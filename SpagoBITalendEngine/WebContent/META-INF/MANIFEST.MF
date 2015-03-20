@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: SpagoBITalendEngine.war
+Implementation-Title: SpagoBITalendEngine
+Implementation-Version: 5.1.0 (Compatible with TOS 3.0.4)
+
