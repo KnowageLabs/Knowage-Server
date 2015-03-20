@@ -1,0 +1,4 @@
+extjs 3.1.1 taken  from spagobi project core o 9/10/2013
+with all the extensions and overrieds applied there to the original lib at that time.
+
+as described here it should be compatibel with geoext 1.1: http://www.geoext.org/tutorials/quickstart.html

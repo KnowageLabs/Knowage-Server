@@ -1,0 +1,95 @@
+
+.. currentmodule:: GeoExt
+
+:class:`GeoExt.Lang`
+================================================================================
+
+
+.. cssclass:: meta
+
+
+Extends
+    * `Ext.util.Observable <http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable>`_
+    
+
+
+
+
+
+
+.. class:: Lang
+
+    The GeoExt.Lang singleton is created when the library is loaded.
+    Include all relevant language files after this file in your build.
+
+
+    
+
+
+
+
+Public Properties
+-----------------
+
+Public properties in addition to those
+listed for `Ext.util.Observable <http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable>`_.
+
+
+.. attribute:: Lang.locale
+
+    ``String``
+    The current language tag.  Use :meth:`set` to set the locale.  Defaults
+    to the browser language where available.
+
+
+
+
+Public Methods
+--------------
+
+Public methods in addition to those
+listed for `Ext.util.Observable <http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable>`_.
+
+
+.. method:: Lang.add
+
+    :param locale: ``String`` A language tag that follows the "en-CA"
+        convention (http://www.ietf.org/rfc/rfc3066.txt).
+    :param lookup: ``Object`` An object with properties that are dot
+        delimited names of objects with localizable strings (e.g.
+        "GeoExt.VectorLegend.prototype").  The values for these properties
+        are objects that will be used to extend the target objects with
+        localized strings (e.g. {untitledPrefix: "Untitiled "})
+    
+    Add translation strings to the dictionary.  This method can be called
+    multiple times with the same language tag (locale argument) to extend
+    a single dictionary.
+
+.. method:: Lang.set
+
+    :arg locale: ''String'' Language identifier tag following recommendations
+        at http://www.ietf.org/rfc/rfc3066.txt.
+    
+    Set the language for all GeoExt components.  This will use any localized
+    strings in the dictionary (set with the :meth:`add` method) that
+    correspond to the complete matching language tag or any "higher order"
+    tag (e.g. setting "en-CA" will use strings from the "en" dictionary if
+    matching strings are not found in the "en-CA" dictionary).
+
+
+
+
+Events
+------
+
+Events in addition to those
+listed for `Ext.util.Observable <http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable>`_.
+
+
+.. describe:: localize
+
+    Fires when localized strings are set.  Listeners will receive a
+    single ``locale`` event with the language tag.
+
+
+

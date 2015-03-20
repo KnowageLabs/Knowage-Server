@@ -1,0 +1,125 @@
+
+.. currentmodule:: GeoExt.plugins
+
+:class:`GeoExt.plugins.TreeNodeActions`
+================================================================================
+
+
+.. cssclass:: meta
+
+
+
+
+
+ptype
+    ``gx_treenodeactions``
+
+
+
+A plugin to create tree node UIs with actions.
+
+An action is a clickable image in a tree node, which, when clicked,
+leads to an "action" event being triggered by the node.
+
+To set actions in a node an ``actions`` property must be provided in
+the node config options. This property  is an array of
+action objects, each action object has the following property:
+
+* "action" ``String`` the name of the action. It is used as
+  the name of the ``<img>`` class. The ``img`` tag being placed in a
+  div whose class is "gx-tree-layer-actions" a CSS selector for the
+  action is ``.gx-tree-layer-actions .action-name``. The name of the
+  action is also provided in the "action" event for listeners to know
+  which action got clicked. (required)
+* "qtip" ``String`` the tooltip displayed when the action
+  image is hovered. (required)
+* "update" ``Function`` a function executed after the action is
+  rendered in the node, it receives the ``Ext.Element`` object
+  representing the image and executes with the node as its
+  scope. For example, this function can be used to hide the
+  action based on some condition. (optional)
+
+
+
+Example Use
+-----------
+
+Sample code to create a layer node UI with an actions plugin:
+
+.. code-block:: javascript
+
+    var uiClass = GeoExt.examples.LayerNodeUI = Ext.extend(
+       GeoExt.tree.LayerNodeUI,
+       new GeoExt.tree.TreeNodeUIEventMixin()
+    );
+
+    // this function takes action based on the "action"
+    // parameter, it is used as a listener to layer
+    // nodes' "action" events
+    function onAction(node, action, evt) {
+        var layer = node.layer;
+        switch(action) {
+        case "delete":
+            layer.destroy();
+            break;
+        }
+    };
+
+    var tree = new Ext.tree.TreePanel({
+        region: "west",
+        width: 250,
+        title: "Layer Tree",
+        loader: {
+            applyLoader: false,
+            uiProviders: {
+                "ui": GeoExt.examples.LayerNodeUI
+            }
+        },
+        // apply the tree node actions plugin to layer nodes
+        plugins: [{
+            ptype: "gx_treenodeactions",
+            listeners: {
+                action: onAction
+            }
+        }],
+        root: {
+            nodeType: "gx_layercontainer",
+            loader: {
+                baseAttrs: {
+                    radioGroup: "radiogroup",
+                    uiProvider: "ui",
+                    actions: [{
+                        action: "delete",
+                        qtip: "delete"
+                    }]
+                }
+            }
+        },
+        rootVisible: false
+    });
+
+    
+
+
+
+
+
+
+
+
+Events
+------
+
+Events.
+
+
+.. describe:: radiochange
+
+    Fires when an action image is clicked.
+    
+    Listener arguments:
+    
+    * node - ``Ext.TreeNode`` The node of the clicked action image.
+
+
+

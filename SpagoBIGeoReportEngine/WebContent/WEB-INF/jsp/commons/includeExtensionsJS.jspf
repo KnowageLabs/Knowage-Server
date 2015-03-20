@@ -1,0 +1,12 @@
+<%
+	String url;
+
+	for(int i = 0; i < includes.size(); i ++) {
+		 url = includes.get(i);
+%>
+	
+	<script type="text/javascript" src="<%=url%>"></script>
+	
+<%
+	}
+%>

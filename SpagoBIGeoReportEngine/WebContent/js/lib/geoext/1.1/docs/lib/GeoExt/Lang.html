@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GeoExt.Lang &mdash; GeoExt v1.1</title>
+    <link rel="stylesheet" href="../../_static/geoext.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+    <link rel="top" title="GeoExt v1.1" href="../../index.html" />
+    
+    
+    
+    
+    
+
+  </head>
+  <body>
+    <div class="header">
+        <div class="wrap">
+            <h1 id="logo"><a href="../../index.html">GeoExt</a></h1>
+            <ul id="top-nav">
+                <li class="first"><a href="../../docs.html">Documentation</a></li>
+                <li><a href="../../examples.html">Examples</a></li>
+                <li><a href="../../downloads.html">Download</a></li>
+                <li><a href="http://trac.geoext.org/">Development</a></li>
+            </ul>
+            <div id="searchbox">
+                <form class="search" action="../../search.html" method="get">
+                    <input id="searchbox-query" type="text" name="q" size="25" value="Search &hellip;" tabindex="3" onblur="if(this.value=='') this.value='Search &hellip;';" onfocus="if(this.value=='Search &hellip;') this.value='';" />
+                    <input id="searchbox-submit" type="image" value="Search" src="../../_static/img/search_icon_green.png" />
+                    <input type="hidden" name="check_keywords" value="yes" />
+                    <input type="hidden" name="area" value="default" />
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../../index.html">GeoExt</a> &raquo;</li>
+        <li><a href="#"><tt class="docutils literal"><span class="pre">GeoExt.Lang</span></tt></a></li>
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="../../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#"><tt class="docutils literal"><span class="pre">GeoExt.Lang</span></tt></a><ul>
+<li><a class="reference external" href="#public-properties">Public Properties</a></li>
+<li><a class="reference external" href="#public-methods">Public Methods</a></li>
+<li><a class="reference external" href="#events">Events</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="geoext-lang">
+<h1><a title="GeoExt.Lang" class="reference internal" href="#GeoExt.Lang"><tt class="xref docutils literal"><span class="pre">GeoExt.Lang</span></tt></a><a class="headerlink" href="#geoext-lang" title="Permalink to this headline">¶</a></h1>
+<dl class="meta docutils">
+<dt>Extends</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable">Ext.util.Observable</a></li>
+</ul>
+</dd>
+</dl>
+<dl class="class">
+<dt id="GeoExt.Lang">
+<em class="property">class </em><tt class="descclassname">GeoExt.</tt><tt class="descname">Lang</tt><a class="headerlink" href="#GeoExt.Lang" title="Permalink to this definition">¶</a></dt>
+<dd>The GeoExt.Lang singleton is created when the library is loaded.
+Include all relevant language files after this file in your build.</dd></dl>
+
+<div class="section" id="public-properties">
+<h2>Public Properties<a class="headerlink" href="#public-properties" title="Permalink to this headline">¶</a></h2>
+<p>Public properties in addition to those
+listed for <a class="reference external" href="http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable">Ext.util.Observable</a>.</p>
+<dl class="attribute">
+<dt id="GeoExt.Lang.locale">
+<tt class="descclassname">Lang.</tt><tt class="descname">locale</tt><a class="headerlink" href="#GeoExt.Lang.locale" title="Permalink to this definition">¶</a></dt>
+<dd><tt class="docutils literal"><span class="pre">String</span></tt>
+The current language tag.  Use <a title="GeoExt.Lang.set" class="reference internal" href="#GeoExt.Lang.set"><tt class="xref docutils literal"><span class="pre">set()</span></tt></a> to set the locale.  Defaults
+to the browser language where available.</dd></dl>
+
+</div>
+<div class="section" id="public-methods">
+<h2>Public Methods<a class="headerlink" href="#public-methods" title="Permalink to this headline">¶</a></h2>
+<p>Public methods in addition to those
+listed for <a class="reference external" href="http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable">Ext.util.Observable</a>.</p>
+<dl class="method">
+<dt id="GeoExt.Lang.add">
+<tt class="descclassname">Lang.</tt><tt class="descname">add</tt><big>(</big><big>)</big><a class="headerlink" href="#GeoExt.Lang.add" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>locale</em> &#8211; <tt class="docutils literal"><span class="pre">String</span></tt> A language tag that follows the &#8220;en-CA&#8221;
+convention (<a class="reference external" href="http://www.ietf.org/rfc/rfc3066.txt">http://www.ietf.org/rfc/rfc3066.txt</a>).</li>
+<li><em>lookup</em> &#8211; <tt class="docutils literal"><span class="pre">Object</span></tt> An object with properties that are dot
+delimited names of objects with localizable strings (e.g.
+&#8220;GeoExt.VectorLegend.prototype&#8221;).  The values for these properties
+are objects that will be used to extend the target objects with
+localized strings (e.g. {untitledPrefix: &#8220;Untitiled &#8220;})</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Add translation strings to the dictionary.  This method can be called
+multiple times with the same language tag (locale argument) to extend
+a single dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="GeoExt.Lang.set">
+<tt class="descclassname">Lang.</tt><tt class="descname">set</tt><big>(</big><big>)</big><a class="headerlink" href="#GeoExt.Lang.set" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>locale</em> &#8211; &#8216;&#8217;String&#8217;&#8217; Language identifier tag following recommendations
+at <a class="reference external" href="http://www.ietf.org/rfc/rfc3066.txt">http://www.ietf.org/rfc/rfc3066.txt</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>Set the language for all GeoExt components.  This will use any localized
+strings in the dictionary (set with the <a title="GeoExt.Lang.add" class="reference internal" href="#GeoExt.Lang.add"><tt class="xref docutils literal"><span class="pre">add()</span></tt></a> method) that
+correspond to the complete matching language tag or any &#8220;higher order&#8221;
+tag (e.g. setting &#8220;en-CA&#8221; will use strings from the &#8220;en&#8221; dictionary if
+matching strings are not found in the &#8220;en-CA&#8221; dictionary).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>Events in addition to those
+listed for <a class="reference external" href="http://dev.sencha.com/deploy/dev/docs/?class=Ext.util.Observable">Ext.util.Observable</a>.</p>
+<dl class="describe">
+<dt>
+<tt class="descname">localize</tt></dt>
+<dd>Fires when localized strings are set.  Listeners will receive a
+single <tt class="docutils literal"><span class="pre">locale</span></tt> event with the language tag.</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+            <li class="right" style="margin-right: 10px">
+              <a href="../../genindex.html" title="General Index"
+                 accesskey="I">index</a></li>
+            <li class="right" >
+              <a href="../../modindex.html" title="Global Module Index"
+                 accesskey="M">modules</a> |</li>
+        <li><a href="../../index.html">GeoExt</a> &raquo;</li>
+        <li><a href="#"><tt class="docutils literal"><span class="pre">GeoExt.Lang</span></tt></a></li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      &copy; Copyright 2009-2010, GeoExt Community.
+    </div>
+  </body>
+</html>

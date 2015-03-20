@@ -1,0 +1,37 @@
+
+.. currentmodule:: GeoExt.grid
+
+:class:`GeoExt.grid.SymbolizerColumn`
+================================================================================
+
+
+.. cssclass:: meta
+
+
+Extends
+    * `Ext.grid.Column <http://dev.sencha.com/deploy/dev/docs/?class=Ext.grid.Column>`_
+    
+
+
+
+xtype
+    ``gx_symbolizercolumn``
+
+
+
+
+.. class:: SymbolizerColumn(config)
+
+    Grid column for rendering a symbolizer or an array of symbolizers.
+
+
+    
+
+
+
+
+
+
+
+
+

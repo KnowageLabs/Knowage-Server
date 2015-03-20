@@ -1,0 +1,82 @@
+/* --------------------------------------------------
+Theme Name: 
+file: ie9.css
+author: 
+---------------------------------------------------*/
+.login-panel .submit input {
+	padding-top: 6px
+}
+
+.login-panel .field input {
+	padding-top: 11px;
+	height: 21px
+}
+
+.panel .scroll {
+	width: 362px; /* width: 298px; */
+}
+
+.panel .scroll-content {
+	width: 362px; /* width: 298px; */
+} /*float*/
+input.mapTitle {
+	width: 315px;
+}
+
+textarea.mapDescription {
+	width: 315px;
+	overflow: auto;
+}
+
+.panel .group .button {
+	cursor: pointer;
+	font-size: 1.25em;
+	display: block;
+	position: relative;
+	background: #fefefe;
+	height: 40px;
+	width: 315px;
+	color: #434343;
+	padding: 15px 0 0 59px
+}
+
+.panel .group {
+	width: 310px;
+}
+
+.map-type {
+	width: 315px;
+}
+
+.map-type a {
+	height: 40px;
+}
+
+.map-type li.active .arrow {
+	background: url(../img/controlpanel/arrow-2.png) 0 -6 no-repeat
+}
+
+.map-type li.active:hover .arrow {
+	background-position: 0 -6px
+}
+
+div.olControlZoom a {
+	background: #5E5E5E;
+}
+	
+div.olControlZoom a:hover {
+    background: #5D5D5D;
+}
+
+.map-type.open li.active .arrow {
+	background-position: 0 -6px
+}
+
+.map-tools-element {
+	height: auto;
+	display: table-column;
+}
+
+.map-tools-element .icon {
+	margin: 5;
+}

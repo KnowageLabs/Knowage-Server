@@ -1,0 +1,153 @@
+<style>
+	#content {
+		line-height: 1em;
+	}
+     
+    .zoomin {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomin.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+    
+    .zoomout {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomout.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+     
+    .zoomfull {
+     	  background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_zoomfull.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .pan {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/icon_pan.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+    
+     .select {
+          background-image:url(/SpagoBIGeoReportEngine/img/cursor.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+      
+    .drawpoint {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_point_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .drawline {
+          background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_line_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .drawpolygon {
+    	  background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/draw_polygon_off.png) !important;
+          height:20px !important;
+          width:20px !important;
+    }
+       
+    .next {
+            background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/resultset_next.png) !important;
+            height:20px !important;
+            width:20px !important;
+    }
+       
+    .back {
+            background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/resultset_previous.png) !important;
+            height:20px !important;
+            width:20px !important;
+    }
+    
+    .meaLinee {
+			background-image: url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/ruler.png) !important;
+			height:16px !important;
+        	width:16px !important;
+	}
+
+	.meaArea {
+			background-image: url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/ruler_square.png) !important;
+			height:16px !important;
+        	width:16px !important;
+	}		
+	.wmsAdd {
+            background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/wms.png) !important;
+            height:22px !important;
+            width:22px !important;
+        }
+	.addWms {
+			background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/mfbase/mapfish/img/add.gif) !important;
+			height:22px !important;
+			width:22px !important;
+	}
+	.delWms {
+			background-image:url(/SpagoBIGeoReportEngine/js/lib/mapfish/client/ext/examples/shared/icons/fam/delete.gif) !important;
+	}
+	
+	.measure-detail-measure{
+		background: url('../img/measures-big.png') no-repeat;
+		width: 90px;
+		background-position:5px 10px;
+	}
+	
+	.measure-detail-dataset{
+		background: url('../img/img-dataset-1.jpg') no-repeat;
+		width: 90px;
+		background-position:5px 20px;
+	}
+	
+	.htmltable p{
+		line-height:13px;
+		 font-family: tahoma,arial,verdana,sans-serif; 
+		 font-size: 11px;
+		 margin: 3px;
+	}
+	
+	.measure-detail-container{
+		padding-left: 10px;
+	}
+	
+	.dataset-detail-container{
+		padding-left: 10px;
+	}
+	
+	.measure-detail-title{
+		border-bottom: 1px solid lightblue;
+	}
+	.x-livesearch-match {
+    	font-weight: bold;
+    	background-color: yellow;
+	}
+	.x-form-text-search{
+		background-image: url('../img/form/text-bg-search.gif') !important;
+		background-repeat: no-repeat;
+	}
+	
+	.olControlLegend {
+		line-height:100%;
+		z-index:1000;
+		position:absolute;
+		bottom:11px;
+		right:379px;
+		float:left;
+		white-space:nowrap; 
+		background-color: blue;
+	
+		/*
+	    bottom: 30px;
+	    right: 30px;
+	    display: block;
+	    font-family: Arial;
+	    font-size: smaller;
+	    */
+	}
+	
+	.map-tools{}
+	
+		
+	
+ </style>

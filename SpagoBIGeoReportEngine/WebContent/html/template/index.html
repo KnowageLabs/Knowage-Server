@@ -1,0 +1,160 @@
+<!--
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>SpagoBI Geo Engine's Template Specification</title>
+</head>
+
+<body>
+
+<h2><a name="map">MAP</a></h2>
+<h3>Description</h3>
+<p>Root tag
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+    <td align="center" valign="top"><b>Default</b></td>
+    
+  </tr>
+  <tr>
+    <td valign="top">mapName</td>
+    <td valign="top">Title of the map tab</td>
+    <td valign="top" align="center">No</td>
+     <td align="center" valign="top">Map</td>
+  </tr>
+  
+   <tr>
+    <td valign="top">analysisType</td>
+    <td valign="top">Type of analysis performed (proportionalSymbols|choropleth)</td>
+    <td valign="top" align="center"></td>
+     <td align="center" valign="top">NA</td>
+  </tr>
+  
+   <tr>
+    <td valign="top">feautreInfo</td>
+    <td valign="top"></td>
+    <td valign="top" align="center"></td>
+     <td align="center" valign="top"></td>
+  </tr>
+  
+  <tr>
+    <td valign="top">indicators</td>
+    <td valign="top"></td>
+    <td valign="top" align="center"></td>
+     <td align="center" valign="top"></td>
+  </tr>
+  
+  <tr>
+    <td valign="top">businessId</td>
+    <td valign="top"></td>
+    <td valign="top" align="center"></td>
+     <td valign="top"></td>
+  </tr>
+  
+  <tr>
+    <td valign="top">geoId</td>
+    <td valign="top"></td>
+    <td valign="top" align="center"></td>
+     <td valign="top"></td>
+  </tr>
+</table>
+
+<h3>Nested elements</h3>
+<h4>ELEMENT-1</h4>
+<p>The nested 
+<a href="MAP_PROVIDER.html"><code>ELEMENT-1</code></a>
+ element specifies the  ...
+
+<h4>ELEMENT-2</h4>
+<p>The nested 
+<a href="DATAMART_PROVIDER.html"><code>ELEMENT-2</code></a>
+element specifies the ...
+
+<h4>ELEMENT-3</h4>
+<p>The nested 
+<a href="MAP_RENDERER.html"><code>ELEMENT-3</code></a>
+element specifies the ...
+  
+  
+<h3>Examples</h3>
+
+<blockquote><pre>
+{
+	mapName: "WATSONs",
+
+	analysisType: "choropleth",
+		
+	feautreInfo: [["State Name","STATE_NAME"], ["Extension (KM)","LAND_KM"], ["Population", "PERSONS"]],
+	indicators: [["unit_sales", "Unit sales"],["store_sales", "Sales"], ["store_cost", "Cost"]],
+
+	businessId: "sales_state", //it links to alphanumeric data into spagobi dataset
+	geoId: "STATE_ABBR", //it links to geometires 
+
+	targetLayerConf: {
+		text: 'States'
+		, name: 'usa_states'
+		//, url: 'http://localhost:8080/geoserver/wfs'	
+		, data: 'usa_states.json'
+	},
+		
+	inlineDocumentConf: {
+		label: 'DIALCHART_simpledial'
+		, staticParams: {
+			param1: 'andrea'
+		}
+		, dynamicParams: {
+			state: 'STATE_NAME'
+		}
+		, displayToolbar: 'false'
+		, displaySliders: 'false'
+	},
+
+	detailDocumentConf: {
+		label: 'DepartmentList'
+		, staticParams: {
+			departmentId: '3'
+		}
+		, dynamicParams: {
+			state: 'STATE_NAME'
+		}
+		, displayToolbar: 'false'
+		, displaySliders: 'false'
+	} ,
+			    
+	role: "spagobi/admin",
+				
+			    
+	lon: -96.800,
+	lat: 40.800,
+	zoomLevel: 4
+}
+</pre></blockquote>
+
+
+
+</body>
+</html>

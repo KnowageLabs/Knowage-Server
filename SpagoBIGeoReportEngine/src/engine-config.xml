@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ENGINE-CONFIGURATION>
+
+	<!-- ====================================================================================== -->
+	<!--  GENERAL SETTINGS 																        --> 
+	<!-- ====================================================================================== -->
+	
+	<INCLUDES>
+		
+		<!-- http://code.google.com/intl/it-IT/apis/maps/signup.html -->
+		
+		<INCLUDE name="GoogleV3" default="enabled">
+			<URL><![CDATA[https://maps.google.com/maps/api/js?v=3&sensor=false]]></URL>
+		</INCLUDE>
+		
+		<!--  
+		<INCLUDE name="GoogleAtLocalhost" default="enabled">
+			<URL><![CDATA[http://www.google.com/jsapi?key=ABQIAAAAQ7O6ISk_yCoR4rsoNpu2yRTwM0brOpm-All5BF6PoaKBxRWWERT09-Dn64qCYckMx5v2Y0of_bmM5A]]></URL>
+			<URL><![CDATA[http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAQ7O6ISk_yCoR4rsoNpu2yRTwM0brOpm-All5BF6PoaKBxRWWERT09-Dn64qCYckMx5v2Y0of_bmM5A]]></URL>
+		</INCLUDE>
+		
+		<INCLUDE name="GoogleAtAthos" default="disabled">
+			<URL><![CDATA[http://www.google.com/jsapi?key=ABQIAAAAT0zfC6xHp-oES5QEcwXTohRCeKxruTCu1m0FOn8Q2yw4V3iAoxRmnxlXrcOaYhE68byIa5VpwoNL-A]]></URL>
+			<URL><![CDATA[http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAT0zfC6xHp-oES5QEcwXTohRCeKxruTCu1m0FOn8Q2yw4V3iAoxRmnxlXrcOaYhE68byIa5VpwoNL-A]]></URL>
+		</INCLUDE>
+		
+		<INCLUDE name="GoogleEarth" default="disabled">
+			<URL><![CDATA[./js/src/ext/sbi/extensions/Earth.js]]></URL>		
+		</INCLUDE>
+		-->
+		
+		<INCLUDE name="OpenStreetMap" default="enabled">
+			<URL><![CDATA[./js/src/ext/sbi/extensions/OpenStreetMap.js]]></URL>		
+		</INCLUDE>
+				
+	</INCLUDES>
+	
+	<!-- ====================================================================================== -->
+	<!--  INTERNAL SETTINGS 																    --> 
+	<!-- ====================================================================================== -->
+	
+	<!--  SSO settings  -->
+	<INTEGRATION_CLASS_JNDI>java://comp/env/spagobi_sso_class</INTEGRATION_CLASS_JNDI>
+	<FILTER_RECEIPT>/proxyCallback</FILTER_RECEIPT>	
+	<PASS>PASS</PASS>	
+	
+	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
+	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>
+	<SPAGOBI_SERVER_URL_JNDI_NAME>java://comp/env/spagobi_service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
+	
+	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
+	<RESOURCE_PATH_JNDI_NAME>java://comp/env/spagobi_resource_path</RESOURCE_PATH_JNDI_NAME>
+	
+	<!--  THE JNDI NAME FOR SPAGOBI DOMAIN -->
+	<SPAGOBI_DOMAIN_JNDI_NAME>java://comp/env/spagobi_domain</SPAGOBI_DOMAIN_JNDI_NAME>	
+	
+	<!--  BACKEND SERVICES -->
+	<SecurityServiceProxy_URL>/services/SecurityService</SecurityServiceProxy_URL>
+	<SchedulerServiceProxy_URL>/services/SchedulerService</SchedulerServiceProxy_URL>
+	<EventServiceProxy_URL>/services/EventService</EventServiceProxy_URL>
+	<ContentServiceProxy_URL>/services/ContentService</ContentServiceProxy_URL>
+	<AuditServiceProxy_URL>/services/AuditService</AuditServiceProxy_URL>
+	<DataSourceServiceProxy_URL>/services/DataSourceService</DataSourceServiceProxy_URL>
+	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
+	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>
+	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
+	
+	
+</ENGINE-CONFIGURATION>

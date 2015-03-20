@@ -1,0 +1,71 @@
+
+.. currentmodule:: GeoExt.data
+
+:class:`GeoExt.data.StyleReader`
+================================================================================
+
+
+.. cssclass:: meta
+
+
+Extends
+    * `Ext.data.JsonReader <http://dev.sencha.com/deploy/dev/docs/?class=Ext.data.JsonReader>`_
+    
+
+
+
+
+
+
+.. class:: StyleReader
+
+A smart reader that creates records for client-side rendered legends. If
+its store is configured with an ``OpenLayers.Style2`` instance as ``data``,
+each record will represent a Rule of the Style, and the store will be
+configured with ``symbolizers`` (Array of ``OpenLayers.Symbolizer``),
+``filter`` (``OpenLayers.Filter``), ``label`` (String, the rule's title),
+``name`` (String), ``description`` (String), ``elseFilter`` (Boolean),
+``minScaleDenominator`` (Number) and ``maxScaleDenominator`` (Number)
+fields. If the store's ``data`` is an ``OpenLayers.Symbolizer.Raster``
+instance, records will represent its ColorMap entries, and the available
+fields will only be ``symbolizers`` (object literal with ``color`` and
+``opacity`` properties from the ColorMapEntry, and stroke set to false),
+``filter`` (String, the ColorMapEntry's quantity) and ``label`` (String).
+
+The store populated by this reader is synchronized with the underlying data
+object. To write back changes to the Style or Symbolizer object, call
+``commitChanges`` on the store.
+
+.. note::
+
+    Calling ``commitChanges`` on the store that is populated with
+    this reader will fail with OpenLayers 2.11 - it requires at least
+    revision
+    https://github.com/openlayers/openlayers/commit/1db5ac3cbe874317968f78832901d6ef887ecca6
+    from 2011-11-28 of OpenLayers.
+
+
+
+Example Use
+-----------
+
+Sample code to create a store that reads from an ``OpenLayers.Style2``
+object:
+
+.. code-block:: javascript
+
+    var store = new Ext.data.Store({
+        reader: new GeoExt.data.StyleReader(),
+        data: myStyle // OpenLayers.Style2 or OpenLayers.Symbolizer.Raster
+    });
+
+    
+
+
+
+
+
+
+
+
+

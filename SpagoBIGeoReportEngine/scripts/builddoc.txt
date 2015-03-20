@@ -1,0 +1,10 @@
+jsduck-4.4.1 ../WebContent/js/src --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ../WebContent/docs
+
+	<exec executable="${programs.jsduck}">
+	    	<arg value="${js.src.dir}"/>
+	    	<arg value="--builtin-classes"/>
+	    	<arg value="--warnings=-no_doc,-dup_member,-link_ambiguous"/>
+			<arg value="--external XMLHttpRequest"/>
+			<arg value="XMLHttpRequest"/>
+	    	<arg value="--output ${doc.dir}"/>
+		</exec>

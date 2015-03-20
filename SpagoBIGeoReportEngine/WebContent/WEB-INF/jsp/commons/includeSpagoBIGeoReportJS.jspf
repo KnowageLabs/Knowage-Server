@@ -1,0 +1,79 @@
+<!-- 
+Ignore this note for the moment (mimification script hasn't been implemented yet)
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+
+<!-- Include Ext stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="./css/georeport.css" type="text/css" />
+
+<!--  
+<script type="text/javascript" src="./js/src/ext/sbi/commons/OpenStreetMap.js"></script>
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAQ7O6ISk_yCoR4rsoNpu2yRTwM0brOpm-All5BF6PoaKBxRWWERT09-Dn64qCYckMx5v2Y0of_bmM5A"></script>
+<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAQ7O6ISk_yCoR4rsoNpu2yRTwM0brOpm-All5BF6PoaKBxRWWERT09-Dn64qCYckMx5v2Y0of_bmM5A'></script>
+-->
+
+
+<!-- Include sbi sdk  -->
+<script type="text/javascript" src='./js/src/ext/sbi/sdk/sbisdk-all-debug.js'/></script>
+
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='./js/src/ext/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
+
+
+
+
+<!-- START-DEBUG -->
+<script type="text/javascript" src='./js/src/ext/sbi/commons/Settings.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/commons/Log.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/exception/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/commons/Format.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/service/ServiceRegistry.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ColorRgb.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/utils/GeoReportUtils.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ContextFactory.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/utils/ControlFactory.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/utils/LayerFactory.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/control/InlineToolbar.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/control/Layers.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/control/Legend.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/control/Measure.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/Classification.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/Classifier.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/Thematizer.js'/></script>
+
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/ChoroplethControlPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/ProportionalSymbolControlPanel.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/ChoroplethThematizer.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/stat/ProportionalSymbolThematizer.js'/></script>
+
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/ImportWMSLayerForm.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/ControlPanel.js'/></script>
+<!--  script type="text/javascript" src='./js/src/ext/sbi/geo/Toolbar.js'/></script-->
+
+<script type="text/javascript" src='./js/src/ext/sbi/geo/MapComponent.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/geo/MainPanel.js'/></script>
+
+<script type="text/javascript" src='./js/src/ext/sbi/tools/documents/DocumentsTree.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/documents/FileUploadPanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/documents/SaveDocumentWindows.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/measure/MeasuresCataloguePanel.js'/></script>
+<script type="text/javascript" src='./js/src/ext/sbi/tools/layers/LayersCataloguePanel.js'/></script>
+
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='../js/spagobi/qbe-all.js'></script>
+END-PRODUCTION -->
+
+
+

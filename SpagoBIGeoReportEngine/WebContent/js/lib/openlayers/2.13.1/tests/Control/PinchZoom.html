@@ -1,0 +1,134 @@
+<html>
+<head>
+  <script src="../OLLoader.js"></script>
+  <script type="text/javascript">
+
+    function test_constructor(t) {
+        t.plan(2);
+        var control = new OpenLayers.Control.PinchZoom();
+        t.ok(control instanceof OpenLayers.Control.PinchZoom, "got an instance");
+        t.ok(control.handler instanceof OpenLayers.Handler.Pinch, "control has pinch handler");
+        control.destroy();
+    }
+
+    function test_destroy(t) {
+        t.plan(1);
+        var control = new OpenLayers.Control.PinchZoom();
+        control.destroy();
+        t.ok(!control.handler, "handler destroyed");
+    }
+    
+    function test_activate(t) {
+        t.plan(3);
+        var control = new OpenLayers.Control.PinchZoom();
+        t.ok(!control.active, "control not activated after construction");
+        
+        var map = new OpenLayers.Map({
+            div: "map",
+            controls: [control]
+        });
+        t.ok(control.active, "control activated after being added to the map");
+        
+        control.deactivate();
+        t.ok(!control.active, "control deactivated");
+        
+        map.destroy();
+    }
+
+    function test_pinchMove(t) {
+
+        var control = new OpenLayers.Control.PinchZoom();
+
+        var map = new OpenLayers.Map({
+            div: "map",
+            controls: [control]
+        });
+        
+        var log = [];
+        map.applyTransform = function(x, y, scale) {
+            log.push([x, y, scale]);
+        }
+        
+        map.layerContainerOriginPx = {
+            x: -50, y: -50
+        };
+
+        control.pinchOrigin = {
+            x: 100, y: 50
+        };
+
+        var cases = [
+            {x: 100, y: 60, scale: 1, transform: [-50, -40, 1]},
+            {x: 150, y: 60, scale: 1, transform: [0, -40, 1]},
+            {x: 150, y: 60, scale: 2, transform: [-150, -140, 2]},
+            {x: 50, y: 20, scale: 2.5, transform: [-325, -230, 2.5]},
+            {x: 150, y: 60, scale: 2, transform: [-150, -140, 2]},
+            {x: 50, y: 20, scale: 0.25, transform: [13, -5, 0.25]}
+        ];
+        
+        var len = cases.length;
+        t.plan(len*2);
+        
+        var c;
+        for (var i=0; i<len; ++i) {
+            c = cases[i];
+            control.pinchMove({xy: {x: c.x, y: c.y}}, {scale: c.scale});
+            t.eq(log.length, i+1, i + " called once");
+            t.eq(log[i], c.transform, i + " correct transform");
+        }
+        
+    }
+
+    function test_pinchMove_preservecenter(t) {
+
+        var control = new OpenLayers.Control.PinchZoom({
+            preserveCenter: true
+        });
+
+        var map = new OpenLayers.Map({
+            div: "map",
+            controls: [control],
+            layers: [new OpenLayers.Layer('fake', {isBaseLayer: true})]
+        });
+        map.zoomToMaxExtent();
+
+        var centerPx = map.getPixelFromLonLat(map.getCenter());
+
+        control.pinchStart = function(evt, pinchData) {
+            t.eq(map.layerContainerOriginPx, {x: 0, y: 0}, "center preserved");
+            t.eq(map.getPixelFromLonLat(map.getCenter()), centerPx, "center preserved");
+        }
+
+        control.pinchStart(null);
+
+        var log = [];
+        map.applyTransform = function(x, y, scale) {
+            log.push([x, y, scale]);
+        }
+        control.pinchOrigin = map.getPixelFromLonLat(map.getCenter());
+
+        var cases = [
+            {scale: 1, transform: [0, 0, 1]},
+            {scale: 2, transform: [-128, -128, 2]},
+            {scale: 2.5, transform: [-192, -192, 2.5]},
+            {scale: 0.25, transform: [96, 96, 0.25]}
+        ];
+
+        var len = cases.length;
+        t.plan(2 + len*2);
+
+        var c;
+        for (var i=0; i<len; ++i) {
+            c = cases[i];
+            control.pinchMove(null, {scale: c.scale});
+            t.eq(log.length, i+1, i + " called once");
+            t.eq(log[i], c.transform, i + " correct transform");
+        }
+    }
+
+  </script>
+</head>
+<body>
+    <div id="map" style="width: 256px; height: 256px;"></div>
+</body>
+</html>
