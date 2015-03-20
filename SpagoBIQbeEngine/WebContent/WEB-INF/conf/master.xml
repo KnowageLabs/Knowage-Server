@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MASTER>
+	
+	<!--  DEPRECATED: use engine-config.xml to store qbe settings  -->
+	<CONFIGURATOR path="/WEB-INF/conf/qbe.xml" />
+	
+	
+	<!-- start QBE COMMONS -->
+	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/common.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/events.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/security.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/upload.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/authorizations.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/dispatchers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/initializers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/tracing.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />
+  	<CONFIGURATOR path="/WEB-INF/conf/commons/renderers.xml" />	
+  	<CONFIGURATOR path="/WEB-INF/conf/commons/validators.xml" />	
+	
+	<!-- start QBE INITILAIZERS module -->
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/publishers.xml" />	
+	
+	<!-- start QBE CORE configurations -->
+	<CONFIGURATOR path="/WEB-INF/conf/core/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/publishers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/validation.xml" />
+	
+	<CONFIGURATOR path="/WEB-INF/conf/core/catalogue/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/catalogue/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/catalogue/publishers.xml" />
+	
+	<CONFIGURATOR path="/WEB-INF/conf/core/datamart/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/datamart/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/core/datamart/publishers.xml" />
+	
+	<!-- start QBE Data Browser (Form Viewer) configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/formviewer/actions.xml" />
+	
+	<!-- start QBE Data Browser (Form Builder) configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/formbuilder/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/formbuilder/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/formbuilder/publishers.xml" />
+	
+	<!-- start dataset configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/dataset/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/dataset/validation.xml" />
+	
+	<!-- start worksheet configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/worksheet/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/worksheet/validation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/worksheet/publishers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/worksheet/presentation.xml" />
+	
+	<!-- start registry configuration -->
+	<CONFIGURATOR path="/WEB-INF/conf/registry/actions.xml" />
+
+</MASTER>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<INITIALIZERS>
+	<INITIALIZER class="it.eng.spago.tracing.TracerInitializer" config="" />
+	<INITIALIZER class="it.eng.spago.dispatching.coordinator.DispatcherInitializer" config="" />
+	<INITIALIZER class="it.eng.spago.util.MonitorInitializer" config="" />
+</INITIALIZERS>

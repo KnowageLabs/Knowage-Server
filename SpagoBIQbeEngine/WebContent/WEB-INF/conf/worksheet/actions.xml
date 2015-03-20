@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+
+	
+	<ACTION name="GET_WORKSHEET_IMAGES_LIST_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorksheetImagesListAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="UPLOAD_WORKSHEET_IMAGE_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.UploadWorksheetImageAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_IMAGE_CONTENT_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.GetImageContentAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_WORKSHEET_FIELDS_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorksheetFieldsAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="EXECUTE_WORKSHEET_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.ExecuteWorksheetQueryAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_WORKSHEET_PREVIEW_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetWorkSheetPreviewAction"
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SET_WORKSHEET_DEFINITION_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.SetWorkSheetDefinitionAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="EXPORT_CHART_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.export.ExportChartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="WORKSHEET_START_EDIT_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.WorksheetStartEditAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="EXPORT_WORKSHEETS_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.export.ExportWorksheetAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="LOAD_CROSSTAB_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.LoadCrosstabAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_VALUES_FOR_CROSSTAB_ATTRIBUTES_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.GetValuesForCrosstabAttributesAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="UPDATE_DATA_SET_WITH_SMART_FILTER_VALUES" 
+			class="it.eng.spagobi.engines.worksheet.services.smartfilter.UpdateDataSetWithSmartFilterValues" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
+	<ACTION name="START_WORKSHEET_FROM_QBE_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.qbe.StartWorksheetFromQbeAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_FILTER_VALUES_FOR_WORKSHEET_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.runtime.GetFilterValuesAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
+		<ACTION name="WORKSHEET_WITH_DATASET_START_EDIT_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.designer.WorksheetWithDatasetStartEditAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- 		<ACTION name="WORKSHEET_ENGINE_MASSIVE_EXPORT_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.export.MassiveExportWorksheetAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	 -->
+
+	 		<ACTION name="MASSIVE_EXPORT_WORKSHEET_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.initializers.MassiveExportWorksheetEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>	
+
+</ACTIONS>
+

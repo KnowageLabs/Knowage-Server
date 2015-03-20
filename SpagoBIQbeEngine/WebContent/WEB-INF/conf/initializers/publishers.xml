@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PUBLISHERS>
+     
+     	
+	
+	<PUBLISHER name="START_QBE_PUBLISHER">
+		<RENDERING channel="HTTP" type="JAVA" mode="">
+			<RESOURCES>
+			     <ITEM prog="0" resource="it.eng.spago.presentation.DefaultPublisherDispatcher">
+                    <CONFIG>
+                         <CHECKS>
+                         	<CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_RESPONSE" value="AF_NOT_DEFINED" />
+                                </CONDITIONS>
+                            </CHECK>
+                            <CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_RESPONSE" value="QBE" />
+                                </CONDITIONS>
+                            </CHECK>
+                            <CHECK target="REGISTRY_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                    <PARAMETER name="DOCTYPE" scope="SERVICE_RESPONSE" value="REGISTRY" />
+                                </CONDITIONS>
+                            </CHECK>
+                        </CHECKS>                      
+                    </CONFIG>
+                </ITEM>
+            </RESOURCES>
+		</RENDERING>
+		<RENDERING channel="PORTLET" type="JAVA" mode="">
+			<RESOURCES>
+			     <ITEM prog="0" resource="it.eng.spago.presentation.DefaultPublisherDispatcher">
+                    <CONFIG>
+                         <CHECKS>
+                            <CHECK target="QBE_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                     <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="QBE" />
+                                </CONDITIONS>
+                            </CHECK>
+                            <CHECK target="REGISTRY_ENGINE_START_ACTION_PUBLISHER">
+                                <CONDITIONS>
+                                    <PARAMETER name="DOCTYPE" scope="SERVICE_REQUEST" value="REGISTRY" />
+                                </CONDITIONS>
+                            </CHECK>
+                        </CHECKS>                      
+                    </CONFIG>
+                </ITEM>
+            </RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
+	<PUBLISHER name="QBE_ENGINE_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/qbe.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	<PUBLISHER name="FORM_ENGINE_START_ACTION_PUBLISHER">
+   	 	<RENDERING channel="HTTP" type="JAVA" mode="">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.commons.presentation.DynamicPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	<PUBLISHER name="FORM_ENGINE_FROM_DATASET_START_ACTION_PUBLISHER">
+   	 	<RENDERING channel="HTTP" type="JAVA" mode="">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.commons.presentation.DynamicPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+	<PUBLISHER name="VIEW_FORM_ENGINE_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/formviewer.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	<PUBLISHER name="EDIT_FORM_ENGINE_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/formeditor.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	<PUBLISHER name="FORM_ENGINE_TEMPLATE_BUILD_ACTION_PUBLISHER">
+   	 	<RENDERING channel="HTTP" type="JAVA" mode="">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.commons.presentation.DynamicPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	
+	<PUBLISHER name="NEW_FORM_ENGINE_TEMPLATE_BUILD_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/templateBuilder.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	<PUBLISHER name="EDIT_FORM_ENGINE_TEMPLATE_BUILD_ACTION_PUBLISHER">		
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="FORM_ENGINE_START_ACTION" />
+        		<PARAMETER name="MODALITY" type="ABSOLUTE" scope="" value="EDIT" />
+        		<PARAMETER name="document" type="RELATIVE" scope="SERVICE_REQUEST" value="document" />
+        		<PARAMETER name="SBI_LANGUAGE" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_LANGUAGE" />
+        		<PARAMETER name="SBI_COUNTRY" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_COUNTRY" />
+      		</RESOURCES>
+   	 	</RENDERING>   	
+	</PUBLISHER>
+	
+	<PUBLISHER name="EDIT_FORM_ENGINE_TEMPLATE_BUILD_FROM_DATASET_ACTION_PUBLISHER">		
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="FORM_ENGINE_FROM_DATASET_START_ACTION" />
+        		<PARAMETER name="MODALITY" type="ABSOLUTE" scope="" value="EDIT" />
+        		<PARAMETER name="document" type="RELATIVE" scope="SERVICE_REQUEST" value="document" />
+        		<PARAMETER name="SBI_LANGUAGE" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_LANGUAGE" />
+        		<PARAMETER name="SBI_COUNTRY" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_COUNTRY" />
+        		<PARAMETER name="dataset_label" type="RELATIVE" scope="SERVICE_REQUEST" value="dataset_label" />
+      		</RESOURCES>
+   	 	</RENDERING>   	
+	</PUBLISHER>
+
+	<!-- ******************** -->
+	<!--  start dataset build -->
+	<!-- ******************** -->
+	
+	<!-- as admin user -->
+    <PUBLISHER name="BUILD_QBE_DATASET_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/dataset/editDataset.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	<!-- as final user -->
+    <PUBLISHER name="QBE_ENGINE_EDIT_DATASET_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/dataset/editDatasetAsFinalUser.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	<!-- ******************** -->
+	<!--  end dataset build   -->
+	<!-- ******************** -->
+	
+	
+	
+	<!-- ***************** -->
+	<!--  start worksheet  -->
+	<!-- ***************** -->
+	<PUBLISHER name="WORKSHEET_ENGINE_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/worksheet.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	<!-- ***************** -->
+	<!--   end worksheet   -->
+	<!-- ***************** -->
+	
+	
+	<!-- ***************** -->
+	<!--  start registry   -->
+	<!-- ***************** -->
+	<PUBLISHER name="REGISTRY_ENGINE_START_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/registry.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	<!-- ***************** -->
+	<!--   end registry    -->
+	<!-- ***************** -->
+	
+</PUBLISHERS>

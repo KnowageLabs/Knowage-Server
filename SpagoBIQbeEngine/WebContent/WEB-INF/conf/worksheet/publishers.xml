@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PUBLISHERS>
+	
+	<PUBLISHER name="GET_WORKSHEET_PREVIEW_ACTION_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/worksheet.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	
+	<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_PUBLISHER">
+   	 	<RENDERING channel="HTTP" type="JAVA" mode="">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.commons.presentation.DynamicPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	
+	<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_QBE_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/qbe.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+		<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_FORM_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/formviewer.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+	
+	<PUBLISHER name="WORKSHEET_START_EDIT_ACTION_DATASET_PUBLISHER">		
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/worksheet_with_dataset.jsp" />
+			</RESOURCES>
+		</RENDERING>    	
+	</PUBLISHER>
+  	
+  	<PUBLISHER name="MASSIVE_EXPORT_WORKSHEET_PUBLISHER">
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+    			<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="EXPORT_WORKSHEETS_ACTION" /> 
+                <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="0" />
+      			<PARAMETER name="LANGUAGE" type="RELATIVE" scope="SERVICE_REQUEST" value="LANGUAGE" />
+				<PARAMETER name="COUNTRY" type="RELATIVE" scope="SERVICE_REQUEST" value="COUNTRY" />
+				<PARAMETER name="SBI_EXECUTION_ID" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_EXECUTION_ID" />
+				<PARAMETER name="SBI_DROP_TEMPORARY_TABLE_ON_EXIT" type="RELATIVE" scope="SERVICE_REQUEST" value="SBI_DROP_TEMPORARY_TABLE_ON_EXIT" />    
+				<PARAMETER name="MIME_TYPE" type="RELATIVE" scope="SERVICE_REQUEST" value="MIME_TYPE" />     
+				<PARAMETER name="SPLITTING_FILTER" type="RELATIVE" scope="SERVICE_REQUEST" value="SPLITTING_FILTER" />   
+				<PARAMETER name="METADATA" type="RELATIVE" scope="SERVICE_REQUEST" value="METADATA_AND_METACONTENT" />
+				<PARAMETER name="PARAMETERS" type="RELATIVE" scope="SERVICE_RESPONSE" value="PARAMETERS" />      
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	
+</PUBLISHERS>

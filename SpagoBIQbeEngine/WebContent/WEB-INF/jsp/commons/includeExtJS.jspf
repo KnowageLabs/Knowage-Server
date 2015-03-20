@@ -1,0 +1,68 @@
+<%-- SpagoBI, the Open Source Business Intelligence suite
+
+ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.  If a copy of the MPL was not distributed with this file,
+ You can obtain one at http://mozilla.org/MPL/2.0/. --%>
+ 
+ <%-- Include Ext and app-specific scripts for development environment:
+<script type="text/javascript" src='../js/lib/ext-3.2.1/adapter/ext/ext-base-debug-w-comments.js'/></script>
+ --%>
+
+<%-- Include Ext and app-specific scripts for production environment: --%>
+<script type="text/javascript" src='../js/lib/ext-3.2.1/adapter/ext/ext-base.js'/></script>
+
+
+<%-- Ext lib for development environment
+<script type="text/javascript" src='../js/lib/ext-3.2.1/ext-all-debug-w-comments.js'/></script>
+ --%>
+
+<%-- Ext lib for production environment --%>
+<script type="text/javascript" src='../js/lib/ext-3.2.1/ext-all.js'/></script>  
+
+
+<%-- Ext lib overrides --%>
+<script type="text/javascript" src='../js/lib/overrides-ext-3.2.1/overrides.js'/></script>
+
+<!-- Include Ext stylesheets here: -->
+<link id="extall" rel="styleSheet" href ="../js/lib/ext-3.2.1/resources/css/ext-all.css" type="text/css" />
+<link id="theme-gray" rel="styleSheet" href ="../js/lib/ext-3.2.1/resources/css/xtheme-gray.css" type="text/css" />
+<!-- Ext css overrides -->
+<link id="theme-overrides" rel="styleSheet" href ="../js/lib/overrides-ext-3.2.1/resources/css/overrides.css" type="text/css" />
+<link id="theme-overrides" rel="styleSheet" href ="../js/lib/overrides-ext-3.2.1/resources/css/overrides-xtheme-gray.css" type="text/css" />
+
+
+<script type="text/javascript">
+	Ext.chart.Chart.CHART_URL = '../js/lib/ext-3.2.1/resources/charts.swf';
+	Ext.Ajax.timeout = 300000;
+	Ext.Ajax.defaultHeaders = {
+		'Powered-By': 'Ext'
+	};
+	Ext.BLANK_IMAGE_URL = '../js/lib/ext-3.2.1/resources/images/default/s.gif';
+	Ext.Ajax.on('requestexception', function(conn, response, options) {
+		Sbi.exception.ExceptionHandler.handleFailure(response, options);
+	}, this);
+</script>
+
+<%-- Include SuperBoxSelect code --%>
+<script type="text/javascript" src='../js/lib/ext-3.2.1/ux/form/SuperBoxSelect.js'/></script>
+<link rel="styleSheet" href ="../js/lib/ext-3.2.1/resources/css/superboxselect.css" type="text/css" />
+<link rel="styleSheet" href ="../js/lib/ext-3.2.1/resources/css/theme-gray/superboxselect-gray-extend.css" type="text/css" />
+
+<%-- Include MIF debug code 
+<script type="text/javascript" src='../js/lib/ext-3.2.1/ux/miframe/miframe-debug.js'/></script>
+--%>
+<%-- Include MIF production code --%>
+<script type="text/javascript" src='../js/lib/ext-3.2.1/ux/miframe/miframe.js'/></script>
+
+
+<%-- Include Ext.ux.ColorField code --%>
+<script type="text/javascript" src='../js/lib/ext-3.2.1/ux/form/Ext.ux.ColorField.js'/></script>
+<link rel="styleSheet" href ="../js/lib/ext-3.2.1/resources/css/Ext.ux.ColorField.css" type="text/css" />
+
+<!--  jQuery (HighCharts dependency) -->
+<script type="text/javascript" src="../js/lib/jquery-1.5.1/jquery-1.5.1.js"></script>
+
+<!--  HighCharts -->
+<script type="text/javascript" src="../js/lib/highcharts-3.0.7/highcharts.js"></script>
+<script type="text/javascript" src="../js/lib/highcharts-3.0.7/modules/exporting.js"></script>

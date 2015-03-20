@@ -1,0 +1,103 @@
+<project name="${project.name}" default="doc.all" basedir=".">
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DEFINIZIONE FILE DI PROPERTY						                            -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<property file="build.properties" />
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DEFINIZIONE CLASSPATH						                                            -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<path id="web.classpath">
+		<pathelement path="${classpath}" />
+		
+		<!-- LIBRERIE SPECIFICHE ENGINE  -->
+		<fileset dir="${egine.java.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		
+		<!-- LIBRERIE SPECIFICHE CORE  -->
+		<fileset dir="${core.java.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		
+		<!-- LIBRERIE ESTERNE DEL WEB CONTAINER necessarie per la compilazione -->
+		<!-- ma che non devono essere comprese nel war                         -->
+		<fileset dir="${project.runtime.dir}/lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   PULIZIA AMBIENTE						                                                -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="doc.clean">
+		<delete dir="${doc.dir}" />
+	</target>
+	<target name="doc.init" depends="doc.clean">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${doc.dir}" />
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DOCUMENTTION										                            -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="doc.all" depends="doc.init,doc.js,doc.java" />
+
+	<target name="doc.js">
+		<mkdir dir="${js.doc.dir}" />
+		<delete includeemptydirs="true">
+			<fileset dir="${js.doc.dir}" includes="**/*" />
+		</delete>
+		<exec command="${programs.jsduck} ${js.ext.src.dirs} --builtin-classes --warnings=-no_doc,-dup_member,-link_ambiguous --external XMLHttpRequest --output ${js.doc.dir}" />
+	</target>
+
+
+	<target name="doc.java">
+		<javadoc packagenames="*" 
+			sourcepath="${core.java.src.dir}/runtime;${core.java.src.dir}/hibernate;${core.java.src.dir}/jpa;${core.java.src.dir}/serialization;${engine.java.src.dir}" 
+			defaultexcludes="yes" destdir="${java.doc.dir}" 
+			author="true" version="true" use="true">
+			
+			<classpath refid="web.classpath" />
+			<group title="Qbe Core" packages="it.eng.qbe.*" />
+			<group title="Qbe Engine" packages="it.eng.spagobi.engines.*" />
+		</javadoc>
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   JS MIMIFICATION		    					                                  -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="delete-debug">
+		<delete file="${js.src.dir}/georeport-all.js" />
+		<delete file="${js.src.dir}/georeport-all-debug.js" />
+	</target>
+
+	<target name="create-debug" depends="delete-debug">
+		<concat destfile="${js.src.dir}/georeport-all-debug.js" append="true">
+			<filelist dir=".">
+				<file name="${js.src.dir}/commons/Settings.js" />
+				<file name="${js.src.dir}/overrides/overrides.js" />
+				<file name="${js.src.dir}/exception/ExceptionHandler.js" />
+				<file name="${js.src.dir}/commons/Format.js" />
+				<file name="${js.src.dir}/locale/LocaleUtils.js" />
+				<file name="${js.src.dir}/service/ServiceRegistry.js" />
+
+				<file name="${js.src.dir}/georeport/GeoReportUtils.js" />
+				<file name="${js.src.dir}/georeport/ControlFactory.js" />
+				<file name="${js.src.dir}/georeport/LayerFactory.js" />
+				<file name="${js.src.dir}/georeport/GeoReportPanel.js" />
+			</filelist>
+
+		</concat>
+	</target>
+
+	<target name="create-production" depends="create-debug">
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${js.src.dir}/georeport-all.js ${js.src.dir}/georeport-all-debug.js" />
+		</java>
+	</target>
+
+</project>

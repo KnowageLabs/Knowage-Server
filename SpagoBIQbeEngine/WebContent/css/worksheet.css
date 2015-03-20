@@ -1,0 +1,289 @@
+/*
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+/* Sbi.worksheet.designer.SheetsContainerPanel */  
+.newTabIcon {
+	 background-image:url(../img/worksheet/new_tab_icon.png) !important;
+}
+
+/* 
+START NOTIFICATION BOX
+The notification box when a new sheet is added
+From http://dev.sencha.com/deploy/ext-4.0.0/examples/message-box/msg-box.html 
+*/
+#msg-div {
+	font-family:helvetica,tahoma,verdana,sans-serif;
+    padding:20px;
+    padding-top:32px;
+    font-size:13px;
+    position:absolute;
+    left:35%;
+    bottom:10px;
+    /*top:10px;*/
+    width:300px;
+    /*z-index:20000;*/
+}
+#msg-div .msg {
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    background: #F6F6F6;
+    border: 2px solid #ccc;
+    margin-top: 2px;
+    padding: 10px 15px;
+    color: #555;
+}
+#msg-div .msg h3 {
+    margin: 0 0 8px;
+    font-weight: bold;
+    font-size: 15px;
+}
+#msg-div .msg p {
+    margin: 0;
+}
+/* END NOTIFICATION BOX */
+
+/* Sbi.worksheet.designer.SheetTitlePanel */  
+.browsImgIcon {
+	 background-image:url(../img/worksheet/brows_img_icon.png) !important;
+}
+
+.uploadImgIcon {
+	 background-image:url(../img/worksheet/browser_globe_upload.png) !important;
+}
+
+.infoImgIcon {
+     background-image:url(../img/worksheet/info22.png) !important;
+}
+
+.closeUploadImgIcon {
+	 background-image:url(../img/worksheet/close_icon-15.png) !important;
+}
+
+/* Sbi.worksheet.designer.DesignSheetLayoutPanel */
+.layout-headerfooter {
+	 background:url(../img/worksheet/layout_header_footer.png) no-repeat 22px 0px !important;
+}
+.layout-header {
+	 background:url(../img/worksheet/layout_header.png) no-repeat 22px 0px !important;
+}
+.layout-footer {
+	 background:url(../img/worksheet/layout_footer.png) no-repeat 22px 0px !important;
+}
+.layout-content {
+	 background:url(../img/worksheet/layout_content.png) no-repeat 22px 0px !important;
+}
+
+.layout-headerfooter,.layout-header,.layout-footer,.layout-content{
+	 padding-top: 7px !important;
+}
+
+/* Sbi.worksheet.designer.BarChartDesignerPanel */
+.side-by-side-barchart-vertical {
+	 background:url(../img/worksheet/designer/chart/sidebysidebarchart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-barchart-vertical {
+	 background:url(../img/worksheet/designer/chart/stackedbarchart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-barchart-vertical {
+	 background:url(../img/worksheet/designer/chart/percentstackedbarchart-vertical.gif) no-repeat 22px 0px !important;
+}
+
+.side-by-side-barchart-horizontal {
+	 background:url(../img/worksheet/designer/chart/sidebysidebarchart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-barchart-horizontal {
+	 background:url(../img/worksheet/designer/chart/stackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-barchart-horizontal {
+	 background:url(../img/worksheet/designer/chart/percentstackedbarchart-horizontal.gif) no-repeat 22px 0px !important;
+}
+
+.side-by-side-barchart-vertical-preview {
+	background:url(../img/worksheet/designer/chart/sidebysidebarchart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-barchart-vertical-preview {
+	background:url(../img/worksheet/designer/chart/stackedbarchart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-barchart-vertical-preview {
+	background:url(../img/worksheet/designer/chart/percentstackedbarchart-vertical.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.side-by-side-barchart-horizontal-preview {
+	background:url(../img/worksheet/designer/chart/sidebysidebarchart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-barchart-horizontal-preview {
+	background:url(../img/worksheet/designer/chart/stackedbarchart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-barchart-horizontal-preview {
+	background:url(../img/worksheet/designer/chart/percentstackedbarchart-horizontal.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+
+/* Sbi.worksheet.designer.LineChartDesignerPanel */
+.side-by-side-linechart-area {
+	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-area.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-linechart-area {
+	 background:url(../img/worksheet/designer/chart/stackedlinechart-area.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-linechart-area {
+	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-area.gif) no-repeat 22px 0px !important;
+}
+
+.side-by-side-linechart-line {
+	 background:url(../img/worksheet/designer/chart/sidebysidelinechart-line.gif) no-repeat 22px 0px !important;
+}
+
+.stacked-linechart-line {
+	 background:url(../img/worksheet/designer/chart/stackedlinechart-line.gif) no-repeat 22px 0px !important;
+}
+
+.percent-stacked-linechart-line {
+	 background:url(../img/worksheet/designer/chart/percentstackedlinechart-line.gif) no-repeat 22px 0px !important;
+}
+
+.side-by-side-linechart-area-preview {
+	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-area.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-linechart-area-preview {
+	background-image:url(../img/worksheet/designer/chart/stackedlinechart-area.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-linechart-area-preview {
+	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-area.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.side-by-side-linechart-line-preview {
+	background-image:url(../img/worksheet/designer/chart/sidebysidelinechart-line.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.stacked-linechart-line-preview {
+	background-image:url(../img/worksheet/designer/chart/stackedlinechart-line.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+.percent-stacked-linechart-line-preview {
+	background-image:url(../img/worksheet/designer/chart/percentstackedlinechart-line.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+
+/* Sbi.worksheet.designer.PieChartDesignerPanel */
+.piechart {
+	background-image:url(../img/worksheet/designer/chart/piechart.gif) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+
+/* Sbi.worksheet.designer.TableDesignerPanel */  
+.table {
+	background-image:url(../img/worksheet/palette_table_big.png) !important;
+	background-repeat:no-repeat !important;
+	background-position:center !important;
+}
+
+/**************/
+/*    MISC    */
+/**************/
+
+
+/*Center a pannel*/
+.centered-panel{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+/*For center the crosstab*/
+.centered-panel table{
+	margin-left:auto;
+	margin-right:auto;
+}
+
+/* Sbi.worksheet.designer.ChartSeriesPanel */
+.chart-series-panel table {
+	margin-left:0px !important;
+}
+
+/* Sbi.worksheet.designer.ChooseImageWindow */
+#choose-image-window .x-item-over{
+    /*border:1px solid #dddddd;*/
+    background: #efefef; /* url(over.gif) repeat-x left top;*/
+    /*padding: 4px;*/
+}
+
+#choose-image-window .image-preview {
+	max-width: 100px;
+	max-height: 100px;
+	width: expression(this.width > 100 ? "100px" : true);
+    height: expression(this.height > 100 ? "100px" : true);
+}
+
+/* Sbi.worksheet.RuntimeSheetFiltersPanel */
+.filter-icon-top {
+	background:url(../img/worksheet/filter32.png) no-repeat center;
+	width: 40px;
+	height: 50px;
+}
+
+.filter-icon-left {
+	background:url(../img/worksheet/filter32.png) no-repeat center;
+	width: 200px;
+	height: 50px;
+}
+
+.x-btn-invalid{
+ color:#ff0000;
+ text-decoration:line-through;
+
+}

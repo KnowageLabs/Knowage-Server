@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+
+	<ACTION name="SAVE_TREE_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.datamart.SaveTreeAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_TREE_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.datamart.GetTreeAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>	
+	
+</ACTIONS>

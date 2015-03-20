@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- QBE BASE ACTIONS 																   -->
+<!-- ================================================================================= -->
+
+<ACTIONS>		
+
+	<!-- ================================================================================= -->
+	<!-- DISPATCHER																			   -->
+	<!-- ================================================================================= -->	
+	<ACTION name="PUBLISH_ACTION" 
+	 		class="it.eng.spago.dispatching.action.util.PublishAction" 	
+	 		scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>	
+	
+	<!-- ================================================================================= -->
+	<!-- TRAPS																			   -->
+	<!-- ================================================================================= -->
+	
+	<ACTION name="SERVICE_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.ServiceExceptionAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+			class="it.eng.spagobi.utilities.engines.EngineStartupExceptionTrapAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SESSION_EXPIRED_ACTION" 
+			class="it.eng.spagobi.commons.services.SessionExpiredAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>

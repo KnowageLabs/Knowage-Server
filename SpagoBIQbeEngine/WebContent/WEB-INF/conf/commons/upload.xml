@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UPLOAD>
+	<!-- 
+	<UPLOAD_METHODS>
+		<UPLOAD_METHOD name="DATAMART_UPLOAD" class="it.eng.qbe.utility.DataMartUploadManager"/>
+	</UPLOAD_METHODS>
+	<UPLOAD-MANAGER name="DATAMART_UPLOAD"/>
+	-->
+	<UPLOAD_METHODS>
+		<UPLOAD_METHOD name="SET_UPLOAD_OBJECT_INTO_REQUEST" class="it.eng.spago.upload.UploadManager"/>
+	</UPLOAD_METHODS>
+	<UPLOAD-MANAGER name="SET_UPLOAD_OBJECT_INTO_REQUEST"/>
+</UPLOAD>

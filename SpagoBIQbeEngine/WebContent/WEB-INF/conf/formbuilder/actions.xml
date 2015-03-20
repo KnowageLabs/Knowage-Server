@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+	
+	<ACTION name="GET_QUERY_FIELDS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formbuilder.GetSelectedColumnsAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SET_FORM_BUILDER_STATE_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formbuilder.SetFormBuilderStateAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_FORM_PREVIEW_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formbuilder.GetFormPreviewAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="SAVE_FORM_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.formbuilder.SaveFormAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_ENTITY_FIELDS" 
+			class="it.eng.spagobi.engines.qbe.services.formbuilder.GetEntityFieldsAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

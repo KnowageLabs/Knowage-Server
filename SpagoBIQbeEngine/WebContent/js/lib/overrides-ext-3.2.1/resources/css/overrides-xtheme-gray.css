@@ -1,0 +1,6 @@
+/* 
+Extended tool-sprites with 2 additional icons ('list' and 'tree')
+ */
+.x-tool {
+    background-image:url(../images/gray/panel/tool-sprites.gif);
+}

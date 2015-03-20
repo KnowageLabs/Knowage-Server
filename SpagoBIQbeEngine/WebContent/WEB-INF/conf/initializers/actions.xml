@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+	
+	<!-- QBE_ENGINE Initializations -->
+	<ACTION name="QBE_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="QBE_ENGINE_START_ACTION_FROM_BM" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineStartActionFromBusinessModel" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="QBE_ENGINE_FROM_DATASET_START_ACTION" 
+            class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineFromDatasetStartAction" 
+            scope="REQUEST">
+        <CONFIG></CONFIG>
+    </ACTION>
+    
+	<ACTION name="QBE_ENGINE_EDIT_DATASET_START_ACTION" 
+            class="it.eng.spagobi.engines.qbe.services.initializers.QbeEngineEditDatasetStartAction" 
+            scope="REQUEST">
+        <CONFIG></CONFIG>
+    </ACTION>
+	
+	<!-- FORM_ENGINE Initializations -->
+	<ACTION name="FORM_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	<ACTION name="FORM_ENGINE_FROM_DATASET_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineFromDatasetStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- FORM_ENGINE Template Wizard -->
+	<ACTION name="FORM_ENGINE_TEMPLATE_BUILD_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.FormEngineTemplateBuilder" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- BUILD DATASET start action -->
+	<ACTION name="BUILD_QBE_DATASET_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.BuildQbeDatasetStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- WORKSHEET_ENGINE start action -->
+	<ACTION name="WORKSHEET_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>	
+	
+	<!-- REGISTRY_ENGINE start action -->
+	<ACTION name="REGISTRY_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.initializers.RegistryEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	
+</ACTIONS>
+

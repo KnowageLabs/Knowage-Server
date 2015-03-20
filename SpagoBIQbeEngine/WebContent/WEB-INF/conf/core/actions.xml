@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+
+	<ACTION name="ADD_CALCULATED_FIELD_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.AddCalculatedFieldAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	<ACTION name="MODIFY_CALCULATED_FIELD_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.AddCalculatedFieldAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	<ACTION name="DELETE_CALCULATED_FIELD_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.DeleteCalculatedFieldAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="VALIDATE_EXPRESSION_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.ValidateExpressionAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+
+	
+	<ACTION name="GET_PARAMETERS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetParametersAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="GET_ATTRIBUTES_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetAttributesAction"  
+			scope="REQUEST">
+		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+
+	
+	<ACTION name="EXEC_QUERY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction"  
+			scope="REQUEST">
+			
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="EXPORT_RESULT_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.ExportResultAction"  
+			scope="REQUEST">
+			
+		<CONFIG></CONFIG>
+	</ACTION>
+
+	
+
+
+	<ACTION name="GET_ANALYSIS_META_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetAnalysisMetaAction"  
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
+	<ACTION name="GET_VALUES_FOR_QBE_FILTER_LOOKUP_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetValuesForQbeFilterLookup"  
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<ACTION name="INVOKE_EXTERNAL_SERVICE_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.InvokeExternalServiceAction"  
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+	<!-- 
+	<ACTION name="GET_AMBIGUOUS_FIELDS_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.GetAmbiguousFieldsAction"  
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+ 	-->
+ 	
+</ACTIONS>
+

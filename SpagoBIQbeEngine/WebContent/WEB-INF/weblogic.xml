@@ -1,0 +1,9 @@
+<weblogic-web-app xmlns="http://www.bea.com/ns/weblogic/weblogic-web-app">
+         <container-descriptor>
+              <prefer-web-inf-classes>true</prefer-web-inf-classes>
+              <show-archived-real-path-enabled>true</show-archived-real-path-enabled>
+	 </container-descriptor>
+   <jsp-descriptor>
+   <precompile>true</precompile>
+   </jsp-descriptor>
+</weblogic-web-app>

@@ -1,0 +1,669 @@
+/*
+
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2005 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+*/
+
+/*******************************************************************************************************
+ * Actions
+ ********************************************************************************************************/
+        
+.add {
+    background-image:url(../img/actions/add.gif) !important;
+}
+
+.show {
+    background-image: url(../img/actions/show.gif) !important;
+    background-repeat: no-repeat !important;
+}
+
+.hide {
+    background-image: url(../img/actions/hide.gif) !important;
+    background-repeat: no-repeat !important;
+}
+.slot {
+    background-image:url(../img/actions/slot.gif) !important;
+}
+
+.x-item-disabled .add{
+	background-image:url(../img/actions/add_gray.gif) !important;
+}
+
+.edit {
+    background-image:url(../img/actions/edit.png) !important;
+}
+
+.x-item-disabled .edit{
+	 background-image:url(../img/actions/edit_gray.png) !important;
+}
+
+.editremove {
+	background-image:url(../img/actions/editdelete.png) !important;
+}
+
+.x-item-disabled .editremove {
+	background-image:url(../img/actions/editdelete_gray.png) !important;
+}
+
+.remove {
+	background-image:url(../img/actions/delete.gif) !important;
+}
+
+.x-item-disabled .remove {
+	background-image:url(../img/actions/delete_gray.gif) !important;
+}
+
+.option {
+	background-image:url(../img/actions/option.gif) !important;
+}
+
+.add-calculated-filed  {
+	background-image:url(../img/actions/qbe-tb-btn-sprite.png)  no-repeat 0 -0px;
+}
+
+.hide-nonvisible-filed  {
+	background-image:url(../img/actions/qbe-tb-btn-sprite.png)  no-repeat 0 -11px;
+}
+
+
+/*******************************************************************************************************
+ * Datamart Structure
+ ********************************************************************************************************/
+  
+.calculation {
+	 background-image:url(../img/datamartstructure/calculation.gif) !important;
+}
+
+.measure {
+	 background-image:url(../img/datamartstructure/measure.gif) !important;
+}
+
+.attribute {
+	 background-image:url(../img/datamartstructure/attribute.gif) !important;
+}
+
+.relation {
+	 background-image:url(../img/datamartstructure/relation.gif) !important;
+}
+
+.segment_attribute {
+background-image:url(../img/datamartstructure/attribute.gif) !important;
+}
+
+.segment_attribute_text {
+/*border: 2px solid green;*/
+color:green;
+font-weight:bold;
+}
+
+.mandatory_measure {
+background-image:url(../img/datamartstructure/measure.gif) !important;
+}
+
+.mandatory_measure_text {
+/*border: 2px solid red;*/
+color:blue;
+font-weight:bold;
+}
+
+.cube {
+	 background-image:url(../img/datamartstructure/cube.gif) !important;
+}
+
+.database {
+	 background-image:url(../img/datamartstructure/database.png) !important;
+}
+
+.dimension {
+	 background-image:url(../img/datamartstructure/dimension.gif) !important;
+}
+
+.generic {
+     background-image:url(../img/datamartstructure/dimension.gif) !important;
+}
+
+.view {
+	 background-image:url(../img/datamartstructure/view.png) !important;
+}
+
+
+/*******************************************************************************************************
+ * Filter expression wizard
+ ********************************************************************************************************/
+  
+.operand {
+	 background-image:url(../img/datamartstructure/measure.gif) !important;
+}
+
+.operator {
+	 background-image:url(../img/datamartstructure/attribute.gif) !important;
+}
+
+.trigger-up {
+	 background-image:url(../img/triggerup.gif) !important;
+}
+
+
+/*******************************************************************************************************
+ * Mime types
+ ********************************************************************************************************/
+  
+
+.pdf {
+     background-image:url(../img/mimetypes/pdf.gif) !important;
+}
+
+.rtf {
+     background-image:url(../img/mimetypes/rtf.gif) !important;
+}
+.xls {
+     background-image:url(../img/mimetypes/xls.gif) !important;
+}
+
+.csv {
+     background-image:url(../img/mimetypes/csv.gif) !important;
+}
+
+.jrxml {
+     background-image:url(../img/mimetypes/jrxml.gif) !important;
+}
+
+
+.icon-remove {
+	background-image:url(../img/delete.gif) !important;
+}
+
+
+.icon-execute {
+	background-image:url(../img/filter.gif) !important;
+}
+
+
+.icon-grid {
+	background-image:url(../img/grid.png) !important;
+}
+
+.x-node-ctx {
+    background:#eee !important;
+    /* border:1px solid #ccc !important */;
+}
+
+.row-over {
+     border:1px solid #dddddd;
+     background: #efefef url(../js/lib/ext-3.2.1/resources/images/default/grid/row-over.gif) repeat-x left top;
+}
+
+/*******************************************************************************************************
+ * Form viewer
+ ********************************************************************************************************/
+.icon-clear {
+	background-image: url('../img/formviewer/clear16.gif') !important;
+}
+
+.icon-add {
+    background-image:url(../img/actions/add.gif) !important;
+}
+
+.icon-delete {
+    background-image:url(../img/actions/delete.gif) !important;
+}
+
+
+
+/*******************************************************************************************************
+ * Form builder
+ ********************************************************************************************************/
+.filter {	
+    border:1px solid #eee !important;
+}
+
+.filter-select {	
+    background:#eef !important;
+    border:1px dotted #ccc !important;
+}
+
+.x-table-layout td {
+     vertical-align:top;
+}
+
+/* remove the default left,center and right images from the button border*/
+.image-button .x-btn-left, .image-button .x-btn-right, .image-button .x-btn-center{
+    background: 0;
+    padding:0px;	
+}
+
+.image-button .x-btn-center .x-btn-text  {
+	 background-repeat: no-repeat;
+	 width: 20px;
+
+}
+
+/* see Sbi.crosstab.CrosstabDetailsWizard.js, alternate group style.
+See also http://www.sencha.com/deploy/dev/examples/form/check-radio.html */
+.x-check-group-alt {
+    background: #E8E8E8;
+    border-top:1px dotted #D0D0D0;
+    border-bottom:1px dotted #D0D0D0;
+}
+
+/*******************************************************************************************************
+ * Cross Tab
+ ********************************************************************************************************/
+.crosstab-table-headers{
+	cursor: pointer !important;
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	background-image:url("../img/crosstab/headerbackground.gif");
+	font:12px tahoma,arial,verdana,sans-serif;
+	color : #3783E8;
+}
+
+/*
+.crosstab-header-static {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    font:12px arial,tahoma,helvetica,sans-serif;
+    color : #3783E8;
+}
+
+.crosstab-header-member {
+    background-image:url("../img/crosstab/headerbackground.gif");
+}
+
+.crosstab-header-level {
+    background-image:url("../img/crosstab/headerbackgroundtitle.gif");
+}
+*/
+/*white-space: nowrap; width: 100%; overflow: hidden; text-overflow: ellipsis; are needed css properties to obtain ellipsis, for example: "Alcoholic Bev..."*/ 
+/*
+.crosstab-header-text-static {
+	white-space: nowrap; 
+	width: 100%; 
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	height: 1.5em;
+}
+*/
+			
+.crosstab-table-cells-data{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font: normal 11px tahoma,arial,helvetica,sans-serif;
+	background-color: transparent;
+}
+
+.crosstab-table-cells-CF{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font: normal 11px tahoma,arial,helvetica,sans-serif;
+	background-color: #F1F1F1;
+}
+
+.crosstab-table-cells-partialsum{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font: normal 11px tahoma,arial,helvetica,sans-serif;
+	background-color: #E1E1E1;
+}
+
+.crosstab-table-cells-highlight{
+	background-color: #FEFFBF !important;
+}
+
+.crosstab-table-cells-totals{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font: bold 11px tahoma,arial,helvetica,sans-serif;
+	background-color: #D1D1D1;
+}
+
+.crosstab-table-cells-supertotals{
+	border:1px solid;
+	border-left-color:#EEEEEE;	
+	border-right-color:#D0D0D0;
+	border-top-color:#EEEEEE;	
+	border-bottom-color:#D0D0D0;	
+	text-align: center;
+	font: bold 11px tahoma,arial,helvetica,sans-serif;
+	background-color: #B1B1B1;
+}
+				
+.crosstab-tablebackground{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-top-style: none;
+	border-left-style: none;
+}
+
+.crosstab-column-header-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-bottom-style: none;
+	border-left-style: none;
+}
+
+.crosstab-row-header-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-top-style: none;
+}
+				
+.crosstab-table-empty-top-left-panel-leftmostcell{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-bottom-style: none;
+}
+
+.crosstab-table-empty-top-left-panel-bottomcells{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-left-style: none;
+	border-bottom-style: none;
+}
+
+.crosstab-table-empty-top-left-panel-table-left{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-left-style: none;
+	border-top-style: none;
+}
+
+.crosstab-table-empty-top-right-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-top-style: none;
+}
+
+.crosstab-table-empty-bottom-left-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-left-style: none;
+	border-top-style: none;
+	border-bottom-style: none;
+}
+
+.crosstab-table-empty-bottom-right-panel{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-right-style: none;
+	border-bottom-style: none;
+}
+
+.crosstab-table-data-panel{
+	border:1px solid !important;
+	border-color: #99BBE8 !important;
+	border-top-style: none !important;
+	border-left-style: none !important;
+}
+
+.crosstab-row-sum-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-left-style: none;
+	border-top-style: none;
+}
+
+.crosstab-column-sum-panel-container{
+	border:1px solid;
+	border-color: #99BBE8;	
+	border-top-style: none;
+	border-left-style: none;
+}
+
+.crosstab-borderd{
+	border:1px solid;
+	border-color: #8F8F8F;	
+}
+
+.crosstab-no-border{
+	border-style: none !important;	
+}
+
+.crosstab-none-bottom-border-panel{
+	border-bottom-style: none !important;
+}
+
+.crosstab-none-right-border-panel{
+	border-right-style: none !important;
+}
+
+.crosstab-none-top-border-panel{
+	border-top-style: none !important;
+}
+
+.crosstab-none-left-border-panel{
+	border-left-style: none !important;
+}
+
+
+/*******************************************************************************************************
+ * Registry
+ ********************************************************************************************************/
+.icon-save {
+	background-image: url('../img/save16.png') !important;
+}
+.icon-refresh {
+	background-image: url('../img/refresh16.png') !important;
+}
+.x-grid3-hd-inner:hover
+{
+	cursor:e-resize;
+}
+/*******************************************************************************************************
+ * Slot
+ ********************************************************************************************************/
+.icon-close {
+	border: 1px solid blue;
+	border-radius:5px; 
+	padding: 2px; 
+	float: left;
+	margin-right: 1px;
+	background-image: url('../img/actions/close_icon-15.png') !important;
+	background-repeat: no-repeat;
+	background-position: right;
+	padding-right: 16px;
+	text-align: right;	
+}
+.green {
+	border: 1px solid green;
+
+}
+.blue {
+	border: 1px solid blue;
+	background-color: #6C69AB; 
+}
+.default-row{
+	background-color: #6C69AB;	
+	border:1px solid red;
+}
+.box-to-edit{
+	width: 100%;
+	text-align:right;
+	//border: 1px solid black;
+}
+
+/*******************************************************************************************************
+ * disabled-record for Sbi.widgets.FilterLookupPopupWindow
+ ********************************************************************************************************/
+.disabled-record {
+	background-color: #EAEAEA;
+}
+
+.crosstab table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+
+.crosstab td {
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:10px;
+}
+
+.crosstab td.empty {
+	border:0px solid;
+    background-color: transparent;
+}
+
+.crosstab td.member {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    
+    background: #f2f2f2; /* for non-css3 browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f2f2', endColorstr='#e6e6e6'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e6e6e6)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #f2f2f2,  #e6e6e6); /* for firefox 3.6+ */
+    
+    /*background-image:url("../img/crosstab/headerbackground.gif");*/
+    /*background-size:100%;*/
+    /*background-repeat:repeat-x;*/
+    font:11px tahoma,arial,verdana,sans-serif;
+    color: #3783E8;
+    padding-right:10px;
+}
+
+.crosstab td.level {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    
+    background: #ebf3fd; /* for non-css3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ebf3fd', endColorstr='#d9e8fb'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#ebf3fd), to(#d9e8fb)); /* for webkit browsers */
+    background: -moz-linear-gradient(top,  #ebf3fd,  #d9e8fb); /* for firefox 3.6+ */
+    
+    /*background-image:url("../img/crosstab/headerbackgroundtitle.gif");*/
+    /*background-size:contain;*/
+    /*background-repeat:repeat-x;*/
+    font:11px tahoma,arial,verdana,sans-serif;
+    color: #3783E8;
+    padding-right:10px;
+}
+
+.crosstab td.data {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    background-color: transparent;
+    font:11px tahoma,arial,verdana,sans-serif;
+    padding-right:0px;
+}
+
+.crosstab td.na {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: center;
+    background-color: transparent;
+    font:11px tahoma,arial,verdana,sans-serif;
+    padding-right:0px;
+}
+
+.crosstab td.cf {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    font:11px tahoma,arial,verdana,sans-serif;
+    background-color: #F1F1F1;
+    padding-right:0px;
+}
+
+.crosstab td.partialsum {
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    font:11px tahoma,arial,verdana,sans-serif;
+    background-color: #E1E1E1;
+    padding-right:0px;
+}
+
+.crosstab td.totals{
+    border:1px solid;
+    border-left-color:#EEEEEE;  
+    border-right-color:#D0D0D0;
+    border-top-color:#EEEEEE;   
+    border-bottom-color:#D0D0D0;    
+    text-align: right;
+    font:bold 11px tahoma,arial,verdana,sans-serif;
+    background-color: #D1D1D1;
+    padding-right:0px;
+}
+
+/*******************************************************************************************************
+ * Sbi.qbe.RelationshipsWizard
+ ********************************************************************************************************/
+.green-row { background-color: #99CC99 !important; background-image: none !important }
+
+
+/*******************************************************************************************************
+ * Sbi.formtemplate.DocumentTemplateBuilder
+ ********************************************************************************************************/
+.info {
+	background: #dfe8f6 url(../img/info16.png) no-repeat;
+	display: block;
+	padding: 2px 2px 2px 20px;
+	text-align: left;
+	font:11px tahoma,arial,verdana,sans-serif;
+}
