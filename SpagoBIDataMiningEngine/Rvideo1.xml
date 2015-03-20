@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA_MINING>
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="scriptroll" mode="auto" datasets=""  label="label scriptroll">
+			<![CDATA[
+	roll<-function(){die<-1:6;dice<-sample(die,size=2,replace=TRUE,prob=c(1/8,1/8,1/8,1/8,1/8,3/8));sum(dice)};
+	rolls<-replicate(100,roll());
+	rolls;
+			]]>
+		</SCRIPT>
+	</SCRIPTS>
+	<DATASETS></DATASETS>
+	<COMMANDS>
+        <COMMAND name="command1" scriptName="scriptroll"  label="label Command1" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="text" name="prova" value="rolls"  mode="auto" label="label Output 1"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRACING>
+	<LOGGER name="Spago" class="it.eng.spago.tracing.Log4JLogger">
+		<CONFIG trace_min_log_severity="0" debug="false"/>
+	</LOGGER>
+</TRACING>

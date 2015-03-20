@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA_MINING>
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="scriptroll" mode="auto" datasets="ds1" label="label timeplus">
+			<![CDATA[
+				str(ds1);
+				ds1$time;
+				time_plus<-ds1$time+1;
+				time_plus;
+			]]>
+		</SCRIPT>
+	</SCRIPTS>	
+	<DATASETS>
+		<DATASET name="ds1" readType="table" type="file" label="label Data set 1" default="defaultds/dirDoc2/rats2.txt" canUpload="true">	
+			<![CDATA[header = TRUE]]>
+		</DATASET>
+	</DATASETS>	
+	<COMMANDS>
+        <COMMAND name="command1" scriptName="scriptroll"  label="label Command1" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="text" name="time_plus" value="time_plus"  mode="auto" label="Time plus"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA_MINING>
+    <PARAMETERS>
+        <PARAMETER name="par1" alias="par1"/>
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="scriptroll" mode="auto" datasets="spagobids"  label="label scriptroll">
+			<![CDATA[
+	str(spagobids);
+	sbi1<-spagobids[,c(6,29)];
+	t<-tapply(sbi1$ERROR, sbi1$DOC_LABEL, FUN = function(x) sum(!is.na(x)) )
+			]]>
+		</SCRIPT>
+	</SCRIPTS>
+	<DATASETS>	
+		<DATASET name="spagobids" spagobiLabel="spagobids1" readType="" mode="auto" type="spagobi_ds" label="HISTOGRAM">	
+		</DATASET>
+	</DATASETS>
+	<COMMANDS>
+        <COMMAND name="command1" scriptName="scriptroll"  label="AUDIT" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="image" name="histogram" value="t" function="hist"  mode="auto" label="DATAMINING AUDIT"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>

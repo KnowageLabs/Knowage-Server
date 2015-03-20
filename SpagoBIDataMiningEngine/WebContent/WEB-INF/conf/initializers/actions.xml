@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+	
+	<!-- DataMining_ENGINE Initializations -->
+	<ACTION name="DATAMINING_ENGINE_START_ACTION" 
+			class="it.eng.spagobi.engines.datamining.services.initializers.DataMiningEngineStartAction" 
+			scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

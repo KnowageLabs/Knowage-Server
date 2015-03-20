@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA_MINING>
+	<SCRIPTS>  
+        <SCRIPT name="iris" mode="auto" datasets=""  label="Iris">
+			<![CDATA[
+library(datasets)
+data(iris)
+irisSepalL<-subset(iris, subset = Species =='$P{subset}', select = '$P{select}')
+res<-apply(irisSepalL,2,mean)
+res2<-apply(irisSepalL,2,sum)
+			]]>
+		</SCRIPT>
+	</SCRIPTS>
+	<DATASETS></DATASETS>
+	<COMMANDS>
+        <COMMAND name="irisCmd1" scriptName="iris"  label="Petal Length" mode="auto">
+        	<VARIABLES>
+        		<VARIABLE name="subset" default="virginica"/>
+        		<VARIABLE name="select" default="Sepal.Length"/>
+        	</VARIABLES>
+            <OUTPUTS>
+                <OUTPUT type="text" name="mean" value="$P{res_mean}" mode="auto" label="Mean">
+		          	<VARIABLES>
+		        		<VARIABLE name="res_mean" default="res"/>
+		        	</VARIABLES>              
+                </OUTPUT>
+                <OUTPUT type="text" name="sum" value="$P{res_sum}" mode="manual" label="Sum">
+		          	<VARIABLES>
+		        		<VARIABLE name="res_sum" default="res2"/>
+		        	</VARIABLES>              
+                </OUTPUT>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+</DATA_MINING>
