@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: SpagoBIQbeCore.jar
+
+Name: sbi.qbecore-4.1.0.jar
+Implementation-Title: SpagoBIQbeCore
+Implementation-Version: 5.1.0
