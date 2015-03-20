@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<STATEMENTS>
+		
+	<STATEMENT name="SELECT_CHECKED_OBJECT_LIST" 
+  				   query="SELECT SUB_RPT_ID AS OBJ_ID  					 					
+				            FROM SBI_SUBREPORTS
+				            WHERE MASTER_RPT_ID = ? "/>
+	
+ 	<STATEMENT name="DELETE_CHECK" 
+             query="DELETE FROM SBI_CHECKS WHERE CHECK_ID = ?"/>
+    
+  <STATEMENT name="SELECT_LIST_ENGINE" 
+             query="SELECT 	E.ENGINE_ID, 
+							E.DESCR,
+							E.NAME AS NAME,
+							E.LABEL AS LABEL  
+                       FROM SBI_ENGINES E 
+                       WHERE E.ORGANIZATION = ? "/>
+                       
+  <STATEMENT name="SELECT_LIST_PARAMETERS" 
+             query="SELECT P.PAR_ID,
+						P.DESCR AS DESCR,
+						P.LENGTH AS LENGTH,
+						P.LABEL AS LABEL,
+						P.NAME AS NAME,
+						P.PAR_TYPE_CD,
+						P.MASK AS MASK,
+						P.PAR_TYPE_ID,
+						COUNT(DISTINCT(U.USE_ID)) as NUM_USES, COUNT(DISTINCT(O.BIOBJ_ID)) as NUM_BIOBJECTS
+						FROM SBI_PARAMETERS P LEFT JOIN SBI_PARUSE U ON U.PAR_ID = P.PAR_ID
+						LEFT JOIN SBI_OBJ_PAR O ON O.PAR_ID = P.PAR_ID
+						WHERE P.ORGANIZATION = ? 
+						group by P.PAR_ID, P.DESCR, P.LENGTH,P.LABEL,P.NAME,P.PAR_TYPE_CD,P.MASK, P.PAR_TYPE_ID "/>
+  
+  <STATEMENT name="SELECT_LIST_MODALITIES_VALUE" 
+  	         query="SELECT T.LOV_ID,
+					T.LABEL AS LABEL,
+					T.NAME AS NAME,
+					T.DESCR AS DESCR,
+					T.INPUT_TYPE_CD AS INPUT_TYPE_CD,
+					COUNT(DISTINCT(P.PAR_ID)) AS N_OF_PARAMETERS
+					FROM SBI_LOV T LEFT JOIN SBI_PARUSE P ON T.LOV_ID=P.LOV_ID
+					WHERE T.ORGANIZATION = ? 
+					GROUP BY T.LOV_ID,T.LABEL,T.LABEL, T.NAME,T.DESCR,T.INPUT_TYPE_CD"/>
+  	       
+  <STATEMENT name="SELECT_BIOBJECT_VALUE" 
+  	         query="SELECT BI.BIOBJ_ID AS ID,BI.LABEL AS LABEL, BI.NAME AS NAME, BI.DESCR AS DESCR, 
+  	         		E.NAME AS ENGINE FROM SBI_OBJECTS BI, SBI_ENGINES E 
+  	         		WHERE BI.ORGANIZATION = ? 
+  	         		AND BI.ENGINE_ID=E.ENGINE_ID"/>
+  	       
+		   
+	<STATEMENT name="SELECT_PARAMETERS_LIST" 
+  	         query="SELECT PAR_ID AS PAR_ID,
+                  LABEL AS LABEL,
+  	              NAME AS NAME,
+  	              DESCR AS DESCR,
+  	              PAR_TYPE_CD 
+  	       FROM SBI_PARAMETERS 
+  	       WHERE ORGANIZATION = ?  "/>
+		   
+	<STATEMENT name="SELECT_REPORTS_LIST" 
+  	         query="	SELECT 	BIOBJ_ID AS OBJ_ID,
+  					DESCR AS DESCRIPTION,
+  					LABEL AS LABEL,
+  					NAME AS NAME   					
+			FROM SBI_OBJECTS 
+			WHERE ORGANIZATION = ? "/>
+ 
+  <STATEMENT name="SELECT_PREDEFINED_CHECKS" 
+  	          query="SELECT T.CHECK_ID,
+       		T.LABEL AS LABEL,
+       		T.NAME AS NAME,
+       		T.DESCR AS DESCR,
+       		T.VALUE_TYPE_CD
+			FROM SBI_CHECKS T,
+     		SBI_DOMAINS D
+				WHERE D.DOMAIN_CD='PRED_CHECK'
+				AND T.VALUE_TYPE_CD = D.VALUE_CD 
+				AND T.ORGANIZATION = ? "/>
+				
+				
+ 	<STATEMENT name="SELECT_LIST_MODALITIES_CHECKS" 
+  	query="SELECT T.CHECK_ID,
+       		T.LABEL AS LABEL,
+       		T.NAME AS NAME,
+       		T.DESCR AS DESCR,
+       		T.VALUE_TYPE_CD
+			FROM SBI_CHECKS T,
+     		SBI_DOMAINS D
+				WHERE D.DOMAIN_CD='CHECK'
+				AND T.VALUE_TYPE_CD = D.VALUE_CD 
+				AND T.ORGANIZATION = ? "/>
+
+	<!--			
+	<STATEMENT name="SELECT_ALL_ROLES" 
+               query="SELECT EXT_ROLE_ID,  
+       						NAME,
+       						DESCR,
+       						CODE,
+       						ROLE_TYPE_ID,
+       						ROLE_TYPE_CD
+					FROM SBI_EXT_ROLES "/>
+	 
+	 
+	<STATEMENT name="SELECT_ALL_DS" 
+               query="SELECT DS_ID as ID,         						 
+       						 DESCR,
+       						 LABEL,
+       						 JNDI,
+       						 URL_CONNECTION,
+                             USERNAME,
+                             PWD,
+                             DRIVER
+					  FROM SBI_DATA_SOURCE 
+					  WHERE ORGANIZATION = ? "/>
+-->
+	<STATEMENT name="SELECT_ALL_DATASET" 
+               query="SELECT S.DS_ID as ID, S.DESCR, S.LABEL, S.NAME, COUNT(O.BIOBJ_ID) as NUM_BIOBJECTS 
+					FROM SBI_DATA_SET S LEFT OUTER JOIN SBI_OBJECTS O ON O.DATA_SET_ID=S.DS_ID
+					WHERE S.ORGANIZATION = ?  AND S.ACTIVE= ?
+					AND (S.OWNER = ? OR S.IS_PUBLIC = ?)
+					GROUP BY S.DS_ID,S.DESCR, S.LABEL, S.NAME "/>
+
+					  
+	<STATEMENT name="SELECT_ALL_DL" 
+               query="SELECT SDL.DL_ID as ID,
+               				 SDL.NAME,
+       						 SDL.DESCR, COUNT(SDLU.DLU_ID) as USERS
+					  FROM SBI_DIST_LIST SDL LEFT OUTER JOIN  SBI_DIST_LIST_USER SDLU
+  					  ON SDL.DL_ID = SDLU.LIST_ID
+  					  WHERE SDL.ORGANIZATION = ? 
+ 					  GROUP BY SDL.DL_ID,SDL.NAME,SDL.DESCR "/>			
+ 					  
+ 	<STATEMENT name="SELECT_ALL_DL_USER" 
+               query="SELECT s.NAME, s.DESCR,  s.DL_ID as ID, 1 as PRES
+					FROM SBI_DIST_LIST s, SBI_DIST_LIST_USER sbu, 
+					SBI_DIST_LIST_OBJECTS o, SBI_OBJ_FUNC sof, SBI_FUNC_ROLE fr, SBI_EXT_ROLES e
+					WHERE s.DL_ID = o.DL_ID   AND sbu.LIST_ID=s.DL_ID AND o.DOC_ID = sof.BIOBJ_ID AND sof.FUNCT_ID = fr.FUNCT_ID
+					AND fr.STATE_CD = 'EXECUTION' AND fr.ROLE_ID= e.EXT_ROLE_ID  AND e.NAME IN (?,?,?,?,?,?) AND sbu.USER_ID = ?
+					GROUP BY s.NAME, s.DESCR,  s.DL_ID
+					union
+					SELECT s.NAME, s.DESCR,  s.DL_ID as ID, 0 as PRES
+					FROM SBI_DIST_LIST s, SBI_DIST_LIST_OBJECTS o,SBI_OBJ_FUNC sof,SBI_FUNC_ROLE fr, SBI_EXT_ROLES e
+					WHERE s.DL_ID = o.DL_ID    AND o.DOC_ID = sof.BIOBJ_ID       AND sof.FUNCT_ID = fr.FUNCT_ID
+					AND fr.STATE_CD = 'EXECUTION'       AND fr.ROLE_ID= e.EXT_ROLE_ID      AND e.NAME IN (?,?,?,?,?,?) 
+					AND NOT EXISTS (SELECT sl.DL_ID
+    				FROM SBI_DIST_LIST sl, SBI_DIST_LIST_USER sbul, SBI_DIST_LIST_OBJECTS ol,SBI_OBJ_FUNC ofl,SBI_FUNC_ROLE frl, SBI_EXT_ROLES el
+    				WHERE sl.DL_ID = ol.DL_ID   AND sbul.LIST_ID=sl.DL_ID    AND ol.DOC_ID = ofl.BIOBJ_ID       
+    				AND ofl.FUNCT_ID = frl.FUNCT_ID
+   					AND frl.STATE_CD = 'EXECUTION'       AND frl.ROLE_ID= el.EXT_ROLE_ID      
+   					AND el.NAME IN (?,?,?,?,?,?) AND sbul.USER_ID = ? AND  s.DL_ID = sl.DL_ID)
+					GROUP BY s.NAME, s.DESCR,  s.DL_ID"/>	
+					
+	<STATEMENT name="SELECT_ALL_OBJMETADATA" 
+               query="SELECT M.OBJ_META_ID, M.DESCR, M.LABEL, M.NAME, D.VALUE_NM, 
+					         COUNT(C.BIOBJ_ID) as NUM_OBJ, COUNT(C.SUBOBJ_ID) as NUM_SUBOBJ 
+					 FROM SBI_OBJ_METADATA M LEFT OUTER JOIN SBI_OBJ_METACONTENTS C ON C.OBJMETA_ID=M.OBJ_META_ID
+                                             LEFT OUTER JOIN SBI_DOMAINS D ON M.DATA_TYPE_ID=D.VALUE_ID
+                     WHERE M.ORGANIZATION = ?                
+					 GROUP BY  M.OBJ_META_ID , M.DESCR, M.LABEL, M.NAME, D.VALUE_NM  "/>
+					  	  			   
+</STATEMENTS>

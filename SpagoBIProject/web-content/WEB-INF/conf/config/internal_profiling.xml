@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<INTERNAL_PROFILING_INITIALIZER>
+		<DEFAULT_USERS>
+			<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator" organization="SPAGOBI" isSuperadmin="true">
+				<ATTRIBUTE name="email" value="admin@eng.it" />
+				<ATTRIBUTE name="name" value="SpagoBI Administrator" />
+				<ROLE name="/spagobi/admin"/>
+			</USER>
+			<USER userId="biuser" password="biuser" fullName="SpagoBI User" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="SpagoBI User" />
+				<ROLE name="/spagobi/user"/>
+			</USER>
+			<USER userId="bidemo" password="bidemo" fullName="SpagoBI Demo User" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="SpagoBI Demo User" />
+				<ROLE name="/spagobi/user/demo"/>
+			</USER>
+			<USER userId="bitest" password="bitest" fullName="SpagoBI Test User" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="SpagoBI TestUser" />
+				<ROLE name="/spagobi/test"/>
+			</USER>
+			<USER userId="bidev" password="bidev" fullName="SpagoBI Developer" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="SpagoBI Developer" />
+				<ROLE name="/spagobi/dev"/>
+			</USER>
+			<USER userId="bam" password="bam" fullName="Bam User" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="Bam User" />
+				<ROLE name="/spagobi/bam"/>
+			</USER>
+			<USER userId="public_user" password="public_user" fullName="Public User" organization="SPAGOBI">
+				<ATTRIBUTE name="name" value="Public User" />				
+			</USER>
+
+		</DEFAULT_USERS>
+		<DEFAULT_ATTRIBUTES>
+			<ATTRIBUTE name="name" description="name" organization="SPAGOBI"/>
+			<ATTRIBUTE name="surname" description="surname" organization="SPAGOBI"/>
+			<ATTRIBUTE name="address" description="address" organization="SPAGOBI"/>
+			<ATTRIBUTE name="birth_date" description="birth date" organization="SPAGOBI"/>
+			<ATTRIBUTE name="email" description="email" organization="SPAGOBI"/>
+	
+		</DEFAULT_ATTRIBUTES>
+		<DEFAULT_ROLES>
+			<ROLE roleName="/spagobi/dev" description="/spagobi/dev" roleTypeCD="DEV_ROLE" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/test" description="/spagobi/test" roleTypeCD="TEST_ROLE" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/user" description="/spagobi/user" roleTypeCD="USER" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/userb" description="/spagobi/userb" roleTypeCD="USER" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/admin" description="/spagobi/admin" roleTypeCD="ADMIN" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin" roleTypeCD="MODEL_ADMIN" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva" roleTypeCD="USER" organization="SPAGOBI"/>
+			<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva" roleTypeCD="USER" organization="SPAGOBI"/>	
+			<ROLE roleName="/spagobi/bam" description="/spagobi/bam" roleTypeCD="USER" organization="SPAGOBI"/>	
+			<ROLE roleName="/spagobi/user/demo" description="/spagobi/user/demo" roleTypeCD="USER" organization="SPAGOBI"/>	
+
+		</DEFAULT_ROLES>
+		<DEFAULT_AUTHORIZATIONS>
+			<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_SUBOBJECTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_VIEWPOINTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_SNAPSHOTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_NOTES" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEND_MAIL" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_METADATA" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SAVE_METADATA" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="BUILD_QBE_QUERY" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="DO_MASSIVE_EXPORT" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="EDIT_WORKSHEET" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="MANAGE_USERS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_FAVOURITES" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_SUBSCRIPTIONS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
+			<AUTHORIZATION authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
+		</DEFAULT_AUTHORIZATIONS>
+		
+		
+</INTERNAL_PROFILING_INITIALIZER>

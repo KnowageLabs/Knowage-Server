@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobisdkdatasources" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisdkdatasources" xmlns:intf="urn:spagobisdkdatasources" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.datasources.sdk.spagobi.eng.it" xmlns:tns3="http://exceptions.sdk.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://bo.datasources.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdatasources"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKDataSource">
+    <sequence>
+     <element name="attrSchema" nillable="true" type="soapenc:string"/>
+     <element name="descr" nillable="true" type="soapenc:string"/>
+     <element name="dialectId" nillable="true" type="soapenc:int"/>
+     <element name="driver" nillable="true" type="soapenc:string"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="jndi" nillable="true" type="soapenc:string"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="multiSchema" nillable="true" type="soapenc:int"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="pwd" nillable="true" type="soapenc:string"/>
+     <element name="urlConnection" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://exceptions.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.datasources.sdk.spagobi.eng.it"/>
+   <import namespace="urn:spagobisdkdatasources"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="NotAllowedOperationException">
+    <sequence/>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:spagobisdkdatasources" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.datasources.sdk.spagobi.eng.it"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_SDKDataSource">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKDataSource[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="NotAllowedOperationException">
+
+      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourcesRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceResponse">
+
+      <wsdl:part name="getDataSourceReturn" type="tns2:SDKDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourcesResponse">
+
+      <wsdl:part name="getDataSourcesReturn" type="impl:ArrayOf_tns2_SDKDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="DataSourcesSDKService">
+
+      <wsdl:operation name="getDataSource" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDataSourceRequest" name="getDataSourceRequest"/>
+
+         <wsdl:output message="impl:getDataSourceResponse" name="getDataSourceResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSources">
+
+         <wsdl:input message="impl:getDataSourcesRequest" name="getDataSourcesRequest"/>
+
+         <wsdl:output message="impl:getDataSourcesResponse" name="getDataSourcesResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="DataSourcesSDKServiceSoapBinding" type="impl:DataSourcesSDKService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getDataSource">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataSourceRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasources" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataSourceResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasources" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdatasources" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSources">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataSourcesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasources" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataSourcesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdatasources" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdatasources" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="DataSourcesSDKServiceService">
+
+      <wsdl:port binding="impl:DataSourcesSDKServiceSoapBinding" name="DataSourcesSDKService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/sdk/DataSourcesSDKService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HOTLINK>
+	<SECTION name="MOST_POPULAR" rows_number="5" />
+	<SECTION name="MY_RECENTLY_USED" rows_number="5" />
+	<SECTION name="REMEMBER_ME" />
+</HOTLINK>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="MANAGE_IMPEXP_ASS_ACTION" businessProcess="ImportExportManagement" />
+		<MAP_ACTION actionName="DOWNLOAD_FILE_ACTION" businessProcess="ImportExportManagement" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="ImportExportPage" moduleName="ImportExportModule" businessProcess="ImportExportManagement" />	
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

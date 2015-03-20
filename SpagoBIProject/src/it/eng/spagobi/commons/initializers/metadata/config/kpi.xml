@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KPI>
+<PERIODICITY name="month" months="1" days="0" hours="0" minutes="0"/>
+<PERIODICITY name="day" months="0" days="1" hours="0" minutes="0"/>
+<PERIODICITY name="week" months="0" days="7" hours="0" minutes="0"/>
+<PERIODICITY name="hour" months="0" days="0" hours="1" minutes="0"/>
+<PERIODICITY name="1minute" months="0" days="0" hours="0" minutes="1"/>
+<PERIODICITY name="5minutes" months="0" days="0" hours="0" minutes="5"/>
+<PERIODICITY name="10minutes" months="0" days="0" hours="0" minutes="10"/>
+<PERIODICITY name="15minutes" months="0" days="0" hours="0" minutes="15"/>
+</KPI>

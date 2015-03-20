@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+	
+	<ACTION name="DOSSIER_DOWNLOAD_ACTION" class="it.eng.spagobi.engines.dossier.actions.DossierDownloadAction" scope="">
+		<CONFIG></CONFIG>
+	</ACTION>
+	
+</ACTIONS>
+

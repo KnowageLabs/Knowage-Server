@@ -1,0 +1,78 @@
+
+/* 
+Graphics, screen layouts and stylesheets created for the FormattedDataSet by
+Eric Laufer.  Good job Eric!
+*/
+
+/*
+A:ACTIVE {
+	color : #336633;
+}
+
+A:LINK {
+	color : #000066;
+}
+
+A:VISITED {
+	color : #990033;
+}
+
+A:HOVER {
+	color : #0000CC;
+}
+*/
+BODY {
+	background : White;	
+	font-family : Arial, Helvetica, sans-serif;
+	font-size : xx-small;
+}
+
+
+TH {
+	font-size : x-small;
+	font-weight : bold;
+}
+
+TD {
+	font-size : xx-small;
+	font-weight : normal;
+}
+
+BUTTON, INPUT, SELECT {
+	font-size : 7pt;
+}
+
+.odd {
+	background : #EEEEEE;
+}
+
+.even {
+	background : #C5D4E4;
+}
+
+
+.rowon {
+	background :  #75A0FF;
+}
+
+
+.highlight {
+	background : red;
+}
+
+.monkey {
+
+color:#000099;
+font-size:150%;
+}
+
+.sectHead {
+	font-weight : bold;
+	vertical-align : bottom;
+	background-color : #3B6588; /*original color 03487F*/
+	color : White;
+}
+
+TABLE.layoutMain {
+	border : 2px solid #03487F;
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<INITIALIZERS>
+	<INITIALIZER class="it.eng.spago.tracing.TracerInitializer" config="" />
+	<INITIALIZER class="it.eng.spago.dispatching.coordinator.DispatcherInitializer" config="" />
+	<INITIALIZER class="it.eng.spago.dbaccess.DataAccessInitializer" config="" />
+	<INITIALIZER class="it.eng.spago.presentation.StylesheetInitializer" config="" /> 
+	<INITIALIZER class="it.eng.spago.util.MonitorInitializer" config="" />
+	<INITIALIZER class="it.eng.spago.message.MessageBundleInitializer" config="" />
+	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" config="" />
+
+	<!-- Initializer for Workflow   -->  
+	<INITIALIZER class="it.eng.spagobi.workflow.JbpmContextInitializer" config="" />
+
+	<!-- Initializer for SpagoBI metadata   -->  
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.MetadataInitializer" config="" />
+
+	<!-- Initializer for Alarm Sending-->
+	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
+
+
+    <!-- START-WEB  -->
+    
+    <INITIALIZER class="it.eng.spagobi.security.init.SecurityInitializer" config="" />
+	<INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
+	
+	<!-- END-WEB  -->
+	<!--  LUCENE INDEXER -->
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.indexing.IndexingInitializer" config="" />
+	<!--  /LUCENE INDEXER -->
+	
+	<!-- INTERNAL PROFILING -->
+	<INITIALIZER class="it.eng.spagobi.security.init.InternalSecurityInitializer" config="INTERNAL_PROFILING_INITIALIZER" />
+	
+</INITIALIZERS>

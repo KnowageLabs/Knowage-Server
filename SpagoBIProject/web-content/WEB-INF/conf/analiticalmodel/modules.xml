@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+    
+    <MODULE class="it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule" name="TreeObjectsModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    <MODULE class="it.eng.spagobi.analiticalmodel.functionalitytree.service.DetailFunctionalityModule" name="DetailFunctionalityModule">
+     	<CONFIG/>
+    </MODULE>
+
+    <MODULE class="it.eng.spagobi.analiticalmodel.document.service.ListBIObjectsModule" name="ListBIObjectsModule">
+    </MODULE>
+    
+    <MODULE class="it.eng.spagobi.analiticalmodel.document.service.ExecutionWorkspaceModule" name="ExecutionWorkspaceModule">
+     	<CONFIG/>
+    </MODULE>    
+    
+    <MODULE class="it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule" name="BIObjectsModule">
+     	<CONFIG/>
+    </MODULE>
+    <MODULE class="it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule" name="DetailBIObjectModule">
+     	<CONFIG/>
+    </MODULE>
+	<MODULE class="it.eng.spagobi.analiticalmodel.document.service.DocumentTemplateBuildModule" name="DocumentTemplateBuildModule">
+     	<CONFIG/>
+    </MODULE>
+ 
+ 	<MODULE class="it.eng.spagobi.analiticalmodel.document.service.EraseDocumentModule" name="EraseDocumentModule">
+     	<CONFIG/>
+    </MODULE>
+    
+      <MODULE class="it.eng.spagobi.analiticalmodel.document.service.UpdateBIObjectStateModule" name="UpdateBIObjectStateModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    <MODULE class="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule" name="ExecuteBIObjectModule">
+     	<CONFIG/>
+    </MODULE>
+
+  	<MODULE class="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.ListLookupReportsModule" name="ListLookupReportsModule">
+	  <CONFIG pool="spagobi" rows="20" title="SBIDev.ListSubreport.ListLookupSubreports.title" >
+	     <PARAMETER scope="SERVICE_RESPONSE" type="RELATIVE" value="MASTER_ID"/>
+	     <PARAMETER scope="SERVICE_RESPONSE" type="RELATIVE" value="SUBREPORTS"/>
+	      
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_REPORTS_LIST">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+			<PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="obj_id"/>
+	      </QUERIES>
+	      <CAPTIONS></CAPTIONS>
+	      <COLUMNS>
+	        <COLUMN label="OBJ_ID" name="OBJ_ID" hidden="true" />
+	        <COLUMN label="SBIDev.ListSubreport.columnLabel" name="LABEL" />
+	        <COLUMN label="SBIDev.ListSubreport.columnName" name="NAME" />
+	        <COLUMN label="SBIDev.ListSubreport.columnDesc" name="DESCRIPTION"/>
+	      </COLUMNS>
+	      
+	      <BUTTONS PAGE="DetailBIObjectPage" MESSAGEDET="RETURN_FROM_SUBREPORTS_LOOKUP" LIGHT_NAVIGATOR_DISABLED="true">	      	        
+	        <SAVE_BUTTON 
+	        	confirm="FALSE" 
+	        	name="save" 
+	        	image="/img/save.png" 
+	        	label="SBIDev.ListSubreport.saveCaption"/>
+           	
+           	<SAVE_AND_GOBACK_BUTTON 
+           		confirm="FALSE" 
+           		name="saveback" 
+           		image="/img/saveAndGoBack.png" 
+           		label="SBIDev.ListSubreport.savebackCaption"/>
+            
+            <BACK_BUTTON 
+            	confirm="FALSE" 
+            	name="back" 
+            	image="/img/back.png" 
+            	label="SBIDev.ListSubreport.backCaption"/>
+	      </BUTTONS>
+	      
+	    </CONFIG>
+  	</MODULE>
+ 
+     <MODULE class="it.eng.spagobi.analiticalmodel.execution.service.SelectParametersLookupModule" name="SelectParameterPageModule">
+    </MODULE>
+    
+    
+     <MODULE class="it.eng.spagobi.analiticalmodel.execution.service.SelectDatasetLookupModule" name="SelectDatasetLookupModule">
+	  <CONFIG pool="spagobi" rows="20" title="SBISet.ListDataset.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_ALL_DATASET">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<PARAMETER type="TRUE_VALUE" value="true" scope="" />        	
+	        	<PARAMETER type="RELATIVE" value="user_id" scope="SESSION" />
+	        	<PARAMETER type="TRUE_VALUE" value="true" scope="" />        	        	
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="SBISet.ListDataSet.columnLabel" name="LABEL" />
+	        <COLUMN label="SBISet.ListDataSet.columnName" name="NAME" />
+	        <COLUMN label="SBISet.ListDataSet.columnDescr" name="DESCR"/>
+	      </COLUMNS>
+	      <CAPTIONS>
+ 			<SELECT_CAPTION  confirm="FALSE" image="/img/button_ok.gif" label="SBIListLookPage.selectButton">
+				<ONCLICK>
+ 					<![CDATA[
+ 							parent.document.getElementById('datasetReadLabel').value='<PARAMETER name='LABEL' scope='LOCAL'/>';
+ 							parent.document.getElementById('dataset').value='<PARAMETER name='ID' scope='LOCAL'/>';
+ 							parent.win_dataset.hide();
+ 								]]>
+					</ONCLICK>
+	        </SELECT_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+    	                    
+</MODULES>
+
+

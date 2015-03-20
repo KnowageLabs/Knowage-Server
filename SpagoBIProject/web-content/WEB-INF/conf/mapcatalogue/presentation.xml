@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_MAP_CATALOGUE" publisher_name="LoginSBIMapCataloguePublisher"/>
+	<MAPPING business_type="ACTION" business_name="START_SBI_MAP_CATALOGUE" publisher_name="LoginSBIMapCataloguePublisher"/>
+	
+	<MAPPING business_name="ListMapsPage" business_type="PAGE" publisher_name="ListMapsPubJ"/>
+	<MAPPING business_name="ListFeaturesPage" business_type="PAGE" publisher_name="ListFeaturesPubJ"/>
+	<MAPPING business_name="DetailMapPage" business_type="PAGE" publisher_name="DetailMapPubJ"/>
+	<MAPPING business_name="DetailFeaturePage" business_type="PAGE" publisher_name="DetailFeaturePubJ"/>
+	<MAPPING business_name="FeaturesLookupPage" business_type="PAGE" publisher_name="FeaturesLookupPublisher"/>
+</PRESENTATION>

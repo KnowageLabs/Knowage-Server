@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+     
+       <PUBLISHER name="DossierRefreshPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.engines.dossier.publishers.DossierRefreshPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.engines.dossier.publishers.DossierRefreshPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+     
+     <PUBLISHER name="DossierManagementPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.engines.dossier.publishers.DossierManagementPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.engines.dossier.publishers.DossierManagementPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="DossierDetail">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierDetail.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierDetail.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="DossierConfiguredDocumentDetail">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierConfDocDetail.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierConfDocDetail.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+  	<PUBLISHER name="DossierLoopbackDossierDetail">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierManagementPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="OPERATION_DETAIL_DOSSIER" />
+      			<PARAMETER name="DOSSIER_TEMP_FOLDER" type="RELATIVE" scope="SERVICE_REQUEST" value="DOSSIER_TEMP_FOLDER" />
+      			<PARAMETER name="DOSSIER_SAVED_MSG_CODE_ATTR_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="DossierManagementModule.DOSSIER_SAVED_MSG_CODE_ATTR_NAME" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierManagementPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="OPERATION_DETAIL_DOSSIER" />
+      			<PARAMETER name="DOSSIER_TEMP_FOLDER" type="RELATIVE" scope="SERVICE_REQUEST" value="DOSSIER_TEMP_FOLDER" />
+      			<PARAMETER name="DOSSIER_SAVED_MSG_CODE_ATTR_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="DossierManagementModule.DOSSIER_SAVED_MSG_CODE_ATTR_NAME" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ExitFromDossierDetailLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DetailBIObjectPage" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="DETAIL_SELECT" />
+      			<PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="DossierManagementModule.OBJECT_ID" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DetailBIObjectPage" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="DETAIL_SELECT" />
+      			<PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="DossierManagementModule.OBJECT_ID" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="DossierSaveAndGoBackLoop">
+   	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="TRUE" />
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierManagementPage" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="OPERATION_EXIT_FROM_DETAIL" />
+      			<PARAMETER name="DOSSIER_TEMP_FOLDER" type="RELATIVE" scope="SERVICE_REQUEST" value="DOSSIER_TEMP_FOLDER" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="TRUE" />
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierManagementPage" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="OPERATION_EXIT_FROM_DETAIL" />
+      			<PARAMETER name="DOSSIER_TEMP_FOLDER" type="RELATIVE" scope="SERVICE_REQUEST" value="DOSSIER_TEMP_FOLDER" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+    <PUBLISHER name="DossierManagementLoopCall">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierManagementPage" />
+      			<PARAMETER name="OPERATION" type="RELATIVE" scope="SERVICE_RESPONSE" value="DocumentTemplateBuildModule.OPERATION" />
+      			<PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="DocumentTemplateBuildModule.OBJECT_ID" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" type="ABSOLUTE" scope="" value="TRUE" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierManagementPage" />
+      			<PARAMETER name="OPERATION" type="RELATIVE" scope="SERVICE_RESPONSE" value="DocumentTemplateBuildModule.OPERATION" />
+      			<PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="DocumentTemplateBuildModule.OBJECT_ID" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" type="ABSOLUTE" scope="" value="TRUE" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+     
+    <PUBLISHER name="DossierExecution">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierExecution.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierExecution.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+  	
+  	
+  	 <PUBLISHER name="DossierPresentationVersion">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierPresentationVersions.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierPresentationVersions.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+     
+    
+    <PUBLISHER name="DossierCollaborationPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.engines.dossier.publishers.DossierCollaborationPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.engines.dossier.publishers.DossierCollaborationPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+     
+     
+    <PUBLISHER name="AddNoteHandler">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierCollaborationPage" />
+      			<PARAMETER name="ActivityKey" type="RELATIVE" scope="SERVICE_REQUEST" value="ActivityKey" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="OPERATION_OPEN_NOTE_EDITOR" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DossierCollaborationPage" />
+      			<PARAMETER name="ActivityKey" type="RELATIVE" scope="SERVICE_REQUEST" value="ActivityKey" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="OPERATION_OPEN_NOTE_EDITOR" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+    
+    
+    <PUBLISHER name="DossierEditNotesTemplatePart">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierEditNotesTempPart.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierEditNotesTempPart.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+     
+     
+     
+     <PUBLISHER name="ValidateFinalDocumentHandler">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierCheckFinalDocument.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierCheckFinalDocument.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+     
+     
+     
+     <PUBLISHER name="DossierCompleteActivityLoopback">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="CompleteOrRejectActivityPage" />
+      			<PARAMETER name="CompleteActivity" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="ActivityKey" type="RELATIVE" scope="SERVICE_REQUEST" value="ActivityKey" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="CompleteOrRejectActivityPage" />
+      			<PARAMETER name="CompleteActivity" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="ActivityKey" type="RELATIVE" scope="SERVICE_REQUEST" value="ActivityKey" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+  	
+  	
+  	<PUBLISHER name="DossierRejecrActivityLoopback">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="CompleteOrRejectActivityPage" />
+      			<PARAMETER name="ActivityKey" type="RELATIVE" scope="SERVICE_REQUEST" value="ActivityKey" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="CompleteOrRejectActivityPage" />
+      			<PARAMETER name="ActivityKey" type="RELATIVE" scope="SERVICE_REQUEST" value="ActivityKey" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+     
+     
+     
+     <PUBLISHER name="publishPresentation">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/dossier/dossierPublishPresentation.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/dossier/dossierPublishPresentation.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+     
+    
+
+
+</PUBLISHERS>

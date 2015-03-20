@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DOSSIER>
+   <PATH_TMP_FOLDER path="${java.io.tmpdir}/dossier-temp" />
+   <OFFICECONNECTION host="localhost" port="9000" />
+   <!-- the compatible document engine driver must contain 
+   the name written in "match" attribute for acknowledgment -->
+   <TECHNOLOGY_DRIVER_FILTER match="jasper" />
+</DOSSIER>
+

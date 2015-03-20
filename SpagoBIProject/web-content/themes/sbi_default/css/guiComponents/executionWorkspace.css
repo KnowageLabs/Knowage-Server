@@ -1,0 +1,360 @@
+/*
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+
+/* ************************** TABS ***************************** */
+
+.executionWorkspace .UITabs {
+	padding:5px;
+}
+
+.executionWorkspace .UITabs .first-tab-level {
+	padding:2px 0px 2px 5px;
+	background:rgb(254,232,186);
+	border:solid 1px #dddddd;
+	height:26px;	
+	overflow: hidden;
+}
+
+.executionWorkspace .UITabs .first-tab-level .tab{
+	float:left;
+	border:solid 1px #dddddd; 
+	background:#fffee7;
+	padding:2px 10px;
+	margin-right: 5px ;
+	margin-top: 3px ;
+	height:16px;
+	font-size:10px;
+	font-weight:bold;
+	margin-left:0px;	
+}
+
+
+.executionWorkspace .UITabs .first-tab-level .tab a{
+	color:#501ca7;
+	text-decoration:none;
+}
+
+.executionWorkspace .UITabs .first-tab-level .selected {
+	background:#fbf9d0;
+}
+
+
+/* ************************** NAVIGATION BAR ***************************** */
+
+.executionWorkspace .navBarContainerEW {
+	margin:0px;
+	padding:0px;
+	border:0px;
+	width:100%
+  	height:16px;
+}
+
+.executionWorkspace .navBarTextContainerEW{
+	width:90%;
+	float:left;
+}
+			
+.executionWorkspace .navBarBottonContainerEW{
+	width:9%;
+  	float:left;
+}
+
+.executionWorkspace .documentNameNavBarEW {
+	font-family:arial;
+	font-weight:bold;
+	color:#173683;
+	font-size:13px;
+	border-left: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	background:#fbf9d0;
+	width:100%;
+}
+			
+.executionWorkspace .documentMaximizeNavBarEW {
+	border-right: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	text-align:center;
+	background:#fbf9d0;
+	width:100%;
+}
+			
+.executionWorkspace .documentMaximizeIconNavBarEW {
+	width:13px;
+	height:13px;
+	border:0px;
+	margin:0px;
+	padding:0px;
+}
+			
+.executionWorkspace .documentMaximizeLinkNavBarEW {
+	text-decoration:none;
+}
+
+
+/* ************************** MAXIMIZE ***************************** */
+
+.executionWorkspace .maximizeContainer {
+  	display:none;
+	position:absolute;
+	width:98%;
+	height:98%;
+	top:1%;
+	left:1%;
+	background-color:white;
+	border:2px solid #dddddd;
+}
+			
+.executionWorkspace .closeMaximizeIcon {
+	width:15px;
+	height:15px;
+}
+			
+.executionWorkspace .maximizeTitleTable {
+	height:3%;
+	width:100%;
+	border:0px;
+	cell-spacing:0px;		
+}
+
+
+
+/* ************************** EXECUTION AREA ***************************** */
+
+.executionWorkspace .noDocumentSelectedBox{
+	width:100%;
+	height:300px;
+	background-image:url('/SpagoBI/img/spagobgimg.jpg');
+    background-position: bottom right;
+    background-repeat: no-repeat; 
+    color:#6699ff;
+    font-family:arial;
+    font-weight:bold;
+    font-size:15px;
+}
+
+
+/* ************************** PAGE LAYOUT ***************************** */
+
+.executionWorkspace .workspaceTopBox {
+	width: 100%;
+}
+
+.executionWorkspace .workspaceLeftBox {
+	width: 25%;
+	float: left;
+	clear: left; 
+	padding-left:5px;
+}
+
+.executionWorkspace .workspaceRightBox {
+	width: 73%;
+	float: left;
+	margin-left:5px;
+}
+
+
+
+/* ************************** NESTED MENU ***************************** */
+
+.executionWorkspace .menutitle {
+	border: 1px solid #dddddd;
+	background:#fbf9d0;
+	color:#501ca7;
+	font-size:10px;
+	height:16px;
+	padding-left:5px;
+}
+
+.executionWorkspace .menucontainer0 {
+	border: 1px solid #dddddd;
+	overflow:hidden;
+}
+
+.executionWorkspace .menucontainer1 {
+	border-left: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	border-right: 0px solid #ffffff;
+	position:relative;
+	left:5%;
+	width:95%;
+}
+
+.executionWorkspace .menucontainer2 {
+}
+
+.executionWorkspace .menuitemlink {
+	font-family:verdana;
+  	font-size:9px;
+  	color:#173683;
+  	text-decoration:none;
+}
+
+.executionWorkspace .menuitemlink:hover {
+	font-family:verdana;
+  	font-size:9px;
+  	color:#173683;
+  	font-weight:bold;
+  	text-decoration:underline;
+}
+
+.executionWorkspace .menuitem {
+	/*height:23px;*/
+	clear:left;
+}
+
+.executionWorkspace .menuitemfolder {
+	background:#eeeeee;
+}
+
+.executionWorkspace .menuitemleft {
+	width: 20px;
+	height:20px;
+	float:left;
+	clear:left;
+}
+
+.executionWorkspace .menuitemcenter{
+	float:left;
+    width:80%;
+}
+
+.executionWorkspace .menuitemright {
+}
+
+.executionWorkspace .menuinvisiblebox {
+	display: none;
+}
+
+.executionWorkspace .menuitemleftfolder {
+	background-image:url('/SpagoBI/img/treefolder.gif');
+	background-position:top right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftREPORT {
+	background-image:url('/SpagoBI/img/objecticon_REPORT.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftOLAP {
+	background-image:url('/SpagoBI/img/objecticon_OLAP.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftOFFICE_DOC {
+	background-image:url('/SpagoBI/img/objecticon_OFFICE_DOC.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftMAP {
+	background-image:url('/SpagoBI/img/objecticon_MAP.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftETL {
+	background-image:url('/SpagoBI/img/objecticon_ETL.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftDATAMART {
+	background-image:url('/SpagoBI/img/objecticon_DATAMART.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftDATA_MINING {
+	background-image:url('/SpagoBI/img/objecticon_DATA_MINING.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftDASH {
+	background-image:url('/SpagoBI/img/objecticon_DASH.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftNETWORK {
+	background-image:url('/SpagoBI/img/objecticon_NETWORK.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.executionWorkspace .menuitemleftDOSSIER {
+	background-image:url('/SpagoBI/img/objecticon_DOSSIER.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+
+
+
+
+/* ************************** SLIDE MENU ***************************** */
+
+/*
+.executionWorkspace .menuBox{
+	border:2px solid rgb(254,232,186);
+	background:white;
+	width:200px;
+}
+
+.executionWorkspace .menuTitleBox{
+  font-family:verdana;
+  font-weight:bold;
+  border-bottom:1px solid rgb(254,232,186);
+  font-size:11px;
+  font-weight:bold;
+  color:#173683;
+  background-color:rgb(254,232,186);
+}
+
+.executionWorkspace .menuContentBox{
+  padding-top:5px;
+	padding-bottom:10px;
+}
+
+.executionWorkspace .menuItem{
+  padding-left:15px;
+  font-family:verdana;
+  font-size:9px;
+  padding-right:10px;
+}
+
+.executionWorkspace .menuItemOver{
+  padding-left:15px;
+  padding-right:10px;
+  font-family:verdana;
+  font-size:9px;
+  background:#f7ff7e;
+  background-position: left;
+  background-repeat: repeat-y; 
+}
+
+
+.executionWorkspace .menuLink{
+  text-decoration:none;
+  color:#6f6f8c;
+}
+
+.executionWorkspace .menuArrow{
+  font-family:arial;
+  font-weight:bold;
+  color:#173683;
+}
+*/

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	    <MAP_ACTION actionName="MANAGE_META_MODELS_CATALOGUE_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        <MAP_ACTION actionName="GET_META_MODELS_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        <MAP_ACTION actionName="GET_META_MODELS_FOR_FINAL_USER_ACTION" businessProcess="SelfServiceMetaModelManagement" />
+        <MAP_ACTION actionName="SAVE_META_MODEL_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        <MAP_ACTION actionName="DELETE_META_MODEL_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        <MAP_ACTION actionName="GET_META_MODEL_VERSIONS_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        <MAP_ACTION actionName="DELETE_META_MODEL_VERSIONS_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        <MAP_ACTION actionName="DOWNLOAD_META_MODEL_VERSION_ACTION" businessProcess="MetaModelsCatalogueManagement" />
+        
+        <MAP_ACTION actionName="MANAGE_ARTIFACTS_CATALOGUE_ACTION" businessProcess="ArtifactCatalogueManagement" />
+        <MAP_ACTION actionName="GET_ARTIFACTS_ACTION" businessProcess="ArtifactCatalogueManagement" />
+        <MAP_ACTION actionName="SAVE_ARTIFACT_ACTION" businessProcess="ArtifactCatalogueManagement" />
+        <MAP_ACTION actionName="DELETE_ARTIFACT_ACTION" businessProcess="ArtifactCatalogueManagement" />
+        <MAP_ACTION actionName="GET_ARTIFACT_VERSIONS_ACTION" businessProcess="ArtifactCatalogueManagement" />
+        <MAP_ACTION actionName="DELETE_ARTIFACT_VERSIONS_ACTION" businessProcess="ArtifactCatalogueManagement" />
+        <MAP_ACTION actionName="DOWNLOAD_ARTIFACT_VERSION_ACTION" businessProcess="ArtifactCatalogueManagement" />
+	</MAP_ACTIONS>
+</BUSINESS_MAP>

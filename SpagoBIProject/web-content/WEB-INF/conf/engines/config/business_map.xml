@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="TEST_ENGINE" businessProcess="EnginesManagement" />
+		<MAP_ACTION actionName="MANAGE_ENGINE_ACTION" businessProcess="EnginesManagement" />
+        <MAP_ACTION actionName="READ_ENGINE_ACTION" businessProcess="ReadEnginesManagement" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="DetailEnginePage" moduleName="DetailEngineModule" businessProcess="EnginesManagement" />
+		<MAP_PAGE_MODULE pageName="ListEnginesPage" moduleName="ListEnginesModule" businessProcess="EnginesManagement" />
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

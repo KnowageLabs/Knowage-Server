@@ -1,0 +1,108 @@
+/*
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+/* ************************** DOCUMENTS ***************************** */
+
+/* styles for iconCls */
+    .home {
+        background-image: url('../../img/wapp/40/home.png');
+    }
+    .myAccount {
+        background-image: url('../../img/wapp/40/myAccount.png');
+    }
+    .spagobi {
+        background-image: url('../../img/wapp/40/spagobi1.png');
+    }
+    .charts {
+        background-image: url('../../img/wapp/40/charts.png');
+    }
+    .group {
+        background-image: url('../../img/wapp/40/group.png');
+    }
+    .cogwheels {
+        background-image: url('../../img/wapp/40/cogwheels.png');
+    }
+    .display {
+        background-image: url('../../img/wapp/40/display.png');
+    }
+    .question_mark {
+        background-image: url('../../img/wapp/40/question_mark.png');
+    }
+    .info {
+        background-image: url('../../img/wapp/40/info.png');
+    }
+    .power {
+        background-image: url('../../img/wapp/40/power.png');
+    }
+    .login {
+        background-image: url('../../img/wapp/40/login.png');
+    }
+    .flag {
+        background-image: url('../../img/wapp/40/flag.png');
+    }
+    .folder_open {
+        background-image: url('../../img/wapp/40/folder_open.png');
+    }
+    .bookmark {
+        background-image: url('../../img/wapp/40/bookmark.png');
+    }
+    .my_folder {
+        background-image: url('../../img/wapp/40/folder_lock.png');
+    }    
+    .pencil {
+        background-image: url('../../img/wapp/40/pencil.png');
+    }    
+    .edit {
+        background-image: url('../../img/wapp/40/edit.png');
+    }    
+    .list {
+        background-image: url('../../img/wapp/40/list.png');
+    }
+    .repo {
+        background-image: url('../../img/wapp/40/repo.png');
+    }
+    .roles {
+        background-image: url('../../img/wapp/40/roles.png');
+    }
+
+    .my_data {
+      	background-image: url('../../img/wapp/40/mydata.png');
+    }
+
+	.bullet {
+        background-image: url('../../img/wapp/bullet_blue.png');
+    }
+    
+    .help {
+        background-image: url('../../img/wapp/40/help.png');
+    }
+    
+    .social_analysis {
+        background-image: url('../../img/wapp/40/twitter-32.png');
+    }
+    
+    .hierarchies_management {
+        background-image: url('../../img/wapp/40/hierarchy.png');
+    }
+    
+	.users {
+        background-image: url('../../img/wapp/40/group.png');
+    }
+

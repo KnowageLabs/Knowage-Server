@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+	<!--START service for new Ext-based interface -->
+	
+	<SERVICE name="MANAGE_DATASETS_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="DATASET_INSERT"/>
+			</CONDITIONS>
+			<FIELDS> 
+				<FIELD name="label" label="#SBISet.ListDataSet.columnLabel">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="description" label="#SBISet.eng.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>
+				<FIELD name="name" label="#SBISet.eng.NameField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="fileName" label="FILENAME">			
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="300"/>
+				</FIELD>
+				<FIELD name="query" label="QUERY">	
+					<VALIDATOR validatorName="XSS"/>		
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30000"/>
+				</FIELD>
+				<FIELD name="dataSource" label="DATASOURCE">		
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="wsAddress" label="ADDRESS">		
+					<VALIDATOR validatorName="REGEXP"  arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="250"/>
+				</FIELD>
+				<FIELD name="wsOperation" label="EXECUTORCLASS">				
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="script" label="SCRIPT">	
+					<VALIDATOR validatorName="XSS"/>		
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30000"/>
+				</FIELD>	
+				<FIELD name="jclassName" label="JCLASSNAME">			
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+				</FIELD>	
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE> 
+</VALIDATIONS>

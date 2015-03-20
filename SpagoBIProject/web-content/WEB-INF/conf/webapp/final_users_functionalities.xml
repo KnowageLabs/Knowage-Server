@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FINAL_USER_FUNCTIONALITIES>
+
+	<APPLICATION code="DocumentUserBrowser" 
+	             title="#menu.DocumentUserBrowser"  
+	             functionality="DocumentUserBrowser" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
+	</APPLICATION>
+
+<!-- 	<APPLICATION code="DocumentExec" 
+	             title="#menu.DocumentExec"  
+	             functionality="DocumentUserManagement" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/bidocuments16.png">
+	</APPLICATION> -->
+	
+	<APPLICATION code="Events" 
+	             title="#menu.Events"  
+	             functionality="EventsManagement" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=EVENTS_MONITOR_PAGE&amp;WEBMODE=TRUE" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/events16.png">
+	</APPLICATION>
+	
+	<APPLICATION code="Worklist" 
+	             title="#menu.Worklist"  
+	             functionality="WorklistManagement" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=WorkflowToDoListPage&amp;WEBMODE=TRUE" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/worklist16.png">
+	</APPLICATION>
+	
+	<!-- <APPLICATION code="WorkExec" 
+	             title="#menu.WorkExec"  
+	             functionality="WorkspaceManagement" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ExecutionWorkspacePage&amp;WEBMODE=TRUE" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/workspace64.png">
+	</APPLICATION> -->
+	
+	<APPLICATION code="DistributionListUser" 
+	             title="#menu.DistributionListUser"  
+	             functionality="DistributionListUser" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPage" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/tools/distributionlist/distributionlistuser16.png">  
+	</APPLICATION>
+	
+	<APPLICATION code="HotLink" 
+	             title="#menu.HotLink"  
+	             functionality="HotLinkManagement" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=HOT_LINK_PAGE&amp;OPERATION=GET_HOT_LINK_LIST" 
+	             iconUrl="${SPAGOBI_CONTEXT}/img/wapp/hotlinks16.gif">
+	</APPLICATION>
+	
+    <APPLICATION code="FinalUsersManagement" 
+                 title="#menu.Users"  
+                 functionality="FinalUsersManagement" 
+                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION" 
+                 iconUrl="${SPAGOBI_CONTEXT}/img/wapp/users.png">
+    </APPLICATION>
+    
+    <APPLICATION code="CreateWorksheetFromDatasetUserFunctionality" 
+                 title="#menu.WorksheetFromDataset"  
+                 functionality="CreateWorksheetFromDatasetUserFunctionality" 
+                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CREATE_DOCUMENT_START_ACTION" 
+                 iconUrl="${SPAGOBI_CONTEXT}/img/wapp/pencil16.png">
+    </APPLICATION>
+    
+    <APPLICATION code="CreateSelfServiceDataset" 
+                 title="#menu.CreateSelfServiceDataset"
+                 functionality="SelfServiceDatasetManagement" 
+                 link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION" 
+                 iconUrl="${SPAGOBI_CONTEXT}/img/wapp/pencil16.png">
+    </APPLICATION>
+	
+</FINAL_USER_FUNCTIONALITIES>

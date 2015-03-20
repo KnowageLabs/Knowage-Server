@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATASET>
+	<READER type="it.eng.spagobi.tools.dataset.bo.FileDataSet" class="it.eng.spagobi.tools.dataset.common.reader.FileReader" />
+	<READER type="it.eng.spagobi.tools.dataset.bo.QueryDataSet" class="it.eng.spagobi.tools.dataset.common.reader.SQLResultSetReader" />
+	<READER type="it.eng.spagobi.tools.dataset.bo.WSDataSet" class="it.eng.spagobi.tools.dataset.common.reader.WebServiceReader" />
+	<READER type="it.eng.spagobi.tools.dataset.bo.ScriptDataSet" class="it.eng.spagobi.tools.dataset.common.reader.GroovyReader" />
+	<READER type="it.eng.spagobi.tools.dataset.bo.JClassDataSet" class="it.eng.spagobi.tools.dataset.common.reader.ClassReader" />
+</DATASET>

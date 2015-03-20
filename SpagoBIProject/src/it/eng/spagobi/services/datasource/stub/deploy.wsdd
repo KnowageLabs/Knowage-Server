@@ -1,0 +1,42 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from DataSourceServiceService WSDL service -->
+
+  <service name="DataSourceService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobidatasource"/>
+      <parameter name="wsdlServiceElement" value="DataSourceServiceService"/>
+      <parameter name="schemaUnqualified" value="urn:spagobidatasource,http://bo.datasource.services.spagobi.eng.it"/>
+      <parameter name="wsdlServicePort" value="DataSourceService"/>
+      <parameter name="className" value="it.eng.spagobi.services.datasource.stub.DataSourceServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="DataSourceService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <arrayMapping
+        xmlns:ns="urn:spagobidatasource"
+        qname="ns:ArrayOf_tns2_SpagoBiDataSource"
+        type="java:it.eng.spagobi.services.datasource.bo.SpagoBiDataSource[]"
+        innerType="cmp-ns:SpagoBiDataSource" xmlns:cmp-ns="http://bo.datasource.services.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.datasource.services.spagobi.eng.it"
+        qname="ns:SpagoBiDataSource"
+        type="java:it.eng.spagobi.services.datasource.bo.SpagoBiDataSource"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

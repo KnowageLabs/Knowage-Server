@@ -1,0 +1,696 @@
+/*
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+/*******************************************************************************************************
+*
+*	Start Basic settings
+*
+********************************************************************************************************/
+div {
+  padding:  0px ; margin: 0px ;
+}
+
+table {
+  padding:  0px ; margin: 0px ;
+  border-spacing:  0px ;
+  border-collapse: collapse ;
+  width:  100% ;
+}
+
+th, td {
+  padding:  0px ; margin: 0px ;
+}
+
+img {
+  padding:  0px ; margin: 0px ; border: none ;
+}
+
+form {
+  padding:  0px ; margin: 0px ;
+}
+
+body {
+  margin: 0px ; padding: 0px;
+}
+
+
+
+
+
+
+
+
+
+/*******************************************************************************************************
+*
+*	Fix some problems with detail view
+*
+********************************************************************************************************/
+form#formFunct, form#parametersForm, form#engineForm, form#modalitiesValueForm{
+	width:100%;
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+/*******************************************************************************************************
+*
+*	Table.css 
+*
+********************************************************************************************************/
+
+/* Table with the header title and buttons for each section of the SpagoBI portlet*/
+table.header-table-portlet-section {
+	width:100%;
+	cellspacing:0;
+	cellpadding:0;
+	border: 1px solid #cccccc;
+	/*margin-bottom: 4px;*/
+}
+
+/* Sub-table with the header title and buttons for each section of the SpagoBI portlet*/
+table.header-sub-table-portlet-section {
+	width:100%;
+	cellspacing:0;
+	cellpadding:0;
+	border: 1px solid lightgrey;
+	/*margin-bottom: 4px;*/
+}
+
+/* Row of the table with the header title and buttons for each section of the SpagoBI portlet*/
+tr.header-row-portlet-section {
+	height: 30px;
+}
+
+/* Row of the sub-table with the header title and buttons for each section of the SpagoBI portlet*/
+tr.header-sub-row-portlet-section {
+	height: 20px;
+}
+
+/* Column with the header title for each section of the SpagoBI portlet*/
+td.header-title-column-portlet-section {
+	/*padding: 0px 0px 0px 1px;*/
+	/*background-color: #cccccc;*/
+	/*text-align: left;*/
+	background-color: #E1E4E9; 
+ 	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	/* color: #074B88; */
+	/* background-image: url('/SpagoBI/img/white_corner.gif');  
+	background-position: top right;
+	background-repeat: no-repeat;
+	*/
+}
+
+/* Column with the header title for each section of the SpagoBI portlet without grey background*/
+td.header-title-column-portlet-section-nogrey {
+ 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	color: #074B88;
+}
+
+/* Column with the header title for each section of the SpagoBI portlet without image on top right side*/
+td.header-title-column-portlet-section-noimage {
+	background-color: #E1E4E9; 
+ 	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	color: #074B88;
+	background-repeat: no-repeat;
+}
+
+/* Column with the header title for single object execution section of the SpagoBI portlet*/
+td.header-title-column-single-object-execution-portlet-section {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	border-bottom: 1px solid #bbb;
+	background-color: rgb(228, 236, 242);
+	color: #074B88;
+	height: 25px;
+	border-top: 1px solid #bbb;
+	text-align: left;
+	/*
+	background-image: url('/SpagoBI/img/white_corner.gif');
+	background-position: top right;
+	background-repeat: no-repeat;
+	*/
+}
+
+/* Column with the header sub-title for each section of the SpagoBI portlet*/
+td.header-sub-title-column-portlet-section {
+	padding: 0px 0px 0px 1px;
+	/*background-color: lightgrey;*/
+	background-color: #E1E4E9; 
+ 	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	color: #074B88;
+	horizontal-align: left;
+	vertical-align: middle;
+	/*
+  background-image: url('/SpagoBI/img/white_corner.gif');
+	background-position: top right;
+	background-repeat: no-repeat;
+	*/
+}
+
+/* Column with the header title for sections without buttons of the SpagoBI portlet*/
+td.header-title-column-portlet-section-no-buttons {
+	padding: 0px 0px 0px 1px;
+	/*background-color: #cccccc;*/
+	background-color: #E1E4E9; 
+ 	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	color: #074B88;
+	text-align: left;
+}
+
+/* Column with the header title for sections without buttons of the SpagoBI portlet*/
+td.header-sub-title-column-portlet-section-no-buttons {
+	padding: 0px 0px 0px 1px;
+	/*background-color: lightgrey;*/
+	background-color: #E1E4E9; 
+ 	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	color: #074B88;
+	horizontal-align: left;
+	vertical-align: middle;
+}
+
+/* Column with the header title for sections with select form the SpagoBI portlet*/
+td.header-select-column-portlet-section {
+	vertical-align: middle;
+	width: 30px;
+	background-color:white;
+}
+
+/* Column with a button for each section of the SpagoBI portlet*/
+td.header-button-column-portlet-section {
+	vertical-align: middle;
+	width: 30px;
+	background-color:#E1E4E9;
+}
+
+/* Column with a button for single object execution section of the SpagoBI portlet*/
+td.header-button-column-single-object-execution-portlet-section {
+	vertical-align: middle;
+	width: 35px;
+	background-color:white;
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+}
+
+/* Image of a button in the header table for each section of the SpagoBI portlet*/
+img.header-button-image-portlet-section {
+	width:25px;
+	height:25px;
+	border:none;
+}
+
+/* Image of a button in the header table for each section of the SpagoBI portlet*/
+img.header-button-image-portlet-section_bis {
+	width:15px;
+	height:15px;
+	border:none;
+}
+
+/* Image of a button in the header table for each section of the SpagoBI portlet*/
+input.header-button-image-portlet-section {
+	width:25px;
+	height:25px;
+	border:none;
+}
+
+/* Empty column in the header table for each section of the SpagoBI portlet*/
+td.header-empty-column-portlet-section {
+	background-color:#E1E4E9; 
+	width:10px;
+}
+
+/* Empty column in the header table for single object execution section of the SpagoBI portlet*/
+td.header-empty-column-single-object-execution-portlet-section {
+	background-color:#E1E4E9;
+	width:10px;
+	border-bottom: 1px solid #bbb;
+	border-top: 1px solid #bbb;
+}
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+div.object-details-div {
+	float: left;
+	margin: 5px 5px 5px 5px;
+}
+
+/* Table with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+table.object-details-table {
+	cellspacing: 0;
+	border: 0;
+}
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+div.errors-object-details-div {
+	margin: 11px 5px 5px 20px;
+}
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+table.errors-object-details-table {
+	cellspacing: 0;
+	border: 1px solid #cccccc;
+}
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+ul.errors-object-details-ul {
+	margin: 0px;
+	padding: 0px 15px 0px 10px;
+	type: square;
+}
+
+/* Part with the list filter errors in the SpagoBI portlets*/
+div.filter-list-errors {
+	padding: 5px;
+	text-decoration: none;
+	text-align: center;
+	color: red;
+	font-size: 8pt;
+	font-family: "Arial","Tahoma","Helvetica","sans-serif";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*******************************************************************************************************
+*
+*	spagobi.css 
+*
+********************************************************************************************************/
+
+.tdAlertNotesExists{
+	vertical-align:middle;
+	padding-right:5px;
+	padding-top:10px;
+	background-color:white;
+	width:10px;
+}
+
+.divAlertNotesExists {
+	font-family:arial;
+	font-size:11px;
+	color:darkblue;
+}
+
+IMG {
+	border:none;
+}
+
+.div_detail_label {
+	float:left;
+	clear:left;
+	width:110px;
+	height:25px;
+}
+
+
+
+.div_detail_label_check {
+	float:left;
+	width:150px;
+	height:25px;
+}
+
+.div_detail_label_lov {
+	clear:left;
+	float:left;
+	width:130px;
+	height:25px;
+}
+
+.div_detail_label_scheduler {
+	float:left;
+	clear:left;
+	width:170px;
+	height:25px;
+}
+
+
+.div_detail_form {
+	height:25px;
+}
+
+.div_radio_check {
+	float:left;
+	width:20px;
+	height:25px;
+}
+
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+.div_detail_area_forms {
+	margin: 10px 5px 10px 5px;
+	width:500px;
+    padding-top:5px;
+    padding-left:5px; 	
+    border: 1px solid #cccccc;
+    background-color:#fafafa;
+}
+
+.div_detail_area_sub_forms {
+	margin: 10px 5px 10px 5px;
+	width:500px;
+    padding-top:5px;
+    padding-left:5px; 
+    border: 1px solid #cccccc;
+    background-color:#fafafa;
+}
+
+.div_detail_area_forms_lov {
+	margin: 0px 5px 10px 5px;
+	width:600px;
+    padding-top:5px;
+    padding-left:5px; 
+    border: 1px solid #cccccc;
+    background-color:#fafafa;
+}
+
+.div_detail_area_forms_objParuse {
+	margin: 5px 5px 5px 5px;
+	width:95%;
+    padding:5px;
+    border: 1px solid #cccccc;
+    background-color:#fafafa;
+}
+
+.div_detail_area_forms_scheduler {
+	margin: 0px 5px 10px 5px;
+	width:800px;
+    padding-top:5px;
+    padding-left:5px; 	
+    border: 1px solid #cccccc;
+    background-color:#fafafa;
+}
+
+.table_detail_fix_lov {
+	margin: 5px;
+	width:600px;
+}
+
+.div_functions_role_associations {
+    margin-right:5px;
+    padding-top:5px;
+}
+
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+.div_detail_errors {
+	margin: 10px 0px 10px 5px;
+	border: 1px solid #cccccc;
+        width:450px;
+        background-color:#fafafa;
+  
+}
+
+
+/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+.ul_detail_error {
+        font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 8pt;
+	font-weight: bold;
+	color: #074B88;
+	margin: 5px 5px 5px 5px;
+}
+
+
+.box {
+	border: 1px solid #cccccc;
+}
+
+.gray_box {
+    border: 1px solid #cccccc;
+    background-color:#dddddd;
+}
+
+.margin5 {
+	margin: 5px;
+}
+
+.padding5 {
+	padding: 5px;
+}
+
+
+.link_main_menu {
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	color: #074B88;
+	text-decoration: none;
+}
+
+
+
+.titlebar_level_2_text_section {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	border-bottom: 1px solid #bbb;
+	background-color: rgb(228, 236, 242);
+	color: #074B88;
+	height: 25px;
+	border-top: 1px solid #bbb;
+	text-align: left;
+	/*
+  background-image: url('/SpagoBI/img/white_corner.gif');
+	background-position: top right;
+	background-repeat: no-repeat;
+	*/
+	vertical-align:middle;
+}
+
+.titlebar_level_2_empty_section {
+	background-color:white;
+	width:10px;
+	border-bottom: 1px solid #bbb;
+	border-top: 1px solid #bbb;
+}
+
+.titlebar_level_2_empty_section_bis {
+	vertical-align: middle;
+	background-color:#E1E4E9;
+	width:10px;
+	border-bottom: 1px solid #bbb;
+	border-top: 1px solid #bbb;
+}
+
+
+.titlebar_level_2_button_section {
+	vertical-align: middle;
+	width: 35px;
+	background-color:white;
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+}
+
+/* KPI STYLES*/
+.kpi_table  {
+	clear: left;  
+	width: 100%;
+}
+
+.kpi_semaphore    {
+	margin-top:5px;
+	margin-right:5px;
+	float:left;
+	width:9px;
+	height:9px;
+	border: 1px solid #5B6B7C;
+}
+
+.kpi_bulletchart    {
+	margin-top: 0px;
+}
+
+.kpi_image{
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.kpi_resource_section    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	color: white;
+	background-color: #5B6C7C;
+	font-weight: bold;
+	vertical-align: middle;
+	text-align: left;
+	min-height: 20px;
+}
+
+.kpi_line_section_even    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	background-color: #FFFFFF;
+	vertical-align: top;
+
+}
+
+.kpi_line_section_odd    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	background-color: #FFFFFF;
+	vertical-align: top;	
+}
+
+.kpi_first_line_section_odd  {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	background-color:#DDDDDD;
+	vertical-align: top;	
+
+}
+
+.kpi_line_section_even td{
+  border-color:#660000;
+	border-bottom: 1px solid #660000 !important;
+}
+
+.kpi_line_section_odd td{
+  border-color:#DDDDDD;
+	border-bottom: 1px solid #DDDDDD !important;
+}
+
+.kpi_first_line_section_odd td{
+  border-color:#DDDDDD;
+	border-bottom: 1px solid #DDDDDD !important;
+}
+
+.kpi_title_section    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 12pt;
+	font-weight: normal;
+	color: black;
+	font-weight: bold;
+	text-align: center;
+}
+
+.kpi_td_left    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	text-align: left;
+	vertical-align: middle;
+	min-height: 22px;
+}
+
+.kpi_td_right    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	text-align: right;
+	vertical-align: middle;
+	min-height: 22px;
+}
+
+.kpi_first_line_td {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	background-color:#DDDDDD;
+	vertical-align: top;	
+	border-color:#DDDDDD;
+	border-bottom: 1px solid #DDDDDD !important;
+	min-height: 20px;
+	font-weight: bold;
+	vertical-align: middle;	
+}
+	
+.kpi_td    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	vertical-align: middle;
+	min-height: 22px;
+	text-align:left;
+}
+
+.kpi_div    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	vertical-align: middle;
+	min-height: 22px;
+	margin-top:3px;
+}
+
+.kpi_subtitle_section    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	text-align: center;
+}
+
+.kpi_note_section    {
+	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+	text-align: left;
+}
+
+.toggleKPI{
+      padding-left:10px;
+      background-image: url(/SpagoBI/themes/sbi_default/img/down16.gif);
+      background-repeat: no-repeat;
+      cursor: pointer;
+    }
+    
+.tree-look-up{
+      background-image: url(/SpagoBI/themes/sbi_default/img/behavioural/trigger-tree-lookup.gif) !important;
+      
+    }
+.parameter-leaf{
+      background-image: url(/SpagoBI/themes/sbi_default/img/behavioural/parameter-leaf.png) !important;
+}

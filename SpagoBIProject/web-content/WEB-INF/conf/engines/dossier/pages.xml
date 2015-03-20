@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+    
+	<PAGE name="DossierManagementPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DossierManagementPage" target="DossierManagementModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DossierManagementModule"/>
+    	</MODULES>
+  	</PAGE>
+
+ 
+  	<PAGE name="DossierCollaborationPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DossierCollaborationPage" target="DossierCollaborationModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DossierCollaborationModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="DossierRefreshPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DossierRefreshPage" target="DossierRefreshModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DossierRefreshModule"/>
+    	</MODULES>
+  	</PAGE>
+
+  	
+  	
+</PAGES>
+

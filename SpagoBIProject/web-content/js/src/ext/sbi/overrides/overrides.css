@@ -1,0 +1,37 @@
+/* 
+The x-grid3-header-offset style override fixes a bug in the Ext.grid.GridPanel: without fixing a 
+width of the GridPanel, the first column takes all the page width in IE 
+(in FF it works fine).
+See 
+http://extjs.com/forum/showthread.php?t=30613
+http://extjs.com/forum/showthread.php?p=282928#post282928
+ */
+.x-grid3-header-offset {width: auto;}
+
+
+
+.x-date-middle {
+    padding-top:2px;
+    padding-bottom:2px;
+    width:130px; /* FF3 */
+}
+
+.x-date-menu{
+	padding:0!important;
+	width:200px; /* IE */
+}
+
+
+/* fixes the alignment problem in grid panels on FF */
+.x-grid3 table {
+    table-layout:fixed;
+}
+
+
+/* 
+See Sbi.widgets.EditablePanel
+The Ext.form.HtmlEditor retrieves <STRONG> for bold font weight and <EM> for italic font style in IE, but those tags are not interpreted by the 
+browser as expected in the panel content ('view' state of the EditablePanel).
+ */
+.x-editable-panel strong, .x-editable-panel b, .x-editable-panel strong *, .x-editable-panel b * { font-weight: bold !important; }
+.x-editable-panel em, .x-editable-panel i, .x-editable-panel em *, .x-editable-panel i * { font-style: italic !important; }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+	<MAPPING business_name="LoginPage" business_type="PAGE" publisher_name="LoginPublisherJava"/>
+	<MAPPING business_name="LOGOUT_ACTION" business_type="ACTION" publisher_name="LogoutPublisher"/>
+	<MAPPING business_name="ViewBuilderPage" business_type="PAGE" publisher_name="ViewBuilderPublisherJava"/> 
+	<MAPPING business_name="DirectExecutionPage" business_type="PAGE" publisher_name="DirectExecutionPublisherJava"/> 
+	<MAPPING business_name="MenuPage" business_type="PAGE" publisher_name="MenuPublisherJava"/>
+	<MAPPING business_name="DetailMenuPage" business_type="PAGE" publisher_name="DetailMenuPubJ"/>
+	<MAPPING business_name="MenuConfigurationPage" business_type="PAGE" publisher_name="MenuConfigurationPublisher"/>
+	<MAPPING business_name="DocumentLookupPage" business_type="PAGE" publisher_name="DocumentLookupPublisher"/>
+	<MAPPING business_type="ACTION" business_name="CREATE_MASTER_MENU" publisher_name="MenuRefresh"/>	
+	<MAPPING business_type="ACTION" business_name="MOVE_UP_MENU" publisher_name="MenuRefresh"/>		
+	<MAPPING business_type="ACTION" business_name="MOVE_DOWN_MENU" publisher_name="MenuRefresh"/>				
+	<MAPPING business_type="ACTION" business_name="MENU_BEFORE_EXEC" publisher_name="MenuBeforeExecLoopPublisher"/>			
+    <MAPPING business_type="ACTION" business_name="CHANGE_LANGUAGE" publisher_name="ChangeLanguagePublisher"/>      				
+	<!-- <MAPPING business_type="ACTION" business_name="CHANGE_THEME" publisher_name="userhome"/>-->    				
+</PRESENTATION>
+

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+	<SERVICE name="DossierManagementPage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="OPERATION" scope="SERVICE_REQUEST" value="OPERATION_SAVE_CONFIGURED_DOCUMENT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="logicalname" label="#dossier.logNameObject" bundle="component_dossier_messages">
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+	
+	<SERVICE name="DossierCollaborationPage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="OPERATION" scope="SERVICE_REQUEST" value="OPERATION_PUBLISH_PRESENTATION"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="label" label="#SBIDev.docConf.docDet.labelField" bundle="messages">
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+				<FIELD name="name" label="#SBIDev.docConf.docDet.nameField" bundle="messages">
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+				<FIELD name="FUNCT_ID" label="#SBISet.treeFunct.title" bundle="messages">
+					<VALIDATOR validatorName="MANDATORY"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

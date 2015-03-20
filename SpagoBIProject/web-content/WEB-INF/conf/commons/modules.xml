@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+	
+    
+    <MODULE class="it.eng.spagobi.commons.services.SaveConfigurationModule" name="SaveConfigurationModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    <MODULE class="it.eng.spagobi.commons.services.PortletLoginModule" name="PortletLoginModule">
+     	<CONFIG/>
+    </MODULE>
+       	                    
+</MODULES>
+
+

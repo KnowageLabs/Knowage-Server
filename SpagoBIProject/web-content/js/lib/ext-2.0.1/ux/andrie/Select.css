@@ -1,0 +1,9 @@
+.x-combo-list .x-combo-list-cursor{
+	border: 1px dotted #000000 !important;
+}
+
+/* Hack - added for visual effect */
+.x-combo-list-item{
+	cursor:pointer;
+	margin: 1px;
+}

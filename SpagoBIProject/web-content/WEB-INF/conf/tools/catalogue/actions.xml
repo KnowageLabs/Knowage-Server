@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+    <ACTION 
+           name="MANAGE_META_MODELS_CATALOGUE_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.ManageMetaModelsCatalogueAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+
+    <ACTION 
+           name="GET_META_MODELS_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.GetMetaModelsAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+        <ACTION 
+           name="GET_META_MODELS_FOR_FINAL_USER_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.GetMetaModelsForFinalUserAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+
+    <ACTION 
+           name="SAVE_META_MODEL_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.SaveMetaModelAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="DELETE_META_MODEL_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.DeleteMetaModelAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="GET_META_MODEL_VERSIONS_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.GetMetaModelVersionsAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="DELETE_META_MODEL_VERSIONS_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.DeleteMetaModelVersionsAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="DOWNLOAD_META_MODEL_VERSION_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.DownloadMetaModelVersionAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="MANAGE_ARTIFACTS_CATALOGUE_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.ManageArtifactsCatalogueAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+
+    <ACTION 
+           name="GET_ARTIFACTS_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.GetArtifactsAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+
+    <ACTION 
+           name="SAVE_ARTIFACT_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.SaveArtifactAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="DELETE_ARTIFACT_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.DeleteArtifactAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="GET_ARTIFACT_VERSIONS_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.GetArtifactVersionsAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="DELETE_ARTIFACT_VERSIONS_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.DeleteArtifactVersionsAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+    
+    <ACTION 
+           name="DOWNLOAD_ARTIFACT_VERSION_ACTION" 
+           class="it.eng.spagobi.tools.catalogue.service.DownloadArtifactVersionAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>
+
+</ACTIONS>
+
