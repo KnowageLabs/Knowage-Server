@@ -1,0 +1,8 @@
+SpagoBI, the Open Source Business Intelligence suite
+Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+Binaries of SpagoBI suite have been made available to you by the SpagoBI project under the Mozilla Public Licence v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+SpagoBI is both free and open source software: you can study, use, distribute, modify and distribute modified copies of this software under the terms of the Mozilla Public License. You can obtain  a copy of this license  at http://mozilla.org/MPL/2.0/. */
+SpagoBI software uses/links also components/libraries that are developed by third-parties and which are available under a variety of other licenses. You can see the list of those licenses at: http://www.spagoworld.org/xwiki/bin/view/SpagoBI/Licenses .
+SpagoBI is provided on an "as is" basis,  WITHOUT WARRANTY OF ANY KIND.
+If you wish to have warranties on SpagoBI software, you can have supporting services that are clearly separated from your rights to study, use, distribute, modify and distribute modified copies of this software.
+For more information about supporting services or any question about SpagoBI license, please contact spagobi@eng.it

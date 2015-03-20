@@ -1,0 +1,45 @@
+Ext JS 4.1 - JavaScript Library
+Copyright (c) 2006-2012, Sencha Inc.
+All rights reserved.
+licensing@sencha.com
+
+http://www.sencha.com/license
+
+
+Beta License
+------------------------------------------------------------------------------------------
+This version of Ext JS is licensed commercially as beta software. 
+Please visit http://www.sencha.com/legal/commercial-software-beta-license-agreement 
+for more details.
+
+
+
+Third Party Content
+------------------------------------------------------------------------------------------
+The following third party software is distributed with Ext JS and is 
+provided under other licenses and/or has source available from other locations. 
+
+Library: YUI 0.6 - drag-and-drop code
+License: BSD
+Location: http://developer.yahoo.com/yui
+
+Library: JSON parser 
+License: Public Domain
+Location: http://www.JSON.org/js.html
+
+Library: flexible-js-formatting - date parsing and formatting
+License: MIT
+Location: http://code.google.com/p/flexible-js-formatting/
+
+
+Examples
+
+Library: Silk icons 
+License: Creative Commons Attribution 2.5 License. 
+Location: http://www.famfamfam.com/lab/icons/silk/
+
+--
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without the implied warranty of MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND 
+NON-INFRINGEMENT OF THIRD-PARTY INTELLECTUAL PROPERTY RIGHTS.

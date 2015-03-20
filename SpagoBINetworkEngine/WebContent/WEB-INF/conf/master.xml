@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MASTER>
+
+	<!-- start xxx COMMONS -->
+	<CONFIGURATOR path="/WEB-INF/conf/commons/data_access.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/common.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/dispatchers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/initializers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/modules.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/pages.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/publishers.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/statements.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/tracing.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/validation.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/validators.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/renderers.xml" />	
+	<CONFIGURATOR path="/WEB-INF/conf/commons/errors.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/commons/traps.xml" />
+	
+	<!-- start XXX INITILAIZERS module -->
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/actions.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/presentation.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/initializers/publishers.xml" />	
+	
+	
+</MASTER>

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: SpagoBIXxxSpagoEngine.war
+Implementation-Title: SpagoBIXxxSpagoEngine
+Implementation-Version: 5.1.0
+
