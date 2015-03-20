@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="SpagoBICockpitEngine"
+		 xmlns="http://java.sun.com/xml/ns/j2ee" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
+		 version="2.4">
+
+	<display-name>SpagoBICockpitEngine</display-name>
+	<description>
+		SpagoBI - Cockpit Engine
+	</description>
+	
+	
+	<!--  ============================================================================ -->
+	<!--  FILTERS								 									                                   -->
+	<!--  ============================================================================ -->
+	
+	
+	 <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+         <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+     <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    </filter-mapping>
+	
+ 	<!-- START-CAS
+	<filter>
+	  <filter-name>CAS Authentication Filter</filter-name>
+	  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+	  <init-param>
+	    <param-name>casServerLoginUrl</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas/login</param-value>
+	  </init-param>
+	  <init-param>
+	    <param-name>serverName</param-name>
+	    <param-value>athos.engilab.ewebpd.eng.it:1447</param-value>
+	  </init-param>    
+	</filter>
+
+	<filter>
+	  <filter-name>CAS Validation Filter</filter-name>
+	  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+	  <init-param>
+	    <param-name>casServerUrlPrefix</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas</param-value>
+	  </init-param>
+	  <init-param>
+	    <param-name>serverName</param-name>
+	    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
+	  </init-param>
+	  <init-param>
+	    <param-name>proxyReceptorUrl</param-name>
+	    <param-value>/proxyCallback</param-value>
+	  </init-param> 
+	  <init-param>
+			<param-name>proxyCallbackUrl</param-name>
+			<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBICockpitReportEngine/proxyCallback</param-value>
+	   </init-param>  
+	</filter>
+
+	<filter>
+	  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+	  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	
+	END-CAS -->
+
+	<filter>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<filter-class>
+			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
+		</filter-class>
+	</filter>
+
+    <filter-mapping>
+            <filter-name>SpagoBIAccessFilter</filter-name>
+            <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    </filter-mapping>
+
+ 	<listener>
+        <listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+        </listener-class>
+    </listener>
+
+
+	<!--  ============================================================================ -->
+	<!--  FILTER MAPPINGS								 									                                   -->
+	<!--  ============================================================================ -->
+
+	<!-- START-CAS
+   
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+    	
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+   	
+
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+   </filter-mapping> 
+  
+  	<filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/proxyCallback</url-pattern>	
+  	</filter-mapping>
+
+	END-CAS -->
+
+
+    <!--  ============================================================================ -->
+	<!--  SERVLETS								 									                                   -->
+	<!--  ============================================================================ -->
+	
+	<servlet>
+		<servlet-name>ConfigServlet</servlet-name>
+		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+		<init-param>
+			<param-name>AF_CONFIG_FILE</param-name>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	
+	<servlet>
+  		<servlet-name>ProxyTicketReceptor</servlet-name> 
+  		<servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class> 
+		<init-param>
+  			<param-name>edu.yale.its.tp.cas.proxyUrl</param-name> 
+  			<param-value>https://localhost:8443/exo-cas-2/proxy</param-value> 
+  		</init-param>
+    </servlet>
+		
+    <servlet>
+        <servlet-name>Resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+    
+     
+
+	<!--  ============================================================================ -->
+	<!--  SERVLET MAPPINGS						 									                               -->
+	<!--  ============================================================================ -->
+	    
+ 	<servlet-mapping>
+  		<servlet-name>ProxyTicketReceptor</servlet-name> 
+  		<url-pattern>/proxyReceptor</url-pattern> 
+  	</servlet-mapping> 
+
+
+    <servlet-mapping>
+        <servlet-name>Resteasy</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+         <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>    
+    </context-param>
+
+    
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/api</param-value>
+    </context-param>
+    
+    <!--  ============================================================================ -->
+	<!--  RESOURCES								 									   -->
+	<!--  ============================================================================ -->
+	<resource-ref>
+		<res-ref-name>wm/SpagoWorkManager</res-ref-name>
+ 		<res-type>commonj.work.WorkManager</res-type>
+ 		<res-auth>Container</res-auth>
+ 		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+  	
+	<!--  ============================================================================ -->
+	<!--  GENERAL SETTINGS						 									   -->
+	<!--  ============================================================================ -->    
+    
+	<welcome-file-list>
+		<welcome-file>/html/index.html</welcome-file>
+	</welcome-file-list>
+	
+	<!-- 
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+	  	<location>/html/error.html</location>
+	</error-page>
+		 
+	<error-page>
+		<error-code>404</error-code>
+	  	<location>/html/error.html</location>
+	</error-page>
+  
+	<error-page>
+	  	<error-code>500</error-code>
+	  	<location>/html/error.html</location>
+	</error-page>
+	 -->
+
+</web-app>
+

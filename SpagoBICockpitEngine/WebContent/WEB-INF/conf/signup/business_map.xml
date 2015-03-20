@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+	
+    <MAP_REST_SERVICES>
+    	<MAP_REST_SERVICE serviceUrl="/engine.*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/pages.*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/associations.*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/crosstab.*" businessProcess="CreateCockpitFunctionality" />
+    </MAP_REST_SERVICES>
+    
+    <MAP_EXTERNAL_REST_SERVICES>
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/test" businessProcess="publicFunctionality" />
+	</MAP_EXTERNAL_REST_SERVICES>
+    
+</BUSINESS_MAP>

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: SpagoBICockpitEngine.war
+Implementation-Title: SpagoBICockpitEngine
+Implementation-Version: 5.1.0
+

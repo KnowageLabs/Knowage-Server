@@ -1,0 +1,156 @@
+<!-- 
+Ignore this note for the moment (mimification script hasn't been implemented yet)
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+ 
+<!-- TODO : Make path relative to webapp name -->
+
+<!-- Include Ext stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="/SpagoBICockpitEngine/css/cockpit.css" type="text/css" />
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
+
+<!-- START-DEBUG -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Settings.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Sbi.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Log.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/exceptions/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/commons/Format.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/RestService.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/service/ServiceReg.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/StoreManager.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/WizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/DatasetsBrowserPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/DatasetsBrowserView.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/FileUploadPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/SaveDocumentWindow.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/Colors.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/SelectionsPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/SelectionsWindow.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetRuntime.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetDesigner.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetManager.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetContainerComponent.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetContainer.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/core/WidgetExtensionPointManager.js'/></script>
+
+
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditor.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorMainPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorControlPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorDesignerPalette.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorFieldPalette.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorCustomConfPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorGenericConfPanel.js'/></script>
+
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/dataset/DatasetBrowserPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizard.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/DatasetFieldsModel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorList.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorDataset.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorDatasetContainer.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/association/AssociationEditor.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/AssociationEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/data/AssociationEditorWizard.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/filters/editor/main/FilterEditorList.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/filters/editor/main/FilterEditor.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/filters/editor/main/FilterEditorPage.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/filters/FilterEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/filters/FilterEditorWizard.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
+
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
+
+<!-- Widget commons -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsContainerPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsCardPanel.js'/></script>
+
+<!-- Table widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/TableWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/table/AggregationChooserWindow.js'/></script>
+
+<!-- Cross Tab widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidgetDesigner.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/AttributesContainerPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/MeasuresContainerPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/HTMLCrossTab.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabStore.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrosstabDetailsWizard.js'/></script>
+
+
+<!-- NEW Abstract Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractChartWidgetRuntime.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractCartesianChartWidgetRuntime.js'/></script>
+
+<!-- NEW Line Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script>
+
+<!-- NEW Bar Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/BarChartWidgetRuntime.js'/></script>
+
+
+<!-- Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/AbstractChartWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/ChartCategoryPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/SeriesGroupingPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/ChartSeriesPanel.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/ColorField.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/SeriesPalette.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/chart/DefaultChartDimensionRetrieverStrategy.js'/></script>
+
+<!-- NEW Pie Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/PieChartWidgetRuntime.js'/></script>
+
+
+<!-- Bar Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidgetDesigner.js'/></script>
+
+<!-- Pie Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidgetDesigner.js'/></script>
+
+<!-- Line Chart widget -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script>
+
+<!-- Selection widget  -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidget.js'/></script>
+
+<!-- Selection widget  -->
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
+<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js'/></script>
+
+
+
+
+
+
+<!-- END-DEBUG -->
+
+<!-- START-PRODUCTION
+<script type="text/javascript" src='/SpagoBICockpitEngine/SpagoBICockpitEngine/js/spagobi/cockpit-all.js'></script>
+END-PRODUCTION -->
+
+
+

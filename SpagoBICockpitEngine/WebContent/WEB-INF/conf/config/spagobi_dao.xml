@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SPAGOBI>
+     
+     <DAO-CONF>
+		<!--  HIBERNATE DAO (DEFAULT) IMPLEMENTATION -->
+		<DAO name="TenantsDAO" implementation="it.eng.spagobi.commons.dao.TenantsDAOHibImpl"/>
+		<DAO name="BIObjectDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl"/>  
+		<DAO name="ChecksDAO" implementation="it.eng.spagobi.behaviouralmodel.check.dao.CheckDAOHibImpl"/>
+		<DAO name="EngineDAO" implementation="it.eng.spagobi.engines.config.dao.EngineDAOHibImpl"/>
+		<DAO name="ParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl"/>
+		<DAO name="DomainDAO" implementation="it.eng.spagobi.commons.dao.DomainDAOHibImpl"/>
+		<DAO name="BIObjectParameterDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.BIObjectParameterDAOHibImpl"/>
+		<DAO name="RoleDAO" implementation="it.eng.spagobi.commons.dao.RoleDAOHibImpl"/>
+		<DAO name="ModalitiesValueDAO" implementation="it.eng.spagobi.behaviouralmodel.lov.dao.LovDAOHibImpl"/>
+		<DAO name="ParameterUseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterUseDAOHibImpl"/>
+		<DAO name="LowFunctionalityDAO" implementation="it.eng.spagobi.analiticalmodel.functionalitytree.dao.LowFunctionalityDAOHibImpl"/>
+		<DAO name="ObjParuseDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ObjParuseDAOHibImpl"/>
+		<DAO name="ObjParviewDAO" implementation="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ObjParviewDAOHibImpl"/>
+		<DAO name="SubreportDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SubreportDAOHibImpl"/>
+ 		<DAO name="ViewpointDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ViewpointDAOHimpl"/>	
+ 		<DAO name="DataSourceDAO" implementation="it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl"/>
+ 		<DAO name="DataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl"/>
+ 		<DAO name="BinContentDAO" implementation="it.eng.spagobi.commons.dao.BinContentDAOHibImpl"/>
+ 		<DAO name="ObjTemplateDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjTemplateDAOHibImpl"/>	
+ 		<DAO name="ObjNoteDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjNoteDAOHibImpl"/>	
+ 		<DAO name="SubObjectDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl"/>	
+ 		<DAO name="SnapshotDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.SnapshotDAOHibImpl"/>
+ 		<DAO name="GeoFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoFeaturesDAOHibImpl"/>  
+		<DAO name="GeoMapDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapsDAOHibImpl"/>  
+		<DAO name="GeoMapFeatureDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoMapFeaturesDAOHibImpl"/>
+		<DAO name="UserFunctionalityDAO" implementation="it.eng.spagobi.commons.dao.UserFunctionalityDAO"/>
+		<DAO name="DistributionListDAO" implementation="it.eng.spagobi.tools.distributionlist.dao.DistributionListDaoImpl"/>
+		<DAO name="DossierDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierDAOHibImpl"/>
+		<DAO name="DossierPresentationDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierPresentationsDAOHibImpl"/>
+		<DAO name="DossierPartsTempDAO" implementation="it.eng.spagobi.engines.dossier.dao.DossierPartsTempDAOHibImpl"/>
+		<DAO name="RememberMeDAO" implementation="it.eng.spagobi.hotlink.rememberme.dao.RememberMeDAOHibImpl"/>
+		<DAO name="MenuDAO" implementation="it.eng.spagobi.wapp.dao.MenuDAOImpl"/>
+		<DAO name="MenuRolesDAO" implementation="it.eng.spagobi.wapp.dao.MenuRolesDAOImpl"/>
+		<DAO name="BIObjectRatingDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.BIObjectRatingDAOHibImpl"/>
+		<DAO name="KpiDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiDAOImpl"/>
+		<DAO name="AlarmEventDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmEventDAOHibImpl"/>
+		<DAO name="AlarmDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmDAOHibImpl"/>
+		<DAO name="AlarmContactDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl"/>
+		
+		<DAO name="ModelDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelDAOImpl"/>
+		<DAO name="ModelInstanceDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelInstanceDAOImpl"/>
+		<DAO name="PeriodicityDAO" implementation="it.eng.spagobi.kpi.config.dao.PeriodicityDAOImpl"/>
+		<DAO name="ThresholdDAO" implementation="it.eng.spagobi.kpi.threshold.dao.ThresholdDAOImpl"/>
+		<DAO name="ModelResourceDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelResourceDAOImpl" />
+		<DAO name="ThresholdValueDAO" implementation="it.eng.spagobi.kpi.threshold.dao.ThresholdValueDAOImpl" />
+		<DAO name="MeasureUnitDAO" implementation="it.eng.spagobi.kpi.config.dao.MeasureUnitDAOImpl" />
+		<DAO name="KpiInstanceDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiInstanceDAOImpl" />
+		<DAO name="ResourceDAO" implementation="it.eng.spagobi.kpi.model.dao.ResourceDAOImpl" />
+		<DAO name="KpiInstPeriodDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiInstPeriodDAOImpl" />
+		<DAO name="ObjMetadataDAO" implementation="it.eng.spagobi.tools.objmetadata.dao.ObjMetadataDAOHibImpl" />
+		<DAO name="ObjMetacontentDAO" implementation="it.eng.spagobi.tools.objmetadata.dao.ObjMetacontentDAOHibImpl" />
+		<DAO name="KpiErrorDAO" implementation="it.eng.spagobi.kpi.config.dao.KpiErrorDAOImpl" />
+		<DAO name="SbiKpiOUDAO" implementation="it.eng.spagobi.kpi.ou.dao.OrganizationalUnitDAOImpl" />
+		<DAO name="GoalDAO" implementation="it.eng.spagobi.kpi.goal.dao.GoalDAOImpl" />
+		
+		<DAO name="SbiUserDAO" implementation="it.eng.spagobi.profiling.dao.SbiUserDAOHibImpl"/>
+		<DAO name="SbiAttributeDAO" implementation="it.eng.spagobi.profiling.dao.SbiAttributeDAOHibImpl"/>
+		<DAO name="SbiConfigDAO" implementation="it.eng.spagobi.commons.dao.ConfigDAOHibImpl"/>
+		<DAO name="UdpDAO" implementation="it.eng.spagobi.tools.udp.dao.UdpDAOHibImpl"/>
+		<DAO name="UdpDAOValue" implementation="it.eng.spagobi.tools.udp.dao.UdpValueDAOHibImpl"/>
+
+	  	<DAO name="I18NMessagesDAO" implementation="it.eng.spagobi.i18n.dao.I18NMessagesDAOHibImpl"/>
+	  	<DAO name="ProgressThreadDAO" implementation="it.eng.spagobi.tools.massiveExport.dao.ProgressThreadDAOImpl"/>
+	  	
+	  	<DAO name="SchedulerDAO" implementation="it.eng.spagobi.tools.scheduler.dao.quartz.QuarzSchedulerDAOImpl"/>
+	  	<DAO name="MetaModelsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.MetaModelsDAOImpl"/>
+	  	<DAO name="ArtifactsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.ArtifactsDAOImpl"/>
+	  	<DAO name="CommunityDAO" implementation="it.eng.spagobi.community.dao.SbiCommunityDAOImpl"/>
+	  	
+	  	<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl"/>
+	  	
+
+	 </DAO-CONF>     
+     
+     <!-- ********************* END DAO CONFIGURATION ************************ -->
+
+
+    
+	
+</SPAGOBI>
