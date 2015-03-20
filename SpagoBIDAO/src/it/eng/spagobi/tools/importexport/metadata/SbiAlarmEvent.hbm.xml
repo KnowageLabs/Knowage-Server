@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.alarm.metadata.SbiAlarmEvent" table="SBI_ALARM_EVENT">
+        <id name="id" type="integer">
+            <column name="ALARM_EVENT_ID" />
+        </id>
+                
+        <property name="eventTs" type="timestamp">
+            <column name="EVENT_TS" not-null="false" />
+        </property>        
+        
+        <property name="active" type="true_false">
+            <column name="ACTIVE" not-null="false" default="T" />
+        </property>  
+
+        <property name="kpiValue" type="string">
+            <column name="KPI_VALUE" length="50" not-null="false" />
+        </property>  
+        
+        <property name="thresholdValue" type="string">
+            <column name="THRESHOLD_VALUE" length="50" not-null="false" />
+        </property>
+        
+        <property name="kpiName" type="string">
+            <column name="KPI_NAME" length="100" not-null="false" />
+        </property>
+        
+        <property name="resources" type="string">
+            <column name="RESOURCES" length="200" not-null="false" />
+        </property>
+        
+         <property name="kpiDescription" type="string">
+            <column name="KPI_DESCRIPTION" length="100" not-null="false" />
+        </property> 
+        
+         <property name="resourcesId" type="integer">
+            <column name="RESOURCE_ID"  not-null="false" />
+        </property>
+        <property name="kpiInstanceId" type="integer">
+            <column name="KPI_INSTANCE_ID"  not-null="false" />
+        </property>
+               
+        <many-to-one name="sbiAlarms" column="ALARM_ID" unique="true" not-null="true"/>
+
+<!-- 
+ALARM_EVENT_ID		NUMBER		38 (PK)
+ALARM_ID	NUMBER		38 (FK)
+EVENT_TS			TIMESTAMP	11
+ACTIVE				CHAR		1
+KPI_VALUE			VARCHAR2	50
+THRESHOLD_VALUE		VARCHAR2	50
+KPI_NAME			VARCHAR2	100
+RESOURCES			VARCHAR2	200
+ -->    
+    
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiResources" table="SBI_RESOURCES" >
+        <id name="resourceId" type="integer">
+            <column name="RESOURCE_ID" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_RESOURCES</param>
+		<param name="initial_value">1</param>		
+   </generator>
+        </id>
+        <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component>
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="RESOURCE_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="tableName" type="string">
+            <column name="TABLE_NAME" length="40" />
+        </property>
+        <property name="columnName" type="string">
+            <column name="COLUMN_NAME" length="40" />
+        </property>
+        <property name="resourceName" type="string">
+            <column name="RESOURCE_NAME" length="40" not-null="true" />
+        </property>
+        <property name="resourceDescr" type="string">
+            <column name="RESOURCE_DESCR" length="400" />
+        </property>
+        <property name="resourceCode" type="string">
+            <column name="RESOURCE_CODE" length="45" unique="true" not-null="true" />
+        </property>
+        <set name="sbiKpiValues" inverse="true">
+            <key>
+                <column name="RESOURCE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiValue" />
+        </set>
+        <set name="sbiKpiModelResourceses" inverse="true">
+            <key>
+                <column name="RESOURCE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources" />
+        </set>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

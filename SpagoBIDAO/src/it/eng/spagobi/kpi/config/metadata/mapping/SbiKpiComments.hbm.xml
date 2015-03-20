@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-dic-2011 15.03.38 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiComments" table="SBI_KPI_COMMENTS">
+        <id name="kpiCommentId" type="java.lang.Integer">
+            <column name="KPI_COMMENT_ID" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_KPI_COMMENTS</param>	
+		<param name="initial_value">1</param>	
+   </generator>
+        </id>
+        <many-to-one name="sbiBinContents" class="it.eng.spagobi.commons.metadata.SbiBinContents" fetch="select">
+            <column name="BIN_ID" />
+        </many-to-one>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" fetch="select">
+            <column name="KPI_INST_ID" />
+        </many-to-one>
+        <property name="execReq" type="string">
+            <column name="EXEC_REQ" length="500" />
+        </property>
+        <property name="owner" type="string">
+            <column name="OWNER" length="50" />
+        </property>
+        <property name="ispublic" type="java.lang.Boolean">
+            <column name="ISPUBLIC" />
+        </property>
+        <property name="creationDate" type="timestamp">
+            <column name="CREATION_DATE" length="19" not-null="true" />
+        </property>
+        <property name="lastChangeDate" type="timestamp">
+            <column name="LAST_CHANGE_DATE" length="19" not-null="true" />
+        </property>
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property>
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" />
+        </property>
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" />
+        </property>
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" length="19" not-null="true" />
+        </property>
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" length="19" />
+        </property>
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" length="19" />
+        </property>
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" />
+        </property>
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" />
+        </property>
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" />
+        </property>
+        <property name="metaVersion" type="string">
+            <column name="META_VERSION" length="100" />
+        </property>
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.alarm.metadata.SbiAlarm" table="SBI_ALARM">
+        <id name="id" type="integer">
+            <column name="ALARM_ID" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_ALARM</param>	
+		<param name="initial_value">1</param>	
+   </generator>
+        </id>
+        
+<component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component> 
+        <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" >
+            <column name="DOCUMENT_ID" />
+        </many-to-one>
+        <many-to-one name="sbiThresholdValue" class="it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue" >
+            <column name="id_threshold_value" not-null="false" />
+        </many-to-one>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
+            <column name="id_kpi_instance" not-null="false" />
+        </many-to-one>
+        <many-to-one name="modality" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="MODALITY_ID" not-null="true" />
+        </many-to-one>   
+        <property name="singleEvent" type="true_false">
+            <column name="SINGLE_EVENT" not-null="false" default="T" />
+        </property>  
+        
+        <property name="autoDisabled" type="true_false">
+            <column name="AUTO_DISABLED" not-null="false" default="T" />
+        </property>  
+
+        <property name="label" type="string">
+            <column name="LABEL" length="50" not-null="false" />
+        </property>  
+        
+        <property name="name" type="string">
+            <column name="NAME" length="50" not-null="false" />
+        </property>
+        
+        <property name="descr" type="string">
+            <column name="DESCR" length="200" not-null="false" />
+        </property>
+        
+        <property name="text" type="string">
+            <column name="TEXT" length="1000" not-null="false" />
+        </property>
+        
+        <property name="url" type="string">
+            <column name="URL" length="20" not-null="false" />
+        </property>   
+               
+        <set name="sbiAlarmContacts" table="SBI_ALARM_DISTRIBUTION" inverse="false">
+        	<key column="ALARM_ID"/>
+        	<many-to-many column="ALARM_CONTACT_ID" class="it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact" />
+        </set>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def> 
+</hibernate-mapping>

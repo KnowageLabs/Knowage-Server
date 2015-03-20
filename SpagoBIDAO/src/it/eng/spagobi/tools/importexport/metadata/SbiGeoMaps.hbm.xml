@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 31-mag-2007 14.53.27 by Hibernate Tools 3.2.0.beta8 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps" table="SBI_GEO_MAPS" >
+        <id name="mapId" type="int">
+            <column name="MAP_ID" />   
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" />
+        </property>
+        <property name="descr" type="string">
+            <column name="DESCR" />
+        </property>
+        <property name="url" type="string">
+            <column name="URL" />
+        </property>
+        <property name="format" type="string">
+            <column name="FORMAT" />
+        </property>        
+       <many-to-one name="binContents" class="it.eng.spagobi.commons.metadata.SbiBinContents">
+            <column name="BIN_ID" not-null="false"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet" table="SBI_PARUSE_DET" >
+        <composite-id name="id" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDetId">
+            <key-many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse">
+                <column name="use_id" />
+            </key-many-to-one>
+            <key-many-to-one name="sbiExtRoles" class="it.eng.spagobi.commons.metadata.SbiExtRoles" lazy="false">
+                <column name="ext_role_id" />
+            </key-many-to-one>
+        </composite-id>
+        
+<component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component>
+          
+        <property name="prog" type="integer">
+            <column name="prog" />
+        </property>
+        <property name="hiddenFl" type="short">
+            <column name="hidden_fl" />
+        </property>
+        <property name="defaultVal" type="string">
+            <column name="default_val" length="40"   />
+        </property>
+    </class>
+</hibernate-mapping>

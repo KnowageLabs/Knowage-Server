@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" table="SBI_OBJECTS">
+        <id name="biobjId" type="integer">
+            <column name="biobj_id" />
+        </id>
+        <many-to-one name="sbiEngines" class="it.eng.spagobi.engines.config.metadata.SbiEngines">
+            <column name="engine_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="stateConsideration" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="state_cons_id" />
+        </many-to-one>
+        <many-to-one name="state" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="state_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="execMode" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="exec_mode_id" />
+        </many-to-one>
+        <many-to-one name="objectType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="biobj_type_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="dataSource" class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource">
+            <column name="data_source_id" not-null="false" />
+        </many-to-one>
+        <!-- 
+        <many-to-one name="dataSet" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet">
+            <column name="data_set_id" not-null="false" />
+        </many-to-one>   
+         -->
+         <property name="dataSet" type="integer">
+		   <column  name="data_set_id" not-null="false"/>
+		  </property>     
+        <property name="objectTypeCode" type="string">
+            <column name="biobj_type_cd" length="20" not-null="true" />
+        </property>
+        <property name="encrypt" type="short">
+            <column name="encrypt" />
+        </property>
+        <property name="visible" type="short">
+            <column name="visible" />
+        </property>
+        <property name="profiledVisibility" type="string">
+            <column name="PROF_VISIBILITY" />
+        </property>
+        <property name="stateCode" type="string">
+            <column name="state_cd" length="20" not-null="true" />
+        </property>
+        <property name="schedFl" type="short">
+            <column name="sched_fl" />
+        </property>
+        <property name="execModeCode" type="string">
+            <column name="exec_mode_cd" length="20" />
+        </property>
+        <property name="stateConsiderationCode" type="string">
+            <column name="state_cons_cd" length="20" />
+        </property>
+        <property name="label" type="string">
+            <column name="label" length="20" unique="true" not-null="true"/>
+        </property>
+         <property name="name" type="string">
+            <column name="name" length="200"  not-null="true"/>
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="400" />
+        </property>
+        <property name="path" type="string">
+            <column name="path" length="400" />
+        </property>
+        <property name="relName" type="string">
+            <column name="rel_name" length="400" />
+        </property>
+        <property name="uuid" type="string">
+            <column name="UUID" length="40" not-null="true"/>
+        </property>
+       <property name="creationDate" type="timestamp">
+            <column name="CREATION_DATE"/>
+        </property> 
+        <property name="creationUser" type="string">
+            <column name="CREATION_USER" length="45" />
+        </property>
+        <property name="refreshSeconds" type="integer">
+            <column name="REFRESH_SECONDS" />
+        </property>
+  		<property generated="never" lazy="false" name="previewFile" type="string">
+   			<column length="100" name="PREVIEW_FILE"/>
+  		</property>
+  		  <property generated="never" lazy="false" name="parametersRegion" type="string">
+        <column length="20" name="PARAMETERS_REGION"/>
+        </property>
+        
+        
+        <set name="sbiObjPars" inverse="true">
+            <key>
+                <column name="biobj_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" />
+        </set>
+        <set name="sbiObjFuncs" inverse="true">
+            <key>
+                <column name="biobj_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc" />
+        </set>
+        <set name="sbiObjStates" inverse="true">
+            <key>
+                <column name="biobj_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState" />
+        </set>
+        <set name="sbiKpiDocumentses" inverse="true">
+            <key>
+                <column name="BIOBJ_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiDocument" />
+        </set>
+    </class>
+</hibernate-mapping>

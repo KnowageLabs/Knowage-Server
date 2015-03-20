@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 11-gen-2012 17.54.35 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread" table="SBI_PROGRESS_THREAD">
+        <id name="progressThreadId" type="int">
+            <column name="PROGRESS_THREAD_ID" />
+  			 <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_PROGRESS_THREAD</param>
+				<param name="initial_value">1</param>		
+  			 </generator>
+        </id>
+        <property name="userId" type="string">
+            <column name="USER_ID" length="100" not-null="true" />
+        </property>
+        <property name="partial" type="java.lang.Integer">
+            <column name="PARTIAL" />
+        </property>
+        <property name="total" type="java.lang.Integer">
+            <column name="TOTAL" />
+        </property>
+        <property name="functionCd" type="string">
+            <column name="FUNCTION_CD" length="200" />
+        </property>
+        <property name="status" type="string">
+            <column name="STATUS" length="4000" />
+        </property>
+        <property name="randomKey" type="string">
+            <column name="RANDOM_KEY" length="4000" />
+        </property>
+		<property name="type" type="string">
+            <column name="TYPE" length="200" />
+        </property>                   
+    </class>
+</hibernate-mapping>

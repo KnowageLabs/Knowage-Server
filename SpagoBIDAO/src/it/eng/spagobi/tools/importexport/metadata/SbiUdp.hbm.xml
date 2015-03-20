@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 9-set-2010 10.57.32 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.udp.metadata.SbiUdp" table="SBI_UDP" >
+        <id name="udpId" type="integer">
+            <column name="UDP_ID" />
+        </id>
+        <property name="typeId" type="integer">
+            <column name="TYPE_ID" />
+        </property>
+        <property name="familyId" type="integer">
+            <column name="FAMILY_ID" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" length="20" not-null="true" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="40" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="1000" />
+        </property>
+        <property name="isMultivalue" type="boolean">
+            <column name="IS_MULTIVALUE" />
+        </property>
+        <set name="sbiUdpValues" inverse="true">
+            <key>
+                <column name="UDP_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.tools.udp.metadata.SbiUdpValue" />
+        </set>
+    </class>
+</hibernate-mapping>

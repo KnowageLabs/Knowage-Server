@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 17-set-2010 11.25.47 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiRel" table="SBI_KPI_REL" >
+        <id name="kpiRelId" type="java.lang.Integer">
+            <column name="KPI_REL_ID" />
+        </id>
+        <many-to-one name="sbiKpiByKpiChildId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
+            <column name="KPI_CHILD_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiKpiByKpiFatherId" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
+            <column name="KPI_FATHER_ID" not-null="true" />
+        </many-to-one>
+        <property name="parameter" type="string">
+            <column name="PARAMETER" length="100" />
+        </property>
+    </class>
+</hibernate-mapping>

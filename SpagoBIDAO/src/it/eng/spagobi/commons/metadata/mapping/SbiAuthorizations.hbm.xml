@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2-dic-2013 14.44.45 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.commons.metadata.SbiAuthorizations"  table="SBI_AUTHORIZATIONS">
+        <id name="id" type="int">
+            <column name="ID" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_AUTHORIZATIONS</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
+        </id>
+        <property name="name" type="string">
+            <column name="NAME" length="200" />
+        </property>
+        <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property> 
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" not-null="false" />
+	        </property> 
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" not-null="false" />
+	        </property>                 
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" not-null="true" />
+	        </property> 
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" not-null="false" />
+	        </property> 
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" not-null="false" />
+	        </property>                      
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+	        </property>                 
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" not-null="false" />
+	        </property>  			 
+	    </component>        
+        <set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
+            <key>
+                <column name="FUNCTIONALITY_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
+        </set>
+    </class>
+</hibernate-mapping>

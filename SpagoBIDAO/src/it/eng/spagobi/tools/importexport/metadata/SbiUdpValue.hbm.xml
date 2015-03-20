@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 9-set-2010 10.57.31 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.udp.metadata.SbiUdpValue" table="SBI_UDP_VALUE" >
+        <id name="udpValueId" type="integer">
+            <column name="UDP_VALUE_ID" />
+        </id>
+        <many-to-one name="sbiUdp" class="it.eng.spagobi.tools.udp.metadata.SbiUdp" fetch="select">
+            <column name="UDP_ID" not-null="true" />
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="VALUE" length="1000" not-null="false" />
+        </property>
+        <property name="prog" type="integer">
+            <column name="PROG" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" length="20" not-null="false" unique="false" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="40" />
+        </property>
+        <property name="family" type="string">
+            <column name="FAMILY" length="40" />
+        </property>
+        <property name="beginTs" type="timestamp">
+            <column name="BEGIN_TS" length="19" not-null="true" />
+        </property>
+        <property name="endTs" type="timestamp">
+            <column name="END_TS" length="19" />
+        </property>
+        <property name="referenceId" type="integer">
+            <column name="REFERENCE_ID" />
+        </property>
+    </class>
+</hibernate-mapping>

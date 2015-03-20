@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots" table="SBI_SNAPSHOTS" >
+        <id name="snapId" type="integer">
+            <column name="snap_id" />
+        </id>   
+        
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="biobj_id" />
+        </many-to-one>
+        
+        <many-to-one name="sbiBinContents" class="it.eng.spagobi.commons.metadata.SbiBinContents">
+            <column name="bin_id" />
+        </many-to-one>
+        
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        
+        <property name="creationDate" type="timestamp">
+            <column name="creation_date"/>
+        </property>
+        
+        <property name="contentType" type="string">
+            <column name="content_type" />
+        </property>
+                
+    </class>
+</hibernate-mapping>

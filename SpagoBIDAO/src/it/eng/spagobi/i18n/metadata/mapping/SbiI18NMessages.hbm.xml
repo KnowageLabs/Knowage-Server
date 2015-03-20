@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-dic-2011 16.17.44 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.i18n.metadata.SbiI18NMessages" table="SBI_I18N_MESSAGES">
+        <composite-id name="id" class="it.eng.spagobi.i18n.metadata.SbiI18NMessagesId">
+            <key-property name="languageCd" type="integer">
+                <column name="LANGUAGE_CD" not-null="true" />
+            </key-property>
+            <key-property name="label" type="string">
+                <column name="LABEL" length="200" not-null="true" />
+            </key-property>
+        </composite-id>
+        <property name="message" type="string">
+            <column name="MESSAGE"/>
+        </property>
+
+		<component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property> 
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" not-null="false" />
+	        </property> 
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" not-null="false" />
+	        </property>                 
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" not-null="true" />
+	        </property> 
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" not-null="false" />
+	        </property> 
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" not-null="false" />
+	        </property>                      
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+	        </property>                 
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" not-null="false" />
+	        </property>  			 
+  		</component>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

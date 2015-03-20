@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-set-2010 12.29.29 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant" table="SBI_ORG_UNIT_GRANT">
+        <id name="id" type="integer">
+            <column name="ID" />
+        </id>
+        <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" fetch="select">
+            <column name="KPI_MODEL_INST_NODE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiOrgUnitHierarchies" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitHierarchies" fetch="select">
+            <column name="HIERARCHY_ID" not-null="true" />
+        </many-to-one>
+        <property name="startDate" type="timestamp">
+            <column name="START_DATE" length="19" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="END_DATE" length="19" />
+        </property>
+        <property name="label" type="string" not-null="true" unique="true">
+            <column name="LABEL" length="200" />
+        </property>
+        <property name="name" type="string" not-null="true">
+            <column name="NAME" length="400" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="1000" />
+        </property>
+        <property name="isAvailable" type="boolean">
+            <column name="IS_AVAILABLE" />
+        </property>
+        <set name="sbiOrgUnitGrantNodeses" inverse="true">
+            <key>
+                <column name="GRANT_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes" />
+        </set>
+    </class>
+</hibernate-mapping>

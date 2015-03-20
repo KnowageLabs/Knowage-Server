@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.commons.metadata.SbiExtRoles" table="SBI_EXT_ROLES">
+        <id name="extRoleId" type="integer">
+            <column name="EXT_ROLE_ID" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_EXT_ROLES</param>	
+		<param name="initial_value">1</param>	
+   </generator>
+        </id>
+<component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component>         
+        <many-to-one name="roleType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="ROLE_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="roleTypeCode" type="string">
+            <column name="ROLE_TYPE_CD" length="20" not-null="true" />
+        </property>
+        <property name="code" type="string">
+            <column name="CODE" length="20" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="100" />
+        </property>
+        <property name="descr" type="string">
+            <column name="DESCR" length="160" />
+        </property>
+		<set name="sbiFuncRoles" inverse="true">
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" />
+        </set>
+        <set name="sbiParuseDets" inverse="true">
+            <key>
+                <column name="EXT_ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet" />
+        </set>
+        <set name="sbiMetaModelCategories" table="SBI_EXT_ROLES_CATEGORY">
+			<key column="EXT_ROLE_ID"/>
+			<many-to-many column="CATEGORY_ID"  class="it.eng.spagobi.commons.metadata.SbiDomains"/>
+		</set> 
+		<set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
+        </set>   
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

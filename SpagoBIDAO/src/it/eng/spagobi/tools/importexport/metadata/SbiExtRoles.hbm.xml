@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.commons.metadata.SbiExtRoles" table="SBI_EXT_ROLES">
+        <id name="extRoleId" type="integer">
+            <column name="EXT_ROLE_ID" />
+        </id>
+        <many-to-one name="roleType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="ROLE_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="roleTypeCode" type="string">
+            <column name="ROLE_TYPE_CD" length="20" not-null="true" />
+        </property>
+        <property name="code" type="string">
+            <column name="CODE" length="20" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="100" />
+        </property>
+        <property name="descr" type="string">
+            <column name="DESCR" length="160" />
+        </property>
+
+        <set name="sbiFuncRoles" inverse="true">
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" />
+        </set>
+        <set name="sbiParuseDets" inverse="true">
+            <key>
+                <column name="EXT_ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseDet" />
+        </set>
+        <set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
+            <key>
+                <column name="ROLE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
+        </set>   
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-set-2010 12.29.29 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodes" table="SBI_ORG_UNIT_GRANT_NODES">
+        <composite-id name="id" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrantNodesId">
+            <key-property name="nodeId" type="integer">
+                <column name="NODE_ID" />
+            </key-property>
+            <key-property name="kpiModelInstNodeId" type="integer">
+                <column name="KPI_MODEL_INST_NODE_ID" />
+            </key-property>
+            <key-property name="grantId" type="integer">
+                <column name="GRANT_ID" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="sbiOrgUnitNodes" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitNodes" update="false" insert="false" fetch="select">
+            <column name="NODE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" update="false" insert="false" fetch="select">
+            <column name="KPI_MODEL_INST_NODE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiOrgUnitGrant" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnitGrant" update="false" insert="false" fetch="select">
+            <column name="GRANT_ID" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

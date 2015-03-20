@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" table="SBI_DATA_SET" lazy="false">
+  <!-- 
+        <id name="dsId" type="int">
+           <column name="DS_ID" />            
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_DATA_SET</param>	
+				<param name="initial_value">1</param>	
+		   </generator>		                  
+        </id>
+      -->
+   
+       <composite-id name="id" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSetId">
+            <key-property name="dsId" type="integer">
+                <column name="DS_ID" />
+            </key-property>
+            <key-property name="versionNum" type="integer">
+                <column name="VERSION_NUM" />
+            </key-property>
+            <key-property name="organization" type="string">
+                <column name="ORGANIZATION" />
+            </key-property>
+        </composite-id>
+
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="CATEGORY_ID" not-null="false"/>
+        </many-to-one>
+         <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="TRANSFORMER_ID" not-null="false"/>
+        </many-to-one>
+        <many-to-one name="scope" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="SCOPE_ID" not-null="false"/>
+        </many-to-one>
+        <property name="active" type="boolean">
+            <column name="ACTIVE" />
+        </property>          
+        <property name="name" type="string">
+            <column name="NAME" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCR" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" />
+        </property>
+        <property name="type" type="string">
+            <column name="OBJECT_TYPE" />
+        </property>          
+        <property name="parameters" type="string">
+            <column name="PARAMS" />
+        </property>
+        <property name="dsMetadata" type="string">
+            <column name="DS_METADATA" />
+        </property>                      
+         <property name="pivotColumnName" type="string">
+            <column name="PIVOT_COLUMN" />
+        </property>
+        <property name="pivotRowName" type="string">
+            <column name="PIVOT_ROW" />
+        </property>
+        <property name="pivotColumnValue" type="string">
+            <column name="PIVOT_VALUE" />
+        </property>    
+        <property name="numRows" type="boolean">
+            <column name="NUM_ROWS" />
+        </property>       
+         <property name="persisted" type="boolean">
+            <column name="IS_PERSISTED" />
+        </property>
+        <property name="persistTableName" type="string">
+            <column name="PERSIST_TABLE_NAME" length="50" not-null="false" />
+        </property>
+         <property name="configuration" type="string">
+            <column name="CONFIGURATION" />
+        </property>
+        <property name="owner" type="string">
+            <column name="OWNER" />
+        </property>
+        <property name="publicDS" type="boolean">
+            <column name="IS_PUBLIC" />
+        </property>
+
+	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property> 
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" not-null="false" />
+	        </property> 
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" not-null="false" />
+	        </property>                 
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" not-null="true" />
+	        </property> 
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" not-null="false" />
+	        </property> 
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" not-null="false" />
+	        </property>                      
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+	        </property>                 		 
+	  </component> 
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

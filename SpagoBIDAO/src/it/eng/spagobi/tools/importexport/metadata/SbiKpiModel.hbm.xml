@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" table="SBI_KPI_MODEL" >
+        <id name="kpiModelId" type="integer">
+            <column name="KPI_MODEL_ID" />
+        </id>
+        <many-to-one name="modelType" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="KPI_MODEL_TYPE_ID" not-null="false" />
+        </many-to-one>
+        <many-to-one name="sbiKpiModel" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" >
+            <column name="KPI_PARENT_MODEL_ID" />
+        </many-to-one>
+        <many-to-one name="sbiKpi" class="it.eng.spagobi.kpi.config.metadata.SbiKpi" >
+            <column name="KPI_ID" />
+        </many-to-one>
+        <property name="kpiModelCd" type="string">
+            <column name="KPI_MODEL_CD" length="40" />
+        </property>
+        <property name="kpiModelNm" type="string">
+            <column name="KPI_MODEL_NM" length="400" />
+        </property>
+        <property name="kpiModelDesc" type="string">
+            <column name="KPI_MODEL_DESC" length="1000" />
+        </property>
+		<property name="kpiModelLabel" type="string">
+            <column name="KPI_MODEL_LBL" length="1000"/>
+        </property>        
+        <set name="sbiKpiModels" inverse="true">
+            <key>
+                <column name="KPI_PARENT_MODEL_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModel" />
+        </set>
+ 
+        <set name="sbiKpiModelInsts" inverse="true">
+            <key>
+                <column name="KPI_MODEL_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" />
+        </set>
+
+    </class>
+</hibernate-mapping>

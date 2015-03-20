@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" table="SBI_PARAMETERS">
+        <id name="parId" type="integer">
+            <column name="par_id" />
+   	<generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_PARAMETERS</param>	
+		<param name="initial_value">1</param>
+   	</generator>
+        </id>
+        
+<component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component>
+  
+          
+        <many-to-one name="parameterType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="par_type_id" not-null="true" />
+        </many-to-one>
+        <property name="length" type="short">
+            <column name="length" not-null="true"/>
+        </property>
+        <property name="parameterTypeCode" type="string">
+            <column name="par_type_cd" length="20" not-null="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" length="40"  not-null="true" />
+        </property>
+        <property name="label" type="string">
+            <column name="label" length="20" unique="true" not-null="true" />
+        </property>
+        <property name="mask" type="string">
+            <column name="mask" length="20" />
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="160" />
+        </property>
+        <set name="sbiParuses" inverse="true">
+            <key>
+                <column name="par_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse" />
+        </set>
+        <set name="sbiObjPars" inverse="true">
+            <key>
+                <column name="par_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" />
+        </set>
+        <property name="functionalFlag" type="short">
+            <column name="functional_flag" not-null="true"/>
+        </property>
+        <property name="temporalFlag" type="short">
+            <column name="temporal_flag" not-null="true"/>
+        </property>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

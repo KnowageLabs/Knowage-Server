@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.18 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiResources" table="SBI_RESOURCES" >
+        <id name="resourceId" type="integer">
+            <column name="RESOURCE_ID" />
+        </id>
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="RESOURCE_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="tableName" type="string">
+            <column name="TABLE_NAME" length="40" />
+        </property>
+        <property name="columnName" type="string">
+            <column name="COLUMN_NAME" length="40" />
+        </property>
+        <property name="resourceName" type="string">
+            <column name="RESOURCE_NAME" length="40" />
+        </property>
+        <property name="resourceDescr" type="string">
+            <column name="RESOURCE_DESCR" length="400" />
+        </property>
+        <property name="resourceCode" type="string">
+            <column name="RESOURCE_CODE" length="45" unique="true" not-null="false" />
+        </property>        
+        <set name="sbiKpiValues" inverse="true">
+            <key>
+                <column name="RESOURCE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiValue" />
+        </set>
+        <set name="sbiKpiModelResourceses" inverse="true">
+            <key>
+                <column name="RESOURCE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources" />
+        </set>
+    </class>
+</hibernate-mapping>

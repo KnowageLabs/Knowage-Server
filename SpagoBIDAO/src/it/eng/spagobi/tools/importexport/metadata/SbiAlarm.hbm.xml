@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.alarm.metadata.SbiAlarm" table="SBI_ALARM">
+        <id name="id" type="integer">
+            <column name="ALARM_ID" />
+        </id>
+        <many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" >
+            <column name="DOCUMENT_ID" />
+        </many-to-one>
+        <many-to-one name="sbiThresholdValue" class="it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue" >
+            <column name="id_threshold_value" not-null="false" />
+        </many-to-one>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
+            <column name="id_kpi_instance" not-null="true" />
+        </many-to-one>
+        <many-to-one name="modality" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="MODALITY_ID" not-null="true" />
+        </many-to-one>   
+        <property name="singleEvent" type="true_false">
+            <column name="SINGLE_EVENT" not-null="false" default="T" />
+        </property>  
+        
+        <property name="autoDisabled" type="true_false">
+            <column name="AUTO_DISABLED" not-null="false" default="T" />
+        </property>  
+
+        <property name="label" type="string">
+            <column name="LABEL" length="50" not-null="false" />
+        </property>  
+        
+        <property name="name" type="string">
+            <column name="NAME" length="50" not-null="false" />
+        </property>
+        
+        <property name="descr" type="string">
+            <column name="DESCR" length="200" not-null="false" />
+        </property>
+        
+        <property name="text" type="string">
+            <column name="TEXT" length="1000" not-null="false" />
+        </property>
+        
+        <property name="url" type="string">
+            <column name="URL" length="20" not-null="false" />
+        </property>   
+        
+        <set name="sbiAlarmContacts" table="SBI_ALARM_DISTRIBUTION" cascade="all" inverse="false">
+        	<key column="ALARM_ID"/>
+        	<many-to-many column="ALARM_CONTACT_ID" class="it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact" />
+        </set>
+    </class>
+    
+    
+<!-- 
+ALARM_ID	3	NUMBER	38
+ID_KPI_INSTANCE	3	NUMBER	38
+MODALITY_ID	3	NUMBER	38
+DOCUMENT_ID	3	NUMBER	38
+LABEL	12	VARCHAR2	50
+NAME	12	VARCHAR2	50
+DESCR	12	VARCHAR2	200
+TEXT	12	VARCHAR2	1000
+URL	12	VARCHAR2	20
+SINGLE_EVENT	1	CHAR	1
+ -->    
+
+    
+</hibernate-mapping>

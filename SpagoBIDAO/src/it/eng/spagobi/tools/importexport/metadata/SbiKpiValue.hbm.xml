@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiValue" table="SBI_KPI_VALUE" >
+        <id name="idKpiInstanceValue" type="integer">
+            <column name="id_kpi_instance_value" />
+        </id>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
+            <column name="id_kpi_instance" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiResources" class="it.eng.spagobi.kpi.model.metadata.SbiResources" >
+            <column name="RESOURCE_ID"  />
+        </many-to-one>
+        <many-to-one name="sbiOrgUnit" class="it.eng.spagobi.kpi.ou.metadata.SbiOrgUnit" >
+            <column name="ORG_UNIT_ID"  />
+        </many-to-one>
+        <property name="value" type="string">
+            <column name="VALUE" length="40" />
+        </property>
+        <property name="beginDt" type="timestamp">
+            <column name="BEGIN_DT" length="10" />
+        </property>
+        <property name="endDt" type="timestamp">
+            <column name="END_DT" length="10" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="100" />
+        </property>
+        <property name="xmlData" type="string">
+            <column name="XML_DATA" />
+        </property>
+    </class>
+</hibernate-mapping>
