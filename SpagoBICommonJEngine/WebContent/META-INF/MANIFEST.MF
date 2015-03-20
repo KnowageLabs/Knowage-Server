@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: SpagoBICommonJEngine.war
+Implementation-Title: SpagoBICommonJEngine
+Implementation-Version: 5.1.0
+

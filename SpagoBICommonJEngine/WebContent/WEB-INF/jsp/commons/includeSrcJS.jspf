@@ -1,0 +1,7 @@
+<!-- Include spagobi scripts: -->
+<script type="text/javascript" src='../js/spagobi/commons/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/ExecutionPanel.js'/></script>
+
+
+	      

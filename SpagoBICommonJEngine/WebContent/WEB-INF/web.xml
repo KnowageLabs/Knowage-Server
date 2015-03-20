@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="SpagoBICommonJEngine" 
+		 version="2.4" 
+		 xmlns="http://java.sun.com/xml/ns/j2ee" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+	
+	<display-name>SpagoBICommonJEngine</display-name>
+	<description>
+		SpagoBI CommonJ Engine
+	</description>
+	
+	<!--  ============================================================================ -->
+	<!--  FILTERS								 									   -->
+	<!--  ============================================================================ -->		
+	
+	 <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+         <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+    </filter-mapping>
+     
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+    </filter-mapping>   
+	
+	
+	
+<!-- START-CAS 	
+<filter>
+  <filter-name>CAS Authentication Filter</filter-name>
+  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
+  <init-param>
+    <param-name>casServerLoginUrl</param-name>
+    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas/login</param-value>
+  </init-param>
+  <init-param>
+    <param-name>serverName</param-name>
+    <param-value>athos.engilab.ewebpd.eng.it:1447</param-value>
+  </init-param>    
+</filter>
+
+<filter>
+  <filter-name>CAS Validation Filter</filter-name>
+  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+  <init-param>
+    <param-name>casServerUrlPrefix</param-name>
+    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas</param-value>
+  </init-param>
+  <init-param>
+    <param-name>serverName</param-name>
+    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
+  </init-param>
+  <init-param>
+    <param-name>proxyReceptorUrl</param-name>
+    <param-value>/proxyCallback</param-value>
+  </init-param> 
+  <init-param>
+		<param-name>proxyCallbackUrl</param-name>
+		<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBICommonJEngine/proxyCallback</param-value>
+  </init-param>  
+</filter>
+
+<filter>
+  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+</filter>
+END-CAS -->
+ 	
+
+	
+	<!--  ============================================================================ -->
+	<!--  FILTER MAPPINGS						 									   -->
+	<!--  ============================================================================ -->
+<!-- START-CAS 	
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/WorkRunService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/EngineInfoService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/WorkUploadService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/WorkRunServiceTest</url-pattern>
+  </filter-mapping>
+
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/JobRunService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/EngineInfoService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/WorkUploadService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/WorkRunServiceTest</url-pattern>
+  </filter-mapping>
+
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/WorkRunService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/EngineInfoService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/WorkUploadService</url-pattern>
+  </filter-mapping> 
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/WorkRunServiceTest</url-pattern>
+  </filter-mapping>
+  
+  <filter-mapping>
+		<filter-name>CAS Validation Filter</filter-name>
+		<url-pattern>/proxyCallback</url-pattern>	
+  </filter-mapping>
+END-CAS -->
+
+	<filter>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
+	</filter>
+	
+		<filter-mapping>
+    	<filter-name>SpagoBIAccessFilter</filter-name>
+    	<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</filter-mapping>
+	 
+	<filter-mapping>
+		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+	</filter-mapping>	
+
+	<!--  ============================================================================ -->
+	<!--  SERVLETS								 									   -->
+	<!--  ============================================================================ -->
+
+	 
+		<servlet>
+		<servlet-name>AdapterHTTP</servlet-name>
+		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
+	</servlet>
+
+   	<servlet>
+		<servlet-name>ConfigServlet</servlet-name>
+		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+		<init-param>
+			<param-name>AF_CONFIG_FILE</param-name>
+			<param-value>/WEB-INF/conf/master.xml</param-value>
+		</init-param>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+   
+	
+	<servlet>
+		<servlet-name>EngineTestServlet</servlet-name>
+		<servlet-class>
+			it.eng.spagobi.utilities.engines.EngineTestServlet
+		</servlet-class>
+	</servlet>
+	
+	<!--  ============================================================================ -->
+	<!--  SERVLET MAPPINGS						 									   -->
+	<!--  ============================================================================ -->
+  		
+	
+	<servlet-mapping>
+		<servlet-name>AdapterHTTP</servlet-name>
+		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+	</servlet-mapping>
+	
+	
+	<!--<servlet-mapping>
+		<servlet-name>WorkRunServlet</servlet-name>
+		<url-pattern>/WorkRunServlet</url-pattern>
+	</servlet-mapping>
+	
+	
+	<servlet-mapping>
+		<servlet-name>WorkRunService</servlet-name>
+		<url-pattern>/WorkRunServiceBackEnd</url-pattern>
+	</servlet-mapping>	
+	
+-->
+	<servlet-mapping>
+		<servlet-name>AdapterHTTP</servlet-name>
+		<url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
+	</servlet-mapping>
+  	
+	 <servlet-mapping>
+		<servlet-name>EngineTestServlet</servlet-name>
+		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
+	</servlet-mapping>
+	
+		<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+    
+  	<error-page>
+    	<error-code>404</error-code>
+    	<location>/jsp/errors/error404.jsp</location>
+  	</error-page> 
+  
+  	<error-page>
+	  	<exception-type>java.lang.Throwable</exception-type>
+	  	<location>/html/error.html</location>
+	</error-page>
+	
+	
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+	<!--  ============================================================================ -->
+	<!--  RESOURCES								 									   -->
+	<!--  ============================================================================ -->
+
+  <resource-ref>
+    <description>Spagobi db</description>
+    <res-ref-name>jdbc/spagobi</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
+  
+  <resource-ref>
+    <res-ref-name>worker/worker</res-ref-name>
+    <res-type>commonj.work.WorkManager</res-type>
+    <res-auth>Container</res-auth>
+    <res-sharing-scope>Shareable</res-sharing-scope>
+  </resource-ref>
+		 
+
+	
+</web-app>
