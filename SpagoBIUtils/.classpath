@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar" sourcepath="D:/Progetti/Spago/spago2.2.0-src.zip"/>
+	<classpathentry kind="lib" path="lib/spago-web-2.2.0.jar" sourcepath="C:/Installation_files/Spago/spago2.2.0-src.zip"/>
+	<classpathentry kind="lib" path="lib/commonj-twm.jar"/>
+	<classpathentry kind="lib" path="lib/foo-commonj.jar"/>
+	<classpathentry kind="lib" path="lib/axis.jar"/>
+	<classpathentry kind="lib" path="lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/portlet-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/groovy-all-1.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/groovy.engine.jar"/>
+	<classpathentry kind="lib" path="lib/javascript.engine.jar"/>
+	<classpathentry kind="lib" path="lib/js.jar"/>
+	<classpathentry kind="lib" path="lib/jsr223.jar"/>
+	<classpathentry kind="lib" path="lib/wss4j-1.5.7.jar"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/axis-ant.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/cas-client-core-3.1.6.jar"/>
+	<classpathentry kind="lib" path="lib/casclient.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/commons-discovery-0.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/hbql-0.90.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/UserAgentUtils-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/super-csv-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/poi-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="lib/poi-scratchpad-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="lib/it.eng.spagobi.commons_1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.6.0.v20100505.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.common_2.8.0.v20130125-0546.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore_2.8.3.v20130125-0546.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore.xmi_2.8.1.v20130125-0546.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.wtp.xml.capabilities_1.0.100.v201005102000.jar"/>
+	<classpathentry kind="lib" path="lib/jug-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/it.eng.spagobi.meta.model_4.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/quartz-1.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/spago-portlet-2.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/jgrapht-jdk1.6.jar"/>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.12.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.utility"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/javax.json-1.0.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

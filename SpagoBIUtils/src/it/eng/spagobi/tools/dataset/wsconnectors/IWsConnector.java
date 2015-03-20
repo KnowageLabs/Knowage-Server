@@ -1,0 +1,26 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+package it.eng.spagobi.tools.dataset.wsconnectors;
+
+import java.util.HashMap;
+
+
+/**
+ * @author Angelo Bernabei
+ *         angelo.bernabei@eng.it
+ */
+public interface IWsConnector {
+
+    /**
+     * 
+     * @param adress String WS Address
+     * @param params HasMap input parameters
+     * @param operation String operation
+     * @return String result
+     */
+    String readDataSet(String adress,HashMap params, String operation);  
+    
+}
