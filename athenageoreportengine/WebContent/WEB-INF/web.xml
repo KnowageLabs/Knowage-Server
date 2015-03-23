@@ -1,323 +1,169 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="SpagoBIGeoReportEngine"
-		 xmlns="http://java.sun.com/xml/ns/j2ee" 
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
-		 version="2.4">
-
-	<display-name>SpagoBIGeoReportEngine</display-name>
-	<description>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="SpagoBIGeoReportEngine" version="2.4">
+  <display-name>AthenaGeoReportEngine</display-name>
+  <description>
 		SpagoBI - SpagoBIGeoReportEngine
 	</description>
-	
-	 
-	<!--  ============================================================================ -->
-	<!--  FILTERS								 									                                   -->
-	<!--  ============================================================================ -->
-	
-	
-	
-	<filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-         <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-    </filter>
-	
-	   <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
-    </filter-mapping>    
-    
-	
-	
-	
- 	<!-- START-CAS 
-	<filter>
-	  <filter-name>CAS Authentication Filter</filter-name>
-	  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-	  <init-param>
-	    <param-name>casServerLoginUrl</param-name>
-	    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas/login</param-value>
-	  </init-param>
-	  <init-param>
-	    <param-name>serverName</param-name>
-	    <param-value>athos.engilab.ewebpd.eng.it:1447</param-value>
-	  </init-param>    
-	</filter>
-
-	<filter>
-	  <filter-name>CAS Validation Filter</filter-name>
-	  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-	  <init-param>
-	    <param-name>casServerUrlPrefix</param-name>
-	    <param-value>https://athos.engilab.ewebpd.eng.it:1447/cas</param-value>
-	  </init-param>
-	  <init-param>
-	    <param-name>serverName</param-name>
-	    <param-value>https://athos.engilab.ewebpd.eng.it:1447</param-value>
-	  </init-param>
-	  <init-param>
-	    <param-name>proxyReceptorUrl</param-name>
-	    <param-value>/proxyCallback</param-value>
-	  </init-param> 
-	  <init-param>
-			<param-name>proxyCallbackUrl</param-name>
-			<param-value>https://athos.engilab.ewebpd.eng.it:1447/SpagoBIGeoReportEngine/proxyCallback</param-value>
-	   </init-param>  
-	</filter>
-
-	<filter>
-	  <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-	  <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-	</filter>
-	
-	END-CAS -->
-
-	<filter>
-		<filter-name>SpagoBIAccessFilter</filter-name>
-		<filter-class>
+  <filter>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <filter-class>
 			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
 		</filter-class>
-	</filter>
-
-
-
-	<!--  ============================================================================ -->
-	<!--  FILTER MAPPINGS								 									                                   -->
-	<!--  ============================================================================ -->
-
-	<!-- START-CAS 
-   
-   	<filter-mapping>
-    	<filter-name>CAS Authentication Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-  	</filter-mapping> 
-    	
-   	<filter-mapping>
-    	<filter-name>CAS Validation Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-  	</filter-mapping> 
-   	
-
-   	<filter-mapping>
-    	<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    	<url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-  	</filter-mapping> 
-  
-  	<filter-mapping>
-		<filter-name>CAS Validation Filter</filter-name>
-		<url-pattern>/proxyCallback</url-pattern>	
-  	</filter-mapping>
-
-	END-CAS -->
-	
-	<filter-mapping>
-        <filter-name>SpagoBIAccessFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>SpagoBIAccessFilter</filter-name>
-        <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
-    </filter-mapping>    
-	
-
-
-    <!--  ============================================================================ -->
-	<!--  SERVLETS								 									                                   -->
-	<!--  ============================================================================ -->
-	<servlet>
-		<servlet-name>ConfigServlet</servlet-name>
-		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-		<init-param>
-			<param-name>AF_CONFIG_FILE</param-name>
-			<param-value>/WEB-INF/conf/master.xml</param-value>
-		</init-param>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	
-	<servlet>
-  		<servlet-name>ProxyTicketReceptor</servlet-name> 
-  		<servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class> 
-		<init-param>
-  			<param-name>edu.yale.its.tp.cas.proxyUrl</param-name> 
-  			<param-value>https://localhost:8443/exo-cas-2/proxy</param-value> 
-  		</init-param>
-    </servlet>
-
-
-	<servlet>
-		<servlet-name>GeoReportEngineStartAction</servlet-name>
-		<servlet-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SpagoBIAccessFilter</filter-name>
+    <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>ConfigServlet</servlet-name>
+    <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
+    <init-param>
+      <param-name>AF_CONFIG_FILE</param-name>
+      <param-value>/WEB-INF/conf/master.xml</param-value>
+    </init-param>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet>
+    <servlet-name>ProxyTicketReceptor</servlet-name>
+    <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
+    <init-param>
+      <param-name>edu.yale.its.tp.cas.proxyUrl</param-name>
+      <param-value>https://localhost:8443/exo-cas-2/proxy</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>GeoReportEngineStartAction</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GeoReportEngineStartAction
 		</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>GeoReportEngineStartEditAction</servlet-name>
-		<servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GeoReportEngineStartEditAction</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GeoReportEngineStartEditAction
 		</servlet-class>
-	</servlet>
-	
-	<servlet>
-      <servlet-name>GetLayersFromWMS</servlet-name>
-      <servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetLayersFromWMS</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GetLayersFormWMSAction
 		</servlet-class>
-	</servlet>
-	  
-	
-	<servlet>
-      <servlet-name>GetTargetDataset</servlet-name>
-      <servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetTargetDataset</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GetTargetDatasetAction
 		</servlet-class>
-	</servlet>
-	
-	<servlet>
-      <servlet-name>GetTargetLayer</servlet-name>
-      <servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetTargetLayer</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GetTargetLayerAction
 		</servlet-class>
-	</servlet>
-	
-	<servlet>
-    	<servlet-name>MapOl</servlet-name>
-      <servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>MapOl</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.MapOlAction
 		</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>GetHierarchyLevelMeta</servlet-name>
-        <servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>GetHierarchyLevelMeta</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.engines.georeport.services.GetHierachyLevelMetaAction
 		</servlet-class>
-	</servlet>
-	  
-    <servlet>
-		<servlet-name>EngineTestServlet</servlet-name>
-		<servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>EngineTestServlet</servlet-name>
+    <servlet-class>
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
-	</servlet>
-	
-    <!-- 
-    <servlet>
-	    <servlet-name>mapfish.print</servlet-name>
-	    <servlet-class>org.mapfish.print.servlet.MapPrinterServlet</servlet-class>
-	    <init-param>
-	      <param-name>config</param-name>
-	      <param-value>config.yaml</param-value>
-		</init-param>
-	</servlet>
-	 -->
-	 
-	<servlet>
-      <servlet-name>LayerWms</servlet-name>
-      <jsp-file>/WEB-INF/LayerWms.jsp</jsp-file>
-    </servlet>
- 
-    <servlet>
-      <servlet-name>Sandbox</servlet-name>
-      <jsp-file>/WEB-INF/jsp/sandbox.jsp</jsp-file>
-    </servlet>
-
-	<!--  ============================================================================ -->
-	<!--  SERVLET MAPPINGS						 									                               -->
-	<!--  ============================================================================ -->
-	    
- 	<servlet-mapping>
-  		<servlet-name>ProxyTicketReceptor</servlet-name> 
-  		<url-pattern>/proxyReceptor</url-pattern> 
-  	</servlet-mapping> 
-
-
-	<servlet-mapping>
-		<servlet-name>GeoReportEngineStartAction</servlet-name>
-		<url-pattern>/GeoReportEngineStartAction</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>GeoReportEngineStartEditAction</servlet-name>
-		<url-pattern>/GeoReportEngineStartEditAction</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-    	<servlet-name>GetLayersFromWMS</servlet-name>
-    	<url-pattern>/GetLayersFromWMS</url-pattern>
-  	</servlet-mapping>
-  	 	    
-  	<servlet-mapping>
-    	<servlet-name>GetTargetDataset</servlet-name>
-    	<url-pattern>/GetTargetDataset</url-pattern>
-  	</servlet-mapping>
-  	
-  	<servlet-mapping>
-    	<servlet-name>GetTargetLayer</servlet-name>
-    	<url-pattern>/GetTargetLayer</url-pattern>
-  	</servlet-mapping>
-  	
-  	<servlet-mapping>
-    	<servlet-name>MapOl</servlet-name>
-    	<url-pattern>/MapOl</url-pattern>
-  	</servlet-mapping>
-  	
-  	<servlet-mapping>
-    	<servlet-name>GetHierarchyLevelMeta</servlet-name>
-    	<url-pattern>/GetHierarchyLevelMeta</url-pattern>
-  	</servlet-mapping>
-  	
-    <servlet-mapping>
-		<servlet-name>EngineTestServlet</servlet-name>
-		<url-pattern>/GeoReportEngineStartActionTest</url-pattern>
-	</servlet-mapping>
-	<!-- 
-	<servlet-mapping>
-	    <servlet-name>mapfish.print</servlet-name>
-	    <url-pattern>/pdf/*</url-pattern>
-  	</servlet-mapping>
- -->
-
-	<servlet-mapping>
-    	<servlet-name>LayerWms</servlet-name>
-    	<url-pattern>/LayerWms</url-pattern>
-  	</servlet-mapping>
-  	
-  	<servlet-mapping>
-      <servlet-name>Sandbox</servlet-name>
-      <url-pattern>/Sandbox</url-pattern>
-    </servlet-mapping>
-  	
-	<!--  ============================================================================ -->
-	<!--  GENERAL SETTINGS						 									   -->
-	<!--  ============================================================================ -->    
-    
-	<welcome-file-list>
-		<welcome-file>/html/index.jsp</welcome-file>
-	</welcome-file-list>
-
-	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
-	  	<location>/html/error.html</location>
-	</error-page>
-		 
-	<error-page>
-		<error-code>404</error-code>
-	  	<location>/html/error.html</location>
-	</error-page>
-  
-	<error-page>
-	  	<error-code>500</error-code>
-	  	<location>/html/error.html</location>
-	</error-page>
-
+  </servlet>
+  <servlet>
+    <servlet-name>LayerWms</servlet-name>
+    <jsp-file>/WEB-INF/LayerWms.jsp</jsp-file>
+  </servlet>
+  <servlet>
+    <servlet-name>Sandbox</servlet-name>
+    <jsp-file>/WEB-INF/jsp/sandbox.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ProxyTicketReceptor</servlet-name>
+    <url-pattern>/proxyReceptor</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GeoReportEngineStartAction</servlet-name>
+    <url-pattern>/GeoReportEngineStartAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GeoReportEngineStartEditAction</servlet-name>
+    <url-pattern>/GeoReportEngineStartEditAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetLayersFromWMS</servlet-name>
+    <url-pattern>/GetLayersFromWMS</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetTargetDataset</servlet-name>
+    <url-pattern>/GetTargetDataset</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetTargetLayer</servlet-name>
+    <url-pattern>/GetTargetLayer</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MapOl</servlet-name>
+    <url-pattern>/MapOl</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetHierarchyLevelMeta</servlet-name>
+    <url-pattern>/GetHierarchyLevelMeta</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>EngineTestServlet</servlet-name>
+    <url-pattern>/GeoReportEngineStartActionTest</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>LayerWms</servlet-name>
+    <url-pattern>/LayerWms</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Sandbox</servlet-name>
+    <url-pattern>/Sandbox</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>/html/index.jsp</welcome-file>
+  </welcome-file-list>
+  <error-page>
+    <exception-type>java.lang.Throwable</exception-type>
+    <location>/html/error.html</location>
+  </error-page>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/html/error.html</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/html/error.html</location>
+  </error-page>
 </web-app>
-

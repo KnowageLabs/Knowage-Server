@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="SpagoBIDataMiningEngine">
+<wb-module deploy-name="AthenaDataMiningEngine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/WebContent/WEB-INF/lib"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-        <dependent-module archiveName="SpagoBIDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
+        <dependent-module archiveName="AthenaUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtils/AthenaUtils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="SpagoBIUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
+        <dependent-module archiveName="AthenaDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaDAO/AthenaDAO">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-<property name="context-root" value="SpagoBIDataMiningEngine"/>
+        <dependent-module archiveName="AthenaUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtilsJSON/AthenaUtilsJSON">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 <property name="java-output-path"/>
+        <property name="context-root" value="AthenaDataMiningEngine"/>
 </wb-module>
 </project-modules>

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/QbeCore"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIDAO"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.web;#system#"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_21">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaDAO"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

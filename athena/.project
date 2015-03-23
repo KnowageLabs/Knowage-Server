@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SpagoBIProject</name>
+	<name>Athena</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIUtils</project>
-		<project>SpagoBIUtilsJSON</project>
 		<project>QbeCore</project>
-		<project>SpagoBIDAO</project>
-		<project>SpagoBIOAuth2SecurityProvider</project>
+		<project>AthenaUtils</project>
+		<project>AthenaDAO</project>
+		<project>AthenaOAuth2SecurityProvider</project>
+		<project>AthenaUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

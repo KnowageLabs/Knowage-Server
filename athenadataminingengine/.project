@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SpagoBIDataMiningEngine</name>
+	<name>AthenaDataMiningEngine</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIDAO</project>
-		<project>SpagoBIUtils</project>
-		<project>SpagoBIUtilsJSON</project>
+		<project>AthenaUtils</project>
+		<project>AthenaDAO</project>
+		<project>AthenaUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

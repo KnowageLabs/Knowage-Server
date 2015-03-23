@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SpagoBIQbeEngine</name>
+	<name>AthenaQbeEngine</name>
 	<comment></comment>
 	<projects>
 		<project>QbeCore</project>
-		<project>SpagoBIUtils</project>
-		<project>SpagoBIUtilsJSON</project>
+		<project>AthenaUtils</project>
+		<project>AthenaUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

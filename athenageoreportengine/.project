@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SpagoBIGeoReportEngine</name>
+	<name>AthenaGeoReportEngine</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIUtils</project>
-		<project>SpagoBIUtilsJSON</project>
-		<project>SpagoBIDAO</project>
 		<project>QbeCore</project>
+		<project>AthenaUtils</project>
+		<project>AthenaDAO</project>
+		<project>AthenaUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

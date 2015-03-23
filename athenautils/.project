@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SpagoBIUtils</name>
+	<name>AthenaUtils</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIUtilsJSON</project>
+		<project>AthenaUtilsJSON</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

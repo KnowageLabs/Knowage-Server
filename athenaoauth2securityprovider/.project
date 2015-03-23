@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SpagoBIOAuth2SecurityProvider</name>
+	<name>AthenaOAuth2SecurityProvider</name>
 	<comment></comment>
 	<projects>
-		<project>SpagoBIUtils</project>
+		<project>AthenaUtils</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

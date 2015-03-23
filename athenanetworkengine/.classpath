@@ -26,8 +26,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cas-client-core-3.1.6.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-web-2.2.0.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SpagoBIUtils"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-portlet-2.2.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/spago-profile-2.2.0.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/portlet-api-1.0.jar"/>
@@ -38,10 +36,12 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_21">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="lib/jdbc/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.9.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtils"/>
 	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/eclipselink/eclipselink_2.1.2.v20101206-r8635.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.6.2.jar"/>
@@ -28,7 +27,6 @@
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SpagoBIUtilsJSON"/>
 	<classpathentry kind="lib" path="lib/jgrapht-jdk1.6.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/sqljdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.1.jar"/>
@@ -38,5 +36,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

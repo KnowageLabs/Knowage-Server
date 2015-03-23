@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="SpagoBICockpitEngine">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+<wb-module deploy-name="AthenaCockpitEngine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-        <dependent-module archiveName="SpagoBIUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="QbeCore.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/QbeCore/QbeCore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="SpagoBIDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
+        <dependent-module archiveName="AthenaUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtils/AthenaUtils">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="AthenaDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaDAO/AthenaDAO">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="AthenaUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtilsJSON/AthenaUtilsJSON">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path"/>
-        <property name="context-root" value="SpagoBICockpitEngine"/>
+        <property name="context-root" value="AthenaCockpitEngine"/>
 </wb-module>
 </project-modules>
