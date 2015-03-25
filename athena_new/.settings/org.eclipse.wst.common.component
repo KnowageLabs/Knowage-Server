@@ -3,16 +3,16 @@
         <wb-resource deploy-path="/" source-path="/web-content"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
-<dependent-module archiveName="SpagoBIUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtils/SpagoBIUtils">
-<dependency-type>uses</dependency-type>
-</dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIUtilsJSON/SpagoBIUtilsJSON">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="QbeCore.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/QbeCore/QbeCore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="SpagoBIDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/SpagoBIDAO/SpagoBIDAO">
+        <dependent-module archiveName="AthenaUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtilsJSON/AthenaUtilsJSON">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="AthenaDAO.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaDAO/AthenaDAO">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="AthenaUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtils/AthenaUtils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path" value="build/classes"/>
