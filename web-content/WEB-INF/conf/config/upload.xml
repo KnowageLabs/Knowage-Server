@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UPLOAD>
+	<UPLOAD_METHODS>
+		<UPLOAD_METHOD name="SET_UPLOAD_OBJECT_INTO_REQUEST" class="it.eng.spagobi.commons.utilities.UploadManager"/>
+	</UPLOAD_METHODS>
+	<UPLOAD-MANAGER name="SET_UPLOAD_OBJECT_INTO_REQUEST"/>
+</UPLOAD>

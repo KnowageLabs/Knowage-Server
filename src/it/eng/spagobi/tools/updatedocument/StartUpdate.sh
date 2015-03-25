@@ -1,0 +1,2 @@
+#!/bin/sh 
+java -cp lib/activation.jar:lib/axis-ant.jar:lib/axis.jar:lib/commons-discovery-0.2.jar:lib/commons-logging-1.0.jar:lib/commons-logging-api-1.1.jar:lib/jaxrpc.jar:lib/mail-1.4.jar:lib/saaj.jar:lib/sbi.utils-3.1.0.jar:lib/UpdateDocument.jar:lib/wsdl4j-1.5.1.jar:lib/wss4j-1.5.7.jar:lib/xalan-2.6.0.jar:lib/xercesImpl-2.6.2.jar:lib/xml-apis-2.0.2.jar:lib/xmlsec-1.4.2.jar:conf/image_update.properties it/eng/spagobi/tools/updatedocument/UpdateDocument.java

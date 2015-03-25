@@ -1,0 +1,18 @@
+<div style='width:650px;font-size:10px;font-family:verdana;' >
+<br/>
+I nomi di colonna con punti o funzioni di aggregazione non sono permessi, 
+se è necessario utilizzarli assegnare un alias alla colonna (as).
+<br/>
+<b>Esempio:</b> select sum(colonna) as nome_colonna, colonna.colonna as nome_colonna
+<br/><br/>
+Per utilizzare un attributo di profilo dentro la query usa la sintassi <b>${nome_attributo_profilo}</b> 
+<br/>
+<b>Esempio:</b> select ... where colonna = '${nome_attributo_profilo}').
+<br/><br/>
+Per usare un attributo di profilo multi-valore usa la sintassi <b>${nome_attributo_profilo(prefix;splitter;suffix)}</b>
+<br/>
+L'attributo verrà sostituito con prefix+(lista di valori separati dallo splitter)+suffix 
+<br/>
+<b>Esempio:</b> select ... where colonna ${nome_attributo_profilo( in (';',';') )})
+<br/><br/>
+</div>

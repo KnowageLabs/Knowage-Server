@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobisbidocument" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisbidocument" xmlns:intf="urn:spagobisbidocument" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.sbidocument.services.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="urn:spagobisbidocument" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.sbidocument.services.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_anyType">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:anyType[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns2_SpagobiAnalyticalDriver">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SpagobiAnalyticalDriver[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://bo.sbidocument.services.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisbidocument"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SpagobiAnalyticalDriver">
+    <sequence>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="type" nillable="true" type="soapenc:string"/>
+     <element name="urlName" nillable="true" type="soapenc:string"/>
+     <element name="values" nillable="true" type="impl:ArrayOf_xsd_anyType"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getDocumentAnalyticalDriversJSONRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:int"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+      <wsdl:part name="in4" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentAnalyticalDriversRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:int"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+      <wsdl:part name="in4" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentAnalyticalDriversJSONResponse">
+
+      <wsdl:part name="getDocumentAnalyticalDriversJSONReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentAnalyticalDriversResponse">
+
+      <wsdl:part name="getDocumentAnalyticalDriversReturn" type="impl:ArrayOf_tns2_SpagobiAnalyticalDriver"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="SbiDocumentService">
+
+      <wsdl:operation name="getDocumentAnalyticalDrivers" parameterOrder="in0 in1 in2 in3 in4">
+
+         <wsdl:input message="impl:getDocumentAnalyticalDriversRequest" name="getDocumentAnalyticalDriversRequest"/>
+
+         <wsdl:output message="impl:getDocumentAnalyticalDriversResponse" name="getDocumentAnalyticalDriversResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentAnalyticalDriversJSON" parameterOrder="in0 in1 in2 in3 in4">
+
+         <wsdl:input message="impl:getDocumentAnalyticalDriversJSONRequest" name="getDocumentAnalyticalDriversJSONRequest"/>
+
+         <wsdl:output message="impl:getDocumentAnalyticalDriversJSONResponse" name="getDocumentAnalyticalDriversJSONResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="SbiDocumentServiceSoapBinding" type="impl:SbiDocumentService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getDocumentAnalyticalDrivers">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentAnalyticalDriversRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisbidocument" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentAnalyticalDriversResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisbidocument" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentAnalyticalDriversJSON">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentAnalyticalDriversJSONRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisbidocument" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentAnalyticalDriversJSONResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisbidocument" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="SbiDocumentServiceService">
+
+      <wsdl:port binding="impl:SbiDocumentServiceSoapBinding" name="SbiDocumentService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/SbiDocumentService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

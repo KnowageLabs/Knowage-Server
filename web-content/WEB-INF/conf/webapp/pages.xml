@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+	
+	<PAGE name="LoginPage" scope="REQUEST" title="Document template build page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="LoginPage" target="LoginModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="LoginModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<!--
+  	<PAGE name="LogoutPage" scope="REQUEST" title="Logout Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="LogoutPage" target="LogoutModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="LogoutModule"/>
+    	</MODULES>
+  	</PAGE>
+  	-->
+  	
+  	<PAGE name="ViewBuilderPage" scope="REQUEST" title="View Builder" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ViewBuilderPage" target="ViewBuilderModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ViewBuilderModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="DirectExecutionPage" scope="REQUEST" title="Execution" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DirectExecutionPage" target="DirectExecutionModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DirectExecutionModule"/>
+    	</MODULES>
+  	</PAGE>
+
+	<PAGE name="DetailMenuPage" scope="REQUEST" title="Menu Page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailMenuPage" target="DetailMenuModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailMenuModule"/>
+    	</MODULES>
+  	</PAGE>
+
+
+
+	<PAGE name="MenuConfigurationPage" scope="REQUEST" title="Menu Page" >
+    	<DEPENDENCIES>
+    	<DEPENDENCE source="MenuConfigurationPage" target="TreeMenuModule"/>
+    	</DEPENDENCIES>
+    	<MODULES>
+    	<MODULE keep_instance="false" keep_response="false" name="TreeMenuModule"/> 
+    	</MODULES>
+  	</PAGE>
+
+ 	<PAGE name="DocumentLookupPage" scope="REQUEST" title="DocumentLookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DocumentLookupPage" target="ListLookupDocumentModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLookupDocumentModule"/>
+    	</MODULES>
+  	</PAGE> 
+
+</PAGES>
+

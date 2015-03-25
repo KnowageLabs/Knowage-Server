@@ -1,0 +1,50 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from DataSetServiceService WSDL service -->
+
+  <service name="DataSetService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobidataset"/>
+      <parameter name="wsdlServiceElement" value="DataSetServiceService"/>
+      <parameter name="schemaUnqualified" value="http://bo.datasource.services.spagobi.eng.it,http://bo.dataset.services.spagobi.eng.it,urn:spagobidataset"/>
+      <parameter name="wsdlServicePort" value="DataSetService"/>
+      <parameter name="className" value="it.eng.spagobi.services.dataset.stub.DataSetServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="DataSetService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <typeMapping
+        xmlns:ns="http://bo.dataset.services.spagobi.eng.it"
+        qname="ns:SpagoBiDataSet"
+        type="java:it.eng.spagobi.services.dataset.bo.SpagoBiDataSet"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobidataset"
+        qname="ns:ArrayOf_tns2_SpagoBiDataSet"
+        type="java:it.eng.spagobi.services.dataset.bo.SpagoBiDataSet[]"
+        innerType="cmp-ns:SpagoBiDataSet" xmlns:cmp-ns="http://bo.dataset.services.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.datasource.services.spagobi.eng.it"
+        qname="ns:SpagoBiDataSource"
+        type="java:it.eng.spagobi.services.datasource.bo.SpagoBiDataSource"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+  	<ACTION name="DOWNLOAD_FILE_ACTION" class="it.eng.spagobi.tools.importexport.services.DownloadFileAction" scope="REQUEST">
+ 		<CONFIG/>
+ 	</ACTION>
+ 	<ACTION name="MANAGE_IMPEXP_ASS_ACTION" class="it.eng.spagobi.tools.importexport.services.ManageImpExpAssAction" scope="REQUEST">
+ 		<CONFIG/>
+ 	</ACTION>
+ 
+</ACTIONS>
+

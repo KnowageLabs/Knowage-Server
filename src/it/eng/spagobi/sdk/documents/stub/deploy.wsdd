@@ -1,0 +1,196 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from DocumentsServiceService WSDL service -->
+
+  <service name="DocumentsService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobisdkdocuments"/>
+      <parameter name="wsdlServiceElement" value="DocumentsServiceService"/>
+      <parameter name="schemaUnqualified" value="http://exceptions.sdk.spagobi.eng.it,http://bo.importexport.sdk.spagobi.eng.it,http://xml.apache.org/xml-soap,http://bo.documents.sdk.spagobi.eng.it,urn:spagobisdkdocuments"/>
+      <parameter name="wsdlServicePort" value="DocumentsService"/>
+      <parameter name="className" value="it.eng.spagobi.sdk.documents.stub.DocumentsServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="DocumentsService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:InvalidParameterValue"
+        type="java:it.eng.spagobi.sdk.exceptions.InvalidParameterValue"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKDocumentParameterValue"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_xsd_anyType"
+        type="java:java.lang.Object[]"
+        innerType="cmp-ns:anyType" xmlns:cmp-ns="http://www.w3.org/2001/XMLSchema"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://xml.apache.org/xml-soap"
+        qname="ns:mapItem"
+        type="java:org.apache.xml.xml_soap.MapItem"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.importexport.sdk.spagobi.eng.it"
+        qname="ns:SDKFile"
+        type="java:it.eng.spagobi.sdk.importexport.bo.SDKFile"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_soapenc_string"
+        type="java:java.lang.String[]"
+        innerType="cmp-ns:string" xmlns:cmp-ns="http://schemas.xmlsoap.org/soap/encoding/"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKConstraint"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKConstraint"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKDocument"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocument"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_tns2_SDKDocumentParameterValue"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocumentParameterValue[]"
+        innerType="cmp-ns:SDKDocumentParameterValue" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKExecutedDocumentContent"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKTemplate"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKTemplate"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_tns2_SDKDocumentParameter"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter[]"
+        innerType="cmp-ns:SDKDocumentParameter" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:NonExecutableDocumentException"
+        type="java:it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKFunctionality"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKFunctionality"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKSchema"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKSchema"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_tns2_SDKDocument"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocument[]"
+        innerType="cmp-ns:SDKDocument" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_tns2_SDKFunctionality"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKFunctionality[]"
+        innerType="cmp-ns:SDKFunctionality" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.documents.sdk.spagobi.eng.it"
+        qname="ns:SDKDocumentParameter"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:MissingParameterValue"
+        type="java:it.eng.spagobi.sdk.exceptions.MissingParameterValue"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:NotAllowedOperationException"
+        type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdocuments"
+        qname="ns:ArrayOf_tns2_SDKConstraint"
+        type="java:it.eng.spagobi.sdk.documents.bo.SDKConstraint[]"
+        innerType="cmp-ns:SDKConstraint" xmlns:cmp-ns="http://bo.documents.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:SDKException"
+        type="java:it.eng.spagobi.sdk.exceptions.SDKException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

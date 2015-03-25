@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+	
+    
+    <MODULE class="it.eng.spagobi.events.services.DetailEventLogModule" name="DetailEventLogModule">
+     	<CONFIG/>
+    </MODULE>  
+<MODULE class="it.eng.spagobi.events.services.ListEventsLogModule" name="ListEventsLogModule">
+     <CONFIG pool="spagobi" rows="20" title="sbievents.list.title">
+      <QUERIES/>
+      <COLUMNS>
+        <COLUMN label="sbievents.list.eventId" name="ID" />
+        <COLUMN label="sbievents.list.eventDate" name="DATE"/>
+        <COLUMN label="sbievents.list.eventUser" name="USER"/>
+        <COLUMN label="sbievents.list.eventDescription" name="DESCRIPTION"/>
+      </COLUMNS>
+      <CAPTIONS>
+        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="sbievents.list.seeDetail">
+          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailEventLogPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+        </SELECT_CAPTION>
+        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="sbievents.list.eraseDetail">
+              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailEventLogPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+        </DELETE_CAPTION>
+      </CAPTIONS>
+      <BUTTONS>
+        <REFRESH_BUTTON confirm="FALSE" image="/img/updateState.png" label="sbievents.list.refresh">
+	      <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="EVENTS_MONITOR_PAGE"/>
+	      <PARAMETER name="REFRESH" scope="" type="ABSOLUTE" value="true"/>
+	    </REFRESH_BUTTON>
+        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="sbievents.list.back" onlyPortletRunning="true"  >
+          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIEventsPublisher"/>
+         <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+        </BACK_BUTTON>   
+      </BUTTONS>
+    </CONFIG>
+    </MODULE>
+
+</MODULES>
+
+

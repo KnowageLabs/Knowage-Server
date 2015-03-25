@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CACHE_CONFIG>
+	<DATA_TYPES>
+		<TYPE name="Object" bytes="8" />
+		<TYPE name="Float" bytes="16" />
+		<TYPE name="Double" bytes="16" />
+		<TYPE name="Integer" bytes="16" />
+		<TYPE name="Long" bytes="16" />
+		<TYPE name="BigInteger" bytes="56" />
+		<TYPE name="BigDecimal" bytes="72" />
+		<TYPE name="Boolean" bytes="16" />
+		<TYPE name="Date" bytes="24" />
+		<TYPE name="Timestamp" bytes="32" />
+		<TYPE name="String" bytes="4038" />
+		<TYPE name="[B" bytes="1048576" /> <!-- BLOB default: 1024x1024 -->
+		<TYPE name="[C" bytes="10000" />   <!-- CLOB -->
+	</DATA_TYPES>
+</CACHE_CONFIG>

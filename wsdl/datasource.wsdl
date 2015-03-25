@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobidatasource" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobidatasource" xmlns:intf="urn:spagobidatasource" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.datasource.services.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://bo.datasource.services.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobidatasource"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SpagoBiDataSource">
+    <sequence>
+     <element name="driver" nillable="true" type="soapenc:string"/>
+     <element name="hibDialectClass" nillable="true" type="soapenc:string"/>
+     <element name="hibDialectName" nillable="true" type="soapenc:string"/>
+     <element name="id" type="xsd:int"/>
+     <element name="jndiName" nillable="true" type="soapenc:string"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="multiSchema" nillable="true" type="soapenc:boolean"/>
+     <element name="password" nillable="true" type="soapenc:string"/>
+     <element name="readOnly" nillable="true" type="soapenc:boolean"/>
+     <element name="schemaAttribute" nillable="true" type="soapenc:string"/>
+     <element name="url" nillable="true" type="soapenc:string"/>
+     <element name="user" nillable="true" type="soapenc:string"/>
+     <element name="writeDefault" nillable="true" type="soapenc:boolean"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:spagobidatasource" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.datasource.services.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_SpagoBiDataSource">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SpagoBiDataSource[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getDataSourceByIdRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceByLabelRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceByLabelResponse">
+
+      <wsdl:part name="getDataSourceByLabelReturn" type="tns2:SpagoBiDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDataSourceResponse">
+
+      <wsdl:part name="getAllDataSourceReturn" type="impl:ArrayOf_tns2_SpagoBiDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceResponse">
+
+      <wsdl:part name="getDataSourceReturn" type="tns2:SpagoBiDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDataSourceRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataSourceByIdResponse">
+
+      <wsdl:part name="getDataSourceByIdReturn" type="tns2:SpagoBiDataSource"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="DataSourceService">
+
+      <wsdl:operation name="getDataSource" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getDataSourceRequest" name="getDataSourceRequest"/>
+
+         <wsdl:output message="impl:getDataSourceResponse" name="getDataSourceResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSourceByLabel" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getDataSourceByLabelRequest" name="getDataSourceByLabelRequest"/>
+
+         <wsdl:output message="impl:getDataSourceByLabelResponse" name="getDataSourceByLabelResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSourceById" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getDataSourceByIdRequest" name="getDataSourceByIdRequest"/>
+
+         <wsdl:output message="impl:getDataSourceByIdResponse" name="getDataSourceByIdResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDataSource" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getAllDataSourceRequest" name="getAllDataSourceRequest"/>
+
+         <wsdl:output message="impl:getAllDataSourceResponse" name="getAllDataSourceResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="DataSourceServiceSoapBinding" type="impl:DataSourceService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getDataSource">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataSourceRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataSourceResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSourceByLabel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataSourceByLabelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataSourceByLabelResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataSourceById">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataSourceByIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataSourceByIdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDataSource">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllDataSourceRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllDataSourceResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobidatasource" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="DataSourceServiceService">
+
+      <wsdl:port binding="impl:DataSourceServiceSoapBinding" name="DataSourceService">
+
+         <wsdlsoap:address location="http://localhost:8181/SpagoBI/services/DataSourceService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

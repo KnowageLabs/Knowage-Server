@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+	<PUBLISHER name="AcceptActivityPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.workflow.publishers.AcceptActivityPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.workflow.publishers.AcceptActivityPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+	<PUBLISHER name="CompleteOrRejectActivityPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="WorkflowToDoListPage" />
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="WorkflowToDoListPage" />
+        		<PARAMETER name="WEBMODE" type="ABSOLUTE" scope="" value="TRUE" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+	<PUBLISHER name="WorkflowToDoListPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/workflow/workflowToDoList.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/workflow/workflowToDoList.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+</PUBLISHERS>

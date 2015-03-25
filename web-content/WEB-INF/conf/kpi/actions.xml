@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+<!--START Kpi new interface actions in WEB modality -->
+ <ACTION name="MANAGE_KPIS_ACTION" class="it.eng.spagobi.kpi.config.service.ManageKpisAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_THRESHOLDS_ACTION" class="it.eng.spagobi.kpi.threshold.service.ManageThresholdsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_MODELS_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <ACTION name="MANAGE_PERIODICITIES_ACTION" class="it.eng.spagobi.kpi.model.service.ManagePeriodicitiesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_MODEL_INSTANCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageModelInstancesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+   <ACTION name="MANAGE_OUS_ACTION" class="it.eng.spagobi.kpi.ou.service.ManageOUsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+   <ACTION name="MANAGE_GOALS_ACTION" class="it.eng.spagobi.kpi.goal.service.ManageGoalsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+  <ACTION name="MANAGE_OU_EMPTY_ACTION" class="it.eng.spago.dispatching.action.EmptyAction"  scope="REQUEST">
+    <CONFIG/>
+ </ACTION>
+  <ACTION name="MANAGE_GOALS_EMPTY_ACTION" class="it.eng.spago.dispatching.action.EmptyAction"  scope="REQUEST">
+    <CONFIG/>
+ </ACTION>
+ <ACTION name="MANAGE_RESOURCES_ACTION" class="it.eng.spagobi.kpi.model.service.ManageResourcesAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <!--END Kpi new interface actions in WEB modality -->
+
+<!--START Kpi new interface actions in PORTLET modality -->
+ <ACTION name="INIT_MANAGE_KPIS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_THRESHOLDS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_MODELS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <ACTION name="INIT_MANAGE_PERIODICITIES_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_MODEL_INSTANCES_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+   <ACTION name="INIT_MANAGE_OUS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="INIT_MANAGE_RESOURCES_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <!--END Kpi new interface actions in PORTLET modality -->
+
+    <ACTION name="LOGIN_ACTION_KPI_CONFIGURATION" class="it.eng.spagobi.commons.services.PortletLoginAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>
+  <ACTION name="EXPORT_PDF" class="it.eng.spagobi.kpi.service.KpiExporterAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
+  <ACTION name="EXPORT_XML" class="it.eng.spagobi.kpi.service.KpiXmlExporterAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
+  
+ <!-- Action for organizational units synchronization --> 
+ <ACTION name="SYNCHRONIZE_OUS_ACTION" class="it.eng.spagobi.kpi.ou.service.SynchronizeOUsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
+</ACTIONS>

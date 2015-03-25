@@ -1,0 +1,42 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from ArtifactServiceService WSDL service -->
+
+  <service name="ArtifactService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobiartifact"/>
+      <parameter name="wsdlServiceElement" value="ArtifactServiceService"/>
+      <parameter name="schemaUnqualified" value="http://bo.artifact.services.spagobi.eng.it,urn:spagobiartifact"/>
+      <parameter name="wsdlServicePort" value="ArtifactService"/>
+      <parameter name="className" value="it.eng.spagobi.services.artifact.stub.ArtifactServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="ArtifactService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <typeMapping
+        xmlns:ns="http://bo.artifact.services.spagobi.eng.it"
+        qname="ns:SpagoBIArtifact"
+        type="java:it.eng.spagobi.services.artifact.bo.SpagoBIArtifact"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobiartifact"
+        qname="ns:ArrayOf_tns2_SpagoBIArtifact"
+        type="java:it.eng.spagobi.services.artifact.bo.SpagoBIArtifact[]"
+        innerType="cmp-ns:SpagoBIArtifact" xmlns:cmp-ns="http://bo.artifact.services.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

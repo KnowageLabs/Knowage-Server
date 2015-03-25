@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+	<SERVICE name="DOMAIN_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST"
+					value="DOMAIN_SAVE" />
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="DOMAIN_CD" label="#domains.definitionForm.fields.domain_cd">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20" />
+				</FIELD>
+				<FIELD name="DOMAIN_NM" label="#domains.definitionForm.fields.domain_nm">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40" />
+				</FIELD>
+				<FIELD name="VALUE_CD" label="#domains.definitionForm.fields.value_cd">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="VALUE_NM" label="#domains.definitionForm.fields.value_nm">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40" />
+				</FIELD>
+				<FIELD name="VALUE_DS" label="#domains.definitionForm.fields.value_ds">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160" />
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	<SERVICE name="CONFIG_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST"
+					value="CONFIG_SAVE" />
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="ID" label="#config.definitionForm.fields.id">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="LABEL" label="#config.definitionForm.fields.label">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="NAME" label="#config.definitionForm.fields.name">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100" />
+				</FIELD>
+				<FIELD name="DESCRIPTION" label="#config.definitionForm.fields.description">
+					<!--  <VALIDATOR validatorName="MANDATORY" /> -->
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="500" />
+				</FIELD>
+				<FIELD name="IS_ACTIVE" label="#config.definitionForm.fields.isactive">
+					<VALIDATOR validatorName="MANDATORY" />
+					<VALIDATOR validatorName="BOOLEAN" />
+				</FIELD>
+				<FIELD name="VALUE_CHECK" label="#config.definitionForm.fields.value_check">
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000" />
+				</FIELD>
+				<FIELD name="VALUE_TYPE" label="#config.definitionForm.fields.value_type">
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="25" />
+				</FIELD>
+				<FIELD name="CATEGORY" label="#config.definitionForm.fields.category">
+					<VALIDATOR validatorName="ALPHANUMERIC_EXTENDED_STRING_REGEXP" />
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50" />
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

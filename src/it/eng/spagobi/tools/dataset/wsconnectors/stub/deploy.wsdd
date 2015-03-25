@@ -1,0 +1,27 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from IWsConnectorService WSDL service -->
+
+  <service name="WSDataSetService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobiwsdataset"/>
+      <parameter name="wsdlServiceElement" value="IWsConnectorService"/>
+      <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap"/>
+      <parameter name="wsdlServicePort" value="WSDataSetService"/>
+      <parameter name="className" value="it.eng.spagobi.tools.dataset.wsconnectors.stub.WSDataSetServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="IWsConnector"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Session"/>
+
+  </service>
+</deployment>

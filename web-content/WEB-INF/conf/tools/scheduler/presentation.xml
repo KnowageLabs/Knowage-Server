@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+	<MAPPING business_type="ACTION" business_name="MANAGE_SCHEDULER_ACTION" publisher_name="ManageSchedulerPublisher"/>	 
+    <MAPPING business_name="JobManagementPage" business_type="PAGE" publisher_name="JobManagementPubJ"/>
+    <MAPPING business_name="TriggerManagementPage" business_type="PAGE" publisher_name="TriggerManagementPubJ"/>
+    <MAPPING business_name="LovLookupAjaxPage" business_type="PAGE" publisher_name="LovLookupAjaxPubJ"/>
+    <MAPPING business_name="SchedulerPage" business_type="PAGE" publisher_name="SchedulerPub"/>
+    
+</PRESENTATION>
+

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+  	
+  	<PUBLISHER name="LoginPublisherJava">
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.commons.presentation.LoginPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+  	<PUBLISHER name="ChangeLanguagePublisher">
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.commons.presentation.ChangeLanguagePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="LoginPublisher">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/login.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="LogoutPublisher">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/logout.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	 <!-- 
+  	<PUBLISHER name="userhome">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/homeBase.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	 <PUBLISHER name="PublicUserPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/wapp/homeBase.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/homeBase.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	 -->
+  	<PUBLISHER name="chiron">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/chiron.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="login">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/login.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="authenticationFailed">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/index.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ViewBuilderPublisherJava">
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.commons.presentation.ViewBuilderPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ViewBuilder">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/viewBuilder.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="DirectExecutionPublisherJava">
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.analiticalmodel.document.presentation.DirectExecutionPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.analiticalmodel.document.presentation.DirectExecutionPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="MenuPublisherJava">
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.wapp.presentation.MenuPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.wapp.presentation.MenuPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+  	 <PUBLISHER name="MenuConfigurationPublisher">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="/WEB-INF/jsp/wapp/menuConfiguration.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	  	<PUBLISHER name="DetailMenuPubJ">
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.wapp.presentation.DetailMenuPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+  	
+  	
+  	<PUBLISHER name="detailMenuPublisher">
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/detailMenu.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="detailMenuLoopPublisher">
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="MenuConfigurationPage" />
+        		<!--  <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />-->
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="documentLookupLoop">
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DocumentLookupPage" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	  	<PUBLISHER name="DocumentLookupPublisher">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/listLookupDocument.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	 <PUBLISHER name="MenuRefresh">
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="MenuConfigurationPage" />
+        		<!--  <PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="FUNCTIONALITIES_OPERATION" />-->
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+  	
+  	
+  	
+  	<PUBLISHER name="MenuBeforeExecLoopPublisher">
+  		<!--
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+      			<ITEM prog="0" resource="/WEB-INF/jsp/analiticalmodel/execution/documentExecution.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  		-->
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="ACTION_NAME" type="ABSOLUTE" scope="" value="EXECUTE_DOCUMENT_ACTION" />
+        		<!-- PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ExecuteBIObjectPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="EXEC_PHASE_CREATE_PAGE" /-->
+                <PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="OBJECT_ID" />
+                <PARAMETER name="TOOLBAR_VISIBLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="TOOLBAR_VISIBLE" />
+                <PARAMETER name="SLIDERS_VISIBLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="SLIDERS_VISIBLE" />
+        		<PARAMETER name="MODALITY" type="ABSOLUTE" scope="" value="SINGLE_OBJECT_EXECUTION_MODALITY" />
+                <PARAMETER name="PARAMETERS" type="RELATIVE" scope="SERVICE_RESPONSE" value="PARAMETERS" />
+                <PARAMETER name="SUBOBJECT_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="SUBOBJECT_NAME" />
+                <PARAMETER name="SNAPSHOT_NAME" type="RELATIVE" scope="SERVICE_RESPONSE" value="SNAPSHOT_NAME" />
+                <PARAMETER name="SNAPSHOT_HISTORY_NUMBER" type="RELATIVE" scope="SERVICE_RESPONSE" value="SNAPSHOT_HISTORY_NUMBER" />
+                <PARAMETER name="IGNORE_SUBOBJECTS_VIEWPOINTS_SNAPSHOTS" type="ABSOLUTE" scope="" value="TRUE" />
+                <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+  	<PUBLISHER name="SERVICE_ERROR_PUBLISHER">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+      			<ITEM prog="0" resource="/WEB-INF/jsp/commons/genericError.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ChangePwdPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/wapp/changePwd.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/wapp/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/changePwd.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER> 
+  	
+  	<PUBLISHER name="WarningPublisher">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/warning.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+</PUBLISHERS>

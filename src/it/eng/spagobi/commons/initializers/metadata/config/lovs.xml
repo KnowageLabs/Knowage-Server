@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LOVS>
+<LOV label="CURRENT_MONTH_YEAR" name="Current month of the year" descr="Current month of the year format mm" inputTypeCd="SCRIPT" defaultVal="" profileAttr="">
+<LOV_PROVIDER>
+<![CDATA[<SCRIPTLOV><SCRIPT>
+Date now = new Date();
+int month = now.getMonth() + 1;
+String monthStr = month.toString();
+if (month < 10) monthStr = '0' + monthStr;
+returnValue(monthStr);
+</SCRIPT><VALUE-COLUMN>VALUE</VALUE-COLUMN><DESCRIPTION-COLUMN>VALUE</DESCRIPTION-COLUMN><VISIBLE-COLUMNS>VALUE</VISIBLE-COLUMNS><INVISIBLE-COLUMNS></INVISIBLE-COLUMNS></SCRIPTLOV>]]>
+</LOV_PROVIDER>
+</LOV>
+<LOV label="CURRENT_YEAR" name="Current year" descr="Current year format yyyy" inputTypeCd="SCRIPT" defaultVal="" profileAttr="">
+<LOV_PROVIDER>
+<![CDATA[<SCRIPTLOV><SCRIPT>
+Date now = new Date();
+int year = now.getYear() + 1900;
+String yearStr = year.toString();
+returnValue(yearStr);
+</SCRIPT><VALUE-COLUMN>VALUE</VALUE-COLUMN><DESCRIPTION-COLUMN>VALUE</DESCRIPTION-COLUMN><VISIBLE-COLUMNS>VALUE</VISIBLE-COLUMNS><INVISIBLE-COLUMNS></INVISIBLE-COLUMNS></SCRIPTLOV>]]>
+</LOV_PROVIDER>
+</LOV>
+<LOV label="CURRENT_MONTH" name="Current month" descr="Current month format mm/yyyy" inputTypeCd="SCRIPT" defaultVal="" profileAttr="">
+<LOV_PROVIDER>
+<![CDATA[<SCRIPTLOV><SCRIPT>
+Date now = new Date();
+int month = now.getMonth() + 1;
+String monthStr = month.toString();
+if (month < 10) monthStr = '0' + monthStr;
+int year = now.getYear() + 1900;
+String toReturn = monthStr + '/' + year.toString();
+returnValue(toReturn);
+</SCRIPT><VALUE-COLUMN>VALUE</VALUE-COLUMN><DESCRIPTION-COLUMN>VALUE</DESCRIPTION-COLUMN><VISIBLE-COLUMNS>VALUE</VISIBLE-COLUMNS><INVISIBLE-COLUMNS></INVISIBLE-COLUMNS></SCRIPTLOV>]]>
+</LOV_PROVIDER>
+</LOV>
+<LOV label="CURRENT_DATE" name="Current date" descr="Current date format dd/mm/yyyy" inputTypeCd="SCRIPT" defaultVal="" profileAttr="">
+<LOV_PROVIDER>
+<![CDATA[<SCRIPTLOV><SCRIPT>
+Date now = new Date();
+int day = now.getDate();
+String dayStr = day.toString();
+if (day < 10) dayStr = '0' + dayStr;
+int month = now.getMonth() + 1;
+String monthStr = month.toString();
+if (month < 10) monthStr = '0' + monthStr;
+int year = now.getYear() + 1900;
+String toReturn = dayStr + '/' + monthStr + '/' + year.toString();
+returnValue(toReturn);
+</SCRIPT><VALUE-COLUMN>VALUE</VALUE-COLUMN><DESCRIPTION-COLUMN>VALUE</DESCRIPTION-COLUMN><VISIBLE-COLUMNS>VALUE</VISIBLE-COLUMNS><INVISIBLE-COLUMNS></INVISIBLE-COLUMNS></SCRIPTLOV>]]>
+</LOV_PROVIDER>
+</LOV>
+</LOVS>

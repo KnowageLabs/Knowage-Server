@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+	<!-- validation for RememberMe saving -->
+	<!-- service for old interface, deprecated -->
+	<SERVICE name="SAVE_REMEMBER_ME" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS/>
+			<FIELDS>
+				<FIELD name="name" label="#sbi.rememberme.name">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="description" label="#sbi.rememberme.descr">
+					<VALIDATOR validatorName="XSS"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>
+				<FIELD name="parameters">
+					<VALIDATOR validatorName="XSS"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="400"/>
+				</FIELD>	
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+	<!-- service for new Ext-based interface -->
+	<SERVICE name="SAVE_REMEMBER_ME_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS/>
+			<FIELDS>
+				<FIELD name="name" label="#sbi.rememberme.name">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="description" label="#sbi.rememberme.descr">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="5000"/>
+				</FIELD>	
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+
+</VALIDATIONS>

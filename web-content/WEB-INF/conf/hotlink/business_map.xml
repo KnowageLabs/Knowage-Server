@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="SAVE_REMEMBER_ME" businessProcess="HotLinkManagement" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="HOT_LINK_PAGE" moduleName="PortletLoginModule" businessProcess="HotLinkManagement" />	
+		<MAP_PAGE_MODULE pageName="HOT_LINK_PAGE" moduleName="HotLinkModule" businessProcess="HotLinkManagement" />
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

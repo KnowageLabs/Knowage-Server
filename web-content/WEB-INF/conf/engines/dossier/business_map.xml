@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<!--  MAP_ACTION actionName="DOSSIER_DOWNLOAD_ACTION" businessProcess="DocumentUserManagement" /-->
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="DossierManagementPage" moduleName="DossierManagementModule" businessProcess="DocumentManagement" />	
+		<MAP_PAGE_MODULE pageName="DossierCollaborationPage" moduleName="DossierCollaborationModule" businessProcess="DocumentUserManagement" />	
+		<MAP_PAGE_MODULE pageName="DossierRefreshPage" moduleName="DossierRefreshModule" businessProcess="DocumentUserManagement" />	
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

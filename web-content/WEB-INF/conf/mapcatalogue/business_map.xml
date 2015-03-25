@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="LOGIN_ACTION_SBI_MAP_CATALOGUE" businessProcess="MapCatalogueManagement" />
+		<MAP_ACTION actionName="START_SBI_MAP_CATALOGUE" businessProcess="MapCatalogueManagement" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="ListMapsPage" moduleName="ListMapsModule" businessProcess="MapCatalogueManagement" />
+		<MAP_PAGE_MODULE pageName="ListFeaturesPage" moduleName="ListFeaturesModule" businessProcess="MapCatalogueManagement" />	
+		<MAP_PAGE_MODULE pageName="DetailMapPage" moduleName="DetailMapModule" businessProcess="MapCatalogueManagement" />	
+		<MAP_PAGE_MODULE pageName="DetailFeaturePage" moduleName="DetailFeatureModule" businessProcess="MapCatalogueManagement" />	
+		<MAP_PAGE_MODULE pageName="FeaturesLookupPage" moduleName="ListLookupFeaturesModule" businessProcess="MapCatalogueManagement" />		
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

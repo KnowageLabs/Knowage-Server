@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobiwsdataset" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobiwsdataset" xmlns:intf="urn:spagobiwsdataset" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="mapItem">
+    <sequence>
+     <element name="key" nillable="true" type="xsd:anyType"/>
+     <element name="value" nillable="true" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="Map">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="readDataSetRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="apachesoap:Map"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="readDataSetResponse">
+
+      <wsdl:part name="readDataSetReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="IWsConnector">
+
+      <wsdl:operation name="readDataSet" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:readDataSetRequest" name="readDataSetRequest"/>
+
+         <wsdl:output message="impl:readDataSetResponse" name="readDataSetResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="WSDataSetServiceSoapBinding" type="impl:IWsConnector">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="readDataSet">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="readDataSetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiwsdataset" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="readDataSetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiwsdataset" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="IWsConnectorService">
+
+      <wsdl:port binding="impl:WSDataSetServiceSoapBinding" name="WSDataSetService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/WSDataSetService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

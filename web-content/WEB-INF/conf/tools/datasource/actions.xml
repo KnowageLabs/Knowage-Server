@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+ <ACTION name="TEST_CONN" class="it.eng.spagobi.tools.datasource.service.TestConnectionAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+
+</ACTIONS>
+

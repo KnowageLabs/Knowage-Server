@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+	<MAPPING business_name="ListDistributionListPage" business_type="PAGE" publisher_name="ListDistributionListPubJ"/>
+	<MAPPING business_name="DetailDistributionListPage" business_type="PAGE" publisher_name="DetailDistributionListPubJ"/>      
+	<MAPPING business_name="ListDistributionListUserPage" business_type="PAGE" publisher_name="ListDistributionListUserPubJ"/>
+	<MAPPING business_name="ListDistributionListUserPageWithOutback" business_type="PAGE" publisher_name="listDistributionListUserWithOutbackPubJ"/>
+	<MAPPING business_name="DetailDistributionListUserPage" business_type="PAGE" publisher_name="DetailDistributionListUserPubJ"/>
+	<MAPPING business_name="InsertEmailPage" business_type="PAGE" publisher_name="InsertEmailPubJ"/>     		 
+</PRESENTATION>
+

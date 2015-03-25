@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUDIT>
+	<!-- 
+	disable is a flag to disable auditing; possibile values are: true/false
+	persistenceClass is the class for persistence; possibile values are:
+		it.eng.spagobi.monitoring.dao.DbAuditImpl
+		it.eng.spagobi.bo.dao.audit.FileSystemAuditImpl
+	document_state is the state of the executed document for auditing; possibile values are:
+		DEV only documents in DEV state are inserted in auditing log
+		TEST only documents in TEST state are inserted in auditing log
+		REL only documents in REL state are inserted in auditing log
+		ALL all documents are inserted in auditing log
+	-->
+	<CONFIG disable="false" persistenceClass="it.eng.spagobi.monitoring.dao.DbAuditImpl" document_state="REL" /> 
+</AUDIT>

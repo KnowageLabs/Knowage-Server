@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+    <MODULE class="it.eng.spagobi.hotlink.service.HotLinkModule" name="HotLinkModule">
+     	<CONFIG/>
+    </MODULE>
+</MODULES>
+
+
