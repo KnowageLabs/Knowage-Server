@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+     
+	<MODULE class="it.eng.spagobi.engines.dossier.modules.DossierManagementModule" name="DossierManagementModule">
+	</MODULE>
+	
+	<MODULE class="it.eng.spagobi.engines.dossier.modules.DossierCollaborationModule" name="DossierCollaborationModule">
+	</MODULE>
+	
+	<MODULE class="it.eng.spagobi.engines.dossier.modules.DossierRefreshModule" name="DossierRefreshModule">
+	</MODULE>
+   
+</MODULES>

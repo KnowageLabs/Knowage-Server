@@ -1,0 +1,35 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from ContentServiceService WSDL service -->
+
+  <service name="ContentService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobicontent"/>
+      <parameter name="wsdlServiceElement" value="ContentServiceService"/>
+      <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap,http://bo.content.services.spagobi.eng.it"/>
+      <parameter name="wsdlServicePort" value="ContentService"/>
+      <parameter name="className" value="it.eng.spagobi.services.content.stub.ContentServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="ContentService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="http://bo.content.services.spagobi.eng.it"
+        qname="ns:Content"
+        type="java:it.eng.spagobi.services.content.bo.Content"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

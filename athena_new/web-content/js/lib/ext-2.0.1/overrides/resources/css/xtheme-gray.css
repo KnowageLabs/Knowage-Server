@@ -1,0 +1,4 @@
+/* 
+Background color for menu item (when selected) fixed (gray instead of blue)
+ */
+.x-menu-item-active{background:#ececec url(../images/gray/menu/item-over.gif) repeat-x left bottom;border:1px solid #adadad;padding:0;}

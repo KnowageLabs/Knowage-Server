@@ -1,0 +1,50 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from DomainsServiceService WSDL service -->
+
+  <service name="DomainsService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobisdkdomains"/>
+      <parameter name="wsdlServiceElement" value="DomainsServiceService"/>
+      <parameter name="schemaUnqualified" value="http://bo.domains.sdk.spagobi.eng.it,http://exceptions.sdk.spagobi.eng.it,urn:spagobisdkdomains"/>
+      <parameter name="wsdlServicePort" value="DomainsService"/>
+      <parameter name="className" value="it.eng.spagobi.sdk.domains.stub.DomainsServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="DomainsService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdomains"
+        qname="ns:ArrayOf_tns2_SDKDomain"
+        type="java:it.eng.spagobi.sdk.domains.bo.SDKDomain[]"
+        innerType="cmp-ns:SDKDomain" xmlns:cmp-ns="http://bo.domains.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.domains.sdk.spagobi.eng.it"
+        qname="ns:SDKDomain"
+        type="java:it.eng.spagobi.sdk.domains.bo.SDKDomain"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:SDKException"
+        type="java:it.eng.spagobi.sdk.exceptions.SDKException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

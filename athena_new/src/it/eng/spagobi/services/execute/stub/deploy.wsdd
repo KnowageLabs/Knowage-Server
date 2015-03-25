@@ -1,0 +1,27 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from DocumentExecuteServiceService WSDL service -->
+
+  <service name="DocumentExecuteService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobiexecute"/>
+      <parameter name="wsdlServiceElement" value="DocumentExecuteServiceService"/>
+      <parameter name="schemaUnqualified" value="http://xml.apache.org/xml-soap"/>
+      <parameter name="wsdlServicePort" value="DocumentExecuteService"/>
+      <parameter name="className" value="it.eng.spagobi.services.execute.stub.DocumentExecuteServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="DocumentExecuteService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Session"/>
+
+  </service>
+</deployment>

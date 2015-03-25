@@ -1,0 +1,251 @@
+/*
+SpagoBI - The Business Intelligence Free Platform
+
+Copyright (C) 2008 Engineering Ingegneria Informatica S.p.A.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+/* ************************** DOCUMENTS ***************************** */
+
+.documentName {
+  font-family:arial;
+  font-weight:bold;
+  color:#173683;
+  font-size:15px;
+}
+
+.noDocumentSelectedBox{
+	width:100%;
+	height:300px;
+	background-image:url('/SpagoBI/img/spagobgimg.jpg');
+    background-position: bottom right;
+    background-repeat: no-repeat; 
+    color:#501ca7;
+    font-family:arial;
+    font-weight:bold;
+    font-size:15px;
+}
+
+
+/* ************************** PAGE LAYOUT ***************************** */
+
+.workspaceTopBox {
+	width: 100%;
+}
+
+.workspaceLeftBox {
+	width: 25%;
+	float: left;
+	clear: left; 
+	padding-left:5px;
+}
+
+.workspaceRightBox {
+	width: 73%;
+	float: left;
+	margin-left:5px;
+}
+
+/* ************************** NESTED MENU ***************************** */
+
+.menutitle {
+	border: 1px solid #dddddd;
+	background:#fbf9d0;
+	color:#501ca7;
+	font-size:10px;
+	height:16px;
+	padding-left:5px;
+}
+
+.menucontainer0 {
+	border: 1px solid #dddddd;
+	overflow:hidden;
+}
+
+.menucontainer1 {
+	border-left: 1px solid #dddddd;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #dddddd;
+	border-right: 0px solid #ffffff;
+	position:relative;
+	left:5%;
+	width:95%;
+}
+
+.menucontainer2 {
+}
+
+.menuitemlink {
+	font-family:verdana;
+  	font-size:9px;
+  	color:#173683;
+  	text-decoration:none;
+}
+
+.menuitemlink:hover {
+	font-family:verdana;
+  	font-size:9px;
+  	color:#173683;
+  	font-weight:bold;
+  	text-decoration:underline;
+}
+
+.menuitem {
+	height:23px;
+	clear:left;
+}
+
+.menuitemfolder {
+	background:#eeeeee;
+}
+
+.menuitemleft {
+	width: 20px;
+	height:20px;
+	float:left;
+	clear:left;
+}
+
+.menuitemcenter{
+	float:left;
+}
+
+.menuitemright {
+}
+
+.menuitemleftfolder {
+	background-image:url('/SpagoBI/img/treefolder.gif');
+	background-position:top right;
+	background-repeat:no-repeat;
+}
+.menuitemleftREPORT {
+	background-image:url('/SpagoBI/img/objecticon_REPORT.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftOLAP {
+	background-image:url('/SpagoBI/img/objecticon_OLAP.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftOFFICE_DOC {
+	background-image:url('/SpagoBI/img/objecticon_OFFICE_DOC.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftMAP {
+	background-image:url('/SpagoBI/img/objecticon_MAP.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftETL {
+	background-image:url('/SpagoBI/img/objecticon_ETL.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftDATAMART {
+	background-image:url('/SpagoBI/img/objecticon_DATAMART.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftDATA_MINING {
+	background-image:url('/SpagoBI/img/objecticon_DATA_MINING.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftDASH {
+	background-image:url('/SpagoBI/img/objecticon_DASH.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftDOSSIER {
+	background-image:url('/SpagoBI/img/objecticon_DOSSIER.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+.menuitemleftNETWORK {
+	background-image:url('/SpagoBI/img/objecticon_NETWORK.png');
+	background-position:right;
+	background-repeat:no-repeat;
+}
+
+
+/* ************************** SLIDE MENU ***************************** */
+
+/*
+.menuBox{
+	border:2px solid rgb(254,232,186);
+	background:white;
+	width:200px;
+}
+
+.menuTitleBox{
+  font-family:verdana;
+  font-weight:bold;
+  border-bottom:1px solid rgb(254,232,186);
+  font-size:11px;
+  font-weight:bold;
+  color:#173683;
+  background-color:rgb(254,232,186);
+}
+
+.menuContentBox{
+  padding-top:5px;
+	padding-bottom:10px;
+}
+
+.menuItem{
+  padding-left:15px;
+  font-family:verdana;
+  font-size:9px;
+  padding-right:10px;
+}
+
+.menuItemOver{
+  padding-left:15px;
+  padding-right:10px;
+  font-family:verdana;
+  font-size:9px;
+  background:#f7ff7e;
+  background-position: left;
+  background-repeat: repeat-y; 
+}
+
+
+.menuLink{
+  text-decoration:none;
+  color:#6f6f8c;
+}
+
+.menuArrow{
+  font-family:arial;
+  font-weight:bold;
+  color:#173683;
+}
+
+.noDocumentSelectedBox{
+	width:100%;
+	height:300px;
+	background-image:url('/SpagoBI/img/spagobgimg.jpg');
+    background-position: bottom right;
+    background-repeat: no-repeat; 
+    color:#501ca7;
+    font-family:arial;
+    font-weight:bold;
+    font-size:15px;
+}
+*/
+

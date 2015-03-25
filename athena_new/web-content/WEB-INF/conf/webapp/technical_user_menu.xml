@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TECHNICAL_USER_MENU>
+	 
+	<ITEM	code="resources" 
+			title="#menu.Resources"
+			iconCls="cogwheels">
+			
+		<ITEM	code="data_providers" 
+				title="#menu.DataProviders"
+				groupingMenu="true">			
+			<ITEM	title="#menu.TenantMan"
+					functionality="TenantManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagement.jsp" 
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+		    <ITEM	title="#menu.EngMan"
+					functionality="TenantManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListEnginesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/engines16.png" />	
+			<ITEM	title="#menu.DataSourceMan"
+					functionality="DataSourceManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/datasource/listDataSource.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+			<ITEM	title="#menu.DataSetMan"
+					functionality="DatasetManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_DATASETS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
+		</ITEM>
+		<ITEM	code="catalogs" 
+				title="#menu.Catalogs"
+				groupingMenu="true">
+			<ITEM   title="#menu.MetaModelsCatalogue"
+	                functionality="MetaModelsCatalogueManagement"
+	                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_META_MODELS_CATALOGUE_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+			<ITEM   title="#menu.MondrianCatalogue"
+	                functionality="ArtifactCatalogueManagement"
+	                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ARTIFACTS_CATALOGUE_ACTION&amp;type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />	
+			<ITEM	title="#menu.MapCat"
+					functionality="MapCatalogueManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/maps16.png" />
+			<ITEM	title="#menu.FeatureMapCat"
+					functionality="MapFeaturesManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/featureManagement16.png" />
+			<ITEM	title="#menu.MeasuresCatalogue"
+					functionality="MeasuresCatalogueManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/measure/measuresCatalogue.jsp" />
+			<ITEM	title="#menu.LayersCatalogue"
+					functionality="MeasuresCatalogueManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
+					
+					
+		</ITEM>
+		<ITEM	code="server_settings" 
+				title="#menu.ServerSettings"
+				groupingMenu="true">
+			<ITEM	title="#menu.UdpMan"
+					functionality="UserDefinedPropertyManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_UDP_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
+
+
+			<ITEM	title="#menu.Config"
+					functionality="ConfigManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CONFIG_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
+			<ITEM	title="#menu.Domain"
+					functionality="DomainManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
+			<ITEM	title="#menu.MetadataMan"
+					functionality="ObjMetadataManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/objmetadata/document-meta.gif" />
+		</ITEM>
+	</ITEM>
+	<ITEM	code="profiling" 
+			title="#menu.Profiling"
+			iconCls="group">
+		<ITEM	code="profile_mng" 
+			title="#menu.ProfileMenu"
+			groupingMenu="true">
+			<ITEM	title="#menu.Attributes"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ATTRIBUTES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
+			<ITEM	title="#menu.Roles"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ROLES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/roles.png" />
+			<ITEM	title="#menu.Users"
+					functionality="ProfileManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_USER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/users.png" />
+		</ITEM>
+		<ITEM	code="behaviouralModel" 
+			title="#menu.BehaviouralModelMenu"
+			groupingMenu="true">
+			<ITEM	title="#menu.LovMan"
+					functionality="LovsView"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListLovsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
+			<ITEM	title="#menu.ParameterMan"
+					functionality="ParameterView"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListParametersPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/parameters16.png" />
+			<ITEM	title="#menu.ConstraintMan"
+					functionality="ConstraintView"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=LISTMODALITIESCHECKSPAGE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/checks16.png" />
+		</ITEM>
+		<ITEM	code="menu_config" 
+			title="#menu.MenuConfig"
+			groupingMenu="true">
+			<ITEM	title="#menu.menuconfiguration"
+					functionality="MenuManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=MenuConfigurationPage"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/menu16.png" />
+			<ITEM	title="#menu.community.mng"
+					functionality="MenuManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/community/ManageCommunity.jsp"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/community.png" />
+		</ITEM>
+		<ITEM	code="tree_mng" 
+			title="#menu.TreeMng"
+			groupingMenu="true">
+			<ITEM	title="#menu.FunctMan"
+						functionality="FunctionalitiesManagement"
+						url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=FUNCTIONALITIES_OPERATION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+						iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
+		</ITEM>
+
+	</ITEM>
+	<ITEM code="doc_admin" 	title="#menu.DocumentDev"
+			functionality="DocumentDevManagement"
+			url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION"
+			iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" 
+			iconCls="folder_open"/>
+
+	<ITEM code="my_data_admin" title="#menu.MyData"  
+	             functionality="SelfServiceMetaModelManagement" 
+	             url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE&amp;MYDATA=TRUE" 
+	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png"
+	             iconCls="my_data"/>
+			
+	<ITEM	code="analyticalModel" 
+			title="#menu.AnalyticalModel"
+			iconCls="charts">
+		<ITEM	code="kpiDefinition" 
+			title="#menu.KpiModel"
+			groupingMenu="true">
+			<ITEM	title="#menu.KpiDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/kpiico16.png" />
+			<ITEM	title="#menu.ThresholdDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_THRESHOLDS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/thr16.png" />
+			<ITEM	title="#menu.ModelDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODELS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/modeldef16.png" />
+			<ITEM	title="#menu.ModelInstanceDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_MODEL_INSTANCES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/model16.png" />
+			<ITEM	title="#menu.GrantDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_OU_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/door_opened16.png" />
+			<ITEM	title="#menu.GoalDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_GOALS_EMPTY_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/goal16.png" />
+			<ITEM	title="#menu.ResourcesDefinition"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_RESOURCES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/res16.png" />
+			<ITEM	title="#menu.ManageAlarms"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ALARMS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/alarm16.png" />
+			<ITEM	title="#menu.ManageContacts"
+					functionality="KpiManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_CONTACTS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/kpi/mail_generic16.png" />
+
+		</ITEM>
+		<ITEM	code="subscription" 
+			title="#menu.Subscription"
+			groupingMenu="true">
+			<ITEM	title="#menu.DistributionListList"
+					functionality="DistributionListManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlist16.png" />
+		  	<ITEM	title="#menu.DistributionListUser"
+					functionality="DistributionListUser"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListUserPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUEe"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/distributionlist/distributionlistuser16.png" />
+		</ITEM>
+	</ITEM>
+	
+	<ITEM	code="repo_mng" 
+			title="#menu.RepositoryMng"
+			iconCls="repo">
+		<ITEM	code="menu_tools" 
+			title="#menu.ToolsMenu"
+			groupingMenu="true">
+			<ITEM	title="#menu.ImpExp"
+					functionality="ImportExportManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/importexport/importexport16.png" />
+			<ITEM	title="#menu.Scheduler"
+					functionality="SchedulerManagement"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_SCHEDULER_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/scheduleIcon16.png" />
+					<!--url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=JobManagementPage&amp;MESSAGEDET=MESSAGE_GET_ALL_JOBS&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"-->
+	  		<ITEM	title="#menu.HierarchiesEditor"
+					functionality="HierarchiesManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp" />
+			<ITEM	title="#menu.SocialAnalysis"
+					functionality="CreateSocialAnalysis"
+					url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
+	  		 </ITEM>
+					
+
+	</ITEM>
+ 
+	<APPLICATION code="DocumentAdmin" 
+	             title="#menu.DocumentAdmin"  
+	             functionality="DocumentAdminManagement" 
+	             type="link" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage" 
+	             width="800" 
+	             height="500"
+	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png">
+	</APPLICATION>
+	
+	<APPLICATION code="DocumentDev" 
+	             title="#menu.DocumentDev"  
+	             functionality="DocumentDevManagement" 
+	             type="link" 
+	             link="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage" 
+	             width="800" 
+	             height="500"
+	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png">
+	</APPLICATION>
+
+	
+</TECHNICAL_USER_MENU>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CHECKS>
+<CHECK label="CK-FIX-01" name="Internet Address" descr="Control if parameter is an Internet Address" valueTypeCd="INTERNET ADDRESS" value1="" value2="" />
+<CHECK label="CK-FIX-02" name="Numeric" descr="Control if  a parameter is Numeric" valueTypeCd="NUMERIC" value1="" value2="" />
+<CHECK label="CK-FIX-03" name="Alfanumeric" descr="Control if  a parameter is Alfanumeric" valueTypeCd="ALFANUMERIC" value1="" value2="" />
+<CHECK label="CK-FIX-04" name="Letter String" descr="Control if a parameter is a letter string" valueTypeCd="LETTERSTRING" value1="" value2="" />
+<!-- CHECK label="CK-FIX-05" name="Mandatory" descr="Control if the parameter is present" valueTypeCd="MANDATORY" value1="" value2="" /-->
+<CHECK label="CK-FIX-06" name="Fiscal Code" descr="Control if parameter is a Fiscal Code" valueTypeCd="FISCALCODE" value1="" value2="" />
+<CHECK label="CK-FIX-07" name="E-Mail" descr="Control if parameter is a E-Mail" valueTypeCd="EMAIL" value1="" value2="" />
+</CHECKS>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+ <ACTION name="LIST_TEST_LOV_ACTION" class="it.eng.spagobi.behaviouralmodel.lov.service.ListTestLovAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="SAVE_LOV_ACTION" class="it.eng.spagobi.behaviouralmodel.lov.service.SaveLovAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+</ACTIONS>
+

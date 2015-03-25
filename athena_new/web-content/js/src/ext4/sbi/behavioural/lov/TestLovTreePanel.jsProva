@@ -1,0 +1,558 @@
+/** SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
+ 
+  
+ 
+  
+ 
+  
+
+/**
+ * Object name 
+ * 
+ * 
+ * Public Properties
+ * 
+  * MANDATORY PARAMETERS: serviceUrl: the url for the ajax request
+  * OPTIONAL:
+  * 	pagingConfig:{} Object. If this object is defined the paging toollbar will be displayed
+ * 
+ * 
+ * Public Methods
+ * 
+ *  [list]
+ * 
+ * 
+ * Public Events
+ * 
+ *  [list]
+ * 
+ * Authors
+ * 
+ * - Alberto Ghedin (alberto.ghedin@eng.it)
+ */
+
+
+
+
+
+
+Ext.define('Ext.ux.CellFieldDropZone', {
+    extend: 'Ext.dd.DropZone',
+
+    constructor: function(cfg){
+        cfg = cfg || {};
+        if (cfg.onCellDrop) {
+            this.onCellDrop = cfg.onCellDrop;
+        }
+    },
+
+//  Call the DropZone constructor using the View's scrolling element
+//  only after the grid has been rendered.
+    init: function(grid) {
+        var me = this;
+
+        if (grid.rendered) {
+            me.grid = grid;
+            grid.on({
+                render: function(v) {
+                    me.view = v;
+                    Ext.ux.CellFieldDropZone.superclass.constructor.call(me, me.view.el);
+                },
+                single: true
+            });
+        } else {
+            grid.on('render', me.init, me, {single: true});
+        }
+    },
+
+//  Scroll the main configured Element when we drag close to the edge
+    containerScroll: true,
+
+    getTargetFromEvent: function(e) {
+        var me = this,
+            v = me.view;
+
+//      Ascertain whether the mousemove is within a grid cell
+        var cell = e.getTarget(v.cellSelector);
+        if (cell) {
+
+//          We *are* within a grid cell, so ask the View exactly which one,
+//          Extract data from the Model to create a target object for
+//          processing in subsequent onNodeXXXX methods. Note that the target does
+//          not have to be a DOM element. It can be whatever the noNodeXXX methods are
+//          programmed to expect.
+            var row = v.findItemByChild(cell),
+                columnIndex = cell.cellIndex;
+
+            if (row && Ext.isDefined(columnIndex)) {
+                return {
+                    node: cell,
+                    record: v.getRecord(row),
+                    fieldName: me.grid.columns[columnIndex].dataIndex
+                };
+            }
+        }
+    },
+
+//  On Node enter, see if it is valid for us to drop the field on that type of column.
+    onNodeEnter: function(target, dd, e, dragData) {
+        delete this.dropOK;
+//        if (!target) {
+//            return;
+//        }
+//
+////      Check that a field is being dragged.
+//        var f = dragData.field;
+//        if (!f) {
+//            return;
+//        }
+//
+////      Check whether the data type of the column being dropped on accepts the
+////      dragged field type. If so, set dropOK flag, and highlight the target node.
+//        var type = target.record.fields.get(target.fieldName).type,
+//            types = Ext.data.Types;
+//        switch(type){
+//            case types.FLOAT:
+//            case types.INT:
+//                if (!f.isXType('numberfield')) {
+//                    return;
+//                }
+//                break;
+//            case types.DATE:
+//                if (!f.isXType('datefield')) {
+//                    return;
+//                }
+//                break;
+//            case types.BOOL:
+//                if (!f.isXType('checkbox')) {
+//                    return;
+//                }
+//        }
+        this.dropOK = true;
+        Ext.fly(target.node).addCls('x-drop-target-active');
+    },
+
+//  Return the class name to add to the drag proxy. This provides a visual indication
+//  of drop allowed or not allowed.
+    onNodeOver: function(target, dd, e, dragData) {
+        return this.dropOK ? this.dropAllowed : this.dropNotAllowed;
+    },
+
+//  highlight the target node.
+    onNodeOut: function(target, dd, e, dragData) {
+        Ext.fly(target.node).removeCls('x-drop-target-active');
+    },
+
+//  Process the drop event if we have previously ascertained that a drop is OK.
+    onNodeDrop: function(target, dd, e, dragData) {
+//        if (this.dropOK) {
+//            var value = dragData.field.getValue();
+//            target.record.set(target.fieldName, value);
+//            this.onCellDrop(target.fieldName, value);
+//            return true;
+//        }
+    },
+    
+    onCellDrop: Ext.emptyFn
+});
+
+
+
+
+
+
+
+
+Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
+    extend: 'Ext.tree.Panel'
+
+    ,config: {
+      	stripeRows: true,
+        useArrows: true,
+        rootVisible: false,
+        multiSelect: true,
+        singleExpand: true
+    }
+
+    , constructor: function(config) {
+    	this.height = 300;
+        this.viewConfig = {
+            plugins: Ext.create('Ext.ux.CellFieldDropZone',{}),                
+			listeners: {
+				drop: function(a, b, c,d){
+					this.moveTreeNode(b.records[0].data.column, d);
+                },
+				beforedrop: function( node, data, overModel, dropPosition, dropFunction, eOpts ){
+					this.beforeMoveTreeNode(data.records[0]);
+                }
+            }
+        };
+        this.columns = [{
+            xtype: 'treecolumn', //this is so we know which column will show the tree
+            text: 'Level',
+            flex: 2,
+            dataIndex: 'value',
+            tdCls  : 'lov-tree-column-node'
+        },{
+            text: 'Value',
+            flex: 1,
+            dataIndex: 'value',
+            tdCls  : 'lov-tree-column-value'
+        
+        },{
+            text: 'Description',
+            flex: 1,
+            dataIndex: 'description',
+            tdCls  : 'lov-tree-column-description'
+        }];
+        
+    	
+        Ext.define('TreeLov', {
+            extend: 'Ext.data.Model',
+            fields: [
+//                {name: 'levelId',     type: 'string'},
+                //{name: 'level',     type: 'string'},
+                {name: 'value',     type: 'string'},
+                {name: 'description', type: 'string'}
+            ]
+        });
+
+        var store = Ext.create('Ext.data.TreeStore', {
+            model: 'TreeLov',
+            root:{"text":"root","children": []}
+        });
+        
+        
+        this.store = store;
+        
+        this.callParent(arguments);
+        var treePanel = this;
+        this.on("render",function(){
+            var formPanelDropTarget = Ext.create('Ext.dd.DropTarget', this.el, {
+                ddGroup: 'GridLovDD',
+                notifyEnter: function(ddSource, e, data ){
+                	treePanel.body.stopAnimation();
+                	treePanel.body.highlight();
+                },
+                notifyDrop  : function(ddSource, e, data, c){
+                	var node=null;
+        			var target = e.getTarget();
+        			var targetType = treePanel.getTargetPosition(target);
+        			node = treePanel.findTreeNode(treePanel.getStore().getRootNode(), 'value', data.records[0].data.name);//if the node already exist
+        			if(((target.id.indexOf('treeview')>=0) || targetType=='node' ) && node==null){
+        				treePanel.addTreeNode(data.records[0].data);//add the node
+        			}else{//update the existing node
+        				var targetNode = treePanel.findTreeNode(treePanel.getStore().getRootNode(), targetType, target.innerText);
+        				treePanel.updateTreeNode(target, data.records[0].data.name, targetNode);
+        			}
+
+                    return true;
+                }
+            });},this);
+    }
+    
+    , addTreeNode: function(nodeConfig){
+		var store = this.getStore();
+		var root = store.getRootNode();
+		var node = root;
+		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+			node = node.childNodes[0];
+		}
+		node.set('leaf', false);	
+		node.appendChild({         
+		//	levelId: nodeConfig.name,
+			//level: nodeConfig.name,
+			value: nodeConfig.name,
+			description: nodeConfig.name
+		});	
+
+		this.getView().refresh();   
+	}
+    
+    , updateTreeNode: function(target, name, node){
+    	var position = this.getTargetPosition(target);
+    	if(position!=null){
+        	node.set(position, name);
+    		this.getView().refresh();   
+    	}
+
+	}
+    
+    
+    , getTargetPosition: function(target){
+    	if(target!= null && target!= undefined && target.parentNode!= null && target.parentNode!= undefined && target.parentNode.className!= null && target.parentNode.className!= undefined){
+    		if(target.parentNode.className.indexOf('lov-tree-column-description')>=0){
+    			return 'description';
+    		}else if(target.parentNode.className.indexOf('lov-tree-column-value')>=0){
+    			return 'value';
+    		}else if(target.parentNode.className.indexOf('lov-tree-column-node')>=0){
+    			return 'node';
+    		}
+    	}
+    	return null;
+    }
+    
+    , beforeMoveTreeNode: function(node){
+		
+		if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+			var parentNode = node.parentNode;
+			var child = node.childNodes[0];
+			node.removeChild(child);
+			parentNode.removeChild(node);
+			parentNode.appendChild(child);
+		}
+		
+		return true;
+	}
+    
+    ,  moveTreeNode: function(nodeSrcName, event){
+		var store = this.getStore();
+		var root = store.getRootNode();
+		var node = root;
+		while (node!=null){
+			if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length==2){
+				var oldChild;
+				var newChild;
+				if(event=="append"){
+					oldChild = node.childNodes[0];
+					newChild = node.childNodes[1];
+				}else{
+					oldChild = node.childNodes[1];
+					newChild = node.childNodes[0];				
+				}
+				
+				newChild.set('leaf', false);	
+				node.removeChild(oldChild);
+				newChild.appendChild(oldChild);	
+				return true;
+			}else if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+				node = node.childNodes[0];
+			}else{
+				return false;
+			}
+		}
+	}
+
+    ,  findTreeNode: function(node,type, value){
+    	if(node.data[type] == value || (type == 'node' && node.data[value] == value )){
+			return node;
+		}else{
+			if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+				return this.findTreeNode(node.childNodes[0], type, value);
+			}else{
+				return null;
+			}
+		}
+	}
+    
+    
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//Ext.define('Sbi.behavioural.lov.TestLovTreePanel', {
+//    extend: 'Ext.tree.Panel'
+//
+//    ,config: {
+//      	stripeRows: true,
+//        useArrows: true,
+//        rootVisible: false,
+//        multiSelect: true,
+//        singleExpand: true
+//    }
+//
+//    , constructor: function(config) {
+//    	this.height = 300;
+//        this.viewConfig = {
+//            plugins: {
+//                ptype: 'treeviewdragdrop',
+//                containerScroll: true
+//            },                
+//			listeners: {
+//				drop: function(a, b, c,d){
+//					this.moveTreeNode(b.records[0].data.column, d);
+//                },
+//				beforedrop: function( node, data, overModel, dropPosition, dropFunction, eOpts ){
+//					this.beforeMoveTreeNode(data.records[0]);
+//                }
+//            }
+//        };
+//        this.columns = [{
+//            xtype: 'treecolumn', //this is so we know which column will show the tree
+//            text: 'Level',
+//            flex: 2,
+//            dataIndex: 'value',
+//            tdCls  : 'lov-tree-column-node'
+//        },{
+//            text: 'Value',
+//            flex: 1,
+//            dataIndex: 'value',
+//            tdCls  : 'lov-tree-column-value'
+//        
+//        },{
+//            text: 'Description',
+//            flex: 1,
+//            dataIndex: 'description',
+//            tdCls  : 'lov-tree-column-description'
+//        }];
+//        
+//    	
+//        Ext.define('TreeLov', {
+//            extend: 'Ext.data.Model',
+//            fields: [
+////                {name: 'levelId',     type: 'string'},
+//                //{name: 'level',     type: 'string'},
+//                {name: 'value',     type: 'string'},
+//                {name: 'description', type: 'string'}
+//            ]
+//        });
+//
+//        var store = Ext.create('Ext.data.TreeStore', {
+//            model: 'TreeLov',
+//            root:{"text":"root","children": []}
+//        });
+//        
+//        
+//        this.store = store;
+//        
+//        this.callParent(arguments);
+//        var treePanel = this;
+//        this.on("render",function(){
+//            var formPanelDropTarget = Ext.create('Ext.dd.DropTarget', this.el, {
+//                ddGroup: 'GridLovDD',
+//                notifyEnter: function(ddSource, e, data ){
+//                	treePanel.body.stopAnimation();
+//                	treePanel.body.highlight();
+//                },
+//                notifyDrop  : function(ddSource, e, data, c){
+//                	var node=null;
+//        			var target = e.getTarget();
+//        			var targetType = treePanel.getTargetPosition(target);
+//        			node = treePanel.findTreeNode(treePanel.getStore().getRootNode(), 'value', data.records[0].data.name);//if the node already exist
+//        			if(((target.id.indexOf('treeview')>=0) || targetType=='node' ) && node==null){
+//        				treePanel.addTreeNode(data.records[0].data);//add the node
+//        			}else{//update the existing node
+//        				var targetNode = treePanel.findTreeNode(treePanel.getStore().getRootNode(), targetType, target.innerText);
+//        				treePanel.updateTreeNode(target, data.records[0].data.name, targetNode);
+//        			}
+//
+//                    return true;
+//                }
+//            });},this);
+//    }
+//    
+//    , addTreeNode: function(nodeConfig){
+//		var store = this.getStore();
+//		var root = store.getRootNode();
+//		var node = root;
+//		while (node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+//			node = node.childNodes[0];
+//		}
+//		node.set('leaf', false);	
+//		node.appendChild({         
+//		//	levelId: nodeConfig.name,
+//			//level: nodeConfig.name,
+//			value: nodeConfig.name,
+//			description: nodeConfig.name
+//		});	
+//
+//		this.getView().refresh();   
+//	}
+//    
+//    , updateTreeNode: function(target, name, node){
+//    	var position = this.getTargetPosition(target);
+//    	if(position!=null){
+//        	node.set(position, name);
+//    		this.getView().refresh();   
+//    	}
+//
+//	}
+//    
+//    
+//    , getTargetPosition: function(target){
+//    	if(target!= null && target!= undefined && target.parentNode!= null && target.parentNode!= undefined && target.parentNode.className!= null && target.parentNode.className!= undefined){
+//    		if(target.parentNode.className.indexOf('lov-tree-column-description')>=0){
+//    			return 'description';
+//    		}else if(target.parentNode.className.indexOf('lov-tree-column-value')>=0){
+//    			return 'value';
+//    		}else if(target.parentNode.className.indexOf('lov-tree-column-node')>=0){
+//    			return 'node';
+//    		}
+//    	}
+//    	return null;
+//    }
+//    
+//    , beforeMoveTreeNode: function(node){
+//		
+//		if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+//			var parentNode = node.parentNode;
+//			var child = node.childNodes[0];
+//			node.removeChild(child);
+//			parentNode.removeChild(node);
+//			parentNode.appendChild(child);
+//		}
+//		
+//		return true;
+//	}
+//    
+//    ,  moveTreeNode: function(nodeSrcName, event){
+//		var store = this.getStore();
+//		var root = store.getRootNode();
+//		var node = root;
+//		while (node!=null){
+//			if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length==2){
+//				var oldChild;
+//				var newChild;
+//				if(event=="append"){
+//					oldChild = node.childNodes[0];
+//					newChild = node.childNodes[1];
+//				}else{
+//					oldChild = node.childNodes[1];
+//					newChild = node.childNodes[0];				
+//				}
+//				
+//				newChild.set('leaf', false);	
+//				node.removeChild(oldChild);
+//				newChild.appendChild(oldChild);	
+//				return true;
+//			}else if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+//				node = node.childNodes[0];
+//			}else{
+//				return false;
+//			}
+//		}
+//	}
+//
+//    ,  findTreeNode: function(node,type, value){
+//    	if(node.data[type] == value || (type == 'node' && node.data[value] == value )){
+//			return node;
+//		}else{
+//			if(node.childNodes !=null && node.childNodes!=undefined && node.childNodes.length>0){
+//				return this.findTreeNode(node.childNodes[0], type, value);
+//			}else{
+//				return null;
+//			}
+//		}
+//	}
+//    
+//    
+//
+//});

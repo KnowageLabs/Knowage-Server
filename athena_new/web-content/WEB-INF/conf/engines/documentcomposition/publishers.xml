@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+  	
+  	<PUBLISHER name="DocumentCompositionExecutionPublisherJ">
+    	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.engines.documentcomposition.presentation.DocumentCompositionExecutionPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM PROG="0" resource="it.eng.spagobi.engines.documentcomposition.presentation.DocumentCompositionExecutionPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+
+  <PUBLISHER name="DOCUMENT_COMPOSITION">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/documentcomposition/documentcomposition.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/documentcomposition/documentcomposition.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="loopbackCompositeDocumentExecution">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DocumentCompositionExecutionPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="LOOPBACK_AFTER_EXEC_DOC" />
+                <PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="OBJECT_ID" />
+                <PARAMETER name="PARAMETERS" type="RELATIVE" scope="SERVICE_RESPONSE" value="PARAMETERS" />
+     			<PARAMETER name="ROLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="ROLE" />
+                <PARAMETER name="MODALITY" type="RELATIVE" scope="SERVICE_RESPONSE" value="MODALITY" />
+                <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+			<!-- 	<PARAMETER name="NEW_SESSION" type="ABSOLUTE" scope="" value="true" />-->
+			</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DocumentCompositionExecutionPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="LOOPBACK_AFTER_EXEC_DOC" />
+                <PARAMETER name="OBJECT_ID" type="RELATIVE" scope="SERVICE_RESPONSE" value="DirectExecutionModule.OBJECT_ID" />
+                <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+				<PARAMETER name="NEW_SESSION" type="ABSOLUTE" scope="" value="true" />
+				<PARAMETER name="spagobi_execution_id" type="RELATIVE" scope="SERVICE_RESPONSE" value="DirectExecutionModule.spagobi_execution_id" />
+				<PARAMETER name="spagobi_flow_id" type="RELATIVE" scope="SERVICE_RESPONSE" value="DirectExecutionModule.spagobi_flow_id" />
+				<PARAMETER name="ROLE" type="RELATIVE" scope="SERVICE_RESPONSE" value="DirectExecutionModule.ROLE" />
+				<PARAMETER name="IGNORE_SUB_NODES" type="RELATIVE" scope="SERVICE_RESPONSE" value="DirectExecutionModule.IGNORE_SUB_NODES" />
+			</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	 <PUBLISHER name="OUTPUT_DOCUMENT_COMPOSITION">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/engines/documentcomposition/template/templateTwoDocOriz.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/engines/documentcomposition/template/templateTwoDocOriz.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+</PUBLISHERS>

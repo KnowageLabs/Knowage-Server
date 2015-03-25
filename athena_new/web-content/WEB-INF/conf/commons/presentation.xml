@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+	
+	<MAPPING business_type="ACTION" business_name="SERVICE_EXCEPTION_ACTION" publisher_name="SERVICE_ERROR_PUBLISHER"/>
+	<MAPPING business_type="ACTION" business_name="START_ACTION" publisher_name="DYN_FORWARD_PUBLISHER"/>
+	<!-- <MAPPING business_type="ACTION" business_name="START_ACTION_PUBLIC_USER" publisher_name="PublicUserPublisher"/> -->
+	<MAPPING business_name="SaveConfigurationPage" business_type="PAGE" publisher_name="SaveConfigurationPubJ"/>
+    <MAPPING business_name="SERVICE_CALLER_PAGE" business_type="PAGE" publisher_name="ServiceCallerPublisher"/>
+	
+	<MAPPING business_name="SESSION_EXPIRED_ACTION" business_type="ACTION" publisher_name="SESSION_EXPIRED_PUBLISHER"/>
+	
+	<!-- new organization portlet for SpagoBI 2.0 -->
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_ANALITICAL_MODELS" publisher_name="LoginSBIAnaliticalModelPublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_BEHAVIORAL_MODELS" publisher_name="LoginSBIBehavioralModelPublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_EVENTS" publisher_name="LoginSBIEventsPublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_CATALOGUES" publisher_name="LoginSBICataloguePublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_TOOLS" publisher_name="LoginSBIToolsPublisher"/>	
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_RESOURCES" publisher_name="LoginSBIResourcesPublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DISTRIBUTIONLIST" publisher_name="LoginSBIDistributionListPublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DISTRIBUTIONLISTUSER" publisher_name="LoginSBIDistributionListUserPublisher"/>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_SBI_DOCUMENTEXECUTION" publisher_name="LoginSBIDocumentExecutionPublisher"/>
+	
+	<MAPPING business_type="ACTION" business_name="DOMAIN_ACTION" publisher_name="DomainPublisher"/>
+	<MAPPING business_type="ACTION" business_name="CONFIG_ACTION" publisher_name="ConfigPublisher"/>
+</PRESENTATION>
+

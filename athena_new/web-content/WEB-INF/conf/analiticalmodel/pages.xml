@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+  	<PAGE name="ReportsLookupPage" scope="REQUEST" title="ReportsLookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ReportsLookupPage" target="ListLookupReportsModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLookupReportsModule"/>
+    	</MODULES>
+  	</PAGE> 
+  	
+  	<PAGE name="ListBIObjectsPage" scope="REQUEST" title="BI Objects List" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListBIObjectsPage" target="ListBIObjectsModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListBIObjectsModule"/>
+    	</MODULES>
+  	</PAGE>
+     
+	<PAGE name="MYFOLDERMANAGEMENTPAGE" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="MYFOLDERMANAGEMENTPAGE" target="EraseDocumentModule">
+        		<CONDITIONS>
+        			<PARAMETER name="TASK" scope="SERVICE_REQUEST" value="ERASE_DOCUMENT" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="MYFOLDERMANAGEMENTPAGE" target="BIObjectsModule">
+        		<CONDITIONS/>
+        		<!-- 
+        		<CONSEQUENCES>
+        			<PARAMETER name="ACTOR" type="ABSOLUTE" scope="" value="USER_ACTOR"/>
+  				</CONSEQUENCES> 
+  				-->
+      		</DEPENDENCE>
+      		<DEPENDENCE source="BIObjectsModule" target="TreeObjectsModule">
+        		<CONDITIONS>
+        			<PARAMETER name="BIObjectsModule.OBJECTS_VIEW" scope="SERVICE_RESPONSE" value="VIEW_OBJECTS_AS_TREE" />
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        		<!-- 	<PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.ACTOR"/> -->
+        			<PARAMETER name="PATH_SUBTREE" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.PATH_SUBTREE"/>
+  				</CONSEQUENCES>        		
+      		</DEPENDENCE>	
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="EraseDocumentModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="BIObjectsModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="TreeObjectsModule"/> 
+    	</MODULES>
+  	</PAGE>
+   	<PAGE name="DetailFunctionalityPage" scope="REQUEST" title="Functionality Detail" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailFunctionalityPage" target="DetailFunctionalityModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailFunctionalityModule"/>
+    	</MODULES>
+  	</PAGE>
+  	<PAGE name="UpdateBIObjectStatePage" scope="REQUEST" title="Update BI Object" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="UpdateBIObjectStatePage" target="UpdateBIObjectStateModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="UpdateBIObjectStateModule"/>
+    	</MODULES>
+  	</PAGE>
+	<PAGE name="BIObjectsPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+    		<DEPENDENCE source="BIObjectsPage" target="BIObjectsModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="BIObjectsModule" target="TreeObjectsModule">
+        		<CONDITIONS>
+        			<PARAMETER name="BIObjectsModule.OBJECTS_VIEW" scope="SERVICE_RESPONSE" value="VIEW_OBJECTS_AS_TREE" />
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        			<!-- <PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.ACTOR"/>-->
+        			<PARAMETER name="PATH_SUBTREE" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.PATH_SUBTREE"/>
+  				</CONSEQUENCES> 
+      		</DEPENDENCE>
+      		<DEPENDENCE source="BIObjectsModule" target="ListBIObjectsModule">
+        		<CONDITIONS>
+        			<PARAMETER name="BIObjectsModule.OBJECTS_VIEW" scope="SERVICE_RESPONSE" value="VIEW_OBJECTS_AS_LIST" />
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        			<!-- <PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.ACTOR"/>-->
+        			<PARAMETER name="PATH_SUBTREE" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.PATH_SUBTREE"/>
+  				</CONSEQUENCES> 
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+    		<MODULE keep_instance="false" keep_response="false" name="BIObjectsModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="TreeObjectsModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="ListBIObjectsModule"/>    		
+    	</MODULES>
+  	</PAGE>    
+  	<PAGE name="ExecutionWorkspacePage" scope="REQUEST" title="Execution Workspace Page" >
+    	<DEPENDENCIES>
+    		<DEPENDENCE source="ExecutionWorkspacePage" target="PortletLoginModule">
+        		<CONDITIONS>
+        			<PARAMETER name="WEBMODE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="ExecutionWorkspacePage" target="ExecutionWorkspaceModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="PortletLoginModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="ExecutionWorkspaceModule"/>
+    	</MODULES>
+  	</PAGE>    
+    
+	<PAGE name="LOGIN_PAGE_SBI_FUNCTIONALITY" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="LOGIN_PAGE_SBI_FUNCTIONALITY" target="PortletLoginModule">
+        		<CONDITIONS>
+        			<PARAMETER name="WEBMODE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		<DEPENDENCE source="LOGIN_PAGE_SBI_FUNCTIONALITY" target="BIObjectsModule">
+        		<CONDITIONS/>
+        		<!-- 
+        		<CONSEQUENCES>
+        			<PARAMETER name="ACTOR" type="ABSOLUTE" scope="" value="USER_ACTOR"/>
+  				</CONSEQUENCES> 
+  				 -->
+      		</DEPENDENCE>
+      		<DEPENDENCE source="BIObjectsModule" target="TreeObjectsModule">
+        		<CONDITIONS>
+        			<PARAMETER name="BIObjectsModule.OBJECTS_VIEW" scope="SERVICE_RESPONSE" value="VIEW_OBJECTS_AS_TREE" />
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        			<!-- <PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.ACTOR"/> -->
+        			<PARAMETER name="PATH_SUBTREE" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.PATH_SUBTREE"/>
+  				</CONSEQUENCES>        		
+      		</DEPENDENCE>
+      		<DEPENDENCE source="BIObjectsModule" target="ListBIObjectsModule">
+        		<CONDITIONS>
+        			<PARAMETER name="BIObjectsModule.OBJECTS_VIEW" scope="SERVICE_RESPONSE" value="VIEW_OBJECTS_AS_LIST" />
+        		</CONDITIONS>
+        		<CONSEQUENCES>
+        			<!-- <PARAMETER name="ACTOR" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.ACTOR"/> -->
+        			<PARAMETER name="PATH_SUBTREE" type="RELATIVE" scope="SERVICE_RESPONSE" value="BIObjectsModule.PATH_SUBTREE"/>
+  				</CONSEQUENCES> 
+      		</DEPENDENCE>      		
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="PortletLoginModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="BIObjectsModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="TreeObjectsModule"/> 
+      		<MODULE keep_instance="false" keep_response="false" name="ListBIObjectsModule"/> 
+    	</MODULES>
+  	</PAGE>
+    <PAGE name="DetailBIObjectPage" scope="REQUEST" title="BIObject Detail" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailBIObjectPage" target="DetailBIObjectModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailBIObjectModule"/>
+    	</MODULES>
+  	</PAGE>    
+	
+	<PAGE name="DocumentTemplateBuildPage" scope="REQUEST" title="Document template build page" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DocumentTemplateBuildPage" target="DocumentTemplateBuildModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DocumentTemplateBuildModule"/>
+    	</MODULES>
+  	</PAGE>
+ 
+
+  	<PAGE name="ExecuteBIObjectPage" scope="REQUEST" title="Execute BIObject" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ExecuteBIObjectPage" target="ExecuteBIObjectModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ExecuteBIObjectModule"/>
+    	</MODULES>
+  	</PAGE>  
+  	
+  	<PAGE name="SelectParameterPage" scope="REQUEST" title="SelectParameterPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="SelectParameterPage" target="SelectParameterPageModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="SelectParameterPageModule"/>
+    	</MODULES>
+  	</PAGE> 
+  	
+  	  	  	<PAGE name="SelectDatasetLookupPage" scope="REQUEST" title="SelectDatasetLookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="SelectDatasetLookupPage" target="SelectDatasetLookupModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="SelectDatasetLookupModule"/>
+    	</MODULES>
+  	</PAGE> 	
+  	
+  	
+  		
+</PAGES>
+

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="MANAGE_USER_ACTION" businessProcess="ProfileManagement" />
+		<MAP_ACTION actionName="MANAGE_USER_ACTION" businessProcess="FinalUsersManagement" />		
+		<MAP_ACTION actionName="MANAGE_ROLES_ACTION" businessProcess="ProfileManagement" />
+		<MAP_ACTION actionName="MANAGE_ATTRIBUTES_ACTION" businessProcess="ProfileManagement" />		
+	</MAP_ACTIONS>
+
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+
+</BUSINESS_MAP>

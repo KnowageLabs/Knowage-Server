@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+	<SERVICE name="MANAGE_ROLES_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="ROLE_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="name">
+		 	 		<VALIDATOR validatorName="MANDATORY"/>
+				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+				</FIELD>
+				<FIELD name="description" label="description">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+		 	 		<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>
+				<FIELD name="code" label="code">
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>
+				<FIELD name="typeCd" label="typeCd">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>
+				<FIELD name="saveSubobj" label="saveSubobj">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>	
+				<FIELD name="seeSubobj" label="seeSubobj">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="seeViewpoints" label="seeViewpoints">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="seeSnapshot" label="">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="seeNotes" label="seeSnapshot">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="sendMail" label="sendMail">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="savePersonalFolder" label="savePersonalFolder">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="saveRemember" label="saveRemember">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="seeMeta" label="seeMeta">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="saveMeta" label="saveMeta">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="buildQbe" label="buildQbe">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="doMassiveExport" label="doMassiveExport">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	<SERVICE name="MANAGE_USER_ACTION" type="ACTION">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE_DET" scope="SERVICE_REQUEST" value="USER_INSERT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="userId" label="userId">
+					<VALIDATOR validatorName="MANDATORY"/>	
+					<VALIDATOR validatorName="REGEXP" arg0="^[a-zA-Z0-9_\\\x2D]*$"/>				
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+				</FIELD>
+				<FIELD name="fullName" label="fullName">
+		 	 		<VALIDATOR validatorName="MANDATORY"/>
+				  	<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="2550"/>
+				</FIELD>
+
+				<FIELD name="pwd" label="pwd">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="150"/>
+				</FIELD>
+				
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

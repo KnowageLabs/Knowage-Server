@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+ <ACTION name="GET_ANALYTICAL_DRIVER_FROM_DOCS_IN_FOLDER_ACTION" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.GetAnalyticalDriversFromDocsInFolderAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+  <ACTION name="START_MASSIVE_EXPORT_EXECUTION_PROCESS_ACTION" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.StartMassiveExportExecutionProcessAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+   <ACTION name="START_MASSIVE_EXPORT_THREAD_ACTION" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.StartMassiveExportThreadAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="START_MASSIVE_SCHEDULE_ACTION" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.StartMassiveScheduleAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+    <ACTION name="GET_MASSIVE_EXPORT_PROGRESS_STATUS" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.GetMassiveExportProgressStatus" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+     <ACTION name="DOWNLOAD_MASSIVE_EXPORT_ZIP" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.DownloadMassiveExportZip" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+      <ACTION name="DELETE_MASSIVE_EXPORT_ZIP" 
+ 	class="it.eng.spagobi.tools.massiveExport.services.DeleteMassiveExportZip" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
+</ACTIONS> 

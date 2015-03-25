@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+ <ACTION name="MANAGE_SCHEDULER_ACTION" class="it.eng.spagobi.tools.scheduler.services.ManageSchedulerAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
+
+</ACTIONS>

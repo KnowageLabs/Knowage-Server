@@ -1,0 +1,406 @@
+.group-view {
+	
+}
+
+.group-view dd {
+	float: left;
+	width: 300px;
+	height: 170px;
+	margin: 5px 5px 5px 10px;
+	cursor: pointer;
+	zoom: 1;
+}
+
+.group-view-small dd {
+	float: left;
+	width: 200px;
+	height: 190px;
+	margin: 5px 5px 5px 10px;
+	cursor: pointer;
+	zoom: 1;
+	text-align: center;
+}
+
+.meta-models-view{
+	background-image:url('../../../img/metamodel/metamodel.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	margin-top: 15px;
+	height: 130px;
+	width: 200px;
+}
+
+.dataset-view{
+	text-align: center;
+}
+
+.group-view dd.over {
+	background: #F5FDE3
+		url('../../../img/analiticalmodel/browser/sample-over-160x300.png')
+		no-repeat 0px 10px;
+}
+
+.group-view-small dd.over {
+	background: #F5FDE3
+		url('../../../img/analiticalmodel/browser/sample-over-180x200.gif')
+		no-repeat 0px 10px;
+}
+
+/* ============================================================= */
+	/*	item icon layout					  			 		     */
+	/* ============================================================= */
+.group-view .document-item-icon {
+	margin: 5px 0 0 5px;
+	float: left;
+	/* border: solid  #0000FF; */
+}
+
+.group-view .document-item-icon img {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document.png') !important;
+}
+
+.group-view .document-item-icon .REPORT-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_report.png')
+		!important;
+}
+
+.group-view .document-item-icon .OLAP-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_olap.png')
+		!important;
+}
+
+.group-view .document-item-icon .OFFICE_DOC-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_officedoc.png')
+		!important;
+}
+
+.group-view .document-item-icon .DASH-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_chart.png')
+		!important;
+}
+
+.group-view .document-item-icon .CHART-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_chart.png')
+		!important;
+}
+
+.group-view .document-item-icon .DOCUMENT_COMPOSITE-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_idashboard.png')
+		!important;
+}
+
+.group-view .document-item-icon .ETL-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_etl.png')
+		!important;
+}
+
+.group-view .document-item-icon .DATA_MINING-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_datamining.png')
+		!important;
+}
+
+.group-view .document-item-icon .MAP-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_geo.png')
+		!important;
+}
+
+.group-view .document-item-icon .DATAMART-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_qbe.png')
+		!important;
+}
+
+.group-view .document-item-icon .DOSSIER-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_dossier.png')
+		!important;
+}
+
+.group-view .document-item-icon .KPI-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_kpi.png')
+		!important;
+}
+
+.group-view .document-item-icon .SMART_FILTER-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_smart_filter.png')
+		!important;
+}
+
+.group-view .document-item-icon .WORKSHEET-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_worksheet.png')
+		!important;
+}
+
+.group-view .document-item-icon .ACCESSIBLE_HTML-icon {
+	width: 96px;
+	height: 96px;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_acc.png')
+		!important;
+}
+
+.group-view .document-item-icon .CONSOLE-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_console.gif')!important;
+}
+
+.group-view .document-item-icon .MOBILE_REPORT-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_mobile_report.png')!important;
+}
+
+.group-view .document-item-icon .MOBILE_CHART-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_mobile_chart.png')!important;
+}
+
+.group-view .document-item-icon .MOBILE_COCKPIT-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_mobile_cockpit.png')!important;
+}
+
+.group-view .document-item-icon .NETWORK-icon {
+   	width:96px;
+    height:96px;
+    background-image:url('../../../img/analiticalmodel/browser/document_network.png')!important;
+}
+
+
+.group-view  #icon {
+	width: 96px;
+	height: 96px;
+	margin: 5px 0 0 5px;
+	float: left;
+}
+
+.folder {
+	background-image: url('../../../img/analiticalmodel/browser/folder.png')
+		!important;
+}
+
+.folder_home {
+	background-image:
+		url('../../../img/analiticalmodel/browser/folder_home.png') !important
+		;
+}
+
+.document {
+	background-image:
+		url('../../../img/analiticalmodel/browser/document.png') !important;
+}
+
+/* ============================================================= */
+	/*	item description layout					  			 		 */
+	/* ============================================================= */
+.group-view .item-desc {
+	float: 	right; /*left;*/
+	width: 160px;
+	margin-left: 10px;
+	margin-top: 5px;
+	/* border: thin  #0000FF; */
+}
+
+.group-view .field-label {
+	font-family: tahoma, arial, san-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+/* ------------------------------------------------------------ */
+	/*	layout customization on field name base  			 		 */
+	/* -------------------------------------------------------------*/
+.group-view .item-desc #id .field-value {
+	font-family: tahoma, arial, san-serif;
+	color: #555;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.group-view .item-desc #label .field-value {
+	font-family: tahoma, arial, san-serif;
+	color: #555;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.group-view .item-desc #name .field-value {
+	font-family: tahoma, arial, san-serif;
+	color: #555;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.group-view .item-desc #creationDate .field-label {
+	font-size: 9px;
+	font-style: italic;
+}
+
+.group-view .item-desc #creationDate .field-value {
+	font-size: 9px;
+	font-style: italic;
+}
+
+/* -------------------------------------------------------------*/
+	/* ============================================================= */
+.group-view .group-header {
+	border-bottom: 2px solid #99bbe8;
+	cursor: pointer;
+	background: transparent
+		url('../../../img/analiticalmodel/browser/group-expand-sprite.gif')
+		no-repeat 3px -47px;
+	padding: 4px 4px 4px 17px;
+	color: #3764a0;
+	font: bold 11px tahoma, arial, helvetica, sans-serif;
+}
+
+.group-view .collapsed .group-header {
+	background-position: 3px 3px;
+}
+
+.group-view .collapsed .group-body {
+	display: none;
+}
+
+.group-view .item-control-panel {
+	height: 20px;
+	width: 298px;
+	background-color: #F5FDE3;
+	border: 1px solid #d4eaac;
+	visibility: hidden;
+}
+
+.group-view .item-control-panel .action-delete {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/delete16.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .item-control-panel .action-worksheet {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/document_worksheet16.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .item-control-panel .action-georeport {
+	width: 16px;
+	height: 15px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/metadata.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .item-control-panel .action-detail {
+	width: 14px;
+	height: 14px;
+	margin: 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/detail.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.group-view .item-control-panel .action-export {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/export.png');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .item-control-panel .action-schedule {
+	width: 16px;
+	height: 16px;
+	margin: 2 2 2 2;
+	float: right;
+	background-image:
+		url('../../../img/analiticalmodel/browser/schedule.gif');
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.group-view .group-item .item-desc p {
+	color: #777;
+}
+
+.group-view .group-item-search #summary {
+	float: left;
+	width: 250px;
+	margin: 2 2 2 2;
+	margin-left: 50px;
+	clear:right;
+	padding: 10px;
+	color:#555555;
+}
+
+/*overrides existing*/
+.group-view .group-item-search {
+	float: left;
+	width: 700px;
+	height: 122px;
+	margin: 5px 5px 5px 10px;
+	cursor: pointer;
+	zoom: 1;
+}

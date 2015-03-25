@@ -1,0 +1,1077 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobisdkdocuments" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisdkdocuments" xmlns:intf="urn:spagobisdkdocuments" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.documents.sdk.spagobi.eng.it" xmlns:tns3="http://exceptions.sdk.spagobi.eng.it" xmlns:tns4="http://bo.importexport.sdk.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://bo.documents.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKDocument">
+    <sequence>
+     <element name="dataSetId" nillable="true" type="soapenc:int"/>
+     <element name="dataSourceId" nillable="true" type="soapenc:int"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+     <element name="engineId" nillable="true" type="soapenc:int"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="state" nillable="true" type="soapenc:string"/>
+     <element name="type" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKFunctionality">
+    <sequence>
+     <element name="code" nillable="true" type="soapenc:string"/>
+     <element name="containedDocuments" nillable="true" type="impl:ArrayOf_tns2_SDKDocument"/>
+     <element name="containedFunctionalities" nillable="true" type="impl:ArrayOf_tns2_SDKFunctionality"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="parentId" nillable="true" type="soapenc:int"/>
+     <element name="path" nillable="true" type="soapenc:string"/>
+     <element name="prog" nillable="true" type="soapenc:int"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKConstraint">
+    <sequence>
+     <element name="description" nillable="true" type="soapenc:string"/>
+     <element name="firstValue" nillable="true" type="soapenc:string"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="secondValue" nillable="true" type="soapenc:string"/>
+     <element name="type" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKDocumentParameter">
+    <sequence>
+     <element name="constraints" nillable="true" type="impl:ArrayOf_tns2_SDKConstraint"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="type" nillable="true" type="soapenc:string"/>
+     <element name="urlName" nillable="true" type="soapenc:string"/>
+     <element name="values" nillable="true" type="impl:ArrayOf_xsd_anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKDocumentParameterValue">
+    <sequence>
+     <element name="description" nillable="true" type="soapenc:string"/>
+     <element name="value" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKTemplate">
+    <sequence>
+     <element name="content" nillable="true" type="apachesoap:DataHandler"/>
+     <element name="fileName" nillable="true" type="soapenc:string"/>
+     <element name="folderName" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKExecutedDocumentContent">
+    <sequence>
+     <element name="content" nillable="true" type="apachesoap:DataHandler"/>
+     <element name="fileName" nillable="true" type="soapenc:string"/>
+     <element name="fileType" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKSchema">
+    <sequence>
+     <element name="schemaName" nillable="true" type="soapenc:string"/>
+     <element name="schemaDescription" nillable="true" type="soapenc:string"/>
+     <element name="schemaDataSourceLbl" nillable="true" type="soapenc:string"/>
+     <element name="schemaFile" nillable="true" type="tns4:SDKFile"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:spagobisdkdocuments" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_SDKDocument">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKDocument[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns2_SDKFunctionality">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKFunctionality[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_soapenc_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="soapenc:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns2_SDKConstraint">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKConstraint[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_xsd_anyType">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:anyType[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns2_SDKDocumentParameter">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKDocumentParameter[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns2_SDKDocumentParameterValue">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKDocumentParameterValue[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://exceptions.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
+   <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="NonExecutableDocumentException">
+    <sequence/>
+   </complexType>
+   <complexType name="NotAllowedOperationException">
+    <sequence/>
+   </complexType>
+   <complexType name="InvalidParameterValue">
+    <sequence>
+     <element name="parameterFormat" nillable="true" type="soapenc:string"/>
+     <element name="parameterName" nillable="true" type="soapenc:string"/>
+     <element name="parameterType" nillable="true" type="soapenc:string"/>
+     <element name="wrongParameterValue" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="MissingParameterValue">
+    <sequence>
+     <element name="parameterName" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+   <complexType name="SDKException">
+    <sequence>
+     <element name="code" nillable="true" type="soapenc:string"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
+   <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
+   <import namespace="http://bo.importexport.sdk.spagobi.eng.it"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="mapItem">
+    <sequence>
+     <element name="key" nillable="true" type="xsd:anyType"/>
+     <element name="value" nillable="true" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+   <complexType name="Map">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="apachesoap:mapItem"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://bo.importexport.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdocuments"/>
+   <import namespace="http://bo.documents.sdk.spagobi.eng.it"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKFile">
+    <sequence>
+     <element name="content" nillable="true" type="apachesoap:DataHandler"/>
+     <element name="fileName" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getDefaultValuesResponse">
+
+      <wsdl:part name="getDefaultValuesReturn" type="impl:ArrayOf_tns2_SDKDocumentParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentParametersRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadTemplateResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="executeDocumentRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDocument"/>
+
+      <wsdl:part name="in1" type="impl:ArrayOf_tns2_SDKDocumentParameter"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentParametersResponse">
+
+      <wsdl:part name="getDocumentParametersReturn" type="impl:ArrayOf_tns2_SDKDocumentParameter"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadTemplateRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+      <wsdl:part name="in1" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAdmissibleValuesResponse">
+
+      <wsdl:part name="getAdmissibleValuesReturn" type="impl:ArrayOf_tns2_SDKDocumentParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveNewDocumentResponse">
+
+      <wsdl:part name="saveNewDocumentReturn" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByIdResponse">
+
+      <wsdl:part name="getDocumentByIdReturn" type="tns2:SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadMondrianSchemaRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKSchema"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByLabelResponse">
+
+      <wsdl:part name="getDocumentByLabelReturn" type="tns2:SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDefaultValuesRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTemplateResponse">
+
+      <wsdl:part name="downloadTemplateReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getCorrectRolesForExecutionRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsTreeResponse">
+
+      <wsdl:part name="getDocumentsAsTreeReturn" type="tns2:SDKFunctionality"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartTemplateResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartFileResponse">
+
+      <wsdl:part name="downloadDatamartFileReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="InvalidParameterValue">
+
+      <wsdl:part name="fault" type="tns3:InvalidParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByLabelRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAdmissibleValuesRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="NotAllowedOperationException">
+
+      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="SDKException">
+
+      <wsdl:part name="fault" type="tns3:SDKException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartFileRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadMondrianSchemaResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartModelResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="MissingParameterValue">
+
+      <wsdl:part name="fault" type="tns3:MissingParameterValue"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="saveNewDocumentRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDocument"/>
+
+      <wsdl:part name="in1" type="tns2:SDKTemplate"/>
+
+      <wsdl:part name="in2" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartTemplateRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKTemplate"/>
+
+      <wsdl:part name="in1" type="tns2:SDKTemplate"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsListRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartModelFilesRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentByIdRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getCorrectRolesForExecutionResponse">
+
+      <wsdl:part name="getCorrectRolesForExecutionReturn" type="impl:ArrayOf_soapenc_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDatamartModelsRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="executeDocumentResponse">
+
+      <wsdl:part name="executeDocumentReturn" type="tns2:SDKExecutedDocumentContent"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTemplateRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDatamartModelRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDatamartModelsResponse">
+
+      <wsdl:part name="getAllDatamartModelsReturn" type="apachesoap:Map"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDatamartModelFilesResponse">
+
+      <wsdl:part name="downloadDatamartModelFilesReturn" type="tns2:SDKTemplate"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsListResponse">
+
+      <wsdl:part name="getDocumentsAsListReturn" type="impl:ArrayOf_tns2_SDKDocument"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="NonExecutableDocumentException">
+
+      <wsdl:part name="fault" type="tns3:NonExecutableDocumentException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDocumentsAsTreeRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="DocumentsService">
+
+      <wsdl:operation name="getDocumentsAsList" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getDocumentsAsListRequest" name="getDocumentsAsListRequest"/>
+
+         <wsdl:output message="impl:getDocumentsAsListResponse" name="getDocumentsAsListResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentById" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDocumentByIdRequest" name="getDocumentByIdRequest"/>
+
+         <wsdl:output message="impl:getDocumentByIdResponse" name="getDocumentByIdResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentByLabel" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDocumentByLabelRequest" name="getDocumentByLabelRequest"/>
+
+         <wsdl:output message="impl:getDocumentByLabelResponse" name="getDocumentByLabelResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentsAsTree" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDocumentsAsTreeRequest" name="getDocumentsAsTreeRequest"/>
+
+         <wsdl:output message="impl:getDocumentsAsTreeResponse" name="getDocumentsAsTreeResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getCorrectRolesForExecution" parameterOrder="in0">
+
+         <wsdl:input message="impl:getCorrectRolesForExecutionRequest" name="getCorrectRolesForExecutionRequest"/>
+
+         <wsdl:output message="impl:getCorrectRolesForExecutionResponse" name="getCorrectRolesForExecutionResponse"/>
+
+         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentParameters" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getDocumentParametersRequest" name="getDocumentParametersRequest"/>
+
+         <wsdl:output message="impl:getDocumentParametersResponse" name="getDocumentParametersResponse"/>
+
+         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAdmissibleValues" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getAdmissibleValuesRequest" name="getAdmissibleValuesRequest"/>
+
+         <wsdl:output message="impl:getAdmissibleValuesResponse" name="getAdmissibleValuesResponse"/>
+
+         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDefaultValues" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getDefaultValuesRequest" name="getDefaultValuesRequest"/>
+
+         <wsdl:output message="impl:getDefaultValuesResponse" name="getDefaultValuesResponse"/>
+
+         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadTemplate" parameterOrder="in0">
+
+         <wsdl:input message="impl:downloadTemplateRequest" name="downloadTemplateRequest"/>
+
+         <wsdl:output message="impl:downloadTemplateResponse" name="downloadTemplateResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadTemplate" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:uploadTemplateRequest" name="uploadTemplateRequest"/>
+
+         <wsdl:output message="impl:uploadTemplateResponse" name="uploadTemplateResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveNewDocument" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:saveNewDocumentRequest" name="saveNewDocumentRequest"/>
+
+         <wsdl:output message="impl:saveNewDocumentResponse" name="saveNewDocumentResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="executeDocument" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:executeDocumentRequest" name="executeDocumentRequest"/>
+
+         <wsdl:output message="impl:executeDocumentResponse" name="executeDocumentResponse"/>
+
+         <wsdl:fault message="impl:NonExecutableDocumentException" name="NonExecutableDocumentException"/>
+
+         <wsdl:fault message="impl:InvalidParameterValue" name="InvalidParameterValue"/>
+
+         <wsdl:fault message="impl:MissingParameterValue" name="MissingParameterValue"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDatamartTemplate" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:uploadDatamartTemplateRequest" name="uploadDatamartTemplateRequest"/>
+
+         <wsdl:output message="impl:uploadDatamartTemplateResponse" name="uploadDatamartTemplateResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDatamartModel" parameterOrder="in0">
+
+         <wsdl:input message="impl:uploadDatamartModelRequest" name="uploadDatamartModelRequest"/>
+
+         <wsdl:output message="impl:uploadDatamartModelResponse" name="uploadDatamartModelResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDatamartFile" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:downloadDatamartFileRequest" name="downloadDatamartFileRequest"/>
+
+         <wsdl:output message="impl:downloadDatamartFileResponse" name="downloadDatamartFileResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDatamartModelFiles" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:downloadDatamartModelFilesRequest" name="downloadDatamartModelFilesRequest"/>
+
+         <wsdl:output message="impl:downloadDatamartModelFilesResponse" name="downloadDatamartModelFilesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDatamartModels">
+
+         <wsdl:input message="impl:getAllDatamartModelsRequest" name="getAllDatamartModelsRequest"/>
+
+         <wsdl:output message="impl:getAllDatamartModelsResponse" name="getAllDatamartModelsResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadMondrianSchema" parameterOrder="in0">
+
+         <wsdl:input message="impl:uploadMondrianSchemaRequest" name="uploadMondrianSchemaRequest"/>
+
+         <wsdl:output message="impl:uploadMondrianSchemaResponse" name="uploadMondrianSchemaResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="DocumentsServiceSoapBinding" type="impl:DocumentsService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getDocumentsAsList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentsAsListRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentsAsListResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentById">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentByIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentByIdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentByLabel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentByLabelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentByLabelResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentsAsTree">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentsAsTreeRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentsAsTreeResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getCorrectRolesForExecution">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getCorrectRolesForExecutionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getCorrectRolesForExecutionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NonExecutableDocumentException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDocumentParameters">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDocumentParametersRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDocumentParametersResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NonExecutableDocumentException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAdmissibleValues">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAdmissibleValuesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAdmissibleValuesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NonExecutableDocumentException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDefaultValues">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDefaultValuesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDefaultValuesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NonExecutableDocumentException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadTemplate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadTemplateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadTemplate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadTemplateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="saveNewDocument">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="saveNewDocumentRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="saveNewDocumentResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="executeDocument">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="executeDocumentRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="executeDocumentResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NonExecutableDocumentException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NonExecutableDocumentException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="InvalidParameterValue">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="InvalidParameterValue" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="MissingParameterValue">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="MissingParameterValue" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDatamartTemplate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadDatamartTemplateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadDatamartTemplateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDatamartModel">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadDatamartModelRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadDatamartModelResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDatamartFile">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadDatamartFileRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadDatamartFileResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDatamartModelFiles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadDatamartModelFilesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadDatamartModelFilesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDatamartModels">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllDatamartModelsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllDatamartModelsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadMondrianSchema">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadMondrianSchemaRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadMondrianSchemaResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkdocuments" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="DocumentsServiceService">
+
+      <wsdl:port binding="impl:DocumentsServiceSoapBinding" name="DocumentsService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/sdk/DocumentsService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

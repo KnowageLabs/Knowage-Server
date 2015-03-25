@@ -1,0 +1,111 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from DataSetsSDKServiceService WSDL service -->
+
+  <service name="DataSetsSDKService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobisdkdatasets"/>
+      <parameter name="wsdlServiceElement" value="DataSetsSDKServiceService"/>
+      <parameter name="schemaUnqualified" value="http://bo.datasets.sdk.spagobi.eng.it,urn:spagobisdkdatasets,http://exceptions.sdk.spagobi.eng.it,http://xml.apache.org/xml-soap"/>
+      <parameter name="wsdlServicePort" value="DataSetsSDKService"/>
+      <parameter name="className" value="it.eng.spagobi.sdk.datasets.stub.DataSetsSDKServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="DataSetsSDKService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:InvalidParameterValue"
+        type="java:it.eng.spagobi.sdk.exceptions.InvalidParameterValue"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdatasets"
+        qname="ns:ArrayOf_tns2_SDKDataSetParameter"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter[]"
+        innerType="cmp-ns:SDKDataSetParameter" xmlns:cmp-ns="http://bo.datasets.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdatasets"
+        qname="ns:ArrayOf_tns2_SDKDataSet"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataSet[]"
+        innerType="cmp-ns:SDKDataSet" xmlns:cmp-ns="http://bo.datasets.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.datasets.sdk.spagobi.eng.it"
+        qname="ns:SDKDataStoreFieldMetadata"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataStoreFieldMetadata"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.datasets.sdk.spagobi.eng.it"
+        qname="ns:SDKDataSetParameter"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdatasets"
+        qname="ns:ArrayOf_tns2_SDKDataStoreFieldMetadata"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataStoreFieldMetadata[]"
+        innerType="cmp-ns:SDKDataStoreFieldMetadata" xmlns:cmp-ns="http://bo.datasets.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkdatasets"
+        qname="ns:ArrayOf_soapenc_string"
+        type="java:java.lang.String[]"
+        innerType="cmp-ns:string" xmlns:cmp-ns="http://schemas.xmlsoap.org/soap/encoding/"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.datasets.sdk.spagobi.eng.it"
+        qname="ns:SDKDataStoreMetadata"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataStoreMetadata"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:MissingParameterValue"
+        type="java:it.eng.spagobi.sdk.exceptions.MissingParameterValue"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.datasets.sdk.spagobi.eng.it"
+        qname="ns:SDKDataSet"
+        type="java:it.eng.spagobi.sdk.datasets.bo.SDKDataSet"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:NotAllowedOperationException"
+        type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

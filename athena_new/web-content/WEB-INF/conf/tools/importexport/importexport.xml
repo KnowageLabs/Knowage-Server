@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IMPORTEXPORT>
+    <CURRENTVERSION version="5.1.0"/>
+	<EXPORTER class="it.eng.spagobi.tools.importexport.ExportManager"
+	          exportFolder="${java.io.tmpdir}/exports" />
+	<IMPORTER class="it.eng.spagobi.tools.importexport.ImportManager" 
+			  tmpFolder="${java.io.tmpdir}/import"/>
+	<TRANSFORMERS>
+		<TRANSFORM from="2.0.0" to="2.1.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_0_0To2_1_0" />
+		<TRANSFORM from="2.1.0" to="2.2.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_1_0To2_2_0" />	
+		<TRANSFORM from="2.2.0" to="2.3.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_2_0To2_3_0" />	
+		<TRANSFORM from="2.3.0" to="2.4.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_3_0To2_4_0" />	
+		<TRANSFORM from="2.4.0" to="2.5.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_4_0To2_5_0" />	
+		<TRANSFORM from="2.5.0" to="2.6.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_5_0To2_6_0" />	
+		<TRANSFORM from="2.6.0" to="2.7.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_6_0To2_7_0" />
+		<TRANSFORM from="2.7.0" to="2.8.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_7_0To2_8_0" />
+		<TRANSFORM from="2.8.0" to="3.0.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom2_8_0To3_0_0" />
+		<TRANSFORM from="3.0.0" to="3.1.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_0_0To3_1_0" />
+		<TRANSFORM from="3.1.0" to="3.2.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_1_0To3_2_0" />
+		<TRANSFORM from="3.2.0" to="3.3.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_2_0To3_3_0" />
+		<TRANSFORM from="3.3.0" to="3.4.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_3_0To3_4_0" />
+		<TRANSFORM from="3.4.0" to="3.5.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_4_0To3_5_0" />
+		<TRANSFORM from="3.5.0" to="3.5.1" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_5_0To3_5_1" />
+        <TRANSFORM from="3.5.1" to="3.6.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_5_1To3_6_0" />
+        <TRANSFORM from="3.6.0" to="3.7.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_6_0To3_7_0" />
+        <TRANSFORM from="3.7.0" to="4.0.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom3_7_0To4_0_0" />
+    	<TRANSFORM from="4.0.0" to="4.1.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom4_0_0To4_1_0" />
+        <TRANSFORM from="4.1.0" to="4.2.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom4_1_0To4_2_0" />
+        <TRANSFORM from="4.2.0" to="5.0.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom4_2_0To5_0_0" />
+        <TRANSFORM from="5.0.0" to="5.1.0" class="it.eng.spagobi.tools.importexport.transformers.TransformerFrom5_0_0To5_1_0" />
+
+		<!--
+		put transformers here using the syntax:
+		<TRANSFORM from="{from version}" to="{to version}" class="{transformer class complete name}" />
+		 -->
+	</TRANSFORMERS>
+	<ASSOCIATIONS_REPOSITORY path="Repository_Association_Files"/>
+	<IMPORT_FILE_MAX_SIZE>5242880</IMPORT_FILE_MAX_SIZE>
+</IMPORTEXPORT>
+
+<!--
+	The export feature read only the class to use for export and then produce the archive
+	the import feature:
+	- unzip the archive
+	- read the version from properties file 
+	- if archive version = current version read the importer class and exec it giving it the archive
+	- if archive version != current version
+		- search the transformer with from = archive version and exec it
+		- after trans execution look if to attribute =  current version read the importer class and exec it giving it the new archive
+		- if to attribute != current version search the transformer with from = to and exec it
+		- repeat the last steps util to = current version
+-->

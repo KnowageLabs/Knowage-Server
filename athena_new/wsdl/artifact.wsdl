@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobiartifact" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobiartifact" xmlns:intf="urn:spagobiartifact" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.artifact.services.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://bo.artifact.services.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobiartifact"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SpagoBIArtifact">
+    <sequence>
+     <element name="contentId" nillable="true" type="soapenc:int"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="type" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:spagobiartifact" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://bo.artifact.services.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_SpagoBIArtifact">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SpagoBIArtifact[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getArtifactsByTypeResponse">
+
+      <wsdl:part name="getArtifactsByTypeReturn" type="impl:ArrayOf_tns2_SpagoBIArtifact"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getArtifactsByTypeRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getArtifactContentByNameAndTypeRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getArtifactContentByNameAndTypeResponse">
+
+      <wsdl:part name="getArtifactContentByNameAndTypeReturn" type="apachesoap:DataHandler"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getArtifactContentByIdResponse">
+
+      <wsdl:part name="getArtifactContentByIdReturn" type="apachesoap:DataHandler"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getArtifactContentByIdRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="ArtifactService">
+
+      <wsdl:operation name="getArtifactContentByNameAndType" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:getArtifactContentByNameAndTypeRequest" name="getArtifactContentByNameAndTypeRequest"/>
+
+         <wsdl:output message="impl:getArtifactContentByNameAndTypeResponse" name="getArtifactContentByNameAndTypeResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getArtifactContentById" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getArtifactContentByIdRequest" name="getArtifactContentByIdRequest"/>
+
+         <wsdl:output message="impl:getArtifactContentByIdResponse" name="getArtifactContentByIdResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getArtifactsByType" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getArtifactsByTypeRequest" name="getArtifactsByTypeRequest"/>
+
+         <wsdl:output message="impl:getArtifactsByTypeResponse" name="getArtifactsByTypeResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="ArtifactServiceSoapBinding" type="impl:ArtifactService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getArtifactContentByNameAndType">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getArtifactContentByNameAndTypeRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiartifact" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getArtifactContentByNameAndTypeResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiartifact" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getArtifactContentById">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getArtifactContentByIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiartifact" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getArtifactContentByIdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiartifact" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getArtifactsByType">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getArtifactsByTypeRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiartifact" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getArtifactsByTypeResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobiartifact" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+	<wsdl:service name="ArtifactServiceService">
+
+		<wsdl:port binding="impl:ArtifactServiceSoapBinding" name="ArtifactService">
+
+			<wsdlsoap:address
+				location="http://localhost:8080/SpagoBI/services/ArtifactService" />
+
+		</wsdl:port>
+
+	</wsdl:service>
+
+</wsdl:definitions>

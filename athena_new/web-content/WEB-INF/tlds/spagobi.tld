@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE taglib
+  PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+  "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+                        
+<taglib xmlns="http://java.sun.com/JSP/TagLibraryDescriptor">
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>spagobi_tags</short-name>
+  <uri></uri>
+  <description>
+    Spago BI Tags
+  </description>
+
+
+
+    <!-- START LIST TAGS  -->
+   <tag>
+       <name>list</name>
+       <tag-class>it.eng.spagobi.commons.presentation.tags.ListTag</tag-class>
+       <body-content>empty</body-content>
+       <description>Rendering of a list</description>
+       <attribute>
+           <name>moduleName</name>
+           <required>true</required>
+           <rtexprvalue>true</rtexprvalue>
+       </attribute>
+       <attribute>
+           <name>filter</name>
+           <required>false</required>
+           <rtexprvalue>true</rtexprvalue>
+       </attribute>
+       <attribute>
+           <name>bundle</name>
+           <required>false</required>
+           <rtexprvalue>true</rtexprvalue>
+       </attribute> 
+        <attribute>
+            <name>bundle</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <!-- display the list of biobject links  -->
+	<tag>
+        <name>checklist</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.CheckListTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of a check list</description>
+        <attribute>
+            <name>moduleName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>filter</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+   
+    
+    <!-- display the list of checkboxs  -->
+	<tag>
+        <name>checkbox</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.CheckBoxTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of a check list</description>
+        <attribute>
+            <name>moduleName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>filter</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    
+    <tag>
+        <name>listBiParameters</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.ListBIParametersTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of a list</description>
+        <attribute>
+            <name>moduleName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <!-- END LIST TAGS  -->
+    
+    
+    
+    
+    
+     <!-- START TREE TAGS  -->
+    
+    <tag>
+        <name>treeObjects</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.TreeObjectsTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the objects tree</description>
+        <attribute>
+            <name>moduleName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>htmlGeneratorClass</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>treeName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>attributeToRender</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>   
+    </tag>
+    
+    <!-- END TREE TAGS  -->
+    
+    
+    
+    
+    <!-- START ERROR TAGS  -->
+    
+    <tag>
+        <name>error</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.ErrorTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Esegue il rendering degli errori, versione HTML</description>
+    </tag>
+    
+    <!-- END ERROR TAGS  -->
+    
+    
+    <!-- START ParametersGeneratorTag TAGS  -->
+    
+    <tag>
+        <name>ParametersGenerator</name>
+        <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.ParametersGeneratorTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the parameters form</description>
+        <attribute>
+            <name>modality</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>moduleName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>requestIdentity</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+     <!-- END ParametersGeneratorTag TAGS  -->
+    
+    
+    
+    <!-- START MESSAGE TAGS  -->
+    
+	<tag>
+        <name>message</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.SpagoBIMessageTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Esegue il rendering dei messagi prevedendo 5 parametri opzionali</description>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>bundle</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <!-- this parameters contains the argument for the message error, the value is one string 
+        and each argument is separated from a |. Example: argument1|argument2|argument3
+        sep -->
+        <attribute>
+            <name>args</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <!-- END MESSAGE TAGS  -->
+    
+    
+    
+    
+    
+    <!-- START LOV TAGS  -->
+    
+    <tag>
+        <name>queryWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.QueryWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the query wizard form</description>
+        <attribute>
+            <name>dataSourceLabel</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>queryDef</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>scriptWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.ScriptWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the script wizard form</description>
+        <attribute>
+            <name>script</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>languageScript</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    
+    <tag>
+        <name>javaClassWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.JavaClassWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the java class wizard form</description>
+        <attribute>
+            <name>javaClassName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>        
+    </tag>
+    
+    
+    <tag>
+        <name>lovWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.LovWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the fixed lov wizard form</description>
+        <attribute>
+            <name>lovProvider</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    <tag>
+        <name>datasetLovWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.DatasetLovWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the dataset lov form</description>
+        <attribute>
+            <name>datasetId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>    
+    
+        <tag>
+        <name>datasetWizard</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.DatasetWizardTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the dataset parameters form</description>
+        <attribute>
+            <name>parametersXML</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    
+    <tag>
+        <name>LovColumnsSelector</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.LovColumnsSelectorTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the lov column selector</description>
+        <attribute>
+            <name>moduleName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>visibleColumns</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>valueColumn</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>descriptionColumn</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>        
+        <attribute>
+            <name>invisibleColumns</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    
+    
+    
+    <!-- END LOV TAGS  -->
+    
+    <!-- InfoTag -->
+    
+     <tag>
+        <name>infoTag</name>
+        <tag-class>it.eng.spagobi.commons.presentation.tags.InfoTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of same information</description>
+        <attribute>
+            <name>infoTitle</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>fileName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+		<attribute>
+            <name>buttonId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    
+    
+    <!-- Tag for view point list 
+    <tag>
+        <name>viewPointsList</name>
+        <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.ViewPointsListTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the viewpoints list</description>
+        <attribute>
+            <name>biobjectId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    -->
+    
+    <!-- Tag for subObjects list 
+    <tag>
+        <name>subObjectsList</name>
+        <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.SubObjectsListTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the SubObjects list</description>
+        <attribute>
+            <name>biobjectId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    -->
+    
+    <!-- Tag for snapshots list 
+    <tag>
+        <name>snapshotsList</name>
+        <tag-class>it.eng.spagobi.analiticalmodel.execution.presentation.tag.SnapshotsListTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Rendering of the snapshots list</description>
+        <attribute>
+            <name>snapshotsList</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    -->
+    
+</taglib>

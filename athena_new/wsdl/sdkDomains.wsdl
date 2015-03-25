@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobisdkdomains" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisdkdomains" xmlns:intf="urn:spagobisdkdomains" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.domains.sdk.spagobi.eng.it" xmlns:tns3="http://exceptions.sdk.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://bo.domains.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdomains"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKDomain">
+    <sequence>
+     <element name="domainCd" nillable="true" type="soapenc:string"/>
+     <element name="domainNm" nillable="true" type="soapenc:string"/>
+     <element name="valueCd" nillable="true" type="soapenc:string"/>
+     <element name="valueDs" nillable="true" type="soapenc:string"/>
+     <element name="valueId" nillable="true" type="soapenc:int"/>
+     <element name="valueNm" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://exceptions.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkdomains"/>
+   <import namespace="http://bo.domains.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKException">
+    <sequence>
+     <element name="code" nillable="true" type="soapenc:string"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:spagobisdkdomains" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://bo.domains.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_SDKDomain">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKDomain[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="insertDomainResponse">
+
+      <wsdl:part name="insertDomainReturn" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="SDKException">
+
+      <wsdl:part name="fault" type="tns3:SDKException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainByDomainAndValueCdResponse">
+
+      <wsdl:part name="getDomainByDomainAndValueCdReturn" type="tns2:SDKDomain"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainByIdResponse">
+
+      <wsdl:part name="getDomainByIdReturn" type="tns2:SDKDomain"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDomainsResponse">
+
+      <wsdl:part name="getAllDomainsReturn" type="impl:ArrayOf_tns2_SDKDomain"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainsListByDomainCdResponse">
+
+      <wsdl:part name="getDomainsListByDomainCdReturn" type="impl:ArrayOf_tns2_SDKDomain"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDomainsRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainByDomainAndValueCdRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainByIdRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateDomainResponse">
+
+      <wsdl:part name="updateDomainReturn" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateDomainRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDomain"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainsListByDomainCdRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="insertDomainRequest">
+
+      <wsdl:part name="in0" type="tns2:SDKDomain"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="DomainsService">
+
+      <wsdl:operation name="insertDomain" parameterOrder="in0">
+
+         <wsdl:input message="impl:insertDomainRequest" name="insertDomainRequest"/>
+
+         <wsdl:output message="impl:insertDomainResponse" name="insertDomainResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateDomain" parameterOrder="in0">
+
+         <wsdl:input message="impl:updateDomainRequest" name="updateDomainRequest"/>
+
+         <wsdl:output message="impl:updateDomainResponse" name="updateDomainResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainById" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDomainByIdRequest" name="getDomainByIdRequest"/>
+
+         <wsdl:output message="impl:getDomainByIdResponse" name="getDomainByIdResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainByDomainAndValueCd" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getDomainByDomainAndValueCdRequest" name="getDomainByDomainAndValueCdRequest"/>
+
+         <wsdl:output message="impl:getDomainByDomainAndValueCdResponse" name="getDomainByDomainAndValueCdResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDomains">
+
+         <wsdl:input message="impl:getAllDomainsRequest" name="getAllDomainsRequest"/>
+
+         <wsdl:output message="impl:getAllDomainsResponse" name="getAllDomainsResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainsListByDomainCd" parameterOrder="in0">
+
+         <wsdl:input message="impl:getDomainsListByDomainCdRequest" name="getDomainsListByDomainCdRequest"/>
+
+         <wsdl:output message="impl:getDomainsListByDomainCdResponse" name="getDomainsListByDomainCdResponse"/>
+
+         <wsdl:fault message="impl:SDKException" name="SDKException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="DomainsServiceSoapBinding" type="impl:DomainsService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="insertDomain">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="insertDomainRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="insertDomainResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateDomain">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateDomainRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateDomainResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainById">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDomainByIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDomainByIdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainByDomainAndValueCd">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDomainByDomainAndValueCdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDomainByDomainAndValueCdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDomains">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllDomainsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllDomainsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainsListByDomainCd">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDomainsListByDomainCdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDomainsListByDomainCdResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SDKException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SDKException" namespace="urn:spagobisdkdomains" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="DomainsServiceService">
+
+      <wsdl:port binding="impl:DomainsServiceSoapBinding" name="DomainsService">
+
+         <wsdlsoap:address location="http://localhost:8181/SpagoBI/sdk/DomainsService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

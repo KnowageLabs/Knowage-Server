@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+<MAPPING business_name="ReportsLookupPage" business_type="PAGE" publisher_name="ReportsLookupPublisher"/>	
+<MAPPING business_name="MyFolderManagementPage" business_type="PAGE" publisher_name="BIObjectsPubJ"/> 
+<MAPPING business_name="DetailFunctionalityPage" business_type="PAGE" publisher_name="DetailFunctionalityPubJ"/>
+<MAPPING business_name="BIObjectsPage" business_type="PAGE" publisher_name="BIObjectsPubJ"/>
+<MAPPING business_name="ExecutionWorkspacePage" business_type="PAGE" publisher_name="ExecutionWorkspacePublisher"/>
+<MAPPING business_name="LOGIN_PAGE_SBI_FUNCTIONALITY" business_type="PAGE" publisher_name="BIObjectsPubJ"/>
+<MAPPING business_name="DetailBIObjectPage" business_type="PAGE" publisher_name="DetailBIObjectPubJ"/>
+<MAPPING business_name="DocumentTemplateBuildPage" business_type="PAGE" publisher_name="DocumentTemplateBuildPublisher"/>
+<MAPPING business_name="ExecuteBIObjectPage" business_type="PAGE" publisher_name="ExecuteBIObjectPubJ"/>
+<MAPPING business_type="ACTION" business_name="CREATE_MASTER_NODE_LOWFUNCTIONALITY" publisher_name="FunctionalitiesTreeRefresh"/>
+<MAPPING business_type="ACTION" business_name="MOVE_UP_LOWFUNCTIONALITY" publisher_name="FunctionalitiesTreeRefresh"/>
+<MAPPING business_type="ACTION" business_name="MOVE_DOWN_LOWFUNCTIONALITY" publisher_name="FunctionalitiesTreeRefresh"/>
+<MAPPING business_name="ValidateExecuteBIObjectPage" business_type="PAGE" publisher_name="ExecuteBIObjectPubJ"/>
+
+<MAPPING business_type="ACTION" business_name="SAVE_OBJECT" publisher_name="SaveObjectPublisher"/>
+<MAPPING business_name="SelectParameterPage" business_type="PAGE" publisher_name="SelectParameterPublisherJ"/>
+<MAPPING business_type="ACTION" business_name="SHOW_SEND_TO_FORM" publisher_name="ShowSendToFormPublisher"/>
+
+<MAPPING business_name="INSERT_NOTES_ACTION" business_type="ACTION" publisher_name="insertNotesBIObjectPubJ"/>
+<MAPPING business_name="RATING_ACTION" business_type="ACTION" publisher_name="ratingBIObjectPubJ"/>
+
+<MAPPING business_type="PAGE" business_name="SelectDatasetLookupPage" publisher_name="SelectDatasetLookupPublisher"/>
+<MAPPING business_type="PAGE" business_name="UpdateBIObjectStatePage" publisher_name="UpdateBIObjectStatePublisher"/>
+
+<MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_CREATE_DOCUMENT" publisher_name="UserDocumentBrowserCreateDoc"/>
+<MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_ACTION" publisher_name="UserDocumentBrowserPublisher"/>
+<MAPPING business_type="ACTION" business_name="DOCUMENT_USER_BROWSER_START_PORTLET_ACTION" publisher_name="UserDocumentBrowserPortletPublisher"/>
+
+<MAPPING business_type="ACTION" business_name="EXECUTE_DOCUMENT_ACTION" publisher_name="ExecuteDocumentPublisher"/>
+<MAPPING business_type="ACTION" business_name="CREATE_DATASET_FOR_WORKSHEET_ACTION" publisher_name="CreateWorksheetObjectPublisher"/>
+<MAPPING business_type="ACTION" business_name="SELECT_DATASET_ACTION" publisher_name="SelectDatasetPublisher"/>
+
+</PRESENTATION>
+

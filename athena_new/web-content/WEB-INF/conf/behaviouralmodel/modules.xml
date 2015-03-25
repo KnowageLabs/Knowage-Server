@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+	
+           
+    <MODULE class="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.DetailParameterModule" name="DetailParameterModule">
+     	<CONFIG/>
+    </MODULE>
+  
+ 	<MODULE class="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.ListLookupParametersModule" name="ListLookupParametersModule">
+	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListParam.ListLookupParameters.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_PARAMETERS_LIST">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	        <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="par_id"/>
+	      </QUERIES>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/button_ok.gif" label="SBIDev.ListParam.ListLookupParameters.selectCaption">
+	          <PARAMETER name="PAR_ID" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ParametersLookupPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="EXIT_FROM_MODULE"/>
+	          <PARAMETER name="RETURN_STATE" scope="" type="ABSOLUTE" value="SELECT"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>          
+	        </SELECT_CAPTION>
+	        <CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.ListParam.ListLookupParameters.selectCaption">
+	          <PARAMETER name="id" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>	          
+	        </CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.ListParam.ListLookupParameters.deleteCaption">
+	          <CONDITIONS>
+		      		<PARAMETER user_functionality='ParameterManagement' /> 
+			  </CONDITIONS>
+	          <PARAMETER name="PAR_ID" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ParametersLookupPage"/>        
+              <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>	
+              <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>  
+ 	        </DELETE_CAPTION>
+	     </CAPTIONS>
+	      <COLUMNS>
+	        <COLUMN label="PAR_ID" name="PAR_ID" hidden="true" />
+	        <COLUMN label="SBIDev.ListParam.columnLabel" name="LABEL" />
+	        <COLUMN label="SBIDev.ListParam.columnName" name="NAME" />
+	        <COLUMN label="SBIDev.ListParam.columnDesc" name="DESCRIPTION"/>
+	        <COLUMN label="SBIDev.ListParam.columnType" name="TYPE"/>
+	      </COLUMNS>
+	      <BUTTONS>
+	      <NEW_BUTTON confirm="FALSE" image="/img/new.png" label="SBIDev.ListParam.ListLookupParameters.insertButton">
+	      	  <CONDITIONS>
+		      		<PARAMETER user_functionality='ParameterManagement' /> 
+			  </CONDITIONS>
+	        <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
+	        <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>	         
+	        <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
+	      </NEW_BUTTON>
+	      <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.ListParam.ListLookupParameters.backButton">
+	        <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ParametersLookupPage"/>
+	        <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="EXIT_FROM_MODULE"/>
+	        <PARAMETER name="RETURN_STATE" scope="" type="ABSOLUTE" value="BACK"/>
+	        <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+	      </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+
+    <MODULE class="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.ListObjParuseModule" name="ListObjParuseModule">
+     	<CONFIG/>
+    </MODULE>  	   
+    
+	<MODULE class="it.eng.spagobi.behaviouralmodel.analyticaldriver.service.ListParametersModule" name="ListParametersModule">
+	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListParam.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_LIST_PARAMETERS">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="PAR_ID" name="PAR_ID" hidden="true" />
+	        <COLUMN label="SBIDev.ListParam.columnLabel" name="LABEL"/>
+	        <COLUMN label="SBIDev.ListParam.columnName" name="NAME"/>
+	        <COLUMN label="SBIDev.ListParam.columnDesc" name="DESCR"/>
+	        <COLUMN label="SBIDev.ListParam.columnType" name="TYPE"/>
+	        <COLUMN label="SBIDev.ListParam.columnUsesNum" name="NUM_USES" horizontal-align="CENTER"/>
+	        <COLUMN label="SBIDev.ListParam.columnBIObjects" name="NUM_BIOBJECTS" horizontal-align="CENTER"/>
+	      </COLUMNS>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.ListParam.selectCaption">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
+	        </SELECT_CAPTION>
+	        <!--MODALITY_CAPTION confirm="FALSE" image="/img/modality.gif" label="SBIDev.ListParam.parUseCaption">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="ListParameterUsesPage"/>
+	          <PARAMETER name="ID_DOMAIN" scope="LOCAL" type="RELATIVE" value="ID"/>
+	        </MODALITY_CAPTION-->
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.ListParam.deleteCaption">
+	          <CONDITIONS>
+		      		<PARAMETER user_functionality='ParameterManagement' /> 
+			  </CONDITIONS>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="PAR_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>        
+              <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+              <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>	        
+ 	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="FALSE" image="/img/new.png" label="SBIDev.ListParam.insertButton">
+	          <CONDITIONS>
+		      		<PARAMETER  user_functionality='ParameterManagement' /> 
+			  </CONDITIONS>
+	          <!--PARAMETER name="TARGET" scope="" type="ABSOLUTE" value="DETAIL"/-->
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <!-- PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/ -->
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.ListParam.backButton" onlyPortletRunning="true">
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIBehavioralModelPublisher"/>
+	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/> -->
+	          <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+  	
+  	
+<MODULE class="it.eng.spagobi.behaviouralmodel.check.service.CheckLinksModule" name="CheckLinksModule">
+		<CONFIG pool="spagobi" rows="30" title="Check-List ">  		
+      		<KEYS>
+      			<OBJECT key='OBJ_ID'/>
+      			<SUBJECT key='SUBJECT_ID'/>
+      		</KEYS>
+      		<QUERIES>
+	        	<CHECKED_QUERY statement="SELECT_CHECKED_OBJECT_LIST">
+	        		<PARAMETER number="0" name="SUBJECT_ID"/>
+	        	</CHECKED_QUERY>
+	      	</QUERIES> 	
+	      	<CAPTIONS></CAPTIONS>
+	      	<COLUMNS>
+	        	<COLUMN label="OBJ_ID" name="OBJ_ID" hidden="true" />
+	        	<COLUMN label="Label" name="label"/>
+	        	<COLUMN label="Name" name="name" />
+	        	<COLUMN label="Description" name="description" />
+	      	</COLUMNS>
+      		<BUTTONS PAGE="CheckLinksPage" MESSAGEDET="RETURN_FROM_LOOKUP" LIGHT_NAVIGATOR_DISABLED="true">	      	        
+		        <SAVE_BUTTON 
+		        	confirm="FALSE" 
+		        	name="save" 
+		        	image="/img/save.png" 
+		        	label="SBIDev.ListSubreport.saveCaption">
+		        	<CONDITIONS>
+		      			<PARAMETER user_functionality='ConstraintManagement' /> 
+			  		</CONDITIONS>
+		        	</SAVE_BUTTON >
+	           	<SAVE_AND_GOBACK_BUTTON
+	           		confirm="FALSE" 
+	           		name="saveback" 
+	           		image="/img/saveAndGoBack.png" 
+	           		label="SBIDev.ListSubreport.savebackCaption">
+	           		<CONDITIONS>
+		      			<PARAMETER user_functionality='ConstraintManagement' /> 
+			  		</CONDITIONS>
+	           		</SAVE_AND_GOBACK_BUTTON> 
+	            <BACK_BUTTON 
+	            	confirm="FALSE" 
+	            	name="back" 
+	            	image="/img/back.png" 
+	            	label="SBIDev.ListSubreport.backCaption"/>
+	 		</BUTTONS>
+    	</CONFIG>
+  	</MODULE>
+  	
+  	<!-- 
+	<MODULE class="it.eng.spagobi.behaviouralmodel.check.service.ChecklistLookupModalityValuesModule" name="ChecklistLookupModalityValuesModule">
+	</MODULE>
+	-->
+    
+    <MODULE class="it.eng.spagobi.behaviouralmodel.check.service.DetailChecksModule" name="DetailChecksModule">
+     	<CONFIG/>
+    </MODULE>   
+    
+	<MODULE class="it.eng.spagobi.behaviouralmodel.check.service.ListChecksModule" name="ListModalitiesChecksModule" >
+	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListConfConst.title">
+      <QUERIES>
+        <SELECT_QUERY statement="SELECT_LIST_MODALITIES_CHECKS">
+        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+         	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+         	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+        </SELECT_QUERY>
+        <DELETE_QUERY statement="DELETE_CHECKS">
+          <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="CHECK_ID"/>
+        </DELETE_QUERY>
+      </QUERIES>
+      <COLUMNS>
+        <COLUMN label="CHECK_ID" name="CHECK_ID" hidden="true" />
+        <COLUMN label="SBIDev.ListConfConst.columnLabel" name="LABEL"/>
+        <COLUMN label="SBIDev.ListConfConst.columnName" name="NAME"/>
+        <COLUMN label="SBIDev.ListConfConst.columnDescr" name="DESCRIPTION"/>
+        <COLUMN label="SBIDev.ListConfConst.columnCheckType" name="CONTROLTYPE"/>
+      </COLUMNS>
+      <CAPTIONS>
+        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.ListConfConst.detailCaption">
+          	  <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesChecksPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="CHECK_ID"/>
+        </SELECT_CAPTION>
+        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.ListConfConst.deleteCaption">
+        	  <CONDITIONS>
+		      		<PARAMETER user_functionality='ConstraintManagement' /> 
+			  </CONDITIONS>
+              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="CHECK_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesChecksPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+        </DELETE_CAPTION>
+      </CAPTIONS>
+      <BUTTONS>
+        <INSERT_BUTTON confirm="FALSE" image="/img/new.png" label="SBIDev.ListConfConst.insertButton">
+        	  <CONDITIONS>
+		      		<PARAMETER user_functionality='ConstraintManagement' /> 
+			  </CONDITIONS>
+          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	      <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesChecksPage"/>
+        </INSERT_BUTTON>
+        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.ListConfConst.backButton" onlyPortletRunning="true">
+	      <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	      <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIBehavioralModelPublisher"/>
+	      <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	    </BACK_BUTTON>
+      </BUTTONS>
+    </CONFIG>
+  	</MODULE>
+  	
+	<MODULE class="it.eng.spagobi.behaviouralmodel.check.service.ListPredefinedChecksModule" name="ListPredefinedChecksModule">
+	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListPredConst.title">
+      <QUERIES>
+        <SELECT_QUERY statement="SELECT_PREDEFINED_CHECKS">
+        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+        </SELECT_QUERY>
+      </QUERIES>
+      <COLUMNS>
+        <COLUMN label="CHECK_ID" name="CHECK_ID" hidden="true" />
+        <COLUMN label="SBIDev.ListConfConst.columnLabel" name="LABEL"/>
+        <COLUMN label="SBIDev.ListPredConst.columnName" name="NAME"/>
+        <COLUMN label="SBIDev.ListPredConst.columnDescr" name="DESCRIPTION"/>
+        <COLUMN label="SBIDev.ListConfConst.columnCheckType" name="CONTROLTYPE"/>
+      </COLUMNS>
+      <CAPTIONS>
+      </CAPTIONS>
+      <BUTTONS>
+        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.ListConfConst.backButton" onlyPortletRunning="true">
+	      <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	      <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIBehavioralModelPublisher"/>
+	      <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	    </BACK_BUTTON>
+      </BUTTONS>
+    </CONFIG>
+  	</MODULE>
+ 
+
+    <MODULE class="it.eng.spagobi.behaviouralmodel.lov.service.DetailModalitiesValueModule" name="DetailModalitiesValueModule">
+     	<CONFIG/>
+    </MODULE>
+    
+	<MODULE class="it.eng.spagobi.behaviouralmodel.lov.service.ListLookupLovModule" name="ListLookupLovModule">
+	    <CONFIG pool="spagobi" rows="30" title="SBIDev.ListParamUse.ListLookupLov.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_LIST_MODALITIES_VALUE">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+				<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+				<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+			</SELECT_QUERY>
+	      </QUERIES>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/button_ok.png" label="SBIDev.ListParamUse.ListLookupLov.selectCaption">
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="RETURN_FROM_LOOKUP"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>
+	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />-->
+	        </SELECT_CAPTION>
+	        <CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.predLovList.detailCaption">
+	          <PARAMETER name="id" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>-->		          
+	         </CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.ListParamUse.ListLookupLov.deleteCaption">
+	          <CONDITIONS>
+		      		<PARAMETER user_functionality='LovsManagement' /> 
+			  </CONDITIONS>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>-->
+	        </DELETE_CAPTION>
+	     </CAPTIONS>
+	      <COLUMNS>
+	        <COLUMN label="LOV_ID" name="LOV_ID" hidden="true" />
+	        <COLUMN label="SBIDev.predLovList.columnLabel" name="LABEL" />
+	        <COLUMN label="SBIDev.predLovList.columnName" name="NAME" />
+	        <COLUMN label="SBIDev.predLovList.columnDesc" name="DESCR"/>
+	        <COLUMN label="SBIDev.predLovList.columnType" name="TYPE"/>
+	      </COLUMNS>
+	      <BUTTONS>
+		      <INSERT_BUTTON confirm="FALSE" image="/img/new.png" label="SBIDev.ListParamUse.ListLookupLov.insertButton">
+		      <CONDITIONS>
+		      		<PARAMETER user_functionality='LovsManagement' /> 
+			  </CONDITIONS>
+		          <!--PARAMETER name="TARGET" scope="" type="ABSOLUTE" value="DETAIL"/-->
+		          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+		         <!--  <PARAMETER name="ORIGIN_LOV" scope="" type="ABSOLUTE" value="listLookupLov"/> -->
+		      </INSERT_BUTTON>
+	          <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.ListParamUse.ListLookupLov.backButton">
+		          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailParameterPage"/>
+		          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="RETURN_BACK_FROM_LOOKUP"/>
+		          <!-- <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/> -->
+		          <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+	      </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+	
+	<!-- 
+	<MODULE class="it.eng.spagobi.behaviouralmodel.lov.service.ListLookupModalityValuesModule" name="ListLookupModalityValuesModule">
+	</MODULE>    
+	-->
+
+	<MODULE class="it.eng.spagobi.behaviouralmodel.lov.service.ListLovsModule" name="ListLovsModule">	    
+	    <CONFIG pool="spagobi" rows="30" title="SBIDev.predLovList.title">
+      <QUERIES>
+        	<SELECT_QUERY statement="SELECT_LIST_MODALITIES_VALUE">
+        		<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+        		<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+        		<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+        	</SELECT_QUERY>
+      </QUERIES>
+      <COLUMNS>
+        <COLUMN label="ID" name="ID" hidden="true" />        
+        <COLUMN label="SBIDev.predLovList.columnLabel" name="LABEL"/>
+        <COLUMN label="SBIDev.predLovList.columnName" name="NAME"/>
+        <COLUMN label="SBIDev.predLovList.columnDesc" name="DESCR"/>
+      	<COLUMN label="SBIDev.predLovList.columnType" name="TYPE"/>
+      	<COLUMN label="SBIDev.predLovList.columnParameters" name="N_OF_PARAMETERS" horizontal-align="CENTER"/>
+      </COLUMNS>
+      <CAPTIONS>
+        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBIDev.predLovList.detailCaption">
+          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
+	          <!--  <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/> -->
+        </SELECT_CAPTION>
+        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBIDev.predLovList.deleteCaption" userRoleType="">
+        <CONDITIONS>
+		      <PARAMETER user_functionality='LovsManagement' /> 
+		</CONDITIONS>
+              <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="LOV_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" scope="" type="ABSOLUTE" value="true"/>	
+        </DELETE_CAPTION>
+      </CAPTIONS>
+      <BUTTONS>
+        <INSERT_BUTTON confirm="FALSE" image="/img/new.png" label="SBIDev.predLovList.insertButton">
+        <CONDITIONS>
+		      <PARAMETER user_functionality='LovsManagement' /> 
+		</CONDITIONS>
+          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	      <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="DetailModalitiesValuePage"/>
+        </INSERT_BUTTON>
+        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBIDev.predLovList.backButton" onlyPortletRunning="true">
+	      <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	      <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIBehavioralModelPublisher"/>
+	      <!-- <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/> -->
+	      <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+	    </BACK_BUTTON>
+      </BUTTONS>
+    </CONFIG>
+  	</MODULE>
+	
+	<MODULE class="it.eng.spagobi.behaviouralmodel.lov.service.ListTestLovModule" name="ListTestLovModule">
+	</MODULE> 
+  
+       	                    
+</MODULES>
+
+

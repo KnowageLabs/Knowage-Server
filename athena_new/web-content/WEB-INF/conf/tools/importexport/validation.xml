@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+
+	<SERVICE name="ImportExportPage" type="PAGE">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="EXPORT"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="exportFileName" label="#SBISet.importexport.nameExp">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>			
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+	<SERVICE name="DOWNLOAD_FILE_ACTION" type="ACTION">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS/>
+			<FIELDS>
+				<FIELD name="FILE_NAME">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+				<FIELD name="FOLDER_NAME">
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+	<SERVICE name="MANAGE_IMPEXP_ASS_ACTION" type="ACTION">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE" scope="SERVICE_REQUEST" value="SAVE_ASSOCIATION_FILE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="FILE_NAME">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+				<FIELD name="FOLDER_NAME">
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+				<FIELD name="NAME">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+				<FIELD name="DESCRIPTION">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9\s\-\_\(\)])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="100"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE" scope="SERVICE_REQUEST" value="DOWNLOAD_ASSOCIATION_FILE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="ID">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGE" scope="SERVICE_REQUEST" value="DELETE_ASSOCIATION_FILE"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="ID">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="30"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+</VALIDATIONS>

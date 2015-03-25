@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+  <ACTION name="MANAGE_UDP_ACTION" class="it.eng.spagobi.tools.udp.service.ManageUdpAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+
+ 
+</ACTIONS>
+

@@ -1,0 +1,294 @@
+/* --------------------------------------------------
+Theme Name: 
+file: standard.css
+author: 
+---------------------------------------------------*/
+
+/* ------- FONTS ------- */	
+
+@font-face {
+    font-family: 'cabinregular';
+    src: url('../../fonts/cabin-regular-webfont.eot');
+    src: url('../../fonts/cabin-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/cabin-regular-webfont.woff') format('woff'),
+         url('../../fonts/cabin-regular-webfont.ttf') format('truetype'),
+         url('../../fonts/cabin-regular-webfont.svg#cabinregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'cabinbold';
+    src: url('../../fonts/cabin-bold-webfont.eot');
+    src: url('../../fonts/cabin-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/cabin-bold-webfont.woff') format('woff'),
+         url('../../fonts/cabin-bold-webfont.ttf') format('truetype'),
+         url('../../fonts/cabin-bold-webfont.svg#cabinbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'cabinmedium';
+    src: url('../../fonts/cabin-medium-webfont.eot');
+    src: url('../../fonts/cabin-medium-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../../fonts/cabin-medium-webfont.woff') format('woff'),
+         url('../../fonts/cabin-medium-webfont.ttf') format('truetype'),
+         url('../../fonts/cabin-medium-webfont.svg#cabinmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+/* ------- MEDIA SCREEN ------- */	
+
+@media screen{
+
+/* ----------- RESET DEFAULT STYLES ----------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+html{font-size:62.5%}body{font-family:Arial, Helvetica, sans-serif;padding:0;margin:0;background:#f9f9f9;font-size:1.2em}div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;outline:0;font-size:1em;vertical-align:baseline;background:transparent}body{line-height:1}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}nav ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}a{margin:0;padding:0;vertical-align:baseline;background:transparent}ins{background-color:#ff9;color:#000;text-decoration:none}mark{background-color:#ff9;color:#000;font-style:italic;font-weight:bold}del{text-decoration:line-through}abbr[title],dfn[title]{border-bottom:1px dotted;cursor:help}table{border-collapse:collapse;border-spacing:0}hr{display:block;height:1px;border:0;border-top:1px solid #ccc;margin:1em 0;padding:0}input,select{vertical-align:middle}
+html, body{height:100%}
+
+
+/* ----------- COMMON CLASSES ----------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.alt,.navigation {position:absolute;top:-9999px;left:-9999px}
+.hidden, hr{display:none}
+img,fieldset{border:0}
+p,ul,ol,li,form,fieldset,table,td,th,h1,h2,h3,h4,h5,sup{margin:0;padding:0}
+ul{list-style-type:none}
+a {text-decoration:none}
+	a:hover {text-decoration:none}
+	a:focus{outline:none}
+.clear{clear:both}
+.ext{text-indent:-9999px;font-size:0;display:block;line-height:0}
+.aux{position:relative;margin:0 auto;padding:0 33px} /* ATTENTION! ADDED padding:0 33px */
+	
+
+/* ----------- STRUCTURE --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.header{border-bottom:1px solid #ededed;background:#fff;position:relative;z-index:10000;width:100%;float:left;padding:33px 0 0 0;height:142px}
+.map-body .header{position:fixed;top:0;left:0} /* ATTENTION! ADDED */
+
+#logo{position:absolute;top:23px;left:33px;width:228px;height:61px;display:block;background:url(../../images/logo.gif) 0 0 no-repeat;text-indent:-9999px;font-size:0;line-height:0} /* ATTENTION! MODIFIED left:33px*/
+#logo:hover{opacity:0.9;filter:alpha(opacity = 90)}
+
+.main-buttons{float:right;padding:33px 0 0 0}
+.main-buttons ul{float:left}
+.main-buttons li{float:left;margin:0 0 0 26px}
+.main-buttons a{font-family:cabinbold, sans-serif;position:relative;position:relative;font-size:1.25em;padding:15px 0 0 16px;width:135px;height:41px;color:#fff;text-transform:uppercase;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.main-buttons .active a span{position:absolute;bottom:-7px;left:59px;display:block;height:7px;width:17px;background-image:url(../../images/btn-arrow.gif);background-repeat:no-repeat}
+.main-buttons .btn-maps a{background:#75b407 url(../../images/bg-btn-maps.png) 103px 10px no-repeat}
+.main-buttons .btn-maps a:hover{background-color:#7bbf04}
+.main-buttons .btn-maps.active a span{background-position:-17px 0}
+.main-buttons .btn-maps.active a:hover span{background-position:-17px -7px}
+.main-buttons .btn-datasets a{background:#3d90d4 url(../../images/bg-btn-datasets.png) 105px 11px no-repeat}
+.main-buttons .btn-datasets a:hover{background-color:#4598dc}
+.main-buttons .btn-datasets.active a span{background-position:0 0}
+.main-buttons .btn-datasets.active a:hover span{background-position:0 -7px}
+
+
+.top-bar{height:33px;width:100%;background:url(../../images/bg-top-bar.gif) 0 0 repeat-x;position:absolute;top:0;left:0}
+
+/* ATTENTION! start MODIFIED lines */
+.top-menu{float:right;margin:0 4px 0 0}
+.top-menu li{position:relative;float:left;border-right:1px solid #282828;border-left:1px solid #434343}
+.top-menu .first{border-left:0}
+.top-menu .last{border-right:1px solid #363636}
+.top-menu a,
+.top-menu .reserved span{cursor:pointer;font-size:0.91em;display:block;height:21px;padding:12px 15px 0 15px;color:#a1a1a1}
+.top-menu .reserved span{padding-left:35px;background:url(../../images/ico-lock-small.png) 12px 11px no-repeat}
+.top-menu .reserved.open span{color:#cbcbcb;background-color:#2c2c2c;box-shadow:0 0 3px #181818 inset}
+.top-menu li:hover a,
+.top-menu li.reserved:hover span{color:#cbcbcb;background-color:#2c2c2c;box-shadow:0 0 3px #181818 inset}
+.top-menu .first:hover a:hover{border-left:1px solid #282828}
+.top-menu .user a{color:#e6e6e6}
+.top-menu .user:hover a{color:#fff}
+.top-menu .user .name{font-weight:bold}
+.user-logged .top-menu li ul{display:none;position:absolute;top:33px;right:0;width:100%}
+.user-logged .top-menu li:hover ul{display:block}
+.user-logged .top-menu li li{float:none;border-left:0;border-right:0;background:#2c2c2c;border-top:1px solid #353535;border-bottom:1px solid #242424}
+.user-logged .top-menu li li.last{border-bottom:0}
+.user-logged .top-menu li li a{color:#a3a3a3}
+.user-logged .top-menu li:hover li a{box-shadow:none;color:#a3a3a3}
+.user-logged .top-menu li li:hover a{background:#303030;color:#a3a3a3}
+.login-panel{display:none;font-family:cabinregular,arial,helvetica,sans-serif;float:left;width:326px;position:absolute;top:33px;right:-2px;background:#2c2c2c;-webkit-border-radius:0 0 4px 4px;-moz-border-radius:0 0 4px 4px;border-radius:0 0 4px 4px}
+.login-panel form{float:left;padding:21px 24px 19px 24px;width:278px}
+.login-panel fieldset{float:left;width:278px}
+.login-panel .title{color:#b7b7b7;font-family:cabinmedium, arial, helvetica, sans-serif;font-size:1.3em}
+.login-panel .not-registered{font-family:cabinregular,arial,helvetica,sans-serif;font-style:italic;font-size:1em;position:absolute;top:23px;right:24px;color:#5f5e5e}
+li:hover .login-panel .not-registered a,.login-panel .not-registered a{border:0;box-shadow:none;padding:0;margin:0;display:inline;font-size:1em;color:#747474}
+li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hover{color:#969696}
+.login-panel .field{padding:14px 0 0 0;width:134px;float:left;margin:0 10px 0 0}
+.login-panel .field.last{margin-right:0;border:0}
+.login-panel .field input{position:relative;font-family:cabinregular,arial,helvetica,sans-serif;font-size:0.91em;width:112px;height:25px;padding:3px 11px 0 11px;color:#cecece;font-style:italic;background:#3e3e3e;border:1px solid #262626;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.login-panel .field label{display:none}
+.login-panel .submit{float:right;padding:9px 0 0 0}
+.login-panel .submit input{position:relative;border:1px solid #262626;padding:1px 15px 0 15px;font-size:0.91em;font-family:cabinmedium,arial,helvetica,sans-serif;height:25px;border:0;background:#3d90d4;color:#fff;display:block;cursor:pointer;text-transform:uppercase;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.login-panel .submit input:hover{background:#4598DC}
+.login-panel .forgot-password,li:hover .login-panel .forgot-password{color:#747474;/*position:absolute;bottom:17px;left:24px;*/float:left;padding:17px 0 0 0;font-size:1em;border:0;margin:0;box-shadow:none}
+.login-panel .forgot-password:hover,li:hover .login-panel .forgot-password:hover{color:#969696}
+/* end MODIFIED lines */
+
+.language-switcher{float:right;width:37px;position:absolute;top:0;right:0}
+.language-switcher li{display:none;background:#1e1e1e;border-top:1px solid #2e2e2e;border-bottom:1px solid #1f1f1f}
+.language-switcher li.active{display:block;border-top:0;border-bottom:0}
+.language-switcher:hover li{display:block}
+.language-switcher li a{font-weight:bold;font-size:0.91em;color:#919191;text-transform:uppercase;font-family: 'Cabin', sans-serif;text-align:center;padding:12px 0 0 0;height:21px;display:block}
+.language-switcher li.active a{background:url(../../images/bg-language-switcher.gif) 0 0 no-repeat}
+.language-switcher li a:hover{/*color:#e6e6e6*/background:#262626}
+.language-switcher:hover li.active a{box-shadow:0 0 3px #161616 inset}
+
+.main{width:100%;float:left;position:relative;z-index:1}
+.main.main-list{padding-top:29px}
+.map-body .main.main-map{position:absolute;top:142px;left:0;right:0;bottom:71px;overflow:hidden} /* ATTENTION! ADDED */
+
+/* ----------- ERROR --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.main p{font-family:cabinregular,arial,helvetica,sans-serif;font-size:1.33em;font-weight:normal;color:#363636;margin-bottom:15px; }
+.main a{color:#2a80c8;}
+.loginPage a{color:#F8A400;font-size:14px; }
+.main a:hover{text-decoration:underline;}
+
+.main-error{padding-top:165px}
+.content-error{width:531px;height:191px;padding-left:386px;margin:0 auto 135px;background:url(../../images/bg-cloud.gif) 99px 0 no-repeat}
+.main-error h1{display:none}
+.main-error .ops{display:block;padding-top:32px;margin-bottom:29px;color:#606060;font-family:cabinregular,arial,helvetica,sans-serif;font-size:3.5em;font-weight:bold}
+.main-error .retry{font-size:1.83em}
+
+.main-msg{}
+.main-msg h1{display:none}
+.main-msg .ops{display:block;padding-top:32px;margin-bottom:29px;color:#606060;font-family:cabinregular,arial,helvetica,sans-serif;font-size:3.5em;font-weight:bold}
+.main-msg .retry{font-size:1.83em}
+
+.main-warn{}
+.main-warn h1{display:none}
+.main-warn .ops{display:block;padding-top:32px;margin-bottom:29px;color:#606060;font-family:cabinregular,arial,helvetica,sans-serif;font-size:30px;/*font-weight:bold*/}
+.main-warn .retry{font-size:1.83em}
+
+/* ----------- RESERVED AREA --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.reserved-area-container{float:left;width:100%}
+.reserved-area-container h1{padding-top:20px;margin-bottom:28px;font-family:cabinregular,arial,helvetica,sans-serif;font-size:3.5em;font-weight:bold;color:#606060;text-align:center}
+.reserved-area-form{position:relative;float:left;width:100%;margin-bottom:50px}
+.reserved-area-form fieldset{width:476px;margin:0 auto}
+.reserved-area-form.login fieldset{width:270px}
+.reserved-area-form .field{float:left;margin-bottom:21px}
+.reserved-area-form .name,
+.reserved-area-form .username,
+.reserved-area-form .password{margin-right:16px}
+.reserved-area-form.login .username,
+.reserved-area-form.login .password{margin-right:0}
+
+.reserved-area-form .field label{display:none}
+.reserved-area-form .field input,
+.reserved-area-form .field textarea{position:relative;border:1px solid #e6e6e6;width:203px;padding:2px 20px 0 50px;height:43px;background:url(../../images/ico-register-form.png) 14px 14px #fff no-repeat;color:#c6c5c5;font-family:cabinbold,arial,helvetica,sans-serif;font-size:1.33em;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;overflow:hidden}
+.reserved-area-form.login input{width:250px}
+.reserved-area-form.login .submit input{width:auto}
+
+.reserved-area-form .organization input{width:420px}
+.reserved-area-form .name input,
+.reserved-area-form .surname input,
+.reserved-area-form .username input{background-position:14px -58px}
+.reserved-area-form .email input{background-position:14px -133px}
+.reserved-area-form .password input,
+.reserved-area-form .confirm input{background-position:14px -203px}
+
+.reserved-area-form .field textarea{width:438px;height:35px;resize:none;overflow-y:scroll;padding:15px 18px 10px;background:#fff;font-family:cabinregular,arial,helvetica,sans-serif;font-weight:normal;font-size:1.08em;line-height:135%;outline:none}
+	
+.reserved-area-form .submit{clear:both;width:auto;padding-top:12px;text-align:center}
+.reserved-area-form .submit input{border:0;height:42px;width:198px;padding:2px 31px 0;text-align:center;cursor:pointer;margin:0 0 20px;font-family:cabinregular,arial,helvetica,sans-serif;font-size:1.33em;font-weight:bold;line-height:100%;text-transform:uppercase;background:#F8A400;color:#fff;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.reserved-area-form .submit input:hover{opacity:0.9;filter:alpha(opacity = 90)}
+
+.reserved-area-form .delete{font-size:1.08em}
+.reserved-area-form .delete a{color:red}
+
+/* ----------- FOOTER --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.footer{font-family:cabinregular, sans-serif;width:100%;background:#fff;float:left;border-top:1px solid #ededed}
+.map-body .footer{z-index:99999;position:fixed !important;position:absolute;bottom:0;left:0}
+.footer .left{padding:12px 0;line-height:138%;float:left;color:#b4b4b4;font-size:0.91em}
+.footer .left a{color:#b4b4b4}
+.footer .left a:hover{color:#919191}
+
+.footer .logos{float:right;padding:14px 0 17px 0}
+.footer .logos li{float:left;margin:0 0 0 17px}
+.footer .logos .tis{padding-top:7px}
+.footer .logos .pab{padding-top:6px}
+.footer .logos a{display:block;text-indent:-9999px;font-size:0;line-height:0}
+.footer .logos .tis a{width:41px;height:30px;background:url(../../images/logo-tis.gif) 0 -30px no-repeat}
+.footer .logos .tis a:hover{background-position:0 0}
+.footer .logos .pab a{width:98px;height:27px;background:url(../../images/logo-pab.gif) 0 -27px no-repeat}
+.footer .logos .pab a:hover{background-position:0 0}
+.footer .logos .ue a{width:61px;height:39px;background:url(../../images/logo-ue.gif) 0 -39px no-repeat}
+.footer .logos .ue a:hover{background-position:0 0}
+	
+	
+/* ----- IE 10 ------*/
+	
+.ie10 .login-panel .submit input{padding-top:6px}
+	
+} /* END MEDIA SCREEN*/	
+
+
+
+/* ----------- RULES FOR SAFARI AND CHROME --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	input[type="text"], input[type="password"] { outline: none; }
+	.list-tab a{height:25px;padding-top:16px}
+	.list-actions .btn-add{height:23px;padding-top:16px}
+	.login-panel .submit input{padding-top:3px}
+}	
+
+
+/* ----------- MEDIA QUERIES FOR RESPONSIVE --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+
+@media screen and (max-width: 1024px){
+	.aux{width:938px}
+	.map-container{width:1004px}
+}
+
+@media screen and (min-width: 1025px) and (max-width: 1200px){
+	.aux{width:auto}/* ATTENTION! MODIFIED width */
+}
+
+@media screen and (min-width: 1201px) and (max-width: 1500px){
+	.aux{width:auto}/* ATTENTION! MODIFIED width */
+	.box{width:22.968%;margin-right:2.45%}
+	.box.counter-3{margin-right:2.45%}
+	.box.counter-4{margin-right:0}
+}
+
+@media screen and (min-width: 1501px){
+	.aux{width:auto}/* ATTENTION! MODIFIED width */
+	.box{width:18.28358208955%;margin-right:1.97%}
+	.box.counter-3{margin-right:1.97%}
+	.box.counter-4{margin-right:1.97%}
+	.box.counter-5{margin-right:0}
+}
+
+	
+/* ------- MEDIA PRINT  ------- */	
+	
+@media print{
+
+	body{font-size:12pt}
+	h1{color:#000;text-decoration:none;border-bottom:1px solid #ccc;padding-bottom:5pt}
+	a{text-decoration:none;color:#000}
+	hr,.navigation,#main-menu,fieldset,#submenu,#footer nav,#footer,#main-aside,nav,#breadcrumbs{display:none}
+	#footer{border-top:1px solid #ccc}
+	h2{font-size:14pt}
+	h3{font-size:13pt}
+	h4{font-size:12pt}
+	ul{list-style-type:none;margin-left:0;padding-left:0}
+	
+	table{border-collapse:collapse}
+	table td,table th{text-align:center;border:1px solid #ccc;padding:10px;font-size:12pt}
+
+} /* END MEDIA PRINT*/	

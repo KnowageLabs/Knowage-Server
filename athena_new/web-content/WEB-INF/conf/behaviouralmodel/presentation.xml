@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+<MAPPING business_name="DetailParameterPage" business_type="PAGE" publisher_name="DetailParameterPubJ"/> 	
+<MAPPING business_name="ParametersLookupPage" business_type="PAGE" publisher_name="DynamicPublisher"/>
+<MAPPING business_name="ListObjParusePage" business_type="PAGE" publisher_name="ListObjParusePublisher"/>
+<MAPPING business_name="ListParametersPage" business_type="PAGE" publisher_name="ListParametersPubJ"/>
+<MAPPING business_name="CheckLinksPage" business_type="PAGE" publisher_name="CheckLinksDispatcherPublisher"/>
+<MAPPING business_name="DetailModalitiesChecksPage" business_type="PAGE" publisher_name="DetailModalitiesChecksPubJ"/>
+<MAPPING business_name="ListModalitiesChecksPage" business_type="PAGE" publisher_name="ListModalitiesChecksPubJ"/>
+<MAPPING business_name="DetailModalitiesValuePage" business_type="PAGE" publisher_name="DetailModalitiesValuePubJ"/>
+<MAPPING business_name="LovLookupPage" business_type="PAGE" publisher_name="LovLookupPublisher"/>
+<MAPPING business_name="GenericLookupPage" business_type="PAGE" publisher_name="LookupPublisher"/>
+<MAPPING business_name="ListLovsPage" business_type="PAGE" publisher_name="ListLovsPubJ"/>
+	
+
+      	 
+</PRESENTATION>
+

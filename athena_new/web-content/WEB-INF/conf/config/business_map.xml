@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="Action1" businessProcess="" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+	
+	<MAP_REST_SERVICES>
+	
+	    <MAP_REST_SERVICE serviceUrl="/datasets.*" businessProcess="SelfServiceDatasetManagement" />
+	    <MAP_REST_SERVICE serviceUrl="/documents.*" businessProcess="SelfServiceDatasetManagement" />
+	    <MAP_REST_SERVICE serviceUrl="/cache.*" businessProcess="SelfServiceDatasetManagement" />
+        <MAP_REST_SERVICE serviceUrl="/fileservicedataset/createdataset" businessProcess="SelfServiceDatasetManagement" />                                              
+
+		<MAP_REST_SERVICE serviceUrl="/analyticalDriver" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/analyticalDriverUse" businessProcess="publicFunctionality" />
+	    
+        <MAP_REST_SERVICE serviceUrl="/locker/lock" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/locker/unlock" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/locker/getStatus" businessProcess="publicFunctionality" />
+	    
+		<MAP_REST_SERVICE serviceUrl="/documents/sendFeedback" businessProcess="publicFunctionality" />	
+		<MAP_REST_SERVICE serviceUrl="/documents/clone" businessProcess="publicFunctionality" />	
+		<MAP_REST_SERVICE serviceUrl="/documents/share" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/documents/myAnalysisDocsList" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
+	
+		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />	
+
+		<MAP_REST_SERVICE serviceUrl="/certificateddatasets/getflatdataset" businessProcess="DocumentDevManagement" />
+        <MAP_REST_SERVICE serviceUrl="/certificateddatasets" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
+                
+        <MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="UserSaveDocumentFunctionality" />        
+		<MAP_REST_SERVICE serviceUrl="/community/accept" businessProcess="publicFunctionality" />		
+		<MAP_REST_SERVICE serviceUrl="/communityCRUD" businessProcess="MenuManagement" />
+		<MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="publicFunctionality" />
+		
+		<MAP_REST_SERVICE serviceUrl="/signup/prepareUpdate" businessProcess="publicFunctionality" />		
+		<MAP_REST_SERVICE serviceUrl="/signup/update" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/signup/delete" businessProcess="publicFunctionality" />
+	
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_full_noday" businessProcess="publicFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_full_geo" businessProcess="publicFunctionality" />    
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_full_time" businessProcess="publicFunctionality" />    
+        <MAP_REST_SERVICE serviceUrl="/test/inmemorymaterializer/join_geo_time" businessProcess="publicFunctionality" />                
+    
+		<MAP_REST_SERVICE serviceUrl="/publish" businessProcess="publicFunctionality" />
+		
+		<MAP_REST_SERVICE serviceUrl="/LOV" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/AD" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/ADUse" businessProcess="publicFunctionality" />	
+		
+		<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="publicFunctionality" />		
+	 	<MAP_REST_SERVICE serviceUrl="/domainsforfinaluser/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" /> 
+	 	
+		<MAP_REST_SERVICE serviceUrl="/layers" businessProcess="publicFunctionality" />			
+		<MAP_REST_SERVICE serviceUrl="/layers/getLayerProperties" businessProcess="publicFunctionality" />
+	 								
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/save" businessProcess="SelfServiceDatasetManagement" />
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/delete" businessProcess="SelfServiceDatasetManagement" />
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/testDataSet" businessProcess="SelfServiceDatasetManagement" />
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/getDataStore" businessProcess="SelfServiceDatasetManagement" />
+		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/share" businessProcess="SelfServiceDatasetManagement" />
+
+		<MAP_REST_SERVICE serviceUrl="/datasources/test" businessProcess="DataSourceManagement" />			
+		<MAP_REST_SERVICE serviceUrl="/datasources" businessProcess="DataSourceManagement" />
+		<MAP_REST_SERVICE serviceUrl="/datasourcespublic" businessProcess="publicFunctionality" />				
+
+		<MAP_REST_SERVICE serviceUrl="/measures" businessProcess="MeasuresCatalogueManagement" />
+		<MAP_REST_SERVICE serviceUrl="/measures/join" businessProcess="MeasuresCatalogueManagement" />								
+
+		<MAP_REST_SERVICE serviceUrl="/multitenant" businessProcess="TenantManagement" />		
+		<MAP_REST_SERVICE serviceUrl="/multitenant/themes" businessProcess="TenantManagement" />
+		<MAP_REST_SERVICE serviceUrl="/multitenant/engines" businessProcess="TenantManagement" />
+		<MAP_REST_SERVICE serviceUrl="/multitenant/datasources" businessProcess="TenantManagement" />
+		<MAP_REST_SERVICE serviceUrl="/multitenant/save" businessProcess="TenantManagement" />				
+
+		<MAP_REST_SERVICE serviceUrl="/scheduler/listAllJobs" businessProcess="SchedulerManagement" /> 							
+		<MAP_REST_SERVICE serviceUrl="/scheduler/deleteJob" businessProcess="SchedulerManagement" /> 							
+		<MAP_REST_SERVICE serviceUrl="/scheduler/deleteTrigger" businessProcess="SchedulerManagement" /> 							
+		<MAP_REST_SERVICE serviceUrl="/scheduler/executeTrigger" businessProcess="SchedulerManagement" /> 							
+		<MAP_REST_SERVICE serviceUrl="/scheduler/pauseTrigger" businessProcess="SchedulerManagement" /> 							
+		<MAP_REST_SERVICE serviceUrl="/scheduler/resumeTrigger" businessProcess="SchedulerManagement" /> 	
+		<MAP_REST_SERVICE serviceUrl="/scheduler/getTriggerSaveOptions" businessProcess="SchedulerManagement" />
+		
+		<MAP_REST_SERVICE serviceUrl="/hierarchies" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/dimensions" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/hierarchiesOfDimension" businessProcess="HierarchiesManagement" />		
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getAutomaticHierarchyTree" businessProcess="HierarchiesManagement" />
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchies" businessProcess="HierarchiesManagement" />	
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/getCustomHierarchyTree" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/saveCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/deleteCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/hierarchies/modifyCustomHierarchy" businessProcess="HierarchiesManagement" />				 						 						
+		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
+		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
+				 						 						
+		
+	</MAP_REST_SERVICES>
+	
+	<MAP_EXTERNAL_REST_SERVICES>
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/subscribe/getUserInfo" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/prepare" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/create" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/prepareActive" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/active" businessProcess="publicFunctionality" />
+	</MAP_EXTERNAL_REST_SERVICES>
+	
+</BUSINESS_MAP>
