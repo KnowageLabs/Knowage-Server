@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ENGINES>
-<!-- ENGINE label="SpagoBIDashboardEng" name="Dashboard Engine" descr="Dashboard Engine" mainUrl="" driverNm="" engineTypeCd="INT" classNm="it.eng.spagobi.engines.dashboard.SpagoBIDashboardInternalEngine" biobjTypeCd="DASH" useDataSet="true" useDataSource="false" encrypt="0" --/>
+<!-- ENGINE label="SpagoBIDashboardEng" name="Dashboard Engine" descr="Dashboard Engine" mainUrl="" driverNm="" engineTypeCd="INT" classNm="it.eng.spagobi.engines.dashboard.SpagoBIDashboardInternalEngine" biobjTypeCd="DASH" useDataSet="true" useDataSource="false" encrypt="0" /-->
 <!-- ENGINE label="SpagoBIJFreeChartEng" name="JFreeChart Engine" descr="JFree Chart Engine" mainUrl="" driverNm=""  engineTypeCd="INT" classNm="it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine" biobjTypeCd="DASH" useDataSet="true" useDataSource="false" encrypt="0" /-->
 <!-- ENGINE label="SpagoBIDossierEngine" name="Dossier Engine" descr="Dossier Engine" mainUrl="" driverNm=""  engineTypeCd="INT" classNm="it.eng.spagobi.engines.dossier.SpagoBIDossierInternalEngine" biobjTypeCd="DOSSIER" useDataSet="false" useDataSource="false" encrypt="0" /-->
 <ENGINE label="SpagoBIOfficeEngine" name="Office Document Engine" descr="Office Document Engine" mainUrl="" driverNm=""  engineTypeCd="INT" classNm="it.eng.spagobi.engines.officedocument.SpagoBIOfficeDocumentInternalEngine" biobjTypeCd="OFFICE_DOC" useDataSet="false" useDataSource="false" encrypt="0" />
