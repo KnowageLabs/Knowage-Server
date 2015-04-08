@@ -28,6 +28,8 @@ author:
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
+<%@page import="org.json.JSONObject"%>
+<%@page import="org.json.XML"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -93,6 +95,11 @@ author:
 	}
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
+    String jsonTemplate = XML.toJSONObject(template).toString(2);
+    
+    
+    
+    
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -114,15 +121,95 @@ author:
     <body>
     
     <p>PAGINA DI TEST</p>
+    
+    <p><%=template%></p>
+	
+	
 	
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 
-		
+		var params = {
+				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+				, user_id: "<%=userId%>"
+		};
+
 	
+		Sbi.config.serviceReg = new Sbi.service.ServiceReg();
+		
+		Sbi.config.serviceReg.addServiceBaseConf('chartServiceConf', {
+			method: "GET"
+			
+			, baseUrlConf: {
+				protocol: '<%= request.getScheme()%>'     
+				, host: '<%= request.getServerName()%>'
+				, port: '<%= request.getServerPort()%>'
+				, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
+			}
+			, controllerConf: {
+				controllerPath: 'api'   
+				, serviceVersion: '1.0'
+				, serviceVersionParamType: 'path' 
+			}
+		
+			, basePathParams:{}
+			, baseQueryParams: params
+			, baseFormParams: {}
+	
+			//, absolute: false
+		});
+		
+		Sbi.config.serviceReg.addServiceBaseConf('spagobiServiceConf', {
+			method: "GET"
+			
+			, baseUrlConf: {
+				protocol: '<%= request.getScheme()%>'     
+				, host: '<%= request.getServerName()%>'
+				, port: '<%= request.getServerPort()%>'
+				, contextPath: 'SpagoBI'
+			}
+			, controllerConf: {
+				controllerPath: 'restful-services'   
+				, serviceVersion: '1.0'
+				, serviceVersionParamType: 'path' 
+			}
+		
+			, basePathParams:{}
+			, baseQueryParams: params
+			, baseFormParams: {}
+	
+			//, absolute: false
+		});
+	
+		Sbi.config.serviceReg.registerService('jsonChartTemplate', {
+			name: 'jsonChartTemplate'
+			, description: 'Load the jsonChartTemplate'
+			, resourcePath: 'jsonChartTemplate/{jsonTemplate}/'
+		}, 'spagobiServiceConf');
+
+		
+		Ext.Ajax.request({
+			url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'),
+			method: 'GET',
+			timeout: 60000,
+			params:
+			{
+				jsonTemplate: "testo di prova" // loads student whose Id is 1
+			},
+			headers:
+			{
+				'Content-Type': 'application/json'
+			},
+			success: function (response) {
+				var text = response.responseText;
+				Ext.Msg.alert('Content',text);
+			},
+			failure: function (response) {
+				Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+
+			}
+		});
 	</script>
 	
 	</body>
-
 </html>
-

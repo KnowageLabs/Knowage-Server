@@ -99,6 +99,7 @@ public class PageResource extends AbstractChartEngineResource {
 		try {
 
 			switch (pageName) {
+
 			case "execute":
 				engineInstance = ChartEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 				// TODO put this not in session but in context

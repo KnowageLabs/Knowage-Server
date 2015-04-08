@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.json.XML;
 
 /**
  * @author
@@ -44,7 +45,7 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 	public ChartEngineInstance(String template, Map env) {
 		super(env);
 		try {
-			this.template = new JSONObject();
+			this.template = XML.toJSONObject(template);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", e);
 		}
