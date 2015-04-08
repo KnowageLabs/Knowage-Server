@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+      
+     <session-factory name="HibernateSessionFactory"> 
+	 
+    	<property name="hibernate.connection.datasource">java:/comp/env/jdbc/spagobi</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    
+     <!--      
+        <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/spagobi4</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.connection.pool_size">1</property>     
+   	 -->    
+   	 
+   	  <!--      
+       
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5433/spagobi</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">postgres</property>
+        <property name="hibernate.connection.pool_size">1</property>     
+   	   -->  
+   	     
+     <!-- 
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.Oracle9Dialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.IngresDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.DB2400Dialect</property>
+        
+        -->
+        
+        <property name="hibernate.cache.use_second_level_cache">false</property>
+        <property name="hibernate.cache.use_query_cache">false</property>
+		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
+        
+        <!--
+        <property name="hibernate.show_sql">true</property>
+		<property name="hibernate.cache.use_minimal_puts">true</property>                
+        <property name="hibernate.generate_statistics">true</property>       
+        <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
+        -->
+        
+        
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiTenant.hbm.xml" />
+        <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEvents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/events/metadata/mapping/SbiEventsLog.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDomains.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiConfig.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiEventRole.hbm.xml" /> 
+  
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiAuthorizations.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiExtRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiAuthorizationsRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiUserFunctionality.hbm.xml" />      
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParameters.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseDet.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiParuseCk.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiObjParuse.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/analyticaldriver/metadata/mapping/SbiObjParview.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/lov/metadata/mapping/SbiLov.hbm.xml" />
+        <mapping resource="it/eng/spagobi/behaviouralmodel/check/metadata/mapping/SbiChecks.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjPar.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjects.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjectsRating.hbm.xml" />          
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjFunc.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjState.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSubreports.hbm.xml"/>
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiViewpoints.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFunctions.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFuncRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/monitoring/metadata/mapping/SbiAudit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/config/metadata/mapping/SbiEngines.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/config/metadata/mapping/SbiExporters.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/datasource/metadata/mapping/SbiDataSource.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionList.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionListsObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionListUser.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationEngine.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationDatasource.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiBinContents.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjTemplates.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjNotes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSubObjects.hbm.xml" />
+        <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiSnapshots.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/tools/scheduler/metadata/mapping/SbiTriggerPaused.hbm.xml" />
+        
+        
+
+        <!-- map catalogue -->
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMapFeatures.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoFeatures.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoMaps.hbm.xml" />
+        <mapping resource="it/eng/spagobi/mapcatalogue/metadata/mapping/SbiGeoLayers.hbm.xml" />
+        
+        <!-- dossier -->
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mapping/SbiDossierBinaryContentsTemp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mapping/SbiDossierPartsTemp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/engines/dossier/metadata/mapping/SbiDossierPresentations.hbm.xml" />
+        
+        <!-- rememberMe -->
+        <mapping resource="it/eng/spagobi/hotlink/rememberme/metadata/mapping/SbiRememberMe.hbm.xml" />
+        
+        <mapping resource="it/eng/spagobi/tools/dataset/metadata/mapping/SbiDataSet.hbm.xml" />
+        
+         <!-- KPI Engine -->
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiDocuments.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiInstance.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiInstPeriod.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiInstanceHistory.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModelInst.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiKpiModelResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiPeriodicity.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRole.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiValue.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiMeasureUnit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/model/metadata/mapping/SbiResources.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mapping/SbiThreshold.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/threshold/metadata/mapping/SbiThresholdValue.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiRel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiError.hbm.xml" />
+        
+         <!-- Menu -->
+        <mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenu.hbm.xml" />
+        <mapping resource="it/eng/spagobi/wapp/metadata/mapping/SbiMenuRole.hbm.xml" />
+        
+        <!-- Kpi.alarm -->
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarm.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarmEvent.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/alarm/metadata/mapping/SbiAlarmContact.hbm.xml" />
+        
+         <!-- Obj Metadata -->
+        <mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mapping/SbiObjMetadata.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/objmetadata/metadata/mapping/SbiObjMetacontents.hbm.xml" />
+        
+        <!-- PROFILING -->
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiAttribute.hbm.xml" />
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiExtUserRoles.hbm.xml" />
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiUser.hbm.xml" /> 
+        <mapping resource="it/eng/spagobi/profiling/mapping/SbiUserAttributes.hbm.xml" />  
+
+		<!-- User Defined Attributes -->
+        <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdp.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/udp/metadata/SbiUdpValue.hbm.xml" />
+        
+        
+        <!-- Kpi Organizational Units -->
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnit.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitHierarchies.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitNodes.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrant.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/ou/metadata/mapping/SbiOrgUnitGrantNodes.hbm.xml" />
+        
+        <!-- Kpi Goal -->
+        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoal.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalKpi.hbm.xml" />
+        <mapping resource="it/eng/spagobi/kpi/goal/metadata/mapping/SbiGoalHierarchy.hbm.xml" />
+        <!-- messages -->
+   		<mapping resource="it/eng/spagobi/i18n/metadata/mapping/SbiI18NMessages.hbm.xml" />   
+        
+        <!-- massive export -->
+       <!--  -->
+       <mapping resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml"/> 
+                
+        
+        <mapping resource="it/eng/spagobi/kpi/config/metadata/mapping/SbiKpiComments.hbm.xml" />
+        
+        <!-- tools: Meta-models catalogue -->
+        <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModel.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelContent.hbm.xml" />
+        
+        <!-- tools: Artifacts' catalogue -->
+        <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifact.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifactContent.hbm.xml" />
+		
+	    <!-- COMMUNITY -->
+        <mapping resource="it/eng/spagobi/community/mapping/SbiCommunity.hbm.xml" />
+        <mapping resource="it/eng/spagobi/community/mapping/SbiCommunityUsers.hbm.xml" />
+        
+        <!-- end mapping -->
+        
+        <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
+        <class-cache class="it.eng.spagobi.commons.metadata.SbiUserFunctionality" usage="read-only"/>
+        <class-cache class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" usage="nonstrict-read-write"/>
+        <class-cache class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" usage="nonstrict-read-write"/>
+        <class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" usage="nonstrict-read-write"/>
+     
+     
+
+        <!-- 
+        <class-cache class="it.eng.spagobi.commons.metadata.SbiExtRoles" usage="read-only"/>
+	 	-->
+		<!--   class-cache class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions" usage="nonstrict-read-write"/
+-->
+		<!--  collection-cache collection="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions.sbiFuncRoles" usage="nonstrict-read-write"/
+-->   
+		        
+    </session-factory>
+    
+</hibernate-configuration>
