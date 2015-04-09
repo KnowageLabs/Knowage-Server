@@ -1,0 +1,4 @@
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/modules/exporting.js"></script>

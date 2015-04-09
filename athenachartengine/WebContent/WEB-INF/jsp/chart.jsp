@@ -112,8 +112,10 @@ author:
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS5.jspf" %>
+		<%@include file="commons/includeHighcharts414.jspf" %>
 		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
+		
     </head>
 	
 	<%-- == BODY ========================================================== --%>
@@ -130,7 +132,7 @@ author:
 	
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
-
+	
 		<%-- 
 		var params = {
 				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>

@@ -14,7 +14,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/AthenaDAO"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.7.0_45">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
