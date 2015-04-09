@@ -56,5 +56,6 @@
 <USER_FUNCTIONALITY name="HierarchiesManagement" description="HierarchiesManagement"/>
 <USER_FUNCTIONALITY name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
 
+<USER_FUNCTIONALITY name="CreateChartFunctionality" description="CreateChartFunctionality"/>
 
 </USER_FUNCTIONALITIES>

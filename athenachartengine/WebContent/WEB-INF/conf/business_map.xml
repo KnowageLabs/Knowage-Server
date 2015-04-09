@@ -6,8 +6,8 @@
 	</MAP_PAGE_MODULES>
 	
     <MAP_REST_SERVICES>
-        <MAP_REST_SERVICE serviceUrl="/test" businessProcess="CreateCockpitFunctionality" />     
-    	<MAP_REST_SERVICE serviceUrl="/datasets" businessProcess="CreateCockpitFunctionality" />
+        <MAP_REST_SERVICE serviceUrl="/test" businessProcess="CreateChartFunctionality" />     
+    	<MAP_REST_SERVICE serviceUrl="/datasets" businessProcess="CreateChartFunctionality" />
     </MAP_REST_SERVICES>
     
 </BUSINESS_MAP>

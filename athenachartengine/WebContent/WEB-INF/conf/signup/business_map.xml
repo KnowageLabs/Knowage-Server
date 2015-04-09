@@ -6,10 +6,11 @@
 	</MAP_PAGE_MODULES>
 	
     <MAP_REST_SERVICES>
-    	<MAP_REST_SERVICE serviceUrl="/engine.*" businessProcess="CreateCockpitFunctionality" />
-    	<MAP_REST_SERVICE serviceUrl="/pages.*" businessProcess="CreateCockpitFunctionality" />
-    	<MAP_REST_SERVICE serviceUrl="/associations.*" businessProcess="CreateCockpitFunctionality" />
-    	<MAP_REST_SERVICE serviceUrl="/crosstab.*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/engine.*" 			businessProcess="CreateChartFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/pages.*" 			businessProcess="CreateChartFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/associations.*" 		businessProcess="CreateChartFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/crosstab.*" 			businessProcess="CreateChartFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/jsonChartTemplate.*" businessProcess="CreateChartFunctionality" />
     </MAP_REST_SERVICES>
     
     <MAP_EXTERNAL_REST_SERVICES>

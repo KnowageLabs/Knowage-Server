@@ -122,13 +122,16 @@ author:
     
     <p>PAGINA DI TEST</p>
     
+    <!--
     <p><%=template%></p>
+    -->
 	
 	
 	
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 
+		<%-- 
 		var params = {
 				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
 				, user_id: "<%=userId%>"
@@ -186,28 +189,46 @@ author:
 			, description: 'Load the jsonChartTemplate'
 			, resourcePath: 'jsonChartTemplate/{jsonTemplate}/'
 		}, 'spagobiServiceConf');
-
+ 		--%>
 		
-		Ext.Ajax.request({
-			url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'),
-			method: 'GET',
-			timeout: 60000,
-			params:
-			{
-				jsonTemplate: "testo di prova" // loads student whose Id is 1
-			},
-			headers:
-			{
-				'Content-Type': 'application/json'
-			},
-			success: function (response) {
-				var text = response.responseText;
-				Ext.Msg.alert('Content',text);
-			},
-			failure: function (response) {
-				Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+		
 
-			}
+
+
+
+		Ext.create('Ext.Button', {
+		    text: 'Test',
+		    renderTo: Ext.getBody(),
+		    handler: function() {
+
+
+
+		    	Ext.Ajax.request({
+		    		/* 			url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
+		    					url: 'http://192.168.40.100:8080/AthenaChartEngine/api/1.0/jsonChartTemplate/testo_di_prova',
+		    					method: 'GET',
+		    					timeout: 60000,
+		    					disableCaching: false,
+		    					params:
+		    					{
+		    						jsonTemplate: 'testo di prova'
+		    						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+		    						, user_id: "<%=userId%>"
+		    					},
+		    					headers:
+		    					{
+		    						'Content-Type': 'application/json'
+		    					},
+		    					success: function (response) {
+		    						var text = response.responseText;
+		    						Ext.Msg.alert('Content',text);
+		    					},
+		    					failure: function (response) {
+		    						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+
+		    					}
+		    				});			       
+		    }
 		});
 	</script>
 	
