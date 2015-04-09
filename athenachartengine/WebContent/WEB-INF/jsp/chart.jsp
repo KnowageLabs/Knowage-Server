@@ -70,7 +70,7 @@ author:
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
-	template = engineInstance.getTemplate().toString();
+	template = engineInstance.getTemplate().toString(0);
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
@@ -95,10 +95,6 @@ author:
 	}
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
-    String jsonTemplate = XML.toJSONObject(template).toString(2);
-    
-    
-    
     
 %>
 
@@ -124,12 +120,6 @@ author:
     
     <p>PAGINA DI TEST</p>
     
-    <!--
-    <p><%=template%></p>
-    -->
-	
-	
-	
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 	
@@ -200,6 +190,7 @@ author:
 
 		Ext.create('Ext.Button', {
 		    text: 'Test',
+		    height: 200,
 		    renderTo: Ext.getBody(),
 		    handler: function() {
 
@@ -207,13 +198,13 @@ author:
 
 		    	Ext.Ajax.request({
 		    		/* 			url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
-		    					url: 'http://192.168.40.100:8080/AthenaChartEngine/api/1.0/jsonChartTemplate/testo_di_prova',
+		    					url: 'http://192.168.40.100:8080/AthenaChartEngine/api/1.0/jsonChartTemplate/bar',
 		    					method: 'GET',
 		    					timeout: 60000,
 		    					disableCaching: false,
 		    					params:
 		    					{
-		    						jsonTemplate: 'testo di prova'
+		    						jsonTemplate: '<%=template%>'
 		    						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
 		    						, user_id: "<%=userId%>"
 		    					},
