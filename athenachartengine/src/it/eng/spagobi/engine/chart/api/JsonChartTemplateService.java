@@ -1,5 +1,6 @@
 package it.eng.spagobi.engine.chart.api;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,6 +17,11 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 @Path("/1.0/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
@@ -41,9 +47,19 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 
 	private VelocityContext loadVelocityContext(HttpServletRequest request) {
 		VelocityContext velocityContext = new VelocityContext();
-		Map<String, Object> mapTemplate = new LinkedHashMap<>();
-		mapTemplate.put("template", request.getParameter("jsonTemplate"));
-		velocityContext.put("template", mapTemplate);
+
+		String jsonToConvert = request.getParameter("jsonTemplate");
+
+		Map<String, Object> mapTemplate = null;
+		try {
+			mapTemplate = convertJsonToMap(jsonToConvert);
+		} catch (IOException e) {
+			logger.error("Error in template to be converted: " + jsonToConvert);
+			e.printStackTrace();
+		}
+
+		// velocityContext.put("template", mapTemplate);
+		velocityContext.put("chart", mapTemplate.get("CHART")); // livello <CHART/>
 		return velocityContext;
 	}
 
@@ -65,5 +81,17 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		StringWriter jsonChartTemplate = new StringWriter();
 		velocityTemplate.merge(velocityContext, jsonChartTemplate);
 		return jsonChartTemplate.toString();
+	}
+
+	private Map<String, Object> convertJsonToMap(String json) throws JsonParseException, JsonMappingException, IOException {
+		JsonFactory factory = new JsonFactory();
+		ObjectMapper mapper = new ObjectMapper(factory);
+
+		TypeReference<LinkedHashMap<String, Object>> typeRef = new TypeReference<LinkedHashMap<String, Object>>() {
+		};
+
+		LinkedHashMap<String, Object> result = mapper.readValue(json, typeRef);
+
+		return result;
 	}
 }

@@ -183,44 +183,41 @@ author:
 		}, 'spagobiServiceConf');
  		--%>
 		
-		
-
-
-
-
 		Ext.create('Ext.Button', {
 		    text: 'Test',
 		    height: 200,
 		    renderTo: Ext.getBody(),
 		    handler: function() {
 
-
-
 		    	Ext.Ajax.request({
-		    		/* 			url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
-		    					url: 'http://192.168.40.100:8080/AthenaChartEngine/api/1.0/jsonChartTemplate/bar',
-		    					method: 'GET',
-		    					timeout: 60000,
-		    					disableCaching: false,
-		    					params:
-		    					{
-		    						jsonTemplate: '<%=template%>'
-		    						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-		    						, user_id: "<%=userId%>"
-		    					},
-		    					headers:
-		    					{
-		    						'Content-Type': 'application/json'
-		    					},
-		    					success: function (response) {
-		    						var text = response.responseText;
-		    						Ext.Msg.alert('Content',text);
-		    					},
-		    					failure: function (response) {
-		    						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+   				/*	url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
+   					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate/bar',
+   					method: 'GET',
+   					timeout: 60000,
+   					disableCaching: false,
+   					params:
+   					{
+   						jsonTemplate: '<%=template%>'
+   						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+   						, user_id: "<%=userId%>"
+   					},
+   					headers:
+   					{
+   						'Content-Type': 'application/json'
+   					},
+   					success: function (response) {
+   						var chartConf = JSON.stringify(eval('(' + response.responseText + ')'));
+   						
+   						Ext.Msg.alert('Content', chartConf);
+   						/* 
+   						*/
+   						
+   					},
+   					failure: function (response) {
+   						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
 
-		    					}
-		    				});			       
+   					}
+   				});			       
 		    }
 		});
 	</script>
