@@ -45,6 +45,17 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		return jsonChartTemplate;
 	}
 
+	// @POST
+	// @Produces(MediaType.APPLICATION_JSON)
+	// @Consumes(MediaType.APPLICATION_JSON)
+	// public String doPost(@FormParam("chartType") String chartType, @FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse
+	// servletResponse) {
+	// VelocityContext velocityContext = loadVelocityContext(jsonTemplate);
+	// Template velocityTemplate = loadVelocityTemplate(chartType);
+	// String jsonChartTemplate = applyTemplate(velocityTemplate, velocityContext);
+	// return jsonChartTemplate;
+	// }
+
 	private VelocityContext loadVelocityContext(HttpServletRequest request) {
 		VelocityContext velocityContext = new VelocityContext();
 

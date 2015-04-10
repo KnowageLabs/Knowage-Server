@@ -110,116 +110,100 @@ author:
         <%@include file="commons/includeExtJS5.jspf" %>
 		<%@include file="commons/includeHighcharts414.jspf" %>
 		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeSpagoBICockpitJS4.jspf" %>
+		<%@include file="commons/includeAthenaChartEngineJS5.jspf" %>
 		
     </head>
 	
 	<%-- == BODY ========================================================== --%>
     
     <body>
-    
-    <p>PAGINA DI TEST</p>
-    
+	
+	    
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 	
-		<%-- 
-		var params = {
-				SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-				, user_id: "<%=userId%>"
-		};
+ 		Ext.onReady(function(){
+ 			
+ 			Ext.log({level: 'info'}, 'CHART: IN');
 
-	
-		Sbi.config.serviceReg = new Sbi.service.ServiceReg();
-		
-		Sbi.config.serviceReg.addServiceBaseConf('chartServiceConf', {
-			method: "GET"
-			
-			, baseUrlConf: {
-				protocol: '<%= request.getScheme()%>'     
-				, host: '<%= request.getServerName()%>'
-				, port: '<%= request.getServerPort()%>'
-				, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>'
-			}
-			, controllerConf: {
-				controllerPath: 'api'   
-				, serviceVersion: '1.0'
-				, serviceVersionParamType: 'path' 
-			}
-		
-			, basePathParams:{}
-			, baseQueryParams: params
-			, baseFormParams: {}
-	
-			//, absolute: false
-		});
-		
-		Sbi.config.serviceReg.addServiceBaseConf('spagobiServiceConf', {
-			method: "GET"
-			
-			, baseUrlConf: {
-				protocol: '<%= request.getScheme()%>'     
-				, host: '<%= request.getServerName()%>'
-				, port: '<%= request.getServerPort()%>'
-				, contextPath: 'SpagoBI'
-			}
-			, controllerConf: {
-				controllerPath: 'restful-services'   
-				, serviceVersion: '1.0'
-				, serviceVersionParamType: 'path' 
-			}
-		
-			, basePathParams:{}
-			, baseQueryParams: params
-			, baseFormParams: {}
-	
-			//, absolute: false
-		});
-	
-		Sbi.config.serviceReg.registerService('jsonChartTemplate', {
-			name: 'jsonChartTemplate'
-			, description: 'Load the jsonChartTemplate'
-			, resourcePath: 'jsonChartTemplate/{jsonTemplate}/'
-		}, 'spagobiServiceConf');
- 		--%>
-		
-		Ext.create('Ext.Button', {
-		    text: 'Test',
-		    height: 200,
-		    renderTo: Ext.getBody(),
-		    handler: function() {
+ 			var mainPanel = Ext.create('Ext.panel.Panel', {
+ 				id: 'mainPanel',
+ 				width: '100%',
+ 			    height: '100%',
+ 			    renderTo: Ext.getBody()
+ 			});
+ 			
+ 			Highcharts.setOptions({
+ 		       chart: {
+ 		    	   renderTo: mainPanel.id,
+ 		           backgroundColor: {
+ 		               linearGradient: [0, 0, 500, 500],
+ 		               stops: [
+ 		                   [0, 'rgb(255, 255, 255)'],
+ 		                   [1, 'rgb(240, 240, 255)']
+ 		               ]
+ 		           },
+ 		           borderWidth: 2,
+ 		           plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+ 		           plotShadow: true,
+ 		           plotBorderWidth: 1
+ 		       },
+ 		       exporting: {
+ 		           url: 'https://export.highcharts.com/'
+ 		       }
+ 		   });
+ 			
+	    	Ext.Ajax.request({
+				/*	url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
+					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate/bar',
+					method: 'GET',
+					timeout: 60000,
+					disableCaching: false,
+					params:
+					{
+						jsonTemplate: '<%=template%>'
+						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+						, user_id: "<%=userId%>"
+					},
+					headers:
+					{
+						'Content-Type': 'application/json'
+					},
+					success: function (response) {
+						var chartConf = Ext.JSON.decode(response.responseText, true);
+						new Highcharts.Chart(chartConf);
+					},
+					failure: function (response) {
+						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+					}
+			});
+	    	
 
-		    	Ext.Ajax.request({
-   				/*	url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
-   					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate/bar',
-   					method: 'GET',
-   					timeout: 60000,
-   					disableCaching: false,
-   					params:
-   					{
-   						jsonTemplate: '<%=template%>'
-   						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-   						, user_id: "<%=userId%>"
-   					},
-   					headers:
-   					{
-   						'Content-Type': 'application/json'
-   					},
-   					success: function (response) {
-   						var chartConf = JSON.stringify(eval('(' + response.responseText + ')'));
-   						
-   						Ext.Msg.alert('Content', chartConf);
-   						/* 
-   						*/
-   						
-   					},
-   					failure: function (response) {
-   						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+ 			Ext.log({level: 'info'}, 'CHART: STILL IN');
+ 			
+<%--
+ 		   new Highcharts.Chart({
+ 			   
+ 			   chart: {
+ 				  type: 'spline'
+ 			   },
+ 			   
+ 		       xAxis: {
+ 		           type: 'datetime'
+ 		       },
 
-   					}
-   				});			       
-		    }
-		});
+ 		       series: [{
+ 		    	   
+ 		           data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+ 		           pointStart: Date.UTC(2010, 0, 1),
+ 		           pointInterval: 3600 * 1000 // one hour
+ 		       }]
+ 		   });
+--%>
+			Ext.log({level: 'info'}, 'CHART: OUT');
+
+ 		  });
+		
 	</script>
 	
 	</body>
