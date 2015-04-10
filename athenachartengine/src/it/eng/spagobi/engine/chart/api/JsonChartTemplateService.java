@@ -2,6 +2,7 @@ package it.eng.spagobi.engine.chart.api;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -25,6 +27,10 @@ import org.codehaus.jackson.type.TypeReference;
 
 @Path("/1.0/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
+
+	private static final String STYLE_TAG = "style";
+	private static final String STYLES_SEPARATOR = ";";
+	private static final String STYLE_KEY_VALUE_SEPARATOR = ":";
 
 	private VelocityEngine ve;
 	{
@@ -44,17 +50,6 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		String jsonChartTemplate = applyTemplate(velocityTemplate, velocityContext);
 		return jsonChartTemplate;
 	}
-
-	// @POST
-	// @Produces(MediaType.APPLICATION_JSON)
-	// @Consumes(MediaType.APPLICATION_JSON)
-	// public String doPost(@FormParam("chartType") String chartType, @FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse
-	// servletResponse) {
-	// VelocityContext velocityContext = loadVelocityContext(jsonTemplate);
-	// Template velocityTemplate = loadVelocityTemplate(chartType);
-	// String jsonChartTemplate = applyTemplate(velocityTemplate, velocityContext);
-	// return jsonChartTemplate;
-	// }
 
 	private VelocityContext loadVelocityContext(HttpServletRequest request) {
 		VelocityContext velocityContext = new VelocityContext();
@@ -101,7 +96,63 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		TypeReference<LinkedHashMap<String, Object>> typeRef = new TypeReference<LinkedHashMap<String, Object>>() {
 		};
 
+		// TODO Aggiungere a questo livello StringEscapeUtils.escapeHtml per lettere
 		LinkedHashMap<String, Object> result = mapper.readValue(json, typeRef);
+
+		LinkedHashMap<String, Object> escapedMapStrings = escapeMapStrings(result);
+
+		// return result;
+		return escapedMapStrings;
+	}
+
+	private LinkedHashMap<String, Object> escapeMapStrings(LinkedHashMap<String, Object> map) {
+		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
+
+		for (String key : map.keySet()) {
+
+			if (map.get(key) instanceof ArrayList) {
+				ArrayList<LinkedHashMap<String, Object>> mapsArray = (ArrayList<LinkedHashMap<String, Object>>) map.get(key);
+
+				ArrayList<LinkedHashMap<String, Object>> mapsArrayOut = new ArrayList<LinkedHashMap<String, Object>>();
+
+				for (LinkedHashMap<String, Object> mapElement : mapsArray) {
+					LinkedHashMap<String, Object> escapedArrayMapElement = escapeMapStrings(mapElement);
+
+					mapsArrayOut.add(escapedArrayMapElement);
+				}
+				result.put(key, mapsArrayOut);
+
+			} else if (!(map.get(key) instanceof LinkedHashMap)) {
+				if (key.equals(STYLE_TAG)) {
+					String value = (String) map.get(key);
+
+					LinkedHashMap<String, String> changedValue = stylizeString(value);
+					result.put(key, changedValue);
+
+					continue;
+				}
+
+				String escapedString = StringEscapeUtils.escapeHtml(map.get(key).toString());
+
+				result.put(key, escapedString);
+			} else {
+				LinkedHashMap<String, Object> value = escapeMapStrings((LinkedHashMap<String, Object>) map.get(key));
+				result.put(key, value);
+			}
+		}
+
+		return result;
+	}
+
+	private LinkedHashMap<String, String> stylizeString(String value) {
+		LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
+
+		String[] styles = value.split(STYLES_SEPARATOR);
+
+		for (String styleKV : styles) {
+			String[] kv = styleKV.split(STYLE_KEY_VALUE_SEPARATOR);
+			result.put(kv[0], kv[1]);
+		}
 
 		return result;
 	}
