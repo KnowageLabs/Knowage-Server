@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -41,20 +43,19 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		this.ve.init();
 	}
 
-	@GET
-	@Path("/{chartType}")
+	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public String openPage(@PathParam("chartType") String chartType) {
-		VelocityContext velocityContext = loadVelocityContext(request);
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public String doPost(@FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse servletResponse) {
+		VelocityContext velocityContext = loadVelocityContext(jsonTemplate);
+		String chartType = extractChartType(jsonTemplate, velocityContext);
 		Template velocityTemplate = loadVelocityTemplate(chartType);
 		String jsonChartTemplate = applyTemplate(velocityTemplate, velocityContext);
 		return jsonChartTemplate;
 	}
 
-	private VelocityContext loadVelocityContext(HttpServletRequest request) {
+	private VelocityContext loadVelocityContext(String jsonToConvert) {
 		VelocityContext velocityContext = new VelocityContext();
-
-		String jsonToConvert = request.getParameter("jsonTemplate");
 
 		Map<String, Object> mapTemplate = null;
 		try {
@@ -81,6 +82,14 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			throw new RuntimeException("Unsupported chart type: " + chartType);
 		}
 		return velocityTemplate;
+	}
+
+	// TODO externalise file path
+	private String extractChartType(String jsonTemplate, VelocityContext velocityContext) {
+		Template velocityTemplate = ve.getTemplate("/chart/templates/get_chart_type.vm");
+		StringWriter chartType = new StringWriter();
+		velocityTemplate.merge(velocityContext, chartType);
+		return chartType.toString();
 	}
 
 	private String applyTemplate(Template velocityTemplate, VelocityContext velocityContext) {

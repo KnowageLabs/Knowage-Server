@@ -154,9 +154,8 @@ author:
  		   });
  			
 	    	Ext.Ajax.request({
-				/*	url: Sbi.config.serviceReg.getServiceUrl('jsonChartTemplate'), */
-					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate/bar',
-					method: 'GET',
+					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate',
+					method: 'POST',
 					timeout: 60000,
 					disableCaching: false,
 					params:
@@ -167,7 +166,7 @@ author:
 					},
 					headers:
 					{
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/x-www-form-urlencoded'
 					},
 					success: function (response) {
 						var chartConf = Ext.JSON.decode(response.responseText, true);
@@ -180,27 +179,7 @@ author:
 	    	
 
  			Ext.log({level: 'info'}, 'CHART: STILL IN');
- 			
-<%--
- 		   new Highcharts.Chart({
- 			   
- 			   chart: {
- 				  type: 'spline'
- 			   },
- 			   
- 		       xAxis: {
- 		           type: 'datetime'
- 		       },
-
- 		       series: [{
- 		    	   
- 		           data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
- 		           pointStart: Date.UTC(2010, 0, 1),
- 		           pointInterval: 3600 * 1000 // one hour
- 		       }]
- 		   });
---%>
-			Ext.log({level: 'info'}, 'CHART: OUT');
+ 			Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });
 		
