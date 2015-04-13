@@ -33,54 +33,84 @@
         	"fontWeight": "$chart.LEGEND.style.fontWeight" 
         }
     },
+
+    #* Selezione Assi *#
+    #set($axisList = $chart.AXES_LIST.AXIS)
+    #set($xAxisList = [])
+    #set($yAxisList = [])
+    
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.add($axis))
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		#set($workAroundNoPrint = $yAxisList.add($axis))
+	 	#end
+	#end
+    
+    
     xAxis: {
         categories: [
-                     ## Categorie fisse (da rimuovere)
-                     'Apples' ## Categorie fisse (da rimuovere)
-                     , 'Oranges'
-                     , 'Pears'
-                     ## FINE Categorie fisse (da rimuovere)
+                     #* Categorie fisse (da rimuovere) 
+                     *#
+                     'Apples',
+                     #* FINE Categorie fisse (da rimuovere) *#
+                     
                      
                      #* Aggiunta categorie *#
-                     #set($axisList = $chart.AXES_LIST.AXIS)
-                     
-                     #foreach($axis in $axisList)
-                     	#if($axis.type == 'Category')
-                     	, '$axis.TITLE.text'
-                     	#end
+                     #foreach($xAxis in $xAxisList)
+                     '$xAxis.TITLE.text',
                      #end
                      #* FINE Aggiunta categorie *#
                      
                      ]
     },
     yAxis: [
+        #* Serie di prova (da eliminare) 
+		{ 
+			min: 0,
+			title: {
+				text: 'Total fruit consumption'
+			},
+			stackLabels: {
+				enabled: true,
+				style: {
+					fontWeight: 'bold',
+					color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+				}
+			}
+		},
+        *#	
+        #* FINE Serie di prova (da eliminare) *#	
+            
+        
+        #* Aggiunta serie 
+        *#
+        #foreach($yAxis in $yAxisList)
         {
         	min: 0,
         	title: {
-        		text: 'Total fruit consumption'
-        	},
-        	stackLabels: {
-        		enabled: true,
-        		style: {
-        			fontWeight: 'bold',
-        			color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-        		}
-        	}
-        },
-        {
-        	min: 0,
-        	title: {
-        		text: 'Asse Y posizione Destra',
+        		##text: 'Asse Y posizione Destra',
+        		text: '$yAxis.TITLE.text',
         		style: {
         			fontWeight: 'thin',
         			color: 'red'
         		}
         	},
+        	
+        	#if($yAxis.position == 'right')
         	opposite: true,
+        	#end
+        	
         	stackLabels: {
         		enabled: true
         	}
-        }
+        },
+        #end
+        #* FINE Aggiunta serie *#
+            
     ],
     tooltip: {
         formatter: function () {
@@ -103,10 +133,10 @@
     },
     series: [{	## [Category_1, Category_2, Category_3]
         name: 'John',
-        data: [1, 2, 3, 5]
+        data: [1, 40]
     }, {
-        name: 'Jane',
-        data: [2, 4, 6, 5],
-        yAxis: 1
+        name: 'Jane'
+        , data: [2, 32]
+    	, yAxis: 1
     }]
 }
