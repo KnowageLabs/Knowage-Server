@@ -1,8 +1,8 @@
 {
     chart: {
     	##type: '$chart.type.toLowerCase()'
-        ##type: 'bar'
-        type: 'column'
+    	##type: 'column'
+    	type: 'bar'
     },
     title: {
         ##text: 'Historic World Population by Region'

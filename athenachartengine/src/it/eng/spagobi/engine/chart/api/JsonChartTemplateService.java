@@ -75,7 +75,11 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		Template velocityTemplate;
 		switch (chartType) {
 		case "bar":
-			velocityTemplate = ve.getTemplate("/chart/templates/highcharts/bar_chart.vm");
+			velocityTemplate = ve.getTemplate("/chart/templates/highcharts/column_chart.vm");
+			// velocityTemplate = ve.getTemplate("/chart/templates/highcharts/bar_chart.vm");
+			break;
+		case "column":
+			velocityTemplate = ve.getTemplate("/chart/templates/highcharts/column_chart.vm");
 			break;
 		default:
 			logger.error("Unsupported chart type: " + chartType);
@@ -114,12 +118,15 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		return escapedMapStrings;
 	}
 
+	/**
+	 *
+	 * */
 	private LinkedHashMap<String, Object> escapeMapStrings(LinkedHashMap<String, Object> map) {
 		LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>();
 
 		for (String key : map.keySet()) {
 
-			if (map.get(key) instanceof ArrayList) {
+			if (map.get(key) instanceof ArrayList) { // Se il tag individuato e' un array
 				ArrayList<LinkedHashMap<String, Object>> mapsArray = (ArrayList<LinkedHashMap<String, Object>>) map.get(key);
 
 				ArrayList<LinkedHashMap<String, Object>> mapsArrayOut = new ArrayList<LinkedHashMap<String, Object>>();
@@ -131,7 +138,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				}
 				result.put(key, mapsArrayOut);
 
-			} else if (!(map.get(key) instanceof LinkedHashMap)) {
+			} else if (!(map.get(key) instanceof LinkedHashMap)) { // Se viene individuato un tag <style/>
 				if (key.equals(STYLE_TAG)) {
 					String value = (String) map.get(key);
 
@@ -144,7 +151,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				String escapedString = StringEscapeUtils.escapeHtml(map.get(key).toString());
 
 				result.put(key, escapedString);
-			} else {
+			} else { // Nel caso è un semplice nodo viene chiamata la funzione ricorsivamente
 				LinkedHashMap<String, Object> value = escapeMapStrings((LinkedHashMap<String, Object>) map.get(key));
 				result.put(key, value);
 			}

@@ -1,0 +1,112 @@
+{
+    chart: {
+    	##type: '$chart.type.toLowerCase()'
+        type: 'column'
+    },
+    title: {
+        ##text: 'Stacked column chart'
+        text: '$chart.TITLE.text'
+    },
+    subtitle: {
+        ##text: 'Source: Wikipedia.org'
+        text: '$chart.SUBTITLE.text'
+    },
+    legend: {
+        layout: '$chart.LEGEND.layout',
+        align: '$chart.LEGEND.position',
+        verticalAlign: 'top',
+        floating: $chart.LEGEND.floating,
+        
+        #if($chart.LEGEND.floating == 'true')
+        x: $chart.LEGEND.x,
+        y: $chart.LEGEND.y,
+        #end
+        
+        borderWidth: $chart.LEGEND.style.borderWidth,
+        ##backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '$chart.LEGEND.style.backgroundColor'),
+        backgroundColor: '$chart.LEGEND.style.backgroundColor',
+        shadow: true,
+        itemStyle: { 
+        	"color": "$chart.LEGEND.style.color", 
+        	##"cursor": "pointer", 
+        	"fontSize": "$chart.LEGEND.style.fontSize", 
+        	"fontWeight": "$chart.LEGEND.style.fontWeight" 
+        }
+    },
+    xAxis: {
+        categories: [
+                     ## Categorie fisse (da rimuovere)
+                     'Apples' ## Categorie fisse (da rimuovere)
+                     , 'Oranges'
+                     , 'Pears'
+                     ## FINE Categorie fisse (da rimuovere)
+                     
+                     #* Aggiunta categorie *#
+                     #set($axisList = $chart.AXES_LIST.AXIS)
+                     
+                     #foreach($axis in $axisList)
+                     	#if($axis.type == 'Category')
+                     	, '$axis.TITLE.text'
+                     	#end
+                     #end
+                     #* FINE Aggiunta categorie *#
+                     
+                     ]
+    },
+    yAxis: [
+        {
+        	min: 0,
+        	title: {
+        		text: 'Total fruit consumption'
+        	},
+        	stackLabels: {
+        		enabled: true,
+        		style: {
+        			fontWeight: 'bold',
+        			color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+        		}
+        	}
+        },
+        {
+        	min: 0,
+        	title: {
+        		text: 'Asse Y posizione Destra',
+        		style: {
+        			fontWeight: 'thin',
+        			color: 'red'
+        		}
+        	},
+        	opposite: true,
+        	stackLabels: {
+        		enabled: true
+        	}
+        }
+    ],
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.x + '</b><br/>' +
+                this.series.name + ': ' + this.y + '<br/>' +
+                'Total: ' + this.point.stackTotal;
+        }
+    },
+    plotOptions: {
+        column: {
+        	##stacking: 'normal', ## 'percent'
+            dataLabels: {
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                style: {
+                    textShadow: '0 0 3px black'
+                }
+            }
+        }
+    },
+    series: [{	## [Category_1, Category_2, Category_3]
+        name: 'John',
+        data: [1, 2, 3, 5]
+    }, {
+        name: 'Jane',
+        data: [2, 4, 6, 5],
+        yAxis: 1
+    }]
+}
