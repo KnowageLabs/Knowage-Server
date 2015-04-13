@@ -1,6 +1,8 @@
 {
     chart: {
-        type: '$chart.type.toLowerCase()'
+    	##type: '$chart.type.toLowerCase()'
+        ##type: 'bar'
+        type: 'column'
     },
     title: {
         ##text: 'Historic World Population by Region'
@@ -9,6 +11,33 @@
     subtitle: {
         ##text: 'Source: Wikipedia.org'
         text: '$chart.SUBTITLE.text'
+    },
+    legend: {
+        ##layout: 'vertical',
+        ##align: 'right',
+        ##verticalAlign: 'top',
+        ##x: -40,
+        ##y: 100,
+        ##floating: true,
+        ##borderWidth: 1,
+        ##backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        ##shadow: true
+        layout: '$chart.LEGEND.layout',
+        align: '$chart.LEGEND.position',
+        verticalAlign: 'top',
+        x: $chart.LEGEND.x,
+        y: $chart.LEGEND.y,
+        floating: $chart.LEGEND.floating,
+        borderWidth: $chart.LEGEND.style.borderWidth,
+        ##backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '$chart.LEGEND.style.backgroundColor'),
+        backgroundColor: '$chart.LEGEND.style.backgroundColor',
+        shadow: true,
+        itemStyle: { 
+        	"color": "$chart.LEGEND.style.color", 
+        	##"cursor": "pointer", 
+        	"fontSize": "$chart.LEGEND.style.fontSize", 
+        	"fontWeight": "$chart.LEGEND.style.fontWeight" 
+        }
     },
     xAxis: {
         categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
@@ -27,7 +56,8 @@
         }
     },
     tooltip: {
-        valueSuffix: ' millions'
+    	##valueSuffix: ' millions'
+        valuePrefix: 'Euro '
     },
     plotOptions: {
         bar: {
@@ -35,17 +65,6 @@
                 enabled: true
             }
         }
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'top',
-        x: -40,
-        y: 100,
-        floating: true,
-        borderWidth: 1,
-        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-        shadow: true
     },
     credits: {
         enabled: false
