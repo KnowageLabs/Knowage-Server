@@ -42,7 +42,7 @@ public class ChartEngineUtil {
 	}
 
 	public static String getLibraryInitializerPath(String jsonTemplateFromXML) {
-		String chartType = ChartEngineUtil.extractChartType(jsonTemplateFromXML);
+		String chartType = extractChartType(jsonTemplateFromXML);
 		ChartConfig chartConfig = ChartEngineConfig.getChartLibConf().get(chartType);
 		return chartConfig.getLibraryInitializerPath();
 	}
