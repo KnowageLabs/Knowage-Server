@@ -52,4 +52,29 @@
 	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
 	
 	
+	<!-- ====================================================================================== -->
+	<!--  CHART ENGINE CONFIG 																	--> 
+	<!-- ====================================================================================== -->
+	
+	<!-- 
+		You can define a different js library for each chart type.
+		Attributes 'type' and 'name ' are mandatory. 
+		Others defaults as follows:
+		
+			- Velocity Model properties
+				vmPath="/chart/templates/{name}/"
+				vmName="{type}_chart.vm"
+			
+			- Library Initializer properties
+				libIniPath="/chartlib/"
+				libIniName="{name}Initializer.jspf"
+	 -->
+	<chartConfiguration>
+		<chart type="bar" 		name="highcharts414" 	vmName="column_chart.vm" />
+		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm" />
+		<chart type="line" 		name="highcharts414" 	/>		
+		<chart type="pie"		name="highcharts414" 	/>
+		<chart type="gauge" 	name="highcharts414" 	/>
+	</chartConfiguration>
+	
 </ENGINE-CONFIGURATION>

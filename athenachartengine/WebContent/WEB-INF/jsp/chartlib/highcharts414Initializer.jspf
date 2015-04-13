@@ -1,0 +1,37 @@
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<!-- <script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script> -->
+<script type="text/javascript" src="/AthenaChartEngine/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
+
+<script>
+
+	// TODO: check if ext was imported
+	
+	// Ext.create("Sbi.chart.library")
+	
+	function initChartLibrary(panelId) {
+		Highcharts.setOptions({
+		    chart: {
+		 	   renderTo: panelId,
+		        backgroundColor: {
+		            linearGradient: [0, 0, 500, 500],
+		            stops: [
+		                [0, 'rgb(255, 255, 255)'],
+		                [1, 'rgb(240, 240, 255)']
+		            ]
+		        },
+		        borderWidth: 2,
+		        plotBackgroundColor: 'rgba(255, 255, 255, .9)',
+		        plotShadow: true,
+		        plotBorderWidth: 1
+		    },
+		    exporting: {
+		        url: 'https://export.highcharts.com/'
+		    }
+		});
+	}
+
+	function renderChart(chartConf){
+		new Highcharts.Chart(chartConf)
+	}
+</script>

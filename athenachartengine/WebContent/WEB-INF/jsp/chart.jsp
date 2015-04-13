@@ -9,6 +9,9 @@
 author: 
 --%>
 
+<%@page import="it.eng.spagobi.engine.chart.model.conf.ChartConfig"%>
+<%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
+<%@page import="it.eng.spagobi.engine.util.ChartEngineUtil"%>
 <%@page import="it.eng.spagobi.engine.chart.ChartEngineInstance"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
@@ -108,7 +111,9 @@ author:
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS5.jspf" %>
-		<%@include file="commons/includeHighcharts414.jspf" %>
+        
+		<jsp:include page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" />
+		
 		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeAthenaChartEngineJS5.jspf" %>
 		
@@ -133,25 +138,7 @@ author:
  			    renderTo: Ext.getBody()
  			});
  			
- 			Highcharts.setOptions({
- 		       chart: {
- 		    	   renderTo: mainPanel.id,
- 		           backgroundColor: {
- 		               linearGradient: [0, 0, 500, 500],
- 		               stops: [
- 		                   [0, 'rgb(255, 255, 255)'],
- 		                   [1, 'rgb(240, 240, 255)']
- 		               ]
- 		           },
- 		           borderWidth: 2,
- 		           plotBackgroundColor: 'rgba(255, 255, 255, .9)',
- 		           plotShadow: true,
- 		           plotBorderWidth: 1
- 		       },
- 		       exporting: {
- 		           url: 'https://export.highcharts.com/'
- 		       }
- 		   });
+ 			initChartLibrary(mainPanel.id);
  			
 	    	Ext.Ajax.request({
 					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate',
@@ -170,7 +157,7 @@ author:
 					},
 					success: function (response) {
 						var chartConf = Ext.JSON.decode(response.responseText, true);
-						new Highcharts.Chart(chartConf);
+						renderChart(chartConf);
 					},
 					failure: function (response) {
 						Ext.Msg.alert('Status', 'Request Failed: '+response.status);

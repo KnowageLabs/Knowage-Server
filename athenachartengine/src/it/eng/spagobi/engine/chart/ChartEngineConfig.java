@@ -6,18 +6,26 @@
 package it.eng.spagobi.engine.chart;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
 import it.eng.spagobi.services.common.EnginConf;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 /**
  * @author
  */
+@SuppressWarnings("unchecked")
 public class ChartEngineConfig {
 
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+
+	private static Map<String, ChartConfig> chartLibConf = new HashMap<>();
 
 	private static EnginConf engineConfig;
 
@@ -27,14 +35,35 @@ public class ChartEngineConfig {
 	private static ChartEngineConfig instance;
 
 	public static ChartEngineConfig getInstance() {
-		if (instance == null) {
-			instance = new ChartEngineConfig();
-		}
 		return instance;
 	}
 
+	static {
+		logger.trace("IN");
+
+		engineConfig = EnginConf.getInstance();
+
+		instance = new ChartEngineConfig();
+
+		SourceBean chartLibraries = (SourceBean) getConfigSourceBean().getAttribute("chartConfiguration");
+		if (chartLibraries != null) {
+			List<SourceBean> chartLibrariesItems = chartLibraries.getAttributeAsList("chart");
+			for (SourceBean chart : chartLibrariesItems) {
+				String type = (String) chart.getAttribute("type");
+				String name = (String) chart.getAttribute("name");
+				String vmPath = (String) chart.getAttribute("vmPath");
+				String vmName = (String) chart.getAttribute("vmName");
+				String libIniPath = (String) chart.getAttribute("libIniPath");
+				String libIniName = (String) chart.getAttribute("libIniName");
+
+				chartLibConf.put(type, new ChartConfig(type, name, vmPath, vmName, libIniPath, libIniName));
+			}
+		}
+		logger.trace("OUT");
+	}
+
 	private ChartEngineConfig() {
-		setEngineConfig(EnginConf.getInstance());
+
 	}
 
 	// -- singleton pattern --------------------------------------------
@@ -44,12 +73,12 @@ public class ChartEngineConfig {
 		return engineConfig;
 	}
 
-	private void setEngineConfig(EnginConf engineConfig) {
-		this.engineConfig = engineConfig;
-	}
-
 	public static SourceBean getConfigSourceBean() {
 		return getEngineConfig().getConfig();
+	}
+
+	public static Map<String, ChartConfig> getChartLibConf() {
+		return chartLibConf;
 	}
 
 }
