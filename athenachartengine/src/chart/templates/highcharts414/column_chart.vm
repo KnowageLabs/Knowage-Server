@@ -1,14 +1,44 @@
 {
     chart: {
-    	##type: '$chart.type.toLowerCase()'
-        type: 'column'
+        type: 'column',
+        
+        #set ($chartHeight = 0)
+        #if($chart.height != '')
+        	#set($chartHeight = $chart.height)
+        #end
+        
+        #set ($chartWidth = 0)
+        #if($chart.width != '')
+        	#set($chartWidth = $chart.width)
+    	#end
+        
+        height: $chartHeight,
+        
+        style:{
+        	#foreach($styleName in $chart.style.keySet())
+        	$styleName: '$chart.style[$styleName]',
+        	#end
+	    },
+        
+        width: $chartWidth
     },
+    
+    colors: [
+             #foreach($color in $chart.COLORSPALLET.COLOR)
+             '$color.value', 
+             #end
+             ],
+    
     title: {
-        ##text: 'Stacked column chart'
-        text: '$chart.TITLE.text'
+        text: '$chart.TITLE.text',
+        
+        style:{
+        	#foreach($styleName in $chart.TITLE.style.keySet())
+        	$styleName: '$chart.TITLE.style[$styleName]',
+        	#end
+	    }, 
     },
     subtitle: {
-        ##text: 'Source: Wikipedia.org'
         text: '$chart.SUBTITLE.text'
     },
     legend: {
@@ -34,7 +64,7 @@
         }
     },
 
-    #* Selezione Assi *#
+    ## Selezione Assi
     #set($axisList = $chart.AXES_LIST.AXIS)
     #set($xAxisList = [])
     #set($yAxisList = [])
@@ -51,53 +81,44 @@
 	#end
     
     
-    xAxis: {
-        categories: [
-                     #* Categorie fisse (da rimuovere) 
-                     *#
-                     'Apples',
-                     #* FINE Categorie fisse (da rimuovere) *#
-                     
-                     
-                     #* Aggiunta categorie *#
-                     #foreach($xAxis in $xAxisList)
-                     '$xAxis.TITLE.text',
-                     #end
-                     #* FINE Aggiunta categorie *#
-                     
-                     ]
-    },
+    xAxis:[
+    	 #foreach($xAxis in $xAxisList)
+    	 {
+			 title: {
+				 text: '$xAxis.TITLE.text',
+				 style:{
+		        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+		        	$styleName: '$xAxis.TITLE.style[$styleName]',
+		        	#end
+			     },
+			 }
+
+			 #if($xAxis.position == 'top')
+			 opposite: true,
+			 #end
+			 
+    		 #*
+    		 categories: [
+				## Aggiunta categorie
+				'$xAxis.TITLE.text',
+				## FINE Aggiunta categorie
+			 ]
+    	 	 *#
+    	 },
+    	 #end
+    ],
     yAxis: [
-        #* Serie di prova (da eliminare) 
-		{ 
-			min: 0,
-			title: {
-				text: 'Total fruit consumption'
-			},
-			stackLabels: {
-				enabled: true,
-				style: {
-					fontWeight: 'bold',
-					color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-				}
-			}
-		},
-        *#	
-        #* FINE Serie di prova (da eliminare) *#	
-            
-        
-        #* Aggiunta serie 
-        *#
+        ## Aggiunta serie 
         #foreach($yAxis in $yAxisList)
         {
         	min: 0,
         	title: {
-        		##text: 'Asse Y posizione Destra',
         		text: '$yAxis.TITLE.text',
-        		style: {
-        			fontWeight: 'thin',
-        			color: 'red'
-        		}
+        		style:{
+		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+		        	$styleName: '$yAxis.TITLE.style[$styleName]',
+		        	#end
+        		},
         	},
         	
         	#if($yAxis.position == 'right')
@@ -109,9 +130,10 @@
         	}
         },
         #end
-        #* FINE Aggiunta serie *#
+        ## FINE Aggiunta serie
             
     ],
+    
     tooltip: {
         formatter: function () {
             return '<b>' + this.x + '</b><br/>' +
@@ -131,12 +153,28 @@
             }
         }
     },
-    series: [{	## [Category_1, Category_2, Category_3]
-        name: 'John',
-        data: [1, 40]
-    }, {
-        name: 'Jane'
-        , data: [2, 32]
-    	, yAxis: 1
-    }]
+    series: [
+     #*
+	    {	
+	        name: 'John',
+	        ## data: [Category_1, Category_2, Category_3]
+	        data: [40]
+	    }, 
+	    {
+	        name: 'Jane'
+	        , data: [5]
+	    	##, yAxis: 1
+	    }
+	    *#
+    ],
+    lang: {
+        noData: "$chart.EMPTYMESSAGE.test"
+    },
+    noData: {
+    	style:{
+    	#foreach($styleName in $chart.EMPTYMESSAGE.style.keySet())
+    		$styleName: '$chart.EMPTYMESSAGE.style[$styleName]',
+    	#end
+		}
+    }
 }
