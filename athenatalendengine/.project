@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>AthenaTalendEngine</name>
+	<name>athenatalendengine</name>
 	<comment></comment>
 	<projects>
-		<project>AthenaUtils</project>
-		<project>Athena</project>
+		<project>athenautils</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

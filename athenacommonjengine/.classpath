@@ -13,7 +13,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

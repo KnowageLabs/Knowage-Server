@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>AthenaDataMiningEngine</name>
+	<name>athenadataminingengine</name>
 	<comment></comment>
 	<projects>
-		<project>AthenaUtils</project>
-		<project>AthenaDAO</project>
-		<project>AthenaUtilsJSON</project>
+		<project>athenadao</project>
+		<project>athenautils</project>
+		<project>athenautilsjson</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

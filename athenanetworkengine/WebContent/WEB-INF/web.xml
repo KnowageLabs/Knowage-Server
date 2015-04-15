@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="SpagoBIXXXSpagoEngine" version="2.4">
-  <javaee:display-name>AthenaNetworkEngine</javaee:display-name>
+<javaee:web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:javaee="http://xmlns.jcp.org/xml/ns/javaee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="SpagoBIXXXSpagoEngine" version="2.4">
+  <javaee:display-name>athenanetworkengine</javaee:display-name>
   <javaee:description>
 		Spago BI - SpagoBINetworkEngine 
 	</javaee:description>
-  <filter>
-    <filter-name>EncodingFilter</filter-name>
-    <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
-    <init-param>
+  <javaee:filter>
+    <javaee:filter-name>EncodingFilter</javaee:filter-name>
+    <javaee:filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</javaee:filter-class>
+    <javaee:init-param>
       <javaee:param-name>encoding</javaee:param-name>
       <javaee:param-value>UTF-8</javaee:param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
-  </filter-mapping>
-  <filter>
-    <filter-name>EngineCheckSessionFilter</filter-name>
-    <filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</filter-class>
-  </filter>
-  <filter>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <filter-class>
+    </javaee:init-param>
+  </javaee:filter>
+  <javaee:filter-mapping>
+    <javaee:filter-name>EncodingFilter</javaee:filter-name>
+    <javaee:url-pattern>/servlet/AdapterHTTP/*</javaee:url-pattern>
+  </javaee:filter-mapping>
+  <javaee:filter-mapping>
+    <javaee:filter-name>EncodingFilter</javaee:filter-name>
+    <javaee:url-pattern>/servlet/AdapterHTTPBackEnd/*</javaee:url-pattern>
+  </javaee:filter-mapping>
+  <javaee:filter>
+    <javaee:filter-name>EngineCheckSessionFilter</javaee:filter-name>
+    <javaee:filter-class>it.eng.spagobi.utilities.filters.EngineCheckSessionFilter</javaee:filter-class>
+  </javaee:filter>
+  <javaee:filter>
+    <javaee:filter-name>SpagoBIAccessFilter</javaee:filter-name>
+    <javaee:filter-class>
 			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
-		</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>EngineCheckSessionFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <url-pattern>/servlet/AdapterHTTPBackEnd/*</url-pattern>
-  </filter-mapping>
-  <servlet>
-    <servlet-name>ConfigServlet</servlet-name>
-    <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
-    <init-param>
+		</javaee:filter-class>
+  </javaee:filter>
+  <javaee:filter-mapping>
+    <javaee:filter-name>EngineCheckSessionFilter</javaee:filter-name>
+    <javaee:url-pattern>/servlet/AdapterHTTP/*</javaee:url-pattern>
+  </javaee:filter-mapping>
+  <javaee:filter-mapping>
+    <javaee:filter-name>SpagoBIAccessFilter</javaee:filter-name>
+    <javaee:url-pattern>/servlet/AdapterHTTP/*</javaee:url-pattern>
+  </javaee:filter-mapping>
+  <javaee:filter-mapping>
+    <javaee:filter-name>SpagoBIAccessFilter</javaee:filter-name>
+    <javaee:url-pattern>/servlet/AdapterHTTPBackEnd/*</javaee:url-pattern>
+  </javaee:filter-mapping>
+  <javaee:servlet>
+    <javaee:servlet-name>ConfigServlet</javaee:servlet-name>
+    <javaee:servlet-class>it.eng.spago.configuration.ConfigServlet</javaee:servlet-class>
+    <javaee:init-param>
       <javaee:param-name>AF_CONFIG_FILE</javaee:param-name>
       <javaee:param-value>\WEB-INF\conf\master.xml</javaee:param-value>
-    </init-param>
-    <load-on-startup>0</load-on-startup>
-  </servlet>
-  <servlet>
-    <servlet-name>AdapterHTTP</servlet-name>
-    <servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>AdapterHTTP</servlet-name>
-    <url-pattern>/servlet/AdapterHTTP</url-pattern>
-  </servlet-mapping>
-  <welcome-file-list>
-    <welcome-file>/html/index.html</welcome-file>
-  </welcome-file-list>
-  <error-page>
-    <exception-type>java.lang.Throwable</exception-type>
-    <location>/html/error.html</location>
-  </error-page>
-  <error-page>
-    <error-code>404</error-code>
-    <location>/html/error.html</location>
-  </error-page>
-  <error-page>
-    <error-code>500</error-code>
-    <location>/html/error.html</location>
-  </error-page>
-</web-app>
+    </javaee:init-param>
+    <javaee:load-on-startup>0</javaee:load-on-startup>
+  </javaee:servlet>
+  <javaee:servlet>
+    <javaee:servlet-name>AdapterHTTP</javaee:servlet-name>
+    <javaee:servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</javaee:servlet-class>
+  </javaee:servlet>
+  <javaee:servlet-mapping>
+    <javaee:servlet-name>AdapterHTTP</javaee:servlet-name>
+    <javaee:url-pattern>/servlet/AdapterHTTP</javaee:url-pattern>
+  </javaee:servlet-mapping>
+  <javaee:welcome-file-list>
+    <javaee:welcome-file>/html/index.html</javaee:welcome-file>
+  </javaee:welcome-file-list>
+  <javaee:error-page>
+    <javaee:exception-type>java.lang.Throwable</javaee:exception-type>
+    <javaee:location>/html/error.html</javaee:location>
+  </javaee:error-page>
+  <javaee:error-page>
+    <javaee:error-code>404</javaee:error-code>
+    <javaee:location>/html/error.html</javaee:location>
+  </javaee:error-page>
+  <javaee:error-page>
+    <javaee:error-code>500</javaee:error-code>
+    <javaee:location>/html/error.html</javaee:location>
+  </javaee:error-page>
+</javaee:web-app>

@@ -23,7 +23,7 @@
 <CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI" description="HOST JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL" description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.TEMPLATE_MAX_SIZE" name="TEMPLATE MAX SIZE" description="TEMPLATE MAX SIZE" isActive="true" valueCheck="5242880" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI CONTEXT" description="SPAGOBI CONTEXT" isActive="true" valueCheck="/Athena" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI CONTEXT" description="SPAGOBI CONTEXT" isActive="true" valueCheck="/athena" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.SESSION_EXPIRED_URL" name="SESSION EXPIRED URL" description="SESSION EXPIRED URL" isActive="true" valueCheck="/WEB-INF/jsp/commons/sessionExpired.jsp" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.DATASET.maxResult" name="DATASET maxResult" description="maxResult" isActive="true" valueCheck="500000" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled" name="SESSION PARAMETERS MANAGER" description="enabled" isActive="true" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>

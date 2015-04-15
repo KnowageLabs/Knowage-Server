@@ -1,4 +1,4 @@
-<Context  path="/SpagoBIBirtReportEngine" reloadable="false" >
+<Context  path="/athenabirtreportengine" reloadable="false" >
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
 	<ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
     <ResourceLink global="spagobi_resource_path" name="spagobi_resource_path" type="java.lang.String"/>

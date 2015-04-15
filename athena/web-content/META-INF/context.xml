@@ -1,4 +1,4 @@
-      <Context docBase="SpagoBIProject" path="/SpagoBI" reloadable="true" source="org.eclipse.jst.j2ee.server:SpagoBIProject">	
+      <Context docBase="athena" path="/athena" reloadable="true" source="org.eclipse.jst.j2ee.server:athena">	
         <ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
         <ResourceLink global="spagobi_resource_path" name="spagobi_resource_path" type="java.lang.String"/>

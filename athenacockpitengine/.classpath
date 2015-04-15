@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/QbeCore"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
@@ -16,8 +15,9 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaDAO"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenadao"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

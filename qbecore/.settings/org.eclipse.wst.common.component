@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="QbeCore">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+<wb-module deploy-name="qbecore">
         <wb-resource deploy-path="/" source-path="/src/runtime"/>
         <wb-resource deploy-path="/" source-path="/src/jpa"/>
         <wb-resource deploy-path="/" source-path="/src/hibernate"/>

@@ -13,10 +13,10 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaDAO"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
-	<classpathentry kind="lib" path="/AthenaUtils/lib/commonj-twm.jar"/>
-	<classpathentry kind="lib" path="/AthenaUtils/lib/foo-commonj.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenadao"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
+	<classpathentry kind="lib" path="/athenautils/lib/commonj-twm.jar"/>
+	<classpathentry kind="lib" path="/athenautils/lib/foo-commonj.jar"/>
 	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
 </classpath>

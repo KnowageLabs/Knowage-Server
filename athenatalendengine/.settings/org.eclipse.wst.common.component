@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="AthenaTalendEngine">
+<wb-module deploy-name="athenatalendengine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="AthenaUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtils/AthenaUtils">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="SpagoBI.war" deploy-path="/WEB-INF/lib" handle="module:/resource/Athena/Athena">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautils/athenautils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path" value="build/classes"/>
-        <property name="context-root" value="AthenaTalendEngine"/>
+        <property name="context-root" value="athenatalendengine"/>
 </wb-module>
 </project-modules>

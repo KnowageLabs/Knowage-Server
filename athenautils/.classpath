@@ -54,7 +54,6 @@
 	<classpathentry kind="lib" path="lib/jgrapht-jdk1.6.jar"/>
 	<classpathentry kind="lib" path="lib/mongo-java-driver-2.12.3.jar"/>
 	<classpathentry kind="lib" path="lib/javax.json-1.0.4.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AthenaUtilsJSON"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
 		<attributes>
 			<attribute name="owner.project.facets" value="jst.utility"/>
@@ -65,5 +64,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

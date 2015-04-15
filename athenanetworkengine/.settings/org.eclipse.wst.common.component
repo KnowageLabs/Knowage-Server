@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="AthenaNetworkEngine">
+<wb-module deploy-name="athenanetworkengine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module archiveName="AthenaUtils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtils/AthenaUtils">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautils/athenautils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="AthenaUtilsJSON.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/AthenaUtilsJSON/AthenaUtilsJSON">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautilsjson/athenautilsjson">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path"/>
-        <property name="context-root" value="AthenaNetworkEngine"/>
+        <property name="context-root" value="athenanetworkengine"/>
 </wb-module>
 </project-modules>

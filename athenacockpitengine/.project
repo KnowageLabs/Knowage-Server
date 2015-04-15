@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>AthenaCockpitEngine</name>
+	<name>athenacockpitengine</name>
 	<comment></comment>
 	<projects>
-		<project>QbeCore</project>
-		<project>AthenaUtils</project>
-		<project>AthenaDAO</project>
-		<project>AthenaUtilsJSON</project>
+		<project>athenadao</project>
+		<project>athenautils</project>
+		<project>athenautilsjson</project>
+		<project>qbecore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
