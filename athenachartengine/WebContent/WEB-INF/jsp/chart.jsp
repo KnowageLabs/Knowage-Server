@@ -74,6 +74,9 @@ author:
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
 	template = engineInstance.getTemplate().toString(0);
+	
+	String datasetLabel = engineInstance.getDataSet().getLabel();
+	
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null)?"":engineInstance.getDocumentAuthor().toString();
@@ -140,6 +143,31 @@ author:
  			
  			initChartLibrary(mainPanel.id);
  			
+
+
+ 			var dati = {};
+	    	Ext.Ajax.request({
+				url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/Athena/restful-services/1.0/datasets/<%=datasetLabel%>/data',
+				method: 'POST',
+				timeout: 60000,
+				disableCaching: false,
+				params:
+				{
+					SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+					, user_id: "<%=userId%>"
+				},
+				headers:
+				{
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				success: function (response) {
+					Ext.log('Status', Ext.JSON.encode(response));
+				},
+				failure: function (response) {
+					Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+				}
+			});
+ 			
 	    	Ext.Ajax.request({
 					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate',
 					method: 'POST',
@@ -163,7 +191,6 @@ author:
 						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
 					}
 			});
-	    	
 
  			Ext.log({level: 'info'}, 'CHART: STILL IN');
  			Ext.log({level: 'info'}, 'CHART: OUT');
