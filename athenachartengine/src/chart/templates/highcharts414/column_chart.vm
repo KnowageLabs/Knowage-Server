@@ -66,23 +66,34 @@
 
     ## Selezione Assi
     #set($axisList = $chart.AXES_LIST.AXIS)
-    #set($xAxisList = [])
-    #set($yAxisList = [])
-    
+
+    #set($xAxisList = {})
+    #set($yAxisList = {})
+    #set($xAxisPositions = {})
+    #set($yAxisPositions = {})
+    #set($xAxisCounter = 0)
+    #set($yAxisCounter = 0)
     
     #foreach($axis in $axisList)
 	 	#if($axis.type == 'Category')
-	 		#set($workAroundNoPrint = $xAxisList.add($axis))
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
 	 	#end
 	 	
 	 	#if($axis.type == 'Serie')
-	 		#set($workAroundNoPrint = $yAxisList.add($axis))
+	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+	 		
+	 		#set($yAxisCounter = $yAxisCounter + 1)
 	 	#end
 	#end
-    
-    
+	
     xAxis:[
-    	 #foreach($xAxis in $xAxisList)
+    	 #foreach($xAxisKey in $xAxisList.keySet())
+    	 	#set ($xAxis = $xAxisList[$xAxisKey])
+    	 
     	 {
 			 title: {
 				 text: '$xAxis.TITLE.text',
@@ -91,25 +102,28 @@
 		        	$styleName: '$xAxis.TITLE.style[$styleName]',
 		        	#end
 			     },
-			 }
+			 },
 
 			 #if($xAxis.position == 'top')
 			 opposite: true,
 			 #end
 			 
-    		 #*
     		 categories: [
+    		    #*
 				## Aggiunta categorie
 				'$xAxis.TITLE.text',
 				## FINE Aggiunta categorie
-			 ]
-    	 	 *#
+				*#
+			 ],
     	 },
     	 #end
     ],
+    
     yAxis: [
         ## Aggiunta serie 
-        #foreach($yAxis in $yAxisList)
+        #foreach($yAxisKey in $yAxisList.keySet())
+        	#set ($yAxis = $yAxisList[$yAxisKey] )
+        
         {
         	min: 0,
         	title: {
@@ -121,13 +135,36 @@
         		},
         	},
         	
+        	tickInterval: $yAxis.MAJORGRID.interval,
+        	gridLineColor: '$yAxis.MAJORGRID.style.color',
+        	
+        	#* 
+        	#set($typeline = [ 'Solid', 'ShortDash', 'ShortDot', 'ShortDashDot', 'ShortDashDotDot', 
+        	                   'Dot','Dash', 'LongDash', 'DashDot', 'LongDashDot', 'LongDashDotDot'])
+        	*#
+        	
+        	#set($typeline = $yAxis.MAJORGRID.style.typeline)
+        	#if($typeline == 'dashed')
+        		#set($convertedTpeline = 'Dash')
+        	#end
+        	gridLineDashStyle: '$convertedTpeline',
+        	
+        	minorTickInterval: $yAxis.MINORGRID.interval,
+        	minorGridLineColor: '$yAxis.MINORGRID.style.color',
+        	
+        	#set($typeline = $yAxis.MINORGRID.style.typeline)
+        	#if($typeline == 'dashed')
+        		#set($convertedMinorTpeline = 'Dash')
+        	#end
+        	minorGridLineDashStyle: '$convertedMinorTpeline',
+        	
         	#if($yAxis.position == 'right')
         	opposite: true,
         	#end
         	
         	stackLabels: {
         		enabled: true
-        	}
+        	},
         },
         #end
         ## FINE Aggiunta serie
@@ -153,20 +190,36 @@
             }
         }
     },
-    series: [
-     #*
+    
+## Dati di prova
+    #set ($values = {})
+    #set($workAroundNoPrint = $values.put('Vendite' , [10]))
+	#set($workAroundNoPrint = $values.put('Ricavi' , [3] ))
+## FINE Dati di prova  	
+	
+	#set($series = $chart.VALUES.SERIE)
+	#set($seriesMap = {})
+	
+	#foreach($serie in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+	#end
+
+	#set($valuesKeys = $values.keySet())
+	
+	series: [
+	#foreach($valueKey in $valuesKeys)
+	    #set($relatedSerie = $seriesMap.get($valueKey))
+	    	
 	    {	
-	        name: 'John',
-	        ## data: [Category_1, Category_2, Category_3]
-	        data: [40]
+	    	name: '$relatedSerie.name',
+	    	data: $values[$valueKey],
+	    	
+	    	#set($referencedAxis = $relatedSerie.axis)
+	    	yAxis: $yAxisPositions[$referencedAxis]
 	    }, 
-	    {
-	        name: 'Jane'
-	        , data: [5]
-	    	##, yAxis: 1
-	    }
-	    *#
+	#end
     ],
+    
     lang: {
         noData: "$chart.EMPTYMESSAGE.test"
     },
