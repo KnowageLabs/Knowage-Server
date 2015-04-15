@@ -227,7 +227,7 @@ public class DataSourceCRUD {
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		Integer dialectId = Integer.valueOf((String) requestBodyJSON.opt("DIALECT_ID"));
+		Integer dialectId = (Integer) requestBodyJSON.opt("DIALECT_ID");
 		String description = (String) requestBodyJSON.opt("DESCRIPTION");
 		String label = (String) requestBodyJSON.opt("DATASOURCE_LABEL");
 		String jndi = (String) requestBodyJSON.opt("JNDI_URL");
@@ -237,22 +237,12 @@ public class DataSourceCRUD {
 		String driver = (String) requestBodyJSON.opt("DRIVER");
 		String schemaAttr = (String) requestBodyJSON.opt("SCHEMA");
 		String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
-		String readOnlyS = (String) requestBodyJSON.opt("READ_ONLY");
-		String writeDefaultS = (String) requestBodyJSON.opt("WRITE_DEFAULT");
+		Boolean readOnly = (Boolean) requestBodyJSON.opt("READ_ONLY");
+		Boolean writeDefault = (Boolean) requestBodyJSON.opt("WRITE_DEFAULT");
 
 		Boolean isMultiSchema = false;
 		if (multiSchema != null && (multiSchema.equals("on") || multiSchema.equals("true"))) {
 			isMultiSchema = true;
-		}
-
-		Boolean readOnly = false;
-		if (readOnlyS != null && (readOnlyS.equals("on") || readOnlyS.equals("true"))) {
-			readOnly = true;
-		}
-
-		Boolean writeDefault = false;
-		if (writeDefaultS != null && (writeDefaultS.equals("on") || writeDefaultS.equals("true"))) {
-			writeDefault = true;
 		}
 
 		ds.setDsId(id.intValue());
