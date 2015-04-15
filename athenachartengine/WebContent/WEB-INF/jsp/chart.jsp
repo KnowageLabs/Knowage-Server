@@ -156,7 +156,7 @@ author:
  							params:
  							{
  								jsonTemplate: '<%=template%>'
- 								, jsonData: Ext.JSON.encode(jsonData)
+ 								, jsonData: jsonData
  								, SBI_EXECUTION_ID: <%=request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null"%>
  								, user_id: "<%=userId%>"
  							},
@@ -193,7 +193,7 @@ author:
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
 				success: function (response) {
-					templateContainer.fireEvent('dataReady', response);
+					templateContainer.fireEvent('dataReady', response.responseText);
 				},
 				failure: function (response) {
 					Ext.Msg.alert('Status', 'Request Failed: '+response.status);

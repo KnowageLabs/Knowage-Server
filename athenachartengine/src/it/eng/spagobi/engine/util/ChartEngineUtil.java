@@ -64,20 +64,28 @@ public class ChartEngineUtil {
 	}
 
 	public static VelocityContext loadVelocityContext(String jsonToConvert) {
+		return loadVelocityContext(jsonToConvert, null);
+	}
+
+	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData) {
 		VelocityContext velocityContext = new VelocityContext();
 
 		Map<String, Object> mapTemplate = null;
+		Map<String, Object> mapData = null;
 		try {
-			mapTemplate = convertJsonToMap(jsonToConvert);
+			mapTemplate = convertJsonToMap(jsonToConvert, true);
+			velocityContext.put("chart", mapTemplate.get("CHART"));
+			if (jsonData != null) {
+				mapData = convertJsonToMap(jsonData, true);
+				velocityContext.put("data", mapData);
+			}
 		} catch (IOException e) {
 			logger.error("Error in template to be converted: " + jsonToConvert, e);
 		}
-
-		velocityContext.put("chart", mapTemplate.get("CHART"));
 		return velocityContext;
 	}
 
-	private static Map<String, Object> convertJsonToMap(String json) throws JsonParseException, JsonMappingException, IOException {
+	private static Map<String, Object> convertJsonToMap(String json, boolean escape) throws JsonParseException, JsonMappingException, IOException {
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 
@@ -87,7 +95,9 @@ public class ChartEngineUtil {
 		// TODO Aggiungere a questo livello StringEscapeUtils.escapeHtml per lettere
 		LinkedHashMap<String, Object> result = mapper.readValue(json, typeRef);
 
-		LinkedHashMap<String, Object> escapedMapStrings = escapeMapStrings(result);
+		// TODO DARIOLANEVE RIPRENDI DA QUI
+
+		LinkedHashMap<String, Object> escapedMapStrings = escape ? escapeMapStrings(result) : result;
 
 		// return result;
 		return escapedMapStrings;
