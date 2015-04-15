@@ -13,9 +13,8 @@ author:
 <%@page import="it.eng.spagobi.engine.chart.ChartEngineConfig"%>
 <%@page import="it.eng.spagobi.engine.util.ChartEngineUtil"%>
 <%@page import="it.eng.spagobi.engine.chart.ChartEngineInstance"%>
-<%@ page language="java" 
-	     contentType="text/html; charset=UTF-8" 
-	     pageEncoding="UTF-8"%>	
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -37,7 +36,7 @@ author:
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
-<% 
+<%
 	ChartEngineInstance engineInstance;
 	IEngUserProfile profile;
 	String profileJSONStr;
@@ -96,37 +95,37 @@ author:
 		fromMyAnalysis = true;
 	}else{
 		if (request.getParameter("SBI_ENVIRONMENT") != null && request.getParameter("SBI_ENVIRONMENT").equalsIgnoreCase("MYANALYSIS")){
-			fromMyAnalysis = true;
+	fromMyAnalysis = true;
 		}
 	}
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
-    
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <html>
-	<%-- == HEAD ========================================================== --%>
-	<head>
-	   <title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
-       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-       
-        <%@include file="commons/includeExtJS5.jspf" %>
-        
-		<jsp:include page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" />
-		
-		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeAthenaChartEngineJS5.jspf" %>
-		
-    </head>
-	
-	<%-- == BODY ========================================================== --%>
-    
-    <body>
-	
-	    
+<%-- == HEAD ========================================================== --%>
+<head>
+<title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<%@include file="commons/includeExtJS5.jspf"%>
+
+<jsp:include
+	page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" />
+
+<%@include file="commons/includeMessageResource.jspf"%>
+<%@include file="commons/includeAthenaChartEngineJS5.jspf"%>
+
+</head>
+
+<%-- == BODY ========================================================== --%>
+
+<body>
+
+
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 	
@@ -143,17 +142,50 @@ author:
  			
  			initChartLibrary(mainPanel.id);
  			
+ 			
+ 			var templateContainer = Ext.create('Ext.Container', {
+ 			    
+ 			    listeners: {
+ 			        dataReady: function(jsonData) {
+ 			        	
+ 			        	Ext.Ajax.request({
+ 							url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate',
+ 							method: 'POST',
+ 							timeout: 60000,
+ 							disableCaching: false,
+ 							params:
+ 							{
+ 								jsonTemplate: '<%=template%>'
+ 								, jsonData: Ext.JSON.encode(jsonData)
+ 								, SBI_EXECUTION_ID: <%=request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null"%>
+ 								, user_id: "<%=userId%>"
+ 							},
+ 							headers:
+ 							{
+ 								'Content-Type': 'application/x-www-form-urlencoded'
+ 							},
+ 							success: function (response) {
+ 								var chartConf = Ext.JSON.decode(response.responseText, true);
+ 								renderChart(chartConf);
+ 							},
+ 							failure: function (response) {
+ 								Ext.Msg.alert('Status', 'Request Failed: '+response.status);
+ 							}
+ 					});
+ 			        	
+ 			           // Ext.Msg.alert('dataReady fired!',' Passa al servizio REST come param i seguenti dati: ' + Ext.JSON.encode(jsonData));
+ 			        }
+ 			    }
+ 			});
 
-
- 			var dati = {};
 	    	Ext.Ajax.request({
-				url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/Athena/restful-services/1.0/datasets/<%=datasetLabel%>/data',
+				url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/Athena/restful-services/1.0/datasets/<%=datasetLabel%>/data',
 				method: 'POST',
 				timeout: 60000,
 				disableCaching: false,
 				params:
 				{
-					SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
+					SBI_EXECUTION_ID: <%=request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null"%>
 					, user_id: "<%=userId%>"
 				},
 				headers:
@@ -161,36 +193,14 @@ author:
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
 				success: function (response) {
-					Ext.log('Status', Ext.JSON.encode(response));
+					templateContainer.fireEvent('dataReady', response);
 				},
 				failure: function (response) {
 					Ext.Msg.alert('Status', 'Request Failed: '+response.status);
 				}
 			});
  			
-	    	Ext.Ajax.request({
-					url: 'http://<%= request.getServerName()%>:<%= request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate',
-					method: 'POST',
-					timeout: 60000,
-					disableCaching: false,
-					params:
-					{
-						jsonTemplate: '<%=template%>'
-						, SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-						, user_id: "<%=userId%>"
-					},
-					headers:
-					{
-						'Content-Type': 'application/x-www-form-urlencoded'
-					},
-					success: function (response) {
-						var chartConf = Ext.JSON.decode(response.responseText, true);
-						renderChart(chartConf);
-					},
-					failure: function (response) {
-						Ext.Msg.alert('Status', 'Request Failed: '+response.status);
-					}
-			});
+	    	
 
  			Ext.log({level: 'info'}, 'CHART: STILL IN');
  			Ext.log({level: 'info'}, 'CHART: OUT');
@@ -198,6 +208,6 @@ author:
  		  });
 		
 	</script>
-	
-	</body>
+
+</body>
 </html>
