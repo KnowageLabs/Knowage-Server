@@ -31,6 +31,7 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		targetComponentName = "SpagoBI Metadata Database";
 
 		metadataInitializers = new ArrayList<SpagoBIInitializer>();
+		metadataInitializers.add(new ProductTypesInitializer());
 		metadataInitializers.add(new TenantsInitializer());
 		metadataInitializers.add(new DomainsInitializer());
 		metadataInitializers.add(new EnginesInitializer());

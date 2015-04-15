@@ -30,5 +30,11 @@
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationDatasource" />
         </set>
+        <set name="sbiOrganizationProductType" inverse="true">
+            <key>
+                <column name="ORGANIZATION_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationProductType" />
+        </set>        
     </class>
 </hibernate-mapping>

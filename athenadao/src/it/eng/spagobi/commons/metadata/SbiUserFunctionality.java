@@ -15,6 +15,7 @@ public class SbiUserFunctionality  extends SbiHibernateModel {
      private String name=null;
      private String description=null;
      private Set roleType;
+     private SbiProductType productType;
      
     /**
      * Gets the id.
@@ -87,6 +88,15 @@ public class SbiUserFunctionality  extends SbiHibernateModel {
     public void setRoleType(Set roleType) {
         this.roleType = roleType;
     }
+
+	public SbiProductType getProductType() {
+		return productType;
+	}
+
+	public void setProductType(SbiProductType productType) {
+		this.productType = productType;
+	}
+
     
 
 

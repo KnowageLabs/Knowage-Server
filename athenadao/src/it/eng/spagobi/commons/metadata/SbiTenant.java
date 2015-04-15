@@ -19,6 +19,7 @@ public class SbiTenant  extends SbiHibernateModel {
 	private String theme;
 	private Set sbiOrganizationEngines = new HashSet(0);
 	private Set sbiOrganizationDatasources = new HashSet(0);
+	private Set sbiOrganizationProductType = new HashSet(0);
 	
     // Constructors
 
@@ -79,5 +80,13 @@ public class SbiTenant  extends SbiHibernateModel {
 
 	public void setSbiOrganizationDatasources(Set sbiOrganizationDatasources) {
 		this.sbiOrganizationDatasources = sbiOrganizationDatasources;
+	}
+
+	public Set getSbiOrganizationProductType() {
+		return sbiOrganizationProductType;
+	}
+
+	public void setSbiOrganizationProductType(Set sbiOrganizationProductType) {
+		this.sbiOrganizationProductType = sbiOrganizationProductType;
 	}
 }

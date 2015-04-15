@@ -18,6 +18,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 
@@ -134,6 +135,16 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 		SbiEngines engine = (SbiEngines) hqlQuery.uniqueResult();
 		logger.debug("OUT");
 		return engine;
+	}
+	
+	protected SbiProductType findProductType(Session aSession, String label) {
+		logger.debug("IN");
+		String hql = "from SbiProductType e where e.label = :label";
+		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setParameter("label", label);
+		SbiProductType productType = (SbiProductType) hqlQuery.uniqueResult();
+		logger.debug("OUT");
+		return productType;
 	}
 
 }
