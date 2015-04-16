@@ -1,29 +1,6 @@
-## Mock data
-    #set ($values = {})
-    #set($workAroundNoPrint = $values.put('Vendite' , [15, 4, 5]))
-	#set($workAroundNoPrint = $values.put('Ricavi' , [1, 2, 3] ))
-## END Mock data 
-
-
-#set($categories = [])
-#set($workAroundNoPrint = $categories.add(''))
-#set($workAroundNoPrint = $categories.add(''))
-#set($workAroundNoPrint = $categories.add(''))
-
-
-#set($series = $chart.VALUES.SERIE)
-#set($seriesMap = {})
-
-#foreach($serie in $series)
-	#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
-#end
-
-#set($valuesKeys = $values.keySet())
-
 {
     chart: {
-        type: 'column',
-        backgroundColor: '$chart.style.backgroundColor', ##outer chart background
+        type: 'line',
         
         #set ($chartHeight = 0)
         #if($chart.height != '')
@@ -35,12 +12,14 @@
         	#set($chartWidth = $chart.width)
     	#end
         
-    	style:{
-    		#foreach($styleName in $chart.style.keySet())
-    		$styleName: '$chart.style[$styleName]',
-    		#end
-    	},
-	    height: $chartHeight,
+        height: $chartHeight,
+        
+        style:{
+        	#foreach($styleName in $chart.style.keySet())
+        	$styleName: '$chart.style[$styleName]',
+        	#end
+	    },
+        
         width: $chartWidth
     },
     
@@ -52,6 +31,7 @@
     
     title: {
         text: '$chart.TITLE.text',
+        
         style:{
         	#foreach($styleName in $chart.TITLE.style.keySet())
         	$styleName: '$chart.TITLE.style[$styleName]',
@@ -128,14 +108,13 @@
 			 opposite: true,
 			 #end
 			 
-    		 categories: $categories ,
-    			 #*
-    			 [
+    		 categories: [
+    		    #*
 				## Aggiunta categorie
 				'$xAxis.TITLE.text',
 				## FINE Aggiunta categorie
+				*#
 			 ],
-			 *#
     	 },
     	 #end
     ],
@@ -193,18 +172,10 @@
     ],
     
     tooltip: {
-    	##valueDecimals: this.series.options.valueDecimals,
         formatter: function () {
-        	var prefixChar = this.series.options.prefixChar;
-        	var postfixChar = this.series.options.postfixChar;
-        	
-        	var formattedTooltip = 
-        		'<b>Category : ' + this.x + '</b><br/>' +
-        	//          this.series.name + ': ' + this.y + '<br/>' +
-        		(prefixChar == ''? '' : prefixChar + ' ') + this.y + postfixChar + '<br/>' 
-        	//  + 'Total: ' + this.point.stackTotal;
-        	
-            return formattedTooltip;
+            return '<b>' + this.x + '</b><br/>' +
+                this.series.name + ': ' + this.y + '<br/>' +
+                'Total: ' + this.point.stackTotal;
         }
     },
     plotOptions: {
@@ -219,34 +190,35 @@
             }
         }
     },
+    
+## Dati di prova
+    #set ($values = {})
+    #set($workAroundNoPrint = $values.put('Vendite' , [10]))
+	#set($workAroundNoPrint = $values.put('Ricavi' , [3] ))
+## FINE Dati di prova  	
+	
+	#set($series = $chart.VALUES.SERIE)
+	#set($seriesMap = {})
+	
+	#foreach($serie in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+	#end
+	#set($valuesKeys = $values.keySet())
+	
+	/*
+	\$values: $values
+	\$series: $series
+	\$seriesMap: $seriesMap
+	\$valuesKeys: $valuesKeys
+	*/
 	
 	series: [
 	#foreach($valueKey in $valuesKeys)
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
 	    {	
-			color: '$relatedSerie.color',
-			name: '$relatedSerie.name',
-	    	type: '$relatedSerie.type',
+	    	name: '$relatedSerie.name',
 	    	data: $values[$valueKey],
-    	
-	    //Access these properties by this.series.options.xxxx
-    	#set($seriePrefix = '')
-    	#set($seriePrefix = $relatedSerie.prefixChar)
-    		prefixChar: '$seriePrefix',
-    		
-		#set($seriePostfix = '')
-		#set($seriePostfix = $relatedSerie.postfixChar)
-			postfixChar: '$seriePostfix',
-			valueDecimals: $relatedSerie.precision ,
-	    	
-    	#set($serieTooltip = false)
-    	#set($serieTooltip = $relatedSerie.TOOLTIP)
-    	#if($serieTooltip)
-    		tooltip : { //created property
-    			
-    		},
-    	#end
 	    	
 	    	#set($referencedAxis = $relatedSerie.axis)
 	    	yAxis: $yAxisPositions[$referencedAxis]
@@ -263,9 +235,5 @@
     		$styleName: '$chart.EMPTYMESSAGE.style[$styleName]',
     	#end
 		}
-    },
-    
-    credits: { ##remove bottom credits text
-    	enabled: false
-    },
+    }
 }

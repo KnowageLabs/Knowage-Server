@@ -1,33 +1,57 @@
 {
     chart: {
-    	##type: '$chart.type.toLowerCase()'
-    	##type: 'column'
-    	type: 'bar'
+        type: 'bar',
+        
+        #set ($chartHeight = 0)
+        #if($chart.height != '')
+        	#set($chartHeight = $chart.height)
+        #end
+        
+        #set ($chartWidth = 0)
+        #if($chart.width != '')
+        	#set($chartWidth = $chart.width)
+    	#end
+        
+        height: $chartHeight,
+        
+        style:{
+        	#foreach($styleName in $chart.style.keySet())
+        	$styleName: '$chart.style[$styleName]',
+        	#end
+	    },
+        
+        width: $chartWidth
     },
+    
+    colors: [
+             #foreach($color in $chart.COLORSPALLET.COLOR)
+             '$color.value', 
+             #end
+             ],
+    
     title: {
-        ##text: 'Historic World Population by Region'
-        text: '$chart.TITLE.text'
+        text: '$chart.TITLE.text',
+        
+        style:{
+        	#foreach($styleName in $chart.TITLE.style.keySet())
+        	$styleName: '$chart.TITLE.style[$styleName]',
+        	#end
+	    }, 
     },
     subtitle: {
-        ##text: 'Source: Wikipedia.org'
         text: '$chart.SUBTITLE.text'
     },
     legend: {
-        ##layout: 'vertical',
-        ##align: 'right',
-        ##verticalAlign: 'top',
-        ##x: -40,
-        ##y: 100,
-        ##floating: true,
-        ##borderWidth: 1,
-        ##backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-        ##shadow: true
         layout: '$chart.LEGEND.layout',
         align: '$chart.LEGEND.position',
         verticalAlign: 'top',
+        floating: $chart.LEGEND.floating,
+        
+        #if($chart.LEGEND.floating == 'true')
         x: $chart.LEGEND.x,
         y: $chart.LEGEND.y,
-        floating: $chart.LEGEND.floating,
+        #end
+        
         borderWidth: $chart.LEGEND.style.borderWidth,
         ##backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '$chart.LEGEND.style.backgroundColor'),
         backgroundColor: '$chart.LEGEND.style.backgroundColor',
@@ -39,44 +63,171 @@
         	"fontWeight": "$chart.LEGEND.style.fontWeight" 
         }
     },
-    xAxis: {
-        categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
-        title: {
-            text: null
-        }
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Population (millions)',
-            align: 'high'
+
+    ## Selezione Assi
+    #set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {})
+    #set($yAxisList = {})
+    #set($xAxisPositions = {})
+    #set($yAxisPositions = {})
+    #set($xAxisCounter = 0)
+    #set($yAxisCounter = 0)
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+	 		
+	 		#set($yAxisCounter = $yAxisCounter + 1)
+	 	#end
+	#end
+	
+    xAxis:[
+    	 #foreach($xAxisKey in $xAxisList.keySet())
+    	 	#set ($xAxis = $xAxisList[$xAxisKey])
+    	 
+    	 {
+			 title: {
+				 text: '$xAxis.TITLE.text',
+				 style:{
+		        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+		        	$styleName: '$xAxis.TITLE.style[$styleName]',
+		        	#end
+			     },
+			 },
+
+			 #if($xAxis.position == 'top')
+			 opposite: true,
+			 #end
+			 
+    		 categories: [
+    		    #*
+				## Aggiunta categorie
+				'$xAxis.TITLE.text',
+				## FINE Aggiunta categorie
+				*#
+			 ],
+    	 },
+    	 #end
+    ],
+    
+    yAxis: [
+        ## Aggiunta serie 
+        #foreach($yAxisKey in $yAxisList.keySet())
+        	#set ($yAxis = $yAxisList[$yAxisKey] )
+        
+        {
+        	min: 0,
+        	title: {
+        		text: '$yAxis.TITLE.text',
+        		style:{
+		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+		        	$styleName: '$yAxis.TITLE.style[$styleName]',
+		        	#end
+        		},
+        	},
+        	
+        	tickInterval: $yAxis.MAJORGRID.interval,
+        	gridLineColor: '$yAxis.MAJORGRID.style.color',
+        	
+        	#* 
+        	#set($typeline = [ 'Solid', 'ShortDash', 'ShortDot', 'ShortDashDot', 'ShortDashDotDot', 
+        	                   'Dot','Dash', 'LongDash', 'DashDot', 'LongDashDot', 'LongDashDotDot'])
+        	*#
+        	
+        	#set($typeline = $yAxis.MAJORGRID.style.typeline)
+        	#if($typeline == 'dashed')
+        		#set($convertedTpeline = 'Dash')
+        	#end
+        	gridLineDashStyle: '$convertedTpeline',
+        	
+        	minorTickInterval: $yAxis.MINORGRID.interval,
+        	minorGridLineColor: '$yAxis.MINORGRID.style.color',
+        	
+        	#set($typeline = $yAxis.MINORGRID.style.typeline)
+        	#if($typeline == 'dashed')
+        		#set($convertedMinorTpeline = 'Dash')
+        	#end
+        	minorGridLineDashStyle: '$convertedMinorTpeline',
+        	
+        	#if($yAxis.position == 'right')
+        	opposite: true,
+        	#end
+        	
+        	stackLabels: {
+        		enabled: true
+        	},
         },
-        labels: {
-            overflow: 'justify'
-        }
-    },
+        #end
+        ## FINE Aggiunta serie
+            
+    ],
+    
     tooltip: {
-    	##valueSuffix: ' millions'
-        valuePrefix: 'Euro '
+        formatter: function () {
+            return '<b>' + this.x + '</b><br/>' +
+                this.series.name + ': ' + this.y + '<br/>' +
+                'Total: ' + this.point.stackTotal;
+        }
     },
     plotOptions: {
-        bar: {
+        column: {
+        	##stacking: 'normal', ## 'percent'
             dataLabels: {
-                enabled: true
+                enabled: true,
+                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                style: {
+                    textShadow: '0 0 3px black'
+                }
             }
         }
     },
-    credits: {
-        enabled: false
+    
+## Dati di prova
+    #set ($values = {})
+    #set($workAroundNoPrint = $values.put('Vendite' , [10]))
+	#set($workAroundNoPrint = $values.put('Ricavi' , [3] ))
+## FINE Dati di prova  	
+	
+	#set($series = $chart.VALUES.SERIE)
+	#set($seriesMap = {})
+	
+	#foreach($serie in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+	#end
+
+	#set($valuesKeys = $values.keySet())
+	
+	series: [
+	#foreach($valueKey in $valuesKeys)
+	    #set($relatedSerie = $seriesMap.get($valueKey))
+	    	
+	    {	
+	    	name: '$relatedSerie.name',
+	    	data: $values[$valueKey],
+	    	
+	    	#set($referencedAxis = $relatedSerie.axis)
+	    	yAxis: $yAxisPositions[$referencedAxis]
+	    }, 
+	#end
+    ],
+    
+    lang: {
+        noData: "$chart.EMPTYMESSAGE.test"
     },
-    series: [{
-        name: 'Year 1800',
-        data: [107, 31, 635, 203, 2]
-    }, {
-        name: 'Year 1900',
-        data: [133, 156, 947, 408, 6]
-    }, {
-        name: 'Year 2008',
-        data: [973, 914, 4054, 732, 34]
-    }]
+    noData: {
+    	style:{
+    	#foreach($styleName in $chart.EMPTYMESSAGE.style.keySet())
+    		$styleName: '$chart.EMPTYMESSAGE.style[$styleName]',
+    	#end
+		}
+    }
 }
