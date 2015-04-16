@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,6 +20,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiUserFunctionality;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -78,21 +80,27 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 		while (it.hasNext()) {
 			SourceBean aUSerFunctionalitySB = (SourceBean) it.next();
 			
-			String userFunctionality = (String) aUSerFunctionalitySB.getAttribute("name");
+			String userFunctionalityName = (String) aUSerFunctionalitySB.getAttribute("name");
+			String userFunctionalityProductType = (String) aUSerFunctionalitySB.getAttribute("productType");
+			//retrieve productType for his id 
+			SbiProductType productType = findProductType(aSession,userFunctionalityProductType);
+
 			
-			String hql = "from SbiUserFunctionality f where f.name=?";
+			String hql = "from SbiUserFunctionality f where f.name=? and f.productType = ?";
 			Query hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setParameter(0, userFunctionality);
+			hqlQuery.setParameter(0, userFunctionalityName);
+			hqlQuery.setParameter(1, productType.getProductTypeId(),Hibernate.INTEGER);
 			SbiUserFunctionality aUserFunctionality = (SbiUserFunctionality)hqlQuery.uniqueResult();
 			if(aUserFunctionality == null) {
 				aUserFunctionality = new SbiUserFunctionality();
-				aUserFunctionality.setName(userFunctionality);
+				aUserFunctionality.setName(userFunctionalityName);
+				aUserFunctionality.setProductType(productType);
 				aUserFunctionality.setDescription((String) aUSerFunctionalitySB.getAttribute("description"));
 			}
 			
-			Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality", userFunctionality);
+			Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality", userFunctionalityName);
 			if (roleTypesObject == null) {
-				throw new Exception("No role type found for user functionality [" + userFunctionality + "]!!!");
+				throw new Exception("No role type found for user functionality [" + userFunctionalityName + "] in product type ["+productType+"]!!!");
 			}
 			StringBuffer roleTypesStrBuffer = new StringBuffer();
 			Set roleTypes = new HashSet();

@@ -57,7 +57,7 @@
 			<many-to-many column="ROLE_TYPE_ID"  class="it.eng.spagobi.commons.metadata.SbiDomains"/>
 		</set>       
 		
-        <many-to-one name="productType" class="it.eng.spagobi.commons.metadata.SbiProductType" update="false" insert="false" fetch="select">
+        <many-to-one name="productType" class="it.eng.spagobi.commons.metadata.SbiProductType" update="false"  fetch="select">
             <column name="PRODUCT_TYPE_ID" not-null="true" />
         </many-to-one>
       

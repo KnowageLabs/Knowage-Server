@@ -1,16 +1,21 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.initializers.metadata;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductTypeId;
+import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,7 +33,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 	private static String TENANTS_CONFIG_TAG_NAME = "TENANTS";
 	private static String TENANT_CONFIG_TAG_NAME = "TENANT";
 	private static String TENANT_CONFIG_NAME_ATTRIBUTE = "name";
-	
+
 	@Override
 	SourceBean getConfiguration() throws Exception {
 		SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute(TENANTS_CONFIG_TAG_NAME);
@@ -43,7 +48,8 @@ public class TenantsInitializer extends SpagoBIInitializer {
 	public TenantsInitializer() {
 		targetComponentName = "Tenants";
 	}
-	
+
+	@Override
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {
@@ -57,6 +63,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 				} else {
 					LogMF.info(logger, "Tenant {0} does not exist. It will be inserted", aConfiguredTenant);
 					writeTenant(aConfiguredTenant, hibernateSession);
+					writeTenantProductType(aConfiguredTenant, hibernateSession);
 					LogMF.debug(logger, "Tenant {0} was inserted", aConfiguredTenant);
 				}
 			}
@@ -66,7 +73,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	private boolean exists(String aConfiguredTenant, List<SbiTenant> existingTenants) {
 		for (SbiTenant aTenant : existingTenants) {
 			if (aTenant.getName().equals(aConfiguredTenant)) {
@@ -102,6 +109,44 @@ public class TenantsInitializer extends SpagoBIInitializer {
 		logger.debug("Inserting tenant with name = [" + tenantName + "]...");
 		hibernateSession.save(aTenant);
 		logger.debug("OUT");
+	}
+
+	private void writeTenantProductType(String tenantName, Session hibernateSession) throws Exception {
+		SourceBean configuration = this.getConfiguration();
+		Object tenantObject = configuration.getFilteredSourceBeanAttribute(TENANT_CONFIG_TAG_NAME, "name", tenantName);
+
+		if (tenantObject == null) {
+			throw new Exception("Tenant [" + tenantName + "] configuration not found!!!");
+		} else {
+			SourceBean tenantObjectSB = (SourceBean) tenantObject;
+			List tenantProducts = tenantObjectSB.getAttributeAsList("PRODUCT");
+			Iterator it = tenantProducts.iterator();
+			while (it.hasNext()) {
+				SourceBean aTenantProductSB = (SourceBean) it.next();
+				String productTypeName = (String) aTenantProductSB.getAttribute("name");
+				LogMF.debug(logger, "Found configured tenant product: [{0}]", productTypeName);
+
+				// /create association tenant to product type
+				SbiTenant aTenant = findTenant(hibernateSession, tenantName);
+				SbiProductType aProductType = findProductType(hibernateSession, productTypeName);
+				SbiOrganizationProductType association = new SbiOrganizationProductType();
+				association.setSbiProductType(aProductType);
+				association.setSbiOrganizations(aTenant);
+				SbiCommonInfo commonInfo = new SbiCommonInfo();
+				commonInfo.setUserIn("server");
+				commonInfo.setTimeIn(new Date());
+
+				association.setCommonInfo(commonInfo);
+
+				SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
+				id.setProductTypeId(aProductType.getProductTypeId());
+				id.setOrganizationId(aTenant.getId());
+				association.setId(id);
+
+				hibernateSession.save(association);
+
+			}
+		}
 	}
 
 }

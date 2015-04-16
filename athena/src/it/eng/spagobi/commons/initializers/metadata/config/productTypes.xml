@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PRODUCT_TYPES>
-<PRODUCT_TYPE label="AthenaBD" />
-<PRODUCT_TYPE label="AthenaSocial" />
-<PRODUCT_TYPE label="AthenaBI" />
+	<PRODUCT_TYPE label="AthenaBD" />
+	<PRODUCT_TYPE label="AthenaSocial" />
 </PRODUCT_TYPES>
