@@ -1,7 +1,7 @@
- /* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.tools.multitenant.service.rest;
@@ -15,17 +15,20 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.IProductTypeDAO;
 import it.eng.spagobi.commons.dao.ITenantsDAO;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
 import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductTypeId;
+import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.rest.interceptors.RestExceptionMapper;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -42,7 +45,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -58,7 +60,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Rossato Luca (luca.rossato@eng.it)
- * 
+ *
  */
 @Path("/multitenant")
 @SuppressWarnings("all")
@@ -69,18 +71,18 @@ public class MultitenantCRUD {
 	static private String deleteInUseError = "error.mesage.multitenant.deleting.inuse";
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedError = "error.mesage.multitenant.saving.duplicated";
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllTenant(@Context HttpServletRequest req) {
-		
-		TenantManager.unset();	 		
+
+		TenantManager.unset();
 		ITenantsDAO tenantDao = null;
 		List<SbiTenant> tenants;
 		JSONObject tenantJSON = new JSONObject();
 		try {
 			tenantDao = DAOFactory.getTenantsDAO();
-			tenants = tenantDao.loadAllTenants();		
+			tenants = tenantDao.loadAllTenants();
 			JSONArray tenantJSONArray = new JSONArray();
 			if (tenants != null) {
 				tenantJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(tenants, null);
@@ -90,24 +92,24 @@ public class MultitenantCRUD {
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while istantiating the dao", t);
 		}
-		
+
 		return tenantJSON.toString();
 	}
-	
+
 	@GET
 	@Path("/themes")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllThemes(@Context HttpServletRequest req) {
-		
+
 		TenantManager.unset();
-		
+
 		IConfigDAO configDao = null;
 		Config theme = null;
 		JSONObject result = new JSONObject();
 		JSONArray themesJSONArray = new JSONArray();
 		try {
 			configDao = DAOFactory.getSbiConfigDAO();
-			theme = configDao.loadConfigParametersByLabel("SPAGOBI.THEMES.THEMES");		
+			theme = configDao.loadConfigParametersByLabel("SPAGOBI.THEMES.THEMES");
 			String valueCheck = theme.getValueCheck();
 			String[] values = valueCheck.split(",");
 			for (int i = 0; i < values.length; i++) {
@@ -116,19 +118,19 @@ public class MultitenantCRUD {
 				themesJSONArray.put(item);
 			}
 			result.put("root", themesJSONArray);
-			
+
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while istantiating the dao", t);
 		}
-		
+
 		return result.toString();
 	}
-	
+
 	@GET
 	@Path("/engines")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllEngines(@Context HttpServletRequest req) {
-		
+
 		TenantManager.unset();
 
 		List<Engine> engines = null;
@@ -136,41 +138,52 @@ public class MultitenantCRUD {
 		JSONObject result = new JSONObject();
 		JSONArray enginesJSONArray = new JSONArray();
 		try {
-			engines = DAOFactory.getEngineDAO().loadAllEngines();		
-			String tenant = (String)req.getParameter("TENANT");
+			engines = DAOFactory.getEngineDAO().loadAllEngines();
+			String tenant = req.getParameter("TENANT");
 			selectedEngines = DAOFactory.getTenantsDAO().loadSelectedEngines(tenant);
-			for (Engine engine: engines) {
-				JSONObject item = new JSONObject();			
+			for (Engine engine : engines) {
+				JSONObject item = new JSONObject();
 				item.put("ID", engine.getId());
 				item.put("NAME", engine.getName());
 				item.put("CHECKED", isChecked(engine, selectedEngines));
-				enginesJSONArray.put(item);			
+				enginesJSONArray.put(item);
 			}
 			result.put("root", enginesJSONArray);
-			
+
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while istantiating the dao", t);
 		}
-		
+
 		return result.toString();
 	}
-	
-	private boolean isChecked(Engine engine, List<SbiOrganizationEngine> selectedEngines){
-		
-		for (SbiOrganizationEngine orgEngine: selectedEngines) {		
+
+	private boolean isChecked(Engine engine, List<SbiOrganizationEngine> selectedEngines) {
+
+		for (SbiOrganizationEngine orgEngine : selectedEngines) {
 			SbiEngines sbiEngine = orgEngine.getSbiEngines();
-			if(sbiEngine.getEngineId().intValue() == engine.getId().intValue())
-				return true;		
+			if (sbiEngine.getEngineId().intValue() == engine.getId().intValue())
+				return true;
 		}
-		
+
 		return false;
 	}
-	
+
+	private boolean isCheckedProductType(SbiProductType productType, List<SbiOrganizationProductType> selectedProductTypes) {
+
+		for (SbiOrganizationProductType orgProductType : selectedProductTypes) {
+			SbiProductType sbiProductType = orgProductType.getSbiProductType();
+			if (sbiProductType.getProductTypeId().intValue() == productType.getProductTypeId().intValue())
+				return true;
+		}
+
+		return false;
+	}
+
 	@GET
 	@Path("/datasources")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllDataSources(@Context HttpServletRequest req) {
-		
+
 		TenantManager.unset();
 
 		List<DataSource> dataSources = null;
@@ -181,50 +194,84 @@ public class MultitenantCRUD {
 
 		try {
 			dataSourceDao = DAOFactory.getDataSourceDAO();
-			dataSources = dataSourceDao.loadDataSourcesForSuperAdmin();			
-			String tenant = (String)req.getParameter("TENANT");
+			dataSources = dataSourceDao.loadDataSourcesForSuperAdmin();
+			String tenant = req.getParameter("TENANT");
 			selectedDataSources = DAOFactory.getTenantsDAO().loadSelectedDS(tenant);
-			for (DataSource ds: dataSources) {
-				JSONObject item = new JSONObject();			
+			for (DataSource ds : dataSources) {
+				JSONObject item = new JSONObject();
 				item.put("ID", ds.getDsId());
 				item.put("LABEL", ds.getLabel());
 				item.put("DESCRIPTION", ds.getDescr());
 				item.put("CHECKED", isCheckedDs(ds, selectedDataSources));
-				dsJSONArray.put(item);			
+				dsJSONArray.put(item);
 			}
 			result.put("root", dsJSONArray);
-			
+
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while istantiating the dao", t);
 		}
-		
+
 		return result.toString();
 	}
-	
-	private boolean isCheckedDs(DataSource dataSource, List<SbiOrganizationDatasource> selectedDataSources){
-		
-		for (SbiOrganizationDatasource orgDs: selectedDataSources) {		
+
+	private boolean isCheckedDs(DataSource dataSource, List<SbiOrganizationDatasource> selectedDataSources) {
+
+		for (SbiOrganizationDatasource orgDs : selectedDataSources) {
 			SbiDataSource sbiDataSource = orgDs.getSbiDataSource();
-			if(sbiDataSource.getDsId() == dataSource.getDsId())
-				return true;		
+			if (sbiDataSource.getDsId() == dataSource.getDsId())
+				return true;
 		}
-		
+
 		return false;
 	}
-	
+
+	@GET
+	@Path("/producttypes")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getAllProductTypes(@Context HttpServletRequest req) {
+
+		TenantManager.unset();
+
+		List<SbiProductType> productTypes = null;
+		List<SbiOrganizationProductType> selectedProductTypes = null;
+		IProductTypeDAO productTypeDao = null;
+		JSONObject result = new JSONObject();
+		JSONArray productTypesJSONArray = new JSONArray();
+
+		try {
+			productTypeDao = DAOFactory.getProductTypeDAO();
+			productTypes = productTypeDao.loadAllProductType();
+			String tenant = req.getParameter("TENANT");
+			selectedProductTypes = DAOFactory.getTenantsDAO().loadSelectedProductTypes(tenant);
+			for (SbiProductType product : productTypes) {
+				JSONObject item = new JSONObject();
+				item.put("ID", product.getProductTypeId());
+				item.put("LABEL", product.getLabel());
+				item.put("CHECKED", isCheckedProductType(product, selectedProductTypes));
+				productTypesJSONArray.put(item);
+			}
+			result.put("root", productTypesJSONArray);
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while istantiating the dao", t);
+		}
+
+		return result.toString();
+	}
+
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteTenant(@Context HttpServletRequest req) {
-		
+
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		
+
 		try {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			String id = (String) requestBodyJSON.opt("MULTITENANT_ID");
+			Integer id = (Integer) requestBodyJSON.opt("MULTITENANT_ID");
 			String name = (String) requestBodyJSON.opt("MULTITENANT_NAME");
 			SbiTenant aTenant = new SbiTenant(new Integer(id));
 			aTenant.setName(name);
-			Assert.assertNotNull(id, deleteNullIdTenantError );
+			Assert.assertNotNull(id, deleteNullIdTenantError);
 			ITenantsDAO tenantDao = DAOFactory.getTenantsDAO();
 			tenantDao.deleteTenant(aTenant);
 			return ("");
@@ -232,62 +279,64 @@ public class MultitenantCRUD {
 			logger.error("Cannot fill response container", ex);
 			logger.debug(canNotFillResponseError);
 			try {
-				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
 	}
-	
+
 	@POST
 	@Path("/save")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveTenant(@Context HttpServletRequest req) {
-		
+
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			String saveType = "INSERT";
 			SbiUser newAdminUser = null;
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-				 
+
 			ITenantsDAO dao = DAOFactory.getTenantsDAO();
 			dao.setUserProfile(profile);
-			SbiTenant tenantNew = getTenantDetails(requestBodyJSON);		
+			SbiTenant tenantNew = getTenantDetails(requestBodyJSON);
 			Set<SbiOrganizationEngine> sbiOrganizationEngines = getEngines(requestBodyJSON, tenantNew);
 			Set<SbiOrganizationDatasource> sbiOrganizationDatasources = getDatasources(requestBodyJSON, tenantNew);
-			
+			Set<SbiOrganizationProductType> sbiOrganizationProductTypes = getProductTypes(requestBodyJSON, tenantNew);
+
 			tenantNew.setSbiOrganizationEngines(sbiOrganizationEngines);
 			tenantNew.setSbiOrganizationDatasources(sbiOrganizationDatasources);
+			tenantNew.setSbiOrganizationProductType(sbiOrganizationProductTypes);
 
 			if (tenantNew.getId() == -1) {
-				//if a tenant with the same name not exists on db ok else error
-				if (DAOFactory.getTenantsDAO().loadTenantByName(tenantNew.getName()) != null){
+				// if a tenant with the same name not exists on db ok else error
+				if (DAOFactory.getTenantsDAO().loadTenantByName(tenantNew.getName()) != null) {
 					throw new SpagoBIRuntimeException(saveDuplicatedError);
-				}	 		
+				}
 				dao.insertTenant(tenantNew);
-							
+
 				SbiTenant tmp = dao.loadTenantByName(tenantNew.getName());
 				tenantNew.setId(tmp.getId());
 
-				// add admin user 
+				// add admin user
 				newAdminUser = dao.initializeAdminUser(tenantNew);
-				
+
 				// initialize folders tree structure
 				TreeInitializer initializer = new TreeInitializer();
 				SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute("TREE_INITIALIZATION");
 				initializer.initialize(tenantNew, config);
-				
-			} else {				
-				//update ds
-				try{
+
+			} else {
+				// update ds
+				try {
 					dao.modifyTenant(tenantNew);
 					saveType = "UPDATE";
-				}catch(Throwable e){
+				} catch (Throwable e) {
 					throw new SpagoBIRuntimeException(e.getMessage());
 				}
-				
-			}  
+
+			}
 			JSONObject o = new JSONObject();
 			o.put("MULTITENANT_ID", tenantNew.getId());
 			o.put("SAVE_TYPE", saveType);
@@ -295,12 +344,12 @@ public class MultitenantCRUD {
 				o.put("NEW_USER", newAdminUser.getUserId());
 			}
 			return o.toString();
-			
+
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 			logger.debug(ex.getMessage());
 			try {
-				return ExceptionUtilities.serializeException(ex.getMessage(),null);
+				return ExceptionUtilities.serializeException(ex.getMessage(), null);
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException(ex.getMessage(), e);
@@ -309,7 +358,7 @@ public class MultitenantCRUD {
 			logger.error("Cannot fill response container", ex);
 			logger.debug(canNotFillResponseError);
 			try {
-				return ( ExceptionUtilities.serializeException(canNotFillResponseError,null));
+				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException("Cannot fill response container", e);
@@ -317,90 +366,112 @@ public class MultitenantCRUD {
 		}
 	}
 
-//	private static void updateAudit(HttpServletRequest request,
-//			IEngUserProfile profile, String action_code,
-//			HashMap<String, String> parameters, String esito) {
-//		try {
-//			AuditLogUtilities.updateAudit(request, profile, action_code, parameters, esito);
-//		} catch (Exception e) {
-//			logger.debug("Error writinig audit", e);
-//		}
-//	}
-	
-	private SbiTenant getTenantDetails (JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException  {
-		SbiTenant tenant  = new SbiTenant();
+	// private static void updateAudit(HttpServletRequest request,
+	// IEngUserProfile profile, String action_code,
+	// HashMap<String, String> parameters, String esito) {
+	// try {
+	// AuditLogUtilities.updateAudit(request, profile, action_code, parameters, esito);
+	// } catch (Exception e) {
+	// logger.debug("Error writinig audit", e);
+	// }
+	// }
+
+	private SbiTenant getTenantDetails(JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException {
+		SbiTenant tenant = new SbiTenant();
 		Integer id = -1;
-		String idStr = (String)requestBodyJSON.opt("MULTITENANT_ID");
-		if(idStr!=null && !idStr.equals("")){
+		String idStr = (String) requestBodyJSON.opt("MULTITENANT_ID");
+		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		
-		String name = (String)requestBodyJSON.opt("MULTITENANT_NAME");	
-		String theme = (String)requestBodyJSON.opt("MULTITENANT_THEME");
-	
+
+		String name = (String) requestBodyJSON.opt("MULTITENANT_NAME");
+		String theme = (String) requestBodyJSON.opt("MULTITENANT_THEME");
+
 		tenant.setId(id.intValue());
 		tenant.setName(name);
 		tenant.setTheme(theme);
-				
+
 		return tenant;
 	}
-	
-	
-	private Set<SbiOrganizationEngine> getEngines(JSONObject requestBodyJSON, SbiTenant tenant) throws EMFUserError, SourceBeanException, IOException  {
-		
+
+	private Set<SbiOrganizationEngine> getEngines(JSONObject requestBodyJSON, SbiTenant tenant) throws EMFUserError, SourceBeanException, IOException {
+
 		Set<SbiOrganizationEngine> sbiOrganizationEngines = new HashSet<SbiOrganizationEngine>();
 		JSONArray engines = requestBodyJSON.optJSONArray("ENG_LIST");
 		for (int i = 0; i < engines.length(); i++) {
-			try{
-				JSONObject obj = (JSONObject)engines.get(i);
+			try {
+				JSONObject obj = (JSONObject) engines.get(i);
 				SbiEngines sbiEngine = new SbiEngines();
 				sbiEngine.setEngineId(obj.getInt("ID"));
 				sbiEngine.setName(obj.getString("NAME"));
 				SbiOrganizationEngine engine = new SbiOrganizationEngine();
-				if(tenant.getId() != -1)
+				if (tenant.getId() != -1)
 					engine.setId(new SbiOrganizationEngineId(sbiEngine.getEngineId(), tenant.getId()));
 				engine.setSbiOrganizations(tenant);
 				engine.setSbiEngines(sbiEngine);
 				sbiOrganizationEngines.add(engine);
-			}catch (JSONException e) {
+			} catch (JSONException e) {
 				logger.error("Cannot fill response container", e);
 				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
-		
+
 		return sbiOrganizationEngines;
 	}
-	
-	private Set<SbiOrganizationDatasource> getDatasources(JSONObject requestBodyJSON, SbiTenant tenant) throws EMFUserError, SourceBeanException, IOException  {
-		
+
+	private Set<SbiOrganizationDatasource> getDatasources(JSONObject requestBodyJSON, SbiTenant tenant) throws EMFUserError, SourceBeanException, IOException {
+
 		Set<SbiOrganizationDatasource> sbiOrganizationDatasources = new HashSet<SbiOrganizationDatasource>();
 		JSONArray ds = requestBodyJSON.optJSONArray("DS_LIST");
 		for (int i = 0; i < ds.length(); i++) {
-			try{
-				JSONObject obj = (JSONObject)ds.get(i);
+			try {
+				JSONObject obj = (JSONObject) ds.get(i);
 				SbiDataSource sbiDs = new SbiDataSource();
 				sbiDs.setDsId(obj.getInt("ID"));
 				sbiDs.setLabel(obj.getString("LABEL"));
 				sbiDs.setDescr(obj.getString("DESCRIPTION"));
 				SbiOrganizationDatasource sbiOrgDs = new SbiOrganizationDatasource();
-				if(tenant.getId() != -1)
+				if (tenant.getId() != -1)
 					sbiOrgDs.setId(new SbiOrganizationDatasourceId(sbiDs.getDsId(), tenant.getId()));
 				sbiOrgDs.setSbiOrganizations(tenant);
 				sbiOrgDs.setSbiDataSource(sbiDs);
 				sbiOrganizationDatasources.add(sbiOrgDs);
-			}catch (JSONException e) {
+			} catch (JSONException e) {
 				logger.error("Cannot fill response container", e);
 				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		}
-		
+
 		return sbiOrganizationDatasources;
 	}
 
-	
-//	private String serializeException(Exception e) throws JSONException{
-//		return ExceptionUtilities.serializeException(e.getMessage(),null);
-//	}
+	private Set<SbiOrganizationProductType> getProductTypes(JSONObject requestBodyJSON, SbiTenant tenant) throws EMFUserError, SourceBeanException, IOException {
 
+		Set<SbiOrganizationProductType> sbiOrganizationProductType = new HashSet<SbiOrganizationProductType>();
+		JSONArray productTypes = requestBodyJSON.optJSONArray("PRODUCT_TYPE_LIST");
+		for (int i = 0; i < productTypes.length(); i++) {
+			try {
+				JSONObject obj = (JSONObject) productTypes.get(i);
+				SbiProductType sbiProductType = new SbiProductType();
+				sbiProductType.setProductTypeId(obj.getInt("ID"));
+				sbiProductType.setLabel(obj.getString("LABEL"));
+				SbiOrganizationProductType association = new SbiOrganizationProductType();
+				if (tenant.getId() != -1)
+					association.setId(new SbiOrganizationProductTypeId(sbiProductType.getProductTypeId(), tenant.getId()));
+				association.setSbiOrganizations(tenant);
+				association.setSbiProductType(sbiProductType);
+				sbiOrganizationProductType.add(association);
+			} catch (JSONException e) {
+				logger.error("Cannot fill response container", e);
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
+			}
+		}
+
+		return sbiOrganizationProductType;
+	}
+
+	// private String serializeException(Exception e) throws JSONException{
+	// return ExceptionUtilities.serializeException(e.getMessage(),null);
+	// }
 
 }

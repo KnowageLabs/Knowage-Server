@@ -108,6 +108,8 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
     	
     	var errorEngines = "engine";
     	var errorDS = "datasource";
+    	var errorProductType = "producttype";
+
     	
     	var errMessage = ''
     	if(response !== undefined) {
@@ -138,7 +140,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
     				}else {
     					for (var count = 0; count < content.errors.length; count++) {
     						var anError = content.errors[count];
-    						if (anError.message !== undefined && anError.message !== '' && (anError.message.indexOf(errorEngines)>=0 || anError.message.indexOf(errorDS)>=0)) {
+    						if (anError.message !== undefined && anError.message !== '' && (anError.message.indexOf(errorEngines)>=0 || anError.message.indexOf(errorDS)>=0 || anError.message.indexOf(errorProductType)>=0 )) {
 		        				//errMessage += LN(anError.message);
     							errMessage += LN('multitenant.error.association')+anError.message;
 		        			} else if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
@@ -219,6 +221,8 @@ Ext.define('Sbi.tools.multitenant.MultitenantListDetailPanel', {
 		this.detailPanel.enginesStore.load();
 		this.detailPanel.dsStore.getProxy().extraParams  = {'TENANT': record.data.MULTITENANT_NAME, DOMAIN_TYPE:"DIALECT_HIB"};
 		this.detailPanel.dsStore.load();
+		this.detailPanel.productTypesStore.getProxy().extraParams  = {'TENANT': record.data.MULTITENANT_NAME, DOMAIN_TYPE:"DIALECT_HIB"};
+		this.detailPanel.productTypesStore.load();
 		this.detailPanel.show();
 	}
 

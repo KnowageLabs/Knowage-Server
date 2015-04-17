@@ -31,7 +31,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		this.services = [];
 		this.initServices();
 		this.initTabs();
-		this.items = [this.detailTab, this.engineTab, this.dsTab];
+		this.items = [this.detailTab, this.engineTab, this.dsTab, this.productTypeTab];
 
 		this.addEvents('save');
 		this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name:'save'}]},this);
@@ -73,6 +73,11 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 			serviceName: 'multitenant/datasources'
 				, baseParams: baseParams
 		});
+		
+		this.services["getProductTypes"]= Sbi.config.serviceRegistry.getRestServiceUrl({
+			serviceName: 'multitenant/producttypes'
+				, baseParams: baseParams
+		});
 	}
 	
 	, getValues: function(){
@@ -107,6 +112,20 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 				engList[engCount++] = engRow;
 		};
 		
+		
+		//product types list
+		var productTypesArray = this.productTypesList.getStore().getRange();
+		var productTypesList = [];
+		
+		var productTypesCount = 0;
+		for (var i = 0, len = productTypesArray.length; i < len; i++) {
+			var productTypesRow = productTypesArray[i].getData();
+			if(productTypesRow.CHECKED)
+				productTypesList[productTypesCount++] = productTypesRow;
+		};
+		
+		
+		values.PRODUCT_TYPE_LIST = productTypesList;
 		values.DS_LIST = dsList;	
 		values.ENG_LIST = engList;
 
@@ -273,6 +292,54 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	          }]
 	    });	
 		
+		
+		// Product Type
+		Ext.define("ProductTypeModel", {
+    		extend: 'Ext.data.Model',
+            fields: ["ID", "LABEL", "CHECKED"]
+    	});
+		
+		this.productTypesStore = Ext.create('Ext.data.Store', {
+		        model: 'ProductTypeModel',
+		        proxy: {
+		            type: 'ajax',
+		            extraParams : {DOMAIN_TYPE:"DIALECT_HIB"},
+	    			url:  this.services['getProductTypes'],
+		            reader: {
+		                type: 'json',
+		                root: 'root'
+		            },		         
+		        }
+		    });
+		
+		this.productTypesList = Ext.create('Ext.grid.Panel', {
+	        store: this.productTypesStore,
+	       // autoScroll: true,
+	        scroll: true,
+	        layout: 'fit',
+	        height: 750,
+	        autoScroll: true,
+	        style: 'overflow: hidden;',
+	        columns: [{
+	        	hidden: true,
+	            dataIndex: 'ID'
+	          }, {
+	            text: LN('sbi.generic.label'),
+	            flex: 1,
+	            sortable: true,
+	            dataIndex: 'LABEL',
+	            field: {
+	                xtype: 'textfield'
+	            }
+	          }, {
+	        	  xtype: 'checkcolumn',
+	        	  header: '',
+	        	  dataIndex: 'CHECKED',
+	        	  sortable: false,
+	        	  width: 40  
+	          }]
+	    });			
+		
 		this.detailTab = new Ext.form.Panel({
 			title: 'Detail',
 			items: [this.tenantId, this.tenantName, this.tenantTheme],
@@ -294,6 +361,12 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 			items: [this.dsList],
 //			autoScroll: true,
 //			layout: 'fit',
+			border: false
+		});	
+		
+		this.productTypeTab = new Ext.form.Panel({
+			title: 'Product Types',
+			items: [this.productTypesList],
 			border: false
 		});	
 	}

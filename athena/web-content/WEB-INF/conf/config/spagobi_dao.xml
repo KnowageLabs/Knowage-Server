@@ -74,6 +74,8 @@
 	  	
 	  	<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl"/>
 	  	
+	  	<DAO name="ProductTypeDAO" implementation="it.eng.spagobi.commons.dao.ProductTypeDAOHibImpl"/>
+	  	
 
 	 </DAO-CONF>     
      
