@@ -1,5 +1,6 @@
 {
     chart: {
+   		type: 'pie',
     	height:'$chart.height',
     	width:'$chart.width',
     	#if($chart.dimension=='3D')
@@ -37,21 +38,13 @@
             }
         }
     },
+    
     series: [{
-        type: 'pie',
-        name: 'Titolo serie',
+        name: '$chart.TITLE.text',
         data: [
-            ['Firefox',   45.0],
-            ['IE',       26.8],
-            {
-                name: 'Chrome',
-                y: 12.8,
-                sliced: true,
-                selected: true
-            },
-            ['Safari',    8.5],
-            ['Opera',     6.2],
-            ['Others',   0.7]
+			#foreach($row in $data.rows)
+				['$row.column_3', $row.column_4],
+        	#end
         ]
     }]
 }

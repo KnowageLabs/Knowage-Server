@@ -74,9 +74,9 @@ public class ChartEngineUtil {
 		Map<String, Object> mapData = null;
 		try {
 			mapTemplate = convertJsonToMap(jsonToConvert, true);
-			velocityContext.put("chart", mapTemplate.get("CHART"));
+			velocityContext.put("chart", mapTemplate.get("chart")!=null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
 			if (jsonData != null) {
-				mapData = convertJsonToMap(jsonData, true);
+				mapData = convertJsonToMap(jsonData, false);
 				velocityContext.put("data", mapData);
 			}
 		} catch (IOException e) {
@@ -89,15 +89,13 @@ public class ChartEngineUtil {
 		JsonFactory factory = new JsonFactory();
 		ObjectMapper mapper = new ObjectMapper(factory);
 
-		TypeReference<LinkedHashMap<String, Object>> typeRef = new TypeReference<LinkedHashMap<String, Object>>() {
+		TypeReference<Map<String, Object>> typeRef = new TypeReference<Map<String, Object>>() {
 		};
 
 		// TODO Aggiungere a questo livello StringEscapeUtils.escapeHtml per lettere
-		LinkedHashMap<String, Object> result = mapper.readValue(json, typeRef);
+		Map<String, Object> result = mapper.readValue(json, typeRef);
 
-		// TODO DARIOLANEVE RIPRENDI DA QUI
-
-		LinkedHashMap<String, Object> escapedMapStrings = escape ? escapeMapStrings(result) : result;
+		Map<String, Object> escapedMapStrings = escape ? escapeMapStrings(result) : result;
 
 		// return result;
 		return escapedMapStrings;
