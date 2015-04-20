@@ -1,24 +1,22 @@
-## Mock data
-    #set ($values = {})
-    #set($workAroundNoPrint = $values.put('Vendite' , [15, 4, 5]))
-	#set($workAroundNoPrint = $values.put('Ricavi' , [1, 2, 3] ))
-## END Mock data 
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+
+#set($rows = $data.rows) ## data in table rows
 
 
-#set($categories = [])
-#set($workAroundNoPrint = $categories.add(''))
-#set($workAroundNoPrint = $categories.add(''))
-#set($workAroundNoPrint = $categories.add(''))
+#set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+#set($series = $chart.VALUES.SERIE) ## metadata related to series
 
-
-#set($series = $chart.VALUES.SERIE)
-#set($seriesMap = {})
-
+#set($seriesMap = {}) ## conversion series metadata to map object
 #foreach($serie in $series)
 	#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
 #end
-
-#set($valuesKeys = $values.keySet())
 
 {
     chart: {
@@ -29,19 +27,19 @@
         #if($chart.height != '')
         	#set($chartHeight = $chart.height)
         #end
+        height: $chartHeight,
         
         #set ($chartWidth = 0)
         #if($chart.width != '')
         	#set($chartWidth = $chart.width)
     	#end
+    	width: $chartWidth,
         
     	style:{
     		#foreach($styleName in $chart.style.keySet())
     		$styleName: '$chart.style[$styleName]',
     		#end
     	},
-	    height: $chartHeight,
-        width: $chartWidth
     },
     
     colors: [
@@ -78,21 +76,20 @@
         shadow: true,
         itemStyle: { 
         	"color": "$chart.LEGEND.style.color", 
-        	##"cursor": "pointer", 
         	"fontSize": "$chart.LEGEND.style.fontSize", 
         	"fontWeight": "$chart.LEGEND.style.fontWeight" 
         }
     },
 
-    ## Selezione Assi
+    ## Axises selection
     #set($axisList = $chart.AXES_LIST.AXIS)
 
-    #set($xAxisList = {})
-    #set($yAxisList = {})
-    #set($xAxisPositions = {})
-    #set($yAxisPositions = {})
-    #set($xAxisCounter = 0)
-    #set($yAxisCounter = 0)
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
     
     #foreach($axis in $axisList)
 	 	#if($axis.type == 'Category')
@@ -128,14 +125,15 @@
 			 opposite: true,
 			 #end
 			 
-    		 categories: $categories ,
-    			 #*
-    			 [
-				## Aggiunta categorie
-				'$xAxis.TITLE.text',
-				## FINE Aggiunta categorie
+			 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+			 
+    		 categories:
+    		 [
+    		 #foreach($row in $rows)
+    		 	#set ($categorie = $row.get($categorieColumnsMapped))
+    		 	'$categorie', 
+    		 #end
 			 ],
-			 *#
     	 },
     	 #end
     ],
@@ -166,9 +164,9 @@
         	
         	#set($typeline = $yAxis.MAJORGRID.style.typeline)
         	#if($typeline == 'dashed')
-        		#set($convertedTpeline = 'Dash')
+        		#set($convertedTypeline = 'Dash')
         	#end
-        	gridLineDashStyle: '$convertedTpeline',
+        	gridLineDashStyle: '$convertedTypeline',
         	
         	minorTickInterval: $yAxis.MINORGRID.interval,
         	minorGridLineColor: '$yAxis.MINORGRID.style.color',
@@ -180,7 +178,7 @@
         	minorGridLineDashStyle: '$convertedMinorTpeline',
         	
         	#if($yAxis.position == 'right')
-        	opposite: true,
+        	opposite: true,  ## prints the axis in right position
         	#end
         	
         	stackLabels: {
@@ -193,17 +191,13 @@
     ],
     
     tooltip: {
-    	##valueDecimals: this.series.options.valueDecimals,
         formatter: function () {
         	var prefixChar = this.series.options.prefixChar;
         	var postfixChar = this.series.options.postfixChar;
         	
         	var formattedTooltip = 
-        		'<b>Category : ' + this.x + '</b><br/>' +
-        	//          this.series.name + ': ' + this.y + '<br/>' +
+        		'<b>' + this.x + '</b><br/>' +
         		(prefixChar == ''? '' : prefixChar + ' ') + this.y + postfixChar + '<br/>' 
-        	//  + 'Total: ' + this.point.stackTotal;
-        	
             return formattedTooltip;
         }
     },
@@ -221,35 +215,40 @@
     },
 	
 	series: [
-	#foreach($valueKey in $valuesKeys)
+	
+	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
 	    {	
 			color: '$relatedSerie.color',
 			name: '$relatedSerie.name',
 	    	type: '$relatedSerie.type',
-	    	data: $values[$valueKey],
-    	
-	    //Access these properties by this.series.options.xxxx
-    	#set($seriePrefix = '')
-    	#set($seriePrefix = $relatedSerie.prefixChar)
-    		prefixChar: '$seriePrefix',
-    		
+	    	data: [
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerie.name)) ## "Vendite" -> "column_5" ## "Ricavi" -> "column_6"
+				#foreach($row in $rows)
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					$serieValue, 
+				#end
+	    	],
+		#set($seriePrefix = '')
+		#set($seriePrefix = $relatedSerie.prefixChar)
+			prefixChar: '$seriePrefix',
+			
 		#set($seriePostfix = '')
 		#set($seriePostfix = $relatedSerie.postfixChar)
 			postfixChar: '$seriePostfix',
 			valueDecimals: $relatedSerie.precision ,
-	    	
-    	#set($serieTooltip = false)
+
+		#set($serieTooltip = false)
     	#set($serieTooltip = $relatedSerie.TOOLTIP)
     	#if($serieTooltip)
     		tooltip : { //created property
     			
     		},
     	#end
-	    	
-	    	#set($referencedAxis = $relatedSerie.axis)
-	    	yAxis: $yAxisPositions[$referencedAxis]
+    	
+    	#set($referencedAxis = $relatedSerie.axis)
+    		yAxis: $yAxisPositions[$referencedAxis]
 	    }, 
 	#end
     ],

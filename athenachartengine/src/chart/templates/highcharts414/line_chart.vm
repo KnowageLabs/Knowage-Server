@@ -1,6 +1,7 @@
 {
     chart: {
         type: 'line',
+        backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
         #set ($chartHeight = 0)
         #if($chart.height != '')
@@ -235,5 +236,9 @@
     		$styleName: '$chart.EMPTYMESSAGE.style[$styleName]',
     	#end
 		}
-    }
+    },
+    
+    credits: { ##remove bottom credits text
+    	enabled: false
+    },
 }
