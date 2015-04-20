@@ -60,7 +60,10 @@ public class ChartEngineUtil {
 		Template velocityTemplate = ve.getTemplate("/chart/templates/get_chart_type.vm");
 		StringWriter chartType = new StringWriter();
 		velocityTemplate.merge(velocityContext, chartType);
-		return chartType.toString();
+
+		String chartTypeString = chartType.toString();
+		velocityContext.put("chartType", chartTypeString);
+		return chartTypeString;
 	}
 
 	public static VelocityContext loadVelocityContext(String jsonToConvert) {

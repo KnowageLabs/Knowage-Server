@@ -20,7 +20,11 @@
 
 {
     chart: {
-        type: 'column',
+    	#set($chartTypeToPrint = 'column')
+    	#if($chartType == 'bar')
+    		#set($chartTypeToPrint = $chartType)
+    	#end
+        type: '$chartTypeToPrint',
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
         #set ($chartHeight = 0)
@@ -218,11 +222,22 @@
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
 	    {	
-			color: '$relatedSerie.color',
+		#set($relatedSerieColor = false)
+		#set($relatedSerieColor = $relatedSerie.color)
+		#if($relatedSerieColor)
+			color: '$relatedSerieColor',
+	    #end
+		
 			name: '$relatedSerie.name',
-	    	type: '$relatedSerie.type',
+			
+		#set($relatedSerieType = false)
+		#set($relatedSerieType = $relatedSerie.type)
+		#if($relatedSerieType)		
+	    	type: '$relatedSerieType',
+	    #end
+	    
 	    	data: [
-	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerie.name)) ## "Vendite" -> "column_5" ## "Ricavi" -> "column_6"
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerie.column)) ## "Vendite" -> "column_5" ## "Ricavi" -> "column_6"
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					$serieValue, 
