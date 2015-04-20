@@ -71,7 +71,6 @@
         #end
         
         borderWidth: $chart.LEGEND.style.borderWidth,
-        ##backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '$chart.LEGEND.style.backgroundColor'),
         backgroundColor: '$chart.LEGEND.style.backgroundColor',
         shadow: true,
         itemStyle: { 
@@ -126,7 +125,6 @@
 			 #end
 			 
 			 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
-			 
     		 categories:
     		 [
     		 #foreach($row in $rows)
