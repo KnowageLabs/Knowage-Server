@@ -10,53 +10,53 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- START-DEBUG -->
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/commons/Settings.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/overrides/overrides.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/commons/Sbi.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/commons/Log.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/exceptions/ExceptionHandler.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/commons/Format.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/formats/LocaleUtils.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/service/RestService.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/service/ServiceReg.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Settings.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Sbi.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Log.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/exceptions/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Format.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/service/RestService.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/service/ServiceReg.js'/></script>
 
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/StoreManager.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/StoreManager.js'/></script>
 
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/WizardPanel.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/DatasetsBrowserPanel.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/DatasetsBrowserView.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/FileUploadPanel.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/SaveDocumentWindow.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/Colors.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/WizardPanel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/DatasetsBrowserPanel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/DatasetsBrowserView.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/FileUploadPanel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/SaveDocumentWindow.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/Colors.js'/></script>
 
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/DatasetFieldsModel.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorList.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorDataset.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorDatasetContainer.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/editor/association/AssociationEditor.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/editor/association/AssociationEditorPage.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/AssociationEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/data/AssociationEditorWizard.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/DatasetFieldsModel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/editor/association/AssociationEditorList.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDataset.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDatasetContainer.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/editor/association/AssociationEditor.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/editor/association/AssociationEditorPage.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/AssociationEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/data/AssociationEditorWizard.js'/></script>
 
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/filters/editor/main/FilterEditorList.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/filters/editor/main/FilterEditor.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/filters/editor/main/FilterEditorPage.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/filters/FilterEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/filters/FilterEditorWizard.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/filters/editor/main/FilterEditorList.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/filters/editor/main/FilterEditor.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/filters/editor/main/FilterEditorPage.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/filters/FilterEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/filters/FilterEditorWizard.js'/></script>
 
 <!-- Selection widget  -->
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
-<script type="text/javascript" src='/AthenaChartEngine/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js'/></script>
 
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
-<script type="text/javascript" src='/AthenaChartEngine/AthenaChartEngine/js/spagobi/chart-all.js'></script>
+<script type="text/javascript" src='/athenachartengine/athenachartengine/js/spagobi/chart-all.js'></script>
 END-PRODUCTION -->
 
 

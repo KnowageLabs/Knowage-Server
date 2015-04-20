@@ -1,22 +1,22 @@
 <!-- The default Ext theme -->
-<link id="theme-gray" rel="styleSheet" href ="/AthenaChartEngine/js/lib/ext/5.1.0/packages/css/ext-all-gray.css" type="text/css"/>
+<link id="theme-gray" rel="styleSheet" href ="/athenachartengine/js/lib/ext/5.1.0/packages/css/ext-all-gray.css" type="text/css"/>
 
 <!-- Ext 5 framework -->
-<script type="text/javascript" src='/AthenaChartEngine/js/lib/ext/5.1.0/ext-all-debug.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/lib/ext/5.1.0/ext-all-debug.js'/></script>
 
 
 <!-- Additional Ext overrides and application-specific includes here -->
 <%
 	if(request.getParameter("theme")!=null && !request.getParameter("theme").equals("")){
 %>
-	<script type="text/javascript" src='/AthenaChartEngine/js/lib/ext/5.1.0/packages/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
-	<link id="theme-access" rel="styleSheet" href ="/AthenaChartEngine/js/lib/ext/5.1.0/packages/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />
+	<script type="text/javascript" src='/athenachartengine/js/lib/ext/5.1.0/packages/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
+	<link id="theme-access" rel="styleSheet" href ="/athenachartengine/js/lib/ext/5.1.0/packages/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />
 <%
 	}
 %>
 
 <script type="text/javascript">
 	Ext.Ajax.timeout = 300000;
-	Ext.BLANK_IMAGE_URL = '/AthenaChartEngine/js/lib/ext/4.2.1/resources/themes/images/default/tree/s.gif';
+	Ext.BLANK_IMAGE_URL = '/athenachartengine/js/lib/ext/4.2.1/resources/themes/images/default/tree/s.gif';
 </script>
 	      

@@ -149,7 +149,7 @@ author:
  			        dataReady: function(jsonData) {
  			        	
  			        	Ext.Ajax.request({
- 							url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/AthenaChartEngine/api/1.0/jsonChartTemplate',
+ 							url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/athenachartengine/api/1.0/jsonChartTemplate',
  							method: 'POST',
  							timeout: 60000,
  							disableCaching: false,
@@ -179,7 +179,7 @@ author:
  			});
 
 	    	Ext.Ajax.request({
-				url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/Athena/restful-services/1.0/datasets/<%=datasetLabel%>/data',
+				url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/athena/restful-services/1.0/datasets/<%=datasetLabel%>/data',
 				method: 'POST',
 				timeout: 60000,
 				disableCaching: false,
