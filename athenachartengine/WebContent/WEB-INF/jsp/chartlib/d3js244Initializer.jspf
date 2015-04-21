@@ -1,0 +1,25 @@
+<!--
+
+IMPORT D3 SPECIFIC JS FILES (LIBS and others if needed)
+
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
+-->
+
+<script>
+
+	// TODO: check if ext was imported (don't care)
+	
+	// TODO: Ext.create("Sbi.chart.library") (don't care)
+	
+	function initChartLibrary(panelId) {
+		// init your library
+	}
+
+	function renderChart(chartConf){
+		// decode the chartConf in order to display your chart
+	}
+</script>

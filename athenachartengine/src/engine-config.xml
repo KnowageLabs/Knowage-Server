@@ -75,6 +75,8 @@
 		<chart type="line" 		name="highcharts414" 	/>		
 		<chart type="pie"		name="highcharts414" 	/>
 		<chart type="gauge" 	name="highcharts414" 	/>
+		<chart type="sunburst"	name="d3js244"  		/>
+		<chart type="wordcloud"	name="d3js244"  		/>
 	</chartConfiguration>
 	
 </ENGINE-CONFIGURATION>
