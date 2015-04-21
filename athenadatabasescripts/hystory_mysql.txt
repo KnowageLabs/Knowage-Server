@@ -870,7 +870,7 @@ VALUES ((SELECT next_val FROM hibernate_sequences WHERE sequence_name = 'SBI_DOM
 -- 6/10/2011 Giulio
 ALTER TABLE sbi_data_set_history MODIFY COLUMN DS_METADATA TEXT;
 
--- 20/10/2011 Davide : il motore worksheet può lavorare con i dataset
+-- 20/10/2011 Davide : il motore worksheet puï¿½ lavorare con i dataset
 UPDATE SBI_ENGINES SET USE_DATASET = TRUE WHERE DRIVER_NM = 'it.eng.spagobi.engines.drivers.worksheet.WorksheetDriver';
 
 -- 06/12/2011 Davide : exporter XLSX per Qbe e Worksheet
@@ -1724,7 +1724,7 @@ RENAME TABLE SBI_DATA_SET_TEMP TO SBI_DATA_SET;
 ALTER TABLE SBI_LOV DROP FOREIGN KEY FK_SBI_LOV_2;
 ALTER TABLE SBI_OBJECTS DROP FOREIGN KEY FK_SBI_OBJECTS_7;
 
---per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire così lo stmt di drop (per ora manualemnte!)
+--per la tabella sbi_kpi la fk non ha nome esplicito: bisogna rilevarlo tramite query e definire cosï¿½ lo stmt di drop (per ora manualemnte!)
 select constraint_name from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE constraint_schema = '<SCHEMA_DB_NAME>' and
 referenced_table_name = 'SBI_DATA_SET'  and table_name = 'SBI_KPI';
 ALTER TABLE sbi_kpi DROP FOREIGN KEY <FK_NAME_GETTED>;
@@ -2739,3 +2739,58 @@ INSERT INTO SBI_CONFIG ( ID, LABEL, NAME, DESCRIPTION, IS_ACTIVE, VALUE_CHECK, V
 (select VALUE_ID from SBI_DOMAINS where VALUE_CD = 'STRING' AND DOMAIN_CD = 'PAR_TYPE'), 'GENERIC_CONFIGURATION', 'biadmin', current_timestamp);
 update hibernate_sequences set next_val = next_val+1 where sequence_name = 'SBI_CONFIG';
 commit;
+
+-- ---------------------------------------
+-- - Database updates related to Athena --
+-- ---------------------------------------
+
+-- tables for different athena product types
+CREATE TABLE `sbi_product_type` (
+	`PRODUCT_TYPE_ID` INT(11) NOT NULL,
+	`LABEL` VARCHAR(40) NOT NULL,
+	`USER_IN` VARCHAR(100) NOT NULL,
+	`USER_UP` VARCHAR(100) NULL DEFAULT NULL,
+	`USER_DE` VARCHAR(100) NULL DEFAULT NULL,
+	`TIME_IN` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`TIME_UP` TIMESTAMP NULL DEFAULT NULL,
+	`TIME_DE` TIMESTAMP NULL DEFAULT NULL,
+	`SBI_VERSION_IN` VARCHAR(10) NULL DEFAULT NULL,
+	`SBI_VERSION_UP` VARCHAR(10) NULL DEFAULT NULL,
+	`SBI_VERSION_DE` VARCHAR(10) NULL DEFAULT NULL,
+	`META_VERSION` VARCHAR(100) NULL DEFAULT NULL,
+	`ORGANIZATION` VARCHAR(20) NULL DEFAULT NULL,
+	PRIMARY KEY (`PRODUCT_TYPE_ID`),
+	UNIQUE INDEX `XAK1SBI_PRODUCT_TYPE` (`LABEL`, `ORGANIZATION`)
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+;
+
+--- mapping table between organizations (tenants) and product types
+CREATE TABLE `sbi_organization_product_type` (
+	`PRODUCT_TYPE_ID` INT(11) NOT NULL,
+	`ORGANIZATION_ID` INT(11) NOT NULL,
+	`USER_IN` VARCHAR(100) NOT NULL,
+	`USER_UP` VARCHAR(100) NULL DEFAULT NULL,
+	`USER_DE` VARCHAR(100) NULL DEFAULT NULL,
+	`TIME_IN` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`TIME_UP` TIMESTAMP NULL DEFAULT NULL,
+	`TIME_DE` TIMESTAMP NULL DEFAULT NULL,
+	`SBI_VERSION_IN` VARCHAR(10) NULL DEFAULT NULL,
+	`SBI_VERSION_UP` VARCHAR(10) NULL DEFAULT NULL,
+	`SBI_VERSION_DE` VARCHAR(10) NULL DEFAULT NULL,
+	`META_VERSION` VARCHAR(100) NULL DEFAULT NULL,
+	`ORGANIZATION` VARCHAR(20) NULL DEFAULT NULL,
+	PRIMARY KEY (`PRODUCT_TYPE_ID`, `ORGANIZATION_ID`),
+	INDEX `FK_ORGANIZATION_3` (`ORGANIZATION_ID`),
+	CONSTRAINT `FK_PRODUCT_TYPE_1` FOREIGN KEY (`PRODUCT_TYPE_ID`) REFERENCES `sbi_product_type` (`PRODUCT_TYPE_ID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_ORGANIZATION_3` FOREIGN KEY (`ORGANIZATION_ID`) REFERENCES `sbi_organizations` (`ID`) ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB
+; 
+
+-- modify sbi_user_func with product_id fk 
+ALTER TABLE `sbi_user_func`
+	ADD COLUMN `PRODUCT_TYPE_ID` INT(11) NOT NULL AFTER `DESCRIPTION`,
+	ADD CONSTRAINT `FK_PRODUCT_TYPE` FOREIGN KEY (`PRODUCT_TYPE_ID`) REFERENCES `sbi_product_type` (`PRODUCT_TYPE_ID`);
