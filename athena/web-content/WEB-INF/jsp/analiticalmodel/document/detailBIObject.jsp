@@ -171,7 +171,7 @@ function checkFormVisibility(docType, engineValue) {
 	var type = docType.substring(ind+1);
 	// hide template dynamic creation button for dossier and olap document 
 	var divLinkConf = document.getElementById("link_obj_conf");
-	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1))|| type=="DOSSIER" || type=="SMART_FILTER") {
+	if((type=="OLAP" && !(engineDriver[engineValue].toLowerCase().indexOf("what")>-1))|| type=="DOSSIER" || type=="SMART_FILTER" || type=='CHART') {
 		divLinkConf.style.display="inline";
 	} else {
 		divLinkConf.style.display="none";

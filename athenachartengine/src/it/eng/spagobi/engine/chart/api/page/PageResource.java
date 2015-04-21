@@ -55,7 +55,7 @@ public class PageResource extends AbstractChartEngineResource {
 
 		try {
 			pages.put("edit", new JSONObject("{name: 'edit', description: 'the chart edit page', parameters: []}"));
-			urls.put("edit", "/WEB-INF/jsp/chart.jsp");
+			urls.put("edit", "/WEB-INF/jsp/chart_edit.jsp");
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the chart execution page', parameters: ['template']}"));
 			urls.put("execute", "/WEB-INF/jsp/chart.jsp");
 			pages.put("test", new JSONObject("{name: 'test', description: 'the chart test page', parameters: ['template']}"));
