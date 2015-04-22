@@ -143,7 +143,7 @@ author:
  			initChartLibrary(mainPanel.id);
  			
  			
- 			var templateContainer = Ext.create('Ext.Container', {
+ 			var templateContainer = Ext.create('Ext.mixin.Observable', {
  			    
  			    listeners: {
  			        dataReady: function(jsonData) {
