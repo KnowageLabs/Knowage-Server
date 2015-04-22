@@ -139,10 +139,35 @@ author:
  			
   			initChartLibrary(mainPanel.id);
   			--%>
+  			
+  			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
+  				title: 'Passo1',
+  			});
+  			
+  			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
+  				//id: 'wizard',
+  				bodyBorder: false,
+ 			    height: '100%',
+  				width: '100%',
+  				region: 'center',
+  				//xtype: 'tabpanel',
+  				items: [
+			        /*
+	  				{
+	  			        title: 'Passo 1'
+	  			    }, 
+			        */
+			        chartStructure,
+	  			    {
+	  			        title: 'Passo 2',
+	  			    },
+	  			    {
+	  			        title: 'Passo 3',
+	  			    },
+  			    ],
+  			});
  			
- 			
- 			var dapanel = Ext.create('Ext.panel.Panel', {
- 				id: 'pinello',
+ 			var designerMainPanel = Ext.create('Ext.panel.Panel', {
  				renderTo: Ext.getBody(),
  				xtype: 'layout-border',
  			    requires: [
@@ -162,20 +187,21 @@ author:
 
  			    items: [
  			        {
- 			            region:'west',
  			            floatable: false,
  			            margin: '5 0 0 0',
- 			            width: 125,
- 			            minWidth: 100,
  			            maxWidth: 250,
- 			            
+ 			            minWidth: 100,
+ 			            region:'west',
+ 			            width: 125,
  			        },
+ 			       stepsTabPanel,
+ 			        /*
  			        {
- 			            collapsible: false,
- 			            region: 'center',
+ 			            html: '<h2>Main Page</h2><p>This is where the main content would go</p>',
  			            margin: '5 0 0 0',
- 			            html: '<h2>Main Page</h2><p>This is where the main content would go</p>'
- 			        }
+ 			            region: 'center',
+ 			        },
+ 			        */
  			    ]
 
  			});
