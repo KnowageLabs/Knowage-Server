@@ -6,10 +6,6 @@
 
 <script>
 
-	// TODO: check if ext was imported
-	
-	// Ext.create("Sbi.chart.library")
-	
 	function initChartLibrary(panelId) {
 		Highcharts.setOptions({
 		    chart: {
