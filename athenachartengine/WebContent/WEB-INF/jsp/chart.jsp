@@ -128,11 +128,19 @@ author:
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
+		
 	
  		Ext.onReady(function(){
- 			
  			Ext.log({level: 'info'}, 'CHART: IN');
 
+ 			
+ 			
+ 			// TODO check if the following instruction is really needed
+ 			Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
+ 			
+
+ 			
+ 			
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
@@ -141,69 +149,65 @@ author:
  			});
  			
  			initChartLibrary(mainPanel.id);
+
  			
- 			
+ 			// START WEB SERVICES INIT
+ 			var chartSR = Ext.create('Sbi.chart.utils.WebServiceRegister', {
+ 	            serviceConfig: {
+ 	                hostName: '<%=request.getServerName()%>',
+ 	                tcpPort: '<%=request.getServerPort()%>',
+ 	                context: '/athenachartengine',
+ 	                wsPrefix: '/api/1.0/',
+					sbiExecutionId: <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>,
+					userId: '<%=userId%>'
+ 	            }
+ 	        });
+ 	        chartSR.add('jsonChartTemplate', {
+ 	            service: 'jsonChartTemplate',
+ 	            method: 'POST'
+ 	        });
+ 	        
+ 	       var coreSR = Ext.create('Sbi.chart.utils.WebServiceRegister', {
+	            serviceConfig: {
+	                hostName: '<%=request.getServerName()%>',
+	                tcpPort: '<%=request.getServerPort()%>',
+	                context: '/athena',
+	                wsPrefix: '/restful-services/1.0/',
+					sbiExecutionId: <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>,
+					userId: '<%=userId%>'
+	            }
+	        });
+ 	      	coreSR.add('loadData', {
+	            service: 'datasets/<%=datasetLabel%>/data',
+	            method: 'POST'
+	        });
+			// END WEB SERVICE INIT
+ 	      	
+ 	      	
+ 	      	
+			// START CALLING WS
  			var templateContainer = Ext.create('Ext.mixin.Observable', {
- 			    
  			    listeners: {
  			        dataReady: function(jsonData) {
- 			        	
- 			        	Ext.Ajax.request({
- 							url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/athenachartengine/api/1.0/jsonChartTemplate',
- 							method: 'POST',
- 							timeout: 60000,
- 							disableCaching: false,
- 							params:
- 							{
- 								jsonTemplate: '<%=template%>'
- 								, jsonData: jsonData
- 								, SBI_EXECUTION_ID: <%=request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null"%>
- 								, user_id: "<%=userId%>"
- 							},
- 							headers:
- 							{
- 								'Content-Type': 'application/x-www-form-urlencoded'
- 							},
- 							success: function (response) {
- 								var chartConf = Ext.JSON.decode(response.responseText, true);
- 								renderChart(chartConf);
- 							},
- 							failure: function (response) {
- 								Ext.Msg.alert('Status', 'Request Failed: '+response.status);
- 							}
- 					});
- 			        	
- 			           // Ext.Msg.alert('dataReady fired!',' Passa al servizio REST come param i seguenti dati: ' + Ext.JSON.encode(jsonData));
+ 			        	var parameters = {
+ 			        			jsonTemplate: '<%=template%>' ,
+								jsonData: jsonData
+						};
+ 			        	chartSR.run('jsonChartTemplate', parameters, function (response) {
+							Ext.log({level: 'info'}, 'Service COMPLETE: jsonChartTemplate');
+ 			        		var chartConf = Ext.JSON.decode(response.responseText, true);
+ 			        		renderChart(chartConf);
+ 			        	});
  			        }
  			    }
  			});
 
-	    	Ext.Ajax.request({
-				url: 'http://<%=request.getServerName()%>:<%=request.getServerPort()%>/athena/restful-services/1.0/datasets/<%=datasetLabel%>/data',
-				method: 'POST',
-				timeout: 60000,
-				disableCaching: false,
-				params:
-				{
-					SBI_EXECUTION_ID: <%=request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null"%>
-					, user_id: "<%=userId%>"
-				},
-				headers:
-				{
-					'Content-Type': 'application/x-www-form-urlencoded'
-				},
-				success: function (response) {
-					templateContainer.fireEvent('dataReady', response.responseText);
-				},
-				failure: function (response) {
-					Ext.Msg.alert('Status', 'Request Failed: '+response.status);
-				}
+ 			coreSR.run('loadData', {jsonTemplate: '<%=template%>'}, function (response) {
+	           	Ext.log({level: 'info'}, 'Service COMPLETE: loadData');
+				templateContainer.fireEvent('dataReady', response.responseText);
 			});
- 			
-	    	
 
- 			Ext.log({level: 'info'}, 'CHART: STILL IN');
- 			Ext.log({level: 'info'}, 'CHART: OUT');
+	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });
 		
