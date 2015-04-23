@@ -1,4 +1,4 @@
-Ext.define('Sbi.chart.utils.WebService', {
+Ext.define('Sbi.chart.rest.WebService', {
     extend: 'Ext.util.Observable',
     config: {
         protocol: 'http',

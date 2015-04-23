@@ -1,6 +1,6 @@
-Ext.define('Sbi.chart.utils.WebServiceRegister', {
+Ext.define('Sbi.chart.rest.WebServiceManager', {
     extend: 'Ext.util.Observable',
-    requires: 'Sbi.chart.utils.WebService',
+    requires: 'Sbi.chart.rest.WebService',
     config: {
         serviceConfig: {
             protocol: 'http',
@@ -21,14 +21,16 @@ Ext.define('Sbi.chart.utils.WebServiceRegister', {
     }
 
     ,
-    add: function(serviceName, serviceConfig) {
+    registerService: function(serviceName, serviceConfig) {
          Ext.applyIf(serviceConfig, this.getServiceConfig());
-         var newService = Ext.create('Sbi.chart.utils.WebService', serviceConfig);
+         var newService = Ext.create('Sbi.chart.rest.WebService', serviceConfig);
          this.getWebServices().add(serviceName, newService);
     }
 
-    ,
-    run: function(serviceName, parameters, successFunction) {        if (!parameters) {
+    , run: function(serviceName, parameters, urlParams, successFunction) {    	
+    	Ext.log({level:'info'}, 'Starting service execution: ' + serviceName);
+    	
+    	if (!parameters) {
         	parameters = {};
         }
         parameters.SBI_EXECUTION_ID = this.getServiceConfig().sbiExecutionId;
@@ -36,9 +38,20 @@ Ext.define('Sbi.chart.utils.WebServiceRegister', {
     	
     	var ws = this.getWebServices().get(serviceName);
 
+    	var serviceUrl = ws.getUrl();
+    	Ext.log(serviceUrl);
+    	Ext.log(urlParams);
+    	if(urlParams && urlParams.length > 0 && urlParams instanceof Array) {
+    		urlParams.forEach(function(element, index, array){
+    			Ext.log('PIPpOOOOOOOOOOOO'+index);
+    			serviceUrl = serviceUrl.replace('{'+index+'}', element);
+    		});
+    	}
+    	Ext.log(serviceUrl);
+    	
         if (ws != undefined) {
             Ext.Ajax.request({
-                url: ws.getUrl(),
+                url: serviceUrl,
                 method: ws.getMethod(),
                 timeout: ws.getTimeout(),
                 disableCaching: ws.getDisableCaching(),
@@ -46,12 +59,15 @@ Ext.define('Sbi.chart.utils.WebServiceRegister', {
                 headers: {
                     'Content-Type': ws.getContentType(),
                 },
-                success: successFunction,
+                success: function(response) {
+                	Ext.log({level:'info'}, 'Completed service execution: ' + serviceName);
+                	successFunction.call(this, response);
+                },
                 failure: function(response) {
-                    Ext.Msg.alert('Status', 'Request Failed: ' + response.status);
+                    Ext.log({level:'error'}, 'Request Failed: ' + response.status);
                 }
             });        } else {
-            Ext.log({level: 'error'}, 'Sbi.chart.utils.WebServiceRegistry ' + serviceName + ' not registered!');
+            Ext.log({level: 'error'}, 'Sbi.chart.rest.WebServiceRegistry ' + serviceName + ' not registered!');
         }
     }
 });

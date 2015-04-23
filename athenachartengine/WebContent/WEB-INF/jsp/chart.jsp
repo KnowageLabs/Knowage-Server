@@ -128,73 +128,47 @@ author:
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
-		
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
 
  			
+
  			
  			// TODO check if the following instruction is really needed
  			Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
- 			
 
- 			
- 			
+
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
  			    height: '100%',
  			    renderTo: Ext.getBody()
  			});
- 			
+
  			initChartLibrary(mainPanel.id);
 
+
  			
- 			// START WEB SERVICES INIT
- 			var chartSR = Ext.create('Sbi.chart.utils.WebServiceRegister', {
- 	            serviceConfig: {
- 	                hostName: '<%=request.getServerName()%>',
- 	                tcpPort: '<%=request.getServerPort()%>',
- 	                context: '/athenachartengine',
- 	                wsPrefix: '/api/1.0/',
-					sbiExecutionId: <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>,
-					userId: '<%=userId%>'
- 	            }
- 	        });
- 	        chartSR.add('jsonChartTemplate', {
- 	            service: 'jsonChartTemplate',
- 	            method: 'POST'
- 	        });
- 	        
- 	       var coreSR = Ext.create('Sbi.chart.utils.WebServiceRegister', {
-	            serviceConfig: {
-	                hostName: '<%=request.getServerName()%>',
-	                tcpPort: '<%=request.getServerPort()%>',
-	                context: '/athena',
-	                wsPrefix: '/restful-services/1.0/',
-					sbiExecutionId: <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>,
-					userId: '<%=userId%>'
-	            }
-	        });
- 	      	coreSR.add('loadData', {
-	            service: 'datasets/<%=datasetLabel%>/data',
-	            method: 'POST'
-	        });
-			// END WEB SERVICE INIT
- 	      	
- 	      	
- 	      	
+ 			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+ 			var userId = '<%=userId%>';
+ 			var hostName = '<%=request.getServerName()%>';
+ 			var serverPort = '<%=request.getServerPort()%>';
+ 			var jsonTemplate = '<%=template%>';
+ 			var datasetLabel  = '<%=datasetLabel%>';
+
+ 			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+ 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+ 			
 			// START CALLING WS
  			var templateContainer = Ext.create('Ext.mixin.Observable', {
  			    listeners: {
  			        dataReady: function(jsonData) {
  			        	var parameters = {
- 			        			jsonTemplate: '<%=template%>' ,
+ 			        			jsonTemplate: jsonTemplate,
 								jsonData: jsonData
 						};
- 			        	chartSR.run('jsonChartTemplate', parameters, function (response) {
-							Ext.log({level: 'info'}, 'Service COMPLETE: jsonChartTemplate');
+ 			        	chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
  			        		var chartConf = Ext.JSON.decode(response.responseText, true);
  			        		renderChart(chartConf);
  			        	});
@@ -202,15 +176,14 @@ author:
  			    }
  			});
 
- 			coreSR.run('loadData', {jsonTemplate: '<%=template%>'}, function (response) {
-	           	Ext.log({level: 'info'}, 'Service COMPLETE: loadData');
+ 			coreServiceManager.run('loadData', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
 				templateContainer.fireEvent('dataReady', response.responseText);
 			});
 
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });
-		
+
 	</script>
 
 </body>
