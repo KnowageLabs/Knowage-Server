@@ -132,12 +132,7 @@ author:
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
 
- 			
-
- 			
- 			// TODO check if the following instruction is really needed
- 			Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
-
+ 			//Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
 
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
@@ -147,8 +142,6 @@ author:
  			});
 
  			initChartLibrary(mainPanel.id);
-
-
  			
  			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
  			var userId = '<%=userId%>';
