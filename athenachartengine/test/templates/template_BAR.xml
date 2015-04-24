@@ -1,0 +1,72 @@
+<chart type="BAR" height="500" width="900"  style='backgroundColor:#FFFFFF;font:Verdana;fontWeight:bold;fontSize:16px' dimension='2D' orientation='vertical'>
+
+	<!--
+	type= BAR/PIE/LINE/gauge/scatter/bouble/RADAR/Waterfall/stockline/treemap/chord/heatmap
+	-->
+	<colorsPallet>
+		<color name="col1" value="#FF0D00" order="1" gradient=""/> <!-- red -->
+		<color name="col2" value="#FFFF00" order="2"/> <!-- yellow -->
+		<color name="col3" value="#00E929" order="3"/> <!-- green -->
+		<color name="col4" value="#0447E0" order="4"/> <!-- blue -->
+	</colorsPallet>
+
+	<emptymessage test ="nessn dato da visualizzare"  style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px'  />
+
+	<TITLE text='questo è un titolo' 
+	style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px' />
+
+
+	<SUBTITLE text='questo è un sotto titolo'
+	style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px' />
+
+	<!--  nel caso di true visualizzo la legenda nella posizione x/y -->
+	<LEGEND position='right' layout='vertical' separator="-"
+		style='borderWidth:1;backgroundColor:#FFFFFF;color:#003366;font:Verdana;fontWeight:bold;fontSize:12px'
+		x='-100' y='100' floating='true' />
+
+	<!--  la sezione axes ha senso per : bar , line , waterfall , scatter -->
+	<AXES_LIST>
+		<AXIS alias='Y' type='Serie' position='left' style='rotate:60;align:center;color:#00E929;font:Verdana;fontWeight:bold;fontSize:16px'>
+			<majorgrid interval='1' style='typeline:dashed;color:#003366'/>   <!-- corrisponde ai valori principali delle serie -->
+			<minorgrid interval='3' style='typeline:dashed;color:#003366'/>   <!-- suddivisione della gliglia principale -->
+			<TITLE text='Valori' style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px'/>
+		</AXIS>
+		<AXIS alias='Y2' type='Serie' position='right' style='rotate:60;align:center;color:#0447E0;font:Verdana;fontWeight:bold;fontSize:16px'>
+			<majorgrid interval='1' style='typeline:dashed;color:#FF0D00'/>   <!-- corrisponde ai valori principali delle serie -->
+			<minorgrid interval='3' style='typeline:dashed;color:#003366'/>   <!-- suddivisione della gliglia principale -->
+			<TITLE text='Euro' style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px'/>
+		</AXIS>
+
+		<AXIS alias='X' type='Category' label="$F{formatter_1}" position='bottom' style='align:center;color:#00E929;font:Verdana;fontWeight:bold;fontSize:16px'>
+			<TITLE text='Valori' style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px'/>
+		</AXIS>
+
+	</AXES_LIST>
+
+	<!--
+	esiste un catalogo di funzionalità legate alla libreria, dal template utilizzo le funzioni del catalogo
+	queste funzioni sono gestite nella sezione avanzata del designer
+	il catalogo contiene anche gli attributi che non gestiamo con il designer grafico
+	-->
+
+	<Values>
+		<!-- questo tag lo uso per definire le categorie ed eventualmente il raggruppamento  
+		la property groupby ha senso solo per le barre
+		se voglio fare la stacked indico la colonna che devo usare per mettere in fila i valori che hanno la stesso valore di categoria
+		stackedType="absolute/percentage"
+		Vince l'ordinamento delle serie se presente
+		-->
+		<category column="product" groupby="anno" stacked="country" stackedType="absolute"
+			orderColumn="anno" orderType="asc" />
+
+		<SERIE name='vendite' axis='Y' orderType="asc" column='Vendite' showValue='true' precision='2' prefixChar='Euro' postfixChar='Milion' >
+			<TOOLTIP templateHtml="" backgroundColor='#FCFFC5' 
+				style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px' />
+		</SERIE>
+		<SERIE name='Ricavi' axis='Y2'  column='Ricavi' precision='2' />
+
+	</Values>
+
+	<!-- cross navigation -->
+
+</chart>
