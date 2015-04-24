@@ -40,4 +40,6 @@ public interface ITenantsDAO extends ISpagoBIDao {
 
 	public SbiUser initializeAdminUser(SbiTenant aTenant);
 
+	public List<Integer> loadSelectedProductTypesIds(String tenant) throws EMFUserError;
+
 }

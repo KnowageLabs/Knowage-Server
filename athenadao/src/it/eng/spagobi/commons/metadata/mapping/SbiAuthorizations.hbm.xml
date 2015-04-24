@@ -43,10 +43,7 @@
 	        </property> 
 	        <property name="sbiVersionDe" type="string">
 	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
-	        </property>                 
-	        <property name="organization" type="string">
-	            <column name="ORGANIZATION" length="20" not-null="false" />
-	        </property>  			 
+	        </property>                 			 
 	    </component>        
         <set name="sbiAuthorizationsRoleses" table="SBI_AUTHORIZATIONS_ROLES">
             <key>
@@ -54,5 +51,9 @@
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles" />
         </set>
+        
+        <many-to-one name="productType" class="it.eng.spagobi.commons.metadata.SbiProductType" update="false"  fetch="select" lazy="false">
+            <column name="PRODUCT_TYPE_ID" not-null="true" />
+        </many-to-one>
     </class>
 </hibernate-mapping>

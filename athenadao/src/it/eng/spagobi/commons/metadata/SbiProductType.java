@@ -4,18 +4,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SbiProductType extends SbiHibernateModel {
-	// Fields  
-	
+	// Fields
+
 	private Integer productTypeId;
-    private String label;     
-    private Set sbiOrganizationProductType = new HashSet(0);
-    private Set sbiUserFunctionality = new HashSet(0);
-	
-    
-    public SbiProductType() {
+	private String label;
+	private Set sbiOrganizationProductType = new HashSet(0);
+	private Set sbiUserFunctionality = new HashSet(0);
+	private Set sbiAuthorizations = new HashSet(0);
+
+	public SbiProductType() {
 	}
-    
-    public SbiProductType(Integer productTypeId) {
+
+	public SbiProductType(Integer productTypeId) {
 		this.productTypeId = productTypeId;
 	}
 
@@ -51,6 +51,12 @@ public class SbiProductType extends SbiHibernateModel {
 		this.sbiUserFunctionality = sbiUserFunctionality;
 	}
 
+	public Set getSbiAuthorizations() {
+		return sbiAuthorizations;
+	}
 
+	public void setSbiAuthorizations(Set sbiAuthorizations) {
+		this.sbiAuthorizations = sbiAuthorizations;
+	}
 
 }

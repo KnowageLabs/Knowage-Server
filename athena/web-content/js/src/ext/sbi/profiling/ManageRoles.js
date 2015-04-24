@@ -64,6 +64,11 @@ Sbi.profiling.ManageRoles = function(config) {
 			}
 	});
 
+	// List Authorizations Service
+	this.configurationObject.getAuthorizationsList = Sbi.config.serviceRegistry.getRestServiceUrl({
+		serviceName: 'authorizations'
+		, baseParams: {	}
+	});
 	
 	
 
@@ -131,39 +136,40 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'enableDatasetPersistence'
 	                        	        ];
 		
-		this.configurationObject.emptyRecToAdd = new Ext.data.Record({
+		//Note: are we using this object?
+	    this.configurationObject.emptyRecToAdd = new Ext.data.Record({
 											id: 0,
 											name:'', 
 											label:'', 
 											description:'',
 											typeCd:'',
 											code:'',
-											saveSubobj: true,
-											seeSubobj:true,
-											seeViewpoints:true,
-											seeSnapshot:true,
-											seeNotes:true,
-											sendMail:true,
-											savePersonalFolder:true,
-											saveRemember:true,
-											seeMeta:true,
-											saveMeta:true,
-											buildQbe:true,
+											saveSubobj: false,
+											seeSubobj:false,
+											seeViewpoints:false,
+											seeSnapshot:false,
+											seeNotes:false,
+											sendMail:false,
+											savePersonalFolder:false,
+											saveRemember:false,
+											seeMeta:false,
+											saveMeta:false,
+											buildQbe:false,
 											manageUsers:false,
-											editWorksheet: true,
-											seeDocBrowser:true,
-		                        	        seeFavourites:true,
-		                        	        seeSubscriptions:true,
-		                        	        seeMyData:true,
-		                        	        seeToDoList:true,
-		                        	        createDocument:true,
-		                        	        kpiCommentEditAll: true,
-		                        	        kpiCommentEditMy: true,
-		                        	        kpiCommentDelete: true,
-		                        	        createSocialAnalysis: true,
-		                        	        viewSocialAnalysis: true,
-		                        	        hierarchiesManagement: true,
-		                        	        enableDatasetPersistence: true,
+											editWorksheet: false,
+											seeDocBrowser:false,
+		                        	        seeFavourites:false,
+		                        	        seeSubscriptions:false,
+		                        	        seeMyData:false,
+		                        	        seeToDoList:false,
+		                        	        createDocument:false,
+		                        	        kpiCommentEditAll: false,
+		                        	        kpiCommentEditMy: false,
+		                        	        kpiCommentDelete: false,
+		                        	        createSocialAnalysis: false,
+		                        	        viewSocialAnalysis: false,
+		                        	        hierarchiesManagement: false,
+		                        	        enableDatasetPersistence: false,
 											bmCategories: []
 										});
 		
@@ -192,8 +198,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 
 	,initTabItems: function(){
 		
+
+		
 		this.initDetailtab();
 		this.initChecksTab();
+		this.enableConfigurableAuthorizations();
 		this.initBusinessModelTab();
 		this.configurationObject.tabItems = [ this.detailTab, this.authorizationTab, this.businessModelsTab];
 	}
@@ -395,6 +404,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
  	     * CheckGroup Is able to
  	     *====================================================================*/
 
+
  	    this.checkGroup = {
            xtype:'fieldset'
            ,id: 'checks-form'
@@ -408,14 +418,14 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            itemId: 'isAbleToSave',
 		            columns: 1,
 		            boxMinWidth  : 150,
-		            boxMinHeight  : 100,
+		            //boxMinHeight  : 100,
 		            hideLabel  : false,
 		            fieldLabel: LN('sbi.roles.save')
 		            ,items: [
-		                {boxLabel: LN('sbi.roles.savePersonalFolder'), name: 'savePersonalFolder', checked:'savePersonalFolder',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.saveMeta'), name: 'saveMeta', checked:'saveMeta',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.saveRemember'), name: 'saveRemember', checked:'saveRemember',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.saveSubobj'), name: 'saveSubobj', checked:'saveSubobj',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.savePersonalFolder'), name: 'savePersonalFolder',id: 'savePersonalFolder', checked:'savePersonalFolder',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.saveMeta'), name: 'saveMeta', id: 'saveMeta', checked:'saveMeta',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.saveRemember'), name: 'saveRemember',id: 'saveRemember', checked:'saveRemember',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.saveSubobj'), name: 'saveSubobj',id: 'saveSubobj', checked:'saveSubobj',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -423,15 +433,15 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            itemId: 'isAbleToSee',
 		            columns: 1,
 		            boxMinWidth  : 150,
-		            boxMinHeight  : 100,
+		            //boxMinHeight  : 100,
 		            hideLabel  : false,
 		            fieldLabel: LN('sbi.roles.see'),
 		            items: [
-		                {boxLabel: LN('sbi.roles.seeMeta'), name: 'seeMeta', checked: 'seeMeta', inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeNotes'), name: 'seeNotes', checked:'seeNotes',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeSnapshot'), name: 'seeSnapshot', checked:'seeSnapshot',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeSubobj'), name: 'seeSubobj', checked:'seeSubobj',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeViewpoints'), name: 'seeViewpoints', checked:'seeViewpoints',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.seeMeta'), name: 'seeMeta',id: 'seeMeta', checked: 'seeMeta', inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeNotes'), name: 'seeNotes',id: 'seeNotes', checked:'seeNotes',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeSnapshot'), name: 'seeSnapshot',id: 'seeSnapshot', checked:'seeSnapshot',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeSubobj'), name: 'seeSubobj', id: 'seeSubobj', checked:'seeSubobj',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeViewpoints'), name: 'seeViewpoints',id: 'seeViewpoints', checked:'seeViewpoints',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -443,7 +453,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            itemId: 'isAbleToSend',
 		            //height:200,
 		            items: [
-		                {boxLabel: LN('sbi.roles.sendMail'), name: 'sendMail', checked:'sendMail',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.sendMail'), name: 'sendMail',id: 'sendMail', checked:'sendMail',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -454,7 +464,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.build'),
 		            itemId: 'isAbleToBuild',
 		            items: [
-		                {boxLabel: LN('sbi.roles.buildQbe'), name: 'buildQbe', checked:'buildQbe',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.buildQbe'), name: 'buildQbe',id: 'buildQbe', checked:'buildQbe',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -465,7 +475,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.export'),
 		            itemId: 'isAbleToDo',
 		            items: [
-		                {boxLabel: LN('sbi.roles.doMassiveExport'), name: 'doMassiveExport', checked:'doMassiveExport',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.doMassiveExport'), name: 'doMassiveExport',id: 'doMassiveExport', checked:'doMassiveExport',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -476,7 +486,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.manage'),
 		            itemId: 'isAbleToManage',
 		            items: [
-		                {boxLabel: LN('sbi.roles.manageUsers'), name: 'manageUsers', checked:'manageUsers',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.manageUsers'), name: 'manageUsers',id: 'manageUsers', checked:'manageUsers',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -487,7 +497,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.edit'),
 		            itemId: 'isAbleToEditWorksheet',
 		            items: [
-		                {boxLabel: LN('sbi.roles.worksheet'), name: 'editWorksheet', checked:'editWorksheet',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.worksheet'), name: 'editWorksheet',id: 'editWorksheet', checked:'editWorksheet',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -498,7 +508,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.edit'),
 		            itemId: 'isAbleTokpiCommentEditAll',
 		            items: [
-		                {boxLabel: LN('sbi.roles.allKpiComment'), name: 'kpiCommentEditAll', checked:'kpiCommentEditAll',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.allKpiComment'), name: 'kpiCommentEditAll',id: 'kpiCommentEditAll', checked:'kpiCommentEditAll',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -509,7 +519,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.edit'),
 		            itemId: 'isAbleTokpiCommentEditMy',
 		            items: [
-		                {boxLabel: LN('sbi.roles.myKpiComment'), name: 'kpiCommentEditMy', checked:'kpiCommentEditMy',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.myKpiComment'), name: 'kpiCommentEditMy',id: 'kpiCommentEditMy', checked:'kpiCommentEditMy',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -520,7 +530,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.delete'),
 		            itemId: 'isAbleTokpiCommentDelete',
 		            items: [
-		                {boxLabel: LN('sbi.roles.kpiComment'), name: 'kpiCommentDelete', checked:'kpiCommentDelete',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.kpiComment'), name: 'kpiCommentDelete',id: 'kpiCommentDelete', checked:'kpiCommentDelete',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -531,7 +541,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.enable'),
 		            itemId: 'isAbleToEnableDatasetPersistence',
 		            items: [
-		                    {boxLabel: LN('sbi.roles.enableDatasetPersistence'), name: 'enableDatasetPersistence', checked:'enableDatasetPersistence',inputValue: 1}
+		                    {boxLabel: LN('sbi.roles.enableDatasetPersistence'), name: 'enableDatasetPersistence',id: 'enableDatasetPersistence', checked:'enableDatasetPersistence',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -539,19 +549,19 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            itemId: 'finalUserCan',
 		            columns: 1,
 		            boxMinWidth  : 150,
-		            boxMinHeight  : 100,
+		            //boxMinHeight  : 100,
 //		            hideLabel  : false,
 		            fieldLabel: LN('sbi.roles.finalUserCan'),
 		            items: [
-		                {boxLabel: LN('sbi.roles.seeDocumentBrowser'), name: 'seeDocBrowser', checked: 'seeDocBrowser', inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeMyData'), name: 'seeMyData', checked:'seeMyData',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeFavourites'), name: 'seeFavourites', checked:'seeFavourites',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeSubscriptions'), name: 'seeSubscriptions', checked:'seeSubscriptions',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.seeToDoList'), name: 'seeToDoList', checked:'seeToDoList',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.createDocument'), name: 'createDocument', checked:'createDocument',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.createSocialAnalysis'), name: 'createSocialAnalysis', checked:'createSocialAnalysis',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.viewSocialAnalysis'), name: 'viewSocialAnalysis', checked:'viewSocialAnalysis',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.hierarchiesManagement'), name: 'hierarchiesManagement', checked:'hierarchiesManagement',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.seeDocumentBrowser'), name: 'seeDocBrowser',id: 'seeDocBrowser', checked: 'seeDocBrowser', inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeMyData'), name: 'seeMyData', id: 'seeMyData', checked:'seeMyData',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeFavourites'), name: 'seeFavourites',id: 'seeFavourites', checked:'seeFavourites',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeSubscriptions'), name: 'seeSubscriptions', id: 'seeSubscriptions', checked:'seeSubscriptions',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.seeToDoList'), name: 'seeToDoList',id: 'seeToDoList', checked:'seeToDoList',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.createDocument'), name: 'createDocument',id: 'createDocument', checked:'createDocument',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.createSocialAnalysis'), name: 'createSocialAnalysis',id: 'createSocialAnalysis', id:'createSocialAnalysis',checked:'createSocialAnalysis',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.viewSocialAnalysis'), name: 'viewSocialAnalysis',id: 'viewSocialAnalysis', id:'viewSocialAnalysis', checked:'viewSocialAnalysis',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.hierarchiesManagement'), name: 'hierarchiesManagement', id: 'hierarchiesManagement', id:'hierarchiesManagement', checked:'hierarchiesManagement',inputValue: 1}
 		                
 		            ]
 		        }
@@ -567,8 +577,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	    });
  	    
 
+ 	    
+
 	}
-	
+
+	//-------------------------------------------------------
 	,fillChecks : function(row, rec) {
 		Ext.getCmp('checks-form').items.each(function(item){	   	                   		  
         		  if(item.getItemId() == 'isAbleToSave'){
@@ -658,33 +671,33 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								description:'',
 								typeCd:'',
 								code:'',
-								saveSubobj: true,
-								seeSubobj:true,
-								seeViewpoints:true,
-								seeSnapshot:true,
-								seeNotes:true,
-								sendMail:true,
-								savePersonalFolder:true,
-								saveRemember:true,
-								seeMeta:true,
-								saveMeta:true,
-								buildQbe:true,
-								doMassiveExport:true,
+								saveSubobj: this.isVisible('saveSubobj'),
+								seeSubobj:this.isVisible('seeSubobj'),
+								seeViewpoints:this.isVisible('seeViewpoints'),
+								seeSnapshot:this.isVisible('seeSnapshot'),
+								seeNotes:this.isVisible('seeNotes'),
+								sendMail:this.isVisible('sendMail'),
+								savePersonalFolder:this.isVisible('savePersonalFolder'),
+								saveRemember:this.isVisible('saveRemember'),
+								seeMeta:this.isVisible('seeMeta'),
+								saveMeta:this.isVisible('saveMeta'),
+								buildQbe:this.isVisible('buildQbe'),
+								doMassiveExport:this.isVisible('doMassiveExport'),
 								manageUsers:false,
-								editWorksheet: true,
-								seeDocBrowser:true,
-                    	        seeFavourites:true,
-                    	        seeSubscriptions:true,
-                    	        seeMyData:true,
-                    	        seeToDoList:true,
-                    	        createDocument:true,
-                    	        kpiCommentEditAll:true,
-                    	        kpiCommentEditMy:true,
-                    	        kpiCommentDelete:true,
-                    	        createSocialAnalysis: true,
-                    	        viewSocialAnalysis: true,
-                    	        hierarchiesManagement: true,
-                    	        enableDatasetPersistence: true,
+								editWorksheet: this.isVisible('editWorksheet'),
+								seeDocBrowser:this.isVisible('seeDocBrowser'),
+                    	        seeFavourites:this.isVisible('seeFavourites'),
+                    	        seeSubscriptions:this.isVisible('seeSubscriptions'),
+                    	        seeMyData:this.isVisible('seeMyData'),
+                    	        seeToDoList:this.isVisible('seeToDoList'),
+                    	        createDocument:this.isVisible('createDocument'),
+                    	        kpiCommentEditAll:this.isVisible('kpiCommentEditAll'),
+                    	        kpiCommentEditMy:this.isVisible('kpiCommentEditMy'),
+                    	        kpiCommentDelete:this.isVisible('kpiCommentDelete'),
+                    	        createSocialAnalysis: this.isVisible('createSocialAnalysis'),
+                    	        viewSocialAnalysis: this.isVisible('viewSocialAnalysis'),
+                    	        hierarchiesManagement: this.isVisible('hierarchiesManagement'),
+                    	        enableDatasetPersistence: this.isVisible('enableDatasetPersistence'),
 								bmCategories: []
 							});
 		
@@ -1119,7 +1132,79 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		    userChecks.setDisabled(false);		    
 		}else{					
 		    userChecks.setDisabled(true);
-		}	
+		}		
+		
+	}
+	
+	, enableConfigurableAuthorizations: function(){
+		//Load list of authorization configurable for this tenant (related to product types)
+		this.authorizationsStore = new Ext.data.JsonStore(
+				{
+					url : this.configurationObject.getAuthorizationsList,
+					autoLoad : false,
+					root : 'root',
+					fields : [ 'name' ],
+					restful : true
+				});
+		var thisPanel = this;
+		this.authorizationsStore.load({
+
+			callback: function(r,option,success){
+				// alert("loaded store");
+				
+				//load authorizations mapping to elements gui
+				var mapping = Sbi.profiling.AuthorizationsMapping;
+				var auths = mapping.authorizations;
+				for(var i=0; i < auths.length; i++){
+					var aMapping = auths[i];
+					thisPanel.checkAuthorizationVisibility(aMapping);
+				}	 
+				
+				thisPanel.hideEmptyCheckBoxGroup();
+			}
+		});
+	}
+	
+	, checkAuthorizationVisibility: function(authorizationMapping){
+		//check if the authorization is in the list of the authorization of the user's tenant
+		//if not, hide the corresponding GUI element
+		var index = this.authorizationsStore.find("name",authorizationMapping[1])
+		if (index == -1){
+			//hide component
+			var aCheck = Ext.getCmp(authorizationMapping[0]);
+			aCheck.setValue('false');
+			aCheck.hide();
+		}
+	}
+	, hideEmptyCheckBoxGroup: function(){
+		var checksForm = Ext.getCmp('checks-form');
+		checksForm.items.each(function(item){
+			var checkGroupItemsCount = item.items.length
+			var hiddenItemsCount = 0;
+			item.items.each(function(item){
+				if (!item.isVisible()){
+					//count how many hidden items are inside the checkbox group
+					hiddenItemsCount = hiddenItemsCount + 1;
+				}
+			});
+			
+			//hide the entire checkBoxGroup because all his items are hidden
+			if (hiddenItemsCount == checkGroupItemsCount) {			
+				item.hideLabel = true;
+				var label = item.label
+				//force css display:none because only hide keeps empty space
+				label.setDisplayed('none')
+				item.getEl().setDisplayed('none')
+
+			}
+		});
+
+	}
+	
+	, isVisible: function(elementId){
+		//check if the element is hidden or not
+		var element = Ext.getCmp(elementId);
+		return element.isVisible();
 	}
 
 });

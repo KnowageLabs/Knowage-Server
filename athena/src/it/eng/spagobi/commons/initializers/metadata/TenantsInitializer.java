@@ -135,6 +135,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 				SbiCommonInfo commonInfo = new SbiCommonInfo();
 				commonInfo.setUserIn("server");
 				commonInfo.setTimeIn(new Date());
+				commonInfo.setOrganization(tenantName);
 
 				association.setCommonInfo(commonInfo);
 

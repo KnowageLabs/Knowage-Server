@@ -9,6 +9,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
@@ -220,6 +221,33 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Query hibQuery = aSession.createQuery("from SbiOrganizationProductType p where p.sbiOrganizations.name = :tenantName");
 			hibQuery.setString("tenantName", tenant);
 			ArrayList<SbiOrganizationProductType> result = (ArrayList<SbiOrganizationProductType>) hibQuery.list();
+			return result;
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIRuntimeException("Error getting Tenant Product Types", he);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
+	@Override
+	public List<Integer> loadSelectedProductTypesIds(String tenant) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query hibQuery = aSession
+					.createQuery("select p.sbiProductType.productTypeId from SbiOrganizationProductType p where p.sbiOrganizations.name = :tenantName");
+			hibQuery.setString("tenantName", tenant);
+			ArrayList<Integer> result = (ArrayList<Integer>) hibQuery.list();
 			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
@@ -646,6 +674,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				aSession.flush();
 			}
 
+			// check associations between roles and authorizations to remove (possibly)
+			checkAuthorizationsRoles(aTenant, aSession);
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the tenant with id " + ((aTenant == null) ? "" : String.valueOf(aTenant.getId())), he);
@@ -662,6 +693,50 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				logger.debug("modifyTenant OUT");
 			}
 		}
+	}
+
+	/**
+	 * Remove not valid association between authorizations and roles after changing product types related to a tenant
+	 *
+	 * @param aTenant
+	 * @param aSession
+	 */
+	private void checkAuthorizationsRoles(SbiTenant aTenant, Session aSession) {
+		// 1) Get the product types id currently configured for the tenant
+
+		Set<SbiOrganizationProductType> productTypes = aTenant.getSbiOrganizationProductType();
+		ArrayList<Integer> productTypesIds = new ArrayList<Integer>();
+		// get a list of product types ids
+		Iterator itproduct = productTypes.iterator();
+		while (itproduct.hasNext()) {
+			SbiOrganizationProductType aOrganizationProductType = (SbiOrganizationProductType) itproduct.next();
+			productTypesIds.add(aOrganizationProductType.getSbiProductType().getProductTypeId());
+		}
+
+		// 2) Get ids of the authorizations related to this product types
+		String hql = "select f.id from SbiAuthorizations f where f.productType.productTypeId IN (:PRODUCT_TYPES)";
+
+		Query hqlQueryAut = aSession.createQuery(hql);
+		hqlQueryAut.setParameterList("PRODUCT_TYPES", productTypesIds);
+		List<Integer> authorizations = hqlQueryAut.list();
+
+		// 3) Check if, for this tenant, there are associations between roles and authorizations
+		// for product types not longer associated to the tenant
+		hql = "select autrole from SbiAuthorizationsRoles autrole where autrole.commonInfo.organization = :TENANT and autrole.id.authorizationId NOT IN (:AUTHORIZATIONS)";
+		Query hqlQueryAutRole = aSession.createQuery(hql);
+		hqlQueryAutRole.setString("TENANT", aTenant.getName());
+		hqlQueryAutRole.setParameterList("AUTHORIZATIONS", authorizations);
+		List<SbiAuthorizationsRoles> associations = new ArrayList<SbiAuthorizationsRoles>();
+		associations = hqlQueryAutRole.list();
+
+		// 4) Remove not valid associations
+		Iterator it = associations.iterator();
+		while (it.hasNext()) {
+			SbiAuthorizationsRoles anAssociation = (SbiAuthorizationsRoles) it.next();
+			aSession.delete(anAssociation);
+			aSession.flush();
+		}
+
 	}
 
 	@Override

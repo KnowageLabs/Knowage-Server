@@ -98,6 +98,7 @@
 		<MAP_REST_SERVICE serviceUrl="/forecast" businessProcess="publicFunctionality" />		
 		<MAP_REST_SERVICE serviceUrl="/forecastT8" businessProcess="publicFunctionality" />				 						 						
 				 						 						
+		<MAP_REST_SERVICE serviceUrl="/authorizations" businessProcess="ProfileManagement" />				 						 						
 		
 	</MAP_REST_SERVICES>
 	

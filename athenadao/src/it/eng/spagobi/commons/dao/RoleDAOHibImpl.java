@@ -23,7 +23,10 @@ import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiEventRole;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
+import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.events.metadata.SbiEventsLog;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -373,6 +376,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setCode(aRole.getCode());
 			hibRole.setDescr(aRole.getDescription());
 			hibRole.setName(aRole.getName());
+
 			Set<SbiAuthorizationsRoles> authorizations = hibRole.getSbiAuthorizationsRoleses();
 			Iterator it = authorizations.iterator();
 			while (it.hasNext()) {
@@ -391,8 +395,20 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession.flush();
 
 			// create new association
-			String hqlall = "from SbiAuthorizations ";
+			// -----------------------------------------
+			// 1 - get Product Types of this tenant
+			String tenant = this.getTenant();
+			if (tenant == null) {
+				throw new SpagoBIRuntimeException("Organization not set!!!");
+			}
+
+			// Get corresponding Product Type Id for role's tenant
+			Set<Integer> productTypesId = findProductTypesId(aSession, tenant);
+
+			// 2 - Get only the authorizations of the product types of the tenant
+			String hqlall = "from SbiAuthorizations aut where aut.productType.productTypeId IN (:PRODUCT_TYPES)";
 			Query hqlQueryAll = aSession.createQuery(hqlall);
+			hqlQueryAll.setParameterList("PRODUCT_TYPES", productTypesId);
 			List<SbiAuthorizations> allFunct = hqlQueryAll.list();
 
 			Set<SbiAuthorizationsRoles> authorizzationsNew = new HashSet();
@@ -839,9 +855,23 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession.flush();
 
 			// abilitations
+			// -----------------------------------------
+			// 1 - get Product Types of this tenant
+			String tenant = this.getTenant();
+			if (tenant == null) {
+				throw new SpagoBIRuntimeException("Organization not set!!!");
+			}
 
-			String hqlall = "from SbiAuthorizations ";
+			// Get corresponding Product Type Id for role's tenant
+			Set<Integer> productTypesId = findProductTypesId(aSession, tenant);
+
+			// ------------------------
+			// 2 - Get only the authorizations of the product types of the tenant
+
+			String hqlall = "from SbiAuthorizations aut where aut.productType.productTypeId IN (:PRODUCT_TYPES)";
 			Query hqlQueryAll = aSession.createQuery(hqlall);
+			hqlQueryAll.setParameterList("PRODUCT_TYPES", productTypesId);
+
 			List<SbiAuthorizations> allFunct = hqlQueryAll.list();
 
 			Iterator allFunIt = allFunct.iterator();
@@ -873,6 +903,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("KPI_COMMENT_DELETE") && role.isAbleToDeleteKpiComm())
 						|| (functI.getName().equals("CREATE_DOCUMENTS") && role.isAbleToCreateDocuments())
 						|| (functI.getName().equals("CREATE_SOCIAL_ANALYSIS") && role.isAbleToCreateSocialAnalysis())
+						|| (functI.getName().equals("HIERARCHIES_MANAGEMENT") && role.isAbleToHierarchiesManagement())
 						|| (functI.getName().equals("VIEW_SOCIAL_ANALYSIS") && role.isAbleToViewSocialAnalysis())
 						|| (functI.getName().equals("ENABLE_DATASET_PERSISTENCE") && role.isAbleToEnableDatasetPersistence())) {
 
@@ -1180,6 +1211,86 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	/**
+	 * Gets all the Authorizations for product Types
+	 *
+	 *
+	 * @return The authorizations
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	@Override
+	public List<SbiAuthorizations> loadAllAuthorizationsByProductTypes(List<Integer> productTypesIds) throws EMFUserError {
+		List functs = new ArrayList();
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select f from SbiAuthorizations f where f.productType.productTypeId IN (:PRODUCT_TYPES)";
+
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameterList("PRODUCT_TYPES", productTypesIds);
+			functs = hqlQuery.list();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return functs;
+	}
+
+	/**
+	 * Gets all the Authorizations names for product Types
+	 *
+	 *
+	 * @return The authorizations
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	@Override
+	public List<String> loadAllAuthorizationsNamesByProductTypes(List<Integer> productTypesIds) throws EMFUserError {
+		List functs = new ArrayList();
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			String hql = "select f.name from SbiAuthorizations f where f.productType.productTypeId IN (:PRODUCT_TYPES)";
+
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameterList("PRODUCT_TYPES", productTypesIds);
+			functs = hqlQuery.list();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return functs;
+	}
+
+	/**
 	 * Gets all the authorizations associated to the role.
 	 *
 	 * @param roleID
@@ -1290,7 +1401,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	@Override
-	public SbiAuthorizations insertAuthorization(String authorizationName, String organization) throws EMFUserError {
+	public SbiAuthorizations insertAuthorization(String authorizationName, String productType) throws EMFUserError {
 		logger.debug("IN");
 		SbiAuthorizations toInsert = null;
 		Session aSession = null;
@@ -1298,12 +1409,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-
+			SbiProductType sbiProductType = findProductType(aSession, productType);
 			toInsert = new SbiAuthorizations();
-
 			toInsert.setName(authorizationName);
-			toInsert.getCommonInfo().setOrganization(organization);
-			updateSbiCommonInfo4Insert(toInsert);
+			toInsert.setProductType(sbiProductType);
+			updateSbiCommonInfo4Insert(toInsert, true);
 			aSession.save(toInsert);
 
 			tx.commit();
@@ -1324,6 +1434,31 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		logger.debug("OUT");
 		return toInsert;
+	}
+
+	private SbiProductType findProductType(Session aSession, String label) {
+		logger.debug("IN");
+		String hql = "from SbiProductType e where e.label = :label";
+		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setParameter("label", label);
+		SbiProductType productType = (SbiProductType) hqlQuery.uniqueResult();
+		logger.debug("OUT");
+		return productType;
+	}
+
+	private Set<Integer> findProductTypesId(Session aSession, String tenant) {
+		Set<Integer> productTypesId = new HashSet<Integer>();
+
+		String hql = "from SbiOrganizationProductType opt where opt.commonInfo.organization=?";
+		Query query = aSession.createQuery(hql);
+		query.setParameter(0, tenant);
+		List productTypes = query.list();
+		Iterator iter = productTypes.iterator();
+		while (iter.hasNext()) {
+			SbiOrganizationProductType sbiOrganizationProductType = (SbiOrganizationProductType) iter.next();
+			productTypesId.add(sbiOrganizationProductType.getSbiProductType().getProductTypeId());
+		}
+		return productTypesId;
 	}
 
 }
