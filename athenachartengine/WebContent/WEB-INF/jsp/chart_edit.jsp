@@ -61,6 +61,7 @@ author:
 	String userId;
 	String isTechnicalUser;
 	List<String> includes;
+	//String datasetLabel;
 
 	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -68,6 +69,7 @@ author:
 	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 	locale = engineInstance.getLocale();
 	
+	//datasetLabel = engineInstance.getDataSet().getLabel();
 	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
 	environment = request.getParameter("SBI_ENVIRONMENT"); 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
@@ -124,12 +126,12 @@ author:
 	    
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
-	
  		Ext.onReady(function(){
- 			
  			Ext.log({level: 'info'}, 'CHART: IN');
+ 			Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
 
- 			<%-- TODO questo dovrà essere il pannello dell'anteprima 
+ 			<%-- TODO questo dovrà essere il pannello dell'anteprima --%>
+ 			<%-- 
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
@@ -138,32 +140,78 @@ author:
  			});
  			
   			initChartLibrary(mainPanel.id);
+  			
+  			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+ 			var userId = '<%=userId%>';
+ 			var hostName = '<%=request.getServerName()%>';
+ 			var serverPort = '<%=request.getServerPort()%>';
+ 			var jsonTemplate = '<%=template%>';
+ 			var datasetLabel  = '<%=datasetLabel%>';
+
+ 			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+ 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+  			
   			--%>
   			
+  			var axisesContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+  			    //storeId : 'axisesContainerStore',
+  			    data: [
+  					{ 'axisName' : 'Colonna 1'},
+  					{ 'axisName' : 'Colonna 2'},
+  					{ 'axisName' : 'Colonna 3'},
+  					{ 'axisName' : 'Categoria 1'},
+  				],
+  			});
+
+  			var axisesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
+  			    region: 'south',
+  			    margin: '5 0 5 0',
+  			    minHeight: 200,
+  			    //store: Ext.data.StoreManager.lookup('axisesContainerStore'),
+  			    store: axisesContainerStore
+  			});
+  			
+  			var chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
+  				axisesPicker: axisesPicker,
+  				region: 'west',
+  			});
+  			
+  			
+  			var leftYAxisesPanel = {html: '<div>Left Y Axises passato al costruttore</div>'};
+  			
+  			var mainPanel = Ext.create('Ext.panel.Panel', {
+ 				id: 'mainPanel',
+ 				width: '100%',
+ 			    height: '100%',
+ 			   	html: '<div>Div per la preview</div>'
+ 			    
+ 			    //renderTo: Ext.getBody()
+ 			});
+  			
+			/* var previewPanel = {html: '<div>Preview da mostrare passato al costruttore</div>'}; */
+  			var rightYAxisesPanel = {html: '<div>Right Y Axises passato al costruttore</div>'};
+		    var bottomXAxisesPanel = {html: '<div>Bottom X Axises passato al costruttore</div>'};
+			 
   			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
-  				title: 'Passo1',
+  				title: 'Passo 1',
+  				leftYAxisesPanel: leftYAxisesPanel,
+  				//previewPanel: previewPanel,
+  				previewPanel: mainPanel,
+  				rightYAxisesPanel: rightYAxisesPanel,
+  				bottomXAxisesPanel: bottomXAxisesPanel
   			});
   			
   			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				//id: 'wizard',
   				bodyBorder: false,
- 			    height: '100%',
   				width: '100%',
   				region: 'center',
   				//xtype: 'tabpanel',
   				items: [
-			        /*
-	  				{
-	  			        title: 'Passo 1'
-	  			    }, 
-			        */
+			        //{title: 'Passo 1'}, 
 			        chartStructure,
-	  			    {
-	  			        title: 'Passo 2',
-	  			    },
-	  			    {
-	  			        title: 'Passo 3',
-	  			    },
+	  			    {title: 'Passo 2',},
+	  			    {title: 'Passo 3',},
   			    ],
   			});
  			
@@ -186,22 +234,8 @@ author:
  			    },
 
  			    items: [
- 			        {
- 			            floatable: false,
- 			            margin: '5 0 0 0',
- 			            maxWidth: 250,
- 			            minWidth: 100,
- 			            region:'west',
- 			            width: 125,
- 			        },
+ 			       chartTypeColumnSelector,
  			       stepsTabPanel,
- 			        /*
- 			        {
- 			            html: '<h2>Main Page</h2><p>This is where the main content would go</p>',
- 			            margin: '5 0 0 0',
- 			            region: 'center',
- 			        },
- 			        */
  			    ]
 
  			});
