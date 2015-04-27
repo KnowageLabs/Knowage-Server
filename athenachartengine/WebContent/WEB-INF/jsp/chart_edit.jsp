@@ -154,91 +154,149 @@ author:
   			--%>
   			
   			var axisesContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  			    //storeId : 'axisesContainerStore',
   			    data: [
-  					{ 'axisName' : 'Colonna 1'},
-  					{ 'axisName' : 'Colonna 2'},
-  					{ 'axisName' : 'Colonna 3'},
-  					{ 'axisName' : 'Categoria 1'},
+  			        { axisName : 'Colonna 1', axisType: 'column'},
+  					{ axisName : 'Colonna 2', axisType: 'column'},
+  					{ axisName : 'Colonna 3', axisType: 'column'},
+  					{ axisName : 'Categoria 1', axisType: 'category'},
   				],
   			});
 
+  			var ddGroup1 = 'ddGroup1';
+  			var ddGroup2 = 'ddGroup2';
+
   			var axisesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   			    region: 'south',
+  			    flex:  1,
   			    margin: '5 0 5 0',
   			    minHeight: 200,
-  			    //store: Ext.data.StoreManager.lookup('axisesContainerStore'),
-  			    store: axisesContainerStore
+  			    store: axisesContainerStore,
+  			        
+  			    viewConfig: {
+  					plugins: {
+  			            ptype: 'gridviewdragdrop',
+  			            containerScroll: true,
+  			            dragGroup: ddGroup1,
+  			            dropGroup: ddGroup1,
+  			        	dragText: 'Drag from AxisesPicker',
+  			        	enableDrop: true
+  			        },
+  			        
+  			        listeners: {
+  			        	drop: function(node, data, dropRec, dropPosition) {
+  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
+  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  						}
+  					}
+  			    }
   			});
-  			
+
   			var chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
-  				axisesPicker: axisesPicker,
-  				region: 'west',
+  			    axisesPicker: axisesPicker,
+  			    region: 'west'
   			});
-  			
-  			
-  			var leftYAxisesPanel = {html: '<div>Left Y Axises passato al costruttore</div>'};
-  			
+
+  			var leftYAxisesPanel = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
+  			    flex:  1,
+  			    viewConfig: {
+  					plugins: {
+  			            ptype: 'gridviewdragdrop',
+  			            containerScroll: true,
+  			            dragGroup: ddGroup1,
+  			            dropGroup: ddGroup1
+  			        },
+  			        listeners: {
+  			        	drop: function(node, data, dropRec, dropPosition) {
+  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
+  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  						}
+  					}
+  			    },
+  			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
+  			    columns: [{
+		        	text: 'Colonne sinistra', 
+		            dataIndex: 'axisName'
+		        }]
+  			});
+
   			var mainPanel = Ext.create('Ext.panel.Panel', {
- 				id: 'mainPanel',
- 				width: '100%',
- 			    height: '100%',
- 			   	html: '<div>Div per la preview</div>'
- 			    
- 			    //renderTo: Ext.getBody()
- 			});
-  			
-			/* var previewPanel = {html: '<div>Preview da mostrare passato al costruttore</div>'}; */
-  			var rightYAxisesPanel = {html: '<div>Right Y Axises passato al costruttore</div>'};
-		    var bottomXAxisesPanel = {html: '<div>Bottom X Axises passato al costruttore</div>'};
-			 
+  			    flex:  1,
+  			    id: 'mainPanel',
+  			    width: '100%',
+  			    height: 150,
+  			    html: '<div><b>Div</b> per la preview</div>'
+  			});
+
+  			var rightYAxisesPanel = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
+  			    flex: 1,
+  			    viewConfig: {
+  					plugins: {
+  			            ptype: 'gridviewdragdrop',
+  			            containerScroll: true,
+  			            dragGroup: ddGroup1,
+  			            dropGroup: ddGroup1
+  			        },
+  			        listeners: {
+  			        	drop: function(node, data, dropRec, dropPosition) {
+  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
+  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
+  			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  						}
+  					}
+  			    },
+  			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
+  			    columns: [{
+		        	text: 'Colonne destra', 
+		            dataIndex: 'axisName'
+		        }]
+  			});
+
+  			var bottomXAxisesPanel = {html: '<div>Bottom X Axises passato al costruttore</div>'};
+
   			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
-  				title: 'Passo 1',
-  				leftYAxisesPanel: leftYAxisesPanel,
-  				//previewPanel: previewPanel,
-  				previewPanel: mainPanel,
-  				rightYAxisesPanel: rightYAxisesPanel,
-  				bottomXAxisesPanel: bottomXAxisesPanel
+  			    title: 'Passo 1',
+  			    leftYAxisesPanel: leftYAxisesPanel,
+  			    previewPanel: mainPanel,
+  			    rightYAxisesPanel: rightYAxisesPanel,
+  			    bottomXAxisesPanel: bottomXAxisesPanel
   			});
-  			
+
   			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
-  				//id: 'wizard',
-  				bodyBorder: false,
-  				width: '100%',
-  				region: 'center',
-  				//xtype: 'tabpanel',
-  				items: [
-			        //{title: 'Passo 1'}, 
-			        chartStructure,
-	  			    {title: 'Passo 2',},
-	  			    {title: 'Passo 3',},
-  			    ],
+  			    bodyBorder: false,
+  			    width: '100%',
+  			    region: 'center',
+  			    items: [
+  			        chartStructure,
+  			        {title: 'Passo 2',},
+  			        {title: 'Passo 3',},
+  			    ]
   			});
- 			
- 			var designerMainPanel = Ext.create('Ext.panel.Panel', {
- 				renderTo: Ext.getBody(),
- 				xtype: 'layout-border',
- 			    requires: [
- 			        'Ext.layout.container.Border'
- 			    ],
- 			    layout: 'border',
- 				width: '100%',
- 			    height: '100%',
-
- 			    bodyBorder: false,
- 			    
- 			    defaults: {
- 			        collapsible: false,
- 			        split: true,
- 			        bodyPadding: 10
- 			    },
-
- 			    items: [
- 			       chartTypeColumnSelector,
- 			       stepsTabPanel,
- 			    ]
-
- 			});
+  			        
+  			var designerMainPanel = Ext.create('Ext.panel.Panel', {
+  				renderTo: Ext.getBody(),
+  				xtype: 'layout-border',
+  				requires: [
+  			        'Ext.layout.container.Border'
+  			    ],
+  			    layout: 'border',
+  			    width: '100%',
+  			    height: '100%',
+  			    
+  			    bodyBorder: false,
+  			    
+  			    defaults: {
+  			        collapsible: false,
+  			        split: true,
+  			        bodyPadding: 10
+  			    },
+  			    
+  			    items: [
+  			        chartTypeColumnSelector,
+  			        stepsTabPanel,
+  			    ]
+  			});
 
  			Ext.log({level: 'info'}, 'CHART: STILL INNNN');
  			Ext.log({level: 'info'}, 'CHART: OUT');

@@ -1,7 +1,3 @@
-/**
- *
- */
-
 Ext.define('Sbi.chart.designer.ChartStructure', {
     extend: 'Ext.panel.Panel',
     requires: [

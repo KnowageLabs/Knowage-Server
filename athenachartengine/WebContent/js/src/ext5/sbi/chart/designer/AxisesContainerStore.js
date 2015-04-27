@@ -1,8 +1,7 @@
 Ext.define('Sbi.chart.designer.AxisesContainerStore', {
     extend: 'Ext.data.Store',
-    fields: ['axisName'],
     
-    data: [],
+    model: Sbi.chart.designer.AxisesContainerModel,
     
     proxy: {
         type: 'memory',
