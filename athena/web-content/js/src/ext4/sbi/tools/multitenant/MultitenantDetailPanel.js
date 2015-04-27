@@ -81,10 +81,22 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	}
 	
 	, getValues: function(){
+		//count product types selected
+		var productTypesArray = this.productTypesList.getStore().getRange();
+		var productTypesList = [];
+		
+		var productTypesCount = 0;
+		for (var i = 0, len = productTypesArray.length; i < len; i++) {
+			var productTypesRow = productTypesArray[i].getData();
+			if(productTypesRow.CHECKED)
+				productTypesList[productTypesCount++] = productTypesRow;
+		};
+
 		var values = {
 			MULTITENANT_ID: this.tenantId.getValue(),
 			MULTITENANT_NAME: this.tenantName.getValue(),
-			MULTITENANT_THEME: this.tenantTheme.getValue()
+			MULTITENANT_THEME: this.tenantTheme.getValue(),
+			PRODUCT_TYPES_COUNT: productTypesList.length
 		};
 
 		return values;
@@ -138,7 +150,8 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 
 		valid = valid && (v.MULTITENANT_NAME!=null && v.MULTITENANT_NAME!=undefined && v.MULTITENANT_NAME!="" && v.MULTITENANT_NAME.length <= 20);	
 		valid = valid && (v.MULTITENANT_THEME!=null && v.MULTITENANT_THEME!=undefined &&  v.MULTITENANT_THEME!="");
-		
+		valid = valid && (v.PRODUCT_TYPES_COUNT!=null && v.PRODUCT_TYPES_COUNT!=undefined && v.PRODUCT_TYPES_COUNT>0);
+
 		return valid;
 	}
 	
