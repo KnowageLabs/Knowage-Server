@@ -1,0 +1,108 @@
+<project name="${project.name}" default="makeDist" basedir=".">
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE FILE DI PROPERTY						                                      -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <property file="build.properties"/>	
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE CLASSPATH						                                            -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<path id="jar.classpath">
+    		<pathelement path="${classpath}"/>
+    		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+    		<fileset dir="${lib.dir}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<!-- LIBRERIE ESTERNE DEL WEB CONTAINER necessarie per la compilazione -->
+    		<fileset dir="${runtime.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<!-- LIBRERIA SBI.UTILS.JSON necessaria per la compilazione -->
+    		<fileset dir="${sbiutils.json.dir}/dist">
+          		<include name="**/*.jar"/>
+    		</fileset>
+			<!-- LIBRERIA SBI.UTILS necessaria per la compilazione -->
+			<fileset dir="${sbiutils.dir}/dist">
+      			<include name="**/*.jar"/>
+			</fileset>		
+			<!-- LIBRERIA QBE.CORE necessaria per la compilazione -->
+			<fileset dir="${qbe.core.dir}/dist">
+  				<include name="**/*.jar"/>
+			</fileset>			
+ 	</path>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   PULIZIA AMBIENTE						                                                -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--> 
+  <target name="clean" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}/${project.name}" />
+  </target>	   	
+  <target name="init" depends="clean">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	  <target name="upgrade.mf"  >
+			<replaceregexp file="${src}/META-INF/MANIFEST.MF">
+				<regexp pattern="(Implementation-Version:)(.*?$)"/>
+				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+			</replaceregexp>
+	  </target> 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   COMPILAZIONE							                                                  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="compile"  description="compile the source" >
+  	<antcall target="upgrade.mf" />
+    <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
+    <javac srcdir="${src}" destdir="${build}" debug="on" encoding="${encoding}">
+      <classpath refid="jar.classpath"/>
+    </javac> 
+	<exec dir="${project.dir}" executable="svn" output="${build}/svn.properties">
+		<arg value="info" />
+	</exec>
+  </target>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   COPIA EVENTUALI RISORSE     Aggiungere eventuali altri tipi di file        -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	  	  
+  <target name="copy.artifacts" depends="compile">
+    <copy todir="${build}">
+      <fileset dir="${src}">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+	<target name="create.jar" depends="init,copy.artifacts" >
+	      <mkdir dir="${dist}"/>
+	      <delete file="${dist}/${jar.name}-${project.version}.jar" />
+	      <jar destfile="${dist}/${jar.name}-${project.version}.jar" 
+	           basedir="${build}" />
+	</target>
+
+  <target name="javadoc">    
+    <javadoc packagenames="*"
+      sourcepath="${src}"
+      defaultexcludes="yes"
+      destdir="${dist}/javadoc"
+      author="true"
+      version="true"
+      use="true">
+      <classpath refid="jar.classpath"/>
+    </javadoc>    
+  </target>
+
+  <target name="makeDist" >    
+    <antcall target="create.jar" />
+   <!-- <antcall target="javadoc" />  -->
+  </target>
+
+</project>

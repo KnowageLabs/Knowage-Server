@@ -1,0 +1,458 @@
+<project name="${project.name}" default="makeDist" basedir=".">
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DEFINIZIONE FILE DI PROPERTY						                                      -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<property file="build.properties" />
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DEFINIZIONE CLASSPATH						                                            -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<path id="web.classpath">
+		<pathelement path="${classpath}" />
+		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+		<fileset dir="${web.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+		<!-- LIBRERIE ESTERNE DEL WEB CONTAINER necessarie per la compilazione -->
+		<!-- ma che non devono essere comprese nel war                         -->
+		<fileset dir="${runtime.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   PULIZIA AMBIENTE						                                                -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}/${webapp_name}" />
+	</target>
+	<target name="init" depends="clean">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/${webapp_name}/WEB-INF/classes" />
+	</target>
+
+
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="sbi.utils.update" description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos sbi.utils -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar" />
+		</delete>
+		<!-- copies the newly created jar file -->
+		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   AGGIORNAMENTO JAR QBE.CORE							                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="qbe.core.update" description="Updates qbe.core library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos sbi.utils -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/qbe.core*.jar" />
+		</delete>
+		<!-- copies the newly created jar file -->
+		<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   COMPILAZIONE							                                                  -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="compile" depends="sbi.utils.update,qbe.core.update" description="compile the source">
+		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
+		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" excludes="it/eng/qbe/geo/action/**" debug="on" encoding="${encoding}">
+			<classpath refid="web.classpath" />
+		</javac>
+		<exec dir="${project.dir}" executable="svn" output="${build}/${webapp_name}/svn.properties">
+			<arg value="info" />
+		</exec>
+	</target>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   COPIA DELLE JSP,CSS,...                                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="copy.artifacts" depends="compile">
+		<copy todir="${build}/${webapp_name}">
+			<fileset dir="${web.dir}">
+				<exclude name="**/*.svn" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build}/${webapp_name}/WEB-INF/classes">
+			<fileset dir="${src}">
+				<exclude name="**/*.java" />
+				<exclude name="**/*.svn" />
+			</fileset>
+		</copy>
+		<copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
+	</target>
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   CREAZIONE JAR							                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+	<!--target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.qbe-${project.version}.jar"  >
+		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
+			<include name="it/**/*" />
+		</fileset>
+		</jar>
+		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
+	</target-->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="tomcat">
+
+	</target>
+
+	<target name="jboss6">
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/commons-logging.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/jaxen-1.1-beta-6.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/jta.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/xml-apis.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/xmlbeans-2.3.0.jar" />	
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/slf4j-api-1.6.1.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/ojdbc5.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/antlr-2.7.6.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/javassist-3.12.0.GA.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/jta-1.1.jar" />
+			<delete file="${build}/${webapp_name}/WEB-INF/lib/asm.jar" />
+	</target>
+
+	<target name="liferay.jboss">
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/xml-apis-2.0.2.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/portlet-api-1.0.jar" />
+
+	</target>
+
+	<target name="liferay.tomcat">
+	</target>
+
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER COMPRESSIONE CODICE JS                              -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="production" depends="create-production">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>
+	</target>
+
+	<target name="delete-debug">
+		<delete file="${build}/${webapp_name}/js/spagobi/qbe-all-${project.version}.js" />
+		<delete file="${build}/${webapp_name}/js/spagobi/qbe-all-debug.js" />
+	</target>
+
+	<target name="create-debug" depends="delete-debug">
+		<concat destfile="${build}/${webapp_name}/js/spagobi/qbe-all-debug.js" append="true">
+			<filelist dir="${build}/${webapp_name}/js">
+				<file name='./spagobi/qbe/filterwizard/parser.js' />
+<file name='./spagobi/qbe/filterwizard/buttonColumn.js' />
+
+<file name='./spagobi/exception/ExceptionHandler.js' />
+<file name='./spagobi/service/ServiceRegistry.js' />
+<file name='./spagobi/commons/Format.js' />
+<file name='./spagobi/commons/Utils.js' />
+<file name='./spagobi/commons/JSON.js' />
+<file name='./spagobi/formats/LocaleUtils.js' />
+<file name='./spagobi/commons/Constants.js' />
+<file name='./spagobi/commons/Log.js' />
+
+<file name='./spagobi/qbe/filterwizard/filterWizard.js' />
+		
+<file name='./spagobi/qbe/DataStorePanel.js' />
+<file name='./spagobi/qbe/DataMartStructurePanel.js' />
+<file name='./spagobi/qbe/QueryCataloguePanel.js' />
+<file name='./spagobi/qbe/SelectGridDropTarget.js' />
+<file name='./spagobi/qbe/SelectGridPanel.js' />
+<file name='./spagobi/formviewer/OperandChooserWindow.js' />
+<file name='./spagobi/qbe/FilterGridDropTarget.js' />
+<file name='./spagobi/qbe/FilterGridPanel.js' />
+<file name='./spagobi/qbe/QbeCardsPanel.js' />
+<file name='./spagobi/qbe/HavingGridPanel.js' />
+<file name='./spagobi/qbe/HavingGridDropTarget.js' />
+<file name='./spagobi/qbe/SaveWindow.js' />
+<file name='./spagobi/qbe/SaveDatasetWindow.js' />
+<file name='./spagobi/qbe/QueryBuilderPanel.js' />
+<file name='./spagobi/qbe/QbePanel.js' />
+<file name='./spagobi/qbe/FreeConditionsWindow.js' />
+<file name='./spagobi/qbe/OperandsWindow.js' />
+<file name='./spagobi/qbe/CalculatedFieldEditorPanel.js' />
+<file name='./spagobi/qbe/RangeDefinitionWindow.js' />
+<file name='./spagobi/qbe/SlotEditorPanel.js' />
+<file name='./spagobi/qbe/CalculatedFieldWizard.js' />
+<file name='./spagobi/qbe/SlotWizard.js' />
+<file name='./spagobi/qbe/InLineCalculatedFieldValidator.js' />
+		
+<file name='./spagobi/qbe/DocumentParametersGridPanel.js' />
+<file name='./spagobi/qbe/DocumentParametersStore.js' />
+<file name='./spagobi/qbe/HavingGridPanel.js' />
+
+<file name='./spagobi/qbe/RelationshipsWizard.js' />
+<file name='./spagobi/qbe/RelationshipsWizardRoleForEntity.js' />
+<file name='./spagobi/qbe/RelationshipsWizardRole.js' />
+<file name='./spagobi/qbe/RelationshipsWizardContainer.js' />
+<file name='./spagobi/qbe/RelationshipsWizardWindow.js' />
+<file name='./spagobi/qbe/AmbiguousFields.js' />
+
+<file name='./spagobi/widgets/LookupField.js' />
+<file name='./spagobi/widgets/FilterLookupField.js' />
+<file name='./spagobi/widgets/FilteringToolbar.js' />
+<file name='./spagobi/widgets/PagingToolbar.js' />
+<file name='./spagobi/widgets/TriggerFieldMultiButton.js' />
+<file name='./spagobi/widgets/Colors.js' />
+<file name='./spagobi/widgets/SeriesPalette.js' />
+<file name='./spagobi/widgets/SimpleValuesChooserWindow.js' />
+<file name='./spagobi/widgets/FilterLookupPopupWindow.js' />
+<file name='./spagobi/widgets/ConfigurableForm.js' />
+<file name='./spagobi/widgets/Cache.js' />
+
+
+<file name='./spagobi/qbe/FilterComboBox.js' />
+
+<file name='./spagobi/formbuilder/FormBuilderPage.js' />
+<file name='./spagobi/formbuilder/FormPreviewPage.js' />
+<file name='./spagobi/formbuilder/FormPanel.js' />
+<file name='./spagobi/formbuilder/QueryFieldsPanel.js' />
+<file name='./spagobi/formbuilder/TemplateEditorPanel.js' />
+
+
+<file name='./spagobi/formbuilder/editor/EditorDropTarget.js' />
+<file name='./spagobi/formbuilder/editor/InlineEditor.js' />
+<file name='./spagobi/formbuilder/editor/EditorPanel.js' />
+
+<file name='./spagobi/formbuilder/editor/staticclose/StaticCloseFilterEditorPanel.js' />
+<file name='./spagobi/formbuilder/editor/staticclose/StaticCloseFilterGroupEditor.js' />
+<file name='./spagobi/formbuilder/editor/staticclose/StaticCloseFilterGroupWizard.js' />
+<file name='./spagobi/formbuilder/editor/staticclose/StaticCloseFilterEditor.js' />
+<file name='./spagobi/formbuilder/editor/staticclose/StaticCloseFilterWizard.js' />
+
+<file name='./spagobi/formbuilder/editor/staticopen/StaticOpenFilterEditorPanel.js' />
+<file name='./spagobi/formbuilder/editor/staticopen/StaticOpenFilterGroupEditor.js' />
+<file name='./spagobi/formbuilder/editor/staticopen/StaticOpenFilterEditor.js' />
+<file name='./spagobi/formbuilder/editor/staticopen/StaticOpenFilterWizard.js' />
+
+<file name='./spagobi/formbuilder/editor/dynamic/DynamicFilterEditorPanel.js' />
+<file name='./spagobi/formbuilder/editor/dynamic/DynamicFilterGroupEditor.js' />
+<file name='./spagobi/formbuilder/editor/dynamic/DynamicFilterEditor.js' />
+<file name='./spagobi/formbuilder/editor/dynamic/DynamicFilterGroupWizard.js' />
+
+<file name='./spagobi/formbuilder/editor/grouping/VariableEditor.js' />
+<file name='./spagobi/formbuilder/editor/grouping/VariableGroupEditor.js' />
+<file name='./spagobi/formbuilder/editor/grouping/VariableEditorPanel.js' />
+
+<file name='./spagobi/formbuilder/TestTemplate.js' />
+
+<file name='./spagobi/formviewer/FormViewerPage.js' />
+<file name='./spagobi/formviewer/StaticClosedFiltersPanel.js' />
+<file name='./spagobi/formviewer/StaticClosedXORFiltersPanel.js' />
+<file name='./spagobi/formviewer/StaticClosedOnOffFiltersPanel.js' />
+<file name='./spagobi/formviewer/StaticOpenFiltersPanel.js' />
+<file name='./spagobi/formviewer/DynamicFiltersPanel.js' />
+<file name='./spagobi/formviewer/DynamicFilter.js' />
+<file name='./spagobi/formviewer/GroupingVariablesPanel.js' />
+
+<file name='./spagobi/formviewer/SaveFormValueSubObject.js' />
+<file name='./spagobi/formviewer/DataStorePanel.js' />
+<file name='./spagobi/formviewer/ResultsPage.js' />
+<file name='./spagobi/formviewer/WorksheetPage.js' />
+<file name='./spagobi/formviewer/FormEnginePanel.js' />
+
+<file name='./spagobi/formtemplate/DocumentTemplateBuilder.js' />
+
+<file name='./spagobi/widgets/GenericDropTarget.js' />
+
+<file name='./spagobi/crosstab/core/CrossTab.js' />
+<file name='./spagobi/crosstab/core/CrossTabCalculatedFields.js' />
+<file name='./spagobi/crosstab/core/CrossTabCFWizard.js' />
+<file name='./spagobi/crosstab/core/CrossTabContextualMenu.js' />
+<file name='./spagobi/crosstab/core/HeaderEntry.js' />
+<file name='./spagobi/crosstab/core/CrossTabCalculatedFieldsValidator.js' />
+<file name='./spagobi/crosstab/core/CrossTabData.js' />
+<file name='./spagobi/crosstab/core/CrossTabCalculatedField.js' />
+<file name='./spagobi/crosstab/core/CrossTabShowHideUtility.js' />
+<file name='./spagobi/crosstab/ChooseAggregationFunctionWindow.js' />
+<file name='./spagobi/crosstab/CrosstabDetailsWizard.js' />
+<file name='./spagobi/crosstab/AttributesContainerPanel.js' />
+<file name='./spagobi/crosstab/MeasuresContainerPanel.js' />
+<file name='./spagobi/crosstab/CrosstabDefinitionPanel.js' />
+<file name='./spagobi/crosstab/CrosstabPreviewPanel.js' />
+
+<file name='./spagobi/crosstab/StaticCrosstabDefinitionPanel.js' />
+<file name='./spagobi/crosstab/StaticCrosstabPreviewPanel.js' />
+<file name='./spagobi/crosstab/core/HTMLCrossTab.js' />
+
+<file name='./spagobi/dataset/ParametersGridPanel.js' />
+
+<file name='./spagobi/worksheet/exception/ValidationError.js' />
+<file name='./spagobi/worksheet/designer/AttributeValuesChooserWindow.js' />
+<file name='./spagobi/worksheet/designer/SheetTabMenu.js' />
+<file name='./spagobi/worksheet/designer/SheetsContainerPanel.js' />
+<file name='./spagobi/worksheet/designer/DesignToolsPanel.js' />
+<file name='./spagobi/worksheet/designer/DesignToolsPallettePanel.js' />
+<file name='./spagobi/worksheet/designer/DesignToolsLayoutPanel.js' />
+<file name='./spagobi/worksheet/designer/SheetPanel.js' />
+<file name='./spagobi/worksheet/designer/DesignSheetFiltersPanel.js' />
+<file name='./spagobi/worksheet/designer/DesignSheetFiltersEditWizard.js' />
+<file name='./spagobi/worksheet/designer/SheetTitlePanel.js' />
+<file name='./spagobi/worksheet/designer/ChooseImageWindow.js' />
+<file name='./spagobi/worksheet/designer/WorksheetDesignerPanel.js' />
+<file name='./spagobi/worksheet/designer/SheetContentPanel.js' />
+<file name='./spagobi/worksheet/designer/ChartCategoryPanel.js' />
+<file name='./spagobi/worksheet/designer/SeriesGroupingPanel.js' />
+<file name='./spagobi/worksheet/designer/ChartSeriesPanel.js' />
+<file name='./spagobi/worksheet/designer/GenericChartDesignerPanel.js' />
+<file name='./spagobi/worksheet/designer/BarChartDesignerPanel.js' />
+<file name='./spagobi/worksheet/designer/LineChartDesignerPanel.js' />
+<file name='./spagobi/worksheet/designer/PieChartDesignerPanel.js' />
+<file name='./spagobi/worksheet/designer/TableDesignerPanel.js' />
+<file name='./spagobi/worksheet/designer/QueryFieldsCardPanel.js' />
+<file name='./spagobi/worksheet/designer/QueryFieldsContainerPanel.js' />
+<file name='./spagobi/worksheet/designer/SheetFilterContentPanel.js' />
+<file name='./spagobi/worksheet/designer/WorksheetDefinitionPanel.js' />
+<file name='./spagobi/worksheet/designer/WorksheetPanel.js' />
+
+<file name='./spagobi/worksheet/runtime/RuntimeSheetsContainerPanel.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeSheetPanel.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersPanel.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeSheetFiltersInfoPanel.js' />
+<file name='./spagobi/worksheet/runtime/WorkSheetsRuntimePanel.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeSheetContentPanel.js' />
+<file name='./spagobi/worksheet/runtime/WorkSheetPreviewPage.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanel.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeGenericChartPanelExt3.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeChartFactory.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelHighcharts.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelHighcharts.js' />
+<file name='./spagobi/worksheet/runtime/RuntimePieChartPanelHighcharts.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeBarChartPanelExt3.js' />
+<file name='./spagobi/worksheet/runtime/RuntimeLineChartPanelExt3.js' />
+<file name='./spagobi/worksheet/runtime/RuntimePieChartPanelExt3.js' />
+
+<file name='./spagobi/worksheet/runtime/DefaultChartDimensionRetrieverStrategy.js' />
+
+<file name='./spagobi/worksheet/config/OptionsWindow.js' />
+
+<file name='./spagobi/registry/RegistryEditorGridPanel.js' />
+<file name='./spagobi/registry/RegistryPanel.js' />
+
+
+			</filelist>
+
+		</concat>
+	</target>
+
+	<target name="create-production" depends="create-debug">
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${build}/${webapp_name}/js/spagobi/qbe-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/qbe-all-debug.js" />
+		</java>
+	</target>
+
+
+	<target name="development">
+
+
+	</target>
+
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER LA GESTIONE DEL SSI                          -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="sso.cas">
+
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- START-CAS]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-CAS -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[END-CAS -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>
+		</replace>
+
+	</target>
+
+	<target name="sso.no_sso">
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="upgrade.mf">
+		<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+			<regexp pattern="(Implementation-Version:)(.*?$)" />
+			<substitution expression="(^)Implementation-Version: ${project.version}($)" />
+		</replaceregexp>
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="create.war" depends="init,copy.artifacts">
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="${ext.deploy}" />
+		<antcall target="upgrade.mf" />
+
+		<mkdir dir="${dist}" />
+		<delete file="${dist}/${war_name}" />
+		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
+	</target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR SINGLE PACKAGES                                                               -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="create-bin.war" depends="init,copy.artifacts">
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="${ext.deploy}" />
+		<antcall target="upgrade.mf" />
+
+		<mkdir dir="${dist}" />
+		<delete file="${dist}/${war_name}" />
+		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" excludes="**/**/js/lib/highcharts-2.1.4/**" />
+	</target>
+	<target name="javadoc">
+		<javadoc packagenames="*" sourcepath="${src}" defaultexcludes="yes" destdir="${dist}/javadoc" author="true" version="true" use="true">
+			<classpath refid="web.classpath" />
+		</javadoc>
+	</target>
+
+	<target name="package">
+		<zip destfile="../../../../dist/${project.name}-bin-${project.version}_${project.date}.zip" basedir="${dist}" />
+	</target>
+
+	<target name="makeDist">
+		<antcall target="create.war" />
+	</target>
+
+</project>

@@ -1,0 +1,827 @@
+<project name="${project.name}" default="makeDist" basedir=".">
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DEFINIZIONE FILE DI PROPERTY						                                      -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<property file="build.properties" />
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   DEFINIZIONE CLASSPATH						                                            -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<path id="web.classpath">
+		<pathelement path="${classpath}" />
+		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+		<fileset dir="${web.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+		<!-- LIBRERIE ESTERNE DEL WEB CONTAINER necessarie per la compilazione -->
+		<!-- ma che non devono essere comprese nel war                         -->
+		<fileset dir="${runtime.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   PULIZIA AMBIENTE						                                                -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}/${webapp_name}" />
+	</target>
+	<target name="init" depends="clean">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/${webapp_name}/WEB-INF/classes" />
+	</target>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   SCARICO DEI SORGENTI AGGIORNATI DA SVN							                        -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="svn.checkout" depends="init" description="Sincronizza l'applicazione con il repository">
+		<exec dir="${project.dir}" executable="svn">
+			<arg line="checkout ${svn.base.location}/${project.name} ." />
+		</exec>
+
+		<exec dir="${project.dir}" executable="svn" output="${web.dir}/svn.properties">
+			<arg value="info" />
+		</exec>
+	</target>
+
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   AGGIORNAMENTO JAR QBE.CORE							                                  -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="qbe.core.update" description="Updates qbe.core library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos qbe.core -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/qbe.core*.jar" />
+		</delete>
+
+		<!-- copies the newly created jar file -->
+		<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+
+	</target>
+
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="sbi.utils.update" description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos sbi.utils -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar" />
+		</delete>
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.security.*.jar" />
+		</delete>
+		<!-- copies the newly created jar file -->
+		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+
+		<antcall target="copy.sbi.security.liferay" />
+		<antcall target="copy.sbi.security.OAuth2" />
+		<antcall target="copy.sbi.security.exo" />
+		<antcall target="copy.sbi.security.xml" />
+		<antcall target="copy.sbi.security.ldap" />
+
+  	<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+
+	</target>
+	
+	<!-- liferay -->
+	<target name="check.sbi.security.liferay" unless="sbi.security.liferay.file.exists">
+		<available property="sbi.security.liferay.file.exists" file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" />
+	</target>
+	<target name="copy.sbi.security.liferay" depends="check.sbi.security.liferay" if="${sbi.security.liferay.file.exists}">
+		<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+	<!-- OAuth2 -->
+	<target name="check.sbi.security.OAuth2" unless="sbi.security.OAuth2.file.exists">
+		<available property="sbi.security.OAuth2.file.exists" file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" />
+	</target>
+	<target name="copy.sbi.security.OAuth2" depends="check.sbi.security.OAuth2" if="${sbi.security.OAuth2.file.exists}">
+		<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+	<!-- exo -->
+	<target name="check.sbi.security.exo" unless="sbi.security.exo.file.exists">
+		<available property="sbi.security.exo.file.exists" file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" />
+	</target>
+	<target name="copy.sbi.security.exo" depends="check.sbi.security.exo" if="${sbi.security.exo.file.exists}">
+		<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+	<!-- xml -->
+	<target name="check.sbi.security.xml" unless="sbi.security.xml.file.exists">
+		<available property="sbi.security.xml.file.exists" file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" />
+	</target>
+	<target name="copy.sbi.security.xml" depends="check.sbi.security.xml" if="${sbi.security.xml.file.exists}">
+		<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+
+	<!-- ldap -->
+	<target name="check.sbi.security.ldap" unless="sbi.security.ldap.file.exists">
+		<available property="sbi.security.ldap.file.exists" file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" />
+	</target>
+	<target name="copy.sbi.security.ldap" depends="check.sbi.security.ldap" if="${sbi.security.ldap.file.exists}">
+		<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+	</target>
+	
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   AGGIORNAMENTO JAR SBI.DAO							                                  -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="sbi.dao.update" description="Updates sbi.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos qbe.core -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.dao*.jar" />
+		</delete>
+
+		<!-- copies the newly created jar file -->
+		<copy file="${sbi.dao.dir}/dist/sbi.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+
+	</target>
+
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   COMPILAZIONE							                                                  -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="compile" depends="sbi.utils.update,qbe.core.update,sbi.dao.update" description="compile the source">
+		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
+		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
+			<classpath refid="web.classpath" />
+		</javac>
+		<exec dir="${project.dir}" executable="svn" output="${build}/${webapp_name}/svn.properties">
+			<arg value="info" />
+		</exec>
+	</target>
+
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   COPIA DELLE JSP,CSS,...                                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="copy.artifacts" depends="compile">
+		<copy todir="${build}/${webapp_name}/WEB-INF/classes">
+			<fileset dir="${src}">
+				<exclude name="**/*.java" />
+				<exclude name="**/*.svn" />
+		        <exclude name="MessageFiles/*.properties" />  <!-- properties files must be encoded, see below when native2ascii is invoked -->
+			</fileset>
+		</copy>
+		<!-- copies artifacts without filter (jars, jsp, js, ....) -->
+		<copy todir="${build}/${webapp_name}">
+			<fileset dir="${web.dir}">
+				<exclude name="**/*.svn" />
+				<exclude name="**/*.xml" />
+				<exclude name="**/*.properties" />
+        <exclude name="js/src/ext/sbi/formats/*.js" /> <!-- js messages files must be encoded, see below when native2ascii is invoked -->
+			</fileset>
+		</copy>
+		<!-- copies artifacts with filter (*.xml, *.properties) -->
+		<copy todir="${build}/${webapp_name}">
+			<fileset dir="${web.dir}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+
+		<copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
+
+    <!-- converting messages file from UTF-8 to ASCII -->
+    <native2ascii encoding="UTF-8" src="${src}/MessageFiles" dest="${build}/${webapp_name}/WEB-INF/classes/MessageFiles"  includes="**/*.properties" />
+    <native2ascii encoding="UTF-8" src="${web.dir}/js/src/ext/sbi/formats" dest="${build}/${webapp_name}/js/src/ext/sbi/formats"  includes="**/*.js" />
+
+	</target>
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<!--   CREAZIONE JAR							                                    -->
+	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<path id="svnant.classpath">
+		<fileset dir="../../ant/antsvn-lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<target name="jar" depends="copy.artifacts" description="Generates executable jar file">
+		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
+
+		<!-- 
+		The following task has been commented out because it causes an error. 
+		See: http://www.spagoworld.org/jforum/posts/list/1045.page 
+		-->
+		<!-- 
+		<svn>
+			<wcVersion path="${src}" prefix="svn." />
+		</svn>
+		-->
+
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar">
+			<fileset dir="${build}/${webapp_name}/WEB-INF/classes/">
+				<include name="it/**/*" />
+				<exclude name="it/eng/spago/**/*" />
+			</fileset>
+
+			<manifest>
+				<attribute name="Implementation-Version" value="${svn.revision.max}" />
+			</manifest>
+		</jar>
+		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it/eng/spagobi" />
+	</target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="tomcat">
+
+	</target>
+
+	<target name="jboss6">
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/bsh-1.3.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/commons-logging-1.0.4.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/imap-1.4.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/jaxen-1.1.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/jsr223-0.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/slf4j-api-1.6.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/slf4j-log4j12-1.6.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/xml-apis.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/antlr-2.7.6.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/hibernate-3.6.2.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/javassist-3.12.0.GA.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/jta-1.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/javax.persistence-2.0.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/eclipselink-2.1.2.v20101206-r8635.jar" />
+	</target>
+
+
+	<target name="liferay.jboss">
+
+		<copy file="${liferay.security.dir}/lib/portal-client.jar" todir="${build}/${webapp_name}/WEB-INF/lib" overwrite="true" />
+
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.1.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/xml-apis-2.0.2.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/bsh-1.3.0.jar" />
+
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- START-LIFERAY]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-LIFERAY -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[END-LIFERAY -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-LIFERAY -->]]></replacevalue>
+		</replace>
+
+
+	</target>
+
+	<target name="liferay.tomcat">
+
+		<copy file="${liferay.security.dir}/lib/portal-client.jar" todir="${build}/${webapp_name}/WEB-INF/lib" overwrite="true" />
+
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- START-LIFERAY]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-LIFERAY -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[END-LIFERAY -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-LIFERAY -->]]></replacevalue>
+		</replace>
+
+
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER MODALITA' WEB O PORTLET                             -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="modality.web">
+
+	</target>
+
+	<target name="modality.portlet">
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/portlet-api-1.0.jar" />
+
+		<replace file="${build}/${webapp_name}/WEB-INF/conf/config/initializers.xml">
+			<replacetoken><![CDATA[<!-- START-WEB  -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-WEB]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/conf/config/initializers.xml">
+			<replacetoken><![CDATA[<!-- END-WEB  -->]]></replacetoken>
+			<replacevalue><![CDATA[END-WEB  -->]]></replacevalue>
+		</replace>
+
+
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER COMPRESSIONE CODICE JS                              -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="production" depends="create-production">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS.jspf">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS311.jspf">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+				<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+			</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+				<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+			</replace>
+
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+				<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+			</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/importSbiJS410.jspf">
+				<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+				<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+			</replace>
+		
+	</target>
+
+
+	<target name="delete-debug">
+		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext/sbi-all-ext311.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js" />
+		<delete file="${build}/${webapp_name}/js/src/ext4/sbi-all-ext410.js" />
+	</target>
+
+	<target name="create-debug" depends="delete-debug">
+		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-debug.js" append="true">
+			<filelist dir="${build}/${webapp_name}/js">
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext/sbi/commons/Log.js" />
+				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
+				<file name="./src/ext/sbi/decorator/LoadMask.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/commons/JSON.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />		
+
+				<file name="./src/ext/sbi/browser/SampleData.js" />
+				<file name="./src/ext/sbi/browser/SearchField.js" />
+				<file name="./src/ext/sbi/browser/Toolbar.js" />
+				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext/sbi/browser/FilterPanel.js" />
+				<file name="./src/ext/sbi/browser/SearchPanel.js" />
+				<file name="./src/ext/sbi/browser/ProgressPanel.js" />
+				<file name="./src/ext/sbi/browser/FolderViewTemplate.js" />
+				<file name="./src/ext/sbi/browser/FolderView.js" />
+				<file name="./src/ext/sbi/browser/FolderDetailPanel.js" />  
+																										
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js" />
+
+
+				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />  
+				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />      
+				<file name="./src/ext/sbi/widgets/LookupField.js" />  
+				<file name="./lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderTip.js" />
+				<file name="./lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.js" />
+				<file name="./src/ext/sbi/widgets/SliderField.js" />
+				<file name="./src/ext/sbi/widgets/CheckboxField.js" /> 
+				<file name="./src/ext/sbi/widgets/RadioField.js" /> 
+				<file name="./src/ext/sbi/widgets/SaveWindow.js" />
+				<file name="./src/ext/sbi/widgets/EditablePanel.js" />  
+				<file name="./src/ext/sbi/widgets/TreeLookUpField.js" />
+				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
+				<file name="./src/ext/sbi/cookies/Cookies.js" />
+
+				<file name="./src/ext/sbi/execution/SubobjectsPanel.js" />
+				<file name="./src/ext/sbi/execution/SnapshotsPanel.js" />
+				<file name="./src/ext/sbi/execution/ViewpointsPanel.js" />
+				<file name="./src/ext/sbi/execution/ShortcutsPanel.js" />
+				<file name="./src/ext/sbi/execution/HotlinksPanel.js" />
+				<file name="./src/ext/sbi/execution/ParametersPanel.js" />
+				<file name="./src/ext/sbi/execution/LookupFieldWithMaximize.js" />
+				<file name="./src/ext/sbi/execution/SessionParametersManager.js" />
+				<file name="./src/ext/sbi/execution/RoleSelectionPage.js" />
+				<file name="./src/ext/sbi/execution/InfoPage.js" />
+				<file name="./src/ext/sbi/execution/DocumentPage.js" />
+				<file name="./src/ext/sbi/execution/ParametersSelectionPage.js" />
+				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/ExportersMenu.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SaveSubObjectWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js" />
+				<file name="./src/ext/sbi/execution/DocumentExecutionPage.js" />
+				<file name="./src/ext/sbi/execution/ExecutionWizard.js" />
+				<file name="./src/ext/sbi/execution/ExecutionPanel.js" />
+				<file name="./src/ext/sbi/browser/DocumentsBrowser.js" />
+				<file name="./src/ext/sbi/browser/DocBrowserContainer.js" />
+				<file name="./lib/ext-2.0.1/ux/miframe/miframe-min.js" />
+				<file name="./lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js" />
+				<file name="./lib/ext-2.0.1/ux/andrie/Select.js" />
+
+				<file name="./src/ext/sbi/decorator/ComponentBuddy.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SendToWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/NotesWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/MetadataWindow.js" />
+				<file name="./src/ext/sbi/execution/toolbar/RatingWindow.js" />
+				<file name="./src/ext/sbi/home/Footer.js" />
+				<file name="./src/ext/sbi/home/Banner.js" />
+				<file name="./src/ext/sbi/execution/toolbar/ListNotesWindow.js" /> 
+				<file name="./src/ext/sbi/home/DefaultRoleWindow.js" /> 
+
+				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" />  
+
+				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanel.js" />
+
+			</filelist>
+
+		</concat>
+
+		<concat destfile="${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js" append="true">
+			<filelist dir="${build}/${webapp_name}/js">
+
+				<file name="./src/ext/sbi/commons/Log.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext/sbi/service/ServiceRegistry.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />	
+				<file name="./lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js" /> 
+				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js" />
+				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js" />
+
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridSorter.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumnResizer.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridNodeUI.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridLoader.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumns.js" />
+				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGrid.js" />
+				 
+				<file name="./lib/ext-3.1.1/ux/imageeditor/ImageEditor.js" />
+				<file name="./lib/ext-3.1.1/ux/imageeditor/PanPanel.js" />
+
+				<file name="./src/ext/sbi/widgets/KpiTreeOuTreePanel.js" />
+				<file name="./src/ext/sbi/widgets/FilteringToolbar.js" />
+				<file name="./src/ext/sbi/widgets/PagingToolbar.js" />
+				<file name="./src/ext/sbi/widgets/ListGridPanel.js" />
+				<file name="./src/ext/sbi/widgets/ListDetailForm.js" />
+				<file name="./src/ext/sbi/widgets/LookupField.js" />
+				<file name="./src/ext/sbi/widgets/TreeDetailForm.js" />
+				<file name="./src/ext/sbi/widgets/TreeModelPanel.js" />
+				<file name="./src/ext/sbi/widgets/SimpleTreePanel.js" />
+				<file name="./src/ext/sbi/widgets/TreeSerializers.js" />
+				<file name="./src/ext/sbi/widgets/FilteringToolbarLight.js" />
+				<file name="./src/ext/sbi/widgets/ConfigurableTree.js" />
+				<file name="./src/ext/sbi/widgets/ModelInstanceTree.js" />
+				<file name="./src/ext/sbi/widgets/DataStorePanel.js" />
+				<file name="./src/ext/sbi/widgets/ButtonField.js" />
+				<file name="./src/ext/sbi/widgets/Catalogue.js" />
+				<file name="./src/ext/sbi/widgets/CatalogueVersionsGridPanel.js" />
+				<file name="./src/ext/sbi/widgets/InMemoryFilteredStore.js" />
+				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
+
+				<file name="./src/ext/sbi/udp/ManageUdp.js" />
+				<file name="./src/ext/sbi/udp/ManageUdpValues.js" />
+
+				<file name="./src/ext/sbi/profiling/ManageAttributes.js" />
+				<file name="./src/ext/sbi/profiling/ManageRoles.js" />
+				<file name="./src/ext/sbi/profiling/ManageUsers.js" />
+				<file name="./src/ext/sbi/alarm/ManageContacts.js" />
+				<file name="./src/ext/sbi/alarm/ManageAlarms.js" />
+
+				<file name="./src/ext/sbi/kpi/ManageThresholdValues.js" />
+				<file name="./src/ext/sbi/kpi/ManageResources.js" />
+				<file name="./src/ext/sbi/kpi/ManageThresholds.js" />
+				<file name="./src/ext/sbi/kpi/ManageKpis.js" />
+				<file name="./src/ext/sbi/kpi/ManageModels.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelsGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelsViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManagePeriodicities.js" />
+
+				<file name="./src/ext/sbi/kpi/ManageOUGrants.js" />
+				<file name="./src/ext/sbi/kpi/ManageOUGrantsViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelInstances.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelInstancesGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageOUGrantsGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelInstancesViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManageModelsTree.js" />
+				<file name="./src/ext/sbi/kpi/ManageAddModelPanel.js" />
+				<file name="./src/ext/sbi/kpi/ManageKpisGrid.js" />
+				<file name="./src/ext/sbi/kpi/ManageKpiWindow.js" />
+
+				<file name="./src/ext/sbi/kpi/ManageGoals.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsOUTree.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsDetailsPanel.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsViewPort.js" />
+				<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js" />
+				<file name="./src/ext/sbi/widgets/ColumnNodeUI.js" />
+
+				<file name="./src/ext/sbi/tools/ManageDatasetVersions.js" />
+				<file name="./src/ext/sbi/tools/ManageDatasetParameters.js" />
+				<file name="./src/ext/sbi/tools/ParametersFillGrid.js" />
+				<file name="./src/ext/sbi/tools/dataset/DatasetManagementPanel.js" />
+				<file name="./src/ext/sbi/tools/dataset/QueryDatasetConfigurationPanel.js" />
+				<file name="./src/ext/sbi/tools/dataset/QueryDatasetScriptWizard.js" />
+				<file name="./src/ext/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
+				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
+
+				<file name="./src/ext/sbi/engines/EngineManagementPanel.js" />
+
+
+				<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js" />
+				<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js" />
+				<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js" />
+
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" /> 
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js" /> 
+
+				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js" />
+
+
+				<file name="./src/ext/sbi/domain/ManageDomains.js" />
+				<file name="./src/ext/sbi/config/ManageConfig.js" />
+
+				<file name="./src/ext/sbi/engines/chart/data/PagingStore.js" />
+				<file name="./src/ext/sbi/engines/chart/data/StoreManager.js" />
+				<file name="./src/ext/sbi/engines/chart/data/Store.js" />
+
+				<file name="./src/ext/sbi/engines/chart/GenericChartPanel.js" />
+				<file name="./src/ext/sbi/engines/chart/HighchartsPanel.js" />
+				<file name="./src/ext/sbi/engines/chart/MasterDetailChartPanel.js" />
+				
+				<file name="./src/ext/sbi/kpi/GUI/KpiChart.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiChartHighcharts.js" />
+				<file name="./src/ext/sbi/kpi/KpiGUILayout.js" />
+				<file name="./src/ext/sbi/kpi/KpiGridPanel.js" />
+				<file name="./src/ext/sbi/kpi/KpiAccordionPanel.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDetail.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDescription.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIDocCollegato.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIComments.js" />
+				<file name="./src/ext/sbi/kpi/GUI/KpiGUIHistorical.js" />
+
+				<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
+				<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" />
+
+				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
+				<file name="./src/ext/sbi/worksheet/DatasetsListPanel.js" />
+				<file name="./src/ext/sbi/worksheet/WorksheetEditorIframePanelExt3.js" />
+				<file name="./src/ext/sbi/worksheet/WorksheetFromDatasetPanel.js" />
+				
+			</filelist>
+
+		</concat>
+		
+		
+		<concat destfile="${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js" append="true">
+			<filelist dir="${build}/${webapp_name}/js">
+
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/formats/LocaleUtils.js" />
+				<file name="./src/ext/sbi/exception/ExceptionHandler.js" />
+				<file name="./src/ext/sbi/decorator/LoadMask.js" />
+				<file name="./src/ext/sbi/commons/Format.js" />
+				<file name="./src/ext/sbi/commons/JSON.js" />
+				<file name="./src/ext/sbi/commons/Session.js" />	
+				<file name="./src/ext/sbi/commons/Log.js" />	
+
+				<file name="./src/ext/sbi/home/DefaultRoleWindow.js" />
+
+				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
+
+				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
+				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
+				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
+				<file name="./src/ext4/sbi/widgets/grid/StaticGridDecorator.js" />
+				<file name="./src/ext4/sbi/widgets/grid/CheckColumn.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicFilteringToolbar.js" />
+				<file name="./src/ext4/sbi/widgets/grid/DynamicGridPanel.js" />
+				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanel.js" />
+				<file name="./src/ext4/sbi/widgets/grid/FixedGridPanelInMemoryFiltered.js" />
+				<file name="./src/ext4/sbi/widgets/grid/GrouppedGrid.js" />
+				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
+				<file name="./src/ext4/sbi/widgets/compositepanel/SplittedPanel.js" />
+
+				<file name="./src/ext4/sbi/widgets/toolbar/InLineFilterAndOrder.js" />
+				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
+				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" />
+				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" />
+				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js" />
+
+				<file name="./src/ext4/sbi/browser/DocumentsTree.js" />
+				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" />
+
+
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel.js" />
+
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
+				
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantModel.js" />
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantDetailPanel.js" />
+
+				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
+
+				<file name="./src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js" />
+				<file name="./src/ext4/sbi/tools/dataset/ValidateDataset.js" />
+				<file name="./src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
+				<file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" />
+				<file name="./src/ext4/sbi/tools/dataset/QbeDataSetsWizard.js" />
+				<file name="./src/ext4/sbi/tools/dataset/DatasetMetadataMainPage.js" />
+				<file name="./src/ext4/sbi/tools/dataset/GeoBIDatasetFieldMetadata.js" />
+
+
+				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" />
+				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" />
+
+
+				<file name="./src/ext4/sbi/tools/measure/MeasuresCatalogue.js" />
+				<file name="./src/ext4/sbi/tools/measure/MeasureModel.js" />
+
+				<file name="./src/ext4/sbi/selfservice/ManageSelfService.js" />
+				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" />
+				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" />
+
+
+				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" />
+				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisBrowser.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisModel.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisView.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisWizard.js" />
+				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisMetadataWindow.js" />
+
+
+				<file name="./src/ext4/sbi/community/CommunityDetailPanel.js" />
+				<file name="./src/ext4/sbi/community/CommunityListDetailPanel.js" />
+				<file name="./src/ext4/sbi/community/CommunityModel.js" />
+
+
+				<file name="./src/ext4/sbi/tools/layer/LayerModel.js" />
+				<file name="./src/ext4/sbi/tools/layer/LayerListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/layer/LayerDetailPanel.js" />
+				
+				<file name="./src/ext4/sbi/tools/scheduler/SchedulerModel.js" />
+				<file name="./src/ext4/sbi/tools/scheduler/SchedulerListDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/scheduler/SchedulerDetailPanel.js" />
+				<file name="./src/ext4/sbi/tools/scheduler/TriggerInfoWindow.js" />
+
+				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorSplittedPanel.js" />
+				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorContextMenu.js" />
+
+				
+			</filelist>
+
+		</concat>
+	</target>
+
+	<target name="create-production" depends="create-debug">
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${build}/${webapp_name}/js/src/ext/sbi-all-${project.version}.js ${build}/${webapp_name}/js/src/ext/sbi-all-debug.js --nomunge" />
+		</java>
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${build}/${webapp_name}/js/src/ext/sbi-all-ext311-${project.version}.js ${build}/${webapp_name}/js/src/ext/sbi-all-ext311-debug.js --nomunge" />
+		</java>
+		<java jar="./yuicompressor-2.4.2.jar" fork="true">
+			<arg line="-o ${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-${project.version}.js ${build}/${webapp_name}/js/src/ext4/sbi-all-ext410-debug.js --nomunge" />
+		</java>
+	</target>
+
+
+	<target name="development">
+
+
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER LA GESTIONE DEL SSI                          -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+	<target name="sso.cas">
+
+
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- START-CAS]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-CAS -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[END-CAS -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>
+		</replace>
+
+	</target>
+
+	<target name="sso.no_sso">
+	</target>
+
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="upgrade.mf">
+		<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+			<regexp pattern="(Implementation-Version:)(.*?$)" />
+			<substitution expression="(^)Implementation-Version: ${project.version}($)" />
+		</replaceregexp>
+	</target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create.war" depends="init,jar">
+
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="${modality}" />
+		<antcall target="${ext.deploy}" />
+		<antcall target="upgrade.mf" />
+
+		<mkdir dir="${dist}" />
+		<delete file="${dist}/${war_name}" />
+
+		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
+
+
+	</target>
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR SINGLE PACKAGES                                                         -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create-bin.war" depends="init,jar">
+
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="${modality}" />
+		<antcall target="${ext.deploy}" />
+		<antcall target="upgrade.mf" />
+
+		<mkdir dir="${dist}" />
+		<delete file="${dist}/${war_name}" />
+
+		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" excludes="**/**/js/lib/highcharts-2.1.6/**" />
+
+	</target>
+	<target name="javadoc">
+		<javadoc packagenames="*" sourcepath="${src}" defaultexcludes="yes" destdir="${dist}/javadoc" author="true" version="true" use="true">
+			<classpath refid="web.classpath" />
+		</javadoc>
+	</target>
+
+	<target name="package">
+		<zip destfile="../../../../dist/SpagoBI-bin-${project.version}_${project.date}.zip" basedir="${dist}" />
+	</target>
+
+	<target name="makeDist">
+		<antcall target="create.war" />
+	</target>
+
+
+</project>

@@ -1,0 +1,142 @@
+<project name="CasServer" default="create.war" basedir=".">
+
+  <property file="build.properties"/>
+  
+   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE CLASSPATH						                                            -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<path id="web.classpath">
+    		<pathelement path="${classpath}"/>
+    		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+    		<fileset dir="${web.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<!-- LIBRERIE ESTERNE DEL WEB CONTAINER necessarie per la compilazione -->
+    		<!-- ma che non devono essere comprese nel war                         
+    		<fileset dir="${runtime.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>    	-->	
+ 	</path>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   PULIZIA AMBIENTE						                                                -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--> 
+  <target name="clean" >
+  <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}/CasServer-${project.version}_${project.date}.war"/>
+    <delete dir="${dist}"/>  	
+    <mkdir dir="${dist}"/>
+    
+     <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/${webapp_name}/WEB-INF/classes"/>
+
+  </target>
+ 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   SCARICO DEI SORGENTI AGGIORNATI DA SVN							                        -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="svn.checkout" depends="clean">
+
+    <exec dir="${project.dir}" executable="svn" >
+      <arg line="checkout ${svn.base.location}/cas ."/>
+    </exec>	 
+  </target>
+
+<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="sbi.utils.update" 
+      description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+    <!-- deletes any previuos sbi.utils -->
+    <delete>
+      <fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar"/>
+    </delete>
+    <delete>
+      <fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.security.*.jar"/>
+    </delete>    
+    <!-- copies the newly created jar file -->
+    <copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" 
+        todir="${web.dir}/WEB-INF/lib" overwrite="true" />            
+  </target>
+ 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   COMPILAZIONE							                                                  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="compile"  depends="sbi.utils.update" description="compile the source" >
+    <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
+    <javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on">
+      <classpath refid="web.classpath"/>
+    </javac> 
+  </target>
+  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   COPIA DELLE JSP,CSS,...                                                    -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	  	  
+  <target name="copy.artifacts" depends="compile">
+    <copy todir="${build}/${webapp_name}/WEB-INF/classes">
+      <fileset dir="${src}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.svn"/>
+      </fileset>
+    </copy>
+    <!-- copies artifacts without filter (jars, jsp, js, ....) -->
+    <copy todir="${build}/${webapp_name}" >
+      <fileset dir="${web.dir}">
+        <exclude name="**/*.svn"/>
+        <exclude name="**/*.xml"/>
+        <exclude name="**/*.properties"/>
+      </fileset>
+    </copy>
+    <!-- copies artifacts with filter (*.xml, *.properties) -->
+    <copy todir="${build}/${webapp_name}" >
+      <fileset dir="${web.dir}">
+        <include name="**/*.xml"/>
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+    
+  <!--  <copy file="${web.dir}/COPYING" todir="${dist}" overwrite="true" /> -->
+        
+  </target>
+  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   CREAZIONE WAR  					                                        -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	<target name="create.war" depends="svn.checkout,compile,copy.artifacts">
+	      <war warfile="${dist}/${war_name}" 
+	           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+	           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
+	           basedir="${build}/${webapp_name}"/>
+	           
+        <zip destfile="${dist}/CasServer-${project.version}_${project.date}.zip"
+              basedir="${dist}">
+        </zip>
+
+	</target>
+	
+	<target name="create_only.war" depends="compile,copy.artifacts">
+	      <war warfile="${dist}/${war_name}" 
+	           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+	           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" 
+	           basedir="${build}/${webapp_name}"/>
+	           
+        <zip destfile="${dist}/CasServer-${project.version}_${project.date}.zip"
+              basedir="${dist}">
+        </zip>
+
+	</target>
+	
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   CREAZIONE WAR  					                                        -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+ <target name="package.src" depends="clean">
+   <mkdir dir="${dist}" />
+   <zip destfile="${dist}/CasServer-src-${project.version}_${project.date}.zip"
+        excludes="**/*.svn"  basedir="../../cas/src/">
+
+  </zip> 
+  </target>
+     
+</project>

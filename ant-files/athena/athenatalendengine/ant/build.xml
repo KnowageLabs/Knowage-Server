@@ -1,0 +1,190 @@
+<project name="${project.name}" default="makeDist" basedir=".">
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE FILE DI PROPERTY						                                      -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  <property file="build.properties"/>	
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   DEFINIZIONE CLASSPATH						                                            -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	<path id="web.classpath">
+    		<pathelement path="${classpath}"/>
+    		<!-- LIBRERIE SPECIFICHE APPLICATIVO  -->
+    		<fileset dir="${web.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<!-- LIBRERIE ESTERNE DEL WEB CONTAINER necessarie per la compilazione -->
+    		<!-- ma che non devono essere comprese nel war                         -->
+    		<fileset dir="${runtime.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>
+    		<!-- LIBRERIE DIPENDENZA SBI.UTILS necessarie per la compilazione      -->
+    		<!-- che non devono essere comprese nel war                            -->
+    		<fileset dir="${sbi.utils.lib}">
+          		<include name="**/*.jar"/>
+    		</fileset>  		
+ 	</path>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   PULIZIA AMBIENTE						                                                -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--> 
+  <target name="clean" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}/${webapp_name}" />
+  </target>	   	
+  <target name="init" depends="clean">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/${webapp_name}/WEB-INF/classes"/>
+  </target>
+
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   AGGIORNAMENTO JAR SBI.UTILS							                                  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="sbi.utils.update" 
+      description="Updates sbi.utils library from distribution folder (THIS JAR MUST BE EXISTING)">
+    <!-- deletes any previuos sbi.utils -->
+    <delete>
+      <fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.utils*.jar"/>
+    </delete>
+    <!-- copies the newly created jar file -->
+    <copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" 
+        todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  </target>
+
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   COMPILAZIONE							                                                  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <target name="compile" depends="sbi.utils.update" description="compile the source" >
+    <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
+    <javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
+      <classpath refid="web.classpath"/>
+    </javac>
+	<exec dir="${project.dir}" executable="svn" output="${build}/${webapp_name}/svn.properties">
+		<arg value="info" />
+	</exec>
+  </target>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   COPIA DELLE JSP,CSS,...                                                    -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	  	  
+  <target name="copy.artifacts" depends="compile">
+    <copy todir="${build}/${webapp_name}">
+      <fileset dir="${web.dir}">
+        <exclude name="**/*.svn"/>
+      </fileset>
+    </copy>
+    <filter filtersfile="env.properties"/>
+    <copy todir="${build}/${webapp_name}/WEB-INF/classes" filtering="true">
+      <fileset dir="${src}">
+        <exclude name="**/*.java"/>
+        <exclude name="**/*.svn"/>
+      </fileset>
+    </copy>
+            <copy file="${web.dir}/${license}" todir="${dist}" overwrite="true" />
+  </target>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--   CREAZIONE JAR							                                    -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->	
+
+	  <!--target name="jar" depends="copy.artifacts"  description="Generates executable jar file">
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.talend-${project.version}.jar"  >
+		<fileset dir="${build}/${webapp_name}/WEB-INF/classes">
+			<include name="it/**/*" />
+		</fileset>
+		</jar>
+		<delete dir="${build}/${webapp_name}/WEB-INF/classes/it"/>
+	</target-->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   ATTIVITA' SPECIFICHE PER APPLICATION SERVER                                  -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+  
+  <target name="tomcat">  
+               
+  </target>
+	
+  <target name="jboss6">
+  </target>
+
+    
+  <target name="liferay.jboss">  
+      <delete file="${build}/${webapp_name}/WEB-INF/lib/dom4j-1.6.jar" />
+      <delete file="${build}/${webapp_name}/WEB-INF/lib/xercesImpl-2.6.2.jar" />
+      <delete file="${build}/${webapp_name}/WEB-INF/lib/xml-apis-2.0.2.jar" /> 
+      <delete file="${build}/${webapp_name}/WEB-INF/lib/portlet-api-1.0.jar" />                 
+                          
+  </target>
+  
+ <target name="liferay.tomcat">                            
+  </target>
+  
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <!--   ATTIVITA' SPECIFICHE PER LA GESTIONE DEL SSI                          -->
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->	
+	
+  <target name="sso.cas"  >
+
+			<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+				 <replacetoken><![CDATA[<!-- START-CAS]]></replacetoken>      
+				 <replacevalue><![CDATA[<!-- START-CAS -->]]></replacevalue>		
+			</replace>
+			<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+				 <replacetoken><![CDATA[END-CAS -->]]></replacetoken>      
+				 <replacevalue><![CDATA[<!-- END-CAS -->]]></replacevalue>		
+			</replace>
+			
+  </target>
+		
+  <target name="sso.no_sso"  >
+  </target>	
+      <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	  <!--   AGGIORNAMENTO DELLA VERSIONE NEL MANIFEST                                                                -->
+	  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --> 
+	  <target name="upgrade.mf"  >
+			<replaceregexp file="${build}/${webapp_name}/META-INF/MANIFEST.MF">
+				<regexp pattern="(Implementation-Version:)(.*?$)"/>
+				<substitution expression="(^)Implementation-Version: ${project.version}($)"/>
+			</replaceregexp>
+	  </target>
+	
+	<target name="create.war" depends="init,copy.artifacts" >
+		<antcall target="${sso}" />
+		<antcall target="${specific.ant.task}" />
+		<antcall target="upgrade.mf" />
+	      <mkdir dir="${dist}"/>
+	      <delete file="${dist}/${war_name}" />
+	      <war warfile="${dist}/${war_name}" 
+	           webxml="${build}/${webapp_name}/WEB-INF/web.xml" 
+	           manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF"	           
+	           basedir="${build}/${webapp_name}" />
+	</target>
+
+  <target name="javadoc">    
+    <javadoc packagenames="*"
+      sourcepath="${src}"
+      defaultexcludes="yes"
+      destdir="${dist}/javadoc"
+      author="true"
+      version="true"
+      use="true">
+      <classpath refid="web.classpath"/>
+    </javadoc>    
+  </target>
+
+  <target name="package">    
+  <zip destfile="../../../../dist/${project.name}-bin-${project.version}_${project.date}.zip"
+       basedir="${dist}"
+  />    
+  </target>
+  
+  <target name="makeDist" >    
+    <antcall target="create.war" />
+  </target>
+
+</project>
