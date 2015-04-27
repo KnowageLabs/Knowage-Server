@@ -1,0 +1,44 @@
+<chart type="pie" height="500" width="900"  
+style="backgroundColor:#FFFFFF;font:Verdana;fontWeight:bold;fontSize:16px"
+dimension="2D" >
+
+<colorsPallet>
+<color name="col1" value="#003366" order="1"/>
+<color name="col2" value="#003366" order="2"/>
+<color name="col3" value="#003366" order="3"/>
+<color name="col4" value="#003366" order="4"/>
+</colorsPallet>
+
+<emptymessage test ="nessun dato da visualizzare"  style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px"  />
+
+<TITLE text="questo è un titolo" 
+style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+
+
+<SUBTITLE text="questo è un sotto titolo"
+style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+
+<!--  nel caso di true visualizzo la legenda nella posizione x/y -->
+<LEGEND position="right" layout="vertical" separator="-"
+style="borderWidth:1;backgroundColor:#FFFFFF;color:#003366;font:Verdana;fontWeight:bold;fontSize:12px"
+         x="-100"
+         y="100"
+         floating="true"  
+         />
+
+
+<Values>
+
+<category column="product" displayColumn="productName" orderColumn="anno" orderType="asc" />
+
+<SERIE name="vendite" position="internal" orderType="asc" column="vendite" color="#4572A7" 
+showValue="true" showPerc="true" precision="2" prefixChar="Euro"  >
+<TOOLTIP templateHtml="" backgroundColor="#FCFFC5" style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+</SERIE>
+<SERIE name="ricavi" position="esternal"  column="ricavi" color="#4572A7" precision="" />
+
+</Values>
+
+<!-- cross navigation -->
+
+</chart>
