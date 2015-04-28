@@ -39,7 +39,5 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         this.add(config.chartTypeSelector ? config.chartTypeSelector : this.chartTypeSelector);
         this.add(config.axisesPicker ? config.axisesPicker : this.axisesPicker);
     },
-
-
     items: [],
 });

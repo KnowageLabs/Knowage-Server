@@ -11,7 +11,6 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
     config:{
         flex: 1,
 		region: 'south',
-		margin: '5 0 5 0',
 		minHeight: 300
     },
 	
@@ -20,12 +19,11 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
     columns: [
         {
         	text: 'Nome asse',
-            dataIndex: 'axisName'
+            dataIndex: 'axisName',
+            sortable: false,
+            flex: 1
         }
     ],
-
     enableDragDrop: true,
-    
-    margin: '0 5 0 0'
-    
+    margin: '0 0 0 0'
 });

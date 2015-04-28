@@ -51,8 +51,8 @@ Ext.define('Sbi.chart.designer.ChartStructure', {
     scrollable: true,
 
     defaults: {
-        bodyPadding: '15 20',
-        border: false
+        //bodyPadding: '15 20',
+        border: true
     },
 
     items: []

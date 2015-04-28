@@ -152,18 +152,26 @@ author:
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
   			
   			--%>
-  			
-  			var axisesContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  			    data: [
-  			        { axisName : 'Colonna 1', axisType: 'column'},
-  					{ axisName : 'Colonna 2', axisType: 'column'},
-  					{ axisName : 'Colonna 3', axisType: 'column'},
-  					{ axisName : 'Categoria 1', axisType: 'category'},
-  				],
-  			});
-
   			var ddGroup1 = 'ddGroup1';
   			var ddGroup2 = 'ddGroup2';
+
+  			var axisesContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+  				data: [
+  			        { axisName : 'Colonna 1', axisType: 'MEASURE'},
+  					{ axisName : 'Colonna 2', axisType: 'MEASURE'},
+  					{ axisName : 'Colonna 3', axisType: 'MEASURE'},
+  					{ axisName : 'Colonna 4', axisType: 'MEASURE'},
+  			        { axisName : 'Categoria 1', axisType: 'ATTRIBUTE'}
+  				],
+  			    sorters: [{ //first by type: columns and then categories
+  			        property: 'axisType',
+  			        direction: 'DESC'
+  			    }, {
+  			        property: 'axisName', //second by name, alphabetically
+  			        direction: 'ASC'
+  			    }],
+  			});
+
 
   			var axisesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   			    region: 'south',
@@ -185,11 +193,12 @@ author:
   			        listeners: {
   			        	drop: function(node, data, dropRec, dropPosition) {
   			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
-  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
   			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
   						}
   					}
-  			    }
+  			        
+  			    },
   			});
 
   			var chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
@@ -197,40 +206,8 @@ author:
   			    region: 'west'
   			});
 
+  			//var leftYAxisesPanel = {html: '<div>Left Y Axises passato al costruttore</div>'};
   			var leftYAxisesPanel = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
-  			    flex:  1,
-  			    viewConfig: {
-  					plugins: {
-  			            ptype: 'gridviewdragdrop',
-  			            containerScroll: true,
-  			            dragGroup: ddGroup1,
-  			            dropGroup: ddGroup1
-  			        },
-  			        listeners: {
-  			        	drop: function(node, data, dropRec, dropPosition) {
-  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
-  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
-  			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
-  						}
-  					}
-  			    },
-  			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
-  			    columns: [{
-		        	text: 'Colonne sinistra', 
-		            dataIndex: 'axisName'
-		        }]
-  			});
-
-  			var mainPanel = Ext.create('Ext.panel.Panel', {
-  			    flex:  1,
-  			    id: 'mainPanel',
-  			    width: '100%',
-  			    height: 150,
-  			    html: '<div><b>Div</b> per la preview</div>'
-  			});
-
-  			var rightYAxisesPanel = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
-  			    flex: 1,
   			    viewConfig: {
   					plugins: {
   			            ptype: 'gridviewdragdrop',
@@ -247,13 +224,76 @@ author:
   					}
   			    },
   			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
-  			    columns: [{
-		        	text: 'Colonne destra', 
-		            dataIndex: 'axisName'
-		        }]
+  			    columns: [
+  			        {
+  			        	text: 'Colonne sinistra', 
+  			            dataIndex: 'axisName',
+  			            flex: 1
+  			        }
+  			    ]
   			});
 
-  			var bottomXAxisesPanel = {html: '<div>Bottom X Axises passato al costruttore</div>'};
+  			/* var previewPanel = {html: '<div>Preview da mostrare passato al costruttore</div>'}; */
+  			var mainPanel = Ext.create('Ext.panel.Panel', {
+  			    id: 'mainPanel',
+  			    width: '100%',
+  			    height: 150,
+  			    html: '<div><b>Div</b> per la preview</div>'
+  			});
+
+  			//var rightYAxisesPanel = {html: '<div>Right Y Axises passato al costruttore</div>'};
+  			var rightYAxisesPanel = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
+  			   viewConfig: {
+  					plugins: {
+  			            ptype: 'gridviewdragdrop',
+  			            containerScroll: true,
+  			            dragGroup: ddGroup1,
+  			            dropGroup: ddGroup1
+  			        },
+  			        listeners: {
+  			        	drop: function(node, data, dropRec, dropPosition) {
+  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
+  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
+  			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  						}
+  					}
+  			    },
+  			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
+  			    columns: [
+  			        {
+  			        	text: 'Colonne destra', 
+  			            dataIndex: 'axisName',
+  			            flex: 1
+  			        }
+  			    ]
+  			});
+
+  			//var bottomXAxisesPanel = {html: '<div>Bottom X Axises passato al costruttore</div>'};
+  			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
+  			    viewConfig: {
+  					plugins: {
+  			            ptype: 'gridviewdragdrop',
+  			            containerScroll: true,
+  			            dragGroup: ddGroup1,
+  			            dropGroup: ddGroup1
+  			        },
+  			        listeners: {
+  			        	drop: function(node, data, dropRec, dropPosition) {
+  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
+  			        		Ext.log('Drag from left to right', 'Dropped ' + data.records[0].get('name') + dropOn);
+  			        		//Ext.Msg.alert('Drag from left to right', 'Dropped ' + data.records[0].get('axisName') + dropOn);
+  						}
+  					}
+  			    },
+  			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
+  			    columns: [
+  			        {
+  			        	text: 'Categorie', 
+  			            dataIndex: 'axisName',
+  			            flex: 1
+  			        }
+  			    ]
+  			});
 
   			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
   			    title: 'Passo 1',
@@ -296,6 +336,7 @@ author:
   			        chartTypeColumnSelector,
   			        stepsTabPanel,
   			    ]
+  			        
   			});
 
  			Ext.log({level: 'info'}, 'CHART: STILL INNNN');
