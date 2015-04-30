@@ -62,10 +62,24 @@
 			<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 		</target>
 	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   AGGIORNAMENTO JAR SBI.DAO							                        -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="sbi.dao.update" description="Updates sbi.dao library from distribution folder (THIS JAR MUST BE EXISTING)">
+		<!-- deletes any previuos qbe.core -->
+		<delete>
+			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/sbi.dao*.jar" />
+		</delete>
+
+		<!-- copies the newly created jar file -->
+		<copy file="${sbi.dao.dir}/dist/sbi.dao-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+
+	</target>	
+	
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COMPILAZIONE							                                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="compile" depends="sbi.utils.update,qbe.core.update" description="compile the source">
+	<target name="compile" depends="sbi.utils.update,qbe.core.update,sbi.dao.update" description="compile the source">
 		<!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
 		<javac srcdir="${src}" destdir="${build}/${webapp_name}/WEB-INF/classes" debug="on" encoding="${encoding}">
 			<classpath refid="web.classpath" />
