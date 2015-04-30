@@ -185,7 +185,7 @@ author:
   							text: 'Custom name (Y)',
   							dataIndex: 'axisName',
   							flex: 12,
-  							sortable: true,
+  							sortable: false,
   						},
   						{
   							text: '',
@@ -196,6 +196,7 @@ author:
   								xtype: 'combo',
   								store: [
   									'AVG',
+  									'COUNT',
   									'MAX',
   									'MIN',
   									'SUM'
@@ -277,10 +278,10 @@ author:
 
   			var columnsStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
   				data: [
-  			        { axisName : 'Serie 1', axisType: 'MEASURE', groupingFunction: 'SUM'},
-  					{ axisName : 'Serie 2', axisType: 'MEASURE', groupingFunction: 'AVG'},
-  					{ axisName : 'Serie 3', axisType: 'MEASURE', groupingFunction: 'MAX'},
-  					{ axisName : 'Serie 4', axisType: 'MEASURE', groupingFunction: 'MIN'}
+  			        { axisName : 'Vendite', axisType: 'MEASURE', groupingFunction: ''},
+  					{ axisName : 'Ricavi', axisType: 'MEASURE', groupingFunction: ''},
+  					{ axisName : 'Costi', axisType: 'MEASURE', groupingFunction: ''},
+  					{ axisName : 'Acquisti', axisType: 'MEASURE', groupingFunction: ''}
   				],
   				sorters: [{
   			        property: 'axisName',
@@ -289,8 +290,15 @@ author:
   			});
   			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
   				data: [
-  			        { axisName : 'Categoria 1', axisType: 'ATTRIBUTE'},
-  			        { axisName : 'Categoria 2', axisType: 'ATTRIBUTE'}
+  	  			        { axisName : 'Anno', axisType: 'ATTRIBUTE'},
+  	  			        { axisName : 'Mese', axisType: 'ATTRIBUTE'},
+  	  			        { axisName : 'Giorno', axisType: 'ATTRIBUTE'},
+  	  			        
+  	  			        { axisName : 'Stato', axisType: 'ATTRIBUTE'},
+  	  			        { axisName : 'Regione', axisType: 'ATTRIBUTE'},
+  			        	{ axisName : 'Provincia', axisType: 'ATTRIBUTE'},
+  	  			        { axisName : 'Comune', axisType: 'ATTRIBUTE'}
+  			        	
   				],
   				sorters: [{
   			        property: 'axisName',
@@ -394,9 +402,8 @@ author:
 
   			var mainPanel = Ext.create('Ext.panel.Panel', {
   			    id: 'mainPanel',
-  			    width: 150,
-  			    height: 150,
-  			    html: '<div><b>Div</b> per la preview</div>'
+  			    height: 300,
+  			    html: '<div style="text-align:center">PREVIEW</div>'
   			});
 
   			var rightYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
@@ -428,7 +435,7 @@ author:
   			        {
   			        	text: 'Categorie', 
   			            dataIndex: 'axisName',
-  						sortable: true,
+  						sortable: false,
   			            flex: 10
   			        },
   					{
