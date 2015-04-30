@@ -149,20 +149,20 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 	<target name="production" depends="create-production">
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeAthenaChartEngineJS5.jspf">
 			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
 			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
 		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeAthenaChartEngineJS5.jspf">
 			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
 			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
 		</replace>
 
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeAthenaChartEngineJS5.jspf">
 			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
 			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
 		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiChartJS.jspf">
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeAthenaChartEngineJS5.jspf">
 			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
 			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
 		</replace>
@@ -177,25 +177,17 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/chart-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-				<file name='./spagobi/commons/Settings.js' />
-				<file name='./spagobi/overrides/overrides.js' />
-
-				<file name='./spagobi/exception/ExceptionHandler.js' />
-				<file name='./spagobi/service/ServiceRegistry.js' />
-
-				<file name='./spagobi/commons/Format.js' />
-				<file name='./spagobi/commons/Utils.js' />
-
-				<file name='./spagobi/formats/LocaleUtils.js' />
-
-
-				<file name='./spagobi/data/Model.js' />
-				<file name='./spagobi/data/Store.js' />
-				<file name='./spagobi/data/StoreManager.js' />
-
-				<file name='./spagobi/extJSChart/ExtJSGenericChartPanel.js' />
-				<file name='./spagobi/extJSChart/ExtJSChartPanel.js' />
-
+				<file name='./src/ext5/sbi/chart/designer/AxisesContainerModel.js' />
+				<file name='./src/ext5/sbi/chart/designer/AxisesContainerStore.js' />
+				<file name='./src/ext5/sbi/chart/designer/AxisesPicker.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartColumnsContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartStructure.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' />
+				<file name='./src/ext5/sbi/chart/rest/WebService.js' />
+				<file name='./src/ext5/sbi/chart/rest/WebServiceManager.js' />
+				<file name='./src/ext5/sbi/chart/rest/WebServiceManagerFactory.js' />
+				
 			</filelist>
 
 		</concat>
