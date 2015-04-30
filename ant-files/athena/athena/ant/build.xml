@@ -683,7 +683,7 @@
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
-				<file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" />
+				<!--file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" /-->
 				<file name="./src/ext4/sbi/tools/dataset/QbeDataSetsWizard.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DatasetMetadataMainPage.js" />
 				<file name="./src/ext4/sbi/tools/dataset/GeoBIDatasetFieldMetadata.js" />
