@@ -644,7 +644,7 @@
 		<!--
 		<ant dir="../SpagoBIConsoleEngine/ant" target="package"/>
 		-->
-		<ant dir="../AthenaChartEngine/ant" target="package"/>
+		<ant dir="../athenachartengine/ant" target="package"/>
 		<!--
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
 		-->
