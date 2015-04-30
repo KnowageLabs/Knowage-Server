@@ -572,6 +572,7 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
         width: 850,
     },
     constructor: function(config) {
+    	this.title = config.title && config.title != null ? config.title: this.title;
         this.callParent(config);
         var general = Ext.create('Sbi.chart.designer.ChartConfigurationGeneral');
 		var sub = Ext.create('Sbi.chart.designer.ChartConfigurationSub');
