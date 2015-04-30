@@ -1,20 +1,18 @@
 Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
     extend: 'Ext.grid.Panel',
-
+	alternateClassName: ['ChartColumnsContainer'],
 	requires: [
-        'Ext.grid',
         'Sbi.chart.designer.AxisesContainerStore',
         'Sbi.chart.designer.AxisesContainerModel'
     ],
-    
-    //width: '100%',
-    
+	statics: {
+        idseed: 1,
+	},
     config:{
-		minHeight: 200
+		minHeight: 150,
+		width: '100%',
     },
-    
-    model: Sbi.chart.designer.AxisesContainerModel,
-	    
+    model: Sbi.chart.designer.AxisesContainerModel,  
     columns: [
         {
         	text: 'Nome colonna', 
@@ -23,8 +21,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
             flex: 1
         }
     ],
-
     enableDragDrop: true,
-    
-    margin: '0 5 5 0'	
+    enableColumnHide:false,
+    margin: '0 5 0 0'	
 });

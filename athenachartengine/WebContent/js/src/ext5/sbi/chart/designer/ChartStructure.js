@@ -1,60 +1,99 @@
 Ext.define('Sbi.chart.designer.ChartStructure', {
     extend: 'Ext.panel.Panel',
+    xtype: 'layout-column',
     requires: [
-        'Ext.layout.container.Table'
+        'Ext.layout.container.Column'
     ],
-
+	layout: 'column',
     config :
     {
         title : 'Default custom Title',
-        leftYAxisesPanel : {
-            html: '<div>Left Y Axises</div>',
-        },
-        previewPanel : {
-            html: '<div>Preview da mostrare</div>',
-        },
-        rightYAxisesPanel : {
-            html: '<div>Right Y Axises</div>',
-        },
-        bottomXAxisesPanel : {
-        	html: '<div>Bottom X Axises</div>',
-        },
+        leftYAxisesPanel : {html: '<div>Left Y Axises</div>'},
+        previewPanel : {html: '<div>Preview da mostrare</div>'},
+        rightYAxisesPanel : {html: '<div>Right Y Axises</div>'},
+        bottomXAxisesPanel : {html: '<div>Bottom X Axises</div>'}
     },
-
     constructor: function(config) {
         this.callParent(config);
-        
         this.title = config.title && config.title != null ? config.title: this.title;
-
-        this.add(config.leftYAxisesPanel);
-        this.add(config.previewPanel);
-        this.add(config.rightYAxisesPanel);
-        this.add({html: ''});
-        this.add(config.bottomXAxisesPanel);
-        this.add({html: ''});
+				
+		// composizione parte di sinistra
+		var leftPanel = Ext.create('Ext.panel.Panel', {
+			xtype: 'layout-vertical-box',
+			layout: {
+				type: 'vbox',
+				pack: 'start',
+				align: 'stretch'
+			},
+			columnWidth: 0.3,
+		});
+		var leftTopPanel = Ext.create('Ext.Container', {
+			xtype: 'basic-panels',
+			flex: 1,
+		});
+		leftTopPanel.add(config.leftYAxisesPanel);
+		var leftBottomPanel = Ext.create('Ext.Container', {
+			xtype: 'basic-panels',
+			flex: 1,
+		});
+		leftPanel.add(leftTopPanel);
+		leftPanel.add(leftBottomPanel);
+		
+		// composizione parte centrale
+		var centralPanel = Ext.create('Ext.panel.Panel', {
+			xtype: 'layout-vertical-box',
+			layout: {
+				type: 'vbox',
+				pack: 'start',
+				align: 'stretch'
+			},
+			columnWidth: 0.4,
+		});
+		var centralTopPanel = Ext.create('Ext.Container', {
+			xtype: 'basic-panels',
+			flex: 1,
+		});
+		centralTopPanel.add(config.previewPanel);
+		
+		var centralBottomPanel = Ext.create('Ext.Container', {
+			xtype: 'basic-panels',
+			flex: 1,
+		});
+		centralBottomPanel.add(config.bottomXAxisesPanel);
+		
+		centralPanel.add(centralTopPanel);
+		centralPanel.add(centralBottomPanel);		
+		
+		// composizione parte di destra
+		var rightPanel = Ext.create('Ext.panel.Panel', {
+			xtype: 'layout-vertical-box',
+			layout: {
+				type: 'vbox',
+				pack: 'start',
+				align: 'stretch'
+			},
+			columnWidth: 0.3,
+		});
+		var rightTopPanel = Ext.create('Ext.Container', {
+			xtype: 'basic-panels',
+			flex: 1,
+		});
+		rightTopPanel.add(config.rightYAxisesPanel);
+		var rightBottomPanel = Ext.create('Ext.Container', {
+			xtype: 'basic-panels',
+			flex: 1,
+		});
+		rightPanel.add(rightTopPanel);
+		rightPanel.add(rightBottomPanel);
+		
+        this.add(leftPanel);		
+        this.add(centralPanel);		
+        this.add(rightPanel);
     },
 
-    xtype: 'layout-table',
     width: "100%",
-
-    layout: {
-        type: 'table',
-        columns: 3,
-        rows: 2,
-        tableAttrs: {
-            style: {
-                width: '100%',
-            }
-        }
-    },
-
-    scrollable: true,
-
     defaults: {
-        //bodyPadding: '15 20',
         border: true
     },
-
     items: []
-
 });

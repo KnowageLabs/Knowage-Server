@@ -10,8 +10,8 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
         
     config:{
         flex: 1,
-		region: 'south',
-		minHeight: 300
+		margin: '5 0 5 0',
+		minHeight: 150
     },
 	
     model: Sbi.chart.designer.AxisesContainerModel,
@@ -24,6 +24,11 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
             flex: 1
         }
     ],
+
     enableDragDrop: true,
-    margin: '0 0 0 0'
+    
+    enableColumnHide:false,
+    
+    margin: '0 5 0 0'
+    
 });

@@ -9,35 +9,37 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     	region: 'west',
     	chartTypeSelector: {
         	region: 'north',
-        	margin: '5 0 5 0',
+        	margin: '0 0 5 0',
         	minHeight: 200,
         	html: '<p>Chart type selector</p>'
         },
-    	axisesPicker: {
+    	columnsPicker: {
+            region: 'center',
+            margin: '0 0 5 0',
+            minHeight: 200,
+            html: '<p>Columns picker</p>'
+        },
+		categoriesPicker: {
             region: 'south',
-            margin: '5 0 5 0',
+            margin: '0 0 5 0',
             minHeight: 200,
             html: '<p>Axises picker</p>'
         }
     },
-
+    collapsible: true,
 	maxWidth: 250,
-	minWidth: 100,
-	width: 125,
-
+	minWidth: 150,
+	width: 200,
     bodyBorder: true,
-
     defaults: {
-        collapsible: false,
         split: true,
-        bodyPadding: 10
     },
-
     constructor: function(config) {
         this.callParent(config);
 
         this.add(config.chartTypeSelector ? config.chartTypeSelector : this.chartTypeSelector);
-        this.add(config.axisesPicker ? config.axisesPicker : this.axisesPicker);
+        this.add(config.columnsPicker ? config.columnsPicker : this.columnsPicker);
+        this.add(config.categoriesPicker ? config.categoriesPicker : this.categoriesPicker);
     },
     items: [],
 });

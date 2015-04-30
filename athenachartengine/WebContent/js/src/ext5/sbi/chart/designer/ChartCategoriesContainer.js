@@ -1,18 +1,14 @@
 Ext.define('Sbi.chart.designer.ChartCategoriesContainer', {
     extend: 'Ext.grid.Panel',
-
 	requires: [
         'Ext.grid',
         'Sbi.chart.designer.AxisesContainerStore',
         'Sbi.chart.designer.AxisesContainerModel'
     ],
-        
     config:{
 		minHeight: 200
     },
-    
-    model: Sbi.chart.designer.AxisesContainerModel,
-	    
+    model: Sbi.chart.designer.AxisesContainerModel,  
     columns: [
         {
         	text: 'Nome categoria', 
@@ -21,8 +17,7 @@ Ext.define('Sbi.chart.designer.ChartCategoriesContainer', {
             autoSizeColumn: true
         }
     ],
-
     enableDragDrop: true,
-    
-    margin: '0 0 0 0'	
+    enableColumnHide:false,
+    margin: '0 5 0 0'	
 });

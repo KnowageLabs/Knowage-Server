@@ -59,10 +59,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesContainerModel.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesContainerStore.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeStore.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesPicker.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartColumnsContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartAxisesContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartStructure.js' ></script>
 <!-- END-DEBUG -->
 
