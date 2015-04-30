@@ -454,14 +454,16 @@ author:
   			    rightYAxisesPanel: rightYAxisesPanel,
   			    bottomXAxisesPanel: bottomXAxisesPanel
   			});
-
+  			var chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
+  				title: 'Passo 2',
+  			});
   			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
   			    bodyBorder: false,
   			    width: '100%',
   			    region: 'center',
   			    items: [
   			        chartStructure,
-  			        {title: 'Passo 2',},
+  			      	chartConfiguration,
   			        {title: 'Passo 3',},
   			    ]
   			});
