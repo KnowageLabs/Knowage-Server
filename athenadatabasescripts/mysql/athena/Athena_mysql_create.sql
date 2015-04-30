@@ -26,7 +26,7 @@ COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB
 ;
 
---- mapping table between organizations (tenants) and product types
+-- mapping table between organizations (tenants) and product types
 CREATE TABLE `sbi_organization_product_type` (
 	`PRODUCT_TYPE_ID` INT(11) NOT NULL,
 	`ORGANIZATION_ID` INT(11) NOT NULL,
