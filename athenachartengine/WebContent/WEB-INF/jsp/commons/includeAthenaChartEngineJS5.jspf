@@ -67,7 +67,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION 
-<script type="text/javascript" src='/athenachartengine/athenachartengine/js/spagobi/chart-all.js'></script>
+<script type="text/javascript" src='/athenachartengine/js/spagobi/chart-all.js'></script>
 -->
 
 <!-- END-PRODUCTION -->
