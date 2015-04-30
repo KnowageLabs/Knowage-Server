@@ -62,7 +62,8 @@
 	<target name="create-bin.athena.war" depends="create.qbe.core.jar">
 		<ant dir="../athena/ant" target="create-bin.war" />
 	</target>
-	<target name="deploy.athena.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.sbi.oauth.security.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.athena.war">
+	<!--<target name="deploy.athena.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.sbi.oauth.security.jar,create.exo.security.jar,create.xlm.security.jar,create.ldap.security.jar,create.liferay.security.jar,create.athena.war">-->
+	<target name="deploy.athena.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.athena.war">
 		<delete dir="${tomcat.home}/webapps/athena" />
 		<mkdir dir="${tomcat.home}/webapps/athena" />
 		<unzip src="../../../athena/dist/athena.war" dest="${tomcat.home}/webapps/athena" />
@@ -84,7 +85,7 @@
 	</target>
 
 	<target name="create.sbi.utils.jar" >
-		<ant dir="../athenautilsJSON/ant" />
+		<ant dir="../athenautilsjson/ant" />
 		<ant dir="../athenautils/ant" />
 	</target>
 
@@ -96,6 +97,7 @@
 		<ant dir="../athenadao/ant" />
 	</target>
 	
+	<!--
 	<target name="create.sbi.oauth.security.jar" depends="create.sbi.utils.jar,create.sbi.dao.jar">
 		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
 	</target>
@@ -112,7 +114,7 @@
 	<target name="create.ldap.security.jar" >
 		<ant dir="../SpagoBILdapSecurityProvider/ant" />
 	</target>
-
+	-->
 	<target name="create.athenabirtreportengine.war" depends="create.sbi.utils.jar">
 		<ant dir="../athenabirtreportengine/ant" />
 	</target>
@@ -123,6 +125,7 @@
 		<unzip src="../../../athenabirtreportengine/dist/athenabirtreportengine.war" dest="${tomcat.home}/webapps/athenabirtreportengine" />
 	</target>
 
+	<!--
 	<target name="create.SpagoBIGeoEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIGeoEngine/ant" />
 	</target>
@@ -132,7 +135,7 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIGeoEngine" />
 		<unzip src="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" dest="${tomcat.home}/webapps/SpagoBIGeoEngine" />
 	</target>
-
+	 -->
 
 	<target name="create.athenageoreportengine.war" depends="create.sbi.utils.jar">
 		<ant dir="../athenageoreportengine/ant" />
@@ -157,7 +160,7 @@
 		<unzip src="../../../athenacockpitengine/dist/athenacockpitengine.war" dest="${tomcat.home}/webapps/athenacockpitengine" />
 	</target>
 
-
+<!--
 
 	<target name="create.SpagoBIJasperReportEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIJasperReportEngine/ant" />
@@ -178,7 +181,7 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
 		<unzip src="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" dest="${tomcat.home}/webapps/SpagoBIJPivotEngine" />
 	</target>
-
+-->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -218,7 +221,7 @@
 		<mkdir dir="${tomcat.home}/webapps/athenadataminingengine" />
 		<unzip src="../../../athenadataminingengine/dist/athenadataminingengine.war" dest="${tomcat.home}/webapps/athenadataminingengine" />
 	</target>
-
+<!--
 	<target name="create.SpagoBIAccessibilityEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIAccessibilityEngine/ant" />
 	</target>
@@ -228,7 +231,7 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
 		<unzip src="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" dest="${tomcat.home}/webapps/SpagoBIAccessibilityEngine" />
 	</target>
-
+-->
 	<target name="create.athenacommonjengine.war" depends="create.sbi.utils.jar">
 		<ant dir="../athenacommonjengine/ant" />
 	</target>
@@ -238,7 +241,7 @@
 		<mkdir dir="${tomcat.home}/webapps/athenacommonjengine" />
 		<unzip src="../../../athenacommonjengine/dist/athenacommonjengine.war" dest="${tomcat.home}/webapps/athenacommonjengine" />
 	</target>
-
+<!--
 	<target name="create.SpagoBIConsoleEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIConsoleEngine/ant" />
 	</target>
@@ -249,19 +252,20 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 		<unzip src="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" dest="${tomcat.home}/webapps/SpagoBIConsoleEngine" />
 	</target>
-
-	<target name="create.AthenaChartEngine.war" depends="create.sbi.utils.jar">
-		<ant dir="../AthenaChartEngine/ant" />
+-->
+	<target name="create.athenachartengine.war" depends="create.sbi.utils.jar">
+		<ant dir="../athenachartengine/ant" />
 	</target>
-	<target name="deploy.AthenaChartEngine.war" depends="create.sbi.utils.jar,create.AthenaChartEngine.war">
-		<delete dir="${tomcat.home}/work/Catalina/localhost/AthenaChartEngine" />
-		<delete dir="${tomcat.home}/webapps/AthenaChartEngine" />
-		<mkdir dir="${tomcat.home}/webapps/AthenaChartEngine" />
-		<unzip src="../../../AthenaChartEngine/dist/AthenaChartEngine.war" dest="${tomcat.home}/webapps/AthenaChartEngine" />
+	<target name="deploy.athenachartengine.war" depends="create.sbi.utils.jar,create.athenachartengine.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/athenachartengine" />
+		<delete dir="${tomcat.home}/webapps/athenachartengine" />
+		<mkdir dir="${tomcat.home}/webapps/athenachartengine" />
+		<unzip src="../../../athenachartengine/dist/athenachartengine.war" dest="${tomcat.home}/webapps/athenachartengine" />
 	</target>
 
 
 	<!-- MOBILE ENGINE -->
+<!--
 	<target name="create.SpagoBIMobileEngine.war" depends="create.sbi.utils.jar,create.sbi.oauth.security.jar,create.athena.war">
 		<ant dir="../SpagoBIMobileEngine/ant" />
 	</target>
@@ -270,7 +274,7 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIMobileEngine" />
 		<unzip src="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" dest="${tomcat.home}/webapps/SpagoBIMobileEngine" />
 	</target>
-
+-->
 	<!-- NETWORK ENGINE -->
 	<target name="create.athenanetworkengine.war" depends="create.sbi.utils.jar,create.athena.war">
 		<ant dir="../athenanetworkengine/ant" />
@@ -282,7 +286,7 @@
 	</target>
 	
 	<!-- WHATIF ENGINE -->
-
+<!--
 	<target name="create.SpagoBIWhatIfEngine.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBIWhatIfEngine/ant" />
 	</target>
@@ -292,11 +296,11 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
 		<unzip src="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" dest="${tomcat.home}/webapps/SpagoBIWhatIfEngine" />
 	</target>
-	
+-->	
 	
 	
 	<!-- SOCIAL ENGINE -->
-
+<!--
 	<target name="create.SpagoBISocialAnalysis.war" depends="create.sbi.utils.jar">
 		<ant dir="../SpagoBISocialAnalysis/ant" />
 	</target>
@@ -306,7 +310,7 @@
 		<mkdir dir="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
 		<unzip src="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" dest="${tomcat.home}/webapps/SpagoBISocialAnalysis" />
 	</target>
-
+-->
 
 	<!--   TO BE EXECUTED FIRST FOR ALL IN ONE DEMO WARS CREATION  -->
 	<target name="create.all" depends="clean.all">
@@ -323,13 +327,13 @@
 		<antcall target="create.athenacommonjengine.war" />
 		<copy file="../../../athenacommonjengine/dist/athenacommonjengine.war" 
         todir="../../../dist" overwrite="true" />
-
+<!--
 		<antcall target="create.SpagoBIConsoleEngine.war" />
 		<copy file="../../../SpagoBIConsoleEngine/dist/SpagoBIConsoleEngine.war" 
         todir="../../../dist" overwrite="true" />
-
-		<antcall target="create.AthenaChartEngine.war" />
-		<copy file="../../../AthenaChartEngine/dist/AthenaChartEngine.war" 
+-->
+		<antcall target="create.athenachartengine.war" />
+		<copy file="../../../athenachartengine/dist/athenachartengine.war" 
         todir="../../../dist" overwrite="true" />
 
 		<antcall target="create.athena.war" />
@@ -340,11 +344,11 @@
 		<antcall target="create.athenabirtreportengine.war" />
 		<copy file="../../../athenabirtreportengine/dist/athenabirtreportengine.war" 
         todir="../../../dist" overwrite="true" />
-
+<!--
 		<antcall target="create.SpagoBIGeoEngine.war" />
 		<copy file="../../../SpagoBIGeoEngine/dist/SpagoBIGeoEngine.war" 
         todir="../../../dist" overwrite="true" />
-
+-->
 		<antcall target="create.athenageoreportengine.war" />
 		<copy file="../../../athenageoreportengine/dist/athenageoreportengine.war" todir="../../../dist" overwrite="true" />
 
@@ -358,7 +362,7 @@
 		<antcall target="create.athenadataminingengine.war" />
 		<copy file="../../../athenadataminingengine/dist/athenadataminingengine.war" 
         todir="../../../dist" overwrite="true" />
-
+<!--
 		<antcall target="create.SpagoBIJasperReportEngine.war" />
 		<copy file="../../../SpagoBIJasperReportEngine/dist/SpagoBIJasperReportEngine.war" 
         todir="../../../dist" overwrite="true" />
@@ -366,12 +370,12 @@
 		<antcall target="create.SpagoBIJPivotEngine.war" />
 		<copy file="../../../SpagoBIJPivotEngine/dist/SpagoBIJPivotEngine.war" 
         todir="../../../dist" overwrite="true" />
-
+-->
 
 		<antcall target="create.athenaqbeengine.war" />
 		<copy file="../../../athenaqbeengine/dist/athenaqbeengine.war" 
         todir="../../../dist" overwrite="true" />
-		
+<!--		
 		<antcall target="create.SpagoBIAccessibilityEngine.war" />
 		<copy file="../../../SpagoBIAccessibilityEngine/dist/SpagoBIAccessibilityEngine.war" 
         todir="../../../dist" overwrite="true" />
@@ -379,11 +383,11 @@
 		<antcall target="create.SpagoBIMobileEngine.war" />
 		<copy file="../../../SpagoBIMobileEngine/dist/SpagoBIMobileEngine.war" 
   	        todir="../../../dist" overwrite="true" />
-
+-->
 		<antcall target="create.athenanetworkengine.war" />
 		<copy file="../../../athenanetworkengine/dist/athenanetworkengine.war" 
   	        todir="../../../dist" overwrite="true" />
-		
+<!--		
 		<antcall target="create.SpagoBIWhatIfEngine.war" />
 		<copy file="../../../SpagoBIWhatIfEngine/dist/SpagoBIWhatIfEngine.war" 
         todir="../../../dist" overwrite="true" />
@@ -391,7 +395,7 @@
 		<antcall target="create.SpagoBISocialAnalysis.war" />
 		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
         todir="../../../dist" overwrite="true" />
-
+-->
 	</target>
 
 	<!-- NEW: 22/05/2012 -->
@@ -401,11 +405,13 @@
 		<antcall target="create.sbi.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
 		<antcall target="create.sbi.dao.jar" />
+		<!--
 		<antcall target="create.sbi.oauth.security.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
 		<antcall target="create.ldap.security.jar" />
+		-->
 		<antcall target="create-bin.athena.war" />
 		<copy file="../../../athena/dist/athena.war" 
 	        todir="../../../dist" overwrite="true" />
@@ -418,22 +424,22 @@
 	<target name="deploy.all" >
 		<antcall target="deploy.athena.war" />
 		<antcall target="deploy.athenabirtreportengine.war" />
-		<antcall target="deploy.SpagoBIGeoEngine.war" />
+		<!-- antcall target="deploy.SpagoBIGeoEngine.war" /-->
 		<antcall target="deploy.athenageoreportengine.war" />
 		<antcall target="deploy.athenacockpitengine.war" />
-		<antcall target="deploy.SpagoBIJasperReportEngine.war" />
-		<antcall target="deploy.SpagoBIJPivotEngine.war" />
+		<!-- antcall target="deploy.SpagoBIJasperReportEngine.war" /-->
+		<!-- antcall target="deploy.SpagoBIJPivotEngine.war" / -->
 		<antcall target="deploy.athenaqbeengine.war" />
 		<antcall target="deploy.athenatalendengine.war" />
 		<antcall target="deploy.athenadataminingengine.war" />
-		<antcall target="deploy.SpagoBIAccessibilityEngine.war" />
+		<!-- antcall target="deploy.SpagoBIAccessibilityEngine.war" /-->
 		<antcall target="deploy.athenacommonjengine.war" />
-		<antcall target="deploy.SpagoBIConsoleEngine.war" />
-		<antcall target="deploy.AthenaChartEngine.war" />
-		<antcall target="deploy.SpagoBIMobileEngine.war" />
+		<!-- antcall target="deploy.SpagoBIConsoleEngine.war" /-->
+		<antcall target="deploy.athenachartengine.war" />
+		<!-- antcall target="deploy.SpagoBIMobileEngine.war" /-->
 		<antcall target="deploy.athenanetworkengine.war" />
-		<antcall target="deploy.SpagoBIWhatIfEngine.war" />
-		<antcall target="deploy.SpagoBISocialAnalysis.war" />
+		<!-- antcall target="deploy.SpagoBIWhatIfEngine.war" /-->
+		<!-- antcall target="deploy.SpagoBISocialAnalysis.war" /-->
 
 	</target>
 
@@ -452,6 +458,7 @@
 		<delete dir="../../../qbecore/dist"/>
 		<delete dir="../../../athenabirtreportengine/ant-build"/>
 		<delete dir="../../../athenabirtreportengine/dist"/>
+		<!--
 		<delete dir="../../../SpagoBIOAuth2SecurityProvider/ant-build"/>
 		<delete dir="../../../SpagoBIOAuth2SecurityProvider/dist"/>
 		<delete dir="../../../SpagoBIExoSecurityProvider/ant-build"/>
@@ -464,14 +471,17 @@
 		<delete dir="../../../SpagoBILdapSecurityProvider/dist"/>
 		<delete dir="../../../SpagoBIGeoEngine/ant-build"/>
 		<delete dir="../../../SpagoBIGeoEngine/dist"/>
+		-->
 		<delete dir="../../../athenageoreportengine/ant-build"/>
 		<delete dir="../../../athenacockpitengine/ant-build"/>
 		<delete dir="../../../athenageoreportengine/dist"/>
 		<delete dir="../../../athenacockpitengine/dist"/>
+		<!--
 		<delete dir="../../../SpagoBIJasperReportEngine/ant-build"/>
 		<delete dir="../../../SpagoBIJasperReportEngine/dist"/>
 		<delete dir="../../../SpagoBIJPivotEngine/ant-build"/>
 		<delete dir="../../../SpagoBIJPivotEngine/dist"/>
+		-->
 		<delete dir="../../../athenaqbeengine/ant-build"/>
 		<delete dir="../../../athenaqbeengine/dist"/>
 		<delete dir="../../../athenatalendengine/ant-build"/>
@@ -486,24 +496,31 @@
 		<delete dir="../../../athenautilsJSON/dist"/>
 		<delete dir="../../../athenadataminingengine/ant-build"/>
 		<delete dir="../../../athenadataminingengine/dist"/>
+		<!--
 		<delete dir="../../../SpagoBIAccessibilityEngine/ant-build"/>
 		<delete dir="../../../SpagoBIAccessibilityEngine/dist"/>
+		-->
 		<delete dir="../../../athenacommonjengine/ant-build"/>
 		<delete dir="../../../athenacommonjengine/dist"/>
+		<!--
 		<delete dir="../../../SpagoBIConsoleEngine/ant-build"/>
 		<delete dir="../../../SpagoBIConsoleEngine/dist"/>
-		<delete dir="../../../AthenaChartEngine/ant-build"/>
-		<delete dir="../../../AthenaChartEngine/dist"/>
+		-->
+		<delete dir="../../../athenachartengine/ant-build"/>
+		<delete dir="../../../athenachartengine/dist"/>
+		<!--
 		<delete dir="../../../SpagoBIMobileEngine/ant-build"/>
 		<delete dir="../../../SpagoBIMobileEngine/dist"/>
+		-->
 		<delete dir="../../../athenanetworkengine/ant-build"/>
 		<delete dir="../../../athenanetworkengine/dist"/>
-
+		<!--
 		<delete dir="../../../SpagoBIWhatIfEngine/ant-build"/>
 		<delete dir="../../../SpagoBIWhatIfEngine/dist"/>
 		
 		<delete dir="../../../SpagoBISocialAnalysis/ant-build"/>
 		<delete dir="../../../SpagoBISocialAnalysis/dist"/>
+		-->
 
 	</target>
 
@@ -565,13 +582,17 @@
 	<target name="javadoc" >
 		<ant dir="../qbecore/ant" target="javadoc"/>
 		<ant dir="../athenabirtreportengine/ant" target="javadoc"/>
+		<!--
 		<ant dir="../SpagoBIExoSecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBIGeoEngine/ant" target="javadoc"/>
+		-->
 		<ant dir="../athenageoreportengine/ant" target="javadoc"/>
 		<ant dir="../athenacockpitengine/ant" target="javadoc"/>
+		<!-- 
 		<ant dir="../SpagoBIJasperReportEngine/ant" target="javadoc"/>
 		<ant dir="../SpagoBIJPivotEngine/ant" target="javadoc"/>
+		-->
 		<ant dir="../athena/ant" target="javadoc"/>
 		<ant dir="../athenaqbeengine/ant" target="javadoc"/>
 		<ant dir="../athenatalendengine/ant" target="javadoc"/>
@@ -579,42 +600,59 @@
 		<ant dir="../athenautils/ant" target="javadoc"/>
 		<ant dir="../athenautilsJSON/ant" target="javadoc"/>
 		<ant dir="../athenadataminingengine/ant" target="javadoc"/>
+		<!-- 
 		<ant dir="../SpagoBIXmlSecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBILiferaySecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBILdapSecurityProvider/ant" target="javadoc"/>
 		<ant dir="../SpagoBIAccessibilityEngine/ant" target="javadoc"/>
+		-->
 		<ant dir="../athenacommonjengine/ant" target="javadoc"/>
+		<!--
 		<ant dir="../SpagoBIConsoleEngine/ant" target="javadoc"/>
-		<ant dir="../AthenaChartEngine/ant" target="javadoc"/>
+		-->
+		<ant dir="../athenachartengine/ant" target="javadoc"/>
+		<!-- 
 		<ant dir="../SpagoBIMobileEngine/ant" target="javadoc"/>
+		-->
 		<ant dir="../athenanetworkengine/ant" target="javadoc"/>
-
+		<!--
 		<ant dir="../SpagoBIWhatIfEngine/ant" target="javadoc"/>
+		-->
 
 	</target>
 
 	<target name="package.all" >
 		<ant dir="../athena/ant" target="package"/>
 		<ant dir="../athenabirtreportengine/ant" target="package"/>
+		<!--
 		<ant dir="../SpagoBIGeoEngine/ant" target="package"/>
+		-->
 		<ant dir="../athenageoreportengine/ant" target="package"/>
 		<ant dir="../athenacockpitengine/ant" target="package"/>
+		<!--
 		<ant dir="../SpagoBIJasperReportEngine/ant" target="package"/>
 		<ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
+		-->
 		<ant dir="../athenaqbeengine/ant" target="package"/>
 		<ant dir="../athenatalendengine/ant" target="package"/>
 		<ant dir="../athenadataminingengine/ant" target="package"/>
+		<!--
 		<ant dir="../SpagoBIDatabaseScripts" target="package"/>
 		<ant dir="../SpagoBIAccessibilityEngine/ant" target="package"/>
+		-->
 		<ant dir="../athenacommonjengine/ant" target="package"/>
+		<!--
 		<ant dir="../SpagoBIConsoleEngine/ant" target="package"/>
+		-->
 		<ant dir="../AthenaChartEngine/ant" target="package"/>
+		<!--
 		<ant dir="../SpagoBIMobileEngine/ant" target="package"/>
+		-->
 		<ant dir="../athenanetworkengine/ant" target="package"/>
-
+		<!--
 		<ant dir="../SpagoBIWhatIfEngine/ant" target="package"/>
-
 		<ant dir="../SpagoBISocialAnalysis/ant" target="package"/>
+		-->
 		
 	</target>
 

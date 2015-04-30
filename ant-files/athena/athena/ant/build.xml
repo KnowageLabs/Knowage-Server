@@ -78,7 +78,7 @@
 		<!-- copies the newly created jar file -->
 		<copy file="${sbiutils.json.dir}/dist/sbi.utils.json-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 		<copy file="${sbiutils.dir}/dist/sbi.utils-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
-
+	<!--
 		<antcall target="copy.sbi.security.liferay" />
 		<antcall target="copy.sbi.security.OAuth2" />
 		<antcall target="copy.sbi.security.exo" />
@@ -90,49 +90,56 @@
   	<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
   	<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+  	
+  	-->
 
 	</target>
 	
 	<!-- liferay -->
+	<!--
 	<target name="check.sbi.security.liferay" unless="sbi.security.liferay.file.exists">
 		<available property="sbi.security.liferay.file.exists" file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.liferay" depends="check.sbi.security.liferay" if="${sbi.security.liferay.file.exists}">
 		<copy file="${liferay.security.dir}/dist/sbi.security.liferay-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
-
+	-->	
 	<!-- OAuth2 -->
+	<!--
 	<target name="check.sbi.security.OAuth2" unless="sbi.security.OAuth2.file.exists">
 		<available property="sbi.security.OAuth2.file.exists" file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.OAuth2" depends="check.sbi.security.OAuth2" if="${sbi.security.OAuth2.file.exists}">
 		<copy file="${OAuth2.security.dir}/dist/sbi.security.OAuth2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
-
+	-->	
 	<!-- exo -->
+	<!--
 	<target name="check.sbi.security.exo" unless="sbi.security.exo.file.exists">
 		<available property="sbi.security.exo.file.exists" file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.exo" depends="check.sbi.security.exo" if="${sbi.security.exo.file.exists}">
 		<copy file="${exo.security.dir}/dist/sbi.security.exo-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
-
+	-->	
 	<!-- xml -->
+	<!--
 	<target name="check.sbi.security.xml" unless="sbi.security.xml.file.exists">
 		<available property="sbi.security.xml.file.exists" file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.xml" depends="check.sbi.security.xml" if="${sbi.security.xml.file.exists}">
 		<copy file="${xml.security.dir}/dist/sbi.security.xml-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
-
+	-->	
 	<!-- ldap -->
+	<!--
 	<target name="check.sbi.security.ldap" unless="sbi.security.ldap.file.exists">
 		<available property="sbi.security.ldap.file.exists" file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" />
 	</target>
 	<target name="copy.sbi.security.ldap" depends="check.sbi.security.ldap" if="${sbi.security.ldap.file.exists}">
 		<copy file="${ldap.security.dir}/dist/sbi.security.ldap-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
-	
+	-->	
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   AGGIORNAMENTO JAR SBI.DAO							                                  -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -523,6 +530,7 @@
 				<file name="./src/ext/sbi/udp/ManageUdpValues.js" />
 
 				<file name="./src/ext/sbi/profiling/ManageAttributes.js" />
+				<file name="./src/ext/sbi/profiling/AuthorizationsMapping.js" />
 				<file name="./src/ext/sbi/profiling/ManageRoles.js" />
 				<file name="./src/ext/sbi/profiling/ManageUsers.js" />
 				<file name="./src/ext/sbi/alarm/ManageContacts.js" />
@@ -816,7 +824,7 @@
 	</target>
 
 	<target name="package">
-		<zip destfile="../../../../dist/SpagoBI-bin-${project.version}_${project.date}.zip" basedir="${dist}" />
+		<zip destfile="../../../../dist/Athena-bin-${project.version}_${project.date}.zip" basedir="${dist}" />
 	</target>
 
 	<target name="makeDist">
