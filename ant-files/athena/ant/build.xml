@@ -149,7 +149,7 @@
 
 
 
-	<target name="create.athenacockpitengine.war" depends="create.sbi.utils.jar">
+	<target name="create.athenacockpitengine.war" depends="create.sbi.utils.jar,create.sbi.dao.jar,create.qbe.core.jar">
 		<ant dir="../athenacockpitengine/ant" />
 	</target>
 
