@@ -72,7 +72,7 @@
 	<chartConfiguration>
 		<chart type="bar" 		name="highcharts414" 	vmName="column_chart.vm" />
 		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm" />
-		<chart type="line" 		name="highcharts414" 	/>		
+		<chart type="line" 		name="highcharts414" 	vmName="column_chart.vm" />
 		<chart type="pie"		name="highcharts414" 	/>
 		<chart type="gauge" 	name="highcharts414" 	/>
 		<chart type="sunburst"	name="d3js244"  		/>

@@ -28,7 +28,9 @@
     chart: {
     	#set($chartTypeToPrint = 'column')
     	#if($chartType == 'bar')
-    		#set($chartTypeToPrint = $chartType)
+    		#set($chartTypeToPrint = 'bar')
+    	#elseif($chartType == 'line')
+    		#set($chartTypeToPrint = 'line')
     	#end
         type: '$chartTypeToPrint',
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
@@ -186,7 +188,7 @@
         	minorGridLineDashStyle: '$convertedMinorTpeline',
         	
         	#if($yAxis.position == 'right')
-        	opposite: true,  ## prints the axis in right position
+        	opposite: true,
         	#end
         	
         	stackLabels: {
@@ -211,7 +213,6 @@
     },
     plotOptions: {
         column: {
-        	##stacking: 'normal', ## 'percent'
             dataLabels: {
                 enabled: true,
                 color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
