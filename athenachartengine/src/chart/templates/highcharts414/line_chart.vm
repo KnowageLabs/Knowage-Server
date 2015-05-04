@@ -14,8 +14,12 @@
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
 #set($seriesMap = {}) ## conversion series metadata to map object
-#foreach($serie in $series)
-	#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+#if($series.class.name == 'java.util.LinkedHashMap')
+	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
+#else
+	#foreach($serie in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+	#end
 #end
 
 {
