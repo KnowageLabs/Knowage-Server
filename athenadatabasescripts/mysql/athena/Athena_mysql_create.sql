@@ -24,7 +24,6 @@ CREATE TABLE `SBI_PRODUCT_TYPE` (
 )
 COLLATE='LATIN1_SWEDISH_CI'
 ENGINE=INNODB
-
 ;
 
 -- mapping table between organizations (tenants) and product types
