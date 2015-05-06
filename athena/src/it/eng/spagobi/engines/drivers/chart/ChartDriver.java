@@ -144,8 +144,23 @@ public class ChartDriver extends GenericDriver {
 	 */
 	@Override
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
-		logger.warn("Function not implemented");
-		throw new InvalidOperationRequest();
+		logger.debug("IN");
+		BIObject obj = null;
+		try {
+			obj = (BIObject) biobject;
+		} catch (ClassCastException cce) {
+			logger.error("The input object is not a BIObject type", cce);
+			return null;
+		}
+		Engine engine = obj.getEngine();
+		String url = engine.getUrl();
+		HashMap parameters = new HashMap();
+		String documentId = obj.getId().toString();
+		parameters.put("document", documentId);
+		applySecurity(parameters, profile);
+		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
+		logger.debug("OUT");
+		return engineURL;
 	}
 
 	private final static String PARAM_SERVICE_NAME = "ACTION_NAME";
