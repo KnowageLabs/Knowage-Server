@@ -39,15 +39,14 @@ Ext.define('Sbi.chart.rest.WebServiceManager', {
     	var ws = this.getWebServices().get(serviceName);
 
     	var serviceUrl = ws.getUrl();
-    	Ext.log(serviceUrl);
-    	Ext.log(urlParams);
+    	Ext.log({level: 'info'}, serviceUrl);
+    	Ext.log({level: 'info'}, urlParams);
     	if(urlParams && urlParams.length > 0 && urlParams instanceof Array) {
     		urlParams.forEach(function(element, index, array){
-    			Ext.log('PIPpOOOOOOOOOOOO'+index);
     			serviceUrl = serviceUrl.replace('{'+index+'}', element);
     		});
     	}
-    	Ext.log(serviceUrl);
+    	Ext.log({level: 'info'}, serviceUrl);
     	
         if (ws != undefined) {
             Ext.Ajax.request({
