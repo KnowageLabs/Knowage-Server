@@ -292,10 +292,10 @@ author:
   			columnsStore.on('dataReady', function(jsonData) {
 				var jsonDataObj = Ext.JSON.decode(jsonData);
 				var theData = [];
-  				Ext.each(jsonDataObj.metaData.fields, function(field, index){
-  					if(field != 'recNo' && field.type != 'string'){
+  				Ext.each(jsonDataObj.results, function(field, index){
+  					if(field != 'recNo' && field.nature == 'measure'){
   						theData.push({
-  							axisName : field.header,
+  							axisName : field.alias,
   							axisType: 'ATTRIBUTE'
   						});
   					}
@@ -305,10 +305,10 @@ author:
   			categoriesStore.on('dataReady', function(jsonData) {
   				var jsonDataObj = Ext.JSON.decode(jsonData);
 				var theData = [];
-  				Ext.each(jsonDataObj.metaData.fields, function(field, index){
-  					if(field != 'recNo' && field.type == 'string'){
+  				Ext.each(jsonDataObj.results, function(field, index){
+  					if(field != 'recNo' && field.nature == 'attribute'){
   						theData.push({
-  							axisName : field.header,
+  							axisName : field.alias,
   							axisType: 'MEASURE'
   						});
   					}
@@ -318,7 +318,7 @@ author:
   			
   			
   			
-  			coreServiceManager.run('loadData', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
+  			coreServiceManager.run('loadDatasetFields', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
   				columnsStore.fireEvent('dataReady', response.responseText);
   				categoriesStore.fireEvent('dataReady', response.responseText);
 			});
