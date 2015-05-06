@@ -61,7 +61,7 @@ author:
 	String userId;
 	String isTechnicalUser;
 	List<String> includes;
-	//String datasetLabel;
+	String datasetLabel;
 
 	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -69,7 +69,7 @@ author:
 	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 	locale = engineInstance.getLocale();
 	
-	//datasetLabel = engineInstance.getDataSet().getLabel();
+	datasetLabel = engineInstance.getDataSet().getLabel();
 	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
 	environment = request.getParameter("SBI_ENVIRONMENT"); 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
@@ -109,7 +109,7 @@ author:
 <html>
 	<%-- == HEAD ========================================================== --%>
 	<head>
-	   <title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
+	   <title><%=docName.trim().length() > 0? docName: "AthenaChartEngine"%></title>
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS5.jspf" %>
@@ -141,19 +141,17 @@ author:
  			
   			initChartLibrary(mainPanel.id);
   			
+  			--%>
   			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
  			var userId = '<%=userId%>';
  			var hostName = '<%=request.getServerName()%>';
  			var serverPort = '<%=request.getServerPort()%>';
  			var jsonTemplate = '<%=template%>';
  			var datasetLabel  = '<%=datasetLabel%>';
-
+  			
  			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
-  			
-  			--%>
-  			
-  			
+ 			
   			function addToAxisesContainer(id) {
   				var panel = Ext.getCmp(id);
   				var newPanel = createChartColumnsContainer();
@@ -236,7 +234,7 @@ author:
   			var chartTypes = [
   				{
   					name: 'Column chart', 
-  					iconUrl:'https://cdn1.iconfinder.com/data/icons/prettyoffice8/256/Bar-chart.png',
+  					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
   					handler: function(btn){
   						Ext.Msg.alert('Clicked Column chart', 'body text');
   						Ext.log('Clicked Column chart');
@@ -244,19 +242,19 @@ author:
   				},
   				{
   					name: 'Line chart', 
-  					iconUrl:'http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/96/Actions-office-chart-line-icon.png',
+  					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_64x64_ico.png',
   					handler: function(btn){
   						Ext.log('Clicked Line chart');}
   				},
   				{	
   					name: 'Pie chart', 
-  					iconUrl:'http://icons.iconarchive.com/icons/oxygen-icons.org/oxygen/96/Actions-office-chart-pie-icon.png',
+  					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
   					handler: function(btn){
   						Ext.log('Clicked Pie chart');}
   				},
   				{
   					name: 'Bar chart', 
-  					iconUrl:'http://www.iconshock.com/img_jpg/FUTUREXP/business/jpg/256/bar_chart_icon.jpg',
+  					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
   					handler: function(btn){
   						Ext.log('Clicked Pie chart');}
   				}
@@ -277,34 +275,55 @@ author:
   			var ddGroup2 = 'ATTRIBUTE';
 
   			var columnsStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  				data: [
-  			        { axisName : 'Vendite', axisType: 'MEASURE', groupingFunction: ''},
-  					{ axisName : 'Ricavi', axisType: 'MEASURE', groupingFunction: ''},
-  					{ axisName : 'Costi', axisType: 'MEASURE', groupingFunction: ''},
-  					{ axisName : 'Acquisti', axisType: 'MEASURE', groupingFunction: ''}
-  				],
+  				data: [],
   				sorters: [{
   			        property: 'axisName',
   			        direction: 'ASC'
   			    }],
   			});
   			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  				data: [
-  	  			        { axisName : 'Anno', axisType: 'ATTRIBUTE'},
-  	  			        { axisName : 'Mese', axisType: 'ATTRIBUTE'},
-  	  			        { axisName : 'Giorno', axisType: 'ATTRIBUTE'},
-  	  			        
-  	  			        { axisName : 'Stato', axisType: 'ATTRIBUTE'},
-  	  			        { axisName : 'Regione', axisType: 'ATTRIBUTE'},
-  			        	{ axisName : 'Provincia', axisType: 'ATTRIBUTE'},
-  	  			        { axisName : 'Comune', axisType: 'ATTRIBUTE'}
-  			        	
-  				],
+  				data: [],
   				sorters: [{
   			        property: 'axisName',
   			        direction: 'ASC'
-  			    }],
+  			    }]
   			});
+
+  			columnsStore.on('dataReady', function(jsonData) {
+				var jsonDataObj = Ext.JSON.decode(jsonData);
+				var theData = [];
+  				Ext.each(jsonDataObj.metaData.fields, function(field, index){
+  					if(field != 'recNo' && field.type != 'string'){
+  						theData.push({
+  							axisName : field.header,
+  							axisType: 'ATTRIBUTE'
+  						});
+  					}
+  				});
+  				columnsStore.setData(theData);
+  			});
+  			categoriesStore.on('dataReady', function(jsonData) {
+  				var jsonDataObj = Ext.JSON.decode(jsonData);
+				var theData = [];
+  				Ext.each(jsonDataObj.metaData.fields, function(field, index){
+  					if(field != 'recNo' && field.type == 'string'){
+  						theData.push({
+  							axisName : field.header,
+  							axisType: 'MEASURE'
+  						});
+  					}
+  				});
+  				categoriesStore.setData(theData);
+  			});
+  			
+  			
+  			
+  			coreServiceManager.run('loadData', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
+  				columnsStore.fireEvent('dataReady', response.responseText);
+  				categoriesStore.fireEvent('dataReady', response.responseText);
+			});
+  			
+  			
 
   			var columnsPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   			    region: 'center',
