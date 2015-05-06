@@ -1,5 +1,6 @@
 package it.eng.spagobi.engine.util;
 
+import it.eng.spagobi.athenachart.test.DataSetTransformer;
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
 import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
 
@@ -72,11 +73,12 @@ public class ChartEngineUtil {
 
 	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData) {
 		VelocityContext velocityContext = new VelocityContext();
-
+		
 		Map<String, Object> mapTemplate = null;
 		Map<String, Object> mapData = null;
 		try {
 			mapTemplate = convertJsonToMap(jsonToConvert, true);
+			velocityContext.put("datasettransformer", new DataSetTransformer());
 			velocityContext.put("chart", mapTemplate.get("chart")!=null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
 			if (jsonData != null) {
 				mapData = convertJsonToMap(jsonData, false);

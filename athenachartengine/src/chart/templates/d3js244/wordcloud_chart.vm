@@ -1,1 +1,46 @@
-$chart.TITLE.text
+#set($category = $chart.VALUES.CATEGORY)
+#set($chartType = $chart.type)
+#set($font = $chart.style.font)
+#set($padding = $chart.padding)
+#set($dataRows = $data.rows)
+
+
+
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+ #if($dataField.class.name == 'java.util.LinkedHashMap')
+  #set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
+ #end
+#end
+
+#*  
+ For Java class of dataset transformer we need '$dataRows' (raw JSON dataset),
+ '$columnsNeeded' (name of the columns for sequence) and $$dataColumnsMapper (metadata)
+*#
+
+#set($columnsNeeded = {})
+
+#set($columnCouter = 0)
+   
+#foreach($value in $category.COLUMN) 
+ #set($columnsNeeded[$columnCouter] = $value.value)
+ #set($columnCouter = $columnCouter + 1)
+#end
+
+ #set($result = $datasettransformer.toColumn($columnsNeeded,$dataColumnsMapper,$dataRows))
+
+{
+ chart: 
+ {
+  type: '$chartType',
+  font: '$font',
+  padding: '$padding'
+ },
+ 
+ data:
+ [
+  $result
+ ]
+}
