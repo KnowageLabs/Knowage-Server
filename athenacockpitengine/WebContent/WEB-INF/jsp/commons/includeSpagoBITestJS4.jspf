@@ -5,22 +5,22 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 
 <!-- Include COCKPIT stylesheets here: -->
-<link id="theme" rel="styleSheet" href ="/SpagoBICockpitEngine/css/cockpit.css" type="text/css" />
+<link id="theme" rel="styleSheet" href ="/athenacockpitengine/css/cockpit.css" type="text/css" />
 
 
 <!-- Include localized labels  -->
-<!-- script type="text/javascript" src='./SpagoBICockpitEngine/js/spagobi/commons/Settings.js'/></script-->	
+<!-- script type="text/javascript" src='./athenacockpitengine/js/spagobi/commons/Settings.js'/></script-->	
 
 <!-- Include localized labels  -->
-<!-- script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext/sbi/formats/[...locale.getLanguage()...].js'/></script-->
+<!-- script type="text/javascript" src='/athenacockpitengine/js/src/ext/sbi/formats/[...locale.getLanguage()...].js'/></script-->
 
 
 <!-- START-DEBUG -->
 
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/test/HelloWorldPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/test/HelloWorldPanel.js'/></script>
 
 <!-- END-DEBUG -->
  
 <!-- START-PRODUCTION
-<script type="text/javascript" src='/SpagoBICockpitEngine/js/src/ext4/sbi/cockpit-all.js'></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit-all.js'></script>
 END-PRODUCTION -->
