@@ -1,4 +1,4 @@
-Ext.define('Sbi.chart.designer.FontColor', {
+Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 	extend : 'Ext.container.Container',
 	layout : 'hbox',
 	margin: '5 0',

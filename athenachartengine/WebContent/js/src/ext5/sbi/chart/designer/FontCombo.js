@@ -1,18 +1,9 @@
-var fontData = [
-    ['Arial'],
-    ['Times New Roman'],
-    ['Tahoma'],
-    ['Verdana']
-];
-
-var fontStore = Ext.create('Ext.data.ArrayStore', {
-    fields: [{name: 'name'}],
-    data: fontData
-});
-
 Ext.define('Sbi.chart.designer.FontCombo',{
-    extend:'Ext.form.ComboBox', 
-    store: fontStore,
+    extend:'Ext.form.ComboBox',
+    store: {
+        fields: [ 'name' ],
+        data: [ [ 'Arial' ], [ 'Times New Roman' ], [ 'Tahoma' ], [ 'Verdana' ] ]
+    },
     displayField: 'name',
     fieldLabel : 'Carattere',
     tdCls: '',

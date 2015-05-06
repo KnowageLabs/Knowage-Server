@@ -12,17 +12,17 @@ var positionData = [ {
 	value : 'left'
 } ];
 
-var stylePanelLegend = Ext.create('Sbi.chart.designer.StylePopup', {
-    title:'Stile Legenda',
-});
-
 Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
-    id: 'chartLegend',
 	extend : 'Ext.panel.Panel',
-	columnWidth: 0.7,
+	columnWidth : 0.7,
 	title : 'Legenda',
-
+	id : 'page2Legend',
 	bodyPadding : 10,
+	config : {
+		stylePanelLegend : Ext.create('Sbi.chart.designer.StylePopup', {
+		    title:'Stile Legenda',
+		}),
+	},
     items : [
         {
             xtype : 'fieldcontainer',
@@ -58,9 +58,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                 displayField : 'name',
                 valueField : 'value',
                 store : {
-                    fields : ['name', 'value'],
-                    data : layoutData
-                }
+    				fields : [ 'name', 'value' ],
+    				data : [ {
+    					name : 'Verticale',
+    					value : 'v'
+    				}, {
+    					name : 'Orizzontale',
+    					value : 'h'
+    				} ]
+    			}
             }]
             
         },  {            
@@ -90,7 +96,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                 xtype : 'button',
                 text: 'St',
                 handler: function(){
-                    stylePanelLegend.show()
+            		Ext.getCmp('page2Legend').getStylePanelLegend().show();
                 }
             }]
         }

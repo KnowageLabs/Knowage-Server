@@ -1,19 +1,18 @@
-var alignData = [ {
-	name : 'Destra',
-	value : 'dx'
-}, {
-	name : 'Sinistra',
-	value : 'sx'
-}, {
-	name : 'Centro',
-	value : 'cx'
-} ];
-
 Ext.define('Sbi.chart.designer.FontAlignCombo', {
-    extend:'Ext.form.ComboBox',
+    extend :'Ext.form.ComboBox',
+    
     store: {
         fields: [ 'name','value' ],
-        data: alignData
+        data: [ {
+			name : 'Destra',
+			value : 'dx'
+		}, {
+			name : 'Sinistra',
+			value : 'sx'
+		}, {
+			name : 'Centro',
+			value : 'cx'
+		} ]
     },
     editable : false,
     displayField: 'name',

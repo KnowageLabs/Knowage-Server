@@ -6,7 +6,7 @@ var paletteGrid = Ext.create('Ext.grid.Panel', {
     store: paletteStore,
     width: 100,
     margin:'0 10 0 0',
-    
+    multiSelect: true,
     columns: [{
         text     : 'Colore',
         flex     : 1,
@@ -49,7 +49,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
                 }),                 
             },{
                 xtype : 'button',
-                text: '-',              
+                text: '-',
+                handler: function(){
+                    var selectedRows = paletteGrid.getSelectionModel().getSelection();
+                    if (selectedRows.length) {
+                    	paletteStore.remove(selectedRows);
+                    } else {
+                        Ext.Msg.alert('Status', 'Please select at least one record to delete!');
+                    }
+                }
             }]
         }]
     }

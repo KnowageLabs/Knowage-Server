@@ -2,10 +2,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
     extend: 'Ext.panel.Panel',
     xtype: 'layout-column',
     border:false,
-    requires: [
-        'Ext.layout.container.Column'
-    ],
-    
     layout: 'column',
     defaults:{
         height: 200,

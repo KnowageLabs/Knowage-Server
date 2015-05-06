@@ -1,22 +1,20 @@
-var fontStyleArray = [ {
-	name : 'Bold',
-	value : 'b'
-}, {
-	name : 'Normal',
-	value : 'n'
-}, {
-	name : 'Italico',
-	value : 'i'
-}, {
-	name : 'Sottolineato',
-	value : 's'
-} ];
-
 Ext.define('Sbi.chart.designer.FontStyleCombo', {
     extend:'Ext.form.ComboBox',
     store: {
         fields: [ 'name','value' ],
-        data: fontStyleArray
+        data: [ {
+    		name : 'Bold',
+    		value : 'bold'
+    	}, {
+    		name : 'Normal',
+    		value : 'normal'
+    	}, {
+    		name : 'Italico',
+    		value : 'italic'
+    	}, {
+    		name : 'Sottolineato',
+    		value : 'underline'
+    	} ]
     },
     editable : false,
     displayField: 'name',

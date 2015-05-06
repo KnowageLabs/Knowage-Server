@@ -1,27 +1,20 @@
-var layoutData = [ {
-	name : 'Verticale',
-	value : 'v'
-}, {
-	name : 'Orizzontale',
-	value : 'h'
-} ];
-
-var stylePanelS = Ext.create('Sbi.chart.designer.StylePopup', {
-    title:'Stile Sottotitolo',
-});
-var stylePanelT = Ext.create('Sbi.chart.designer.StylePopup',{
-    title:'Stile Titolo',
-});
-var stylePanelND = Ext.create('Sbi.chart.designer.StylePopup',{
-    title:'Stile "No Data"',
-});
-
-
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Ext.panel.Panel',
-
+	requires : ['Sbi.chart.designer.StylePopup'],
 	title : 'Configurazione generica',
-
+	id: 'page2Container',
+	config : {
+		stylePanelSubtitle : Ext.create('Sbi.chart.designer.StylePopup', {
+		    title:'Stile Sottotitolo',
+		}),
+		stylePanelTitle : Ext.create('Sbi.chart.designer.StylePopup',{
+		    title:'Stile Titolo',
+		}),
+		stylePanelNoData : Ext.create('Sbi.chart.designer.StylePopup',{
+		    title:'Stile "No Data"',
+		})
+	},
+	
 	bodyPadding : 10,
 	
 	items : [ {
@@ -52,7 +45,13 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			valueField : 'value',
 			store : {
 				fields : [ 'name', 'value' ],
-				data : layoutData
+				data : [ {
+					name : 'Verticale',
+					value : 'v'
+				}, {
+					name : 'Orizzontale',
+					value : 'h'
+				} ]
 			}
 		} ]
 	}, {
@@ -63,7 +62,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
             margin: '0 20 10 0'
 		},
 		items : [ 
-			Ext.create('Sbi.chart.designer.FontColor'),
+			Ext.create('Sbi.chart.designer.ColorPickerContainer'),
 			Ext.create('Sbi.chart.designer.FontCombo'),
 	       	Ext.create('Sbi.chart.designer.FontDimCombo')
 		]
@@ -81,7 +80,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			xtype : 'button',
             text: 'St',
             handler: function(){
-               stylePanelT.show()
+                Ext.getCmp('page2Container').getStylePanelTitle().show();
             }
 		}      
 		]
@@ -100,7 +99,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
             xtype : 'button',
             text: 'St',
             handler: function(){
-                stylePanelS.show()
+                Ext.getCmp('page2Container').getStylePanelSubtitle().show();
             }
         }
      	]
@@ -117,7 +116,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
             xtype : 'button',
             text: 'St',
             handler: function(){
-                stylePanelND.show()
+                Ext.getCmp('page2Container').getStylePanelNoData().show();
             }
         }
      	]

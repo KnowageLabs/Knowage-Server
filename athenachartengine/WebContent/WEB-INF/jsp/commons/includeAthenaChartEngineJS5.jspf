@@ -59,7 +59,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesContainerModel.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesContainerStore.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeStore.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesPicker.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' ></script>
@@ -67,12 +66,26 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartAxisesContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartStructure.js' ></script>
+
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontAlignCombo.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontCombo.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontDimCombo.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontStyleCombo.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ColorPicker.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ColorPickerContainer.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopup.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationLegend.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationPalette.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationMainContainer.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfiguration.js' ></script>
+
+
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION 
 <script type="text/javascript" src='/athenachartengine/js/spagobi/chart-all.js'></script>
 -->
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfiguration.js'></script>
 
 <!-- END-PRODUCTION -->
 

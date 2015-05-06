@@ -1,5 +1,6 @@
 Ext.define('Sbi.chart.designer.StylePopup',{
 	extend : 'Ext.form.Panel',
+	
 	width : 300,
 	height : 180,
 	floating : true,
@@ -14,8 +15,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 	}],			
 	constructor: function(config) {
         this.callParent(config);
+        this.title = config.title && config.title != null ? config.title: this.title;
         var align = Ext.create('Sbi.chart.designer.FontAlignCombo');
-		var color = Ext.create('Sbi.chart.designer.FontColor');
+		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer');
 		var font = Ext.create('Sbi.chart.designer.FontCombo');
         var dim = Ext.create('Sbi.chart.designer.FontDimCombo');
         var style = Ext.create('Sbi.chart.designer.FontStyleCombo');
