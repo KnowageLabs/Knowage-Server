@@ -161,12 +161,6 @@ author:
 				renderChart(chartConf);
 			});
 
- 			/* 
- 			coreServiceManager.run('loadData', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
-				templateContainer.fireEvent('dataReady', response.responseText);
-			}); 
- 			*/
-
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });

@@ -2,14 +2,11 @@ package it.eng.spagobi.engine.chart.api;
 
 import static it.eng.spagobi.engine.util.ChartEngineUtil.ve;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engine.chart.ChartEngineInstance;
+import it.eng.spagobi.engine.util.ChartEngineDataUtil;
 import it.eng.spagobi.engine.util.ChartEngineUtil;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -17,6 +14,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,10 +23,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 @Path("/1.0/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
@@ -36,14 +30,26 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String doPost(@FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse servletResponse) {
+	@SuppressWarnings("rawtypes")
+	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse servletResponse) {
 
-		String jsonData = loadJsonData();
+		IDataSet dataSet = getEngineInstance().getDataSet();
+		Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
+		Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+		String jsonData = ChartEngineDataUtil.loadJsonData(dataSet, analyticalDrivers, profileAttributes, getLocale());
 
 		VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData);
 		String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 		Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
 		return applyTemplate(velocityTemplate, velocityContext);
+	}
+
+	@GET
+	@Path("/fieldsMetadata")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDatasetMetadata() {
+		IDataSet dataSet = getEngineInstance().getDataSet();
+		return ChartEngineDataUtil.loadMetaData(dataSet);
 	}
 
 	private String applyTemplate(Template velocityTemplate, VelocityContext velocityContext) {
@@ -52,36 +58,4 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 		return jsonChartTemplate.toString();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private String loadJsonData() {
-		ChartEngineInstance engineInstance = getEngineInstance();
-		IDataSet dataSet = engineInstance.getDataSet();
-		IDataStore dataStore;
-
-		Map params = engineInstance.getAnalyticalDrivers();
-		params.put("LOCALE", getLocale());
-		dataSet.setParamsMap(params);
-		dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
-		Monitor monitorLD = MonitorFactory.start("SpagoBI_Chart.GetChartDataAction.service.LoadData");
-
-		dataSet.loadData();// start, limit, rowsLimit);
-
-		monitorLD.stop();
-		dataStore = dataSet.getDataStore();
-
-		JSONObject dataSetJSON = new JSONObject();
-		try {
-			JSONDataWriter writer = new JSONDataWriter();
-
-			Object resultNumber = dataStore.getMetaData().getProperty("resultNumber");
-			if (resultNumber == null)
-				dataStore.getMetaData().setProperty("resultNumber", new Integer((int) dataStore.getRecordsCount()));
-			dataSetJSON = (JSONObject) writer.write(dataStore);
-		} catch (Throwable e) {
-			throw new SpagoBIServiceException("Impossible to serialize datastore", e);
-		}
-
-		return dataSetJSON.toString();
-
-	}
 }

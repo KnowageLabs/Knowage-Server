@@ -29,6 +29,11 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 				method: 'POST'
 			});
 			
+			chartServiceManager.registerService('loadDatasetFields', {
+				service: 'jsonChartTemplate/fieldsMetadata',
+				method: 'GET'
+			});
+			
 			return chartServiceManager;
 		}
 		

@@ -149,7 +149,6 @@ author:
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
  			var datasetLabel  = '<%=datasetLabel%>';
   			
- 			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			
  			function addToAxisesContainer(id) {
@@ -396,7 +395,7 @@ author:
   				Ext.each(jsonDataObj.results, function(field, index){
   					if(field != 'recNo' && field.nature == 'measure'){
   						theData.push({
-  							axisName : field.alias,
+  							serieColumn : field.alias,
   							axisType: 'ATTRIBUTE'
   						});
   					}
@@ -409,7 +408,7 @@ author:
   				Ext.each(jsonDataObj.results, function(field, index){
   					if(field != 'recNo' && field.nature == 'attribute'){
   						theData.push({
-  							axisName : field.alias,
+  							categoryColumn : field.alias,
   							axisType: 'MEASURE'
   						});
   					}
@@ -419,7 +418,7 @@ author:
   			
   			
   			
-  			coreServiceManager.run('loadDatasetFields', {}, [datasetLabel], function (response) {
+  			chartServiceManager.run('loadDatasetFields', {}, [datasetLabel], function (response) {
   				columnsStore.fireEvent('dataReady', response.responseText);
   				categoriesStore.fireEvent('dataReady', response.responseText);
 			});
