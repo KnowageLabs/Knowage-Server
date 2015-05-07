@@ -1,5 +1,4 @@
 #set($category = $chart.VALUES.CATEGORY)
-#set($chartType = $chart.type)
 #set($dataRows = $data.rows)
 
 #set($dataFields = $data.metaData.fields) ## columns of data table
@@ -27,27 +26,70 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
-#set($result = $datasettransformer.toTree($columnsNeeded,$serie,$dataColumnsMapper,$dataRows))
-
-#set($fontType = $chart.FONT.type)
-#set($fontSize = $chart.FONT.size)
-#set($fontColor = $chart.FONT.color)
-
 {
 	chart: 
 	{
-		type: '$chartType'
+		type: '$chart.type',
+		width: '$chart.width',
+		height: '$chart.height',		
+		topPadding: '$chart.topPadding',
+		bottomPadding: '$chart.bottomPadding',
+		
+		style:
+		{
+			opacMouseOver: '$chart.CHART-STYLE.opacMouseOver',
+			
+			font:
+			{
+				type: '$chart.CHART-STYLE.FONT.type',
+				size: '$chart.CHART-STYLE.FONT.size',
+				color: '$chart.CHART-STYLE.FONT.color'
+			}
+		}
 	},
-	
-	font:
+		
+	tip:
 	{
-		type: '$fontType',
-		size: '$fontSize',
-		color: '$fontColor'
+		text: '$chart.TIP.text',		
+		width: '$chart.TIP.width',		
+		position: '$chart.TIP.position',
+		
+		style:
+		{
+			fontType: '$chart.TIP.TIP-STYLE.fontType',
+			fontStyle: '$chart.TIP.TIP-STYLE.fontStyle',
+			fontSize: '$chart.TIP.TIP-STYLE.fontSize',
+			fontColor: '$chart.TIP.TIP-STYLE.fontColor',
+			textAlign: '$chart.TIP.TIP-STYLE.textAlign'
+		}
 	},
+		
+	toolbar:
+	{
+		position: '$chart.TOOLBAR.position',
+		height: '$chart.TOOLBAR.height',
+		width: '$chart.TOOLBAR.width',
+		spacing: '$chart.TOOLBAR.spacing',
+		tail: '$chart.TOOLBAR.tail',
+		padding: '$chart.TOOLBAR.padding',
+		
+		style:
+		{
+			percFontColor: '$chart.TOOLBAR.TOOLBAR-STYLE.percFontColor'
+		}
+	},	
 	
+	legend:
+	{
+		width: '$chart.LEGEND.width',
+		height: '$chart.LEGEND.height',
+		spacing: '$chart.LEGEND.spacing',
+		radius: '$chart.LEGEND.radius',
+		padding: '$chart.LEGEND.padding'
+	},
+		
 	data:
 	[
-	 	$result
+	 	$datasettransformer.toTree($columnsNeeded,$serie,$dataColumnsMapper,$dataRows)
 	]
 }

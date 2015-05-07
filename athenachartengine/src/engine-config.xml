@@ -75,7 +75,7 @@
 		<chart type="line" 		name="highcharts414" 	vmName="column_chart.vm" />
 		<chart type="pie"		name="highcharts414" 	/>
 		<chart type="gauge" 	name="highcharts414" 	/>
-		<chart type="sunburst"	name="d3js244"  		/>
+		<chart type="sunburst"	name="d3js244"  		vmName="sunburst_chart.vm"/>
 		<chart type="wordcloud"	name="d3js244"  		/>
 	</chartConfiguration>
 	

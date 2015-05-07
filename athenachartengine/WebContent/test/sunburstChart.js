@@ -3,40 +3,94 @@ function renderSunburst(jsonObject)
 	/* ME: The part that we need to place into HTML in order to attach 
 	 * given data to them - we are going to create it through D3 notation */
 	
-//	document.getElementById.innerHTML="<div id="sequence"></div>"+
-//    '<div id="chart"> '+
-//	 '  <div id="explanation" style="visibility: hidden;"> '+
-//	 '    <span id="percentage"></span><br/> '+
-//	 '     of visits begin with this sequence of pages '+
-//	 ' </div> '+
-//	 ' </div>
-	
-//	<div id="sidebar">
-//    	<input type="checkbox" id="togglelegend"> Legend<br/>
-//    	<div id="legend" style="visibility: hidden;"></div>
-// 	</div>
-	
 	console.log(jsonObject);
+	
+	// Dimensions of sunburst.
+    /* ME: Dimensions of the window in which is chart going to be placed.
+     * Hence, radius of the circular Sunburst chart is going to be half of
+     * the lesser dimension of that window. */
+//	var width = 750;
+//	var height = 600;
+    var width = parseInt(jsonObject.chart.width);
+	var height = parseInt(jsonObject.chart.height);
+	var radius = Math.min(width, height) / 2;	
+	
+	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+	//var b = { w: 50, h: 30, s: 3, t: 10 };
+	var bcWidth = parseInt(jsonObject.toolbar.width);
+	var bcHeight = parseInt(jsonObject.toolbar.height);
+	var bcSpacing = parseInt(jsonObject.toolbar.spacing);
+	var bcTipTail = parseInt(jsonObject.toolbar.tail);
+	
+	//var toolbarPadding = parseInt(jsonObject.toolbar.padding);
+	
+	var topPadding = parseInt(jsonObject.chart.topPadding);
+	var bottomPadding = parseInt(jsonObject.chart.bottomPadding);
+	
+    var tipFontSize = parseInt(jsonObject.tip.style.fontSize);
+    var tipWidth = parseInt(jsonObject.tip.width);
+        
+    //var sequenceHeight = parseInt(jsonObject.toolbar.padding) + parseInt(bcHeight);
+	
+	var b = { 
+				w: bcWidth, 	h: bcHeight, 
+				s: bcSpacing, 	t: bcTipTail 
+			};
     
 	/* ME: Create necessary part of the HTML DOM - the one that code need to
 	 * position chart on the page (D3 notation) */
 	d3.select("body")
 		.append("div").attr("id","main")
-		.style("font-family", jsonObject.font.type);
+		.style("font-family", jsonObject.chart.style.font.type);
+		
+	var tipPadding = 0;
 	
-    d3.select("#main")
-    	.append("div").attr("id","sequence");
+    if (jsonObject.toolbar.position=="top")
+	{   
+    	tipPadding = height/2+bcHeight/2-tipFontSize+topPadding;
+		d3.select("#main").append("div").attr("id","sequence");		
+	}
+    else
+    {
+    	tipPadding = height/2-tipFontSize+topPadding;
+    }
+    
+    d3.select("#main").append("div").attr("style","height: " + topPadding + "px;");
     
     d3.select("#main")
-    	.append("div").attr("id","chart")
-    	.append("div").attr("id","explanation").attr("style","visibility: hidden;")
+    	.append("div").attr("id","chart")    	
+    	.append("div").attr("id","explanation")
+    		.attr(
+    					"style",
+    					
+    					"visibility: hidden; " +
+    					"color: " + jsonObject.tip.style.fontColor + "; " +
+    					"position: " + jsonObject.tip.position + "; " +
+    					"top:" + tipPadding + "px; " +
+    					"left: " + (height/2+(width-height)/2-tipWidth/2) + "px; " +
+    					"width: " + tipWidth + "px; " +
+    					"text-align: " + jsonObject.tip.style.textAlign + "; " + 
+    					"font-family: " + jsonObject.tip.style.fontType + "; " +
+    					"font-style: " + jsonObject.tip.style.fontStyle + "; " +
+    					"resize: both;" + 
+    					"font-size: " + tipFontSize + "px;"
+				)
     	.append("span").attr("id","percentage");
+    
+    d3.select("#main").append("div").attr("style","height: " + bottomPadding + "px;"); 
+    
+    if (jsonObject.toolbar.position=="bottom")
+	{   	   	
+		d3.select("#main").append("div").attr("id","sequence");		
+	}
     
     d3.select("body")
     	.append("div").attr("id","sidebar")
     	.append("input").attr("type","checkbox").attr("id","togglelegend");
     
-    d3.select("#sidebar").append("text").html("Legend" + "</br>");
+    // We can also customize this (font size)
+    d3.select("#sidebar").append("text").html("Legend" + "</br>")
+    	.attr("style","font-size: 13px;");
     
     d3.select("#sidebar")
     	.append("div").attr("id","legend").attr("style","visibility: hidden;");
@@ -45,18 +99,7 @@ function renderSunburst(jsonObject)
  * !!! depend on query that user is going to provide in order to create
  * !!! a proper dataset */
     d3.select("#explanation")
-    	.append("text").html("</br>" + "of visits begin with this sequence of pages");
-	
-	// Dimensions of sunburst.
-    /* ME: Dimensions of the window in which is chart going to be placed.
-     * Hence, radius of the circular Sunburst chart is going to be half of
-     * the lesser dimension of that window. */
-	var width = 750;
-	var height = 600;
-	var radius = Math.min(width, height) / 2;	
-	
-	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-	var b = { w: 120, h: 30, s: 3, t: 10 };
+    	.append("text").html("</br>" + jsonObject.tip.text);
 	
 	/* ME: Collect all possible colors into one array - PREDEFINED set of colors
 	 * (the ones that we are going to use in case configuration for the
@@ -199,8 +242,11 @@ function renderSunburst(jsonObject)
 	  updateBreadcrumbs(sequenceArray, percentageString);
 	
 	  // Fade all the segments.
+	  /*d3.selectAll("path")
+	      .style("opacity", 0.8);*/
+	  
 	  d3.selectAll("path")
-	      .style("opacity", 0.3);
+      .style("opacity", jsonObject.chart.style.opacMouseOver);
 	
 	  // Then highlight only those that are an ancestor of the current segment.
 	  vis.selectAll("path")
@@ -260,11 +306,13 @@ function renderSunburst(jsonObject)
 		/* ME: Adds the new SVG DOM element to the current structure -
 		 * it appends new SVG to the very first "div" element in order
 		 * to present breadcrumb. It specifies its dimensions (width,
-		 * height */
+		 * height */		
+		
+		
 		var trail = d3.select("#sequence")
 			.append("svg:svg")
 			.attr("width", width)
-			.attr("height", 50)
+			.attr("height", bcHeight)
 			.attr("id", "trail");
 		  
 		// Add the label at the end, for the percentage.
@@ -275,7 +323,7 @@ function renderSunburst(jsonObject)
 		trail
 			.append("svg:text")
 			.attr("id", "endlabel")
-			.style("fill", "#000");
+			.style("fill", jsonObject.toolbar.style.percFontColor);
 	}
 	
 	// Generate a string that describes the points of a breadcrumb polygon.
@@ -339,7 +387,12 @@ function renderSunburst(jsonObject)
 	function drawLegend() 
 	{	
 		// Dimensions of legend item: width, height, spacing, radius of rounded rect.
-		var li = { w: 120, h: 30, s: 3, r: 3 };
+//		var li = { w: 120, h: 30, s: 3, r: 3 };
+		var li = 
+				{ 
+					w: parseInt(jsonObject.legend.width), h: parseInt(jsonObject.legend.height), 
+					s: parseInt(jsonObject.legend.spacing), r: parseInt(jsonObject.legend.radius) 
+				};
 
 		var numOfColorElems = Object.keys(colors).length;
 		
@@ -420,9 +473,7 @@ function renderSunburst(jsonObject)
 		  
 		  var sequence = jsonObject[i].sequence;
 		  var size =+ jsonObject[i].value;
-		  
-		  console.log(size);
-		
+		  		
 	    if (isNaN(size)) 
 	    { 
 	    	// e.g. if this is a header row
@@ -433,9 +484,6 @@ function renderSunburst(jsonObject)
 	     * to create visualization of levels that represent those
 	     * data. */
 	    var parts = sequence.split("-");
-	    
-//	    console.log("888888888888888888");
-//	    console.log(parts);
 	    
 	    var currentNode = root;
 	    
