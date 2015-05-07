@@ -66,6 +66,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartAxisesContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartStructure.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/SerieStylePopup.js' ></script>
 
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontAlignCombo.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontCombo.js' ></script>

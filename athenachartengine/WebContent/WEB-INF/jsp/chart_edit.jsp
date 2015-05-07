@@ -152,86 +152,166 @@ author:
  			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			
-  			function addToAxisesContainer(id) {
-  				var panel = Ext.getCmp(id);
-  				var newPanel = createChartColumnsContainer();
-  				panel.add(newPanel);
-  			}
+ 			function addToAxisesContainer(id) {
+ 				var panel = Ext.getCmp(id);
+ 				var newPanel = createChartColumnsContainer(panel.id , '' , true);
+ 				Ext.log('Created new ChartColumnsContainer: id="' + newPanel.id + '"');
+ 				panel.add(newPanel);
+ 			}
 
-  			function createChartColumnsContainer(id) {
-  				var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
-  					id: (id && id != '')? id: 'ChartColumnsContainer_' + ChartColumnsContainer.idseed++,
-  					flex: 1,
-  					viewConfig: {
-  						plugins: {
-  							ptype: 'gridviewdragdrop',
-  							containerScroll: true,
-  							dragGroup: ddGroup1,
-  							dropGroup: ddGroup1
-  						},
-  						listeners: {
-  							beforeDrop: function(node, data, dropRec, dropPosition) {
-  								if(data.view.id != this.id) {
-  									data.records[0] = data.records[0].copy('id' + ChartColumnsContainer.idseed++);   
-  								} 
-  							}
-  						}
-  					},
-  					store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
-  					columns: [
-  						{
-  							text: 'Custom name (Y)',
-  							dataIndex: 'axisName',
-  							flex: 12,
-  							sortable: false,
-  						},
-  						{
-  							text: '',
-  							dataIndex: 'groupingFunction',
-  							flex: 8,
-  							xtype: 'widgetcolumn',
-  							widget: {
-  								xtype: 'combo',
-  								store: [
-  									'AVG',
-  									'COUNT',
-  									'MAX',
-  									'MIN',
-  									'SUM'
-  								],
-  								listeners: {
-  									select: function(combo, data, others){
-  										console.log('combo.getValue() ' , combo.getValue());
-  										console.log('data ' , data);
-  									}
-  								}
-  							}
-  						}, 
-  						{
-  							menuDisabled: true,
-  							sortable: false,
-  							flex: 1,
-  							xtype: 'actioncolumn',
-  							items: [{
-  								icon: 'http://docs.sencha.com/extjs/5.1/5.1.0-apidocs/extjs-build/examples/restful/images/delete.png',
-  								tooltip: 'Remove column',
-  								handler: function(grid, rowIndex, colIndex) {
-  									var rec = grid.getStore().removeAt(rowIndex);
+ 			function removeFromAxisesContainer(idAxisesContainer, idColumnsContainer) {
+ 				Ext.log('removeFromAxisesContainer(): idAxisesContainer -> "' + idAxisesContainer + '", idColumnsContainer -> "' + idColumnsContainer + '"');
+ 				
+ 				var axisesContainer = Ext.getCmp(idAxisesContainer);
+ 				
+ 				var columnsContainerToBeRemoved = Ext.getCmp(idColumnsContainer);
+ 				columnsContainerToBeRemoved.destroy();
+ 				
+ 				if(axisesContainer.items.length == 0) {
+ 					axisesContainer.hide();
+ 				}
+ 			}
 
-  								}
-  							}]
-  						}
-  					]
-  				});
-  				return chartColumnsContainer;
-  			}
+ 			function createChartColumnsContainer(idAxisesContainer, id, isDestructible) {
+ 				var idChartColumnsContainer = (id && id != '')? id: 'ChartColumnsContainer_' + ChartColumnsContainer.idseed++;
+ 				var chartColumnsContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+ 					idAxisesContainer: idChartColumnsContainer,
+ 				});
+ 				
+ 				var dockedItms = isDestructible?
+ 					[{
+ 						xtype: 'toolbar',
+ 						dock: 'top',
+ 						items: [{
+ 							xtype: 'tbfill',
+ 							flex: 4
+ 						},{
+ 							xtype: 'button',
+ 							text: 'X',
+ 							flex: 1,
+ 							handler: function(btn, mouseXY){
+ 								removeFromAxisesContainer(idAxisesContainer, idChartColumnsContainer)
+ 							}
+ 						}]
+ 					}]
+ 					: [] ;
 
-  			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
-  				region: 'north',
-  				minHeight: 50,
-  			});
+ 				var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
+ 					id: idChartColumnsContainer,
+ 					idAxisesContainer: idAxisesContainer,
+ 					
+ 					flex: 1,
+ 					viewConfig: {
+ 						plugins: {
+ 							ptype: 'gridviewdragdrop',
+ 							containerScroll: true,
+ 							dragGroup: ddGroup1,
+ 							dropGroup: ddGroup1
+ 						},
+ 						listeners: {
+ 							beforeDrop: function(node, data, dropRec, dropPosition) {
+ 								if(data.view.id != this.id) {
+ 									data.records[0] = data.records[0].copy('id' + ChartColumnsContainer.idseed++);   
+ 								} 
+ 							}
+ 						}
+ 					},
+ 					store: chartColumnsContainerStore,
+ 					dockedItems: dockedItms,
+ 					columns: [
+ 						{
+ 							// text: 'Custom name (Y)',
+ 							text: '',
+ 							dataIndex: 'serieColumn',
+ 							flex: 12,
+ 							layout: 'fit',
+ 							sortable: false,
+ 							items: {
+ 			                    xtype: 'textfield',
+ 								allowBlank: false,
+ 			                    emptyText: 'Insert name',
+ 								selectOnFocus: true,
+ 								value: 'Custom name',
+ 			                }
+ 						}, {
+ 			                header: '',
+ 			                dataIndex: 'serieGroupingFunction',
+ 			                flex: 8,
+ 			                field: {
+ 			                    xtype: 'combobox',
+ 			                    typeAhead: true,
+ 			                    triggerAction: 'all',
+ 			                    selectOnTab: true,
+ 			                    store: [
+ 			                        ['AVG','AVG'],
+ 			                        ['COUNT','COUNT'],
+ 			                        ['MAX','MAX'],
+ 			                        ['MIN','MIN'],
+ 			                        ['SUM','SUM']
+ 			                    ],
+ 			                    lazyRender: false,
+ 			                    listClass: 'x-combo-list-small'
+ 			                }
+ 			            },
+ 						{
+ 							menuDisabled: true,
+ 							sortable: false,
+ 							flex: 1,
+ 							xtype: 'actioncolumn',
+ 							items: [{
+ 								icon: 'http://findicons.com/icon/download/66617/paint/24/png',
+ 								tooltip: 'Style',
+ 								handler: function(grid, rowIndex, colIndex) {
+ 									var store = grid.getStore();
+ 									
+ 									promptChangeSerieStyle(store, rowIndex);
+ 									
+ 														
+ 								}
+ 							},{
+ 								icon: 'http://docs.sencha.com/extjs/5.1/5.1.0-apidocs/extjs-build/examples/restful/images/delete.png',
+ 								tooltip: 'Remove column',
+ 								handler: function(grid, rowIndex, colIndex) {
+ 									var store = grid.getStore();
+ 									var rec = store.removeAt(rowIndex);
+ 									
+ 								}
+ 							}]
+ 						}
+ 					],
+ 					selModel: {
+ 						selType: 'cellmodel'
+ 					},
+ 					plugins: [{
+ 						ptype: 'cellediting',
+ 						clicksToEdit: 1
+ 					}]
+ 				});
+ 				return chartColumnsContainer;
+ 			}
 
-  			var chartTypes = [
+ 			function promptChangeSerieStyle(store, rowIndex) {
+ 				var previousInstance = Ext.getCmp('serieStylePopup');
+ 				
+ 				if(previousInstance != undefined) {
+ 					return;
+ 					// previousInstance.destroy();
+ 				}
+ 				
+ 				var serieStylePopup = Ext.create('Sbi.chart.designer.SerieStylePopup', {
+ 					store: store,
+ 					rowIndex: rowIndex,
+ 				});
+ 				
+ 				serieStylePopup.show();
+ 			}
+
+ 			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
+ 				region: 'north',
+ 				minHeight: 50,
+ 			});
+
+ 			var chartTypes = [
   				{
   					name: 'Column chart', 
   					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
@@ -260,34 +340,55 @@ author:
   				}
   			];
 
-  			for(index in chartTypes) {
-  				var button = Ext.create('Ext.button.Button', {
-  					text: chartTypes[index].name,
-  					icon: chartTypes[index].iconUrl,
-  					handler: chartTypes[index].handler,
-  					scale : "large",
-  					width: '100%'
-  				});
-  				chartTypeSelector.add(button);
-  			}
+ 			for(index in chartTypes) {
+ 				var button = Ext.create('Ext.button.Button', {
+ 					text: chartTypes[index].name,
+ 					icon: chartTypes[index].iconUrl,
+ 					handler: chartTypes[index].handler,
+ 					scale : "large",
+ 					width: '100%'
+ 				});
+ 				chartTypeSelector.add(button);
+ 			}
 
-  			var ddGroup1 = 'MEASURE';
-  			var ddGroup2 = 'ATTRIBUTE';
+ 			var ddGroup1 = 'MEASURE';
+ 			var ddGroup2 = 'ATTRIBUTE';
 
-  			var columnsStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  				data: [],
-  				sorters: [{
-  			        property: 'axisName',
-  			        direction: 'ASC'
-  			    }],
-  			});
-  			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  				data: [],
-  				sorters: [{
-  			        property: 'axisName',
-  			        direction: 'ASC'
-  			    }]
-  			});
+ 			var columnsStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+ 				data: [
+ 					{ serieColumn : 'Vendite', axisType: 'MEASURE', serieGroupingFunction: '', 
+						axisName:'Nome 1', serieOrderType: 'asc', serieType: 'pie', 
+						serieColor: '#FF0000', serieShowValue: false, seriePrecision: '3', 
+						seriePrefixChar: 'Euro', seriePostfixChar: 'Millions',
+						serieTooltipTemplateHtml: '<b>Texto de prueba</b>', serieTooltipColor: '#FF00FF', 
+						serieTooltipBackgroundColor: '#FFAB00', serieTooltipAlign: 'center', serieTooltipFont: 'Arial', 
+						serieTooltipFontWeight: 'b', serieTooltipFontSize: '8'},
+ 					{ serieColumn : 'Ricavi', axisType: 'MEASURE', serieGroupingFunction: ''},
+ 					{ serieColumn : 'Costi', axisType: 'MEASURE', serieGroupingFunction: ''},
+ 					{ serieColumn : 'Acquisti', axisType: 'MEASURE', serieGroupingFunction: ''}
+ 				],
+ 				sorters: [{
+ 					property: 'serieColumn',
+ 					direction: 'ASC'
+ 				}],
+ 			});
+ 			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+ 				data: [
+ 						{ categoryColumn : 'Anno', axisType: 'ATTRIBUTE'},
+ 						{ categoryColumn : 'Mese', axisType: 'ATTRIBUTE'},
+ 						{ categoryColumn : 'Giorno', axisType: 'ATTRIBUTE'},
+ 						
+ 						{ categoryColumn : 'Stato', axisType: 'ATTRIBUTE'},
+ 						{ categoryColumn : 'Regione', axisType: 'ATTRIBUTE'},
+ 						{ categoryColumn : 'Provincia', axisType: 'ATTRIBUTE'},
+ 						{ categoryColumn : 'Comune', axisType: 'ATTRIBUTE'}
+ 						
+ 				],
+ 				sorters: [{
+ 					property: 'categoryColumn',
+ 					direction: 'ASC'
+ 				}],
+ 			});
 
   			columnsStore.on('dataReady', function(jsonData) {
 				var jsonDataObj = Ext.JSON.decode(jsonData);
@@ -326,86 +427,87 @@ author:
   			
 
   			var columnsPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
-  			    region: 'center',
-  			    flex:  1,
-  			    margin: '0 0 5 0',
-  			    store: columnsStore,
-  			    viewConfig: {
-  			        copy: true,
+  				region: 'center',
+  				flex:  1,
+  				margin: '0 0 5 0',
+  				store: columnsStore,
+  				viewConfig: {
+  					copy: true,
   					plugins: {
-  			            ptype: 'gridviewdragdrop',
-  			            containerScroll: true,
-  			            dragGroup: ddGroup1,
-  			            dropGroup: ddGroup1,
-  			        	dragText: 'Drag from Columns Picker',
-  			        	enableDrop: false
-  			        },
-  			        listeners: {
-  			        	drop: function(node, data, dropRec, dropPosition) {
-  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
-  			        		Ext.log('Drag from Columns Picker', 'Dropped ' + data.records[0].get('name') + dropOn);
+  						ptype: 'gridviewdragdrop',
+  						containerScroll: true,
+  						dragGroup: ddGroup1,
+  						dropGroup: ddGroup1,
+  						dragText: 'Drag from Columns Picker',
+  						enableDrop: false
+  					},
+  					listeners: {
+  						drop: function(node, data, dropRec, dropPosition) {
+  							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('serieColumn') : ' on empty view';
+  							Ext.log('Drag from Columns Picker', 'Dropped ' + data.records[0].get('name') + dropOn);
   						}
   					}
-  			    },
+  				},
   				columns: [
-  			        {
-  			        	text: 'Elenco colonne', 
-  			            dataIndex: 'axisName',
+  					{
+  						text: 'Elenco misure', 
+  						dataIndex: 'serieColumn',
   						sortable: false,
-  			            flex: 1
-  			        }
-  			    ]
+  						flex: 1
+  					}
+  				]
   			});
 
   			var categoriesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
-  			    region: 'south',
-  			    flex: 1,
-  			    margin: '0 0 5 0',
-  			    store: categoriesStore, 
-  			    viewConfig: {
+  				region: 'south',
+  				flex: 1,
+  				margin: '0 0 5 0',
+  				store: categoriesStore, 
+  				viewConfig: {
   					copy: true,
   					plugins: {
-  			            ptype: 'gridviewdragdrop',
-  			            containerScroll: true,
-  			            dragGroup: ddGroup2,
-  			            dropGroup: ddGroup2,
-  			        	dragText: 'Drag from Categories Picker',
-  			        	enableDrop: false
-  			        },
-  			        listeners: {
-  			        	drop: function(node, data, dropRec, dropPosition) {
-  			        		var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('axisName') : ' on empty view';
-  			        		Ext.log('Drag from Categories Picker', 'Dropped ' + data.records[0].get('name') + dropOn);
+  						ptype: 'gridviewdragdrop',
+  						containerScroll: true,
+  						dragGroup: ddGroup2,
+  						dropGroup: ddGroup2,
+  						dragText: 'Drag from Categories Picker',
+  						enableDrop: false
+  					},
+  					listeners: {
+  						drop: function(node, data, dropRec, dropPosition) {
+  							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('categoryColumn') : ' on empty view';
+  							Ext.log('Drag from Categories Picker', 'Dropped ' + data.records[0].get('name') + dropOn);
   						}
   					}
-  			    },
+  				},
   				columns: [
-  			        {
-  			        	text: 'Elenco categorie', 
-  			            dataIndex: 'axisName',
+  					{
+  						text: 'Elenco attributi', 
+  						dataIndex: 'categoryColumn',
   						sortable: false,
-  			            flex: 1
-  			        }
-  			    ]
+  						flex: 1
+  					}
+  				]
   			});
 
   			var chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
   				chartTypeSelector: chartTypeSelector,
-  			    columnsPicker: columnsPicker,
+  				columnsPicker: columnsPicker,
   				categoriesPicker: categoriesPicker,
-  			    region: 'west'
+  				region: 'west'
   			});
 
-  			var idseed = 1;
-
-  			var firstcolumn = createChartColumnsContainer('firstcolumn');
   			var leftYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
   				id: 'chartLeftAxisesContainer',
-  				title: 'Asse Y',
   				header:{
+  					title: {hidden: true},
   					items:[{
+  						xtype: 'tbfill',
+  						flex: 6
+  					},{
   						xtype:'button',
   						text: '+',
+  						flex: 1,
   						handler: function(node, mouse){
   							var panel = Ext.getCmp('chartRightAxisesContainer');
   							if (!panel.isVisible()) {
@@ -417,46 +519,38 @@ author:
   					}]    
   				},
   			});
+
+  			var firstcolumn = createChartColumnsContainer('chartLeftAxisesContainer', 'firstcolumn', false);
   			leftYAxisesPanel.add(firstcolumn);
 
   			var mainPanel = Ext.create('Ext.panel.Panel', {
-  			    id: 'mainPanel',
-  			    height: 300,
-  			    html: '<div style="text-align:center">PREVIEW</div>'
+  				id: 'mainPanel',
+  				height: 300,
+  				html: '<div style="text-align:center">PREVIEW</div>'
   			});
 
   			var rightYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
   				id: 'chartRightAxisesContainer',
-  				title: 'Asse Y2',
-  				hidden : true,
-  				header:{
-  					items:[{
-  						xtype:'button',
-  						text: '+',
-  						handler: function(node, mouse){
-  							addToAxisesContainer('chartRightAxisesContainer');
-  						}
-  					}]    
-  				},
+  				hidden : true
   			});
 
   			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
-  			    viewConfig: {
+  				viewConfig: {
   					plugins: {
-  			            ptype: 'gridviewdragdrop',
-  			            containerScroll: true,
-  			            dragGroup: ddGroup2,
-  			            dropGroup: ddGroup2
-  			        },
-  			    },
-  			    store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
-  			    columns: [
-  			        {
-  			        	text: 'Categorie', 
-  			            dataIndex: 'axisName',
+  						ptype: 'gridviewdragdrop',
+  						containerScroll: true,
+  						dragGroup: ddGroup2,
+  						dropGroup: ddGroup2
+  					},
+  				},
+  				store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
+  				columns: [
+  					{
+  						text: 'Categorie', 
+  						dataIndex: 'categoryColumn',
   						sortable: false,
-  			            flex: 10
-  			        },
+  						flex: 10
+  					},
   					{
   						menuDisabled: true,
   						sortable: false,
@@ -470,49 +564,50 @@ author:
   							}
   						}]
   					}
-  			    ]
+  				]
   			});
 
   			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
-  			    title: 'Passo 1',
-  			    leftYAxisesPanel: leftYAxisesPanel,
-  			    previewPanel: mainPanel,
-  			    rightYAxisesPanel: rightYAxisesPanel,
-  			    bottomXAxisesPanel: bottomXAxisesPanel
+  				title: 'Passo 1',
+  				leftYAxisesPanel: leftYAxisesPanel,
+  				previewPanel: mainPanel,
+  				rightYAxisesPanel: rightYAxisesPanel,
+  				bottomXAxisesPanel: bottomXAxisesPanel
   			});
+  			
   			var chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
   				title: 'Passo 2',
   			});
   			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
-  			    bodyBorder: false,
-  			    width: '100%',
-  			    region: 'center',
-  			    items: [
-  			        chartStructure,
-  			      	chartConfiguration,
-  			        {title: 'Passo 3',},
-  			    ]
+  				bodyBorder: false,
+  				width: '100%',
+  				region: 'center',
+  				items: [
+  					chartStructure,
+  					chartConfiguration,
+  					{title: 'Passo 3',},
+  				]
   			});
-  			        
+  					
   			var designerMainPanel = Ext.create('Ext.panel.Panel', {
   				renderTo: Ext.getBody(),
   				xtype: 'layout-border',
   				requires: [
-  			        'Ext.layout.container.Border'
-  			    ],
-  			    layout: 'border',
-  			    width: '100%',
-  			    height: '100%',                            
-  			    bodyBorder: false,
-  			    defaults: {
-  			        collapsible: false,
-  			        split: true,
-  			        bodyPadding: 10
-  			    },
-  			    items: [
-  			        chartTypeColumnSelector,
-  			        stepsTabPanel,
-  			    ]
+  					'Ext.layout.container.Border'
+  				],
+  				layout: 'border',
+  				width: '100%',
+  				height: '100%',                            
+  				bodyBorder: false,
+  				defaults: {
+  					collapsible: false,
+  					split: true,
+  					bodyPadding: 10
+  				},
+  				items: [
+  					chartTypeColumnSelector,
+  					stepsTabPanel,
+  				]
   			});
 
  			Ext.log({level: 'info'}, 'CHART: STILL INNNN');

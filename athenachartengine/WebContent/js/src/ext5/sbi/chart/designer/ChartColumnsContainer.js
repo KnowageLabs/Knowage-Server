@@ -16,12 +16,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
     columns: [
         {
         	text: 'Nome colonna', 
-            dataIndex: 'axisName',
+            dataIndex: 'serieColumn',
             sortable: true,
             flex: 1
         }
     ],
     enableDragDrop: true,
     enableColumnHide:false,
-    margin: '0 5 0 0'	
+    margin: '0 0 0 0'	
 });

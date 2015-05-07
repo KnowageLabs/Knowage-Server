@@ -12,12 +12,12 @@ Ext.define('Sbi.chart.designer.ChartCategoriesContainer', {
     columns: [
         {
         	text: 'Nome categoria', 
-            dataIndex: 'axisName',
+            dataIndex: 'categoryColumn',
             sortable: true,
             autoSizeColumn: true
         }
     ],
     enableDragDrop: true,
     enableColumnHide:false,
-    margin: '0 5 0 0'	
+    margin: '0 0 0 0'	
 });

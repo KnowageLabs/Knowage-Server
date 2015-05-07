@@ -1,5 +1,9 @@
 Ext.define('Sbi.chart.designer.AxisesContainerStore', {
     extend: 'Ext.data.Store',
+	
+	config: {
+		idAxisesContainer: 'idAxisesContainer'
+	},
     
     model: Sbi.chart.designer.AxisesContainerModel,
 	       
