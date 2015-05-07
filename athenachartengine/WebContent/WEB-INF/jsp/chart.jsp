@@ -152,26 +152,20 @@ author:
 
  			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
- 			
-			// START CALLING WS
- 			var templateContainer = Ext.create('Ext.mixin.Observable', {
- 			    listeners: {
- 			        dataReady: function(jsonData) {
- 			        	var parameters = {
- 			        			jsonTemplate: jsonTemplate,
-								jsonData: jsonData
-						};
- 			        	chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 			        		var chartConf = Ext.JSON.decode(response.responseText, true);
- 			        		renderChart(chartConf);
- 			        	});
- 			        }
- 			    }
- 			});
+			
+			var parameters = {
+				jsonTemplate: jsonTemplate,
+			};
+			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+				var chartConf = Ext.JSON.decode(response.responseText, true);
+				renderChart(chartConf);
+			});
 
+ 			/* 
  			coreServiceManager.run('loadData', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
 				templateContainer.fireEvent('dataReady', response.responseText);
-			});
+			}); 
+ 			*/
 
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
