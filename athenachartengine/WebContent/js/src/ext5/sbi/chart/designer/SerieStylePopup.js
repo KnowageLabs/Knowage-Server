@@ -29,11 +29,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	tooltipBackgroundColor: null,
 	tooltipAlignComboBox: null,
 	tooltipFontsComboBox: null,
-	field: null,
-	field: null,
-	field: null,
-	field: null,
-	
+	tooltipFontWeightStylesComboBox: null,
+	tooltipFontSizeComboBox: null,
+	/* * * * * * * END Internal components * * * * * * * */
 
     // Fields will be arranged vertically, stretched to full width
 	layout: 'anchor',
@@ -156,7 +154,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                 {
                     id : 'serieColorField',
                     xtype : 'field',
-					fieldStyle : (serieColor && serieColor.trim() != '') ? 'background-color: ' + serieColor.trim() : '',
+					fieldStyle : (serieColor && serieColor.trim() != '') ? 
+						'background-image: none; background-color: ' + serieColor.trim() : '',
                     fieldLabel : 'Color',
                     labelWidth : 115,
 					readOnly : true,
@@ -167,7 +166,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     menu : Ext.create('Ext.menu.ColorPicker',{
                         listeners : {
                             select : function(picker, selColor) {
-                                var style = 'background-color: #' + selColor;
+                                var style = 'background-image: none;background-color: #' + selColor;
+								
                                 Ext.getCmp('serieColorField').setFieldStyle(style);
                             }
                         }
@@ -254,7 +254,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                 {
                     id : 'tooltipColorField',
                     xtype : 'field',
-					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 'background-color: ' + serieTooltipColor.trim() : '',
+					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
+						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
                     fieldLabel : 'Color',
 					labelWidth : 115,
                     readOnly : true,
@@ -265,8 +266,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     menu : Ext.create('Ext.menu.ColorPicker',{
                         listeners : {
                             select : function(picker, selColor) {
-                                var style = 'background-color: #' + selColor
-                                        + '; background-image: none;';
+                                var style = 'background-image: none; background-color: #' + selColor;
                                 Ext.getCmp('tooltipColorField').setFieldStyle(style);
 								
 								// console.log('selected color:', '#'+selColor);
@@ -290,7 +290,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     id : 'tooltipBackgroundColorField',
                     fieldLabel : 'Background color',
 					fieldStyle : (serieTooltipBackgroundColor && serieTooltipBackgroundColor.trim() != '') ? 
-						'background-color: ' + serieTooltipBackgroundColor.trim() : '',
+						'background-image: none; background-color: ' + serieTooltipBackgroundColor.trim() : '',
 					labelWidth : 115,
                     xtype : 'field',
                     readOnly : true,
@@ -301,8 +301,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     menu : Ext.create('Ext.menu.ColorPicker',{
                         listeners : {
                             select : function(picker, selColor) {
-                                var style = 'background-color: #' + selColor
-                                        + '; background-image: none;';
+                                var style = 'background-image: none; background-color: #' + selColor;
                                 Ext.getCmp('tooltipBackgroundColorField').setFieldStyle(style);
 								
 								// console.log('selected color:', '#'+selColor);
@@ -365,7 +364,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			{name : 'Underline', value : 'u'},
 			{name : 'Strike-through', value : 's'}, 
 		];
-		var tooltipFontWeightStylesComboBox = Ext.create('Ext.form.ComboBox', {
+		
+		// var tooltipFontWeightStylesComboBox = Ext.create('Ext.form.ComboBox', {
+		this.tooltipFontWeightStylesComboBox = Ext.create('Ext.form.ComboBox', {
 			id: 'tooltipFontWeightStyles',
 			store: {
 				store: 'array',
@@ -382,11 +383,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				}
 			}
 		});
-		this.tooltipFieldSet.add(tooltipFontWeightStylesComboBox);
+		this.tooltipFieldSet.add(this.tooltipFontWeightStylesComboBox);
 		
 		var serieTooltipFontSize = dataAtRow.get('serieTooltipFontSize');		
 		var tooltipFontSize = [[8],[9],[10],[11],[12],[14],[16],[18],[20],[22],[24],[26],[28],[36],[48],[72]];
-		var tooltipFontSizeComboBox = Ext.create('Ext.form.ComboBox', {
+		// var tooltipFontSizeComboBox = Ext.create('Ext.form.ComboBox', {
+		this.tooltipFontSizeComboBox = Ext.create('Ext.form.ComboBox', {
 			id: 'tooltipFontSize',
 			store: {
 				store: 'array',
@@ -402,37 +404,14 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				}
 			}
 		});
-		this.tooltipFieldSet.add(tooltipFontSizeComboBox);
+		this.tooltipFieldSet.add(this.tooltipFontSizeComboBox);
 		
 		this.add(this.serieFieldSet);
 		this.add(this.tooltipFieldSet);
 	},
 	
-	/*
-	beforeDestroy: function () {
-		var serieFieldSetItems = this.serieFieldSet.items.items;
-		
-		for(index in serieFieldSetItems) {
-			serieFieldSetItems[index].destroy();
-		}
-		
-		serieFieldSet.destroy();
-		
-		var tooltipFieldSetItems = this.tooltipFieldSet.items.items;
-		
-		for(index in tooltipFieldSetItems) {
-			tooltipFieldSetItems[index].destroy();
-		}
-		tooltipFieldSet.destroy();
-    },
-    */
-	
     writeConfigsAndExit: function() {
 		Ext.log('Dati scritti');
-		// console.log('store',store);
-		// console.log('rowIndex', rowIndex);
-		
-		
 		
 		this.destroy();
 	},
