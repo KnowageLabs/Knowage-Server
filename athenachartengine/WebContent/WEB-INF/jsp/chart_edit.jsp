@@ -146,7 +146,7 @@ author:
  			var userId = '<%=userId%>';
  			var hostName = '<%=request.getServerName()%>';
  			var serverPort = '<%=request.getServerPort()%>';
- 			var jsonTemplate = '<%=template%>';
+ 			var jsonTemplate = Ext.JSON.decode('<%=template%>');
  			var datasetLabel  = '<%=datasetLabel%>';
   			
  			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
@@ -318,7 +318,7 @@ author:
   			
   			
   			
-  			coreServiceManager.run('loadDatasetFields', {jsonTemplate: jsonTemplate}, [datasetLabel], function (response) {
+  			coreServiceManager.run('loadDatasetFields', {}, [datasetLabel], function (response) {
   				columnsStore.fireEvent('dataReady', response.responseText);
   				categoriesStore.fireEvent('dataReady', response.responseText);
 			});

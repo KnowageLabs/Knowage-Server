@@ -1,10 +1,12 @@
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
-<!-- <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script> -->
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.src.js"></script>
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script>
 
 <script>
+	var hostName = '<%=request.getServerName()%>';
+	var serverPort = '<%=request.getServerPort()%>';
 
 	function initChartLibrary(panelId) {
 		Highcharts.setOptions({
@@ -23,7 +25,7 @@
 		        plotBorderWidth: 1
 		    },
 		    exporting: {
-		        url: 'https://export.highcharts.com/'
+		        url: 'http://192.168.40.100:8080/highcharts-export-web/'
 		    }
 		});
 	}

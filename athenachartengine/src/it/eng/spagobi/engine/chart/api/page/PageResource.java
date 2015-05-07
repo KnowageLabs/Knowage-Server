@@ -98,10 +98,11 @@ public class PageResource extends AbstractChartEngineResource {
 
 		try {
 
+			String savedTemplate = getIOManager().getTemplateAsString();
 			switch (pageName) {
 
 			case "execute":
-				engineInstance = ChartEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
+				engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;
@@ -109,10 +110,10 @@ public class PageResource extends AbstractChartEngineResource {
 			case "edit":
 
 				JSONObject template = null;
-				template = buildBaseTemplate();
+				String templateString = savedTemplate != null ? savedTemplate : buildBaseTemplate().toString();
 
 				// create a new engine instance
-				engineInstance = ChartEngine.createInstance(template.toString(), getIOManager().getEnv());
+				engineInstance = ChartEngine.createInstance(templateString, getIOManager().getEnv());
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;

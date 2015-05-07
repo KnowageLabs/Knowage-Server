@@ -49,6 +49,11 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 				service: 'datasets/{0}/data',
 				method: 'POST'
 			});
+			
+			coreServiceManager.registerService('loadDatasetFields', {
+				service: 'datasets/{0}/fields',
+				method: 'GET'
+			});
 			return coreServiceManager;
 		}
 	}
