@@ -1,7 +1,10 @@
 #set($category = $chart.VALUES.CATEGORY)
 #set($chartType = $chart.type)
-#set($font = $chart.style.font)
-#set($padding = $chart.padding)
+#set($font = $chart.FONT.type)
+#set($padding = $chart.PADDING.value)
+#set($maxWords = $chart.MAXWORDS.value)
+#set($maxAngle= $chart.ANGLE.max)
+#set($minAngle= $chart.ANGLE.min)
 #set($dataRows = $data.rows)
 
 
@@ -36,7 +39,10 @@
  {
   type: '$chartType',
   font: '$font',
-  padding: '$padding'
+  padding: '$padding',
+  maxWords: '$maxWords',
+  maxAngle: '$maxAngle',
+  minAngle: '$minAngle'
  },
  
  data:

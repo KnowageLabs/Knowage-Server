@@ -46,7 +46,7 @@ function renderWordCloud(chartConf){
 			cloud.start = function() {
 				var board = zeroArray((size[0] >> 5) * size[1]),
 				bounds = null,
-				n = words.length,
+				n = Math.min(words.length, chartConf.chart.maxWords),
 				i = -1,
 				tags = [],
 				data = words.map(function(d, i) {
@@ -189,6 +189,7 @@ function renderWordCloud(chartConf){
 				if (!arguments.length) return rotate;
 				rotate = d3.functor(x);
 				return cloud;
+				
 			};
 
 			cloud.text = function(x) {
@@ -434,7 +435,12 @@ function renderWordCloud(chartConf){
 		return {text: d.name, size: 10 + d.count*25};
 	}))
 	.padding(chartConf.chart.padding)
-	.rotate(function() { return (Math.random() * 2) * 90; })
+	.rotate(function() {
+		var angle = (Math.random() * 2) * 90;
+		while ((angle < chartConf.chart.minAngle || angle > chartConf.chart.maxAngle)){
+			angle = (Math.random() * 2) * 90;
+		}
+		return angle })
 	.font("Impact")
 	.fontSize(function(d) { return d.size; })
 	.on("end", draw)
@@ -459,4 +465,5 @@ function renderWordCloud(chartConf){
 		.text(function(d) { return d.text; });
 		
 	}
+	
 }
