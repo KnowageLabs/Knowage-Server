@@ -17,6 +17,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	/* * * * * * * Internal components * * * * * * * */
 	serieFieldSet: null,
 	tooltipFieldSet: null,
+	
 	serieNameTextField: null,
 	serieTypesComboBox: null,
 	serieOrderComboBox: null,
@@ -25,7 +26,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	seriePrecisionNumberField: null,
 	seriePrefixCharTextField: null,
 	seriePostfixCharTextField: null,
+	
 	tooltipTemplateHtml: null,
+	tooltipColor: null,
 	tooltipBackgroundColor: null,
 	tooltipAlignComboBox: null,
 	tooltipFontsComboBox: null,
@@ -82,15 +85,15 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var serieName = dataAtRow.get('axisName');
 		// var serieNameTextField = {
-		this.serieNameTextField = {
-			xtype: 'textfield',
+		this.serieNameTextField = Ext.create('Ext.form.field.Text', {
+			// xtype: 'textfield',
 			// id: 'serieName',
 			name: 'serieName',
 			value: (serieName && serieName.trim() != '') ? serieName.trim() : 'Custom name',
 			fieldLabel: 'Name',
 			selectOnFocus: true,
 			allowBlank: true 
-		};
+		});
 		this.serieFieldSet.add(this.serieNameTextField);
 	
 		var serieType = dataAtRow.get('serieType');
@@ -149,84 +152,91 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieColorPicker = {
 			// id: 'serieColor',
 			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                {
-                    id : 'serieColorField',
-                    xtype : 'field',
+			layout : 'hbox',
+			items: [
+				Ext.create('Ext.form.field.Base', {
+					id : 'serieColorField',
+					// xtype : 'field',
 					fieldStyle : (serieColor && serieColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieColor.trim() : '',
-                    fieldLabel : 'Color',
-                    labelWidth : 115,
+					fieldLabel : 'Color',
+					labelWidth : 115,
 					readOnly : true,
-					flex: 15
-                }, {
-                    xtype : 'button',
+					flex: 15,
+					
+					getStyle: function() {
+						return this.getFieldStyle( );
+					}
+				}), {
+					xtype : 'button',
 					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none;background-color: #' + selColor;
+					menu : Ext.create('Ext.menu.ColorPicker',{
+						listeners : {
+							select : function(picker, selColor) {
+								var style = 'background-image: none;background-color: #' + selColor;
 								
-                                Ext.getCmp('serieColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
+								Ext.getCmp('serieColorField').setFieldStyle(style);
+							}
+						}
+					}),
 					flex: 1                
-                }
-			]
+				}
+			],
+			getColor: function(){
+				var styleColor = this.items[0].getStyle();
+				var indexOfSharp = styleColor.indexOf('#');
+				styleColor = styleColor.substring(indexOfSharp);
+				
+				return styleColor;
+			}
 		};
 		this.serieFieldSet.add(this.serieColorPicker);
 		
 		var showValue = dataAtRow.get('serieShowValue');
 		// var serieShowValue = {
-		this.serieShowValue = {
+		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
 			// id: 'serieShowValue',
-			xtype: 'checkboxfield',
 			checked: (showValue != undefined) ? showValue: true,
 			labelSeparator: '',
 			fieldLabel: 'Show value',
-		};
+		});
 		this.serieFieldSet.add(this.serieShowValue);
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		// var seriePrecisionNumberField = {
-		this.seriePrecisionNumberField = {
-			xtype: 'numberfield',
+		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
 			// id: 'seriePrecision',
 			fieldLabel: 'Precision',
 			selectOnFocus: true,
 			value: (seriePrecision && seriePrecision.trim() != '') ? seriePrecision.trim() : '',
 			maxValue: 10,
 			minValue: 0
-		};
+		});
 		this.serieFieldSet.add(this.seriePrecisionNumberField);
 		
 		
 		var prefixChar = dataAtRow.get('seriePrefixChar');
 		// var seriePrefixCharTextField = {
-		this.seriePrefixCharTextField = {
-			xtype: 'textfield',
+		this.seriePrefixCharTextField = Ext.create('Ext.form.field.Text', {
 			// id: 'prefixChar',
 			name: 'name',
 			value: (prefixChar && prefixChar.trim() != '') ? prefixChar.trim() : '',
 			fieldLabel: 'Prefix text',
 			selectOnFocus: true,
 			allowBlank: true 
-		};
+		});
 		this.serieFieldSet.add(this.seriePrefixCharTextField);
 		
 		var postfixChar = dataAtRow.get('seriePostfixChar'); 
 		// var seriePostfixCharTextField = {
-		this.seriePostfixCharTextField = {
-			xtype: 'textfield',
-			id: 'postfixChar',
+		this.seriePostfixCharTextField = Ext.create('Ext.form.field.Text', {
+			// id: 'postfixChar',
 			name: 'name',
 			value: (postfixChar && postfixChar.trim() != '') ? postfixChar.trim() : '',
 			fieldLabel: 'Postfix text',
 			selectOnFocus: true,
 			allowBlank: true 
-		};
+		});
 		this.serieFieldSet.add(this.seriePostfixCharTextField);
 		
 		
@@ -251,16 +261,20 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			xtype : 'fieldcontainer',
             layout : 'hbox',
             items: [
-                {
+                Ext.create('Ext.form.field.Base', {
                     id : 'tooltipColorField',
-                    xtype : 'field',
+                    // xtype : 'field',
 					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
                     fieldLabel : 'Color',
 					labelWidth : 115,
                     readOnly : true,
-					flex: 15
-                }, {
+					flex: 15,
+				
+					getStyle: function() {
+						return this.getFieldStyle( );
+					}
+                }), {
                     xtype : 'button',
 					layout : 'hbox',
                     menu : Ext.create('Ext.menu.ColorPicker',{
@@ -268,14 +282,15 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                             select : function(picker, selColor) {
                                 var style = 'background-image: none; background-color: #' + selColor;
                                 Ext.getCmp('tooltipColorField').setFieldStyle(style);
-								
-								// console.log('selected color:', '#'+selColor);
                             }
                         }
                     }),
 					flex: 1                
                 }
-			]
+			],
+			getColor: function(){
+				return this.items[0].getStyle();
+			}
 		};
 		this.tooltipFieldSet.add(this.tooltipColor);
 		
@@ -286,16 +301,20 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			xtype : 'fieldcontainer',
             layout : 'hbox',
             items: [
-                {
+                Ext.create('Ext.form.field.Base', {
                     id : 'tooltipBackgroundColorField',
+                    // xtype : 'field',
                     fieldLabel : 'Background color',
 					fieldStyle : (serieTooltipBackgroundColor && serieTooltipBackgroundColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipBackgroundColor.trim() : '',
 					labelWidth : 115,
-                    xtype : 'field',
                     readOnly : true,
-					flex: 15
-                }, {
+					flex: 15,
+				
+					getStyle: function() {
+						return this.getFieldStyle( );
+					}
+                }), {
                     xtype : 'button',
 					layout : 'hbox',
                     menu : Ext.create('Ext.menu.ColorPicker',{
@@ -303,14 +322,15 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                             select : function(picker, selColor) {
                                 var style = 'background-image: none; background-color: #' + selColor;
                                 Ext.getCmp('tooltipBackgroundColorField').setFieldStyle(style);
-								
-								// console.log('selected color:', '#'+selColor);
                             }
                         }
                     }),
 					flex: 1                
                 }
-			]
+			],
+			getColor: function(){
+				return this.items[0].getStyle();
+			}
 		};
 		this.tooltipFieldSet.add(this.tooltipBackgroundColor);
 		
@@ -411,8 +431,55 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	},
 	
     writeConfigsAndExit: function() {
-		Ext.log('Dati scritti');
+		var dataAtRow = store.getAt(rowIndex);
+		var serieName = this.serieNameTextField.getValue();
+		dataAtRow.set('axisName', serieName);
 		
+		var serieType = this.serieTypesComboBox.getValue();
+		dataAtRow.set('serieType', serieType);
+		
+		var serieOrder = this.serieOrderComboBox.getValue();
+		dataAtRow.set('serieOrderType', serieOrder);
+		
+		var serieColor = this.serieColorPicker.getColor();
+		dataAtRow.set('serieColor', serieColor);
+		
+		var showValue = this.serieShowValue.getValue();
+		dataAtRow.set('serieShowValue', showValue);
+		
+		var seriePrecision = '' + this.seriePrecisionNumberField.getValue(); //Save as string 
+		dataAtRow.set('seriePrecision', seriePrecision);
+		
+		var prefixChar = this.seriePrefixCharTextField.getValue();
+		dataAtRow.set('seriePrefixChar', prefixChar);
+		
+		var postfixChar = this.seriePostfixCharTextField.getValue();
+		dataAtRow.set('seriePostfixChar', postfixChar);
+		
+		var templateHtml = this.tooltipTemplateHtml.getValue();
+		dataAtRow.set('serieTooltipTemplateHtml', templateHtml);
+		
+		var serieTooltipColor = this.tooltipColor.getColor();
+		dataAtRow.set('serieTooltipColor', serieTooltipColor);
+		
+		var serieTooltipBackgroundColor = this.tooltipBackgroundColor.getColor();
+		dataAtRow.set('serieTooltipBackgroundColor', serieTooltipBackgroundColor);
+		
+		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();
+		dataAtRow.set('serieTooltipAlign', serieTooltipAlign);
+		
+		var serieTooltipFont = this.tooltipFontsComboBox.getValue();
+		dataAtRow.set('serieTooltipFont', serieTooltipFont);
+		
+		var serieTooltipFontWeight = this.tooltipFontWeightStylesComboBox.getValue();
+		dataAtRow.set('serieTooltipFontWeight', serieTooltipFontWeight);
+		
+		var serieTooltipFontSize = '' + this.tooltipFontSizeComboBox.getValue(); //Save as string 
+		dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
+				
+		// console.log('serieColor', serieColor);
+		
+		// Ext.log('Dati scritti');
 		this.destroy();
 	},
 	
