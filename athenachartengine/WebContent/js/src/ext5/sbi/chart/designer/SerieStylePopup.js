@@ -9,6 +9,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
     closable : true,
     closeAction: 'destroy',
     width: 500,
+    modal: true,
 	config: {
 		store: '',
 		rowIndex: ''

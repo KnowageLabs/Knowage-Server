@@ -10,7 +10,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	
 	alternateClassName: ['ChartColumnsContainerManager'],
 	
-    
     statics: {
     	instanceIdFeed: 0,
     	
@@ -92,25 +91,18 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 
 					},
 					
-					columns: [
-						{
-							// text: 'Custom name (Y)',
-							text: '',
+					hideHeaders: true,
+					columns: {
+						items: [{
 							dataIndex: 'serieColumn',
 							flex: 12,
 							layout: 'fit',
 							sortable: false,
-							items: {
-			                    xtype: 'textfield',
-								allowBlank: false,
-			                    emptyText: 'Insert name',
-								selectOnFocus: true,
-								value: 'Custom name',
-			                }
 						}, {
-			                header: '',
 			                dataIndex: 'serieGroupingFunction',
 			                flex: 8,
+							layout: 'fit',
+							sortable: false,
 			                field: {
 			                    xtype: 'combobox',
 			                    typeAhead: true,
@@ -151,7 +143,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								}
 							}]
 						}
-					],
+					]},
 					selModel: {
 						selType: 'cellmodel'
 					},

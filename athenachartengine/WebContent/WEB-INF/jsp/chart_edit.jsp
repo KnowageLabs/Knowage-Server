@@ -143,15 +143,6 @@ author:
  			var datasetLabel  = '<%=datasetLabel%>';
   			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
- 			
- 			function addToAxisesContainer(id) {
- 				var panel = Ext.getCmp(id);
- 				var newPanel = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(panel.id , '' , true, ddGroup1, ddGroup1);
- 				if(newPanel != null) {
-	 				Ext.log('Created new ChartColumnsContainer: id="' + newPanel.id + '"');
-	 				panel.add(newPanel);
- 				}
- 			}
 
  			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
  				region: 'north',
@@ -263,8 +254,8 @@ author:
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						containerScroll: true,
-  						dragGroup: ddGroup1,
-  						dropGroup: ddGroup1,
+  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroup1,
+  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroup1,
   						dragText: 'Drag from Columns Picker',
   						enableDrop: false
   					},
@@ -295,8 +286,8 @@ author:
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						containerScroll: true,
-  						dragGroup: ddGroup2,
-  						dropGroup: ddGroup2,
+  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroup2,
+  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroup2,
   						dragText: 'Drag from Categories Picker',
   						enableDrop: false
   					},
@@ -324,13 +315,21 @@ author:
   				region: 'west'
   			});
 
-  			var leftYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
+/*   		var leftYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
   				id: 'chartLeftAxisesContainer',
   				header:{
-  					title: {hidden: true},
+  					title: {hidden: true },
   					items:[{
+	                    xtype: 'textfield',
+  						flex: 6,
+						allowBlank: false,
+						height: 30,
+	                    emptyText: 'Insert name',
+						selectOnFocus: true,
+						value: 'Custom name',
+	                },{
   						xtype: 'tbfill',
-  						flex: 6
+  						flex: 1
   					},{
   						xtype:'button',
   						text: '+',
@@ -345,10 +344,7 @@ author:
   						}
   					}]    
   				},
-  			});
-
-  			var firstcolumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer('chartLeftAxisesContainer', '', false, ddGroup1, ddGroup1);
-  			leftYAxisesPanel.add(firstcolumn);
+  			}); */
 
   			var mainPanel = Ext.create('Ext.panel.Panel', {
   				id: 'mainPanel',
@@ -360,14 +356,26 @@ author:
   				id: 'chartRightAxisesContainer',
   				hidden : true
   			});
+  			
+  			var leftYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
+  				id: 'chartLeftAxisesContainer',
+  				alias: 'Asse Y',
+  				otherPanel: rightYAxisesPanel
+  			});
+
+  			var firstcolumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
+  						'chartLeftAxisesContainer', '', false, 
+  						Sbi.chart.designer.ChartUtils.ddGroup1, 
+  						Sbi.chart.designer.ChartUtils.ddGroup1);
+  			leftYAxisesPanel.add(firstcolumn);
 
   			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				viewConfig: {
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						containerScroll: true,
-  						dragGroup: ddGroup2,
-  						dropGroup: ddGroup2
+  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroup2,
+  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroup2
   					},
   				},
   				store: Ext.create('Sbi.chart.designer.AxisesContainerStore'),
@@ -436,8 +444,6 @@ author:
   					stepsTabPanel,
   				]
   			});
-
- 		
  			
   			/*  LOADING CONFIGURATION FROM TEMPLATE  */
  			Ext.log({level: 'info'}, 'CHART: IN CONFIGURATION FROM TEMPLATE');
@@ -455,7 +461,10 @@ author:
 
   					} else {
 	  					console.log('CREATING NEW COLUMN');
-	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(rightYAxisesPanel.id , '', true, ddGroup1, ddGroup1, axisAlias);
+	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
+	  							rightYAxisesPanel.id , '', true, 
+	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
+	  							Sbi.chart.designer.ChartUtils.ddGroup1, axisAlias);
 	  					rightYAxisesPanel.add(newColumn);
 	  					rightYAxisesPanel.show();
 	  				}
