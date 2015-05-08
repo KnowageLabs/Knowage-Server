@@ -1,8 +1,5 @@
 Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	extend: 'Ext.form.Panel',
-	requires: [
-	    'Sbi.chart.designer.SerieColorPicker'
-    ],	
 	id: 'serieStylePopup',
     title: 'Simple Form',
     layout: 'border',
@@ -133,10 +130,45 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieFieldSet.add(this.serieOrderComboBox);
 				
 		var serieColor = dataAtRow.get('serieColor');
-		this.serieColorPicker = Ext.create('Sbi.chart.designer.SerieColorPicker',{
-			colorValue: serieColor,
-			fieldLabel: 'Color'
-		});
+		this.serieColorPicker = {
+			xtype : 'fieldcontainer',
+			layout : 'hbox',
+			items: [
+				Ext.create('Ext.form.field.Base', {
+					id : 'serieColorField',
+					fieldStyle : (serieColor && serieColor.trim() != '') ? 
+						'background-image: none; background-color: ' + serieColor.trim() : '',
+					fieldLabel : 'Color',
+					labelWidth : 115,
+					readOnly : true,
+					flex: 15,
+					
+					getStyle: function() {
+						return this.getFieldStyle( );
+					}
+				}), {
+					xtype : 'button',
+					layout : 'hbox',
+					menu : Ext.create('Ext.menu.ColorPicker',{
+						listeners : {
+							select : function(picker, selColor) {
+								var style = 'background-image: none;background-color: #' + selColor;
+								
+								Ext.getCmp('serieColorField').setFieldStyle(style);
+							}
+						}
+					}),
+					flex: 1                
+				}
+			],
+			getColor: function(){
+				var styleColor = this.items[0].getStyle();
+				var indexOfSharp = styleColor.indexOf('#');
+				styleColor = styleColor.substring(indexOfSharp);
+				
+				return styleColor;
+			}
+		};
 		this.serieFieldSet.add(this.serieColorPicker);
 		
 		var showValue = dataAtRow.get('serieShowValue');
