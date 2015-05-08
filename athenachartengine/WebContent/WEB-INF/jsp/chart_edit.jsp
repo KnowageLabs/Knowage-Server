@@ -394,23 +394,6 @@ author:
   				]
   			});
   			
-  			
-  			
-  			
-  			/*  LOADING CONFIGURATION FROM TEMPLATE  */
-  			
-  			/* var yCount = 0;
-  			Ext.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
-  				
-  				if(axis.)
-  				if(yCount > 0) {
-  					
-  				}
-  			}); */
-  			
-  			/*  LOADED CONFIGURATION FROM TEMPLATE  */
-  			
-
   			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
   				title: 'Passo 1',
   				leftYAxisesPanel: leftYAxisesPanel,
@@ -454,7 +437,57 @@ author:
   				]
   			});
 
- 			Ext.log({level: 'info'}, 'CHART: STILL INNNN');
+ 		
+ 			
+  			/*  LOADING CONFIGURATION FROM TEMPLATE  */
+ 			Ext.log({level: 'info'}, 'CHART: IN CONFIGURATION FROM TEMPLATE');
+  			
+  			var yCount = 0;
+  			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+  			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
+  				if(axis.type.toUpperCase() == "SERIE"){
+
+  					var axisAlias = axis.alias;
+  					
+  					if(yCount == 0) {
+  					
+  						theStorePool[0].axisAlias = axisAlias;
+
+  					} else {
+	  					console.log('CREATING NEW COLUMN');
+	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(rightYAxisesPanel.id , '', true, ddGroup1, ddGroup1, axisAlias);
+	  					rightYAxisesPanel.add(newColumn);
+	  					rightYAxisesPanel.show();
+	  				}
+	  				yCount++;
+  				}
+  			});
+  			
+  			Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
+  				var axisAlias = serie.axis;
+  				Ext.Array.each(theStorePool, function(store, index){
+  					if(store.axisAlias === axisAlias) {
+  						console.log('serie.axis: ' + serie.axis+": ", store);
+
+  						
+  					
+  					}
+  				});
+  			});
+
+  			
+  			
+  			
+  			
+ 			Ext.log({level: 'info'}, 'CHART: OUT CONFIGURATION FROM TEMPLATE');
+  			
+  			/*  LOADED CONFIGURATION FROM TEMPLATE  */
+  			
+ 			
+ 			
+ 			
+ 			
+ 			
  			Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });

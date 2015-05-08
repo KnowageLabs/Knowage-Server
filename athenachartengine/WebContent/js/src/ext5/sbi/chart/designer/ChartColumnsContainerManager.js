@@ -38,7 +38,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			serieStylePopup.show();
 		},
 
-		createChartColumnsContainer: function(idAxisesContainer, id, isDestructible, dragGroup, dropGroup) {
+		createChartColumnsContainer: function(idAxisesContainer, id, isDestructible, dragGroup, dropGroup, axisAlias) {
 			/*
 			 */
 			if( ChartColumnsContainerManager.instanceCounter == ChartColumnsContainerManager.COUNTER_LIMIT) {
@@ -55,6 +55,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				var chartColumnsContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
 					idAxisesContainer: idChartColumnsContainer,
 					autoDestroy : true,
+					axisAlias: axisAlias
 				});
 				
 				Ext.Array.push(ChartColumnsContainerManager.storePool, chartColumnsContainerStore);
