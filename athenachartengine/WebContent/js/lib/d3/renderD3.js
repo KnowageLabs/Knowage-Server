@@ -1,5 +1,7 @@
 function renderWordCloud(chartConf){
 		
+	console.log(chartConf);
+	
 		(function() {
 
 			function cloud() {
@@ -428,6 +430,63 @@ function renderWordCloud(chartConf){
 		.start();
 
 		function draw(words) {
+			
+			d3.select("body")
+			.append("div").attr("id","main")
+			.style("font-family", chartConf.chart.font.type);
+			
+			if (chartConf.data[0].length < 1)
+			{
+				var emptyMsgFontSize = parseInt(chartConf.emptymessage.style.fontSize);
+				var emptyMsgDivHeight = parseInt(chartConf.emptymessage.height);
+				var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
+				
+				// Set title
+				d3.select("#main").append("div")
+					.style("height",emptyMsgTotal)
+					.style("position",chartConf.emptymessage.position)
+					.style("left",chartConf.emptymessage.paddingLeft)
+					.style("color",chartConf.emptymessage.style.fontColor)
+					.style("text-align",chartConf.emptymessage.style.textAlign)
+		    		.style("font-family",chartConf.emptymessage.style.fontType)
+		    		.style("font-style",chartConf.emptymessage.style.fontStyle)
+		    		.style("font-size",emptyMsgFontSize)
+					.text(chartConf.emptymessage.text);	
+			}
+			else
+			{
+				var titleFontSize = parseInt(chartConf.title.style.fontSize);
+				var titleDivHeight = parseInt(chartConf.title.height);
+				var titleTotal = titleDivHeight+titleFontSize/2;
+				
+				// Set title
+				d3.select("#main").append("div")
+					.style("height",titleTotal)
+					.style("position",chartConf.title.position)
+					.style("left",chartConf.title.paddingLeft)
+					.style("color",chartConf.title.style.fontColor)
+					.style("text-align",chartConf.title.style.textAlign)
+		    		.style("font-family",chartConf.title.style.fontType)
+		    		.style("font-style",chartConf.title.style.fontStyle)
+		    		.style("font-size",titleFontSize)
+					.text(chartConf.title.text);	
+				
+				var subtitleFontSize = parseInt(chartConf.subtitle.style.fontSize);
+				var subtitleDivHeight = parseInt(chartConf.subtitle.height);
+				var subtitleTotal = subtitleDivHeight+subtitleFontSize/2;
+				
+				// Set subtitle
+				d3.select("#main").append("div")
+					.style("height",subtitleTotal)
+					.style("position",chartConf.subtitle.position)
+					.style("left",chartConf.subtitle.paddingLeft)
+					.style("color",chartConf.subtitle.style.fontColor)
+					.style("text-align",chartConf.subtitle.style.textAlign)
+		    		.style("font-family",chartConf.subtitle.style.fontType)
+		    		.style("font-style",chartConf.subtitle.style.fontStyle)
+		    		.style("font-size",subtitleFontSize)
+					.text(chartConf.subtitle.text);
+			      
 			d3.select("body").append("svg")
 			.attr("width", 800)
 			.attr("height", 700)
@@ -1040,4 +1099,4 @@ function renderWordCloud(chartConf){
 		  return root;
 		  
 		};
-	}
+	}}
