@@ -147,8 +147,10 @@ author:
  			function addToAxisesContainer(id) {
  				var panel = Ext.getCmp(id);
  				var newPanel = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(panel.id , '' , true, ddGroup1, ddGroup1);
- 				Ext.log('Created new ChartColumnsContainer: id="' + newPanel.id + '"');
- 				panel.add(newPanel);
+ 				if(newPanel != null) {
+	 				Ext.log('Created new ChartColumnsContainer: id="' + newPanel.id + '"');
+	 				panel.add(newPanel);
+ 				}
  			}
 
  			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {

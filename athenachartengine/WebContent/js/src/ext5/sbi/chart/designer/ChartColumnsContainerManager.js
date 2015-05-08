@@ -9,10 +9,15 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	},
 	
 	alternateClassName: ['ChartColumnsContainerManager'],
+	
     
     statics: {
-		instanceCounter: 1,
-		
+    	instanceIdFeed: 0,
+    	
+    	instanceCounter: 0,
+    	
+    	COUNTER_LIMIT: 4,
+    	
 		storePool: [],
 		
 		yAxisPool: [],
@@ -34,8 +39,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		},
 
 		createChartColumnsContainer: function(idAxisesContainer, id, isDestructible, dragGroup, dropGroup) {
+			/*
+			 */
+			if( ChartColumnsContainerManager.instanceCounter == ChartColumnsContainerManager.COUNTER_LIMIT) {
+				Ext.log('Maximum number of ChartColumnsContainer instances reached');
+				return null;
+			}
 	    	
-	    	var idChartColumnsContainer = (id && id != '')? id: 'ChartColumnsContainer_' + ChartColumnsContainerManager.instanceCounter;
+	    	var idChartColumnsContainer = (id && id != '')? id: 'ChartColumnsContainer_' + ChartColumnsContainerManager.instanceIdFeed;
+	    	
+	    	ChartColumnsContainerManager.instanceIdFeed++;
 	    	
 	    	ChartColumnsContainerManager.instanceCounter++;
 	    	
@@ -61,7 +74,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						listeners: {
 							beforeDrop: function(node, data, dropRec, dropPosition) {
 								if(data.view.id != this.id) {
-									data.records[0] = data.records[0].copy('id' + ChartColumnsContainer.instanceCounter++);   
+									data.records[0] = data.records[0].copy('id' + ChartColumnsContainer.idseed++);   
 								} 
 							}
 						}
@@ -71,7 +84,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					closable : isDestructible,
 					closeAction : 'destroy',
 					beforeDestroy: function(el, eOpts){
-
+						ChartColumnsContainerManager.instanceCounter--;
+						
 						Ext.Array.remove(ChartColumnsContainerManager.storePool, chartColumnsContainerStore);
 						Ext.Array.remove(ChartColumnsContainerManager.yAxisPool, this);
 
@@ -150,7 +164,5 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				
 				return chartColumnsContainer;
 	    }
-		
 	}
-
 });
