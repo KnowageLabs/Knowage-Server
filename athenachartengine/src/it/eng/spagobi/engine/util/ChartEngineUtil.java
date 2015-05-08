@@ -1,6 +1,5 @@
 package it.eng.spagobi.engine.util;
 
-import it.eng.spagobi.athenachart.test.DataSetTransformer;
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
 import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
 
