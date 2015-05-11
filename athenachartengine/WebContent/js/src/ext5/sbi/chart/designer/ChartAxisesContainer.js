@@ -20,8 +20,8 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 		addToAxisesContainer: function (panel) {
 			var newPanel = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 					panel.id , '' , null, true, 
-					Sbi.chart.designer.ChartUtils.ddGroup1, 
-					Sbi.chart.designer.ChartUtils.ddGroup1);
+					Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+					Sbi.chart.designer.ChartUtils.ddGroupMeasure);
 			if(newPanel != null) {
 				Ext.log('Created new ChartColumnsContainer: id="' + newPanel.id + '"');
 				panel.add(newPanel);

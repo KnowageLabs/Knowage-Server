@@ -189,9 +189,6 @@ author:
  				chartTypeSelector.add(button);
  			}
 
- 			var ddGroup1 = 'MEASURE';
- 			var ddGroup2 = 'ATTRIBUTE';
-
  			var columnsStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
  				sorters: [{
@@ -254,8 +251,8 @@ author:
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						containerScroll: true,
-  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroup1,
-  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroup1,
+  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupMeasure,
+  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupMeasure,
   						dragText: 'Drag from Columns Picker',
   						enableDrop: false
   					},
@@ -286,8 +283,8 @@ author:
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						containerScroll: true,
-  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroup2,
-  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroup2,
+  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
+  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dragText: 'Drag from Categories Picker',
   						enableDrop: false
   					},
@@ -367,8 +364,8 @@ author:
   			
   			var firstcolumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
   						'chartLeftAxisesContainer', '', false, 
-  						Sbi.chart.designer.ChartUtils.ddGroup1, 
-  						Sbi.chart.designer.ChartUtils.ddGroup1);
+  						Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+  						Sbi.chart.designer.ChartUtils.ddGroupMeasure);
   			leftYAxisesPanel.add(firstcolumn);
   			 */
 
@@ -378,8 +375,8 @@ author:
   					plugins: {
   						ptype: 'gridviewdragdrop',
   						containerScroll: true,
-  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroup2,
-  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroup2
+  						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
+  						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute
   					},
   				},
   				store: categoriesStore,
@@ -469,16 +466,16 @@ author:
 
 	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 	  							leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
-	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
-	  							Sbi.chart.designer.ChartUtils.ddGroup1, axis);
+	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
 	  					leftYAxisesPanel.add(newColumn);
 
   					} else {
   					
 	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 	  							rightYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
-	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
-	  							Sbi.chart.designer.ChartUtils.ddGroup1, axis);
+	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
 	  					rightYAxisesPanel.add(newColumn);
 	  					rightYAxisesPanel.show();
 	  				}
@@ -494,8 +491,8 @@ author:
   					
 	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 	  							rightYAxisesPanel.id , '', true, 
-	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
-	  							Sbi.chart.designer.ChartUtils.ddGroup1, axisAlias);
+	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, axisAlias);
 	  					rightYAxisesPanel.add(newColumn);
 	  					rightYAxisesPanel.show();
 	  				} 
