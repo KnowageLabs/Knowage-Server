@@ -189,7 +189,7 @@ author:
  				chartTypeSelector.add(button);
  			}
 
- 			var columnsStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+ 			var columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
  				sorters: [{
  					property: 'serieColumn',
@@ -211,7 +211,7 @@ author:
  		  			}
  				}
  			});
- 			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+ 			var categoriesPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
  				sorters: [{
  					property: 'categoryColumn',
@@ -235,8 +235,8 @@ author:
  			});
   			
   			chartServiceManager.run('loadDatasetFields', {}, [datasetLabel], function (response) {
-  				columnsStore.fireEvent('dataReady', response.responseText);
-  				categoriesStore.fireEvent('dataReady', response.responseText);
+  				columnsPickerStore.fireEvent('dataReady', response.responseText);
+  				categoriesPickerStore.fireEvent('dataReady', response.responseText);
 			});
   			
   			
@@ -245,7 +245,7 @@ author:
   				region: 'center',
   				flex:  1,
   				margin: '0 0 5 0',
-  				store: columnsStore,
+  				store: columnsPickerStore,
   				viewConfig: {
   					copy: true,
   					plugins: {
@@ -277,7 +277,7 @@ author:
   				region: 'south',
   				flex: 1,
   				margin: '0 0 5 0',
-  				store: categoriesStore, 
+  				store: categoriesPickerStore, 
   				viewConfig: {
   					copy: true,
   					plugins: {
@@ -312,37 +312,6 @@ author:
   				region: 'west'
   			});
 
-/*   		var leftYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
-  				id: 'chartLeftAxisesContainer',
-  				header:{
-  					title: {hidden: true },
-  					items:[{
-	                    xtype: 'textfield',
-  						flex: 6,
-						allowBlank: false,
-						height: 30,
-	                    emptyText: 'Insert name',
-						selectOnFocus: true,
-						value: 'Custom name',
-	                },{
-  						xtype: 'tbfill',
-  						flex: 1
-  					},{
-  						xtype:'button',
-  						text: '+',
-  						flex: 1,
-  						handler: function(node, mouse){
-  							var panel = Ext.getCmp('chartRightAxisesContainer');
-  							if (!panel.isVisible()) {
-  								panel.setVisible(true);
-  							}
-  							
-  							addToAxisesContainer('chartRightAxisesContainer');
-  						}
-  					}]    
-  				},
-  			}); */
-
   			var mainPanel = Ext.create('Ext.panel.Panel', {
   				id: 'mainPanel',
   				height: 300,
@@ -359,15 +328,6 @@ author:
   				alias: 'Asse Y',
   				otherPanel: rightYAxisesPanel
   			});
-	
-  			/* 
-  			
-  			var firstcolumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-  						'chartLeftAxisesContainer', '', false, 
-  						Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-  						Sbi.chart.designer.ChartUtils.ddGroupMeasure);
-  			leftYAxisesPanel.add(firstcolumn);
-  			 */
 
   			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore');
   			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
@@ -458,8 +418,6 @@ author:
   			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
   				if(axis.type.toUpperCase() == "SERIE"){
 
-					var axisData = Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis);					
-					
   					var isDestructible = (yCount > 1);
   					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
   					if(axis.position.toLowerCase() == 'left') {
@@ -481,23 +439,7 @@ author:
 	  				}
   					console.log('CREATING NEW COLUMN');
 	  				yCount++;
-  					
-					/*   					
- 					if(yCount == 0) {
-  					
-  						theStorePool[0].axisAlias = axisAlias;
 
-  					} else {
-  					
-	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-	  							rightYAxisesPanel.id , '', true, 
-	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, axisAlias);
-	  					rightYAxisesPanel.add(newColumn);
-	  					rightYAxisesPanel.show();
-	  				} 
-	  				yCount++;
-					*/
   				}
   			});
   			/**

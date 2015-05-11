@@ -63,58 +63,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			Ext.Array.push(ChartColumnsContainerManager.storePool, chartColumnsContainerStore);
 
 			
-			var tools = [];
-			
 			var titleText = (axis && axis.TITLE && axis.TITLE.text &&  axis.TITLE.text != null) ? axis.TITLE.text : '';
-//				var titleText = (axisData && axisData != null) ? axisData.titleText : '';
-			
-			var titleTextfield = Ext.create('Ext.form.TextField', {
-					flex: 10,
-					allowBlank: false,
-		            emptyText: 'Insert axis title',
-					selectOnFocus: true,
-					value: titleText,
-					listeners: {
-			            change: 'onTitleChange'
-			        }
-				});
-			tools.push(titleTextfield);
-			
-//			tools.push({
-//				xtype: 'tbfill',
-//				flex: 1,
-//			});
-			
-			tools.push({
-			    type:'gear',
-			    tooltip: 'Set axis style',
-			    flex: 1,
-			    handler: function(event, toolEl, panelHeader) {
-			    	var thisChartColumnsContainer = panelHeader.ownerCt;
-			    	
-			    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
-			    		axisData: thisChartColumnsContainer.getAxisData()
-					});
-					
-			    	axisStylePopup.show();
-				}
-			});
-			
-			if (panelWhereAddSeries != null) {
-				tools.push(
-				{
-				    type:'plus',
-				    tooltip: 'Add another axis',
-				    flex: 1,
-				    handler: function(event, toolEl, panelHeader) {
-						if (!panelWhereAddSeries.isVisible()) {
-							panelWhereAddSeries.setVisible(true);
-						}
-						
-						ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
-				    }
-				});
-			}
 			
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
@@ -125,11 +74,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				axisData: axisData,
 				
 				controller: Ext.create('Ext.app.ViewController', {
-			        extend: '',
-			    
 			        onTitleChange: function (barTextField, textValue) {
 			        	axisData.titleText = textValue;
-			            console.log('axisData.titleText: ', axisData.titleText);
 			        }
 			    }),
 				
@@ -155,7 +101,53 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				title: {
 					hidden: true 
 				}, 
-				tools: tools,
+				tools:[
+				    
+				    // TEXT AREA
+				    {
+				    	xtype: 'textfield',
+						flex: 10,
+						allowBlank:  true,
+			            emptyText: 'Insert axis title',
+						selectOnFocus: true,
+						value: titleText,
+						listeners: {
+				            change: 'onTitleChange'
+				        }
+					},
+					
+					// STYLE POPUP
+					{
+					    type:'gear',
+					    tooltip: 'Set axis style',
+					    flex: 1,
+					    handler: function(event, toolEl, panelHeader) {
+					    	var thisChartColumnsContainer = panelHeader.ownerCt;
+					    	
+					    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
+					    		axisData: thisChartColumnsContainer.getAxisData()
+							});
+							
+					    	axisStylePopup.show();
+						}
+					},
+					
+					// PLUS BUTTON
+					{
+					    type:'plus',
+					    tooltip: 'Add another axis',
+					    flex: 1,
+					    handler: function(event, toolEl, panelHeader) {
+							if (!panelWhereAddSeries.isVisible()) {
+								panelWhereAddSeries.setVisible(true);
+							}
+							
+							ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
+					    },
+					    hidden: (panelWhereAddSeries == null)
+					}
+					
+				],
 				
 				closable : isDestructible,
 				closeAction : 'destroy',
