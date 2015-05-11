@@ -141,7 +141,7 @@ author:
  			var serverPort = '<%=request.getServerPort()%>';
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
  			var datasetLabel  = '<%=datasetLabel%>';
-  			
+ 			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			
  			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
@@ -378,6 +378,14 @@ author:
   				bodyBorder: false,
   				width: '100%',
   				region: 'center',
+				title: {hidden: true },
+  				tools:[{ 
+  		            xtype: 'button',
+  		            text : 'Export as Json',
+  		            handler: function(){
+  		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson();
+  		            }
+  		        }],
   				items: [
   					chartStructure,
   					chartConfiguration,

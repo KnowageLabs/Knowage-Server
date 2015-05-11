@@ -31,62 +31,6 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 	
 	config: {
 		otherPanel: null,
-		
-//		axis: {},
-		
-		/*
-		Ext.log("Sbi.chart.designer.ChartAxisesContainer constructor BEGIN");
-		
-		var headerItems = [];
-		
-		var alias = 'Custom name';
-		if(config.alias != '') {
-			alias = config.alias;
-		}
-		var aliasTextfield = {
-			xtype: 'textfield',
-			flex: 6,
-			allowBlank: false,
-			height: 30,
-            emptyText: 'Insert axis name',
-			selectOnFocus: true,
-			value: alias,
-		};
-		headerItems.push(aliasTextfield);
-		
-		var styleButton = {
-			xtype:'button',
-			icon: 'http://findicons.com/icon/download/66617/paint/24/png',
-			flex: 1
-		};
-		headerItems.push(styleButton);
-		
-		if(config.otherPanel && config.otherPanel != null){
-			var addButton = {
-					xtype:'button',
-					text: '+',
-					flex: 1,
-					handler: function(node, mouse){
-						var panel = config.otherPanel;
-						if (!panel.isVisible()) {
-							panel.setVisible(true);
-						}
-						
-						ChartAxisesContainer.addToAxisesContainer(panel);
-					}
-			};
-			headerItems.push(addButton);
-		}
-		
-		this.header = {
-			title: {hidden: true },
-			items: headerItems
-		};
-		
-
-		
-		Ext.log("Sbi.chart.designer.ChartAxisesContainer constructor END");
-		*/
 	},
 	items: [],
 	
