@@ -1,14 +1,14 @@
 Ext.define('Sbi.chart.designer.FontCombo',{
-    extend:'Ext.form.ComboBox',
+    extend : 'Ext.form.ComboBox',
     store: {
         fields: [ 'name' ],
         data: [ [ 'Arial' ], [ 'Times New Roman' ], [ 'Tahoma' ], [ 'Verdana' ] ]
     },
-    displayField: 'name',
+    displayField : 'name',
     fieldLabel : 'Carattere',
-    tdCls: '',
+    tdCls : '',
     editable : false,
-    listeners: {
+    listeners : {
         change: function(sender, newValue, oldValue, opts) {
             this.inputEl.setStyle('font-family', newValue);
         }

@@ -5,25 +5,22 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	bodyPadding : 10,
 	items : [],
 	
-	config : {
-		paletteGrid : Ext.create('Ext.grid.Panel', {
-		    store: Ext.create('Ext.data.ArrayStore', { fields: ['value']} ),
-		    width: 180,
-		    margin:'0 10 0 0',
-		    multiSelect: true,
-		    columns: [{
-		        text     : 'Colore',
-		        flex     : 1,
-		        sortable : false,
-		        dataIndex: 'value',
-		        renderer : function(value, meta) {
-		        	meta.style = "background-color:#"+value+";";
-		            return value;
-		        }
-		    }]
-		    }
-		)
-	},
+	paletteGrid : Ext.create('Ext.grid.Panel', {
+	    store: Ext.create('Ext.data.ArrayStore', { fields: ['value']} ),
+	    width: 180,
+	    margin:'0 10 0 0',
+	    multiSelect: true,
+	    columns: [{
+	        text     : 'Colore',
+	        flex     : 1,
+	        sortable : false,
+	        dataIndex: 'value',
+	        renderer : function(value, meta) {
+	        	meta.style = "background-color:#"+value+";";
+	            return value;
+	        }
+	    }]
+	}),
 	
 	constructor: function(config) {
         this.callParent(config);

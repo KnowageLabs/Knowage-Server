@@ -311,7 +311,8 @@ author:
   				categoriesPicker: categoriesPicker,
   				region: 'west'
   			});
-
+			
+  			
   			var mainPanel = Ext.create('Ext.panel.Panel', {
   				id: 'mainPanel',
   				height: 300,
@@ -371,9 +372,19 @@ author:
   				bottomXAxisesPanel: bottomXAxisesPanel
   			});
   			
+  			
+  			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel');
+  			var cViewModel = Ext.create('Ext.app.ViewModel',{
+  				data: {
+  					configModel:cModel
+				}
+  			});
+  			
   			var chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
   				title: 'Passo 2',
+  				viewModel: cViewModel
   			});
+  			
   			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
   				width: '100%',

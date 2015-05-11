@@ -1,17 +1,3 @@
-var positionData = [ {
-	name : 'Sotto',
-	value : 'bottom'
-}, {
-	name : 'Sopra',
-	value : 'top'
-}, {
-	name : 'Destra',
-	value : 'right'
-}, {
-	name : 'Sinistra',
-	value : 'left'
-} ];
-
 Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	extend : 'Ext.panel.Panel',
 	columnWidth : 0.7,
@@ -21,6 +7,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	config : {
 		stylePanelLegend : Ext.create('Sbi.chart.designer.StylePopup', {
 		    title:'Stile Legenda',
+		    bindFontAlign:'{configModel.legendAlign}',
+		    bindFont:'{configModel.legendFont}',
+		    bindFontDim:'{configModel.legendDimension}',
+		    bindFontStyle:'{configModel.legendStyle}',
+		    bindColor:'{configModel.legendColor}'
 		}),
 	},
     items : [
@@ -39,12 +30,24 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                 forceSelection : true,
                 editable : false,
                 fieldLabel : 'Posizione',
-                name : 'pos',
+                bind : '{legendPosition}',
                 displayField : 'name',
                 valueField : 'value',
                 store : {
                     fields : ['name', 'value'],
-                    data : positionData
+                    data : [ {
+                    	name : 'Sotto',
+                    	value : 'bottom'
+                    }, {
+                    	name : 'Sopra',
+                    	value : 'top'
+                    }, {
+                    	name : 'Destra',
+                    	value : 'right'
+                    }, {
+                    	name : 'Sinistra',
+                    	value : 'left'
+                    } ]
                 }
             } , {
                 xtype : 'combo',
@@ -54,7 +57,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                 forceSelection : true,
                 editable : false,
                 fieldLabel : 'Layout',
-                name : 'layout',
+                bind : '{legendLayout}',
                 displayField : 'name',
                 valueField : 'value',
                 store : {
@@ -78,18 +81,18 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
             },
             items: [{
                 xtype: 'checkboxfield',
-                name:'floating', 
+                bind :'{legnendFloating}', 
                 id: 'floating',
                 labelSeparator: '',
                 fieldLabel: 'Floating'
             },{
                 xtype : 'textfield',
-                name : 'x',
+                bind : '{legendX}',
                 fieldLabel : 'X',
                 maxWidth:'50'
             },{
                 xtype : 'textfield',
-                name : 'y',
+                bind : '{legendY}',
                 fieldLabel : 'Y',
                 maxWidth:'50'
             },{
