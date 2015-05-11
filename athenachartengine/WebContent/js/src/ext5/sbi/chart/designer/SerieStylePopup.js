@@ -1,7 +1,14 @@
 Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	extend: 'Ext.form.Panel',
+	require: [
+	    'Sbi.chart.designer.FontCombo',
+	    'Sbi.chart.designer.FontStyleCombo',
+	    'Sbi.chart.designer.FontDimCombo',
+	    'Sbi.chart.designer.FontAlignCombo'
+	],
+	
 	id: 'serieStylePopup',
-    title: 'Simple Form',
+    title: 'Serie style configuration',
     layout: 'border',
     bodyPadding: 5,
 	floating: true,
@@ -32,7 +39,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	tooltipColor: null,
 	tooltipBackgroundColor: null,
 	tooltipAlignComboBox: null,
-	tooltipFontsComboBox: null,
+	tooltipFontComboBox: null,
 	tooltipFontWeightStylesComboBox: null,
 	tooltipFontSizeComboBox: null,
 	/* * * * * * * END Internal components * * * * * * * */
@@ -59,7 +66,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				labelWidth : 115
 			},
 			layout: 'anchor',
-			items : [ ]
+			items : []
 		});
 			
 		this.tooltipFieldSet = Ext.create('Ext.form.FieldSet', {
@@ -70,7 +77,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				labelWidth : 115,
 			},
 			layout: 'anchor',
-			items : [ ]
+			items : []
 		});
 		
 		/* * * * * * * * * * SERIE FIELDS  * * * * * *  * * * * */
@@ -102,11 +109,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			valueField: 'value',
 			displayField: 'name',
 			fieldLabel : 'Serie type',
-			listeners: {
-				change: function(sender, newValue, oldValue, opts) {
-					this.inputEl.setStyle('font-family', newValue);
-				}
-			}
 		});
 		this.serieFieldSet.add(this.serieTypesComboBox);		
 		
@@ -122,11 +124,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			valueField: 'value',
 			displayField: 'name',
 			fieldLabel : 'Serie order type',
-			listeners: {
-				change: function(sender, newValue, oldValue, opts) {
-					this.inputEl.setStyle('font-family', newValue);
-				}
-			}
 		});
 		this.serieFieldSet.add(this.serieOrderComboBox);
 				
@@ -304,88 +301,30 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.tooltipFieldSet.add(this.tooltipBackgroundColor);
 		
 		var serieTooltipAlign = dataAtRow.get('serieTooltipAlign');
-		var tooltipAlign = [ {name: 'Left ', value:'left'}, {name: 'Center', value:'center'}, {name: 'Right', value:'right'}];
-		this.tooltipAlignComboBox = Ext.create('Ext.form.ComboBox', {
-			store: {
-				store: 'array',
-				fields: ['name', 'value'],
-				data: tooltipAlign
-			},
+		this.tooltipAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 			value: (serieTooltipAlign && serieTooltipAlign.trim() != '') ? serieTooltipAlign.trim() : '',
-			valueField: 'value',
-			displayField: 'name',
 			fieldLabel : 'Align',
-			listeners: {
-				change: function(sender, newValue, oldValue, opts) {
-					this.inputEl.setStyle('font-family', newValue);
-				}
-			}
 		});
 		this.tooltipFieldSet.add(this.tooltipAlignComboBox);
 		
 		var serieTooltipFont = dataAtRow.get('serieTooltipFont');
-		var tooltipFonts = [['Arial'], ['Times New Roman'], ['Tahoma'], ['Verdana']];
-		this.tooltipFontsComboBox = Ext.create('Ext.form.ComboBox', {
-			store: {
-				store: 'array',
-				fields: ['name'],
-				data: tooltipFonts
-			},
+		this.tooltipFontComboBox = Ext.create('Sbi.chart.designer.FontCombo', {
 			value: (serieTooltipFont && serieTooltipFont.trim() != '') ? serieTooltipFont.trim() : '',
-			displayField: 'name',
 			fieldLabel : 'Font',
-			listeners: {
-				change: function(sender, newValue, oldValue, opts) {
-					this.inputEl.setStyle('font-family', newValue);
-				}
-			}
 		});
-		this.tooltipFieldSet.add(this.tooltipFontsComboBox);
+		this.tooltipFieldSet.add(this.tooltipFontComboBox);
 		
 		var serieTooltipFontWeight = dataAtRow.get('serieTooltipFontWeight');
-		var tooltipFontWeightStyles = [
-			{name : 'Bold', value : 'b'}, 
-			{name : 'Italic', value : 'i'},
-			{name : 'Underline', value : 'u'},
-			{name : 'Strike-through', value : 's'}, 
-		];
-		
-		this.tooltipFontWeightStylesComboBox = Ext.create('Ext.form.ComboBox', {
-			id: 'tooltipFontWeightStyles',
-			store: {
-				store: 'array',
-				fields: ['name', 'value'],
-				data: tooltipFontWeightStyles
-			},
+		this.tooltipFontWeightStylesComboBox = Ext.create('Sbi.chart.designer.FontStyleCombo', {
 			value: (serieTooltipFontWeight && serieTooltipFontWeight.trim() != '') ? serieTooltipFontWeight.trim() : '',
-			valueField: 'value',
-			displayField: 'name',
 			fieldLabel : 'Font weight',
-			listeners: {
-				change: function(sender, newValue, oldValue, opts) {
-					this.inputEl.setStyle('font-family', newValue);
-				}
-			}
 		});
 		this.tooltipFieldSet.add(this.tooltipFontWeightStylesComboBox);
 		
 		var serieTooltipFontSize = dataAtRow.get('serieTooltipFontSize');		
-		var tooltipFontSize = [[8],[9],[10],[11],[12],[14],[16],[18],[20],[22],[24],[26],[28],[36],[48],[72]];
-		this.tooltipFontSizeComboBox = Ext.create('Ext.form.ComboBox', {
-			id: 'tooltipFontSize',
-			store: {
-				store: 'array',
-				fields: ['name'],
-				data: tooltipFontSize
-			},
+		this.tooltipFontSizeComboBox = Ext.create('Sbi.chart.designer.FontDimCombo', {
 			value: (serieTooltipFontSize && serieTooltipFontSize.trim() != '') ? serieTooltipFontSize.trim() : '',
-			displayField: 'name',
 			fieldLabel : 'Font size',
-			listeners: {
-				change: function(sender, newValue, oldValue, opts) {
-					this.inputEl.setStyle('font-family', newValue);
-				}
-			}
 		});
 		this.tooltipFieldSet.add(this.tooltipFontSizeComboBox);
 		
@@ -431,7 +370,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var serieTooltipAlign = this.tooltipAlignComboBox.getValue();
 		dataAtRow.set('serieTooltipAlign', serieTooltipAlign);
 		
-		var serieTooltipFont = this.tooltipFontsComboBox.getValue();
+		var serieTooltipFont = this.tooltipFontComboBox.getValue();
 		dataAtRow.set('serieTooltipFont', serieTooltipFont);
 		
 		var serieTooltipFontWeight = this.tooltipFontWeightStylesComboBox.getValue();

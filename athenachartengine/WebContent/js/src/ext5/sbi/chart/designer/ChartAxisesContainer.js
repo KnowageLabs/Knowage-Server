@@ -19,7 +19,7 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 	statics: {
 		addToAxisesContainer: function (panel) {
 			var newPanel = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-					panel.id , '' , true, 
+					panel.id , '' , null, true, 
 					Sbi.chart.designer.ChartUtils.ddGroup1, 
 					Sbi.chart.designer.ChartUtils.ddGroup1);
 			if(newPanel != null) {
@@ -32,44 +32,13 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 	config: {
 		otherPanel: null,
 		
-		/* * * Internal components * * */
-		alias: '', 
-		//	type: '', 
-		position: '', 
-		styleRotate: '', 
-		styleAlign: '', 
-		styleColor: '', 
-		styleFont: '', 
-		styleFontWeigh: '', 
-		styleFontSize: '',
-		majorgridInterval: '',
-		majorgridInterval: '',
-		majorgridStyleTypeline: '',
-		majorgridStyleColor: '',
-		minorgridInterval: '',
-		minorgridInterval: '',
-		minorgridStyleTypeline: '',
-		minorgridStyleColor: '',
-		titleText: '',
-		titleStyleAlign: '', 
-		titleStyleColor: '', 
-		titleStyleFont: '', 
-		titleStyleFontWeigh: '', 
-		titleStyleFontSize: '',
-		/* * * END Internal components * * */
-	},
-	
-	constructor: function(config) {
-		this.callParent(config);
-		if(config.id && config.id != '') {
-			this.id = config.id;
-		}
+//		axis: {},
 		
+		/*
 		Ext.log("Sbi.chart.designer.ChartAxisesContainer constructor BEGIN");
 		
 		var headerItems = [];
 		
-//		Ext.log("config.alias: ", config.alias);
 		var alias = 'Custom name';
 		if(config.alias != '') {
 			alias = config.alias;
@@ -88,12 +57,10 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 		var styleButton = {
 			xtype:'button',
 			icon: 'http://findicons.com/icon/download/66617/paint/24/png',
-//			text: 'Style',
 			flex: 1
 		};
 		headerItems.push(styleButton);
 		
-		Ext.log("config.otherPanel: ", config.otherPanel);
 		if(config.otherPanel && config.otherPanel != null){
 			var addButton = {
 					xtype:'button',
@@ -110,6 +77,7 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 			};
 			headerItems.push(addButton);
 		}
+		
 		this.header = {
 			title: {hidden: true },
 			items: headerItems
@@ -118,7 +86,7 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 
 		
 		Ext.log("Sbi.chart.designer.ChartAxisesContainer constructor END");
-		Ext.log(this.getId());
+		*/
 	},
 	items: [],
 	

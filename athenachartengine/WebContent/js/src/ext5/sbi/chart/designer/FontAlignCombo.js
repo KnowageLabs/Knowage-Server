@@ -5,13 +5,13 @@ Ext.define('Sbi.chart.designer.FontAlignCombo', {
         fields: [ 'name','value' ],
         data: [ {
 			name : 'Destra',
-			value : 'dx'
+			value : 'right'
 		}, {
 			name : 'Sinistra',
-			value : 'sx'
+			value : 'left'
 		}, {
 			name : 'Centro',
-			value : 'cx'
+			value : 'center'
 		} ]
     },
     editable : false,

@@ -362,13 +362,15 @@ author:
   				alias: 'Asse Y',
   				otherPanel: rightYAxisesPanel
   			});
-
+	
+  			/* 
   			
   			var firstcolumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
   						'chartLeftAxisesContainer', '', false, 
   						Sbi.chart.designer.ChartUtils.ddGroup1, 
   						Sbi.chart.designer.ChartUtils.ddGroup1);
   			leftYAxisesPanel.add(firstcolumn);
+  			 */
 
   			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore');
   			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
@@ -454,26 +456,51 @@ author:
   				START LOADING Y AXES >>>>>>>>>>>>>>>>>>>>
   			*/
   			
-  			var yCount = 0;
+  			var yCount = 1;
   			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
   			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
   				if(axis.type.toUpperCase() == "SERIE"){
 
-  					var axisAlias = axis.alias;
+					var axisData = Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis);					
+					
+  					var isDestructible = (yCount > 1);
+  					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
+  					if(axis.position.toLowerCase() == 'left') {
+
+	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
+	  							leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
+	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
+	  							Sbi.chart.designer.ChartUtils.ddGroup1, axis);
+	  					leftYAxisesPanel.add(newColumn);
+
+  					} else {
   					
-  					if(yCount == 0) {
+	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
+	  							rightYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
+	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
+	  							Sbi.chart.designer.ChartUtils.ddGroup1, axis);
+	  					rightYAxisesPanel.add(newColumn);
+	  					rightYAxisesPanel.show();
+	  				}
+  					console.log('CREATING NEW COLUMN');
+	  				yCount++;
+  					
+					/*   					
+ 					if(yCount == 0) {
   					
   						theStorePool[0].axisAlias = axisAlias;
 
   					} else {
+  					
 	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 	  							rightYAxisesPanel.id , '', true, 
 	  							Sbi.chart.designer.ChartUtils.ddGroup1, 
 	  							Sbi.chart.designer.ChartUtils.ddGroup1, axisAlias);
 	  					rightYAxisesPanel.add(newColumn);
 	  					rightYAxisesPanel.show();
-	  				}
+	  				} 
 	  				yCount++;
+					*/
   				}
   			});
   			/**
