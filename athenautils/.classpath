@@ -22,6 +22,9 @@
 	<classpathentry kind="lib" path="lib/ehcache-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/cas-client-core-3.1.6.jar"/>
 	<classpathentry kind="lib" path="lib/casclient.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-core-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-full-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/MetaModel-pojo-4.3.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>

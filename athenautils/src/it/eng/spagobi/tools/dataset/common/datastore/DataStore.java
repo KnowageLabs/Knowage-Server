@@ -1,26 +1,42 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.apache.metamodel.DataContext;
+import org.apache.metamodel.data.DataSet;
+import org.apache.metamodel.data.Row;
+import org.apache.metamodel.pojo.ArrayTableDataProvider;
+import org.apache.metamodel.pojo.PojoDataContext;
+import org.apache.metamodel.query.FunctionType;
+import org.apache.metamodel.query.Query;
+import org.apache.metamodel.query.SelectItem;
+import org.apache.metamodel.schema.ColumnType;
+import org.apache.metamodel.util.SimpleTableDef;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -28,6 +44,9 @@ import org.apache.log4j.Logger;
 public class DataStore implements IDataStore {
 
 	private static transient Logger logger = Logger.getLogger(DataStore.class);
+
+	public static String DEFAULT_TABLE_NAME = "TemporaryTable";
+	public static String DEFAULT_SCHEMA_NAME = "SpagoBI";
 
 	IMetaData metaData;
 
@@ -343,6 +362,119 @@ public class DataStore implements IDataStore {
 
 	public void setCacheDate(Date cacheDate) {
 		this.cacheDate = cacheDate;
+	}
+
+	public IDataStore aggregateAndFilterRecords(IQuery query) {
+		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME));
+	}
+
+	public IDataStore aggregateAndFilterRecords(String sqlQuery) {
+
+		// **************************************************************************************************************
+		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
+		// **************************************************************************************************************
+		int fieldCount = this.metaData.getFieldCount();
+
+		String[] columnNames = new String[fieldCount];
+		ColumnType[] columnTypes = new ColumnType[fieldCount];
+		HashMap<String, FieldType> fieldTypes = new HashMap<String, FieldType>();
+
+		Collection<Object[]> arrays = new ArrayList<Object[]>();
+
+		for (int i = 0; i < fieldCount; i++) {
+			String columnName = this.metaData.getFieldName(i);
+			columnNames[i] = columnName;
+			Class type = this.metaData.getFieldType(i);
+			if (type == Integer.class) {
+				columnTypes[i] = ColumnType.INTEGER;
+			} else if (type == Double.class) {
+				columnTypes[i] = ColumnType.DOUBLE;
+			} else {
+				columnTypes[i] = ColumnType.STRING;
+			}
+			fieldTypes.put(columnName, this.metaData.getFieldMeta(i).getFieldType());
+		}
+		for (Object r : this.records) {
+			IRecord record = (IRecord) r;
+			Object[] row = new Object[fieldCount];
+			for (int i = 0; i < fieldCount; i++) {
+				row[i] = record.getFieldAt(i).getValue();
+			}
+			arrays.add(row);
+		}
+
+		// *************************************************************************************************
+		// ****** This part create a DataContext for doing aggregation and filter define by the query ******
+		// *************************************************************************************************
+
+		String uniqueTableName = UUID.randomUUID().toString().replace('-', '_');
+		SimpleTableDef dataStoreDef = new SimpleTableDef(uniqueTableName, columnNames, columnTypes);
+		ArrayTableDataProvider dataStoreTableProvider = new ArrayTableDataProvider(dataStoreDef, arrays);
+		DataContext dataContext = new PojoDataContext(DEFAULT_SCHEMA_NAME, dataStoreTableProvider);
+
+		// Change table name to be concurrency-safe
+		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
+		Query query = dataContext.parseQuery(newSqlQuery);
+		DataSet dataSet = dataContext.executeQuery(query);
+
+		// *************************************************************************************************
+		// **** This part generates a SpagoBI datastore starting from the Apache MetaModel dataset *********
+		// *************************************************************************************************
+		IDataStore dataStore = new DataStore();
+
+		int resultCount = 0;
+		while (dataSet.next()) {
+			Row row = dataSet.getRow();
+			IRecord record = getRecordFromRow(row, dataStore);
+			dataStore.appendRecord(record);
+			resultCount++;
+		}
+
+		SelectItem[] selectItems = dataSet.getSelectItems();
+		for (int i = 0; i < selectItems.length; i++) {
+			IFieldMetaData fieldMetaData = getFieldMetaDataFromSelectItem(selectItems[i], fieldTypes);
+			dataStore.getMetaData().addFiedMeta(fieldMetaData);
+		}
+		dataStore.getMetaData().setProperty("resultNumber", resultCount);
+
+		return dataStore;
+	}
+
+	private IFieldMetaData getFieldMetaDataFromSelectItem(SelectItem selectItem, HashMap<String, FieldType> fieldTypes) {
+
+		IFieldMetaData fieldMetaData = new FieldMetadata();
+
+		String alias = selectItem.getAlias();
+		Class type = selectItem.getExpectedColumnType().getJavaEquivalentClass();
+		if ((type != Double.class) && (type != Integer.class)) {
+			type = String.class;
+		}
+		String name = selectItem.getColumn().getName();
+		FunctionType function = selectItem.getFunction();
+		FieldType fieldType;
+
+		if (function != null) {
+			fieldType = FieldType.MEASURE;
+			name = function.toString() + "(" + name + ")";
+		} else {
+			fieldType = fieldTypes.get(name);
+		}
+
+		fieldMetaData.setName(name);
+		fieldMetaData.setAlias(alias);
+		fieldMetaData.setFieldType(fieldType);
+		fieldMetaData.setType(type);
+
+		return fieldMetaData;
+	}
+
+	private IRecord getRecordFromRow(Row row, IDataStore dataStore) {
+		IRecord record = new Record(dataStore);
+		Object[] values = row.getValues();
+		for (int i = 0; i < values.length; i++) {
+			record.appendField(new Field(values[i]));
+		}
+		return record;
 	}
 
 }
