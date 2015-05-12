@@ -240,7 +240,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 			//call the dataset list (mydata gui)
 			urlToCall = Sbi.config.contextName + '/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=true&TYPE_DOC=GEO&SBI_ENVIRONMENT=DOCBROWSER';						
 		}else if(type =='createcockpit'){
-			urlToCall =  this.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + Sbi.config.isTechnicalUser;
+			urlToCall =  this.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + Sbi.config.isTechnicalUser + "&documentMode=EDIT";
 		}
 		
 		if (Sbi.settings.browser.typeLayout !== undefined && Sbi.settings.browser.typeLayout == 'card'){
