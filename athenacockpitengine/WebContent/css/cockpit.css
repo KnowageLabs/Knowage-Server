@@ -210,6 +210,24 @@
 	 	background-image:url('../img/browser_globe_upload.png') !important;
 	}
 	
+	.icon_font {
+	 	background-image:url('../img/ico_font.png') !important;
+	}
+	
+	.icon_layout {
+		background-image: url('../img/ico_layout.png') !important;
+	}
+	
+	.icon_delete_tablerow { 
+		background-image: url('../img/ico_delete_tablerow.png') !important;
+		margin-top: 10px;
+	}
+	
+	.icon_configure_tablerow { 
+		background-image: url('../img/ico_configure_tablerow.png') !important;
+		margin-top: 10px;
+	}
+	
 	.mainPanel {
 		-webkit-background-clip: border-box;
 		-webkit-background-origin: padding-box;

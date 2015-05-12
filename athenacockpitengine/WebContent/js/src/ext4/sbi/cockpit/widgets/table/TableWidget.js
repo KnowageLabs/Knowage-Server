@@ -53,7 +53,7 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	this.init();
 
 	this.addEvents('contentloaded');
-
+	
 	c = Ext.apply(c, {
 		items: [this.grid]
 	});
@@ -125,6 +125,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, redraw: function() {
 		Sbi.trace("[TableWidget.refresh]: IN");
+		this.initFontOptions();		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.redraw.call(this);
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
@@ -160,12 +161,32 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
 			for(var i = 0; i < meta.fields.length; i++) {
-				if(meta.fields[i].header === this.wconf.visibleselectfields[j].alias) {
-					if(this.wconf.visibleselectfields[j].funct != null &&
-							this.wconf.visibleselectfields[j].funct != 'NaN'
-								&& this.wconf.visibleselectfields[j].funct != ''){
-						meta.fields[i].header = this.wconf.visibleselectfields[j].funct+'('+this.wconf.visibleselectfields[j].alias+')';
+				
+				var propToCheck;
+				
+				//attribute can appear once
+				if(this.wconf.visibleselectfields[j].nature == 'attribute' || 
+						this.wconf.visibleselectfields[j].funct === null ||
+						this.wconf.visibleselectfields[j].funct == ''){
+					propToCheck = this.wconf.visibleselectfields[j].columnName;
+				}else{
+					//measures can have the same field with different aggregation
+					propToCheck = this.wconf.visibleselectfields[j].alias
+				}
+				
+				
+				if(meta.fields[i].header === propToCheck) {
+//					if(this.wconf.visibleselectfields[j].funct != null &&
+//							this.wconf.visibleselectfields[j].funct != 'NaN'
+//								&& this.wconf.visibleselectfields[j].funct != ''){
+//						meta.fields[i].header = this.wconf.visibleselectfields[j].funct+'('+this.wconf.visibleselectfields[j].alias+')';
+//					}
+					if(this.wconf.visibleselectfields[j].alias != null && 
+							this.wconf.visibleselectfields[j].alias != ''){
+						
+						meta.fields[i].header = this.wconf.visibleselectfields[j].alias;
 					}
+					
 					this.applyRendererOnField(meta.fields[i], this.wconf.visibleselectfields[j].funct);
 					this.applySortableOnField(meta.fields[i]);
 
@@ -182,8 +203,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		}
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
-
-		this.grid.reconfigure(this.getStore(), fields);
+		
+		this.grid.reconfigure(this.getStore(), fields);		
 
 		Sbi.trace("[TableWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
 	}
@@ -214,7 +235,32 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				this.grid.getView().refresh();
 			}, this);
 		}
-
+		if (this.wconf.maxRowsNumber !== undefined && 
+				this.wconf.maxRowsNumber !== null && 
+				this.wconf.maxRowsNumber !== '') {
+	     	
+	     	var maxRowsIndex = this.wconf.maxRowsNumber;
+	     	var previousStore = this.getStore();
+	     	var totalCount = previousStore.getTotalCount();
+	     	
+	     	if(previousStore.getTotalCount() > this.wconf.maxRowsNumber){
+	     		
+	     		var limitedRows = [];
+	     		
+	     		for(var k = 0; k < maxRowsIndex; k++){
+	     			limitedRows.push(previousStore.inMemoryData[k]);
+	     		}
+	     		
+		     	this.grid.getStore().loadData(limitedRows)
+	     	}
+		}
+		
+		if(this.rendered){
+    		this.redraw();
+    	} else {
+    		this.on('afterrender', function(){this.redraw();}, this);
+    	}
+		
      	Sbi.trace("[TableWidget.onStoreLoad]: OUT");
 	}
 
@@ -223,6 +269,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var selections = this.getWidgetManager().getWidgetSelections(this.getId());
 		// TODO: reselect rows in a selective way
 		this.fireSelectionEvent = true;
+		
 		Sbi.trace("[TableWidget.onAfterLayout][" + this.getId() + "]: OUT");
 	}
 
@@ -294,6 +341,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			// in a way that this.getWidgetManager().getWidgetSelections(this.getId()) || {};
 			// is evaluated one time for all the cells
 			var selections = this.selectionsForColumnRenderers;
+			
+	    	for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
+				if(fieldHeader === this.wconf.visibleselectfields[j].alias) {				
+					fieldHeader = this.wconf.visibleselectfields[j].columnName;
+				}
+	    	}
+			
 	    	if (selections[fieldHeader] !== undefined && selections[fieldHeader].values.indexOf(value) != -1) {
 	    		metadata.attr = 'style="background-color: #D1D1D1;font-weight: bold;"';
 	    	}
@@ -455,7 +509,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    this.grid.on('columnmove', this.onColumnMove, this);
 	    this.grid.on('afterlayout', this.onAfterLayout, this);
 	    // optimization: this is useful for columns rendering (see applyCellStyleRenderer function)
-	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);
+	    this.grid.getView().on('beforerefresh', this.setSelectionsForColumnRenderers, this);	
+	    
 	    Sbi.trace("[TableWidget.initGridPanel]: OUT");
 	}
 
@@ -573,6 +628,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     	var header = this.grid.getView().getHeaderCt().getHeaderAtIndex(cellIndex);
     	var fieldName = header.dataIndex;
     	var fieldHeader = header.text;
+    	
+    	//Added after table alias configuration, to manage the different header
+    	for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
+			if(fieldHeader === this.wconf.visibleselectfields[j].alias) {				
+				fieldHeader = this.wconf.visibleselectfields[j].columnName;
+			}
+    	}
 
     	if (!meta[fieldHeader]) {
 			Sbi.error("[TableWidget.extractSelectionsFromRecord]: column with header [" + fieldHeader + "] not found on record's metadata");
@@ -591,7 +653,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		var fieldValue = record.data[fieldName];
 
-		selection.header = fieldHeader;
+		selection.header = fieldHeader;//header.text;
 		selection.value = fieldValue;
 
     	return selection;
@@ -721,7 +783,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		this.pagingTBar = new Ext.PagingToolbar({
             pageSize: this.pageSize,
-            store: this.getStore(),
+//            store: this.getStore(),
+            store: this.grid.getStore(),
             displayInfo: this.displayInfo,
             displayMsg: LN('sbi.qbe.datastorepanel.grid.displaymsg'),
             emptyMsg: LN('sbi.qbe.datastorepanel.grid.emptymsg'),
@@ -739,6 +802,115 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}, this);
 
 		return this.pagingTBar;
+	}
+	
+	//grid font setting
+	, initFontOptions: function() {
+		
+		//font options		
+	    if(this.wconf === undefined || this.wconf === null){
+	    	//do not change the CSS, do nothing
+	    }
+	    else{
+	    	
+	    	//font options
+		    var headerFontStyle = '#' + this.grid.id + ' .x-column-header-text { font: ';
+		    var rowsFontStyle = '#' + this.grid.id + ' .x-grid-cell { font: ';
+    	
+		    //header font weight
+		    if(this.wconf.headerFontWeight === undefined || this.wconf.headerFontWeight  === null){
+				headerFontStyle = headerFontStyle + 'normal ';	
+			} else {
+				headerFontStyle = headerFontStyle + this.wconf.headerFontWeight + ' ';
+			}
+		    
+		    //rows font weight
+		    if(this.wconf.rowsFontWeight === undefined || this.wconf.rowsFontWeight  === null){
+				rowsFontStyle = rowsFontStyle + 'normal ';	
+			} else {
+				rowsFontStyle = rowsFontStyle + this.wconf.rowsFontWeight + ' ';
+			}
+	    
+		 	//header font size
+		    if(this.wconf.headerFontSize === undefined || this.wconf.headerFontSize === null){
+	    		
+				if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+					headerFontStyle = headerFontStyle + '11px/13px ';
+				} else {
+					headerFontStyle = headerFontStyle + this.wconf.fontSize + 'px ';
+				}			
+			} else {
+				headerFontStyle = headerFontStyle + this.wconf.headerFontSize + 'px ';
+			}
+	    	
+	    	//rows font size
+	    	if(this.wconf.rowsFontSize === undefined || this.wconf.rowsFontSize === null){
+	    		
+				if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
+					rowsFontStyle = rowsFontStyle + '11px/13px ';
+				} else {
+					rowsFontStyle = rowsFontStyle + this.wconf.fontSize + 'px ';
+				}			
+			} else {
+				rowsFontStyle = rowsFontStyle + this.wconf.rowsFontSize + 'px ';
+			}
+		    
+		    //font family
+	    	if (this.wconf.fontType === undefined || this.wconf.fontType === null){
+				headerFontStyle = headerFontStyle + 'tahoma,arial,verdana,sans-serif; ';
+				rowsFontStyle = rowsFontStyle + 'tahoma,arial,verdana,sans-serif; ';
+			} else {
+				headerFontStyle = headerFontStyle + '' + this.wconf.fontType + '; ';
+				rowsFontStyle = rowsFontStyle  + '' + this.wconf.fontType + '; ';
+			}
+	    	
+	    	//font decoration
+	    	//header font decoration
+		    if(this.wconf.headerFontDecoration === undefined || this.wconf.headerFontDecoration  === null){
+				headerFontStyle = headerFontStyle + 'text-decoration: none; ';	
+			} else {
+				headerFontStyle = headerFontStyle + 'text-decoration: ' + this.wconf.headerFontDecoration + '; ';
+			}
+		    
+			//rows font decoration
+		    if(this.wconf.rowsFontDecoration === undefined || this.wconf.rowsFontDecoration  === null){
+				rowsFontStyle = rowsFontStyle + 'text-decoration: none; ';	
+			} else {
+				rowsFontStyle = rowsFontStyle + 'text-decoration: ' + this.wconf.rowsFontDecoration + '; ';
+			}
+		    
+		    //font color
+		    //header font color
+		    if(this.wconf.headerFontColor === undefined || this.wconf.headerFontColor === null || this.wconf.headerFontColor === ''){
+				headerFontStyle = headerFontStyle + '} ';	
+			} else {
+				headerFontStyle = headerFontStyle + 'color: ' + this.wconf.headerFontColor + '; } ';
+			}
+		    
+			//rows font color
+		    if(this.wconf.rowsFontColor === undefined || this.wconf.rowsFontColor === null || this.wconf.rowsFontColor === ''){
+		    	rowsFontStyle = rowsFontStyle + '} ';	
+			} else {
+				rowsFontStyle = rowsFontStyle + 'color: ' + this.wconf.rowsFontColor + '; } ';
+			}
+
+		    if(Ext.util.CSS.getRule(headerFontStyle) !== undefined || Ext.util.CSS.getRule(headerFontStyle) !== null){
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_hstyle');
+		    	Ext.util.CSS.createStyleSheet(headerFontStyle, this.grid.id + '_hstyle');
+		    }
+		    else {
+		    	Ext.util.CSS.createStyleSheet(headerFontStyle, this.grid.id + '_hstyle');
+		    }
+		    
+		    if(Ext.util.CSS.getRule(rowsFontStyle) !== undefined || Ext.util.CSS.getRule(rowsFontStyle) !== null){
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
+		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
+		    }
+		    else {
+		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
+		    }  
+		    
+	    }	
 	}
 
 });

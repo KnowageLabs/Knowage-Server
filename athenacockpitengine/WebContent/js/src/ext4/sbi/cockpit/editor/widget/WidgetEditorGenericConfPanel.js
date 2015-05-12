@@ -67,15 +67,46 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		this.re = new RegExp("^([A-Z0-9 ]*)$","i");
 
 		this.fields = [];
-
-		var title = new Ext.form.field.Text({
-			fieldLabel: 'Title',
-			name: 'title',
-            allowBlank: true,
-            tooltip: 'Enter the widget title',
-            regex: this.re,
-            regextText: 'Not a valid title.  Must enter only alphnumeric character'
+		
+		var title = Ext.create('Ext.form.HtmlEditor', {
+			width: 525,
+		    height: 100,
+//		    labelWidth: 50,
+		    fieldLabel: 'Title',
+		    name: 'title',
+		    enableLinks: false,
+		    enableSourceEdit: false,
+		    enableLists: false,
 		});
+		
+		var titlePerc = Ext.create('Ext.form.field.Number', {
+//			width: 525,
+//		    height: 100,
+//		    labelWidth: 50,
+		    fieldLabel: LN('sbi.cockpit.widgeteditorgenericconfpanel.titleheightperc'),
+		    name: 'titlePerc',
+	        value: 10,
+	        maxValue: 30,
+	        minValue: 1
+		});
+		
+//		var title = new Ext.form.field.Text({
+//			fieldLabel: 'Title',
+//			name: 'title',
+//            allowBlank: true,
+//            tooltip: 'Enter the widget title',
+//            regex: this.re,
+//            regextText: 'Not a valid title.  Must enter only alphnumeric character',
+//            listeners: {
+//		    	blur: function(d) {
+//	                var newVal = d.getValue().trim();
+//	                titleStyle.setValue(newVal);
+//	                
+//	                Ext.getCmp('titleStyleId').select();
+//	            }
+//		    }
+//		});
+		
 
 		var description = new Ext.form.field.TextArea({
 			fieldLabel: 'Description',
@@ -104,6 +135,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		});
 
 		this.fields.push(title);
+		this.fields.push(titlePerc);
 		this.fields.push(description);
 		this.fields.push(incomingeventsenabled);
 		this.fields.push(outcomingeventsenabled);
@@ -117,9 +149,10 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 
 		var formState = Ext.apply({}, {
 			title: this.fields[0].getValue(),
-			description: this.fields[1].getValue(),
-			incomingeventsenabled: this.fields[2].getValue(),
-			outcomingeventsenabled: this.fields[3].getValue()
+			titlePerc: this.fields[1].getValue(),
+			description: this.fields[2].getValue(),
+			incomingeventsenabled: this.fields[3].getValue(),
+			outcomingeventsenabled: this.fields[4].getValue()
 		});
 
 		return formState;
@@ -129,9 +162,10 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: IN");
 
 		this.fields[0].setValue(widgetConf.title);
-		this.fields[1].setValue(widgetConf.description);
-		this.fields[2].setValue(widgetConf.incomingeventsenabled);
-		this.fields[3].setValue(widgetConf.outcomingeventsenabled);
+		this.fields[1].setValue(widgetConf.titlePerc);
+		this.fields[2].setValue(widgetConf.description);
+		this.fields[3].setValue(widgetConf.incomingeventsenabled);
+		this.fields[4].setValue(widgetConf.outcomingeventsenabled);
 
 		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: OUT");
 	}
@@ -144,6 +178,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
         this.fields[1].reset();
         this.fields[2].reset();
         this.fields[3].reset();
+        this.fields[4].reset();
 
         Sbi.trace("[WidgetEditorGenericConfPanel.resetFormState]: OUT");
     }

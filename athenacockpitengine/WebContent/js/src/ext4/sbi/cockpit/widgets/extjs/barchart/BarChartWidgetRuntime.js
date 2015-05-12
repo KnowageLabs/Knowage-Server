@@ -514,7 +514,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			
 			var value = itemMeta.seriesFieldValue;
 			if (typeof(value) == 'number'){
-				if (!this.isInteger(value)){
+				//if (this.isInteger(value)){
 					
 					var decimalPrecision;
 					var suffix;
@@ -526,22 +526,23 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 							break;
 						}
 					}
-					
+
 					if(decimalPrecision !== undefined && decimalPrecision !== null)
 					{
 						Sbi.trace("[BarChartWidgetRuntime.getTooltip]: Value is a number, local formatting. First is: " + value);
 						
-						value = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, value);
+						value = this.getLocalFormattedNumericValues(decimalPrecision, value);
 						
 						Sbi.trace("[BarChartWidgetRuntime.getTooltip]: After is: " + value);
 					}
 					
+
 					if(suffix !== undefined && suffix !== null && suffix !== '')
 					{
 						value = value + ' ' + suffix;
 						Sbi.trace("[BarChartWidgetRuntime.getTooltip]: Adding suffix to value : " + value);
 					}
-				}
+				//}
 			}			
 
 			var categoryValue = itemMeta.categoryValues[0];

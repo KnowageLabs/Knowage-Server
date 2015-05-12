@@ -40,7 +40,8 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 
 	Ext.apply(c, {
         store: this.store
-        , width: 250
+//        , width: 250
+        , width: 450
         , height: 280
         , cls : 'table'
         , hideHeaders: true
@@ -53,17 +54,17 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	    	forceFit: true
 	    }
 		, tools: [
-			        {
-			        	  type: 'help'
-			        	, handler: function(){
-							Ext.Msg.show({
-								   title: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.infoTitle'),
-								   msg: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.info'),
-								   buttons: Ext.Msg.OK,
-								   icon: Ext.MessageBox.INFO 	});
-			            }
-			          }
-		          ,
+//			        {
+//			        	  type: 'help'
+//			        	, handler: function(){
+//							Ext.Msg.show({
+//								   title: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.infoTitle'),
+//								   msg: LN('Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.info'),
+//								   buttons: Ext.Msg.OK,
+//								   icon: Ext.MessageBox.INFO 	});
+//			            }
+//			          }
+//		          ,
 		        {
 	        	  type: 'close'
 	        	, handler: this.removeAllValues
@@ -95,7 +96,7 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	// constructor
 	Sbi.cockpit.widgets.table.QueryFieldsContainerPanel.superclass.constructor.call(this, c);
 
-	this.on('rowdblclick', this.rowDblClickHandler, this);
+	//this.on('rowdblclick', this.rowDblClickHandler, this);
 };
 
 Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPanel, {
@@ -120,6 +121,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'values', type: 'string'}
 	      , {name: 'sortable', type: 'boolean'}
 	      , {name: 'width', type: 'int'}
+	      , {name: 'columnName', type: 'string'}
 	])
 
 		 , renderTpl1: [
@@ -130,7 +132,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	                     '<span id="{id}-btnEl" class="{baseCls}-button">',
 	                         '<span id="{id}-btnInnerEl" class="{baseCls}-inner {innerCls}',
 	                             '{childElCls}" unselectable="on">',
-	                             '{funct}{text}',
+	                             '{text}',
 	                         '</span>',
 	                         '<span role="img" id="{id}-btnIconEl" class="{baseCls}-icon-el {iconCls}',
 	                             '{childElCls} {glyphCls}" unselectable="on" style="',
@@ -174,7 +176,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid', 'sortable', 'width']
+	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid', 'sortable', 'width','columnName']
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -200,6 +202,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		this.template = new Ext.XTemplate(this.renderTpl1);
         this.template.compile();
 
+        var thePanel = this;
+        
 	    var fieldColumn = {
 	    	header:  ''
 	    	, dataIndex: 'alias'
@@ -231,8 +235,39 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	    	}
 	        , scope: this
 	    };
+	    
+	    var actionColumn = {
+            
+	    		menuDisabled: true,
+	    		sortable: false,
+	    		xtype: 'actioncolumn',
+	    		width: 50,
+	    		items: 
+	    		[
+					{
+							iconCls: 'icon_configure_tablerow',
+							tooltip: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure'),
+							handler: function(grid, rowIndex, colIndex) {
+								var rec = grid.getStore().getAt(rowIndex);
+								thePanel.rowDblClickHandler(grid, rec);
+								
+							}
+					},
+	    		 	{
+	    		 		iconCls: 'icon_delete_tablerow',
+	    		 		tooltip: LN('sbi.qbe.selectgridpanel.headers.delete.column'),
+	    		 		handler: function(grid, rowIndex, colIndex) {
+	    		 			var rec = grid.getStore().getAt(rowIndex);
+	    		 			grid.getStore().remove(rec);
+	    		 	        this.fireEvent('storeChanged', grid.getStore().getCount());
+	    		 			
+	    		 		}
+	    		 	}
+                ]
+	    }
+	    
 	    //this.cm = new Ext.grid.ColumnModel([fieldColumn]);
-	    this.columns =[fieldColumn];
+	    this.columns =[fieldColumn, actionColumn];
 	}
 
 	, notifyDropFromQueryFieldsPanel: function(ddSource) {
@@ -241,16 +276,30 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		var i = 0;
 		for (; i < rows.length; i++) {
 			var aRow = rows[i];
-			// if the attribute is already present show a warning
-			if (this.store.findExact('id', aRow.data.id) !== -1) {
-				Ext.Msg.show({
-					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
-					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
-					   buttons: Ext.Msg.OK,
-					   icon: Ext.MessageBox.WARNING
-				});
-				return;
+			// OLD: if the attribute is already present show a warning
+			// NOW: now is permitted to add more attribute than one, to aggregate it in different ways
+//			if (this.store.findExact('id', aRow.data.id) !== -1) {
+//				Ext.Msg.show({
+//					   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+//					   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
+//					   buttons: Ext.Msg.OK,
+//					   icon: Ext.MessageBox.WARNING
+//				});
+//				return;
+//			}
+			if(aRow.data.nature === 'attribute'){
+				if (this.store.findExact('id', aRow.data.id) !== -1) {
+					Ext.Msg.show({
+						   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
+						   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
+						   buttons: Ext.Msg.OK,
+						   icon: Ext.MessageBox.WARNING
+					});
+					return;
+				}
 			}
+			
+			
 			Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: 1");
 
 			// if the field is a postLineCalculated show an error
@@ -313,14 +362,17 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	// double clicking on a field
 	, rowDblClickHandler: function(grid, record, event) {
 
+		Sbi.trace("[QueryFieldsContainerPanel.rowDblClickHandler]: IN");
+		
 		var thisPanel = this;
 		var thisGrid = grid;
 		var thisRecord = record;
 
 		if(record != undefined){
 
-			// if is a measure open aggregation chooser window
-			if (record.data.nature == 'measure') {
+			// OLD: if is a measure open aggregation chooser window
+			// NEW: open a window and shot aggregation chooser for measure only
+			//if (record.data.nature == 'measure') {
 
 
 				// instantiate window
@@ -331,25 +383,52 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 //				}
 
 				// pass actual funct value for default case
-				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(record.data.funct);
+				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(record.data.alias, record.data.funct, record.data.nature);
 
 				// on save set aggregation function
 				this.chooserWindow.on('aggregationSave', function(window, formState){
-					var aggregationSelected = formState.aggregation;
-					var recordIndex  =thisGrid.store.findExact('id', thisRecord.data.id);
+					
+					var recordIndex  = thisGrid.store.findExact('id', thisRecord.data.id);
 					var record = thisGrid.store.getAt(recordIndex);
-					record.data.funct = aggregationSelected;
-					if(aggregationSelected == 'NONE'){
-						record.data.funct = null;
+					
+					var aliasSelected = formState.fieldAlias;
+					
+					if(aliasSelected !== undefined && aliasSelected !== null && aliasSelected !== ""){
+						
+						var indexAlias = thisGrid.store.findExact('alias', aliasSelected);
+						
+						if(indexAlias !== -1 && indexAlias !== recordIndex){
+							Ext.Msg.show({
+								   title: LN('sbi.cockpit.widgets.table.tabledesignerpanel.aliasalreadypresent.title'),
+								   msg: LN('sbi.cockpit.widgets.table.tabledesignerpanel.aliasalreadypresent.msg'),
+								   buttons: Ext.Msg.OK,
+								   icon: Ext.MessageBox.WARNING
+							});
+							return;
+						}else{
+							record.data.alias = aliasSelected;
+						}
+						
 					}
+					
+					if (record.data.nature == 'measure'){
+						var aggregationSelected = formState.aggregation;
+						
+						record.data.funct = aggregationSelected;
+						if(aggregationSelected == 'NONE'){
+							record.data.funct = null;
+						}
+					}					
+					
 					thisPanel.getView().refresh();
 
 				});
 
 				this.chooserWindow.show();
 
+//		}
 		}
-		}
+		Sbi.trace("[QueryFieldsContainerPanel.rowDblClickHandler]: OUT");
 	}
 
 	, getContainedValues: function () {
@@ -375,11 +454,42 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, addField : function (field) {
 		//Default values
+		
+//		if(field.idCounter === undefined || field.idCounter === null || field.idCounter === ''){
+//			field.idCounter = 1;
+//		}
+//		
+		if(field.columnName == undefined || field.columnName === null || field.columnName == ''){
+			field.columnName = field.alias;
+		}	
+		
 		field.sortable = true;
 		field.width = 150;
+		if(field.nature == 'measure'){
+			if(field.funct == null || field.funct == ''){
+				field.funct = null;
+			} else if((field.funct == undefined) || (typeof field.funct == typeof NaN)){
+				field.funct = 'SUM';
+			}
+		}
 
 		Sbi.trace("[QueryFieldsContainerPanel.addField]: IN");
 		var data = Ext.apply({}, field); // making a clone
+		
+		var fieldCounter = 1;
+		var tempId = data.id;
+		var tempAlias = data.alias;
+		
+		while (this.store.findExact('id', tempId) !== -1){
+			
+			tempId = data.id + '(' + fieldCounter + ')';
+			tempAlias = data.alias + '(' + fieldCounter + ')';
+			fieldCounter++;
+		}
+		
+		data.id = tempId;
+		data.alias = tempAlias;
+		
 		var record = new this.Record(data);
 		this.store.add(record);
 		Sbi.trace("[QueryFieldsContainerPanel.addField]: field [" + Sbi.toSource(field)+ "] succesfully added");

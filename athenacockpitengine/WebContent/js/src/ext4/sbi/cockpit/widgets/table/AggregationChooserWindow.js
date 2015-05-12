@@ -34,17 +34,19 @@
  */
 Ext.ns("Sbi.worksheet.designer");
 
-Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defAggregation) {
+Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defAlias, defAggregation, defNature) {
 
 
 	var c = {
-		title: LN('sbi.cockpit.aggregationwindow.title')
+		title: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure')//LN('sbi.cockpit.aggregationwindow.title')
 		, width: 500
 		, height: 200
 		, nameFieldVisible: true
 		, descriptionFieldVisible: true
 		, hasBuddy: false
 		, funct: defAggregation
+		, fieldAlias: defAlias
+		, fieldNature: defNature
 
 	};
 
@@ -84,7 +86,22 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 
 		var items = [];
 
-
+		 this.aliasTextField = Ext.create('Ext.form.Text', {
+			 name: 'fieldAlias',
+			 fieldLabel: LN('sbi.qbe.selectgridpanel.headers.alias'),
+			 allowBlank: 	true,
+			 labelWidth:	130
+		});
+		 
+		//if an alias is already defined, set it
+    	if(config.fieldAlias != undefined && config.fieldAlias != null && config.fieldAlias != ""){
+    		this.aliasTextField.setValue(config.fieldAlias);
+    	}
+			 
+		 items.push(this.aliasTextField);
+		
+		 if(this.fieldNature == 'measure'){
+			 
 	    	var aggregationComboBoxData = [
                 ['NONE',LN('sbi.qbe.selectgridpanel.aggfunc.name.none'), LN('sbi.qbe.selectgridpanel.aggfunc.name.none')],
 	    		['SUM',LN('sbi.qbe.selectgridpanel.aggfunc.name.sum'), LN('sbi.qbe.selectgridpanel.aggfunc.name.sum')],
@@ -113,17 +130,24 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	    	    emptyText:LN('sbi.cockpit.aggregationwindow.selectAggregation'),
 	    	    typeAhead: true,
 	    	    triggerAction: 'all',
-	    	    selectOnFocus:true
+	    	    selectOnFocus:true,
+				labelWidth:	130
 	    	});
+	    	
+	    	
 
-	    	// if a function is already defined select it
-	    	if(config.funct != undefined && config.funct != 'NaN'){
-	    		this.aggregationField.select(config.funct);
+			if(this.fieldNature == 'measure'){
+				if(config.funct == null ||config.funct == ''){
+					this.aggregationField.select('NONE');
+				} else if((config.funct == undefined) || (typeof config.funct == typeof NaN)){
+					this.aggregationField.select('SUM');
+				} else {
+					this.aggregationField.select(config.funct);
+				}
+			}	    	
+	    	
+	    		items.push(this.aggregationField);
 	    	}
-	    	else this.aggregationField.select('NONE');
-
-	    	items.push(this.aggregationField);
-
 
 
     	this.formPanel = new Ext.form.FormPanel({
@@ -154,7 +178,10 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	// public methods
 	,getFormState : function() {
 		var formState = {};
-		formState.aggregation= this.aggregationField.getValue();
+		formState.fieldAlias= this.aliasTextField.getValue();
+		if(this.fieldNature == 'measure'){
+			formState.aggregation= this.aggregationField.getValue();
+		}
 		return formState;
 	}
 });

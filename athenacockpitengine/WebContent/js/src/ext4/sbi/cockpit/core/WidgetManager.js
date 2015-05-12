@@ -524,6 +524,28 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var fields = Sbi.storeManager.getStoreFields(store);
 		Sbi.trace("[WidgetManager.getSelectionsByStore]: store [" + store.storeId + "] has [" + fields.length + "] fields: [" + fields + "]");
 		for(var i = 0; i < fields.length; i++) {
+			
+			//Added control on field header if the widget type is "table". 
+			//This is mandatory after alias/column name change
+			
+			var widgets = this.getWidgetsByStore(store.storeId);
+
+			for(var j = 0; j < widgets.getCount(); j++) {
+				var widget = widgets.get(j);
+			
+				if(Sbi.isValorized(widget.wtype) && widget.wtype == 'table'){
+					if((Sbi.isValorized(widget.wconf)) && 
+						(Sbi.isValorized(widget.wconf.visibleselectfields))){
+							for(var k = 0; k < widget.wconf.visibleselectfields.length; k++){
+								if(fields[i].header === widget.wconf.visibleselectfields[k].alias){
+									fields[i].header = widget.wconf.visibleselectfields[k].columnName;
+									break;
+								}
+							}
+					}
+				}
+			}
+			
 			var values = this.getStoreFieldSelectedValues(store.storeId, fields[i].header);
 			var fieldSelectedValues = [];
 			for(var value in values) { fieldSelectedValues.push(value); }

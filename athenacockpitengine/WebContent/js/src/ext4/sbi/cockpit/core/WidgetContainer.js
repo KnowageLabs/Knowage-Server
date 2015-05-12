@@ -218,6 +218,56 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		return widget;
 	}
+    
+    /**
+	 * @method
+	 *
+	 * Adds the widget to the container using the passed in layout configuration to render it
+	 * properly. TODO This method is a copy of the previous addWidget method, but it returns the component,
+	 * not the widget. If there is an easier way to accomplish this goal, just remove it.
+	 *
+	 * @param {Sbi.cockpit.core.WidgetRuntime/Object} widget The widget to add or it configuration
+	 * object.
+	 * @parm {Object} The layout configuration to use in oreder to render properly yhe widhet into
+	 * the container. It's opetional. If not provided the Sbi.cockpit.core.WidgetRuntime#wlayout proeprty of
+	 * the widget will be used (see Sbi.cockpit.core.WidgetRuntime#getLayoutConfiguration).
+	 *
+	 * @return The added widget container component
+	 */
+    , addWidgetContainerComponent: function(widget, layoutConf) {
+
+		Sbi.trace("[WidgetContainer.addWidgetContainerComponent]: IN");
+
+		if(Sbi.isNotValorized(widget)) {
+			Sbi.trace("[WidgetContainer.addWidgetContainerComponent]: [widget] parameter is not defined. An empty component will be added to the container.");
+		} else {
+			widget = Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetRuntime(widget);
+
+	    	if(Sbi.isValorized(widget)) {
+	    		this.getWidgetManager().register(widget);
+
+	    		if(Sbi.isValorized(layoutConf)) {
+	        		Sbi.trace("[WidgetContainer.addWidgetContainerComponent]: Input parameter [layoutConf] is valorized");
+	        		widget.setLayoutConfiguration(layoutConf);
+	        	} else {
+	        		Sbi.trace("[WidgetContainer.addWidgetContainerComponent]: Input parameter [layoutConf] is not valorized so it will e replaced with the [wlayout] property of the widget]");
+	        		layoutConf = widget.getLayoutConfiguration();
+	        	}
+	    	} else {
+	    		Sbi.error("[WidgetContainer.addWidgetContainerComponent]: Impossible to create a widget from [widget] parameter passed in as argument. An empty container will be added to the container.");
+	    	}
+		}
+
+
+
+    	Sbi.trace("[WidgetContainer.addWidgetContainerComponent]: [layoutConf] is equal to [" + Sbi.toSource(layoutConf) + "]");
+
+    	var component = this.addComponent(widget, layoutConf);
+
+		Sbi.trace("[WidgetContainer.addWidgetContainerComponent]: OUT");
+
+		return component;
+	}
 
 
     , addSelectionWidget: function(selectionWidget, layoutConf) {
@@ -453,8 +503,10 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 		var re = this.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.genericConfPanel.re;
 
 		var titleRegExp = new RegExp(re);
+	    
+	    var titleWithoutHtml = Ext.util.Format.stripTags(wizardState.wgeneric.title);
 
-		if (!titleRegExp.test(wizardState.wgeneric.title)){
+		if (!titleRegExp.test(titleWithoutHtml)){
 			Ext.Msg.alert('Message', 'Title not valid');
 
 			return false;

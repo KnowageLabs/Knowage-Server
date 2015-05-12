@@ -167,7 +167,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		if (percent) fieldValue = (fieldValue/seriesum)*100;
 
 		if (typeof(fieldValue) == 'number'){
-			if (!this.isInteger(fieldValue)){
+			//if (this.isInteger(fieldValue)){
 				
 				var decimalPrecision;
 				var suffix;
@@ -182,14 +182,14 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 				
 				if(decimalPrecision !== undefined && decimalPrecision !== null)
 				{					
-					fieldValue = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, fieldValue);
+					fieldValue = this.getLocalFormattedNumericValues(decimalPrecision, fieldValue);
 				}
 				
 				if(suffix !== undefined && suffix !== null && suffix !== '')
 				{
 					fieldValue = fieldValue + ' ' + suffix;
 				}
-			}
+			//}
 		}
 
 		if (percent) fieldValue = fieldValue + "%";
@@ -199,7 +199,7 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 		tooltip =  itemMeta.seriesFieldHeader + ': ' + fieldValue + " <p> " +
 				   itemMeta.categoryFieldHeaders + ': '+ categoryValue;
 
-		Sbi.trace("[PieChartWidgetRuntime.getTooltip]: IN");
+		Sbi.trace("[PieChartWidgetRuntime.getTooltip]: OUT");
 
 		return tooltip;
 	}
@@ -327,11 +327,11 @@ Ext.define('Sbi.cockpit.widgets.extjs.piechart.PieChartWidgetRuntime', {
 					if (percent) fieldValue = (fieldValue/seriesum)*100;
 
 					if (typeof(fieldValue) == 'number'){
-						if (!thisPanel.isInteger(fieldValue)){
+						//if (thisPanel.isInteger(fieldValue)){
 							//decimal number
 							//fieldValue = +fieldValue.toFixed(2);
 							fieldValue = thisPanel.getLabelValuesNumericFormat(fieldValue,label, storeItem, item, i, display, animate, index, seriesConfig);
-						}
+						//}
 					}
 
 					if (percent) fieldValue = fieldValue + "%";

@@ -130,7 +130,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 		if (typeof(value) == 'number'){
 			Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: Value is a number, local formatting. First is: " + value);
 			
-			value = this.getLocalFormattedNumericValuesNumeric(decimalPrecision, value);
+			value = this.getLocalFormattedNumericValues(decimalPrecision, value);
 			
 			Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: After is: " + value);
 			
@@ -148,7 +148,7 @@ Ext.extend(Sbi.cockpit.widgets.extjs.abstractchart.AbstractCartesianChartWidgetR
 					+ " <p> " +
 					itemMeta.categoryFieldHeaders + ': '+ categoryValue;
 
-		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: IN");
+		Sbi.trace("[AbstractCartesianChartWidgetRuntime.getTooltip]: OUT");
 
 		return tooltip;
 	}

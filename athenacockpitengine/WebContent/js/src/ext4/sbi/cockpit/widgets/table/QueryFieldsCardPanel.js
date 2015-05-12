@@ -83,7 +83,8 @@ Sbi.cockpit.widgets.table.QueryFieldsCardPanel = function(config) {
 			, activeItem: 0
 			, height: 280
 			, style: 'margin-top: 10px; margin-left: auto; margin-right: auto;'
-			, width: 250
+			//, width: 250
+			, width: 450
 	};
 
 	Sbi.cockpit.widgets.table.QueryFieldsCardPanel.superclass.constructor.call(this, c);

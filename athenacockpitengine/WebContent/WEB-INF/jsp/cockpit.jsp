@@ -52,6 +52,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	List docFunctionalities;
 	String userId;
 	List<String> includes;
+	
+	String documentMode;
 
 	engineInstance = (CockpitEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -73,6 +75,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	docCommunities= (engineInstance.getDocumentCommunities()==null)?null:engineInstance.getDocumentCommunities();
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
+	
+	documentMode = (request.getParameter("documentMode")==null)?"VIEW":request.getParameter("documentMode");
 	
 	boolean forceIE8Compatibility = false;
 	
@@ -144,6 +148,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.fromMyAnalysis = <%=fromMyAnalysis%>;
 		Sbi.config.environment = "<%=environment%>";
 		Sbi.config.contextName =  '<%= contextName %>';
+		Sbi.config.documentMode = "<%=documentMode%>";
 		
 		var cockpitPanel = null;
 		    

@@ -74,6 +74,29 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/FilterEditorWizardPanel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/FilterEditorWizard.js'/></script>
 
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/editor/main/FontEditorTabsPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/editor/main/FontEditor.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/editor/main/FontEditorPage.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/FontEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/FontEditorWizard.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/BarChartFontStore.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontFamilyStore.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontSizeStore.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontDecorationStore.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontWeightStore.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/BarChartFontTabPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/LineChartFontTabPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/PieChartFontTabPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/TableFontTabPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/CrosstabFontTabPanel.js'/></script>
+
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorTabsPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditor.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorPage.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/LayoutEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/LayoutEditorWizard.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/views/ViewModeLayoutTabPanel.js'/></script>
+
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
 
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>

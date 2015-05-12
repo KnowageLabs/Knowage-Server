@@ -73,6 +73,18 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	, associationGroups: null
 
 	/**
+     * @property {Ext.util.MixedCollection()} fonts
+     * The list of registered fonts managed by this manager
+     */
+	, fonts: null
+	
+	/**
+     * @property {Ext.util.MixedCollection()} layout
+     * The list of registered layouts managed by this manager
+     */
+	, layouts: null
+	
+	/**
      * @property {Ext.util.MixedCollection()} parameters
      * The list of registered parameters managed by this manager
      */
@@ -105,6 +117,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 		var associations = conf.associations || [];
 		this.setAssociationConfigurations(associations);
+		
+		var fonts = conf.fonts || [];
+		this.setFontConfigurations(fonts);
+		
+		var layouts = conf.layouts || [];
+		this.setLayoutConfigurations(layouts);
 
 		var parameters = conf.parameters || [];
 		this.setParameterConfigurations(parameters);
@@ -146,6 +164,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		config.stores = this.getStoreConfigurations();
 		config.associations = this.getAssociationConfigurations();
 		config.parameters = this.getParameterConfigurations();
+		config.fonts = this.getFontConfigurations();
+		config.layouts = this.getLayoutConfigurations();
 		Sbi.trace("[StoreManager.getConfiguration]: OUT");
 		return config;
 	}
@@ -398,6 +418,113 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.getStoresInAssociationGroup]: OUT");
 		return stores;
 	}
+	
+	// FONTS CONFIGS
+	
+	/**
+	 * @method
+	 * Sets fonts configuration
+	 *
+	 * @param {Object[]} conf The configuration object
+	 */
+	, setFontConfigurations: function(conf) {
+		Sbi.trace("[StoreManager.setFontConfigurations]: IN");
+		this.resetFontConfigurations();
+		Sbi.debug("[StoreManager.setFontConfigurations]: parameter [conf] is equal to [" + Sbi.toSource(conf)+ "]");
+		conf = conf || [];
+		for(var i = 0; i < conf.length; i++) {
+			this.addFont(conf[i]);
+		}
+		Sbi.trace("[StoreManager.setFontConfigurations]: OUT");
+	}
+
+	, resetFontConfigurations: function(autoDestroy) {
+		if(Sbi.isValorized(this.fonts)) {
+			Sbi.trace("[StoreManager.resetFontConfigurations]: There are [" + this.fonts.getCount() + "] parameter(s) to remove");
+			autoDestroy = autoDestroy || this.autoDestroy;
+			this.fonts.each(function(font, index, length) {
+				this.removeFont(font, autoDestroy);
+			}, this);
+		}
+
+		this.fonts = new Ext.util.MixedCollection();
+		this.fonts.getKey = function(o){
+	        return o.id;
+	    };
+	}
+
+	/**
+	 * @method
+	 * Gets the configuration of all fonts defined in this store manager.
+	 *
+	 * @return {Object[]} The fonts' configuration
+	 */
+	, getFontConfigurations: function() {
+		Sbi.trace("[StoreManager.getFontConfigurations]: IN");
+		var confs = [];
+		this.fonts.each(function(font, index, length) {
+			//var c = this.getFontConfiguration(font);
+			if(Sbi.isValorized(font)) {
+				confs.push(font);
+			}
+		}, this);
+		Sbi.trace("[StoreManager.getFontConfigurations]: OUT");
+		return confs;
+	}
+	
+	// LAYOUT CONFIGS
+	
+	/**
+	 * @method
+	 * Sets layout configuration
+	 *
+	 * @param {Object[]} conf The configuration object
+	 */
+	, setLayoutConfigurations: function(conf) {
+		Sbi.trace("[StoreManager.setLayoutConfigurations]: IN");
+		this.resetLayoutConfigurations();
+		Sbi.debug("[StoreManager.setLayoutConfigurations]: parameter [conf] is equal to [" + Sbi.toSource(conf)+ "]");
+		conf = conf || [];
+		for(var i = 0; i < conf.length; i++) {
+			this.addLayout(conf[i]);
+		}
+		Sbi.trace("[StoreManager.setLayoutConfigurations]: OUT");
+	}
+
+	, resetLayoutConfigurations: function(autoDestroy) {
+		if(Sbi.isValorized(this.layouts)) {
+			Sbi.trace("[StoreManager.resetLayoutConfigurations]: There are [" + this.layouts.getCount() + "] parameter(s) to remove");
+			autoDestroy = autoDestroy || this.autoDestroy;
+			this.layouts.each(function(layout, index, length) {
+				this.removeLayout(layout, autoDestroy);
+			}, this);
+		}
+
+		this.layouts = new Ext.util.MixedCollection();
+		this.layouts.getKey = function(o){
+	        return o.id;
+	    };
+	}
+
+	/**
+	 * @method
+	 * Gets the configuration of layout defined in this store manager.
+	 *
+	 * @return {Object[]} The layout configuration
+	 */
+	, getLayoutConfigurations: function() {
+		Sbi.trace("[StoreManager.getLayoutConfigurations]: IN");
+		var confs = [];
+		this.layouts.each(function(layout, index, length) {
+			//var c = this.getFontConfiguration(font);
+			if(Sbi.isValorized(layout)) {
+				confs.push(layout);
+			}
+		}, this);
+		Sbi.trace("[StoreManager.getLayoutConfigurations]: OUT");
+		return confs;
+	}
+	
 
 	// FILTERS CONFIGS
 
@@ -478,6 +605,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 		return parameterConf;
 	}
+
 
 
 	// -----------------------------------------------------------------------------------------------------------------
@@ -1250,6 +1378,135 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		Sbi.trace("[StoreManager.removeAssociation]: OUT");
 
 		return association;
+	}
+	
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // fonts methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, addFont: function(font){
+		Sbi.trace("[StoreManager.addFont]: IN");
+
+		if(Sbi.isNotValorized(font)) {
+			Sbi.warn("[StoreManager.addFont]: Input parameter [font] is not defined");
+			Sbi.trace("[StoreManager.addFont]: OUT");
+		}
+
+		if(Ext.isArray(font)) {
+			Sbi.trace("[StoreManager.addFont]: Input parameter [font] is of type [Array]");
+			for(var i = 0; i < store.length; i++) {
+				this.addFont(font[i]);
+			}
+		} else if(Sbi.isNotExtObject(font)) {
+			Sbi.trace("[StoreManager.addFont]: Input parameter [font] is of type [Object]");
+			this.fonts.add(font);
+			Sbi.debug("[StoreManager.addFont]: Font [" + Sbi.toSource(font) + "] succesfully added");
+		} else {
+			Sbi.error("[StoreManager.addStore]: Input parameter [font] of type [" + (typeof store) + "] is not valid");
+		}
+
+		Sbi.trace("[StoreManager.addFont]: OUT");
+	}
+	
+	/**
+	 * @methods
+	 *
+	 * Returns all the fonts defined in this store manager
+	 *
+	 *  @return {Object[]} The fonts list
+	 */
+	, getFonts: function() {
+		return this.fonts.getRange();
+	}
+	
+	, getFont: function(fontId) {
+		return this.fonts.get(fontId);
+	}
+
+	, removeFont: function(font, autoDestroy) {
+
+		Sbi.trace("[StoreManager.removeFont]: IN");
+
+		if(Sbi.isNotValorized(font)) {
+			Sbi.trace("[StoreManager.removeFont]: Parameter [font] is not valorized");
+			Sbi.trace("[StoreManager.removeFont]: OUT");
+			return false;
+		}
+
+		font = this.stores.removeKey(font);
+
+		if(font === false) {
+			Sbi.trace("[StoreManager.removeFont]: Impossible to remove font [" + Sbi.toSource(font)  + "]");
+		}
+
+		Sbi.trace("[StoreManager.removeFont]: OUT");
+
+		return font;
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+    // layout methods
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	, addLayout: function(layout){
+		Sbi.trace("[StoreManager.addLayout]: IN");
+
+		if(Sbi.isNotValorized(layout)) {
+			Sbi.warn("[StoreManager.addLayout]: Input parameter [layout] is not defined");
+			Sbi.trace("[StoreManager.addLayout]: OUT");
+		}
+
+		if(Ext.isArray(layout)) {
+			Sbi.trace("[StoreManager.addLayout]: Input parameter [layout] is of type [Array]");
+			for(var i = 0; i < store.length; i++) {
+				this.addLayout(layout[i]);
+			}
+		} else if(Sbi.isNotExtObject(layout)) {
+			Sbi.trace("[StoreManager.addLayout]: Input parameter [layout] is of type [Object]");
+			this.layouts.add(layout);
+			Sbi.debug("[StoreManager.addLayout]: Font [" + Sbi.toSource(layout) + "] succesfully added");
+		} else {
+			Sbi.error("[StoreManager.addLayout]: Input parameter [layout] of type [" + (typeof store) + "] is not valid");
+		}
+
+		Sbi.trace("[StoreManager.layoutFont]: OUT");
+	}
+	
+	/**
+	 * @methods
+	 *
+	 * Returns layout defined in this store manager
+	 *
+	 *  @return {Object[]} The fonts list
+	 */
+	, getLayouts: function() {
+		return this.layouts.getRange();
+	}
+	
+	, getLayout: function(layoutId) {
+		return this.layouts.get(layoutId);
+	}
+
+	, removeLayout: function(layout, autoDestroy) {
+
+		Sbi.trace("[StoreManager.removeLayout]: IN");
+
+		if(Sbi.isNotValorized(layout)) {
+			Sbi.trace("[StoreManager.removeLayout]: Parameter [layout] is not valorized");
+			Sbi.trace("[StoreManager.removeLayout]: OUT");
+			return false;
+		}
+
+		layout = this.stores.removeKey(layout);
+
+		if(layout === false) {
+			Sbi.trace("[StoreManager.removeLayout]: Impossible to remove layout [" + Sbi.toSource(layout)  + "]");
+		}
+
+		Sbi.trace("[StoreManager.removeLayout]: OUT");
+
+		return layout;
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
