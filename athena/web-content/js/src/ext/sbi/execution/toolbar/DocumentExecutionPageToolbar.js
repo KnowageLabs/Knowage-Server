@@ -229,7 +229,11 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		} else if (this.documentMode === 'VIEW') {
 			this.addButtonsForViewMode();
 		} else {
-			this.addButtonsForEditMode();
+			if(this.isCockpitEngine()){
+				this.addButtonsForCockpitEditMode();
+			} else {
+				this.addButtonsForEditMode();
+			}
 		}
 		Sbi.trace('[DocumentExecutionPageToolbar.synchronize]: OUT');
    }
@@ -369,6 +373,18 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				    , handler : this.startWorksheetEditing	
 				}));
 			}
+			
+			if(this.isCockpitEngine() && 
+					Sbi.config.serviceRegistry.baseParams.SBI_ENVIRONMENT === 'DOCBROWSER' && 
+					Sbi.user.userId === this.executionInstance.document.creationUser) {
+				
+				this.addButton(new Ext.Toolbar.Button({
+					iconCls: 'icon-edit' 
+					, tooltip: LN('sbi.execution.executionpage.toolbar.edit')
+				    , scope: this
+				    , handler : this.startCockpitEditing	
+				}));
+			}
 		
 			this.addButton(new Ext.Toolbar.Button({
 				iconCls: 'icon-refresh' 
@@ -466,6 +482,25 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		   }));
 		   
 		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForEditMode]: OUT');	
+	   }
+	
+	/**
+	 * @method 
+	 * 
+	 * Add buttons specific for Cockpit EDIT mode (used by Cockpit documents only)
+	 */
+	, addButtonsForCockpitEditMode: function () {
+
+		Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForCockpitEditMode]: IN');
+		   
+		   this.addButton(new Ext.Toolbar.Button({
+			   iconCls: 'icon-view' 
+				   , tooltip: LN('sbi.execution.executionpage.toolbar.view')
+				   , scope: this
+				   , handler : this.stopCockpitEditing	
+		   }));
+		   
+		   Sbi.trace('[DocumentExecutionPageToolbar.addButtonsForCockpitEditMode]: OUT');	
 	   }
 	
 	
@@ -900,6 +935,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	   this.controller.getFrame().setSrc(newUrl);
    }
    
+   , startCockpitEditing: function() {	
+	   this.documentMode = 'EDIT';
+	   this.synchronize(this.controller, this.executionInstance);
+	   var newUrl = this.changeDocumentExecutionUrlParameter('documentMode', this.documentMode);
+	   this.controller.getFrame().setSrc(newUrl);
+   }
+   
    
    , getDocumentTemplateAsString: function() {
 		try {
@@ -1000,6 +1042,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 	   this.controller.getFrame().setSrc(newUrl);
    }
    
+   , stopCockpitEditing: function() {
+	   this.documentMode = 'VIEW';
+	   this.synchronize(this.controller, this.executionInstance);
+	   var newUrl = this.changeDocumentExecutionUrlParameter('documentMode', this.documentMode);
+	   this.controller.getFrame().setSrc(newUrl);
+   }
+   
    , changeDocumentExecutionUrlParameter: function(parameterName, parameterValue) {
 		var frame = this.controller.getFrame();
 	    var docurl = frame.getDocumentURI();
@@ -1084,6 +1133,10 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			default:
 				throw "Cannot save document type " + this.executionInstance.document.typeCode;
 		}
+	 }
+	 
+	 , isCockpitEngine: function() {
+		 return (this.executionInstance.document.engine === 'Cockpit Engine');
 	 }
 	 
 		// =================================================================================================================
