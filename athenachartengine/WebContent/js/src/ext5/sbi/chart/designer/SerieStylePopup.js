@@ -349,7 +349,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var showValue = this.serieShowValue.getValue();
 		dataAtRow.set('serieShowValue', showValue);
 		
-		var seriePrecision = '' + this.seriePrecisionNumberField.getValue(); //Save as string 
+		var seriePrecision = this.seriePrecisionNumberField.getValue();
 		dataAtRow.set('seriePrecision', seriePrecision);
 		
 		var prefixChar = this.seriePrefixCharTextField.getValue();

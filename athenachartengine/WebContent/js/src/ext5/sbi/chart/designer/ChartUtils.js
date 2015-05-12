@@ -165,44 +165,47 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	},
     	
     	getSeriesDataAsOriginalJson : function() {
-    		var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
-
     		var result = [];
     		
+    		var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
     		for(storeIndex in serieStores) {
-    			/*
-    			var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
-  						var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
-  						var jsonTooltipStyle = jsonizeStyle(tooltipStyle);
-  						
-  						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-  							axisName: serie.name,
-  							axisType: 'MEASURE',
-  							
-  							serieGroupingFunction: '',
-  							serieType: serie.type,
-  							serieOrderType: serie.orderType,
-  							serieColumn: serie.column,
-  							serieColor: serie.color,
-  							serieShowValue: serie.showValue,
-  							seriePrecision: serie.precision+'',
-  							seriePrefixChar: serie.prefixChar,
-  							seriePostfixChar: serie.postfixChar,
-  							
-  							serieTooltipTemplateHtml: tooltip.templateHtml,
-  							serieTooltipBackgroundColor: tooltip.backgroundColor,
-  							serieTooltipAlign: jsonTooltipStyle.align,
-  							serieTooltipColor: jsonTooltipStyle.color,
-  							serieTooltipFont: jsonTooltipStyle.font,
-  							serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-  							serieTooltipFontSize: jsonTooltipStyle.fontSize
-  						});
-    			 */
     			var store = serieStores[storeIndex];
-    			var serie = {};
+    			var axisAlias = store.axisAlias;
     			
-    		
-    			result.push(serie);
+    			var storeSerieDataLength = store.data.items.length;
+    			for(rowIndex = 0; rowIndex < storeSerieDataLength; rowIndex++) {
+    				var serieAsMap = store.getAt(rowIndex);
+    				var serie = {};
+    				
+    				serie['axis'] = axisAlias;
+    				serie['color'] = serieAsMap.get('serieColor') != undefined? serieAsMap.get('serieColor'): '';
+    				serie['column'] = serieAsMap.get('serieColumn') != undefined? serieAsMap.get('serieColumn'): '';
+    				serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined? serieAsMap.get('serieGroupingFunction'): '';
+    				serie['name'] = serieAsMap.get('axisName') != undefined? serieAsMap.get('axisName'): '';
+    				serie['orderType'] = serieAsMap.get('serieOrderType') != undefined? serieAsMap.get('serieOrderType'): '';
+    				serie['postfixChar'] = serieAsMap.get('seriePostfixChar') != undefined? serieAsMap.get('seriePostfixChar'): '';
+    				serie['precision'] = serieAsMap.get('seriePrecision') != undefined? serieAsMap.get('seriePrecision'): '';
+    				serie['prefixChar'] = serieAsMap.get('seriePrefixChar') != undefined? serieAsMap.get('seriePrefixChar'): '';
+    				serie['showValue'] = serieAsMap.get('serieShowValue') != undefined? serieAsMap.get('serieShowValue'): '';
+    				serie['type'] = serieAsMap.get('serieType') != undefined? serieAsMap.get('serieType'): '';
+    				
+    				var TOOLTIP = {};
+    				TOOLTIP['backgroundColor'] = serieAsMap.get('serieTooltipBackgroundColor') != undefined? 
+    						serieAsMap.get('serieTooltipBackgroundColor'): '';
+    				TOOLTIP['templateHtml'] = serieAsMap.get('serieTooltipTemplateHtml') != undefined? 
+    						serieAsMap.get('serieTooltipTemplateHtml'): '';
+    				
+					var tooltipStyle = {};
+					tooltipStyle['align'] = serieAsMap.get('serieTooltipAlign') != undefined? serieAsMap.get('serieTooltipAlign'): '';
+					tooltipStyle['color'] = serieAsMap.get('serieTooltipColor') != undefined? serieAsMap.get('serieTooltipColor'): '';
+					tooltipStyle['font'] = serieAsMap.get('serieTooltipFont') != undefined? serieAsMap.get('serieTooltipFont'): '';
+					tooltipStyle['fontWeight'] = serieAsMap.get('serieTooltipFontWeight') != undefined? serieAsMap.get('serieTooltipFontWeight'): '';
+					tooltipStyle['fontSize'] = serieAsMap.get('serieTooltipFontSize') != undefined? serieAsMap.get('serieTooltipFontSize'): '';
+					TOOLTIP['style'] = tooltipStyle; 
+    				
+					serie['TOOLTIP'] = TOOLTIP
+    				result.push(serie);
+    			}
     		}
     		
     		return result;

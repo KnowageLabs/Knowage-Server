@@ -469,6 +469,7 @@ author:
 			/**
 				START LOADING SERIES >>>>>>>>>>>>>>>>>>>>
 			*/
+  			/* 
   			function jsonizeStyle(str) {
   				var jsonStyle = {};
   				var styles = str.split(';');
@@ -480,7 +481,8 @@ author:
   				console.log('jsonStyle: ',  jsonStyle);
   				
   				return jsonStyle;
-  			}
+  			} 
+			*/
   			
   			Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
   				var axisAlias = serie.axis;
@@ -489,12 +491,13 @@ author:
 
   						var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
   						var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
-  						var jsonTooltipStyle = jsonizeStyle(tooltipStyle);
+  						var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
   						
   						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
   							axisName: serie.name,
   							axisType: 'MEASURE',
   							
+  							serieAxis: store.axisAlias,
   							serieGroupingFunction: '',
   							serieType: serie.type,
   							serieOrderType: serie.orderType,
