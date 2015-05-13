@@ -2,7 +2,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationModel',{
 	extend: 'Ext.data.Model',
     fields: [
 		'height', 'width', 'orientation',
-		'backgroundColor', 'font', 'fontDimension',
+		'backgroundColor', 'font', 'fontDimension', 'fontWeight',
 		
 		'title', 
 		'titleAlign','titleColor','titleFont',
