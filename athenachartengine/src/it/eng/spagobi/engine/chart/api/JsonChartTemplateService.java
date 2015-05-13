@@ -28,6 +28,7 @@ import org.apache.velocity.VelocityContext;
 public class JsonChartTemplateService extends AbstractChartEngineResource {
 
 	@POST
+	@Path("/readChartTemplate")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")

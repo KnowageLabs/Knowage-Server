@@ -142,8 +142,9 @@ author:
  			var serverPort = '<%=request.getServerPort()%>';
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
  			var datasetLabel  = '<%=datasetLabel%>';
- 			
+
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+ 			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 
  			var chartTypes = [
   				{
@@ -412,6 +413,18 @@ author:
   		            text : 'Export as Json',
   		            handler: function(){
   		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
+  		            	
+  		            	var parameters = {
+  		      				jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+  		      				docLabel: '<%= docLabel %>'
+  		      			};
+  		            	coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
+  		      				
+  		      				console.log('chartConf', response.responseText);
+  		      				
+  		      				//renderChart(chartConf);
+  		      			});
+
   		            }
   		        }],
   				items: [

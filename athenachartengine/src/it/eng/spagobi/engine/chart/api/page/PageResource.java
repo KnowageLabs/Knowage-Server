@@ -114,6 +114,8 @@ public class PageResource extends AbstractChartEngineResource {
 
 				// create a new engine instance
 				engineInstance = ChartEngine.createInstance(templateString, getIOManager().getEnv());
+
+				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				break;

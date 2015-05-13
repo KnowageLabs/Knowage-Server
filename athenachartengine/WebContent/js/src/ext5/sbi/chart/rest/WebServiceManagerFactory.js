@@ -25,7 +25,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 			});
 			
 			chartServiceManager.registerService('jsonChartTemplate', {
-				service: 'jsonChartTemplate',
+				service: 'jsonChartTemplate/readChartTemplate',
 				method: 'POST'
 			});
 			
@@ -59,6 +59,12 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 				service: 'datasets/{0}/fields',
 				method: 'GET'
 			});
+			
+			coreServiceManager.registerService('saveChartTemplate', {
+				service: 'documents/saveChartTemplate',
+				method: 'POST'
+			});
+			
 			return coreServiceManager;
 		}
 	}
