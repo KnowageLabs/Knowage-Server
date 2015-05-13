@@ -6,9 +6,6 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 	constructor : function(config) {
 		this.callParent(config);
 		
-		console.log('DANIELOOOO - config.bind: ' + config.bind);
-		console.log('config.viewModel', config);
-		
 		this.viewModel = config.viewModel;
 		
 		var menu = Ext.create('Ext.menu.ColorPicker',{
