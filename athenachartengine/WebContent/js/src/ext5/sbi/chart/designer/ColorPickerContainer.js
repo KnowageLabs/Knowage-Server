@@ -22,7 +22,6 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 			readOnly : true,
 			fieldLabel : this.config.customLabel ? this.config.customLabel : 'Colore',
 			bind: {
-				value: this.config.fieldBind,
 				fieldStyle : 'background-image: none; background-color: '+this.config.fieldBind+'',
 			}
 		});

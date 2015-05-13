@@ -150,7 +150,6 @@ author:
   					name: 'Column chart', 
   					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
   					handler: function(btn){
-  						Ext.Msg.alert('Clicked Column chart', 'body text');
   						Ext.log('Clicked Column chart');
   					}
   				},
@@ -343,13 +342,28 @@ author:
   					},
   				},
   				store: categoriesStore,
+				plugins: [{
+					ptype:	 'cellediting',
+					clicksToEdit: 1
+				}],
   				columns: [
-  					{
-  						text: 'Categorie', 
-  						dataIndex: 'categoryColumn',
-  						sortable: false,
-  						flex: 10
-  					},
+	  				{
+	  					text: 'Column Name', 
+	  					dataIndex: 'categoryColumn',
+	  					sortable: false,
+	  					flex: 10
+	  				},
+	  				{
+	  					text: 'Column Alias', 
+	  					dataIndex: 'axisName',
+	  					sortable: false,
+	  					flex: 10,
+	  					editor: {
+		  		            xtype: 'textfield',
+		  					selectOnFocus: true,
+		  		        }
+	  					
+	  				},
   					{
   						menuDisabled: true,
   						sortable: false,
@@ -536,9 +550,10 @@ author:
 
 			var groupBy = category.groupby;
 			var groupByNames = category.groupbyNames;
+			
 			if(groupBy) {
-				var gbyCategories = groupBy.split[','];
-				var gbyNames = groupByNames ? groupByNames.split[','] : groupBy.split[','];
+				var gbyCategories = groupBy.split(',');
+				var gbyNames = groupByNames ? groupByNames.split(',') : groupBy.split(',');
 
 				Ext.Array.each(gbyCategories, function(gbyCategory, index) {
 					var newCat = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
