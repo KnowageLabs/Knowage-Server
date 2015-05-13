@@ -1,6 +1,8 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Ext.panel.Panel',
-	requires : ['Sbi.chart.designer.StylePopup'],
+	requires : [
+	            'Sbi.chart.designer.StylePopup',
+	            'Sbi.chart.designer.FontStyleCombo'],
 	title : 'Configurazione generica',
 	id: 'page2Container',
 	bodyPadding : 10,
@@ -30,6 +32,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
    		bind : '{configModel.fontDimension}'
    	}),
    	
+   	fontStyle : Ext.create('Sbi.chart.designer.FontStyleCombo',{
+   		bind : '{configModel.fontStyle}'
+   	}),
+   	
    	
    	colorPickerContainer : {},
    	
@@ -49,6 +55,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         var chartOrientation = this.chartOrientation;
         var font = this.font;
         var fontSize = this.fontSize;
+        var fontStyle = this.fontStyle;
         
         this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
     		viewModel: this.viewModel,
@@ -58,6 +65,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         var colorPickerContainer = this.colorPickerContainer;
         
+        this.stylePanelTitle = Ext.create('Sbi.chart.designer.StylePopup',{
+        	title:'Stile Titolo',
+        	viewModel: this.viewModel,
+        	bindFontAlign:'{configModel.titleAlign}',
+        	bindFont:'{configModel.titleFont}',
+        	bindFontDim:'{configModel.titleDimension}',
+        	bindFontStyle:'{configModel.titleStyle}',
+        	bindColor:'{configModel.titleColor}'
+        });
         this.stylePanelSubtitle = Ext.create('Sbi.chart.designer.StylePopup', {
     	    title:'Stile Sottotitolo',
     	    viewModel: this.viewModel,
@@ -66,15 +82,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	    bindFontDim:'{configModel.subtitleDimension}',
     	    bindFontStyle:'{configModel.subtitleStyle}',
     	    bindColor:'{configModel.subtitleColor}'
-    	});
-        this.stylePanelTitle = Ext.create('Sbi.chart.designer.StylePopup',{
-    	    title:'Stile Titolo',
-    	    viewModel: this.viewModel,
-    	    bindFontAlign:'{configModel.titleAlign}',
-    	    bindFont:'{configModel.titleFont}',
-    	    bindFontDim:'{configModel.titleDimension}',
-    	    bindFontStyle:'{configModel.titleStyle}',
-    	    bindColor:'{configModel.titleColor}'
     	});
         
     	this.stylePanelNoData = Ext.create('Sbi.chart.designer.StylePopup',{
@@ -113,7 +120,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			items : [ 
 				colorPickerContainer,
 				font,
-				fontSize
+				fontSize,
+				fontStyle
 			]
 		}, {
 			xtype : 'fieldcontainer',
