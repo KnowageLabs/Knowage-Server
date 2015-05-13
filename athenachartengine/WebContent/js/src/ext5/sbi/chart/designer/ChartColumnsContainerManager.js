@@ -190,6 +190,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						menuDisabled: true,
 						sortable: false,
 						flex: 1,
+  						align : 'center',
 						xtype: 'actioncolumn',
 						items: [{
 							icon: 'http://findicons.com/icon/download/66617/paint/24/png',

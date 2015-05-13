@@ -354,6 +354,7 @@ author:
   						menuDisabled: true,
   						sortable: false,
   						xtype: 'actioncolumn',
+  						align : 'center',
   						flex: 1,
   						items: [{
   							icon: 'http://docs.sencha.com/extjs/5.1/5.1.0-apidocs/extjs-build/examples/restful/images/delete.png',
@@ -377,8 +378,6 @@ author:
   			
   			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel');
   			
-  			cModel.set('titleDimension', 12);
-  			
   			var cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {
   					configModel:cModel
@@ -399,7 +398,7 @@ author:
   		            xtype: 'button',
   		            text : 'Export as Json',
   		            handler: function(){
-  		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson();
+  		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
   		            }
   		        }],
   				items: [

@@ -80,28 +80,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		return result;
     	},
     	
-    	exportAsJson: function(){
+    	exportAsJson: function(chartModel){
     		var result = {};
     		var CHART = {};
     		
-    		var COLORSPALLET = {};
-    		var COLOR = [];
-    		
-    		COLORSPALLET['COLOR'] = COLOR;
-    		CHART['COLORSPALLET'] = COLORSPALLET;
-    		
-    		var EMPTYMESSAGE = {};
-    		CHART['EMPTYMESSAGE'] = EMPTYMESSAGE;
-    		
-    		var TITLE = {};
-    		CHART['TITLE'] = TITLE;
-    		
-    		var SUBTITLE = {};
-    		CHART['SUBTITLE'] = SUBTITLE;
-    		
-    		var LEGEND = {};
-    		CHART['LEGEND'] = LEGEND;
-    		
+    		var chartData = ChartUtils.getChartDataAsOriginaJson(chartModel);
+    		Ext.apply(CHART, chartData);
+    		    		
     		var AXES_LIST = {};
     		var AXIS = ChartUtils.getAxesDataAsOriginalJson();
     		AXES_LIST['AXIS'] = AXIS;
@@ -234,6 +219,53 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var result = {};
     		
     		return result;
+    	},
+    	
+    	getChartDataAsOriginaJson: function(chartModel) {
+    		var CHART = {};
+    		
+    		CHART['height'] = chartModel.get('height');
+    		CHART['width'] = chartModel.get('width');
+    		CHART['orientation'] = chartModel.get('orientation');
+    		
+    		var COLORSPALLET = {};
+    		var COLOR = [];
+    		COLORSPALLET['COLOR'] = COLOR;
+    		CHART['COLORSPALLET'] = COLORSPALLET;
+    		
+    		var EMPTYMESSAGE = {};
+    		CHART['EMPTYMESSAGE'] = EMPTYMESSAGE;
+    		
+    		var TITLE = {};
+    		TITLE['text'] = chartModel.get('title');
+    		
+    		var titleStyle = {};
+    		titleStyle['align'] = chartModel.get('titleAlign');
+    		titleStyle['color'] = chartModel.get('titleColor');
+    		titleStyle['font'] = chartModel.get('titleFont');
+    		titleStyle['fontWeight'] = chartModel.get('titleStyle');
+    		titleStyle['fontSize'] = chartModel.get('titleDimension');
+    		TITLE['style'] = titleStyle;
+    		
+    		CHART['TITLE'] = TITLE;
+    		
+    		var SUBTITLE = {};
+    		SUBTITLE['text'] = chartModel.get('subtitle');
+    		
+    		var subtitleStyle = {};
+    		subtitleStyle['align'] = chartModel.get('subtitleAlign');
+    		subtitleStyle['color'] = chartModel.get('subtitleColor');
+    		subtitleStyle['font'] = chartModel.get('subtitleFont');
+    		subtitleStyle['fontWeight'] = chartModel.get('subtitleStyle');
+    		subtitleStyle['fontSize'] = chartModel.get('subtitleDimension');
+    		SUBTITLE['style'] = subtitleStyle;
+    		
+    		CHART['SUBTITLE'] = SUBTITLE;
+    		
+    		var LEGEND = {};
+    		CHART['LEGEND'] = LEGEND;
+    		
+    		return CHART;
     	},
     	
     	jsonizeStyle: function (str) {
