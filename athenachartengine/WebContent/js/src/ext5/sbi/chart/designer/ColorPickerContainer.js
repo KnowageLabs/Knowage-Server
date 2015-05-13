@@ -16,13 +16,17 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		
 		var picker = Ext.create('Sbi.chart.designer.ColorPicker',{
 			viewModel : this.viewModel,
-			bind : config.fieldBind
 		});
+		
 		var field = Ext.create('Ext.form.Field',{
 			readOnly : true,
 			fieldLabel : this.config.customLabel ? this.config.customLabel : 'Colore',
-			bind: this.config.fieldBind
+			bind: {
+				value: this.config.fieldBind,
+				fieldStyle : 'background-image: none; background-color: '+this.config.fieldBind+'',
+			}
 		});
+		
 		this.add(field);
 		this.add(picker);
 	}

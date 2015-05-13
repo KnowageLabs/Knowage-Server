@@ -12,10 +12,10 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 		fields : [ 'name', 'value' ],
 		data : [ {
 			name : 'Verticale',
-			value : 'v'
+			value : 'vertical'
 		}, {
 			name : 'Orizzontale',
-			value : 'h'
+			value : 'horizontal'
 		} ]
 	}
 });

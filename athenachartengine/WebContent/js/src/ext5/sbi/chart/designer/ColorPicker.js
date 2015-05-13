@@ -5,11 +5,7 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 	
 	constructor : function(config) {
 		this.callParent(config);
-		
-		this.viewModel = config.viewModel;
-		
-		var menu = Ext.create('Ext.menu.ColorPicker',{
-			value : config.bind ? config.bind : '000000',
+		var menu = Ext.create('Ext.menu.ColorPicker', {
 			listeners : {
 				select : function(picker,selColor) {
 					var style = 'background-color: #'+ selColor 
@@ -17,7 +13,6 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 					this.findParentByType('container').down('field').setFieldStyle(style);
 				}
 			}});
-		
-        this.setMenu(menu);
+		this.setMenu(menu);
     }
 });

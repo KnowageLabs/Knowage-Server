@@ -279,6 +279,72 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 			
 			return jsonStyle;
+		},
+		
+		removeStartingHash: function(colorWithHash) {
+			return colorWithHash ? colorWithHash.replace("#", '') : colorWithHash;
+		},
+		
+		createChartConfigurationModelFromJson: function(jsonTemplate){
+			var jsonChartStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.style);
+  			
+  			var jsonTitleText = jsonTemplate.CHART.TITLE ? jsonTemplate.CHART.TITLE.text : '';
+  			var jsonTitleStyle = jsonTemplate.CHART.TITLE ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TITLE.style) : {};
+  			
+  			var jsonSubtitleText = jsonTemplate.CHART.SUBTITLE ? jsonTemplate.CHART.SUBTITLE.text : '';
+  			var jsonSubtitleStyle = jsonTemplate.CHART.SUBTITLE ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.SUBTITLE.style) : {};
+  			
+  			var jsonEmptyMsgText = jsonTemplate.CHART.EMPTYMESSAGE ? jsonTemplate.CHART.EMPTYMESSAGE.text : '';
+  			var jsonEmptyMsgStyle = jsonTemplate.CHART.EMPTYMESSAGE ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.EMPTYMESSAGE.style) : {};
+  			
+  			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND : '';
+  			var jsonLegendStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.style) : {};
+  			
+  			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
+  				height: jsonTemplate.CHART.height,
+  				width: jsonTemplate.CHART.width, 
+  				orientation: jsonTemplate.CHART.orientation,
+  				backgroundColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonChartStyle.backgroundColor),
+  				font: jsonChartStyle.font,
+  				fontDimension: jsonChartStyle.fontSize,
+  				fontWeight: jsonChartStyle.fontWeight,
+  				
+  				title: jsonTitleText,
+  				titleAlign: jsonTitleStyle.align,
+  				titleColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTitleStyle.color),
+  				titleFont: jsonTitleStyle.font,
+  				titleDimension: jsonTitleStyle.fontSize,
+  				titleStyle: jsonTitleStyle.fontWeight,
+  				  				
+  				subtitle: jsonSubtitleText,
+  				subtitleAlign: jsonSubtitleStyle.align,
+  				subtitleColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonSubtitleStyle.color),
+  				subtitleFont: jsonSubtitleStyle.font,
+  				subtitleDimension: jsonSubtitleStyle.fontSize,
+  				subtitleStyle: jsonSubtitleStyle.fontWeight,
+  				
+  				nodata: jsonEmptyMsgText,
+  				nodataAlign: jsonEmptyMsgStyle.align,
+  				nodataColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonEmptyMsgStyle.color),
+  				nodataFont: jsonEmptyMsgStyle.font,
+  				nodataDimension: jsonEmptyMsgStyle.fontSize,
+  				nodataStyle: jsonEmptyMsgStyle.fontWeight,
+  				  				
+  				legendPosition: chartLegend.position,
+  				legendLayout: chartLegend.layout,
+  				legendFloating: chartLegend.floating,
+  				legendX: chartLegend.x,
+  				legendY: chartLegend.y,
+  				legendAlign: jsonTemplate.CHART.align,
+  				legendColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
+  				legendFont: jsonLegendStyle.font,
+  				legendDimension: jsonLegendStyle.fontSize,
+  				legendStyle: jsonLegendStyle.fontWeight,
+  				legendBorderWidth: jsonLegendStyle.borderWidth,
+  				legendBackgroundColor: jsonLegendStyle.backgroundColor
+  			});
+  			
+  			return cModel;
 		}
     }
 });

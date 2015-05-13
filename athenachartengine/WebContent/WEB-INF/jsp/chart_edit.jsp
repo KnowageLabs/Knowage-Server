@@ -375,11 +375,8 @@ author:
   				bottomXAxisesPanel: bottomXAxisesPanel
   			});
   			
-  			
-  			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel');
+  			var cModel = Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
 
-  			
-  			
   			var cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {
   					configModel:cModel
