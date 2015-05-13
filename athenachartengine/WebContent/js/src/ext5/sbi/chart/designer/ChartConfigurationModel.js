@@ -2,7 +2,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationModel',{
 	extend: 'Ext.data.Model',
     fields: [
 		'height', 'width', 'orientation',
-		'backgroundColor', 'font', 'fontDimension', 'fontWeight',
+		'backgroundColor', 'font', 'fontDimension', 
+		'fontWeight',
 		
 		'title', 
 		'titleAlign','titleColor','titleFont',
@@ -19,7 +20,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationModel',{
 		'legendPosition', 'legendLayout',
 		'legendFloating','legendX','legendY',
 		'legendAlign','legendColor','legendFont',
-		'legendDimension','legendStyle',
+		'legendDimension','legendStyle', 
+		'legendBorderWidth', 'legendBackgroundColor'
 		
 	],
 	
