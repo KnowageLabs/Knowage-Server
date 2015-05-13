@@ -31,10 +31,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
    	}),
    	
    	
-   	colorPickerContainer : Ext.create('Sbi.chart.designer.ColorPickerContainer',{
-   		customLabel : 'Colore sfondo',
-   		fieldBind: '{configModel.backgroundColor}'
-   	}),
+   	colorPickerContainer : {},
    	
 	stylePanelSubtitle : {},
 	stylePanelTitle : {},
@@ -52,6 +49,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         var chartOrientation = this.chartOrientation;
         var font = this.font;
         var fontSize = this.fontSize;
+        
+        this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
+    		viewModel: this.viewModel,
+    		customLabel : 'Colore sfondo',
+       		fieldBind: '{configModel.backgroundColor}'
+       	});
         
         var colorPickerContainer = this.colorPickerContainer;
         

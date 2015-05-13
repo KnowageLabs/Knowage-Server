@@ -26,17 +26,18 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         var align = Ext.create('Sbi.chart.designer.FontAlignCombo',{
         	bind : this.config.bindFontAlign
         });
-		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
-			bind : this.config.bindColor
+		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
+			viewModel: this.viewModel,
+			fieldBind : this.config.bindColor
 		});
 		var font = Ext.create('Sbi.chart.designer.FontCombo',{
-			bind : this.config.bindFont
+			fieldBind : this.config.bindFont
 		});
         var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
-        	bind : this.config.bindFontDim
+        	fieldBind : this.config.bindFontDim
         });
         var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
-        	bind : this.config.bindFontStyle
+        	fieldBind : this.config.bindFontStyle
         });
         
         this.add(align);

@@ -377,6 +377,8 @@ author:
   			
   			
   			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel');
+
+  			
   			
   			var cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {

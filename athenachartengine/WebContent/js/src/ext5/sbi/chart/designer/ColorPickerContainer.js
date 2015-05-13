@@ -5,13 +5,19 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 	margin: '5 0',
 	items : [ ],
 	config:{
-		customLabel : '',
-		fieldBind: '',
+		customLabel : null,
+		fieldBind: null,
 	},
 	constructor : function(config) {
 		this.callParent(config);
 		Ext.apply(this.config,config);
-		var picker = Ext.create('Sbi.chart.designer.ColorPicker');
+		
+		this.viewModel = config.viewModel;
+		
+		var picker = Ext.create('Sbi.chart.designer.ColorPicker',{
+			viewModel : this.viewModel,
+			bind : config.fieldBind
+		});
 		var field = Ext.create('Ext.form.Field',{
 			readOnly : true,
 			fieldLabel : this.config.customLabel ? this.config.customLabel : 'Colore',

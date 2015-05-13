@@ -4,9 +4,15 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 	padding : '1 0',
 	
 	constructor : function(config) {
-		this.callParent(config);        
+		this.callParent(config);
+		
+		console.log('DANIELOOOO - config.bind: ' + config.bind);
+		console.log('config.viewModel', config);
+		
+		this.viewModel = config.viewModel;
+		
 		var menu = Ext.create('Ext.menu.ColorPicker',{
-			value : '000000',
+			value : config.bind ? config.bind : '000000',
 			listeners : {
 				select : function(picker,selColor) {
 					var style = 'background-color: #'+ selColor 
