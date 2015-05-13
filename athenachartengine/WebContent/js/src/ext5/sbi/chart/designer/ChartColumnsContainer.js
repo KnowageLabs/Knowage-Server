@@ -25,7 +25,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
             flex: 1
         }
     ],
-    enableDragDrop: true,
+    hideHeaders: true,
     enableColumnHide:false,
     margin: '0 0 0 0'	
 });

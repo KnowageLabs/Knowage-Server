@@ -84,6 +84,24 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var result = {};
     		var CHART = {};
     		
+    		var COLORSPALLET = {};
+    		var COLOR = [];
+    		
+    		COLORSPALLET['COLOR'] = COLOR;
+    		CHART['COLORSPALLET'] = COLORSPALLET;
+    		
+    		var EMPTYMESSAGE = {};
+    		CHART['EMPTYMESSAGE'] = EMPTYMESSAGE;
+    		
+    		var TITLE = {};
+    		CHART['TITLE'] = TITLE;
+    		
+    		var SUBTITLE = {};
+    		CHART['SUBTITLE'] = SUBTITLE;
+    		
+    		var LEGEND = {};
+    		CHART['LEGEND'] = LEGEND;
+    		
     		var AXES_LIST = {};
     		var AXIS = ChartUtils.getAxesDataAsOriginalJson();
     		AXES_LIST['AXIS'] = AXIS;
@@ -92,7 +110,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var VALUES = {};
     		var SERIE = ChartUtils.getSeriesDataAsOriginalJson();
     		VALUES['SERIE'] = SERIE;
-    		
+    		var CATEGORY = ChartUtils.getCategoriesDataAsOriginalJson();
+    		VALUES['CATEGORY'] = CATEGORY;
     		CHART['VALUES'] = VALUES;
     		
     		result['CHART'] = CHART;
@@ -207,6 +226,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				result.push(serie);
     			}
     		}
+    		
+    		return result;
+    	},
+    	
+    	getCategoriesDataAsOriginalJson: function() {
+    		var result = {};
     		
     		return result;
     	},

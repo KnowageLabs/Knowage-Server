@@ -143,11 +143,6 @@ author:
  			var datasetLabel  = '<%=datasetLabel%>';
  			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
- 			
- 			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
- 				region: 'north',
- 				minHeight: 50,
- 			});
 
  			var chartTypes = [
   				{
@@ -174,20 +169,25 @@ author:
   					name: 'Bar chart', 
   					iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
   					handler: function(btn){
-  						Ext.log('Clicked Pie chart');}
+  						Ext.log('Clicked Bar chart');
+  					}
   				}
   			];
-
- 			for(index in chartTypes) {
- 				var button = Ext.create('Ext.button.Button', {
- 					text: chartTypes[index].name,
- 					icon: chartTypes[index].iconUrl,
- 					handler: chartTypes[index].handler,
- 					scale : "large",
- 					width: '100%'
- 				});
- 				chartTypeSelector.add(button);
- 			}
+ 			
+ 			var chartTypeStore = Ext.create('Ext.data.Store', {
+				fields: [
+					{name: 'name', type: 'string'},
+					{name: 'iconUrl', type: 'string'},
+					{name: 'handler', type: 'auto'}
+				],
+	 			data: chartTypes
+		    });
+ 			
+ 			var chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
+ 				region: 'north',
+ 				minHeight: 50,
+ 				store: chartTypeStore
+ 			});
 
  			var columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
@@ -332,6 +332,7 @@ author:
 
   			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore');
   			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
+  				id: 'chartBottomCategoriesContainer',
   				viewConfig: {
   					plugins: {
   						ptype: 'gridviewdragdrop',
@@ -468,20 +469,6 @@ author:
 			
 			/**
 				START LOADING SERIES >>>>>>>>>>>>>>>>>>>>
-			*/
-  			/* 
-  			function jsonizeStyle(str) {
-  				var jsonStyle = {};
-  				var styles = str.split(';');
-  				for(style in styles) {
-  					var keyValue = style.split(':');
-  					jsonStyle[keyValue[0]] = keyValue[1];
-  				}
-  				
-  				console.log('jsonStyle: ',  jsonStyle);
-  				
-  				return jsonStyle;
-  			} 
 			*/
   			
   			Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
