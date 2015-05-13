@@ -10,8 +10,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
     
     constructor: function(config) {
         this.callParent(config);
-        var legend = Ext.create('Sbi.chart.designer.ChartConfigurationLegend');
-		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette');
+        
+        this.viewModel = config.viewModel;
+        
+        var legend = Ext.create('Sbi.chart.designer.ChartConfigurationLegend',{
+			viewModel: this.viewModel
+		});
+		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
+			viewModel: this.viewModel
+		});
         
         this.add(legend);
 		this.add(palette);

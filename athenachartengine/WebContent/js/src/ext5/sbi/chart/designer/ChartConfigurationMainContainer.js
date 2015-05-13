@@ -178,7 +178,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            Ext.getCmp('page2Legend').setDisabled(!checked);
 	        }
 	    }
-		]
+		];
 	        
 	    this.add(item);
         

@@ -1,6 +1,6 @@
 Ext.define('Sbi.chart.designer.StylePopup',{
 	extend : 'Ext.form.Panel',
-    session: true,
+    //session: true,
 	width : 300,
 	height : 180,
 	floating : true,

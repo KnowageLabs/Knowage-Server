@@ -135,6 +135,7 @@ author:
   			initChartLibrary(mainPanel.id);
   			
   			--%>
+  			
   			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
  			var userId = '<%=userId%>';
  			var hostName = '<%=request.getServerName()%>';
@@ -375,6 +376,9 @@ author:
   			
   			
   			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel');
+  			
+  			cModel.set('titleDimension', 12);
+  			
   			var cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {
   					configModel:cModel
@@ -519,8 +523,8 @@ author:
 				START LOADING CATEGORIES >>>>>>>>>>>>>>>>>>>>
 			*/
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
-			var newCat = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-				axisName: category.column,
+			var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+				axisName: category.name,
 				axisType: 'ATTRIBUTE', 
 				
 				categoryColumn: category.column,
@@ -530,8 +534,26 @@ author:
 				categoryOrderColumn: category.orderColumn, 
 				categoryOrderType: category.orderType
 			});
-			categoriesStore.add(newCat);
-			
+			categoriesStore.add(mainCategory);
+
+			var groupBy = category.groupby;
+			var groupByNames = category.groupbyNames;
+			if(groupBy) {
+				var gbyCategories = groupBy.split[','];
+				var gbyNames = groupByNames ? groupByNames.split[','] : groupBy.split[','];
+
+				Ext.Array.each(gbyCategories, function(gbyCategory, index) {
+					var newCat = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+						axisName: gbyNames[index],
+						axisType: 'ATTRIBUTE', 
+
+						categoryColumn: gbyCategory,
+						categoryStacked: ''
+					});
+					categoriesStore.add(newCat);
+				});
+			}
+
 			/**
 				END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<<
 			*/
@@ -540,10 +562,6 @@ author:
   			
   			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
   			
- 			
- 			
- 			
- 			
  			
  			Ext.log({level: 'info'}, 'CHART: OUT');
 

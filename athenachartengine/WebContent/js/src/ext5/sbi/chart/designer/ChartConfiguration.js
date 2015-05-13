@@ -26,4 +26,4 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
         this.add(this.main);
 		this.add(this.second);
     }
-})
+});
