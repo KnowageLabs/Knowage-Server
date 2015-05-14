@@ -201,42 +201,11 @@ Sbi.widgets.ListDetailForm = function(config) {
     	, id : 'id'		
     	, fields: conf.fields
     	, root: 'rows'
+        , baseParams:{start:0, limit:20} 
 		, url: this.services['manageListService']		
 	});
 
 	this.initWidget();	
-	
-	 /*
- 	   *    Here is where we create the Form
- 	   */
-	/*
- 	  this.gridForm = {
- 	          frame: true,
- 	          autoScroll: true,
- 	          labelAlign: 'left',
- 	          autoWidth: true,
- 	         // title: this.panelTitle,
- 	          //bodyStyle:'padding:7px',
- 	          //width: 1000,
- 	          //height: '90%', //550,
- 	          layout: 'column',
- 	          scope:this,
- 	          forceLayout: true,
- 	          trackResetOnLoad: true,
- 	          layoutConfig : {
- 	 				animate : true,
- 	 				activeOnTop : false
-
- 	 			},
- 	          items: [
- 	              this.mainGrid
- 	              //, this.tabs           	  		
- 	          ]
- 	          
- 	      };
- 	      */   
- 	      
- 	   
 	
 	this.mainGrid.region = "west";
 	
@@ -450,7 +419,6 @@ Ext.extend(Sbi.widgets.ListDetailForm, Ext.FormPanel, {
 	                  colModel: this.colModel,
 	                  plugins: pluginsToAdd ,
 	                  selModel: this.rowselModel,
-//	                  width: '35%',
 	                  width: this.gridWidth,
 					  //autoWidth: true,
 					  frame: true,

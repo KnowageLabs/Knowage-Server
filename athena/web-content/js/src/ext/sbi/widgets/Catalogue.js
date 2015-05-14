@@ -163,7 +163,7 @@ Ext
 
 						this.configurationObject.gridColItems = [ {
 							header : LN('sbi.generic.name'),
-							width : 180,
+							width : 144,
 							sortable : true,
 							locked : true,
 							dataIndex : 'name'
