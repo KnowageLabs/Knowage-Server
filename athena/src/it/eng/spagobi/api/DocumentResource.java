@@ -18,6 +18,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Iterator;
@@ -37,9 +38,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.XML;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -114,33 +113,16 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		String xml = null;
 		try {
 			JSONObject json = new JSONObject(jsonTemplate);
-			xml = XML.toString(json);
-		} catch (JSONException e) {
+
+			xml = JSONTemplateUtilities.convertJsonToXML(json);
+
+		} catch (Exception e) {
 			logger.error("Error converting JSON Template to XML...", e);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 
 		}
 
-		ObjTemplate template = new ObjTemplate();
-		template.setName("Template.xml");
-		template.setContent(xml.getBytes());
-		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
-
-		IBIObjectDAO biObjectDao;
-		BIObject document;
-		try {
-
-			if (documentManagementAPI == null) {
-				documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-			}
-
-			biObjectDao = DAOFactory.getBIObjectDAO();
-			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
-			documentManagementAPI.saveDocument(document, template);
-		} catch (EMFUserError e) {
-			logger.error("Error saving JSON Template to XML...", e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
-		}
+		saveTemplate(docLabel, xml);
 
 		return xml;
 	}
@@ -167,5 +149,26 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	private AnalyticalModelDocumentManagementAPI getDocumentManagementAPI() {
 		AnalyticalModelDocumentManagementAPI managementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		return managementAPI;
+	}
+
+	private void saveTemplate(String docLabel, String xml) {
+		ObjTemplate template = new ObjTemplate();
+		template.setName("Template.xml");
+		template.setContent(xml.getBytes());
+		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
+
+		IBIObjectDAO biObjectDao;
+		BIObject document;
+		try {
+			if (documentManagementAPI == null) {
+				documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+			}
+			biObjectDao = DAOFactory.getBIObjectDAO();
+			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
+			documentManagementAPI.saveDocument(document, template);
+		} catch (EMFUserError e) {
+			logger.error("Error saving JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
 	}
 }
