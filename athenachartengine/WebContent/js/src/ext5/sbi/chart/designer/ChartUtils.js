@@ -125,39 +125,58 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				axisAsJson['type'] = axisData.axisType;
     				axisAsJson['position'] = axisData.position;
     				
-    				var style = {};
-    				style['rotate'] = axisData.styleRotate;
-    				style['align'] = axisData.styleAlign;
-    				style['color'] = axisData.styleColor;
-    				style['font'] = axisData.styleFont;
-    				style['fontWeight'] = axisData.styleFontWeigh;
-    				style['fontSize'] = axisData.styleFontSize;
+//    				var style = {};
+//    				style['rotate'] = axisData.styleRotate;
+//    				style['align'] = axisData.styleAlign;
+//    				style['color'] = axisData.styleColor;
+//    				style['font'] = axisData.styleFont;
+//    				style['fontWeight'] = axisData.styleFontWeigh;
+//    				style['fontSize'] = axisData.styleFontSize;
+    				var style = '';
+    				style += 'rotate:' + ((axisData.styleRotate != undefined)? axisData.styleRotate : '') + ';';
+    				style += 'align:' + ((axisData.styleAlign != undefined)? axisData.styleAlign : '') + ';';
+    				style += 'color:' + ((axisData.styleColor != undefined)? axisData.styleColor : '') + ';';
+    				style += 'font:' + ((axisData.styleFont != undefined)? axisData.styleFont : '') + ';';
+    				style += 'fontWeight:' + ((axisData.styleFontWeigh != undefined)? axisData.styleFontWeigh : '') + ';';
+    				style += 'fontSize:' + ((axisData.styleFontSize != undefined)? axisData.styleFontSize : '') + ';';
     				axisAsJson['style'] = style;
     				
     				var MAJORGRID = {}
     				MAJORGRID['interval'] = axisData.majorgridInterval;
-    				var majorgridStyle = {};
-    				majorgridStyle['typeline'] = axisData.majorgridStyleTypeline;
-    				majorgridStyle['color'] = axisData.majorgridStyleColor;
+//    				var majorgridStyle = {};
+//    				majorgridStyle['typeline'] = axisData.majorgridStyleTypeline;
+//    				majorgridStyle['color'] = axisData.majorgridStyleColor;
+    				var majorgridStyle = '';
+    				majorgridStyle += 'typeline:' + ((axisData.majorgridStyleTypeline != undefined)? axisData.majorgridStyleTypeline: '') + ';';
+    				majorgridStyle += 'color:' + ((axisData.majorgridStyleColor != undefined)? axisData.majorgridStyleColor: '') + ';';
     				MAJORGRID['style'] = majorgridStyle;
     				axisAsJson['MAJORGRID'] = MAJORGRID;
     				
     				var MINORGRID = {}
     				MINORGRID['interval'] = axisData.minorgridInterval;
-    				var minorgridStyle = {};
-    				minorgridStyle['typeline'] = axisData.minorgridStyleTypeline;
-    				minorgridStyle['color'] = axisData.minorgridStyleColor;
+//    				var minorgridStyle = {};
+//    				minorgridStyle['typeline'] = axisData.minorgridStyleTypeline;
+//    				minorgridStyle['color'] = axisData.minorgridStyleColor;
+    				var minorgridStyle = '';
+    				minorgridStyle += 'typeline:' + ((axisData.minorgridStyleTypeline != undefined)? axisData.minorgridStyleTypeline: '') + ';';
+    				minorgridStyle += 'color:' + ((axisData.minorgridStyleColor != undefined)? axisData.minorgridStyleColor: '') + ';';
     				MINORGRID['style'] = minorgridStyle;
     				axisAsJson['MINORGRID'] = MINORGRID;
     				
     				var TITLE = {};
     				TITLE['text'] = axisData.titleText;
-    				var titleStyle = {};
-    				titleStyle['align'] = axisData.titleStyleAlign;
-    				titleStyle['color'] = axisData.titleStyleColor;
-    				titleStyle['font'] = axisData.titleStyleFont;
-    				titleStyle['fontWeight'] = axisData.titleStyleFontWeigh;
-    				titleStyle['fontSize'] = axisData.titleStyleFontSize;
+//    				var titleStyle = {};
+//    				titleStyle['align'] = axisData.titleStyleAlign;
+//    				titleStyle['color'] = axisData.titleStyleColor;
+//    				titleStyle['font'] = axisData.titleStyleFont;
+//    				titleStyle['fontWeight'] = axisData.titleStyleFontWeigh;
+//    				titleStyle['fontSize'] = axisData.titleStyleFontSize;
+    				var titleStyle = '';
+    				titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
+    				titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';
+    				titleStyle += 'font:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
+    				titleStyle += 'fontWeight:' + ((axisData.titleStyleFontWeigh != undefined)? axisData.titleStyleFontWeigh: '') + ';';
+    				titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';
     				TITLE['style'] = titleStyle;
     				axisAsJson['TITLE'] = TITLE;
     				
@@ -199,12 +218,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				TOOLTIP['templateHtml'] = serieAsMap.get('serieTooltipTemplateHtml') != undefined? 
     						serieAsMap.get('serieTooltipTemplateHtml'): '';
     				
-					var tooltipStyle = {};
-					tooltipStyle['align'] = serieAsMap.get('serieTooltipAlign') != undefined? serieAsMap.get('serieTooltipAlign'): '';
-					tooltipStyle['color'] = serieAsMap.get('serieTooltipColor') != undefined? serieAsMap.get('serieTooltipColor'): '';
-					tooltipStyle['font'] = serieAsMap.get('serieTooltipFont') != undefined? serieAsMap.get('serieTooltipFont'): '';
-					tooltipStyle['fontWeight'] = serieAsMap.get('serieTooltipFontWeight') != undefined? serieAsMap.get('serieTooltipFontWeight'): '';
-					tooltipStyle['fontSize'] = serieAsMap.get('serieTooltipFontSize') != undefined? serieAsMap.get('serieTooltipFontSize'): '';
+//					var tooltipStyle = {};
+//					tooltipStyle['align'] = serieAsMap.get('serieTooltipAlign') != undefined? serieAsMap.get('serieTooltipAlign'): '';
+//					tooltipStyle['color'] = serieAsMap.get('serieTooltipColor') != undefined? serieAsMap.get('serieTooltipColor'): '';
+//					tooltipStyle['font'] = serieAsMap.get('serieTooltipFont') != undefined? serieAsMap.get('serieTooltipFont'): '';
+//					tooltipStyle['fontWeight'] = serieAsMap.get('serieTooltipFontWeight') != undefined? serieAsMap.get('serieTooltipFontWeight'): '';
+//					tooltipStyle['fontSize'] = serieAsMap.get('serieTooltipFontSize') != undefined? serieAsMap.get('serieTooltipFontSize'): '';
+					var tooltipStyle = '';
+					tooltipStyle += 'align:' + ((serieAsMap.get('serieTooltipAlign') != undefined)? serieAsMap.get('serieTooltipAlign'): '') + ';';					
+					tooltipStyle += 'color:' + ((serieAsMap.get('serieTooltipColor') != undefined)? serieAsMap.get('serieTooltipColor'): '') + ';';					
+					tooltipStyle += 'font:' + ((serieAsMap.get('serieTooltipFont') != undefined)? serieAsMap.get('serieTooltipFont'): '') + ';';					
+					tooltipStyle += 'fontWeight:' + ((serieAsMap.get('serieTooltipFontWeight') != undefined)? serieAsMap.get('serieTooltipFontWeight'): '') + ';';					
+					tooltipStyle += 'fontSize:' + ((serieAsMap.get('serieTooltipFontSize') != undefined)? serieAsMap.get('serieTooltipFontSize'): '') + ';';					
 					TOOLTIP['style'] = tooltipStyle; 
     				
 					serie['TOOLTIP'] = TOOLTIP
@@ -228,11 +253,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		CHART['width'] = (chartModel.get('width') != undefined)? chartModel.get('width') : '';
     		CHART['orientation'] = (chartModel.get('orientation') != undefined)? chartModel.get('orientation') : '';
     		
-    		var chartStyle = {};
-    		chartStyle['font'] = (chartModel.get('font') != undefined)? chartModel.get('font') : '';
-    		chartStyle['fontSize'] = (chartModel.get('fontDimension') != undefined)? chartModel.get('fontDimension') : '';
-    		chartStyle['fontWeight'] = (chartModel.get('fontWeight') != undefined)? chartModel.get('fontWeight') : '';
-    		chartStyle['backgroundColor'] = (chartModel.get('backgroundColor') != undefined)? '#' + chartModel.get('backgroundColor') : '';
+//    		var chartStyle = {};
+//    		chartStyle['font'] = (chartModel.get('font') != undefined)? chartModel.get('font') : '';
+//    		chartStyle['fontSize'] = (chartModel.get('fontDimension') != undefined)? chartModel.get('fontDimension') : '';
+//    		chartStyle['fontWeight'] = (chartModel.get('fontWeight') != undefined)? chartModel.get('fontWeight') : '';
+//    		chartStyle['backgroundColor'] = (chartModel.get('backgroundColor') != undefined)? '#' + chartModel.get('backgroundColor') : '';
+    		var chartStyle = '';
+    		chartStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
+    		chartStyle += 'fontSize:' + ((chartModel.get('fontDimension') != undefined)? chartModel.get('fontDimension') : '') + ';';
+    		chartStyle += 'fontWeight:' + ((chartModel.get('fontWeight') != undefined)? chartModel.get('fontWeight') : '') + ';';
+    		chartStyle += 'backgroundColor:' + ((chartModel.get('backgroundColor') != undefined)? '#' + chartModel.get('backgroundColor') : '') + ';';
     		CHART['style'] = chartStyle;
     		
     		var COLORSPALLET = {};
@@ -243,12 +273,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var EMPTYMESSAGE = {};
     		EMPTYMESSAGE['text'] = (chartModel.get('nodata') != undefined)? chartModel.get('nodata') : '';
     		
-    		var emptymessageStyle = {};
-    		emptymessageStyle['align'] = (chartModel.get('nodataAlign') != undefined)? chartModel.get('nodataAlign') : '';
-    		emptymessageStyle['color'] = (chartModel.get('nodataColor') != undefined)? '#' + chartModel.get('nodataColor') : '';
-    		emptymessageStyle['font'] = (chartModel.get('font') != undefined)? chartModel.get('font') : '';
-    		emptymessageStyle['fontWeight'] = (chartModel.get('nodataStyle') != undefined)? chartModel.get('nodataStyle') : '';
-    		emptymessageStyle['fontSize'] = (chartModel.get('nodataDimension') != undefined)? chartModel.get('nodataDimension') : '';
+//    		var emptymessageStyle = {};
+//    		emptymessageStyle['align'] = (chartModel.get('nodataAlign') != undefined)? chartModel.get('nodataAlign') : '';
+//    		emptymessageStyle['color'] = (chartModel.get('nodataColor') != undefined)? '#' + chartModel.get('nodataColor') : '';
+//    		emptymessageStyle['font'] = (chartModel.get('font') != undefined)? chartModel.get('font') : '';
+//    		emptymessageStyle['fontWeight'] = (chartModel.get('nodataStyle') != undefined)? chartModel.get('nodataStyle') : '';
+//    		emptymessageStyle['fontSize'] = (chartModel.get('nodataDimension') != undefined)? chartModel.get('nodataDimension') : '';
+    		var emptymessageStyle = '';
+    		emptymessageStyle += 'align:' + ((chartModel.get('nodataAlign') != undefined)? chartModel.get('nodataAlign') : '') + ';';
+    		emptymessageStyle += 'color:'+ ((chartModel.get('nodataColor') != undefined)? '#' + chartModel.get('nodataColor') : '') + ';';
+    		emptymessageStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
+    		emptymessageStyle += 'fontWeight:' + ((chartModel.get('nodataStyle') != undefined)? chartModel.get('nodataStyle') : '') + ';';
+    		emptymessageStyle += 'fontSize:' + ((chartModel.get('nodataDimension') != undefined)? chartModel.get('nodataDimension') : '') + ';';
     		EMPTYMESSAGE['style'] = emptymessageStyle;
     		
     		CHART['EMPTYMESSAGE'] = EMPTYMESSAGE;
@@ -256,12 +292,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var TITLE = {};
     		TITLE['text'] = (chartModel.get('title') != undefined)? chartModel.get('title') : '';
     		
-    		var titleStyle = {};
-    		titleStyle['align'] = (chartModel.get('titleAlign') != undefined)? chartModel.get('titleAlign') : '';
-    		titleStyle['color'] = (chartModel.get('titleColor') != undefined)? '#' + chartModel.get('titleColor') : '';
-    		titleStyle['font'] = (chartModel.get('titleFont') != undefined)? chartModel.get('titleFont') : '';
-    		titleStyle['fontWeight'] = (chartModel.get('titleStyle') != undefined)? chartModel.get('titleStyle') : '';
-    		titleStyle['fontSize'] = (chartModel.get('titleDimension') != undefined)? chartModel.get('titleDimension') : '';
+    		var titleStyle = '';
+    		titleStyle += 'align:' + ((chartModel.get('titleAlign') != undefined)? chartModel.get('titleAlign') : '') + ';';
+    		titleStyle += 'color:' + ((chartModel.get('titleColor') != undefined)? '#' + chartModel.get('titleColor') : '') + ';';
+    		titleStyle += 'font:' + ((chartModel.get('titleFont') != undefined)? chartModel.get('titleFont') : '') + ';';
+    		titleStyle += 'fontWeight:' + ((chartModel.get('titleStyle') != undefined)? chartModel.get('titleStyle') : '') + ';';
+    		titleStyle += 'fontSize:' + ((chartModel.get('titleDimension') != undefined)? chartModel.get('titleDimension') : '') + ';';
     		TITLE['style'] = titleStyle;
     		
     		CHART['TITLE'] = TITLE;
@@ -269,12 +305,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var SUBTITLE = {};
     		SUBTITLE['text'] = (chartModel.get('subtitle') != undefined)? chartModel.get('subtitle') : '';
     		
-    		var subtitleStyle = {};
-    		subtitleStyle['align'] = (chartModel.get('subtitleAlign') != undefined)? chartModel.get('subtitleAlign') : '';
-    		subtitleStyle['color'] = (chartModel.get('subtitleColor') != undefined)? '#' + chartModel.get('subtitleColor') : '';
-    		subtitleStyle['font'] = (chartModel.get('subtitleFont') != undefined)? chartModel.get('subtitleFont') : '';
-    		subtitleStyle['fontWeight'] = (chartModel.get('subtitleStyle') != undefined)? chartModel.get('subtitleStyle') : '';
-    		subtitleStyle['fontSize'] = (chartModel.get('subtitleDimension') != undefined)? chartModel.get('subtitleDimension') : '';
+    		var subtitleStyle = '';
+    		subtitleStyle += 'align:' + ((chartModel.get('subtitleAlign') != undefined)? chartModel.get('subtitleAlign') : '') + ';';
+    		subtitleStyle += 'color:' + ((chartModel.get('subtitleColor') != undefined)? '#' + chartModel.get('subtitleColor') : '') + ';';
+    		subtitleStyle += 'font:' + ((chartModel.get('subtitleFont') != undefined)? chartModel.get('subtitleFont') : '') + ';';
+    		subtitleStyle += 'fontWeight:' + ((chartModel.get('subtitleStyle') != undefined)? chartModel.get('subtitleStyle') : '') + ';';
+    		subtitleStyle += 'fontSize:' + ((chartModel.get('subtitleDimension') != undefined)? chartModel.get('subtitleDimension') : '') + ';';
     		SUBTITLE['style'] = subtitleStyle;
     		
     		CHART['SUBTITLE'] = SUBTITLE;
@@ -286,13 +322,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		LEGEND['x'] = (chartModel.get('legendX') != undefined)? chartModel.get('legendX') : '';
     		LEGEND['y'] = (chartModel.get('legendY') != undefined)? chartModel.get('legendY') : '';
     		
-    		var legendStyle = {};
-    		legendStyle['color'] = (chartModel.get('legendColor') != undefined)? '#' + chartModel.get('legendColor') : '';
-    		legendStyle['font'] = (chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '';
-    		legendStyle['fontSize'] = (chartModel.get('legendDimension') != undefined)? chartModel.get('legendDimension') : '';
-    		legendStyle['fontWeight'] = (chartModel.get('legendStyle') != undefined)? chartModel.get('legendStyle') : '';
-    		legendStyle['borderWidth'] = (chartModel.get('legendBorderWidth') != undefined)? chartModel.get('legendBorderWidth') : '';
-    		legendStyle['backgroundColor'] = (chartModel.get('legendBackgroundColor') != undefined)? chartModel.get('legendBackgroundColor') : '';
+    		var legendStyle = '';
+    		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined)? '#' + chartModel.get('legendColor') : '') + ';';
+    		legendStyle += 'font:' + ((chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '') + ';';
+    		legendStyle += 'fontSize:' + ((chartModel.get('legendDimension') != undefined)? chartModel.get('legendDimension') : '') + ';';
+    		legendStyle += 'fontWeight:' + ((chartModel.get('legendStyle') != undefined)? chartModel.get('legendStyle') : '') + ';';
+    		legendStyle += 'borderWidth:' + ((chartModel.get('legendBorderWidth') != undefined)? chartModel.get('legendBorderWidth') : '') + ';';
+    		legendStyle += 'backgroundColor:' + ((chartModel.get('legendBackgroundColor') != undefined)? chartModel.get('legendBackgroundColor') : '') + ';';
     		LEGEND['style'] = legendStyle;
     		
     		CHART['LEGEND'] = LEGEND;
