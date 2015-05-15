@@ -3,6 +3,7 @@
 
 <!-- Ext 5 framework -->
 <script type="text/javascript" src='/athenachartengine/js/lib/ext/5.1.0/ext-all-debug.js'/></script>
+<script type="text/javascript" src='/athenachartengine/js/lib/ext/5.1.0/patch/EXTJS16166.js'/></script>
 <script type="text/javascript" src='/athenachartengine/js/lib/d3/d3.js'/></script>
 
 

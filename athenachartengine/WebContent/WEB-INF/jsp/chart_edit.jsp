@@ -403,6 +403,11 @@ author:
   				viewModel: cViewModel
   			});
   			
+  			var advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
+  				id: 'advancedEditor',
+  				title: 'Passo 3'
+  			});
+  			
   			var stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
   				width: '100%',
@@ -427,10 +432,23 @@ author:
 
   		            }
   		        }],
+				listeners: {
+				     'tabchange': function(tabPanel, tab){
+				         /* 
+				         */
+				         if(tab.getId() == 'advancedEditor') {
+				        	 var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
+				        	 tab.setChartData(exportedAsOriginalJson);
+				         } else {
+				        	 var advancedEditor = Ext.getCmp('advancedEditor');
+				        	 var json = advancedEditor.getChartData();
+				         }
+				     }
+				},  
   				items: [
   					chartStructure,
   					chartConfiguration,
-  					{title: 'Passo 3',},
+  					advancedEditor,
   				]
   			});
   					
