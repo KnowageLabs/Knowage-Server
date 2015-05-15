@@ -416,6 +416,7 @@ author:
   				width: '100%',
   				region: 'center',
 				title: {hidden: true },
+				previousTabId: '',
   				tools:[{ 
   		            xtype: 'button',
   		            text : 'Export as Json',
@@ -437,15 +438,15 @@ author:
   		        }],
 				listeners: {
 				     'tabchange': function(tabPanel, tab){
-				         /* 
-				         */
-				         if(tab.getId() == 'advancedEditor') {
+				    	 if(tab.getId() == 'advancedEditor') {
+				    		 tabPanel.advancedEditorHasBeenVisited = true;
 				        	 var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
 				        	 tab.setChartData(exportedAsOriginalJson);
-				         } else {
+				         } else if(tabPanel.previousTabId == 'advancedEditor') {
 				        	 var advancedEditor = Ext.getCmp('advancedEditor');
 				        	 var json = advancedEditor.getChartData();
 				         }
+				    	 tabPanel.previousTabId = tab.getId();
 				     }
 				},  
   				items: [
