@@ -94,8 +94,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var VALUES = {};
     		var SERIE = ChartUtils.getSeriesDataAsOriginalJson();
     		VALUES['SERIE'] = SERIE;
-//    		var CATEGORY = ChartUtils.getCategoriesDataAsOriginalJson();
-//    		VALUES['CATEGORY'] = CATEGORY;
+    		var CATEGORY = ChartUtils.getCategoriesDataAsOriginalJson();
+    		VALUES['CATEGORY'] = CATEGORY;
     		CHART['VALUES'] = VALUES;
     		
     		result['CHART'] = CHART;
@@ -215,7 +215,31 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	},
     	
     	getCategoriesDataAsOriginalJson: function() {
+    		var categoriesStore = Ext.data.StoreManager.lookup('categoriesStore');
+    		
+    		var mainCategory = categoriesStore.getAt(0);
+    		
     		var result = {};
+    		result['name'] = mainCategory.get('axisName') != undefined? mainCategory.get('axisName') : mainCategory.get('categoryColumn');
+    		result['column'] = mainCategory.get('categoryColumn');
+    		result['orderColumn'] = mainCategory.get('categoryOrderColumn');
+    		result['orderType'] = mainCategory.get('categoryOrderType');
+    		result['stackedType'] = mainCategory.get('categoryOrderType');
+    		result['stacked'] = mainCategory.get('categoryStacked');
+    		
+    		var categoriesStoreDataLength = categoriesStore.data.items.length;
+    		
+    		var groupby = ''; 
+    		var groupbyNames = ''; 
+    		if (categoriesStoreDataLength > 1) {
+    			for(rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
+    				var categorieItem = categoriesStore.getAt(rowIndex);
+    				groupby += categorieItem.get('categoryColumn') != undefined ? categorieItem.get('categoryColumn') + ',' : '';
+    				groupbyNames += categorieItem.get('axisName') != undefined ? categorieItem.get('axisName') + ',' : '';
+    			}
+    		}
+    		result['groupby'] = groupby.replace(/\,$/,'');
+    		result['groupbyNames'] = groupbyNames.replace(/\,$/,'');;
     		
     		return result;
     	},
@@ -409,7 +433,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						treeData.push({
 							key: key,
 							expanded: (nivel < 1),
-							isArray: true,
+							isArray: 1,
 							children: ChartUtils.convertJsonToTreeFormat(array[i], nivel + 1),
 						});
 					}
@@ -423,14 +447,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						key: key,
 						value: data[key],
 		                type: type ,
-						isArray: false,
+						isArray: 0,
 						leaf: true
 					});
 				} else {
 					treeData.push({
 						key: key,
 						expanded: (nivel < 1),
-		                isArray: false,
+						isArray: 0,
 						children: ChartUtils.convertJsonToTreeFormat(data[key], nivel + 1)
 					});
 				}
@@ -449,14 +473,59 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		convertTreeFormatToJson: function(data, isWrapper){
-			if(isWrapper && isWrapper != true) {
+			
+			function areThereDifferentChildren(children) {
+				if(children.length == 0) {
+					return false;
+				}
+				var firstIsArray = children[0].isArray;
+				for(i in children) {
+					var isArray = children[i].isArray;
+					if(firstIsArray != isArray) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			if(isWrapper && isWrapper == true) {
 				var root = ChartUtils.convertTreeFormatToJson(data.children[0])
-				return root;
+				var rootKey = data.children[0].key;
+				
+				var result = {};
+				result[rootKey] = root;
+				return result;
 			}
 			
 			if(data.leaf) {
 				return data.value;
-			} else if(data.children && data.children[0] && !(data.children[0].isArray)) {
+			} else if(data.children && areThereDifferentChildren(data.children)) {
+				var result = {};
+//				var assemblerResult = {};
+				for(i in data.children) {
+					var datum = data.children[i];
+					if(result[datum.key] != undefined) { //Se già è presente un nodo conlo stesso nome
+						var tempDatum = result[datum.key];
+						if(Array.isArray(tempDatum)){
+							var newDatumKeyArray = [];
+							for(j in tempDatum) {
+								newDatumKeyArray.push(tempDatum[i]);
+							}
+							newDatumKeyArray.push(ChartUtils.convertTreeFormatToJson(datum));
+							result[datum.key] = newDatumKeyArray;
+						} else {
+							var newDatumKeyArray = [];
+							newDatumKeyArray.push(tempDatum);
+							newDatumKeyArray.push(ChartUtils.convertTreeFormatToJson(datum));
+							result[datum.key] = newDatumKeyArray;
+						}
+					} else {
+						result[datum.key] = ChartUtils.convertTreeFormatToJson(datum);
+					}
+				}
+				return result;
+				
+			} else if(data.children && data.children[0] && data.children[0].isArray == 0) {
 				var result = {};
 				
 				for(i in data.children) {
@@ -464,7 +533,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					result[datum.key] = ChartUtils.convertTreeFormatToJson(datum);
 				}
 				return result;
-			} else if(data.children && data.children[0] && data.children[0].isArray) {
+			} else if(data.children && data.children[0] && data.children[0].isArray == 1) {
 				var array = [];
 				
 				for(i in data.children) {

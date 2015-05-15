@@ -331,7 +331,10 @@ author:
   				otherPanel: rightYAxisesPanel
   			});
 
-  			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore');
+  			var categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
+  				storeId: 'categoriesStore'
+			});
+  			
   			var bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
   				viewConfig: {
@@ -372,8 +375,8 @@ author:
   						align : 'center',
   						flex: 1,
   						items: [{
-  							icon: 'http://docs.sencha.com/extjs/5.1/5.1.0-apidocs/extjs-build/examples/restful/images/delete.png',
-  							tooltip: 'Sell stock',
+  							icon: '/athena/themes/sbi_default/img/delete.gif',
+  							tooltip: 'Remove',
   							handler: function(grid, rowIndex, colIndex) {
   								var rec = grid.getStore().removeAt(rowIndex);
   							}
@@ -567,7 +570,7 @@ author:
 			*/
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-				axisName: category.name,
+				axisName: category.name != undefined ? category.name: category.column,
 				axisType: 'ATTRIBUTE', 
 				
 				categoryColumn: category.column,

@@ -193,7 +193,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   						align : 'center',
 						xtype: 'actioncolumn',
 						items: [{
-							icon: 'http://findicons.com/icon/download/66617/paint/24/png',
+							icon: '/athena/themes/sbi_default/img/createTemplate.jpg',
 							tooltip: 'Style',
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();
@@ -201,7 +201,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								ChartColumnsContainerManager.promptChangeSerieStyle(store, rowIndex);
 							}
 						},{
-							icon: 'http://docs.sencha.com/extjs/5.1/5.1.0-apidocs/extjs-build/examples/restful/images/delete.png',
+							icon: '/athena/themes/sbi_default/img/delete.gif',
 							tooltip: 'Remove column',
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();
