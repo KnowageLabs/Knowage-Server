@@ -55,7 +55,7 @@
     },
     
     colors: [
-             #foreach($color in $chart.COLORSPALLET.COLOR)
+             #foreach($color in $chart.COLORPALETTE.COLOR)
              '$color.value', 
              #end
              ],

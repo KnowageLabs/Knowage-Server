@@ -258,10 +258,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		chartStyle += 'backgroundColor:' + ((chartModel.get('backgroundColor') != undefined)? '#' + chartModel.get('backgroundColor') : '') + ';';
     		CHART['style'] = chartStyle;
     		
-    		var COLORSPALLET = {};
+    		var COLORPALETTE = {};
 //    		var COLOR = [];
-//    		COLORSPALLET['COLOR'] = COLOR;
-    		CHART['COLORSPALLET'] = COLORSPALLET;
+//    		COLORPALETTE['COLOR'] = COLOR;
+    		CHART['COLORPALETTE'] = COLORPALETTE;
     		
     		var EMPTYMESSAGE = {};
     		EMPTYMESSAGE['text'] = (chartModel.get('nodata') != undefined)? chartModel.get('nodata') : '';

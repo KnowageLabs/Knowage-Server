@@ -4,12 +4,12 @@
 	<!--
 	type= BAR/PIE/LINE/gauge/scatter/bouble/RADAR/Waterfall/stockline/treemap/chord/heatmap
 	-->
-<colorsPallet>
+<colorPalette>
 <color name="col1" value="#003366" order="1" gradient=""/>
 <color name="col2" value="#003366" order="2"/>
 <color name="col3" value="#003366" order="3"/>
 <color name="col4" value="#003366" order="4"/>
-</colorsPallet>
+</colorPalette>
 
 <emptymessage test ="nessun dato da visualizzare"  style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px'  />
 

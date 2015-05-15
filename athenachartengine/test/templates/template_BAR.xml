@@ -3,12 +3,12 @@
 	<!--
 	type= BAR/PIE/LINE/gauge/scatter/bouble/RADAR/Waterfall/stockline/treemap/chord/heatmap
 	-->
-	<colorsPallet>
+	<colorPalette>
 		<color name="col1" value="#FF0D00" order="1" gradient=""/> <!-- red -->
 		<color name="col2" value="#FFFF00" order="2"/> <!-- yellow -->
 		<color name="col3" value="#00E929" order="3"/> <!-- green -->
 		<color name="col4" value="#0447E0" order="4"/> <!-- blue -->
-	</colorsPallet>
+	</colorPalette>
 
 	<emptymessage test ="nessn dato da visualizzare"  style='align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px'  />
 
