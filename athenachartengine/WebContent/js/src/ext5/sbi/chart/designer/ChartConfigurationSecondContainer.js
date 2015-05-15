@@ -17,7 +17,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			viewModel: this.viewModel
 		});
 		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
-			viewModel: this.viewModel
+			colorPalette: this.viewModel.data.configModel.data.colorPalette
 		});
         
         this.add(legend);

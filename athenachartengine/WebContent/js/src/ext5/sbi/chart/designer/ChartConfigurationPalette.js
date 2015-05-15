@@ -4,27 +4,39 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	title : 'Palette Colori',
 	bodyPadding : 10,
 	items : [],
-	
-	paletteGrid : Ext.create('Ext.grid.Panel', {
-	    store: Ext.create('Ext.data.ArrayStore', { fields: ['value']} ),
-	    width: 180,
-	    margin:'0 10 0 0',
-	    multiSelect: true,
-	    columns: [{
-	        text     : 'Colore',
-	        flex     : 1,
-	        sortable : false,
-	        dataIndex: 'value',
-	        renderer : function(value, meta) {
-	        	meta.style = "background-color:#"+value+";";
-	            return value;
-	        }
-	    }]
-	}),
+
+	paletteGrid : {},
 	
 	constructor: function(config) {
         this.callParent(config);
+        
+        this.paletteGrid = Ext.create('Ext.grid.Panel', {
+    	    store: Ext.create('Ext.data.ArrayStore', { 
+            	storeId: 'chartConfigurationPaletteStore',
+            	
+            	fields: ['gradient','name','order','value'], 
+            	
+            	data: config.colorPalette
+            }),
+    	    
+    	    width: 180,
+    	    margin:'0 10 0 0',
+    	    multiSelect: true,
+    	    columns: [{
+    	        text     : 'Colore',
+    	        flex     : 1,
+    	        sortable : false,
+    	        dataIndex: 'value',
+    	        renderer : function(value, meta) {
+    	        	meta.style = "background-color:#"+value+";";
+    	            return value;
+    	        }
+    	    }]
+    	});
+        
+        
         var grid = this.paletteGrid;
+        
         
 		var item = [{
 	        xtype : 'fieldcontainer',
@@ -44,7 +56,20 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                menu : Ext.create('Ext.menu.ColorPicker',{
 	                    listeners : {
 	                        select : function(picker, selColor) {
-	                            grid.store.add({value:selColor});
+
+	                        	var order = 0;
+	                        	if(grid.store.data && grid.store.data.items) {
+	                        		order = grid.store.getAt(grid.store.data.items.length-1).get('order') + 1;
+	                        	}
+	                        	
+	                        	console.log(order);
+	                        	
+	                        	grid.store.add({
+	                            	gradient:'',
+	                            	name:'',
+	                            	order: order,
+	                            	value:selColor
+	                            });
 	                        }
 	                    }
 	                }),                 

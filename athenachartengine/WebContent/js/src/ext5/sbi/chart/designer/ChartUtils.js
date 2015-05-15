@@ -355,6 +355,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND : '';
   			var jsonLegendStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.style) : {};
   			
+  			var colorPalette = [];
+  			if(jsonTemplate.CHART.COLORPALETTE && jsonTemplate.CHART.COLORPALETTE.COLOR) {
+  				Ext.Array.each(jsonTemplate.CHART.COLORPALETTE.COLOR, function(color) {
+  					colorPalette.push([color.gradient,color.name,color.order, Sbi.chart.designer.ChartUtils.removeStartingHash(color.value)]);
+  				});
+  			}
+  			
   			var cModel = Ext.create('Sbi.chart.designer.ChartConfigurationModel', {
   				height: jsonTemplate.CHART.height,
   				width: jsonTemplate.CHART.width, 
@@ -396,7 +403,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				legendDimension: jsonLegendStyle.fontSize,
   				legendStyle: jsonLegendStyle.fontWeight,
   				legendBorderWidth: jsonLegendStyle.borderWidth,
-  				legendBackgroundColor: jsonLegendStyle.backgroundColor
+  				legendBackgroundColor: jsonLegendStyle.backgroundColor,
+  				
+  				colorPalette: colorPalette
   			});
   			
   			return cModel;

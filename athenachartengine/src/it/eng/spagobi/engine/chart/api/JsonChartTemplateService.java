@@ -34,6 +34,26 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@SuppressWarnings("rawtypes")
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse servletResponse) {
 
+		// try {
+		// JSONObject jo = new JSONObject(jsonTemplate);
+		// JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
+		// String column = category.getString("column");
+		// String groupby = category.has("groupby") ? category.getString("groupby") : null;
+		//
+		// String groupBys = column + (groupby != null && !"".equals(groupby) ? ','+groupby : "");
+		//
+		// Query q = new Query();
+		//
+		// q.set
+		//
+		// IDataStore ds = new DataStore();
+		// ds.
+		//
+		// } catch (JSONException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+
 		IDataSet dataSet = getEngineInstance().getDataSet();
 		Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
 		Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));

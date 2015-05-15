@@ -89,6 +89,7 @@ public class PageResource extends AbstractChartEngineResource {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
@@ -109,7 +110,6 @@ public class PageResource extends AbstractChartEngineResource {
 
 			case "edit":
 
-				JSONObject template = null;
 				String templateString = savedTemplate != null ? savedTemplate : buildBaseTemplate().toString();
 
 				// create a new engine instance
