@@ -259,8 +259,20 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		CHART['style'] = chartStyle;
     		
     		var COLORPALETTE = {};
-//    		var COLOR = [];
-//    		COLORPALETTE['COLOR'] = COLOR;
+    		var COLOR = [];
+    		var colors = chartModel.get('colorPalette');
+    		for(i in colors){
+    			var color = colors[i];
+    			var colorElement = {};
+    			colorElement['gradient'] = color[0] != undefined? color[0]: '';
+    			colorElement['name'] = color[1] != undefined? color[1]: '';
+    			colorElement['order'] = color[2] != undefined? color[2]: '';
+    			colorElement['value'] = color[3] != undefined? '#' + color[3]: '';
+    			
+    			COLOR.push(colorElement);
+    		}
+    		
+    		COLORPALETTE['COLOR'] = COLOR;
     		CHART['COLORPALETTE'] = COLORPALETTE;
     		
     		var EMPTYMESSAGE = {};
