@@ -93,11 +93,24 @@
 			<%= ( !parameterBean.allowNewValues( ) && parameterBean.isRequired( ) ) ? "aria-required='true'" : "" %>
 		    >
 <%
+    boolean selectFirst = false;
 	if ( parameterBean.getSelectionList( ) != null )
 	{
 		//TED 50195
 		if( !parameterBean.isRequired( ) || ( (parameterBean.getValueList(  ) == null || parameterBean.getValueList(  ).size(  ) == 0) &&  DataUtil.trimString( defaultValue ).length( )<=0 ) )
 		{
+			if(parameterBean.isRequired( )){
+				if(parameterBean.getSelectionList( )!=null && !parameterBean.getSelectionList( ).isEmpty(  )){
+					/*
+					ParameterSelectionChoice selectionItem = ( ParameterSelectionChoice )parameterBean.getSelectionList( ).get( 0 );						
+					String label = selectionItem.getLabel( );
+					String value = ( String ) selectionItem.getValue( );
+					defaultValue = 	value;
+					*/
+					selectFirst = true;
+				}
+			}
+				
 			if( allowMultiValue && DataUtil.contain( values, "", true ) )
 			{
 %>
@@ -225,6 +238,20 @@
 	{
 	%>
 		<INPUT TYPE="HIDDEN" ID="<%=IBirtConstants.IS_CASCADE%>" VALUE="true"/>
+	<%
+	}
+	%>
+	
+	<%
+	//60078, 57264. If the parameterBean is not cascade, then select the first element.
+	//64717, when preview in the report designer but not web, this page will load twice, 
+	//and the second time has the seleted value, then skip select the first value.
+	if ( selectFirst && !parameterBean.isCascade( ) && parameterBean.getValue( ) == null)
+	{
+	%>
+		<script>
+			document.getElementById("<%= encodedParameterName + "_selection"%>").options[1].selected = true;
+		</script>
 	<%
 	}
 	%>

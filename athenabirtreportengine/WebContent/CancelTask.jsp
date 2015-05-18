@@ -10,46 +10,40 @@
 -----------------------------------------------------------------------------%>
 <%@ page contentType="text/html; charset=utf-8" %>
 <%@ page session="false" buffer="none" %>
-<%@ page import="org.eclipse.birt.core.exception.BirtException,
-				 org.eclipse.birt.report.utility.ParameterAccessor,
-				 org.eclipse.birt.report.resource.BirtResources,
-				 java.io.PrintWriter" %>
+<%@ page import="org.eclipse.birt.report.utility.BirtUtility,
+				 org.eclipse.birt.report.IBirtConstants,	
+				 org.eclipse.birt.report.resource.BirtResources" %>
 
 <%-----------------------------------------------------------------------------
-	Expected java beans
------------------------------------------------------------------------------%>
-<jsp:useBean id="error" type="java.lang.Exception" scope="request" />
-
-<%-----------------------------------------------------------------------------
-	Error content
+	Cancel Task
 -----------------------------------------------------------------------------%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 	<HEAD>
 		<TITLE>
-				<%= BirtResources.getMessage( "birt.viewer.title.error" )%>
+			<%= BirtResources.getMessage( "birt.viewer.title.message" )%>
 		</TITLE>
 		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 		<LINK REL="stylesheet" HREF="<%= request.getContextPath( ) + "/webcontent/birt/styles/style.css" %>" TYPE="text/css">
 	</HEAD>
+	<%
+		String taskid = request.getParameter( IBirtConstants.OPRAND_TASKID );
+		try
+		{
+			BirtUtility.cancelTask( request, taskid );
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace( );
+		}
+	%>
 	<BODY>
 		<TABLE CLASS="BirtViewer_Highlight_Label">
-			<TR><TD NOWRAP>
-				<%
-					if ( error != null )
-					{
-						if ( error.getMessage( ) != null )
-						{
-							out.println( ParameterAccessor.htmlEncode( new String( error.getMessage( ).getBytes( "ISO-8859-1" ),"UTF-8" ) ) );
-						}
-						else
-						{
-							PrintWriter writer = new PrintWriter( out );									
-							error.printStackTrace( writer );				
-						}					
-					}
-				%>
-			</TD></TR>
+			<TR>
+				<TD NOWRAP>
+					<%= BirtResources.getMessage( "birt.viewer.message.taskcanceled" )%>
+				</TD>
+			</TR>
 		</TABLE>
 	</BODY>
 </HTML>
