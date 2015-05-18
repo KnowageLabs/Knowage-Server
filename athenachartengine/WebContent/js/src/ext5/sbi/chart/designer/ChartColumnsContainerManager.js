@@ -75,7 +75,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				
 				controller: Ext.create('Ext.app.ViewController', {
 			        onTitleChange: function (barTextField, textValue) {
-			        	axisData.titleText = textValue;
+			        	this.view.axisData.titleText = textValue;
 			        }
 			    }),
 				
@@ -125,7 +125,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	var thisChartColumnsContainer = panelHeader.ownerCt;
 					    	
 					    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
-					    		axisData: thisChartColumnsContainer.getAxisData()
+					    		axisData: thisChartColumnsContainer.getAxisData(),
+					    		isYAxis: true
 							});
 							
 					    	axisStylePopup.show();

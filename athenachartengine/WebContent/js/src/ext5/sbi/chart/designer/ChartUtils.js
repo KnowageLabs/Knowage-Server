@@ -106,18 +106,20 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	
     	getAxesDataAsOriginalJson: function() {
     		var result = [];
+
+    		/* START Chart left and right axes data */
     		var leftAndRightAxisesContainers = [
     		    Ext.getCmp('chartLeftAxisesContainer'),
     		    Ext.getCmp('chartRightAxisesContainer')
     		];
     		
     		for(containerIndex in leftAndRightAxisesContainers) {
-    			var axesContainer = leftAndRightAxisesContainers[containerIndex];
+    			var axisContainer = leftAndRightAxisesContainers[containerIndex];
     			
-    			var axesContainerItems = axesContainer.items.items;
-    			for(index in axesContainerItems){
-    				var leftAxis = axesContainerItems[index];
-    				var axisData = leftAxis.axisData;
+    			var axisContainerItems = axisContainer.items.items;
+    			for(index in axisContainerItems){
+    				var axis = axisContainerItems[index];
+    				var axisData = axis.axisData;
     				var axisAsJson = {};
     				
     				axisAsJson['alias'] = axisData.alias;
@@ -163,6 +165,38 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				result.push(axisAsJson);
     			}
     		}
+    		/* END Chart left and right axes data */
+    		
+    		/* START Chart bottom axis data */
+    		var axisData = Ext.getCmp('chartBottomCategoriesContainer').axisData;
+			var axisAsJson = {};
+			
+			axisAsJson['alias'] = axisData.alias;
+			axisAsJson['type'] = axisData.axisType;
+			axisAsJson['position'] = axisData.position;
+			
+			var style = '';
+			style += 'rotate:' + ((axisData.styleRotate != undefined)? axisData.styleRotate : '') + ';';
+			style += 'align:' + ((axisData.styleAlign != undefined)? axisData.styleAlign : '') + ';';
+			style += 'color:' + ((axisData.styleColor != undefined)? axisData.styleColor : '') + ';';
+			style += 'font:' + ((axisData.styleFont != undefined)? axisData.styleFont : '') + ';';
+			style += 'fontWeight:' + ((axisData.styleFontWeigh != undefined)? axisData.styleFontWeigh : '') + ';';
+			style += 'fontSize:' + ((axisData.styleFontSize != undefined)? axisData.styleFontSize : '') + ';';
+			axisAsJson['style'] = style;
+			
+			var TITLE = {};
+			TITLE['text'] = axisData.titleText;
+			var titleStyle = '';
+			titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
+			titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';
+			titleStyle += 'font:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
+			titleStyle += 'fontWeight:' + ((axisData.titleStyleFontWeigh != undefined)? axisData.titleStyleFontWeigh: '') + ';';
+			titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';
+			TITLE['style'] = titleStyle;
+			axisAsJson['TITLE'] = TITLE;
+			
+			result.push(axisAsJson);
+    		/* END Chart bottom axis data */
     		
     		return result;
     	},

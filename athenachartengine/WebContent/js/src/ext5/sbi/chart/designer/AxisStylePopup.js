@@ -18,9 +18,11 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
     width: 500,
     modal: true,
 	config: {
-		axisData: {}
+		axisData: {},
+		isYAxis: false
 	},
 	axisData: {},
+	isYAxis: false,
 	
 	/* * * * * * * Internal components * * * * * * * */
 	axisFieldSet: null,
@@ -61,6 +63,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		this.axisData = config.axisData;
 		
+		var isYAxis = (config.isYAxis != undefined)? config.isYAxis: false;
+		this.isYAxis = isYAxis;
+		
 		this.axisFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
 			title: 'Axis',
@@ -82,30 +87,32 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			layout: 'anchor',
 			items : []
 		});
-
-		this.majorgridFieldSet = Ext.create('Ext.form.FieldSet', {
-			collapsible: true,
-			collapsed : true,
-			title: 'Major grid',
-			defaults: {anchor: '100%',
-				labelAlign : 'left',
-				labelWidth : 115
-			},
-			layout: 'anchor',
-			items : []
-		});
 		
-		this.minorgridFieldSet = Ext.create('Ext.form.FieldSet', {
-			collapsible: true,
-			collapsed : true,
-			title: 'Minor grid',
-			defaults: {anchor: '100%',
-				labelAlign : 'left',
-				labelWidth : 115
-			},
-			layout: 'anchor',
-			items : []
-		});
+		if(isYAxis) {
+			this.majorgridFieldSet = Ext.create('Ext.form.FieldSet', {
+				collapsible: true,
+				collapsed : true,
+				title: 'Major grid',
+				defaults: {anchor: '100%',
+					labelAlign : 'left',
+					labelWidth : 115
+				},
+				layout: 'anchor',
+				items : []
+			});
+			
+			this.minorgridFieldSet = Ext.create('Ext.form.FieldSet', {
+				collapsible: true,
+				collapsed : true,
+				title: 'Minor grid',
+				defaults: {anchor: '100%',
+					labelAlign : 'left',
+					labelWidth : 115
+				},
+				layout: 'anchor',
+				items : []
+			});
+		}
 		
 		var styleRotate = this.axisData.styleRotate;
 		this.styleRotateNumberField = Ext.create('Ext.form.field.Number', {
@@ -186,130 +193,122 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		});
 		this.axisFieldSet.add(this.styleFontSizeComboBox);
 		
-		var majorgridInterval = '' + this.axisData.majorgridInterval;
-		this.majorgridIntervalNumberField = Ext.create('Ext.form.field.Number', {
-			fieldLabel: 'Interval',
-			selectOnFocus: true,
-			value: (majorgridInterval && majorgridInterval.trim() != '') ? majorgridInterval.trim() : '',
-			minValue: 0,
-		});
-		this.majorgridFieldSet.add(this.majorgridIntervalNumberField);
-		
-		var majorgridStyleTypeline = this.axisData.majorgridStyleTypeline;
-		this.majorgridStyleTypelineComboBox = Ext.create('Sbi.chart.designer.TypeLineCombo', {
-			value: (majorgridStyleTypeline && majorgridStyleTypeline.trim() != '') ? majorgridStyleTypeline.trim() : '',
-			fieldLabel : 'Type line',
-		});
-		this.majorgridFieldSet.add(this.majorgridStyleTypelineComboBox);
-		
-		var majorgridStyleColor = this.axisData.majorgridStyleColor;
-		this.majorgridStyleColor = {
-			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                Ext.create('Ext.form.field.Base', {
-                	id: 'majorgridStyleColorColorField',
-					fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
-						'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
-                    fieldLabel : 'Color',
-					labelWidth : 115,
-                    readOnly : true,
-					flex: 15,
+		if(isYAxis) {
+			var majorgridInterval = '' + this.axisData.majorgridInterval;
+			this.majorgridIntervalNumberField = Ext.create('Ext.form.field.Number', {
+				fieldLabel: 'Interval',
+				selectOnFocus: true,
+				value: (majorgridInterval && majorgridInterval.trim() != '') ? majorgridInterval.trim() : '',
+				minValue: 0,
+			});
+			this.majorgridFieldSet.add(this.majorgridIntervalNumberField);
+			
+			var majorgridStyleTypeline = this.axisData.majorgridStyleTypeline;
+			this.majorgridStyleTypelineComboBox = Ext.create('Sbi.chart.designer.TypeLineCombo', {
+				value: (majorgridStyleTypeline && majorgridStyleTypeline.trim() != '') ? majorgridStyleTypeline.trim() : '',
+				fieldLabel : 'Type line',
+			});
+			this.majorgridFieldSet.add(this.majorgridStyleTypelineComboBox);
+			
+			var majorgridStyleColor = this.axisData.majorgridStyleColor;
+			this.majorgridStyleColor = {
+				xtype : 'fieldcontainer',
+	            layout : 'hbox',
+	            items: [
+	                Ext.create('Ext.form.field.Base', {
+	                	id: 'majorgridStyleColorColorField',
+						fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
+							'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
+	                    fieldLabel : 'Color',
+						labelWidth : 115,
+	                    readOnly : true,
+						flex: 15,
+					
+						getStyle: function() {
+							return this.getFieldStyle( );
+						}
+	                }), {
+	                    xtype : 'button',
+						layout : 'hbox',
+	                    menu : Ext.create('Ext.menu.ColorPicker',{
+	                        listeners : {
+	                            select : function(picker, selColor) {
+	                                var style = 'background-image: none; background-color: #' + selColor;
+	                                Ext.getCmp('majorgridStyleColorColorField').setFieldStyle(style);
+	                            }
+	                        }
+	                    }),
+						flex: 1                
+	                }
+				],
+				getColor: function(){
+					var styleColor = this.items[0].getStyle();
+					var indexOfSharp = styleColor.indexOf('#');
+					styleColor = styleColor.substring(indexOfSharp);
+					
+					return styleColor;
+				}
+			};
+			this.majorgridFieldSet.add(this.majorgridStyleColor);
+			
+			var minorgridInterval = '' + this.axisData.minorgridInterval;
+			this.minorgridIntervalNumberField = Ext.create('Ext.form.field.Number', {
+				fieldLabel: 'Interval',
+				selectOnFocus: true,
+				value: (minorgridInterval && minorgridInterval.trim() != '') ? minorgridInterval.trim() : '',
+				minValue: 0,
+			});
+			this.minorgridFieldSet.add(this.minorgridIntervalNumberField);
+			
+			var minorgridStyleTypeline = this.axisData.minorgridStyleTypeline;
+			this.minorgridStyleTypelineComboBox = Ext.create('Sbi.chart.designer.TypeLineCombo', {
+				value: (minorgridStyleTypeline && minorgridStyleTypeline.trim() != '') ? minorgridStyleTypeline.trim() : '',
+				fieldLabel : 'Type line',
+			});
+			this.minorgridFieldSet.add(this.minorgridStyleTypelineComboBox);
+			
+			var minorgridStyleColor = this.axisData.minorgridStyleColor;
+			this.minorgridStyleColor = {
+				xtype : 'fieldcontainer',
+	            layout : 'hbox',
+	            items: [
+	                Ext.create('Ext.form.field.Base', {
+	                	id: 'minorgridStyleColorColorField',
+						fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
+							'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
+	                    fieldLabel : 'Color',
+						labelWidth : 115,
+	                    readOnly : true,
+						flex: 15,
+					
+						getStyle: function() {
+							return this.getFieldStyle( );
+						}
+	                }), {
+	                    xtype : 'button',
+						layout : 'hbox',
+	                    menu : Ext.create('Ext.menu.ColorPicker',{
+	                        listeners : {
+	                            select : function(picker, selColor) {
+	                                var style = 'background-image: none; background-color: #' + selColor;
+	                                Ext.getCmp('minorgridStyleColorColorField').setFieldStyle(style);
+	                            }
+	                        }
+	                    }),
+						flex: 1                
+	                }
+				],
+				getColor: function(){
+					var styleColor = this.items[0].getStyle();
+					var indexOfSharp = styleColor.indexOf('#');
+					styleColor = styleColor.substring(indexOfSharp);
+					
+					return styleColor;
+				}
+			};
+			this.minorgridFieldSet.add(this.minorgridStyleColor);
+		}
 				
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-                }), {
-                    xtype : 'button',
-					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none; background-color: #' + selColor;
-                                Ext.getCmp('majorgridStyleColorColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
-					flex: 1                
-                }
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
-		this.majorgridFieldSet.add(this.majorgridStyleColor);
-		
-		var minorgridInterval = '' + this.axisData.minorgridInterval;
-		this.minorgridIntervalNumberField = Ext.create('Ext.form.field.Number', {
-			fieldLabel: 'Interval',
-			selectOnFocus: true,
-			value: (minorgridInterval && minorgridInterval.trim() != '') ? minorgridInterval.trim() : '',
-			minValue: 0,
-		});
-		this.minorgridFieldSet.add(this.minorgridIntervalNumberField);
-		
-		var minorgridStyleTypeline = this.axisData.minorgridStyleTypeline;
-		this.minorgridStyleTypelineComboBox = Ext.create('Sbi.chart.designer.TypeLineCombo', {
-			value: (minorgridStyleTypeline && minorgridStyleTypeline.trim() != '') ? minorgridStyleTypeline.trim() : '',
-			fieldLabel : 'Type line',
-		});
-		this.minorgridFieldSet.add(this.minorgridStyleTypelineComboBox);
-		
-		var minorgridStyleColor = this.axisData.minorgridStyleColor;
-		this.minorgridStyleColor = {
-			xtype : 'fieldcontainer',
-            layout : 'hbox',
-            items: [
-                Ext.create('Ext.form.field.Base', {
-                	id: 'minorgridStyleColorColorField',
-					fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
-						'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
-                    fieldLabel : 'Color',
-					labelWidth : 115,
-                    readOnly : true,
-					flex: 15,
-				
-					getStyle: function() {
-						return this.getFieldStyle( );
-					}
-                }), {
-                    xtype : 'button',
-					layout : 'hbox',
-                    menu : Ext.create('Ext.menu.ColorPicker',{
-                        listeners : {
-                            select : function(picker, selColor) {
-                                var style = 'background-image: none; background-color: #' + selColor;
-                                Ext.getCmp('minorgridStyleColorColorField').setFieldStyle(style);
-                            }
-                        }
-                    }),
-					flex: 1                
-                }
-			],
-			getColor: function(){
-				var styleColor = this.items[0].getStyle();
-				var indexOfSharp = styleColor.indexOf('#');
-				styleColor = styleColor.substring(indexOfSharp);
-				
-				return styleColor;
-			}
-		};
-		this.minorgridFieldSet.add(this.minorgridStyleColor);
-				
-//		var titleText = this.axisData.titleText;
-//		this.titleTextTextField = Ext.create('Ext.form.field.Text', {
-//			name: 'titleText',
-//			value: (titleText && titleText.trim() != '') ? titleText.trim() : '',
-//			fieldLabel: 'Text',
-//			selectOnFocus: true,
-//			allowBlank: false 
-//		});
-//		this.titleFieldSet.add(this.titleTextTextField);
-
 		var titleStyleAlign = this.axisData.titleStyleAlign;
 		this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 			value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
@@ -380,14 +379,17 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		this.titleFieldSet.add(this.titleStyleFontSizeComboBox);
 
 		
-		this.add(this.axisFieldSet)
-		this.add(this.titleFieldSet)
-		this.add(this.majorgridFieldSet)
-		this.add(this.minorgridFieldSet)
+		this.add(this.axisFieldSet);
+		this.add(this.titleFieldSet);
+		
+		if(isYAxis) {
+			this.add(this.majorgridFieldSet);
+			this.add(this.minorgridFieldSet);
+		}
     },
     writeConfigsAndExit: function() {
-    	this.axisData;
-
+    	var isYAxis = this.isYAxis;
+    	
 		var styleRotate = this.styleRotateNumberField.getValue();
 		this.axisData.styleRotate = styleRotate;
 
@@ -406,23 +408,25 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var styleFontSize = this.styleFontSizeComboBox.getValue();
 		this.axisData.styleFontSize = styleFontSize;
 
-		var majorgridInterval = this.majorgridIntervalNumberField.getValue();
-		this.axisData.majorgridInterval = majorgridInterval;
-
-		var majorgridStyleTypeline = this.majorgridStyleTypelineComboBox.getValue();
-		this.axisData.majorgridStyleTypeline = majorgridStyleTypeline;
-
-		var majorgridStyleColor = this.majorgridStyleColor.getColor();
-		this.axisData.majorgridStyleColor = majorgridStyleColor;
-
-		var minorgridInterval = this.minorgridIntervalNumberField.getValue();
-		this.axisData.minorgridInterval = minorgridInterval;
-
-		var minorgridStyleTypeline = this.minorgridStyleTypelineComboBox.getValue();
-		this.axisData.minorgridStyleTypeline = minorgridStyleTypeline;
-
-		var minorgridStyleColor = this.minorgridStyleColor.getColor();
-		this.axisData.minorgridStyleColor = minorgridStyleColor;
+		if(isYAxis) {
+			var majorgridInterval = this.majorgridIntervalNumberField.getValue();
+			this.axisData.majorgridInterval = majorgridInterval;
+	
+			var majorgridStyleTypeline = this.majorgridStyleTypelineComboBox.getValue();
+			this.axisData.majorgridStyleTypeline = majorgridStyleTypeline;
+	
+			var majorgridStyleColor = this.majorgridStyleColor.getColor();
+			this.axisData.majorgridStyleColor = majorgridStyleColor;
+	
+			var minorgridInterval = this.minorgridIntervalNumberField.getValue();
+			this.axisData.minorgridInterval = minorgridInterval;
+	
+			var minorgridStyleTypeline = this.minorgridStyleTypelineComboBox.getValue();
+			this.axisData.minorgridStyleTypeline = minorgridStyleTypeline;
+	
+			var minorgridStyleColor = this.minorgridStyleColor.getColor();
+			this.axisData.minorgridStyleColor = minorgridStyleColor;
+		}
 
 		// var titleText = this.titleTextTextField.getValue();
 		// this.axisData.titleText = titleText;

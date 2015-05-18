@@ -3,8 +3,10 @@ Ext.define('Sbi.chart.designer.ChartCategoriesContainer', {
 	requires: [
         'Ext.grid',
         'Sbi.chart.designer.AxisesContainerStore',
-        'Sbi.chart.designer.AxisesContainerModel'
+        'Sbi.chart.designer.AxisesContainerModel',
+        'Sbi.chart.designer.ChartUtils'
     ],
+    axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(),
     config:{
 		minHeight: 200
     },

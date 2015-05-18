@@ -239,8 +239,6 @@ author:
   				columnsPickerStore.fireEvent('dataReady', response.responseText);
   				categoriesPickerStore.fireEvent('dataReady', response.responseText);
 			});
-  			
-  			
 
   			var columnsPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'center',
@@ -346,10 +344,62 @@ author:
   					},
   				},
   				store: categoriesStore,
+  				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(),
 				plugins: [{
 					ptype:	 'cellediting',
 					clicksToEdit: 1
 				}],
+
+				controller: Ext.create('Ext.app.ViewController', {
+			        onTitleChange: function (barTextField, textValue) {
+			        	this.view.axisData.titleText = textValue;
+			        }
+			    }),
+			    listeners: {
+			    	updateAxisTitleValue: function(textValue) {
+			        	this.axisData.titleText = textValue;
+			    		var textfieldAxisTitle = Ext.getCmp('textfieldAxisTitle');
+			    		textfieldAxisTitle.setValue(textValue);
+			    	}
+			    },
+
+				title: {
+					hidden: true 
+				}, 
+				tools:[
+				    
+				    // TEXT AREA
+				    {
+				    	xtype: 'textfield',
+				    	id: 'textfieldAxisTitle',
+						flex: 10,
+						allowBlank:  true,
+			            emptyText: 'Insert axis title',
+						selectOnFocus: true,
+						value: 'titolo vuoto',
+						listeners: {
+				            change: 'onTitleChange',
+				        }
+					},
+					
+					// STYLE POPUP
+					{
+					    type:'gear',
+					    tooltip: 'Set axis style',
+					    flex: 1,
+					    handler: function(event, toolEl, panelHeader) {
+					    	var thisChartColumnsContainer = panelHeader.ownerCt;
+					    	
+					    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
+					    		axisData: thisChartColumnsContainer.getAxisData(),
+							});
+							
+					    	axisStylePopup.show();
+						}
+					}					
+				],
+			    
+				hideHeaders: true,
   				columns: [
 	  				{
 	  					text: 'Column Name', 
@@ -382,7 +432,20 @@ author:
   							}
   						}]
   					}
-  				]
+  				],
+  				
+  				setAxisData: function(axisData) {
+  					this.axisData = axisData;
+  					/* 
+	            	var titleTextField = this.down('.x-form-field.x-form-text');
+	            	titleTextField.value = textValue;
+	            	*/
+  					this.fireEvent('updateAxisTitleValue', axisData.titleText);
+  				},
+  				getAxisData: function() {
+  					return this.axisData;
+  				}
+  				
   			});
   			
   			var chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
@@ -481,7 +544,7 @@ author:
  			Ext.log({level: 'info'}, 'CHART: IN CONFIGURATION FROM TEMPLATE');
   			
   			/**
-  				START LOADING Y AXES >>>>>>>>>>>>>>>>>>>>
+  				START LOADING Y AXES AND X AXIS >>>>>>>>>>>>>>>>>>>>
   			*/
   			
   			var yCount = 1;
@@ -511,10 +574,19 @@ author:
   					console.log('CREATING NEW COLUMN');
 	  				yCount++;
 
+  				} else if(axis.type.toUpperCase() == "CATEGORY"){
+					var chartBottomCategoriesContainer = Ext.getCmp('chartBottomCategoriesContainer');
+					
+					var axisData = (axis && axis != null)? 
+							Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
+								Sbi.chart.designer.ChartUtils.createEmptyAxisData();
+					
+					chartBottomCategoriesContainer.setAxisData(axisData);
+
   				}
   			});
   			/**
-				END LOADING Y AXES <<<<<<<<<<<<<<<<<<<<
+				END LOADING Y AXES AND X AXIS <<<<<<<<<<<<<<<<<<<<
 			*/
   			
 			
