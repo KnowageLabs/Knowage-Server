@@ -253,6 +253,20 @@ public class Query implements IQuery {
 		return whereField;
 	}
 
+	public void addWhereField(String name, String description, boolean promptable, String[] leftOperatorValues, String leftOperatorDescription,
+			String leftOperatorType, String[] leftOperatorDefaulttValues, String[] leftOperatorLastValues, String leftOperatorAlias, String operator,
+			String[] rightOperatorValues, String rightOperatorDescription, String rightOperatorType, String[] rightOperatorDefaulttValues,
+			String[] rightOperatorLastValues, String rightOperatorAlias, String booleanConnector) {
+		it.eng.qbe.query.WhereField.Operand leftOperand = new it.eng.qbe.query.WhereField.Operand(leftOperatorValues, leftOperatorDescription,
+				leftOperatorType, leftOperatorDefaulttValues, leftOperatorLastValues, leftOperatorAlias);
+		it.eng.qbe.query.WhereField.Operand rightOperand = new it.eng.qbe.query.WhereField.Operand(rightOperatorValues, rightOperatorDescription,
+				rightOperatorType, rightOperatorDefaulttValues, rightOperatorLastValues, rightOperatorAlias);
+		WhereField whereField = new WhereField(name, description, promptable, leftOperand, operator, rightOperand, booleanConnector);
+
+		whereClause.add(whereField);
+		whereFieldMap.put("$F{" + name + "}", whereField);
+	}
+
 	public HavingField addHavingField(String name, String description, boolean promptable, it.eng.qbe.query.HavingField.Operand leftOperand, String operator,
 			it.eng.qbe.query.HavingField.Operand rightOperand, String booleanConnector) {
 

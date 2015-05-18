@@ -11,5 +11,18 @@ package it.eng.spagobi.tools.dataset.common.query;
  */
 
 public interface IQuery {
+
+	public boolean isDistinctClauseEnabled();
+
+	public void setDistinctClauseEnabled(boolean distinctClauseEnabled);
+
+	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
+			String orderType, String pattern);
+
+	public void addWhereField(String name, String description, boolean promptable, String[] leftOperatorValues, String leftOperatorDescription,
+			String leftOperatorType, String[] leftOperatorDefaulttValues, String[] leftOperatorLastValues, String leftOperatorAlias, String operator,
+			String[] rightOperatorValues, String rightOperatorDescription, String rightOperatorType, String[] rightOperatorDefaulttValues,
+			String[] rightOperatorLastValues, String rightOperatorAlias, String booleanConnector);
+
 	public String toSql(String schema, String table);
 }
