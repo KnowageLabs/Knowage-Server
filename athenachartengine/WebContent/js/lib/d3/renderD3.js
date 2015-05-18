@@ -503,7 +503,7 @@ function renderWordCloud(chartConf){
 				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
 			})
 			.text(function(d) { return d.text; });
-			
+			}	
 		}
 		
 	}
@@ -1099,4 +1099,4 @@ function renderWordCloud(chartConf){
 		  return root;
 		  
 		};
-	}}
+	}
