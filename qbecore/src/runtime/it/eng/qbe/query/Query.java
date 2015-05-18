@@ -739,7 +739,7 @@ public class Query implements IQuery {
 
 		String fromClause = "FROM " + schema + "." + table + " ";
 		String selectClause = "SELECT ";
-		String whereClause = "WHERE ( 1=1 ";
+		String whereClause = "WHERE ( ";
 		String groupByClause = "GROUP BY ";
 
 		List<ISelectField> selectFields = getSelectFields(false);
@@ -800,7 +800,7 @@ public class Query implements IQuery {
 			}
 		}
 
-		return selectClause + fromClause + whereClause + groupByClause;
+		return selectClause + fromClause + (whereClause.equals("WHERE ( ) ") ? " " : whereClause) + groupByClause;
 	}
 
 	private String extractColumnNameFromSimpleField(SimpleSelectField simpleField) {
