@@ -53,6 +53,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js' ></script>
 
+<script type="text/javascript" src="/athenachartengine/js/src/configuration/propertiesCatalogue.js" ></script>
+
 <script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebService.js" ></script>
 <script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebServiceManager.js" ></script>
 <script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebServiceManagerFactory.js" ></script>
