@@ -737,9 +737,13 @@ public class Query implements IQuery {
 
 	public String toSql(String schema, String table) {
 
+		final String whereStart = "WHERE ( ";
+		final String whereEnd = ") ";
+		final String whereEmpty = whereStart + whereEnd;
+
 		String fromClause = "FROM " + schema + "." + table + " ";
 		String selectClause = "SELECT ";
-		String whereClause = "WHERE ( ";
+		String whereClause = whereStart;
 		String groupByClause = "GROUP BY ";
 
 		List<ISelectField> selectFields = getSelectFields(false);
@@ -784,7 +788,7 @@ public class Query implements IQuery {
 				whereClause += where.getBooleanConnector() + " ";
 			}
 		}
-		whereClause += ") ";
+		whereClause += whereEnd;
 
 		for (ISelectField groupBy : groupByFields) {
 			if (groupBy instanceof SimpleSelectField) {
@@ -800,7 +804,7 @@ public class Query implements IQuery {
 			}
 		}
 
-		return selectClause + fromClause + (whereClause.equals("WHERE ( ) ") ? " " : whereClause) + groupByClause;
+		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause) + groupByClause;
 	}
 
 	private String extractColumnNameFromSimpleField(SimpleSelectField simpleField) {
