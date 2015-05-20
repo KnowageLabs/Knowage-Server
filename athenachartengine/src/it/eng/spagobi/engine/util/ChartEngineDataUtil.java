@@ -1,5 +1,7 @@
 package it.eng.spagobi.engine.util;
 
+import it.eng.qbe.query.Query;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -12,12 +14,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
@@ -26,19 +30,9 @@ import com.jamonapi.MonitorFactory;
 public class ChartEngineDataUtil {
 	public static transient Logger logger = Logger.getLogger(ChartEngineDataUtil.class);
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static String loadJsonData(IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) {
-
-		analyticalDrivers.put("LOCALE", locale);
-		dataSet.setParamsMap(analyticalDrivers);
-		dataSet.setUserProfileAttributes(userProfile);
-
-		Monitor monitorLD = MonitorFactory.start("SpagoBI_Chart.GetChartDataAction.service.LoadData");
-
-		dataSet.loadData();// start, limit, rowsLimit); // ??????????????????????????
-
-		monitorLD.stop();
-		IDataStore dataStore = dataSet.getDataStore();
+	@SuppressWarnings({ "rawtypes" })
+	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
+		IDataStore dataStore = loadDatastore(jsonTemplate, dataSet, analyticalDrivers, userProfile, locale);
 
 		JSONObject dataSetJSON = new JSONObject();
 		try {
@@ -54,6 +48,58 @@ public class ChartEngineDataUtil {
 
 		return dataSetJSON.toString();
 
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static IDataStore loadDatastore(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws JSONException {
+		Query q = extractAggregatedQueryFromTemplate(jsonTemplate);
+
+		analyticalDrivers.put("LOCALE", locale);
+		dataSet.setParamsMap(analyticalDrivers);
+		dataSet.setUserProfileAttributes(userProfile);
+
+		Monitor monitorLD = MonitorFactory.start("SpagoBI_Chart.GetChartDataAction.service.LoadData");
+
+		dataSet.loadData();// start, limit, rowsLimit); // ??????????????????????????
+
+		monitorLD.stop();
+
+		IDataStore dataStore = dataSet.getDataStore().aggregateAndFilterRecords(q);
+		return dataStore;
+	}
+
+	private static Query extractAggregatedQueryFromTemplate(String jsonTemplate) throws JSONException {
+		Query q = new Query();
+
+		JSONObject jo = new JSONObject(jsonTemplate);
+		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
+
+		String categoryColumn = category.getString("column");
+		String categoryName = StringUtilities.isNotEmpty(category.optString("name")) ? category.optString("name") : category.getString("column");
+
+		List<JSONObject> seriesList = new LinkedList<>();
+
+		JSONArray seriesArray = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("SERIE");
+		JSONObject singleSerie = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONObject("SERIE");
+		if (seriesArray != null) {
+			for (int i = 0; i < seriesArray.length(); i++) {
+				JSONObject thisSerie = (JSONObject) seriesArray.get(i);
+				seriesList.add(thisSerie);
+			}
+		} else {
+			seriesList.add(singleSerie);
+		}
+
+		for (JSONObject serie : seriesList) {
+
+			String serieColumn = serie.getString("column");
+			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
+
+			q.addSelectFiled(serieColumn, serieFunction, serieColumn, true, true, false, null, null);
+		}
+
+		q.addSelectFiled(categoryColumn, null, categoryColumn, true, true, true, "DESC", null);
+		return q;
 	}
 
 	public static String loadMetaData(IDataSet dataSet) {

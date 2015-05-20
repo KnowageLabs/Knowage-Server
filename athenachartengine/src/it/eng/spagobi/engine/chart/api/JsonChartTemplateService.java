@@ -7,6 +7,7 @@ import it.eng.spagobi.engine.util.ChartEngineUtil;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -33,36 +34,22 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @Context HttpServletResponse servletResponse) {
+		try {
+			IDataSet dataSet = getEngineInstance().getDataSet();
+			Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
+			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 
-		// try {
-		// JSONObject jo = new JSONObject(jsonTemplate);
-		// JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
-		// String column = category.getString("column");
-		// String groupby = category.has("groupby") ? category.getString("groupby") : null;
-		//
-		// String groupBys = column + (groupby != null && !"".equals(groupby) ? ','+groupby : "");
-		//
-		// Query q = new Query();
-		//
-		// q.set
-		//
-		// IDataStore ds = new DataStore();
-		// ds.
-		//
-		// } catch (JSONException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+			String jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
 
-		IDataSet dataSet = getEngineInstance().getDataSet();
-		Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
-		Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
-		String jsonData = ChartEngineDataUtil.loadJsonData(dataSet, analyticalDrivers, profileAttributes, getLocale());
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData);
+			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
+			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
+			return applyTemplate(velocityTemplate, velocityContext);
 
-		VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData);
-		String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
-		Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
-		return applyTemplate(velocityTemplate, velocityContext);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+		}
 	}
 
 	@GET
