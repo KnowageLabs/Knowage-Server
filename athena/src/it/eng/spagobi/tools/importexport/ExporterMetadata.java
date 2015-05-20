@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
@@ -187,12 +187,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a domain into the exported database.
-	 *
+	 * 
 	 * @param domain
 	 *            Domain object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -223,12 +223,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a authorization into the exported database.
-	 *
+	 * 
 	 * @param authorization
 	 *            Authorizations object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -244,6 +244,7 @@ public class ExporterMetadata {
 			SbiAuthorizations hibAuthorizations = new SbiAuthorizations();
 			hibAuthorizations.setId(auth.getId());
 			hibAuthorizations.setName(auth.getName());
+			// hibAuthorizations.setOrganization(auth.getOrganization());
 			hibAuthorizations.setUserIn(auth.getUserIn());
 			hibAuthorizations.setUserUp(auth.getUserUp());
 			hibAuthorizations.setUserDe(auth.getUserDe());
@@ -263,12 +264,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a Object Metadata Category into the exported database.
-	 *
+	 * 
 	 * @param objMetadata
 	 *            ObjMetadata object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -305,12 +306,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a Object Metadata Content into the exported database.
-	 *
+	 * 
 	 * @param objMetadataContent
 	 *            ObjMetadataContent object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -372,12 +373,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert data source.
-	 *
+	 * 
 	 * @param ds
 	 *            the ds
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -434,8 +435,11 @@ public class ExporterMetadata {
 		Transaction tx3 = null;
 
 		try {
-			// check if it's not already present a dataset with id dataSet.getDsId
-			// Query hibQuery = session.createQuery("from SbiDataSet where active = true and dsId = " +dataSet.getId());
+			// check if it's not already present a dataset with id
+			// dataSet.getDsId
+			// Query hibQuery =
+			// session.createQuery("from SbiDataSet where active = true and dsId = "
+			// +dataSet.getId());
 			Query hibQuery = session.createQuery("from SbiDataSet sb where sb.active = ? and sb.id.dsId = ? ");
 			hibQuery.setBoolean(0, true);
 			hibQuery.setInteger(1, Integer.valueOf(dataSet.getId()));
@@ -450,7 +454,8 @@ public class ExporterMetadata {
 				if (recalculateId == true) {
 					compositeKey = getDataSetKey(session, dataSet, true);
 				} else {
-					// in case of export do not recaculate id to avoid losing constraints
+					// in case of export do not recaculate id to avoid losing
+					// constraints
 					compositeKey = new SbiDataSetId();
 					compositeKey.setDsId(dataSet.getId());
 					compositeKey.setVersionNum(1);
@@ -574,7 +579,7 @@ public class ExporterMetadata {
 	 * @param artifact
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
+	 * 
 	 */
 	public boolean insertArtifact(Artifact artifact, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -624,7 +629,7 @@ public class ExporterMetadata {
 	 * @param artifact
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
+	 * 
 	 */
 	public void insertArtifactContent(Artifact artifact, Content content, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -680,7 +685,7 @@ public class ExporterMetadata {
 	 * @param metaModel
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
+	 * 
 	 */
 	public boolean insertMetaModel(MetaModel metaModel, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -744,7 +749,7 @@ public class ExporterMetadata {
 	 * @param metaModel
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
+	 * 
 	 */
 	public void insertMetaModelContent(MetaModel metaModel, Content content, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -796,19 +801,20 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert data set.
-	 *
+	 * 
 	 * @param dataset
 	 *            the dataset
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
 	public void insertDataSetAndDataSource(IDataSet dataset, Session session) throws EMFUserError {
 		logger.debug("IN");
 		try {
-			// if it is a query data set, insert datasource first, before opening a new transaction
+			// if it is a query data set, insert datasource first, before
+			// opening a new transaction
 
 			VersionedDataSet versDataSet = null;
 			if (dataset instanceof VersionedDataSet)
@@ -835,12 +841,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert an engine into the exported database.
-	 *
+	 * 
 	 * @param engine
 	 *            Engine Object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -882,14 +888,14 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert all Snapshot and their binary content.
-	 *
+	 * 
 	 * @param biobj
 	 *            the biobj
 	 * @param snapshotLis
 	 *            the snapshot lis
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -952,14 +958,14 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert all SubObject and their binary content.
-	 *
+	 * 
 	 * @param biobj
 	 *            the biobj
 	 * @param subObjectLis
 	 *            the sub object lis
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1041,12 +1047,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a biobject into the exported database.
-	 *
+	 * 
 	 * @param biobj
 	 *            BIObject to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1093,18 +1099,21 @@ public class ExporterMetadata {
 			if (dataSetId != null) {
 				// if the transaction is new insert dataset if missing
 				IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-				// insert dataset if parameter insertDataSet is true (in case of KPI export)
+				// insert dataset if parameter insertDataSet is true (in case of
+				// KPI export)
 				if (insertDataSet) {
 					hibQuery = session.createQuery(" from SbiDataSet s where s.active=true and s.id.dsId = " + biobj.getId());
 					SbiDataSet hibDataSet = (SbiDataSet) hibQuery.uniqueResult();
 					IDataSet guiDataSet = DataSetFactory.toDataSet(hibDataSet);
 
-					// IDataSet guiDataSet = datasetDao.loadDataSetById(dataSetId);
+					// IDataSet guiDataSet =
+					// datasetDao.loadDataSetById(dataSetId);
 					if (guiDataSet != null) {
 						insertDataSet(guiDataSet, session, false);
 					}
 				}
-				// SbiDataSet dataset = (SbiDataSet) session.load(SbiDataSet.class, dataSetId);
+				// SbiDataSet dataset = (SbiDataSet)
+				// session.load(SbiDataSet.class, dataSetId);
 				hibBIObj.setDataSet(dataSetId);
 			}
 
@@ -1181,12 +1190,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a BIObject Parameter into the exported database.
-	 *
+	 * 
 	 * @param biobjpar
 	 *            BIObject parameter to insert
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1242,12 +1251,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a parameter into the exported database.
-	 *
+	 * 
 	 * @param param
 	 *            The param object to insert
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1285,12 +1294,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a parameter use into the exported database.
-	 *
+	 * 
 	 * @param parUse
 	 *            The Parameter use object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1338,12 +1347,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Dependencies between parameters.
-	 *
+	 * 
 	 * @param biparams
 	 *            the biparams
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1359,7 +1368,8 @@ public class ExporterMetadata {
 				while (iterObjParuse.hasNext()) {
 					ObjParuse objparuse = (ObjParuse) iterObjParuse.next();
 					Transaction tx = session.beginTransaction();
-					// TODO controllare perché serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per
+					// TODO controllare perché serve questo controllo: le
+					// dipendenze non dovrebbero essere riutilizzabili, per
 					// cui vengono inseriti una sola volta
 					Query hibQuery = session.createQuery(" from SbiObjParuse where id.sbiObjPar.objParId = " + objparuse.getObjParId()
 							+ " and id.sbiParuse.useId = " + objparuse.getParuseId() + " and id.sbiObjParFather.objParId = " + objparuse.getObjParFatherId()
@@ -1398,12 +1408,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Visibility Dependencies between parameters.
-	 *
+	 * 
 	 * @param biparams
 	 *            the biparams
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1419,7 +1429,8 @@ public class ExporterMetadata {
 				while (iterObjParview.hasNext()) {
 					ObjParview objParview = (ObjParview) iterObjParview.next();
 					Transaction tx = session.beginTransaction();
-					// TODO controllare perché serve questo controllo: le dipendenze non dovrebbero essere riutilizzabili, per
+					// TODO controllare perché serve questo controllo: le
+					// dipendenze non dovrebbero essere riutilizzabili, per
 					// cui vengono inseriti una sola volta
 					Query hibQuery = session.createQuery(" from SbiObjParview where id.sbiObjPar.objParId = " + objParview.getObjParId()
 							+ " and id.sbiObjParFather.objParId = " + objParview.getObjParFatherId() + " and id.compareValue = '"
@@ -1454,12 +1465,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a list of value into the exported database.
-	 *
+	 * 
 	 * @param lov
 	 *            The list of values object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1507,12 +1518,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a check into the exported database.
-	 *
+	 * 
 	 * @param check
 	 *            The check object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1546,14 +1557,14 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert an association between a parameter use and a check into the exported database.
-	 *
+	 * 
 	 * @param parUse
 	 *            The paruse object which is an element of the association
 	 * @param check
 	 *            The check object which is an element of the association
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1589,14 +1600,14 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert an association between a parameter use and a role into the exported database.
-	 *
+	 * 
 	 * @param parUse
 	 *            The paruse object which is an element of the association
 	 * @param role
 	 *            The role object which is an element of the association
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1631,12 +1642,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert an association between a master report and a subreport.
-	 *
+	 * 
 	 * @param sub
 	 *            The subreport
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1673,12 +1684,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a functionality into the exported database.
-	 *
+	 * 
 	 * @param funct
 	 *            Functionality Object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1705,7 +1716,8 @@ public class ExporterMetadata {
 
 			// Integer parentId2 = funct.getParentId();
 			// if(parentId2!=null){
-			// SbiFunctions hibFunctParent = (SbiFunctions)session.load(SbiFunctions.class, parentId2);
+			// SbiFunctions hibFunctParent =
+			// (SbiFunctions)session.load(SbiFunctions.class, parentId2);
 			// if(hibFunctParent != null){
 			// hibFunct.setParentFunct(hibFunctParent);
 			// }
@@ -1718,7 +1730,7 @@ public class ExporterMetadata {
 			for (int i = 0; i < devRoles.length; i++) {
 				Role devRole = devRoles[i];
 				insertRole(devRole, session);
-				insertAuthorizationsRole(devRole, session);
+				// insertAuthorizationsRole(devRole, session);
 				insertFunctRole(devRole, funct, devDom.getValueId(), devDom.getValueCd(), session);
 			}
 			Role[] testRoles = funct.getTestRoles();
@@ -1726,7 +1738,7 @@ public class ExporterMetadata {
 			for (int i = 0; i < testRoles.length; i++) {
 				Role testRole = testRoles[i];
 				insertRole(testRole, session);
-				insertAuthorizationsRole(testRole, session);
+				// insertAuthorizationsRole(testRole, session);
 				insertFunctRole(testRole, funct, testDom.getValueId(), testDom.getValueCd(), session);
 			}
 			Role[] execRoles = funct.getExecRoles();
@@ -1734,7 +1746,7 @@ public class ExporterMetadata {
 			for (int i = 0; i < execRoles.length; i++) {
 				Role execRole = execRoles[i];
 				insertRole(execRole, session);
-				insertAuthorizationsRole(execRole, session);
+				// insertAuthorizationsRole(execRole, session);
 				insertFunctRole(execRole, funct, execDom.getValueId(), execDom.getValueCd(), session);
 			}
 			Role[] createRoles = funct.getCreateRoles();
@@ -1742,7 +1754,7 @@ public class ExporterMetadata {
 			for (int i = 0; i < createRoles.length; i++) {
 				Role createRole = createRoles[i];
 				insertRole(createRole, session);
-				insertAuthorizationsRole(createRole, session);
+				// insertAuthorizationsRole(createRole, session);
 				insertFunctRole(createRole, funct, createDom.getValueId(), createDom.getValueCd(), session);
 			}
 
@@ -1764,12 +1776,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert a role into the exported database.
-	 *
+	 * 
 	 * @param role
 	 *            The role object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1789,14 +1801,22 @@ public class ExporterMetadata {
 			SbiDomains roleType = (SbiDomains) session.load(SbiDomains.class, role.getRoleTypeID());
 			hibRole.setRoleType(roleType);
 			hibRole.setRoleTypeCode(role.getRoleTypeCD());
-			// hibRole.setIsAbleToSaveIntoPersonalFolder(new Boolean(role.isAbleToSaveIntoPersonalFolder()));
-			// hibRole.setIsAbleToSaveRememberMe(new Boolean(role.isAbleToSaveRememberMe()));
-			// hibRole.setIsAbleToSeeMetadata(new Boolean(role.isAbleToSeeMetadata()));
-			// hibRole.setIsAbleToSeeNotes(new Boolean(role.isAbleToSeeNotes()));;
-			// hibRole.setIsAbleToSeeSnapshots(new Boolean(role.isAbleToSeeSnapshots()));
-			// hibRole.setIsAbleToSeeSubobjects(new Boolean(role.isAbleToSeeSubobjects()));
-			// hibRole.setIsAbleToSeeViewpoints(new Boolean(role.isAbleToSeeViewpoints()));
-			// hibRole.setIsAbleToSendMail(new Boolean(role.isAbleToSendMail()));
+			// hibRole.setIsAbleToSaveIntoPersonalFolder(new
+			// Boolean(role.isAbleToSaveIntoPersonalFolder()));
+			// hibRole.setIsAbleToSaveRememberMe(new
+			// Boolean(role.isAbleToSaveRememberMe()));
+			// hibRole.setIsAbleToSeeMetadata(new
+			// Boolean(role.isAbleToSeeMetadata()));
+			// hibRole.setIsAbleToSeeNotes(new
+			// Boolean(role.isAbleToSeeNotes()));;
+			// hibRole.setIsAbleToSeeSnapshots(new
+			// Boolean(role.isAbleToSeeSnapshots()));
+			// hibRole.setIsAbleToSeeSubobjects(new
+			// Boolean(role.isAbleToSeeSubobjects()));
+			// hibRole.setIsAbleToSeeViewpoints(new
+			// Boolean(role.isAbleToSeeViewpoints()));
+			// hibRole.setIsAbleToSendMail(new
+			// Boolean(role.isAbleToSendMail()));
 			// hibRole.setIsAbleToBuildQbeQuery(role.isAbleToBuildQbeQuery());
 			// hibRole.setIsAbleToDoMassiveExport(role.isAbleToDoMassiveExport());
 			// hibRole.setIsAbleToEditWorksheet(role.isAbleToEditWorksheet());
@@ -1813,12 +1833,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert association between a role and authorizations associated.
-	 *
+	 * 
 	 * @param role
 	 *            The role object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1867,7 +1887,7 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert an association between a functionality and a role into the exported database.
-	 *
+	 * 
 	 * @param role
 	 *            The role object which is an element of the association
 	 * @param funct
@@ -1878,7 +1898,7 @@ public class ExporterMetadata {
 	 *            The code of the permission associated to the couple role / functionality
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1917,14 +1937,14 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert an association between a functionality and a biobject into the exported database.
-	 *
+	 * 
 	 * @param biobj
 	 *            The BIObject which is an element of the association
 	 * @param funct
 	 *            The functionality object which is an element of the association
 	 * @param session
 	 *            Hibernate session for the exported database
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1961,7 +1981,7 @@ public class ExporterMetadata {
 
 	/**
 	 * Exports the map catalogue (maps and features)
-	 *
+	 * 
 	 * @param session
 	 *            Hibernate session for the exported database
 	 * @throws EMFUserError
@@ -1995,7 +2015,7 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert the maps of the maps catalogue
-	 *
+	 * 
 	 * @param session
 	 *            Hibernate session for the exported database
 	 * @throws EMFUserError
@@ -2042,7 +2062,7 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert the features of the maps catalogue
-	 *
+	 * 
 	 * @param session
 	 *            Hibernate session for the exported database
 	 * @throws EMFUserError
@@ -2073,7 +2093,7 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert the association between maps and features of the maps catalogue
-	 *
+	 * 
 	 * @param session
 	 *            Hibernate session for the exported database
 	 * @throws EMFUserError
@@ -2114,12 +2134,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Model Instance Tree.
-	 *
+	 * 
 	 * @param mi
 	 *            the Model Instance
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2128,7 +2148,8 @@ public class ExporterMetadata {
 
 		biObjectToInsert = new ArrayList();
 
-		// I want to insert the whole model instance tree, first of all I get the model instance root
+		// I want to insert the whole model instance tree, first of all I get
+		// the model instance root
 		IModelInstanceDAO modInstDAO = DAOFactory.getModelInstanceDAO();
 		ModelInstance miRoot = modInstDAO.loadModelInstanceRoot(mi);
 
@@ -2150,12 +2171,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Model Instance.
-	 *
+	 * 
 	 * @param mi
 	 *            the Model Instance
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2251,12 +2272,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Model .
-	 *
+	 * 
 	 * @param mod
 	 *            the Model
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2346,12 +2367,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Kpi .
-	 *
+	 * 
 	 * @param kpi
 	 *            the Kpi
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2491,12 +2512,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Kpi child for relations.
-	 *
+	 * 
 	 * @param kpiId
 	 *            the Kpi child id
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2629,12 +2650,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Kpi Instance.
-	 *
+	 * 
 	 * @param kpiInst
 	 *            the Kpi Instance
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2723,12 +2744,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Threshold .
-	 *
+	 * 
 	 * @param th
 	 *            the Threshold
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2777,12 +2798,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Threshold Value.
-	 *
+	 * 
 	 * @param th
 	 *            the Threshold Value
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2831,12 +2852,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Measure Unit.
-	 *
+	 * 
 	 * @param mu
 	 *            the Measure Unit
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2873,12 +2894,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Kpi Instance Periodicity.
-	 *
+	 * 
 	 * @param kpiPeriod
 	 *            kpiInstancePeriodicity
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2932,12 +2953,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Periodicity.
-	 *
+	 * 
 	 * @param mu
 	 *            the Measure Unit
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2973,12 +2994,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert ModelResources.
-	 *
+	 * 
 	 * @param modRes
 	 *            the modelResource
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3032,12 +3053,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Resources.
-	 *
+	 * 
 	 * @param res
 	 *            the resource
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3087,12 +3108,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Alarm.
-	 *
+	 * 
 	 * @param res
 	 *            the Alarm
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3161,12 +3182,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Alarm Contact
-	 *
+	 * 
 	 * @param con
 	 *            the Alarm Contact
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3201,12 +3222,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert BinContent.
-	 *
+	 * 
 	 * @param id
 	 *            and content
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3236,12 +3257,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert KpiRel .
-	 *
+	 * 
 	 * @param kpiRel
 	 *            the KpiRel
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3288,12 +3309,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Udp .
-	 *
+	 * 
 	 * @param udp
 	 *            the Udp
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3333,12 +3354,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Udp Value.
-	 *
+	 * 
 	 * @param udpValue
 	 *            the Udp Value
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3379,12 +3400,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert OU .
-	 *
+	 * 
 	 * @param ou
 	 *            the OU
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3417,12 +3438,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert Hierarchy .
-	 *
+	 * 
 	 * @param hier
 	 *            the Hierarchy
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3457,12 +3478,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert ou node .
-	 *
+	 * 
 	 * @param node
 	 *            the ou node
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3502,12 +3523,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert all grants for model instance node.
-	 *
+	 * 
 	 * @param grant
 	 *            the OrganizationalUnitGrant
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3548,12 +3569,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert all grants nodes for model instance node.
-	 *
+	 * 
 	 * @param ou
 	 *            the OrganizationalUnitGrantNode
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3638,12 +3659,12 @@ public class ExporterMetadata {
 
 	/**
 	 * Insert saved parameters
-	 *
+	 * 
 	 * @param biObject
 	 *            the biObjects
 	 * @param session
 	 *            the session
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */

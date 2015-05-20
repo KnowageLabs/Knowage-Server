@@ -78,21 +78,25 @@ public class ExportManager implements IExportManager {
 	private ExporterMetadata exporter = null;
 	private boolean exportSubObjects = false;
 	private boolean exportSnapshots = false;
-	private List objectsInserted=null;
+	private List objectsInserted = null;
+
 	/**
 	 * Prepare the environment for export.
 	 * 
-	 * @param pathExpFold Path of the export folder
-	 * @param nameExpFile the name to give to the exported file
-	 * @param expSubObj   Flag which tells if it's necessary to export subobjects
-	 * @param expSnaps    Flag which tells if it's necessary to export snapshots
+	 * @param pathExpFold
+	 *            Path of the export folder
+	 * @param nameExpFile
+	 *            the name to give to the exported file
+	 * @param expSubObj
+	 *            Flag which tells if it's necessary to export subobjects
+	 * @param expSnaps
+	 *            Flag which tells if it's necessary to export snapshots
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 */
-	public void prepareExport(String pathExpFold, String nameExpFile, boolean expSubObj, boolean expSnaps)
-	throws EMFUserError {
-		logger.debug("IN. pathExpFold=" + pathExpFold + " nameExpFile=" + nameExpFile + " expSubObj=" + expSubObj
-				+ " expSnaps" + expSnaps);
+	public void prepareExport(String pathExpFold, String nameExpFile, boolean expSubObj, boolean expSnaps) throws EMFUserError {
+		logger.debug("IN. pathExpFold=" + pathExpFold + " nameExpFile=" + nameExpFile + " expSubObj=" + expSubObj + " expSnaps" + expSnaps);
 		try {
 			nameExportFile = nameExpFile;
 			pathExportFolder = pathExpFold;
@@ -119,7 +123,7 @@ public class ExportManager implements IExportManager {
 			sessionFactory = ExportUtilities.getHibSessionExportDB(pathDBFolder);
 			session = sessionFactory.openSession();
 			exporter = new ExporterMetadata();
-			objectsInserted=new ArrayList();
+			objectsInserted = new ArrayList();
 		} catch (Exception e) {
 			logger.error("Error while creating export environment ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
@@ -131,9 +135,11 @@ public class ExportManager implements IExportManager {
 	/**
 	 * Exports objects and creates the archive export file.
 	 * 
-	 * @param objIds the obj ids
+	 * @param objIds
+	 *            the obj ids
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 */
 	public void exportObjects(List objIds) throws EMFUserError {
 		logger.debug("IN");
@@ -141,10 +147,10 @@ public class ExportManager implements IExportManager {
 			exportPropertiesFile();
 			logger.debug("export domains ");
 			exportDomains();
-			
+
 			logger.debug("export authorizations ");
-			exportAuthorizations();
-			
+			// exportAuthorizations();
+
 			logger.debug("export metadata categories");
 			exportObjectMetadata();
 			logger.debug("export udp");
@@ -162,8 +168,8 @@ public class ExportManager implements IExportManager {
 				exportSingleObj(idobj);
 			}
 			closeSession();
-			//			createExportArchive();
-			//			deleteTmpFolder();
+			// createExportArchive();
+			// deleteTmpFolder();
 		} catch (EMFUserError emfue) {
 			throw emfue;
 		} catch (Exception e) {
@@ -226,8 +232,10 @@ public class ExportManager implements IExportManager {
 	/**
 	 * Compress contents of a folder into an output stream
 	 * 
-	 * @param pathFolder  The path of the folder to compress
-	 * @param out         The Compress output stream
+	 * @param pathFolder
+	 *            The path of the folder to compress
+	 * @param out
+	 *            The Compress output stream
 	 * @throws EMFUserError
 	 */
 	private void compressFolder(String pathFolder, ZipOutputStream out) throws EMFUserError {
@@ -327,7 +335,7 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Exports SpagoBI authorizations
 	 * 
@@ -349,8 +357,7 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
-	
-	
+
 	/**
 	 * Exports SpagoBI Udp Items
 	 * 
@@ -360,15 +367,15 @@ public class ExportManager implements IExportManager {
 		logger.debug("IN");
 		try {
 			List udpFamilies = DAOFactory.getDomainDAO().loadListDomainsByType("UDP_FAMILY");
-			if(udpFamilies != null){
-				for(int i=0; i< udpFamilies.size(); i++){
-					Domain type = (Domain)udpFamilies.get(i);
-					//kpi udp/model udp
+			if (udpFamilies != null) {
+				for (int i = 0; i < udpFamilies.size(); i++) {
+					Domain type = (Domain) udpFamilies.get(i);
+					// kpi udp/model udp
 					List<Udp> udpList = DAOFactory.getUdpDAO().loadAllByFamily(type.getValueCd());
-					if(udpList != null && !udpList.isEmpty()){
+					if (udpList != null && !udpList.isEmpty()) {
 						for (Iterator iterator = udpList.iterator(); iterator.hasNext();) {
 							Udp udp = (Udp) iterator.next();
-							exporter.insertUdp(udp, session);					
+							exporter.insertUdp(udp, session);
 						}
 					}
 				}
@@ -380,6 +387,7 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
+
 	/**
 	 * Exports SpagoBI OU Items
 	 * 
@@ -390,10 +398,10 @@ public class ExportManager implements IExportManager {
 		try {
 
 			List<OrganizationalUnit> ouList = DAOFactory.getOrganizationalUnitDAO().getOrganizationalUnitList();
-			if(ouList != null && !ouList.isEmpty()){
+			if (ouList != null && !ouList.isEmpty()) {
 				for (Iterator iterator = ouList.iterator(); iterator.hasNext();) {
 					OrganizationalUnit ou = (OrganizationalUnit) iterator.next();
-					exporter.insertOu(ou, session);					
+					exporter.insertOu(ou, session);
 				}
 			}
 
@@ -404,6 +412,7 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
+
 	/**
 	 * Exports SpagoBI OU Hierarchies Items
 	 * 
@@ -414,10 +423,10 @@ public class ExportManager implements IExportManager {
 		try {
 
 			List<OrganizationalUnitHierarchy> hierList = DAOFactory.getOrganizationalUnitDAO().getHierarchiesList();
-			if(hierList != null && !hierList.isEmpty()){
+			if (hierList != null && !hierList.isEmpty()) {
 				for (Iterator iterator = hierList.iterator(); iterator.hasNext();) {
 					OrganizationalUnitHierarchy hier = (OrganizationalUnitHierarchy) iterator.next();
-					exporter.insertHierarchy(hier, session);					
+					exporter.insertHierarchy(hier, session);
 				}
 			}
 
@@ -428,6 +437,7 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
+
 	/**
 	 * Exports SpagoBI OU nodes Items
 	 * 
@@ -438,10 +448,10 @@ public class ExportManager implements IExportManager {
 		try {
 
 			List<OrganizationalUnitNode> nodesList = DAOFactory.getOrganizationalUnitDAO().getNodes();
-			if(nodesList != null && !nodesList.isEmpty()){
+			if (nodesList != null && !nodesList.isEmpty()) {
 				for (Iterator iterator = nodesList.iterator(); iterator.hasNext();) {
 					OrganizationalUnitNode node = (OrganizationalUnitNode) iterator.next();
-					exporter.insertOuNode(node, session);					
+					exporter.insertOuNode(node, session);
 				}
 			}
 
@@ -452,6 +462,7 @@ public class ExportManager implements IExportManager {
 			logger.debug("OUT");
 		}
 	}
+
 	/**
 	 * Exports SpagoBI Object Metadata (metadata categories)
 	 * 
@@ -475,17 +486,17 @@ public class ExportManager implements IExportManager {
 		}
 	}
 
-
 	/**
 	 * Export A single SpagoBI BiObject with Template, SubObject and Snapshot
 	 * 
-	 * @param idObj The idObj to export
+	 * @param idObj
+	 *            The idObj to export
 	 * @throws EMFUserError
 	 */
 	public void exportSingleObj(String idObj) throws EMFUserError {
 		logger.debug("IN");
 
-		if(objectsInserted.contains(Integer.valueOf(idObj))){
+		if (objectsInserted.contains(Integer.valueOf(idObj))) {
 			logger.warn("object already inserted");
 			return;
 		}
@@ -504,48 +515,50 @@ public class ExportManager implements IExportManager {
 				IDataSource ds = dataSourceDao.loadDataSourceByID(objataSourceId);
 				exporter.insertDataSource(ds, session);
 			}
-			
+
 			// Data set if present
 			Integer objDataSetId = biobj.getDataSetId();
 			if (objDataSetId != null) {
 
 				IDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
-				if(genericDs!=null){
-					//exporter.insertDataSet(genericDs, session);
-					
-					// when inserting dataset in export must mantain same id and version to preserve costraints
-				exporter.insertDataSetAndDataSource(genericDs, session);
-				}
-				
+				if (genericDs != null) {
+					// exporter.insertDataSet(genericDs, session);
 
-			}			
+					// when inserting dataset in export must mantain same id and
+					// version to preserve costraints
+					exporter.insertDataSetAndDataSource(genericDs, session);
+				}
+
+			}
 
 			// Engine if present, and data source if engine uses data source
 			Engine engine = biobj.getEngine();
-//			if (engine.getUseDataSource() && engine.getDataSourceId() != null) {
-//				Integer engineDataSourceId = engine.getDataSourceId();
-//				IDataSource ds = dataSourceDao.loadDataSourceByID(engineDataSourceId);
-//				exporter.insertDataSource(ds, session);
-//			}
+			// if (engine.getUseDataSource() && engine.getDataSourceId() !=
+			// null) {
+			// Integer engineDataSourceId = engine.getDataSourceId();
+			// IDataSource ds =
+			// dataSourceDao.loadDataSourceByID(engineDataSourceId);
+			// exporter.insertDataSource(ds, session);
+			// }
 
-			exporter.insertEngine(engine, session);   
-			exporter.insertBIObject(biobj, session, false); // do not insert dataset
-
+			exporter.insertEngine(engine, session);
+			exporter.insertBIObject(biobj, session, false); // do not insert
+															// dataset
 
 			logger.debug("Export metadata associated to the object");
 			IObjMetacontentDAO objMetacontentDAO = DAOFactory.getObjMetacontentDAO();
-			//  get metacontents associated to object
+			// get metacontents associated to object
 			List metacontents = objMetacontentDAO.loadObjOrSubObjMetacontents(biobj.getId(), null);
 			for (Iterator iterator = metacontents.iterator(); iterator.hasNext();) {
 				ObjMetacontent metacontent = (ObjMetacontent) iterator.next();
 				exporter.insertObjMetacontent(metacontent, session);
 			}
 
-
-			// if the document is a chart, export the relevant dataset that is referenced by the template
+			// if the document is a chart, export the relevant dataset that is
+			// referenced by the template
 			boolean isChart = false;
-			if (biobj.getBiObjectTypeCode().equalsIgnoreCase("DASH") 
-					&& engine.getClassName() != null && engine.getClassName().equals("it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine")) {
+			if (biobj.getBiObjectTypeCode().equalsIgnoreCase("DASH") && engine.getClassName() != null
+					&& engine.getClassName().equals("it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine")) {
 				isChart = true;
 			}
 
@@ -563,93 +576,98 @@ public class ExportManager implements IExportManager {
 							IDataSet dataset = datasetDao.loadDataSetByLabel(datasetLabel);
 							IDataSet guiGenericDataSet = datasetDao.loadDataSetByLabel(datasetLabel);
 
-
-
 							if (dataset == null) {
-								logger.warn("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : " +
-										"the template refers to a dataset with label " + datasetLabel + " that does not exist!");
+								logger.warn("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : "
+										+ "the template refers to a dataset with label " + datasetLabel + " that does not exist!");
 							} else {
 								exporter.insertDataSet(guiGenericDataSet, session, false);
 							}
 						}
 					} catch (Exception e) {
-						logger.error("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : " +
-						"could not find dataset reference in its template.");					
+						logger.error("Error while exporting dashboard with id " + idObj + " and label " + biobj.getLabel() + " : "
+								+ "could not find dataset reference in its template.");
 					}
 				}
 			}
 
-
-			// use Types Manager to handle specific export types, by now only KPI and CONSOLE.. TODO with all types
+			// use Types Manager to handle specific export types, by now only
+			// KPI and CONSOLE.. TODO with all types
 
 			ITypesExportManager typeManager = TypesExportManagerFactory.createTypesExportManager(biobj, engine, exporter, this);
 			// if null means it is not defined
 			if (typeManager != null)
 				typeManager.manageExport(biobj, session);
 
-			
 			// if it is qb, registry or smartfilter export associated model
-			
-			
-			
 
-			//maps kpi export
-			//			boolean isKpi = false;
-			//			if (biobj.getBiObjectTypeCode().equalsIgnoreCase("KPI") 
-			//					&& engine.getClassName() != null && engine.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")) {
-			//				isKpi = true;
-			//			}
+			// maps kpi export
+			// boolean isKpi = false;
+			// if (biobj.getBiObjectTypeCode().equalsIgnoreCase("KPI")
+			// && engine.getClassName() != null &&
+			// engine.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine"))
+			// {
+			// isKpi = true;
+			// }
 
-			//			if (isKpi) {
-			//				List objsToInsert=new ArrayList();
-			//				ObjTemplate template = biobj.getActiveTemplate();
-			//				if (template != null) {
-			//					try {
-			//						byte[] tempFileCont = template.getContent();
-			//						String tempFileStr = new String(tempFileCont);
-			//						SourceBean tempFileSB = SourceBean.fromXMLString(tempFileStr);
+			// if (isKpi) {
+			// List objsToInsert=new ArrayList();
+			// ObjTemplate template = biobj.getActiveTemplate();
+			// if (template != null) {
+			// try {
+			// byte[] tempFileCont = template.getContent();
+			// String tempFileStr = new String(tempFileCont);
+			// SourceBean tempFileSB = SourceBean.fromXMLString(tempFileStr);
 			//
 			//
-			//						String modelInstanceLabel = (String) tempFileSB.getAttribute("model_node_instance");
+			// String modelInstanceLabel = (String)
+			// tempFileSB.getAttribute("model_node_instance");
 			//
-			//						// biObjectToInsert keeps track of objects that have to be inserted beacuse related to Kpi
+			// // biObjectToInsert keeps track of objects that have to be
+			// inserted beacuse related to Kpi
 			//
-			//						if (modelInstanceLabel != null) {
-			//							IModelInstanceDAO modelInstanceDao = DAOFactory.getModelInstanceDAO();
-			//							ModelInstance modelInstance = modelInstanceDao.loadModelInstanceWithoutChildrenByLabel(modelInstanceLabel);
-			//							if (modelInstance == null) {
-			//								logger.warn("Error while exporting kpi with id " + idObj + " and label " + biobj.getLabel() + " : " +
-			//										"the template refers to a Model Instance with label " + modelInstanceLabel + " that does not exist!");
-			//							} else {
-			//								objsToInsert=exporter.insertAllFromModelInstance(modelInstance, session);
-			//								//exporter.insertModelInstance(modelInstance, session);
-			//							}
-			//						}
-			//					} catch (Exception e) {
-			//						logger.error("Error while exporting kpi with id " + idObj + " and label " + biobj.getLabel());
-			//						throw new EMFUserError(EMFErrorSeverity.ERROR, "8010", ImportManager.messageBundle);
+			// if (modelInstanceLabel != null) {
+			// IModelInstanceDAO modelInstanceDao =
+			// DAOFactory.getModelInstanceDAO();
+			// ModelInstance modelInstance =
+			// modelInstanceDao.loadModelInstanceWithoutChildrenByLabel(modelInstanceLabel);
+			// if (modelInstance == null) {
+			// logger.warn("Error while exporting kpi with id " + idObj +
+			// " and label " + biobj.getLabel() + " : " +
+			// "the template refers to a Model Instance with label " +
+			// modelInstanceLabel + " that does not exist!");
+			// } else {
+			// objsToInsert=exporter.insertAllFromModelInstance(modelInstance,
+			// session);
+			// //exporter.insertModelInstance(modelInstance, session);
+			// }
+			// }
+			// } catch (Exception e) {
+			// logger.error("Error while exporting kpi with id " + idObj +
+			// " and label " + biobj.getLabel());
+			// throw new EMFUserError(EMFErrorSeverity.ERROR, "8010",
+			// ImportManager.messageBundle);
 			//
-			//					}
-			//				}
+			// }
+			// }
 			//
-			//				for (Iterator iterator = objsToInsert.iterator(); iterator.hasNext();) {
-			//					Integer id = (Integer) iterator.next();
-			//					BIObject obj=(BIObject)biobjDAO.loadBIObjectById(id);
-			//					if(obj!=null){
-			//						exportSingleObj(obj.getId().toString());
-			//					}
-			//					else{
-			//						logger.error("Could not find object with id"+id);
-			//					}
-			//				}
+			// for (Iterator iterator = objsToInsert.iterator();
+			// iterator.hasNext();) {
+			// Integer id = (Integer) iterator.next();
+			// BIObject obj=(BIObject)biobjDAO.loadBIObjectById(id);
+			// if(obj!=null){
+			// exportSingleObj(obj.getId().toString());
+			// }
+			// else{
+			// logger.error("Could not find object with id"+id);
+			// }
+			// }
 			//
-			//			}
-
-
+			// }
 
 			// maps catalogue export
 			boolean isMap = false;
-			if (biobj.getBiObjectTypeCode().equalsIgnoreCase("MAP")) isMap = true;
+			if (biobj.getBiObjectTypeCode().equalsIgnoreCase("MAP"))
+				isMap = true;
 			if (isMap) {
 				exporter.insertMapCatalogue(session);
 			}
@@ -693,7 +711,7 @@ public class ExportManager implements IExportManager {
 
 			// export viewPoints
 			exporter.insertBiViewpoints(biobj, session);
-			
+
 			// export subReport relation
 			ISubreportDAO subRepDao = DAOFactory.getSubreportDAO();
 			List subList = subRepDao.loadSubreportsByMasterRptId(biobj.getId());
@@ -718,8 +736,10 @@ public class ExportManager implements IExportManager {
 	/**
 	 * Exports the BIParameters of a BIObject
 	 * 
-	 * @param biparams List ot the BIParameters belonging to the BIObject
-	 * @param biobj    The BIObject to which the parametes belong
+	 * @param biparams
+	 *            List ot the BIParameters belonging to the BIObject
+	 * @param biobj
+	 *            The BIObject to which the parametes belong
 	 * @throws EMFUserError
 	 */
 	private void exportBIParamsBIObj(List biparams, BIObject biobj) throws EMFUserError {
@@ -741,7 +761,8 @@ public class ExportManager implements IExportManager {
 	/**
 	 * Export a list ot Parameter use Objects
 	 * 
-	 * @param paruses The list of parameter use objects
+	 * @param paruses
+	 *            The list of parameter use objects
 	 * @throws EMFUserError
 	 */
 	private void exportParUses(List paruses) throws EMFUserError {
@@ -783,16 +804,18 @@ public class ExportManager implements IExportManager {
 	}
 
 	/**
-	 * Checks if a list of value object is a query type and in this case 
-	 * exports the name of the SpagoBI data source associated to the query
-	 * @param lov List of values Object
+	 * Checks if a list of value object is a query type and in this case exports
+	 * the name of the SpagoBI data source associated to the query
+	 * 
+	 * @param lov
+	 *            List of values Object
 	 * @throws EMFUserError
 	 */
 	private void checkDataSource(ModalitiesValue lov) throws EMFUserError {
 		logger.debug("IN");
 		try {
 			String type = lov.getITypeCd();
-			if(type.equalsIgnoreCase("QUERY")) {
+			if (type.equalsIgnoreCase("QUERY")) {
 				String provider = lov.getLovProvider();
 				QueryDetail queryDet = QueryDetail.fromXML(provider);
 				String datasourceName = queryDet.getDataSource();
@@ -807,8 +830,8 @@ public class ExportManager implements IExportManager {
 						break;
 					}
 				}
-				if (dsFound == null){
-					logger.error("Data source pool name " +datasourceName+ " not found");
+				if (dsFound == null) {
+					logger.error("Data source pool name " + datasourceName + " not found");
 					List paramsErr = new ArrayList();
 					paramsErr.add(lov.getLabel());
 					paramsErr.add(datasourceName);
@@ -817,7 +840,7 @@ public class ExportManager implements IExportManager {
 					exporter.insertDataSource(dsFound, session);
 				}
 			}
-		} catch (EMFUserError emfue){
+		} catch (EMFUserError emfue) {
 			throw emfue;
 		} catch (Exception e) {
 			logger.error("Error while checking connection" + e);
@@ -827,11 +850,11 @@ public class ExportManager implements IExportManager {
 		}
 	}
 
-
 	/**
 	 * Export a list of SpagoBI roles
 	 * 
-	 * @param roles The list of roles to export
+	 * @param roles
+	 *            The list of roles to export
 	 * @throws EMFUserError
 	 */
 	private void exportRoles(List roles) throws EMFUserError {
@@ -840,16 +863,12 @@ public class ExportManager implements IExportManager {
 		while (iterRoles.hasNext()) {
 			Role role = (Role) iterRoles.next();
 			exporter.insertRole(role, session);
-			exporter.insertAuthorizationsRole(role, session);
+			// exporter.insertAuthorizationsRole(role, session);
 		}
-			
+
 		logger.debug("OUT");
 	}
 
-
-	
-	
-	
 	/**
 	 * Close hibernate session and session factory relative to the export
 	 * database
@@ -877,25 +896,21 @@ public class ExportManager implements IExportManager {
 	}
 
 	/*
-	public void exportResources() throws EMFUserError {
-	    logger.debug("IN");
-	    try {
-			SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-			logger.debug("RESOURCE_PATH_JNDI_NAME configuration found: " + config);
-			String resourcePathJndiName = config.getCharacters();
-			Context ctx = new InitialContext();
-			String value = (String)ctx.lookup(resourcePathJndiName);
-			logger.debug("Resource path found from jndi: " + value);
-			File resourcesDir = new File(value);
-			File destDir = new File(pathBaseFolder + "/resources");
-			FileUtilities.copyDirectory(resourcesDir, destDir, true, true, false);
-	    } catch (Exception e) {
-        	logger.error("Error during the copy of maps files" , e);
-        	throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
-	    } finally {
-	    	logger.debug("OUT");
-	    }
-	}
+	 * public void exportResources() throws EMFUserError { logger.debug("IN");
+	 * try { SourceBean config = (SourceBean)
+	 * ConfigSingleton.getInstance().getAttribute
+	 * ("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+	 * logger.debug("RESOURCE_PATH_JNDI_NAME configuration found: " + config);
+	 * String resourcePathJndiName = config.getCharacters(); Context ctx = new
+	 * InitialContext(); String value =
+	 * (String)ctx.lookup(resourcePathJndiName);
+	 * logger.debug("Resource path found from jndi: " + value); File
+	 * resourcesDir = new File(value); File destDir = new File(pathBaseFolder +
+	 * "/resources"); FileUtilities.copyDirectory(resourcesDir, destDir, true,
+	 * true, false); } catch (Exception e) {
+	 * logger.error("Error during the copy of maps files" , e); throw new
+	 * EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
+	 * } finally { logger.debug("OUT"); } }
 	 */
 
 }
