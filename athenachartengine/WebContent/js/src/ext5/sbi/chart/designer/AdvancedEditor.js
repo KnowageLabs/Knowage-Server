@@ -6,6 +6,7 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
 //    title: 'Simple Tree',
     rootVisible: false,
     hideHeaders: true,
+    dataChanged: false,
     plugins: [
         Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
@@ -35,12 +36,23 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
             });
         },
     }],
+    
     setChartData: function(json) {
 	    var formattedJson = Sbi.chart.designer.ChartUtils.convertJsonToTreeFormat(json);
 	    
+	    this.dataChanged = false;
+	    
 	    this.reconfigure(
     		Ext.create('Ext.data.TreeStore',{
-		    	root: formattedJson
+		    	root: formattedJson,
+		    	
+		    	listeners: {
+		    		update: function( store, record, operation, modifiedFieldNames, details, eOpts ) {
+		    			var advancedEditor = store.ownerTree;
+		    			
+		    			advancedEditor.dataChanged = true;
+		    		}
+		    	}
 		    })
 	    );
     },

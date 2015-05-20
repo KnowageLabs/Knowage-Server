@@ -34,10 +34,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     	    }]
     	});
         
-        
         var grid = this.paletteGrid;
-        
-        
 		var item = [{
 	        xtype : 'fieldcontainer',
 	        layout : 'hbox',
