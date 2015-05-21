@@ -18,6 +18,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 
     statics: {
 		jsonTemplate: null,
+		
+		jsonTemplateHistory: [],
+		jsonTemplateHistoryIterator: null,
 	
     	chartServiceManager: null,
     	coreServiceManager: null,
@@ -94,8 +97,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel) {
+					
 			this.docLabel = docLabel;
 			this.jsonTemplate = jsonTemplate;
+			
+			this.jsonTemplateHistory.push(jsonTemplate);
+			this.jsonTemplateHistoryIterator = 0;
+			
 		
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
@@ -240,7 +248,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   				categoriesPicker: this.categoriesPicker,
   				region: 'west'
   			});
-			
 			
 			// Creating step 1 panel
   			this.mainPanel = Ext.create('Ext.panel.Panel', {
@@ -398,6 +405,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 			
 			// tabs integration
+			var cModel = this.cModel;
+			var coreServiceManager = this.coreServiceManager;
 			this.stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
   				width: '100%',
@@ -406,9 +415,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previousTabId: '',
   				tools:[{ 
   		            xtype: 'button',
-  		            text : 'Export as Json',
+  		            text : 'Export as json and save on DB',
   		            handler: function(){
-  		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
+  		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
   		            	
   		            	var parameters = {
   		      				jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
@@ -432,6 +441,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							var advancedEditor = Ext.getCmp('advancedEditor');
 							if(advancedEditor.dataChanged == true) {
 								var json = advancedEditor.getChartData();
+								
+								Sbi.chart.designer.Designer.update(json);
 							}
 						}
 						tabPanel.previousTabId = tab.getId();
@@ -469,109 +480,43 @@ Ext.define('Sbi.chart.designer.Designer', {
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
  			Ext.log({level: 'info'}, 'CHART: IN CONFIGURATION FROM TEMPLATE');
   			/**
-  				START LOADING Y AXES AND X AXIS >>>>>>>>>>>>>>>>>>>>
+  				START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>>
   			*/
-  			
-  			var yCount = 1;
-  			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
-			
-			var leftYAxisesPanel = this.leftYAxisesPanel;
-			var rightYAxisesPanel = this.rightYAxisesPanel;
-			var bottomXAxisesPanel = this.bottomXAxisesPanel;
-  			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
-  				if(axis.type.toUpperCase() == "SERIE"){
-
-  					var isDestructible = (yCount > 1);
-  					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
-  					if(axis.position.toLowerCase() == 'left') {
-
-	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-	  							leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
-	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
-	  					leftYAxisesPanel.add(newColumn);
-
-  					} else {
-	  					var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-	  							rightYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
-	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-	  							Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
-	  					rightYAxisesPanel.add(newColumn);
-	  					rightYAxisesPanel.show();
-	  				}
-	  				yCount++;
-
-  				} else if(axis.type.toUpperCase() == "CATEGORY"){
-					var axisData = (axis && axis != null)? 
-							Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
-								Sbi.chart.designer.ChartUtils.createEmptyAxisData();
-					
-					bottomXAxisesPanel.setAxisData(axisData);
-  				}
-  			});
+  			this.loadAxesAndSeries(jsonTemplate);
   			/**
-				END LOADING Y AXES AND X AXIS <<<<<<<<<<<<<<<<<<<<
-			*/
-			
-			/**
-				START LOADING SERIES >>>>>>>>>>>>>>>>>>>>
-			*/
-  			
-  			Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
-  				var axisAlias = serie.axis;
-  				Ext.Array.each(theStorePool, function(store, index){
-  					if(store.axisAlias === axisAlias) {
-
-  						var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
-  						var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
-  						var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
-  						
-  						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-  							axisName: serie.name,
-  							axisType: 'MEASURE',
-  							
-  							serieAxis: store.axisAlias,
-  							serieGroupingFunction: '',
-  							serieType: serie.type,
-  							serieOrderType: serie.orderType,
-  							serieColumn: serie.column,
-  							serieColor: serie.color,
-  							serieShowValue: serie.showValue,
-  							seriePrecision: serie.precision+'',
-  							seriePrefixChar: serie.prefixChar,
-  							seriePostfixChar: serie.postfixChar,
-  							
-  							serieTooltipTemplateHtml: tooltip.templateHtml,
-  							serieTooltipBackgroundColor: tooltip.backgroundColor,
-  							serieTooltipAlign: jsonTooltipStyle.align,
-  							serieTooltipColor: jsonTooltipStyle.color,
-  							serieTooltipFont: jsonTooltipStyle.font,
-  							serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-  							serieTooltipFontSize: jsonTooltipStyle.fontSize
-  						});
-  						
-  						store.add(newCol);
-  					}
-  				});
-  			});
-
-  			/**
-				END LOADING SERIES <<<<<<<<<<<<<<<<<<<<
+				END LOADING Y AXES, X AXIS AND SERIES <<<<<<<<<<<<<<<<<<<<
 			*/
   			
 			/**
 				START LOADING CATEGORIES >>>>>>>>>>>>>>>>>>>>
 			*/
-			var category = jsonTemplate.CHART.VALUES.CATEGORY;
+			this.loadCategories(jsonTemplate);
+			
+			/**
+				END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<<
+			*/
+  			
+ 			Ext.log({level: 'info'}, 'CHART: OUT CONFIGURATION FROM TEMPLATE');
+  			
+  			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
+ 			
+ 			Ext.log({level: 'info'}, 'CHART: OUT');
+		},
+		
+		loadCategories: function(jsonTemplate) {
 			var categoriesStore = this.categoriesStore;
+			// Reset categoriesStore
+			categoriesStore.loadData({});
+			
+			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 				axisName: category.name != undefined ? category.name: category.column,
 				axisType: 'ATTRIBUTE', 
 				
 				categoryColumn: category.column,
-				categoryGroupby: '', 
-				categoryStacked: '', 
-				categoryStackedType: '', 
+				categoryGroupby: category.groupby, 
+				categoryStacked: category.stacked, 
+				categoryStackedType: category.stackedType, 
 				categoryOrderColumn: category.orderColumn, 
 				categoryOrderType: category.orderType
 			});
@@ -579,7 +524,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 			var groupBy = category.groupby;
 			var groupByNames = category.groupbyNames;
-			
+
 			if(groupBy) {
 				var gbyCategories = groupBy.split(',');
 				var gbyNames = groupByNames ? groupByNames.split(',') : groupBy.split(',');
@@ -595,16 +540,116 @@ Ext.define('Sbi.chart.designer.Designer', {
 					categoriesStore.add(newCat);
 				});
 			}
-
-			/**
-				END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<<
-			*/
-  			
- 			Ext.log({level: 'info'}, 'CHART: OUT CONFIGURATION FROM TEMPLATE');
-  			
-  			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
- 			
- 			Ext.log({level: 'info'}, 'CHART: OUT');
 		},
+		
+		loadAxesAndSeries: function(jsonTemplate) {
+			var leftYAxisesPanel = this.leftYAxisesPanel;
+			var rightYAxisesPanel = this.rightYAxisesPanel;
+			var bottomXAxisesPanel = this.bottomXAxisesPanel;
+			
+			Sbi.chart.designer.ChartColumnsContainerManager.resetContainers();
+
+			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+			var yCount = 1;
+			
+			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
+				if(axis.type.toUpperCase() == "SERIE"){
+
+					var isDestructible = (yCount > 1);
+					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
+					if(axis.position.toLowerCase() == 'left') {
+
+						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
+								leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
+								Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+								Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
+						leftYAxisesPanel.add(newColumn);
+
+					} else {
+						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
+								rightYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
+								Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+								Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
+						rightYAxisesPanel.add(newColumn);
+						rightYAxisesPanel.show();
+					}
+					yCount++;
+
+				} else if(axis.type.toUpperCase() == "CATEGORY"){
+					var axisData = (axis && axis != null)? 
+							Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
+								Sbi.chart.designer.ChartUtils.createEmptyAxisData();
+					
+					bottomXAxisesPanel.setAxisData(axisData);
+				}
+			});
+				
+			Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
+				var axisAlias = serie.axis;
+				Ext.Array.each(theStorePool, function(store, index){
+					if(store.axisAlias === axisAlias) {
+
+						var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
+						var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
+						var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
+						
+						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+							axisName: serie.name,
+							axisType: 'MEASURE',
+							
+							serieAxis: store.axisAlias,
+							serieGroupingFunction: '',
+							serieType: serie.type,
+							serieOrderType: serie.orderType,
+							serieColumn: serie.column,
+							serieColor: serie.color,
+							serieShowValue: serie.showValue,
+							seriePrecision: serie.precision+'',
+							seriePrefixChar: serie.prefixChar,
+							seriePostfixChar: serie.postfixChar,
+							
+							serieTooltipTemplateHtml: tooltip.templateHtml,
+							serieTooltipBackgroundColor: tooltip.backgroundColor,
+							serieTooltipAlign: jsonTooltipStyle.align,
+							serieTooltipColor: jsonTooltipStyle.color,
+							serieTooltipFont: jsonTooltipStyle.font,
+							serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
+							serieTooltipFontSize: jsonTooltipStyle.fontSize
+						});
+						
+						store.add(newCol);
+					}
+				});
+			});
+
+		},
+		
+		update: function(jsonTemplate) {
+			this.jsonTemplate = jsonTemplate;
+	
+			this.jsonTemplateHistory.push(jsonTemplate);
+			var jsonTemplateHistoryLen = this.jsonTemplateHistory.length;
+			this.jsonTemplateHistoryIterator = jsonTemplateHistoryLen - 1;
+
+			this.updateStep1Data(jsonTemplate);
+			this.updateStep2Data(jsonTemplate);
+		},
+		
+		updateStep1Data: function(jsonTemplate) {
+			// Updating step 1 data
+			this.loadCategories(jsonTemplate);
+			this.loadAxesAndSeries(jsonTemplate);
+
+		}, 
+		
+		updateStep2Data: function(jsonTemplate) {
+			// Updating step 2 data
+			this.cModel = 
+			Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
+
+			this.cViewModel.setData({
+			configModel: this.cModel
+			});
+		}, 
     }
 });

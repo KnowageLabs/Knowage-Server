@@ -3,7 +3,6 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
 	requires: [
        'Sbi.chart.designer.ChartUtils'
     ],
-//    title: 'Simple Tree',
     rootVisible: false,
     hideHeaders: true,
     dataChanged: false,
@@ -61,5 +60,6 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
 		var originalJson = Sbi.chart.designer.ChartUtils.convertTreeFormatToJson(formattedJson, true);
 		
 		console.log('originalJson: ', originalJson);
+		return originalJson;
 	}
 });

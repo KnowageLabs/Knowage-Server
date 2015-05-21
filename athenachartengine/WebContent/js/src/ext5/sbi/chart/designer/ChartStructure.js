@@ -1,6 +1,5 @@
 Ext.define('Sbi.chart.designer.ChartStructure', {
     extend: 'Ext.panel.Panel',
-    xtype: 'layout-column',
     requires: [
         'Ext.layout.container.Column'
     ],

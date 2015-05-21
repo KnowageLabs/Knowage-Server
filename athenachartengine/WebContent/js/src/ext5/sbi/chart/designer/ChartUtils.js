@@ -602,7 +602,136 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			} else {
 				return {};
 			}
-		}
+		},
+		
+		clone: function(objToClone) {
+		    if(objToClone === null || typeof(objToClone) !== 'object') {
+		        return objToClone;
+		    }
+		     
+		    var temp = objToClone.constructor();
+		    
+		    for(var key in objToClone) {
+		        if(Object.prototype.hasOwnProperty.call(objToClone, key)) {
+		            temp[key] = ChartUtils.clone(objToClone[key]);
+		        }
+		    }
+		    return temp;
+		},
+		
+		/**
+		 * Creates a new merged object using matching key in case of array merging, 
+		 * keeping intact the original objects <code>target</code> and <code>source</code>.
+		 * 
+		 * @author Benedetto
+		 * @param target
+		 * @param source 
+		 * @param arrayKeys array object containing the keys for array items matching;
+		 */
+		mergeObjects: function(target, source, arrayKeys) {
+			function isArray(o) {
+				return Object.prototype.toString.call(o) == "[object Array]";
+			}
+
+			var item, tItem, o, idx;
+
+			// If either argument is undefined, return the other.
+			// If both are undefined, return undefined.
+			if (typeof source == 'undefined') {
+				return source;
+			} else if (typeof target == 'undefined') {
+				return target;
+			}
+
+			var newTarget = ChartUtils.clone(target);
+			// Assume both are objects and don't care about inherited properties
+			for (var prop in source) {
+				item = source[prop];
+
+				if (typeof item == 'object' && item !== null) {
+
+					if (isArray(item) && item.length) {
+
+						// deal with arrays, will be either array of primitives or array of objects
+						// If primitives
+						if (typeof item[0] != 'object') {
+
+							// if target doesn't have a similar property, just reference it
+							tItem = newTarget[prop];
+							if (!tItem) {
+								newTarget[prop] = item;
+
+							// Otherwise, copy only those members that don't exist on target
+							} else {
+
+								// Create an index of items on target
+								o = {};
+								for (var i=0; i < tItem.length; i++) {
+									o[tItem[i]] = true;
+								}
+
+								// Do check, push missing
+								for (var j=0; j < item.length; j++) {
+
+									if ( !(item[j] in o) ) {
+										tItem.push(item[j]);
+									} 
+								}
+							}
+						} else {
+							// Deal with array of objects
+							// Create index of objects in target object using ID property
+							// Assume if target has same named property then it will be similar array
+							idx = {};
+							tItem = newTarget[prop];
+							
+							var selectedKey = 'id';
+							if(arrayKeys != undefined) {
+								if(!isArray(arrayKeys)) {
+									var array = [];
+									array.push(arrayKeys);
+									arrayKeys = array;
+								}
+							
+								for(keyIndex in arrayKeys) {
+									var key = arrayKeys[keyIndex];
+									var firstItem = item[0];
+									if(firstItem[key] != undefined) {
+										selectedKey = key;
+										break;
+									}
+								}
+							}
+
+							for (var k=0; k < tItem.length; k++) {
+								var tItemK = tItem[k];
+								idx[tItemK[selectedKey]] = tItemK;
+							}
+
+							// Do updates
+							for (var l=0; l < item.length; l++) {
+								// If target doesn't have an equivalent, just add it
+								var itemL = item[l];
+								if (!(itemL[selectedKey] in idx)) {
+									tItem.push(itemL);
+								} else {
+									tItem[l] = ChartUtils.mergeObjects(idx[itemL[selectedKey]], itemL, arrayKeys);
+								}
+							}  
+						}
+					} else {
+						// deal with object
+						newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item, arrayKeys);
+					}
+
+				} else {
+					// item is a primitive, just copy it over
+					newTarget[prop] = item;
+				}
+			}
+			return newTarget;
+		},
+
 
     }
 });

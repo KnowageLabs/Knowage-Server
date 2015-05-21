@@ -61,7 +61,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     	 } , {
                     		 xtype : 'combo',
                     		 queryMode : 'local',
-                    		 value : 'h',
+                    		 value : 'horizontal',
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
@@ -73,10 +73,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     			 fields : [ 'name', 'value' ],
                     			 data : [ {
                     				 name : 'Verticale',
-                    				 value : 'v'
+                    				 value : 'vertical'
                     			 }, {
                     				 name : 'Orizzontale',
-                    				 value : 'h'
+                    				 value : 'horizontal'
                     			 } ]
                     		 }
                     	 }]

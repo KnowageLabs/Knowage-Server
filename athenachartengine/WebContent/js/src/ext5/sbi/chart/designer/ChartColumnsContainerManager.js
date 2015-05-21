@@ -22,6 +22,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		storePool: [],
 		
 		yAxisPool: [],
+		
+		resetContainers: function() {
+			var yAxisPool = this.yAxisPool;
+			var storePool = this.storePool;
+			
+			while(yAxisPool.length > 0) {
+				var yAxis = yAxisPool[0];
+				yAxis.destroy();
+			}
+			
+			this.instanceCounter = 0;
+			this.storePool = [];
+			this.yAxisPool = [];
+		},
 
 		promptChangeSerieStyle: function (store, rowIndex) {
 			var previousInstance = Ext.getCmp('serieStylePopup');
@@ -61,7 +75,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			});
 			
 			Ext.Array.push(ChartColumnsContainerManager.storePool, chartColumnsContainerStore);
-
 			
 			var titleText = (axis && axis.TITLE && axis.TITLE.text &&  axis.TITLE.text != null) ? axis.TITLE.text : '';
 			
@@ -171,6 +184,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		                flex: 8,
 						layout: 'fit',
 						sortable: false,
+						editor: {
+							xtype: 'combobox',
+							displayField: 'label',
+							valueField: 'value',
+							store: [
+		                        ['AVG','AVG'],
+		                        ['COUNT','COUNT'],
+		                        ['MAX','MAX'],
+		                        ['MIN','MIN'],
+		                        ['SUM','SUM']
+		                    ],
+							fields: ['value', 'label']
+						}
+						/*
 		                field: {
 		                    xtype: 'combobox',
 		                    typeAhead: true,
@@ -186,6 +213,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		                    lazyRender: false,
 		                    listClass: 'x-combo-list-small'
 		                }
+						*/
 		            },
 					{
 						menuDisabled: true,
