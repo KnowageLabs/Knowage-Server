@@ -4,6 +4,9 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
     margin: '0 0 5 0',
 	enableColumnHide:true,
 	hideHeaders: true,
+	
+	chartType: '',
+	
 	columns: [
 	    {
 	    	dataIndex: 'iconUrl',
@@ -17,10 +20,26 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	],
 	listeners : {
 		rowclick: function(table, record, tr, rowIndex, e, eOpts ) {
-			var clickHandler = record.get('handler');
-			clickHandler();
+			var selectedType = record.get('type');
+			this.chartType = selectedType;
+		},
+	},
+	
+	setChartType: function(type) {
+		this.chartType = type;
+		
+		// selection on the table
+		for(i = 0; i < this.store.data.length; i++) {
+			var row = this.store.getAt(i);
+			
+			if(type === row.get('type')) {
+				this.getSelectionModel().select(i);
+				break;
+			}
 		}
+	},
+
+	getChartType: function() {
+		return this.chartType;
 	}
 });
-
-

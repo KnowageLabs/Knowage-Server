@@ -83,6 +83,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var result = {};
     		var CHART = {};
     		
+    		CHART['type'] = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+    		
     		var chartData = ChartUtils.getChartDataAsOriginaJson(chartModel);
     		Ext.apply(CHART, chartData);
     		    		
@@ -255,11 +257,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var result = {};
     		result['name'] = mainCategory.get('axisName') != undefined? mainCategory.get('axisName') : mainCategory.get('categoryColumn');
-    		result['column'] = mainCategory.get('categoryColumn');
-    		result['orderColumn'] = mainCategory.get('categoryOrderColumn');
-    		result['orderType'] = mainCategory.get('categoryOrderType');
-    		result['stackedType'] = mainCategory.get('categoryOrderType');
-    		result['stacked'] = mainCategory.get('categoryStacked');
+    		result['column'] = mainCategory.get('categoryColumn') != undefined? mainCategory.get('categoryColumn') : '';
+    		result['orderColumn'] = mainCategory.get('categoryOrderColumn') != undefined? mainCategory.get('categoryOrderColumn') : '';
+    		result['orderType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
+    		result['stackedType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
+    		result['stacked'] = mainCategory.get('categoryStacked') != undefined? mainCategory.get('categoryStacked') : '';
     		
     		var categoriesStoreDataLength = categoriesStore.data.items.length;
     		
@@ -731,7 +733,5 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 			return newTarget;
 		},
-
-
     }
 });
