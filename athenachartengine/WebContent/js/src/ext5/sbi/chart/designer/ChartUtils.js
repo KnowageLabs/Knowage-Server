@@ -723,7 +723,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						}
 					} else {
 						// deal with object
-						newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item, arrayKeys);
+						var tItem = newTarget[prop];
+						if (!tItem) {
+							newTarget[prop] = item;
+						} else {
+							newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item, arrayKeys);
+						}
 					}
 
 				} else {

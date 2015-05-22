@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -45,6 +46,17 @@ public class ChartEngineUtil {
 		String chartType = extractChartType(jsonTemplateFromXML);
 		ChartConfig chartConfig = ChartEngineConfig.getChartLibConf().get(chartType);
 		return chartConfig.getLibraryInitializerPath();
+	}
+
+	public static String getChartLibNamesConfig() {
+		Map<String, ChartConfig> chartLibConf = ChartEngineConfig.getChartLibConf();
+		Set<String> chartTypes = chartLibConf.keySet();
+		String ret = "{";
+		for (String chartType : chartTypes) {
+			ret += chartType + ":'" + chartLibConf.get(chartType).getName() + "',";
+		}
+		ret += "}";
+		return ret;
 	}
 
 	public static String getVelocityModelPath(String chartType) {

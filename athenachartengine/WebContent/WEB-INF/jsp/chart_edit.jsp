@@ -131,8 +131,6 @@ author:
  			Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
 
  			
- 			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
- 			
  			<%-- 
  			
   			initChartLibrary(mainPanel.id);
@@ -148,6 +146,8 @@ author:
  			var jsonTemplate = Ext.JSON.decode('<%=template%>');
  			var datasetLabel  = '<%=datasetLabel%>';
  			
+ 			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
+ 			
  			Sbi.chart.designer.Designer.initialize(
  					sbiExecutionId, 
  					userId, 
@@ -155,8 +155,9 @@ author:
  					serverPort, 
  					docLabel, 
  					jsonTemplate, 
- 					datasetLabel, 
- 					propertiesCatalogueRoot);
+ 					datasetLabel,
+ 					chartLibNamesConfig
+ 					);
 
  		  });
 		

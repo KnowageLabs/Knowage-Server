@@ -18,7 +18,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 
     statics: {
 		jsonTemplate: null,
-		propertiesCatalogue: null,
+		chartLibNamesConfig: null,
 		
 		jsonTemplateHistory: [],
 		jsonTemplateHistoryIterator: null,
@@ -33,21 +33,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 		selectedChartType: '',
 		// chart types
     	chartTypes : [{
+			name: 'Bar chart', 
+			type: 'BAR',
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
+		}, {
 			name: 'Column chart',
 			type: 'COLUMN',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
-		}, {
+		}, {	
 			name: 'Line chart', 
 			type: 'LINE',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_64x64_ico.png',
-		}, {	
+		}, {
 			name: 'Pie chart', 
 			type: 'PIE',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}, {
-			name: 'Bar chart', 
-			type: 'BAR',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
+			name: 'Sun burst chart', 
+			type: 'SUNBURST',
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}],
 		
 		chartTypeStore: null,
@@ -93,15 +97,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 		designerMainPanel: null,
 		
 		
-		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, propertiesCatalogueRoot) {
-					
+		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {
+			
 			this.docLabel = docLabel;
 			this.jsonTemplate = jsonTemplate;
 			
 			this.jsonTemplateHistory.push(jsonTemplate);
 			this.jsonTemplateHistoryIterator = 0;
 			
-		
+			this.chartLibNamesConfig = chartLibNamesConfig;
+			
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			
@@ -121,7 +126,8 @@ Ext.define('Sbi.chart.designer.Designer', {
  				minHeight: 50,
  				store: chartTypeStore
  			});
-			this.chartTypeSelector.setChartType(jsonTemplate.CHART.type);
+			var selectedChartType = jsonTemplate.CHART.type;
+			this.chartTypeSelector.setChartType(selectedChartType);
 			
 			this.columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
@@ -435,8 +441,22 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    	if(tab.getId() == 'advancedEditor') {
 				    		Sbi.chart.designer.Designer.chartTypeColumnSelector.disable();
 				    		
-							var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
-							tab.setChartData(exportedAsOriginalJson);
+				    		var exportedFirstSecondSteps = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
+				    		/*
+				    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+							var selectedPropertiesCatalogue = Sbi.chart.designer.Designer.getPropertiesCatalogueByChartType(chartType);
+							
+							var arrayKeys = ['id', 'alias'];
+							
+							var lastJsonTemplate = Sbi.chart.designer.Designer.jsonTemplate;
+							
+							var overwrittenJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(lastJsonTemplate, exportedFirstSecondSteps);
+							
+							var mergedJson = Sbi.chart.designer.ChartUtils.mergeObjects(selectedPropertiesCatalogue, overwrittenJsonTemplate);
+							*/
+				    		
+							// tab.setChartData(mergedJson);
+				    		tab.setChartData(exportedFirstSecondSteps);
 							
 						} else if(tabPanel.previousTabId == 'advancedEditor') {
 							Sbi.chart.designer.Designer.chartTypeColumnSelector.enable();
@@ -630,7 +650,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 		update: function(jsonTemplate) {
 			this.jsonTemplate = jsonTemplate;
 			
-			this.chartTypeSelector.setChartType(jsonTemplate.CHART.type);
+			var selectedChartType = jsonTemplate.CHART.type;
+			this.chartTypeSelector.setChartType(selectedChartType);
 	
 			this.jsonTemplateHistory.push(jsonTemplate);
 			var jsonTemplateHistoryLen = this.jsonTemplateHistory.length;
@@ -656,5 +677,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 			configModel: this.cModel
 			});
 		}, 
+		
+		getPropertiesCatalogueByChartType: function(chartType) {
+			chartType = chartType.toLowerCase();
+			var library = this.chartLibNamesConfig[chartType];
+			
+			var catalogue = propertiesCatalogue[library];
+			return catalogue;
+		}
     }
 });

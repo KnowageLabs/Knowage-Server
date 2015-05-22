@@ -4,7 +4,7 @@ public class ChartConfig {
 
 	/*
 	 * - Velocity Model properties vmPath="/chart/templates/{name}/" vmName="{type}_chart.vm"
-	 * 
+	 *
 	 * - Library Initializer properties libIniPath="/chartlib/" libIniNAme="{name}Initializer.jspf"
 	 */
 
@@ -38,6 +38,10 @@ public class ChartConfig {
 
 	public String getLibraryInitializerPath() {
 		return this.libIniPath + this.libIniName;
+	}
+
+	public String getLibIniName() {
+		return libIniName;
 	}
 
 	private boolean isEmpty(String s) {

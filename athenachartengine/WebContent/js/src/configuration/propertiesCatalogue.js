@@ -1,11 +1,9 @@
 var propertiesCatalogue = {
 		highcharts414 : {
 			CHART: {
-				newTitle: '',
-				VALUES: {
-					SERIE: {
-						newProperty: ''
-					}
+				TITLE: {
+					useHTML: false,
+					floating: false
 				}
 			}
 		},
