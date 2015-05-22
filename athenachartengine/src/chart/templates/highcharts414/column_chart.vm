@@ -11,6 +11,14 @@
 
 
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+
+
+#set($enableDrilldown = false)
+#if($categorieColumns.groupby)
+	#set($enableDrilldown = true)
+#end
+
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
 #set($seriesMap = {}) ## conversion series metadata to map object
@@ -24,7 +32,13 @@
 #end
 
 
+
 {
+
+	meta: {
+		drilldownEnabled: $enableDrilldown,
+	},
+
     chart: {
     	#set($chartTypeToPrint = 'column')
     	#if($chartType == 'bar')
@@ -52,6 +66,13 @@
     		$styleName: '$chart.style[$styleName]',
     		#end
     	},
+    	
+    	#if($enableDrilldown)
+	    events: {
+			drilldown: handleDrilldown,
+			drillup: handleDrillup
+	    },
+	    #end
     },
     
     colors: [
@@ -118,35 +139,28 @@
 	 	#end
 	#end
 	
-    xAxis:[
-    	 #foreach($xAxisKey in $xAxisList.keySet())
-    	 	#set ($xAxis = $xAxisList[$xAxisKey])
-    	 
-    	 {
-			 title: {
-				 text: '$xAxis.TITLE.text',
-				 style:{
-		        	#foreach($styleName in $xAxis.TITLE.style.keySet())
-		        	$styleName: '$xAxis.TITLE.style[$styleName]',
-		        	#end
-			     },
-			 },
+    xAxis:
+	 #foreach($xAxisKey in $xAxisList.keySet())
+	 	#set ($xAxis = $xAxisList[$xAxisKey])
+	 
+	 {
+		 title: {
+			 text: '$xAxis.TITLE.text',
+			 style:{
+	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+	        	$styleName: '$xAxis.TITLE.style[$styleName]',
+	        	#end
+		     },
+		 },
 
-			 #if($xAxis.position == 'top')
-			 opposite: true,
-			 #end
-			 
-			 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
-    		 categories:
-    		 [
-    		 #foreach($row in $rows)
-    		 	#set ($categorie = $row.get($categorieColumnsMapped))
-    		 	'$categorie', 
-    		 #end
-			 ],
-    	 },
-    	 #end
-    ],
+		 #if($xAxis.position == 'top')
+		 opposite: true,
+		 #end
+		 
+		 type: 'category',
+	 },
+	 #end
+    
     
     yAxis: [
         ## Aggiunta serie 
@@ -201,26 +215,17 @@
     ],
     
     tooltip: {
+    #if($seriePrefix || $seriePostfix)
         formatter: function () {
         	var prefixChar = this.series.options.prefixChar;
         	var postfixChar = this.series.options.postfixChar;
         	
         	var formattedTooltip = 
         		'<b>' + this.x + '</b><br/>' +
-        		(prefixChar == ''? '' : prefixChar + ' ') + this.y + postfixChar + '<br/>' 
+        		(!prefixChar ? '' : prefixChar + ' ') + this.y + (!postfixChar ? '' : postfixChar + ' ') + '<br/>' 
             return formattedTooltip;
         }
-    },
-    plotOptions: {
-        column: {
-            dataLabels: {
-                enabled: true,
-                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                style: {
-                    textShadow: '0 0 3px black'
-                }
-            }
-        }
+    #end
     },
 	
 	series: [
@@ -247,7 +252,12 @@
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerie.column)) ## "Vendite" -> "column_5" ## "Ricavi" -> "column_6"
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
-					$serieValue, 
+					#set ($serieName =  $row.get($categorieColumnsMapped))
+					{
+						drilldown: $enableDrilldown,
+						y: $serieValue,
+						name: '$serieName'
+					},
 				#end
 	    	],
 		#set($seriePrefix = '')
@@ -272,6 +282,13 @@
 	    }, 
 	#end
     ],
+    
+    
+    #if($enableDrilldown)
+    drilldown: {
+        series: []
+    },
+    #end
     
     lang: {
         noData: "$chart.EMPTYMESSAGE.test"

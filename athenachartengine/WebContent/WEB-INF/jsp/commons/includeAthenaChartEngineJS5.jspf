@@ -14,11 +14,22 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-DEBUG -->
 
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Settings.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/overrides/overrides.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Sbi.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Log.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/exceptions/ExceptionHandler.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Format.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/formats/LocaleUtils.js' ></script>
+
 <script type="text/javascript" src="/athenachartengine/js/src/configuration/propertiesCatalogue.js" ></script>
 
 <script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebService.js" ></script>
 <script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebServiceManager.js" ></script>
 <script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebServiceManagerFactory.js" ></script>
+
+<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/viewer/ChartTemplateContainer.js" ></script>
+<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/viewer/HighchartsDrilldownHelper.js" ></script>
 
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartUtils.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AdvancedEditor.js' ></script>

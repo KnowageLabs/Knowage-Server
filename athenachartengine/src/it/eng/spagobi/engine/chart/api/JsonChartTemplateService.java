@@ -9,7 +9,6 @@ import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-import java.io.StringWriter;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,11 +43,28 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData);
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
-			return applyTemplate(velocityTemplate, velocityContext);
+			return ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
 
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+		}
+	}
+
+	@POST
+	@Path("/drilldownHighchart")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@SuppressWarnings("rawtypes")
+	public String drilldownHighchart(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("breadcrumb") String breadcrumb) {
+		try {
+			IDataSet dataSet = getEngineInstance().getDataSet();
+			Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
+			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale());
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
 		}
 	}
 
@@ -58,12 +74,6 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	public String getDatasetMetadata() {
 		IDataSet dataSet = getEngineInstance().getDataSet();
 		return ChartEngineDataUtil.loadMetaData(dataSet);
-	}
-
-	private String applyTemplate(Template velocityTemplate, VelocityContext velocityContext) {
-		StringWriter jsonChartTemplate = new StringWriter();
-		velocityTemplate.merge(velocityContext, jsonChartTemplate);
-		return jsonChartTemplate.toString();
 	}
 
 }

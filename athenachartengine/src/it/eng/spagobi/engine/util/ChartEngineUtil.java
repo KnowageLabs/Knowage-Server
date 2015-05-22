@@ -76,9 +76,11 @@ public class ChartEngineUtil {
 		Map<String, Object> mapTemplate = null;
 		Map<String, Object> mapData = null;
 		try {
-			mapTemplate = convertJsonToMap(jsonToConvert, true);
 			velocityContext.put("datasettransformer", new DataSetTransformer());
-			velocityContext.put("chart", mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
+			if (jsonToConvert != null) {
+				mapTemplate = convertJsonToMap(jsonToConvert, true);
+				velocityContext.put("chart", mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
+			}
 			if (jsonData != null) {
 				mapData = convertJsonToMap(jsonData, false);
 				velocityContext.put("data", mapData);
@@ -160,4 +162,11 @@ public class ChartEngineUtil {
 
 		return result;
 	}
+
+	public static String applyTemplate(Template velocityTemplate, VelocityContext velocityContext) {
+		StringWriter jsonChartTemplate = new StringWriter();
+		velocityTemplate.merge(velocityContext, jsonChartTemplate);
+		return jsonChartTemplate.toString();
+	}
+
 }

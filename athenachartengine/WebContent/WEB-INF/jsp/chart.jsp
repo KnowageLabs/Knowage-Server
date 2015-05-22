@@ -113,10 +113,13 @@ author:
 
 <%@include file="commons/includeExtJS5.jspf"%>
 
-<jsp:include
-	page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" />
-
 <%@include file="commons/includeMessageResource.jspf"%>
+
+<jsp:include
+	page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" >
+	<jsp:param name="template" value="<%=template%>" />
+</jsp:include>
+
 <%@include file="commons/includeAthenaChartEngineJS5.jspf"%>
 
 </head>
@@ -147,14 +150,12 @@ author:
  			var userId = '<%=userId%>';
  			var hostName = '<%=request.getServerName()%>';
  			var serverPort = '<%=request.getServerPort()%>';
- 			var jsonTemplate = '<%=template%>';
- 			var datasetLabel  = '<%=datasetLabel%>';
+ 			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
 
- 			var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			
 			var parameters = {
-				jsonTemplate: jsonTemplate,
+				jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
 			};
 			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 				var chartConf = Ext.JSON.decode(response.responseText, true);

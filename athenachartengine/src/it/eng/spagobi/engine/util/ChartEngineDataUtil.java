@@ -1,5 +1,6 @@
 package it.eng.spagobi.engine.util;
 
+import static it.eng.spagobi.engine.util.ChartEngineUtil.ve;
 import it.eng.qbe.query.Query;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -9,17 +10,22 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +38,13 @@ public class ChartEngineDataUtil {
 
 	@SuppressWarnings({ "rawtypes" })
 	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
-		IDataStore dataStore = loadDatastore(jsonTemplate, dataSet, analyticalDrivers, userProfile, locale);
+		IQuery query = extractAggregatedQueryFromTemplate(jsonTemplate);
+		return loadJsonData(query, dataSet, analyticalDrivers, userProfile, locale);
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
+		IDataStore dataStore = loadDatastore(query, dataSet, analyticalDrivers, userProfile, locale);
 
 		JSONObject dataSetJSON = new JSONObject();
 		try {
@@ -47,12 +59,10 @@ public class ChartEngineDataUtil {
 		}
 
 		return dataSetJSON.toString();
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static IDataStore loadDatastore(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws JSONException {
-		Query q = extractAggregatedQueryFromTemplate(jsonTemplate);
+	private static IDataStore loadDatastore(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws JSONException {
 
 		analyticalDrivers.put("LOCALE", locale);
 		dataSet.setParamsMap(analyticalDrivers);
@@ -64,20 +74,83 @@ public class ChartEngineDataUtil {
 
 		monitorLD.stop();
 
-		IDataStore dataStore = dataSet.getDataStore().aggregateAndFilterRecords(q);
+		IDataStore dataStore = dataSet.getDataStore().aggregateAndFilterRecords(query);
 		return dataStore;
 	}
 
-	private static Query extractAggregatedQueryFromTemplate(String jsonTemplate) throws JSONException {
-		Query q = new Query();
+	@SuppressWarnings("rawtypes")
+	public static String drilldown(String jsonTemplate, String breadcrumb, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale)
+			throws Throwable {
+
+		String result = "";
+
+		JSONObject jo = new JSONObject(jsonTemplate);
+		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
+		String groupBys = category.optString("groupby");
+		String groupByNames = category.optString("groupby");
+
+		JSONArray jaBreadcrumb = new JSONArray(breadcrumb);
+		if (groupBys != null) {
+			String drilldownSerie = "";
+			Map<String, Object> drilldownParams = new LinkedHashMap<>();
+			String drilldownCategory = category.getString("column");
+			String selectedCategory = "";
+			String[] gbys = groupBys.split(",");
+			String[] gbyNames = groupByNames != null ? groupBys.split(",") : gbys;
+			int i;
+			for (i = 0; i < jaBreadcrumb.length(); i++) {
+				JSONObject drilldown = (JSONObject) jaBreadcrumb.get(i);
+
+				String selectedName = drilldown.getString("selectedName");
+				String selectedSerie = drilldown.getString("selectedSerie");
+				String gby = gbys[i];
+				String gbyName = gbyNames[i];
+
+				drilldownParams.put(drilldownCategory, selectedName);
+
+				// Exiting the form we'll have last values
+				if (i == 0)
+					drilldownSerie = selectedSerie;
+				drilldownCategory = gby;
+				selectedCategory = selectedName;
+			}
+
+			IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
+
+			System.out.println(q.toSql("SCHEMA", "TABLE"));
+
+			String jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale);
+			boolean enableNextDrilldown = i < gbys.length;
+
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData);
+
+			velocityContext.put("selectedCategory", selectedCategory);
+			velocityContext.put("drilldownSerie", drilldownSerie);
+			velocityContext.put("drilldownCategory", drilldownCategory);
+			velocityContext.put("enableNextDrilldown", enableNextDrilldown);
+
+			Template velocityTemplate = ve.getTemplate("/chart/templates/highcharts414/drilldowndata.vm");
+			result = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
+		}
+
+		return result;
+	}
+
+	private static IQuery extractAggregatedQueryFromTemplate(String jsonTemplate) throws JSONException {
+		return extractAggregatedQueryFromTemplate(jsonTemplate, false, null, null, null);
+	}
+
+	private static IQuery extractAggregatedQueryFromTemplate(String jsonTemplate, boolean isDrilldown, String drilldownSerie, String drilldownCategory,
+			Map<String, Object> drilldownParams) throws JSONException {
+
+		IQuery q = new Query();
 
 		JSONObject jo = new JSONObject(jsonTemplate);
 		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
 
-		String categoryColumn = category.getString("column");
-		String categoryName = StringUtilities.isNotEmpty(category.optString("name")) ? category.optString("name") : category.getString("column");
-
 		List<JSONObject> seriesList = new LinkedList<>();
+
+		// Select fields
 
 		JSONArray seriesArray = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("SERIE");
 		JSONObject singleSerie = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONObject("SERIE");
@@ -91,14 +164,31 @@ public class ChartEngineDataUtil {
 		}
 
 		for (JSONObject serie : seriesList) {
-
 			String serieColumn = serie.getString("column");
+			String serieName = serie.getString("name");
 			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
 
-			q.addSelectFiled(serieColumn, serieFunction, serieColumn, true, true, false, null, null);
+			if (!isDrilldown || serieName.equalsIgnoreCase(drilldownSerie)) {
+				q.addSelectFiled(serieColumn, serieFunction, serieColumn, true, true, false, null, null);
+			}
 		}
 
+		// Category
+		String categoryColumn = drilldownCategory;
+		if (!isDrilldown) {
+			categoryColumn = category.getString("column");
+		}
 		q.addSelectFiled(categoryColumn, null, categoryColumn, true, true, true, "DESC", null);
+
+		// Where clause
+		if (isDrilldown) {
+			Set<String> keySet = drilldownParams.keySet();
+			for (String colName : keySet) {
+				q.addWhereField(colName, "", false, new String[] { colName }, null, null, null, null, null, "EQUALS TO",
+						new String[] { (String) drilldownParams.get(colName) }, null, null, null, null, null, "AND");
+			}
+		}
+
 		return q;
 	}
 

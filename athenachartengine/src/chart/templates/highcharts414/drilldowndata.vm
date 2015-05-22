@@ -1,0 +1,25 @@
+#set($dataFields=$data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper={})
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+#if($dataField.class.name == 'java.util.LinkedHashMap')
+#set($workAroundNoPrint=$dataColumnsMapper.put($dataField.header.toLowerCase() , $dataField.name))
+#end
+#end
+#set($rows=$data.rows) ## data in table rows
+#set($categorieColumnsMapped=$dataColumnsMapper.get($drilldownCategory.toLowerCase()))
+#set($serieColumnsMapped=$dataColumnsMapper.get($drilldownSerie.toLowerCase()))
+
+{
+	name:	'$selectedCategory',
+	data: [
+#foreach($row in $rows)
+#set ($serieValue=$row.get($serieColumnsMapped))
+#set ($serieName= $row.get($categorieColumnsMapped))
+		{
+			drilldown: $enableNextDrilldown,
+			y: $serieValue,
+			name: '$serieName'
+		},
+#end
+	]
+}
