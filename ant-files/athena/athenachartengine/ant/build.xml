@@ -177,16 +177,49 @@
 		<concat destfile="${build}/${webapp_name}/js/spagobi/chart-all-debug.js" append="true">
 			<filelist dir="${build}/${webapp_name}/js">
 
-				<file name='./src/ext5/sbi/chart/designer/AxisesContainerModel.js' />
-				<file name='./src/ext5/sbi/chart/designer/AxisesContainerStore.js' />
-				<file name='./src/ext5/sbi/chart/designer/AxisesPicker.js' />
-				<file name='./src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' />
-				<file name='./src/ext5/sbi/chart/designer/ChartColumnsContainer.js' />
-				<file name='./src/ext5/sbi/chart/designer/ChartStructure.js' />
-				<file name='./src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' />
+				<file name='./src/ext4/sbi/commons/Settings.js' />
+				<file name='./src/ext4/sbi/overrides/overrides.js' />
+				<file name='./src/ext4/sbi/commons/Sbi.js' />
+				<file name='./src/ext4/sbi/commons/Log.js' />
+				<file name='./src/ext4/sbi/exceptions/ExceptionHandler.js' />
+				<file name='./src/ext4/sbi/commons/Format.js' />
+				<file name='./src/ext4/sbi/formats/LocaleUtils.js' />
+				<file name='./src/configuration/propertiesCatalogue.js' />
 				<file name='./src/ext5/sbi/chart/rest/WebService.js' />
 				<file name='./src/ext5/sbi/chart/rest/WebServiceManager.js' />
 				<file name='./src/ext5/sbi/chart/rest/WebServiceManagerFactory.js' />
+				<file name='./src/ext5/sbi/chart/viewer/ChartTemplateContainer.js' />
+				<file name='./src/ext5/sbi/chart/viewer/HighchartsDrilldownHelper.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartUtils.js' />
+				<file name='./src/ext5/sbi/chart/designer/AdvancedEditor.js' />
+				<file name='./src/ext5/sbi/chart/designer/AxisesContainerModel.js' />
+				<file name='./src/ext5/sbi/chart/designer/AxisesContainerStore.js' />
+				<file name='./src/ext5/sbi/chart/designer/AxisesPicker.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartTypeSelector.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartColumnsContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartColumnsContainerManager.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartAxisesContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartStructure.js' />
+				<file name='./src/ext5/sbi/chart/designer/SerieColorPicker.js' />
+				<file name='./src/ext5/sbi/chart/designer/SerieStylePopup.js' />
+				<file name='./src/ext5/sbi/chart/designer/AxisStylePopup.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartConfigurationModel.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartOrientationCombo.js' />
+				<file name='./src/ext5/sbi/chart/designer/FontAlignCombo.js' />
+				<file name='./src/ext5/sbi/chart/designer/FontCombo.js' />
+				<file name='./src/ext5/sbi/chart/designer/FontDimCombo.js' />
+				<file name='./src/ext5/sbi/chart/designer/FontStyleCombo.js' />
+				<file name='./src/ext5/sbi/chart/designer/ColorPicker.js' />
+				<file name='./src/ext5/sbi/chart/designer/ColorPickerContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/StylePopup.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartConfigurationLegend.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartConfigurationPalette.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartConfigurationMainContainer.js' />
+				<file name='./src/ext5/sbi/chart/designer/ChartConfiguration.js' />
+				<file name='./src/ext5/sbi/chart/designer/Designer.js' />
 				
 			</filelist>
 
