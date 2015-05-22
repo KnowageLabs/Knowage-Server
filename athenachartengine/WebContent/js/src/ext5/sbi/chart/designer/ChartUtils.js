@@ -137,7 +137,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				style += 'fontSize:' + ((axisData.styleFontSize != undefined)? axisData.styleFontSize : '') + ';';
     				axisAsJson['style'] = style;
     				
-    				var MAJORGRID = {}
+    				var MAJORGRID = {};
     				MAJORGRID['interval'] = axisData.majorgridInterval;
     				var majorgridStyle = '';
     				majorgridStyle += 'typeline:' + ((axisData.majorgridStyleTypeline != undefined)? axisData.majorgridStyleTypeline: '') + ';';
@@ -145,7 +145,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				MAJORGRID['style'] = majorgridStyle;
     				axisAsJson['MAJORGRID'] = MAJORGRID;
     				
-    				var MINORGRID = {}
+    				var MINORGRID = {};
     				MINORGRID['interval'] = axisData.minorgridInterval;
     				var minorgridStyle = '';
     				minorgridStyle += 'typeline:' + ((axisData.minorgridStyleTypeline != undefined)? axisData.minorgridStyleTypeline: '') + ';';
@@ -212,7 +212,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     			var axisAlias = store.axisAlias;
     			
     			var storeSerieDataLength = store.data.items.length;
-    			for(rowIndex = 0; rowIndex < storeSerieDataLength; rowIndex++) {
+    			for(var rowIndex = 0; rowIndex < storeSerieDataLength; rowIndex++) {
     				var serieAsMap = store.getAt(rowIndex);
     				var serie = {};
     				
@@ -242,7 +242,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					tooltipStyle += 'fontSize:' + ((serieAsMap.get('serieTooltipFontSize') != undefined)? serieAsMap.get('serieTooltipFontSize'): '') + ';';					
 					TOOLTIP['style'] = tooltipStyle; 
     				
-					serie['TOOLTIP'] = TOOLTIP
+					serie['TOOLTIP'] = TOOLTIP;
     				result.push(serie);
     			}
     		}
@@ -268,7 +268,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var groupby = ''; 
     		var groupbyNames = ''; 
     		if (categoriesStoreDataLength > 1) {
-    			for(rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
+    			for(var rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
     				var categorieItem = categoriesStore.getAt(rowIndex);
     				groupby += categorieItem.get('categoryColumn') != undefined ? categorieItem.get('categoryColumn') + ',' : '';
     				groupbyNames += categorieItem.get('axisName') != undefined ? categorieItem.get('axisName') + ',' : '';
@@ -486,7 +486,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 //						});
 //					} else {
 //					}
-					for(i = 0; i < array.length; i++){
+					for(var i = 0; i < array.length; i++){
 						treeData.push({
 							key: key,
 							expanded: (nivel < 1),
@@ -546,7 +546,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 			
 			if(isWrapper && isWrapper == true) {
-				var root = ChartUtils.convertTreeFormatToJson(data.children[0])
+				var root = ChartUtils.convertTreeFormatToJson(data.children[0]);
 				var rootKey = data.children[0].key;
 				
 				var result = {};
@@ -598,7 +598,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					array.push(ChartUtils.convertTreeFormatToJson(datum));
 				}
 				var result = {};
-				result[data.children[0].key] = array
+				result[data.children[0].key] = array;
 				
 				return result;
 			} else {
