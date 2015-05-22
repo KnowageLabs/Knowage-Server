@@ -29,7 +29,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 		this.chartType = type;
 		
 		// selection on the table
-		for(i = 0; i < this.store.data.length; i++) {
+		for(var i = 0; i < this.store.data.length; i++) {
 			var row = this.store.getAt(i);
 			
 			if(type === row.get('type')) {
