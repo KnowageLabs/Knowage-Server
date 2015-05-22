@@ -147,6 +147,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	private AssociationFile associationFile = null;
 	private String impAssMode = IMPORT_ASS_DEFAULT_MODE;
 
+	private final ArrayList<String> enginesDiscarded = new ArrayList<String>();
+
 	private boolean isSuperadmin = false;
 
 	ImportUtilities importUtilities = null;
@@ -920,6 +922,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				} else {
 					metaLog.log("Could not insert engine " + engine.getName() + " because user is not superadmin");
 					logger.debug("Could not insert engine " + engine.getName() + " because user is not superadmin");
+
+					// trace the engine that will not be inserted because
+					// documetns using it must be ignored!
+					enginesDiscarded.add(engine.getLabel());
 				}
 
 			}
@@ -1841,6 +1847,19 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					continue;
 				} else {
 					existingObjId = (Integer) objIdAss.get(expId);
+				}
+
+				// check that engine is not among the discarder one!
+				if (exportedObj.getSbiEngines() != null) {
+					SbiEngines engine = exportedObj.getSbiEngines();
+					String engineLabel = engine.getLabel();
+					if (enginesDiscarded.contains(engineLabel)) {
+						logger.debug("Exported biobject " + exportedObj.getName() + " is not inserted" + " because its engine " + engineLabel
+								+ " could not be inserted");
+						metaLog.log("Exported biobject " + exportedObj.getName() + " is not inserted" + " because its engine " + engineLabel
+								+ " could not be inserted");
+						continue;
+					}
 				}
 
 				SbiObjects obj = null;
