@@ -72,13 +72,13 @@ public class ChartEngineUtil {
 
 	public static VelocityContext loadVelocityContext(String jsonToConvert, String jsonData) {
 		VelocityContext velocityContext = new VelocityContext();
-		
+
 		Map<String, Object> mapTemplate = null;
 		Map<String, Object> mapData = null;
 		try {
 			mapTemplate = convertJsonToMap(jsonToConvert, true);
 			velocityContext.put("datasettransformer", new DataSetTransformer());
-			velocityContext.put("chart", mapTemplate.get("chart")!=null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
+			velocityContext.put("chart", mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
 			if (jsonData != null) {
 				mapData = convertJsonToMap(jsonData, false);
 				velocityContext.put("data", mapData);
@@ -155,7 +155,7 @@ public class ChartEngineUtil {
 
 		for (String styleKV : styles) {
 			String[] kv = styleKV.split(STYLE_KEY_VALUE_SEPARATOR);
-			result.put(kv[0], kv[1]);
+			result.put(kv[0], kv.length > 1 ? kv[1] : "");
 		}
 
 		return result;
