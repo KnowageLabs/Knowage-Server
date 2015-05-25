@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.AxisesContainerModel',{
     extend: 'Ext.data.Model',
     fields: [
-		'axisName', 'axisType', 
+		'id', 'axisName', 'axisType', 
 		
 		'categoryColumn', 'categoryGroupby', 'categoryStacked', 
 		'categoryStackedType', 'categoryOrderColumn', 'categoryOrderType', 

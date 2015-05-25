@@ -419,7 +419,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previousTabId: '',
   				tools:[{ 
   		            xtype: 'button',
-  		            text : 'Export as json and save on DB',
+  		            text : 'Save',
   		            handler: function(){
   		            	var exportedAsOriginalJson = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
   		            	
@@ -442,21 +442,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    		Sbi.chart.designer.Designer.chartTypeColumnSelector.disable();
 				    		
 				    		var exportedFirstSecondSteps = Sbi.chart.designer.ChartUtils.exportAsJson(cModel);
-				    		/*
+							
 				    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 							var selectedPropertiesCatalogue = Sbi.chart.designer.Designer.getPropertiesCatalogueByChartType(chartType);
 							
-							var arrayKeys = ['id', 'alias'];
-							
 							var lastJsonTemplate = Sbi.chart.designer.Designer.jsonTemplate;
 							
-							var overwrittenJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(lastJsonTemplate, exportedFirstSecondSteps);
+							var appliedProperiesOnOldJson = Sbi.chart.designer.ChartUtils.mergeObjects(selectedPropertiesCatalogue, lastJsonTemplate);
 							
-							var mergedJson = Sbi.chart.designer.ChartUtils.mergeObjects(selectedPropertiesCatalogue, overwrittenJsonTemplate);
-							*/
-				    		
-							// tab.setChartData(mergedJson);
-				    		tab.setChartData(exportedFirstSecondSteps);
+							var overwrittenJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(appliedProperiesOnOldJson, exportedFirstSecondSteps);
+							
+							tab.setChartData(overwrittenJsonTemplate);
 							
 						} else if(tabPanel.previousTabId == 'advancedEditor') {
 							Sbi.chart.designer.Designer.chartTypeColumnSelector.enable();
@@ -617,6 +613,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
 						
 						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+							id: serie.id,
 							axisName: serie.name,
 							axisType: 'MEASURE',
 							
@@ -671,10 +668,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 		updateStep2Data: function(jsonTemplate) {
 			// Updating step 2 data
 			this.cModel = 
-			Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
+				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
 
 			this.cViewModel.setData({
-			configModel: this.cModel
+				configModel: this.cModel
 			});
 		}, 
 		

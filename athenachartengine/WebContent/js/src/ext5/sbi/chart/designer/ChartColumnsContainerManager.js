@@ -103,7 +103,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {
 							if(data.view.id != this.id) {
-								data.records[0] = data.records[0].copy('id' + ChartColumnsContainer.idseed++);   
+								data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);   
 							} 
 						}
 					}

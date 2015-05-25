@@ -9,6 +9,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	convertJsonAxisObjToAxisData: function(axis) {
     		var result = {};
 
+    		result['id'] = axis.id;
     		result['alias'] = axis.alias;
     		result['axisType'] = axis.type;
     		result['position'] = axis.position;
@@ -51,6 +52,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	createEmptyAxisData : function(){
     		var result = {};
 
+    		result['id'] = '';
     		result['alias'] = '';
     		result['axisType'] = '';
     		result['position'] = '';
@@ -124,6 +126,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				var axisData = axis.axisData;
     				var axisAsJson = {};
     				
+    				axisAsJson['id'] = axisData.id;
     				axisAsJson['alias'] = axisData.alias;
     				axisAsJson['type'] = axisData.axisType;
     				axisAsJson['position'] = axisData.position;
@@ -173,6 +176,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var axisData = Ext.getCmp('chartBottomCategoriesContainer').axisData;
 			var axisAsJson = {};
 			
+			axisAsJson['id'] = axisData.id;
 			axisAsJson['alias'] = axisData.alias;
 			axisAsJson['type'] = axisData.axisType;
 			axisAsJson['position'] = axisData.position;
@@ -216,6 +220,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				var serieAsMap = store.getAt(rowIndex);
     				var serie = {};
     				
+    				serie['id'] = serieAsMap.get('id') != undefined? serieAsMap.get('id'): '';;
     				serie['axis'] = axisAlias;
     				serie['color'] = serieAsMap.get('serieColor') != undefined? serieAsMap.get('serieColor'): '';
     				serie['column'] = serieAsMap.get('serieColumn') != undefined? serieAsMap.get('serieColumn'): '';
@@ -300,10 +305,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		for(i in colors){
     			var color = colors[i];
     			var colorElement = {};
-    			colorElement['gradient'] = color[0] != undefined? color[0]: '';
-    			colorElement['name'] = color[1] != undefined? color[1]: '';
-    			colorElement['order'] = color[2] != undefined? color[2]: '';
-    			colorElement['value'] = color[3] != undefined? '#' + color[3]: '';
+    			colorElement['id'] = color[0] != undefined? color[0]: '';
+    			colorElement['gradient'] = color[1] != undefined? color[1]: '';
+    			colorElement['name'] = color[2] != undefined? color[2]: '';
+    			colorElement['order'] = color[3] != undefined? '#' + color[3]: '';
+    			colorElement['value'] = color[4] != undefined? '#' + color[4]: '';
     			
     			COLOR.push(colorElement);
     		}
@@ -406,7 +412,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   			var colorPalette = [];
   			if(jsonTemplate.CHART.COLORPALETTE && jsonTemplate.CHART.COLORPALETTE.COLOR) {
   				Ext.Array.each(jsonTemplate.CHART.COLORPALETTE.COLOR, function(color) {
-  					colorPalette.push([color.gradient,color.name,color.order, Sbi.chart.designer.ChartUtils.removeStartingHash(color.value)]);
+  					colorPalette.push([
+						color.id != undefined ? color.id : '',
+						color.gradient != undefined ? color.gradient : '',
+						color.name,
+						color.order, 
+						Sbi.chart.designer.ChartUtils.removeStartingHash(color.value)]);
   				});
   			}
   			
@@ -558,7 +569,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				return data.value;
 			} else if(data.children && areThereDifferentChildren(data.children)) {
 				var result = {};
-//				var assemblerResult = {};
 				for(i in data.children) {
 					var datum = data.children[i];
 					if(result[datum.key] != undefined) { //Se già è presente un nodo conlo stesso nome
@@ -566,7 +576,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						if(Array.isArray(tempDatum)){
 							var newDatumKeyArray = [];
 							for(j in tempDatum) {
-								newDatumKeyArray.push(tempDatum[i]);
+								newDatumKeyArray.push(tempDatum[j]);
 							}
 							newDatumKeyArray.push(ChartUtils.convertTreeFormatToJson(datum));
 							result[datum.key] = newDatumKeyArray;
@@ -577,7 +587,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							result[datum.key] = newDatumKeyArray;
 						}
 					} else {
-						result[datum.key] = ChartUtils.convertTreeFormatToJson(datum);
+						result[datum.key] = datum.isArray == 0 ? ChartUtils.convertTreeFormatToJson(datum) : [ChartUtils.convertTreeFormatToJson(datum)];
 					}
 				}
 				return result;
@@ -628,9 +638,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * @author Benedetto
 		 * @param target
 		 * @param source 
-		 * @param arrayKeys array object containing the keys for array items matching;
 		 */
-		mergeObjects: function(target, source, arrayKeys) {
+		mergeObjects: function(target, source) {
 			function isArray(o) {
 				return Object.prototype.toString.call(o) == "[object Array]";
 			}
@@ -652,11 +661,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				if (typeof item == 'object' && item !== null) {
 
-					if (isArray(item) && item.length) {
+					if (isArray(item)) {
 
 						// deal with arrays, will be either array of primitives or array of objects
 						// If primitives
-						if (typeof item[0] != 'object') {
+						if (item.length > 0 && typeof item[0] != 'object') {
 
 							// if target doesn't have a similar property, just reference it
 							tItem = newTarget[prop];
@@ -687,38 +696,38 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							idx = {};
 							tItem = newTarget[prop];
 							
-							var selectedKey = 'id';
-							if(arrayKeys != undefined) {
-								if(!isArray(arrayKeys)) {
-									var array = [];
-									array.push(arrayKeys);
-									arrayKeys = array;
-								}
-							
-								for(keyIndex in arrayKeys) {
-									var key = arrayKeys[keyIndex];
-									var firstItem = item[0];
-									if(firstItem[key] != undefined) {
-										selectedKey = key;
-										break;
+							if (!tItem) {
+								newTarget[prop] = item;
+							} else {	
+								for (var k=0; k < tItem.length; k++) {
+									var tItemK = tItem[k];
+									
+									var idValue = tItemK.id;
+									for (var l=0; l < item.length; l++) {
+										var itemL = item[l];
+										if( itemL.id == idValue) {
+											idx[tItemK.id] = tItemK;
+											break;
+										}
 									}
 								}
-							}
-
-							for (var k=0; k < tItem.length; k++) {
-								var tItemK = tItem[k];
-								idx[tItemK[selectedKey]] = tItemK;
-							}
-
-							// Do updates
-							for (var l=0; l < item.length; l++) {
-								// If target doesn't have an equivalent, just add it
-								var itemL = item[l];
-								if (!(itemL[selectedKey] in idx)) {
-									tItem.push(itemL);
-								} else {
-									tItem[l] = ChartUtils.mergeObjects(idx[itemL[selectedKey]], itemL, arrayKeys);
+								
+								while(tItem.length > 0) {
+									tItem.pop();
 								}
+								
+//								tItem = [];
+								// Do updates
+								for (var l=0; l < item.length; l++) {
+									var itemL = item[l];
+									var idxItem = idx[itemL.id];
+									
+									if(idxItem != undefined) {
+										tItem.push(ChartUtils.mergeObjects(idxItem, itemL));
+									} else {
+										tItem.push(itemL);
+									}
+								}  
 							}  
 						}
 					} else {
@@ -727,7 +736,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						if (!tItem) {
 							newTarget[prop] = item;
 						} else {
-							newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item, arrayKeys);
+							newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item);
 						}
 					}
 

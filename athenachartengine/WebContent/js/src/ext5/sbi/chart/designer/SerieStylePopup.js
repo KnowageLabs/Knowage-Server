@@ -181,7 +181,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
 			fieldLabel: 'Precision',
 			selectOnFocus: true,
-			value: (seriePrecision && seriePrecision.trim() != '') ? seriePrecision.trim() : '',
+			value: seriePrecision ? seriePrecision : '',
 			maxValue: 10,
 			minValue: 0
 		});
