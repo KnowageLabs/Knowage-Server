@@ -1,59 +1,59 @@
 /**
- * DocumentsServiceServiceLocator.java
+ * BehaviouralServiceServiceLocator.java
  *
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
-package it.eng.spagobi.sdk.documents.stub;
+package it.eng.spagobi.sdk.behavioural.stub;
 
-public class DocumentsServiceServiceLocator extends org.apache.axis.client.Service implements it.eng.spagobi.sdk.documents.stub.DocumentsServiceService {
+public class BehaviouralServiceServiceLocator extends org.apache.axis.client.Service implements it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceService {
 
-    public DocumentsServiceServiceLocator() {
+    public BehaviouralServiceServiceLocator() {
     }
 
 
-    public DocumentsServiceServiceLocator(org.apache.axis.EngineConfiguration config) {
+    public BehaviouralServiceServiceLocator(org.apache.axis.EngineConfiguration config) {
         super(config);
     }
 
-    public DocumentsServiceServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+    public BehaviouralServiceServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
 
-    // Use to get a proxy class for DocumentsService
-    private java.lang.String DocumentsService_address = "http://localhost:8181/SpagoBI/sdk/DocumentsService";
+    // Use to get a proxy class for BehaviouralService
+    private java.lang.String BehaviouralService_address = "http://localhost:8181/SpagoBI/sdk/BehaviouralService";
 
-    public java.lang.String getDocumentsServiceAddress() {
-        return DocumentsService_address;
+    public java.lang.String getBehaviouralServiceAddress() {
+        return BehaviouralService_address;
     }
 
     // The WSDD service name defaults to the port name.
-    private java.lang.String DocumentsServiceWSDDServiceName = "DocumentsService";
+    private java.lang.String BehaviouralServiceWSDDServiceName = "BehaviouralService";
 
-    public java.lang.String getDocumentsServiceWSDDServiceName() {
-        return DocumentsServiceWSDDServiceName;
+    public java.lang.String getBehaviouralServiceWSDDServiceName() {
+        return BehaviouralServiceWSDDServiceName;
     }
 
-    public void setDocumentsServiceWSDDServiceName(java.lang.String name) {
-        DocumentsServiceWSDDServiceName = name;
+    public void setBehaviouralServiceWSDDServiceName(java.lang.String name) {
+        BehaviouralServiceWSDDServiceName = name;
     }
 
-    public it.eng.spagobi.sdk.documents.stub.DocumentsService getDocumentsService() throws javax.xml.rpc.ServiceException {
+    public it.eng.spagobi.sdk.behavioural.stub.BehaviouralService getBehaviouralService() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
-            endpoint = new java.net.URL(DocumentsService_address);
+            endpoint = new java.net.URL(BehaviouralService_address);
         }
         catch (java.net.MalformedURLException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
-        return getDocumentsService(endpoint);
+        return getBehaviouralService(endpoint);
     }
 
-    public it.eng.spagobi.sdk.documents.stub.DocumentsService getDocumentsService(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public it.eng.spagobi.sdk.behavioural.stub.BehaviouralService getBehaviouralService(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            it.eng.spagobi.sdk.documents.stub.DocumentsServiceSoapBindingStub _stub = new it.eng.spagobi.sdk.documents.stub.DocumentsServiceSoapBindingStub(portAddress, this);
-            _stub.setPortName(getDocumentsServiceWSDDServiceName());
+            it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceSoapBindingStub _stub = new it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceSoapBindingStub(portAddress, this);
+            _stub.setPortName(getBehaviouralServiceWSDDServiceName());
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
@@ -61,8 +61,8 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
         }
     }
 
-    public void setDocumentsServiceEndpointAddress(java.lang.String address) {
-        DocumentsService_address = address;
+    public void setBehaviouralServiceEndpointAddress(java.lang.String address) {
+        BehaviouralService_address = address;
     }
 
     /**
@@ -72,9 +72,9 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
      */
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
-            if (it.eng.spagobi.sdk.documents.stub.DocumentsService.class.isAssignableFrom(serviceEndpointInterface)) {
-                it.eng.spagobi.sdk.documents.stub.DocumentsServiceSoapBindingStub _stub = new it.eng.spagobi.sdk.documents.stub.DocumentsServiceSoapBindingStub(new java.net.URL(DocumentsService_address), this);
-                _stub.setPortName(getDocumentsServiceWSDDServiceName());
+            if (it.eng.spagobi.sdk.behavioural.stub.BehaviouralService.class.isAssignableFrom(serviceEndpointInterface)) {
+                it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceSoapBindingStub _stub = new it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceSoapBindingStub(new java.net.URL(BehaviouralService_address), this);
+                _stub.setPortName(getBehaviouralServiceWSDDServiceName());
                 return _stub;
             }
         }
@@ -94,8 +94,8 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
             return getPort(serviceEndpointInterface);
         }
         java.lang.String inputPortName = portName.getLocalPart();
-        if ("DocumentsService".equals(inputPortName)) {
-            return getDocumentsService();
+        if ("BehaviouralService".equals(inputPortName)) {
+            return getBehaviouralService();
         }
         else  {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);
@@ -105,7 +105,7 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("urn:spagobisdkdocuments", "DocumentsServiceService");
+        return new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "BehaviouralServiceService");
     }
 
     private java.util.HashSet ports = null;
@@ -113,7 +113,7 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("urn:spagobisdkdocuments", "DocumentsService"));
+            ports.add(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "BehaviouralService"));
         }
         return ports.iterator();
     }
@@ -123,8 +123,8 @@ public class DocumentsServiceServiceLocator extends org.apache.axis.client.Servi
     */
     public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
         
-if ("DocumentsService".equals(portName)) {
-            setDocumentsServiceEndpointAddress(address);
+if ("BehaviouralService".equals(portName)) {
+            setBehaviouralServiceEndpointAddress(address);
         }
         else 
 { // Unknown Port Name

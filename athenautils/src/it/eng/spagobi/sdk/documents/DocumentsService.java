@@ -21,40 +21,41 @@ import it.eng.spagobi.sdk.exceptions.SDKException;
 import java.util.HashMap;
 
 public interface DocumentsService {
-	
+
 	SDKDocument[] getDocumentsAsList(String type, String state, String folderPath);
 
 	SDKDocument getDocumentById(Integer id);
 
 	SDKDocument getDocumentByLabel(String label);
-	
+
 	SDKFunctionality getDocumentsAsTree(String initialPath);
-	
+
 	String[] getCorrectRolesForExecution(Integer documentId) throws NonExecutableDocumentException;
-	
+
 	SDKDocumentParameter[] getDocumentParameters(Integer documentId, String roleName) throws NonExecutableDocumentException;
-	
+
 	SDKDocumentParameterValue[] getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException;
-	
+
 	SDKDocumentParameterValue[] getDefaultValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException;
-	
+
 	SDKTemplate downloadTemplate(Integer documentId) throws NotAllowedOperationException;
-	
+
 	void uploadTemplate(Integer documentId, SDKTemplate template) throws NotAllowedOperationException;
-	
+
 	Integer saveNewDocument(SDKDocument document, SDKTemplate template, Integer functionalityId) throws NotAllowedOperationException;
 
-    SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType) throws NonExecutableDocumentException, NotAllowedOperationException, InvalidParameterValue, MissingParameterValue;
-    
-    void uploadDatamartTemplate(SDKTemplate template, SDKTemplate calculatedFields, String dataSourceLabel, String categoryLabel);
-    
-    void uploadDatamartModel(SDKTemplate template);
+	SDKExecutedDocumentContent executeDocument(SDKDocument document, SDKDocumentParameter[] parameters, String roleName, String outputType)
+			throws NonExecutableDocumentException, NotAllowedOperationException, InvalidParameterValue, MissingParameterValue;
 
-    SDKTemplate downloadDatamartFile(String folderName, String fileName);
-    
-    SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName , String fileModelName);
-    
-    HashMap<String, String> getAllDatamartModels() throws NotAllowedOperationException;
-    
-    void uploadMondrianSchema(SDKSchema schema) throws NotAllowedOperationException, SDKException;
+	void uploadDatamartTemplate(SDKTemplate template, SDKTemplate calculatedFields, String dataSourceLabel, String categoryLabel);
+
+	void uploadDatamartModel(SDKTemplate template);
+
+	SDKTemplate downloadDatamartFile(String folderName, String fileName);
+
+	SDKTemplate downloadDatamartModelFiles(String folderName, String fileDatamartName, String fileModelName);
+
+	HashMap<String, String> getAllDatamartModels() throws NotAllowedOperationException;
+
+	void uploadMondrianSchema(SDKSchema schema) throws NotAllowedOperationException, SDKException;
 }
