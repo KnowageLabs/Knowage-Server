@@ -196,7 +196,7 @@ Sbi.commons.Format = function(){
 
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.commons.Format.boolean(v, format);
+                return Sbi.commons.Format['boolean'](v, format);
             };
         }
 
