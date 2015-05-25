@@ -18,6 +18,12 @@ var propertiesCatalogue = {
 				VALUES: {
 					CATEGORY: {
 						customProperty: 42
+					},
+					SERIE:{
+						pointInterval: 1,
+						showInLegend: true,
+						animation: true,
+						borderColor: "#FFFFFF",
 					}
 				}
 			}

@@ -657,8 +657,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var newTarget = ChartUtils.clone(target);
 			// Assume both are objects and don't care about inherited properties
 			for (var prop in source) {
-				item = source[prop];
 
+				item = source[prop];
 				if (typeof item == 'object' && item !== null) {
 
 					if (isArray(item)) {
@@ -672,17 +672,17 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							if (!tItem) {
 								newTarget[prop] = item;
 
-							// Otherwise, copy only those members that don't exist on target
 							} else {
+							// Otherwise, copy only those members that don't exist on target
 
 								// Create an index of items on target
 								o = {};
-								for (var i=0; i < tItem.length; i++) {
+								for (var i = 0; i < tItem.length; i++) {
 									o[tItem[i]] = true;
 								}
 
 								// Do check, push missing
-								for (var j=0; j < item.length; j++) {
+								for (var j = 0; j < item.length; j++) {
 
 									if ( !(item[j] in o) ) {
 										tItem.push(item[j]);
@@ -698,7 +698,18 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							
 							if (!tItem) {
 								newTarget[prop] = item;
-							} else {	
+							} else {
+								var forcedTItemArray = [];
+								if( !isArray(tItem)) {
+									//same length of source array
+									for(var itemIndex in item) {
+										var mixedMergedObj = ChartUtils.mergeObjects(tItem, item[itemIndex]);
+										forcedTItemArray.push(mixedMergedObj);
+									}
+									
+									tItem = forcedTItemArray;
+								}
+								
 								for (var k=0; k < tItem.length; k++) {
 									var tItemK = tItem[k];
 									
@@ -716,7 +727,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 									tItem.pop();
 								}
 								
-//								tItem = [];
 								// Do updates
 								for (var l=0; l < item.length; l++) {
 									var itemL = item[l];
@@ -727,7 +737,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 									} else {
 										tItem.push(itemL);
 									}
-								}  
+								}
+								
+								newTarget[prop] = tItem;
 							}  
 						}
 					} else {
