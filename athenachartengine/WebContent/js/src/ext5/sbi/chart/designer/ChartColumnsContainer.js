@@ -6,13 +6,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
         'Sbi.chart.designer.AxisesContainerModel'
     ],
 	statics: {
-        idseed: 1,
+        idseed: 1
 	},
 	
     config:{
 		minHeight: 150,
 		flex: 1,
-		axisData: {},
+		axisData: {}
 		
     },
     model: Sbi.chart.designer.AxisesContainerModel, 

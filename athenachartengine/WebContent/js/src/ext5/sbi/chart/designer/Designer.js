@@ -33,7 +33,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		selectedChartType: '',
 		// chart types
     	chartTypes : [{
-			name: 'Bar chart', 
+			name: LN('sbi.chartengine.designer.charttype.bar'), 
 			type: 'BAR',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
 		}, {
@@ -47,10 +47,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 		}, {
 			name: 'Pie chart', 
 			type: 'PIE',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: 'Sun burst chart', 
-			type: 'SUNBURST',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}],
 		

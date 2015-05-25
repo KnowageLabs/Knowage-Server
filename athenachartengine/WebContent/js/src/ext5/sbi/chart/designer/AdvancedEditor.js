@@ -33,7 +33,7 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
                     selectOnFocus: true
                 }
             });
-        },
+        }
     }],
     
     setChartData: function(json) {
