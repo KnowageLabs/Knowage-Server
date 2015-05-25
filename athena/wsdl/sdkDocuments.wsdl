@@ -388,6 +388,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       <wsdl:part name="in2" type="soapenc:string"/>
 
+      <wsdl:part name="in3" type="soapenc:string"/>
+
    </wsdl:message>
 
    <wsdl:message name="getDocumentsAsListRequest">
@@ -1068,7 +1070,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
       <wsdl:port binding="impl:DocumentsServiceSoapBinding" name="DocumentsService">
 
-         <wsdlsoap:address location="http://localhost:8080/SpagoBI/sdk/DocumentsService"/>
+         <wsdlsoap:address location="http://localhost:8181/SpagoBI/sdk/DocumentsService"/>
 
       </wsdl:port>
 

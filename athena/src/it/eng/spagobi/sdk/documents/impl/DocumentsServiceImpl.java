@@ -1747,4 +1747,5 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		toReturn.setCreationDate(new Date());
 		return toReturn;
 	}
+
 }

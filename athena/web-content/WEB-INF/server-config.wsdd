@@ -137,8 +137,7 @@
   <parameter name="wsdlTargetNamespace" value="urn:spagobisdktestconnection"/>
   <parameter name="wsdlServiceElement" value="TestConnectionServiceService"/>
  </service>
-
-<service name="DocumentsService" provider="java:RPC">
+  <service name="DocumentsService" provider="java:RPC">
   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">
     <parameter name="passwordCallbackClass" value="it.eng.spagobi.sdk.callbacks.ServerPWCallback"/>
@@ -177,9 +176,7 @@
   <arrayMapping innerType="ns36:SDKFunctionality" languageSpecificType="java:it.eng.spagobi.sdk.documents.bo.SDKFunctionality[]" qname="ns35:ArrayOf_tns2_SDKFunctionality" xmlns:ns35="urn:spagobisdkdocuments" xmlns:ns36="http://bo.documents.sdk.spagobi.eng.it"/>
   <arrayMapping innerType="ns38:SDKConstraint" languageSpecificType="java:it.eng.spagobi.sdk.documents.bo.SDKConstraint[]" qname="ns37:ArrayOf_tns2_SDKConstraint" xmlns:ns37="urn:spagobisdkdocuments" xmlns:ns38="http://bo.documents.sdk.spagobi.eng.it"/>
  </service>
-
-
- <service name="ImportExportSDKService" provider="java:RPC">
+  <service name="ImportExportSDKService" provider="java:RPC">
   <requestFlow>
    <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">
     <parameter name="passwordCallbackClass" value="it.eng.spagobi.sdk.callbacks.ServerPWCallback"/>
@@ -198,7 +195,27 @@
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns39:NotAllowedOperationException" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException" xmlns:ns39="http://exceptions.sdk.spagobi.eng.it"/>
   <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns40:SDKFile" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.importexport.bo.SDKFile" xmlns:ns40="http://bo.importexport.sdk.spagobi.eng.it"/>
  </service>
- <service name="SbiDocumentService" provider="java:RPC">
+  <service name="BehaviouralService" provider="java:RPC">
+  <requestFlow>
+   <handler type="java:org.apache.ws.axis.security.WSDoAllReceiver">
+    <parameter name="passwordCallbackClass" value="it.eng.spagobi.sdk.callbacks.ServerPWCallback"/>
+    <parameter name="action" value="UsernameToken"/>
+   </handler>
+  </requestFlow>
+  <parameter name="wsdlServicePort" value="BehaviouralService"/>
+  <parameter name="className" value="it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceSoapBindingSkeleton"/>
+  <parameter name="typeMappingVersion" value="1.2"/>
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="wsdlServiceElement" value="BehaviouralServiceService"/>
+  <parameter name="wsdlTargetNamespace" value="urn:spagobisdkbehavioural"/>
+  <parameter name="wsdlPortType" value="BehaviouralService"/>
+  <parameter name="scope" value="Application"/>
+  <parameter name="schemaUnqualified" value="http://exceptions.sdk.spagobi.eng.it,urn:spagobisdkbehavioural,http://bo.behavioural.sdk.spagobi.eng.it"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns14:NotAllowedOperationException" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException" xmlns:ns14="http://exceptions.sdk.spagobi.eng.it"/>
+  <typeMapping deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" qname="ns15:SDKAttribute" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" type="java:it.eng.spagobi.sdk.behavioural.bo.SDKAttribute" xmlns:ns15="http://bo.behavioural.sdk.spagobi.eng.it"/>
+  <arrayMapping innerType="ns17:SDKAttribute" languageSpecificType="java:it.eng.spagobi.sdk.behavioural.bo.SDKAttribute[]" qname="ns16:ArrayOf_tns2_SDKAttribute" xmlns:ns16="urn:spagobisdkbehavioural" xmlns:ns17="http://bo.behavioural.sdk.spagobi.eng.it"/>
+ </service>
+  <service name="SbiDocumentService" provider="java:RPC">
   <parameter name="wsdlServicePort" value="SbiDocumentService"/>
   <parameter name="className" value="it.eng.spagobi.services.sbidocument.stub.SbiDocumentServiceSoapBindingSkeleton"/>
   <parameter name="typeMappingVersion" value="1.2"/>
