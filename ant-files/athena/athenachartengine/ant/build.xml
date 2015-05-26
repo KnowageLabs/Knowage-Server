@@ -147,8 +147,10 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   ATTIVITA' SPECIFICHE PER COMPRESSIONE CODICE JS                              -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-	<target name="production" depends="create-production">
+	<target name="production" >
+	</target>
+	
+	<target name="productionDisabled" depends="create-production">
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeAthenaChartEngineJS5.jspf">
 			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
 			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
