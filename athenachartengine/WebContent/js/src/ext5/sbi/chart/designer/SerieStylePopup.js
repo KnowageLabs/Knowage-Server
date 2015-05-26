@@ -71,7 +71,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			
 		this.tooltipFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
-			title: 'Tooltip',
+			title: LN('sbi.chartengine.designer.tooltip'),
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
 				labelWidth : 115,
