@@ -394,14 +394,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
   			});
 			this.chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
-  				title: LN('sbi.chartengine.designer.step1'),
+  				title: LN('sbi.chartengine.designer.step2'),
   				viewModel: this.cViewModel
   			});
 
 			// Creating step 3 panel
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
   				id: 'advancedEditor',
-  				title: LN('sbi.chartengine.designer.step1')
+  				title: LN('sbi.chartengine.designer.step3')
   			});
 			
 			// tabs integration

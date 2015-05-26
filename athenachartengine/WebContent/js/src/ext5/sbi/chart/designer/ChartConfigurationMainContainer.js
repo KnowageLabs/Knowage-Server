@@ -59,7 +59,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
     		viewModel: this.viewModel,
-    		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),//'Colore sfondo',
+    		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
        		fieldBind: '{configModel.backgroundColor}'
        	});
         
