@@ -8,7 +8,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
   	    'Sbi.chart.designer.TypeLineCombo'
   	],
 	id: 'axisStylePopup',
-	title: 'Axis style configuration',
+	title: LN('sbi.chartengine.axisstylepopup.title'),
     layout: 'border',
     bodyPadding: 5,
 	floating: true,
@@ -92,7 +92,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.majorgridFieldSet = Ext.create('Ext.form.FieldSet', {
 				collapsible: true,
 				collapsed : true,
-				title: 'Major grid',
+				title: LN('sbi.chartengine.axisstylepopup.majorgrid'),
 				defaults: {anchor: '100%',
 					labelAlign : 'left',
 					labelWidth : 115
@@ -104,7 +104,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.minorgridFieldSet = Ext.create('Ext.form.FieldSet', {
 				collapsible: true,
 				collapsed : true,
-				title: 'Minor grid',
+				title: LN('sbi.chartengine.axisstylepopup.minorgrid'),
 				defaults: {anchor: '100%',
 					labelAlign : 'left',
 					labelWidth : 115
@@ -116,7 +116,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		var styleRotate = this.axisData.styleRotate;
 		this.styleRotateNumberField = Ext.create('Ext.form.field.Number', {
-			fieldLabel: 'Rotate',
+			fieldLabel: LN('sbi.chartengine.axisstylepopup.rotate'),
 			selectOnFocus: true,
 			value: styleRotate ? '' + styleRotate : '',
 			maxValue: 180,
@@ -127,7 +127,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var styleAlign = this.axisData.styleAlign;
 		this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 			value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
-				fieldLabel : 'Align',
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
 		});
 		this.axisFieldSet.add(this.styleAlignComboBox);
 		
@@ -140,7 +140,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
                 	id: 'styleColorField',
 					fieldStyle : (axisStyleColor && axisStyleColor.trim() != '') ? 
 						'background-image: none; background-color: ' + axisStyleColor.trim() : '',
-                    fieldLabel : 'Color',
+                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
 					labelWidth : 115,
                     readOnly : true,
 					flex: 15,
@@ -175,21 +175,21 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var styleFont = this.axisData.styleFont;
 		this.styleFontComboBox = Ext.create('Sbi.chart.designer.FontCombo', {
 			value: (styleFont && styleFont.trim() != '') ? styleFont.trim() : '',
-			fieldLabel : 'Font',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.font'),
 		});
 		this.axisFieldSet.add(this.styleFontComboBox);
 
 		var styleFontWeigh = this.axisData.styleFontWeigh;
 		this.styleFontWeighComboBox = Ext.create('Sbi.chart.designer.FontStyleCombo', {
 			value: (styleFontWeigh && styleFontWeigh.trim() != '') ? styleFontWeigh.trim() : '',
-			fieldLabel : 'Font weight',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontweight'),
 		});
 		this.axisFieldSet.add(this.styleFontWeighComboBox);
 		
 		var styleFontSize = this.axisData.styleFontSize;
 		this.styleFontSizeComboBox = Ext.create('Sbi.chart.designer.FontDimCombo', {
 			value: (styleFontSize && styleFontSize.trim() != '') ? styleFontSize.trim() : '',
-			fieldLabel : 'Font size',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontsize'),
 		});
 		this.axisFieldSet.add(this.styleFontSizeComboBox);
 		
@@ -206,7 +206,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			var majorgridStyleTypeline = this.axisData.majorgridStyleTypeline;
 			this.majorgridStyleTypelineComboBox = Ext.create('Sbi.chart.designer.TypeLineCombo', {
 				value: (majorgridStyleTypeline && majorgridStyleTypeline.trim() != '') ? majorgridStyleTypeline.trim() : '',
-				fieldLabel : 'Type line',
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.typeline'),
 			});
 			this.majorgridFieldSet.add(this.majorgridStyleTypelineComboBox);
 			
@@ -219,7 +219,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 	                	id: 'majorgridStyleColorColorField',
 						fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
 							'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
-	                    fieldLabel : 'Color',
+	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
 						labelWidth : 115,
 	                    readOnly : true,
 						flex: 15,
@@ -253,7 +253,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			
 			var minorgridInterval = '' + this.axisData.minorgridInterval;
 			this.minorgridIntervalNumberField = Ext.create('Ext.form.field.Number', {
-				fieldLabel: 'Interval',
+				fieldLabel: LN('sbi.chartengine.axisstylepopup.interval'),
 				selectOnFocus: true,
 				value: (minorgridInterval && minorgridInterval.trim() != '') ? minorgridInterval.trim() : '',
 				minValue: 0,
@@ -263,7 +263,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			var minorgridStyleTypeline = this.axisData.minorgridStyleTypeline;
 			this.minorgridStyleTypelineComboBox = Ext.create('Sbi.chart.designer.TypeLineCombo', {
 				value: (minorgridStyleTypeline && minorgridStyleTypeline.trim() != '') ? minorgridStyleTypeline.trim() : '',
-				fieldLabel : 'Type line',
+				fieldLabel : LN('sbi.chartengine.axisstylepopup.typeline'),
 			});
 			this.minorgridFieldSet.add(this.minorgridStyleTypelineComboBox);
 			
@@ -276,7 +276,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 	                	id: 'minorgridStyleColorColorField',
 						fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
 							'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
-	                    fieldLabel : 'Color',
+	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
 						labelWidth : 115,
 	                    readOnly : true,
 						flex: 15,
@@ -312,7 +312,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var titleStyleAlign = this.axisData.titleStyleAlign;
 		this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 			value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
-			fieldLabel : 'Align',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
 		});
 		this.titleFieldSet.add(this.titleStyleAlignComboBox);
 		
@@ -325,7 +325,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
                 	id: 'titleStyleColorColorField',
 					fieldStyle : (titleStyleColor && titleStyleColor.trim() != '') ? 
 						'background-image: none; background-color: ' + titleStyleColor.trim() : '',
-                    fieldLabel : 'Color',
+                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
 					labelWidth : 115,
                     readOnly : true,
 					flex: 15,
@@ -360,21 +360,21 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var titleStyleFont = this.axisData.titleStyleFont;
 		this.titleStyleFontComboBox = Ext.create('Sbi.chart.designer.FontCombo', {
 			value: (titleStyleFont && titleStyleFont.trim() != '') ? titleStyleFont.trim() : '',
-			fieldLabel : 'Font',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.font'),
 		});
 		this.titleFieldSet.add(this.titleStyleFontComboBox);
 		
 		var titleStyleFontWeigh = this.axisData.titleStyleFontWeigh;
 		this.titleStyleFontWeighComboBox = Ext.create('Sbi.chart.designer.FontStyleCombo', {
 			value: (titleStyleFontWeigh && titleStyleFontWeigh.trim() != '') ? titleStyleFontWeigh.trim() : '',
-			fieldLabel : 'Font weight',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontweight'),
 		});
 		this.titleFieldSet.add(this.titleStyleFontWeighComboBox);
 		
 		var titleStyleFontSize = this.axisData.titleStyleFontSize;
 		this.titleStyleFontSizeComboBox = Ext.create('Sbi.chart.designer.FontDimCombo', {
 			value: (titleStyleFontSize && titleStyleFontSize.trim() != '') ? titleStyleFontSize.trim() : '',
-			fieldLabel : 'Font size',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontsize'),
 		});
 		this.titleFieldSet.add(this.titleStyleFontSizeComboBox);
 
@@ -454,12 +454,12 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 	items: [],
 	// Cancel and Save buttons
     buttons: [{
-        text: 'Cancel',
+        text: LN('sbi.generic.cancel'),
         handler: function(btn, elem2 ) {
 			Ext.getCmp('axisStylePopup').destroy();
         }
     }, {
-        text: 'Save',
+        text: LN('sbi.generic.save'),
         handler: function() {
 			Ext.getCmp('axisStylePopup').writeConfigsAndExit();
         }

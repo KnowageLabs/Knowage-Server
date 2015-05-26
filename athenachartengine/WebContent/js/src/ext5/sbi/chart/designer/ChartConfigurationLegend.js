@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	extend : 'Ext.panel.Panel',
 	columnWidth : 0.7,
-	title : 'Legenda',
+	title : LN('sbi.chartengine.configuration.legend'),
 	id : 'page2Legend',
 	bodyPadding : 10,
 	items : [],
@@ -12,7 +12,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
         this.viewModel = config.viewModel;
         
         this.stylePanelLegend = Ext.create('Sbi.chart.designer.StylePopup', {
-    	    title:'Stile Legenda',
+    	    title:LN('sbi.chartengine.configuration.legendstyle'),
     	    viewModel: this.viewModel,
     	    bindFontAlign:'{configModel.legendAlign}',
     	    bindFont:'{configModel.legendFont}',
@@ -38,7 +38,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
-                    		 fieldLabel : 'Posizione',
+                    		 fieldLabel : LN('sbi.chartengine.configuration.position'),
                     		 bind : '{configModel.legendPosition}',
                     		 displayField : 'name',
                     		 valueField : 'value',
@@ -65,7 +65,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
-                    		 fieldLabel : 'Layout',
+                    		 fieldLabel : LN('sbi.chartengine.configuration.layout'),
                     		 bind : '{configModel.legendLayout}',
                     		 displayField : 'name',
                     		 valueField : 'value',
@@ -93,20 +93,20 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 bind :'{configModel.legnendFloating}', 
                     		 id: 'floating',
                     		 labelSeparator: '',
-                    		 fieldLabel: 'Floating'
+                    		 fieldLabel: LN('sbi.chartengine.configuration.floating')
                     	 },{
                     		 xtype : 'textfield',
                     		 bind : '{configModel.legendX}',
-                    		 fieldLabel : 'X',
+                    		 fieldLabel : LN('sbi.chartengine.configuration.x'),
                     		 maxWidth:'50'
                     	 },{
                     		 xtype : 'textfield',
                     		 bind : '{configModel.legendY}',
-                    		 fieldLabel : 'Y',
+                    		 fieldLabel : LN('sbi.chartengine.configuration.y'),
                     		 maxWidth:'50'
                     	 },{
                     		 xtype : 'button',
-                    		 text: 'St',
+                    		 text: LN('sbi.chartengine.configuration.stylebutton'),
                     		 handler: function(){
                     			 stylePanelLegend.show();
                     		 }

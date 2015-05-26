@@ -5,16 +5,16 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 	triggerAction : 'all',
 	forceSelection : true,
 	editable : false,
-	fieldLabel : 'Verso',
+	fieldLabel : LN('sbi.chartengine.configuration.orientation'),
 	displayField : 'name',
 	valueField : 'value',
 	store : {
 		fields : [ 'name', 'value' ],
 		data : [ {
-			name : 'Verticale',
+			name : LN('sbi.chartengine.configuration.orientation.v'),
 			value : 'vertical'
 		}, {
-			name : 'Orizzontale',
+			name : LN('sbi.chartengine.configuration.orientation.h'),
 			value : 'horizontal'
 		} ]
 	}

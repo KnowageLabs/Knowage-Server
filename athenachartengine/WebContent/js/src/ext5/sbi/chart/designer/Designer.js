@@ -37,15 +37,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 			type: 'BAR',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
 		}, {
-			name: 'Column chart',
+			name: LN('sbi.chartengine.designer.charttype.column'),
 			type: 'COLUMN',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
 		}, {	
-			name: 'Line chart', 
+			name: LN('sbi.chartengine.designer.charttype.line'), 
 			type: 'LINE',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_64x64_ico.png',
 		}, {
-			name: 'Pie chart', 
+			name: LN('sbi.chartengine.designer.charttype.pie'), 
 			type: 'PIE',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}],
@@ -203,7 +203,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				},
   				columns: [
   					{
-  						text: 'Measures list', 
+  						text: LN('sbi.chartengine.designer.measureslist'), 
   						dataIndex: 'serieColumn',
   						sortable: false,
   						flex: 1
@@ -234,7 +234,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				},
   				columns: [
   					{
-  						text: 'Elenco attributi', 
+  						text: LN('sbi.chartengine.designer.attributeslist'), 
   						dataIndex: 'categoryColumn',
   						sortable: false,
   						flex: 1
@@ -322,7 +322,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					// STYLE POPUP
 					{
 					    type:'gear',
-					    tooltip: 'Set axis style',
+					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var thisChartColumnsContainer = panelHeader.ownerCt;
@@ -338,12 +338,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    
 				hideHeaders: true,
   				columns: [{
-					text: 'Column Name', 
+					text: LN('sbi.chartengine.designer.columnname'), 
 					dataIndex: 'categoryColumn',
 					sortable: false,
 					flex: 10
 				}, {
-					text: 'Column Alias', 
+					text: LN('sbi.chartengine.designer.columnalias'), 
 					dataIndex: 'axisName',
 					sortable: false,
 					flex: 10,
@@ -360,7 +360,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					flex: 1,
 					items: [{
 						icon: '/athena/themes/sbi_default/img/delete.gif',
-						tooltip: 'Remove',
+						tooltip: LN('sbi.generic.remove'),
 						handler: function(grid, rowIndex, colIndex) {
 							var rec = grid.getStore().removeAt(rowIndex);
 						}
@@ -378,7 +378,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 		
 			this.chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
-  				title: 'Step 1',
+  				title: LN('sbi.chartengine.designer.step1'),
   				leftYAxisesPanel: this.leftYAxisesPanel,
   				previewPanel: this.mainPanel,
   				rightYAxisesPanel: this.rightYAxisesPanel,
@@ -394,14 +394,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
   			});
 			this.chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
-  				title: 'Step 2',
+  				title: LN('sbi.chartengine.designer.step1'),
   				viewModel: this.cViewModel
   			});
 
 			// Creating step 3 panel
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
   				id: 'advancedEditor',
-  				title: 'Step 3'
+  				title: LN('sbi.chartengine.designer.step1')
   			});
 			
 			// tabs integration

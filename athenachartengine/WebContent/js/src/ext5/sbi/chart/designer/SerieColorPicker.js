@@ -4,7 +4,7 @@ Ext.define('Sbi.chart.designer.SerieColorPicker',{
 	alternateClassName: ['SerieColorPicker'],
 	config: {
 		colorValue : '',
-		fieldLabel : 'Color',
+		fieldLabel : LN('sbi.chartengine.configuration.color'),
 		labelWidth : 115,
 	},
 	statics: {

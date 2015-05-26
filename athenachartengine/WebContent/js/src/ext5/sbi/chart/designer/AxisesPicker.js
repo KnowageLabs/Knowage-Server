@@ -13,7 +13,7 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
     model: Sbi.chart.designer.AxisesContainerModel,    
     columns: [
         {
-        	text: 'Nome asse',
+        	text: LN('sbi.chartengine.axisespicker.axisname'),
             dataIndex: 'axisName', //'serieColumn' for measures (columns), 'categoriesColumn' for attributes (categories)
             sortable: false,
             flex: 1

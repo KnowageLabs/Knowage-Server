@@ -8,7 +8,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	],
 	
 	id: 'serieStylePopup',
-    title: 'Serie style configuration',
+    title: LN('sbi.chartengine.designer.seriesstyleconf'),
     layout: 'border',
     bodyPadding: 5,
 	floating: true,
@@ -60,7 +60,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			
 		this.serieFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
-			title: 'Serie',
+			title: LN('sbi.chartengine.designer.series'),
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
 				labelWidth : 115
@@ -85,7 +85,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieNameTextField = Ext.create('Ext.form.field.Text', {
 			name: 'serieName',
 			value: (serieName && serieName.trim() != '') ? serieName.trim() : 'Custom name',
-			fieldLabel: 'Name',
+			fieldLabel: LN('sbi.generic.name'),
 			selectOnFocus: true,
 			allowBlank: true 
 		});
@@ -93,10 +93,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	
 		var serieType = dataAtRow.get('serieType');
 		var serieTypes = [
-			{name: 'Bar chart', value:'bar'},
-			{name: 'Column chart', value:'column'}, 
-			{name: 'Line chart', value:'line'}, 
-			{name: 'Pie chart', value:'pie'} 
+			{name: LN('sbi.chartengine.designer.charttype.bar'), value:'bar'},
+			{name: LN('sbi.chartengine.designer.charttype.column'), value:'column'}, 
+			{name: LN('sbi.chartengine.designer.charttype.line'), value:'line'}, 
+			{name: LN('sbi.chartengine.designer.charttype.pie'), value:'pie'} 
 		];
 		
 		this.serieTypesComboBox = Ext.create('Ext.form.ComboBox', {
@@ -108,7 +108,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (serieType && serieType.trim() != '') ? serieType.trim() : '',
 			valueField: 'value',
 			displayField: 'name',
-			fieldLabel : 'Serie type',
+			fieldLabel : LN('sbi.chartengine.designer.seriestype'),
 		});
 		this.serieFieldSet.add(this.serieTypesComboBox);		
 		
@@ -123,7 +123,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (serieOrder && serieOrder.trim() != '') ? serieOrder.trim() : '',
 			valueField: 'value',
 			displayField: 'name',
-			fieldLabel : 'Serie order type',
+			fieldLabel : LN('sbi.chartengine.designer.seriesordertype'),
 		});
 		this.serieFieldSet.add(this.serieOrderComboBox);
 				
@@ -136,7 +136,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 					id : 'serieColorField',
 					fieldStyle : (serieColor && serieColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieColor.trim() : '',
-					fieldLabel : 'Color',
+					fieldLabel : LN('sbi.chartengine.designer.color'),
 					labelWidth : 115,
 					readOnly : true,
 					flex: 15,
@@ -173,13 +173,13 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: (showValue != undefined) ? showValue: true,
 			labelSeparator: '',
-			fieldLabel: 'Show value',
+			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
 		});
 		this.serieFieldSet.add(this.serieShowValue);
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {
-			fieldLabel: 'Precision',
+			fieldLabel: LN('sbi.chartengine.designer.precision'),
 			selectOnFocus: true,
 			value: seriePrecision ? seriePrecision : '',
 			maxValue: 10,
@@ -191,7 +191,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.seriePrefixCharTextField = Ext.create('Ext.form.field.Text', {
 			name: 'name',
 			value: (prefixChar && prefixChar.trim() != '') ? prefixChar.trim() : '',
-			fieldLabel: 'Prefix text',
+			fieldLabel: LN('sbi.chartengine.designer.prefixtext'),
 			selectOnFocus: true,
 			allowBlank: true 
 		});
@@ -201,7 +201,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.seriePostfixCharTextField = Ext.create('Ext.form.field.Text', {
 			name: 'name',
 			value: (postfixChar && postfixChar.trim() != '') ? postfixChar.trim() : '',
-			fieldLabel: 'Postfix text',
+			fieldLabel: LN('sbi.chartengine.designer.postfixtext'),
 			selectOnFocus: true,
 			allowBlank: true 
 		});
@@ -213,7 +213,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			grow      : true,
 			name      : 'tooltipTemplateHtml',
 			value: (templateHtml && templateHtml.trim() != '') ? templateHtml.trim() : '',
-			fieldLabel: 'Template html',
+			fieldLabel: LN('sbi.chartengine.designer.templatehtml'),
 			anchor    : '100%'
 		});
 		this.tooltipFieldSet.add(this.tooltipTemplateHtml);
@@ -227,7 +227,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     id : 'tooltipColorField',
 					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
-                    fieldLabel : 'Color',
+                    fieldLabel : LN('sbi.chartengine.designer.color'),
 					labelWidth : 115,
                     readOnly : true,
 					flex: 15,
@@ -266,7 +266,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
             items: [
                 Ext.create('Ext.form.field.Base', {
                     id : 'tooltipBackgroundColorField',
-                    fieldLabel : 'Background color',
+                    fieldLabel : LN('sbi.chartengine.designer.backgroundcolor'),
 					fieldStyle : (serieTooltipBackgroundColor && serieTooltipBackgroundColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipBackgroundColor.trim() : '',
 					labelWidth : 115,
@@ -303,28 +303,28 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var serieTooltipAlign = dataAtRow.get('serieTooltipAlign');
 		this.tooltipAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 			value: (serieTooltipAlign && serieTooltipAlign.trim() != '') ? serieTooltipAlign.trim() : '',
-			fieldLabel : 'Align',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
 		});
 		this.tooltipFieldSet.add(this.tooltipAlignComboBox);
 		
 		var serieTooltipFont = dataAtRow.get('serieTooltipFont');
 		this.tooltipFontComboBox = Ext.create('Sbi.chart.designer.FontCombo', {
 			value: (serieTooltipFont && serieTooltipFont.trim() != '') ? serieTooltipFont.trim() : '',
-			fieldLabel : 'Font',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.font'),
 		});
 		this.tooltipFieldSet.add(this.tooltipFontComboBox);
 		
 		var serieTooltipFontWeight = dataAtRow.get('serieTooltipFontWeight');
 		this.tooltipFontWeightStylesComboBox = Ext.create('Sbi.chart.designer.FontStyleCombo', {
 			value: (serieTooltipFontWeight && serieTooltipFontWeight.trim() != '') ? serieTooltipFontWeight.trim() : '',
-			fieldLabel : 'Font weight',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontweight'),
 		});
 		this.tooltipFieldSet.add(this.tooltipFontWeightStylesComboBox);
 		
 		var serieTooltipFontSize = dataAtRow.get('serieTooltipFontSize');		
 		this.tooltipFontSizeComboBox = Ext.create('Sbi.chart.designer.FontDimCombo', {
 			value: (serieTooltipFontSize && serieTooltipFontSize.trim() != '') ? serieTooltipFontSize.trim() : '',
-			fieldLabel : 'Font size',
+			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontsize'),
 		});
 		this.tooltipFieldSet.add(this.tooltipFontSizeComboBox);
 		
@@ -386,12 +386,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	items: [],
 	// Cancel and Save buttons
     buttons: [{
-        text: 'Cancel',
+        text: LN('sbi.generic.cancel'),
         handler: function(btn, elem2 ) {
 			Ext.getCmp('serieStylePopup').destroy();
         }
     }, {
-        text: 'Save',
+        text: LN('sbi.generic.save'),
         handler: function() {
 			Ext.getCmp('serieStylePopup').writeConfigsAndExit();
         }

@@ -13,7 +13,7 @@ Ext.define('Sbi.chart.designer.ChartCategoriesContainer', {
     model: Sbi.chart.designer.AxisesContainerModel,  
     columns: [
         {
-        	text: 'Nome categoria', 
+        	text: LN('sbi.chartengine.categorycontainer.categoryname'), 
             dataIndex: 'categoryColumn',
             sortable: true,
             autoSizeColumn: true

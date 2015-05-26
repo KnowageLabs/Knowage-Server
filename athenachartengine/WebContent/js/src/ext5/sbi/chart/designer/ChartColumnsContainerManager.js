@@ -130,7 +130,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					// STYLE POPUP
 					{
 					    type:'gear',
-					    tooltip: 'Set axis style',
+					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var thisChartColumnsContainer = panelHeader.ownerCt;
@@ -147,7 +147,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					// PLUS BUTTON
 					{
 					    type:'plus',
-					    tooltip: 'Add another axis',
+					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 							if (!panelWhereAddSeries.isVisible()) {
@@ -204,7 +204,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						xtype: 'actioncolumn',
 						items: [{
 							icon: '/athena/themes/sbi_default/img/createTemplate.jpg',
-							tooltip: 'Style',
+							tooltip: LN('sbi.chartengine.columnscontainer.tooltip.style'),
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();
 								
@@ -212,7 +212,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							}
 						},{
 							icon: '/athena/themes/sbi_default/img/delete.gif',
-							tooltip: 'Remove column',
+							tooltip: LN('sbi.chartengine.columnscontainer.tooltip.removecolumn'),
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();
 								var rec = store.removeAt(rowIndex);

@@ -12,12 +12,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	height: {
 		xtype : 'textfield',
 		bind : '{configModel.height}',
-		fieldLabel : 'Altezza',
+		fieldLabel : LN('sbi.chartengine.configuration.height'),
 	},
 	width: {
 		xtype : 'textfield',
 		bind : '{configModel.width}',
-		fieldLabel : 'Larghezza',
+		fieldLabel : LN('sbi.chartengine.configuration.width'),
 	},
 	
 	chartOrientation : Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
@@ -59,14 +59,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
     		viewModel: this.viewModel,
-    		customLabel : 'Colore sfondo',
+    		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),//'Colore sfondo',
        		fieldBind: '{configModel.backgroundColor}'
        	});
         
         var colorPickerContainer = this.colorPickerContainer;
         
         this.stylePanelTitle = Ext.create('Sbi.chart.designer.StylePopup',{
-        	title:'Stile Titolo',
+        	title: LN('sbi.chartengine.configuration.titlestyle'),
         	viewModel: this.viewModel,
         	bindFontAlign:'{configModel.titleAlign}',
         	bindFont:'{configModel.titleFont}',
@@ -75,7 +75,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         	bindColor:'{configModel.titleColor}'
         });
         this.stylePanelSubtitle = Ext.create('Sbi.chart.designer.StylePopup', {
-    	    title:'Stile Sottotitolo',
+    	    title: LN('sbi.chartengine.configuration.subtitlestyle'),
     	    viewModel: this.viewModel,
     	    bindFontAlign:'{configModel.subtitleAlign}',
     	    bindFont:'{configModel.subtitleFont}',
@@ -85,7 +85,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	});
         
     	this.stylePanelNoData = Ext.create('Sbi.chart.designer.StylePopup',{
-    	    title:'Stile "No Data"',
+    	    title: LN('sbi.chartengine.configuration.nodatastyle'),
     	    viewModel: this.viewModel,
     	    bindFontAlign:'{configModel.nodataAlign}',
     	    bindFont:'{configModel.nodataFont}',
@@ -132,7 +132,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			items : [ {
 	            xtype : 'textfield',
 	            bind : '{configModel.title}',
-	            fieldLabel : 'Titolo',
+	            fieldLabel : LN('sbi.chartengine.configuration.title'),
 	        },{
 				xtype : 'button',
 	            text: 'St',
@@ -150,7 +150,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        items : [ {
 	            xtype : 'textfield',
 	            bind : '{configModel.subtitle}',
-	            fieldLabel : 'Sottotitolo',
+	            fieldLabel : LN('sbi.chartengine.configuration.subtitle'),
 	            maxWidth:'500',
 	        }, {
 	            xtype : 'button',
@@ -167,7 +167,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        	id: 'nodata',
 	            xtype : 'textfield',
 	            bind : '{configModel.nodata}',
-	            fieldLabel : 'Messaggio "No data"' ,
+	            fieldLabel : LN('sbi.chartengine.configuration.nodata') ,
 	            labelWidth : '100%',
 	        },{
 	            xtype : 'button',
@@ -184,7 +184,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        margin: '20 0 0 0',
 	        value: true,
 	        labelSeparator: '',
-	        fieldLabel: 'Mostra Legenda',
+	        fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
 	        handler: function(checkbox, checked) {
 	            Ext.getCmp('page2Legend').setDisabled(!checked);
 	        }

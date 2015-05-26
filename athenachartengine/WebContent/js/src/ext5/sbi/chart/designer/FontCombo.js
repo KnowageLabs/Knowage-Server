@@ -5,7 +5,7 @@ Ext.define('Sbi.chart.designer.FontCombo',{
         data: [ [ 'Arial' ], [ 'Times New Roman' ], [ 'Tahoma' ], [ 'Verdana' ] ]
     },
     displayField : 'name',
-    fieldLabel : 'Carattere',
+    fieldLabel : LN('sbi.chartengine.configuration.font'),
     tdCls : '',
     editable : false,
     listeners : {

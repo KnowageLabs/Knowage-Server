@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	extend : 'Ext.panel.Panel',
 	columnWidth: 0.3,
-	title : 'Palette Colori',
+	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,
 	items : [],
 
@@ -23,7 +23,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     	    margin:'0 10 0 0',
     	    multiSelect: true,
     	    columns: [{
-    	        text     : 'Colore',
+    	        text     : LN('sbi.chartengine.configuration.color'),
     	        flex     : 1,
     	        sortable : false,
     	        dataIndex: 'value',
@@ -65,7 +65,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                            	gradient:'',
 	                            	name:'',
 	                            	order: order,
-	                            	value:selColor
+	                            	value: selColor
 	                            });
 	                        }
 	                    }
@@ -78,7 +78,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                    if (selectedRows.length) {
 	                    	grid.store.remove(selectedRows);
 	                    } else {
-	                        Ext.Msg.alert('Messaggio', 'Selezionare almeno un colore da eliminare');
+	                        Ext.Msg.alert(LN('sbi.generic.msg'), LN('sbi.chartengine.configuration.palette.msg.remove'));
 	                    }
 	                }
 	            }]

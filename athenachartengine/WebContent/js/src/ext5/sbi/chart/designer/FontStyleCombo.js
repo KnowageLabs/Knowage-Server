@@ -3,22 +3,22 @@ Ext.define('Sbi.chart.designer.FontStyleCombo', {
     store: {
         fields: [ 'name','value' ],
         data: [ {
-    		name : 'Bold',
+    		name : LN('sbi.chartengine.configuration.fontstyle.b'),
     		value : 'bold'
     	}, {
-    		name : 'Normal',
+    		name : LN('sbi.chartengine.configuration.fontstyle.n'),
     		value : 'normal'
     	}, {
-    		name : 'Italico',
+    		name : LN('sbi.chartengine.configuration.fontstyle.i'),
     		value : 'italic'
     	}, {
-    		name : 'Sottolineato',
+    		name : LN('sbi.chartengine.configuration.fontstyle.u'),
     		value : 'underline'
     	} ]
     },
     editable : false,
     displayField: 'name',
     valueField: 'value',
-    fieldLabel : 'Stile',
+    fieldLabel : LN('sbi.chartengine.configuration.fontstyle'),
     queryMode : 'local',
 });

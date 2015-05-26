@@ -3,19 +3,19 @@ Ext.define('Sbi.chart.designer.TypeLineCombo', {
     store: {
         fields: [ 'name','value' ],
         data: [ {
-        	name : 'Solid',
+        	name : LN('sbi.chartengine.axisstylepopup.typeline.solid'),
         	value : 'solid'
     	}, {
-			name : 'Dashed',
+			name : LN('sbi.chartengine.axisstylepopup.typeline.dashed'),
 			value : 'dashed'
     	}, {
-    		name : 'Dotted',
+    		name : LN('sbi.chartengine.axisstylepopup.typeline.dotted'),
     		value : 'dotted'
     	}, ]
     },
     editable : false,
     displayField: 'name',
     valueField: 'value',
-    fieldLabel : 'Type line',
+    fieldLabel : LN('sbi.chartengine.axisstylepopup.typeline'),
     queryMode : 'local',
 });

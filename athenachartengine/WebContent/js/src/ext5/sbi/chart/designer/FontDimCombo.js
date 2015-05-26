@@ -9,5 +9,5 @@ Ext.define('Sbi.chart.designer.FontDimCombo', {
     editable : false,
     displayField : 'name',
     valueField : 'name',
-    fieldLabel : 'Dimensione'
+    fieldLabel : LN('sbi.chartengine.configuration.fontsize')
 });
