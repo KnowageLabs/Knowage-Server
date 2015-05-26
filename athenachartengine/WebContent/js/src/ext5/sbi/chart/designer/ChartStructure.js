@@ -6,11 +6,11 @@ Ext.define('Sbi.chart.designer.ChartStructure', {
 	layout: 'column',
     config :
     {
-        title : 'Default custom Title',
-        leftYAxisesPanel : {html: '<div>Left Y Axises</div>'},
-        previewPanel : {html: '<div>Preview da mostrare</div>'},
-        rightYAxisesPanel : {html: '<div>Right Y Axises</div>'},
-        bottomXAxisesPanel : {html: '<div>Bottom X Axises</div>'}
+        title : '',
+        leftYAxisesPanel : {},
+        previewPanel : {},
+        rightYAxisesPanel : {},
+        bottomXAxisesPanel : {}
     },
     constructor: function(config) {
         this.callParent(config);

@@ -1,7 +1,9 @@
 Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	extend: 'Ext.grid.Panel',
-    title: 'Chart Type Selector',
     margin: '0 0 5 0',
+    title: {
+		hidden: true 
+	},
 	enableColumnHide:true,
 	hideHeaders: true,
 	

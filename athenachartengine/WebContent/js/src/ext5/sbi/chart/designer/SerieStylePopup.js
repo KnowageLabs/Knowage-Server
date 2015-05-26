@@ -84,7 +84,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var serieName = dataAtRow.get('axisName');
 		this.serieNameTextField = Ext.create('Ext.form.field.Text', {
 			name: 'serieName',
-			value: (serieName && serieName.trim() != '') ? serieName.trim() : 'Custom name',
+			value: (serieName && serieName.trim() != '') ? serieName.trim() : '',
 			fieldLabel: LN('sbi.generic.name'),
 			selectOnFocus: true,
 			allowBlank: true 
@@ -113,17 +113,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieFieldSet.add(this.serieTypesComboBox);		
 		
 		var serieOrder = dataAtRow.get('serieOrderType');
-		var serieOrders = [ {name: 'Ascending ', value:'asc'}, {name: 'Descending', value:'desc'}];
-		this.serieOrderComboBox = Ext.create('Ext.form.ComboBox', {
-			store: {
-				store: 'array',
-				fields: ['name', 'value'],
-				data: serieOrders
-			},
+		this.serieOrderComboBox = Ext.create('Sbi.chart.designer.SeriesOrderCombo', {
 			value: (serieOrder && serieOrder.trim() != '') ? serieOrder.trim() : '',
-			valueField: 'value',
-			displayField: 'name',
-			fieldLabel : LN('sbi.chartengine.designer.seriesordertype'),
 		});
 		this.serieFieldSet.add(this.serieOrderComboBox);
 				

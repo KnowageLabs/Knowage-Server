@@ -196,7 +196,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		if(isYAxis) {
 			var majorgridInterval = '' + this.axisData.majorgridInterval;
 			this.majorgridIntervalNumberField = Ext.create('Ext.form.field.Number', {
-				fieldLabel: 'Interval',
+				fieldLabel: LN('sbi.chartengine.axisstylepopup.interval'),
 				selectOnFocus: true,
 				value: (majorgridInterval && majorgridInterval.trim() != '') ? majorgridInterval.trim() : '',
 				minValue: 0,

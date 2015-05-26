@@ -191,7 +191,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						containerScroll: true,
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupMeasure,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupMeasure,
-  						dragText: 'Drag from Columns Picker',
+  						dragText: LN('sbi.chartengine.designer.tooltip.drop.series'),
   						enableDrop: false
   					},
   					listeners: {
@@ -222,7 +222,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						containerScroll: true,
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
-  						dragText: 'Drag from Categories Picker',
+  						dragText: LN('sbi.chartengine.designer.tooltip.drop.categories'),
   						enableDrop: false
   					},
   					listeners: {
@@ -311,9 +311,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    	id: 'textfieldAxisTitle',
 						flex: 10,
 						allowBlank:  true,
-			            emptyText: 'Insert axis title',
+			            emptyText: LN('sbi.chartengine.designer.emptytext.axistitle'),
 						selectOnFocus: true,
-						value: 'titolo vuoto',
 						listeners: {
 				            change: 'onTitleChange',
 				        }
@@ -414,7 +413,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previousTabId: '',
   				tools:[{ 
   		            xtype: 'button',
-  		            text : 'Save',
+  		            text : LN('sbi.generic.save'),
   		            handler: function(){
   		            	var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson();
   		            	
