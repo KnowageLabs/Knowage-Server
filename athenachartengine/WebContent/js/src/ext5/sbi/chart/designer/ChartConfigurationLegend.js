@@ -34,7 +34,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     	 items: [{
                     		 xtype : 'combo',
                     		 queryMode : 'local',
-                    		 value : LN('sbi.chartengine.configuration.position.b'),
+                    		 value : 'bottom',
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
@@ -61,7 +61,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     	 } , {
                     		 xtype : 'combo',
                     		 queryMode : 'local',
-                    		 value : LN('sbi.chartengine.configuration.orientation.h'),
+                    		 value : 'horizontal',
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
