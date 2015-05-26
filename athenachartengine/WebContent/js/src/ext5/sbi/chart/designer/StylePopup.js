@@ -7,6 +7,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 	draggable : true,
 	closable : true,
 	closeAction : 'hide',
+    modal: true,
 	bodyPadding : 10,
 	config : {
 		bindFontAlign:null,
@@ -23,24 +24,32 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         this.title = config.title && config.title != null ? config.title: this.title;
         Ext.apply(this.config,config);
         
-        var align = Ext.create('Sbi.chart.designer.FontAlignCombo',{
-        	bind : this.config.bindFontAlign
-        });
+        if(this.config.bindFontAlign) {
+        	var align = Ext.create('Sbi.chart.designer.FontAlignCombo',{
+        		viewModel: this.viewModel,
+        		bind : this.config.bindFontAlign
+        	});
+        	this.add(align);
+        }
+        
 		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 			viewModel: this.viewModel,
-			fieldBind : this.config.bindColor
+			fieldBind : this.config.bindColor,
+			bind : this.config.bindColor
 		});
 		var font = Ext.create('Sbi.chart.designer.FontCombo',{
-			fieldBind : this.config.bindFont
+			viewModel: this.viewModel,
+			bind : this.config.bindFont
 		});
         var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
-        	fieldBind : this.config.bindFontDim
+        	viewModel: this.viewModel,
+        	bind : this.config.bindFontDim
         });
         var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
-        	fieldBind : this.config.bindFontStyle
+        	viewModel: this.viewModel,
+        	bind : this.config.bindFontStyle
         });
         
-        this.add(align);
 		this.add(color);
 		this.add(font);
 		this.add(dim);

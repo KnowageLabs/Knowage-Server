@@ -33,7 +33,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
    	}),
    	
    	fontStyle : Ext.create('Sbi.chart.designer.FontStyleCombo',{
-   		bind : '{configModel.fontStyle}'
+   		bind : '{configModel.fontWeight}'
    	}),
    	
    	

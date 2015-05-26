@@ -3,17 +3,20 @@ style="backgroundColor:#FFFFFF;font:Verdana;fontWeight:bold;fontSize:16px"
 dimension="2D" >
 
 <colorPalette>
-<color name="col1" value="#003366" order="1"/>
-<color name="col2" value="#003366" order="2"/>
-<color name="col3" value="#003366" order="3"/>
-<color name="col4" value="#003366" order="4"/>
+	<color name="col1" value="#003366" order="1"/>
+	<color name="col2" value="#003366" order="2"/>
+	<color name="col3" value="#003366" order="3"/>
+	<color name="col4" value="#003366" order="4"/>
 </colorPalette>
 
 <emptymessage test ="nessun dato da visualizzare"  style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px"  />
 
 <TITLE text="questo è un titolo" 
 style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
-
+<AXES_LIST>
+		<AXIS alias='Y' type='Serie' />
+		<AXIS alias='X' type='Category'/>
+</AXES_LIST>
 
 <SUBTITLE text="questo è un sotto titolo"
 style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
@@ -29,13 +32,13 @@ style="borderWidth:1;backgroundColor:#FFFFFF;color:#003366;font:Verdana;fontWeig
 
 <Values>
 
-<category column="product" displayColumn="productName" orderColumn="anno" orderType="asc" />
-
-<SERIE name="vendite" position="internal" orderType="asc" column="vendite" color="#4572A7" 
-showValue="true" showPerc="true" precision="2" prefixChar="Euro"  >
-<TOOLTIP templateHtml="" backgroundColor="#FCFFC5" style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
-</SERIE>
-<SERIE name="ricavi" position="esternal"  column="ricavi" color="#4572A7" precision="" />
+	<category column="product" displayColumn="productName" orderColumn="anno" orderType="asc" />
+	
+	<SERIE name="vendite" axis='Y' position="internal" orderType="asc" column="Vendite" color="#4572A7" 
+		showValue="true" showPerc="true" precision="2" prefixChar="Euro"  >
+		<TOOLTIP templateHtml="" backgroundColor="#FCFFC5" style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+	</SERIE>
+	<SERIE name="ricavi" axis='Y' position="esternal"  column="ricavi" color="#4572A7" precision="" />
 
 </Values>
 

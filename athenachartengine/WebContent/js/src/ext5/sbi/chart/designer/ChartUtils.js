@@ -301,15 +301,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var COLORPALETTE = {};
     		var COLOR = [];
-    		var colors = chartModel.get('colorPalette');
-    		for(i in colors){
-    			var color = colors[i];
+    		var paletteStore = Ext.data.StoreManager.lookup('chartConfigurationPaletteStore');
+    		var colors = paletteStore.getData();
+    		for(i in colors.items){
+    			var color = paletteStore.getAt(i);
     			var colorElement = {};
-    			colorElement['id'] = color[0] != undefined? color[0]: '';
-    			colorElement['gradient'] = color[1] != undefined? color[1]: '';
-    			colorElement['name'] = color[2] != undefined? color[2]: '';
-    			colorElement['order'] = color[3] != undefined? '#' + color[3]: '';
-    			colorElement['value'] = color[4] != undefined? '#' + color[4]: '';
+    			colorElement['id'] = color.get('id') != undefined? color.get('id'): '';
+    			colorElement['gradient'] = color.get('gradient') != undefined? color.get('gradient'): '';
+    			colorElement['name'] = color.get('name') != undefined? color.get('name'): '';
+    			colorElement['order'] = color.get('order') != undefined? color.get('order'): '';
+    			colorElement['value'] = color.get('value') != undefined? color.get('value'): '';
     			
     			COLOR.push(colorElement);
     		}
@@ -413,7 +414,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   			if(jsonTemplate.CHART.COLORPALETTE && jsonTemplate.CHART.COLORPALETTE.COLOR) {
   				Ext.Array.each(jsonTemplate.CHART.COLORPALETTE.COLOR, function(color) {
   					colorPalette.push([
-						color.id != undefined ? color.id : '',
+						color.id != undefined ? color.id : color.name,
 						color.gradient != undefined ? color.gradient : '',
 						color.name,
 						color.order, 

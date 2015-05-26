@@ -122,7 +122,7 @@ Ext.define('Sbi.chart.designer.Designer', {
  				minHeight: 50,
  				store: chartTypeStore
  			});
-			var selectedChartType = jsonTemplate.CHART.type;
+			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
 			this.chartTypeSelector.setChartType(selectedChartType);
 			
 			this.columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
@@ -405,7 +405,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 			
 			// tabs integration
-			var cModel = this.cModel;
 			var coreServiceManager = this.coreServiceManager;
 			this.stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
@@ -563,7 +562,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 					var isDestructible = (yCount > 1);
 					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
-					if(axis.position.toLowerCase() == 'left') {
+					// pie workaround "!axis.position"
+					if(!axis.position || axis.position.toLowerCase() == 'left') {
 
 						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 								leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
@@ -634,7 +634,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		update: function(jsonTemplate) {
 			this.jsonTemplate = jsonTemplate;
 			
-			var selectedChartType = jsonTemplate.CHART.type;
+			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
 			this.chartTypeSelector.setChartType(selectedChartType);
 	
 			this.jsonTemplateHistory.push(jsonTemplate);
@@ -643,6 +643,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 			this.updateStep1Data(jsonTemplate);
 			this.updateStep2Data(jsonTemplate);
+			
+			console.log("jsonTemplate updated!");
 		},
 		
 		updateStep1Data: function(jsonTemplate) {
@@ -654,6 +656,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		updateStep2Data: function(jsonTemplate) {
 			// Updating step 2 data
+			this.cModel.drop();
+			this.cModel.erase();
+			
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
 
@@ -664,6 +669,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.chartConfiguration.setData({
   				viewModel: this.cViewModel
   			});
+			
+			//updating color Palette
+			var paletteStore = Ext.data.StoreManager.lookup('chartConfigurationPaletteStore');
+			// Reset
+			paletteStore.loadData({});
+			// Load json colors
+			paletteStore.setData(this.cModel.get('colorPalette'));
 		}, 
 		
 		exportAsJson: function() {

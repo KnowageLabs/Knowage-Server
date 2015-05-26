@@ -90,7 +90,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     	 },
                     	 items: [{
                     		 xtype: 'checkboxfield',
-                    		 bind :'{configModel.legnendFloating}', 
+                    		 bind :'{configModel.legendFloating}', 
                     		 id: 'floating',
                     		 labelSeparator: '',
                     		 fieldLabel: LN('sbi.chartengine.configuration.floating')
