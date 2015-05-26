@@ -9,42 +9,42 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	convertJsonAxisObjToAxisData: function(axis) {
     		var result = {};
 
-    		result['id'] = axis.id;
-    		result['alias'] = axis.alias;
-    		result['axisType'] = axis.type;
-    		result['position'] = axis.position;
+    		result['id'] = axis.alias && axis.alias != ''? axis.alias : '';
+    		result['alias'] = axis.alias && axis.alias != ''? axis.alias : '';
+    		result['axisType'] = axis.type && axis.type != ''? axis.type : '';
+    		result['position'] = axis.position && axis.position != ''? axis.position : '';
     		
     		var axisStyleAsMap = ChartUtils.jsonizeStyle(axis.style);
-    		result['styleRotate'] = axisStyleAsMap.rotate;
-    		result['styleAlign'] = axisStyleAsMap.align;
-    		result['styleColor'] = axisStyleAsMap.color;
-    		result['styleFont'] = axisStyleAsMap.font;
-    		result['styleFontWeigh'] = axisStyleAsMap.fontWeight;
-    		result['styleFontSize'] = axisStyleAsMap.fontSize;
+    		result['styleRotate'] = axisStyleAsMap.rotate && axisStyleAsMap.rotate != ''? axisStyleAsMap.rotate : '';
+    		result['styleAlign'] = axisStyleAsMap.align && axisStyleAsMap.align != ''? axisStyleAsMap.align : '';
+    		result['styleColor'] = axisStyleAsMap.color && axisStyleAsMap.color != ''? axisStyleAsMap.color : '';
+    		result['styleFont'] = axisStyleAsMap.font && axisStyleAsMap.font != ''? axisStyleAsMap.font : '';
+    		result['styleFontWeigh'] = axisStyleAsMap.fontWeight && axisStyleAsMap.fontWeight != ''? axisStyleAsMap.fontWeight : '';
+    		result['styleFontSize'] = axisStyleAsMap.fontSize && axisStyleAsMap.fontSize != ''? axisStyleAsMap.fontSize : '';
     		
     		if(axis.MAJORGRID) {
-	    		result['majorgridInterval'] = axis.MAJORGRID.interval;
+	    		result['majorgridInterval'] = axis.MAJORGRID.interval && axis.MAJORGRID.interval != ''? axis.MAJORGRID.interval : '';
 	    		
 	    		var majorgridStyleAsMap = ChartUtils.jsonizeStyle(axis.MAJORGRID.style);
-	    		result['majorgridStyleTypeline'] = majorgridStyleAsMap.typeline;
-	    		result['majorgridStyleColor'] = majorgridStyleAsMap.color;
+	    		result['majorgridStyleTypeline'] = majorgridStyleAsMap.typeline && majorgridStyleAsMap.typeline != ''? majorgridStyleAsMap.typeline : '';
+	    		result['majorgridStyleColor'] = majorgridStyleAsMap.color && majorgridStyleAsMap.color != ''? majorgridStyleAsMap.color : '';
 	    	}
     		if(axis.MINORGRID) {
 	    		var minorgridStyleAsMap = ChartUtils.jsonizeStyle(axis.MINORGRID.style);
-	    		result['minorgridInterval'] = axis.MINORGRID.interval;
-	    		result['minorgridStyleTypeline'] = minorgridStyleAsMap.typeline;
-	    		result['minorgridStyleColor'] = minorgridStyleAsMap.color;
+	    		result['minorgridInterval'] = axis.MINORGRID.interval && axis.MINORGRID.interval != ''? axis.MINORGRID.interval : '';
+	    		result['minorgridStyleTypeline'] = minorgridStyleAsMap.typeline && minorgridStyleAsMap.typeline != ''? minorgridStyleAsMap.typeline : '';
+	    		result['minorgridStyleColor'] = minorgridStyleAsMap.color && minorgridStyleAsMap.color != ''? minorgridStyleAsMap.color : '';
     		}
 
     		if(axis.TITLE) {
-	    		result['titleText'] = axis.TITLE.text;
+	    		result['titleText'] = axis.TITLE.text && axis.TITLE.text != ''? axis.TITLE.text : '';
 	    		
 	    		var titlegridStyleAsMap = ChartUtils.jsonizeStyle(axis.TITLE.style);
-	    		result['titleStyleAlign'] = titlegridStyleAsMap.align;
-	    		result['titleStyleColor'] = titlegridStyleAsMap.color;
-	    		result['titleStyleFont'] = titlegridStyleAsMap.font;
-	    		result['titleStyleFontWeigh'] = titlegridStyleAsMap.fontWeight;
-	    		result['titleStyleFontSize'] = titlegridStyleAsMap.fontSize;
+	    		result['titleStyleAlign'] = titlegridStyleAsMap.align && titlegridStyleAsMap.align != ''? titlegridStyleAsMap.align : '';
+	    		result['titleStyleColor'] = titlegridStyleAsMap.color && titlegridStyleAsMap.color != ''? titlegridStyleAsMap.color : '';
+	    		result['titleStyleFont'] = titlegridStyleAsMap.font && titlegridStyleAsMap.font != ''? titlegridStyleAsMap.font : '';
+	    		result['titleStyleFontWeigh'] = titlegridStyleAsMap.fontWeight && titlegridStyleAsMap.fontWeight != ''? titlegridStyleAsMap.fontWeight : '';
+	    		result['titleStyleFontSize'] = titlegridStyleAsMap.fontSize && titlegridStyleAsMap.fontSize != ''? titlegridStyleAsMap.fontSize : '';
     		}
     		
     		return result;
@@ -52,10 +52,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	createEmptyAxisData : function(){
     		var result = {};
 
-    		result['id'] = '';
-    		result['alias'] = '';
-    		result['axisType'] = '';
-    		result['position'] = '';
+    		result['id'] = 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
+    		result['alias'] = 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
+    		result['axisType'] = 'Serie';
+    		result['position'] = 'right';
 
     		result['styleRotate'] = '';
     		result['styleAlign'] = '';
@@ -128,8 +128,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				
     				axisAsJson['id'] = axisData.id;
     				axisAsJson['alias'] = axisData.alias;
-    				axisAsJson['type'] = axisData.axisType;
-    				axisAsJson['position'] = axisData.position;
+    				axisAsJson['type'] = axisData.axisType? axisData.axisType: '';
+    				axisAsJson['position'] = axisData.position? axisData.position: '';
     				
     				var style = '';
     				style += 'rotate:' + ((axisData.styleRotate != undefined)? axisData.styleRotate : '') + ';';
@@ -141,7 +141,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				axisAsJson['style'] = style;
     				
     				var MAJORGRID = {};
-    				MAJORGRID['interval'] = axisData.majorgridInterval;
+    				MAJORGRID['interval'] = axisData.majorgridInterval? axisData.majorgridInterval : '';
     				var majorgridStyle = '';
     				majorgridStyle += 'typeline:' + ((axisData.majorgridStyleTypeline != undefined)? axisData.majorgridStyleTypeline: '') + ';';
     				majorgridStyle += 'color:' + ((axisData.majorgridStyleColor != undefined)? axisData.majorgridStyleColor: '') + ';';
@@ -149,7 +149,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				axisAsJson['MAJORGRID'] = MAJORGRID;
     				
     				var MINORGRID = {};
-    				MINORGRID['interval'] = axisData.minorgridInterval;
+    				MINORGRID['interval'] = axisData.minorgridInterval? axisData.minorgridInterval: '';
     				var minorgridStyle = '';
     				minorgridStyle += 'typeline:' + ((axisData.minorgridStyleTypeline != undefined)? axisData.minorgridStyleTypeline: '') + ';';
     				minorgridStyle += 'color:' + ((axisData.minorgridStyleColor != undefined)? axisData.minorgridStyleColor: '') + ';';
@@ -157,7 +157,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				axisAsJson['MINORGRID'] = MINORGRID;
     				
     				var TITLE = {};
-    				TITLE['text'] = axisData.titleText;
+    				TITLE['text'] = axisData.titleText? axisData.titleText : '';
     				var titleStyle = '';
     				titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
     				titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';

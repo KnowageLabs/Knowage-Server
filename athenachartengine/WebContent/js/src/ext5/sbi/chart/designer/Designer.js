@@ -600,7 +600,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
 						
 						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-							id: serie.id,
+							id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
 							axisName: serie.name,
 							axisType: 'MEASURE',
 							
@@ -660,6 +660,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.cViewModel.setData({
 				configModel: this.cModel
 			});
+
+			this.chartConfiguration.setData({
+  				viewModel: this.cViewModel
+  			});
 		}, 
 		
 		exportAsJson: function() {

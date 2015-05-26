@@ -1,8 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	requires: [
         'Sbi.chart.designer.ChartColumnsContainer',
-        'Sbi.chart.designer.ChartUtils',
-//        'Sbi.chart.designer.AxisStylePopup'
+        'Sbi.chart.designer.ChartUtils'
     ],
 
 	constructor: function(config) {
@@ -61,13 +60,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				return null;
 			}
 	    	
-	    	var idChartColumnsContainer = (id && id != '')? id: 'ChartColumnsContainer_' + ChartColumnsContainerManager.instanceIdFeed;
-	    	
-	    	ChartColumnsContainerManager.instanceIdFeed++;
+			ChartColumnsContainerManager.instanceIdFeed++;
+	    	var idChartColumnsContainer = (id && id != '')? id: 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
 	    	
 	    	ChartColumnsContainerManager.instanceCounter++;
 	    	
-	    	var axisAlias = (axis && axis != null)? axis.alias: '';
+	    	var axisAlias = (axis && axis != null)? axis.alias: idChartColumnsContainer;
 			var chartColumnsContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
 				idAxisesContainer: idChartColumnsContainer,
 				autoDestroy : true,
@@ -103,7 +101,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {
 							if(data.view.id != this.id) {
-								data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);   
+								data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
 							} 
 						}
 					}
@@ -197,23 +195,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		                    ],
 							fields: ['value', 'label']
 						}
-						/*
-		                field: {
-		                    xtype: 'combobox',
-		                    typeAhead: true,
-		                    triggerAction: 'all',
-		                    selectOnTab: true,
-		                    store: [
-		                        ['AVG','AVG'],
-		                        ['COUNT','COUNT'],
-		                        ['MAX','MAX'],
-		                        ['MIN','MIN'],
-		                        ['SUM','SUM']
-		                    ],
-		                    lazyRender: false,
-		                    listClass: 'x-combo-list-small'
-		                }
-						*/
 		            },
 					{
 						menuDisabled: true,
