@@ -34,7 +34,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     	 items: [{
                     		 xtype : 'combo',
                     		 queryMode : 'local',
-                    		 value : 'bottom',
+                    		 value : LN('sbi.chartengine.configuration.position.b'),
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
@@ -45,23 +45,23 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 store : {
                     			 fields : ['name', 'value'],
                     			 data : [ {
-                    				 name : 'Sotto',
+                    				 name : LN('sbi.chartengine.configuration.position.b'),
                     				 value : 'bottom'
                     			 }, {
-                    				 name : 'Sopra',
+                    				 name : LN('sbi.chartengine.configuration.position.t'),
                     				 value : 'top'
                     			 }, {
-                    				 name : 'Destra',
+                    				 name : LN('sbi.chartengine.configuration.position.r'),
                     				 value : 'right'
                     			 }, {
-                    				 name : 'Sinistra',
+                    				 name : LN('sbi.chartengine.configuration.position.l'),
                     				 value : 'left'
                     			 } ]
                     		 }
                     	 } , {
                     		 xtype : 'combo',
                     		 queryMode : 'local',
-                    		 value : 'horizontal',
+                    		 value : LN('sbi.chartengine.configuration.orientation.h'),
                     		 triggerAction : 'all',
                     		 forceSelection : true,
                     		 editable : false,
@@ -72,10 +72,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 store : {
                     			 fields : [ 'name', 'value' ],
                     			 data : [ {
-                    				 name : 'Verticale',
+                    				 name : LN('sbi.chartengine.configuration.orientation.v'),
                     				 value : 'vertical'
                     			 }, {
-                    				 name : 'Orizzontale',
+                    				 name : LN('sbi.chartengine.configuration.orientation.h'),
                     				 value : 'horizontal'
                     			 } ]
                     		 }
