@@ -318,11 +318,13 @@
 		<antcall target="create.sbi.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
 		<antcall target="create.sbi.dao.jar" />
+		<!--
 		<antcall target="create.sbi.oauth.security.jar" />
 		<antcall target="create.exo.security.jar" />
 		<antcall target="create.liferay.security.jar" />
 		<antcall target="create.xlm.security.jar" />
 		<antcall target="create.ldap.security.jar" />
+		-->
 
 		<antcall target="create.athenacommonjengine.war" />
 		<copy file="../../../athenacommonjengine/dist/athenacommonjengine.war" 
