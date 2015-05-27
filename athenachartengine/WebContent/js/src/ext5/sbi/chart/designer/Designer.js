@@ -95,6 +95,28 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {
 			
+			if (!jsonTemplate.CHART) {
+				jsonTemplate = {
+						CHART: {
+							type: 'BAR',
+							AXES_LIST: {
+								AXIS: [
+								       {alias:'Y', type: 'Serie'},
+								       {alias:'X', type: 'Category'}
+								       ]
+							},
+							VALUES:
+							{
+								SERIE: []
+							},
+							COLORPALETTE:
+							{
+								COLOR: []
+							}
+						}
+				};
+			}
+			
 			this.docLabel = docLabel;
 			this.jsonTemplate = jsonTemplate;
 			
@@ -511,6 +533,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var categoriesStore = this.categoriesStore;
 			// Reset categoriesStore
 			categoriesStore.loadData({});
+			
+			if(!(jsonTemplate.CHART.VALUES.CATEGORY)) {
+				return;
+			}
 			
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {

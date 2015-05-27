@@ -191,7 +191,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			axisAsJson['style'] = style;
 			
 			var TITLE = {};
-			TITLE['text'] = axisData.titleText;
+			TITLE['text'] = (axisData.titleText != undefined)? axisData.titleText: ''; 
 			var titleStyle = '';
 			titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
 			titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';

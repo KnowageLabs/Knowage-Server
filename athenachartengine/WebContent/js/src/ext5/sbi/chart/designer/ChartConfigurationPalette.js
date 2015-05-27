@@ -62,7 +62,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 
 	                        	var order = 0;
 	                        	if(grid.store.data && grid.store.data.items) {
-	                        		order = grid.store.getAt(grid.store.data.items.length-1).get('order') + 1;
+	                        		order = grid.store.data.length ? 
+	                        				grid.store.getAt(grid.store.data.items.length-1).get('order') + 1
+	                        				: 1;
 	                        	}
 	                        	
 	                        	grid.store.add({
