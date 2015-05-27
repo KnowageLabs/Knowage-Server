@@ -310,7 +310,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     			colorElement['gradient'] = color.get('gradient') != undefined? color.get('gradient'): '';
     			colorElement['name'] = color.get('name') != undefined? color.get('name'): '';
     			colorElement['order'] = color.get('order') != undefined? color.get('order'): '';
-    			colorElement['value'] = color.get('value') != undefined? color.get('value'): '';
+    			
+    			var colorValue = color.get('value') != undefined? color.get('value'): '';
+    			colorValue = colorValue.replace(/^#?([\dA-Fa-f]+)/, '#$1');
+    			colorElement['value'] = colorValue;
     			
     			COLOR.push(colorElement);
     		}

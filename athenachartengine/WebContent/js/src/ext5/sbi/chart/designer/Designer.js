@@ -415,7 +415,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            xtype: 'button',
   		            text : LN('sbi.generic.save'),
   		            handler: function(){
-  		            	var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson();
+  		            	var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            	
   		            	var parameters = {
   		      				jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
@@ -677,7 +677,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			paletteStore.setData(this.cModel.get('colorPalette'));
 		}, 
 		
-		exportAsJson: function() {
+		exportAsJson: function(finalJson) {
+			finalJson = finalJson || false;
+			
 			// resulted json from 1st and 2nd designer steps (without properties catalogue)
 			var exported1st2ndSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
 			
@@ -705,7 +707,48 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var newJsonTemplate = (library === oldLibrary)?
 				Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, overwrittenJsonTemplate)
 				: Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, exported1st2ndSteps);
-			return newJsonTemplate;
+				
+			if(finalJson == true) {
+				return Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate);
+			} else {
+				return newJsonTemplate;
+			}
+			
+		},
+		removeIdAttribute: function(templateJson) {
+			if(templateJson.CHART){
+				if(templateJson.CHART.AXES_LIST 
+						&& templateJson.CHART.AXES_LIST.AXIS 
+						&& templateJson.CHART.AXES_LIST.AXIS.length) {
+					
+					var axes = templateJson.CHART.AXES_LIST.AXIS;
+					for(i in axes) {
+						var axis = axes[i];
+						delete axis.id;
+					}
+				}
+				if(templateJson.CHART.VALUES
+						&& templateJson.CHART.VALUES.SERIE
+						&& templateJson.CHART.VALUES.SERIE.length) {
+					
+					var series = templateJson.CHART.VALUES.SERIE;
+					for(i in series) {
+						var serie = series[i];
+						delete serie.id;
+					}
+				}
+				if(templateJson.CHART.COLORPALETTE
+						&& templateJson.CHART.COLORPALETTE.COLOR
+						&& templateJson.CHART.COLORPALETTE.COLOR.length) {
+					
+					var colors = templateJson.CHART.COLORPALETTE.COLOR;
+					for(i in colors) {
+						var color = colors[i];
+						delete color.id;
+					}
+				}
+			}
+			return templateJson;
 		}
     }
 });
