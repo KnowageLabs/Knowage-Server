@@ -18,12 +18,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
         var colorPalette = config.colorPalette;
         
         this.paletteGrid = Ext.create('Ext.grid.Panel', {
-    	    store: Ext.create('Ext.data.ArrayStore', { 
+    	    store: Ext.create('Ext.data.ArrayStore', {
             	storeId: 'chartConfigurationPaletteStore',
             	
-            	fields: ['id', 'gradient','name','order','value'], 
-            	
-            	data: colorPalette
+            	fields: ['id', 'gradient','name','order','value']
             }),
     	    
     	    width: 180,
@@ -40,6 +38,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     	    }]
     	});
         
+        // Reset
+        this.paletteGrid.store.loadData({});
+		// Load json colors
+        this.paletteGrid.store.setData(colorPalette);
+		
+		
         var grid = this.paletteGrid;
 		var item = [{
 	        xtype : 'fieldcontainer',
@@ -62,7 +66,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 
 	                        	var order = 0;
 	                        	if(grid.store.data && grid.store.data.items) {
-	                        		order = grid.store.data.length ? 
+	                        		order = grid.store.data.length > 0? 
 	                        				grid.store.getAt(grid.store.data.items.length-1).get('order') + 1
 	                        				: 1;
 	                        	}
@@ -76,7 +80,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                            });
 	                        	
 	                        	console.log('added in grid.store: ', grid.store);
-	                        	console.log('colorPalette: ', colorPalette);
 	                        }
 	                    }
 	                }),                 
@@ -88,7 +91,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                    if (selectedRows.length) {
 	                    	grid.store.remove(selectedRows);
 	                    	console.log('removed from grid.store: ', grid.store);
-                        	console.log('colorPalette: ', colorPalette);
 	                    } else {
 	                        Ext.Msg.alert(LN('sbi.generic.msg'), LN('sbi.chartengine.configuration.palette.msg.remove'));
 	                    }

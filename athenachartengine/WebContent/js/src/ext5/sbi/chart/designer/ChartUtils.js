@@ -416,12 +416,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   			var colorPalette = [];
   			if(jsonTemplate.CHART.COLORPALETTE && jsonTemplate.CHART.COLORPALETTE.COLOR) {
   				Ext.Array.each(jsonTemplate.CHART.COLORPALETTE.COLOR, function(color) {
-  					colorPalette.push([
-						color.id != undefined ? color.id : color.name,
-						color.gradient != undefined ? color.gradient : '',
-						color.name,
-						color.order, 
-						Sbi.chart.designer.ChartUtils.removeStartingHash(color.value)]);
+  					colorPalette.push({
+						'id': color.id != undefined ? color.id : color.name,
+						'gradient': color.gradient != undefined ? color.gradient : '',
+						'name': color.name,
+						'order': color.order, 
+						'value': Sbi.chart.designer.ChartUtils.removeStartingHash(color.value)
+					});
   				});
   			}
   			
