@@ -49,17 +49,13 @@
         type: '$chartTypeToPrint',
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
-        #set ($chartHeight = 0)
         #if($chart.height != '')
-        	#set($chartHeight = $chart.height)
+        height: $chart.height,
         #end
-        height: $chartHeight,
         
-        #set ($chartWidth = 0)
         #if($chart.width != '')
-        	#set($chartWidth = $chart.width)
+    	width: $chart.width,
     	#end
-    	width: $chartWidth,
         
     	style:{
     		#foreach($styleName in $chart.style.keySet())
@@ -96,20 +92,36 @@
         layout: '$chart.LEGEND.layout',
         align: '$chart.LEGEND.position',
         verticalAlign: 'top',
-        floating: $chart.LEGEND.floating,
         
-        #if($chart.LEGEND.floating == 'true')
-        x: $chart.LEGEND.x,
-        y: $chart.LEGEND.y,
+        #if ($chart.LEGEND.floating != '')
+        floating: $chart.LEGEND.floating,
         #end
         
+    	#if($chart.LEGEND.floating == 'true')
+    	
+        #if($chart.LEGEND.x != '')
+        x: $chart.LEGEND.x,
+	    #end
+        
+        #if($chart.LEGEND.y != '')
+        y: $chart.LEGEND.y,
+    	#end
+    	
+    	#end
+        
+        #if($chart.LEGEND.style.borderWidth != '')
         borderWidth: $chart.LEGEND.style.borderWidth,
+	    #end
+        
+        #if($chart.LEGEND.style.backgroundColor != '')
         backgroundColor: '$chart.LEGEND.style.backgroundColor',
+	    #end
+	    
         shadow: true,
         itemStyle: { 
-        	"color": "$chart.LEGEND.style.color", 
-        	"fontSize": "$chart.LEGEND.style.fontSize", 
-        	"fontWeight": "$chart.LEGEND.style.fontWeight" 
+        	'color': '$chart.LEGEND.style.color', 
+        	'fontSize': '$chart.LEGEND.style.fontSize', 
+        	'fontWeight': '$chart.LEGEND.style.fontWeight' 
         }
     },
 
@@ -163,7 +175,7 @@
     
     
     yAxis: [
-        ## Aggiunta serie 
+        ## Serie add
         #foreach($yAxisKey in $yAxisList.keySet())
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         
@@ -178,8 +190,13 @@
         		},
         	},
         	
+	        #if($yAxis.MAJORGRID.interval != '')
         	tickInterval: $yAxis.MAJORGRID.interval,
+		    #end
+		    
+	        #if($yAxis.MAJORGRID.style.color != '')
         	gridLineColor: '$yAxis.MAJORGRID.style.color',
+		    #end
         	
         	#* 
         	#set($typeline = [ 'Solid', 'ShortDash', 'ShortDot', 'ShortDashDot', 'ShortDashDotDot', 
@@ -187,13 +204,22 @@
         	*#
         	
         	#set($typeline = $yAxis.MAJORGRID.style.typeline)
-        	#if($typeline == 'dashed')
-        		#set($convertedTypeline = 'Dash')
+        	#if($yAxis.MAJORGRID.style.typeline != '')
+	        	#if($typeline == 'dashed')
+	        		#set($convertedTypeline = 'Dash')
+				#else
+	        		#set($convertedTypeline = $typeline)
+	        	#end
+	        	gridLineDashStyle: '$convertedTypeline',
         	#end
-        	gridLineDashStyle: '$convertedTypeline',
         	
+	        #if($yAxis.MINORGRID.interval != '')
         	minorTickInterval: $yAxis.MINORGRID.interval,
+		    #end
+		    
+	        #if($yAxis.MINORGRID.style.color != '')
         	minorGridLineColor: '$yAxis.MINORGRID.style.color',
+		    #end
         	
         	#set($typeline = $yAxis.MINORGRID.style.typeline)
         	#if($typeline == 'dashed')
@@ -210,7 +236,7 @@
         	},
         },
         #end
-        ## FINE Aggiunta serie
+        ## FINE Serie add
             
     ],
     
@@ -267,8 +293,10 @@
 		#set($seriePostfix = '')
 		#set($seriePostfix = $relatedSerie.postfixChar)
 			postfixChar: '$seriePostfix',
+			#if ($relatedSerie.precision != '')
 			valueDecimals: $relatedSerie.precision ,
-
+			#end
+			
 		#set($serieTooltip = false)
     	#set($serieTooltip = $relatedSerie.TOOLTIP)
     	#if($serieTooltip)
@@ -291,7 +319,7 @@
     #end
     
     lang: {
-        noData: "$chart.EMPTYMESSAGE.test"
+        noData: "$chart.EMPTYMESSAGE.text"
     },
     noData: {
     	style:{

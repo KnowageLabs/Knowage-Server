@@ -95,15 +95,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 labelSeparator: '',
                     		 fieldLabel: LN('sbi.chartengine.configuration.floating')
                     	 },{
-                    		 xtype : 'textfield',
+                    		 xtype : 'numberfield',
                     		 bind : '{configModel.legendX}',
                     		 fieldLabel : LN('sbi.chartengine.configuration.x'),
-                    		 maxWidth:'50'
+                    		 maxWidth:'120'
                     	 },{
-                    		 xtype : 'textfield',
+                    		 xtype : 'numberfield',
                     		 bind : '{configModel.legendY}',
                     		 fieldLabel : LN('sbi.chartengine.configuration.y'),
-                    		 maxWidth:'50'
+                    		 maxWidth:'120'
                     	 },{
                     		 xtype : 'button',
                     		 text: LN('sbi.chartengine.configuration.stylebutton'),

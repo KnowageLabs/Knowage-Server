@@ -444,9 +444,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   		      				docLabel: docLabel
   		      			};
   		            	coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
-  		      				
-  		      				console.log('chartConf', response.responseText);
-  		      				
   		      				//renderChart(chartConf);
   		      			});
 

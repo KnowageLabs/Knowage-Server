@@ -10,12 +10,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	//**********************//
 	
 	height: {
-		xtype : 'textfield',
+		xtype : 'numberfield',
 		bind : '{configModel.height}',
 		fieldLabel : LN('sbi.chartengine.configuration.height'),
 	},
 	width: {
-		xtype : 'textfield',
+		xtype : 'numberfield',
 		bind : '{configModel.width}',
 		fieldLabel : LN('sbi.chartengine.configuration.width'),
 	},
