@@ -18,7 +18,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
     	    bindFont:'{configModel.legendFont}',
     	    bindFontDim:'{configModel.legendDimension}',
     	    bindFontStyle:'{configModel.legendStyle}',
-    	    bindColor:'{configModel.legendColor}'
+    	    bindColor:'{configModel.legendColor}',
+    	    bindBorderWidth:'{configModel.legendBorderWidth}',
+    	   	bindBackgroundColor:'{configModel.legendBackgroundColor}'
     	});
         
         var stylePanelLegend = this.stylePanelLegend;

@@ -1,8 +1,5 @@
 Ext.define('Sbi.chart.designer.StylePopup',{
 	extend : 'Ext.form.Panel',
-    //session: true,
-	width : 300,
-	height : 180,
 	floating : true,
 	draggable : true,
 	closable : true,
@@ -14,7 +11,9 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		bindColor:null,
 		bindFont:null,
 		bindFontDim:null,
-		bindFontStyle:null
+		bindFontStyle:null,
+		bindBorderWidth:null,
+		bindBackgroundColor:null
 	},
 	
 	items : [],
@@ -32,27 +31,47 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         	this.add(align);
         }
         
+		var font = Ext.create('Sbi.chart.designer.FontCombo',{
+			viewModel: this.viewModel,
+			bind : this.config.bindFont
+		});
+		this.add(font);
+
+		var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
+        	viewModel: this.viewModel,
+        	bind : this.config.bindFontDim
+        });
+		this.add(dim);
+        
+		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
+        	viewModel: this.viewModel,
+        	bind : this.config.bindFontStyle
+        });
+		this.add(style);
+		
+		if(this.config.bindBorderWidth){
+			var borderWidth = Ext.create('Ext.form.field.Number',{
+				fieldLabel : LN('sbi.chartengine.configuration.borderwidth'),
+				viewModel: this.viewModel,
+				boind:  this.config.bindBorderWidth
+			})
+			this.add(borderWidth);
+		};
+
 		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 			viewModel: this.viewModel,
 			fieldBind : this.config.bindColor,
 			bind : this.config.bindColor
 		});
-		var font = Ext.create('Sbi.chart.designer.FontCombo',{
-			viewModel: this.viewModel,
-			bind : this.config.bindFont
-		});
-        var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
-        	viewModel: this.viewModel,
-        	bind : this.config.bindFontDim
-        });
-        var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
-        	viewModel: this.viewModel,
-        	bind : this.config.bindFontStyle
-        });
-        
 		this.add(color);
-		this.add(font);
-		this.add(dim);
-		this.add(style);
+		
+		if(this.config.bindBackgroundColor){
+			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
+				viewModel: this.viewModel,
+				fieldBind : this.config.bindBackgroundColor,
+				customLabel : LN('sbi.chartengine.configuration.backgroundcolor')
+			});
+			this.add(bkgrColor);
+		}
     }
 });
