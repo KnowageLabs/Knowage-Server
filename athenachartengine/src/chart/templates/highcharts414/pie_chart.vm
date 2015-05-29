@@ -93,9 +93,36 @@
     },
     #end
     
+    #if($chart.SUBTITLE.text != '')
     subtitle: {
-        text: '$chart.SUBTITLE.text'
+        text: '$chart.SUBTITLE.text',
+        
+        #set ($subtitleAlign = $chart.SUBTITLE.style.align)
+        #if ($subtitleAlign != '' )
+        
+        	#if ($subtitleAlign == 'left')
+        	x: 70,
+        	#elseif ($subtitleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$subtitleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && $axisSubtitleStyle == 'italic')
+    			fontStyle: 'italic',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
+		}
     },
+    #end
     
     #if ($chart.LEGEND.show)
     legend: {

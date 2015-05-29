@@ -56,13 +56,13 @@
         
     	style:{
     		#foreach($styleName in $chart.style.keySet())
-    			#set ($axisTytleStyle = $chart.style[$styleName])
-    			#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+    			#set ($chartStyleValue = $chart.style[$styleName])
+    			#if ($styleName == 'fontWeight' && $chartStyleValue == 'italic')
         			fontStyle: 'italic',
-				#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+				#elseif($styleName == 'fontWeight' && $chartStyleValue == 'underline')
         			textDecoration: 'underline',
 				#else		        			
-        			$styleName: '$axisTytleStyle',
+        			$styleName: '$chartStyleValue',
         		#end
     		#end
     	},
@@ -99,22 +99,49 @@
         
         style:{
         #foreach($styleName in $chart.TITLE.style.keySet())
-        	#set ($axisTytleStyle = $chart.TITLE.style[$styleName])
-    		#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+        	#set ($axisTitleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && $axisTitleStyle == 'italic')
     			fontStyle: 'italic',
-			#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+			#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
     			textDecoration: 'underline',
 			#else		        			
-    			$styleName: '$axisTytleStyle',
+    			$styleName: '$axisTitleStyle',
     		#end
 		#end
 	    }
     },
     #end
     
+    #if($chart.SUBTITLE.text != '')
     subtitle: {
-        text: '$chart.SUBTITLE.text'
+        text: '$chart.SUBTITLE.text',
+        
+        #set ($subtitleAlign = $chart.SUBTITLE.style.align)
+        #if ($subtitleAlign != '' )
+        
+        	#if ($subtitleAlign == 'left')
+        	x: 70,
+        	#elseif ($subtitleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$subtitleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && $axisSubtitleStyle == 'italic')
+    			fontStyle: 'italic',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
+		}
     },
+    #end
     
     #if ($chart.LEGEND.show)
     legend: {
@@ -209,13 +236,13 @@
 			 
 			 style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
-		        	#set ($axisTytleStyle = $xAxis.TITLE.style[$styleName])
-		        	#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
+		        	#if ($styleName == 'fontWeight' && $axisTitleStyle == 'italic')
 	        			fontStyle: 'italic',
-					#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 	        			textDecoration: 'underline',
 					#else		        			
-	        			$styleName: '$axisTytleStyle',
+	        			$styleName: '$axisTitleStyle',
 	        		#end
 	        	#end
 		     },
@@ -252,13 +279,13 @@
 			 
         		style:{
 		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
-		        		#set ($axisTytleStyle = $yAxis.TITLE.style[$styleName])
-		        		#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+		        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+		        		#if ($styleName == 'fontWeight' && $axisTitleStyle == 'italic')
 		        			fontStyle: 'italic',
-						#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 		        			textDecoration: 'underline',
 						#else		        			
-		        			$styleName: '$axisTytleStyle',
+		        			$styleName: '$axisTitleStyle',
 		        		#end
 		        	#end
         		},
@@ -412,5 +439,5 @@
     
     credits: { ##remove bottom credits text
     	enabled: false
-    },
+    }
 }
