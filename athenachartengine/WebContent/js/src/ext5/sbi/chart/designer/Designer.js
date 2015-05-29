@@ -94,27 +94,33 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {
+			var baseTemplate = {
+					CHART: {
+						type: 'BAR',
+						AXES_LIST: {
+							AXIS: [
+							       {alias:'Y', type: 'Serie'},
+							       {alias:'X', type: 'Category'}
+							       ]
+						},
+						VALUES:
+						{
+							SERIE: []
+						},
+						COLORPALETTE:
+						{
+							COLOR: []
+						}
+					}
+			};
 			
 			if (!jsonTemplate.CHART) {
-				jsonTemplate = {
-						CHART: {
-							type: 'BAR',
-							AXES_LIST: {
-								AXIS: [
-								       {alias:'Y', type: 'Serie'},
-								       {alias:'X', type: 'Category'}
-								       ]
-							},
-							VALUES:
-							{
-								SERIE: []
-							},
-							COLORPALETTE:
-							{
-								COLOR: []
-							}
-						}
-				};
+				jsonTemplate = baseTemplate;
+			}
+			
+			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE') {
+				Ext.apply(baseTemplate, jsonTemplate);
+				jsonTemplate = baseTemplate;
 			}
 			
 			this.docLabel = docLabel;
@@ -437,16 +443,33 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            xtype: 'button',
   		            text : LN('sbi.generic.save'),
   		            handler: function(){
-  		            	var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-  		            	
-  		            	var parameters = {
-  		      				jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
-  		      				docLabel: docLabel
-  		      			};
-  		            	coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
-  		      				//renderChart(chartConf);
-  		      			});
-
+  		            	Ext.Msg.show({
+                            title : LN('sbi.chartengine.designer.savetemplate.title'),
+                            msg : LN('sbi.chartengine.designer.savetemplate.msg'),
+                            width : 300,
+                            closable : false,
+                            buttons : Ext.Msg.OKCANCEL,
+                            buttonText : 
+                            {
+                                ok : LN('sbi.generic.save'),
+                                cancel : LN('sbi.generic.cancel')
+                            },
+                            fn : function(buttonValue, inputText, showConfig){
+                            	if (buttonValue == 'ok') {
+                            		var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+              		            	
+              		            	var parameters = {
+              		      				jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+              		      				docLabel: docLabel
+              		      			};
+              		            	coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
+              		      				//renderChart(chartConf);
+              		      			});
+                            	}
+//                                Ext.Msg.alert('Status', buttonValue);
+                            },
+                            icon : Ext.Msg.QUESTION
+                        });
   		            }
   		        }],
 				listeners: {

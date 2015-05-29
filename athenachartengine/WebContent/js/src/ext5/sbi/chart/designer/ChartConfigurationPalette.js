@@ -78,8 +78,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                            	order: order,
 	                            	value: selColor
 	                            });
-	                        	
-	                        	console.log('added in grid.store: ', grid.store);
 	                        }
 	                    }
 	                }),                 
