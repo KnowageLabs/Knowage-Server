@@ -1,13 +1,8 @@
 Ext.define('Sbi.chart.designer.ChartConfiguration',{
 	extend: 'Ext.form.Panel',
-//	viewModel: 'chartconfigmodel',
-//	session: true,
 	border: false,
 	layout: 'vbox',
 	item: [ ],
-	defaults:{
-        width: 850,
-    },
     main:null,
     second:null,
     

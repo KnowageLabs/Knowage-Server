@@ -365,6 +365,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		CHART['SUBTITLE'] = SUBTITLE;
     		
     		var LEGEND = {};
+    		LEGEND['show'] = chartModel.get('showLegend');
     		LEGEND['position'] = (chartModel.get('legendPosition') != undefined)? chartModel.get('legendPosition') : '';
     		LEGEND['layout'] = (chartModel.get('legendLayout') != undefined)? chartModel.get('legendLayout') : '';
     		LEGEND['floating'] = (chartModel.get('legendFloating') != undefined)? chartModel.get('legendFloating') : '';
@@ -460,7 +461,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				nodataFont: jsonEmptyMsgStyle.font,
   				nodataDimension: jsonEmptyMsgStyle.fontSize,
   				nodataStyle: jsonEmptyMsgStyle.fontWeight,
-  				  				
+  				
+  				showLegend: chartLegend.show,
   				legendPosition: chartLegend.position,
   				legendLayout: chartLegend.layout,
   				legendFloating: chartLegend.floating,

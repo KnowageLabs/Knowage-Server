@@ -115,6 +115,8 @@
     subtitle: {
         text: '$chart.SUBTITLE.text'
     },
+    
+    #if ($chart.LEGEND.show)
     legend: {
         #if ($chart.LEGEND.layout != '' )
         layout: '$chart.LEGEND.layout',
@@ -155,6 +157,7 @@
         	'fontWeight': '$chart.LEGEND.style.fontWeight' 
         }
     },
+    #end
 
     ## Axises selection
     #set($axisList = $chart.AXES_LIST.AXIS)

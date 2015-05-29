@@ -179,15 +179,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	     	]
 	    },{
 	        xtype: 'checkboxfield',
-	        name: 'showLegend', 
 	        id: 'showLegend',
+	        bind : '{configModel.showLegend}',
 	        margin: '20 0 0 0',
-	        value: true,
 	        labelSeparator: '',
 	        fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
-	        handler: function(checkbox, checked) {
-	            Ext.getCmp('page2Legend').setDisabled(!checked);
-	        }
 	    }
 		];
 	        

@@ -2,11 +2,12 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	extend : 'Ext.panel.Panel',
 	columnWidth : 0.7,
 	title : LN('sbi.chartengine.configuration.legend'),
-	id : 'page2Legend',
 	bodyPadding : 10,
 	items : [],
 	stylePanelLegend : {},
-	
+	bind:{
+		disabled:'{!configModel.showLegend}'
+	},
 	constructor: function(config) {
         this.callParent(config);
         this.viewModel = config.viewModel;
