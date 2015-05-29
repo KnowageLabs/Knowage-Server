@@ -55,9 +55,41 @@
         plotShadow: false
     },
     
+    colors: [
+		#foreach($color in $chart.COLORPALETTE.COLOR)
+		'$color.value', 
+		#end
+    ],
+    
+    
     #if($chart.TITLE.text != '')
     title: {
-        text: '$chart.TITLE.text'
+        text: '$chart.TITLE.text',
+        
+        #set ($titleAlign = $chart.TITLE.style.align)
+        #if ($titleAlign != '' )
+        
+        	#if ($titleAlign == 'left')
+        	x: 70,
+        	#elseif ($titleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$titleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.TITLE.style.keySet())
+        	#set ($axisTytleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+    			fontStyle: 'italic',
+			#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTytleStyle',
+    		#end
+		#end
+	    }
     },
     #end
     

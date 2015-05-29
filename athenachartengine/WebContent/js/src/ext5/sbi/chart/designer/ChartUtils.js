@@ -327,7 +327,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var emptymessageStyle = '';
     		emptymessageStyle += 'align:' + ((chartModel.get('nodataAlign') != undefined)? chartModel.get('nodataAlign') : '') + ';';
-    		emptymessageStyle += 'color:'+ ((chartModel.get('nodataColor') != undefined)? '#' + chartModel.get('nodataColor') : '') + ';';
+    		emptymessageStyle += 'color:'+ ((chartModel.get('nodataColor') != undefined && chartModel.get('nodataColor') != '')? 
+    				'#' + chartModel.get('nodataColor') : '') + ';';
     		emptymessageStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
     		emptymessageStyle += 'fontWeight:' + ((chartModel.get('nodataStyle') != undefined)? chartModel.get('nodataStyle') : '') + ';';
     		emptymessageStyle += 'fontSize:' + ((chartModel.get('nodataDimension') != undefined)? chartModel.get('nodataDimension') : '') + ';';
@@ -340,7 +341,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var titleStyle = '';
     		titleStyle += 'align:' + ((chartModel.get('titleAlign') != undefined)? chartModel.get('titleAlign') : '') + ';';
-    		titleStyle += 'color:' + ((chartModel.get('titleColor') != undefined)? '#' + chartModel.get('titleColor') : '') + ';';
+    		titleStyle += 'color:' + ((chartModel.get('titleColor') != undefined && chartModel.get('titleColor') != '')? 
+    				'#' + chartModel.get('titleColor') : '') + ';';
     		titleStyle += 'font:' + ((chartModel.get('titleFont') != undefined)? chartModel.get('titleFont') : '') + ';';
     		titleStyle += 'fontWeight:' + ((chartModel.get('titleStyle') != undefined)? chartModel.get('titleStyle') : '') + ';';
     		titleStyle += 'fontSize:' + ((chartModel.get('titleDimension') != undefined)? chartModel.get('titleDimension') : '') + ';';
@@ -353,7 +355,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var subtitleStyle = '';
     		subtitleStyle += 'align:' + ((chartModel.get('subtitleAlign') != undefined)? chartModel.get('subtitleAlign') : '') + ';';
-    		subtitleStyle += 'color:' + ((chartModel.get('subtitleColor') != undefined)? '#' + chartModel.get('subtitleColor') : '') + ';';
+    		subtitleStyle += 'color:' + ((chartModel.get('subtitleColor') != undefined && chartModel.get('subtitleColor') != '')? 
+    				'#' + chartModel.get('subtitleColor') : '') + ';';
     		subtitleStyle += 'font:' + ((chartModel.get('subtitleFont') != undefined)? chartModel.get('subtitleFont') : '') + ';';
     		subtitleStyle += 'fontWeight:' + ((chartModel.get('subtitleStyle') != undefined)? chartModel.get('subtitleStyle') : '') + ';';
     		subtitleStyle += 'fontSize:' + ((chartModel.get('subtitleDimension') != undefined)? chartModel.get('subtitleDimension') : '') + ';';
@@ -369,7 +372,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		LEGEND['y'] = (chartModel.get('legendY') != undefined)? chartModel.get('legendY') : '';
     		
     		var legendStyle = '';
-    		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined)? '#' + chartModel.get('legendColor') : '') + ';';
+    		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined && chartModel.get('legendColor') != '')? 
+    				'#' + chartModel.get('legendColor') : '') + ';';
     		legendStyle += 'font:' + ((chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '') + ';';
     		legendStyle += 'fontSize:' + ((chartModel.get('legendDimension') != undefined)? chartModel.get('legendDimension') : '') + ';';
     		legendStyle += 'fontWeight:' + ((chartModel.get('legendStyle') != undefined)? chartModel.get('legendStyle') : '') + ';';
