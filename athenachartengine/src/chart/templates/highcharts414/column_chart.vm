@@ -31,10 +31,7 @@
 	#end
 #end
 
-
-
 {
-
 	meta: {
 		drilldownEnabled: $enableDrilldown,
 	},
@@ -59,7 +56,14 @@
         
     	style:{
     		#foreach($styleName in $chart.style.keySet())
-    		$styleName: '$chart.style[$styleName]',
+    			#set ($axisTytleStyle = $chart.style[$styleName])
+    			#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+        			fontStyle: 'italic',
+				#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+        			textDecoration: 'underline',
+				#else		        			
+        			$styleName: '$axisTytleStyle',
+        		#end
     		#end
     	},
     	
@@ -80,17 +84,26 @@
     title: {
         text: '$chart.TITLE.text',
         style:{
-        	#foreach($styleName in $chart.TITLE.style.keySet())
-        	$styleName: '$chart.TITLE.style[$styleName]',
-        	#end
+        	#set ($axisTytleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+    			fontStyle: 'italic',
+			#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTytleStyle',
+    		#end
 	    }, 
     },
     subtitle: {
         text: '$chart.SUBTITLE.text'
     },
     legend: {
+        #if ($chart.LEGEND.layout != '' )
         layout: '$chart.LEGEND.layout',
+        #end
+        #if ($chart.LEGEND.position != '' )
         align: '$chart.LEGEND.position',
+        #end
         verticalAlign: 'top',
         
         #if ($chart.LEGEND.floating != '')
@@ -158,9 +171,31 @@
 	 {
 		 title: {
 			 text: '$xAxis.TITLE.text',
+			 #if( $xAxis.style.rotate != '' ) 
+			 rotation: $xAxis.style.rotate,
+			 #end
+			 
+			 #set ($xTitleAlign = $xAxis.TITLE.style.align)
+			 #if( $xTitleAlign != '' )
+			 	#if ($xTitleAlign == 'center' )
+				align: 'middle',
+				#elseif ($xTitleAlign == 'left' )
+				align: 'low',
+				#elseif ($xTitleAlign == 'right' )
+				align: 'high',
+				#end
+			 #end
+			 
 			 style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
-	        	$styleName: '$xAxis.TITLE.style[$styleName]',
+		        	#set ($axisTytleStyle = $xAxis.TITLE.style[$styleName])
+		        	#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+	        			fontStyle: 'italic',
+					#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+	        			textDecoration: 'underline',
+					#else		        			
+	        			$styleName: '$axisTytleStyle',
+	        		#end
 	        	#end
 		     },
 		 },
@@ -183,9 +218,27 @@
         	min: 0,
         	title: {
         		text: '$yAxis.TITLE.text',
+        		#if( $yAxis.style.rotate != '' ) 
+        		rotation: $yAxis.style.rotate,
+        		#end
+        		#if( $yAxis.TITLE.style.align != '' )
+        			#if ($yAxis.TITLE.style.align == 'center' )
+					align: 'middle',
+					#else
+					align: '$yAxis.TITLE.style.align',
+					#end
+				#end
+			 
         		style:{
 		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
-		        	$styleName: '$yAxis.TITLE.style[$styleName]',
+		        		#set ($axisTytleStyle = $yAxis.TITLE.style[$styleName])
+		        		#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
+		        			fontStyle: 'italic',
+						#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+		        			textDecoration: 'underline',
+						#else		        			
+		        			$styleName: '$axisTytleStyle',
+		        		#end
 		        	#end
         		},
         	},

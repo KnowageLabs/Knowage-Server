@@ -1,17 +1,17 @@
-Ext.define('Sbi.chart.designer.FontAlignCombo', {
+Ext.define('Sbi.chart.designer.FontVerticalAlignCombo', {
     extend :'Ext.form.ComboBox',
     
     store: {
         fields: [ 'name','value' ],
         data: [ {
-        	name : LN('sbi.chartengine.configuration.alignment.l'),
-        	value : 'left'
+			name : LN('sbi.chartengine.configuration.alignment.h'),
+			value : 'high'
 		}, {
-			name : LN('sbi.chartengine.configuration.alignment.c'),
+			name : LN('sbi.chartengine.configuration.alignment.m'),
 			value : 'center'
 		}, {
-			name : LN('sbi.chartengine.configuration.alignment.r'),
-			value : 'right'
+			name : LN('sbi.chartengine.configuration.alignment.low'),
+			value : 'low'
 		} ]
     },
     editable : false,

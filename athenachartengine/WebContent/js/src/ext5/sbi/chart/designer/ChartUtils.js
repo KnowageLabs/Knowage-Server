@@ -296,7 +296,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		chartStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
     		chartStyle += 'fontSize:' + ((chartModel.get('fontDimension') != undefined)? chartModel.get('fontDimension') : '') + ';';
     		chartStyle += 'fontWeight:' + ((chartModel.get('fontWeight') != undefined)? chartModel.get('fontWeight') : '') + ';';
-    		chartStyle += 'backgroundColor:' + ((chartModel.get('backgroundColor') != undefined)? '#' + chartModel.get('backgroundColor') : '') + ';';
+    		chartStyle += 'backgroundColor:' + ((chartModel.get('backgroundColor') != undefined && chartModel.get('backgroundColor') != '')? 
+    				'#' + chartModel.get('backgroundColor') : '') + ';';
     		CHART['style'] = chartStyle;
     		
     		var COLORPALETTE = {};

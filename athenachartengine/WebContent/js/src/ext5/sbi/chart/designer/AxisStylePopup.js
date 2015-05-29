@@ -5,6 +5,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
   	    'Sbi.chart.designer.FontStyleCombo',
   	    'Sbi.chart.designer.FontDimCombo',
   	    'Sbi.chart.designer.FontAlignCombo',
+  	    'Sbi.chart.designer.FontVerticalAlignCombo',
   	    'Sbi.chart.designer.TypeLineCombo'
   	],
 	id: 'axisStylePopup',
@@ -125,10 +126,17 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		this.axisFieldSet.add(this.styleRotateNumberField);
 		
 		var styleAlign = this.axisData.styleAlign;
-		this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
-			value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
-				fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
-		});
+		if(isYAxis) {
+			this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontVerticalAlignCombo', {
+				value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+			});
+		} else {
+			this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
+				value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+			});
+		}
 		this.axisFieldSet.add(this.styleAlignComboBox);
 		
 		var axisStyleColor = this.axisData.styleColor;
@@ -310,10 +318,17 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		}
 				
 		var titleStyleAlign = this.axisData.titleStyleAlign;
-		this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
-			value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
-			fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
-		});
+		if(isYAxis) {
+			this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontVerticalAlignCombo', {
+				value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+			});
+		} else {
+			this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
+				value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+			});
+		}
 		this.titleFieldSet.add(this.titleStyleAlignComboBox);
 		
 		var titleStyleColor = this.axisData.titleStyleColor;
@@ -445,8 +460,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 
 		var titleStyleFontSize = this.titleStyleFontSizeComboBox.getValue();
 		this.axisData.titleStyleFontSize = titleStyleFontSize;
-		
-		console.log('axisData after: ', this.axisData);
 		
 		this.destroy();
     },
