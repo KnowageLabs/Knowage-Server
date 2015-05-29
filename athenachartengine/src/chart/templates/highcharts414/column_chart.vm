@@ -327,6 +327,7 @@
 	    	type: '$relatedSerieType',
 	    #end
 	    
+		#set($relatedSerieShowValue = $relatedSerie.showValue)
 	    	data: [
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerie.column)) ## "Vendite" -> "column_5" ## "Ricavi" -> "column_6"
 				#foreach($row in $rows)
@@ -335,7 +336,13 @@
 					{
 						drilldown: $enableDrilldown,
 						y: $serieValue,
-						name: '$serieName'
+						name: '$serieName',
+						
+						#if ($relatedSerieShowValue != '')
+						dataLabels: {
+		                    enabled: $relatedSerieShowValue
+		                }
+						#end
 					},
 				#end
 	    	],
