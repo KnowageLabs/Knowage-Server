@@ -54,6 +54,7 @@
     	width: $chart.width,
     	#end
         
+        borderColor: '$chart.style.backgroundColor',
     	style:{
     		#foreach($styleName in $chart.style.keySet())
     			#set ($chartStyleValue = $chart.style[$styleName])
