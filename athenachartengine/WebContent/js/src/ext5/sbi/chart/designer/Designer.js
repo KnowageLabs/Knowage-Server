@@ -36,10 +36,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			name: LN('sbi.chartengine.designer.charttype.bar'), 
 			type: 'BAR',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.column'),
-			type: 'COLUMN',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
 		}, {	
 			name: LN('sbi.chartengine.designer.charttype.line'), 
 			type: 'LINE',
@@ -119,7 +115,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			
 			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE') {
-				Ext.apply(baseTemplate, jsonTemplate);
+				Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
 				jsonTemplate = baseTemplate;
 			}
 			

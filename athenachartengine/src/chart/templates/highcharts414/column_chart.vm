@@ -38,13 +38,16 @@
 
     chart: {
     	#set($chartTypeToPrint = 'column')
-    	#if($chartType == 'bar')
-    		#set($chartTypeToPrint = 'bar')
-    	#elseif($chartType == 'line')
+    	#if($chartType == 'line')
     		#set($chartTypeToPrint = 'line')
     	#end
+    
         type: '$chartTypeToPrint',
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
+        
+        #if($chart.orientation == 'horizontal' && $chartTypeToPrint == 'column')
+        inverted: true,
+        #end
         
         #if($chart.height != '')
         height: $chart.height,
