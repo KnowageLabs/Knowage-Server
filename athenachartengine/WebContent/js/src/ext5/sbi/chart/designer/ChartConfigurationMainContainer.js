@@ -3,10 +3,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	requires : [
 	            'Sbi.chart.designer.StylePopup',
 	            'Sbi.chart.designer.FontStyleCombo'],
-	title : 'Configurazione generica',
-	id: 'page2Container',
+	title : LN('sbi.chartengine.configuration'),
 	bodyPadding : 10,
-	
 	//**********************//
 	
 	height: {

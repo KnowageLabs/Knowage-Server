@@ -373,6 +373,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		LEGEND['y'] = (chartModel.get('legendY') != undefined)? chartModel.get('legendY') : '';
     		
     		var legendStyle = '';
+    		legendStyle += 'align:' + ((chartModel.get('legendAlign') != undefined)? chartModel.get('legendAlign') : '') + ';';
     		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined && chartModel.get('legendColor') != '')? 
     				'#' + chartModel.get('legendColor') : '') + ';';
     		legendStyle += 'font:' + ((chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '') + ';';
@@ -468,8 +469,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				legendFloating: chartLegend.floating,
   				legendX: chartLegend.x,
   				legendY: chartLegend.y,
-  				legendAlign: jsonTemplate.CHART.align,
   				legendColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
+  				legendAlign: jsonLegendStyle.align,
   				legendFont: jsonLegendStyle.font,
   				legendDimension: jsonLegendStyle.fontSize,
   				legendStyle: jsonLegendStyle.fontWeight,
