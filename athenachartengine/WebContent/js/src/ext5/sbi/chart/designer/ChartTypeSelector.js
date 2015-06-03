@@ -7,7 +7,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	enableColumnHide:true,
 	hideHeaders: true,
 	
-	chartType: '',
+	chartType: '', // 'BAR', 'LINE' or 'PIE'
 	
 	columns: [
 	    {
@@ -23,7 +23,8 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	listeners : {
 		rowclick: function(table, record, tr, rowIndex, e, eOpts ) {
 			var selectedType = record.get('type');
-			this.chartType = selectedType;
+
+			this.setChartType(selectedType);
 		},
 	},
 	
@@ -37,6 +38,24 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			if(type === row.get('type')) {
 				this.getSelectionModel().select(i);
 				break;
+			}
+		}
+		
+		var chartOrientationCombo = Ext.getCmp('chartOrientationCombo');
+		var chartRightAxisesContainer = Ext.getCmp('chartRightAxisesContainer');
+		if(this.chartType.toUpperCase() == 'PIE') {
+			if(chartOrientationCombo != undefined) {
+				chartOrientationCombo.disable();
+			}
+			if(chartRightAxisesContainer != undefined) {
+				chartRightAxisesContainer.disable();
+			}
+		} else {
+			if(chartOrientationCombo != undefined) {
+				chartOrientationCombo.enable();
+			}
+			if(chartRightAxisesContainer != undefined) {
+				chartRightAxisesContainer.enable();
 			}
 		}
 	},

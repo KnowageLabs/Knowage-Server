@@ -150,11 +150,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
-							if (!panelWhereAddSeries.isVisible()) {
-								panelWhereAddSeries.setVisible(true);
-							}
-							
-							ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
+					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+					    	
+					    	if(chartType.toUpperCase() != 'PIE') {
+					    		if (!panelWhereAddSeries.isVisible()) {
+					    			panelWhereAddSeries.setVisible(true);
+					    		}
+					    		
+					    		ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
+					    	}
+					    	
 					    },
 					    hidden: (panelWhereAddSeries == null)
 					}

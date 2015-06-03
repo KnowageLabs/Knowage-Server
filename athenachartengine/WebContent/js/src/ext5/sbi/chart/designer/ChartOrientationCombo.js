@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
     extend : 'Ext.form.ComboBox',
 	queryMode : 'local',
-	value : 'h',
+	value : 'vertical',
 	triggerAction : 'all',
 	forceSelection : true,
 	editable : false,

@@ -91,13 +91,25 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		});
 		this.serieFieldSet.add(this.serieNameTextField);
 	
-		var serieType = dataAtRow.get('serieType');
-		var serieTypes = [
-            {name: LN('sbi.chartengine.designer.charttype.notype'), value:''},
-			{name: LN('sbi.chartengine.designer.charttype.bar'), value:'bar'},
-			{name: LN('sbi.chartengine.designer.charttype.line'), value:'line'}, 
-			{name: LN('sbi.chartengine.designer.charttype.pie'), value:'pie'} 
-		];
+		
+		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+		var serieType = null;
+		var serieTypes = null;
+		
+		if(chartType.toUpperCase() == 'PIE') {
+			serieType = dataAtRow.get('serieType').toUpperCase() == 'PIE'? dataAtRow.get('serieType') : '';
+			serieTypes = [
+				{name: LN('sbi.chartengine.designer.charttype.notype'), value:''},
+				{name: LN('sbi.chartengine.designer.charttype.pie'), value:'pie'} 
+			];
+		} else {
+			serieType = dataAtRow.get('serieType').toUpperCase() != 'PIE'? dataAtRow.get('serieType') : '';
+			serieTypes = [
+				{name: LN('sbi.chartengine.designer.charttype.notype'), value:''},
+				{name: LN('sbi.chartengine.designer.charttype.bar'), value:'bar'},
+				{name: LN('sbi.chartengine.designer.charttype.line'), value:'line'}, 
+            ];
+		}
 		
 		this.serieTypesComboBox = Ext.create('Ext.form.ComboBox', {
 			store: {

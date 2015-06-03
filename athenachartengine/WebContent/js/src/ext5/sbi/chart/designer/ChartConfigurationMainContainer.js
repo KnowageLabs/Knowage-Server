@@ -19,6 +19,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	},
 	
 	chartOrientation : Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
+		id: 'chartOrientationCombo',
 		bind : '{configModel.orientation}'
 	}),
 	

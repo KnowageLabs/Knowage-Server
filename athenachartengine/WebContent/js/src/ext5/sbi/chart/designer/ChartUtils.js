@@ -290,7 +290,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		CHART['height'] = (chartModel.get('height') != undefined)? chartModel.get('height') : '';
     		CHART['width'] = (chartModel.get('width') != undefined)? chartModel.get('width') : '';
-    		CHART['orientation'] = (chartModel.get('orientation') != undefined)? chartModel.get('orientation') : '';
+    		
+    		if(chartModel.get('orientation') != undefined) {
+    			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+    			
+    			CHART['orientation'] = chartType.toUpperCase() != 'PIE' ? chartModel.get('orientation') : '';
+    		}
     		
     		var chartStyle = '';
     		chartStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
