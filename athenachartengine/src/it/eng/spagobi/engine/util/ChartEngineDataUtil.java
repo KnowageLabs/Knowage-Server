@@ -146,7 +146,6 @@ public class ChartEngineDataUtil {
 		IQuery q = new Query();
 
 		JSONObject jo = new JSONObject(jsonTemplate);
-		JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").getJSONObject("CATEGORY");
 
 		List<JSONObject> seriesList = new LinkedList<>();
 
@@ -174,11 +173,25 @@ public class ChartEngineDataUtil {
 		}
 
 		// Category
-		String categoryColumn = drilldownCategory;
 		if (!isDrilldown) {
-			categoryColumn = category.getString("column");
+			JSONArray categories = new JSONArray();
+			JSONObject category = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONObject("CATEGORY");
+			if (category != null) {
+				categories.put(category);
+			}
+			// multiple categories for non conventional charts es. SUNBURST/TREEMAP
+			else {
+				categories = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("CATEGORY");
+			}
+
+			for (int i = 0; i < categories.length(); i++) {
+				JSONObject cat = (JSONObject) categories.get(i);
+				q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, "DESC", null);
+
+			}
+		} else {
+			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "DESC", null);
 		}
-		q.addSelectFiled(categoryColumn, null, categoryColumn, true, true, true, "DESC", null);
 
 		// Where clause
 		if (isDrilldown) {
