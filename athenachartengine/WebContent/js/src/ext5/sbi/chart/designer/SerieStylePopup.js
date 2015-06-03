@@ -97,13 +97,13 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var serieTypes = null;
 		
 		if(chartType.toUpperCase() == 'PIE') {
-			serieType = dataAtRow.get('serieType').toUpperCase() == 'PIE'? dataAtRow.get('serieType') : '';
+			serieType = dataAtRow.get('serieType') && dataAtRow.get('serieType').toUpperCase() == 'PIE'? dataAtRow.get('serieType') : '';
 			serieTypes = [
 				{name: LN('sbi.chartengine.designer.charttype.notype'), value:''},
 				{name: LN('sbi.chartengine.designer.charttype.pie'), value:'pie'} 
 			];
 		} else {
-			serieType = dataAtRow.get('serieType').toUpperCase() != 'PIE'? dataAtRow.get('serieType') : '';
+			serieType = dataAtRow.get('serieType') && dataAtRow.get('serieType').toUpperCase() != 'PIE'? dataAtRow.get('serieType') : '';
 			serieTypes = [
 				{name: LN('sbi.chartengine.designer.charttype.notype'), value:''},
 				{name: LN('sbi.chartengine.designer.charttype.bar'), value:'bar'},
