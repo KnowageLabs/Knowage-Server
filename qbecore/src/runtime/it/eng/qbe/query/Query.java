@@ -757,7 +757,7 @@ public class Query implements IQuery {
 		for (ISelectField select : selectFields) {
 			if (select instanceof SimpleSelectField) {
 				SimpleSelectField simpleField = (SimpleSelectField) select;
-				String columnName = extractColumnNameFromSimpleField(simpleField);
+				String columnName = extractColumnNameFromFieldName(simpleField.getName());
 				selectClause += simpleField.getFunction().apply(columnName) + " AS " + simpleField.getAlias() + " ";
 				if (selectFields.indexOf(select) != (selectFields.size() - 1)) {
 					selectClause += ", ";
@@ -769,7 +769,7 @@ public class Query implements IQuery {
 		}
 
 		for (WhereField where : whereFields) {
-			String columnName = where.getLeftOperand().values[0].split(":")[1];
+			String columnName = extractColumnNameFromFieldName(where.getLeftOperand().values[0]);
 			String operator = where.getOperator();
 			if (!operator.equals("EQUALS TO")) {
 				throw new SpagoBIEngineRuntimeException(
@@ -793,7 +793,7 @@ public class Query implements IQuery {
 		for (ISelectField groupBy : groupByFields) {
 			if (groupBy instanceof SimpleSelectField) {
 				SimpleSelectField simpleField = (SimpleSelectField) groupBy;
-				String columnName = extractColumnNameFromSimpleField(simpleField);
+				String columnName = extractColumnNameFromFieldName(simpleField.getName());
 				groupByClause += simpleField.getFunction().apply(columnName) + " ";
 				if (groupByFields.indexOf(groupBy) != (groupByFields.size() - 1)) {
 					groupByClause += ", ";
@@ -807,7 +807,7 @@ public class Query implements IQuery {
 		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause) + groupByClause;
 	}
 
-	private String extractColumnNameFromSimpleField(SimpleSelectField simpleField) {
-		return simpleField.getName().contains(":") ? simpleField.getName().split(":")[1] : simpleField.getName();
+	private String extractColumnNameFromFieldName(String fieldName) {
+		return fieldName.contains(":") ? fieldName.split(":")[1] : fieldName;
 	}
 }
