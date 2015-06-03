@@ -15,7 +15,7 @@
 
 
 #set($enableDrilldown = false)
-#if($categorieColumns.groupby)
+#if($categorieColumns.groupby != '')
 	#set($enableDrilldown = true)
 #end
 
