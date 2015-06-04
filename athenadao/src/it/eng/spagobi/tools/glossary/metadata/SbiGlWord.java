@@ -2,6 +2,8 @@ package it.eng.spagobi.tools.glossary.metadata;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
+import java.util.Set;
+
 public class SbiGlWord extends SbiHibernateModel {
 
 	private static final long serialVersionUID = 3377527470798741056L;
@@ -13,6 +15,8 @@ public class SbiGlWord extends SbiHibernateModel {
 	private String formula;
 	private String state;
 	private String category;
+
+	private Set<SbiGlReferences> references;
 
 	public SbiGlWord() {
 	}
@@ -123,6 +127,21 @@ public class SbiGlWord extends SbiHibernateModel {
 	 */
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	/**
+	 * @return the references
+	 */
+	public Set<SbiGlReferences> getReferences() {
+		return references;
+	}
+
+	/**
+	 * @param references
+	 *            the references to set
+	 */
+	public void setReferences(Set<SbiGlReferences> references) {
+		this.references = references;
 	}
 
 }
