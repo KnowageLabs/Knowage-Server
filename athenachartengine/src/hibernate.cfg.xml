@@ -198,6 +198,16 @@
         <mapping resource="it/eng/spagobi/community/mapping/SbiCommunity.hbm.xml" />
         <mapping resource="it/eng/spagobi/community/mapping/SbiCommunityUsers.hbm.xml" />
         
+        
+        <!-- GLOSSARY -->
+        <mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlAttributes.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlContents.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlGlossary.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlReferences.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWlist.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWordAttr.hbm.xml" />
+        
         <!-- end mapping -->
         
         <class-cache class="it.eng.spagobi.commons.metadata.SbiDomains" usage="read-only"/>
