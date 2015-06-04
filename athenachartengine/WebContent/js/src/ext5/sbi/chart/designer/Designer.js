@@ -459,8 +459,10 @@ Ext.define('Sbi.chart.designer.Designer', {
               		      				docLabel: docLabel
               		      			};
               		            	coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
-              		      				//renderChart(chartConf);
-              		      			});
+              		            		
+              		            		parent.location.href = '/athena/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
+
+              		            	});
                             	}
 //                                Ext.Msg.alert('Status', buttonValue);
                             },
