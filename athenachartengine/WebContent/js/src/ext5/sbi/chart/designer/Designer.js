@@ -439,35 +439,39 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            xtype: 'button',
   		            text : LN('sbi.generic.save'),
   		            handler: function(){
-  		            	Ext.Msg.show({
-                            title : LN('sbi.chartengine.designer.savetemplate.title'),
-                            msg : LN('sbi.chartengine.designer.savetemplate.msg'),
-                            width : 300,
-                            closable : false,
-                            buttons : Ext.Msg.OKCANCEL,
-                            buttonText : 
-                            {
-                                ok : LN('sbi.generic.save'),
-                                cancel : LN('sbi.generic.cancel')
-                            },
-                            fn : function(buttonValue, inputText, showConfig){
-                            	if (buttonValue == 'ok') {
-                            		var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-              		            	
-              		            	var parameters = {
-              		      				jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
-              		      				docLabel: docLabel
-              		      			};
-              		            	coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
-              		            		
-              		            		parent.location.href = '/athena/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
-
-              		            	});
-                            	}
-//                                Ext.Msg.alert('Status', buttonValue);
-                            },
-                            icon : Ext.Msg.QUESTION
-                        });
+  		            	var errorMessage = Sbi.chart.designer.Designer.validateTemplate();
+  		            	
+  		            	if (errorMessage == false) {
+  		            		Ext.Msg.show({
+  		            			title : LN('sbi.chartengine.designer.savetemplate.title'),
+  		            			msg : LN('sbi.chartengine.designer.savetemplate.msg'),
+  		            			icon : Ext.Msg.QUESTION,
+  		            			closable : false,
+  		            			buttons : Ext.Msg.OKCANCEL,
+  		            			buttonText : 
+  		            			{
+  		            				ok : LN('sbi.generic.save'),
+  		            				cancel : LN('sbi.generic.cancel')
+  		            			},
+  		            			fn : function(buttonValue, inputText, showConfig){
+  		            				if (buttonValue == 'ok') {
+  		            					var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+  		            					
+  		            					var parameters = {
+  		            							jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+  		            							docLabel: docLabel
+  		            					};
+  		            					coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
+  		            						
+  		            						parent.location.href = '/athena/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
+  		            						
+  		            					});
+  		            				}
+  		            			}
+  		            		});
+  		            	} else {
+  		            		
+  		            	}
   		            }
   		        }],
 				listeners: {
@@ -648,7 +652,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							axisType: 'MEASURE',
 							
 							serieAxis: store.axisAlias,
-							serieGroupingFunction: '',
+							serieGroupingFunction: serie.groupingFunction,
 							serieType: serie.type,
 							serieOrderType: serie.orderType,
 							serieColumn: serie.column,
@@ -793,6 +797,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 			}
 			return templateJson;
+		},
+		
+		validateTemplate: function() {
+			return false;
 		}
+		
     }
 });
