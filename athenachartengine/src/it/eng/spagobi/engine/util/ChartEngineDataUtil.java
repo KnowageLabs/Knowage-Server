@@ -117,8 +117,6 @@ public class ChartEngineDataUtil {
 
 			IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
 
-			System.out.println(q.toSql("SCHEMA", "TABLE"));
-
 			String jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale);
 			boolean enableNextDrilldown = i < gbys.length;
 
