@@ -12,12 +12,16 @@ import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -29,16 +33,15 @@ import org.hibernate.Transaction;
  */
 public class AbstractHibernateDAO {
 
-	private static transient Logger logger = Logger
-			.getLogger(AbstractHibernateDAO.class);
-	
+	private static transient Logger logger = Logger.getLogger(AbstractHibernateDAO.class);
+
 	private String userID = "server";
 	private IEngUserProfile profile = null;
 	private String tenant = null;
 
 	public static final String TENANT_FILTER_NAME = "tenantFilter";
 	private static final String TENANT_DEFAULT = "SPAGOBI";
-	
+
 	public void setUserID(String user) {
 		userID = user;
 	}
@@ -46,34 +49,34 @@ public class AbstractHibernateDAO {
 	public void setUserProfile(IEngUserProfile profile) {
 		this.profile = profile;
 		if (profile != null) {
-			this.setUserID( (String) (((UserProfile)profile).getUserId() ));
+			this.setUserID((String) (((UserProfile) profile).getUserId()));
 		}
-		logger.debug("userID = [{0}]"+ this.userID);
+		logger.debug("userID = [{0}]" + this.userID);
 	}
 
 	public IEngUserProfile getUserProfile() {
 		return profile;
 	}
-	
-//	public Boolean isSuperadmin(){
-//		Boolean isSuperadmin = false;
-//		// look in the user profile
-//		IEngUserProfile profile = this.getUserProfile();
-//		if (profile != null) {
-//			UserProfile userProfile = (UserProfile) profile;
-//			isSuperadmin = userProfile.getIsSuperadmin();
-//
-//		} else {
-//			logger.debug("User profile object not found");
-//		}
-//		return isSuperadmin;
-//	}
-	
+
+	// public Boolean isSuperadmin(){
+	// Boolean isSuperadmin = false;
+	// // look in the user profile
+	// IEngUserProfile profile = this.getUserProfile();
+	// if (profile != null) {
+	// UserProfile userProfile = (UserProfile) profile;
+	// isSuperadmin = userProfile.getIsSuperadmin();
+	//
+	// } else {
+	// logger.debug("User profile object not found");
+	// }
+	// return isSuperadmin;
+	// }
+
 	public String getTenant() {
 		// if a tenant is set into the DAO object, it wins
 		String tenantId = this.tenant;
 		logger.debug("This DAO object instance tenant = [{0}]" + tenantId);
-		
+
 		if (tenantId == null) {
 			logger.debug("Tenant id not find in this DAO object instance; looking for it in the user profile object ... ");
 			// look in the user profile
@@ -81,15 +84,14 @@ public class AbstractHibernateDAO {
 			if (profile != null) {
 				UserProfile userProfile = (UserProfile) profile;
 				tenantId = userProfile.getOrganization();
-				logger.debug( "User profile tenant = [{0}]" + tenantId);
+				logger.debug("User profile tenant = [{0}]" + tenantId);
 			} else {
 				logger.debug("User profile object not found");
 			}
 		}
-		
+
 		if (tenantId == null) {
-			logger.debug("Tenant id not find in this DAO object instance nor in the user profile object; " +
-					"looking for it using TenantManager ... ");
+			logger.debug("Tenant id not find in this DAO object instance nor in the user profile object; " + "looking for it using TenantManager ... ");
 			// look for tenant using TenantManager
 			Tenant tenant = TenantManager.getTenant();
 			if (tenant != null) {
@@ -99,8 +101,8 @@ public class AbstractHibernateDAO {
 				logger.debug("TenantManager did not return any Tenant");
 			}
 		}
-		
-		logger.debug( "OUT: tenant = [{0}]" + tenantId);
+
+		logger.debug("OUT: tenant = [{0}]" + tenantId);
 		return tenantId;
 	}
 
@@ -122,12 +124,12 @@ public class AbstractHibernateDAO {
 		}
 		return session;
 	}
-	
+
 	protected void enableTenantFilter(Session session, String tenantId) {
 		Filter filter = session.enableFilter(TENANT_FILTER_NAME);
 		filter.setParameter("tenant", tenantId);
 	}
-	
+
 	protected void disableTenantFilter(Session session) {
 		Filter filter = session.getEnabledFilter(TENANT_FILTER_NAME);
 		if (filter != null) {
@@ -155,7 +157,7 @@ public class AbstractHibernateDAO {
 		}
 		return obj;
 	}
-	
+
 	/**
 	 * usefull to update some property
 	 * 
@@ -184,7 +186,7 @@ public class AbstractHibernateDAO {
 		obj.getCommonInfo().setTimeIn(new Date());
 		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
 		obj.getCommonInfo().setUserIn(userID);
-		
+
 		// sets the tenant if it is set and input object hasn't
 		String tenantId = this.getTenant();
 		if (tenantId != null && obj.getCommonInfo().getOrganization() == null) {
@@ -195,7 +197,7 @@ public class AbstractHibernateDAO {
 		}
 		return obj;
 	}
-	
+
 	protected SbiHibernateModel updateSbiCommonInfo4Insert(SbiHibernateModel obj, boolean useDefaultTenant) {
 		obj.getCommonInfo().setTimeIn(new Date());
 		obj.getCommonInfo().setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
@@ -210,7 +212,7 @@ public class AbstractHibernateDAO {
 				obj.getCommonInfo().setOrganization(TENANT_DEFAULT);
 			else
 				throw new SpagoBIRuntimeException("Organization not set!!!");
-			
+
 		}
 		return obj;
 	}
@@ -241,5 +243,164 @@ public class AbstractHibernateDAO {
 		if (aSession != null && aSession.isOpen()) {
 			aSession.close();
 		}
+	}
+
+	/**
+	 * Load an object of type "clazz" whose id is "id"
+	 * 
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	public <T extends SbiHibernateModel> T load(Class<T> clazz, Serializable id) {
+		Session session = null;
+		T toReturn = null;
+
+		LogMF.debug(logger, "IN: id = [{0}]", id);
+
+		try {
+			if (id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			toReturn = (T) session.load(clazz, id);
+			session.flush();
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Persist a new object or update a modified object
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public boolean saveOrUpdate(SbiHibernateModel obj) {
+		Session session = null;
+		boolean toReturn = false;
+
+		LogMF.debug(logger, "IN: obj = [{0}]", obj);
+
+		try {
+			if (obj == null) {
+				throw new IllegalArgumentException("Input parameter cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			session.saveOrUpdate(obj);
+			session.flush();
+			toReturn = true;
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("Error saving or updating object of type [" + obj.getClass() + "] ", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * 
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	public boolean delete(Class<? extends SbiHibernateModel> clazz, Serializable id) {
+		Session session = null;
+		boolean toReturn = false;
+
+		LogMF.debug(logger, "IN: id = [{0}]", id);
+
+		try {
+			if (id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+
+			Object obj = session.get(clazz, id);
+			if (obj == null) {
+				throw new SpagoBIDOAException("Object of type [" + clazz + "] whose id is equal to [" + id + "] was not found");
+			}
+			session.delete(obj);
+			session.flush();
+			toReturn = true;
+
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while deleting object of type [" + clazz + "] whose id is equal to [" + id + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+
+		return toReturn;
+	}
+
+	public <T extends SbiHibernateModel> List<T> list(Class<T> clazz) {
+		if (clazz == null) {
+			throw new IllegalArgumentException("Input parameter 'clazz' cannot be null");
+		}
+		return list(clazz, null);
+	}
+
+	public <T extends SbiHibernateModel> List<T> list(Criterion<T> criterion) {
+		if (criterion == null) {
+			throw new IllegalArgumentException("Input parameter 'criteria' cannot be null");
+		}
+		return list(null, criterion);
+	}
+
+	private <T extends SbiHibernateModel> List<T> list(Class<T> clazz, Criterion<T> criterion) {
+		List<T> ret = null;
+		Session session = null;
+		try {
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			Criteria criteria = null;
+			if (criterion == null) {
+				criteria = session.createCriteria(clazz);
+			} else {
+				criteria = criterion.evaluete(session);
+			}
+			ret = criteria.list();
+		} catch (Throwable t) {
+			throw new SpagoBIDOAException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return ret;
 	}
 }
