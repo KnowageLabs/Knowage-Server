@@ -438,13 +438,19 @@ Ext.define('Sbi.chart.designer.Designer', {
   				tools:[{ 
   		            xtype: 'button',
   		            text : LN('sbi.generic.save'),
-  		            handler: function(){
-  		            	var errorMessage = Sbi.chart.designer.Designer.validateTemplate();
+  		            handler: function(button){
+  		            	var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+  		            	if (activeTab.getId() == 'advancedEditor') {
+  		            		var json = activeTab.getChartData();
+							Sbi.chart.designer.Designer.update(json);
+  		            	}
   		            	
-  		            	if (errorMessage == false) {
+  		            	var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
+  		            	
+  		            	if (errorMessages == false) {
   		            		Ext.Msg.show({
   		            			title : LN('sbi.chartengine.designer.savetemplate.title'),
-  		            			msg : LN('sbi.chartengine.designer.savetemplate.msg'),
+  		            			message : LN('sbi.chartengine.designer.savetemplate.msg'),
   		            			icon : Ext.Msg.QUESTION,
   		            			closable : false,
   		            			buttons : Ext.Msg.OKCANCEL,
@@ -470,7 +476,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            			}
   		            		});
   		            	} else {
-  		            		
+  		            		Ext.Msg.show({
+  		            			title : LN('sbi.chartengine.validation.errormessage'),
+  		            			message : errorMessages,
+  		            			icon : Ext.Msg.WARNING,
+  		            			closable : false,
+  		            			buttons : Ext.Msg.OK
+  		            		});
   		            	}
   		            }
   		        }],
@@ -556,7 +568,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// Reset categoriesStore
 			categoriesStore.loadData({});
 			
-			if(!(jsonTemplate.CHART.VALUES.CATEGORY)) {
+			if(!(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.CATEGORY)) {
 				return;
 			}
 			
@@ -636,46 +648,47 @@ Ext.define('Sbi.chart.designer.Designer', {
 					bottomXAxisesPanel.setAxisData(axisData);
 				}
 			});
-				
-			Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
-				var axisAlias = serie.axis;
-				Ext.Array.each(theStorePool, function(store, index){
-					if(store.axisAlias === axisAlias) {
-
-						var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
-						var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
-						var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
-						
-						var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-							id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
-							axisName: serie.name,
-							axisType: 'MEASURE',
+			
+			if(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.SERIE) {
+				Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
+					var axisAlias = serie.axis;
+					Ext.Array.each(theStorePool, function(store, index){
+						if(store.axisAlias === axisAlias) {
 							
-							serieAxis: store.axisAlias,
-							serieGroupingFunction: serie.groupingFunction,
-							serieType: serie.type,
-							serieOrderType: serie.orderType,
-							serieColumn: serie.column,
-							serieColor: serie.color,
-							serieShowValue: serie.showValue,
-							seriePrecision: serie.precision+'',
-							seriePrefixChar: serie.prefixChar,
-							seriePostfixChar: serie.postfixChar,
+							var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
+							var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
+							var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
 							
-							serieTooltipTemplateHtml: tooltip.templateHtml,
-							serieTooltipBackgroundColor: tooltip.backgroundColor,
-							serieTooltipAlign: jsonTooltipStyle.align,
-							serieTooltipColor: jsonTooltipStyle.color,
-							serieTooltipFont: jsonTooltipStyle.font,
-							serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-							serieTooltipFontSize: jsonTooltipStyle.fontSize
-						});
-						
-						store.add(newCol);
-					}
+							var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+								id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
+										axisName: serie.name,
+										axisType: 'MEASURE',
+										
+										serieAxis: store.axisAlias,
+										serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
+												serieType: serie.type,
+												serieOrderType: serie.orderType,
+												serieColumn: serie.column,
+												serieColor: serie.color,
+												serieShowValue: serie.showValue,
+												seriePrecision: serie.precision + '',
+												seriePrefixChar: serie.prefixChar,
+												seriePostfixChar: serie.postfixChar,
+												
+												serieTooltipTemplateHtml: tooltip.templateHtml,
+												serieTooltipBackgroundColor: tooltip.backgroundColor,
+												serieTooltipAlign: jsonTooltipStyle.align,
+												serieTooltipColor: jsonTooltipStyle.color,
+												serieTooltipFont: jsonTooltipStyle.font,
+												serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
+												serieTooltipFontSize: jsonTooltipStyle.fontSize
+							});
+							
+							store.add(newCol);
+						}
+					});
 				});
-			});
-
+			}
 		},
 		
 		update: function(jsonTemplate) {
@@ -799,8 +812,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 			return templateJson;
 		},
 		
+		/**
+		 * Returns a list of validation errors as string format
+		 * */
 		validateTemplate: function() {
-			return false;
+			var errorMsg = '';
+			
+			if (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) {
+				errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
+			}
+			if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson() == null) {
+				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
+			}
+			
+			return errorMsg != ''? errorMsg : false;
 		}
 		
     }

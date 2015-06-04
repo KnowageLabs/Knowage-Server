@@ -102,6 +102,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						beforeDrop: function(node, data, dropRec, dropPosition) {
 							if(data.view.id != this.id) {
 								data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
+								if( !data.records[0].get('serieGroupingFunction')) {
+									data.records[0].set('serieGroupingFunction', 'SUM');
+								}
 							} 
 						}
 					}

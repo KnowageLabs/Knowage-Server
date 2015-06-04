@@ -88,7 +88,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	                    var selectedRows = grid.getSelectionModel().getSelection();
 	                    if (selectedRows.length) {
 	                    	grid.store.remove(selectedRows);
-	                    	console.log('removed from grid.store: ', grid.store);
 	                    } else {
 	                        Ext.Msg.alert(LN('sbi.generic.msg'), LN('sbi.chartengine.configuration.palette.msg.remove'));
 	                    }
