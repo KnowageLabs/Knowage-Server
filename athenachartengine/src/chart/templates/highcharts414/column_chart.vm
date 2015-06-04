@@ -381,7 +381,8 @@
 	    
 		#set($relatedSerieShowValue = $relatedSerie.showValue)
 	    	data: [
-	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerie.column)) ## "Vendite" -> "column_5" ## "Ricavi" -> "column_6"
+	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieName =  $row.get($categorieColumnsMapped))
