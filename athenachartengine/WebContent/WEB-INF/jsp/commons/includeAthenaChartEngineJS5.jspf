@@ -7,6 +7,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- TODO : Make path relative to webapp name -->
 
 <!-- Include Ext stylesheets here: -->
+<link id="theme" rel="styleSheet" href ="/athenachartengine/css/chart.css" type="text/css" />
 
 
 <!-- Include localized labels  -->
