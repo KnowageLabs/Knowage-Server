@@ -97,10 +97,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var VALUES = {};
     		var SERIE = ChartUtils.getSeriesDataAsOriginalJson();
-    		VALUES['SERIE'] = SERIE;
+    		if(SERIE.length > 0) {
+    			VALUES['SERIE'] = SERIE;
+    		}
     		var CATEGORY = ChartUtils.getCategoriesDataAsOriginalJson();
-    		VALUES['CATEGORY'] = CATEGORY;
-    		CHART['VALUES'] = VALUES;
+    		if(CATEGORY && CATEGORY != null) {
+    			VALUES['CATEGORY'] = CATEGORY;
+    		}
+    		if (Object.keys(VALUES).length !== 0) {
+    			CHART['VALUES'] = VALUES;
+    		}
     		
     		result['CHART'] = CHART;
     		
@@ -260,6 +266,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var mainCategory = categoriesStore.getAt(0);
     		
+    		if(mainCategory == null){
+    			return null;
+    		}
+    		
     		var result = {};
     		result['name'] = mainCategory.get('axisName') != undefined? mainCategory.get('axisName') : mainCategory.get('categoryColumn');
     		result['column'] = mainCategory.get('categoryColumn') != undefined? mainCategory.get('categoryColumn') : '';
@@ -370,7 +380,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		CHART['SUBTITLE'] = SUBTITLE;
     		
     		var LEGEND = {};
-    		LEGEND['show'] = (chartModel.get('showLegend') != undefined)? chartModel.get('showLegend') : '';
+    		LEGEND['show'] = (chartModel.get('showLegend') != undefined)? chartModel.get('showLegend') : false;
     		LEGEND['position'] = (chartModel.get('legendPosition') != undefined)? chartModel.get('legendPosition') : '';
     		LEGEND['layout'] = (chartModel.get('legendLayout') != undefined)? chartModel.get('legendLayout') : '';
     		LEGEND['floating'] = (chartModel.get('legendFloating') != undefined)? chartModel.get('legendFloating') : '';
@@ -488,7 +498,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   			return cModel;
 		},
 		
-
 		convertJsonToTreeFormat: function(data, level){
 		   	function isValue(data) {
 				return ( data != null 
@@ -506,15 +515,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				if (Array.isArray(data[key])) {
 					var array = data[key];
 					
-//					if(array.length == 0) {
-//						treeData.push({
-//							key: key,
-//							expanded: (nivel < 1),
-//							isArray: true,
-//							children: [],
-//						});
-//					} else {
-//					}
 					for(var i = 0; i < array.length; i++){
 						treeData.push({
 							key: key,
@@ -657,10 +657,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * @param target
 		 * @param source 
 		 */
-		mergeObjects: function(target, source) {
+		mergeObjects: function(target, source, removeNotFoundItemsFlag) {
 			function isArray(o) {
 				return Object.prototype.toString.call(o) == "[object Array]";
 			}
+			
+			removeNotFoundItemsFlag = removeNotFoundItemsFlag || false;
 
 			var item, tItem, o, idx;
 
@@ -775,7 +777,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					newTarget[prop] = item;
 				}
 			}
+			
+			if(removeNotFoundItemsFlag) {
+				newTarget = ChartUtils.removeNotFoundItems(newTarget, source);
+			}
+			
 			return newTarget;
 		},
+		
+		removeNotFoundItems: function(target, source) {
+			var newTarget = ChartUtils.clone(target);
+			
+			if (typeof newTarget == 'object' && newTarget !== null) {
+				for (var prop in newTarget) {
+					if(source[prop] == undefined) {
+						delete newTarget[prop];
+					} else if (! Array.isArray(newTarget[prop])){
+						newTarget[prop] = ChartUtils.removeNotFoundItems(newTarget[prop], source[prop]);
+					}
+				}
+			}
+			
+			return newTarget;
+		}
     }
 });

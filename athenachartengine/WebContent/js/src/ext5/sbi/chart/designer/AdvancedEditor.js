@@ -5,6 +5,9 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
     ],
     rootVisible: false,
     hideHeaders: true,
+    
+    treeNodeIsCollapsing: false,
+    treeNodeIsExpanding: false,
     dataChanged: false,
     plugins: [
         Ext.create('Ext.grid.plugin.CellEditing', {
@@ -38,8 +41,13 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
     
     setChartData: function(json) {
 	    var formattedJson = Sbi.chart.designer.ChartUtils.convertJsonToTreeFormat(json);
-	    
+
+	    // Flags
+	    this.treeNodeIsCollapsing = false;
+	    this.treeNodeIsExpanding = false;
 	    this.dataChanged = false;
+	    
+	    var advancedEditor = this;
 	    
 	    this.reconfigure(
     		Ext.create('Ext.data.TreeStore',{
@@ -47,10 +55,21 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
 		    	
 		    	listeners: {
 		    		update: function( store, record, operation, modifiedFieldNames, details, eOpts ) {
-		    			var advancedEditor = store.ownerTree;
 		    			
-		    			advancedEditor.dataChanged = true;
-		    		}
+		    			// Workaround in case this event is invoked while a node is only expandind or collapsing
+		    			if(!advancedEditor.treeNodeIsCollapsing && !advancedEditor.treeNodeIsExpanding) {
+		    				advancedEditor.dataChanged = true;
+		    			}
+		    			
+		    			advancedEditor.treeNodeIsCollapsing = false;
+		    			advancedEditor.treeNodeIsExpanding = false;
+		    		},
+		    		nodebeforecollapse: function( node, eOpts ) {
+		    			advancedEditor.treeNodeIsCollapsing = true;
+		    		},
+		    		nodebeforeexpand: function( node, eOpts ) {
+		    			advancedEditor.treeNodeIsExpanding = true;
+		    		}		    		
 		    	}
 		    })
 	    );
