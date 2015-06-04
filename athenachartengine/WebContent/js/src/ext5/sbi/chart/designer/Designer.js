@@ -105,7 +105,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 						},
 						COLORPALETTE:
 						{
-							COLOR: []
+							COLOR: [
+							        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
+							        {id:2 , order: 2, name: '434348', value: '434348' }, 
+							        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
+							        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
+							        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
+							        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
+							        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
+							        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
+							        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
+							        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
+							        ]
 						}
 					}
 			};
