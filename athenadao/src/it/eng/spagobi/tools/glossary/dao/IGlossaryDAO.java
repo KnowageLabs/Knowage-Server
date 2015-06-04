@@ -62,7 +62,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	//
 	// Wishlist
 	//
-	public List<SbiGlWord> listWlist(Integer contentId);
+	public List<SbiGlWlist> listWlist(Integer contentId);
 
 	public boolean insertWlist(SbiGlWlist wlist);
 
@@ -76,8 +76,6 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public SbiGlAttribute loadAttribute(Integer attributeId);
 
 	public List<SbiGlAttribute> listAttribute();
-
-	public List<SbiGlAttribute> listAttributeByWord(Integer wordId);
 
 	public boolean insertAttribute(SbiGlAttribute attribute);
 
