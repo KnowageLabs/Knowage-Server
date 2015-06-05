@@ -105,7 +105,11 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								if( !data.records[0].get('serieGroupingFunction')) {
 									data.records[0].set('serieGroupingFunction', 'SUM');
 								}
-							} 
+								if( !data.records[0].get('axisName')) {
+									var serieColumn = data.records[0].get('serieColumn', 'SUM');
+									data.records[0].set('axisName', serieColumn);
+								}
+							}
 						}
 					}
 				},

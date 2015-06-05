@@ -26,8 +26,12 @@
 #if($series.class.name == 'java.util.LinkedHashMap')
 	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
 #else
+	#set($serieKeyFeed = 0)
 	#foreach($serie in $series)
-		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+		#set($serieMapKey = $serie.column + '_' + $serieKeyFeed)
+		#set($workAroundNoPrint = $seriesMap.put($serieMapKey , $serie))
+		
+		#set($serieKeyFeed = $serieKeyFeed + 1)
 	#end
 #end
 
@@ -367,7 +371,7 @@
 	    {	
 		#set($relatedSerieColor = false)
 		#set($relatedSerieColor = $relatedSerie.color)
-		#if($relatedSerieColor)
+		#if($relatedSerieColor && $relatedSerieColor != '')
 			color: '$relatedSerieColor',
 	    #end
 		

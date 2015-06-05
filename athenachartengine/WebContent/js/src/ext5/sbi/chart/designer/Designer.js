@@ -681,27 +681,27 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 								id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
-										axisName: serie.name,
+										axisName: serie.name && serie.name != '' ? serie.name : serie.column,
 										axisType: 'MEASURE',
 										
 										serieAxis: store.axisAlias,
 										serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
-												serieType: serie.type,
-												serieOrderType: serie.orderType,
-												serieColumn: serie.column,
-												serieColor: serie.color,
-												serieShowValue: serie.showValue,
-												seriePrecision: serie.precision + '',
-												seriePrefixChar: serie.prefixChar,
-												seriePostfixChar: serie.postfixChar,
-												
-												serieTooltipTemplateHtml: tooltip.templateHtml,
-												serieTooltipBackgroundColor: tooltip.backgroundColor,
-												serieTooltipAlign: jsonTooltipStyle.align,
-												serieTooltipColor: jsonTooltipStyle.color,
-												serieTooltipFont: jsonTooltipStyle.font,
-												serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-												serieTooltipFontSize: jsonTooltipStyle.fontSize
+										serieType: serie.type,
+										serieOrderType: serie.orderType,
+										serieColumn: serie.column,
+										serieColor: serie.color,
+										serieShowValue: serie.showValue,
+										seriePrecision: serie.precision + '',
+										seriePrefixChar: serie.prefixChar,
+										seriePostfixChar: serie.postfixChar,
+										
+										serieTooltipTemplateHtml: tooltip.templateHtml,
+										serieTooltipBackgroundColor: tooltip.backgroundColor,
+										serieTooltipAlign: jsonTooltipStyle.align,
+										serieTooltipColor: jsonTooltipStyle.color,
+										serieTooltipFont: jsonTooltipStyle.font,
+										serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
+										serieTooltipFontSize: jsonTooltipStyle.fontSize
 							});
 							
 							store.add(newCol);
