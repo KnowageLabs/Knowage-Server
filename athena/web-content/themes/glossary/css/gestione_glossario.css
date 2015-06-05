@@ -1,3 +1,13 @@
+.bodyStyle{
+	  font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
+  font-size: 10pt;
+  font-weight: normal;
+  color: black;
+}
+.textareaInputBox{
+  margin-top: -14px !important;}
+
+
 .glossary_word_box {
 	border: 2px solid black;
 }
@@ -33,6 +43,18 @@
 	.wordForm .md-input-has-value-copy .linkChips {
 	padding-top: 12px !important;
 }
+
+
+.wordForm  .linkChips{
+  box-shadow:none !important;
+}
+
+.wordForm .md-input-focused .linkChips{
+  box-shadow: 0 3px rgb(158,158,158)  !important;
+}
+
+
+
 
 .wordForm .md-input-hasnt-value textarea {
 	height: 0px !important;
@@ -146,11 +168,14 @@ md-icon.sm-font-icon {
 	box-shadow: 10px 0px 39px -20px rgba(0, 0, 0, 0.75);
 	position: fixed;
 	height: 100%;
+	overflow: auto;
 }
 
 md-toolbar.md-default-theme.md-blue {
-	background-color: rgb(67, 85, 182);
-	color: rgb(255, 255, 255);
+	  background-color: rgb(232, 232, 232);
+  color: rgb(255, 255, 255);
+  height: 50px;
+  min-height: 0px;
 }
 
 .position-fixed {
@@ -341,15 +366,23 @@ table tr:nth-child(even) {
 /* } */
 .pagination>li, .pagination>li>span {
 	position: relative;
-	float: left;
-	padding: 6px 12px;
-	margin-left: -1px;
-	line-height: 1.42857143;
-	color: #337ab7;
-	text-decoration: none !important;
-	background-color: #fff;
-	border: 1px solid #ddd;
-	display: block;
+  float: left;
+  margin-left: -1px;
+  text-decoration: none !important;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+}
+
+
+.box_pagination{
+	  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 .pagination {
@@ -361,14 +394,14 @@ table tr:nth-child(even) {
 	text-decoration: none !important;
 }
 
-.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover,
+.pagination>.active,.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover,
 	.pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover
 	{
 	z-index: 2;
-	color: #fff;
+	color: #000;
 	cursor: default;
-	background-color: #337ab7;
-	border-color: #337ab7;
+	background-color: rgb(232, 232, 232);
+	border-color: rgb(232, 232, 232);
 }
 
 .pagination>.disabled>a, .pagination>.disabled>a:focus, .pagination>.disabled>a:hover,

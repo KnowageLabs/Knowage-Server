@@ -3,6 +3,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="AIDA_GESTIONE-VOCABOLI">
 
+
+
+<script type="text/javascript">
+//  console.log("----------------------------------")
+<%-- var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>; --%>
+<%-- var userId = <%=userId%>; --%>
+//  console.log(userId);
+//  console.log("----------------------------------")
+ 
+ </script> 
+
+
+
+
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
@@ -39,21 +53,27 @@
 <script type="text/javascript"
 	src="/athena/js/glossary/pagination/dirPagination.js"></script>
 
+
+
+
+
+
 <script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
 
 
 
-
-<body>
+<body class="bodyStyle" >
 
 
 	<div ng-controller="Controller as ctrl">
 
 
+
+
 		<div layout="row" layout-wrap>
 
 			<!-- 			LEFT BOX WORD -->
-			<div flex="25" class="leftBox_word">
+			<div flex="25" class="leftBox_word" resize>
 				<div layout="column">
 
 
@@ -69,15 +89,14 @@
 								<md-button ng-click="ctrl.createNewWord()"
 									class="md-fab   md-mini" aria-label="add word"
 									style="margin: 18px;  margin-left: 0px; box-shadow: none ;  background-color: transparent !important;">
-								<md-icon md-font-icon="fa fa-plus fa-2x"
-									style="  color: greenyellow;"></md-icon> </md-button>
+								<md-icon md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
+								</md-button>
 							</div>
 
 							<div flex="70">
-								<md-input-container md-no-float
-									style="padding-bottom: 17px; padding-top: 17px;">
+								<md-input-container md-no-float style=" padding-top: 22px;">
 								<md-icon md-font-icon="fa fa-search "
-									style="  margin-top: 18px;  margin-left: 13px; color: white"></md-icon>
+									style="  margin-top: 22px;  margin-left: 11px; color: black;"></md-icon>
 								<input ng-model="filter_word.WORD" type="text"
 									placeholder="Search"> </md-input-container>
 							</div>
@@ -93,9 +112,9 @@
 
 							<li
 								dir-paginate="word in ctrl.words | filter:filter_word:strict | itemsPerPage:	ctrl.WordItemPerPage ">
-								<div ui-tree-node>
+								<div ui-tree-node context-menu data-target="WordMenu-{{word.WORD}}">
 
-									<div ui-tree-handle style="border: none;"">
+									<div ui-tree-handle style="border: none;" >
 										<md-list> <md-list-item ng-click="1==1"
 											ng-repeat="n in [1]" context-menu
 											data-target="WordMenu-{{word.WORD}}" class="smallListItem"
@@ -103,24 +122,33 @@
 
 										<p>{{ word.WORD | uppercase }}</p>
 
-										<!-- 					menu contestuale -->
-										<div class="dropdown position-fixed" style="z-index: 999;"
-											id="WordMenu-{{ word.WORD }}">
-											<md-list class="dropdown-menu" role="menu"> <md-list-item
-												ng-click='panel.highlight = true ;ctrl.modifyWord(word)'
-												role="menuitem" tabindex="1">
-											<p>Modifica</p>
-											</md-list-item> <md-list-item
-												ng-click='panel.highlight = false; ctrl.deleteWord(word)'
-												role="menuitem" tabindex="1">
-											<p>Elimina</p>
-											</md-list-item> </md-list>
-										</div>
+										
+										
 
 
 										</md-list-item> </md-list>
 									</div>
 								</div>
+								
+								
+								
+										<!-- 					menu contestuale -->
+										
+										
+										<div class="dropdown position-fixed" style="z-index: 999; left:10px !important"
+							id="WordMenu-{{ word.WORD }}">
+							<md-list class="dropdown-menu" role="menu"	> 
+								<md-list-item
+								ng-click='ctrl.modifyWord(word)' role="menuitem"	tabindex="1" >
+							<p>Modifica</p>
+							</md-list-item>
+
+ 							 <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem"
+								tabindex="2">
+							<p>Elimina</p>
+							</md-list-item> </md-list>
+						</div>
+								
 							</li>
 						</ol>
 					</div>
@@ -130,7 +158,7 @@
 				</md-content>
 
 
-				<md-whiteframe class="md-whiteframe-z5" layout="row"
+				<md-whiteframe class="md-whiteframe-z1  box_pagination" layout="row"
 					layout-align="center end"> <dir-pagination-controls
 					max-size="5"></dir-pagination-controls> </md-whiteframe>
 
@@ -160,7 +188,7 @@
 
 
 			</div>
-			<div flex="75" offset="25" style="padding-bottom: 100px;">
+			<div flex="75" offset="25" >
 
 				<md-content> <md-tabs md-dynamic-height
 					md-border-bottom> <md-tab label="Glossari"
@@ -382,7 +410,7 @@
 
 					<div layout="row" layout-wrap>
 						<div flex="100">
-							<md-input-container class="md-icon-float"
+							<md-input-container class="md-icon-float textareaInputBox"
 								ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.DESCR.length === 0  }">
 							<!-- Use floating label instead of placeholder --> <label>Descrizione</label>
 							<md-icon md-font-icon="fa  fa-file-text-o " class="des"></md-icon>
@@ -411,7 +439,7 @@
 
 					<div layout="row" layout-wrap>
 						<div flex="100">
-							<md-input-container class="md-icon-float"
+							<md-input-container class="md-icon-float textareaInputBox"
 								ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.FORMULA.length === 0  }">
 							<!-- Use floating label instead of placeholder --> <label>Formula</label>
 							<md-icon md-font-icon="fa fa-superscript " class="formu"></md-icon>
@@ -462,45 +490,120 @@
 
 
 
+					<!-- 					<div layout="row" layout-wrap> -->
+					<!-- 						<div flex="30" style="padding-right: 40px;"> -->
+					<!-- 							<div layout="column" layout-wrap> -->
+
+
+
+					<!-- 								<md-autocomplete style="  min-width: 0;" flex="" -->
+					<!-- 									md-input-name="autocompleteField" md-no-cache="ctrl.noCache" -->
+					<!-- 									md-search-text="ctrl.tmpAttr.Prop" -->
+					<!-- 									md-selected-item="ctrl.selectedItem" -->
+					<!-- 									md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)" -->
+					<!-- 									md-item-text="item.ATTRIBUTE_NM" md-require-match="" -->
+					<!-- 									md-floating-label="Proprietà"> <md-item-template> -->
+					<!-- 								<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span> -->
+					<!-- 								</md-item-template> </md-autocomplete> -->
+
+
+
+					<!-- 								<md-button ng-click="ctrl.addProp(ctrl.tmpAttr)" -->
+					<!-- 									ng-disabled="!ctrl.propPresent(ctrl.tmpAttr.Prop) || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null " -->
+					<!-- 									class="md-fab   md-mini" aria-label="Aggiungi_Attributo" -->
+					<!-- 									style="margin: -27px;  margin-left: 100%;"> -->
+
+					<!-- 								<md-tooltip> Aggiungi Attributo </md-tooltip> <md-icon -->
+					<!-- 									md-font-icon="fa fa-angle-double-right fa-2x" -->
+					<!-- 									style="  margin-bottom: 5px;  margin-left: 5px;"></md-icon> -->
+					<!-- 								</md-button> -->
+
+
+
+					<!-- 								<md-input-container> Use floating label instead of placeholder -->
+					<!-- 								<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val" -->
+					<!-- 									type="text"> </md-input-container> -->
+
+					<!-- 							</div> -->
+					<!-- 						</div> -->
+
+
+					<!-- 						<div flex="70"> -->
+
+					<!-- 							<md-list> <md-list-item -->
+					<!-- 								class="md-2-line box-list-option" -->
+					<!-- 								ng-repeat="veg in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row" -->
+					<!-- 								layout-wrap> -->
+					<!-- 							<div class="md-item-text md-whiteframe-z1" flex> -->
+					<!-- 								<p class="margin5"> -->
+					<!-- 									<input class="transparent_input smallFont" ng-model="veg.Prop" -->
+					<!-- 										type="text"> -->
+					<!-- 								</p> -->
+					<!-- 								<p class="margin5"> -->
+					<!-- 									<input class="transparent_input smallFont " ng-model="veg.Val" -->
+					<!-- 										type="text"> -->
+					<!-- 								</p> -->
+
+					<!-- 								<md-button ng-click="ctrl.removeProp(veg)" class="md-fab   md-ExtraMini" -->
+					<!-- 									aria-label="add word" -->
+					<!-- 									style="  background-color: rgb(221, 0, 0) !important; -->
+					<!--  margin-top: -49px; */ /* margin-left: 89%; */ /* border-radius:	0px; -->
+					<!--   border-bottom-left-radius: 18px;"> -->
+					<!-- 								<md-icon md-font-icon="fa fa-times" style="  color: white;"></md-icon> -->
+					<!-- 								</md-button> -->
+
+
+					<!-- 							</div> -->
+					<!-- 							</md-list-item> </md-list> -->
+
+					<!-- 						</div> -->
+					<!-- 					</div> -->
+
+
+
+
+
 					<div layout="row" layout-wrap>
-						<div flex="30" style="padding-right: 40px;">
-							<div layout="column" layout-wrap>
+	<div flex="5">
+	<md-icon md-font-icon="fa fa-folder-o " class="stato" style="  margin-top: 25px;"></md-icon>
+	
+	</div>
 
-
-
-								<md-autocomplete style="  min-width: 0;" flex=""
-									md-input-name="autocompleteField" md-no-cache="ctrl.noCache"
-									md-search-text="ctrl.tmpAttr.Prop"
-									md-selected-item="ctrl.selectedItem"
-									md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
-									md-item-text="item.ATTRIBUTE_NM" md-require-match=""
-									md-floating-label="Proprietà"> <md-item-template>
-								<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
-								</md-item-template> </md-autocomplete>
-
-
-
-								<md-button ng-click="ctrl.addProp(ctrl.tmpAttr)"
-									ng-disabled="!ctrl.propPresent(ctrl.tmpAttr.Prop) || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
-									class="md-fab   md-mini" aria-label="Aggiungi_Attributo"
-									style="background-color: rgb(67, 85, 182) !important;    margin: -27px;  margin-left: 100%;">
-
-								<md-tooltip> Aggiungi Attributo </md-tooltip> <md-icon
-									md-font-icon="fa fa-angle-double-right fa-2x"
-									style="  color: greenyellow;   margin-bottom: 5px;  margin-left: 5px;"></md-icon>
-								</md-button>
-
-
-
-								<md-input-container> <!-- Use floating label instead of placeholder -->
-								<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val"
-									type="text"> </md-input-container>
-
-							</div>
+						<div flex="40">
+							<md-autocomplete style="  min-width: 0;" flex=""
+								md-input-name="autocompleteField" md-no-cache="ctrl.noCache"
+								md-search-text="ctrl.tmpAttr.Prop"
+								md-selected-item="ctrl.selectedItem"
+								md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
+								md-item-text="item.ATTRIBUTE_NM" md-require-match=""
+								md-floating-label="Proprietà"> <md-item-template>
+							<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
+							</md-item-template> </md-autocomplete>
 						</div>
 
 
-						<div flex="70">
+						<div flex="40">
+							<md-input-container> <!-- Use floating label instead of placeholder -->
+							<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val"
+								type="text"> </md-input-container>
+						</div>
+
+						<div flex="15">
+							<md-button ng-click="ctrl.addProp(ctrl.tmpAttr)"
+								ng-disabled="!ctrl.propPresent(ctrl.tmpAttr.Prop) || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
+								class="md-fab   md-mini" aria-label="Aggiungi_Attributo"	> <md-tooltip>
+							Aggiungi Attributo </md-tooltip> <md-icon
+								md-font-icon="fa fa-plus fa-2x"
+								style="   margin-left: 2px;"></md-icon> </md-button>
+						</div>
+
+					</div>
+
+					<div layout="row" layout-wrap>
+
+
+
+						<div flex="100">
 
 							<md-list> <md-list-item
 								class="md-2-line box-list-option"
@@ -510,16 +613,15 @@
 								<p class="margin5">
 									<input class="transparent_input smallFont" ng-model="veg.Prop"
 										type="text">
-								</p>
-								<p class="margin5">
+						
 									<input class="transparent_input smallFont " ng-model="veg.Val"
 										type="text">
 								</p>
 
-								<md-button ng-click="1==1" class="md-fab   md-ExtraMini"
-									aria-label="add word"
+								<md-button ng-click="ctrl.removeProp(veg)"
+									class="md-fab   md-ExtraMini" aria-label="add word"
 									style="  background-color: rgb(221, 0, 0) !important;
-  margin-top: -49px;
+  margin-top: -44px;
   margin-left: 89%;
   border-radius: 0px;
   border-bottom-left-radius: 18px;">
@@ -532,6 +634,9 @@
 
 						</div>
 					</div>
+
+
+
 
 
 					<div layout="row" layout-align="end end">
@@ -551,8 +656,7 @@
 
 		</div>
 
-		{{ctrl.selectedItem}}{{ctrl.newWord}}
-
+		{{ctrl.prova}}
 	</div>
 
 

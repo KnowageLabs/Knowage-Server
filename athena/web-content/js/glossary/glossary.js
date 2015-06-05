@@ -1,4 +1,45 @@
-var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree','angularUtils.directives.dirPagination','ng-context-menu' ]);
+var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree',
+		'angularUtils.directives.dirPagination', 'ng-context-menu' ]);
+
+app.config(function($mdThemingProvider) {
+	  $mdThemingProvider.theme('default')
+	    .primaryPalette('grey')
+	    .accentPalette('blue-grey');
+	});
+
+app.constant('ENDPOINT_URI', 'http://192.168.43.150:8080/athena/restful-services/1.0/')
+
+app.service('restServices',function ($http, ENDPOINT_URI) {
+	
+	var service = this;
+	var path="glossary/"
+	
+	function getBaseUrl() {
+	      return ENDPOINT_URI + path;
+	    }
+	
+	 service.allWord = function () {
+		 console.log("getWord")
+		
+		 
+		 
+		 
+		 console.log(getBaseUrl()+"listWords?SBI_EXECUTION_ID=&user_id=biadmin")
+	      return $http.get(getBaseUrl()+"listWords?SBI_EXECUTION_ID=&user_id=biadmin");
+	    };
+	
+	    service.WordLike = function (item) {
+		      return $http.get(getBaseUrl()+"Word/"+item);
+		    };
+		    
+		    service.prova= function(){
+		    	return $http.get("https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal")
+		    }
+	
+})
+
+
+
 
 var EmptyWord = {
 	LINK : [],
@@ -11,7 +52,6 @@ var EmptyWord = {
 	NEWWORD : true
 };
 
-
 var EmptyGloss = {
 	// GLOSSARY_ID : 1,
 	GLOSSARY_CD : "",
@@ -22,44 +62,40 @@ var EmptyGloss = {
 // MI SERVE SOLO PER LA CREAZIONE DI UN NODO E POI LO RIMUOVO
 };
 
-
-var SBI_GL_ATTRIBUTES=[
-                       {
-                    	   ATTRIBUTE_ID:1,
-                    	   ATTRIBUTE_CD:1,
-                    	   ATTRIBUTE_NM:"PROP1",
-                    	   ATTRIBUTE_DS:"DS PROP1",
-                    	   MANDATORY_FL:1,
-                    	   TYPE:1,
-                    	   DOMAIN:1,
-                    	   FORMAT:1,
-                    	   DISPLAT_TP:1,
-                    	   ORDER:1
-                       },{
-                    	   ATTRIBUTE_ID:2,
-                    	   ATTRIBUTE_CD:2,
-                    	   ATTRIBUTE_NM:"PROP2",
-                    	   ATTRIBUTE_DS:"DS PROP2",
-                    	   MANDATORY_FL:2,
-                    	   TYPE:2,
-                    	   DOMAIN:2,
-                    	   FORMAT:2,
-                    	   DISPLAT_TP:2,
-                    	   ORDER:2
-                       },{
-                    	   ATTRIBUTE_ID:3,
-                    	   ATTRIBUTE_CD:3,
-                    	   ATTRIBUTE_NM:"PROP3",
-                    	   ATTRIBUTE_DS:"DS PROP3",
-                    	   MANDATORY_FL:3,
-                    	   TYPE:3,
-                    	   DOMAIN:3,
-                    	   FORMAT:3,
-                    	   DISPLAT_TP:3,
-                    	   ORDER:3
-                       }];
-
-
+var SBI_GL_ATTRIBUTES = [ {
+	ATTRIBUTE_ID : 1,
+	ATTRIBUTE_CD : 1,
+	ATTRIBUTE_NM : "PROP1",
+	ATTRIBUTE_DS : "DS PROP1",
+	MANDATORY_FL : 1,
+	TYPE : 1,
+	DOMAIN : 1,
+	FORMAT : 1,
+	DISPLAT_TP : 1,
+	ORDER : 1
+}, {
+	ATTRIBUTE_ID : 2,
+	ATTRIBUTE_CD : 2,
+	ATTRIBUTE_NM : "PROP2",
+	ATTRIBUTE_DS : "DS PROP2",
+	MANDATORY_FL : 2,
+	TYPE : 2,
+	DOMAIN : 2,
+	FORMAT : 2,
+	DISPLAT_TP : 2,
+	ORDER : 2
+}, {
+	ATTRIBUTE_ID : 3,
+	ATTRIBUTE_CD : 3,
+	ATTRIBUTE_NM : "PROP3",
+	ATTRIBUTE_DS : "DS PROP3",
+	MANDATORY_FL : 3,
+	TYPE : 3,
+	DOMAIN : 3,
+	FORMAT : 3,
+	DISPLAT_TP : 3,
+	ORDER : 3
+} ];
 
 var wor = [ {
 	WORD_ID : 1,
@@ -137,20 +173,56 @@ var glos = [ {
 	SBI_GL_CONTENTS : [], // DOVREBBERO ESSERE I NODI
 } ];
 
-app.controller('Controller', [ "$mdDialog", "$filter", "$timeout", funzione ]);
+app.controller('Controller', [ "restServices","$scope", "$mdDialog", "$filter", "$timeout",
+		funzione ]);
 
-function funzione($mdDialog, $filter, $timeout) {
-
+function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 	ctr = this;
 	ctr.activeTab = 'Vocabolo';
 	ctr.filterSelected = true;
 	ctr.words = wor;
+
+	
+	
+	
+//	 function getWord() {
+//		 console.log("getWord")
+//		 restServices.allWord()
+//	        .then(function (result) {
+//	        	console.log("Word Ottenuti")
+//	        	console.log(result)
+//// ctr.words = result.data;
+//	        });
+//	    }
+//	    getWord();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var c = 0;
+
+	for (x in wor) {
+		for (var i = 0; i < 20; i++) {
+			var tmp = JSON.parse(JSON.stringify(wor[x]))
+			tmp.WORD = tmp.WORD + "-" + i
+			tmp.WORD_ID = tmp.WORD_ID *i*100
+			ctr.words.push(tmp)
+
+		}
+	}
+
 	ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 	ctr.glossary = glos;
 	ctr.newGloss = JSON.parse(JSON.stringify(EmptyGloss));
-	ctr.propWord=SBI_GL_ATTRIBUTES;
-	ctr.querySearchProp   = "";	
-	 self.searchTextProp    = null;
+	ctr.propWord = SBI_GL_ATTRIBUTES;
+	ctr.querySearchProp = "";
+	self.searchTextProp = null;
 	ctr.selectedGloss = JSON.parse(JSON.stringify(EmptyGloss));
 
 	ctr.modifyWord = function(word) {
@@ -231,56 +303,52 @@ function funzione($mdDialog, $filter, $timeout) {
 
 	}
 
-	
-	//querysearch della select autocompleate durante l'inserimento delle proprietà in new word
-	 ctr.querySearchProp =function(query) {
+	// querysearch della select autocompleate durante l'inserimento delle
+	// proprietà in new word
+	ctr.querySearchProp = function(query) {
 		console.log("querySearchProp")
 		console.log(query)
-		
+
 		var results = $filter('filter')(ctr.propWord, {
 			ATTRIBUTE_NM : query.toUpperCase()
 		}, compareForNestedFiltering);
-		
-		
-	      return results;
-	    }
+
+		return results;
+	}
+
+	ctr.addProp = function(prop) {
+		ctr.newWord.SBI_GL_WORD_ATTR.push(prop)
+		ctr.tmpAttr = {};
+	};
 	
-	 
-	 ctr.addProp= function(prop){
-		 ctr.newWord.SBI_GL_WORD_ATTR.push(prop)
-		 ctr.tmpAttr={};
-	 };
-	 
-	 ctr.propPresent =function(query) {
-		 
-			console.log("propPresent")
-		
-			console.log(query)
-			if(query==null )return false;
-			
-			var results ;
-			if (typeof query !== 'object'){
-				console.log("non obj")
-				 results = $filter('filter')(ctr.propWord, {
-						ATTRIBUTE_NM : query.toUpperCase()
-					}, true);
-			}else{
-				console.log(" obj")
-				 results = $filter('filter')(ctr.propWord, {
-						ATTRIBUTE_NM : query.ATTRIBUTE_NM.toUpperCase()
-					}, true);
-			}
-			
-			
-			console.log(results)
-			
-			if(results.length!=0)return true;
-			
-		      return false ;
-		    }
-	
-	
-	
+	ctr.removeProp=function(prop){
+		console.log("removeprop")
+		ctr.newWord.SBI_GL_WORD_ATTR.splice(ctr.newWord.SBI_GL_WORD_ATTR.indexOf(prop),1)
+	}
+
+	ctr.propPresent = function(query) {
+		if (query == null)
+			return false;
+
+		var results;
+		if (typeof query !== 'object') {
+			console.log("non obj")
+			results = $filter('filter')(ctr.propWord, {
+				ATTRIBUTE_NM : query.toUpperCase()
+			}, true);
+		} else {
+			console.log(" obj")
+			results = $filter('filter')(ctr.propWord, {
+				ATTRIBUTE_NM : query.ATTRIBUTE_NM.toUpperCase()
+			}, true);
+		}
+
+		if (results.length != 0)
+			return true;
+
+		return false;
+	}
+
 	// chips
 	compareForNestedFiltering = function(actual, expected) {
 		console.log("compareForNestedFiltering")
@@ -372,62 +440,64 @@ function funzione($mdDialog, $filter, $timeout) {
 
 	ctr.createNewGlossary = function(ev) {
 
-		$mdDialog.show({
-			controllerAs : 'gloCtrl',
-			controller : function($mdDialog) {
-				var gctl = this;
-				gctl.newGloss = ctr.newGloss;
+		$mdDialog
+				.show({
+					controllerAs : 'gloCtrl',
+					controller : function($mdDialog) {
+						var gctl = this;
+						gctl.newGloss = ctr.newGloss;
 
-				gctl.submit = function() {
-					console.log(gctl.newGloss)
-					if (gctl.newGloss.NEWGLOSS != undefined) {
-						console.log("salvo")
-						gctl.newGloss.GLOSSARY_ID = (new Date()).getTime();
-						delete gctl.newGloss.NEWGLOSS;
-						ctr.glossary.push(gctl.newGloss);
+						gctl.submit = function() {
+							console.log(gctl.newGloss)
+							if (gctl.newGloss.NEWGLOSS != undefined) {
+								console.log("salvo")
+								gctl.newGloss.GLOSSARY_ID = (new Date())
+										.getTime();
+								delete gctl.newGloss.NEWGLOSS;
+								ctr.glossary.push(gctl.newGloss);
 
-					} else {
-						console.log("modifico")
-					}
+							} else {
+								console.log("modifico")
+							}
 
-					gctl.newGloss = JSON.parse(JSON.stringify(EmptyGloss));
+							gctl.newGloss = JSON.parse(JSON
+									.stringify(EmptyGloss));
 
-					$mdDialog.hide();
+							$mdDialog.hide();
 
-				};
-				gctl.annulla = function($event) {
-					$mdDialog.hide();
-					console.log("esco ");
+						};
+						gctl.annulla = function($event) {
+							$mdDialog.hide();
+							console.log("esco ");
 
-				};
+						};
 
-				gctl.isCompletedGlossary = function() {
+						gctl.isCompletedGlossary = function() {
 
-					console.log("isCompletedGlossary")
-					console.log(gctl.newGloss)
+							console.log("isCompletedGlossary")
+							console.log(gctl.newGloss)
 
-					for ( var cod in gctl.newGloss) {
-						console.log(cod)
-						if (gctl.newGloss[cod] == ""
-								&& cod != "SBI_GL_CONTENTS") {
-							return false;
+							for ( var cod in gctl.newGloss) {
+								console.log(cod)
+								if (gctl.newGloss[cod] == ""
+										&& cod != "SBI_GL_CONTENTS") {
+									return false;
+								}
+							}
+							return true;
+							//											
+							// return
+							// (JSON.stringify(EmptyGloss)
+							// !=
+							// JSON
+							// .stringify(gctl.newGloss));
 						}
-					}
-					return true;
-					//											
-					// return
-					// (JSON.stringify(EmptyGloss)
-					// !=
-					// JSON
-					// .stringify(gctl.newGloss));
-				}
-			},
-			 
-			
-//			"web-content/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html"
-			templateUrl : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html',
-			targetEvent : ev,
-		})
+					},
+
+					// "web-content/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html"
+					templateUrl : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html',
+					targetEvent : ev,
+				})
 
 	};
 
@@ -485,13 +555,12 @@ function funzione($mdDialog, $filter, $timeout) {
 			if (found != 0) {
 				console.log("WORD GIa PRESENTE")
 
-				
-
 				angular.element(document.querySelector('.linkChips .md-chips'))
 						.css("box-shadow", "0 2px rgb(255, 0, 0)");
 				$timeout(function() {
-					angular.element(document.querySelector('.linkChips .md-chips'))
-					.css("box-shadow", "");
+					angular.element(
+							document.querySelector('.linkChips .md-chips'))
+							.css("box-shadow", "");
 				}, 500);
 
 				return false;
@@ -544,7 +613,7 @@ function funzione($mdDialog, $filter, $timeout) {
 			CHILD : []
 		});
 	};
- 
+
 	ctr.newSubItem = function(scope, parent) {
 		console.log("add childr")
 		var nodeData = scope.$modelValue;
@@ -564,12 +633,60 @@ function funzione($mdDialog, $filter, $timeout) {
 
 	// <!-- fine tree -->
 
-	
-	//paginazione
-	ctr.currentPage = 1;
-	ctr.WordItemPerPage = 1;
-	
-	 ctr.pageChangeHandler = function(num) {
-		    console.log('going to page ' + num);
-		  };
+	// pagination word
+	function changeWordItemPP() {
+		var lbw = angular.element(document.querySelector('.leftBox_word'))[0].offsetHeight;
+		var tbw = angular.element(document.querySelector('.md-toolbar-tools'))[0].offsetHeight;
+		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
+		bpw == 0 ? bpw = 40 : bpw = bpw;
+		var nit = parseInt((lbw - tbw - bpw) / 31)
+		ctr.WordItemPerPage = nit;
+	}
+
+	$scope
+			.$watch(
+					function() {
+						return angular.element(document
+								.querySelector('.leftBox_word'))[0].offsetHeight;
+					}, function(newValue, oldValue) {
+						if (newValue != oldValue) {
+							changeWordItemPP()
+						}
+					}, true);
+
+	ctr.WordItemPerPage = 5;
+	changeWordItemPP();
+
 }
+
+// app.directive('resize', function ($window) {
+// return function (scope, element) {
+// var ww = angular.element($window)
+// console.log(angular.element($window))
+// var changeHeight = function() {
+// console.log("resize");
+//            
+// var
+// lbw=angular.element(document.querySelector('.leftBox_word'))[0].offsetHeight;
+// var
+// tbw=angular.element(document.querySelector('.md-toolbar-tools'))[0].offsetHeight;
+// var
+// bpw=angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
+// bpw==0 ? bpw=40:bpw=bpw;
+// console.log(lbw);
+// console.log(tbw);
+// console.log(bpw);
+//    		
+// var nit=parseInt((lbw-tbw-bpw)/35)
+// console.log(nit)
+// WIPR=nit;
+//            
+//            
+// };
+// ww.bind('resize', function () {
+// changeHeight(); // when window size gets changed
+// });
+// changeHeight(); // when page loads
+// }
+// })
+
