@@ -375,7 +375,10 @@
 			
 		#set($relatedSerieType = false)
 		#set($relatedSerieType = $relatedSerie.type)
-		#if($relatedSerieType)		
+		#if($relatedSerieType != '')		
+			#if($relatedSerieType == 'bar')
+				#set($relatedSerieType = 'column')
+			#end		
 	    	type: '$relatedSerieType',
 	    #end
 	    
