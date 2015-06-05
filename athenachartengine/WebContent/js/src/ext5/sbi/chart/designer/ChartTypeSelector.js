@@ -23,9 +23,57 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	listeners : {
 		rowclick: function(table, record, tr, rowIndex, e, eOpts ) {
 			var selectedType = record.get('type');
+			
+			var store = this.store;
+			var selectionModel = this.getSelectionModel();
+			
+			var chartTypeSelector = this;
 
-			this.setChartType(selectedType);
-		},
+			var thisChartType = this.chartType.toLowerCase();
+			if(((thisChartType == 'bar' || thisChartType == 'line') && selectedType.toLowerCase() == 'pie')
+					|| (thisChartType == 'pie' && selectedType.toLowerCase() != 'pie')) {
+				
+				Ext.Msg.show({
+					title : '',
+					message : LN('sbi.chartengine.designer.charttype.changetype'),
+					icon : Ext.Msg.QUESTION,
+					closable : false,
+					buttons : Ext.Msg.OKCANCEL,
+					buttonText : 
+					{
+						ok : LN('sbi.chartengine.generic.ok'),
+						cancel : LN('sbi.generic.cancel')
+					},
+					fn : function(buttonValue, inputText, showConfig){
+						if (buttonValue == 'ok') {
+							
+							//Reset Series and Categories
+							var categoriesStore = Sbi.chart.designer.Designer.categoriesStore;
+							categoriesStore.removeAll();
+							
+							var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+							
+							for(i in serieStorePool) {
+								serieStorePool[i].removeAll();
+							}
+							
+							//Select the new chart type
+							chartTypeSelector.setChartType(selectedType);
+						} 
+						else if (buttonValue == 'cancel') {
+							for(var i = 0; i < store.data.length; i++) {
+								var row = store.getAt(i);
+								
+								if(thisChartType.toLowerCase() === row.get('type').toLowerCase()) {
+									selectionModel.select(i);
+									break;
+								}
+							}
+						}
+					}
+				});
+			}
+		}
 	},
 	
 	setChartType: function(type) {
