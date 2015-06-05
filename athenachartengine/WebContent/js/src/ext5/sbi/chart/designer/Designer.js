@@ -454,55 +454,57 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            	click: {
   		            		element: 'el',
   		            		fn: function(){
-  		            	var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
-  		            	if (activeTab.getId() == 'advancedEditor') {
-  		            		var json = activeTab.getChartData();
-							Sbi.chart.designer.Designer.update(json);
-  		            	}
-  		            	
-  		            	var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
-  		            	
-  		            	if (errorMessages == false) {
-  		            		Ext.Msg.show({
-  		            			title : LN('sbi.chartengine.designer.savetemplate.title'),
-  		            			message : LN('sbi.chartengine.designer.savetemplate.msg'),
-  		            			icon : Ext.Msg.QUESTION,
-  		            			closable : false,
-  		            			buttons : Ext.Msg.OKCANCEL,
-  		            			buttonText : 
-  		            			{
-  		            				ok : LN('sbi.generic.save'),
-  		            				cancel : LN('sbi.generic.cancel')
-  		            			},
-  		            			fn : function(buttonValue, inputText, showConfig){
-  		            				if (buttonValue == 'ok') {
-  		            					
-  		            					Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
-  		            					
-  		            					var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-  		            					
-  		            					var parameters = {
-  		            							jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
-  		            							docLabel: docLabel
-  		            					};
-  		            					coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
-  		            						
-  		            						parent.location.href = '/athena/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
-  		            						
-  		            					});
-  		            				}
+  		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+  		            			if (activeTab.getId() == 'advancedEditor') {
+  		            				var json = activeTab.getChartData();
+  		            				Sbi.chart.designer.Designer.update(json);
   		            			}
-  		            		});
-  		            	} else {
-  		            		Ext.Msg.show({
-  		            			title : LN('sbi.chartengine.validation.errormessage'),
-  		            			message : errorMessages,
-  		            			icon : Ext.Msg.WARNING,
-  		            			closable : false,
-  		            			buttons : Ext.Msg.OK
-  		            		});
+
+  		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
+
+  		            			if (errorMessages == false) {
+  		            				Ext.Msg.show({
+  		            					title : LN('sbi.chartengine.designer.savetemplate.title'),
+  		            					message : LN('sbi.chartengine.designer.savetemplate.msg'),
+  		            					icon : Ext.Msg.QUESTION,
+  		            					closable : false,
+  		            					buttons : Ext.Msg.OKCANCEL,
+  		            					buttonText : 
+  		            					{
+  		            						ok : LN('sbi.generic.save'),
+  		            						cancel : LN('sbi.generic.cancel')
+  		            					},
+  		            					fn : function(buttonValue, inputText, showConfig){
+  		            						if (buttonValue == 'ok') {
+
+  		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
+
+  		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+
+  		            							var parameters = {
+  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+  		            									docLabel: docLabel
+  		            							};
+  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {
+  		            								var context = coreServiceManager.initialConfig.serviceConfig.context;
+  		            								parent.location.href = context+'/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
+
+  		            							});
+  		            						}
+  		            					}
+  		            				});
+  		            			} else {
+  		            				Ext.Msg.show({
+  		            					title : LN('sbi.chartengine.validation.errormessage'),
+  		            					message : errorMessages,
+  		            					icon : Ext.Msg.WARNING,
+  		            					closable : false,
+  		            					buttons : Ext.Msg.OK
+  		            				});
+  		            			}
+  		            		}
   		            	}
-  		            }}}
+  		            }
   		        }],
 				listeners: {
 				    tabchange: function(tabPanel, tab){
