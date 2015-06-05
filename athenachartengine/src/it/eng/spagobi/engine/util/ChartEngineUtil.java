@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -145,13 +144,11 @@ public class ChartEngineUtil {
 
 					LinkedHashMap<String, String> changedValue = stylizeString(value);
 					result.put(key, changedValue);
-
-					continue;
+				} else {
+					String escapedString = mapElement2.get(key).toString();
+					result.put(key, escapedString);
 				}
 
-				String escapedString = StringEscapeUtils.escapeHtml(mapElement2.get(key).toString());
-
-				result.put(key, escapedString);
 			} else { // Nel caso è un semplice nodo viene chiamata la funzione ricorsivamente
 				@SuppressWarnings("unchecked")
 				Map<String, Object> value = escapeMapStrings((Map<String, Object>) mapElement2.get(key));

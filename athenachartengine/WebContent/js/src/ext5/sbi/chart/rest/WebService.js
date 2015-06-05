@@ -10,7 +10,7 @@ Ext.define('Sbi.chart.rest.WebService', {
         method: 'POST',
         timeout: 60000,
         disableCaching: false,
-        contentType: 'application/x-www-form-urlencoded'
+        contentType: 'application/x-www-form-urlencoded;  charset=utf-8'
     },
     constructor: function(config) {
         this.initConfig(config);
