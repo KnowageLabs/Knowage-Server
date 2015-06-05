@@ -107,7 +107,6 @@ var UNDEFINED,
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
 
 Highcharts.seriesTypes = seriesTypes;
-
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended

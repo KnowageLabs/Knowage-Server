@@ -3,7 +3,7 @@
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
-<script type="text/javascript" src="/athenachartengine/js/lib/d3/renderD3.js"></script> 
+<script type="text/javascript" src="/athenachartengine/js/src/d3/renderD3.js"></script> 
 
 <script>
 
@@ -49,7 +49,6 @@
 		}
 		else if (chartConf.chart.type === "sunburst")
 		{
-			
 			renderSunburst(chartConf);
 			
 		}

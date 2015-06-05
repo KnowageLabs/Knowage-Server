@@ -4,6 +4,9 @@
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.src.js"></script>
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script>
 <script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/drilldown.src.js"></script>
+<script src="http://code.highcharts.com/modules/heatmap.js"></script>
+<script src="http://code.highcharts.com/modules/treemap.js"></script>
+<script type="text/javascript" src="/athenachartengine/js/src/treemap/treemap.js"></script>
 
 <script>
 	var hostName = '<%=request.getServerName()%>';
@@ -35,7 +38,19 @@
 	};
 
 	function renderChart(chartConf){
-		new Highcharts.Chart(chartConf);
+		
+		if(chartConf.chart.type == 'treemap'){
+			
+			renderTreemap(chartConf);	
+			
+		}
+		
+		else{
+			
+			new Highcharts.Chart(chartConf);
+			
+		}
+		
 	};
 	
 	function handleDrilldown(e) {

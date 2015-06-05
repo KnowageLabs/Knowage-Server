@@ -1,13 +1,12 @@
 package it.eng.spagobi.engine.util;
 
+import it.eng.spagobi.utilities.tree.Node;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +39,6 @@ public class DataSetTransformer {
 			Map<String,Object> row = (Map<String, Object>) dataRows.get(i);
 
 			for (int j=0; j<lista.size();j++){
-
-				System.out.println(row.get(lista.get(j).toString()));
 
 				if (result.containsKey(row.get(lista.get(j).toString()))){
 
@@ -76,68 +73,68 @@ public class DataSetTransformer {
 		return ja;
 
 	}
-	
+
 	/* Merging codes - Sunburst */
-	
+
 	public JSONArray toTree(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows) throws JSONException
 	{
 		// Data columns mapper (as map)
 		Map<String,Object> mapper = (Map<String,Object>)dataColumnsMapper;
-		
+
 		// Columns that we need for making a sequence (as map)
 		Map<String,Object> columns = (Map<String,Object>)columnsNeeded;
-		
+
 		// In this array list we will put raw names of necessary columns
 		ArrayList<String> listColumns = new ArrayList<String>();
-		
+
 		// End result - map of maps (records with their columns values)
 		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
-		
+
 		// Take value of the SERIE column (the one that contains numerical values)
 		Object serieRawColumn = mapper.get(serie.toString()).toString();
-		
+
 		// Take raw names of all of the columns that we need for creating a sequence
 		for (int i=0; i<columns.size(); i++)
 		{
 			Object z = columns.get(i);
 			listColumns.add(mapper.get(z).toString());
 		}
-		
+
 		/* Pass through all records in order to get values of just those 
 		 * columns that we need for sequence. */
 		for (int i=0; i<dataRows.size(); i++)
 		{
 			Map<String,Object> row = (Map<String,Object>)dataRows.get(i);
 			HashMap<String,String> record = new HashMap<String, String>();
-			
+
 			/* For every record take these columns */
 			for (int j=0; j<listColumns.size(); j++)
 			{
 				Object x = row.get(listColumns.get(j));
 				record.put(columns.get(j).toString(), x.toString());				
 			}
-			
+
 			record.put(serie.toString(), row.get(serieRawColumn).toString());
-						
+
 			result.put(new Integer(i),record);			
 		}
-						
+
 		JSONArray res = countSequence(columns,serie,result);
-		
+
 		return res;
 	}
-	
+
 	public JSONArray countSequence(Map<String,Object> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException
 	{		
 		HashMap<String,Double> endresult = new HashMap<String, Double>();
 		JSONArray ja = new JSONArray();
-		
+
 		// Going through all records 
 		for (int i=0; i<result.size(); i++)
 		{
 			HashMap<String,Object> singleRecord = (HashMap<String,Object>)result.get(new Integer(i));
 			String sequence = "";
-			
+
 			// Columns that we now need for creating the sequence
 			for (int j=0; j<columns.size(); j++)
 			{
@@ -150,15 +147,15 @@ public class DataSetTransformer {
 					sequence = sequence + "-" + singleRecord.get(columns.get(j)).toString();	
 				}
 			}
-			
+			System.out.println(serie);
 			Double value = Double.parseDouble(singleRecord.get(serie).toString());			
-			
+			System.out.println(value);
 			JSONObject jo = new JSONObject();
-			
+
 			if (!endresult.containsKey(sequence))
 			{
 				endresult.put(sequence,value);				
-				
+
 				jo.put("sequence", sequence);
 				jo.put("value", value);
 			}
@@ -166,15 +163,108 @@ public class DataSetTransformer {
 			{
 				Double oldValue = endresult.get(sequence);
 				endresult.put(sequence,value+oldValue);
-				
+
 				jo.put("sequence", sequence);
 				jo.put("value", value+oldValue);
 			}
-			
+
 			ja.put(jo);
 		}
-		
+
 		return ja;
+	}
+
+	public JSONObject createTreeChart(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows) throws JSONException
+	{
+		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
+
+		Map<String,String> columns = (Map<String,String>)columnsNeeded;
+
+		Object serieRawColumn = mapper.get(serie.toString()).toString();
+
+		ArrayList<String> listColumns = new ArrayList<String>();
+
+		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
+
+		for (int i = 0; i<columns.size();i++){
+
+			Object cndata = columns.get(i);
+
+			listColumns.add(mapper.get(cndata).toString());
+
+		}
+
+		for (int i=0; i<dataRows.size(); i++)
+		{
+			Map<String,Object> row = (Map<String,Object>)dataRows.get(i);
+			HashMap<String,String> record = new HashMap<String, String>();
+
+			/* For every record take these columns */
+			for (int j=0; j<listColumns.size(); j++)
+			{
+				Object x = row.get(listColumns.get(j));
+				record.put(columns.get(j).toString(), x.toString());				
+			}
+
+			record.put(serie.toString(), row.get(serieRawColumn).toString());
+
+			result.put(new Integer(i),record);			
+		}
+
+		for (int i=0; i<result.size();i++){
+
+			System.out.println(result.get(i));
+
+		}
+
+
+		JSONObject res = createTreeMap(columns,serie,result);
+
+		return res;
+
+	}
+
+	public JSONObject createTreeMap(Map<String,String> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException
+	{		
+
+		TreeMap<String, Double> tree = new TreeMap<String, Double>();
+		
+		JSONObject jfo = new JSONObject();
+		
+		for (int i=0; i<result.size();i++){
+
+			for (int j=0;j<columns.size();j++){
+				
+				if (!tree.containsKey(result.get(i).get(columns.get(j)))){
+					
+					String node = (String) result.get(i).get(columns.get(j));
+					
+					Double value = Double.parseDouble((String) result.get(i).get(serie));
+					
+					tree.put(node, value);
+					}
+					
+					else{
+						
+					String node = (String) result.get(i).get(columns.get(j));
+						
+					Double oldValue = tree.get(node);
+					
+					Double value = Double.parseDouble((String) result.get(i).get(serie));
+					
+					tree.remove(node);
+					
+					tree.put(node, value+oldValue);
+						
+					}
+					
+				}
+				
+		}
+		
+		System.out.println(tree);
+
+		return jfo;
 	}
 
 }

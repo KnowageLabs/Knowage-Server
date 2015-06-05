@@ -1,6 +1,4 @@
 function renderWordCloud(chartConf){
-		
-	console.log(chartConf);
 	
 		(function() {
 
@@ -512,8 +510,6 @@ function renderWordCloud(chartConf){
 	{
 		/* ME: The part that we need to place into HTML in order to attach 
 		 * given data to them - we are going to create it through D3 notation */
-		
-		console.log(jsonObject);
 		
 		// Dimensions of sunburst.
 	    /* ME: Dimensions of the window in which is chart going to be placed.

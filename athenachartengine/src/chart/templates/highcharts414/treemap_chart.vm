@@ -1,45 +1,35 @@
 #set($category = $chart.VALUES.CATEGORY)
-#set($chartType = $chart.type)
+#set($chartType = $CHART.type)
 #set($font = $chart.FONT.type)
-#set($padding = $chart.PADDING.value)
-#set($maxWords = $chart.MAXWORDS.value)
-#set($maxAngle= $chart.ANGLE.max)
-#set($minAngle= $chart.ANGLE.min)
 #set($dataRows = $data.rows)
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
 
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
- #if($dataField.class.name == 'java.util.LinkedHashMap')
-  #set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
- #end
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
 #end
-
-#*  
- For Java class of dataset transformer we need '$dataRows' (raw JSON dataset),
- '$columnsNeeded' (name of the columns for sequence) and $$dataColumnsMapper (metadata)
-*#
 
 #set($columnsNeeded = {})
 
 #set($columnCouter = 0)
+
    
-#foreach($value in $category.COLUMN) 
- #set($columnsNeeded[$columnCouter] = $value.value)
+#foreach($value in $category) 
+ #set($columnsNeeded[$columnCouter] = $value.column)
  #set($columnCouter = $columnCouter + 1)
 #end
 
- #set($result = $datasettransformer.toColumn($columnsNeeded,$dataColumnsMapper,$dataRows))
+#set($serie = $chart.VALUES.SERIE.name)
+
+#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows))
 
 {
  chart: 
  {
   type: '$chartType',
-  font: '$font',
-  padding: '$padding',
-  maxWords: '$maxWords',
-  maxAngle: '$maxAngle',
-  minAngle: '$minAngle'
+  font: '$font'
  },
  
  emptymessage:
@@ -92,8 +82,7 @@
 			textAlign: '$chart.SUBTITLE.SUBTITLE-STYLE.textAlign'
 		}
 	},
- 
- data:
+	data:
  [
   $result
  ]

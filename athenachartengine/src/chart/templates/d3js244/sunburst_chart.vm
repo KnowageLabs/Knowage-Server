@@ -1,6 +1,5 @@
 #set($category = $chart.VALUES.CATEGORY)
 #set($dataRows = $data.rows)
-
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
 
