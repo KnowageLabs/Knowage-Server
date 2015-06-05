@@ -762,10 +762,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 								newTarget[prop] = tItem;
 							}  
 						}
-					} else {
+					} 
+					else {
 						// deal with object
 						var tItem = newTarget[prop];
-						if (!tItem) {
+						if (!tItem || (isArray(tItem) && tItem.length == 0)) {
 							newTarget[prop] = item;
 						} else {
 							newTarget[prop] = ChartUtils.mergeObjects(newTarget[prop], item);

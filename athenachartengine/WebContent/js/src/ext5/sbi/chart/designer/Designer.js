@@ -126,8 +126,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			
 			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE') {
-				Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
-				jsonTemplate = baseTemplate;
+				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
 			}
 			
 			this.docLabel = docLabel;
