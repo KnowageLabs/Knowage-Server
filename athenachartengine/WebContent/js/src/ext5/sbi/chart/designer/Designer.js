@@ -836,6 +836,31 @@ Ext.define('Sbi.chart.designer.Designer', {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
 			}
 			
+			var selectetChartType = this.chartTypeSelector.getChartType().toLowerCase();
+			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+    		for(var storeIndex in serieStores) {
+    			var store = serieStores[storeIndex];
+    			var axisAlias = store.axisAlias;
+    			
+    			for(var rowIndex in store.data.items) {
+    				var serieAsMap = store.getAt(rowIndex);
+    				
+    				var serieColumn = serieAsMap.get('serieColumn') != undefined? serieAsMap.get('serieColumn'): '';
+    				var serieName = serieAsMap.get('axisName') != undefined? serieAsMap.get('axisName'): '';
+    				var serieType = serieAsMap.get('serieType') != undefined? serieAsMap.get('serieType').toLowerCase(): '';
+    				
+    				if((selectetChartType == 'pie' && (serieType != '' && serieType != 'pie')) || 
+    					((selectetChartType == 'bar' || selectetChartType == 'line') && (serieType == 'pie'))) {
+    					
+						errorMsg += "- " 
+							+ Sbi.locale.sobstituteParams(
+								LN('sbi.chartengine.validation.wrongserietype'), 
+								[selectetChartType, serieType, serieColumn, serieName]) 
+							+ '<br>';
+    				}
+    			}
+    		}
+			
 			return errorMsg != ''? errorMsg : false;
 		}
 		
