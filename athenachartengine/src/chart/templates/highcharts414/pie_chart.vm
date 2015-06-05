@@ -194,10 +194,11 @@
 	    	name: '$relatedSerie.name',
 	        data: [
 	    	    #set($serieColumnCategory = $dataColumnsMapper.get($chart.VALUES.CATEGORY.column))
-	    	    #set($serieColumnMapped = $dataColumnsMapper.get($relatedSerie.column))
+	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#foreach($row in $rows)
 					#set ($serieName = $row.get($serieColumnCategory))
-					#set ($serieValue = $row.get($serieColumnMapped))
+					#set ($serieValue = $row.get($serieColumnsMapped))
 					['$serieName', $serieValue],
 				#end
 	    	],
