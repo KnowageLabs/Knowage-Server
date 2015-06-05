@@ -27,8 +27,8 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         }
     },
     collapsible: true,
-	maxWidth: 250,
-	minWidth: 150,
+	maxWidth: 200,
+	minWidth: 200,
 	width: 200,
     bodyBorder: true,
     defaults: {
