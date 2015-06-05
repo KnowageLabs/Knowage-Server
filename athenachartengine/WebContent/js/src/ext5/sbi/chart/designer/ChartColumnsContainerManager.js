@@ -227,7 +227,30 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							tooltip: LN('sbi.chartengine.columnscontainer.tooltip.removecolumn'),
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();
-								var rec = store.removeAt(rowIndex);
+								var item = store.getAt(rowIndex);
+								
+								var serieColumn = item.get('serieColumn');
+								var serieName = item.get('axisName');
+								
+								Ext.Msg.show({
+	            					title : '',
+	            					message : Sbi.locale.sobstituteParams(
+	      								LN('sbi.chartengine.designer.removeserie'), 
+	      								[serieColumn, serieName]),
+	            					icon : Ext.Msg.QUESTION,
+	            					closable : false,
+	            					buttons : Ext.Msg.OKCANCEL,
+	            					buttonText : 
+	            					{
+	            						ok : LN('sbi.chartengine.generic.ok'),
+	            						cancel : LN('sbi.generic.cancel')
+	            					},
+	            					fn : function(buttonValue, inputText, showConfig){
+	            						if (buttonValue == 'ok') {
+	            							var rec = store.removeAt(rowIndex);
+	            						}
+	            					}
+	            				});
 							}
 						}]
 					}

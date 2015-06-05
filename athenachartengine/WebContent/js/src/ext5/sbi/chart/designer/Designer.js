@@ -395,7 +395,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 						icon: '/athena/themes/sbi_default/img/delete.gif',
 						tooltip: LN('sbi.generic.remove'),
 						handler: function(grid, rowIndex, colIndex) {
-							var rec = grid.getStore().removeAt(rowIndex);
+							var store = grid.getStore();
+							var item = store.getAt(rowIndex);
+							
+							var categoryColumn = item.get('categoryColumn');
+							
+							Ext.Msg.show({
+            					title : '',
+            					message : Sbi.locale.sobstituteParams(
+      								LN('sbi.chartengine.designer.removecategory'), 
+      								[categoryColumn]),
+            					icon : Ext.Msg.QUESTION,
+            					closable : false,
+            					buttons : Ext.Msg.OKCANCEL,
+            					buttonText : 
+            					{
+            						ok : LN('sbi.chartengine.generic.ok'),
+            						cancel : LN('sbi.generic.cancel')
+            					},
+            					fn : function(buttonValue, inputText, showConfig){
+            						if (buttonValue == 'ok') {
+            							var rec = store.removeAt(rowIndex);
+            						}
+            					}
+            				});
+							
+//							var rec = grid.getStore().removeAt(rowIndex);
 						}
 					}]
 				}],
