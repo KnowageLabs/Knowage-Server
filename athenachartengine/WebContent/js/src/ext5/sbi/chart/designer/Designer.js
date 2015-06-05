@@ -439,16 +439,21 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// tabs integration
 			var coreServiceManager = this.coreServiceManager;
+			
 			this.stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
   				width: '100%',
   				region: 'center',
 				title: {hidden: true },
 				previousTabId: '',
-  				tools:[{ 
-  		            xtype: 'button',
-  		            text : LN('sbi.generic.save'),
-  		            handler: function(button){
+  				tools:[{ xtype: 'tbfill' }, {
+  		            xtype: 'image',
+  		            src: '/athenachartengine/img/saveAndGoBack.png',
+  		            cls: 'icon-saveback',
+  		            listeners: {
+  		            	click: {
+  		            		element: 'el',
+  		            		fn: function(){
   		            	var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
   		            	if (activeTab.getId() == 'advancedEditor') {
   		            		var json = activeTab.getChartData();
@@ -471,6 +476,9 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            			},
   		            			fn : function(buttonValue, inputText, showConfig){
   		            				if (buttonValue == 'ok') {
+  		            					
+  		            					Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
+  		            					
   		            					var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            					
   		            					var parameters = {
@@ -494,7 +502,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            			buttons : Ext.Msg.OK
   		            		});
   		            	}
-  		            }
+  		            }}}
   		        }],
 				listeners: {
 				    tabchange: function(tabPanel, tab){

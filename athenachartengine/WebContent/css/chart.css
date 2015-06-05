@@ -2,3 +2,9 @@
 	text-align: left;
 	margin-left: 5px;
 }
+
+.icon-saveback {
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
