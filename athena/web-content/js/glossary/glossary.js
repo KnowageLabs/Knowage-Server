@@ -1,5 +1,4 @@
-var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree',
-		'ng-context-menu' ]);
+var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree','angularUtils.directives.dirPagination','ng-context-menu' ]);
 
 var EmptyWord = {
 	LINK : [],
@@ -545,7 +544,7 @@ function funzione($mdDialog, $filter, $timeout) {
 			CHILD : []
 		});
 	};
-
+ 
 	ctr.newSubItem = function(scope, parent) {
 		console.log("add childr")
 		var nodeData = scope.$modelValue;
@@ -565,4 +564,12 @@ function funzione($mdDialog, $filter, $timeout) {
 
 	// <!-- fine tree -->
 
+	
+	//paginazione
+	ctr.currentPage = 1;
+	ctr.WordItemPerPage = 1;
+	
+	 ctr.pageChangeHandler = function(num) {
+		    console.log('going to page ' + num);
+		  };
 }

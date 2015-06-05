@@ -51,6 +51,10 @@
 					functionality="MeasuresCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
 					
+			<ITEM	title="#menu.glossary"
+					functionality="MeasuresCatalogueManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/glossary.jsp" />		
+					
 					
 		</ITEM>
 		<ITEM	code="server_settings" 

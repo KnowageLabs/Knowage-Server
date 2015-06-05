@@ -21,12 +21,13 @@
 <script
 	src="https://rawgit.com/angular/bower-material/master/angular-material.js"></script>
 
+
+
 <!-- <script -->
 <!-- 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script> -->
 
 
-<link rel="stylesheet" type="text/css"
-	href="/athena/themes/glossary/css/Stili.css">
+
 <link rel="stylesheet" type="text/css"
 	href="/athena/themes/glossary/css/gestione_glossario.css">
 <link rel="stylesheet"
@@ -35,6 +36,8 @@
 	src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script>
 <script type="text/javascript"
 	src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
+<script type="text/javascript"
+	src="/athena/js/glossary/pagination/dirPagination.js"></script>
 
 <script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
 
@@ -68,25 +71,16 @@
 									style="margin: 18px;  margin-left: 0px; box-shadow: none ;  background-color: transparent !important;">
 								<md-icon md-font-icon="fa fa-plus fa-2x"
 									style="  color: greenyellow;"></md-icon> </md-button>
-
-
-
-
 							</div>
 
 							<div flex="70">
-
-
 								<md-input-container md-no-float
 									style="padding-bottom: 17px; padding-top: 17px;">
 								<md-icon md-font-icon="fa fa-search "
 									style="  margin-top: 18px;  margin-left: 13px; color: white"></md-icon>
 								<input ng-model="filter_word.WORD" type="text"
 									placeholder="Search"> </md-input-container>
-
-
 							</div>
-
 						</div>
 					</div>
 					</md-toolbar>
@@ -96,45 +90,72 @@
 						data-drag-delay="500" data-clone-enabled="true">
 
 						<ol ui-tree-nodes ng-model="ctrl.words" data-nodrop-enabled="true">
-							<li ui-tree-node
-								ng-repeat="word in ctrl.words | filter:filter_word:strict ">
-								<div ui-tree-handle style="border: none;"">
-									<md-list> <md-list-item ng-click="1==1"
-										ng-repeat="n in [1]" context-menu
-										data-target="WordMenu-{{word.WORD}}" class="smallListItem"
-										ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 
-									<p>{{ word.WORD | uppercase }}</p>
+							<li
+								dir-paginate="word in ctrl.words | filter:filter_word:strict | itemsPerPage:	ctrl.WordItemPerPage ">
+								<div ui-tree-node>
 
-									<!-- 					menu contestuale -->
-									<div class="dropdown position-fixed" style="z-index: 999;"
-										id="WordMenu-{{ word.WORD }}">
-										<md-list class="dropdown-menu" role="menu"> <md-list-item
-											ng-click='panel.highlight = true ;ctrl.modifyWord(word)'
-											role="menuitem" tabindex="1">
-										<p>Modifica</p>
-										</md-list-item> <md-list-item
-											ng-click='panel.highlight = false; ctrl.deleteWord(word)'
-											role="menuitem" tabindex="1">
-										<p>Elimina</p>
+									<div ui-tree-handle style="border: none;"">
+										<md-list> <md-list-item ng-click="1==1"
+											ng-repeat="n in [1]" context-menu
+											data-target="WordMenu-{{word.WORD}}" class="smallListItem"
+											ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
+
+										<p>{{ word.WORD | uppercase }}</p>
+
+										<!-- 					menu contestuale -->
+										<div class="dropdown position-fixed" style="z-index: 999;"
+											id="WordMenu-{{ word.WORD }}">
+											<md-list class="dropdown-menu" role="menu"> <md-list-item
+												ng-click='panel.highlight = true ;ctrl.modifyWord(word)'
+												role="menuitem" tabindex="1">
+											<p>Modifica</p>
+											</md-list-item> <md-list-item
+												ng-click='panel.highlight = false; ctrl.deleteWord(word)'
+												role="menuitem" tabindex="1">
+											<p>Elimina</p>
+											</md-list-item> </md-list>
+										</div>
+
+
 										</md-list-item> </md-list>
 									</div>
-
-
-									</md-list-item> </md-list>
 								</div>
 							</li>
 						</ol>
 					</div>
-					</md-content>
-
-
-
-
 				</div>
 
 
+				</md-content>
 
+
+				<md-whiteframe class="md-whiteframe-z5" layout="row"
+					layout-align="center end"> <dir-pagination-controls
+					max-size="5"></dir-pagination-controls> </md-whiteframe>
+
+
+				<script type="text/ng-template" id="dirPagination.tpl.html">
+
+<ul class="pagination" ng-if="1 < pages.length">
+    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+        <a href="" ng-click="setCurrent(1)"> << </a>
+    </li>
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }" class="ng-scope">
+        <a href="" ng-click="setCurrent(pagination.current - 1)" class="ng-binding"> < </a>
+    </li>
+    <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+        <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
+    </li>
+
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }" class="ng-scope">
+        <a href="" ng-click="setCurrent(pagination.current + 1)" class="ng-binding"> > </a>
+    </li>
+    <li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">
+        <a href="" ng-click="setCurrent(pagination.last)"> >> </a>
+    </li>
+</ul>
+			</script>
 
 
 
@@ -446,15 +467,14 @@
 							<div layout="column" layout-wrap>
 
 
-								
-								<md-autocomplete   style="  min-width: 0;"flex="" md-input-name="autocompleteField"
-									md-no-cache="ctrl.noCache" 
+
+								<md-autocomplete style="  min-width: 0;" flex=""
+									md-input-name="autocompleteField" md-no-cache="ctrl.noCache"
 									md-search-text="ctrl.tmpAttr.Prop"
 									md-selected-item="ctrl.selectedItem"
 									md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
 									md-item-text="item.ATTRIBUTE_NM" md-require-match=""
-									md-floating-label="Proprietà"> 
-								<md-item-template>
+									md-floating-label="Proprietà"> <md-item-template>
 								<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
 								</md-item-template> </md-autocomplete>
 
@@ -463,7 +483,6 @@
 								<md-button ng-click="ctrl.addProp(ctrl.tmpAttr)"
 									ng-disabled="!ctrl.propPresent(ctrl.tmpAttr.Prop) || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
 									class="md-fab   md-mini" aria-label="Aggiungi_Attributo"
-									
 									style="background-color: rgb(67, 85, 182) !important;    margin: -27px;  margin-left: 100%;">
 
 								<md-tooltip> Aggiungi Attributo </md-tooltip> <md-icon
@@ -473,10 +492,9 @@
 
 
 
-								<md-input-container >
-								<!-- Use floating label instead of placeholder --> <label>Valore</label>
-								<input ng-model="ctrl.tmpAttr.Val" type="text" >
-								</md-input-container>
+								<md-input-container> <!-- Use floating label instead of placeholder -->
+								<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val"
+									type="text"> </md-input-container>
 
 							</div>
 						</div>
@@ -485,16 +503,17 @@
 						<div flex="70">
 
 							<md-list> <md-list-item
-								class="md-2-line box-list-option" ng-repeat="veg in ctrl.newWord.SBI_GL_WORD_ATTR"
-								layout="row" layout-wrap>
+								class="md-2-line box-list-option"
+								ng-repeat="veg in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
+								layout-wrap>
 							<div class="md-item-text md-whiteframe-z1" flex>
 								<p class="margin5">
 									<input class="transparent_input smallFont" ng-model="veg.Prop"
 										type="text">
 								</p>
 								<p class="margin5">
-									<input class="transparent_input smallFont "
-										ng-model="veg.Val" type="text">
+									<input class="transparent_input smallFont " ng-model="veg.Val"
+										type="text">
 								</p>
 
 								<md-button ng-click="1==1" class="md-fab   md-ExtraMini"
@@ -532,7 +551,7 @@
 
 		</div>
 
- {{ctrl.selectedItem}}{{ctrl.newWord}}
+		{{ctrl.selectedItem}}{{ctrl.newWord}}
 
 	</div>
 
