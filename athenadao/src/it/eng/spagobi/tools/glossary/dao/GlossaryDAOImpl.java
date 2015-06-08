@@ -33,12 +33,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public boolean insertGlossary(SbiGlGlossary glossary) {
-		return saveOrUpdate(glossary);
+		return insert(glossary);
 	}
 
 	@Override
 	public boolean modifyGlossary(SbiGlGlossary glossary) {
-		return saveOrUpdate(glossary);
+		return update(glossary);
 	}
 
 	@Override
@@ -63,12 +63,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public boolean insertContents(SbiGlContents contents) {
-		return saveOrUpdate(contents);
+		return insert(contents);
 	}
 
 	@Override
 	public boolean modifyContents(SbiGlContents contents) {
-		return saveOrUpdate(contents);
+		return update(contents);
 	}
 
 	@Override
@@ -82,18 +82,23 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public List<SbiGlWord> listWord(String word) {
+	public List<SbiGlWord> listWord() {
+		return list(SbiGlWord.class);
+	}
+
+	@Override
+	public List<SbiGlWord> listWordFiltered(String word) {
 		return list(new SearchWordByWord(word));
 	}
 
 	@Override
 	public boolean insertWord(SbiGlWord word) {
-		return saveOrUpdate(word);
+		return insert(word);
 	}
 
 	@Override
 	public boolean modifyWord(SbiGlWord word) {
-		return saveOrUpdate(word);
+		return update(word);
 	}
 
 	@Override
@@ -108,12 +113,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public boolean insertWlist(SbiGlWlist wlist) {
-		return saveOrUpdate(wlist);
+		return insert(wlist);
 	}
 
 	@Override
 	public boolean modifyWlist(SbiGlWlist wlist) {
-		return saveOrUpdate(wlist);
+		return update(wlist);
 	}
 
 	@Override
@@ -133,12 +138,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public boolean insertAttribute(SbiGlAttribute attribute) {
-		return saveOrUpdate(attribute);
+		return insert(attribute);
 	}
 
 	@Override
 	public boolean modifyAttribute(SbiGlAttribute attribute) {
-		return saveOrUpdate(attribute);
+		return update(attribute);
 	}
 
 	@Override
@@ -153,12 +158,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public boolean insertWordAttr(SbiGlWordAttr wordAttr) {
-		return saveOrUpdate(wordAttr);
+		return insert(wordAttr);
 	}
 
 	@Override
 	public boolean modifyWordAttr(SbiGlWordAttr wordAttr) {
-		return saveOrUpdate(wordAttr);
+		return update(wordAttr);
 	}
 
 	@Override

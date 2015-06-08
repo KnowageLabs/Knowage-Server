@@ -51,7 +51,9 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	//
 	public SbiGlWord loadWord(Integer wordId);
 
-	public List<SbiGlWord> listWord(String word);
+	public List<SbiGlWord> listWord();
+
+	public List<SbiGlWord> listWordFiltered(String word);
 
 	public boolean insertWord(SbiGlWord word);
 

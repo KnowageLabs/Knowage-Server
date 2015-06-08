@@ -246,7 +246,7 @@ public class AbstractHibernateDAO {
 	}
 
 	/**
-	 * Load an object of type "clazz" whose id is "id"
+	 * Loads an object of type "clazz" whose id is "id"
 	 * 
 	 * @param clazz
 	 * @param id
@@ -283,12 +283,33 @@ public class AbstractHibernateDAO {
 	}
 
 	/**
-	 * Persist a new object or update a modified object
+	 * Persists a new object
 	 * 
 	 * @param obj
 	 * @return
 	 */
-	public boolean saveOrUpdate(SbiHibernateModel obj) {
+	public boolean insert(SbiHibernateModel obj) {
+		return saveOrUpdate(obj, true);
+	}
+
+	/**
+	 * Updates an existing object
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public boolean update(SbiHibernateModel obj) {
+		return saveOrUpdate(obj, false);
+	}
+
+	/**
+	 * Persists a new object or updates an existing one
+	 * 
+	 * @param obj
+	 * @param insert
+	 * @return
+	 */
+	private boolean saveOrUpdate(SbiHibernateModel obj, boolean insert) {
 		Session session = null;
 		boolean toReturn = false;
 
@@ -303,6 +324,11 @@ public class AbstractHibernateDAO {
 				Assert.assertNotNull(session, "session cannot be null");
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+			if (insert) {
+				updateSbiCommonInfo4Insert(obj);
+			} else {
+				updateSbiCommonInfo4Update(obj);
 			}
 			session.saveOrUpdate(obj);
 			session.flush();
