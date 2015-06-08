@@ -376,22 +376,7 @@
             
     ],
     
-    tooltip: {
-    #if($seriePrefix || $seriePostfix)
-        formatter: function () {
-        	var prefixChar = this.series.options.prefixChar;
-        	var postfixChar = this.series.options.postfixChar;
-        	
-        	var formattedTooltip = 
-        		'<b>' + this.x + '</b><br/>' +
-        		(!prefixChar ? '' : prefixChar + ' ') + this.y + (!postfixChar ? '' : postfixChar + ' ') + '<br/>' 
-            return formattedTooltip;
-        }
-    #end
-    },
-	
 	series: [
-	
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
@@ -419,11 +404,11 @@
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
-					#set ($serieName =  $row.get($categorieColumnsMapped))
+					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					{
 						drilldown: $enableDrilldown,
 						y: $serieValue,
-						name: '$serieName',
+						name: '$serieCategoryName',
 						
 						#if ($relatedSerieShowValue != '')
 						dataLabels: {
@@ -433,23 +418,27 @@
 					},
 				#end
 	    	],
-		#set($seriePrefix = '')
-		#set($seriePrefix = $relatedSerie.prefixChar)
-			prefixChar: '$seriePrefix',
-			
-		#set($seriePostfix = '')
-		#set($seriePostfix = $relatedSerie.postfixChar)
-			postfixChar: '$seriePostfix',
-			#if ($relatedSerie.precision != '')
-			valueDecimals: $relatedSerie.precision ,
+	    	
+			tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix ',
 			#end
+				
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: ' $seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision ,
+			#end
+				// $ serieTooltip : $serieTooltip
+			},
 			
 		#set($serieTooltip = false)
     	#set($serieTooltip = $relatedSerie.TOOLTIP)
-    	#if($serieTooltip)
-    		tooltip : { //created property
-    			
-    		},
+    	#if($serieTooltip && $serieTooltip != '')
     	#end
     	
     	#set($referencedAxis = $relatedSerie.axis)
