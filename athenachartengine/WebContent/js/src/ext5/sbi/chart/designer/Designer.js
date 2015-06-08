@@ -286,7 +286,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// Creating step 1 panel
   			this.mainPanel = Ext.create('Ext.panel.Panel', {
   				id: 'mainPanel',
-  				height: 300,
+  				minHeight: 300,
   				html: '<div style="text-align:center">PREVIEW</div>'
   			});
 			

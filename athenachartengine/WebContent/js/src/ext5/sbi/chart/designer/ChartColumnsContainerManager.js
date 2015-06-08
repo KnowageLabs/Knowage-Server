@@ -89,7 +89,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			        	this.view.axisData.titleText = textValue;
 			        }
 			    }),
-				
+				minHeight: 300,
 				flex: 1,
 				viewConfig: {
 					plugins: {

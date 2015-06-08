@@ -151,7 +151,7 @@
     },
     #end
     
-    #if ($chart.LEGEND.show)
+    #if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'true')
     legend: {
         #if ($chart.LEGEND.layout != '' )
         layout: '$chart.LEGEND.layout',
