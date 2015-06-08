@@ -159,7 +159,6 @@
         #if ($chart.LEGEND.position != '' )
         align: '$chart.LEGEND.position',
         #end
-        verticalAlign: 'top',
         
         #if ($chart.LEGEND.floating != '')
         floating: $chart.LEGEND.floating,
@@ -274,9 +273,13 @@
         	min: 0,
         	title: {
         		text: '$yAxis.TITLE.text',
+        		
+        		#*
         		#if( $yAxis.style.rotate != '' ) 
         		rotation: $yAxis.style.rotate,
         		#end
+        		*#
+        		
         		#if( $yAxis.TITLE.style.align != '' )
         			#if ($yAxis.TITLE.style.align == 'center' )
 					align: 'middle',
@@ -298,6 +301,27 @@
 		        	#end
         		},
         	},
+        	
+        	labels: {
+    		#if( $yAxis.style != '' ) 
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && $axisTitleStyle == 'italic')
+	        			fontStyle: 'italic',
+					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+	        			textDecoration: 'underline',
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        	#end
+        		
+    		#if( $yAxis.style != '' && $yAxis.style.rotate && $yAxis.style.rotate != '' ) 
+        		rotation: $yAxis.style.rotate,
+    		#end
+            },
         	
 	        #if($yAxis.MAJORGRID.interval != '')
         	tickInterval: $yAxis.MAJORGRID.interval,

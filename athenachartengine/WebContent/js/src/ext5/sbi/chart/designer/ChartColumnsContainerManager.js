@@ -196,6 +196,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						sortable: false,
 						editor: {
 							xtype: 'combobox',
+							editable: false,
 							displayField: 'label',
 							valueField: 'value',
 							store: [
