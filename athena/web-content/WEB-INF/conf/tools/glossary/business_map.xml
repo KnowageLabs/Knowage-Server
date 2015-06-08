@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+	</MAP_PAGE_MODULES>
+	
+    <MAP_REST_SERVICES>
+    	<MAP_REST_SERVICE serviceUrl="/glossary.*" businessProcess="GlossaryManagement" />
+    </MAP_REST_SERVICES>
+    
+<!-- <MAP_EXTERNAL_REST_SERVICES>
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/glossary.*" businessProcess="GlossaryManagement" />
+	</MAP_EXTERNAL_REST_SERVICES> -->
+    
+    
+</BUSINESS_MAP>

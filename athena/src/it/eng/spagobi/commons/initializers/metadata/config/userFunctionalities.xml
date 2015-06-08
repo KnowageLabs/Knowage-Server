@@ -57,6 +57,7 @@
 <USER_FUNCTIONALITY productType="AthenaBD" name="HierarchiesManagement" description="HierarchiesManagement"/>
 <USER_FUNCTIONALITY productType="AthenaBD" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
 <USER_FUNCTIONALITY productType="AthenaBD" name="CreateChartFunctionality" description="CreateChartFunctionality"/>
+<USER_FUNCTIONALITY productType="AthenaBD" name="GlossaryManagement" description="GlossaryManagement"/>
 <!-- Athena Social Functionalities --> 
 <USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement" description="EnginesManagement"/>
 <USER_FUNCTIONALITY productType="AthenaSocial" name="ReadEnginesManagement" description="ReadEnginesManagement"/>

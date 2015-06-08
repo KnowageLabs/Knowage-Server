@@ -127,5 +127,7 @@
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateChartFunctionality" roleType="TEST_ROLE" />
 <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateChartFunctionality" roleType="MODEL_ADMIN" />
 
+<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GlossaryManagement" roleType="ADMIN" />
+
 
 </ROLE_TYPE_USER_FUNCTIONALITIES>

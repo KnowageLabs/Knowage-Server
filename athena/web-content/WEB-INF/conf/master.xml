@@ -303,6 +303,10 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/measure/business_map.xml" /> 
 	
 	
+	<!-- glossary -->
+	<CONFIGURATOR path="/WEB-INF/conf/tools/glossary/business_map.xml" /> 
+	
+	
 	
 
     <!-- TestServices -->
