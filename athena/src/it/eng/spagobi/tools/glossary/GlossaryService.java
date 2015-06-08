@@ -1,9 +1,13 @@
 package it.eng.spagobi.tools.glossary;
 
+import static it.eng.spagobi.tools.glossary.util.Util.fromContentsLight;
+import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
@@ -30,6 +34,54 @@ import org.json.JSONObject;
 public class GlossaryService {
 
 	@GET
+	@Path("/listContents")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String listContents(@Context HttpServletRequest req) {
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			Integer glossaryId = getNumberOrNull(req.getParameter("GLOSSARY_ID"));
+			Integer parentId = getNumberOrNull(req.getParameter("PARENT_ID"));
+			List<SbiGlContents> lst = dao.listContentsByGlossaryId(glossaryId, parentId);
+			JSONArray jarr = new JSONArray();
+			if (lst != null) {
+				for (Iterator<SbiGlContents> iterator = lst.iterator(); iterator.hasNext();) {
+					SbiGlContents sbiGlContents = iterator.next();
+					jarr.put(fromContentsLight(sbiGlContents));
+				}
+			}
+			return jarr.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@GET
+	@Path("/listGlossary")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String listGlossary(@Context HttpServletRequest req) {
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			List<SbiGlGlossary> lst = dao.listGlossary();
+			JSONArray jarr = new JSONArray();
+			if (lst != null) {
+				for (Iterator<SbiGlGlossary> iterator = lst.iterator(); iterator.hasNext();) {
+					SbiGlGlossary sbiGlGlossary = iterator.next();
+					jarr.put(fromGlossaryLight(sbiGlGlossary));
+				}
+			}
+			return jarr.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@GET
 	@Path("/listWords")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String listWords(@Context HttpServletRequest req) {
@@ -54,8 +106,7 @@ public class GlossaryService {
 			}
 			return jarr.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
 
@@ -75,8 +126,7 @@ public class GlossaryService {
 			JSONObject jobj = from(word);
 			return jobj.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
 
@@ -92,8 +142,7 @@ public class GlossaryService {
 	 * if (profile.getIsSuperadmin()) { TenantManager.unset(); dao.setUserID(profile.getUserId().toString()); } else { dao.setUserProfile(profile); }
 	 * 
 	 * SbiGlWord word = from(requestBodyJSON); if(word.getWordId()==null){ dao.insertWord(word); }else{ dao.modifyWord(word); } return jsonWord.toString(); }
-	 * catch (Throwable t) { throw new SpagoBIServiceException(req.getPathInfo(),
-	 * "An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t); } }
+	 * catch (Throwable t) { throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t); } }
 	 */
 	private static JSONObject fromWordLight(SbiGlWord sbiGlWord) throws JSONException {
 		JSONObject jobj = new JSONObject();
@@ -130,6 +179,13 @@ public class GlossaryService {
 			obj.put("SBI_GL_WORD_ATTR", attrs);
 		}
 		return obj;
+	}
+
+	private JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary) throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
+		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
+		return ret;
 	}
 
 	/*
