@@ -17,6 +17,7 @@ public class SbiGlWord extends SbiHibernateModel {
 	private String category;
 
 	private Set<SbiGlReferences> references;
+	private Set<SbiGlWordAttr> attributes;
 
 	public SbiGlWord() {
 	}
@@ -142,6 +143,21 @@ public class SbiGlWord extends SbiHibernateModel {
 	 */
 	public void setReferences(Set<SbiGlReferences> references) {
 		this.references = references;
+	}
+
+	/**
+	 * @return the attributes
+	 */
+	public Set<SbiGlWordAttr> getAttributes() {
+		return attributes;
+	}
+
+	/**
+	 * @param attributes
+	 *            the attributes to set
+	 */
+	public void setAttributes(Set<SbiGlWordAttr> attributes) {
+		this.attributes = attributes;
 	}
 
 }

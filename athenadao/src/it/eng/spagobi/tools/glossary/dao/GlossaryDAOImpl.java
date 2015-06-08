@@ -2,6 +2,7 @@ package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchSimpleWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
@@ -83,7 +84,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 	@Override
 	public List<SbiGlWord> listWord() {
-		return list(SbiGlWord.class);
+		return list(new SearchSimpleWord());
 	}
 
 	@Override

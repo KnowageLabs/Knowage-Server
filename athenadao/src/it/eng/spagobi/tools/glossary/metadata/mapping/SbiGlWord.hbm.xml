@@ -63,12 +63,18 @@
             <column name="CATEGORY" length="30" />
         </property>
         
-        <set name="references" inverse="true" order-by="SEQUENCE" >
+        <set name="references" inverse="true" order-by="SEQUENCE" lazy="false">
             <key>
                 <column name="WORD_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.tools.glossary.metadata.SbiGlReferences" />
         </set>
-                
+        
+        <set name="attributes" inverse="true" order-by="ORDER" lazy="false" >
+            <key>
+                <column name="WORD_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr" />
+        </set> 
     </class>
 </hibernate-mapping>

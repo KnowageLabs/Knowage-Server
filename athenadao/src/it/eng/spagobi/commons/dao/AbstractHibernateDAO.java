@@ -268,8 +268,13 @@ public class AbstractHibernateDAO {
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
-			toReturn = (T) session.load(clazz, id);
-			session.flush();
+			Object obj = session.get(clazz, id);
+			if(obj!=null){
+				toReturn = (T)obj; 
+				session.flush();
+			}else{
+				throw new SpagoBIDOAException("Object not found");
+			}
 		} catch (Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
 		} finally {

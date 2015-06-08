@@ -12,10 +12,10 @@
                 <column name="ATTRIBUTE_ID" />
             </key-property>
         </composite-id>
-        <many-to-one name="word" class="it.eng.spagobi.tools.glossary.metadata.SbiGlWord" update="false" insert="false" fetch="select">
+        <many-to-one name="word" class="it.eng.spagobi.tools.glossary.metadata.SbiGlWord" lazy="false" update="false" insert="false" fetch="select">
             <column name="WORD_ID" not-null="true" />
         </many-to-one>
-        <many-to-one name="attribute" class="it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute" update="false" insert="false" fetch="select">
+        <many-to-one name="attribute" class="it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute" lazy="false" update="false" insert="false" fetch="select">
             <column name="ATTRIBUTE_ID" not-null="true" />
         </many-to-one>
         
