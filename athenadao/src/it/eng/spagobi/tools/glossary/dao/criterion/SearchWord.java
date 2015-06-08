@@ -8,7 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.Transformers;
 
-public class SearchSimpleWord implements Criterion<SbiGlWord> {
+public class SearchWord implements Criterion<SbiGlWord> {
 
 	@Override
 	public Criteria evaluate(Session session) {

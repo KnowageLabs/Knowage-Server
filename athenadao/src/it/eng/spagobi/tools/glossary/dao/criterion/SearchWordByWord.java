@@ -7,7 +7,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 public class SearchWordByWord implements Criterion<SbiGlWord> {
 
@@ -20,7 +22,9 @@ public class SearchWordByWord implements Criterion<SbiGlWord> {
 	@Override
 	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlWord.class);
-		if (word != null) {
+		c.setProjection(Projections.projectionList().add(Projections.property("wordId"), "wordId").add(Projections.property("word"), "word"))
+				.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+		if (word != null && !word.isEmpty()) {
 			c.add(Restrictions.like("word", word, MatchMode.ANYWHERE).ignoreCase());
 		}
 		c.addOrder(Order.asc("word"));

@@ -36,12 +36,21 @@ public class GlossaryService {
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
 			dao.setUserProfile(profile);
-			List<SbiGlWord> lst = dao.listWord();
+			String word = req.getParameter("WORD");
+			List<SbiGlWord> lst = null;
+			if (word != null && !word.trim().isEmpty()) {
+				lst = dao.listWordFiltered(word);
+			} else {
+				lst = dao.listWord();
+			}
 			JSONArray jarr = new JSONArray();
-			for (Iterator<SbiGlWord> iterator = lst.iterator(); iterator.hasNext();) {
-				SbiGlWord sbiGlWord = iterator.next();
-				jarr.put(fromWordLight(sbiGlWord));
+			if (lst != null) {
+				for (Iterator<SbiGlWord> iterator = lst.iterator(); iterator.hasNext();) {
+					SbiGlWord sbiGlWord = iterator.next();
+					jarr.put(fromWordLight(sbiGlWord));
+				}
 			}
 			return jarr.toString();
 		} catch (Throwable t) {
