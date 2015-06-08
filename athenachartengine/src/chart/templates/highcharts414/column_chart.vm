@@ -248,7 +248,7 @@
 	        			fontStyle: 'italic',
 					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 	        			textDecoration: 'underline',
-					#else		        			
+					#elseif($axisTitleStyle != '')
 	        			$styleName: '$axisTitleStyle',
 	        		#end
 	        	#end
@@ -331,15 +331,14 @@
         	gridLineColor: '$yAxis.MAJORGRID.style.color',
 		    #end
         	
-        	#* 
-        	#set($typeline = [ 'Solid', 'ShortDash', 'ShortDot', 'ShortDashDot', 'ShortDashDotDot', 
-        	                   'Dot','Dash', 'LongDash', 'DashDot', 'LongDashDot', 'LongDashDotDot'])
-        	*#
-        	
         	#set($typeline = $yAxis.MAJORGRID.style.typeline)
         	#if($yAxis.MAJORGRID.style.typeline != '')
 	        	#if($typeline == 'dashed')
 	        		#set($convertedTypeline = 'Dash')
+	        	#elseif($typeline == 'dotted')
+	        		#set($convertedTypeline = 'Dot')
+	    		#elseif($typeline == 'solid')
+	        		#set($convertedTypeline = 'Solid')
 				#else
 	        		#set($convertedTypeline = $typeline)
 	        	#end
@@ -357,6 +356,10 @@
         	#set($typeline = $yAxis.MINORGRID.style.typeline)
         	#if($typeline == 'dashed')
         		#set($convertedMinorTpeline = 'Dash')
+    		#elseif($typeline == 'dotted')
+        		#set($convertedMinorTpeline = 'Dot')
+    		#elseif($typeline == 'solid')
+        		#set($convertedMinorTpeline = 'Solid')
         	#end
         	minorGridLineDashStyle: '$convertedMinorTpeline',
         	
