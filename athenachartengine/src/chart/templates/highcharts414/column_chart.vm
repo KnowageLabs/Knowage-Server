@@ -226,7 +226,7 @@
 	 {
 		 title: {
 			 text: '$xAxis.TITLE.text',
-			 #if( $xAxis.style.rotate != '' ) 
+			 #if( $xAxis.style.rotate && $xAxis.style.rotate != '' )
 			 rotation: $xAxis.style.rotate,
 			 #end
 			 
@@ -388,9 +388,11 @@
 	    #end
 		
 			name: '$relatedSerie.name',
-			
-		#set($relatedSerieType = false)
-		#set($relatedSerieType = $relatedSerie.type)
+		
+		#set($relatedSerieType = '')
+		#if($relatedSerie.type)
+			#set($relatedSerieType = $relatedSerie.type)
+		#end
 		#if($relatedSerieType != '')		
 			#if($relatedSerieType == 'bar')
 				#set($relatedSerieType = 'column')
@@ -400,7 +402,7 @@
 	    
 		#set($relatedSerieShowValue = $relatedSerie.showValue)
 	    	data: [
-	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
@@ -433,7 +435,6 @@
 			#if ($relatedSerie.precision != '')
 				valueDecimals: $relatedSerie.precision ,
 			#end
-				// $ serieTooltip : $serieTooltip
 			},
 			
 		#set($serieTooltip = false)
