@@ -24,8 +24,8 @@
 
 #set($columnCouter = 0)
    
-#foreach($value in $category.COLUMN) 
- #set($columnsNeeded[$columnCouter] = $value.value)
+#foreach($value in $category) 
+ #set($columnsNeeded[$columnCouter] = $value.column)
  #set($columnCouter = $columnCouter + 1)
 #end
 

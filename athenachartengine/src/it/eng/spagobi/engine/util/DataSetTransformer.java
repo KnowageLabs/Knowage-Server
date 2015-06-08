@@ -61,7 +61,7 @@ public class DataSetTransformer {
 		JSONArray ja = new JSONArray();
 
 		for (String key : result.keySet()) {
-			System.out.println(key + " " + result.get(key));
+			
 
 			JSONObject jo = new JSONObject();
 
@@ -93,7 +93,7 @@ public class DataSetTransformer {
 		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
 
 		// Take value of the SERIE column (the one that contains numerical values)
-		Object serieRawColumn = mapper.get(serie.toString()).toString();
+		Object serieRawColumn = mapper.get(serie.toString()+"_SUM").toString();
 
 		// Take raw names of all of the columns that we need for creating a sequence
 		for (int i=0; i<columns.size(); i++)
@@ -149,9 +149,9 @@ public class DataSetTransformer {
 					sequence = sequence + "-" + singleRecord.get(columns.get(j)).toString();	
 				}
 			}
-			System.out.println(serie);
+			
 			Double value = Double.parseDouble(singleRecord.get(serie).toString());			
-			System.out.println(value);
+			
 			JSONObject jo = new JSONObject();
 
 			if (!endresult.containsKey(sequence))
@@ -255,6 +255,5 @@ public class DataSetTransformer {
 		}
 		return root;
 	}
-
 
 }
