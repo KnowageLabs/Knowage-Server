@@ -16,7 +16,7 @@ public class SearchWlistByContentId implements Criterion<SbiGlWlist> {
 	}
 
 	@Override
-	public Criteria evaluete(Session session) {
+	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlWlist.class);
 		c.add(Restrictions.eq("content.contentId", contentId));
 		return c;

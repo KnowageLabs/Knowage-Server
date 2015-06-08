@@ -416,7 +416,7 @@ public class AbstractHibernateDAO {
 			if (criterion == null) {
 				criteria = session.createCriteria(clazz);
 			} else {
-				criteria = criterion.evaluete(session);
+				criteria = criterion.evaluate(session);
 			}
 			ret = criteria.list();
 		} catch (Throwable t) {

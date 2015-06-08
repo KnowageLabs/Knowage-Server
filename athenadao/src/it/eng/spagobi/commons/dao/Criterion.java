@@ -5,6 +5,6 @@ import org.hibernate.Session;
 
 public interface Criterion<T> {
 
-	public Criteria evaluete(Session session);
+	public Criteria evaluate(Session session);
 
 }

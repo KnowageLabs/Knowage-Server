@@ -16,7 +16,7 @@ public class SearchWordAttrByWordId implements Criterion<SbiGlWordAttr> {
 	}
 
 	@Override
-	public Criteria evaluete(Session session) {
+	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlWordAttr.class);
 		c.add(Restrictions.eq("word.wordId", wordId));
 		return c;

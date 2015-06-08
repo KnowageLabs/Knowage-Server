@@ -18,7 +18,7 @@ public class SearchWordByWord implements Criterion<SbiGlWord> {
 	}
 
 	@Override
-	public Criteria evaluete(Session session) {
+	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlWord.class);
 		if (word != null) {
 			c.add(Restrictions.like("word", word, MatchMode.ANYWHERE).ignoreCase());

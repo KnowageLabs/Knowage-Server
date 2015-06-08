@@ -17,7 +17,7 @@ public class SearchContentsByParent implements Criterion<SbiGlContents> {
 	}
 
 	@Override
-	public Criteria evaluete(Session session) {
+	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlContents.class);
 		if (glossaryId != null)
 			c.add(Restrictions.eq("glossary.glossaryId", glossaryId));
