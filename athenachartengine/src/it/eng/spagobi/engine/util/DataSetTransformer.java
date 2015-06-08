@@ -1,9 +1,11 @@
 package it.eng.spagobi.engine.util;
 
+import it.eng.spagobi.engine.chart.api.JsonChartTemplateService;
 import it.eng.spagobi.utilities.tree.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -180,7 +182,7 @@ public class DataSetTransformer {
 
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
 
-		Object serieRawColumn = mapper.get(serie.toString()).toString();
+		Object serieRawColumn = mapper.get(serie.toString()+"_SUM");
 
 		ArrayList<String> listColumns = new ArrayList<String>();
 
@@ -211,13 +213,6 @@ public class DataSetTransformer {
 			result.put(new Integer(i),record);			
 		}
 
-		for (int i=0; i<result.size();i++){
-
-			System.out.println(result.get(i));
-
-		}
-
-
 		JSONObject res = createTreeMap(columns,serie,result);
 
 		return res;
@@ -227,44 +222,40 @@ public class DataSetTransformer {
 	public JSONObject createTreeMap(Map<String,String> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException
 	{		
 
-		TreeMap<String, Double> tree = new TreeMap<String, Double>();
-		
-		JSONObject jfo = new JSONObject();
-		
+		JSONObject root = new JSONObject();
+
+		JSONObject currentNode = null;
+
 		for (int i=0; i<result.size();i++){
-
+			currentNode = root;
 			for (int j=0;j<columns.size();j++){
-				
-				if (!tree.containsKey(result.get(i).get(columns.get(j)))){
-					
-					String node = (String) result.get(i).get(columns.get(j));
-					
-					Double value = Double.parseDouble((String) result.get(i).get(serie));
-					
-					tree.put(node, value);
-					}
-					
-					else{
-						
-					String node = (String) result.get(i).get(columns.get(j));
-						
-					Double oldValue = tree.get(node);
-					
-					Double value = Double.parseDouble((String) result.get(i).get(serie));
-					
-					tree.remove(node);
-					
-					tree.put(node, value+oldValue);
-						
-					}
-					
-				}
-				
-		}
-		
-		System.out.println(tree);
 
-		return jfo;
+				String nodeName = ""+result.get(i).get(columns.get(j));
+				JSONObject existingNodeValue = (JSONObject)currentNode.optJSONObject(nodeName);
+
+				if(existingNodeValue==null){
+
+					if (j!=columns.size()-1){
+						currentNode.put(nodeName, new JSONObject());
+					}
+					else
+					{
+						JSONObject njo = new JSONObject();
+						njo.put("value", result.get(i).get(serie));
+						currentNode.put(nodeName, njo);
+						break;
+					}
+
+				}
+
+				currentNode = currentNode.getJSONObject(nodeName);
+
+			}
+
+		}
+		System.out.println(root.toString());
+		return root;
 	}
+
 
 }
