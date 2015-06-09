@@ -15,65 +15,103 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DataSetTransformer {
+	
+	public JSONArray toWordcloud(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serie) throws JSONException{
 
-	public JSONArray toColumn(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows) throws JSONException{
+		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
 
-		ArrayList<String>lista= new ArrayList<>();
+		Map<String,String> columns = (Map<String,String>)columnsNeeded;
 
-		HashMap<String, Integer> result =  new HashMap<String, Integer>();
+		Object serieRawColumn = mapper.get(serie.toString()+"_SUM");
 
-		Map<String, String> dcm = (Map<String, String>) dataColumnsMapper;
+		ArrayList<String> listColumns = new ArrayList<String>();
 
-		Map<String, String> cn = (Map<String, String>) columnsNeeded;
+		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
 
-		ArrayList<String> dcmnc = new ArrayList<>();
+		for (int i = 0; i<columns.size();i++){
 
-		for (int i = 0; i<cn.size();i++){
+			Object cndata = columns.get(i);
 
-			Object cndata = cn.get(i);
-
-			lista.add(dcm.get(cndata).toString());
+			listColumns.add(mapper.get(cndata).toString());
 
 		}
 
-		for (int i=0; i<dataRows.size();i++){
+		for (int i=0; i<dataRows.size(); i++)
+		{
+			Map<String,Object> row = (Map<String,Object>)dataRows.get(i);
+			HashMap<String,String> record = new HashMap<String, String>();
 
-			Map<String,Object> row = (Map<String, Object>) dataRows.get(i);
-
-			for (int j=0; j<lista.size();j++){
-
-				if (result.containsKey(row.get(lista.get(j).toString()))){
-
-					int value = result.get(row.get(lista.get(j)));
-
-					result.put((String) row.get(lista.get(j).toString()), value+1);
-
-				}
-
-				else{
-
-					result.put((String) row.get(lista.get(j)), 1);
-				}
+			/* For every record take these columns */
+			for (int j=0; j<listColumns.size(); j++)
+			{
+				Object x = row.get(listColumns.get(j));
+				record.put(columns.get(j).toString(), x.toString());				
 			}
 
+			record.put(serie.toString(), row.get(serieRawColumn).toString());
+
+			result.put(new Integer(i),record);			
 		}
+		
+		JSONArray res = toWordcloudArray(columns,serie,result);
+		
+		return res;
 
-		JSONArray ja = new JSONArray();
-
-		for (String key : result.keySet()) {
+	}
+	
+	private JSONArray toWordcloudArray(Map<String, String> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException {
+	
+		JSONArray fr = new JSONArray();
+		
+		HashMap<String, Double> res = new HashMap<String, Double>();
+		
+		for (int i=0; i<result.size();i++){
 			
-
-			JSONObject jo = new JSONObject();
-
-			jo.put("name", key);
-			jo.put("count", result.get(key));
-
-			ja.put(jo);
-
+			for (int j=0; j<columns.size();j++){
+				
+				if (!res.containsKey(result.get(i).get(columns.get(j)))){
+					
+					String name = (String) result.get(i).get(columns.get(j));
+					
+					Double value = Double.parseDouble(result.get(i).get(serie).toString());
+					
+					res.put(name, value);
+					
+				}
+				
+				else{
+					
+					String name = (String) result.get(i).get(columns.get(j));
+					
+					Double oldvalue = res.get(name);
+					
+					Double value = Double.parseDouble(result.get(i).get(serie).toString());
+					
+					Double newValue = oldvalue+value;
+					
+					res.remove(name);
+					
+					res.put(name, newValue);
+					
+				}
+				
+			}
+			
 		}
-
-		return ja;
-
+		
+		Iterator it = res.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		      
+		        JSONObject jo = new JSONObject();
+		        jo.put("name", pair.getKey());
+		        jo.put("value", pair.getValue());
+		        
+		        fr.put(jo);
+		        
+		    }
+		
+		return fr;
 	}
 
 	/* Merging codes - Sunburst */
@@ -214,7 +252,7 @@ public class DataSetTransformer {
 		}
 
 		JSONObject res = createTreeMap(columns,serie,result);
-
+		
 		return res;
 
 	}

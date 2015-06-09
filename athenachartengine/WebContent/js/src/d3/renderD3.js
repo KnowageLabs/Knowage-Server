@@ -413,7 +413,7 @@ function renderWordCloud(chartConf){
 
 		d3.layout.cloud().size([800, 700])
 		.words(chartConf.data[0].map(function(d) {
-			return {text: d.name, size: 10 + d.count*25};
+			return {text: d.name, size: d.value/10+30};
 		}))
 		.padding(chartConf.chart.padding)
 		.rotate(function() {
