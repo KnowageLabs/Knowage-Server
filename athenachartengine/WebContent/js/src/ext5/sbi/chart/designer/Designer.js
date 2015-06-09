@@ -476,8 +476,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previousTabId: '',
   				tools:[{ xtype: 'tbfill' }, {
   		            xtype: 'image',
-  		            src: '/athenachartengine/img/saveAndGoBack.png',
-  		            cls: 'icon-saveback',
+  		            src: '/athenachartengine/img/save.png',
+  		            cls: 'tool-icon',
   		            listeners: {
   		            	click: {
   		            		element: 'el',
@@ -487,7 +487,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            				var json = activeTab.getChartData();
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
-
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
 
   		            			if (errorMessages == false) {
@@ -504,11 +503,67 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					},
   		            					fn : function(buttonValue, inputText, showConfig){
   		            						if (buttonValue == 'ok') {
-
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
-
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+  		            							var parameters = {
+  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+  		            									docLabel: docLabel
+  		            							};
+  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
+  		            							Ext.getBody().unmask();
+  		            						}
+  		            					}
+  		            				});
+  		            			} else {
+  		            				Ext.Msg.show({
+  		            					title : LN('sbi.chartengine.validation.errormessage'),
+  		            					message : errorMessages,
+  		            					icon : Ext.Msg.WARNING,
+  		            					closable : false,
+  		            					buttons : Ext.Msg.OK
+  		            				});
+  		            			}
+  		            		}
+  		            	},
+  		            	afterrender: function(c) {
+  		            		Ext.create('Ext.tip.ToolTip', {
+  		            			target: c.getEl(),
+  		            			html: LN('sbi.generic.save')
+  		            		});
+  		            	}
+  		            }
+  		        }, 
+  		        {
+  		            xtype: 'image',
+  		            src: '/athenachartengine/img/saveAndGoBack.png',
+  		            cls: 'tool-icon',
+  		            listeners: {
+  		            	click: {
+  		            		element: 'el',
+  		            		fn: function(){
+  		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
+  		            			if (activeTab.getId() == 'advancedEditor') {
+  		            				var json = activeTab.getChartData();
+  		            				Sbi.chart.designer.Designer.update(json);
+  		            			}
+  		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
 
+  		            			if (errorMessages == false) {
+  		            				Ext.Msg.show({
+  		            					title : LN('sbi.chartengine.designer.savetemplate.title'),
+  		            					message : LN('sbi.chartengine.designer.savetemplate.msg'),
+  		            					icon : Ext.Msg.QUESTION,
+  		            					closable : false,
+  		            					buttons : Ext.Msg.OKCANCEL,
+  		            					buttonText : 
+  		            					{
+  		            						ok : LN('sbi.generic.save'),
+  		            						cancel : LN('sbi.generic.cancel')
+  		            					},
+  		            					fn : function(buttonValue, inputText, showConfig){
+  		            						if (buttonValue == 'ok') {
+  		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
+  		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            							var parameters = {
   		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
   		            									docLabel: docLabel
@@ -531,6 +586,12 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            				});
   		            			}
   		            		}
+  		            	},
+  		            	afterrender: function(c) {
+  		            		Ext.create('Ext.tip.ToolTip', {
+  		            			target: c.getEl(),
+  		            			html: LN('sbi.generic.saveAndGoBack')
+  		            		});
   		            	}
   		            }
   		        }],
