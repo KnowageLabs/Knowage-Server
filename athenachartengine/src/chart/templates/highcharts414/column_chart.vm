@@ -89,7 +89,6 @@
 		#end
     ],
     
-    #if($chart.TITLE.text != '')
     title: {
         text: '$chart.TITLE.text',
         
@@ -118,7 +117,6 @@
 		#end
 	    }
     },
-    #end
     
     #if($chart.SUBTITLE.text != '')
     subtitle: {
