@@ -165,10 +165,6 @@
     },
     #end
     
-    
-    tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-    },
     plotOptions: {
         pie: {
             allowPointSelect: true,
@@ -197,23 +193,110 @@
 				#foreach($row in $rows)
 					#set ($serieName = $row.get($serieColumnCategory))
 					#set ($serieValue = $row.get($serieColumnsMapped))
-					['$serieName', $serieValue],
+					{
+						name: '$serieName',
+						y: $serieValue,
+						
+						#set($relatedSerieShowValue = $relatedSerie.showValue)
+						#if ($relatedSerieShowValue != '')
+						dataLabels: {
+		                    enabled: $relatedSerieShowValue
+		                }
+						#end
+					},
 				#end
 	    	],
 	    	
 	    	#if($series.size()==2)
 		        size: '45%',
 		        #if($first)
-		        	center: ['25%', '50%']
+		        	center: ['25%', '50%'],
 		        #else
-		        	center: ['75%', '50%']
+		        	center: ['75%', '50%'],
 		        #end
 	    		#set ($first = false)
 		    #end
 	        
-	        },
+        	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix != '')
+				valuePrefix: '$seriePrefix',
+			#end
+				
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix != '')
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.backgroundColor != '')
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.font != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.font' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+        },
 	    #end
 	],
+    
+    tooltip: {
+        useHTML: true,
+        backgroundColor: null,
+        borderWidth: 2,
+        style: {
+            padding: 0
+        },
+        formatter: function() {
+        	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
+        	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
+        	
+        	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
+        	var ttFont = this.series.tooltipOptions.ttFont ? ' ' + this.series.tooltipOptions.ttFont : '';
+        	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
+        	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
+        	
+        	var tooltipFont = ttFontWeight + ttFontSize + ttFont;
+        	
+        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
+        	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
+        	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
+        	
+        	var thisValue = this.y;
+        	
+        	if(valueDecimals > -1 ) {
+        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals);
+        	}
+        	thisValue = valuePrefix + thisValue + valueSuffix;
+        	
+            var result = 
+            	'<div style="padding:10px;color:' + ttColor + ';background-color:' + ttBackColor + ';font:' + tooltipFont + ';text-align:' + ttAlign + ';">'; 
+            	
+            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': <strong>' + thisValue + '</strong></div>';
+            
+            return result;
+        }
+    },
     
     #if($chart.EMPTYMESSAGE != '')
     lang: {
