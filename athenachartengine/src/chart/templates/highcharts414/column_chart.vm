@@ -422,29 +422,65 @@
 			tooltip: { 
 			#set($seriePrefix = $relatedSerie.prefixChar)
 			#if($seriePrefix != '')
-				valuePrefix: '$seriePrefix ',
+				valuePrefix: '$seriePrefix',
 			#end
 				
 			#set($seriePostfix = $relatedSerie.postfixChar)
 			#if($seriePostfix != '')
-				valueSuffix: ' $seriePostfix',
+				valueSuffix: '$seriePostfix',
 			#end
 				
 			#if ($relatedSerie.precision != '')
 				valueDecimals: $relatedSerie.precision ,
 			#end
-			},
+				
+			#if ($relatedSerie.TOOLTIP.backgroundColor != '')
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color != '')
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align != '')
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
 			
-		#set($serieTooltip = false)
-    	#set($serieTooltip = $relatedSerie.TOOLTIP)
-    	#if($serieTooltip && $serieTooltip != '')
-    	#end
-    	
+			},
+		    	
     	#set($referencedAxis = $relatedSerie.axis)
     		yAxis: $yAxisPositions[$referencedAxis]
 	    }, 
 	#end
     ],
+    
+    tooltip: {
+        useHTML: true,
+        backgroundColor: null,
+        borderWidth: 2,
+        style: {
+            padding: 0
+        },
+        formatter: function() {
+        	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
+        	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
+        	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
+        	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
+        	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
+        	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
+        	
+        	var thisValue = this.y;
+        	if(valueDecimals > -1 ) {
+        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals);
+        	}
+        	thisValue = valuePrefix + thisValue + valueSuffix;
+        	
+            var result = '<div style="padding:10px;color:' + ttColor + ';background-color:' + ttBackColor + ';text-align:' + ttAlign + ';">';
+            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': <strong>' + thisValue + '</strong></div>';
+            
+            return result;
+        }
+    },
     
     
     #if($enableDrilldown)
