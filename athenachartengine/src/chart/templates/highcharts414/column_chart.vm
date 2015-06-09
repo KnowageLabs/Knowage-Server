@@ -445,6 +445,18 @@
 			#if ($relatedSerie.TOOLTIP.style.align != '')
 				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
 			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.font != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.font' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
 			
 			},
 		    	
@@ -464,7 +476,14 @@
         formatter: function() {
         	var ttColor = this.series.tooltipOptions.ttColor ? this.series.tooltipOptions.ttColor : '';
         	var ttBackColor = this.series.tooltipOptions.ttBackColor ? this.series.tooltipOptions.ttBackColor : '';
+        	
         	var ttAlign = this.series.tooltipOptions.ttAlign ? this.series.tooltipOptions.ttAlign : '';
+        	var ttFont = this.series.tooltipOptions.ttFont ? ' ' + this.series.tooltipOptions.ttFont : '';
+        	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
+        	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
+        	
+        	var tooltipFont = ttFontWeight + ttFontSize + ttFont;
+        	
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
         	var valueSuffix = this.series.tooltipOptions.valueSuffix ? ' ' + this.series.tooltipOptions.valueSuffix : '';
@@ -475,7 +494,9 @@
         	}
         	thisValue = valuePrefix + thisValue + valueSuffix;
         	
-            var result = '<div style="padding:10px;color:' + ttColor + ';background-color:' + ttBackColor + ';text-align:' + ttAlign + ';">';
+            var result = 
+            	'<div style="padding:10px;color:' + ttColor + ';background-color:' + ttBackColor + ';font:' + tooltipFont + ';text-align:' + ttAlign + ';">'; 
+            	
             result += '<span>' + this.key + '</span><br/>' + this.series.name + ': <strong>' + thisValue + '</strong></div>';
             
             return result;
@@ -490,7 +511,7 @@
     #end
     
     lang: {
-        noData: "$chart.EMPTYMESSAGE.text"
+        noData: '$chart.EMPTYMESSAGE.text'
     },
     noData: {
     	style:{
