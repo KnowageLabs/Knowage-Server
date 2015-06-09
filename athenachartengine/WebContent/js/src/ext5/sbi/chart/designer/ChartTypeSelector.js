@@ -48,6 +48,9 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 						if (buttonValue == 'ok') {
 							
 							//Reset Series and Categories
+							var chartBottomCategoriesContainer = Ext.getCmp('chartBottomCategoriesContainer');
+							chartBottomCategoriesContainer.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData());
+							
 							var categoriesStore = Sbi.chart.designer.Designer.categoriesStore;
 							categoriesStore.removeAll();
 							
@@ -56,6 +59,18 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 							for(i in serieStorePool) {
 								serieStorePool[i].removeAll();
 							}
+							
+							var chartRightAxisesContainer = Ext.getCmp('chartRightAxisesContainer');
+							chartRightAxisesContainer.removeAll();
+
+							var chartLeftAxisesContainer = Ext.getCmp('chartLeftAxisesContainer');
+							var leftColumnsContainerId = chartLeftAxisesContainer.items.keys[0];
+							var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
+							
+							leftColumnsContainer.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData());
+//							leftColumnsContainer.tools[0].setValue('');
+//							leftColumnsContainer.tools[0].reset();
+							
 							
 							//Select the new chart type
 							chartTypeSelector.setChartType(selectedType);

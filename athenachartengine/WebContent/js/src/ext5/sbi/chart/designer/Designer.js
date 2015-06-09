@@ -358,13 +358,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
-					    	var thisChartColumnsContainer = panelHeader.ownerCt;
-					    	
-					    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
-					    		axisData: thisChartColumnsContainer.getAxisData(),
-							});
-							
-					    	axisStylePopup.show();
+					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+					    	if(chartType.toUpperCase() != 'PIE') {
+						    	var thisChartColumnsContainer = panelHeader.ownerCt;
+						    	
+						    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
+						    		axisData: thisChartColumnsContainer.getAxisData(),
+								});
+								
+						    	axisStylePopup.show();
+						    	}
 						}
 					}					
 				],

@@ -74,7 +74,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			
 			Ext.Array.push(ChartColumnsContainerManager.storePool, chartColumnsContainerStore);
 			
-			var titleText = (axis && axis.TITLE && axis.TITLE.text &&  axis.TITLE.text != null) ? axis.TITLE.text : '';
+			var titleText = (axis && axis != null && axis.TITLE && axis.TITLE.text &&  axis.TITLE.text != null) ? axis.TITLE.text : '';
 			
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
@@ -120,19 +120,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					hidden: true 
 				}, 
 				tools:[
+				       Ext.create('Ext.form.TextField', 
 				    
 				    // TEXT AREA
 				    {
-				    	xtype: 'textfield',
+//				    	xtype: 'textfield',
 						flex: 10,
 						allowBlank:  true,
-			            emptyText: 'Insert axis title',
 						selectOnFocus: true,
+						emptyText: LN('sbi.chartengine.designer.emptytext.axistitle'),
 						value: titleText,
 						listeners: {
 				            change: 'onTitleChange'
 				        }
-					},
+					}),
 					
 					// STYLE POPUP
 					{
@@ -140,14 +141,18 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
-					    	var thisChartColumnsContainer = panelHeader.ownerCt;
+					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+					    	if(chartType.toUpperCase() != 'PIE') {
+					    		var thisChartColumnsContainer = panelHeader.ownerCt;
+					    		
+					    		var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
+					    			axisData: thisChartColumnsContainer.getAxisData(),
+					    			isYAxis: true
+					    		});
+					    		
+					    		axisStylePopup.show();
+					    	}
 					    	
-					    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
-					    		axisData: thisChartColumnsContainer.getAxisData(),
-					    		isYAxis: true
-							});
-							
-					    	axisStylePopup.show();
 						}
 					},
 					
@@ -158,7 +163,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
-					    	
 					    	if(chartType.toUpperCase() != 'PIE') {
 					    		if (!panelWhereAddSeries.isVisible()) {
 					    			panelWhereAddSeries.setVisible(true);
