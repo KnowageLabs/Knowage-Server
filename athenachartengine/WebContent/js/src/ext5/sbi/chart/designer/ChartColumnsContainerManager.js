@@ -89,6 +89,22 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			        	this.view.axisData.titleText = textValue;
 			        }
 			    }),
+			    listeners: {
+			    	updateAxisTitleValue: function(textValue) {
+			        	this.axisData.titleText = textValue;
+			        	
+			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
+			    		var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);
+			    		textfieldAxisTitle.setValue(textValue);
+			    	}
+			    },
+			    setAxisData: function(axisData) {
+  					this.axisData = axisData;
+  					this.fireEvent('updateAxisTitleValue', axisData.titleText);
+  				},
+  				getAxisData: function() {
+  					return this.axisData;
+  				},
 				minHeight: 300,
 				flex: 1,
 				viewConfig: {
@@ -120,11 +136,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					hidden: true 
 				}, 
 				tools:[
-				       Ext.create('Ext.form.TextField', 
-				    
-				    // TEXT AREA
-				    {
-//				    	xtype: 'textfield',
+				       Ext.create('Ext.form.TextField', {
+				    	id: idChartColumnsContainer + '_TitleTextfield',
 						flex: 10,
 						allowBlank:  true,
 						selectOnFocus: true,

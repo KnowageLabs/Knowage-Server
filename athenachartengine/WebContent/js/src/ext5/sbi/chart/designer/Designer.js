@@ -17,6 +17,8 @@ Ext.define('Sbi.chart.designer.Designer', {
     ],
 
     statics: {
+    	tabChangeChecksFlag: true,
+    	
 		jsonTemplate: null,
 		chartLibNamesConfig: null,
 		
@@ -315,7 +317,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					},
   				},
   				store: this.categoriesStore,
-  				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(),
+  				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
 				plugins: [{
 					ptype:	 'cellediting',
 					clicksToEdit: 1
@@ -422,8 +424,6 @@ Ext.define('Sbi.chart.designer.Designer', {
             						}
             					}
             				});
-							
-//							var rec = grid.getStore().removeAt(rowIndex);
 						}
 					}]
 				}],
@@ -609,9 +609,28 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							var advancedEditor = Ext.getCmp('advancedEditor');
 							if(advancedEditor.dataChanged == true) {
-								var json = advancedEditor.getChartData();
+								var newJson = advancedEditor.getChartData();
+								var oldJson = Sbi.chart.designer.Designer.exportAsJson();
 								
-								Sbi.chart.designer.Designer.update(json);
+								var tabChangeChecksMsgs = Sbi.chart.designer.Designer.tabChangeChecksMessages(oldJson, newJson);
+								if(Sbi.chart.designer.Designer.tabChangeChecksFlag && tabChangeChecksMsgs) {
+										Ext.Msg.show({
+											title : LN('sbi.chartengine.designer.tabchange.title'),
+											message : tabChangeChecksMsgs,
+											icon : Ext.Msg.WARNING,
+											closable : false,
+											buttons : Ext.Msg.OK,
+											buttonText : 
+											{
+												ok : LN('sbi.chartengine.generic.ok'),
+											}
+										});
+								
+									tabPanel.setActiveTab('advancedEditor');
+									return false;
+			    				} else {
+			    					Sbi.chart.designer.Designer.update(newJson);
+			    				}
 							}
 						}
 						tabPanel.previousTabId = tab.getId();
@@ -752,7 +771,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				} else if(axis.type.toUpperCase() == "CATEGORY"){
 					var axisData = (axis && axis != null)? 
 							Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
-								Sbi.chart.designer.ChartUtils.createEmptyAxisData();
+								Sbi.chart.designer.ChartUtils.createEmptyAxisData(true);
 					
 					bottomXAxisesPanel.setAxisData(axisData);
 				}
@@ -934,7 +953,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
 			}
 			
-			var selectetChartType = this.chartTypeSelector.getChartType().toLowerCase();
+			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();
 			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
     		for(var storeIndex in serieStores) {
     			var store = serieStores[storeIndex];
@@ -947,19 +966,54 @@ Ext.define('Sbi.chart.designer.Designer', {
     				var serieName = serieAsMap.get('axisName') != undefined? serieAsMap.get('axisName'): '';
     				var serieType = serieAsMap.get('serieType') != undefined? serieAsMap.get('serieType').toLowerCase(): '';
     				
-    				if((selectetChartType == 'pie' && (serieType != '' && serieType != 'pie')) || 
-    					((selectetChartType == 'bar' || selectetChartType == 'line') && (serieType == 'pie'))) {
+    				if((selectedChartType == 'pie' && (serieType != '' && serieType != 'pie')) || 
+    					((selectedChartType == 'bar' || selectedChartType == 'line') && (serieType == 'pie'))) {
     					
 						errorMsg += "- " 
 							+ Sbi.locale.sobstituteParams(
 								LN('sbi.chartengine.validation.wrongserietype'), 
-								[selectetChartType, serieType, serieColumn, serieName]) 
+								[selectedChartType, serieType, serieColumn, serieName]) 
 							+ '<br>';
     				}
     			}
     		}
 			
 			return errorMsg != ''? errorMsg : false;
+		},
+		
+		cleanAxesSeriesAndCategories: function() {
+			//Reset Series and Categories
+			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));
+			
+			this.categoriesStore.removeAll();
+			
+			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+			
+			for(i in serieStorePool) {
+				serieStorePool[i].removeAll();
+			}
+			
+			this.rightYAxisesPanel.removeAll();
+
+			var leftColumnsContainerId = this.leftYAxisesPanel.items.keys[0];
+			var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
+			
+			leftColumnsContainer.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(false, true));
+		},
+		
+		tabChangeChecksMessages: function(oldJson, newJson) {
+			var result = '';
+			
+			var oldJsonType = oldJson.CHART.type.toLowerCase();
+			var newJsonType = newJson.CHART.type.toLowerCase();
+			if((oldJsonType == 'pie' && newJsonType != 'pie') || 
+					((oldJsonType == 'bar' || oldJsonType == 'line') && (newJsonType != 'bar' && newJsonType != 'line'))) {
+				
+				result += '- ' + Sbi.locale.sobstituteParams(
+						LN('sbi.chartengine.designer.tabchange.changetypeerror'),[oldJsonType, newJsonType]);
+			}
+			
+			return result == ''? false : result;
 		}
 		
     }

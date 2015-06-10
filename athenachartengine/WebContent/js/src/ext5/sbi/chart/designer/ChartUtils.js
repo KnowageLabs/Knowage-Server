@@ -49,13 +49,17 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		return result;
     	}, 
-    	createEmptyAxisData : function(){
+    	createEmptyAxisData : function(isCategory, isLeftSerie){
+    		isCategory = isCategory || false;
+    		isLeftSerie = isLeftSerie || false;
+    		
     		var result = {};
 
     		result['id'] = 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
-    		result['alias'] = 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
-    		result['axisType'] = 'Serie';
-    		result['position'] = 'right';
+    		result['alias'] = 'Axis_' + ChartColumnsContainerManager.instanceIdFeed++;
+    		result['axisType'] = isCategory? 'Category' : 'Serie';
+    		result['position'] = isCategory? 'bottom' : 
+    									isLeftSerie? 'left': 'right';
 
     		result['styleRotate'] = '';
     		result['styleAlign'] = '';
@@ -64,12 +68,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		result['styleFontWeigh'] = '';
     		result['styleFontSize'] = '';
     		
-    		result['majorgridInterval'] = '';
-    		result['majorgridStyleTypeline'] = '';
-    		result['majorgridStyleColor'] = '';
-    		result['minorgridInterval'] = '';
-    		result['minorgridStyleTypeline'] = '';
-    		result['minorgridStyleColor'] = '';
+    		if(isCategory) {
+	    		result['majorgridInterval'] = '';
+	    		result['majorgridStyleTypeline'] = '';
+	    		result['majorgridStyleColor'] = '';
+	    		result['minorgridInterval'] = '';
+	    		result['minorgridStyleTypeline'] = '';
+	    		result['minorgridStyleColor'] = '';
+    		}
 
     		result['titleText'] = '';
     		result['titleStyleAlign'] = '';
