@@ -13,6 +13,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 
 		chartWebServiceManager: undefined,
 		coreWebServiceManager: undefined,
+		chartExportWebServiceManager: undefined,
 	
 		getChartWebServiceManager: function(protocol, hostName, tcpPort, sbiExecutionId, userId) {
 			
@@ -92,6 +93,45 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 			}
 			
 			return Sbi.chart.rest.WebServiceManagerFactory.coreWebServiceManager;
+		}
+		
+		, getChartExportWebServiceManager:  function(protocol, hostName, tcpPort, sbiExecutionId, userId) {
+			
+			if(!Sbi.chart.rest.WebServiceManagerFactory.chartExportWebServiceManager) {
+				
+				console.log('initializing Sbi.chart.rest.WebServiceManagerFactory.coreWebServiceManager...', Sbi.chart.rest.WebServiceManagerFactory.coreWebServiceManager);
+			
+				var chartExportServiceManager = Ext.create('Sbi.chart.rest.WebServiceManager', {
+					serviceConfig: {
+						protocol: protocol,
+						hostName: hostName,
+						tcpPort: tcpPort,
+						context: '/highcharts-export-web',
+						wsPrefix: '/',
+						sbiExecutionId: sbiExecutionId,
+						userId: userId
+					}
+				});
+				
+				chartExportServiceManager.registerService('exportPng', {
+					service: '',
+					method: 'POST',
+					parameters: {
+						content:'options',
+						type:'image/png',
+						width:'600',
+						scale: undefined,
+						constr:'Chart',
+						callback: undefined,
+						async: 'true'
+					}
+				});
+				
+				Sbi.chart.rest.WebServiceManagerFactory.chartExportWebServiceManager = chartExportServiceManager;
+				
+			}
+			
+			return Sbi.chart.rest.WebServiceManagerFactory.chartExportWebServiceManager;
 		}
 	}
 	

@@ -27,6 +27,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	
     	chartServiceManager: null,
     	coreServiceManager: null,
+    	chartExportWebServiceManager: null,
     	docLabel: null,
     	
 		// Left designer panel 
@@ -59,7 +60,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		/* * * * * * START STEP 1 * * * * * */
 		// main central preview panel
-		mainPanel: null,
+		previewPanel: null,
 		
 		// right designer vertical axes container
 		rightYAxisesPanel: null,
@@ -89,6 +90,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		// designer main panel
 		designerMainPanel: null,
+		
+		hostName : '', 
+		serverPort: '',
 		
 		
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {
@@ -127,7 +131,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				jsonTemplate = baseTemplate;
 			}
 			
-			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE') {
+			
+			// NEWCHARTS call this also for new charts
+			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' || jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST') {
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
 			}
 			
@@ -141,6 +147,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+			this.chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+			
+			this.hostName = hostName; 
+			this.serverPort = serverPort;
 			
 			// Creating left panel
 			var chartTypes = this.chartTypes;
@@ -285,12 +295,106 @@ Ext.define('Sbi.chart.designer.Designer', {
   				region: 'west'
   			});
 			
+			
+
+			var chartExportWebServiceManager = this.chartExportWebServiceManager;
+			var chartServiceManager = this.chartServiceManager;
+			
 			// Creating step 1 panel
-  			this.mainPanel = Ext.create('Ext.panel.Panel', {
-  				id: 'mainPanel',
+  			this.previewPanel = Ext.create('Ext.panel.Panel', {
+  				id: 'previewPanel',
   				minHeight: 300,
-  				html: '<div style="text-align:center">PREVIEW</div>'
+  				title: LN('sbi.chartengine.preview'),
+  				titleAlign: 'center',
+  				tools:[]
+  				
   			});
+  			
+  			var previewPanel = this.previewPanel;
+  			
+
+			
+			var hostName = this.hostName; 
+			var serverPort = this.serverPort;
+  			
+			function setPreviewImage(src) {
+				previewPanel.removeAll();
+				var previewImg = Ext.create('Ext.Img', {
+				    src: src,
+					listeners: {
+			            render: function() {
+			                this.mon(this.getEl(), 'load', function(e) {
+			                	previewPanel.setHeight(this.getHeight()+20);
+			                });
+			            }
+			        }
+				});
+				previewPanel.add(previewImg);
+			}; 
+			
+  			var previewTools = 
+  				[{ xtype: 'tbfill' }, {
+  		            xtype: 'image',
+  		            src: '/athenachartengine/img/refresh.png',
+  		            cls: 'tool-icon',
+  		            listeners: {
+  		            	click: {
+  		            		element: 'el',
+  		            		fn: function(){
+  		            			
+      							var sbiJson = Sbi.chart.designer.Designer.exportAsJson(true);
+
+      							var parameters = {
+  									jsonTemplate: Ext.JSON.encode(sbiJson)
+  								};
+      							
+  								chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+									var chartConf = response.responseText;
+	
+									var parameters = {
+	      									options: chartConf,
+	      									content:'options',
+	      									type:'image/png',
+	      									width: previewPanel.getWidth(),
+	      									scale: undefined,
+	      									constr:'Chart',
+	      									callback: undefined,
+	      									async: 'true'
+	      							};
+									
+	      							chartExportWebServiceManager.run('exportPng', parameters, [], 
+      									function (response) {
+		      								var src = '/highcharts-export-web/'+response.responseText;
+		      								setPreviewImage(src);
+		      							},
+		      							function (response) {
+		      								var src = '/athenachartengine/img/preview-not-available.png';
+		      								setPreviewImage(src);
+		      							}
+	      							);
+
+  									
+  								}
+  								,
+      							function (response) {
+      								var src = '/athenachartengine/img/preview-not-available.png';
+      								setPreviewImage(src);
+      							});
+      							
+  		            		}
+  		            	}
+  		            },
+	            	afterrender: function(c) {
+	            		Ext.create('Ext.tip.ToolTip', {
+	            			target: c.getEl(),
+	            			html: LN('sbi.chartengine.refreshpreview')
+	            		});
+	            	}
+  				}]
+  			;
+  			this.previewPanel.tools = previewTools;
+  			
+
 			
 			this.rightYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
   				id: 'chartRightAxisesContainer',
@@ -457,7 +561,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
   				title: LN('sbi.chartengine.designer.step1'),
   				leftYAxisesPanel: this.leftYAxisesPanel,
-  				previewPanel: this.mainPanel,
+  				previewPanel: this.previewPanel,
   				rightYAxisesPanel: this.rightYAxisesPanel,
   				bottomXAxisesPanel: this.bottomXAxisesPanel
   			});
@@ -661,6 +765,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// Creating designer main panel
 			this.designerMainPanel = Ext.create('Ext.panel.Panel', {
+				id: 'designerMainPanel',
   				renderTo: Ext.getBody(),
   				xtype: 'layout-border',
   				requires: [
@@ -716,6 +821,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				return;
 			}
 			
+			// NEWCHARTS: MANAGE MULTIPLE CATEGORYES AS A LIST
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 				axisName: category.name != undefined ? category.name: category.column,
@@ -795,7 +901,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			if(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.SERIE) {
 				Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
-					var axisAlias = serie.axis;
+					var axisAlias = serie.axis ? serie.axis : 'Y';
 					Ext.Array.each(theStorePool, function(store, index){
 						if(store.axisAlias === axisAlias) {
 							

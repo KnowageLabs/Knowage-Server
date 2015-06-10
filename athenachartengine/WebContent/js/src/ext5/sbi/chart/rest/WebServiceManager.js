@@ -27,16 +27,21 @@ Ext.define('Sbi.chart.rest.WebServiceManager', {
          this.getWebServices().add(serviceName, newService);
     }
 
-    , run: function(serviceName, parameters, urlParams, successFunction) {    	
+    , run: function(serviceName, parameters, urlParams, successFunction, failureFunction) {    	
     	Ext.log({level:'info'}, 'Starting service execution: ' + serviceName);
+
+    	var ws = this.getWebServices().get(serviceName);
     	
     	if (!parameters) {
         	parameters = {};
         }
-        parameters.SBI_EXECUTION_ID = this.getServiceConfig().sbiExecutionId;
+    	else if(ws.parameters) {
+    		Ext.applyIf(parameters, ws.parameters);
+    	}
+
+    	parameters.SBI_EXECUTION_ID = this.getServiceConfig().sbiExecutionId;
         parameters.user_id = this.getServiceConfig().userId;
     	
-    	var ws = this.getWebServices().get(serviceName);
 
     	var serviceUrl = ws.getUrl();
     	Ext.log({level: 'info'}, serviceUrl);
@@ -64,6 +69,7 @@ Ext.define('Sbi.chart.rest.WebServiceManager', {
                 },
                 failure: function(response) {
                     Ext.log({level:'error'}, 'Request Failed: ' + response.status);
+                    failureFunction.call(this, response);
                 }
             });        } else {
             Ext.log({level: 'error'}, 'Sbi.chart.rest.WebServiceRegistry ' + serviceName + ' not registered!');
