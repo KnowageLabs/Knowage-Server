@@ -107,7 +107,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			serieTypes = [
 				{name: LN('sbi.chartengine.designer.charttype.notype'), value:''},
 				{name: LN('sbi.chartengine.designer.charttype.bar'), value:'bar'},
-				{name: LN('sbi.chartengine.designer.charttype.line'), value:'line'}, 
+				{name: LN('sbi.chartengine.designer.charttype.line'), value:'line'},
+				{name: LN('sbi.chartengine.designer.charttype.area'), value:'area'},
             ];
 		}
 		
