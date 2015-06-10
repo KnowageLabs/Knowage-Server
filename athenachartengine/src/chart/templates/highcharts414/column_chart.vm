@@ -457,7 +457,6 @@
 			#if ($relatedSerie.TOOLTIP.style.fontSize != '')
 				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
 			#end
-			
 			},
 		    	
     	#set($referencedAxis = $relatedSerie.axis)
@@ -503,7 +502,6 @@
         }
     },
     
-    
     #if($enableDrilldown)
     drilldown: {
         series: []
@@ -523,5 +521,14 @@
     
     credits: { ##remove bottom credits text
     	enabled: false
-    }
+    },
+    
+    plotOptions: {
+        line: {
+	        marker: {
+                symbol: 'circle',
+                lineWidth: 2
+            }
+        }
+    },
 }
