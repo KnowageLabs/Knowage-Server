@@ -315,6 +315,22 @@ Ext.define('Sbi.chart.designer.Designer', {
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute
   					},
+  					listeners: {
+  	  					beforeDrop: function(node, data, dropRec, dropPosition) {
+  	  						if(data.view.id != this.id) { // if the dropping item comes from another container
+	  	  						var thisStore = dropRec.store;
+		  	  					var storeCategoriesLength = thisStore.data.items.length;
+	
+		  	  					for(var rowIndex = 0; rowIndex < storeCategoriesLength; rowIndex++) {
+			  	      				var categoryItem = thisStore.getAt(rowIndex);
+	
+			  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn')) {
+			  	      					return false;
+			  	      				}
+			  	      			}
+	  	  					}
+  						},
+  					}
   				},
   				store: this.categoriesStore,
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
@@ -330,7 +346,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    }),
 			    listeners: {
 			    	updateAxisTitleValue: function(textValue) {
-			        	this.axisData.titleText = textValue;
+			    		this.axisData.titleText = textValue;
 			    		var textfieldAxisTitle = Ext.getCmp('textfieldAxisTitle');
 			    		textfieldAxisTitle.setValue(textValue);
 			    	}
