@@ -262,6 +262,13 @@
 		<mkdir dir="${tomcat.home}/webapps/athenachartengine" />
 		<unzip src="../../../athenachartengine/dist/athenachartengine.war" dest="${tomcat.home}/webapps/athenachartengine" />
 	</target>
+	
+	<target name="deploy.highcharts-export-web.war" depends="">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/highcharts-export-web" />
+		<delete dir="${tomcat.home}/webapps/highcharts-export-web" />
+		<mkdir dir="${tomcat.home}/webapps/highcharts-export-web" />
+		<unzip src="../../../exporting-server/java/highcharts-export/highcharts-export-web/target/highcharts-export-web.war" dest="${tomcat.home}/webapps/highcharts-export-web" />
+	</target>
 
 
 	<!-- MOBILE ENGINE -->
