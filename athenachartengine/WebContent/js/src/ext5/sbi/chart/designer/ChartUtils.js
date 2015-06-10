@@ -147,7 +147,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				style += 'rotate:' + ((axisData.styleRotate != undefined)? axisData.styleRotate : '') + ';';
     				style += 'align:' + ((axisData.styleAlign != undefined)? axisData.styleAlign : '') + ';';
     				style += 'color:' + ((axisData.styleColor != undefined)? axisData.styleColor : '') + ';';
-    				style += 'font:' + ((axisData.styleFont != undefined)? axisData.styleFont : '') + ';';
+    				style += 'fontFamily:' + ((axisData.styleFont != undefined)? axisData.styleFont : '') + ';';
     				style += 'fontWeight:' + ((axisData.styleFontWeigh != undefined)? axisData.styleFontWeigh : '') + ';';
     				style += 'fontSize:' + ((axisData.styleFontSize != undefined)? axisData.styleFontSize : '') + ';';
     				axisAsJson['style'] = style;
@@ -173,7 +173,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				var titleStyle = '';
     				titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
     				titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';
-    				titleStyle += 'font:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
+    				titleStyle += 'fontFamily:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
     				titleStyle += 'fontWeight:' + ((axisData.titleStyleFontWeigh != undefined)? axisData.titleStyleFontWeigh: '') + ';';
     				titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';
     				TITLE['style'] = titleStyle;
@@ -197,7 +197,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			style += 'rotate:' + ((axisData.styleRotate != undefined)? axisData.styleRotate : '') + ';';
 			style += 'align:' + ((axisData.styleAlign != undefined)? axisData.styleAlign : '') + ';';
 			style += 'color:' + ((axisData.styleColor != undefined)? axisData.styleColor : '') + ';';
-			style += 'font:' + ((axisData.styleFont != undefined)? axisData.styleFont : '') + ';';
+			style += 'fontFamily:' + ((axisData.styleFont != undefined)? axisData.styleFont : '') + ';';
 			style += 'fontWeight:' + ((axisData.styleFontWeigh != undefined)? axisData.styleFontWeigh : '') + ';';
 			style += 'fontSize:' + ((axisData.styleFontSize != undefined)? axisData.styleFontSize : '') + ';';
 			axisAsJson['style'] = style;
@@ -207,7 +207,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var titleStyle = '';
 			titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
 			titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';
-			titleStyle += 'font:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
+			titleStyle += 'fontFamily:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
 			titleStyle += 'fontWeight:' + ((axisData.titleStyleFontWeigh != undefined)? axisData.titleStyleFontWeigh: '') + ';';
 			titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';
 			TITLE['style'] = titleStyle;
@@ -254,7 +254,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					var tooltipStyle = '';
 					tooltipStyle += 'align:' + ((serieAsMap.get('serieTooltipAlign') != undefined)? serieAsMap.get('serieTooltipAlign'): '') + ';';					
 					tooltipStyle += 'color:' + ((serieAsMap.get('serieTooltipColor') != undefined)? serieAsMap.get('serieTooltipColor'): '') + ';';					
-					tooltipStyle += 'font:' + ((serieAsMap.get('serieTooltipFont') != undefined)? serieAsMap.get('serieTooltipFont'): '') + ';';					
+					tooltipStyle += 'fontFamily:' + ((serieAsMap.get('serieTooltipFont') != undefined)? serieAsMap.get('serieTooltipFont'): '') + ';';					
 					tooltipStyle += 'fontWeight:' + ((serieAsMap.get('serieTooltipFontWeight') != undefined)? serieAsMap.get('serieTooltipFontWeight'): '') + ';';					
 					tooltipStyle += 'fontSize:' + ((serieAsMap.get('serieTooltipFontSize') != undefined)? serieAsMap.get('serieTooltipFontSize'): '') + ';';					
 					TOOLTIP['style'] = tooltipStyle; 
@@ -314,7 +314,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		}
     		
     		var chartStyle = '';
-    		chartStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
+    		chartStyle += 'fontFamily:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
     		chartStyle += 'fontSize:' + ((chartModel.get('fontDimension') != undefined)? chartModel.get('fontDimension') : '') + ';';
     		chartStyle += 'fontWeight:' + ((chartModel.get('fontWeight') != undefined)? chartModel.get('fontWeight') : '') + ';';
     		chartStyle += 'backgroundColor:' + ((chartModel.get('backgroundColor') != undefined && chartModel.get('backgroundColor') != '')? 
@@ -350,7 +350,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		emptymessageStyle += 'align:' + ((chartModel.get('nodataAlign') != undefined)? chartModel.get('nodataAlign') : '') + ';';
     		emptymessageStyle += 'color:'+ ((chartModel.get('nodataColor') != undefined && chartModel.get('nodataColor') != '')? 
     				'#' + chartModel.get('nodataColor') : '') + ';';
-    		emptymessageStyle += 'font:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
+    		emptymessageStyle += 'fontFamily:' + ((chartModel.get('font') != undefined)? chartModel.get('font') : '') + ';';
     		emptymessageStyle += 'fontWeight:' + ((chartModel.get('nodataStyle') != undefined)? chartModel.get('nodataStyle') : '') + ';';
     		emptymessageStyle += 'fontSize:' + ((chartModel.get('nodataDimension') != undefined)? chartModel.get('nodataDimension') : '') + ';';
     		EMPTYMESSAGE['style'] = emptymessageStyle;
@@ -364,7 +364,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		titleStyle += 'align:' + ((chartModel.get('titleAlign') != undefined)? chartModel.get('titleAlign') : '') + ';';
     		titleStyle += 'color:' + ((chartModel.get('titleColor') != undefined && chartModel.get('titleColor') != '')? 
     				'#' + chartModel.get('titleColor') : '') + ';';
-    		titleStyle += 'font:' + ((chartModel.get('titleFont') != undefined)? chartModel.get('titleFont') : '') + ';';
+    		titleStyle += 'fontFamily:' + ((chartModel.get('titleFont') != undefined)? chartModel.get('titleFont') : '') + ';';
     		titleStyle += 'fontWeight:' + ((chartModel.get('titleStyle') != undefined)? chartModel.get('titleStyle') : '') + ';';
     		titleStyle += 'fontSize:' + ((chartModel.get('titleDimension') != undefined)? chartModel.get('titleDimension') : '') + ';';
     		TITLE['style'] = titleStyle;
@@ -378,7 +378,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		subtitleStyle += 'align:' + ((chartModel.get('subtitleAlign') != undefined)? chartModel.get('subtitleAlign') : '') + ';';
     		subtitleStyle += 'color:' + ((chartModel.get('subtitleColor') != undefined && chartModel.get('subtitleColor') != '')? 
     				'#' + chartModel.get('subtitleColor') : '') + ';';
-    		subtitleStyle += 'font:' + ((chartModel.get('subtitleFont') != undefined)? chartModel.get('subtitleFont') : '') + ';';
+    		subtitleStyle += 'fontFamily:' + ((chartModel.get('subtitleFont') != undefined)? chartModel.get('subtitleFont') : '') + ';';
     		subtitleStyle += 'fontWeight:' + ((chartModel.get('subtitleStyle') != undefined)? chartModel.get('subtitleStyle') : '') + ';';
     		subtitleStyle += 'fontSize:' + ((chartModel.get('subtitleDimension') != undefined)? chartModel.get('subtitleDimension') : '') + ';';
     		SUBTITLE['style'] = subtitleStyle;
@@ -397,7 +397,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		legendStyle += 'align:' + ((chartModel.get('legendAlign') != undefined)? chartModel.get('legendAlign') : '') + ';';
     		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined && chartModel.get('legendColor') != '')? 
     				'#' + chartModel.get('legendColor') : '') + ';';
-    		legendStyle += 'font:' + ((chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '') + ';';
+    		legendStyle += 'fontFamily:' + ((chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '') + ';';
     		legendStyle += 'fontSize:' + ((chartModel.get('legendDimension') != undefined)? chartModel.get('legendDimension') : '') + ';';
     		legendStyle += 'fontWeight:' + ((chartModel.get('legendStyle') != undefined)? chartModel.get('legendStyle') : '') + ';';
     		legendStyle += 'borderWidth:' + ((chartModel.get('legendBorderWidth') != undefined)? chartModel.get('legendBorderWidth') : '') + ';';
@@ -459,28 +459,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				width: jsonTemplate.CHART.width, 
   				orientation: jsonTemplate.CHART.orientation ? jsonTemplate.CHART.orientation : 'vertical',
   				backgroundColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonChartStyle.backgroundColor),
-  				font: jsonChartStyle.font,
+  				fontFamily: jsonChartStyle.fontFamily,
   				fontDimension: jsonChartStyle.fontSize,
   				fontWeight: jsonChartStyle.fontWeight,
   				
   				title: jsonTitleText,
   				titleAlign: jsonTitleStyle.align,
   				titleColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTitleStyle.color),
-  				titleFont: jsonTitleStyle.font,
+  				titleFont: jsonTitleStyle.fontFamily,
   				titleDimension: jsonTitleStyle.fontSize,
   				titleStyle: jsonTitleStyle.fontWeight,
   				  				
   				subtitle: jsonSubtitleText,
   				subtitleAlign: jsonSubtitleStyle.align,
   				subtitleColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonSubtitleStyle.color),
-  				subtitleFont: jsonSubtitleStyle.font,
+  				subtitleFont: jsonSubtitleStyle.fontFamily,
   				subtitleDimension: jsonSubtitleStyle.fontSize,
   				subtitleStyle: jsonSubtitleStyle.fontWeight,
   				
   				nodata: jsonEmptyMsgText,
   				nodataAlign: jsonEmptyMsgStyle.align,
   				nodataColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonEmptyMsgStyle.color),
-  				nodataFont: jsonEmptyMsgStyle.font,
+  				nodataFont: jsonEmptyMsgStyle.fontFamily,
   				nodataDimension: jsonEmptyMsgStyle.fontSize,
   				nodataStyle: jsonEmptyMsgStyle.fontWeight,
   				
@@ -492,7 +492,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				legendY: chartLegend.y,
   				legendColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
   				legendAlign: jsonLegendStyle.align,
-  				legendFont: jsonLegendStyle.font,
+  				legendFont: jsonLegendStyle.fontFamily,
   				legendDimension: jsonLegendStyle.fontSize,
   				legendStyle: jsonLegendStyle.fontWeight,
   				legendBorderWidth: jsonLegendStyle.borderWidth,
