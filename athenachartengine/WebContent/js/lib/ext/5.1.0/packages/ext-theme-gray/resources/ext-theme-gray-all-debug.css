@@ -10764,7 +10764,7 @@ ul.x-tagfield-list.x-tagfield-singleselect {
     padding: 0 2px 1px; }
     /* line 374, ../../../ext-theme-neutral/sass/src/panel/Panel.scss */
     .x-panel-header-title-default > .x-title-text-default:after {
-      content: 'Ext JS Trial';
+      
       position: absolute;
       top: 0;
       right: 0;
@@ -10989,7 +10989,7 @@ ul.x-tagfield-list.x-tagfield-singleselect {
     padding: 0 2px 1px; }
     /* line 374, ../../../ext-theme-neutral/sass/src/panel/Panel.scss */
     .x-panel-header-title-default-framed > .x-title-text-default-framed:after {
-      content: 'Ext JS Trial';
+      
       position: absolute;
       top: 0;
       right: 0;
@@ -21318,7 +21318,7 @@ div.x-border-layout-ct {
     text-transform: none; }
     /* line 303, ../../../ext-theme-neutral/sass/src/window/Window.scss */
     .x-window-header-title-default > .x-title-text-default:after {
-      content: 'Ext JS Trial';
+      
       position: absolute;
       top: 0;
       right: 0;
