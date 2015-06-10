@@ -5,7 +5,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,
 	items : [],
-
+	scrollable: 'y',
 	paletteGrid : {},
 	
 	statics: {

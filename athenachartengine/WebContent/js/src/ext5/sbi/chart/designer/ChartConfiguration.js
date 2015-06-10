@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfiguration',{
 	extend: 'Ext.form.Panel',
+	layout: 'anchor',
 	border: false,
-	layout: 'vbox',
 	item: [ ],
     main:null,
     second:null,

@@ -5,6 +5,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            'Sbi.chart.designer.FontStyleCombo'],
 	title : LN('sbi.chartengine.configuration'),
 	bodyPadding : 10,
+	
+	fieldDefaults: {
+        anchor: '100%'
+	},
 	//**********************//
 	
 	height: {
