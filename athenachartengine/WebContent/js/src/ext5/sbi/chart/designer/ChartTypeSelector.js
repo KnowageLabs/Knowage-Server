@@ -64,6 +64,9 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 					}
 				});
 			}
+			else {
+				chartTypeSelector.setChartType(selectedType);
+			}
 		}
 	},
 	
