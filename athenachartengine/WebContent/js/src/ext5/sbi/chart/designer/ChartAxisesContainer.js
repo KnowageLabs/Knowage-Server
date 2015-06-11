@@ -23,7 +23,6 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 					Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
 					Sbi.chart.designer.ChartUtils.ddGroupMeasure);
 			if(newPanel != null) {
-				Ext.log('Created new ChartColumnsContainer: id="' + newPanel.id + '"');
 				panel.add(newPanel);
 			}
 		}

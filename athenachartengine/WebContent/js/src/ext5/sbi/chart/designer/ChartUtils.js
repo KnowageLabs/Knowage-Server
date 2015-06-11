@@ -116,7 +116,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		result['CHART'] = CHART;
     		
-          	console.log('exportAsJson -> ' , result);
           	return result;
     	},
     	
@@ -558,7 +557,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						children: treeData
 					};
 				
-				console.log('treeFormattedJson: ', treeFormattedJson);
 				return treeFormattedJson;
 			}
 		    return treeData;

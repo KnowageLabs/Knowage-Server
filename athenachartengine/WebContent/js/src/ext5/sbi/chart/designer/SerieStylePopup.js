@@ -382,8 +382,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		var serieTooltipFontSize = '' + this.tooltipFontSizeComboBox.getValue(); //Save as string 
 		dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
-				
-		Ext.log('Store updated');
+
 		this.destroy();
 	},
 	

@@ -243,7 +243,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   					listeners: {
   						drop: function(node, data, dropRec, dropPosition) {
   							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('serieColumn') : ' on empty view';
-  							Ext.log('Drag from Columns Picker', 'Dropped ' + data.records[0].get('name') + dropOn);
   						}
   					}
   				},
@@ -274,7 +273,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   					listeners: {
   						drop: function(node, data, dropRec, dropPosition) {
   							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('categoryColumn') : ' on empty view';
-  							Ext.log('Drag from Categories Picker', 'Dropped ' + data.records[0].get('name') + dropOn);
   						}
   					}
   				},
@@ -786,30 +784,17 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 			
 			
-  			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
- 			Ext.log({level: 'info'}, 'CHART: IN CONFIGURATION FROM TEMPLATE');
-  			/**
-  				START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>>
-  			*/
+  			/* LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
+  			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */
   			this.loadAxesAndSeries(jsonTemplate);
-  			/**
-				END LOADING Y AXES, X AXIS AND SERIES <<<<<<<<<<<<<<<<<<<<
-			*/
+  			/* END LOADING Y AXES, X AXIS AND SERIES <<<<<<<<<<<<<<<<<<<< */
   			
-			/**
-				START LOADING CATEGORIES >>>>>>>>>>>>>>>>>>>>
-			*/
+			/* START LOADING CATEGORIES >>>>>>>>>>>>>>>>>>>> */
 			this.loadCategories(jsonTemplate);
 			
-			/**
-				END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<<
-			*/
-  			
- 			Ext.log({level: 'info'}, 'CHART: OUT CONFIGURATION FROM TEMPLATE');
+			/* END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<< */
   			
   			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
- 			
- 			Ext.log({level: 'info'}, 'CHART: OUT');
 		},
 		
 		loadCategories: function(jsonTemplate) {
@@ -953,8 +938,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 			this.updateStep1Data(jsonTemplate);
 			this.updateStep2Data(jsonTemplate);
-			
-			console.log("jsonTemplate updated!");
 		},
 		
 		updateStep1Data: function(jsonTemplate) {

@@ -78,7 +78,6 @@ Ext.define('Sbi.chart.designer.AdvancedEditor',{
 		var formattedJson = this.store.getRoot().data;
 		var originalJson = Sbi.chart.designer.ChartUtils.convertTreeFormatToJson(formattedJson, true);
 		
-		console.log('originalJson: ', originalJson);
 		return originalJson;
 	}
 });
