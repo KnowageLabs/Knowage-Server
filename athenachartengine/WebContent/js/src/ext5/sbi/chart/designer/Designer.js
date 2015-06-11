@@ -421,7 +421,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					},
   					listeners: {
   	  					beforeDrop: function(node, data, dropRec, dropPosition) {
-  	  						if(data.view.id != this.id) { // if the dropping item comes from another container
+  	  						if(dropRec && data.view.id != this.id) { // if the dropping item comes from another container
 	  	  						var thisStore = dropRec.store;
 		  	  					var storeCategoriesLength = thisStore.data.items.length;
 	
