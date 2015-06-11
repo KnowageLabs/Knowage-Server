@@ -1,5 +1,7 @@
 function renderTreemap(chartConf) {
-
+    
+	console.log(chartConf);
+	
 	var points = [],
 	level0_p,
 	level0_val,
