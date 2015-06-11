@@ -42,11 +42,14 @@
 
     chart: {
     	#set($chartTypeToPrint = 'column')
-    	#if($chartType == 'line')
+    	#if($chartType == 'line' || $chartType == 'radar')
     		#set($chartTypeToPrint = 'line')
     	#end
     
         type: '$chartTypeToPrint',
+    	#if($chartType == 'radar')
+    	polar: true,
+    	#end
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
         #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'pie')
@@ -210,10 +213,12 @@
 	 	#end
 	 	
 	 	#if($axis.type == 'Serie')
-	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
-	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+	 		#if(($chartType == 'radar' && $yAxisCounter < 1) || $chartType != 'radar')
+		 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+		 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
 	 		
-	 		#set($yAxisCounter = $yAxisCounter + 1)
+		 		#set($yAxisCounter = $yAxisCounter + 1)
+	 		#end
 	 	#end
 	#end
 	
@@ -395,10 +400,12 @@
 			#if($relatedSerieType == 'bar')
 				#set($relatedSerieType = 'column')
 			#end		
+			#if($relatedSerieType == 'radar')
+				#set($relatedSerieType = 'line')
+			#end		
 	    	type: '$relatedSerieType',
 	    #end
 	    
-		#set($relatedSerieShowValue = $relatedSerie.showValue)
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
@@ -410,6 +417,7 @@
 						y: $serieValue,
 						name: '$serieCategoryName',
 						
+						#set($relatedSerieShowValue = $relatedSerie.showValue)
 						#if ($relatedSerieShowValue != '')
 						dataLabels: {
 		                    enabled: $relatedSerieShowValue
@@ -446,8 +454,8 @@
 				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.font != '')
-				ttFont: '$relatedSerie.TOOLTIP.style.font' ,
+			#if ($relatedSerie.TOOLTIP.style.fontFamily && $relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
 			#end
 				
 			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
@@ -458,9 +466,11 @@
 				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
 			#end
 			},
-		    	
-    	#set($referencedAxis = $relatedSerie.axis)
+		
+		#if($chartType != 'radar') 	
+    		#set($referencedAxis = $relatedSerie.axis)
     		yAxis: $yAxisPositions[$referencedAxis]
+    	#end
 	    }, 
 	#end
     ],

@@ -251,8 +251,8 @@
 				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.style.font != '')
-				ttFont: '$relatedSerie.TOOLTIP.style.font' ,
+			#if ($relatedSerie.TOOLTIP.style.fontFamily != '')
+				ttFont: '$relatedSerie.TOOLTIP.style.fontFamily' ,
 			#end
 				
 			#if ($relatedSerie.TOOLTIP.style.fontWeight != '')
