@@ -33,7 +33,9 @@
 		        url: 'http://192.168.40.100:8080/highcharts-export-web/'
 		    },
 		    lang: {
-	            drillUpText: LN('sbi.chartengine.viewer.drilluptext')
+	            drillUpText: LN('sbi.chartengine.viewer.drilluptext'),
+	            decimalPoint: LN('sbi.chartengine.viewer.decimalpoint'),
+	            thousandsSep: LN('sbi.chartengine.viewer.thousandsep')
 	        }
 		});
 	};
