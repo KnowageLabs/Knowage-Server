@@ -2,8 +2,8 @@ package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
-import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
@@ -33,18 +33,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public boolean insertGlossary(SbiGlGlossary glossary) {
-		return insert(glossary);
+	public Integer insertGlossary(SbiGlGlossary glossary) {
+		return (Integer) insert(glossary);
 	}
 
 	@Override
-	public boolean modifyGlossary(SbiGlGlossary glossary) {
-		return update(glossary);
+	public void modifyGlossary(SbiGlGlossary glossary) {
+		update(glossary);
 	}
 
 	@Override
-	public boolean deleteGlossary(Integer glossaryId) {
-		return delete(SbiGlGlossary.class, glossaryId);
+	public void deleteGlossary(Integer glossaryId) {
+		delete(SbiGlGlossary.class, glossaryId);
 	}
 
 	@Override
@@ -63,18 +63,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public boolean insertContents(SbiGlContents contents) {
-		return insert(contents);
+	public Integer insertContents(SbiGlContents contents) {
+		return (Integer) insert(contents);
 	}
 
 	@Override
-	public boolean modifyContents(SbiGlContents contents) {
-		return update(contents);
+	public void modifyContents(SbiGlContents contents) {
+		update(contents);
 	}
 
 	@Override
-	public boolean deleteContents(Integer contentId) {
-		return delete(SbiGlContents.class, contentId);
+	public void deleteContents(Integer contentId) {
+		delete(SbiGlContents.class, contentId);
 	}
 
 	@Override
@@ -93,18 +93,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public boolean insertWord(SbiGlWord word) {
-		return insert(word);
+	public Integer insertWord(SbiGlWord word) {
+		return (Integer) insert(word);
 	}
 
 	@Override
-	public boolean modifyWord(SbiGlWord word) {
-		return update(word);
+	public void modifyWord(SbiGlWord word) {
+		update(word);
 	}
 
 	@Override
-	public boolean deleteWord(Integer wordId) {
-		return delete(SbiGlWord.class, wordId);
+	public void deleteWord(Integer wordId) {
+		delete(SbiGlWord.class, wordId);
 	}
 
 	@Override
@@ -113,18 +113,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public boolean insertWlist(SbiGlWlist wlist) {
-		return insert(wlist);
+	public Integer insertWlist(SbiGlWlist wlist) {
+		return (Integer) insert(wlist);
 	}
 
 	@Override
-	public boolean modifyWlist(SbiGlWlist wlist) {
-		return update(wlist);
+	public void modifyWlist(SbiGlWlist wlist) {
+		update(wlist);
 	}
 
 	@Override
-	public boolean deleteWlist(SbiGlWlistId wlistId) {
-		return delete(SbiGlWlist.class, wlistId);
+	public void deleteWlist(SbiGlWlistId wlistId) {
+		delete(SbiGlWlist.class, wlistId);
 	}
 
 	@Override
@@ -138,18 +138,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public boolean insertAttribute(SbiGlAttribute attribute) {
-		return insert(attribute);
+	public Integer insertAttribute(SbiGlAttribute attribute) {
+		return (Integer) insert(attribute);
 	}
 
 	@Override
-	public boolean modifyAttribute(SbiGlAttribute attribute) {
-		return update(attribute);
+	public void modifyAttribute(SbiGlAttribute attribute) {
+		update(attribute);
 	}
 
 	@Override
-	public boolean deleteAttribute(Integer attributeId) {
-		return delete(SbiGlAttribute.class, attributeId);
+	public void deleteAttribute(Integer attributeId) {
+		delete(SbiGlAttribute.class, attributeId);
 	}
 
 	@Override
@@ -158,18 +158,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public boolean insertWordAttr(SbiGlWordAttr wordAttr) {
-		return insert(wordAttr);
+	public Integer insertWordAttr(SbiGlWordAttr wordAttr) {
+		return (Integer) insert(wordAttr);
 	}
 
 	@Override
-	public boolean modifyWordAttr(SbiGlWordAttr wordAttr) {
-		return update(wordAttr);
+	public void modifyWordAttr(SbiGlWordAttr wordAttr) {
+		update(wordAttr);
 	}
 
 	@Override
-	public boolean deleteWordAttr(Integer wordId) {
-		return delete(SbiGlWordAttr.class, wordId);
+	public void deleteWordAttr(Integer wordId) {
+		delete(SbiGlWordAttr.class, wordId);
 	}
 
 }

@@ -25,11 +25,11 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlGlossary> listGlossary();
 
-	public boolean insertGlossary(SbiGlGlossary glossary);
+	public Integer insertGlossary(SbiGlGlossary glossary);
 
-	public boolean modifyGlossary(SbiGlGlossary glossary);
+	public void modifyGlossary(SbiGlGlossary glossary);
 
-	public boolean deleteGlossary(Integer glossaryId);
+	public void deleteGlossary(Integer glossaryId);
 
 	//
 	// Contents
@@ -40,11 +40,11 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlContents> listContentsByGlossaryId(Integer glossaryId, Integer parentId);
 
-	public boolean insertContents(SbiGlContents contents);
+	public Integer insertContents(SbiGlContents contents);
 
-	public boolean modifyContents(SbiGlContents contents);
+	public void modifyContents(SbiGlContents contents);
 
-	public boolean deleteContents(Integer contentId);
+	public void deleteContents(Integer contentId);
 
 	//
 	// Word
@@ -55,22 +55,22 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlWord> listWordFiltered(String word);
 
-	public boolean insertWord(SbiGlWord word);
+	public Integer insertWord(SbiGlWord word);
 
-	public boolean modifyWord(SbiGlWord word);
+	public void modifyWord(SbiGlWord word);
 
-	public boolean deleteWord(Integer wordId);
+	public void deleteWord(Integer wordId);
 
 	//
 	// Wishlist
 	//
 	public List<SbiGlWlist> listWlist(Integer contentId);
 
-	public boolean insertWlist(SbiGlWlist wlist);
+	public Integer insertWlist(SbiGlWlist wlist);
 
-	public boolean modifyWlist(SbiGlWlist wlist);
+	public void modifyWlist(SbiGlWlist wlist);
 
-	public boolean deleteWlist(SbiGlWlistId wlistId);
+	public void deleteWlist(SbiGlWlistId wlistId);
 
 	//
 	// Attribute
@@ -79,20 +79,20 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlAttribute> listAttribute();
 
-	public boolean insertAttribute(SbiGlAttribute attribute);
+	public Integer insertAttribute(SbiGlAttribute attribute);
 
-	public boolean modifyAttribute(SbiGlAttribute attribute);
+	public void modifyAttribute(SbiGlAttribute attribute);
 
-	public boolean deleteAttribute(Integer attributeId);
+	public void deleteAttribute(Integer attributeId);
 
 	//
 	// WordAttr
 	//
 	public List<SbiGlWordAttr> listWordAttr(Integer wordId);
 
-	public boolean insertWordAttr(SbiGlWordAttr wordAttr);
+	public Integer insertWordAttr(SbiGlWordAttr wordAttr);
 
-	public boolean modifyWordAttr(SbiGlWordAttr wordAttr);
+	public void modifyWordAttr(SbiGlWordAttr wordAttr);
 
-	public boolean deleteWordAttr(Integer wordId);
+	public void deleteWordAttr(Integer wordId);
 }
