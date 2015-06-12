@@ -49,8 +49,8 @@
         style:{
         	#foreach($styleName in $chart.style.keySet())
         	#set ($chartStyleValue = $chart.style[$styleName])
-    			#if ($styleName == 'fontWeight' && $chartStyleValue == 'italic')
-        			fontStyle: 'italic',
+    			#if ($styleName == 'fontWeight' && ($chartStyleValue == 'italic' || $chartStyleValue == 'normal')) 
+        			fontStyle: '$chartStyleValue',
 				#elseif($styleName == 'fontWeight' && $chartStyleValue == 'underline')
         			textDecoration: 'underline',
 				#else		        			
@@ -88,8 +88,8 @@
         style:{
         #foreach($styleName in $chart.TITLE.style.keySet())
         	#set ($axisTytleStyle = $chart.TITLE.style[$styleName])
-    		#if ($styleName == 'fontWeight' && $axisTytleStyle == 'italic')
-    			fontStyle: 'italic',
+    		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+    			fontStyle: '$axisTitleStyle',
 			#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
     			textDecoration: 'underline',
 			#else		        			
@@ -118,8 +118,8 @@
         style:{
         #foreach($styleName in $chart.SUBTITLE.style.keySet())
         	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
-    		#if ($styleName == 'fontWeight' && $axisSubtitleStyle == 'italic')
-    			fontStyle: 'italic',
+    		#if ($styleName == 'fontWeight' && ($axisSubtitleStyle == 'italic' || $axisSubtitleStyle == 'normal'))
+    			fontStyle: '$axisSubtitleStyle',
 			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
     			textDecoration: 'underline',
 			#else		        			
@@ -318,7 +318,7 @@
         	thisValue = valuePrefix + thisValue + valueSuffix;
         	
             var result = 
-            	'<div style="padding:10px;color:' + ttColor + ';background-color:' + ttBackColor + ';font:' + tooltipFont + ';text-align:' + ttAlign + ';">'; 
+            	'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';font:' + tooltipFont + ';text-align:' + ttAlign + ';">'; 
             	
             result += '<span>' + this.key + '</span><br/>' + this.series.name + ': <strong>' + thisValue + '</strong></div>';
             
