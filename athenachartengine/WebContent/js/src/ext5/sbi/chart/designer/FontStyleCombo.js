@@ -3,6 +3,9 @@ Ext.define('Sbi.chart.designer.FontStyleCombo', {
     store: {
         fields: [ 'name','value' ],
         data: [ {
+    		name : LN('sbi.chartengine.configuration.fontstyle.nostyle'),
+    		value : ''
+    	}, {
     		name : LN('sbi.chartengine.configuration.fontstyle.b'),
     		value : 'bold'
     	}, {
