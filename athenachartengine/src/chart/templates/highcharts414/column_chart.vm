@@ -160,8 +160,13 @@
         #if ($chart.LEGEND.layout != '' )
         layout: '$chart.LEGEND.layout',
         #end
+        
         #if ($chart.LEGEND.position != '' )
-        align: '$chart.LEGEND.position',
+        verticalAlign: '$chart.LEGEND.position',
+        #end
+        
+        #if ($chart.LEGEND.position != '' )
+        align: '$chart.LEGEND.style.align',
         #end
         
         #if ($chart.LEGEND.floating != '')

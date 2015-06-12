@@ -54,11 +54,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     				 name : LN('sbi.chartengine.configuration.position.t'),
                     				 value : 'top'
                     			 }, {
-                    				 name : LN('sbi.chartengine.configuration.position.r'),
-                    				 value : 'right'
-                    			 }, {
-                    				 name : LN('sbi.chartengine.configuration.position.l'),
-                    				 value : 'left'
+                    				 name : LN('sbi.chartengine.configuration.position.m'),
+                    				 value : 'middle'
                     			 } ]
                     		 }
                     	 } , {
