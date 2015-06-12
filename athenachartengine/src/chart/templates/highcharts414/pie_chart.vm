@@ -130,8 +130,10 @@
     },
     #end
     
-    #if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'true')
     legend: {
+    	#if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'false')
+	    enabled: false,
+	    #end
         #if ($chart.LEGEND.layout != '' )
         layout: '$chart.LEGEND.layout',
         #end
@@ -155,22 +157,28 @@
     	
     	#end
         
-        #if($chart.LEGEND.style.borderWidth != '')
-        borderWidth: $chart.LEGEND.style.borderWidth,
-	    #end
-        
         #if($chart.LEGEND.style.backgroundColor != '')
         backgroundColor: '$chart.LEGEND.style.backgroundColor',
-	    #end
-	    
+        #end
+        
+        #if($chart.LEGEND.style.borderWidth != '')
+        borderWidth: '$chart.LEGEND.style.borderWidth',
+        #end
+        
+        
         shadow: true,
         itemStyle: { 
-        	'color': '$chart.LEGEND.style.color', 
-        	'fontSize': '$chart.LEGEND.style.fontSize', 
-        	'fontWeight': '$chart.LEGEND.style.fontWeight' 
+        	color: '$chart.LEGEND.style.color', 
+        	fontSize: '$chart.LEGEND.style.fontSize', 
+        	#if ($chart.LEGEND.style.fontWeight == 'italic')
+        	fontStyle: 'italic',
+        	#elseif ($chart.LEGEND.style.fontWeight == 'underline')
+        	textDecoration: 'underline',
+        	#else
+        	fontWeight: '$chart.LEGEND.style.fontWeight',
+        	#end
         }
     },
-    #end
     
     plotOptions: {
         pie: {
@@ -182,7 +190,10 @@
                 style: {
                     color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                 }
-            }
+            },
+            #if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'true')
+            showInLegend: true
+		    #end
         }
     },
     

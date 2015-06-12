@@ -394,17 +394,17 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var legendStyle = '';
     		legendStyle += 'align:' + ((chartModel.get('legendAlign') != undefined)? chartModel.get('legendAlign') : '') + ';';
-    		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined && chartModel.get('legendColor') != '')? 
-    				'#' + chartModel.get('legendColor') : '') + ';';
     		legendStyle += 'fontFamily:' + ((chartModel.get('legendFont') != undefined)? chartModel.get('legendFont') : '') + ';';
     		legendStyle += 'fontSize:' + ((chartModel.get('legendDimension') != undefined)? chartModel.get('legendDimension') : '') + ';';
     		legendStyle += 'fontWeight:' + ((chartModel.get('legendStyle') != undefined)? chartModel.get('legendStyle') : '') + ';';
     		legendStyle += 'borderWidth:' + ((chartModel.get('legendBorderWidth') != undefined)? chartModel.get('legendBorderWidth') : '') + ';';
-    		legendStyle += 'backgroundColor:' + ((chartModel.get('legendBackgroundColor') != undefined)? chartModel.get('legendBackgroundColor') : '') + ';';
+    		legendStyle += 'color:' + ((chartModel.get('legendColor') != undefined && chartModel.get('legendColor') != '')? 
+    				'#' + chartModel.get('legendColor') : '') + ';';
+    		legendStyle += 'backgroundColor:' + ((chartModel.get('legendBackgroundColor') != undefined && chartModel.get('legendBackgroundColor') != '')? 
+    				'#' + chartModel.get('legendBackgroundColor') : '') + ';';
     		LEGEND['style'] = legendStyle;
     		
     		CHART['LEGEND'] = LEGEND;
-    		
     		return CHART;
     	},
     	
@@ -489,13 +489,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				legendFloating: chartLegend.floating,
   				legendX: chartLegend.x,
   				legendY: chartLegend.y,
-  				legendColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
   				legendAlign: jsonLegendStyle.align,
   				legendFont: jsonLegendStyle.fontFamily,
   				legendDimension: jsonLegendStyle.fontSize,
   				legendStyle: jsonLegendStyle.fontWeight,
   				legendBorderWidth: jsonLegendStyle.borderWidth,
-  				legendBackgroundColor: jsonLegendStyle.backgroundColor,
+  				legendColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
+  				legendBackgroundColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),
   				
   				colorPalette: colorPalette
   			});
