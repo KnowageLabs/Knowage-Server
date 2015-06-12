@@ -20,8 +20,6 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Sbi.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Log.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/exceptions/ExceptionHandler.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Format.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/formats/LocaleUtils.js' ></script>
 
 <script type="text/javascript" src="/athenachartengine/js/src/configuration/propertiesCatalogue.js" ></script>
 

@@ -7,6 +7,10 @@
 <script type="text/javascript"
 	src="/athenachartengine/js/lib/messageResource/messageResource.min.js"></script>
 
+
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Format.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/formats/LocaleUtils.js' ></script>
+
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
 	getSynch=function(url, callback){

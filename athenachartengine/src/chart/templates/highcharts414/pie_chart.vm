@@ -207,7 +207,14 @@
 						#set($relatedSerieShowValue = $relatedSerie.showValue)
 						#if ($relatedSerieShowValue != '')
 						dataLabels: {
-		                    enabled: $relatedSerieShowValue
+		                    enabled: $relatedSerieShowValue,
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
+							#end
+		                    
+		                    format: '{y$precisionValueAsString}'
 		                }
 						#end
 					},
@@ -292,7 +299,10 @@
         	var thisValue = this.y;
         	
         	if(valueDecimals > -1 ) {
-        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals);
+        		var decimalPoint = Highcharts.getOptions().lang.decimalPoint,
+        			thousandsSep = Highcharts.getOptions().lang.thousandsSep;
+        			
+        		thisValue = Highcharts.numberFormat(thisValue, valueDecimals, decimalPoint, thousandsSep);
         	}
         	thisValue = valuePrefix + thisValue + valueSuffix;
         	
