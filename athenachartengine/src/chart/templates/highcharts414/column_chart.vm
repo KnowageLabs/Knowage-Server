@@ -190,14 +190,14 @@
 	    
         shadow: true,
         itemStyle: { 
-        	'color': '$chart.LEGEND.style.color', 
-        	'fontSize': '$chart.LEGEND.style.fontSize', 
+        	color: '$chart.LEGEND.style.color', 
+        	fontSize: '$chart.LEGEND.style.fontSize', 
         	#if ($chart.LEGEND.style.fontWeight == 'italic')
         	fontStyle: 'italic',
         	#elseif ($chart.LEGEND.style.fontWeight == 'underline')
         	textDecoration: 'underline',
         	#else
-        	'fontWeight': '$chart.LEGEND.style.fontWeight',
+        	fontWeight: '$chart.LEGEND.style.fontWeight',
         	#end
         }
     },

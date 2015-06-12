@@ -53,7 +53,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			var borderWidth = Ext.create('Ext.form.field.Number',{
 				fieldLabel : LN('sbi.chartengine.configuration.borderwidth'),
 				viewModel: this.viewModel,
-				boind:  this.config.bindBorderWidth
+				bind:  this.config.bindBorderWidth
 			})
 			this.add(borderWidth);
 		};
