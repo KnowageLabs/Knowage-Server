@@ -196,7 +196,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 				protocol: '<%= request.getScheme()%>'     
 				, host: '<%= request.getServerName()%>'
 				, port: '<%= request.getServerPort()%>'
-				, contextPath: 'SpagoBI'
+				, contextPath: 'athena'
 			}
 			, controllerConf: {
 				controllerPath: 'restful-services'   
