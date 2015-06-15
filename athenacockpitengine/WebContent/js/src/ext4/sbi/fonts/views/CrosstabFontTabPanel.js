@@ -141,7 +141,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.crosstabFontGeneralOpts')
 	        , margin: 			10
 	    	, items: 			[fontTypeCombo, fontSizeCombo]	
@@ -226,7 +226,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				, fieldDefaults: 	{ margin: 5}
 				, layout: 			{type: 'table', columns: 2}
 		        , collapsible: 		true
-		        , collapsed: 		true
+		        , collapsed: 		false
 		        , title: 			LN('sbi.cockpit.designer.fontConf.crosstabHeadersFontOpts')
 		    	, margin: 			10
 		    	, items: 			[tdLevelFontSizeCombo, tdLevelFontColorText, tdLevelFontWeightCombo, tdLevelFontDecorationCombo]	
@@ -313,7 +313,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.measuresHeadersFontOpts')
 	    	, margin: 			10
 	    	, items: 			[tdMemberFontSizeCombo, tdMemberFontColorText, tdMemberFontWeightCombo, tdMemberFontDecorationCombo]	
@@ -398,7 +398,7 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.measuresFontOpts')
 	    	, margin: 			10
 	    	, items: 			[tdDataFontSizeCombo, tdDataFontColorText, tdDataFontWeightCombo, tdDataFontDecorationCombo]	

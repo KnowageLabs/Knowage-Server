@@ -214,7 +214,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableFontGeneralOpts')
 	        , margin: 			10
 	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
@@ -301,7 +301,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableHeaderFontOptions')
 	    	, margin: 			10
 	    	, items: 			[this.headerFontSizeCombo, this.headerFontColorText, this.headerFontWeightCombo, this.headerFontDecorationCombo]	
@@ -386,7 +386,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableRowsFontOptions')
 	    	, margin: 			10
 	    	, items: 			[this.rowsFontSizeCombo, this.rowsFontColorText, this.rowsFontWeightCombo, this.rowsFontDecorationCombo]	

@@ -297,7 +297,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 				, fieldDefaults: { margin: '0 7 5 0'}
 				, layout: {type: 'table', columns: 3, tdAttrs: { valign: 'top' } }
 			    , collapsible: true
-			    , collapsed: true
+			    , collapsed: false
 			    , title: LN('sbi.cockpit.widgets.linechart.LineChartWidgetDesigner.form.options.title')
 				, margin: '0 0 10 0'
 				, padding: '0 5 0 5'
@@ -586,7 +586,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartGeneralFontOpts')
 	    	, margin: 			10
 	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
@@ -667,7 +667,7 @@ Ext.define('Sbi.cockpit.widgets.linechart.LineChartWidgetDesigner', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartFontSizeOpts')
 	    	, margin: 			10
 	    	, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]	

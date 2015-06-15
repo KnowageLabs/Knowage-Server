@@ -134,7 +134,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableFontGeneralOpts')
 	        , margin: 			10
 	    	, items: 			[fontTypeCombo, fontSizeCombo]	
@@ -221,7 +221,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableHeaderFontOptions')
 	    	, margin: 			10
 	    	, items: 			[headerFontSizeCombo, headerFontColorText, headerFontWeightCombo, headerFontDecorationCombo]	
@@ -306,7 +306,7 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableRowsFontOptions')
 	    	, margin: 			10
 	    	, items: 			[rowsFontSizeCombo, rowsFontColorText, rowsFontWeightCombo, rowsFontDecorationCombo]	

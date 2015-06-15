@@ -84,7 +84,7 @@ Ext.define('Sbi.layouts.views.ViewModeLayoutTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.layouts.editor.wizard.viewmode.widgetWindowStyle')
 	    	, margin: 			10
 	    	, items: 			[showHeaderCheck]	

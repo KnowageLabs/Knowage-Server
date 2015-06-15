@@ -120,7 +120,7 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartGeneralFontOpts')
 	    	, margin: 			10
 	    	, items: 			[fontTypeCombo, fontSizeCombo]	
@@ -170,7 +170,7 @@ Ext.define('Sbi.fonts.views.PieChartFontTabPanel', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartFontSizeOpts')
 	    	, margin: 			10
 	    	, items: 			[legendFontSizeCombo, tooltipLabelFontSizeCombo]	

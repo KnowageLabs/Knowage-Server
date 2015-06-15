@@ -11,7 +11,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 	, config:{
 		  title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.title')
 		, border: false
-		, ddGroup: null
+		, ddGroup: null,
 	}
 
 	, form: null
@@ -266,7 +266,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartGeneralFontOpts')
 	    	, margin: 			10
 	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
@@ -332,7 +332,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartFontSizeOpts')
 	    	, margin: 			10
 	    	, items: 			[this.legendFontSizeCombo, this.tooltipLabelFontSizeCombo]	
@@ -364,7 +364,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
 					, fieldDefaults: { margin: '0 9 5 0'}
 					, layout: {type: 'table', columns: 2, tdAttrs: { valign: 'top' }}
 		            , collapsible: true
-		            , collapsed: true
+		            , collapsed: false
 		            , title: LN('sbi.cockpit.widgets.piechartwidgetdesigner.form.options.title')
 	            	, margin: '0 0 10 0'
 					, items: controlsItems

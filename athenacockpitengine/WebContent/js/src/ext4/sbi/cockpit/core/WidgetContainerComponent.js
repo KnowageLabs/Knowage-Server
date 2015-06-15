@@ -448,6 +448,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			flex: 1, 
 			region:'center', 
 			header:false, 
+			border:false,
 			items:[this.widget]
 		});
 		
@@ -457,6 +458,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			flex: 0.1, 
 			region:'center', 
 			header:false,
+			border:false
 		});
 		
 		var widgetTitle = this.getWidgetConfiguration().wgeneric.title;

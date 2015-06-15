@@ -426,6 +426,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		
 		Sbi.trace("[MainPanel.onShowSelectionsView]: START");
 		
+		var thePanel = this;
+		
 		if(this.viewSelectionsWindow === undefined || this.viewSelectionsWindow === null) {
 		
 			var config = {};
@@ -463,21 +465,34 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			    title: LN('sbi.cockpit.mainpanel.btn.viewselections'),
 			    height: 300,
 			    width: 650,
-			    layout: 'fit',
+			    layout: {
+			        type: 'vbox',
+			        align : 'stretch'
+			    },
 			    closeAction: 'destroy',
 			    closable: false,
-			    items: { 
+			    items: [{ 
 			        xtype: 'grid',
 			        border: false,
+			        flex: 1,
 			        columns: [{header: LN('sbi.cockpit.mainpanel.btn.associations'), dataIndex: 'association', flex:1},
 			                  {header: LN('sbi.cockpit.core.selections.list.columnValues'), dataIndex: 'values', flex:1}],
 			        store: selectionsStore
-			    }
+			    },
+			    {
+		            xtype: 'button',
+		            text : LN('sbi.ds.wizard.close'),
+		            flex: 0.1,
+		            handler: function(){
+		            	thePanel.viewSelectionsWindow.destroy();
+		            	thePanel.viewSelectionsWindow = null;
+		            }
+			    }]
 			}).show();
 			
 		} else {
 			this.viewSelectionsWindow.destroy();
-			this.viewSelectionsWindow.destroy();
+			//this.viewSelectionsWindow.destroy();
 			this.viewSelectionsWindow = null;
 		}
 		
@@ -864,6 +879,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 				, tooltip: LN('sbi.cockpit.mainpanel.btn.parameters')
 				, scope: this
 				, handler:  this.onShowFilterEditorWizard
+				, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 			 }));
 		}
 

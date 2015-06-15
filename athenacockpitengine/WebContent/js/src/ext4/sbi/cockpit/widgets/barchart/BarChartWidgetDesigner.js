@@ -414,7 +414,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartGeneralFontOpts')
 	    	, margin: 			10
 	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
@@ -498,7 +498,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.chartFontSizeOpts')
 	    	, margin: 			10
 	    	, items: 			[this.legendFontSizeCombo, this.axisTitleFontSizeCombo, this.tooltipLabelFontSizeCombo, this.axisLabelsFontSizeCombo]	
@@ -540,7 +540,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
 		    	          	, padding: '0 0 0 5'
 							, layout: {type: 'table', columns: 3, tdAttrs: { valign: 'top' } }
 				            , collapsible: true
-				            , collapsed: true
+				            , collapsed: false
 				            , title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.options.title')
 			            	, margin: '0 0 10 0'
 //								, title: LN('sbi.worksheet.designer.barchartdesignerpanel.form.fieldsets.options')

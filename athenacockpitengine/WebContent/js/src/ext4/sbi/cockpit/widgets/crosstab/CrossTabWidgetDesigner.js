@@ -430,7 +430,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.crosstabFontGeneralOpts')
 	        , margin: 			10
 	    	, items: 			[this.fontTypeCombo, this.fontSizeCombo]	
@@ -515,7 +515,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.crosstabHeadersFontOpts')
 	    	, margin: 			10
 	    	, items: 			[this.tdLevelFontSizeCombo, this.tdLevelFontColorText, this.tdLevelFontWeightCombo, this.tdLevelFontDecorationCombo]	
@@ -602,7 +602,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.measuresHeadersFontOpts')
 	    	, margin: 			10
 	    	, items: 			[this.tdMemberFontSizeCombo, this.tdMemberFontColorText, this.tdMemberFontWeightCombo, this.tdMemberFontDecorationCombo]	
@@ -687,7 +687,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
 	        , collapsible: 		true
-	        , collapsed: 		true
+	        , collapsed: 		false
 	        , title: 			LN('sbi.cockpit.designer.fontConf.measuresFontOpts')
 	    	, margin: 			10
 	    	, items: 			[this.tdDataFontSizeCombo, this.tdDataFontColorText, this.tdDataFontWeightCombo, this.tdDataFontDecorationCombo]	

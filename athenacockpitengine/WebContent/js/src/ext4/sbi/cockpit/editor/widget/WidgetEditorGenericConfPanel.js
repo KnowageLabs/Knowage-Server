@@ -162,7 +162,12 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		Sbi.trace("[WidgetEditorGenericConfPanel.setFormState]: IN");
 
 		this.fields[0].setValue(widgetConf.title);
-		this.fields[1].setValue(widgetConf.titlePerc);
+		if(widgetConf.titlePerc !== undefined && widgetConf.titlePerc !== null){
+			this.fields[1].setValue(widgetConf.titlePerc);
+		}else{
+			//to manage old saved cockpit without this value
+			this.fields[1].setValue(10);
+		}
 		this.fields[2].setValue(widgetConf.description);
 		this.fields[3].setValue(widgetConf.incomingeventsenabled);
 		this.fields[4].setValue(widgetConf.outcomingeventsenabled);

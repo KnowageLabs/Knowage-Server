@@ -278,7 +278,8 @@ Ext.extend(Sbi.cockpit.widgets.extjs.barchart.BarChartWidgetRuntime, Sbi.cockpit
 			    angle: 45,
 			    stops: {
 				    0: {color: '#ffffff'},
-				    100: {color: '#eaf1f8'}
+				    100: {color: '#ffffff'},
+				    //100: {color: '#eaf1f8'}
 				}
 			}
 		};

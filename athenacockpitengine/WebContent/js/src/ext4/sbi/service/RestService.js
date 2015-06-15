@@ -24,7 +24,7 @@ Ext.define('Sbi.service.RestService', {
 			protocol: 'http'
 			, host: 'localhost'
 			, port: '8080'
-			, contextPath: 'SpagoBI'
+			, contextPath: 'athena'
 		}
 		, controllerConf: {
 			controllerPath: 'api'
