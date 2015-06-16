@@ -10,6 +10,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -91,7 +92,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				// a stmt forward only
 				if (dialect.contains("Ingres")) {
 					stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-				} else if (dialect.contains("hbase") || dialect.contains("hive") || dialect.contains("SAP")) {
+				} else if (dialect.contains("hbase") || SqlUtils.isHiveLikeDialect(dialect) || dialect.contains("SAP")) {
 					stmt = connection.createStatement();
 				} else {
 					stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);

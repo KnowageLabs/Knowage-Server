@@ -170,5 +170,10 @@ public class SqlUtils {
 		return toReturn;
 
 	}
+	
+	public static boolean isHiveLikeDialect(String dialect) {
+		return (dialect.toLowerCase().contains("hive") || dialect.toLowerCase().contains("spark") || dialect.toLowerCase().contains("phoenix") || dialect
+				.toLowerCase().contains("impala"));
+	}
 
 }

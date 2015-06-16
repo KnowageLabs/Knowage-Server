@@ -16,6 +16,9 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
@@ -28,6 +31,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.Date;
 
@@ -179,6 +183,12 @@ public class DataSetFactory {
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 					ds = new MongoDataSet();
+				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("hbase")) {
+					ds = new JDBCHBaseDataSet();
+				} else if (dataSource != null && SqlUtils.isHiveLikeDialect(dataSource.getHibDialectClass().toLowerCase())) {
+					ds = new JDBCHiveDataSet();
+				} else if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("orient")) {
+					ds = new JDBCOrientDbDataSet();
 				} else {
 					ds = new JDBCDataSet();
 				}

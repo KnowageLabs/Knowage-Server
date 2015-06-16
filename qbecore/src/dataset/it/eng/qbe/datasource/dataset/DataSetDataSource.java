@@ -24,6 +24,7 @@ import it.eng.qbe.statement.sql.SQLStatement;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +125,7 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 	private void initStatementType(){
 		IDataSource datasourceForReading = this.getDataSourceForReading();
 		if (datasourceForReading != null) {
-			if(datasourceForReading.getHibDialectName().toLowerCase().contains("hive")){
+			if (SqlUtils.isHiveLikeDialect(datasourceForReading.getHibDialectName())) {
 				statementType = HiveQLStatement.class;
 			}
 		}

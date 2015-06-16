@@ -9,6 +9,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +47,7 @@ public class DataSetFactory {
 		if (className.equals(JDBCDataSet.class.getName())) {
 			try {
 				IDataSource ds = DataSourceFactory.getDataSource(dataSetConfig.getDataSource());
-				if ((ds.getHibDialectName()).toLowerCase().contains("hive")) {
+				if (SqlUtils.isHiveLikeDialect(ds.getHibDialectName().toLowerCase())) {
 					className = JDBCHiveDataSet.class.getName();
 				} else if ((ds.getHibDialectClass()).toLowerCase().contains("mongo")) {
 					className = MongoDataSet.class.getName();
@@ -67,7 +68,7 @@ public class DataSetFactory {
 			String dialect = dataSetConfig.getDataSource().getHibDialectName();
 			if (dialect.contains("hbase")) {
 				className = JDBCHBaseDataSet.class.getName();
-			} else if (dialect.contains("hive")) {
+			} else if (SqlUtils.isHiveLikeDialect(dialect)) {
 				className = JDBCHiveDataSet.class.getName();
 			} else if (dialect.contains("orient")) {
 				className = JDBCOrientDbDataSet.class.getName();

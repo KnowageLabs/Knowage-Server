@@ -20,6 +20,7 @@ import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -165,6 +166,11 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
 		}
 
+		// at the moment (04/2015) hibernate doesn't provide a dialect for hive or hbase with phoenix. But its similar to the postrges one
+		if (SqlUtils.isHiveLikeDialect(dialect)) {
+			dialect = "org.hibernate.dialect.PostgreSQLDialect";
+		}
+		
 		if (getToolsDataSource().checkIsJndi()) {
 			cfg.put("javax.persistence.nonJtaDataSource", getToolsDataSource().getJndi());
 			cfg.put("hibernate.dialect", dialect);

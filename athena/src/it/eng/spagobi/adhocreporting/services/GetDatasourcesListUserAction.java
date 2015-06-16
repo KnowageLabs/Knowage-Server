@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -73,7 +74,7 @@ public class GetDatasourcesListUserAction extends AbstractSpagoBIAction {
 					String dialect = datasource.getHibDialectClass();
 					// HBase and Hive cannot be selected in order to persist a dataset, therefore we exclude them.
 					// TODO When implementing dataset persistence on those system, remove this filter.
-					if (dialect.contains("hbase") && dialect.contains("hive")) {
+					if (dialect.contains("hbase") && SqlUtils.isHiveLikeDialect(dialect)) {
 						continue;
 					}
 					JSONObject obj = new JSONObject();
