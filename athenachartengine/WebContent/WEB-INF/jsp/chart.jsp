@@ -115,6 +115,13 @@ author:
 
 <%@include file="commons/includeMessageResource.jspf"%>
 
+<script>
+	var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+	var userId = '<%=userId%>';
+	var hostName = '<%=request.getServerName()%>';
+	var serverPort = '<%=request.getServerPort()%>';
+</script>
+
 <jsp:include
 	page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" >
 	<jsp:param name="template" value="<%=template%>" />
@@ -145,10 +152,6 @@ author:
 
  			initChartLibrary(mainPanel.id);
  			
- 			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
- 			var userId = '<%=userId%>';
- 			var hostName = '<%=request.getServerName()%>';
- 			var serverPort = '<%=request.getServerPort()%>';
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
 
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);

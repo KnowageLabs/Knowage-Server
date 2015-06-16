@@ -10,9 +10,6 @@
 <script type="text/javascript" src="/athenachartengine/js/src/treemap/treemap.js"></script>
 
 <script>
-	var hostName = '<%=request.getServerName()%>';
-	var serverPort = '<%=request.getServerPort()%>';
-
 	function initChartLibrary(panelId) {
 		Highcharts.setOptions({
 		    chart: {
@@ -30,7 +27,7 @@
 		        plotBorderWidth: 1
 		    },
 		    exporting: {
-		        url: 'http://192.168.40.100:8080/highcharts-export-web/'
+		        url: 'http://'+hostName+':'+serverPort+'/highcharts-export-web/'
 		    },
 		    lang: {
 	            drillUpText: LN('sbi.chartengine.viewer.drilluptext'),
@@ -41,7 +38,6 @@
 	};
 
 	function renderChart(chartConf){
-		
 		if(chartConf.chart.type == 'treemap'){
 			
 			renderTreemap(chartConf);	
