@@ -449,7 +449,7 @@
 		<antcall target="deploy.athenanetworkengine.war" />
 		<!-- antcall target="deploy.SpagoBIWhatIfEngine.war" /-->
 		<!-- antcall target="deploy.SpagoBISocialAnalysis.war" /-->
-
+		<antcall target="deploy.highcharts-export-web.war" />
 	</target>
 
 	<target name="clean-bin.all" >
