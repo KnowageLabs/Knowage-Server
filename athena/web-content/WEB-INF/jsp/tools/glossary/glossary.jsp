@@ -1,21 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="AIDA_GESTIONE-VOCABOLI">
-
-
-
-<script type="text/javascript">
-//  console.log("----------------------------------")
-<%-- var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>; --%>
-<%-- var userId = <%=userId%>; --%>
-//  console.log(userId);
-//  console.log("----------------------------------")
- 
- </script> 
-
-
-
 
 <link rel="stylesheet"
 	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -57,16 +45,31 @@
 
 
 
+<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
+
+<script type="text/javascript">
+
+var hostName = '<%=request.getServerName()%>';
+var serverPort ='<%=request.getServerPort()%>';
+
+</script>
 
 <script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
 
 
 
-<body class="bodyStyle" >
+
+<body class="bodyStyle">
+
+
+
 
 
 	<div ng-controller="Controller as ctrl">
 
+		<div class="preloader" ng-show="ctrl.showPreloader">
+			<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
+		</div>
 
 
 
@@ -83,7 +86,7 @@
 					<div class="md-toolbar-tools">
 
 						<div layout="row" layout-wrap class="search_box">
-							<div flex="30">
+							<div flex="20">
 
 
 								<md-button ng-click="ctrl.createNewWord()"
@@ -93,62 +96,78 @@
 								</md-button>
 							</div>
 
-							<div flex="70">
+							<!-- 							<div flex="40"> -->
+							<!-- 								<md-input-container md-no-float style=" padding-top: 22px;"> -->
+							<!-- 								<md-icon md-font-icon="fa fa-search " -->
+							<!-- 									style="  margin-top: 22px;  margin-left: 11px; color: black;"></md-icon> -->
+							<!-- 								<input ng-model="filter_word.WORD" type="text" -->
+							<!-- 									placeholder="Search"> </md-input-container> -->
+							<!-- 							</div> -->
+
+							<div flex="80">
 								<md-input-container md-no-float style=" padding-top: 22px;">
 								<md-icon md-font-icon="fa fa-search "
 									style="  margin-top: 22px;  margin-left: 11px; color: black;"></md-icon>
-								<input ng-model="filter_word.WORD" type="text"
-									placeholder="Search"> </md-input-container>
+
+
+								<input ng-model="searchValue"
+									ng-keyup="ctrl.WordLike(searchValue)" type="text"
+									placeholder="Search "> </md-input-container>
 							</div>
+
 						</div>
 					</div>
 					</md-toolbar>
-					<md-content layout-padding>
+					<md-content layout-padding> <md-progress-circular
+						md-diameter="20" ng-show="ctrl.showSearchPreloader"
+						class="md-hue-2"
+						style="  left: 50%;  margin-left: -25px; position:absolute "
+						md-mode="indeterminate"></md-progress-circular>
 
-					<div ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"
-						data-drag-delay="500" data-clone-enabled="true">
+
+					<p ng-if="ctrl.words.length==0">List Word Empty</p>
+
+
+					<div ng-if="ctrl.words.length>0" ui-tree="ctrl.TreeOptionsWord"
+						data-drag-enabled="true" data-drag-delay="500"
+						data-clone-enabled="true">
 
 						<ol ui-tree-nodes ng-model="ctrl.words" data-nodrop-enabled="true">
 
 							<li
 								dir-paginate="word in ctrl.words | filter:filter_word:strict | itemsPerPage:	ctrl.WordItemPerPage ">
-								<div ui-tree-node context-menu data-target="WordMenu-{{word.WORD}}">
+								<div ui-tree-node context-menu
+									data-target="WordMenu-{{word.WORD}}">
 
-									<div ui-tree-handle style="border: none;" >
+									<div ui-tree-handle style="border: none;">
 										<md-list> <md-list-item ng-click="1==1"
 											ng-repeat="n in [1]" context-menu
 											data-target="WordMenu-{{word.WORD}}" class="smallListItem"
 											ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 
-										<p>{{ word.WORD | uppercase }}</p>
+										<p class="wrapText">{{ word.WORD | uppercase}}</p>
 
-										
-										
+
+
 
 
 										</md-list-item> </md-list>
 									</div>
-								</div>
-								
-								
-								
-										<!-- 					menu contestuale -->
-										
-										
-										<div class="dropdown position-fixed" style="z-index: 999; left:10px !important"
-							id="WordMenu-{{ word.WORD }}">
-							<md-list class="dropdown-menu" role="menu"	> 
-								<md-list-item
-								ng-click='ctrl.modifyWord(word)' role="menuitem"	tabindex="1" >
-							<p>Modifica</p>
-							</md-list-item>
+								</div> <!-- 					menu contestuale -->
 
- 							 <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem"
-								tabindex="2">
-							<p>Elimina</p>
-							</md-list-item> </md-list>
-						</div>
-								
+
+								<div class="dropdown position-fixed"
+									style="z-index: 999; left: 10px !important"
+									id="WordMenu-{{ word.WORD }}">
+									<md-list class="dropdown-menu" role="menu"> <md-list-item
+										ng-click='ctrl.modifyWord(word)' role="menuitem" tabindex="1">
+									<p>Modifica</p>
+									</md-list-item> <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem"
+										tabindex="2">
+									<p>Elimina</p>
+									</md-list-item> </md-list>
+								</div>
+
 							</li>
 						</ol>
 					</div>
@@ -163,32 +182,10 @@
 					max-size="5"></dir-pagination-controls> </md-whiteframe>
 
 
-				<script type="text/ng-template" id="dirPagination.tpl.html">
-
-<ul class="pagination" ng-if="1 < pages.length">
-    <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
-        <a href="" ng-click="setCurrent(1)"> << </a>
-    </li>
-    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }" class="ng-scope">
-        <a href="" ng-click="setCurrent(pagination.current - 1)" class="ng-binding"> < </a>
-    </li>
-    <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
-        <a href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
-    </li>
-
-    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }" class="ng-scope">
-        <a href="" ng-click="setCurrent(pagination.current + 1)" class="ng-binding"> > </a>
-    </li>
-    <li ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">
-        <a href="" ng-click="setCurrent(pagination.last)"> >> </a>
-    </li>
-</ul>
-			</script>
-
 
 
 			</div>
-			<div flex="75" offset="25" >
+			<div flex="75" offset="25">
 
 				<md-content> <md-tabs md-dynamic-height
 					md-border-bottom> <md-tab label="Glossari"
@@ -209,7 +206,7 @@
 							ng-click="ctrl.createNewGlossary($event)">
 						<p style="color: green;">+ Aggiungi</p>
 						</md-list-item> <md-list-item class="smallListItem"
-							ng-click="ctrl.selectedGloss=gloss"
+							ng-click="ctrl.selectedGloss=gloss; ctrl.getGlossaryNode(gloss,null)"
 							ng-repeat="gloss in ctrl.glossary ">
 
 						<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
@@ -223,15 +220,10 @@
 							id="Gloss-{{  gloss.GLOSSARY_NM }}">
 							<md-list class="dropdown-menu" role="menu"
 								style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
-								ng-click='ctrl.newSubItemRootGloss(ctrl.selectedGloss)'
-								role="menuitem" tabindex="1">
-							<p>Aggiungi Nodo Logico</p>
-							</md-list-item> <md-list-item
-								ng-click='ctrl.newSubItemRootGloss(ctrl.selectedGloss)'
-								role="menuitem" tabindex="1">
-							<p>Aggiungi Vocabolo</p>
-							</md-list-item> <md-list-item ng-click='ctrl.deleteGloss(ctrl.selectedGloss)'
-								role="menuitem" tabindex="1">
+								ng-click='ctrl.CloneGloss(gloss)' role="menuitem" tabindex="1">
+							<p>Clona</p>
+							</md-list-item> <md-list-item ng-click='ctrl.deleteGloss(gloss)' role="menuitem"
+								tabindex="1">
 							<p>Elimina</p>
 							</md-list-item> </md-list>
 						</div>
@@ -244,76 +236,6 @@
 
 
 
-						<!-- Nested list template -->
-						<script type="text/ng-template" id="items_renderer.html">
-			  <div context-menu data-target="WordTree-{{item.CONTENT_NM}}"	ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
-	
-               	<div ui-tree-handle  > 
-
-
-		<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
-						<md-list> 
-						<md-list-item	class="SecondaryOnLeft" ng-click="1==1" >	
-
-						<p style="  margin-left: 30px;"><input class="transparent_input" type="text" name="nome" ng-model="item.CONTENT_NM"   > </p>
-						<md-icon class="md-secondary sm-font-icon " 	ng-click="toggle(this)" aria-label="Chat"	md-font-icon="fa fa-angle-down " style=" right: 0px;"  ng-show="!collapsed"></md-icon>
-						<md-icon class=" sm-font-icon expandericon"	ng-click="toggle(this)" aria-label="Chat2"	md-font-icon="fa fa-angle-right "  ng-show="collapsed"></md-icon>
-						</md-list-item> 
-
-						</md-list>
-				 
-
-		</div>
-
-			<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo" >
-						<md-list> 
-						<md-list-item	class="SecondaryOnLeft" ng-click="1==1" >	
-
-						<p style="  margin-left: 30px;" >{{item.WORD}}</p>
-						<md-icon class="md-secondary sm-font-icon " 	ng-click="toggle(this)" aria-label="Chat"	md-font-icon="fa fa-angle-down " style=" right: 0px;"  ng-show="!collapsed"></md-icon>
-						<md-icon class=" sm-font-icon expandericon"	ng-click="toggle(this)" aria-label="Chat2"	md-font-icon="fa fa-angle-right "  ng-show="collapsed"></md-icon>
-						</md-list-item> 
-
-						</md-list>
-			</div>
-
-
-				 </div>
-
-
-				  </div>
-
-
-						<!-- 					menu contestuale albero -->
-						<div class="dropdown position-fixed" style="z-index: 999;"
-							id="WordTree-{{ item.CONTENT_NM }}">
-							<md-list class="dropdown-menu" role="menu"
-								style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
-								ng-click='ctrl.newSubItem(this,item)' role="menuitem"
-								tabindex="1" ng-if=" item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)">
-							<p>Nuovo Nodo Logico</p>
-							</md-list-item>
-
- 							<md-list-item
-								ng-click='ctrl.newSubItem(this,item)' role="menuitem"
-								tabindex="2" ng-if=" item.CONTENT_NM != undefined">
-							<p>Nuovo Vocabolo</p>
-							</md-list-item>  <md-list-item ng-click='ctrl.remove(this)' role="menuitem"
-								tabindex="3">
-							<p>Elimina</p>
-							</md-list-item> </md-list>
-						</div>
-
-<!-- 						fine menu contestuale albero -->
-
-			
-				
-                <ol ng-if=" item.CONTENT_NM != undefined" ui-tree-nodes="options" ng-model="item.CHILD" ng-class="{hideChildren: collapsed}">
-				<li ng-repeat="item in item.CHILD" ui-tree-node ng-include="'items_renderer.html'" class="figlioVisibile"></li>
-				<li  ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox" ></li>				
-</ol>
-				
-              </script>
 
 
 
@@ -360,7 +282,8 @@
 									ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS"
 									ng-class="{hideChildren: collapsed}">
 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
-										ui-tree-node ng-include="'items_renderer.html'"></li>
+										ui-tree-node data-collapsed="true"
+										ng-include="'items_renderer.html'"></li>
 
 									<li ng-if="ctrl.selectedGloss.SBI_GL_CONTENTS.length == 0 "
 										ng-repeat="n in [1]" data-nodrag ui-tree-node
@@ -488,90 +411,16 @@
 					</div>
 
 
-
-
-					<!-- 					<div layout="row" layout-wrap> -->
-					<!-- 						<div flex="30" style="padding-right: 40px;"> -->
-					<!-- 							<div layout="column" layout-wrap> -->
-
-
-
-					<!-- 								<md-autocomplete style="  min-width: 0;" flex="" -->
-					<!-- 									md-input-name="autocompleteField" md-no-cache="ctrl.noCache" -->
-					<!-- 									md-search-text="ctrl.tmpAttr.Prop" -->
-					<!-- 									md-selected-item="ctrl.selectedItem" -->
-					<!-- 									md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)" -->
-					<!-- 									md-item-text="item.ATTRIBUTE_NM" md-require-match="" -->
-					<!-- 									md-floating-label="Proprietà"> <md-item-template> -->
-					<!-- 								<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span> -->
-					<!-- 								</md-item-template> </md-autocomplete> -->
-
-
-
-					<!-- 								<md-button ng-click="ctrl.addProp(ctrl.tmpAttr)" -->
-					<!-- 									ng-disabled="!ctrl.propPresent(ctrl.tmpAttr.Prop) || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null " -->
-					<!-- 									class="md-fab   md-mini" aria-label="Aggiungi_Attributo" -->
-					<!-- 									style="margin: -27px;  margin-left: 100%;"> -->
-
-					<!-- 								<md-tooltip> Aggiungi Attributo </md-tooltip> <md-icon -->
-					<!-- 									md-font-icon="fa fa-angle-double-right fa-2x" -->
-					<!-- 									style="  margin-bottom: 5px;  margin-left: 5px;"></md-icon> -->
-					<!-- 								</md-button> -->
-
-
-
-					<!-- 								<md-input-container> Use floating label instead of placeholder -->
-					<!-- 								<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val" -->
-					<!-- 									type="text"> </md-input-container> -->
-
-					<!-- 							</div> -->
-					<!-- 						</div> -->
-
-
-					<!-- 						<div flex="70"> -->
-
-					<!-- 							<md-list> <md-list-item -->
-					<!-- 								class="md-2-line box-list-option" -->
-					<!-- 								ng-repeat="veg in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row" -->
-					<!-- 								layout-wrap> -->
-					<!-- 							<div class="md-item-text md-whiteframe-z1" flex> -->
-					<!-- 								<p class="margin5"> -->
-					<!-- 									<input class="transparent_input smallFont" ng-model="veg.Prop" -->
-					<!-- 										type="text"> -->
-					<!-- 								</p> -->
-					<!-- 								<p class="margin5"> -->
-					<!-- 									<input class="transparent_input smallFont " ng-model="veg.Val" -->
-					<!-- 										type="text"> -->
-					<!-- 								</p> -->
-
-					<!-- 								<md-button ng-click="ctrl.removeProp(veg)" class="md-fab   md-ExtraMini" -->
-					<!-- 									aria-label="add word" -->
-					<!-- 									style="  background-color: rgb(221, 0, 0) !important; -->
-					<!--  margin-top: -49px; */ /* margin-left: 89%; */ /* border-radius:	0px; -->
-					<!--   border-bottom-left-radius: 18px;"> -->
-					<!-- 								<md-icon md-font-icon="fa fa-times" style="  color: white;"></md-icon> -->
-					<!-- 								</md-button> -->
-
-
-					<!-- 							</div> -->
-					<!-- 							</md-list-item> </md-list> -->
-
-					<!-- 						</div> -->
-					<!-- 					</div> -->
-
-
-
-
-
 					<div layout="row" layout-wrap>
-	<div flex="5">
-	<md-icon md-font-icon="fa fa-folder-o " class="stato" style="  margin-top: 25px;"></md-icon>
-	
-	</div>
+						<div flex="5">
+							<md-icon md-font-icon="fa fa-folder-o " class="stato"
+								style="  margin-top: 25px;"></md-icon>
+
+						</div>
 
 						<div flex="40">
 							<md-autocomplete style="  min-width: 0;" flex=""
-								md-input-name="autocompleteField" md-no-cache="ctrl.noCache"
+								md-input-name="autocompleteField" md-no-cache="true"
 								md-search-text="ctrl.tmpAttr.Prop"
 								md-selected-item="ctrl.selectedItem"
 								md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
@@ -589,12 +438,13 @@
 						</div>
 
 						<div flex="15">
-							<md-button ng-click="ctrl.addProp(ctrl.tmpAttr)"
-								ng-disabled="!ctrl.propPresent(ctrl.tmpAttr.Prop) || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
-								class="md-fab   md-mini" aria-label="Aggiungi_Attributo"	> <md-tooltip>
-							Aggiungi Attributo </md-tooltip> <md-icon
-								md-font-icon="fa fa-plus fa-2x"
-								style="   margin-left: 2px;"></md-icon> </md-button>
+							<md-button
+								ng-click="ctrl.tmpAttr.Prop=ctrl.selectedItem ;ctrl.addProp(ctrl.tmpAttr)"
+								ng-disabled="  ctrl.selectedItem==undefined || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
+								class="md-fab   md-mini" aria-label="Aggiungi_Attributo">
+							<md-tooltip> Aggiungi Attributo </md-tooltip> <md-icon
+								md-font-icon="fa fa-plus fa-2x" style="   margin-left: 2px;"></md-icon>
+							</md-button>
 						</div>
 
 					</div>
@@ -607,18 +457,17 @@
 
 							<md-list> <md-list-item
 								class="md-2-line box-list-option"
-								ng-repeat="veg in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
+								ng-repeat="attr in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
 								layout-wrap>
 							<div class="md-item-text md-whiteframe-z1" flex>
 								<p class="margin5">
-									<input class="transparent_input smallFont" ng-model="veg.Prop"
-										type="text">
-						
-									<input class="transparent_input smallFont " ng-model="veg.Val"
+									<input class="transparent_input smallFont"
+										ng-model="attr.ATTRIBUTE_NM" type="text"> <input
+										class="transparent_input smallFont " ng-model="attr.VALUE"
 										type="text">
 								</p>
 
-								<md-button ng-click="ctrl.removeProp(veg)"
+								<md-button ng-click="ctrl.removeProp(attr)"
 									class="md-fab   md-ExtraMini" aria-label="add word"
 									style="  background-color: rgb(221, 0, 0) !important;
   margin-top: -44px;
@@ -653,10 +502,9 @@
 			</div>
 
 
-
+			{{ctrl.tmpAttr}} {{ctrl.selectedItem}}
 		</div>
 
-		{{ctrl.prova}}
 	</div>
 
 

@@ -14,13 +14,16 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttrId;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -29,10 +32,57 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JacksonWrapper;
 
 @Path("/1.0/glossary")
 public class GlossaryService {
 
+	@POST
+	@Path("/ModifyContentsGlossary")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String ModifyContentsGlossary(@Context HttpServletRequest req) {
+		try {
+			System.out.println("ModifyContentsGlossary");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			System.out.println(req.toString());
+			JSONObject requestVal= RestUtilities.readBodyAsJSONObject(req);
+			
+			
+			
+			Integer contentId = (Integer) requestVal.opt("CONTENT_ID");
+			Integer parentId = (Integer) requestVal.opt("PARENT_ID");
+			
+			
+			System.out.println("-contentId="+contentId);
+			System.out.println("-parentId="+parentId);
+			
+			
+			SbiGlContents contents = dao.loadContents(contentId);
+			
+			System.out.println("padre="+contents.getParent().getContentId());
+			
+			SbiGlContents parent = dao.loadContents(parentId);
+			contents.setParent(parent);
+			
+			System.out.println("padre="+contents.getParent().getContentId());
+			
+			dao.modifyContents(contents);
+			
+			
+			return "{status:'ok'}";
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+	
+	
+	
+	
+	
+	
 	@GET
 	@Path("/listContents")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -152,7 +202,9 @@ public class GlossaryService {
 	}
 
 	private static JSONObject from(SbiGlWord word) throws JSONException {
-		JSONObject obj = new JSONObject();
+		JSONObject obj = new JSONObject(word);
+		
+		/*
 		obj.put("WORD_ID", word.getWordId());
 		obj.put("WORD", word.getWord());
 		obj.put("DESCR", word.getDescr());
@@ -177,7 +229,7 @@ public class GlossaryService {
 				attrs.put(jsonAttr);
 			}
 			obj.put("SBI_GL_WORD_ATTR", attrs);
-		}
+		}*/
 		return obj;
 	}
 
@@ -205,7 +257,7 @@ public class GlossaryService {
 			obj.setAttributes(new HashSet<SbiGlWordAttr>());
 			SbiGlAttribute attribute = new SbiGlAttribute(1, "attributeCd", "attr name", "attributeDs", 1, "type", "domain", "format", "displayTp", "1");
 			obj.getAttributes().add(new SbiGlWordAttr(new SbiGlWordAttrId(1, 1), obj, attribute, "attr 1 value", 1));
-			JSONObject jobj = from(obj);
+			JSONObject jobj = new JSONObject().put("aaa",obj);//from(obj);
 			System.out.println(jobj.toString());
 		} catch (Exception e) {
 			e.printStackTrace();

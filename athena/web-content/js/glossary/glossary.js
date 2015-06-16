@@ -2,44 +2,67 @@ var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree',
 		'angularUtils.directives.dirPagination', 'ng-context-menu' ]);
 
 app.config(function($mdThemingProvider) {
-	  $mdThemingProvider.theme('default')
-	    .primaryPalette('grey')
-	    .accentPalette('blue-grey');
-	});
+	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
+			'blue-grey');
+});
 
-app.constant('ENDPOINT_URI', 'http://192.168.43.150:8080/athena/restful-services/1.0/')
+app.constant('ENDPOINT_URI', 'http://' + hostName + ':' + serverPort
+		+ '/athena/restful-services/1.0/');
 
-app.service('restServices',function ($http, ENDPOINT_URI) {
-	
+app.service('restServices', function($http, ENDPOINT_URI) {
+
 	var service = this;
-	var path="glossary/"
-	
-	function getBaseUrl() {
-	      return ENDPOINT_URI + path;
-	    }
-	
-	 service.allWord = function () {
-		 console.log("getWord")
-		
-		 
-		 
-		 
-		 console.log(getBaseUrl()+"listWords?SBI_EXECUTION_ID=&user_id=biadmin")
-	      return $http.get(getBaseUrl()+"listWords?SBI_EXECUTION_ID=&user_id=biadmin");
-	    };
-	
-	    service.WordLike = function (item) {
-		      return $http.get(getBaseUrl()+"Word/"+item);
-		    };
-		    
-		    service.prova= function(){
-		    	return $http.get("https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal")
-		    }
-	
-})
+	var path = "glossary";
 
+	function getBaseUrl(endP_path) {
+		endP_path == undefined ? endP_path = path : true;
+		return ENDPOINT_URI + endP_path + "/";
+	}
+	;
 
+	service.get = function(endP_path, req_Path, item) {
+		item == undefined ? item = "" : item = "?" + item;
+		console.log("service.get");
+		console.log("endP_path= " + endP_path)
+		console.log("req_Path=" + req_Path)
+		console.log("item=" + item)
+		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item);
+	};
 
+	// prendo i nodi di un glossario
+
+	service.getGlossNode = function(glossID, nodeID) {
+		console.log(getBaseUrl() + "listContents?GLOSSARY_ID=" + glossID
+				+ "&PARENT_ID=" + nodeID)
+		return $http.get(getBaseUrl() + "listContents?GLOSSARY_ID=" + glossID
+				+ "&PARENT_ID=" + nodeID);
+	};
+
+	// prendo tutte le informazioni di uno specifico word
+	service.getWord = function(item) {
+		return $http.get(getBaseUrl() + "getWord?WORD_ID=" + item);
+	};
+
+	// salvo un word
+	service.addWord = function(item) {
+		return $http.post(getBaseUrl() + "addWord", item);
+	};
+
+	// elimino un word
+	service.deleteWord = function(item) {
+		return $http.post(getBaseUrl() + "deleteWord", item);
+	};
+
+	service.WordLike = function(item) {
+		return $http.get(getBaseUrl() + "listWords?WORD=" + item);
+	};
+
+	service.AlterContentGloss = function(item) {
+		console.log("AlterContentGloss")
+		return $http.post(getBaseUrl() + "ModifyContentsGlossary", item);
+	}
+
+});
 
 var EmptyWord = {
 	LINK : [],
@@ -51,6 +74,17 @@ var EmptyWord = {
 	FORMULA : "",
 	NEWWORD : true
 };
+
+var EmptyLogicalNode = {
+		CONTENT_ID : '',
+		GLOSSARY_ID : '',
+		PARENT_ID : '',
+		CONTENT_CD : '',
+		CONTENT_NM : '',
+		CONTENT_DS : '',
+		DEPTH : '',
+		CHILD : []
+	}
 
 var EmptyGloss = {
 	// GLOSSARY_ID : 1,
@@ -173,52 +207,34 @@ var glos = [ {
 	SBI_GL_CONTENTS : [], // DOVREBBERO ESSERE I NODI
 } ];
 
-app.controller('Controller', [ "restServices","$scope", "$mdDialog", "$filter", "$timeout",
-		funzione ]);
+app.controller('Controller', [ "restServices", "$q", "$scope", "$mdDialog",
+		"$filter", "$timeout", "$mdToast", funzione ]);
 
-function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
+function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
+		$mdToast) {
 	ctr = this;
-	ctr.activeTab = 'Vocabolo';
+	ctr.showPreloader = false;
+	ctr.showSearchPreloader = false;
+	ctr.activeTab = 'Glossario';
 	ctr.filterSelected = true;
-	ctr.words = wor;
+	ctr.words = [];
+	getAllWords();
 
-	
-	
-	
-//	 function getWord() {
-//		 console.log("getWord")
-//		 restServices.allWord()
-//	        .then(function (result) {
-//	        	console.log("Word Ottenuti")
-//	        	console.log(result)
-//// ctr.words = result.data;
-//	        });
-//	    }
-//	    getWord();
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	var c = 0;
-
-	for (x in wor) {
-		for (var i = 0; i < 20; i++) {
-			var tmp = JSON.parse(JSON.stringify(wor[x]))
-			tmp.WORD = tmp.WORD + "-" + i
-			tmp.WORD_ID = tmp.WORD_ID *i*100
-			ctr.words.push(tmp)
-
-		}
-	}
+	// var c = 0;
+	//
+	// for (x in wor) {
+	// for (var i = 0; i < 20; i++) {
+	// var tmp = JSON.parse(JSON.stringify(wor[x]))
+	// tmp.WORD = tmp.WORD + "-" + i
+	// tmp.WORD_ID = tmp.WORD_ID * i * 100
+	// ctr.words.push(tmp)
+	//
+	// }
+	// }
 
 	ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 	ctr.glossary = glos;
+	getAllGloss();
 	ctr.newGloss = JSON.parse(JSON.stringify(EmptyGloss));
 	ctr.propWord = SBI_GL_ATTRIBUTES;
 	ctr.querySearchProp = "";
@@ -226,7 +242,6 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 	ctr.selectedGloss = JSON.parse(JSON.stringify(EmptyGloss));
 
 	ctr.modifyWord = function(word) {
-
 		if (JSON.stringify(EmptyWord) != JSON.stringify(ctr.newWord)) {
 			var confirm = $mdDialog
 					.confirm()
@@ -298,7 +313,11 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 		if (ele == undefined) {
 			ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		} else {
-			ctr.newWord = ele;
+
+			// scarico tutte le informazioni del word
+			getWord(ele);
+
+			// ctr.newWord = ele;
 		}
 
 	}
@@ -313,22 +332,36 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 			ATTRIBUTE_NM : query.toUpperCase()
 		}, compareForNestedFiltering);
 
+		console.log(results)
 		return results;
 	}
 
 	ctr.addProp = function(prop) {
-		ctr.newWord.SBI_GL_WORD_ATTR.push(prop)
+		console.log("aggiungo attributo")
+		console.log(prop)
+		
+		var np={};
+		np.ATTRIBUTE_NM=prop.Prop.ATTRIBUTE_NM;
+		np.ATTRIBUTE_CD=prop.Prop.ATTRIBUTE_CD;
+		np.VALUE=prop.Val;
+		
+		
+		ctr.newWord.SBI_GL_WORD_ATTR.push(np)
 		ctr.tmpAttr = {};
 	};
-	
-	ctr.removeProp=function(prop){
+
+	ctr.removeProp = function(prop) {
 		console.log("removeprop")
-		ctr.newWord.SBI_GL_WORD_ATTR.splice(ctr.newWord.SBI_GL_WORD_ATTR.indexOf(prop),1)
+		ctr.newWord.SBI_GL_WORD_ATTR.splice(ctr.newWord.SBI_GL_WORD_ATTR
+				.indexOf(prop), 1)
 	}
 
 	ctr.propPresent = function(query) {
-		if (query == null)
+		if (query == null || query==undefined || angular.equals({},query) ){
 			return false;
+		}
+			
+		console.log(query)
 
 		var results;
 		if (typeof query !== 'object') {
@@ -366,12 +399,63 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 		return result;
 	};
 
-	ctr.querySearch = function(chip) {
+	// non sincronizzato( sulla base dei word presenti)
+	ctr.querySearchold = function(chip) {
 		console.log("querySearch")
 		var found = $filter('filter')(ctr.words, {
 			WORD : chip.toUpperCase()
 		}, compareForNestedFiltering);
 		return found;
+	}
+
+	ctr.tmpWordChipsSearch = "";
+	ctr.prevChipsSearch = "";
+
+	ctr.querySearch = function(chip) {
+		var def = $q.defer();
+
+		ctr.tmpWordChipsSearch = chip;
+		$timeout(function() {
+
+			if (ctr.tmpWordChipsSearch != chip || ctr.prevChipsSearch == chip) {
+				console.log("interrompo la ricerca chips di ele " + chip)
+				return;
+			}
+
+			ctr.prevChipsSearch = chip;
+
+			restServices.WordLike(chip).success(
+					function(data, status, headers, config) {
+						console.log("chipsword Ottenuto")
+						console.log(data)
+						if (data.hasOwnProperty("errors")) {
+							return;
+						} else {
+							def.resolve(data);
+						}
+						hidePreloader();
+					}).error(function(data, status, headers, config) {
+				console.log("Words non Ottenuti " + status);
+			})
+		}, 1000);
+
+		ctr.prevChipsSearch = "-1-";
+
+		return def.promise.then(function(val) {
+
+			for (var i = 0; i < val.length; i++) {
+				if (JSON.stringify(ctr.newWord.LINK).toString().toLowerCase()
+						.indexOf(val[i].WORD.toString().toLowerCase()) != -1) {
+					val.splice(i, 1);
+					i--;
+				}
+			}
+			return val;
+		}, function(val) {
+			console.log("promisenonok")
+
+		})
+
 	}
 
 	ctr.newLink = function(chip) {
@@ -528,6 +612,78 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 		},
 
 		beforeDrop : function(event) {
+			console.log("beforeDrop")
+			console.log(event)
+
+			var n1 = event.dest.nodesScope.$nodeScope == null ? null
+					: event.dest.nodesScope.$nodeScope.$id;
+			var n2 = event.source.nodesScope.$nodeScope == null ? null
+					: event.source.nodesScope.$nodeScope.$id;
+
+			if (n1 == n2) {
+				console.log("nessun movimento")
+				return;
+			}
+
+			var confirm = $mdDialog.confirm().parent(
+					angular.element(document.body)).title(
+					'Sei sicuro di voler effettuare questa modifica?').content(
+					'I dati saranno immediatamente salvati sul database.')
+					.ariaLabel('Muovi').ok('Muovi').cancel('Annulla')
+
+			$mdDialog
+					.show(confirm)
+					.then(
+							function() {
+								console.log("accettato");
+								console.log(event.source.nodeScope.item)
+
+								var elem = event.source.nodeScope.item;
+
+								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
+										: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
+
+								showPreloader();
+								restServices
+										.AlterContentGloss(elem)
+										.success(
+												function(data, status, headers,
+														config) {
+
+													if (data
+															.hasOwnProperty("errors")) {
+														showErrorToast(data.errors[0].message)
+													} else {
+														showToast(
+																"Salvato con successo",
+																3000);
+														event.dest.nodesScope
+																.insertNode(
+																		event.dest.index,
+																		elem);
+														event.source.nodesScope.$modelValue
+																.splice(
+																		event.source.index,
+																		1);
+													}
+
+													event.dest.nodesScope
+															.expand();
+													hidePreloader();
+												}).error(
+												function(data, status, headers,
+														config) {
+													hidePreloader();
+												});
+
+							}, function() {
+								console.log("rifiutato");
+								hidePreloader();
+							});
+
+			// non faccio spostare l'elemento automaticamente
+			event.source.nodeScope.$$apply = false;
+
 		},
 
 		dragStart : function(event) {
@@ -570,6 +726,7 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 		},
 
 		beforeDrop : function(event) {
+
 		},
 
 		dragStart : function(event) {
@@ -585,8 +742,79 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 		scope.remove();
 	};
 
-	ctr.toggle = function(scope) {
-		scope.toggle();
+	ctr.rename = function(node) {
+		console.log("rename")
+		console.log(node)
+		console.log(node.$modelValue)
+
+		$mdDialog
+				.show(
+						{
+							controllerAs : "renCtrl",
+							controller : function($mdDialog) {
+								var rn = this;
+								rn.oldValue = node.$modelValue.CONTENT_NM;
+								rn.salva = function(val) {
+									console.log("salvo " + val)
+
+									showPreloader();
+									restServices
+											.AlterContentGloss(node.$modelValue)
+											.success(
+													function(data, status,
+															headers, config) {
+														console.log("ok")
+														if (data
+																.hasOwnProperty("errors")) {
+															showErrorToast(data.errors[0].message)
+														} else {
+															showToast(
+																	"Salvato con successo",
+																	3000);
+
+															node.$modelValue.CONTENT_NM = val;
+														}
+														hidePreloader();
+													})
+											.error(
+													function(data, status,
+															headers, config) {
+														console.log("nonok")
+														showToast("Errore nel salvataggio "
+																+ status);
+														hidePreloader();
+													});
+
+									$mdDialog.hide();
+								};
+								rn.annulla = function() {
+									console.log("annulla");
+									$mdDialog.hide();
+								}
+
+							},
+							templateUrl : 'rename.dialog.html',
+							parent : angular.element(document.body),
+
+						}).then(
+						function(answer) {
+							console.log('You said the information was "'
+									+ answer + '".');
+						}, function() {
+							console.log('You cancelled the dialog.');
+						});
+
+	};
+
+	ctr.toggle = function(scope, item, gloss) {
+		console.log("toggle")
+		scope.preloader = true;
+		if (scope.collapsed) {
+			ctr.getGlossaryNode(null, item, scope)
+		} else {
+			scope.toggle();
+			scope.preloader = false;
+		}
 	};
 
 	ctr.hasVocabolaryChild = function(scope) {
@@ -619,16 +847,72 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 		var nodeData = scope.$modelValue;
 		console.log(parent)
 
-		parent.CHILD.push({
-			CONTENT_ID : 'Phhh',
-			GLOSSARY_ID : 1,
-			PARENT_ID : 'P1',
-			CONTENT_CD : 'c2',
-			CONTENT_NM : parent.CONTENT_NM + ' ch' + (parent.CHILD.length + 1),
-			CONTENT_DS : 'descr2',
-			DEPTH : 1,
-			CHILD : []
-		});
+//		var tmpNW = {
+//			CONTENT_ID : 'Phhh',
+//			GLOSSARY_ID : 1,
+//			PARENT_ID : 'P1',
+//			CONTENT_CD : 'c2',
+//			CONTENT_NM : parent.CONTENT_NM + ' ch' + (parent.CHILD.length + 1),
+//			CONTENT_DS : 'descr2',
+//			DEPTH : 1,
+//			CHILD : []
+//		}
+
+		$mdDialog
+				.show({
+					controllerAs : "renCtrl",
+					controller : function($mdDialog) {
+						var rn = this;
+				rn.tmpNW =  JSON.parse(JSON.stringify(EmptyLogicalNode));
+					
+
+						rn.salva = function() {
+							console.log("salvo nuovo nodo logico")
+							rn.tmpNW.PARENT_ID = parent.CONTENT_ID;
+							rn.tmpNW.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID ;
+						
+							showPreloader();
+							restServices
+									.addWord(rn.tmpNW)
+									.success(
+											function(data, status, headers,
+													config) {
+												console.log("ok")
+												if (data
+														.hasOwnProperty("errors")) {
+													showErrorToast(data.errors[0].message)
+												} else {
+													showToast(
+															"Salvato con successo",
+															3000);
+
+													parent.CHILD.push(tmpNW);
+
+												}
+												hidePreloader();
+											})
+									.error(
+											function(data, status, headers,
+													config) {
+												console.log("nonok")
+												showToast("Errore nel salvataggio del nuovo nodo logico "
+														+ status);
+												hidePreloader();
+											});
+
+							$mdDialog.hide();
+						};
+						rn.annulla = function() {
+							console.log("annulla");
+							$mdDialog.hide();
+						}
+
+					},
+					templateUrl : 'new.logical.node.dialog.html',
+					parent : angular.element(document.body),
+
+				})
+
 	};
 
 	// <!-- fine tree -->
@@ -657,6 +941,170 @@ function funzione(restServices,$scope, $mdDialog, $filter, $timeout) {
 	ctr.WordItemPerPage = 5;
 	changeWordItemPP();
 
+	// rest call function
+
+	function getAllWords() {
+		console.log("getAllWords")
+		showPreloader();
+		restServices.get("glossary", "listWords").success(
+				function(data, status, headers, config) {
+					console.log("Words Ottenuti " + status)
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						showErrorToast(data.errors[0].message)
+					} else {
+						ctr.words = data;
+					}
+
+					hidePreloader();
+				}).error(function(data, status, headers, config) {
+			console.log("Words non Ottenuti " + status);
+			showErrorToast('Ci sono errori! \n status ' + status)
+			hidePreloader();
+		})
+
+	}
+
+	function getAllGloss() {
+		console.log("getAllGloss")
+		showPreloader();
+		restServices.get("glossary", "listGlossary").success(
+				function(data, status, headers, config) {
+					console.log("Glossary Ottenuti " + status)
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						showErrorToast(data.errors[0].message)
+					} else {
+						ctr.glossary = data;
+					}
+
+					hidePreloader();
+				}).error(function(data, status, headers, config) {
+			console.log("Glossary non Ottenuti " + status);
+			showErrorToast('Ci sono errori! \n status ' + status)
+			hidePreloader();
+		})
+
+	}
+
+	ctr.tmpWordSearch = "";
+	ctr.prevSearch = "";
+
+	ctr.WordLike = function(ele) {
+		console.log("WordLike" + ele)
+		ctr.tmpWordSearch = ele;
+		$timeout(function() {
+
+			if (ctr.tmpWordSearch != ele || ctr.prevSearch == ele) {
+				console.log("interrompo la ricerca  di ele " + ele)
+				return;
+			}
+
+			ctr.prevSearch = ele;
+			ctr.showSearchPreloader = true;
+			restServices.WordLike(ele).success(
+					function(data, status, headers, config) {
+						console.log("WordLike Ottenuti " + status)
+						console.log(data)
+						ctr.words = data;
+						ctr.showSearchPreloader = false;
+					}).error(function(data, status, headers, config) {
+				console.log("WordLike non Ottenuti " + status);
+				ctr.showSearchPreloader = false;
+			})
+
+		}, 1000);
+
+	}
+
+	function getWord(ele) {
+		console.log("getWord")
+		showPreloader();
+		restServices.getWord(ele.WORD_ID).success(
+				function(data, status, headers, config) {
+					console.log("Word Ottenuto")
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						showErrorToast(data.errors[0].message)
+						ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
+					} else {
+						ctr.newWord = data;
+						ctr.activeTab = 'Vocabolo';
+					}
+
+					hidePreloader();
+
+				}).error(function(data, status, headers, config) {
+			console.log("Words non Ottenuti " + status);
+			showErrorToast('Ci sono errori! \n status ' + status)
+			hidePreloader();
+		})
+
+	}
+
+	ctr.getGlossaryNode = function(gloss, node, togg) {
+		console.log("getGlossaryNode")
+		console.log(node)
+		console.log(gloss)
+		var PARENT_ID = (node == null ? null : node.CONTENT_ID);
+		var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
+		console.log(PARENT_ID)
+		console.log(GLOSSARY_ID)
+
+		restServices.get("glossary", "listContents",
+				"GLOSSARY_ID=" + GLOSSARY_ID + "&PARENT_ID=" + PARENT_ID)
+				.success(function(data, status, headers, config) {
+					console.log("nodi ottnuti")
+					console.log(data)
+					console.log(node)
+
+					if (node == null) {
+						gloss.SBI_GL_CONTENTS = data
+					} else {
+						node.CHILD = data;
+					}
+
+					if (togg != undefined) {
+						togg.toggle();
+						togg.preloader = false;
+					}
+				}).error(function(data, status, headers, config) {
+					console.log("nodi non ottenuti " + status)
+					if (togg != undefined) {
+						togg.toggle();
+						togg.preloader = false;
+					}
+				})
+	}
+
+	function showErrorToast(err, time) {
+		var timer = time == undefined ? 6000 : time
+		console.log("ci sono errori")
+		console.log(err)
+		$mdToast.show($mdToast.simple().content('Ci sono errori! \n ' + err)
+				.position('top').action('OK').highlightAction(false).hideDelay(
+						timer));
+	}
+
+	function showToast(text, time) {
+		var timer = time == undefined ? 6000 : time
+		console.log("ci sono errori")
+		console.log(text)
+		$mdToast.show($mdToast.simple().content(text).position('top').action(
+				'OK').highlightAction(false).hideDelay(timer));
+	}
+
+	function showPreloader(pre) {
+		ctr.showPreloader = true;
+
+	}
+	function hidePreloader(pre) {
+		ctr.showPreloader = false;
+	}
+
+	ctr.prova = function() {
+		console.log("prova")
+	}
 }
 
 // app.directive('resize', function ($window) {

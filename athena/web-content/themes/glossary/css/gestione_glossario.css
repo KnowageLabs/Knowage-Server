@@ -216,9 +216,9 @@ md-toolbar.md-default-theme.md-blue {
 
 .SecondaryOnLeft .expandericon {
 	position: absolute;
-	left: -9px;
-	top: 7px;
-	margin-left: 19px;
+  left: 0px;
+  top: 15px;
+  margin-left: 19px;
 }
 
 .figlio_vocabolo {
@@ -275,8 +275,19 @@ md-toolbar.md-default-theme.md-blue {
 	margin: 20px;
 }
 
+.nodo_logico:hover{
+/* 	border:2px solid rgb(232, 232, 232); !important; */
+-webkit-box-shadow: -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
+-moz-box-shadow:    -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
+box-shadow:         -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
+}
+
+
+.nodo_logico md-list {
+	padding: 0px!important;
+}
 .addFiglioBox {
-	/*   background: rgba(224, 229, 240, 0.42) !important; */
+/* 	  background: rgba(224, 229, 240, 0.42) !important; */
 	top: -20px !important;
 	width: 100% !important;
 	right: 0 !important;
@@ -417,3 +428,24 @@ table tr:nth-child(even) {
 	display: none !important;
 	visibility: hidden !important;
 }
+
+.preloader{
+	  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+p.wrapText{
+	  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.preloader md-progress-circular{
+	  top: 50%;
+  margin-top: -25px;
+  left: 50%;
+  margin-left: -25px;
+}
+
