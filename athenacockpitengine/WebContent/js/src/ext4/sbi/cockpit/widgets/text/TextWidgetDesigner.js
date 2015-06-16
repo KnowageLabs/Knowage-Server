@@ -44,9 +44,11 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetD
 		Sbi.trace("[TextWidgetDesigner.getDesignerState]: IN");
 
 		var state = Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.getDesignerState(this);
-		state.designer = 'AAA';
+		state.designer = 'Text Designer';
 		state.wtype = 'text';
-
+		
+		state.textValue = this.textField.getValue();
+		
 		Sbi.trace("[TextWidgetDesigner.getDesignerState]: OUT");
 		return state;
 	}
@@ -54,12 +56,8 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetD
 	, setDesignerState: function(state) {
 		Sbi.trace("[TextWidgetDesigner.setDesignerState]: IN");
 		Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.setDesignerState(this, state);
-		if(state.visibleselectfields!=undefined && state.visibleselectfields!=null){
-			Sbi.trace("[TextWidgetDesigner.setDesignerState]: there are [" + state.visibleselectfields.length + "] fields slected");
-			this.textDesigner.textDesigner.setValues(state.visibleselectfields);
-		} else {
-			Sbi.trace("[TextWidgetDesigner.setDesignerState]: no fields selected");
-		}
+		if(state.textValue) this.textField.setValue(state.textValue);
+		
 		Sbi.trace("[TextWidgetDesigner.setDesignerState]: OUT");
 	}
 

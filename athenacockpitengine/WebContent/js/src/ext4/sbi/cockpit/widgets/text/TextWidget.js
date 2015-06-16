@@ -60,12 +60,14 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 		Sbi.trace("[TextWidget.onRender]: IN");
 		Sbi.cockpit.widgets.text.TextWidget.superclass.onRender.call(this, ct, position);
 
-		this.dummyContent = new Ext.Panel({
+		
+		this.widgetContent = new Ext.Panel({
 			border: false
 			, bodyBorder: false
 			, hideBorders: true
 			, frame: false
-			, html: this.msg || 'Sono un widget qualunque'
+			, height: '100%'
+			, html: this.wconf.textValue
 		});
 
 		this.items.each( function(item) {
@@ -74,7 +76,7 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 	    }, this);
 
 		if(this.chart !== null) {
-			this.add(this.dummyContent);
+			this.add(this.widgetContent);
 			this.doLayout();
 		}
 		Sbi.trace("[TextWidget.onRender]: OUT");
