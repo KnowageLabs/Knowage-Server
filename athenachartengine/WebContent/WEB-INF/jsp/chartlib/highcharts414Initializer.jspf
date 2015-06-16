@@ -32,7 +32,7 @@
 		    lang: {
 	            drillUpText: drillUpText,
 	            decimalPoint: decimalPoint,
-	            thousandsSep: thousandsSep)
+	            thousandsSep: thousandsSep
 	        }
 		});
 	};
