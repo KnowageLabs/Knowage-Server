@@ -35,6 +35,17 @@ Sbi.cockpit.widgets.text.TextWidgetDesigner = function(config) {
 	};
 
 	Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.constructor.call(this, c);
+
+	this.on(
+			'beforerender' ,
+			function (thePanel, attribute) {
+				var state = {};
+				state.textValue = thePanel.textValue;
+				state.wtype = 'text';
+				this.setDesignerState(state);
+			},
+			this
+	);
 };
 
 Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
