@@ -10,7 +10,7 @@
 <script type="text/javascript" src="/athenachartengine/js/src/treemap/treemap.js"></script>
 
 <script>
-	function initChartLibrary(panelId) {
+	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
 		Highcharts.setOptions({
 		    chart: {
 		 	   renderTo: panelId,
@@ -30,9 +30,9 @@
 		        url: 'http://'+hostName+':'+serverPort+'/highcharts-export-web/'
 		    },
 		    lang: {
-	            drillUpText: LN('sbi.chartengine.viewer.drilluptext'),
-	            decimalPoint: LN('sbi.chartengine.viewer.decimalpoint'),
-	            thousandsSep: LN('sbi.chartengine.viewer.thousandsep')
+	            drillUpText: drillUpText,
+	            decimalPoint: decimalPoint,
+	            thousandsSep: thousandsSep)
 	        }
 		});
 	};

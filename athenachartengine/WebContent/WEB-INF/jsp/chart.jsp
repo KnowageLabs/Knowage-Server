@@ -149,8 +149,11 @@ author:
  			    height: '100%',
  			    renderTo: Ext.getBody()
  			});
-
- 			initChartLibrary(mainPanel.id);
+ 			initChartLibrary(
+ 					mainPanel.id, 
+ 					LN('sbi.chartengine.viewer.drilluptext'), 
+ 					LN('sbi.chartengine.viewer.decimalpoint'), 
+ 					LN('sbi.chartengine.viewer.thousandsep'));
  			
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
 
