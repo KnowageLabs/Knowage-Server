@@ -28,7 +28,7 @@ Sbi.widgets.SaveDocumentWindow = function(config) {
 		this.services['saveDocumentService'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName: 'SAVE_DOCUMENT_ACTION'
 			, baseParams: saveDocParams
-			, baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
+			, baseUrl:{contextPath: 'athena', controllerPath: 'servlet/AdapterHTTP'}
 		});
 
 
@@ -315,7 +315,7 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
 					    		serviceName : 'MANAGE_FILE_ACTION',
 					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE', standardUrl:true},
-					    		baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
+					    		baseUrl:{contextPath: 'athena', controllerPath: 'servlet/AdapterHTTP'}
 					    	});
 
 		var baseUrl = completeUrl.substr(0, completeUrl.indexOf("?"));
