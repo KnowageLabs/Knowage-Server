@@ -105,6 +105,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsContainerPanel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsCardPanel.js'/></script>
 
+<!-- Text widget -->
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/text/TextWidget.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/text/TextWidgetDesigner.js'/></script>
+
 <!-- Table widget -->
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/TableWidget.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
