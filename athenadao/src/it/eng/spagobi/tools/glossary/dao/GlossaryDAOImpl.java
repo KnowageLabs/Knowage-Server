@@ -1,6 +1,8 @@
 package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.Criterion;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchAttributeByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
@@ -9,14 +11,24 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttrId;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDAO {
 
@@ -91,10 +103,73 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	public List<SbiGlWord> listWordFiltered(String word) {
 		return list(new SearchWordByWord(word));
 	}
+	
+	
 
 	@Override
-	public Integer insertWord(SbiGlWord word) {
-		return (Integer) insert(word);
+	public Integer insertWord(SbiGlWord word, List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,JSONArray jarr) {
+		Integer wordId = (Integer) insert(word);
+		
+		
+		if (objLink != null) {
+			Set<SbiGlReferences> references = new HashSet<SbiGlReferences>();
+			
+			int index = 0;
+			for (SbiGlWord w : objLink) {
+				SbiGlReferences tmp = new SbiGlReferences();
+				tmp.setId(new SbiGlReferencesId(wordId,w.getWordId()));
+				tmp.setWord(word);
+				tmp.setRefWord(w);
+				tmp.setSequence(index);
+				references.add(tmp);
+				index++;
+			}
+			
+			if (!references.isEmpty()) {
+				word.setReferences(references);
+				modifyWord(word);
+			}
+		}
+		
+		
+		
+		if (objAttr != null) {
+			Set<SbiGlWordAttr> SbiGlWordAttr = new HashSet<SbiGlWordAttr>();
+			
+			int index = 0;
+			for (SbiGlAttribute w : objAttr) {
+				SbiGlWordAttr tmp = new SbiGlWordAttr();
+				tmp.setId(new SbiGlWordAttrId(wordId,w.getAttributeId()));
+				tmp.setWord(word);
+				tmp.setAttribute(w);
+				
+				for(int i=0;i<jarr.length();i++){
+					
+					try {
+						if(jarr.getJSONObject(i).getInt("ATTRIBUTE_ID")==w.getAttributeId()){
+							tmp.setValue(jarr.getJSONObject(i).getString("VALUE"));
+							jarr.remove(i);
+							break;
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				tmp.setOrder(index);
+				SbiGlWordAttr.add(tmp);
+				index++;
+			}
+			
+			if (!SbiGlWordAttr.isEmpty()) {
+				word.setAttributes(SbiGlWordAttr);
+				modifyWord(word);
+			}
+		}
+		
+		
+		return wordId;
 	}
 
 	@Override
@@ -138,6 +213,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
+	public List<SbiGlAttribute> listAttributeFiltered(String attribute){
+		return list(new SearchAttributeByName(attribute));
+	}
+	
+	@Override
 	public Integer insertAttribute(SbiGlAttribute attribute) {
 		return (Integer) insert(attribute);
 	}
@@ -171,5 +251,34 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	public void deleteWordAttr(Integer wordId) {
 		delete(SbiGlWordAttr.class, wordId);
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<SbiGlWord> listWordFromArray(final Object[] arr) {
+		return list(new Criterion() {
+
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiGlWord.class);
+				c.add(Restrictions.in("wordId", arr));
+				return c;
+			}
+		});
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<SbiGlAttribute> listAttrFromArray(final Object[] arr) {
+		return list(new Criterion() {
+
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiGlAttribute.class);
+				c.add(Restrictions.in("attributeId", arr));
+				return c;
+			}
+		});
+	}
+
 
 }

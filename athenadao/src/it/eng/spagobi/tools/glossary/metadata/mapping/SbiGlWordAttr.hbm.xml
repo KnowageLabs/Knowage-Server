@@ -55,10 +55,10 @@
         
         
         <property name="value" type="string">
-            <column name="VALUE" length="500" />
+            <column name="ATTR_VALUE" length="500" />
         </property> 
         <property name="order" type="integer">
-            <column name="ORDER" />
+            <column name="ATTR_ORDER" />
         </property> 
                 
     </class>

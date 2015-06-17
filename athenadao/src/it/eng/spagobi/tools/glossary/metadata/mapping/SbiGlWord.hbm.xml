@@ -63,14 +63,14 @@
             <column name="CATEGORY" length="30" />
         </property>
         
-        <set name="references" inverse="true" order-by="SEQUENCE" lazy="false">
+        <set name="references" inverse="true" order-by="REFERENCES_ORDER" lazy="false"  cascade="all-delete-orphan">
             <key>
                 <column name="WORD_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.tools.glossary.metadata.SbiGlReferences" />
         </set>
         
-        <set name="attributes" inverse="true" order-by="ORDER" lazy="false" >
+        <set name="attributes" inverse="true" order-by="ATTR_ORDER" lazy="false"  cascade="all-delete-orphan" >
             <key>
                 <column name="WORD_ID" not-null="true" />
             </key>

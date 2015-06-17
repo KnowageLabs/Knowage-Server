@@ -55,7 +55,7 @@
         
         
         <property name="sequence" type="integer">
-            <column name="SEQUENCE" />
+            <column name="REFERENCES_ORDER" />
         </property> 
                 
     </class>

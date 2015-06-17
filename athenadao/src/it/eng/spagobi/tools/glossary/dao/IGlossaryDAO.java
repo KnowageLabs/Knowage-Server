@@ -11,6 +11,8 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 
 import java.util.List;
 
+import org.json.JSONArray;
+
 /**
  * CRUD operations
  * 
@@ -52,10 +54,12 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public SbiGlWord loadWord(Integer wordId);
 
 	public List<SbiGlWord> listWord();
+	
+	public List<SbiGlWord> listWordFromArray(Object[] arr);
 
 	public List<SbiGlWord> listWordFiltered(String word);
 
-	public Integer insertWord(SbiGlWord word);
+	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,JSONArray jarr);
 
 	public void modifyWord(SbiGlWord word);
 
@@ -79,6 +83,10 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlAttribute> listAttribute();
 
+	public List<SbiGlAttribute> listAttrFromArray(Object[] arr);
+	
+	public List<SbiGlAttribute> listAttributeFiltered(String attribute);
+	
 	public Integer insertAttribute(SbiGlAttribute attribute);
 
 	public void modifyAttribute(SbiGlAttribute attribute);

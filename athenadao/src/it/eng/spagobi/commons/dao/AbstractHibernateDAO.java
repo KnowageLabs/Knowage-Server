@@ -354,8 +354,9 @@ public class AbstractHibernateDAO {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			updateSbiCommonInfo4Update(obj);
-
-			session.save(obj);
+			
+			session.saveOrUpdate(obj);
+			session.flush();
 			tx.commit();
 		} catch (Throwable t) {
 			if (tx != null)

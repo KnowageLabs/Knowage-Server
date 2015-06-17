@@ -55,7 +55,7 @@
         
         
         <property name="order" type="integer">
-            <column name="ORDER" />
+            <column name="WORD_ORDER" />
         </property> 
                 
     </class>

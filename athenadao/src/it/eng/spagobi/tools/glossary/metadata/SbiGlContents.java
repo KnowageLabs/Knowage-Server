@@ -165,4 +165,15 @@ public class SbiGlContents extends SbiHibernateModel {
 		this.sequence = sequence;
 	}
 
+	@Override
+	public String toString() {
+		return "SbiGlContents [contentId=" + contentId + ", contentCd="
+				+ contentCd + ", contentNm=" + contentNm + ", contentDs="
+				+ contentDs + ", depth=" + depth + "]";
+	}
+	
+	
+	
+	
+
 }
