@@ -87,7 +87,7 @@ Ext.define('Sbi.widgets.store.InMemoryFilteredStore', {
 		this.add(items);
 		this.resumeEvents();
 		this.fireEvent('datachanged', this);
-		//this.fireEvent('refresh', this);
+//		this.fireEvent('refresh', this);
 	}
 
     ,
