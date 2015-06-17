@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
-
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.spagobi.commons.dao.DAOConfig;
 
@@ -17,42 +16,40 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateSessionManager {
-	
+
 	public static transient Logger logger = Logger.getLogger(HibernateSessionManager.class);
 
 	private static SessionFactory sessionFactory;
-	
-//	static {
-//		try {
-//				String fileCfg = "hibernate.cfg.xml";
-//				fileCfg = fileCfg.trim();
-//				logger.info( "Initializing hibernate Session Factory Described by [" + fileCfg +"]");
-//				Configuration conf = new Configuration();
-//				conf = conf.configure(fileCfg);
-//				sessionFactory = conf.buildSessionFactory();
-//
-//		} catch (Throwable ex) {
-//			// Make sure you log the exception, as it might be swallowed
-//			logger.error("Initial SessionFactory creation failed.", ex);
-//			throw new ExceptionInInitializerError(ex);
-//		}
-//	}
-	
+
+	// static {
+	// try {
+	// String fileCfg = "hibernate.cfg.xml";
+	// fileCfg = fileCfg.trim();
+	// logger.info( "Initializing hibernate Session Factory Described by [" + fileCfg +"]");
+	// Configuration conf = new Configuration();
+	// conf = conf.configure(fileCfg);
+	// sessionFactory = conf.buildSessionFactory();
+	//
+	// } catch (Throwable ex) {
+	// // Make sure you log the exception, as it might be swallowed
+	// logger.error("Initial SessionFactory creation failed.", ex);
+	// throw new ExceptionInInitializerError(ex);
+	// }
+	// }
+
 	private synchronized static void initSessionFactory() {
-		logger.info( "Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() +"]");
+		logger.info("Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() + "]");
 		Configuration conf = new Configuration();
 		conf = conf.configure(DAOConfig.getHibernateConfigurationFile());
 		sessionFactory = conf.buildSessionFactory();
 	}
-	
+
 	private static SessionFactory getSessionFactory() {
-		if(HibernateSessionManager.sessionFactory == null) {
+		if (HibernateSessionManager.sessionFactory == null) {
 			initSessionFactory();
 		}
 		return HibernateSessionManager.sessionFactory;
 	}
-
-	
 
 	/**
 	 * Current session.
@@ -62,11 +59,18 @@ public class HibernateSessionManager {
 	public static Session getCurrentSession() {
 		return getSessionFactory().openSession();
 	}
-	
-	
+
+	/**
+	 * Retrieve current session
+	 * 
+	 * @return
+	 */
+	public static Session getExistingSession() {
+		return getSessionFactory().getCurrentSession();
+	}
+
 	public static Connection getConnection(Session session) {
 		return HibernateTransaction.getConnection(session);
 	}
 
-	
 }
