@@ -1096,3 +1096,174 @@ function renderWordCloud(chartConf){
 		  
 		};
 	}
+	function renderParallelChart(data){
+		
+		var groupcolumn = data.chart.group;
+		var group = Ext.decode(data.chart.groups);
+		var column = Ext.decode(data.chart.serie);
+		
+		var groups = [];
+		
+		var columns = [];
+		
+		for (var i = 0; i< group.length; i++){
+			
+			groups.push(group[i][i]);
+		}
+		
+		for (var i = 0; i<column.length;i++){
+			
+			columns.push(column[i][i]);
+		}
+		
+		var c10=d3.scale.category10().range();
+		
+		function pickColors(colors, n){ // picks n different colors from colors
+			  var selected=[];
+			  while(selected.length < n){   
+			   var c= colors[Math.floor(Math.random()*colors.length)];
+			   if(selected.indexOf(c)==-1){
+			    selected.push(c);
+			   }
+			   
+			  }
+			  return selected;
+			}
+
+			var randomColors=pickColors(c10,groups.length);
+
+			var myColors=d3.scale.ordinal().domain(groups).range(randomColors);
+		
+		
+	var m = [80, 160, 200, 160],
+	    w = 1280 - m[1] - m[3],
+	    h = 800 - m[0] - m[2];
+
+	var x = d3.scale.ordinal().domain(columns).rangePoints([0, w]),
+	    y = {};
+
+	var line = d3.svg.line(),
+	    axis = d3.svg.axis().orient("left"),
+	    foreground;
+
+	var svg = d3.select("body").append("svg:svg")
+		.style("font-size",18)
+	    .attr("width", w + m[1] + m[3])
+	    .attr("height", h + m[0] + m[2])
+	  .append("svg:g")
+	    .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+	columns.forEach(function(d){
+		data.data[0].forEach(function(p) {p[d] = +p[d]; });
+		
+		y[d] = d3.scale.linear()
+	    .domain(d3.extent(data.data[0], function(p) {return p[d]; }))
+	    .range([h, 0]);
+		
+		y[d].brush = d3.svg.brush()
+	    .y(y[d])
+	    .on("brush", brush);
+
+	});
+
+	var legend = svg.selectAll("g.legend")
+	
+	.data(groups)
+	.enter().append("svg:g")
+	.attr("class", "legend")
+	.attr("transform", function(d, i) { return "translate(0," + (i * 20 + 584) + ")"; });
+
+	legend.append("svg:line")
+	//.attr("class", String)
+	.style({"stroke":function(d) { return myColors(d); }, "stroke-width":"3px"})
+	.attr("x2", 15);
+
+	legend.append("svg:text")
+		.style("font-size",18)
+		.style("font-style",'oblique')
+	    .attr("x", 12)
+	    .attr("dy", ".31em")
+	    .text(function(d) {	
+	  	  return "Tipo " + d; });
+
+	foreground = svg.append("svg:g")
+	.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "4px"})
+	.selectAll("path")
+	.data(data.data[0])
+	.enter().append("svg:path")
+	.attr("d", path)
+	.style("stroke", function(d) {return myColors(d[groupcolumn])})
+	
+	//.style({"stroke-opacity": ".05","stroke": "#000"});
+	
+	var g = svg.selectAll(".column")
+	.data(columns)
+	.enter().append("svg:g")
+	.attr("class", "group")
+	.attr("transform", function(d) {return "translate(" + x(d) + ")"; })
+	.call(d3.behavior.drag()
+	.origin(function(d) { return {x: x(d)}; })
+	.on("dragstart", dragstart)
+	.on("drag", drag)
+	.on("dragend", dragend));
+
+	g.append("svg:g")
+	.style({"fill": "none", "stroke": "#000","shape-rendering": "crispEdges"})
+	.each(function(d) { d3.select(this).call(axis.scale(y[d])); })
+	.append("svg:text")
+	.style({"cursor":"move"})
+	.attr("text-anchor", "middle")
+	.attr("y", -15)
+	.text(String)
+	.style({"text-shadow":" 0 0px 0 #000","cursor":"move"});
+
+	// Add a brush for each axis.
+	g.append("svg:g")
+	.style({"fill-opacity":" .3","stroke":" #fff","shape-rendering":" crispEdges"})
+	.each(function(d) { d3.select(this).call(y[d].brush); })
+	.selectAll("rect")
+	.attr("x", -8)
+	.attr("width", 16);
+
+	function dragstart(d) {
+	i = columns.indexOf(d);
+	}
+
+	function drag(d) {
+	x.range()[i] = d3.event.x;
+	columns.sort(function(a, b) { return x(a) - x(b); });
+	g.attr("transform", function(d) { return "translate(" + x(d) + ")"; });
+	foreground.attr("d", path);
+	}
+
+	function dragend(d) {
+		
+	x.domain(columns).rangePoints([0, w]);
+	var t = d3.transition().duration(500);
+	t.selectAll(".column").attr("transform", function(d) { 
+		return "translate(" + x(d) + ")"; });
+	//t.selectAll(".foreground path").attr("d", path);
+	
+	}
+
+	// Returns the path for a given data point.
+	function path(d) {
+	  return line(columns.map(function(p) { 
+		  return [x(p), y[p](d[p])]; }));
+	}
+
+	// Handles a brush event, toggling the display of foreground lines.
+	function brush() {
+	  var actives = columns.filter(function(p) { return !y[p].brush.empty(); }),
+	      extents = actives.map(function(p) { return y[p].brush.extent(); });
+	  foreground.classed("fade", function(d) {
+		
+		  return !actives.every(function(p, i) {
+			  
+	      return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+	    });
+	  });
+	  
+	  
+	}
+	}

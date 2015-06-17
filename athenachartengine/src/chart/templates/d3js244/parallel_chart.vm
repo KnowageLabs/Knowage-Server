@@ -1,0 +1,50 @@
+#set($category = $chart.VALUES.CATEGORY)
+#set($serie = $chart.VALUES.SERIE)
+#set($chartType = $chart.type)
+#set($dataRows = $data.rows)
+#set($dataFields = $data.metaData.fields)
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+
+#set($columnsNeeded = {})
+
+#set($columnCounter = 0)
+
+#set($serieNeeded = {})
+
+#set($serieCounter = 0)
+
+#foreach($value in $category) 
+ #set($columnsNeeded[$columnCounter] = $value.column)
+ #set($columnCounter = $columnCounter + 1)
+#end
+
+#foreach($value in $serie) 
+ #set($serieNeeded[$serieCounter] = $value.column)
+ #set($serieCounter = $serieCounter + 1)
+#end
+
+#set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
+
+#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded))
+
+#set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded))
+
+{
+ chart: 
+ {
+  type: '$chartType',
+  serie: '$series',
+  groups: '$groups',
+  group: '$columnsNeeded[0]'
+ },
+data:
+ [
+ 	$result
+ ]
+}

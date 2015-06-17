@@ -52,6 +52,11 @@
 			renderSunburst(chartConf);
 			
 		}
+		else if (chartConf.chart.type === "parallel")
+		{
+			renderParallelChart(chartConf);
+			
+		}
 		else
 		{
 			alert("Chart not defined");
