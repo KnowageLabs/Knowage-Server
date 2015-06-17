@@ -162,20 +162,31 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 			});
 		 
 		
-		 var headerFontColorText = Ext.create('Ext.form.field.Text',{
-				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-				 name: 				'headerFontColor',
-		         allowBlank: 		true,
-		         regex: 			hexColorReg,
-		         regextText: 		'Not a valid HEX color',
-		    	 enforceMaxLength: 	true,
-		 		 maxLength: 		7,
-		 		 msgTarget: 		'side',
-	 			labelWidth:			140,
-				width:				250,
-				afterLabelTextTpl : '<span class="help" data-qtip="'
-					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 var headerFontColorText = Ext.create('Ext.form.field.Text',{
+//				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//				 name: 				'headerFontColor',
+//		         allowBlank: 		true,
+//		         regex: 			hexColorReg,
+//		         regextText: 		'Not a valid HEX color',
+//		    	 enforceMaxLength: 	true,
+//		 		 maxLength: 		7,
+//		 		 msgTarget: 		'side',
+//	 			labelWidth:			140,
+//				width:				250,
+//				afterLabelTextTpl : '<span class="help" data-qtip="'
+//					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 var headerFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 				'headerFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255,
+			 
 		 });
 		 
 		 var headerFontWeightCombo = Ext.create('Ext.form.ComboBox',{
@@ -248,20 +259,31 @@ Ext.define('Sbi.fonts.views.TableFontTabPanel', {
 				width:			180
 			});
 		 
-		 var rowsFontColorText = Ext.create('Ext.form.field.Text',{
-			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'rowsFontColor',
-	         allowBlank: 		true,
-	         regex: 			hexColorReg,
-	         regextText: 		'Not a valid HEX color',
-	    	 enforceMaxLength: 	true,
-	 		 maxLength: 		7,
-	 		 msgTarget: 		'side',
-			 labelWidth:		140,
-			 width:				250,
-			 afterLabelTextTpl : '<span class="help" data-qtip="'
-	         	+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 var rowsFontColorText = Ext.create('Ext.form.field.Text',{
+//			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//			 name: 				'rowsFontColor',
+//	         allowBlank: 		true,
+//	         regex: 			hexColorReg,
+//	         regextText: 		'Not a valid HEX color',
+//	    	 enforceMaxLength: 	true,
+//	 		 maxLength: 		7,
+//	 		 msgTarget: 		'side',
+//			 labelWidth:		140,
+//			 width:				250,
+//			 afterLabelTextTpl : '<span class="help" data-qtip="'
+//	         	+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 var rowsFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 			'rowsFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255
+			 
 		 });
 		 
 		 var rowsFontWeightCombo = Ext.create('Ext.form.ComboBox',{

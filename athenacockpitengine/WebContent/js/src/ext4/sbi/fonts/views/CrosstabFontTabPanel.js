@@ -168,20 +168,31 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				width:			180
 			});
 		 
-		 var tdLevelFontColorText = Ext.create('Ext.form.field.Text',{
-			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'tdLevelFontColor',
-	         allowBlank: 		true,
-	         regex: 			hexColorReg,
-	         regextText: 		'Not a valid HEX color',
-	    	 enforceMaxLength: 	true,
-	 		 maxLength: 		7,
-	 		 msgTarget: 		'side',
-			 labelWidth:		140,
-			 width:				250,
-			 afterLabelTextTpl : '<span class="help" data-qtip="'
-				+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 var tdLevelFontColorText = Ext.create('Ext.form.field.Text',{
+//			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//			 name: 				'tdLevelFontColor',
+//	         allowBlank: 		true,
+//	         regex: 			hexColorReg,
+//	         regextText: 		'Not a valid HEX color',
+//	    	 enforceMaxLength: 	true,
+//	 		 maxLength: 		7,
+//	 		 msgTarget: 		'side',
+//			 labelWidth:		140,
+//			 width:				250,
+//			 afterLabelTextTpl : '<span class="help" data-qtip="'
+//				+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 var tdLevelFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 			'tdLevelFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255
+			 
 		 });
 		 
 		 var tdLevelFontWeightCombo = Ext.create('Ext.form.ComboBox',{
@@ -254,20 +265,31 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 			});
 		 
 		
-		 var tdMemberFontColorText = Ext.create('Ext.form.field.Text',{
-				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-				 name: 				'tdMemberFontColor',
-		         allowBlank: 		true,
-		         regex: 			hexColorReg,
-		         regextText: 		'Not a valid HEX color',
-		    	 enforceMaxLength: 	true,
-		 		 maxLength: 		7,
-		 		 msgTarget: 		'side',
-	 			labelWidth:			140,
-				width:				250,
-				afterLabelTextTpl : '<span class="help" data-qtip="'
-					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 var tdMemberFontColorText = Ext.create('Ext.form.field.Text',{
+//				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//				 name: 				'tdMemberFontColor',
+//		         allowBlank: 		true,
+//		         regex: 			hexColorReg,
+//		         regextText: 		'Not a valid HEX color',
+//		    	 enforceMaxLength: 	true,
+//		 		 maxLength: 		7,
+//		 		 msgTarget: 		'side',
+//	 			labelWidth:			140,
+//				width:				250,
+//				afterLabelTextTpl : '<span class="help" data-qtip="'
+//					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 var tdMemberFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 			'tdMemberFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255
+			 
 		 });
 		 
 		 var tdMemberFontWeightCombo = Ext.create('Ext.form.ComboBox',{
@@ -340,20 +362,31 @@ Ext.define('Sbi.fonts.views.CrosstabFontTabPanel', {
 				width:			180
 			});
 		 
-		 var tdDataFontColorText = Ext.create('Ext.form.field.Text',{
-			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'tdDataFontColor',
-	         allowBlank: 		true,
-	         regex: 			hexColorReg,
-	         regextText: 		'Not a valid HEX color',
-	    	 enforceMaxLength: 	true,
-	 		 maxLength: 		7,
-	 		 msgTarget: 		'side',
-			 labelWidth:		140,
-			 width:				250,
-			 afterLabelTextTpl : '<span class="help" data-qtip="'
-				+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 var tdDataFontColorText = Ext.create('Ext.form.field.Text',{
+//			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//			 name: 				'tdDataFontColor',
+//	         allowBlank: 		true,
+//	         regex: 			hexColorReg,
+//	         regextText: 		'Not a valid HEX color',
+//	    	 enforceMaxLength: 	true,
+//	 		 maxLength: 		7,
+//	 		 msgTarget: 		'side',
+//			 labelWidth:		140,
+//			 width:				250,
+//			 afterLabelTextTpl : '<span class="help" data-qtip="'
+//				+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 var tdDataFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 			'tdDataFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255
+			 
 		 });
 		 
 		 var tdDataFontWeightCombo = Ext.create('Ext.form.ComboBox',{
