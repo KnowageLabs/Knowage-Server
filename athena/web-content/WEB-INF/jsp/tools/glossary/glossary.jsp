@@ -425,7 +425,7 @@ var serverPort ='<%=request.getServerPort()%>';
 								md-selected-item="ctrl.selectedItem"
 								md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
 								md-item-text="item.ATTRIBUTE_NM" md-require-match=""
-								md-floating-label="Proprietà"> <md-item-template>
+								md-floating-label="Proprietà"> <md-item-template >
 							<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
 							</md-item-template> </md-autocomplete>
 						</div>
@@ -461,19 +461,19 @@ var serverPort ='<%=request.getServerPort()%>';
 								layout-wrap>
 							<div class="md-item-text md-whiteframe-z1" flex>
 								<p class="margin5">
-									<input class="transparent_input smallFont"
-										ng-model="attr.ATTRIBUTE_NM" type="text"> <input
-										class="transparent_input smallFont " ng-model="attr.VALUE"
+									<span>{{attr.ATTRIBUTE_NM}}</span>
+<!-- 									<input class="transparent_input smallFont"	ng-model="attr.ATTRIBUTE_NM" type="text">  -->
+										<input	class="transparent_input smallFont " ng-model="attr.VALUE"
 										type="text">
 								</p>
 
 								<md-button ng-click="ctrl.removeProp(attr)"
 									class="md-fab   md-ExtraMini" aria-label="add word"
 									style="  background-color: rgb(221, 0, 0) !important;
-  margin-top: -44px;
-  margin-left: 89%;
-  border-radius: 0px;
-  border-bottom-left-radius: 18px;">
+  									margin-top: -44px;
+ 									margin-left: 89%;
+  									border-radius: 0px;
+  									border-bottom-left-radius: 18px;">
 								<md-icon md-font-icon="fa fa-times" style="  color: white;"></md-icon>
 								</md-button>
 
@@ -501,8 +501,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 			</div>
 
-
-			{{ctrl.tmpAttr}} {{ctrl.selectedItem}}
+ {{ctrl.selectedItem}}
 		</div>
 
 	</div>

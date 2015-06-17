@@ -57,6 +57,10 @@ app.service('restServices', function($http, ENDPOINT_URI) {
 		return $http.get(getBaseUrl() + "listWords?WORD=" + item);
 	};
 
+	service.AttributeLike = function(item) {
+		return $http.get(getBaseUrl() + "listAttribute?ATTR=" + item);
+	};
+
 	service.AlterContentGloss = function(item) {
 		console.log("AlterContentGloss")
 		return $http.post(getBaseUrl() + "ModifyContentsGlossary", item);
@@ -76,15 +80,15 @@ var EmptyWord = {
 };
 
 var EmptyLogicalNode = {
-		CONTENT_ID : '',
-		GLOSSARY_ID : '',
-		PARENT_ID : '',
-		CONTENT_CD : '',
-		CONTENT_NM : '',
-		CONTENT_DS : '',
-		DEPTH : '',
-		CHILD : []
-	}
+	CONTENT_ID : '',
+	GLOSSARY_ID : '',
+	PARENT_ID : '',
+	CONTENT_CD : '',
+	CONTENT_NM : '',
+	CONTENT_DS : '',
+	DEPTH : '',
+	CHILD : []
+}
 
 var EmptyGloss = {
 	// GLOSSARY_ID : 1,
@@ -324,28 +328,102 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 	// querysearch della select autocompleate durante l'inserimento delle
 	// proprietà in new word
+	ctr.tmpPropSearch = "";
+	ctr.prevPropSearch = "";
+
 	ctr.querySearchProp = function(query) {
-		console.log("querySearchProp")
-		console.log(query)
+		console.log("querySearchProp " + query)
 
-		var results = $filter('filter')(ctr.propWord, {
-			ATTRIBUTE_NM : query.toUpperCase()
-		}, compareForNestedFiltering);
+		ctr.tmpPropSearch = query;
 
-		console.log(results)
-		return results;
+		if (ctr.tmpPropSearch != query || ctr.prevPropSearch == query) {
+			
+			console.log("(ctr.tmpPropSearch != query)"+(ctr.tmpPropSearch != query))
+					
+					console.log("(ctr.prevPropSearch == query)"+ (ctr.prevPropSearch == query))
+					
+					console.log("interrompo la ricerca prop di ele "+query)
+			return;
+		}
+
+		if (ctr.selectedItem != null) {
+			console.log("ctr.selectedItem.ATTRIBUTE_NM="
+					+ ctr.selectedItem.ATTRIBUTE_NM)
+			console.log("query=" + query)
+			if (ctr.selectedItem.ATTRIBUTE_NM === query) {
+				console.log("xxxxxinterrompo la ricerca prop di ele " + query)
+
+				return;
+			}
+		}
+
+		var def = $q.defer();
+		$timeout(function() {
+
+			console.log(query)
+			if (ctr.tmpPropSearch != query || ctr.prevPropSearch == query) {
+				console.log((ctr.tmpPropSearch != query)
+						+ "interrompo la ricerca prop di ele "
+						+ (ctr.prevPropSearch == query))
+				return;
+			}
+
+			ctr.prevPropSearch = query;
+
+			restServices.AttributeLike(query).success(
+					function(data, status, headers, config) {
+						console.log("AttributeLike Ottenuto")
+						console.log(data)
+						if (data.hasOwnProperty("errors")) {
+							return;
+						} else {
+							def.resolve(data);
+						}
+						hidePreloader();
+						
+					}).error(function(data, status, headers, config) {
+				console.log("AttributeLike non Ottenuti " + status);
+			
+			})
+		}, 1000);
+
+		ctr.prevPropSearch = "-1-";
+
+		return def.promise.then(
+				function(val) {
+
+					for (var i = 0; i < val.length; i++) {
+						if (JSON.stringify(ctr.newWord.SBI_GL_WORD_ATTR)
+								.toString().toLowerCase().indexOf(
+										val[i].ATTRIBUTE_NM.toString()
+												.toLowerCase()) != -1) {
+							val.splice(i, 1);
+							i--;
+						}
+					}
+					return val;
+				}, function(val) {
+					console.log("promisenonok")
+
+				})
+
+		// var results = $filter('filter')(ctr.propWord, {
+		// ATTRIBUTE_NM : query.toUpperCase()
+		// }, compareForNestedFiltering);
+		//
+		// console.log(results)
+		// return results;
 	}
 
 	ctr.addProp = function(prop) {
 		console.log("aggiungo attributo")
 		console.log(prop)
-		
-		var np={};
-		np.ATTRIBUTE_NM=prop.Prop.ATTRIBUTE_NM;
-		np.ATTRIBUTE_CD=prop.Prop.ATTRIBUTE_CD;
-		np.VALUE=prop.Val;
-		
-		
+
+		var np = {};
+		np.ATTRIBUTE_NM = prop.Prop.ATTRIBUTE_NM;
+		np.ATTRIBUTE_ID = prop.Prop.ATTRIBUTE_ID;
+		np.VALUE = prop.Val;
+
 		ctr.newWord.SBI_GL_WORD_ATTR.push(np)
 		ctr.tmpAttr = {};
 	};
@@ -357,10 +435,10 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 	}
 
 	ctr.propPresent = function(query) {
-		if (query == null || query==undefined || angular.equals({},query) ){
+		if (query == null || query == undefined || angular.equals({}, query)) {
 			return false;
 		}
-			
+
 		console.log(query)
 
 		var results;
@@ -480,14 +558,32 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 		if (ctr.newWord.NEWWORD != undefined) {
 			console.log("salvato")
-			ctr.newWord.WORD_ID = (new Date()).getTime();
-			delete ctr.newWord.NEWWORD;
-			product.push(ctr.newWord);
+
+			restServices.addWord(ctr.newWord)
+					.success(
+							function(data, status, headers, config) {
+								console.log("word salvato ottenuto Ottenuto")
+								console.log(data)
+								if (data.hasOwnProperty("errors")) {
+									return;
+								} else {
+
+									ctr.newWord.WORD_ID = data.id;
+									delete ctr.newWord.NEWWORD;
+									product.push(ctr.newWord);
+									ctr.newWord = JSON.parse(JSON
+											.stringify(EmptyWord));
+								}
+								hidePreloader();
+							}).error(function(data, status, headers, config) {
+						console.log("Words non Ottenuti " + status);
+					})
+
 		} else {
 			console.log("modificato")
+			ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		}
 
-		ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 	};
 
 	ctr.deleteWord = function(ev) {
@@ -847,30 +943,29 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		var nodeData = scope.$modelValue;
 		console.log(parent)
 
-//		var tmpNW = {
-//			CONTENT_ID : 'Phhh',
-//			GLOSSARY_ID : 1,
-//			PARENT_ID : 'P1',
-//			CONTENT_CD : 'c2',
-//			CONTENT_NM : parent.CONTENT_NM + ' ch' + (parent.CHILD.length + 1),
-//			CONTENT_DS : 'descr2',
-//			DEPTH : 1,
-//			CHILD : []
-//		}
+		// var tmpNW = {
+		// CONTENT_ID : 'Phhh',
+		// GLOSSARY_ID : 1,
+		// PARENT_ID : 'P1',
+		// CONTENT_CD : 'c2',
+		// CONTENT_NM : parent.CONTENT_NM + ' ch' + (parent.CHILD.length + 1),
+		// CONTENT_DS : 'descr2',
+		// DEPTH : 1,
+		// CHILD : []
+		// }
 
 		$mdDialog
 				.show({
 					controllerAs : "renCtrl",
 					controller : function($mdDialog) {
 						var rn = this;
-				rn.tmpNW =  JSON.parse(JSON.stringify(EmptyLogicalNode));
-					
+						rn.tmpNW = JSON.parse(JSON.stringify(EmptyLogicalNode));
 
 						rn.salva = function() {
 							console.log("salvo nuovo nodo logico")
 							rn.tmpNW.PARENT_ID = parent.CONTENT_ID;
-							rn.tmpNW.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID ;
-						
+							rn.tmpNW.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+
 							showPreloader();
 							restServices
 									.addWord(rn.tmpNW)

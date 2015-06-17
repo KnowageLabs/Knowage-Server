@@ -449,3 +449,8 @@ p.wrapText{
   margin-left: -25px;
 }
 
+md-list-item.md-no-proxy.md-button, md-list-item .md-no-style.md-button {
+	  align-items: flex-start !important;
+
+	}
+
