@@ -1099,6 +1099,7 @@ function renderWordCloud(chartConf){
 	function renderParallelChart(data){
 		
 		var groupcolumn = data.chart.group;
+		
 		var group = Ext.decode(data.chart.groups);
 		var column = Ext.decode(data.chart.serie);
 		
@@ -1184,7 +1185,7 @@ function renderWordCloud(chartConf){
 	    .attr("x", 12)
 	    .attr("dy", ".31em")
 	    .text(function(d) {	
-	  	  return "Tipo " + d; });
+	  	  return " " + groupcolumn +" " + d; });
 
 	foreground = svg.append("svg:g")
 	.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "4px"})
@@ -1263,6 +1264,16 @@ function renderWordCloud(chartConf){
 	      return extents[i][0] <= d[p] && d[p] <= extents[i][1];
 	    });
 	  });
+	  
+	  foreground.classed("notfade", function(d) {
+		     return actives.every(function(p, i) {
+		       return extents[i][0] <= d[p] && d[p] <= extents[i][1];
+		     })
+		   });
+	  
+	  d3.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
+	  d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "3px"})
+	  .style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
 	  
 	  
 	}
