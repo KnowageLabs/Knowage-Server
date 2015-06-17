@@ -242,20 +242,32 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			});
 		 
 		
-		 this.headerFontColorText = Ext.create('Ext.form.field.Text',{
-				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-				 name: 				'headerFontColor',
-		         allowBlank: 		true,
-		         regex: 			hexColorReg,
-		         regextText: 		'Not a valid HEX color',
-		    	 enforceMaxLength: 	true,
-		 		 maxLength: 		7,
-		 		 msgTarget: 		'side',
-	 			labelWidth:			140,
-				width:				250,
-				afterLabelTextTpl : '<span class="help" data-qtip="'
-					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 this.headerFontColorText = Ext.create('Ext.form.field.Text',{
+//				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//				 name: 				'headerFontColor',
+//		         allowBlank: 		true,
+//		         regex: 			hexColorReg,
+//		         regextText: 		'Not a valid HEX color',
+//		    	 enforceMaxLength: 	true,
+//		 		 maxLength: 		7,
+//		 		 msgTarget: 		'side',
+//	 			labelWidth:			140,
+//				width:				250,
+//				afterLabelTextTpl : '<span class="help" data-qtip="'
+//					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 this.headerFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 			'headerFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255,
+	
+			 
 		 });
 		 
 		 this.headerFontWeightCombo = Ext.create('Ext.form.ComboBox',{
@@ -328,20 +340,31 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 				width:			180
 			});
 		 
-		 this.rowsFontColorText = Ext.create('Ext.form.field.Text',{
-			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 name: 				'rowsFontColor',
-	         allowBlank: 		true,
-	         regex: 			hexColorReg,
-	         regextText: 		'Not a valid HEX color',
-	    	 enforceMaxLength: 	true,
-	 		 maxLength: 		7,
-	 		 msgTarget: 		'side',
-			 labelWidth:		140,
-			 width:				250,
-			 afterLabelTextTpl : '<span class="help" data-qtip="'
-	         	+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 this.rowsFontColorText = Ext.create('Ext.form.field.Text',{
+//			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
+//			 name: 				'rowsFontColor',
+//	         allowBlank: 		true,
+//	         regex: 			hexColorReg,
+//	         regextText: 		'Not a valid HEX color',
+//	    	 enforceMaxLength: 	true,
+//	 		 maxLength: 		7,
+//	 		 msgTarget: 		'side',
+//			 labelWidth:		140,
+//			 width:				250,
+//			 afterLabelTextTpl : '<span class="help" data-qtip="'
+//	         	+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
+//	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+//		 });
+		 
+		 this.rowsFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			 msgTarget: 	'qtip', 
+			 fallback: 		true,
+			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 name: 			'rowsFontColor',
+			 allowBlank: 	true,
+			 labelWidth:	140,
+			 width:			255,
+			 
 		 });
 		 
 		 this.rowsFontWeightCombo = Ext.create('Ext.form.ComboBox',{
@@ -602,7 +625,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			if(thePanel.rowsFontColor === undefined || thePanel.rowsFontColor === null){
 				state.rowsFontColor = tableFonts.rowsFontColor;
 			}else{
-				state.rowsFontColor = thePanel.headerFontColor;
+				state.rowsFontColor = thePanel.rowsFontColor;
 			}
 			
 			if(thePanel.rowsFontWeight === undefined || thePanel.rowsFontWeight === null){
@@ -628,7 +651,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.headerFontDecoration = thePanel.headerFontDecoration;
 			
 			state.rowsFontSize = thePanel.rowsFontSize;
-			state.rowsFontColor = thePanel.headerFontColor;
+			state.rowsFontColor = thePanel.rowsFontColor;
 			state.rowsFontWeight = thePanel.rowsFontWeight;
 			state.rowsFontDecoration = thePanel.rowsFontDecoration;
 			

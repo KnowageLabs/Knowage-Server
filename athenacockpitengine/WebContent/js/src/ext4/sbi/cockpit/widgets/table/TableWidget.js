@@ -212,6 +212,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, onDataChanged: function(store, eOpts) {
 		Sbi.trace("[TableWidget.onDataChanged][" + this.getId() + "]: IN");
 		this.fireSelectionEvent = false;
+		this.grid.getView().refresh();
 		Sbi.trace("[TableWidget.onDataChanged][" + this.getId() + "]: OUT");
 	}
 
