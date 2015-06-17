@@ -89,6 +89,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/PieChartFontTabPanel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/TableFontTabPanel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/CrosstabFontTabPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/FontColorField.js'/></script>
 
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorTabsPanel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditor.js'/></script>
