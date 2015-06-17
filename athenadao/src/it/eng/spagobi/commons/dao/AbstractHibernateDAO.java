@@ -270,6 +270,7 @@ public class AbstractHibernateDAO {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			Object obj = session.get(clazz, id);
+
 			if (obj != null) {
 				toReturn = (T) obj;
 				session.flush();
@@ -354,9 +355,7 @@ public class AbstractHibernateDAO {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 			updateSbiCommonInfo4Update(obj);
-			
-			session.saveOrUpdate(obj);
-			session.flush();
+			session.update(obj);
 			tx.commit();
 		} catch (Throwable t) {
 			if (tx != null)
@@ -420,7 +419,7 @@ public class AbstractHibernateDAO {
 		return list(clazz, null);
 	}
 
-	public <T extends SbiHibernateModel> List<T> list(Criterion<T> criterion) {
+	public <T extends SbiHibernateModel> List<T> list(ICriterion<T> criterion) {
 		if (criterion == null) {
 			throw new IllegalArgumentException("Input parameter 'criteria' cannot be null");
 		}
@@ -428,7 +427,7 @@ public class AbstractHibernateDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends SbiHibernateModel> List<T> list(Class<T> clazz, Criterion<T> criterion) {
+	private <T extends SbiHibernateModel> List<T> list(Class<T> clazz, ICriterion<T> criterion) {
 		List<T> ret = null;
 		Session session = null;
 		try {
@@ -455,4 +454,38 @@ public class AbstractHibernateDAO {
 		}
 		return ret;
 	}
+
+	/**
+	 * Executes the passed method inside a single transaction
+	 * 
+	 * @param executeOnTransaction
+	 * @return
+	 */
+	public <T> T executeOnTransaction(IExecuteOnTransaction<T> executeOnTransaction) {
+		T returnObj = null;
+		Session session = null;
+		Transaction tx = null;
+		logger.debug("IN: executeOnTransaction");
+
+		try {
+			session = getSession();
+			Assert.assertNotNull(session, "session cannot be null");
+			tx = session.beginTransaction();
+			Assert.assertNotNull(tx, "transaction cannot be null");
+			returnObj = executeOnTransaction.execute(session);
+			tx.commit();
+		} catch (Throwable t) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new SpagoBIDOAException("Error executing on transaction ", t);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+			logger.debug("OUT: executeOnTransaction");
+		}
+		return returnObj;
+	}
+
 }
