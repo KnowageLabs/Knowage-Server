@@ -1,0 +1,55 @@
+<chart type="SCATTER" height="600" width="1000" zoomType="xy"
+	style='backgroundColor:#FFFFFF;fontWeight:bold;fontSize:16px'>
+
+	<!--
+	type= BAR/PIE/LINE/gauge/scatter/bouble/RADAR/Waterfall/stockline/treemap/chord/heatmap
+	-->
+<colorPalette>
+
+</colorPalette>
+
+<emptymessage text ="nessun dato da visualizzare"  style='align:center;color:#003366;fontWeight:bold;fontSize:16px'  />
+
+<TITLE text='Titolo del grafico scatter' 
+	style='align:center;color:#003366;fontWeight:bold;fontSize:16px' />
+
+
+<SUBTITLE text='questo è un sotto titolo'
+	style='align:center;color:#003366;fontWeight:bold;fontSize:16px' />
+
+<!--  nel caso di true visualizzo la legenda nella posizione x/y -->
+<LEGEND position='bottom' layout='vertical'
+	style='borderWidth:1;backgroundColor:#FFFFFF;color:#003366;fontWeight:bold;fontSize:12px'/>
+
+<!--  la sezione axes ha senso per : bar , line , waterfall , scatter -->
+<AXES_LIST>
+
+<AXIS alias='Y' type='Serie'>
+	<TITLE text='Valori' style='align:center;color:#003366;fontWeight:bold;fontSize:16px'/>
+</AXIS>
+
+<AXIS alias='X' type='Category' style='align:center;color:#003366;fontFamily:Verdana;fontWeight:bold;fontSize:16px' 
+	startOnTick= 'true' endOnTick='true' showLastLabel= 'true'>
+	<TITLE text='Periodo' style='align:center;color:#003366;fontWeight:bold;fontSize:16px'/>
+</AXIS>
+
+</AXES_LIST>
+
+<!--
+esiste un catalogo di funzionalità legate alla libreria, dal template utilizzo le funzioni del catalogo
+queste funzioni sono gestite nella sezione avanzata del designer
+il catalogo contiene anche gli attributi che non gestiamo con il designer grafico
+-->
+
+<Values>
+	<category column="anno"  />
+
+	<SERIE name='vendite' column='vendite' color='#DF5353' >
+	</SERIE>
+	<SERIE name='ricavi' column='ricavi' color='#4572A7' >
+	</SERIE>
+</Values>
+
+<!-- cross navigation -->
+
+</chart>
