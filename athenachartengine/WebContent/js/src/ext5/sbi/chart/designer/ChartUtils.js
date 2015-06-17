@@ -458,7 +458,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				width: jsonTemplate.CHART.width, 
   				orientation: jsonTemplate.CHART.orientation ? jsonTemplate.CHART.orientation : 'vertical',
   				backgroundColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonChartStyle.backgroundColor),
-  				fontFamily: jsonChartStyle.fontFamily,
+  				font: jsonChartStyle.fontFamily,
   				fontDimension: jsonChartStyle.fontSize,
   				fontWeight: jsonChartStyle.fontWeight,
   				

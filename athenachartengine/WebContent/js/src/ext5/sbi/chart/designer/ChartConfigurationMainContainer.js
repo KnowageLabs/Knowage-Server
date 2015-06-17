@@ -63,7 +63,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
     		viewModel: this.viewModel,
     		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
-       		fieldBind: '{configModel.backgroundColor}'
+       		fieldBind: '{configModel.backgroundColor}',
        	});
         
         var colorPickerContainer = this.colorPickerContainer;
@@ -105,7 +105,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			xtype : 'fieldcontainer',
 			layout : 'hbox',
 			defaults : {
-				labelWidth : '100%',
 				margin: '10 20 10 0'
 			},
 			items : [
@@ -117,20 +116,20 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			xtype : 'fieldcontainer',
 			layout : 'hbox',
 			defaults : {
-				labelWidth : '100%',
 	            margin: '0 20 10 0'
 			},
 			items : [ 
-				colorPickerContainer,
 				font,
 				fontSize,
 				fontStyle
 			]
-		}, {
+		}, 
+		colorPickerContainer,
+		{
 			xtype : 'fieldcontainer',
 			layout : 'hbox',
 			defaults : {
-	            margin: '0 0 10 0'
+	            margin: '10 0 10 0'
 			},
 			items : [ {
 	            xtype : 'textfield',
