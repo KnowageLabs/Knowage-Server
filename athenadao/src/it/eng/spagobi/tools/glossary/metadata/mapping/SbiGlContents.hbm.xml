@@ -61,6 +61,13 @@
 			<column name="DEPTH" />
 		</property>
 
+		<property name="glossaryId" type="integer">
+			<column name="GLOSSARY_ID" />
+		</property>
+		
+		<property name="parentId" type="integer">
+			<column name="PARENT_ID" />
+		</property>
 
 		<many-to-one name="glossary"
 			class="it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary" update="false"
