@@ -812,7 +812,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			, scope: this
 			, handler:  this.onCleanCache
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
+//			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
 		tbItems.push(  new Ext.Button({
