@@ -1,13 +1,13 @@
 package it.eng.spagobi.tools.glossary.dao.criterion;
 
-import it.eng.spagobi.commons.dao.Criterion;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-public class SearchWlistByContentId implements Criterion<SbiGlWlist> {
+public class SearchWlistByContentId implements ICriterion<SbiGlWlist> {
 
 	private final Integer contentId;
 

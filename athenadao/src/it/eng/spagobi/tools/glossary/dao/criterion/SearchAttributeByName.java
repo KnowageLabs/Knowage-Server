@@ -1,6 +1,6 @@
 package it.eng.spagobi.tools.glossary.dao.criterion;
 
-import it.eng.spagobi.commons.dao.Criterion;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 
 import org.hibernate.Criteria;
@@ -11,7 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
-public class SearchAttributeByName implements Criterion<SbiGlAttribute> {
+public class SearchAttributeByName implements ICriterion<SbiGlAttribute> {
 
 	private final String word;
 
@@ -22,7 +22,8 @@ public class SearchAttributeByName implements Criterion<SbiGlAttribute> {
 	@Override
 	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlAttribute.class);
-		c.setProjection(Projections.projectionList().add(Projections.property("attributeId"), "attributeId").add(Projections.property("attributeNm"), "attributeNm"))
+		c.setProjection(
+				Projections.projectionList().add(Projections.property("attributeId"), "attributeId").add(Projections.property("attributeNm"), "attributeNm"))
 				.setResultTransformer(Transformers.aliasToBean(SbiGlAttribute.class));
 		if (word != null && !word.isEmpty()) {
 			c.add(Restrictions.like("attributeNm", word, MatchMode.ANYWHERE).ignoreCase());

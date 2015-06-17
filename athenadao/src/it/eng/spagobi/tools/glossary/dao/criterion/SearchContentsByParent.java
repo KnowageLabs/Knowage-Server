@@ -1,13 +1,13 @@
 package it.eng.spagobi.tools.glossary.dao.criterion;
 
-import it.eng.spagobi.commons.dao.Criterion;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-public class SearchContentsByParent implements Criterion<SbiGlContents> {
+public class SearchContentsByParent implements ICriterion<SbiGlContents> {
 	private final Integer glossaryId;
 	private final Integer parentId;
 

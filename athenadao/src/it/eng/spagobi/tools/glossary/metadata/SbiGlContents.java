@@ -16,10 +16,18 @@ public class SbiGlContents extends SbiHibernateModel {
 	private SbiGlGlossary glossary;
 	private SbiGlContents parent;
 
+	private Integer parentId;
+	private Integer glossaryId;
+
 	private Integer sequence;
 
 	public SbiGlContents() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public SbiGlContents(Integer contentId) {
+		super();
+		this.contentId = contentId;
 	}
 
 	/**
@@ -165,15 +173,40 @@ public class SbiGlContents extends SbiHibernateModel {
 		this.sequence = sequence;
 	}
 
+	/**
+	 * @return the parentId
+	 */
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	/**
+	 * @param parentId
+	 *            the parentId to set
+	 */
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
+
+	/**
+	 * @return the glossaryId
+	 */
+	public Integer getGlossaryId() {
+		return glossaryId;
+	}
+
+	/**
+	 * @param glossaryId
+	 *            the glossaryId to set
+	 */
+	public void setGlossaryId(Integer glossaryId) {
+		this.glossaryId = glossaryId;
+	}
+
 	@Override
 	public String toString() {
 		return "SbiGlContents [contentId=" + contentId + ", contentCd="
 				+ contentCd + ", contentNm=" + contentNm + ", contentDs="
 				+ contentDs + ", depth=" + depth + "]";
 	}
-	
-	
-	
-	
-
 }

@@ -1,6 +1,6 @@
 package it.eng.spagobi.tools.glossary.dao.criterion;
 
-import it.eng.spagobi.commons.dao.Criterion;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 
 import org.hibernate.Criteria;
@@ -8,7 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.Transformers;
 
-public class SearchWord implements Criterion<SbiGlWord> {
+public class SearchWord implements ICriterion<SbiGlWord> {
 
 	@Override
 	public Criteria evaluate(Session session) {
