@@ -1221,19 +1221,18 @@ function renderParallelChart(data){
 			return " " + groupcolumn +" " + d; });
 
 		foreground = svg.append("svg:g")
+		.attr("class","foreground")
 		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "4px"})
 		.selectAll("path")
 		.data(data.data[0])
 		.enter().append("svg:path")
 		.attr("d", path)
-		.style("stroke", function(d) {return myColors(d[groupcolumn])})
-
-		//.style({"stroke-opacity": ".05","stroke": "#000"});
+		.style("stroke", function(d) {return myColors(d[groupcolumn])});
 
 		var g = svg.selectAll(".column")
 		.data(columns)
 		.enter().append("svg:g")
-		.attr("class", "group")
+		.attr("class", "column")
 		.attr("transform", function(d) {return "translate(" + x(d) + ")"; })
 		.call(d3.behavior.drag()
 				.origin(function(d) { return {x: x(d)}; })
@@ -1298,7 +1297,7 @@ function renderParallelChart(data){
 		var t = d3.transition().duration(500);
 		t.selectAll(".column").attr("transform", function(d) { 
 			return "translate(" + x(d) + ")"; });
-		//t.selectAll(".foreground path").attr("d", path);
+		t.selectAll(".foreground path").attr("d", path);
 
 	}
 
