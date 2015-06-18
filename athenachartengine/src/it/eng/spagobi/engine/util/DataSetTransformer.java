@@ -345,7 +345,7 @@ public class DataSetTransformer {
 				
 				al.add(series.get(i)+"_SUM");
 				JSONObject jo = new JSONObject();
-				jo.put((new Integer(j).toString()), series.get(i)+"_SUM");
+				jo.put((new Integer(j).toString()), series.get(i));
 				ja.put(jo);
 				j++;
 			}
@@ -379,7 +379,7 @@ public class DataSetTransformer {
 			
 			listColumns.add(mapper.get(serie));
 			
-			colMapper.put(mapper.get(serie), series.get(i)+"_SUM");
+			colMapper.put(mapper.get(serie), series.get(i));
 			
 		}
 		

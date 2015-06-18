@@ -1222,7 +1222,7 @@ function renderParallelChart(data){
 
 		foreground = svg.append("svg:g")
 		.attr("class","foreground")
-		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "4px"})
+		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "1px"})
 		.selectAll("path")
 		.data(data.data[0])
 		.enter().append("svg:path")
@@ -1326,7 +1326,7 @@ function renderParallelChart(data){
 		});
 
 		d3.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
-		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "3px"})
+		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "1px"})
 		.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
 
 
