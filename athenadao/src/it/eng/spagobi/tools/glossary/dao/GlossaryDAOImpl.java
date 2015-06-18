@@ -130,13 +130,13 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						tmp.setWord(word);
 						tmp.setRefWord(w);
 						tmp.setSequence(index);
+						updateSbiCommonInfo4Update(tmp);
 						references.add(tmp);
 						index++;
 					}
 
 					if (!references.isEmpty()) {
 						word.setReferences(references);
-						// modifyWord(word);
 					} else {
 						word.setReferences(null);
 					}
@@ -167,6 +167,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 						}
 
 						tmp.setOrder(index);
+						updateSbiCommonInfo4Update(tmp);
 						SbiGlWordAttr.add(tmp);
 						index++;
 					}
