@@ -1241,14 +1241,15 @@ function renderParallelChart(data){
 				.on("dragend", dragend));
 
 		g.append("svg:g")
-		.style({"fill": "none", "stroke": "#000","shape-rendering": "crispEdges"})
+		.attr("class","axis")
 		.each(function(d) { d3.select(this).call(axis.scale(y[d])); })
 		.append("svg:text")
-		.style({"cursor":"move"})
 		.attr("text-anchor", "middle")
 		.attr("y", -15)
 		.text(String)
 		.style({"text-shadow":" 0 0px 0 #000","cursor":"move"});
+
+		g.selectAll(".axis line, .axis path").style({"fill":"none","stroke": "#000","shape-rendering": "crispEdges"});
 
 		// Add a brush for each axis.
 		g.append("svg:g")
