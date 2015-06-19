@@ -1,7 +1,12 @@
 #set($category = $chart.VALUES.CATEGORY)
 #set($serie = $chart.VALUES.SERIE)
+#set($font = $chart.FONT)
+#set($axis = $chart.AXIS)
+#set($height = $chart.height)
+#set($width = $chart.width)
 #set($chartType = $chart.type)
 #set($dataRows = $data.rows)
+#set($colorsPallete = $chart.COLORPALETTE)
 #set($dataFields = $data.metaData.fields)
 #set($dataColumnsMapper = {})
 
@@ -19,6 +24,10 @@
 
 #set($serieCounter = 0)
 
+#set($colorsRequired = {})
+
+#set($colorsReqCounter = 0)
+
 #foreach($value in $category) 
  #set($columnsNeeded[$columnCounter] = $value.column)
  #set($columnCounter = $columnCounter + 1)
@@ -29,9 +38,16 @@
  #set($serieCounter = $serieCounter + 1)
 #end
 
+#foreach($value in $colorsPallete.COLOR) 
+	#set($colorsRequired[$colorsReqCounter] = $value.value)
+	#set($colorsReqCounter = $colorsReqCounter + 1)
+#end
+
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
 
 #set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded))
+
+#set($colorsPal = $datasettransformer.getColorPallete($colorsRequired))
 
 #set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded))
 
@@ -41,7 +57,28 @@
   type: '$chartType',
   serie: '$series',
   groups: '$groups',
-  group: '$columnsNeeded[0]'
+  group: '$columnsNeeded[0]',
+  font: '$font',
+  width: '$width',
+  height: '$height',
+  colors: '$colorsPal'
+  
+ },
+ axis: 
+ {
+  color: '$axis.COLOR.value',
+  fill: '$axis.FILL.value',
+  colnamepadd: '$axis.COLNAMEPADD.value',
+  brushcolor: '$axis.BRUSHCOLOR.value',
+  brushwidth: '$axis.BRUSHWIDTH.value'
+  
+ },
+ limit:
+ {
+ 	max: '$chart.LIMIT.MAX.value',
+ 	serie: '$chart.LIMIT.SERIE.value',
+ 	order: '$chart.LIMIT.ORDER.value'
+ 
  },
  emptymessage:
 	{

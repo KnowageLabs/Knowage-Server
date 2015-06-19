@@ -1098,8 +1098,36 @@ function renderSunburst(jsonObject)
 }
 function renderParallelChart(data){
 
-	if(data.data[0].length>0){
+	var records = data.data[0];
 
+	if(records.length>0){
+
+		if (records.length>data.limit.max){
+
+			var limitcolumn = data.limit.serie;
+
+			records.sort(function(obj1, obj2) {
+				return obj1[limitcolumn] - obj2[limitcolumn];
+			});
+		}
+		
+		var len = records.length;
+		
+		var max = data.limit.max;
+		
+		if (data.limit.order === 'desc'){
+			
+			var slicedData = records.slice(len-max,len);
+			
+			records = slicedData;
+		}
+		else if (data.limit.order === 'asc'){
+			
+			var slicedData = records.slice(0,max);
+			
+			records = slicedData;
+		}
+		
 		var groupcolumn = data.chart.group;
 
 		var group = Ext.decode(data.chart.groups);
@@ -1119,8 +1147,6 @@ function renderParallelChart(data){
 			columns.push(column[i][i]);
 		}
 
-		var c10=d3.scale.category10().range();
-
 		function pickColors(colors, n){ // picks n different colors from colors
 			var selected=[];
 			while(selected.length < n){   
@@ -1133,14 +1159,27 @@ function renderParallelChart(data){
 			return selected;
 		}
 
-		var randomColors=pickColors(c10,groups.length);
+		var colors = [];
 
-		var myColors=d3.scale.ordinal().domain(groups).range(randomColors);
+		var colorsResponse = data.chart.colors;
 
+		var colorsResponseDec = Ext.decode(colorsResponse);
+
+		for (var i = 0; i< colorsResponseDec.length; i++){
+
+			colors.push(colorsResponseDec[i][i]);
+
+		}
+
+		var myColors=d3.scale.ordinal().domain(groups).range(colors);
+
+		var brushWidth = data.axis.brushwidth;
+
+		var brushx = -Number(brushWidth)/2;
 
 		var m = [80, 160, 200, 160],
-		w = 1280 - m[1] - m[3],
-		h = 800 - m[0] - m[2];
+		w = data.chart.width - m[1] - m[3],
+		h = data.chart.height - m[0] - m[2];
 
 		var x = d3.scale.ordinal().domain(columns).rangePoints([0, w]),
 		y = {};
@@ -1188,10 +1227,10 @@ function renderParallelChart(data){
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 		columns.forEach(function(d){
-			data.data[0].forEach(function(p) {p[d] = +p[d]; });
+			records.forEach(function(p) {p[d] = +p[d]; });
 
 			y[d] = d3.scale.linear()
-			.domain(d3.extent(data.data[0], function(p) {return p[d]; }))
+			.domain(d3.extent(records, function(p) {return p[d]; }))
 			.range([h, 0]);
 
 			y[d].brush = d3.svg.brush()
@@ -1213,6 +1252,7 @@ function renderParallelChart(data){
 		.attr("x2", 15);
 
 		legend.append("svg:text")
+		.style("font-family",data.chart.font)
 		.style("font-size",18)
 		.style("font-style",'oblique')
 		.attr("x", 12)
@@ -1222,9 +1262,9 @@ function renderParallelChart(data){
 
 		foreground = svg.append("svg:g")
 		.attr("class","foreground")
-		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "1px"})
+		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 		.selectAll("path")
-		.data(data.data[0])
+		.data(records)
 		.enter().append("svg:path")
 		.attr("d", path)
 		.style("stroke", function(d) {return myColors(d[groupcolumn])});
@@ -1233,6 +1273,7 @@ function renderParallelChart(data){
 		.data(columns)
 		.enter().append("svg:g")
 		.attr("class", "column")
+		.style({"font-family":data.chart.font})
 		.attr("transform", function(d) {return "translate(" + x(d) + ")"; })
 		.call(d3.behavior.drag()
 				.origin(function(d) { return {x: x(d)}; })
@@ -1245,19 +1286,19 @@ function renderParallelChart(data){
 		.each(function(d) { d3.select(this).call(axis.scale(y[d])); })
 		.append("svg:text")
 		.attr("text-anchor", "middle")
-		.attr("y", -15)
+		.attr("y", data.axis.colnamepadd)
 		.text(String)
-		.style({"text-shadow":" 0 0px 0 #000","cursor":"move"});
+		.style({"cursor":"move"});
 
-		g.selectAll(".axis line, .axis path").style({"fill":"none","stroke": "#000","shape-rendering": "crispEdges"});
+		g.selectAll(".axis line, .axis path").style({"fill":data.axis.fill,"stroke": data.axis.color,"shape-rendering": "crispEdges"});
 
 		// Add a brush for each axis.
 		g.append("svg:g")
-		.style({"fill-opacity":" .3","stroke":" #fff","shape-rendering":" crispEdges"})
+		.style({"fill-opacity":" .3","stroke":data.axis.brushcolor,"shape-rendering":" crispEdges"})
 		.each(function(d) { d3.select(this).call(y[d].brush); })
 		.selectAll("rect")
-		.attr("x", -8)
-		.attr("width", 16);
+		.attr("x", brushx)
+		.attr("width", brushWidth);
 
 	}
 
@@ -1327,7 +1368,7 @@ function renderParallelChart(data){
 		});
 
 		d3.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
-		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "1px"})
+		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 		.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
 
 

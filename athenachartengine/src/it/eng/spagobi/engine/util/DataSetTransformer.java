@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DataSetTransformer {
-	
+
 	public JSONArray toWordcloud(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serie) throws JSONException{
 
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
@@ -52,65 +52,65 @@ public class DataSetTransformer {
 
 			result.put(new Integer(i),record);			
 		}
-		
+
 		JSONArray res = toWordcloudArray(columns,serie,result);
-		
+
 		return res;
 
 	}
-	
+
 	private JSONArray toWordcloudArray(Map<String, String> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException {
-	
+
 		JSONArray fr = new JSONArray();
-		
+
 		HashMap<String, Double> res = new HashMap<String, Double>();
-		
+
 		for (int i=0; i<result.size();i++){
-			
+
 			for (int j=0; j<columns.size();j++){
-				
+
 				if (!res.containsKey(result.get(i).get(columns.get(j)))){
-					
+
 					String name = (String) result.get(i).get(columns.get(j));
-					
+
 					Double value = Double.parseDouble(result.get(i).get(serie).toString());
-					
+
 					res.put(name, value);
-					
+
 				}
-				
+
 				else{
-					
+
 					String name = (String) result.get(i).get(columns.get(j));
-					
+
 					Double oldvalue = res.get(name);
-					
+
 					Double value = Double.parseDouble(result.get(i).get(serie).toString());
-					
+
 					Double newValue = oldvalue+value;
-					
+
 					res.remove(name);
-					
+
 					res.put(name, newValue);
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		Iterator it = res.entrySet().iterator();
-		    while (it.hasNext()) {
-		        Map.Entry pair = (Map.Entry)it.next();
-		      
-		        JSONObject jo = new JSONObject();
-		        jo.put("name", pair.getKey());
-		        jo.put("value", pair.getValue());
-		        
-		        fr.put(jo);
-		        
-		    }
-		
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+
+			JSONObject jo = new JSONObject();
+			jo.put("name", pair.getKey());
+			jo.put("value", pair.getValue());
+
+			fr.put(jo);
+
+		}
+
 		return fr;
 	}
 
@@ -187,9 +187,9 @@ public class DataSetTransformer {
 					sequence = sequence + "-" + singleRecord.get(columns.get(j)).toString();	
 				}
 			}
-			
+
 			Double value = Double.parseDouble(singleRecord.get(serie).toString());			
-			
+
 			JSONObject jo = new JSONObject();
 
 			if (!endresult.containsKey(sequence))
@@ -252,7 +252,7 @@ public class DataSetTransformer {
 		}
 
 		JSONObject res = createTreeMap(columns,serie,result);
-		
+
 		return res;
 
 	}
@@ -291,32 +291,32 @@ public class DataSetTransformer {
 			}
 
 		}
-		
+
 		return root;
 	}
-	
+
 	public JSONArray getGroupsForParallelChart(Object columnsNeeded, Object dataColumnsMapper, List<Object> dataRows) throws JSONException{
-		
+
 		JSONArray ja = new JSONArray();
-		
+
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
-		
+
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
-		
+
 		String group = columns.get(0);
-		
+
 		String groupvalue = mapper.get(group);
-		
+
 		ArrayList<String> al = new ArrayList<String>(); 
-		
+
 		int j = 0;
-		
+
 		for (int i =0; i<dataRows.size();i++){
-			
+
 			Map<String,Object> row = (Map<String, Object>) dataRows.get(i);
-			
+
 			if (!al.contains(row.get(groupvalue))){
-				
+
 				al.add((String) row.get(groupvalue));
 				JSONObject jo = new JSONObject();
 				jo.put((new Integer(j)).toString(), row.get(groupvalue).toString());
@@ -324,92 +324,116 @@ public class DataSetTransformer {
 				j++;
 			}
 		}
-		
+
 		return ja;
 
 	}
-	
+
 	public JSONArray getSeriesForParallelChart(Object serieNeeded) throws JSONException{
-		
+
 		JSONArray ja = new JSONArray();
-		
+
 		Map<String,String> series= (Map<String,String>)serieNeeded;
-		
+
 		ArrayList<String> al = new ArrayList<String>();
-		
+
 		int j = 0;
-		
+
 		for (int i = 0; i<series.size();i++){
-			
+
 			if (!al.contains(series.get(i))){
-				
+
 				al.add(series.get(i)+"_SUM");
 				JSONObject jo = new JSONObject();
 				jo.put((new Integer(j).toString()), series.get(i));
 				ja.put(jo);
 				j++;
 			}
-			
-			
-			
+
 		}
-		
-		
+
 		return ja;
-		
+
 	}
-	
+
+	public JSONArray getColorPallete(Object colorsRequired) throws JSONException{
+
+		JSONArray ja = new JSONArray();
+
+		Map<String,String> colorsReq= (Map<String,String>)colorsRequired;
+
+		ArrayList<String> al = new ArrayList<String>();
+
+		int j = 0;
+
+		for (int i = 0; i<colorsReq.size();i++){
+
+			if (!al.contains(colorsReq.get(i))){
+
+				al.add(colorsReq.get(i));
+				JSONObject jo = new JSONObject();
+				jo.put((new Integer(j).toString()), colorsReq.get(i));
+				ja.put(jo);
+				j++;
+			}
+
+		}
+
+		return ja;
+
+	}
+
 	public JSONArray toParallelChart(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serieNeeded) throws JSONException{
 
 		JSONArray res = new JSONArray();
-		
+
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
 
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
-		
+
 		Map<String,String> series = (Map<String,String>)serieNeeded;
-		
+
 		Map<String,String> colMapper = new HashMap<String, String>();
-		
+
 		ArrayList<String> listColumns = new ArrayList<String>();
-		
+
 		for (int i = 0; i<series.size(); i++){
-			
+
 			Object serie = series.get(i)+"_SUM";
-			
+
 			listColumns.add(mapper.get(serie));
-			
+
 			colMapper.put(mapper.get(serie), series.get(i));
-			
+
 		}
-		
+
 		for (int i = 0; i<columns.size(); i++){
-			
+
 			Object column = columns.get(i);
 			listColumns.add(mapper.get(column));
-			
+
 			colMapper.put(mapper.get(column), columns.get(i).toString());
-			
+
 		}
-		
+
 		for (int i = 0; i<dataRows.size(); i++){
-			
+
 			Map<String, String> row = (Map<String, String>) dataRows.get(i);
-			
+
 			JSONObject jo = new JSONObject();
-			
+
 			for (int j = 0; j<listColumns.size(); j++){
-				
+
 				Object x = row.get(listColumns.get(j));
-				
+
 				jo.put(colMapper.get(listColumns.get(j)), x);
-				
+
 			}
-			
+
 			res.put(jo);
-			
+
 		}
-		
+
 		return res;
 
 	}
