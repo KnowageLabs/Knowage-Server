@@ -1,12 +1,13 @@
-.bodyStyle{
-	  font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
-  font-size: 10pt;
-  font-weight: normal;
-  color: black;
+.bodyStyle {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
 }
-.textareaInputBox{
-  margin-top: -14px !important;}
 
+.textareaInputBox {
+	margin-top: -14px !important;
+}
 
 .glossary_word_box {
 	border: 2px solid black;
@@ -17,9 +18,9 @@
 }
 
 .md-button.md-fab.md-ExtraMini {
-	line-height: 22px;
-	width: 22px;
-	height: 22px;
+	line-height: 25px;
+	width: 25px;
+	height: 25px;
 	min-height: 0;
 }
 
@@ -44,17 +45,13 @@
 	padding-top: 12px !important;
 }
 
-
-.wordForm  .linkChips{
-  box-shadow:none !important;
+.wordForm  .linkChips {
+	box-shadow: none !important;
 }
 
-.wordForm .md-input-focused .linkChips{
-  box-shadow: 0 3px rgb(158,158,158)  !important;
+.wordForm .md-input-focused .linkChips {
+	box-shadow: 0 3px rgb(158, 158, 158) !important;
 }
-
-
-
 
 .wordForm .md-input-hasnt-value textarea {
 	height: 0px !important;
@@ -73,30 +70,56 @@ md-input-container.md-input-has-value-copy .md-placeholder {
 }
 
 md-input-container
+
+
 .md-input-focused
+
  
+
 label
+
+
 :not
+
  
+
 (
 .md-no-float
+
  
+
 ),
 md-input-container
+
+
 .md-input-has-value-copy
+
  
+
 label
+
+
 :not
+
  
+
 (
 .md-no-float
+
  
+
 )
 {
 -webkit-transform
+
+
 :
+
  
+
 translate3d
+
+
 (0
 ,
 4
@@ -104,15 +127,23 @@ px
 ,
 0)
 scale
+
+
 (
 .75
-);
 
-	
+
+);
 transform
+
+
 :
+
  
+
 translate3d
+
+
 (0
 ,
 4
@@ -120,11 +151,13 @@ px
 ,
 0)
 scale
+
+
 (
 .75
+
+
 );
-
-
 }
 md-input-container.md-icon-float.md-input-focused, md-input-container.md-icon-float.md-input-has-value-copy
 	{
@@ -172,10 +205,10 @@ md-icon.sm-font-icon {
 }
 
 md-toolbar.md-default-theme.md-blue {
-	  background-color: rgb(232, 232, 232);
-  color: rgb(255, 255, 255);
-  height: 50px;
-  min-height: 0px;
+	background-color: rgb(232, 232, 232);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
 }
 
 .position-fixed {
@@ -216,9 +249,9 @@ md-toolbar.md-default-theme.md-blue {
 
 .SecondaryOnLeft .expandericon {
 	position: absolute;
-  left: 0px;
-  top: 15px;
-  margin-left: 19px;
+	left: 0px;
+	top: 15px;
+	margin-left: 19px;
 }
 
 .figlio_vocabolo {
@@ -275,19 +308,19 @@ md-toolbar.md-default-theme.md-blue {
 	margin: 20px;
 }
 
-.nodo_logico:hover{
-/* 	border:2px solid rgb(232, 232, 232); !important; */
--webkit-box-shadow: -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
--moz-box-shadow:    -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
-box-shadow:         -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
+.nodo_logico:hover {
+	/* 	border:2px solid rgb(232, 232, 232); !important; */
+	-webkit-box-shadow: -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
+	-moz-box-shadow: -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
+	box-shadow: -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
 }
-
 
 .nodo_logico md-list {
-	padding: 0px!important;
+	padding: 0px !important;
 }
+
 .addFiglioBox {
-/* 	  background: rgba(224, 229, 240, 0.42) !important; */
+	/* 	  background: rgba(224, 229, 240, 0.42) !important; */
 	top: -20px !important;
 	width: 100% !important;
 	right: 0 !important;
@@ -377,23 +410,46 @@ table tr:nth-child(even) {
 /* } */
 .pagination>li, .pagination>li>span {
 	position: relative;
-  float: left;
-  margin-left: -1px;
-  text-decoration: none !important;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  display: block;
-  width: 30px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
+	float: left;
+	margin-left: -1px;
+	text-decoration: none !important;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	display: block;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+}
+
+.wordListBox {
+	height: 60%;
+	position: relative;
+}
+
+.wordListBox .box_pagination {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: 3px;
 }
 
 
-.box_pagination{
-	  position: absolute;
-  bottom: 0;
-  width: 100%;
+
+
+.glossaryListBox  {
+	height: 40%;
+	overflow-y: scroll;
+/* 	-webkit-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
+/* 	-moz-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
+/* 	box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
+
+}
+
+.minihead  {
+ position: absolute !important;
+  height: 29px !important;
+  color: black !important;
 }
 
 .pagination {
@@ -405,9 +461,9 @@ table tr:nth-child(even) {
 	text-decoration: none !important;
 }
 
-.pagination>.active,.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover,
-	.pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover
-	{
+.pagination>.active, .pagination>.active>a, .pagination>.active>a:focus,
+	.pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus,
+	.pagination>.active>span:hover {
 	z-index: 2;
 	color: #000;
 	cursor: default;
@@ -429,28 +485,33 @@ table tr:nth-child(even) {
 	visibility: hidden !important;
 }
 
-.preloader{
-	  position: absolute;
-  height: 100%;
-  width: 100%;
-  z-index: 99999;
-  background-color: rgba(0, 0, 0, 0.12);
+.preloader {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 99999;
+	background-color: rgba(0, 0, 0, 0.12);
 }
 
-p.wrapText{
-	  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.preloader md-progress-circular{
-	  top: 50%;
-  margin-top: -25px;
-  left: 50%;
-  margin-left: -25px;
+p.wrapText {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
-md-list-item.md-no-proxy.md-button, md-list-item .md-no-style.md-button {
-	  align-items: flex-start !important;
+.preloader md-progress-circular {
+	top: 50%;
+	margin-top: -25px;
+	left: 50%;
+	margin-left: -25px;
+}
 
-	}
+md-list-item.md-no-proxy.md-button, md-list-item .md-no-style.md-button
+	{
+	align-items: flex-start !important;
+}
 
+
+md-tabs.hideTabs md-tabs-wrapper {
+  display: none;
+}

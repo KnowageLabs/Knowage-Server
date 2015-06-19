@@ -54,8 +54,9 @@
     Annulla
     </md-button>
     
+<!--     !gloCtrl.isCompletedGlossary() -->
     
-    <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="!gloCtrl.isCompletedGlossary()"  >
+    <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="gloCtrl.newGloss.GLOSSARY_DS.length === 0 || gloCtrl.newGloss.GLOSSARY_CD.length === 0 || gloCtrl.newGloss.GLOSSARY_NM.length === 0 "  >
      Salva
     </md-button>
   </div>

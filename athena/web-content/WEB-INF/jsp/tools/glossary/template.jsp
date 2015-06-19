@@ -178,7 +178,7 @@
 
 						<p style="  margin-left: 30px;" >{{item.WORD}}</p>
 						<md-icon class="md-secondary sm-font-icon " 	ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)" aria-label="Chat"	md-font-icon="fa fa-angle-down " style=" right: 0px;"  ng-show="!collapsed"></md-icon>
-						<md-icon class=" sm-font-icon expandericon"	ng-click="ctrl.toggle(this,itemctrl.selectedGloss)" aria-label="Chat2"	md-font-icon="fa fa-angle-right "  ng-show="collapsed"></md-icon>
+						<md-icon class=" sm-font-icon expandericon"	ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)" aria-label="Chat2"	md-font-icon="fa fa-angle-right "  ng-show="collapsed"></md-icon>
 						
 						</md-list-item> 
 
@@ -195,21 +195,22 @@
 							<md-list class="dropdown-menu" role="menu"
 								style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
 								ng-click='ctrl.newSubItem(this,item)' role="menuitem"
-								tabindex="1" ng-if=" item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)">
+								tabindex="1" ng-if="!item.HAVE_WORD_CHILD ">
+<!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
 							<p>Nuovo Nodo Logico</p>
 							</md-list-item>
 
  							<md-list-item
-								ng-click='ctrl.newSubItem(this,item)' role="menuitem"
+								ng-click='1==1' role="menuitem"
 								tabindex="2" ng-if=" item.CONTENT_NM != undefined">
 							<p>Nuovo Vocabolo</p>
-							</md-list-item>  <md-list-item ng-click='ctrl.remove(this)' role="menuitem"
+							</md-list-item>  <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
 								tabindex="3">
 							<p>Elimina</p>
 							</md-list-item>
 
  							 <md-list-item ng-click='ctrl.rename(this)' role="menuitem"	tabindex="3">
-							<p>Rinomina</p>
+							<p>Modifica</p>
 							</md-list-item> 
 
  							</md-list>

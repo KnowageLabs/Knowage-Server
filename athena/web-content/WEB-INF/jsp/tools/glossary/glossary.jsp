@@ -76,49 +76,52 @@ var serverPort ='<%=request.getServerPort()%>';
 		<div layout="row" layout-wrap>
 
 			<!-- 			LEFT BOX WORD -->
-			<div flex="25" class="leftBox_word" resize>
-				<div layout="column">
+			<div flex="20" style="width:20%;" class="leftBox_word" resize>
+			
+			
+				<div layout="column" class="wordListBox" style="height:60%;">
 
 
 
 
-					<md-toolbar class="md-blue">
+					
+					
+					
+					
+					
+					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
-
-						<div layout="row" layout-wrap class="search_box">
-							<div flex="20">
-
-
-								<md-button ng-click="ctrl.createNewWord()"
-									class="md-fab   md-mini" aria-label="add word"
-									style="margin: 18px;  margin-left: 0px; box-shadow: none ;  background-color: transparent !important;">
+    
+    				  <div>Word</div>
+    				  <md-button ng-click="ctrl.createNewWord()"
+									class="md-fab   md-ExtraMini" aria-label="add word"
+									style="position:absolute; right:11px;"
+									>
 								<md-icon md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
 								</md-button>
-							</div>
+  					</div>
+  					
+  					
+  				</md-toolbar>
+					
+					
+					
+					
+					
+					
+					<md-content layout-padding>
+					
+								<md-input-container md-no-float style=" padding-top: 22px;   padding-bottom: 0;">
+								<md-icon md-font-icon="fa fa-search " style="  margin-top: 26px;  color: black;"></md-icon>
 
-							<!-- 							<div flex="40"> -->
-							<!-- 								<md-input-container md-no-float style=" padding-top: 22px;"> -->
-							<!-- 								<md-icon md-font-icon="fa fa-search " -->
-							<!-- 									style="  margin-top: 22px;  margin-left: 11px; color: black;"></md-icon> -->
-							<!-- 								<input ng-model="filter_word.WORD" type="text" -->
-							<!-- 									placeholder="Search"> </md-input-container> -->
-							<!-- 							</div> -->
 
-							<div flex="80">
-								<md-input-container md-no-float style=" padding-top: 22px;">
-								<md-icon md-font-icon="fa fa-search "
-									style="  margin-top: 22px;  margin-left: 11px; color: black;"></md-icon>
-
-
-								<input ng-model="searchValue"
+								<input ng-model="searchValue" Style="  margin-left: 15px;"
 									ng-keyup="ctrl.WordLike(searchValue)" type="text"
 									placeholder="Search "> </md-input-container>
-							</div>
-
-						</div>
-					</div>
-					</md-toolbar>
-					<md-content layout-padding> <md-progress-circular
+							
+							
+							
+					 <md-progress-circular
 						md-diameter="20" ng-show="ctrl.showSearchPreloader"
 						class="md-hue-2"
 						style="  left: 50%;  margin-left: -25px; position:absolute "
@@ -171,24 +174,77 @@ var serverPort ='<%=request.getServerPort()%>';
 							</li>
 						</ol>
 					</div>
+					
+									</md-content>
+					
+					<div class="box_pagination" layout="row"
+					layout-align="center end"> <dir-pagination-controls
+					max-size="5"></dir-pagination-controls> </div>
+					
 				</div>
 
 
-				</md-content>
 
 
-				<md-whiteframe class="md-whiteframe-z1  box_pagination" layout="row"
-					layout-align="center end"> <dir-pagination-controls
-					max-size="5"></dir-pagination-controls> </md-whiteframe>
+<!-- 				<div> -->
+<!-- 				<md-whiteframe class="md-whiteframe-z1  box_pagination" layout="row" -->
+<!-- 					layout-align="center end"> <dir-pagination-controls -->
+<!-- 					max-size="5"></dir-pagination-controls> </md-whiteframe> -->
+<!-- 				</div> -->
 
+
+
+			<div layout="row" layout-wrap class="glossaryListBox">
+				<md-toolbar class="md-blue minihead">
+					<div class="md-toolbar-tools">
+    
+    				  <div>Glossari</div>
+    				  <md-button ng-click="ctrl.createNewGlossary($event)"
+									class="md-fab   md-ExtraMini" aria-label="add word"
+									style="position:absolute; right:11px;"
+									>
+								<md-icon md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
+								</md-button>
+  					</div>
+  				</md-toolbar>
+ 
+
+						<md-list style="  margin-top: 25px;  width: 100%;"> 
+						<md-list-item class="smallListItem"
+							ng-click="ctrl.selectedGloss=gloss; ctrl.activeTab='Glossari'; ctrl.getGlossaryNode(gloss,null)"
+							ng-repeat="gloss in ctrl.glossary ">
+
+						<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
+							ng-class="{ 'highlight': highlight, 'expanded' : expanded }"
+							style="width: 100%;">
+							<p>{{ gloss.GLOSSARY_NM | uppercase }}</p>
+						</div>
+
+						<!-- 					menu contestuale glossario -->
+						<div class="dropdown position-fixed" style="z-index: 999; left: 10px !important"
+							id="Gloss-{{  gloss.GLOSSARY_NM }}">
+							<md-list class="dropdown-menu" role="menu"> <md-list-item
+								ng-click='ctrl.CloneGloss(gloss)' role="menuitem" tabindex="1">
+							<p>Clona</p>
+							</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(gloss)' role="menuitem"
+								tabindex="1">
+							<p>Elimina</p>
+							</md-list-item> </md-list>
+						</div>
+
+						<!-- 						fine menu contestuale albero --> </md-list-item> </md-list>
+
+					</div>
 
 
 
 			</div>
-			<div flex="75" offset="25">
+			<div flex="80" offset="20">
+
+<!-- class="hideTabs" -->
 
 				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom> <md-tab label="Glossari"
+					md-border-bottom > <md-tab label="Glossari"
 					md-on-select="ctrl.activeTab='Glossari'"
 					md-active="ctrl.activeTab=='Glossari'"> <md-content
 					class="md-padding" style="padding-bottom: 150px;"> <!-- 					<md-toolbar> -->
@@ -200,38 +256,8 @@ var serverPort ='<%=request.getServerPort()%>';
 					layout-padding>
 
 				<div layout="row" layout-wrap>
-					<div flex="25">
+					<div flex="100">
 
-						<md-list> <md-list-item
-							ng-click="ctrl.createNewGlossary($event)">
-						<p style="color: green;">+ Aggiungi</p>
-						</md-list-item> <md-list-item class="smallListItem"
-							ng-click="ctrl.selectedGloss=gloss; ctrl.getGlossaryNode(gloss,null)"
-							ng-repeat="gloss in ctrl.glossary ">
-
-						<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
-							ng-class="{ 'highlight': highlight, 'expanded' : expanded }"
-							style="width: 100%;">
-							<p>{{ gloss.GLOSSARY_NM | uppercase }}</p>
-						</div>
-
-						<!-- 					menu contestuale glossario -->
-						<div class="dropdown position-fixed" style="z-index: 999;"
-							id="Gloss-{{  gloss.GLOSSARY_NM }}">
-							<md-list class="dropdown-menu" role="menu"
-								style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
-								ng-click='ctrl.CloneGloss(gloss)' role="menuitem" tabindex="1">
-							<p>Clona</p>
-							</md-list-item> <md-list-item ng-click='ctrl.deleteGloss(gloss)' role="menuitem"
-								tabindex="1">
-							<p>Elimina</p>
-							</md-list-item> </md-list>
-						</div>
-
-						<!-- 						fine menu contestuale albero --> </md-list-item> </md-list>
-
-					</div>
-					<div flex="75">
 
 
 
@@ -258,13 +284,9 @@ var serverPort ='<%=request.getServerPort()%>';
 									<md-list class="dropdown-menu" role="menu"
 										style="  margin-top: -49px;  margin-left: -275px;">
 									<md-list-item
-										ng-click='ctrl.newSubItemRootGloss(ctrl.selectedGloss)'
+										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)'
 										role="menuitem" tabindex="1">
 									<p>Aggiungi Nodo Logico</p>
-									</md-list-item> <md-list-item
-										ng-click='ctrl.newSubItemRootGloss(ctrl.selectedGloss)'
-										role="menuitem" tabindex="1">
-									<p>Aggiungi Vocabolo</p>
 									</md-list-item> <md-list-item ng-click='ctrl.deleteGloss(ctrl.selectedGloss)'
 										role="menuitem" tabindex="1">
 									<p>Elimina</p>
@@ -382,7 +404,7 @@ var serverPort ='<%=request.getServerPort()%>';
 							<div>
 								<div ui-tree="ctrl.TreeOptionsChips" data-drag-enabled="true"
 									data-drag-delay="500" data-empty-placeholder-enabled="false"
-									class="chipsTree">
+									class="chipsTree" id="chipsTree">
 									<ol id="olchiproot" ui-tree-nodes ng-model="ctrl.newWord.LINK"
 										data-empty-placeholder-enabled="false">
 										<li ng-repeat="n in [1]" data-nodrag ui-tree-node
@@ -459,21 +481,23 @@ var serverPort ='<%=request.getServerPort()%>';
 								class="md-2-line box-list-option"
 								ng-repeat="attr in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
 								layout-wrap>
-							<div class="md-item-text md-whiteframe-z1" flex>
+							<div class="md-item-text md-whiteframe-z1"  style="  position: relative;"flex>
 								<p class="margin5">
 									<span>{{attr.ATTRIBUTE_NM}}</span>
 <!-- 									<input class="transparent_input smallFont"	ng-model="attr.ATTRIBUTE_NM" type="text">  -->
-										<input	class="transparent_input smallFont " ng-model="attr.VALUE"
-										type="text">
+										
 								</p>
+								<input type="text"	class="transparent_input smallFont " ng-model="attr.VALUE">
 
 								<md-button ng-click="ctrl.removeProp(attr)"
 									class="md-fab   md-ExtraMini" aria-label="add word"
 									style="  background-color: rgb(221, 0, 0) !important;
-  									margin-top: -44px;
- 									margin-left: 89%;
-  									border-radius: 0px;
-  									border-bottom-left-radius: 18px;">
+  											border-radius: 0px;
+  											border-bottom-left-radius: 18px;
+  											position: absolute;
+  											top: 0;
+  											right: 0;
+  											margin: 0;">
 								<md-icon md-font-icon="fa fa-times" style="  color: white;"></md-icon>
 								</md-button>
 
@@ -501,7 +525,6 @@ var serverPort ='<%=request.getServerPort()%>';
 
 			</div>
 
- {{ctrl.selectedItem}}
 		</div>
 
 	</div>

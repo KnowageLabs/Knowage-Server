@@ -11,14 +11,17 @@ public class Util {
 		return str != null && str.matches("\\d+");
 	}
 
-	public static Integer getNumberOrNull(String str) {
-		return isNumber(str) ? Integer.valueOf(str) : null;
+	public static Integer getNumberOrNull(Object str) {
+		if(str instanceof Integer)return (Integer)str;
+		return isNumber(""+str) ? Integer.valueOf(""+str) : null;
 	}
 
-	public static JSONObject fromContentsLight(SbiGlContents sbiGlContents) throws JSONException {
+	public static JSONObject fromContentsLight(SbiGlContents sbiGlContents,boolean wordChild) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("CONTENT_ID", sbiGlContents.getContentId());
 		ret.put("CONTENT_NM", sbiGlContents.getContentNm());
+		ret.put("HAVE_WORD_CHILD", wordChild);
+		
 		return ret;
 	}
 }

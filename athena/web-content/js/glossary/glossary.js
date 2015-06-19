@@ -29,6 +29,16 @@ app.service('restServices', function($http, ENDPOINT_URI) {
 		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item);
 	};
 
+	service.remove = function(endP_path, req_Path, item) {
+		item == undefined ? item = "" : item = "?" + item;
+
+		console.log("service.get");
+		console.log("endP_path= " + endP_path)
+		console.log("req_Path=" + req_Path)
+		console.log("item=" + item)
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item);
+	};
+
 	// prendo i nodi di un glossario
 
 	service.getGlossNode = function(glossID, nodeID) {
@@ -48,9 +58,14 @@ app.service('restServices', function($http, ENDPOINT_URI) {
 		return $http.post(getBaseUrl() + "addWord", item);
 	};
 
-	// elimino un word
-	service.deleteWord = function(item) {
-		return $http.post(getBaseUrl() + "deleteWord", item);
+	// salvo un glossario
+	service.addGlossary = function(item) {
+		return $http.post(getBaseUrl() + "addGlossary", item);
+	};
+
+	// salvo un glossario
+	service.addContents = function(item) {
+		return $http.post(getBaseUrl() + "addContents", item);
 	};
 
 	service.WordLike = function(item) {
@@ -337,12 +352,14 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		ctr.tmpPropSearch = query;
 
 		if (ctr.tmpPropSearch != query || ctr.prevPropSearch == query) {
-			
-			console.log("(ctr.tmpPropSearch != query)"+(ctr.tmpPropSearch != query))
-					
-					console.log("(ctr.prevPropSearch == query)"+ (ctr.prevPropSearch == query))
-					
-					console.log("interrompo la ricerca prop di ele "+query)
+
+			console.log("(ctr.tmpPropSearch != query)"
+					+ (ctr.tmpPropSearch != query))
+
+			console.log("(ctr.prevPropSearch == query)"
+					+ (ctr.prevPropSearch == query))
+
+			console.log("interrompo la ricerca prop di ele " + query)
 			return;
 		}
 
@@ -380,10 +397,10 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 							def.resolve(data);
 						}
 						hidePreloader();
-						
+
 					}).error(function(data, status, headers, config) {
 				console.log("AttributeLike non Ottenuti " + status);
-			
+
 			})
 		}, 1000);
 
@@ -557,32 +574,49 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		console.log(ctr.newWord.NEWWORD)
 
 		if (ctr.newWord.NEWWORD != undefined) {
-			console.log("salvato")
-
-			restServices.addWord(ctr.newWord)
-					.success(
-							function(data, status, headers, config) {
-								console.log("word salvato ottenuto Ottenuto")
-								console.log(data)
-								if (data.hasOwnProperty("errors")) {
-									return;
-								} else {
-
-									ctr.newWord.WORD_ID = data.id;
-									delete ctr.newWord.NEWWORD;
-									product.push(ctr.newWord);
-									ctr.newWord = JSON.parse(JSON
-											.stringify(EmptyWord));
-								}
-								hidePreloader();
-							}).error(function(data, status, headers, config) {
-						console.log("Words non Ottenuti " + status);
-					})
-
+			console.log("salvo")
+			ctr.newWord.SaveOrUpdate = "Save";
 		} else {
 			console.log("modificato")
-			ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
+			ctr.newWord.SaveOrUpdate = "Update";
+			// ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		}
+
+		for (var i = 0; i < ctr.newWord.SBI_GL_WORD_ATTR.length; i++) {
+			ctr.newWord.SBI_GL_WORD_ATTR[i].ORDER = i;
+		}
+
+		for (var i = 0; i < ctr.newWord.LINK.length; i++) {
+			ctr.newWord.LINK[i].ORDER = i;
+		}
+
+		restServices.addWord(ctr.newWord).success(
+				function(data, status, headers, config) {
+					console.log("word salvato  Ottenuto")
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						showErrorToast(data.errors[0].message)
+						return;
+					} else {
+
+						if (ctr.newWord.SaveOrUpdate == "Save") {
+
+							ctr.newWord.WORD_ID = data.id;
+							delete ctr.newWord.NEWWORD;
+							product.push(ctr.newWord);
+						} else {
+							ctr.newWord.oldWord.WORD = ctr.newWord.WORD;
+						}
+
+						ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
+
+						showToast("Word salvata con successo", 3000);
+					}
+					hidePreloader();
+				}).error(function(data, status, headers, config) {
+			showErrorToast("word non salvato " + status)
+			console.log("Words non Ottenuti " + status);
+		})
 
 	};
 
@@ -590,33 +624,111 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
 		console.log("deleteWord")
-		console.log(ctr.words)
-		var confirm = $mdDialog.confirm().title('Elimina word').content(
-				'Sei sicuro di voler eliminare questo word?').ariaLabel(
-				'Lucky day').ok('Elimina!').cancel('Annulla').targetEvent(ev);
+		var confirm = $mdDialog
+				.confirm()
+				.title('Elimina word')
+				.content(
+						'Sei sicuro di voler eliminare questo word?  Saranno eliminate anche le eventuali relazioni con altri word!')
+				.ariaLabel('Lucky day').ok('Elimina!').cancel('Annulla')
+				.targetEvent(ev);
 		console.log(confirm)
 
 		var wds = ctr.words;
 		var nw = ctr.newWord;
-		$mdDialog.show(confirm).then(function() {
+		$mdDialog
+				.show(confirm)
+				.then(
+						function() {
 
-			var index = wds.indexOf(ev);
-			wds.splice(index, 1);
+							restServices
+									.remove("glossary", "deleteWord",
+											"WORD_ID=" + ev.WORD_ID)
+									.success(
+											function(data, status, headers,
+													config) {
+												console.log("Word eliminato")
+												console.log(data)
+												if (data
+														.hasOwnProperty("errors")) {
+													showErrorToast(data.errors[0].message)
+													return;
+												} else {
+													var index = wds.indexOf(ev);
+													wds.splice(index, 1);
+													showToast(
+															"Word eliminato con successo",
+															3000);
+												}
+												hidePreloader();
 
-			// controllo se l'elemento
-			// che si vule eliminare è
-			// in fase di modifica
-			if (nw.WORD_ID === ev.WORD_ID) {
-				console.log("Sto modificando l'elemento che sto eliminando")
-				nw.NEWWORD = true;
-			}
+											})
+									.error(
+											function(data, status, headers,
+													config) {
+												console
+														.log("WORD NON ELMINIATO "
+																+ status);
+												showErrorToast("word non eliminato "
+														+ status)
 
-		}, function() {
-			console.log('You decided to keep your debt.');
-		});
+											})
+
+							// controllo se l'elemento
+							// che si vule eliminare è
+							// in fase di modifica
+							if (nw.WORD_ID === ev.WORD_ID) {
+								console
+										.log("Sto modificando l'elemento che sto eliminando")
+								nw.NEWWORD = true;
+							}
+
+						}, function() {
+							console.log('You decided to keep your debt.');
+						});
 	};
 
 	// glossary
+
+	ctr.deleteGlossary = function(ev) {
+		// Appending dialog to document.body to cover
+		// sidenav in docs app
+		console.log("deleteGloss")
+		var confirm = $mdDialog.confirm().title('Elimina glossario').content(
+				'Sei sicuro di voler eliminare questo Glossario?').ariaLabel(
+				'Lucky day').ok('Elimina!').cancel('Annulla').targetEvent(ev);
+		console.log(confirm)
+
+		var wds = ctr.glossary;
+		$mdDialog.show(confirm).then(
+				function() {
+
+					restServices.remove("glossary", "deleteGlossary",
+							"GLOSSARY_ID=" + ev.GLOSSARY_ID).success(
+							function(data, status, headers, config) {
+								console.log("GLOSSARIO eliminato")
+								console.log(data)
+								if (data.hasOwnProperty("errors")) {
+									showErrorToast(data.errors[0].message)
+									return;
+								} else {
+									var index = wds.indexOf(ev);
+									wds.splice(index, 1);
+									showToast(
+											"Glossario eliminato con successo",
+											3000);
+								}
+								hidePreloader();
+
+							}).error(function(data, status, headers, config) {
+						console.log("WORD NON ELMINIATO " + status);
+						showErrorToast("word non eliminato " + status)
+
+					})
+
+				}, function() {
+					console.log('You decided to keep your debt.');
+				});
+	};
 
 	ctr.createNewGlossary = function(ev) {
 
@@ -631,19 +743,50 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 							console.log(gctl.newGloss)
 							if (gctl.newGloss.NEWGLOSS != undefined) {
 								console.log("salvo")
-								gctl.newGloss.GLOSSARY_ID = (new Date())
-										.getTime();
-								delete gctl.newGloss.NEWGLOSS;
-								ctr.glossary.push(gctl.newGloss);
+
+								restServices
+										.addGlossary(gctl.newGloss)
+										.success(
+												function(data, status, headers,
+														config) {
+													console
+															.log("glossary salvato  Ottenuto")
+													console.log(data)
+													if (data
+															.hasOwnProperty("errors")) {
+
+														showErrorToast(data.errors[0].message)
+
+														return;
+													} else {
+														delete gctl.newGloss.NEWGLOSS;
+														gctl.newGloss.GLOSSARY_ID = data.id;
+														console
+																.log(gctl.newGloss)
+														ctr.glossary
+																.push(gctl.newGloss);
+														ctr.newGloss = JSON
+																.parse(JSON
+																		.stringify(EmptyGloss));
+														$mdDialog.hide();
+														showToast(
+																"Glossario salvato con successo",
+																3000);
+													}
+													hidePreloader();
+												})
+										.error(
+												function(data, status, headers,
+														config) {
+
+													showErrorToast("glossary non salvato "
+															+ status)
+
+												})
 
 							} else {
 								console.log("modifico")
 							}
-
-							gctl.newGloss = JSON.parse(JSON
-									.stringify(EmptyGloss));
-
-							$mdDialog.hide();
 
 						};
 						gctl.annulla = function($event) {
@@ -652,26 +795,6 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 						};
 
-						gctl.isCompletedGlossary = function() {
-
-							console.log("isCompletedGlossary")
-							console.log(gctl.newGloss)
-
-							for ( var cod in gctl.newGloss) {
-								console.log(cod)
-								if (gctl.newGloss[cod] == ""
-										&& cod != "SBI_GL_CONTENTS") {
-									return false;
-								}
-							}
-							return true;
-							//											
-							// return
-							// (JSON.stringify(EmptyGloss)
-							// !=
-							// JSON
-							// .stringify(gctl.newGloss));
-						}
 					},
 
 					// "web-content/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html"
@@ -689,21 +812,114 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
 			console.log("accept TreeOptionsWord")
 			return false;
-		}
+		},
+		beforeDrop : function(event) {
+			console.log("beforeDropWord")
+	
+			
+			if(event.dest.nodesScope.$parent.$element[0].id=="chipsTree"){
+				return true;
+			}
+			return true;
+			
+			
+//			var n1 = event.dest.nodesScope.$nodeScope == null ? null
+//					: event.dest.nodesScope.$nodeScope.$id;
+//			var n2 = event.source.nodesScope.$nodeScope == null ? null
+//					: event.source.nodesScope.$nodeScope.$id;
+//
+//			if (n1 == n2) {
+//				console.log("nessun movimento")
+//				return;
+//			}
+
+			var confirm = $mdDialog.confirm().parent(
+					angular.element(document.body)).title(
+					'Sei sicuro di aggiungere questo word?').content(
+					'I dati saranno immediatamente salvati sul database.')
+					.ariaLabel('Muovi').ok('Aggiungi').cancel('Annulla')
+
+			$mdDialog
+					.show(confirm)
+					.then(
+							function() {
+								console.log("accettato");
+								console.log(event.source.nodeScope.item)
+
+								var elem = event.source.nodeScope.item;
+
+								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
+										: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
+
+									elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+								
+
+								showPreloader();
+								restServices
+								.addContents(elem)
+										.success(
+												function(data, status, headers,
+														config) {
+
+													if (data
+															.hasOwnProperty("errors")) {
+														showErrorToast(data.errors[0].message)
+													} else {
+														showToast(
+																"Salvato con successo",
+																3000);
+														event.dest.nodesScope
+																.insertNode(
+																		event.dest.index,
+																		elem);
+														event.source.nodesScope.$modelValue
+																.splice(
+																		event.source.index,
+																		1);
+													}
+													if (elem.PARENT_ID != null) {
+														event.dest.nodesScope
+																.expand();
+													}
+													hidePreloader();
+												}).error(
+												function(data, status, headers,
+														config) {
+													hidePreloader();
+												});
+
+							}, function() {
+								console.log("rifiutato");
+								hidePreloader();
+							});
+
+			// non faccio spostare l'elemento automaticamente
+			event.source.nodeScope.$$apply = false;
+
+		},
+
 	};
 
 	ctr.TreeOptions = {
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
 			console.log("accept TreeOptions")
-
-			if (destNodesScope.hasChild()) {
-				var child = destNodesScope.childNodes()
-				for (ch in child) {
-					if (child[ch].$modelValue.CONTENT_CD != undefined) {
-						return false;
-					}
+			
+			if(destNodesScope.$parent.$modelValue.hasOwnProperty("HAVE_WORD_CHILD")){
+				if(destNodesScope.$parent.$modelValue.HAVE_WORD_CHILD==true){
+					console.log("figli word presenti")
+					return false;
 				}
 			}
+			
+//			if (destNodesScope.hasChild()) {
+//				var child = destNodesScope.childNodes()
+//				for (ch in child) {
+//					if (child[ch].$modelValue.CONTENT_CD != undefined) {
+//						return false;
+//					}
+//				}
+//			}
+			console.log("figli word NON presenti")
 			return true;
 		},
 
@@ -739,6 +955,9 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
 										: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
 
+									elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+								
+
 								showPreloader();
 								restServices
 										.AlterContentGloss(elem)
@@ -762,9 +981,10 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 																		event.source.index,
 																		1);
 													}
-
-													event.dest.nodesScope
-															.expand();
+													if (elem.PARENT_ID != null) {
+														event.dest.nodesScope
+																.expand();
+													}
 													hidePreloader();
 												}).error(
 												function(data, status, headers,
@@ -838,6 +1058,64 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		scope.remove();
 	};
 
+	ctr.removeContents = function(ev) {
+		console.log("removeContents")
+		console.log(ev)
+//		ev.remove();
+
+		var confirm = $mdDialog
+				.confirm()
+				.title('Elimina Nodo')
+				.content(
+						'Sei sicuro di voler eliminare questo Nodo?  Saranno eliminati anche tutti i figli ad esso associato!')
+				.ariaLabel('Lucky day').ok('Elimina!').cancel('Annulla')
+				.targetEvent(ev);
+		console.log(confirm)
+
+		$mdDialog
+				.show(confirm)
+				.then(
+						function() {
+
+							restServices
+									.remove("glossary", "deleteContents",
+											"CONTENTS_ID=" + ev.$modelValue.CONTENT_ID)
+									.success(
+											function(data, status, headers,
+													config) {
+												console.log("Contents eliminato")
+												console.log(data)
+												if (data
+														.hasOwnProperty("errors")) {
+													showErrorToast(data.errors[0].message)
+													return;
+												} else {
+													ev.remove();
+													showToast(
+															"Nodo eliminato con successo",
+															3000);
+												}
+												hidePreloader();
+
+											})
+									.error(
+											function(data, status, headers,
+													config) {
+												console
+														.log("Nodo NON ELMINIATO "
+																+ status);
+												showErrorToast("nodo non eliminato "
+														+ status)
+
+											})
+
+
+						}, function() {
+							console.log('You decided to keep your debt.');
+						});
+
+	};
+
 	ctr.rename = function(node) {
 		console.log("rename")
 		console.log(node)
@@ -906,42 +1184,42 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		console.log("toggle")
 		scope.preloader = true;
 		if (scope.collapsed) {
-			ctr.getGlossaryNode(null, item, scope)
+			ctr.getGlossaryNode(gloss, item, scope)
 		} else {
 			scope.toggle();
 			scope.preloader = false;
 		}
 	};
 
-	ctr.hasVocabolaryChild = function(scope) {
-		for (ch in scope.CHILD) {
-			if (scope.CHILD[ch].CONTENT_CD == undefined) {
-				return false;
-			}
-		}
-		return true;
-	};
+	// ctr.hasVocabolaryChild = function(scope) {
+	// for (ch in scope.CHILD) {
+	// if (scope.CHILD[ch].CONTENT_CD == undefined) {
+	// return false;
+	// }
+	// }
+	// return true;
+	// };
 
-	ctr.newSubItemRootGloss = function(parent) {
-		console.log("add childrto p")
-
-		parent.SBI_GL_CONTENTS.push({
-			CONTENT_ID : 'Phhh',
-			GLOSSARY_ID : 1,
-			PARENT_ID : 'P1',
-			CONTENT_CD : 'c2',
-			CONTENT_NM : parent.GLOSSARY_NM + ' ch'
-					+ (parent.SBI_GL_CONTENTS.length + 1),
-			CONTENT_DS : 'descr2',
-			DEPTH : 1,
-			CHILD : []
-		});
-	};
+//	ctr.newSubItemRootGloss = function(parent) {
+//		console.log("add childrto p")
+//
+//		parent.SBI_GL_CONTENTS.push({
+//			CONTENT_ID : 'Phhh',
+//			GLOSSARY_ID : 1,
+//			PARENT_ID : 'P1',
+//			CONTENT_CD : 'c2',
+//			CONTENT_NM : parent.GLOSSARY_NM + ' ch'
+//					+ (parent.SBI_GL_CONTENTS.length + 1),
+//			CONTENT_DS : 'descr2',
+//			DEPTH : 1,
+//			CHILD : []
+//		});
+//	};
 
 	ctr.newSubItem = function(scope, parent) {
 		console.log("add childr")
-		var nodeData = scope.$modelValue;
 		console.log(parent)
+		console.log(scope)
 
 		// var tmpNW = {
 		// CONTENT_ID : 'Phhh',
@@ -968,7 +1246,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 							showPreloader();
 							restServices
-									.addWord(rn.tmpNW)
+									.addContents(rn.tmpNW)
 									.success(
 											function(data, status, headers,
 													config) {
@@ -981,7 +1259,17 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 															"Salvato con successo",
 															3000);
 
-													parent.CHILD.push(tmpNW);
+													rn.tmpNW.CONTENT_ID = data.id;
+
+													if (parent
+															.hasOwnProperty("CHILD")) {
+														parent.CHILD
+																.push(rn.tmpNW);
+														scope.expand();
+													} else {
+														parent.SBI_GL_CONTENTS
+																.push(rn.tmpNW);
+													}
 
 												}
 												hidePreloader();
@@ -1014,11 +1302,12 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 	// pagination word
 	function changeWordItemPP() {
-		var lbw = angular.element(document.querySelector('.leftBox_word'))[0].offsetHeight;
+		var lbw = angular.element(document.querySelector('.wordListBox'))[0].offsetHeight;
 		var tbw = angular.element(document.querySelector('.md-toolbar-tools'))[0].offsetHeight;
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
-		bpw == 0 ? bpw = 40 : bpw = bpw;
-		var nit = parseInt((lbw - tbw - bpw) / 31)
+
+		// bpw == 0 ? bpw = 30 : bpw = bpw;
+		var nit = parseInt((lbw - tbw - bpw - 23) / 31);
 		ctr.WordItemPerPage = nit;
 	}
 
@@ -1124,6 +1413,8 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 						ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 					} else {
 						ctr.newWord = data;
+						ctr.newWord.oldWord = ele;
+
 						ctr.activeTab = 'Vocabolo';
 					}
 
@@ -1182,8 +1473,8 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 	}
 
 	function showToast(text, time) {
-		var timer = time == undefined ? 6000 : time
-		console.log("ci sono errori")
+		var timer = time == undefined ? 6000 : time;
+
 		console.log(text)
 		$mdToast.show($mdToast.simple().content(text).position('top').action(
 				'OK').highlightAction(false).hideDelay(timer));
