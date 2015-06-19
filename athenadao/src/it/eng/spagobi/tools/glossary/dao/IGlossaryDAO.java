@@ -10,8 +10,10 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * CRUD operations
@@ -24,6 +26,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// Glossary
 	//
 	public SbiGlGlossary loadGlossary(Integer glossaryId);
+	
+	public List<SbiGlGlossary> loadGlossaryByName(String glossaryNM);
 
 	public List<SbiGlGlossary> listGlossary();
 
@@ -38,9 +42,11 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	//
 	public SbiGlContents loadContents(Integer contentId);
 
+	public List<SbiGlContents> loadContentsByName(String contentNM);
+
 	public List<SbiGlContents> listContents();
 
-	public List<SbiGlContents> listContentsByGlossaryId(Integer glossaryId, Integer parentId);
+	public List<SbiGlContents> listContentsByGlossaryIdAndParentId(Integer glossaryId, Integer parentId);
 
 	public Integer insertContents(SbiGlContents contents);
 
@@ -54,6 +60,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// Word
 	//
 	public SbiGlWord loadWord(Integer wordId);
+	
+	public List<SbiGlWord> loadWordByName(String wordNM);
 
 	public List<SbiGlWord> listWord();
 	
@@ -61,7 +69,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlWord> listWordFiltered(String word);
 
-	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,JSONArray jarr);
+	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
 
 	public void modifyWord(SbiGlWord word);
 
@@ -105,4 +113,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public void modifyWordAttr(SbiGlWordAttr wordAttr);
 
 	public void deleteWordAttr(Integer wordId);
+	
+	//references
+	public void deleteWordReferences(Integer wordId);
 }

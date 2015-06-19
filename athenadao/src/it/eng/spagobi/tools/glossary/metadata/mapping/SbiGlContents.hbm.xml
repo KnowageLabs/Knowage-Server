@@ -72,13 +72,13 @@
 		<many-to-one name="glossary"
 			class="it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary" update="false"
 			insert="false" fetch="select">
-			<column name="GLOSSARY_ID" not-null="true" />
+			<column name="GLOSSARY_ID" />
 		</many-to-one>
 
 		<many-to-one name="parent"
 			class="it.eng.spagobi.tools.glossary.metadata.SbiGlContents" update="false"
 			insert="false" fetch="select">
-			<column name="PARENT_ID" not-null="true" />
+			<column name="PARENT_ID" />
 		</many-to-one>
 
 		<property name="sequence" type="integer">

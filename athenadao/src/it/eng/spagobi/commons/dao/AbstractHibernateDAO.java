@@ -23,6 +23,7 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Filter;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -257,7 +258,7 @@ public class AbstractHibernateDAO {
 		Session session = null;
 		T toReturn = null;
 
-		LogMF.debug(logger, "IN: id = [{0}]", id);
+LogMF.debug(logger, "IN: id = [{0}]", id);
 
 		try {
 			if (id == null) {
@@ -404,6 +405,51 @@ public class AbstractHibernateDAO {
 			if (tx != null)
 				tx.rollback();
 			throw new SpagoBIDOAException("An unexpected error occured while deleting object of type [" + clazz + "] whose id is equal to [" + id + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * Erases a record from db
+	 * 
+	 * @param clazz
+	 * @param id
+	 */
+	public void deleteWordRef( Serializable id) {
+		Session session = null;
+		Transaction tx = null;
+		LogMF.debug(logger, "IN: id = [{0}]", id);
+
+		try {
+			if (id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				tx = session.beginTransaction();
+				Assert.assertNotNull(tx, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+
+			
+			Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
+			q.setParameter("id", id);
+			q.executeUpdate();
+			tx.commit();
+
+		} catch (Throwable t) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDOAException("An unexpected error occured while deleting word references where word id is equal to [" + id + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

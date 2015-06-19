@@ -3,11 +3,15 @@ package it.eng.spagobi.tools.glossary.dao;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchAttributeByName;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
@@ -22,6 +26,7 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttrId;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -30,8 +35,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDAO {
+public class GlossaryDAOImpl extends AbstractHibernateDAO implements
+		IGlossaryDAO {
 
 	static private Logger logger = Logger.getLogger(GlossaryDAOImpl.class);
 
@@ -40,6 +47,20 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		return load(SbiGlGlossary.class, id);
 	}
 
+	
+
+	@Override
+	public List<SbiGlWord> loadWordByName(String name) {
+		return list(new SearchWordByName(name));
+
+	}
+
+	
+	@Override
+	public List<SbiGlGlossary> loadGlossaryByName(String name) {
+		return list(new SearchGlossaryByName(name));
+
+	}
 	@Override
 	public List<SbiGlGlossary> listGlossary() {
 		return list(SbiGlGlossary.class);
@@ -65,13 +86,21 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		return load(SbiGlContents.class, contentId);
 	}
 
+	
+	@Override
+	public List<SbiGlContents> loadContentsByName(String contentNM){
+		return list(new SearchContentsByName(contentNM));
+
+	}
+	
 	@Override
 	public List<SbiGlContents> listContents() {
 		return list(SbiGlContents.class);
 	}
 
 	@Override
-	public List<SbiGlContents> listContentsByGlossaryId(Integer glossaryId, Integer parentId) {
+	public List<SbiGlContents> listContentsByGlossaryIdAndParentId(Integer glossaryId,
+			Integer parentId) {
 		return list(new SearchContentsByParent(glossaryId, parentId));
 	}
 
@@ -86,7 +115,8 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public void modifyContentPosition(Integer contentId, Integer parentId, Integer glossaryId) {
+	public void modifyContentPosition(Integer contentId, Integer parentId,
+			Integer glossaryId) {
 		SbiGlContents content = load(SbiGlContents.class, contentId);
 		content.setParentId(parentId);
 		content.setGlossaryId(glossaryId);
@@ -94,8 +124,27 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public void deleteContents(Integer contentId) {
-		delete(SbiGlContents.class, contentId);
+	public void deleteContents(final Integer contentId) {
+		
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+
+			@Override
+			public Boolean execute(Session session) {
+				List<SbiGlContents> att=listContentsByGlossaryIdAndParentId(null,contentId);
+				if(!att.isEmpty()){
+					for(SbiGlContents tmp : att){
+					deleteContents(tmp.getContentId());
+					}
+				}
+				
+				Object obj = session.get(SbiGlContents.class, contentId);
+				if (obj != null) {
+					session.delete(obj);
+				}
+				return true;
+			}
+			
+		});
 	}
 
 	@Override
@@ -114,70 +163,189 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	}
 
 	@Override
-	public Integer insertWord(final SbiGlWord word, final List<SbiGlWord> objLink, final List<SbiGlAttribute> objAttr, final JSONArray jarr) {
+	public Integer insertWord(final SbiGlWord word,
+			final List<SbiGlWord> objLink, final List<SbiGlAttribute> objAttr,
+			final Map<Integer, JSONObject> MapAttr,final Map<Integer, JSONObject> MapLink, final boolean modify) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) {
-				updateSbiCommonInfo4Insert(word);
-				Integer wordId = (Integer) session.save(word);
-				if (objLink != null) {
-					Set<SbiGlReferences> references = new HashSet<SbiGlReferences>();
 
-					int index = 0;
+				Integer wordId;
+
+				Boolean doUpdate = false;
+				if (modify) {
+					doUpdate = true;
+
+					wordId = word.getWordId();
+				} else {
+					updateSbiCommonInfo4Insert(word);
+					wordId = (Integer) session.save(word);
+				}
+
+				if (objLink != null) {
+					doUpdate = true;
+					Set<SbiGlReferences> references = new HashSet<SbiGlReferences>();
+					if (word.getReferences()== null) {
+						word.setReferences(new HashSet<SbiGlReferences>());
+					}
+					
+					
+					
 					for (SbiGlWord w : objLink) {
+						
+						if (modify) {
+							//check if user modify value or order of presents link
+							boolean pres = false;
+							for (SbiGlReferences at : word.getReferences()) {
+								if(at.getId().getRefWordId()==w.getWordId()){
+									pres = true;
+									try {
+										if (at.getSequence()!=MapLink.get(w.getWordId()).getInt("ORDER")) {
+											//alter index
+											at.setSequence(MapLink.get(w.getWordId()).getInt("ORDER"));
+											updateSbiCommonInfo4Update(at);
+										}
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+
+									}
+									references.add(at);
+									break;
+								}
+								
+							}
+							
+							if(pres){
+								continue;
+							}
+						}
+						
+						
+						
+						//if references link there isn't, create it;
+						
 						SbiGlReferences tmp = new SbiGlReferences();
 						tmp.setId(new SbiGlReferencesId(wordId, w.getWordId()));
 						tmp.setWord(word);
 						tmp.setRefWord(w);
-						tmp.setSequence(index);
-						updateSbiCommonInfo4Update(tmp);
+						
+						try {
+							tmp.setSequence(MapLink.get(w.getWordId()).getInt("ORDER"));
+							
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						updateSbiCommonInfo4Insert(tmp);
 						references.add(tmp);
-						index++;
+						word.getReferences().add(tmp);
+						
 					}
 
-					if (!references.isEmpty()) {
-						word.setReferences(references);
-					} else {
-						word.setReferences(null);
+					//remove the references link not present in new list
+					word.getReferences().retainAll(references);
+					
+				} else {
+
+					if (word.getReferences() != null
+							&& word.getReferences().size() != 0) {
+						word.getReferences().clear();
+						doUpdate = true;
 					}
+
 				}
 
 				if (objAttr != null) {
 					Set<SbiGlWordAttr> SbiGlWordAttr = new HashSet<SbiGlWordAttr>();
+					if (word.getAttributes() == null) {
+						word.setAttributes(new HashSet<SbiGlWordAttr>());
+					}
 
-					int index = 0;
+					doUpdate = true;
+					
 					for (SbiGlAttribute w : objAttr) {
-						SbiGlWordAttr tmp = new SbiGlWordAttr();
-						tmp.setId(new SbiGlWordAttrId(wordId, w.getAttributeId()));
-						tmp.setWord(word);
-						tmp.setAttribute(w);
 
-						for (int i = 0; i < jarr.length(); i++) {
+						if (modify) {
+							//check if user modify value or order of presents attribute
+							boolean pres = false;
+							for (SbiGlWordAttr at : word.getAttributes()) {
+								if (at.getId().getAttributeId() == w
+										.getAttributeId()
+										&& at.getId().getWordId() == wordId) {
 
-							try {
-								if (jarr.getJSONObject(i).getInt("ATTRIBUTE_ID") == w.getAttributeId()) {
-									tmp.setValue(jarr.getJSONObject(i).getString("VALUE"));
-									jarr.remove(i);
+									pres = true;
+									try {
+										boolean alterAttr=false;
+										if (at.getValue().compareTo(MapAttr.get(w.getAttributeId()).getString("VALUE")) != 0) {
+											//alter value
+											at.setValue(MapAttr.get(w.getAttributeId()).getString("VALUE"));
+											alterAttr=true;
+										}
+										if (at.getOrder()!=MapAttr.get(w.getAttributeId()).getInt("ORDER")) {
+											//alter index
+											at.setOrder(MapAttr.get(w.getAttributeId()).getInt("ORDER"));
+											alterAttr=true;
+										}
+										if(alterAttr){
+											updateSbiCommonInfo4Update(at);
+										}
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+
+									}
+
+									SbiGlWordAttr.add(at);
 									break;
 								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							}
+							if (pres) {
+								continue;
 							}
 						}
 
-						tmp.setOrder(index);
-						updateSbiCommonInfo4Update(tmp);
+						//if attribute there isn't, create it;
+						
+						SbiGlWordAttr tmp = new SbiGlWordAttr();
+						tmp.setId(new SbiGlWordAttrId(wordId, w
+								.getAttributeId()));
+						tmp.setWord(word);
+						tmp.setAttribute(w);
+
+						try {
+							tmp.setValue(MapAttr.get(w.getAttributeId())
+									.getString("VALUE"));
+							
+							tmp.setOrder(MapAttr.get(w.getAttributeId()).getInt("ORDER"));
+							
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						updateSbiCommonInfo4Insert(tmp);
 						SbiGlWordAttr.add(tmp);
-						index++;
+						word.getAttributes().add(tmp);
+				
 					}
 
-					if (!SbiGlWordAttr.isEmpty()) {
-						word.setAttributes(SbiGlWordAttr);
-					} else {
-						word.setAttributes(null);
-					}
+					
+					//remove the attribute not present in new list
+					word.getAttributes().retainAll(SbiGlWordAttr);
 
+				} else {
+					//remove all attribute if there aren't in new list
+					if (word.getAttributes() != null
+							&& word.getAttributes().size() != 0) {
+						word.getAttributes().clear();
+						doUpdate = true;
+					}
+				}
+
+				if (doUpdate) {
+					updateSbiCommonInfo4Update(word);
 					session.update(word);
 				}
 				return wordId;
@@ -260,10 +428,19 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		update(wordAttr);
 	}
 
+	
+	
 	@Override
 	public void deleteWordAttr(Integer wordId) {
 		delete(SbiGlWordAttr.class, wordId);
 	}
+	
+	@Override
+	public void deleteWordReferences(Integer wordId) {
+		deleteWordRef( wordId);
+	}
+	
+	
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override

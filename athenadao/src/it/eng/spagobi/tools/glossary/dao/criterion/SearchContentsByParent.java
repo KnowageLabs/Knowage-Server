@@ -21,8 +21,11 @@ public class SearchContentsByParent implements ICriterion<SbiGlContents> {
 		Criteria c = session.createCriteria(SbiGlContents.class);
 		if (glossaryId != null)
 			c.add(Restrictions.eq("glossary.glossaryId", glossaryId));
-		if (parentId != null)
+		if (parentId != null){
 			c.add(Restrictions.eq("parent.contentId", parentId));
+		}else{
+			c.add(Restrictions.isNull("parent.contentId"));
+		}
 		return c;
 	}
 
