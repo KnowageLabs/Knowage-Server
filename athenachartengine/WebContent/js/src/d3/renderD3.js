@@ -1109,24 +1109,24 @@ function renderParallelChart(data){
 			records.sort(function(obj1, obj2) {
 				return obj1[limitcolumn] - obj2[limitcolumn];
 			});
-		}
+		
 		
 		var len = records.length;
 		
 		var max = data.limit.max;
 		
-		if (data.limit.order === 'desc'){
+		if (data.limit.order === 'top'){
 			
 			var slicedData = records.slice(len-max,len);
 			
 			records = slicedData;
 		}
-		else if (data.limit.order === 'asc'){
+		else if (data.limit.order === 'bottom'){
 			
 			var slicedData = records.slice(0,max);
 			
 			records = slicedData;
-		}
+		}}
 		
 		var groupcolumn = data.chart.group;
 
