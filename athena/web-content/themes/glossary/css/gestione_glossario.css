@@ -254,8 +254,16 @@ md-toolbar.md-default-theme.md-blue {
 	margin-left: 19px;
 }
 
-.figlio_vocabolo {
+.figlio_vocabolo md-list-item {
 	background-color: gray;
+}
+.figlio_vocabolo .md-list-item-inner , .nodo_logico .md-list-item-inner ,#wordTree .md-list-item-inner{
+  width: 100%;
+  height: 100%;
+}
+
+ #wordTree md-list md-list-item button.md-button:not([disabled]):hover {
+  background-color: transparent;
 }
 
 .chipsTree  .angular-ui-tree-empty {
@@ -381,10 +389,28 @@ table tr:nth-child(even) {
 	/*     padding-bottom: 20px; */
 }
 
-.angular-ui-tree-handle:hover {
+#wordTree .angular-ui-tree-handle:hover {
 	color: #438eb9;
 	background: #f4f6f7;
 	border-color: #dce2e8;
+
+}
+
+#wordTree button{
+	  height: 25px;
+	  padding: 0px ;
+}
+#wordTree md-list{
+padding:0;
+}
+
+#wordTree  button p{
+ line-height: 25px;
+ padding: 0px 16px;
+}
+ 
+#wordTree .angular-ui-tree-handle ,#wordTree .angular-ui-tree-handle:hover{
+  cursor: pointer !important;
 }
 
 .angular-ui-tree-placeholder {

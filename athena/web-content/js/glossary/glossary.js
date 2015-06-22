@@ -815,12 +815,13 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		},
 		beforeDrop : function(event) {
 			console.log("beforeDropWord")
+			console.log(event)
+			console.log(event.dest.nodesScope.$parent.$element[0].id)
 	
-			
-			if(event.dest.nodesScope.$parent.$element[0].id=="chipsTree"){
+			//if is D&D to newWord chisp link return true
+			if(event.dest.nodesScope.$parent.$element[0].id=="chipsTree" || event.dest.nodesScope.$parent.$element[0].id=="wordTree"){
 				return true;
 			}
-			return true;
 			
 			
 //			var n1 = event.dest.nodesScope.$nodeScope == null ? null
@@ -844,14 +845,13 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 					.then(
 							function() {
 								console.log("accettato");
-								console.log(event.source.nodeScope.item)
 
-								var elem = event.source.nodeScope.item;
+								var elem ={};
 
 								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
-										: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
+										: event.dest.nodesScope.$nodeScope.$modelValue.CONTENT_ID
 
-									elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+								elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
 								
 
 								showPreloader();
@@ -868,14 +868,9 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 														showToast(
 																"Salvato con successo",
 																3000);
-														event.dest.nodesScope
-																.insertNode(
-																		event.dest.index,
-																		elem);
-														event.source.nodesScope.$modelValue
-																.splice(
-																		event.source.index,
-																		1);
+														
+														elem.WORD = event.source.nodeScope.$modelValue.WORD;
+														event.dest.nodesScope.insertNode(event.dest.index,elem);
 													}
 													if (elem.PARENT_ID != null) {
 														event.dest.nodesScope
@@ -903,11 +898,37 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 	ctr.TreeOptions = {
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
 			console.log("accept TreeOptions")
+			console.log(destNodesScope)
 			
-			if(destNodesScope.$parent.$modelValue.hasOwnProperty("HAVE_WORD_CHILD")){
-				if(destNodesScope.$parent.$modelValue.HAVE_WORD_CHILD==true){
-					console.log("figli word presenti")
-					return false;
+		
+			
+		
+			
+			
+			//check if is a D&D of word
+			if(sourceNodeScope.$modelValue.hasOwnProperty("WORD")){
+				//check if is glossary root
+				if(destNodesScope.$parent.$modelValue.hasOwnProperty("PARENT_ID")){
+					if(destNodesScope.$parent.$modelValue.PARENT_ID==null){
+						console.log("D&D not avaible on the glossary root");
+												return false;
+					}
+					
+				}
+				//check if have logical node child
+				if(destNodesScope.$parent.$modelValue.hasOwnProperty("HAVE_CONTENTS_CHILD")){
+					if(destNodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD==true){
+						console.log("figli logici presenti, non faccio il d&d")
+						return false;
+					}
+				}
+			}else{
+				//d&d of logical node
+				if(destNodesScope.$parent.$modelValue.hasOwnProperty("HAVE_WORD_CHILD")){
+					if(destNodesScope.$parent.$modelValue.HAVE_WORD_CHILD==true){
+						console.log("figli word presenti")
+						return false;
+					}
 				}
 			}
 			
@@ -919,7 +940,6 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 //					}
 //				}
 //			}
-			console.log("figli word NON presenti")
 			return true;
 		},
 
@@ -1072,6 +1092,18 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 				.targetEvent(ev);
 		console.log(confirm)
 
+			var req="";
+		if(ev.$modelValue.hasOwnProperty("CONTENT_ID")){
+			//delete logical node
+			req="CONTENTS_ID=" + ev.$modelValue.CONTENT_ID;
+		}else{
+			//delete word of content
+			req="PARENT_ID=" + ev.$parentNodeScope.$modelValue.CONTENT_ID+"&WORD_ID="+ev.$modelValue.WORD_ID;
+		}
+	
+		
+		
+		
 		$mdDialog
 				.show(confirm)
 				.then(
@@ -1079,7 +1111,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 							restServices
 									.remove("glossary", "deleteContents",
-											"CONTENTS_ID=" + ev.$modelValue.CONTENT_ID)
+											req)
 									.success(
 											function(data, status, headers,
 													config) {
@@ -1445,8 +1477,10 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 					console.log(node)
 
 					if (node == null) {
+						//add to glossary
 						gloss.SBI_GL_CONTENTS = data
 					} else {
+						//add to child
 						node.CHILD = data;
 					}
 

@@ -151,72 +151,75 @@
 			
 						<!-- Nested list template -->
 						<script type="text/ng-template" id="items_renderer.html">
-			  <div context-menu data-target="WordTree-{{item.CONTENT_NM}}"	ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
-	
-               	<div ui-tree-handle  > 
+			 <div context-menu data-target="WordTree-{{item.$$hashKey}}"
+		ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
+
 
 
 		<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
-						<md-list> 
-						<md-list-item	class="SecondaryOnLeft" ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)" ng-init="this.preloader=false" >	
-
-				<!--		<p style="  margin-left: 30px;"><input class="transparent_input" type="text" name="nome" ng-model="item.CONTENT_NM"   > </p>  -->
-						<p style="  margin-left: 30px;">{{item.CONTENT_NM}}</p>
-						<md-icon ng-disabled="true" class="md-secondary sm-font-icon " 	 aria-label="Chat"	md-font-icon="fa fa-angle-down " style=" left: 0px;  margin-top: 0px! important;"  ng-show="!collapsed"></md-icon>
-						<md-icon ng-disabled="true" class=" sm-font-icon expandericon"	 aria-label="Chat2"	md-font-icon="fa fa-angle-right "  ng-show="collapsed"></md-icon>
-						<md-progress-circular   md-diameter="20" ng-show="this.preloader"  class="md-hue-2" style="  left: 50%;  margin-left: -25px; position:absolute " md-mode="indeterminate"></md-progress-circular>
-						
-						</md-list-item> 
-						</md-list>
-				 
-
-						</div>
-
-						<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo" >
-						<md-list> 
-						<md-list-item	class="SecondaryOnLeft" ng-click="1==1" >	
-
-						<p style="  margin-left: 30px;" >{{item.WORD}}</p>
-						<md-icon class="md-secondary sm-font-icon " 	ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)" aria-label="Chat"	md-font-icon="fa fa-angle-down " style=" right: 0px;"  ng-show="!collapsed"></md-icon>
-						<md-icon class=" sm-font-icon expandericon"	ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)" aria-label="Chat2"	md-font-icon="fa fa-angle-right "  ng-show="collapsed"></md-icon>
-						
-						</md-list-item> 
-
-						</md-list>
-						</div>
-
-					 </div>
-				  </div>
+			<md-list>
+			<div ui-tree-handle>
+				<md-list-item class="SecondaryOnLeft"
+					ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
+					ng-init="this.preloader=false"> <!--		<p style="  margin-left: 30px;"><input class="transparent_input" type="text" name="nome" ng-model="item.CONTENT_NM"   > </p>  -->
+				<p style="margin-left: 30px;">{{item.CONTENT_NM}}</p>
+				<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+					aria-label="Chat" md-font-icon="fa fa-angle-down "
+					style=" left: 0px;  margin-top: 0px! important;"
+					ng-show="!collapsed"></md-icon> <md-icon ng-disabled="true"
+					class=" sm-font-icon expandericon" aria-label="Chat2"
+					md-font-icon="fa fa-angle-right " ng-show="collapsed"></md-icon> <md-progress-circular
+					md-diameter="20" ng-show="this.preloader" class="md-hue-2"
+					style="  left: 50%;  margin-left: -25px; position:absolute "
+					md-mode="indeterminate"></md-progress-circular> </md-list-item>
+			</div>
+			</md-list>
 
 
-						<!-- 					menu contestuale albero -->
-						<div class="dropdown position-fixed" style="z-index: 999;"
-							id="WordTree-{{ item.CONTENT_NM }}">
-							<md-list class="dropdown-menu" role="menu"
-								style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
-								ng-click='ctrl.newSubItem(this,item)' role="menuitem"
-								tabindex="1" ng-if="!item.HAVE_WORD_CHILD ">
-<!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
-							<p>Nuovo Nodo Logico</p>
-							</md-list-item>
+		</div>
 
- 							<md-list-item
-								ng-click='1==1' role="menuitem"
-								tabindex="2" ng-if=" item.CONTENT_NM != undefined">
-							<p>Nuovo Vocabolo</p>
-							</md-list-item>  <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
-								tabindex="3">
-							<p>Elimina</p>
-							</md-list-item>
+		<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo">
+			<md-list> <md-list-item class="SecondaryOnLeft"
+				ng-click="1==1">
 
- 							 <md-list-item ng-click='ctrl.rename(this)' role="menuitem"	tabindex="3">
-							<p>Modifica</p>
-							</md-list-item> 
+			<p style="margin-left: 30px;">{{item.WORD}}</p>
+			<md-icon class="md-secondary sm-font-icon "
+				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
+				aria-label="Chat" md-font-icon="fa fa-angle-down "
+				style=" right: 0px;" ng-show="!collapsed"></md-icon> <md-icon
+				class=" sm-font-icon expandericon"
+				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
+				aria-label="Chat2" md-font-icon="fa fa-angle-right "
+				ng-show="collapsed"></md-icon> </md-list-item> </md-list>
+		</div>
 
- 							</md-list>
-						</div>
+	
 
-				<!-- 						fine menu contestuale albero -->
+
+
+	<!-- 					menu contestuale albero -->
+	<div class="dropdown position-fixed" style="z-index: 999;"
+		id="WordTree-{{ item.$$hashKey }}">
+		<md-list class="dropdown-menu" role="menu"
+			style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
+			ng-click='ctrl.newSubItem(this,item)' role="menuitem" tabindex="1"
+			ng-if="!item.HAVE_WORD_CHILD "> <!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
+		<p>Nuovo Nodo Logico</p>
+		</md-list-item> <md-list-item ng-click='1==1' role="menuitem" tabindex="2"
+			ng-if=" item.CONTENT_NM != undefined">
+		<p>Nuovo Vocabolo</p>
+		</md-list-item> <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
+			tabindex="3">
+		<p>Elimina</p>
+		</md-list-item> <md-list-item ng-click='ctrl.rename(this)' role="menuitem"
+			tabindex="3">
+		<p>Modifica</p>
+		</md-list-item> </md-list>
+	</div>
+<!-- 						fine menu contestuale albero -->
+
+</div>
+				
 
 			
 				

@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttrId;
@@ -120,21 +121,41 @@ public class GlossaryService {
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			SbiGlContents cont = new SbiGlContents();
-			cont.setContentNm((String) requestVal.opt("CONTENT_NM"));
-			cont.setContentCd((String) requestVal.opt("CONTENT_CD"));
-			cont.setContentDs((String) requestVal.opt("CONTENT_DS"));
 			
-			Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
-			Integer glossaryId = getNumberOrNull(requestVal.opt("GLOSSARY_ID"));
-			cont.setGlossaryId(glossaryId);
-			cont.setParentId(parentId);
-			
-			
-			Integer id = dao.insertContents(cont);
 			JSONObject jo = new JSONObject();
-			jo.put("Status", "OK");
-			jo.put("id", id);
+			
+			Integer id;
+			
+			if(requestVal.has("CONTENT_NM")){
+			//add contents to contents_parent	
+				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
+				Integer glossaryId = getNumberOrNull(requestVal.opt("GLOSSARY_ID"));
+				
+				SbiGlContents cont = new SbiGlContents();
+				cont.setContentNm((String) requestVal.opt("CONTENT_NM"));
+				cont.setContentCd((String) requestVal.opt("CONTENT_CD"));
+				cont.setContentDs((String) requestVal.opt("CONTENT_DS"));
+				cont.setGlossaryId(glossaryId);
+				cont.setParentId(parentId);
+				 id = dao.insertContents(cont);
+				 jo.put("Status", "OK");
+					jo.put("id", id);
+			}else{ 
+				//add word to contents parent
+				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
+				Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
+				
+				SbiGlWlist contw=new SbiGlWlist();
+				contw.setId(new SbiGlWlistId(wordId,parentId));
+//				contw.setWordId(wordId);
+//				contw.setContentId(parentId);
+				
+				SbiGlWlistId idw = dao.insertWlist(contw);
+				 jo.put("Status", "OK");
+			}
+			
+		
+			
 			return jo.toString();
 
 		} catch (Throwable t) {
@@ -291,10 +312,17 @@ public class GlossaryService {
 					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
-			Integer contentId = getNumberOrNull(req
-					.getParameter("CONTENTS_ID"));
 			
+			
+			Integer contentId = getNumberOrNull(req.getParameter("CONTENTS_ID"));
+			if(contentId!=null){
 			dao.deleteContents(contentId);
+			}else{
+				Integer parentId = getNumberOrNull(req.getParameter("PARENT_ID"));
+				Integer wordId = getNumberOrNull(req.getParameter("WORD_ID"));
+				dao.deleteWlist(new SbiGlWlistId(wordId,parentId));
+				
+			}
 
 			JSONObject jo = new JSONObject();
 			jo.put("Status", "OK");
@@ -320,8 +348,8 @@ public class GlossaryService {
 					.getParameter("GLOSSARY_ID"));
 			Integer parentId = getNumberOrNull(req.getParameter("PARENT_ID"));
 			
-			List<SbiGlContents> lst = dao.listContentsByGlossaryIdAndParentId(glossaryId,
-					parentId);
+			List<SbiGlContents> lst = dao.listContentsByGlossaryIdAndParentId(glossaryId,parentId);
+			
 			
 			JSONArray jarr = new JSONArray();
 			if (lst != null) {
@@ -329,11 +357,26 @@ public class GlossaryService {
 						.hasNext();) {
 					SbiGlContents sbiGlContents = iterator.next();
 					
+					//replace whit count function
 					List<SbiGlWlist> wordChild=dao.listWlist(sbiGlContents.getContentId());
+					List<SbiGlContents> ContentsChild= dao.listContentsByGlossaryIdAndParentId(null, sbiGlContents.getContentId());
 					
-					jarr.put(fromContentsLight(sbiGlContents,!wordChild.isEmpty()));
+					jarr.put(fromContentsLight(sbiGlContents,!wordChild.isEmpty(),!ContentsChild.isEmpty()));
 				}
 			}
+			
+			if(parentId!=null){
+			List<SbiGlWord> lstw =dao.listWlistWord(parentId);
+			if (lstw != null) {
+				for(SbiGlWord wl:lstw){
+					jarr.put(fromWordLight(wl));
+				}
+			}
+			
+			}
+			
+		
+			
 			return jarr.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(),

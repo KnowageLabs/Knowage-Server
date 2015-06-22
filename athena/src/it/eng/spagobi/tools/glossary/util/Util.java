@@ -16,11 +16,12 @@ public class Util {
 		return isNumber(""+str) ? Integer.valueOf(""+str) : null;
 	}
 
-	public static JSONObject fromContentsLight(SbiGlContents sbiGlContents,boolean wordChild) throws JSONException {
+	public static JSONObject fromContentsLight(SbiGlContents sbiGlContents,boolean wordChild,boolean ContentsChild) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("CONTENT_ID", sbiGlContents.getContentId());
 		ret.put("CONTENT_NM", sbiGlContents.getContentNm());
 		ret.put("HAVE_WORD_CHILD", wordChild);
+		ret.put("HAVE_CONTENTS_CHILD", ContentsChild);
 		
 		return ret;
 	}

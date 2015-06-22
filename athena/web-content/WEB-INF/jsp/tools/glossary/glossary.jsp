@@ -51,7 +51,6 @@
 
 var hostName = '<%=request.getServerName()%>';
 var serverPort ='<%=request.getServerPort()%>';
-
 </script>
 
 <script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
@@ -76,52 +75,45 @@ var serverPort ='<%=request.getServerPort()%>';
 		<div layout="row" layout-wrap>
 
 			<!-- 			LEFT BOX WORD -->
-			<div flex="20" style="width:20%;" class="leftBox_word" resize>
-			
-			
-				<div layout="column" class="wordListBox" style="height:60%;">
+			<div flex="20" style="width: 20%;" class="leftBox_word" resize>
+
+
+				<div layout="column" class="wordListBox" style="height: 60%;">
 
 
 
 
-					
-					
-					
-					
-					
+
+
+
+
+
 					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
-    
-    				  <div>Word</div>
-    				  <md-button ng-click="ctrl.createNewWord()"
-									class="md-fab   md-ExtraMini" aria-label="add word"
-									style="position:absolute; right:11px;"
-									>
-								<md-icon md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
-								</md-button>
-  					</div>
-  					
-  					
-  				</md-toolbar>
-					
-					
-					
-					
-					
-					
-					<md-content layout-padding>
-					
-								<md-input-container md-no-float style=" padding-top: 22px;   padding-bottom: 0;">
-								<md-icon md-font-icon="fa fa-search " style="  margin-top: 26px;  color: black;"></md-icon>
+
+						<div>Word</div>
+						<md-button ng-click="ctrl.createNewWord()"
+							class="md-fab   md-ExtraMini" aria-label="add word"
+							style="position:absolute; right:11px;"> <md-icon
+							md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
+						</md-button>
+					</div>
 
 
-								<input ng-model="searchValue" Style="  margin-left: 15px;"
-									ng-keyup="ctrl.WordLike(searchValue)" type="text"
-									placeholder="Search "> </md-input-container>
-							
-							
-							
-					 <md-progress-circular
+					</md-toolbar>
+
+
+
+
+
+
+					<md-content layout-padding> <md-input-container
+						md-no-float style=" padding-top: 22px;   padding-bottom: 0;">
+					<md-icon md-font-icon="fa fa-search "
+						style="  margin-top: 26px;  color: black;"></md-icon> <input
+						ng-model="searchValue" Style="margin-left: 15px;"
+						ng-keyup="ctrl.WordLike(searchValue)" type="text"
+						placeholder="Search "> </md-input-container> <md-progress-circular
 						md-diameter="20" ng-show="ctrl.showSearchPreloader"
 						class="md-hue-2"
 						style="  left: 50%;  margin-left: -25px; position:absolute "
@@ -131,14 +123,15 @@ var serverPort ='<%=request.getServerPort()%>';
 					<p ng-if="ctrl.words.length==0">List Word Empty</p>
 
 
-					<div ng-if="ctrl.words.length>0" ui-tree="ctrl.TreeOptionsWord"
-						data-drag-enabled="true" data-drag-delay="500"
-						data-clone-enabled="true">
+					<div id="wordTree" ng-if="ctrl.words.length>0"
+						ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"
+						data-drag-delay="500" data-clone-enabled="true">
 
 						<ol ui-tree-nodes ng-model="ctrl.words" data-nodrop-enabled="true">
 
 							<li
 								dir-paginate="word in ctrl.words | filter:filter_word:strict | itemsPerPage:	ctrl.WordItemPerPage ">
+
 								<div ui-tree-node context-menu
 									data-target="WordMenu-{{word.WORD}}">
 
@@ -174,77 +167,77 @@ var serverPort ='<%=request.getServerPort()%>';
 							</li>
 						</ol>
 					</div>
-					
-									</md-content>
-					
-					<div class="box_pagination" layout="row"
-					layout-align="center end"> <dir-pagination-controls
-					max-size="5"></dir-pagination-controls> </div>
-					
+
+					</md-content>
+
+					<div class="box_pagination" layout="row" layout-align="center end">
+						<dir-pagination-controls max-size="5"></dir-pagination-controls>
+					</div>
+
 				</div>
 
 
 
 
-<!-- 				<div> -->
-<!-- 				<md-whiteframe class="md-whiteframe-z1  box_pagination" layout="row" -->
-<!-- 					layout-align="center end"> <dir-pagination-controls -->
-<!-- 					max-size="5"></dir-pagination-controls> </md-whiteframe> -->
-<!-- 				</div> -->
+				<!-- 				<div> -->
+				<!-- 				<md-whiteframe class="md-whiteframe-z1  box_pagination" layout="row" -->
+				<!-- 					layout-align="center end"> <dir-pagination-controls -->
+				<!-- 					max-size="5"></dir-pagination-controls> </md-whiteframe> -->
+				<!-- 				</div> -->
 
 
 
-			<div layout="row" layout-wrap class="glossaryListBox">
-				<md-toolbar class="md-blue minihead">
+				<div layout="row" layout-wrap class="glossaryListBox">
+					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
-    
-    				  <div>Glossari</div>
-    				  <md-button ng-click="ctrl.createNewGlossary($event)"
-									class="md-fab   md-ExtraMini" aria-label="add word"
-									style="position:absolute; right:11px;"
-									>
-								<md-icon md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
-								</md-button>
-  					</div>
-  				</md-toolbar>
- 
 
-						<md-list style="  margin-top: 25px;  width: 100%;"> 
-						<md-list-item class="smallListItem"
-							ng-click="ctrl.selectedGloss=gloss; ctrl.activeTab='Glossari'; ctrl.getGlossaryNode(gloss,null)"
-							ng-repeat="gloss in ctrl.glossary ">
-
-						<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
-							ng-class="{ 'highlight': highlight, 'expanded' : expanded }"
-							style="width: 100%;">
-							<p>{{ gloss.GLOSSARY_NM | uppercase }}</p>
-						</div>
-
-						<!-- 					menu contestuale glossario -->
-						<div class="dropdown position-fixed" style="z-index: 999; left: 10px !important"
-							id="Gloss-{{  gloss.GLOSSARY_NM }}">
-							<md-list class="dropdown-menu" role="menu"> <md-list-item
-								ng-click='ctrl.CloneGloss(gloss)' role="menuitem" tabindex="1">
-							<p>Clona</p>
-							</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(gloss)' role="menuitem"
-								tabindex="1">
-							<p>Elimina</p>
-							</md-list-item> </md-list>
-						</div>
-
-						<!-- 						fine menu contestuale albero --> </md-list-item> </md-list>
-
+						<div>Glossari</div>
+						<md-button ng-click="ctrl.createNewGlossary($event)"
+							class="md-fab   md-ExtraMini" aria-label="add word"
+							style="position:absolute; right:11px;"> <md-icon
+							md-font-icon="fa fa-plus fa-2x" style="  color: black;"></md-icon>
+						</md-button>
 					</div>
+					</md-toolbar>
+
+
+					<md-list style="  margin-top: 25px;  width: 100%;"> <md-list-item
+						class="smallListItem"
+						ng-click="ctrl.selectedGloss=gloss; ctrl.activeTab='Glossari'; ctrl.getGlossaryNode(gloss,null)"
+						ng-repeat="gloss in ctrl.glossary ">
+
+					<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
+						ng-class="{ 'highlight': highlight, 'expanded' : expanded }"
+						style="width: 100%;">
+						<p>{{ gloss.GLOSSARY_NM | uppercase }}</p>
+					</div>
+
+					<!-- 					menu contestuale glossario -->
+					<div class="dropdown position-fixed"
+						style="z-index: 999; left: 10px !important"
+						id="Gloss-{{  gloss.GLOSSARY_NM }}">
+						<md-list class="dropdown-menu" role="menu"> <md-list-item
+							ng-click='ctrl.CloneGloss(gloss)' role="menuitem" tabindex="1">
+						<p>Clona</p>
+						</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(gloss)'
+							role="menuitem" tabindex="1">
+						<p>Elimina</p>
+						</md-list-item> </md-list>
+					</div>
+
+					<!-- 						fine menu contestuale albero --> </md-list-item> </md-list>
+
+				</div>
 
 
 
 			</div>
 			<div flex="80" offset="20">
 
-<!-- class="hideTabs" -->
+				<!-- class="hideTabs" -->
 
 				<md-content> <md-tabs md-dynamic-height
-					md-border-bottom > <md-tab label="Glossari"
+					md-border-bottom> <md-tab label="Glossari"
 					md-on-select="ctrl.activeTab='Glossari'"
 					md-active="ctrl.activeTab=='Glossari'"> <md-content
 					class="md-padding" style="padding-bottom: 150px;"> <!-- 					<md-toolbar> -->
@@ -402,9 +395,9 @@ var serverPort ='<%=request.getServerPort()%>';
 							<md-input-container class="md-icon-float"
 								ng-class="{ 'md-input-has-value-copy' : ctrl.newWord.LINK.length > 0  }">
 							<div>
-								<div ui-tree="ctrl.TreeOptionsChips" data-drag-enabled="true"
-									data-drag-delay="500" data-empty-placeholder-enabled="false"
-									class="chipsTree" id="chipsTree">
+								<div id="chipsTree" ui-tree="ctrl.TreeOptionsChips"
+									data-drag-enabled="true" data-drag-delay="500"
+									data-empty-placeholder-enabled="false" class="chipsTree">
 									<ol id="olchiproot" ui-tree-nodes ng-model="ctrl.newWord.LINK"
 										data-empty-placeholder-enabled="false">
 										<li ng-repeat="n in [1]" data-nodrag ui-tree-node
@@ -447,7 +440,7 @@ var serverPort ='<%=request.getServerPort()%>';
 								md-selected-item="ctrl.selectedItem"
 								md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
 								md-item-text="item.ATTRIBUTE_NM" md-require-match=""
-								md-floating-label="Proprietà"> <md-item-template >
+								md-floating-label="Proprietà"> <md-item-template>
 							<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
 							</md-item-template> </md-autocomplete>
 						</div>
@@ -481,13 +474,15 @@ var serverPort ='<%=request.getServerPort()%>';
 								class="md-2-line box-list-option"
 								ng-repeat="attr in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
 								layout-wrap>
-							<div class="md-item-text md-whiteframe-z1"  style="  position: relative;"flex>
+							<div class="md-item-text md-whiteframe-z1"
+								style="position: relative;" flex>
 								<p class="margin5">
 									<span>{{attr.ATTRIBUTE_NM}}</span>
-<!-- 									<input class="transparent_input smallFont"	ng-model="attr.ATTRIBUTE_NM" type="text">  -->
-										
+									<!-- 									<input class="transparent_input smallFont"	ng-model="attr.ATTRIBUTE_NM" type="text">  -->
+
 								</p>
-								<input type="text"	class="transparent_input smallFont " ng-model="attr.VALUE">
+								<input type="text" class="transparent_input smallFont "
+									ng-model="attr.VALUE">
 
 								<md-button ng-click="ctrl.removeProp(attr)"
 									class="md-fab   md-ExtraMini" aria-label="add word"
@@ -528,6 +523,41 @@ var serverPort ='<%=request.getServerPort()%>';
 		</div>
 
 	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>
