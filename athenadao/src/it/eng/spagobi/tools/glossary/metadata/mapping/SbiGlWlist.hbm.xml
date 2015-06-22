@@ -12,12 +12,17 @@
                 <column name="CONTENT_ID" />
             </key-property>
         </composite-id>
+        
+		
         <many-to-one name="word" class="it.eng.spagobi.tools.glossary.metadata.SbiGlWord" update="false" insert="false" fetch="select">
             <column name="WORD_ID" not-null="true" />
         </many-to-one>
         <many-to-one name="content" class="it.eng.spagobi.tools.glossary.metadata.SbiGlContents" update="false" insert="false" fetch="select">
             <column name="CONTENT_ID" not-null="true" />
         </many-to-one>
+        
+       
+        
         
 	<component name="commonInfo" insert="true" update="true"
 		class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

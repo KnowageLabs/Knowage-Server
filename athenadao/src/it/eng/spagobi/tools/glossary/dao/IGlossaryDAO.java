@@ -79,8 +79,10 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// Wishlist
 	//
 	public List<SbiGlWlist> listWlist(Integer contentId);
+	
+	public List<SbiGlWord> listWlistWord(Integer contentId);
 
-	public Integer insertWlist(SbiGlWlist wlist);
+	public SbiGlWlistId insertWlist(SbiGlWlist wlist);
 
 	public void modifyWlist(SbiGlWlist wlist);
 

@@ -11,6 +11,7 @@ public class SbiGlWlist extends SbiHibernateModel {
 	private SbiGlWord word;
 	private SbiGlContents content;
 
+	
 	private Integer order;
 
 	public SbiGlWlist() {
@@ -90,5 +91,7 @@ public class SbiGlWlist extends SbiHibernateModel {
 	public void setOrder(Integer order) {
 		this.order = order;
 	}
+
+
 
 }
