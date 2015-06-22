@@ -57,12 +57,26 @@
   type: '$chartType',
   serie: '$series',
   groups: '$groups',
+  tooltip: '$columnsNeeded[1]',
   group: '$columnsNeeded[0]',
   font: '$font',
   width: '$width',
   height: '$height',
   colors: '$colorsPal'
   
+ },
+ tooltip:
+ {
+	fontfamily: '$chart.TOOLTIP.FONTFAMILY.value',
+	fontsize: '$chart.TOOLTIP.FONTSIZE.value',
+	minwidth: '$chart.TOOLTIP.MINWIDTH.value',
+	maxwidth: '$chart.TOOLTIP.MAXWIDTH.value',
+	minheight: '$chart.TOOLTIP.MINHEIGHT.value',
+	maxheight: '$chart.TOOLTIP.MAXHEIGHT.value',
+	padding: '$chart.TOOLTIP.PADDING.value',
+	color: '$chart.TOOLTIP.COLOR.value',
+	border: '$chart.TOOLTIP.BORDER.value',
+ 	borderradius: '$chart.TOOLTIP.BORDERRADIUS.value'
  },
  axis: 
  {

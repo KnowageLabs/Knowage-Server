@@ -1109,25 +1109,25 @@ function renderParallelChart(data){
 			records.sort(function(obj1, obj2) {
 				return obj1[limitcolumn] - obj2[limitcolumn];
 			});
-		
-		
-		var len = records.length;
-		
-		var max = data.limit.max;
-		
-		if (data.limit.order === 'top'){
-			
-			var slicedData = records.slice(len-max,len);
-			
-			records = slicedData;
-		}
-		else if (data.limit.order === 'bottom'){
-			
-			var slicedData = records.slice(0,max);
-			
-			records = slicedData;
-		}}
-		
+
+
+			var len = records.length;
+
+			var max = data.limit.max;
+
+			if (data.limit.order === 'top'){
+
+				var slicedData = records.slice(len-max,len);
+
+				records = slicedData;
+			}
+			else if (data.limit.order === 'bottom'){
+
+				var slicedData = records.slice(0,max);
+
+				records = slicedData;
+			}}
+
 		var groupcolumn = data.chart.group;
 
 		var group = Ext.decode(data.chart.groups);
@@ -1260,6 +1260,27 @@ function renderParallelChart(data){
 		.text(function(d) {	
 			return " " + groupcolumn +" " + d; });
 
+		var tooltip=d3.select("body")
+		.append("div")
+		.attr("class","tooltip")
+		.style("opacity","0");
+
+
+		d3.selectAll(".tooltip")
+		.style("position","absolute")
+		.style("text-align","center")
+		.style("min-width",data.tooltip.minwidth+"px")
+		.style("max-width",data.tooltip.manwidth+"px")
+		.style("min-height",data.tooltip.minheight+"px")
+		.style("max-height",data.tooltip.manheight+"px")
+		.style("padding",data.tooltip.padding+"px")
+		.style("font-size",data.tooltip.fontsize+"px")
+		.style("font-family",data.tooltip.fontfamily)
+		.style("background",data.tooltip.color)
+		.style("border",data.tooltip.border+"px")
+		.style("border-radius",data.tooltip.borderradius+"px")
+		.style("pointer-events","none");
+
 		foreground = svg.append("svg:g")
 		.attr("class","foreground")
 		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
@@ -1268,7 +1289,24 @@ function renderParallelChart(data){
 		.enter().append("svg:path")
 		.attr("d", path)
 		.style("stroke", function(d) {return myColors(d[groupcolumn])});
+		
+		if (records.length<=20){
+		
+		foreground.on("mouseover",function(d){
+			tooltip.transition().duration(50).style("opacity","1");
+			
+			tooltip.text(d[data.chart.tooltip])
+			.style("left", (d3.event.pageX) + "px")     
+            .style("top", (d3.event.pageY - 25) + "px");
+		})
+		.on("mouseout",function(d){
+			tooltip.transition()
+		       .duration(200)
+		       .style("opacity","0");
+		});
 
+		}
+		
 		var g = svg.selectAll(".column")
 		.data(columns)
 		.enter().append("svg:g")
