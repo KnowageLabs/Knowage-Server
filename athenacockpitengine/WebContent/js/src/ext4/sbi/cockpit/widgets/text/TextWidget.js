@@ -14,20 +14,23 @@ Sbi.cockpit.widgets.text.TextWidget = function(config) {
 		fieldValue: ''
 	};
 
-	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.table.TableWidget', defaultSettings);
+	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.text.TextWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
-	/*Sbi.trace("[TextWidget.constructor]: config: " + Sbi.toSource(config));
 
-	if(Sbi.settings && Sbi.settings.console && Sbi.settings.console.widget) {
-		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.console.widget);
-	}
-	var c = Ext.apply(defaultSettings, config || {});
-
-	Ext.apply(this, c);*/
-
+	
+	
 	// constructor
 	Sbi.cockpit.widgets.text.TextWidget.superclass.constructor.call(this, c);
+	
+	this.createContent();
+	
+	this.on("afterrender", function(){
+//		this.refresh();
+		this.getParentComponent().refreshTitle();
+		Sbi.trace("[TextWidget]: afterrender - calling refresh");
+	}, this);
+	
 	Sbi.trace("[TextWidget.constructor]: OUT");
 };
 
@@ -41,7 +44,8 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 	// PROPERTIES
 	// =================================================================================================================
 
-	// ...
+	widgetContent: null,
+	textTitle: null,
 
     // =================================================================================================================
 	// METHODS
@@ -50,17 +54,20 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
     // -----------------------------------------------------------------------------------------------------------------
     // public methods
 	// -----------------------------------------------------------------------------------------------------------------
-
-
+	
+	refresh:  function() {
+    	Sbi.trace("[TextWidget.refresh]: IN");
+    	Sbi.cockpit.widgets.text.TextWidget.superclass.refresh.call(this);
+		this.createContent();
+		this.doLayout();
+		Sbi.trace("[TextWidget.refresh]: OUT");
+	},
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	onRender: function(ct, position) {
-		Sbi.trace("[TextWidget.onRender]: IN");
-		Sbi.cockpit.widgets.text.TextWidget.superclass.onRender.call(this, ct, position);
-
-		
+	createContent: function() {
+    	Sbi.trace("[TextWidget.createContent]: IN");
 		this.widgetContent = new Ext.Panel({
 			border: false
 			, bodyBorder: false
@@ -69,17 +76,29 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 			, height: '100%'
 			, html: this.wconf.textValue
 		});
+		
+		this.textTitle = new Ext.Panel({
+			border: false
+			, bodyBorder: false
+			, hideBorders: true
+			, frame: false
+			, height: '100%'
+			, html: this.wgeneric.title
+		});
 
-		this.items.each( function(item) {
-			this.items.remove(item);
-	        item.destroy();
-	    }, this);
-
-		if(this.chart !== null) {
-			this.add(this.widgetContent);
-			this.doLayout();
+		if(this.items){
+			this.items.each( function(item) {
+				this.items.remove(item);
+				item.destroy();
+			}, this);
 		}
-		Sbi.trace("[TextWidget.onRender]: OUT");
+		
+		if(this.widgetContent !== null) {
+			this.add(this.textTitle);
+	    	this.add(this.widgetContent);
+	    }
+		
+		Sbi.trace("[TextWidget.createContent]: OUT");
 	}
 
 	// =================================================================================================================
@@ -90,7 +109,7 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 });
 
 Sbi.registerWidget('text', {
-	name: 'Text'
+	name: LN('sbi.cockpit.widgets.text.textWidgetDesigner.text')
 	, icon: 'js/src/ext4/sbi/cockpit/widgets/text/dummy_64x64_ico.png'
 	, runtimeClass: 'Sbi.cockpit.widgets.text.TextWidget'
 	, designerClass: 'Sbi.cockpit.widgets.text.TextWidgetDesigner'

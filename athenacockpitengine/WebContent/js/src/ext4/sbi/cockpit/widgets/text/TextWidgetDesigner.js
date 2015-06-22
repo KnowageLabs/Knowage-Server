@@ -11,13 +11,15 @@ Sbi.cockpit.widgets.text.TextWidgetDesigner = function(config) {
 
 	var defaultSettings = {
 		name: 'textWidgetDesigner',
-		title: LN('sbi.cockpit.widgets.text.textWidgetDesigner.title')
+		title: LN('sbi.cockpit.widgets.text.textWidgetDesigner.title'),
 	};
 
+	
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.text && Sbi.settings.cockpit.widgets.text.textWidgetDesigner) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.text.textWidgetDesigner);
 	}
 	var c = Ext.apply(defaultSettings, config || {});
+	
 	Ext.apply(this, c);
 
 	this.initTextPanel();
@@ -37,19 +39,21 @@ Sbi.cockpit.widgets.text.TextWidgetDesigner = function(config) {
 	Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.constructor.call(this, c);
 
 	this.on(
-			'beforerender' ,
-			function (thePanel, attribute) {
-				var state = {};
-				state.textValue = thePanel.textValue;
-				state.wtype = 'text';
-				this.setDesignerState(state);
-			},
-			this
+		'beforerender' ,
+		function (thePanel, attribute) {
+			var state = {};
+			state.textValue = thePanel.textValue;
+			state.wtype = 'text';
+			this.setDesignerState(state);
+		},
+		this
 	);
+	
 };
 
 Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
-	textDesigner: null
+	textField: null
+	, textPanel: null
 
 	, getDesignerState: function(running) {
 		Sbi.trace("[TextWidgetDesigner.getDesignerState]: IN");
@@ -72,44 +76,15 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetD
 		Sbi.trace("[TextWidgetDesigner.setDesignerState]: OUT");
 	}
 
-	/* tab validity: rules are
-	 * - at least one measure or attribute is in
-	 */
 	, validate: function(validFields){
-
-		var valErr = Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.validate(this, validFields);
-		if(valErr!= ''){
-			return varErr;
-		}
-
-		valErr = ''+this.textDesigner.validate(validFields);
-
-		if(valErr!= ''){
-			valErr = valErr.substring(0, valErr.length - 1);
-			return LN("sbi.cockpit.widgets.text.validation.invalidFields")+valErr;
-		}
-
-		var vals = this.textDesigner.textDesigner.getContainedValues();
-		if (vals && vals.length> 0) {return;} // OK
-		else {
-				return LN("sbi.designertext.textValidation.noElement");
-		}
-	}
-
-	, containsAttribute: function (attributeId) {
-		return this.textDesigner.containsAttribute(attributeId);
-	}
-
-	, attributeDblClickHandler : function (thePanel, attribute, theSheet) {
-
+		return Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.validate(this, validFields);
 	}
 
 	, initTextPanel: function (){
 	   this.textField = Ext.create('Ext.form.HtmlEditor', {
 			width: 525,
 		    height: 100,
-//		    labelWidth: 50,
-		    fieldLabel: 'Text',
+		    fieldLabel: LN('sbi.cockpit.widgets.text.textWidgetDesigner.text'),
 		    name: 'textField',
 		    enableLinks: false,
 		    enableSourceEdit: false,
@@ -124,7 +99,7 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetD
 	        defaultType: 'textfield',
 	        bodyPadding: 5,
 
-	        items: [this.textField/*this.fontTypeCombo, this.rowsFontSizeCombo, this.rowsFontColorText, this.rowsFontWeightCombo, this.rowsFontDecorationCombo*/]
+	        items: [this.textField]
 	    });
 	}
 
