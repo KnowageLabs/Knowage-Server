@@ -1265,7 +1265,6 @@ function renderParallelChart(data){
 		.attr("class","tooltip")
 		.style("opacity","0");
 
-
 		d3.selectAll(".tooltip")
 		.style("position","absolute")
 		.style("text-align","center")
@@ -1276,7 +1275,6 @@ function renderParallelChart(data){
 		.style("padding",data.tooltip.padding+"px")
 		.style("font-size",data.tooltip.fontsize+"px")
 		.style("font-family",data.tooltip.fontfamily)
-		.style("background",data.tooltip.color)
 		.style("border",data.tooltip.border+"px")
 		.style("border-radius",data.tooltip.borderradius+"px")
 		.style("pointer-events","none");
@@ -1289,24 +1287,25 @@ function renderParallelChart(data){
 		.enter().append("svg:path")
 		.attr("d", path)
 		.style("stroke", function(d) {return myColors(d[groupcolumn])});
-		
+
 		if (records.length<=20){
-		
-		foreground.on("mouseover",function(d){
-			tooltip.transition().duration(50).style("opacity","1");
-			
-			tooltip.text(d[data.chart.tooltip])
-			.style("left", (d3.event.pageX) + "px")     
-            .style("top", (d3.event.pageY - 25) + "px");
-		})
-		.on("mouseout",function(d){
-			tooltip.transition()
-		       .duration(200)
-		       .style("opacity","0");
-		});
+
+			foreground.on("mouseover",function(d){
+				
+				tooltip.transition().duration(50).style("opacity","1");
+				tooltip.style("background",myColors(d[groupcolumn]));
+				tooltip.text(d[data.chart.tooltip])
+				.style("left", (d3.event.pageX) + "px")     
+				.style("top", (d3.event.pageY - 25) + "px");
+			})
+			.on("mouseout",function(d){
+				tooltip.transition()
+				.duration(200)
+				.style("opacity","0");
+			});
 
 		}
-		
+
 		var g = svg.selectAll(".column")
 		.data(columns)
 		.enter().append("svg:g")

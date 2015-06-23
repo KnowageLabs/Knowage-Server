@@ -74,7 +74,6 @@
 	minheight: '$chart.TOOLTIP.MINHEIGHT.value',
 	maxheight: '$chart.TOOLTIP.MAXHEIGHT.value',
 	padding: '$chart.TOOLTIP.PADDING.value',
-	color: '$chart.TOOLTIP.COLOR.value',
 	border: '$chart.TOOLTIP.BORDER.value',
  	borderradius: '$chart.TOOLTIP.BORDERRADIUS.value'
  },
