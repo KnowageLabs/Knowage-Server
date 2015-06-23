@@ -63,6 +63,10 @@
 	bottom: -5px;
 }
 
+ .newLogicalNode  label{
+ line-height: 0px;
+ }
+
 /* nuova classe che simula md-input-has-value-copy */
 md-input-container.md-input-has-value-copy .md-placeholder {
 	transition: none;
@@ -267,13 +271,14 @@ md-toolbar.md-default-theme.md-blue {
 }
 
 .chipsTree  .angular-ui-tree-empty {
-	height: 25px;
+	height: 60px;
 	position: absolute;
 	width: 100%;
 	min-height: 0px;
 	background-color: transparent;
 	background-image: none;
 	border: none;
+	display:none;
 }
 
 .linkChips  .md-contact-chips .md-chips .md-chip .md-contact-avatar,
@@ -327,13 +332,14 @@ md-toolbar.md-default-theme.md-blue {
 	padding: 0px !important;
 }
 
-.addFiglioBox {
-	/* 	  background: rgba(224, 229, 240, 0.42) !important; */
-	top: -20px !important;
+.addFiglioBox.angular-ui-tree-node {
+		  background: rgba(224, 229, 240, 0.05) !important;
+	top: -48px !important;
 	width: 100% !important;
 	right: 0 !important;
 	position: absolute !important;
-	height: 20px !important;
+	  height: 48px !important;
+  display: none;
 }
 
 .hideChildren .figlioVisibile {

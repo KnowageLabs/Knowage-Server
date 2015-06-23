@@ -2,7 +2,7 @@
 
   <form name="glossaryForm" class="wordForm md-padding" novalidate    >
   <md-dialog-content class="sticky-container">
-    <md-header class="md-sticky-no-effect">Nuovo Glossario</md-header>
+    <md-header class="md-sticky-no-effect">{{gloCtrl.headerTitle}}</md-header>
    
 
 	<div layout="row" layout-wrap>
@@ -56,7 +56,7 @@
     
 <!--     !gloCtrl.isCompletedGlossary() -->
     
-    <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="gloCtrl.newGloss.GLOSSARY_DS.length === 0 || gloCtrl.newGloss.GLOSSARY_CD.length === 0 || gloCtrl.newGloss.GLOSSARY_NM.length === 0 "  >
+    <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="gloCtrl.newGloss.GLOSSARY_NM.length === 0 "  >
      Salva
     </md-button>
   </div>

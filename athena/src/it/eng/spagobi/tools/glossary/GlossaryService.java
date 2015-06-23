@@ -80,23 +80,38 @@ public class GlossaryService {
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			// check if there is another glossary with the same name
-			List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal
-					.opt("GLOSSARY_NM"));
-			if (!lg.isEmpty()) {
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"Glossary Name already defined");
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
+			SbiGlGlossary gloss;
+			
+			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save")==0) {
+				// check if there is another glossary with the same name
+				List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal
+						.opt("GLOSSARY_NM"));
+				if (!lg.isEmpty()) {
+					throw new SpagoBIServiceException(req.getPathInfo(),
+							"Glossary Name already defined");
+				}
+				
+			 gloss = new SbiGlGlossary();
 			}
-
-			SbiGlGlossary gloss = new SbiGlGlossary();
+			else{
+				gloss=dao.loadGlossary((Integer)requestVal.opt("GLOSSARY_ID"));
+			}
+			
+			
 			gloss.setGlossaryNm((String) requestVal.opt("GLOSSARY_NM"));
 			gloss.setGlossaryCd((String) requestVal.opt("GLOSSARY_CD"));
 			gloss.setGlossaryDs((String) requestVal.opt("GLOSSARY_DS"));
-
+			
+			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save")==0) {
 			Integer id = dao.insertGlossary(gloss);
-			JSONObject jo = new JSONObject();
-			jo.put("Status", "OK");
 			jo.put("id", id);
+			}else{
+				dao.modifyGlossary(gloss);
+			}
+			
+			
 			return jo.toString();
 
 		} catch (Throwable t) {
@@ -126,6 +141,22 @@ public class GlossaryService {
 			
 			Integer id;
 			
+			if(requestVal.has("SaveOrUpdate")){
+				if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Update")==0) {
+					//update contents (logical node)
+					Integer contentId = getNumberOrNull(requestVal.opt("CONTENT_ID"));
+					SbiGlContents cont=dao.loadContents(contentId);
+					cont.setContentNm((String) requestVal.opt("CONTENT_NM"));
+					cont.setContentCd((String) requestVal.opt("CONTENT_CD"));
+					cont.setContentDs((String) requestVal.opt("CONTENT_DS"));
+					dao.modifyContents(cont);
+					jo.put("Status", "OK");
+					return jo.toString();
+				}
+					
+			}
+			
+			
 			if(requestVal.has("CONTENT_NM")){
 			//add contents to contents_parent	
 				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
@@ -154,7 +185,7 @@ public class GlossaryService {
 				 jo.put("Status", "OK");
 			}
 			
-		
+			
 			
 			return jo.toString();
 
@@ -464,6 +495,54 @@ public class GlossaryService {
 					"An unexpected error occured while executing service", t);
 		}
 	}
+	
+	@GET
+	@Path("/getGlossary")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getGlossary(@Context HttpServletRequest req) {
+		String glossaryId = req.getParameter("GLOSSARY_ID");
+		if (!glossaryId.matches("\\d+")) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"Input param Id [" + glossaryId + "] not valid");
+		}
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+			
+			SbiGlGlossary glo=dao.loadGlossary(Integer.valueOf(glossaryId));
+			JSONObject jobj = fromGlossary(glo);
+			return jobj.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
+	
+	@GET
+	@Path("/getContent")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getContents(@Context HttpServletRequest req) {
+		String contentId = req.getParameter("CONTENT_ID");
+		if (!contentId.matches("\\d+")) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"Input param Id [" + contentId + "] not valid");
+		}
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+			
+			SbiGlContents cont=dao.loadContents(Integer.valueOf(contentId));
+			JSONObject jobj = fromContent(cont);
+			return jobj.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
 
 	@GET
 	@Path("/listAttribute")
@@ -578,6 +657,25 @@ public class GlossaryService {
 		JSONObject ret = new JSONObject();
 		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
 		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
+		return ret;
+	}
+	private JSONObject fromGlossary(SbiGlGlossary sbiGlGlossary)
+			throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
+		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
+		ret.put("GLOSSARY_CD", sbiGlGlossary.getGlossaryCd());
+		ret.put("GLOSSARY_DS", sbiGlGlossary.getGlossaryDs());
+		return ret;
+	}
+	
+	private JSONObject fromContent(SbiGlContents sbiGlContents)
+			throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("CONTENT_ID", sbiGlContents.getGlossaryId());
+		ret.put("CONTENT_NM", sbiGlContents.getContentNm());
+		ret.put("CONTENT_CD", sbiGlContents.getContentCd());
+		ret.put("CONTENT_DS", sbiGlContents.getContentDs());
 		return ret;
 	}
 

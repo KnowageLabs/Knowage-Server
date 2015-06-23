@@ -16,11 +16,11 @@
 
 <script type="text/ng-template" id="new.logical.node.dialog.html">
 
-<md-dialog aria-label="nuovo nodo logico ">
+<md-dialog aria-label="nuovo nodo logico " class="newLogicalNode">
 
 <md-toolbar>
     <div class="md-toolbar-tools">
-      <h2>Nuovo nodo logico</h2>
+      <h2>{{renCtrl.headerTitle}}</h2>
       <span flex></span>
     
     </div>
@@ -50,7 +50,7 @@
 	
 	<div layout="row" layout-wrap>
 		<div flex="100">
-			<md-input-container class="md-icon-float" ng-class="{ 'md-input-hasnt-value' : renCtrl.tmpNW.CONTENT_DS.length === 0  }"> <!-- Use floating label instead of placeholder -->
+			<md-input-container class="md-icon-float" ng-class="{ 'md-input-hasnt-value' : renCtrl.tmpNW.CONTENT_DS.length === 0  }"> 
 			<label>Descrizione</label> 
 			<md-icon md-font-icon="fa  fa-file-text-o "	class="formu" ></md-icon>	
 				 <textarea ng-model="renCtrl.tmpNW.CONTENT_DS" columns="1" md-maxlength="150" style="  margin-left: 35px;" ></textarea>
@@ -201,17 +201,24 @@
 	<div class="dropdown position-fixed" style="z-index: 999;"
 		id="WordTree-{{ item.$$hashKey }}">
 		<md-list class="dropdown-menu" role="menu"
-			style="  margin-top: -49px;  margin-left: -275px;"> <md-list-item
+			style="  margin-top: -49px;  margin-left: -275px;"> 
+		<md-list-item
 			ng-click='ctrl.newSubItem(this,item)' role="menuitem" tabindex="1"
-			ng-if="!item.HAVE_WORD_CHILD "> <!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
+			ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  "> <!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
 		<p>Nuovo Nodo Logico</p>
-		</md-list-item> <md-list-item ng-click='1==1' role="menuitem" tabindex="2"
-			ng-if=" item.CONTENT_NM != undefined">
+		</md-list-item> 
+
+		<md-list-item ng-click='1==1' role="menuitem" tabindex="2"
+			ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
 		<p>Nuovo Vocabolo</p>
-		</md-list-item> <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
+		</md-list-item> 
+
+		<md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
 			tabindex="3">
 		<p>Elimina</p>
-		</md-list-item> <md-list-item ng-click='ctrl.rename(this)' role="menuitem"
+		</md-list-item> 
+
+		<md-list-item ng-click='ctrl.newSubItem(this,item,true)' role="menuitem" ng-if=" item.CONTENT_NM != undefined"
 			tabindex="3">
 		<p>Modifica</p>
 		</md-list-item> </md-list>
