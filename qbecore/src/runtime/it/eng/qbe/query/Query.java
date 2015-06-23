@@ -31,7 +31,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class Query implements IQuery {
 	String id;
@@ -154,7 +154,7 @@ public class Query implements IQuery {
 
 	/**
 	 * For each entity creates a property taht contains the map role-->fields associated to that role
-	 * 
+	 *
 	 * @param serializedEntityRoles
 	 * @param modelEntities
 	 * @throws JSONException
@@ -289,7 +289,7 @@ public class Query implements IQuery {
 	 * @param onlyIncluded
 	 *            true to return all the select fields. false to include only the select fields actually included in the select clause of the generated statemet
 	 *            (i.e it is possible for a select field to be used only in 'order by' or in 'group by' clause of the statement)
-	 * 
+	 *
 	 * @return a List of all selected fields (ISelectField). All the field types are included (i.e. simple fields, calculated fields and inline calculated
 	 *         fields). Never returns null. If there are no selected fields in the query it returns an empty list.
 	 */
@@ -381,11 +381,11 @@ public class Query implements IQuery {
 
 	/**
 	 * Returns a list of of simple select fields (no inlineCalculatedSelectField & calculatedSelectField)
-	 * 
+	 *
 	 * @param onlyIncluded
 	 *            if true the returned list will include only the simple select fields actually included in the select statement. All the simple select fields
 	 *            will be returned otherwise.
-	 * 
+	 *
 	 * @return a list of SimpleSelectField. It never returns null. If there are not fields in select clause it will return an empty list.
 	 */
 	public List<SimpleSelectField> getSimpleSelectFields(boolean onlyIncluded) {
@@ -424,11 +424,11 @@ public class Query implements IQuery {
 
 	/**
 	 * Returns the list of inline calculated fields included in select clause (no simpleSelectField & calculatedSelectField)
-	 * 
+	 *
 	 * @param onlyIncluded
 	 *            if true the returned list will include only the inline calculated fields actually included in the select statement. All the inline calculated
 	 *            fields will be returned otherwise.
-	 * 
+	 *
 	 * @return a list of InLineCalculatedSelectField. It never returns null. If there are not inline calculated fields in select clause it will return an empty
 	 *         list.
 	 */
@@ -469,7 +469,7 @@ public class Query implements IQuery {
 	/**
 	 * Get all the fields in order by clause (i.e. SimpleSelectField + InLineCalculatedSelectedField). Note: CalculatedField cannot be used in order by clause.
 	 * If some CalculateField has been erroneously added to order by clause it will be ignored by this method.
-	 * 
+	 *
 	 * @return The list of ISelectField included in order by clause (except CalculatedSelectField). It never returns null. If there are not fields in order by
 	 *         clause it will return an empty list.
 	 */
@@ -745,6 +745,7 @@ public class Query implements IQuery {
 		String selectClause = "SELECT ";
 		String whereClause = whereStart;
 		String groupByClause = "GROUP BY ";
+		String groupByClauseEmpty = groupByClause;
 
 		List<ISelectField> selectFields = getSelectFields(false);
 		List<WhereField> whereFields = getWhereFields();
@@ -804,7 +805,7 @@ public class Query implements IQuery {
 			}
 		}
 
-		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause) + groupByClause;
+		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause) + (groupByClause.equals(groupByClauseEmpty) ? " " : groupByClause);
 	}
 
 	private String extractColumnNameFromFieldName(String fieldName) {
