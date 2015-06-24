@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="it.eng.spagobi.tools.glossary.metadata.SbiGlReferences" table="SB_GL_REFERENCES" >
+    <class name="it.eng.spagobi.tools.glossary.metadata.SbiGlReferences" table="SBI_GL_REFERENCES" >
         
         <composite-id name="id" class="it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId">
             <key-property name="wordId" type="int">
