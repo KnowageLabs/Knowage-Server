@@ -23,7 +23,10 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttrId;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +92,60 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 					deleteContents(sb.getContentId());
 				}
 				delete(SbiGlGlossary.class, glossaryId);
+				return true;
+			}
+		});
+
+	}
+	
+	@Override
+	public void cloneGlossary(final Integer glossaryId,final Integer newGlossId ) {
+
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+
+			@Override
+			public Boolean execute(Session session) {
+				
+//					//get glossary
+//				 SbiGlGlossary glo=loadGlossary(glossaryId);
+//					if (glo==null) {
+//						return false;
+//					}
+//					glo.setGlossaryNm(glo.getGlossaryNm()+"-copy");
+//					Integer newGlossId	=insertGlossary(glo);
+					
+					Map<Integer,Integer> newID = new HashMap<Integer,Integer>();
+					
+				List<SbiGlContents> toClone=new ArrayList<SbiGlContents>();
+				//add first level child
+				toClone.addAll(listContentsByGlossaryIdAndParentId(glossaryId,null));
+				
+				
+				while(!toClone.isEmpty()){
+					SbiGlContents tmp=toClone.remove(0);
+					tmp.setGlossaryId(newGlossId);
+					tmp.setParentId(newID.get(tmp.getParentId()));
+					Integer oldID=	tmp.getContentId();
+					Integer ni=insertContents(tmp);
+					newID.put(oldID, ni);
+					
+					
+					List<SbiGlContents> chlis=listContentsByGlossaryIdAndParentId(glossaryId,oldID);
+					for(SbiGlContents glc : chlis){
+						toClone.add(glc);
+					}
+					if(chlis.isEmpty()){
+						//check if have node child
+						 List<SbiGlWord> wl=listWlistWord(oldID);
+						for(SbiGlWord sgw:wl){
+						SbiGlWlist contw=new SbiGlWlist();
+						contw.setId(new SbiGlWlistId(sgw.getWordId(),ni));
+						insertWlist(contw);
+						}
+					}
+					
+				}
+				
 				return true;
 			}
 		});

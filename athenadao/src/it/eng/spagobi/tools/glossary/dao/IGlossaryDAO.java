@@ -37,6 +37,10 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public void deleteGlossary(Integer glossaryId);
 
+	public void cloneGlossary(Integer glossaryId,Integer newGlossId);
+
+	
+	
 	//
 	// Contents
 	//
