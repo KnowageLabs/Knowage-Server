@@ -14,7 +14,8 @@
 
 <!-- <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.css"> -->
 
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
+<link rel="stylesheet"
+	href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
 
 
 <script
@@ -98,8 +99,8 @@ var serverPort ='<%=request.getServerPort()%>';
 						<md-button ng-click="ctrl.createNewWord()"
 							class="md-fab   md-ExtraMini" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
-							md-font-icon="fa fa-plus fa-2x" style="  margin-left: -5px ; color: black;"></md-icon>
-						</md-button>
+							md-font-icon="fa fa-plus fa-2x"
+							style="  margin-left: -5px ; color: black;"></md-icon> </md-button>
 					</div>
 
 
@@ -192,14 +193,14 @@ var serverPort ='<%=request.getServerPort()%>';
 						<md-button ng-click="ctrl.createNewGlossary($event)"
 							class="md-fab   md-ExtraMini" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
-							md-font-icon="fa fa-plus fa-2x" style="  margin-left: -5px ; color: black;"></md-icon>
-						</md-button>
+							md-font-icon="fa fa-plus fa-2x"
+							style="  margin-left: -5px ; color: black;"></md-icon> </md-button>
 					</div>
 					</md-toolbar>
 
 
-					<md-list style="  margin-top: 25px;  width: 100%;"> <md-list-item ng-click="1==1"
-						class="smallListItem" 
+					<md-list style="  margin-top: 25px;  width: 100%;"> <md-list-item
+						ng-click="1==1" class="smallListItem"
 						ng-repeat="gloss in ctrl.glossary ">
 
 					<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
@@ -213,25 +214,22 @@ var serverPort ='<%=request.getServerPort()%>';
 					<div class="dropdown position-fixed"
 						style="z-index: 999; left: 10px !important"
 						id="Gloss-{{  gloss.GLOSSARY_NM }}">
-						<md-list class="dropdown-menu" role="menu"> 
-						<md-list-item style="  height: 40px! important;"
-							ng-click='ctrl.createNewGlossary($event,gloss)' role="menuitem" tabindex="1">
+						<md-list class="dropdown-menu" role="menu"> <md-list-item
+							style="  height: 40px! important;"
+							ng-click='ctrl.createNewGlossary($event,gloss)' role="menuitem"
+							tabindex="1">
 						<p>Modifica</p>
-						</md-list-item>
-						<md-list-item style="  height: 40px! important;"
-							ng-click='ctrl.CloneGloss(gloss)' role="menuitem" tabindex="2">
+						</md-list-item> <md-list-item style="  height: 40px! important;"
+							ng-click='ctrl.CloneGloss($event,gloss)' role="menuitem"
+							tabindex="2">
 						<p>Clona</p>
 						</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(gloss)'
-						style="  height: 40px! important;"
-							role="menuitem" tabindex="3">
+							style="  height: 40px! important;" role="menuitem" tabindex="3">
 						<p>Elimina</p>
 						</md-list-item> </md-list>
 					</div>
 
-					<!-- 						fine menu contestuale albero --> 
-					</md-list-item> 
-					
-					</md-list>
+					<!-- 						fine menu contestuale albero --> </md-list-item> </md-list>
 
 				</div>
 
@@ -263,41 +261,43 @@ var serverPort ='<%=request.getServerPort()%>';
 
 
 
-<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">Selezionare un glossario per visualizzarne la struttura</p>
-						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined " ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
+						<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">Selezionare
+							un glossario per visualizzarne la struttura</p>
+						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined "
+							ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
 							data-drag-delay="500">
 							<ol ui-tree-nodes ng-model="ctrl.selectedGloss">
 								<div context-menu
 									data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"
 									ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 									<li ui-tree-node data-nodrag ng-repeat="n in [1]">
-										<div ui-tree-handle>
+										<div ui-tree-handle style="cursor: pointer;">
 											<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p>
 										</div>
 								</div>
 
 
-					<div class="dropdown position-fixed"
-						style="z-index: 999; margin-left:-270px; margin-top: -40px"
-						id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}">
-						<md-list class="dropdown-menu" role="menu"> 
-						<md-list-item
+								<div class="dropdown position-fixed"
+									style="z-index: 999; margin-left: -25%; margin-top: -40px; width: 200px;"
+									id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}">
+									<md-list class="dropdown-menu" role="menu"> <md-list-item
 										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)'
 										role="menuitem" tabindex="1">
 									<p>Aggiungi Nodo Logico</p>
-									</md-list-item>
-						<md-list-item
-							ng-click='ctrl.createNewGlossary($event,ctrl.selectedGloss)' role="menuitem" tabindex="1">
-						<p>Modifica</p>
-						</md-list-item>
-						<md-list-item
-							ng-click='ctrl.CloneGloss(ctrl.selectedGloss)' role="menuitem" tabindex="2">
-						<p>Clona</p>
-						</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(ctrl.selectedGloss)'
-							role="menuitem" tabindex="3">
-						<p>Elimina</p>
-						</md-list-item> </md-list>
-					</div>
+									</md-list-item> <md-list-item
+										ng-click='ctrl.createNewGlossary($event,ctrl.selectedGloss)'
+										role="menuitem" tabindex="1">
+									<p>Modifica</p>
+									</md-list-item> <md-list-item
+										ng-click='ctrl.CloneGloss($event,ctrl.selectedGloss)'
+										role="menuitem" tabindex="2">
+									<p>Clona</p>
+									</md-list-item> <md-list-item
+										ng-click='ctrl.deleteGlossary(ctrl.selectedGloss)'
+										role="menuitem" tabindex="3">
+									<p>Elimina</p>
+									</md-list-item> </md-list>
+								</div>
 
 								<!-- 						fine menu contestuale albero -->
 
@@ -557,7 +557,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 
 
-	
+
 
 
 

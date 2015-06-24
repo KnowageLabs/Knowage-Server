@@ -79,7 +79,15 @@ public class GlossaryService {
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-
+			
+			//check if name is present
+			String gn=(String) requestVal.opt("GLOSSARY_NM");
+			if(gn.trim().isEmpty()){
+				throw new SpagoBIServiceException(req.getPathInfo(),
+						"Glossary name is request");
+			}
+			
+			
 			JSONObject jo = new JSONObject();
 			jo.put("Status", "OK");
 			SbiGlGlossary gloss;
@@ -248,7 +256,66 @@ public class GlossaryService {
 		}
 	}
 
+	@POST
+	@Path("/cloneGlossary")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String cloneGlossary(@Context HttpServletRequest req) {
+		try {
+			System.out.println("cloneGlossary");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
+			Integer glossaryId = (Integer)requestVal.opt("GLOSSARY_ID");
+			
+			if(glossaryId==null){
+				throw new SpagoBIServiceException(req.getPathInfo(),
+						"ID non puo essere null");
+			}
+			
+			//check if name is present
+			String gn=(String) requestVal.opt("GLOSSARY_NM");
+			if(gn.trim().isEmpty()){
+				throw new SpagoBIServiceException(req.getPathInfo(),
+						"Glossary name is request");
+			}
+			//get glossary
+			 SbiGlGlossary glo=dao.loadGlossary(glossaryId);
+				if (glo==null) {
+					throw new SpagoBIServiceException(req.getPathInfo(),
+							"Glossary not present");
+				}
+				
+				// check if there is another glossary with the same name
+				List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal.opt("GLOSSARY_NM"));
+				if (!lg.isEmpty()) {
+					throw new SpagoBIServiceException(req.getPathInfo(),
+							"Glossary Name already defined");
+				}
+				
+				
+				glo.setGlossaryNm((String) requestVal.opt("GLOSSARY_NM"));
+				glo.setGlossaryCd((String) requestVal.opt("GLOSSARY_CD"));
+				glo.setGlossaryDs((String) requestVal.opt("GLOSSARY_DS"));
+				Integer newGlossId	=dao.insertGlossary(glo);
+			
+			
+			dao.cloneGlossary(glossaryId,newGlossId);
+
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
+			jo.put("id", newGlossId);
+			return jo.toString();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
 	
 	
 	@POST

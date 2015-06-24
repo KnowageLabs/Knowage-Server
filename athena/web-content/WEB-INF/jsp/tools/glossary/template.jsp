@@ -181,16 +181,8 @@
 		<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo">
 			<md-list> <md-list-item class="SecondaryOnLeft"
 				ng-click="1==1">
-
 			<p style="margin-left: 30px;">{{item.WORD}}</p>
-			<md-icon class="md-secondary sm-font-icon "
-				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
-				aria-label="Chat" md-font-icon="fa fa-angle-down "
-				style=" right: 0px;" ng-show="!collapsed"></md-icon> <md-icon
-				class=" sm-font-icon expandericon"
-				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
-				aria-label="Chat2" md-font-icon="fa fa-angle-right "
-				ng-show="collapsed"></md-icon> </md-list-item> </md-list>
+			 </md-list-item> </md-list>
 		</div>
 
 	
@@ -198,10 +190,10 @@
 
 
 	<!-- 					menu contestuale albero -->
-	<div class="dropdown position-fixed" style="z-index: 999;"
+	<div class="dropdown position-fixed" style="z-index: 999;   margin-left: -25%; width: 200px;"
 		id="WordTree-{{ item.$$hashKey }}">
 		<md-list class="dropdown-menu" role="menu"
-			style="  margin-top: -49px;  margin-left: -275px;"> 
+			style="  margin-top: -49px;"> 
 		<md-list-item
 			ng-click='ctrl.newSubItem(this,item)' role="menuitem" tabindex="1"
 			ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  "> <!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->

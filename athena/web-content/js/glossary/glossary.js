@@ -6,8 +6,7 @@ app.config(function($mdThemingProvider) {
 			'blue-grey');
 });
 
-app.constant('ENDPOINT_URI', 'http://' + hostName + ':' + serverPort
-		+ '/athena/restful-services/1.0/');
+app.constant('ENDPOINT_URI', 'http://' + hostName + ':' + serverPort + '/athena/restful-services/1.0/');
 
 app.service('restServices', function($http, ENDPOINT_URI) {
 
@@ -31,12 +30,11 @@ app.service('restServices', function($http, ENDPOINT_URI) {
 
 	service.remove = function(endP_path, req_Path, item) {
 		item == undefined ? item = "" : item = "?" + item;
-
-		console.log("service.get");
-		console.log("endP_path= " + endP_path)
-		console.log("req_Path=" + req_Path)
-		console.log("item=" + item)
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item);
+	};
+	
+	service.post = function(endP_path, req_Path, item) {
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path , item);
 	};
 
 	// prendo i nodi di un glossario
@@ -48,38 +46,9 @@ app.service('restServices', function($http, ENDPOINT_URI) {
 				+ "&PARENT_ID=" + nodeID);
 	};
 
-	// prendo tutte le informazioni di uno specifico word
-	service.getWord = function(item) {
-		return $http.get(getBaseUrl() + "getWord?WORD_ID=" + item);
-	};
+	
 
-	// salvo un word
-	service.addWord = function(item) {
-		return $http.post(getBaseUrl() + "addWord", item);
-	};
 
-	// salvo un glossario
-	service.addGlossary = function(item) {
-		return $http.post(getBaseUrl() + "addGlossary", item);
-	};
-
-	// salvo un glossario
-	service.addContents = function(item) {
-		return $http.post(getBaseUrl() + "addContents", item);
-	};
-
-	service.WordLike = function(item) {
-		return $http.get(getBaseUrl() + "listWords?WORD=" + item);
-	};
-
-	service.AttributeLike = function(item) {
-		return $http.get(getBaseUrl() + "listAttribute?ATTR=" + item);
-	};
-
-	service.AlterContentGloss = function(item) {
-		console.log("AlterContentGloss")
-		return $http.post(getBaseUrl() + "ModifyContentsGlossary", item);
-	}
 
 });
 
@@ -180,53 +149,6 @@ var wor = [ {
 	LINK : []
 }, ];
 
-var glos = [ {
-	GLOSSARY_ID : 1,
-	GLOSSARY_CD : "C1",
-	GLOSSARY_NM : "GLOSSARIO 1",
-	GLOSSARY_DS : "IL GLOSSARIO 1 è",
-	SBI_GL_CONTENTS : [ {
-		CONTENT_ID : 'P1',
-		GLOSSARY_ID : 1,
-		PARENT_ID : "null",
-		CONTENT_CD : 'c1',
-		CONTENT_NM : 'cont1',
-		CONTENT_DS : 'descr1',
-		DEPTH : 0,
-		CHILD : [ {
-			CONTENT_ID : 'P11',
-			GLOSSARY_ID : 1,
-			PARENT_ID : 'P1',
-			CONTENT_CD : 'c2',
-			CONTENT_NM : 'cont2',
-			CONTENT_DS : 'descr2',
-			DEPTH : 1,
-			CHILD : []
-		}, {
-			CONTENT_ID : 'P13',
-			GLOSSARY_ID : 1,
-			PARENT_ID : 'P1',
-			CONTENT_CD : 'c3',
-			CONTENT_NM : 'cont3',
-			CONTENT_DS : 'descr3',
-			DEPTH : 0,
-			CHILD : []
-		} ]
-	}, ], // DOVREBBERO ESSERE I NODI
-}, {
-	GLOSSARY_ID : 2,
-	GLOSSARY_CD : "C2",
-	GLOSSARY_NM : "GLOSSARIO 2",
-	GLOSSARY_DS : "IL GLOSSARIO 2 è",
-	SBI_GL_CONTENTS : [], // DOVREBBERO ESSERE I NODI
-}, {
-	GLOSSARY_ID : 3,
-	GLOSSARY_CD : "C3",
-	GLOSSARY_NM : "GLOSSARIO 3",
-	GLOSSARY_DS : "IL GLOSSARIO 3 è",
-	SBI_GL_CONTENTS : [], // DOVREBBERO ESSERE I NODI
-} ];
-
 app.controller('Controller', [ "restServices", "$q", "$scope", "$mdDialog",
 		"$filter", "$timeout", "$mdToast", funzione ]);
 
@@ -235,7 +157,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 	ctr = this;
 	ctr.showPreloader = false;
 	ctr.showSearchPreloader = false;
-	ctr.activeTab = 'Glossario';
+	ctr.activeTab = 'Glossari';
 	ctr.filterSelected = true;
 	ctr.words = [];
 	getAllWords();
@@ -253,7 +175,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 	// }
 
 	ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
-	ctr.glossary = glos;
+	ctr.glossary;
 	getAllGloss();
 	ctr.newGloss = JSON.parse(JSON.stringify(EmptyGloss));
 	ctr.propWord = SBI_GL_ATTRIBUTES;
@@ -388,7 +310,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 			ctr.prevPropSearch = query;
 
-			restServices.AttributeLike(query).success(
+			restServices.get("glossary", "listAttribute","ATTR=" +query).success(
 					function(data, status, headers, config) {
 						console.log("AttributeLike Ottenuto")
 						console.log(data)
@@ -520,7 +442,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 
 			ctr.prevChipsSearch = chip;
 
-			restServices.WordLike(chip).success(
+			restServices.get("glossary", "listWords","WORD=" +chip).success(
 					function(data, status, headers, config) {
 						console.log("chipsword Ottenuto")
 						console.log(data)
@@ -591,13 +513,14 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 			ctr.newWord.LINK[i].ORDER = i;
 		}
 
-		restServices.addWord(ctr.newWord).success(
+		showPreloader();
+		restServices.post("glossary", "addWord",ctr.newWord).success(
 				function(data, status, headers, config) {
 					console.log("word salvato  Ottenuto")
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message)
-						return;
+//						return;
 					} else {
 
 						if (ctr.newWord.SaveOrUpdate == "Save") {
@@ -612,11 +535,13 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 						ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 
 						showToast("Word salvata con successo", 3000);
+						ctr.activeTab = 'Glossari';
 					}
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
 			showErrorToast("word non salvato " + status)
-			console.log("Words non Ottenuti " + status);
+			console.log("Words non salvato " + status);
+			hidePreloader();
 		})
 
 	};
@@ -640,7 +565,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 				.show(confirm)
 				.then(
 						function() {
-
+							showPreloader();
 							restServices
 									.remove("glossary", "deleteWord",
 											"WORD_ID=" + ev.WORD_ID)
@@ -691,7 +616,113 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 	// glossary
 
 	
-	
+	ctr.CloneGloss=function(ev,gl){
+		
+		
+		$mdDialog
+		.show({
+			controllerAs : 'gloCtrl',
+			controller : function($mdDialog) {
+				var gctl = this;
+				
+				if(gl!=undefined){
+					//load glossary data
+					gctl.headerTitle="Clonazione Glossario";
+					
+					showPreloader();
+					restServices.get("glossary", "getGlossary","GLOSSARY_ID=" + gl.GLOSSARY_ID ).success(
+							function(data, status, headers, config) {
+								console.log("glossary Ottenuto " + status)
+								console.log(data)
+								if (data.hasOwnProperty("errors")) {
+									showErrorToast(data.errors[0].message)
+									$mdDialog.hide();
+									return false;
+								} else {
+									gctl.newGloss = data;
+								}
+
+								hidePreloader();
+							}).error(function(data, status, headers, config) {
+						console.log("glossary non Ottenuto " + status);
+						showErrorToast('Ci sono errori! \n status ' + status)
+						hidePreloader();
+					})
+					
+					
+					
+					
+				}else{
+					showErrorToast("Errore! glossario non puo essere nullo")
+					$mdDialog.hide();
+					return false;
+				}
+				
+
+				gctl.annulla = function($event) {
+					$mdDialog.hide();
+
+				};
+
+				
+				gctl.submit = function() {
+					
+					console.log(gl)
+					showPreloader();
+					restServices.post("glossary", "cloneGlossary",gctl.newGloss )
+					.success(function(data, status, headers,config) {
+								console.log("Gloss clonato")
+								console.log(data)
+								if (data.hasOwnProperty("errors")) {
+									showErrorToast(data.errors[0].message);
+									
+								} else {
+									showToast("Glossario clonato con successo",3000);
+									gctl.newGloss.GLOSSARY_ID=data.id;
+									ctr.glossary.push(gctl.newGloss )
+									$mdDialog.hide();
+								}
+								hidePreloader();
+
+							})
+					.error(
+							function(data, status, headers,
+									config) {
+								console
+										.log("Glossario non clonato "
+												+ status);
+								showErrorToast("Glossario non clonato "
+										+ status)
+										
+										hidePreloader();
+										$mdDialog.hide();
+
+							})
+
+					
+				}
+				
+				
+				
+				
+			},
+			templateUrl : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html',
+			targetEvent : ev,
+		})
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
 	
 	
 	
@@ -707,7 +738,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 		var wds = ctr.glossary;
 		$mdDialog.show(confirm).then(
 				function() {
-
+					showPreloader();
 					restServices.remove("glossary", "deleteGlossary",
 							"GLOSSARY_ID=" + ev.GLOSSARY_ID).success(
 							function(data, status, headers, config) {
@@ -715,7 +746,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 								console.log(data)
 								if (data.hasOwnProperty("errors")) {
 									showErrorToast(data.errors[0].message)
-									return;
+									
 								} else {
 									var index = wds.indexOf(ev);
 									wds.splice(index, 1);
@@ -731,7 +762,7 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 							}).error(function(data, status, headers, config) {
 						console.log("WORD NON ELMINIATO " + status);
 						showErrorToast("word non eliminato " + status)
-
+						hidePreloader();
 					})
 
 				}, function() {
@@ -781,15 +812,15 @@ function funzione(restServices, $q, $scope, $mdDialog, $filter, $timeout,
 							console.log(gctl.newGloss)
 							
 								console.log("salvo o modifico")
-if (gctl.newGloss.NEWGLOSS  != undefined) {
-			console.log("salvo")
-			gctl.newGloss.SaveOrUpdate = "Save";
-		} else {
-			console.log("modificato")
-			gctl.newGloss.SaveOrUpdate = "Update";
-		}
-								restServices
-										.addGlossary(gctl.newGloss)
+								if (gctl.newGloss.NEWGLOSS  != undefined) {
+									console.log("salvo")
+									gctl.newGloss.SaveOrUpdate = "Save";
+								} else {
+									console.log("modificato")
+									gctl.newGloss.SaveOrUpdate = "Update";
+								}
+							showPreloader();
+							restServices.post("glossary", "addGlossary",gctl.newGloss)
 										.success(
 												function(data, status, headers,
 														config) {
@@ -801,7 +832,6 @@ if (gctl.newGloss.NEWGLOSS  != undefined) {
 
 														showErrorToast(data.errors[0].message)
 
-														return;
 													} else {
 														
 														if (gctl.newGloss.SaveOrUpdate == "Save") {
@@ -828,9 +858,10 @@ if (gctl.newGloss.NEWGLOSS  != undefined) {
 										.error(
 												function(data, status, headers,
 														config) {
-
+													$mdDialog.hide();
 													showErrorToast("glossary non salvato "
-															+ status)
+															+ status);
+													hidePreloader();
 
 												})
 
@@ -890,8 +921,7 @@ if (gctl.newGloss.NEWGLOSS  != undefined) {
 								elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
 
 								showPreloader();
-								restServices
-										.addContents(elem)
+								restServices.post("glossary", "addContents",elem)
 										.success(
 												function(data, status, headers,
 														config) {
@@ -1033,8 +1063,7 @@ if (gctl.newGloss.NEWGLOSS  != undefined) {
 								elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 
 								showPreloader();
-								restServices
-										.AlterContentGloss(elem)
+								restServices.post("glossary", "ModifyContentsGlossary",elem)
 										.success(
 												function(data, status, headers,
 														config) {
@@ -1215,8 +1244,7 @@ if (gctl.newGloss.NEWGLOSS  != undefined) {
 									console.log("salvo " + val)
 
 									showPreloader();
-									restServices
-											.AlterContentGloss(node.$modelValue)
+									restServices.post("glossary", "ModifyContentsGlossary",node.$modelValue)
 											.success(
 													function(data, status,
 															headers, config) {
@@ -1360,8 +1388,7 @@ if (rn.tmpNW.NEWCONT  != undefined) {
 							
 
 							showPreloader();
-							restServices
-									.addContents(rn.tmpNW)
+							restServices.post("glossary", "addContents",rn.tmpNW)
 									.success(
 											function(data, status, headers,
 													config) {
@@ -1519,7 +1546,7 @@ if (rn.tmpNW.NEWCONT  != undefined) {
 
 			ctr.prevSearch = ele;
 			ctr.showSearchPreloader = true;
-			restServices.WordLike(ele).success(
+			restServices.get("glossary", "listWords","WORD=" +ele).success(
 					function(data, status, headers, config) {
 						console.log("WordLike Ottenuti " + status)
 						console.log(data)
@@ -1537,7 +1564,7 @@ if (rn.tmpNW.NEWCONT  != undefined) {
 	function getWord(ele) {
 		console.log("getWord")
 		showPreloader();
-		restServices.getWord(ele.WORD_ID).success(
+		restServices.get("glossary", "getWord","WORD_ID="+ele.WORD_ID).success(
 				function(data, status, headers, config) {
 					console.log("Word Ottenuto")
 					console.log(data)
