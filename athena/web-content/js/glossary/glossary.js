@@ -1183,12 +1183,13 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													} else {
 														showToast(translate.load("sbi.glossary.success.save"),3000);
 														
-														if(elem..hasOwnProperty("WORD_ID")){
+														if(elem.hasOwnProperty("WORD_ID")){
 															//confirm that there is a word and check if destination have other word
 															event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD=true;
-															for(event.source.nodesScope.$parent.$modelValue.CHILD.length){
-																
-															}
+//															for(var i=0 i<event.source.nodesScope.$parent.$modelValue.CHILD.length;i++){
+//																if
+//																
+//															}
 															
 															}else{
 																//confirm that there is a cont entand check if destination have other contents
