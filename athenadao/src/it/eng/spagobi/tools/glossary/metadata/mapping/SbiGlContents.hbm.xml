@@ -81,9 +81,6 @@
 			<column name="PARENT_ID" />
 		</many-to-one>
 
-		<property name="sequence" type="integer">
-			<column name="SEQUENCE" />
-		</property>
 
 	</class>
 </hibernate-mapping>

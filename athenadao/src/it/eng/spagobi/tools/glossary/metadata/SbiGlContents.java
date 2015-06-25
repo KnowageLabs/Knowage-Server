@@ -19,7 +19,6 @@ public class SbiGlContents extends SbiHibernateModel {
 	private Integer parentId;
 	private Integer glossaryId;
 
-	private Integer sequence;
 
 	public SbiGlContents() {
 		// TODO Auto-generated constructor stub
@@ -40,8 +39,7 @@ public class SbiGlContents extends SbiHibernateModel {
 	 * @param parent
 	 * @param sequence
 	 */
-	public SbiGlContents(Integer contentId, String contentCd, String contentNm, String contentDs, Integer depth, SbiGlGlossary glossary, SbiGlContents parent,
-			Integer sequence) {
+	public SbiGlContents(Integer contentId, String contentCd, String contentNm, String contentDs, Integer depth, SbiGlGlossary glossary, SbiGlContents parent) {
 		super();
 		this.contentId = contentId;
 		this.contentCd = contentCd;
@@ -50,7 +48,6 @@ public class SbiGlContents extends SbiHibernateModel {
 		this.depth = depth;
 		this.glossary = glossary;
 		this.parent = parent;
-		this.sequence = sequence;
 	}
 
 	/**
@@ -158,20 +155,8 @@ public class SbiGlContents extends SbiHibernateModel {
 		this.parent = parent;
 	}
 
-	/**
-	 * @return the sequence
-	 */
-	public Integer getSequence() {
-		return sequence;
-	}
 
-	/**
-	 * @param sequence
-	 *            the sequence to set
-	 */
-	public void setSequence(Integer sequence) {
-		this.sequence = sequence;
-	}
+
 
 	/**
 	 * @return the parentId
