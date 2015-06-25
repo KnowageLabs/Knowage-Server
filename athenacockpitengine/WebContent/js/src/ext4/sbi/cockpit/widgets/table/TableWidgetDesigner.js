@@ -88,6 +88,12 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 			}
 			
 			state.maxRowsNumber = this.maxRowsNumber;
+			state.hideGrid = this.hideGrid;
+			state.lineSize = this.lineSize;
+			state.gridColor = this.gridColor;
+			state.alternateRowsColors = this.alternateRowsColors;
+			state.alternateRowsColorsFirst = this.alternateRowsColorsFirst;
+			state.alternateRowsColorsSecond = this.alternateRowsColorsSecond;
 			
 			this.setFontStateBeforeRender(this, state);
 				
@@ -142,10 +148,23 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	//panel to show font size options
 	, fontConfigurationPanel: null
 	
+	
 	//field to set the max rows limit
 	, maxRowsNumberField: null
+	//checkbox for grid hiding
+	, hideGridCheckBox: null
 	//panel for table options
 	, tableConfigurationPanel: null
+	//field to set the line size
+	, lineSizeField: null
+	//field to set the grid color
+	, gridColorField: null
+	
+	//fields to set the grid alternate rows colors
+	, alternateRowsColorsContainer: null
+	, alternateRowsColorsChBox: null
+	, alternateRowsColorsFirstColorField: null
+	, alternateRowsColorsSecondColorField: null
 	
 	// =================================================================================================================
 	// METHODS
@@ -262,12 +281,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			 msgTarget: 	'qtip', 
 			 fallback: 		true,
 			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 afterLabelTextTpl : '<span class="help" data-qtip="'
+	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			 name: 			'headerFontColor',
 			 allowBlank: 	true,
 			 labelWidth:	140,
 			 width:			255,
-	
-			 
 		 });
 		 
 		 this.headerFontWeightCombo = Ext.create('Ext.form.ComboBox',{
@@ -360,6 +380,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			 msgTarget: 	'qtip', 
 			 fallback: 		true,
 			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			 afterLabelTextTpl : '<span class="help" data-qtip="'
+	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 			 name: 			'rowsFontColor',
 			 allowBlank: 	true,
 			 labelWidth:	140,
@@ -431,24 +454,103 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 
 	, initTableOptionsTab: function(){
 		
-		this.maxRowsNumberField = Ext.create('Ext.form.field.Text',{
+		var tableOptionsLabelWidths = 140;
+		var tableOptionsWidths = 300;
+		var tableOptionsMargins = '10 0 0 10';
+		
+		this.maxRowsNumberField = Ext.create('Ext.form.field.Number',{
 			 fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber'),
 			 name: 				'maxRowsNumber',
 	         allowBlank: 		true,
+	         minValue: 0,
 //	    	 enforceMaxLength: 	true,
 //	 		 maxLength: 		7,
 //	 		 msgTarget: 		'side',
-			 labelWidth:		140,
-			 width:				250,
-			 margin:			10
-		 });
+			 labelWidth:		tableOptionsLabelWidths,
+			 width:				tableOptionsWidths,
+			 margin:			tableOptionsMargins
+		});
+		
+		this.hideGridCheckBox = Ext.create('Ext.form.field.Checkbox',{
+			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.hidegridlabel'),
+			name: 				'hideGridCheckBox',
+			allowBlank: 		true,
+			labelWidth:			tableOptionsLabelWidths,
+			width:				tableOptionsWidths,
+			margin:				tableOptionsMargins,
+		});
+		
+		this.lineSizeField = Ext.create('Ext.form.field.Number',{
+			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.linesize'),
+			name: 				'lineSizeNumber',
+			allowBlank: 		true,
+			minValue: 0,
+			labelWidth:			tableOptionsLabelWidths,
+			width:				tableOptionsWidths,
+			margin:				tableOptionsMargins, 
+			tip: 				'This is a tip lineSizeField',
+		});
+		
+		this.gridColorField = Ext.create('Ext.ux.FontColorField', { 
+			name: 				'gridColor',
+			msgTarget: 			'qtip', 
+			fallback: 			true,
+			allowBlank: 		true,
+			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.gridcolor'),
+			labelWidth:			tableOptionsLabelWidths,
+			width:				tableOptionsWidths,
+			margin:				tableOptionsMargins
+		});
+		
+		this.alternateRowsColorsChBox = Ext.create('Ext.form.field.Checkbox', {
+			name: 				'alternateRowsColorsChBox',
+            flex: 1
+		});
+		
+		this.alternateRowsColorsFirstColorField = Ext.create('Ext.ux.FontColorField', { 
+			name: 				'alternateRowsColorsFirstColorField',
+			msgTarget: 			'qtip', 
+			fallback: 			true,
+			allowBlank: 		true,
+			margin:				'0 0 0 10',
+            flex: 3
+		});
+		
+		this.alternateRowsColorsSecondColorField = Ext.create('Ext.ux.FontColorField', { 
+			name: 				'alternateRowsColorsSecondColorField',
+			msgTarget: 			'qtip', 
+			fallback: 			true,
+			allowBlank: 		true,
+			margin:				'0 0 0 10',
+            flex: 3
+		});
+		
+		this.alternateRowsColorsContainer = Ext.create('Ext.form.FieldContainer', {
+			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.gridrowscolors'),
+			labelWidth:			tableOptionsLabelWidths,
+			width:				tableOptionsWidths,
+			margin:				tableOptionsMargins,
+			layout: 			'hbox',
+			items: [
+			        this.alternateRowsColorsChBox,
+			        this.alternateRowsColorsFirstColorField,
+			        this.alternateRowsColorsSecondColorField,
+			        ]
+			
+		});
 		
 		this.tableConfigurationPanel = 
 		{
 			xtype:		'panel'
 			, layout: 	{ type: 'table', columns: 1 }
 	        , title: 	LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.title')
-	    	, items: 	[this.maxRowsNumberField]	
+	    	, items: 	[
+	    	         	 this.maxRowsNumberField,
+	    	         	 this.hideGridCheckBox,
+	    	         	 this.lineSizeField,
+	    	         	 this.gridColorField,
+	    	         	 this.alternateRowsColorsContainer,
+	    	         	 ]	
 		};
 		
 	}
@@ -464,7 +566,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.visibleselectfields =  this.visibleselectfields;
 		}
 		
+		/* START Table options */
 		state.maxRowsNumber = this.maxRowsNumberField.getValue();
+		state.hideGrid = this.hideGridCheckBox.getValue();
+		state.lineSize = this.lineSizeField.getValue();
+		state.gridColor = this.gridColorField.getValue();
+		state.alternateRowsColors = this.alternateRowsColorsChBox.getValue();
+		state.alternateRowsColorsFirst = this.alternateRowsColorsFirstColorField.getValue();
+		state.alternateRowsColorsSecond = this.alternateRowsColorsSecondColorField.getValue();
+		/* END Table options */
 		
 		this.getFontState(state);		
 
@@ -521,7 +631,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.setDesignerState(this, state);
 		
 		if (state.maxRowsNumber) this.maxRowsNumberField.setValue(state.maxRowsNumber);
-		
+		if (state.hideGrid) this.hideGridCheckBox.setValue(state.hideGrid);
+		if (state.lineSize) this.lineSizeField.setValue(state.lineSize);
+		if (state.gridColor) this.gridColorField.setValue(state.gridColor);
+		if (state.alternateRowsColors) this.alternateRowsColorsChBox.setValue(state.alternateRowsColors);
+		if (state.alternateRowsColorsFirst) this.alternateRowsColorsFirstColorField.setValue(state.alternateRowsColorsFirst);
+		if (state.alternateRowsColorsSecond) this.alternateRowsColorsSecondColorField.setValue(state.alternateRowsColorsSecond);
+
 		this.setFontState(state);
 		
 		if(state.visibleselectfields!=undefined && state.visibleselectfields!=null){
