@@ -1,0 +1,453 @@
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+
+#set($rows = $data.rows) ## data in table rows
+
+
+#set($series = $chart.VALUES.SERIE) ## metadata related to series
+
+#set($seriesMap = {}) ## conversion series metadata to map object
+#if($series.class.name == 'java.util.LinkedHashMap')
+	#set($workAroundNoPrint = $seriesMap.put($series.name , $series))
+#else
+	#foreach($serie in $series)
+		#set($workAroundNoPrint = $seriesMap.put($serie.name , $serie))
+	#end
+#end
+
+{
+    chart: {
+   		type: 'gauge',
+
+   		#if($chart.style.backgroundColor != '')
+   		backgroundColor: '$chart.style.backgroundColor', ##outer chart background
+    	#end
+   		
+   		#if($chart.height != '')
+    	height:'$chart.height',
+    	#end
+    	
+    	#if($chart.width != '')
+    	width:'$chart.width',
+    	#end
+
+        plotBackgroundColor: null,
+        plotBorderWidth: 0,
+        plotShadow: false
+    },
+    
+    
+    title: {
+        text: '$chart.TITLE.text',
+        
+        #set ($titleAlign = $chart.TITLE.style.align)
+        #if ($titleAlign != '' )
+        
+        	#if ($titleAlign == 'left')
+        	x: 70,
+        	#elseif ($titleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$titleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.TITLE.style.keySet())
+        	#set ($axisTytleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+    			fontStyle: '$axisTitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisTytleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTytleStyle',
+    		#end
+		#end
+	    }
+    },
+    
+    #if($chart.SUBTITLE.text != '')
+    subtitle: {
+        text: '$chart.SUBTITLE.text',
+        
+        #set ($subtitleAlign = $chart.SUBTITLE.style.align)
+        #if ($subtitleAlign != '' )
+        
+        	#if ($subtitleAlign == 'left')
+        	x: 70,
+        	#elseif ($subtitleAlign == 'right')
+        	x: -70,
+        	#end
+        
+        align: '$subtitleAlign',
+        #end
+        
+        style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisSubtitleStyle == 'italic' || $axisSubtitleStyle == 'normal'))
+    			fontStyle: '$axisSubtitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
+		}
+    },
+    #end
+    
+    
+    pane: {
+    	#if($chart.PANE.startAngle)
+        	startAngle: $chart.PANE.startAngle,
+        #end
+        #if($chart.PANE.endAngle)
+        	endAngle: $chart.PANE.endAngle,
+        #end
+        
+        background: [
+        {
+            backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [[0, '#FFF'],[1, '#333']]
+            },
+            borderWidth: 0,
+            outerRadius: '109%'
+        }, {
+            backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                stops: [
+                    [0, '#333'],
+                    [1, '#FFF']
+                ]
+            },
+            borderWidth: 1,
+            outerRadius: '107%'
+        }, {
+            // default background
+        }, {
+            backgroundColor: '#DDD',
+            borderWidth: 0,
+            outerRadius: '105%',
+            innerRadius: '103%'
+        }]
+    },
+    
+    yAxis:[
+        ## Serie add
+        #if($chart.AXES_LIST.AXIS.size()==1)
+        
+        	#set ($yAxis = $chart.AXES_LIST.AXIS )
+        	{
+		        min: $yAxis.min,
+		        max: $yAxis.max,
+		        
+	        	title: {
+		        	#if($yAxis.TITLE.enabled)
+				 	 	enabled: $yAxis.TITLE.enabled
+				 	#end
+			 	 
+	        		text: '$yAxis.TITLE.text',
+	        		
+				 	#if( $yAxis.TITLE.style )
+		        		style:{
+				        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+				        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+				        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+				        			fontStyle: '$axisTitleStyle',
+								#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+				        			textDecoration: 'underline',
+								#else		        			
+				        			$styleName: '$axisTitleStyle',
+				        		#end
+				        	#end
+		        		},
+		        	#end
+	        	},
+	        	
+	        	#if($yAxis.minorTickInterval)
+	        		minorTickInterval: '$yAxis.minorTickInterval',
+	        	#end
+	        	#if($yAxis.minorTickWidth)
+	            	minorTickWidth: $yAxis.minorTickWidth,
+	            #end
+	            #if($yAxis.minorTickLength)
+	            	minorTickLength: $yAxis.minorTickLength,
+	            #end
+	            #if($yAxis.minorTickPosition)
+	            	minorTickPosition: '$yAxis.minorTickPosition',
+	            #end
+	            #if($yAxis.minorTickColor)
+	            	minorTickColor: '$yAxis.minorTickColor',
+				#end
+				#if($yAxis.tickPixelInterval)
+	            	tickPixelInterval: $yAxis.tickPixelInterval,
+	            #end
+	            #if($yAxis.tickWidth)
+	            	tickWidth: $yAxis.tickWidth,
+	            #end
+	            #if($yAxis.tickPosition)
+	            	tickPosition: '$yAxis.tickPosition',
+	            #end
+	            #if($yAxis.tickLength)
+	            	tickLength: $yAxis.tickLength,
+	            #end
+	            #if($yAxis.tickColor)
+	            	tickColor: '$yAxis.tickColor',
+	        	#end
+	        	
+	        	labels: {
+	    		#if($yAxis.style)
+	        		style:{
+		        	#foreach($styleName in $yAxis.style.keySet())
+		        		#set ($axisStyle = $yAxis.style[$styleName])
+		        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',
+						#else
+		        			$styleName: '$axisStyle',
+		        		#end
+		        	#end
+	        		},
+	        	#end
+	            },
+	        	
+	        	#if($yAxis.PLOTBANDS)
+		        	plotBands: [
+		        	#foreach($band in $yAxis.PLOTBANDS.PLOT)
+		        	{
+		        		from: $band.from,
+		        		to: $band.to,
+		        		color: '$band.color'
+		        	},
+		        	#end 
+		        	]
+		        #end
+	        }
+        #else
+        
+	        #foreach ($yAxis in $chart.AXES_LIST.AXIS)
+	        {
+		        min: $yAxis.min,
+		        max: $yAxis.max,
+		        
+	        	title: {
+		        	#if($yAxis.TITLE.enabled)
+				 	 	enabled: $yAxis.TITLE.enabled
+				 	#end
+			 	 
+	        		text: '$yAxis.TITLE.text',
+	        		
+				 	#if( $yAxis.TITLE.style )
+		        		style:{
+				        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+				        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+				        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+				        			fontStyle: '$axisTitleStyle',
+								#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+				        			textDecoration: 'underline',
+								#else		        			
+				        			$styleName: '$axisTitleStyle',
+				        		#end
+				        	#end
+		        		},
+		        	#end
+	        	},
+	        	
+	        	#if($yAxis.lineColor)
+	        		lineColor: '$yAxis.lineColor', ##'#339',
+	            #end
+	        	
+	        	#if($yAxis.tickPosition)
+	        		tickPosition: '$yAxis.tickPosition', ##'outside',
+	        	#end
+	        	
+	            #if($yAxis.tickColor)
+	            	tickColor: '$yAxis.tickColor', ##'#339',
+	            #end
+	            
+	            #if($yAxis.minorTickColor)
+	            	minorTickColor: '$yAxis.minorTickColor', ##'#339',
+	            #end
+	            
+	            #if($yAxis.offset)
+	            	offset: $yAxis.offset, ##-25,
+	            #end
+	            
+	            #if($yAxis.lineWidth)
+	            	lineWidth: $yAxis.lineWidth, ##2,
+	            #end
+	            
+	            #if($yAxis.minorTickLength)
+	            	minorTickLength: $yAxis.minorTickLength, ##5,
+	            #end
+	            
+	            #if($yAxis.endOnTick)
+	            	endOnTick: $yAxis.endOnTick, ##false
+	            #end
+	            
+	        	#if($yAxis.minorTickInterval)
+	        		minorTickInterval: '$yAxis.minorTickInterval',
+	        	#end
+	        	#if($yAxis.minorTickWidth)
+	            	minorTickWidth: $yAxis.minorTickWidth,
+	            #end
+	            #if($yAxis.minorTickLength)
+	            	minorTickLength: $yAxis.minorTickLength,
+	            #end
+	            #if($yAxis.minorTickPosition)
+	            	minorTickPosition: '$yAxis.minorTickPosition',
+	            #end
+	            #if($yAxis.minorTickColor)
+	            	minorTickColor: '$yAxis.minorTickColor',
+				#end
+				#if($yAxis.tickPixelInterval)
+	            	tickPixelInterval: $yAxis.tickPixelInterval,
+	            #end
+	            #if($yAxis.tickWidth)
+	            	tickWidth: $yAxis.tickWidth,
+	            #end
+	            #if($yAxis.tickPosition)
+	            	tickPosition: '$yAxis.tickPosition',
+	            #end
+	            #if($yAxis.tickLength)
+	            	tickLength: $yAxis.tickLength,
+	            #end
+	            #if($yAxis.tickColor)
+	            	tickColor: '$yAxis.tickColor',
+	        	#end
+	        	
+	        	labels: {
+	        		#if($yAxis.LABELS.distance)
+	                	distance: $yAxis.LABELS.distance,
+	            	#end
+	             	#if($yAxis.LABELS.rotation)
+	                	rotation: '$yAxis.LABELS.rotation'
+	                #end
+	                
+		    		#if($yAxis.style)
+		        		style:{
+			        	#foreach($styleName in $yAxis.style.keySet())
+			        		#set ($axisStyle = $yAxis.style[$styleName])
+			        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+			        			fontStyle: '$axisTitleStyle',
+							#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+			        			textDecoration: 'underline',
+							#else
+			        			$styleName: '$axisStyle',
+			        		#end
+			        	#end
+		        		},
+		        	#end
+	            },
+	        	
+	        	#if($yAxis.PLOTBANDS)
+		        	plotBands: [
+		        	#foreach($band in $yAxis.PLOTBANDS.PLOT)
+		        	{
+		        		from: $band.from,
+		        		to: $band.to,
+		        		color: '$band.color'
+		        	},
+		        	#end 
+		        	]
+		        #end
+	        },
+        	#end
+	    	## FINE foreach axis
+        #end
+        ## FINE Serie add
+        ],
+
+    
+    series: [
+    	#foreach($valueKey in $seriesMap.keySet())
+	    	#set($relatedSerie = $seriesMap.get($valueKey))
+	    	{
+	    	name: '$relatedSerie.name',
+	        data: [
+	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
+				
+				#foreach($row in $rows)
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					$serieValue,
+				#end
+	    	],
+	    	
+        	tooltip: { 
+			#set($seriePrefix = $relatedSerie.prefixChar)
+			#if($seriePrefix)
+				valuePrefix: '$seriePrefix',
+			#end
+				
+			#set($seriePostfix = $relatedSerie.postfixChar)
+			#if($seriePostfix)
+				valueSuffix: '$seriePostfix',
+			#end
+				
+			#if ($relatedSerie.precision != '')
+				valueDecimals: $relatedSerie.precision ,
+			#end
+			
+			
+			#if ($relatedSerie.TOOLTIP.backgroundColor)
+                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.color)
+				ttColor: '$relatedSerie.TOOLTIP.style.color' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.align)
+				ttAlign: '$relatedSerie.TOOLTIP.style.align' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.font)
+				ttFont: '$relatedSerie.TOOLTIP.style.font' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontWeight)
+				ttFontWeight: '$relatedSerie.TOOLTIP.style.fontWeight' ,
+			#end
+				
+			#if ($relatedSerie.TOOLTIP.style.fontSize)
+				ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
+			#end
+			},
+			
+			#if ($relatedSerie.DIAL.backgroundColor)
+			dial: {
+                backgroundColor: '$relatedSerie.DIAL.backgroundColor' ##'#339'
+            },
+            #end
+        },
+	    #end
+	],
+    
+    
+    #if($chart.EMPTYMESSAGE != '')
+    lang: {
+        noData: "$chart.EMPTYMESSAGE.text"
+    },
+    noData: {
+    	style:{
+    	#foreach($styleName in $chart.EMPTYMESSAGE.style.keySet())
+    		$styleName: '$chart.EMPTYMESSAGE.style[$styleName]',
+    	#end
+		}
+    },
+    #end
+    
+    credits: { ##remove bottom credits text
+    	enabled: false
+    },
+}

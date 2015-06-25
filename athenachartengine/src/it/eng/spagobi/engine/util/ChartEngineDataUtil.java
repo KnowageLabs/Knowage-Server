@@ -179,13 +179,13 @@ public class ChartEngineDataUtil {
 			}
 			// multiple categories for non conventional charts es. SUNBURST/TREEMAP
 			else {
-				categories = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("CATEGORY");
+				JSONArray optJSONArray = jo.getJSONObject("CHART").getJSONObject("VALUES").optJSONArray("CATEGORY");
+				categories = (optJSONArray != null) ? optJSONArray : categories;
 			}
 
 			for (int i = 0; i < categories.length(); i++) {
 				JSONObject cat = (JSONObject) categories.get(i);
 				q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, "DESC", null);
-
 			}
 		} else {
 			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "DESC", null);
