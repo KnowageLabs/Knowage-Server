@@ -1303,7 +1303,7 @@ function renderParallelChart(data){
 				tooltip.style("background",myColors(d[groupcolumn]));
 				tooltip.text(d[data.chart.tooltip])
 				.style("left", (d3.event.pageX) + "px")     
-				.se("top", (d3.event.pageY - 25) + "px");
+				.style("top", (d3.event.pageY - 25) + "px");
 			})
 			.on("mouseout",function(d){
 				tooltip.transition()
