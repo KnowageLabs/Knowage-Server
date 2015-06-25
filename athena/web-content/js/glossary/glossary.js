@@ -1162,8 +1162,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 								elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 
-								elem.OLD_PARENT_ID = event.source.nodesScope.$nodeScope == null ? null
-										: event.source.nodesScope.$nodeScope.$parent.$modelValue[0].CONTENT_ID;
+								elem.OLD_PARENT_ID = event.source.nodesScope == null ? null
+										: event.source.nodesScope.$parent.$modelValue.CONTENT_ID;
 
 								showPreloader();
 								restServices
@@ -1186,14 +1186,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														if(elem.hasOwnProperty("WORD_ID")){
 															//confirm that there is a word and check if destination have other word
 															event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD=true;
-//															for(var i=0 i<event.source.nodesScope.$parent.$modelValue.CHILD.length;i++){
-//																if
-//																
-//															}
-															
-															}else{
+															//equal to one because the element actual is no dragged
+															if(event.source.nodesScope.$parent.$modelValue.CHILD.length==1){
+																event.source.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD=false;
+															}
+														}else{
 																//confirm that there is a cont entand check if destination have other contents
 																event.dest.nodeScope.$parent.$modelValue.HAVE_CONTENTS_CHILD=true;	
+																if(event.source.nodesScope.$parent.$modelValue.CHILD.length==1){
+																	event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD=false;
+																	}
 															}
 														event.dest.nodesScope.insertNode(event.dest.index,elem);
 														event.source.nodesScope.$modelValue.splice(event.source.index,1);
@@ -1323,6 +1325,17 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																	.load("sbi.glossary.content.delete.error"),
 															3000);
 												} else {
+													if(ev.$parentNodeScope.$modelValue.CHILD.length==1){
+														console.log("ci sono figli")
+														if(ev.$modelValue.hasOwnProperty("WORD_ID")){
+															console.log("word")
+															ev.$parentNodeScope.$modelValue.HAVE_WORD_CHILD=false;
+														}else{
+															console.log("cont")
+															ev.$parentNodeScope.$modelValue.HAVE_CONTENTS_CHILD=false;
+																}
+													}
+													console.log(ev.$parentNodeScope.$modelValue)
 													ev.remove();
 													showToast(
 															translate

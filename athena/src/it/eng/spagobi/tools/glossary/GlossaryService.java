@@ -65,10 +65,12 @@ public class GlossaryService {
 				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
 				Integer oldparentId = getNumberOrNull(requestVal.opt("OLD_PARENT_ID"));
 				
+				dao.deleteWlist((new SbiGlWlistId(wordId,oldparentId)));
+				
 				SbiGlWlist contw=new SbiGlWlist();
 				contw.setId(new SbiGlWlistId(wordId,parentId));
 				dao.insertWlist(contw);
-				dao.deleteWlist((new SbiGlWlistId(wordId,oldparentId)));
+				
 				
 				
 			}

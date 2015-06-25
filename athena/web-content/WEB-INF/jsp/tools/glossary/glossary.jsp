@@ -260,7 +260,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 				<!-- class="hideTabs" -->
 
-				<md-content> <md-tabs md-dynamic-height
+				<md-content > <md-tabs md-dynamic-height  class="hideTabs"
 					md-border-bottom> <md-tab label="Glossari"
 					md-on-select="ctrl.activeTab='Glossari'"
 					md-active="ctrl.activeTab=='Glossari'"> <md-content
