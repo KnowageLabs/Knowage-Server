@@ -1179,7 +1179,7 @@ function renderParallelChart(data){
 
 		var brushx = -Number(brushWidth)/2;
 
-       var m = [80, 160, 200, 160],
+       var m = [40, 300, 40, 100],
 		w = data.chart.width - m[1] - m[3],
 		h = data.chart.height - m[0] - m[2];
 
@@ -1246,12 +1246,15 @@ function renderParallelChart(data){
 		.data(groups)
 		.enter().append("svg:g")
 		.attr("class", "legend")
-		.attr("transform", function(d, i) { return "translate(0," + (i * 20 + 584) + ")"; });
+		.attr("transform", function(d, i) { return "translate("+ (w+10) +"," + (i * 20 + 20) + ")"; });
 
-		legend.append("svg:line")
+		legend.append("svg:rect")
 		//.attr("class", String)
-		.style({"stroke":function(d) { return myColors(d); }, "stroke-width":"3px"})
-		.attr("x2", 15);
+		.style({"stroke":function(d) { return myColors(d); }, "stroke-width":"3px", "fill": function(d) { return myColors(d); }})
+		.attr("x", 0)
+		.attr("y", -6)
+		.attr("width", 10)
+		.attr("height", 10);
 
 		legend.append("svg:text")
 		.style("font-family",data.chart.font)
@@ -1300,7 +1303,7 @@ function renderParallelChart(data){
 				tooltip.style("background",myColors(d[groupcolumn]));
 				tooltip.text(d[data.chart.tooltip])
 				.style("left", (d3.event.pageX) + "px")     
-				.style("top", (d3.event.pageY - 25) + "px");
+				.se("top", (d3.event.pageY - 25) + "px");
 			})
 			.on("mouseout",function(d){
 				tooltip.transition()
@@ -1366,7 +1369,7 @@ function renderParallelChart(data){
 	}
 	
 	// TABLE
-	var table= d3.select("body").append("table").style("width","800px");
+	var table= d3.select("body").append("table").style("width",w+m[3]).style("padding-left",m[3]);
 	//columns for table
 	var tableColumns=[];
 	tableColumns.push(groupcolumn);
