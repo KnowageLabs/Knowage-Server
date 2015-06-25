@@ -1,5 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="ISO-8859-1"%>
+<%@page import="java.util.Locale"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+
+
+<%
+	Locale locale = request.getLocale();
+	String sbiMode = "WEB";
+	IUrlBuilder urlBuilder = null;
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+%>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -51,11 +62,16 @@
 
 <%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
 
-<script type="text/javascript">
+<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 
+
+<script type="text/javascript">
+var locale= '<%=request.getLocale()%>'; 
 var hostName = '<%=request.getServerName()%>';
 var serverPort ='<%=request.getServerPort()%>';
 </script>
+
+
 
 <script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
 
@@ -69,6 +85,10 @@ var serverPort ='<%=request.getServerPort()%>';
 
 
 	<div ng-controller="Controller as ctrl">
+	
+<!-- <md-button type="button" tabindex="-1" class="md-raised" ng-click="ctrl.prova()" >prova</md-button> -->
+
+	
 
 		<div class="preloader" ng-show="ctrl.showPreloader">
 			<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
@@ -206,7 +226,7 @@ var serverPort ='<%=request.getServerPort()%>';
 					<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
 						ng-class="{ 'highlight': highlight, 'expanded' : expanded }"
 						style="width: 100%;"
-						ng-click="ctrl.selectedGloss=gloss; ctrl.activeTab='Glossari'; ctrl.getGlossaryNode(gloss,null)">
+						ng-click="ctrl.showClickedGlossary(gloss);">
 						<p>{{ gloss.GLOSSARY_NM | uppercase }}</p>
 					</div>
 
@@ -536,9 +556,6 @@ var serverPort ='<%=request.getServerPort()%>';
 		</div>
 
 	</div>
-
-
-
 
 
 

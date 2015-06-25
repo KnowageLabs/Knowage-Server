@@ -123,7 +123,7 @@
 
 
 
-				<script type="text/ng-template" id="dirPagination.tpl.html">
+<script type="text/ng-template" id="dirPagination.tpl.html">
 
 <ul class="pagination" ng-if="1 < pages.length">
     <li ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
@@ -145,87 +145,85 @@
 </ul>
 			</script>
 
-			
-			
-			
-			
-						<!-- Nested list template -->
-						<script type="text/ng-template" id="items_renderer.html">
-			 <div context-menu data-target="WordTree-{{item.$$hashKey}}"
-		ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 
 
 
-		<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
-			<md-list>
-			<div ui-tree-handle>
-				<md-list-item class="SecondaryOnLeft"
-					ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
-					ng-init="this.preloader=false"> <!--		<p style="  margin-left: 30px;"><input class="transparent_input" type="text" name="nome" ng-model="item.CONTENT_NM"   > </p>  -->
-				<p style="margin-left: 30px;">{{item.CONTENT_NM}}</p>
-				<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
-					aria-label="Chat" md-font-icon="fa fa-angle-down "
-					style=" left: 0px;  margin-top: 0px! important;"
-					ng-show="!collapsed"></md-icon> <md-icon ng-disabled="true"
-					class=" sm-font-icon expandericon" aria-label="Chat2"
-					md-font-icon="fa fa-angle-right " ng-show="collapsed"></md-icon> <md-progress-circular
-					md-diameter="20" ng-show="this.preloader" class="md-hue-2"
-					style="  left: 50%;  margin-left: -25px; position:absolute "
-					md-mode="indeterminate"></md-progress-circular> </md-list-item>
-			</div>
-			</md-list>
+
+<!-- Nested list template -->
+<script type="text/ng-template" id="items_renderer.html">
+		
+<div context-menu data-target="WordTree-{{item.$$hashKey}}"
+	ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 
 
+
+	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
+		<md-list>
+		<div ui-tree-handle>
+			<md-list-item class="SecondaryOnLeft"
+				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
+				ng-init="this.preloader=false"> <!--		<p style="  margin-left: 30px;"><input class="transparent_input" type="text" name="nome" ng-model="item.CONTENT_NM"   > </p>  -->
+			<p style="margin-left: 30px;">{{item.CONTENT_NM}}</p>
+			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+				aria-label="Chat" md-font-icon="fa fa-angle-down "
+				style=" left: 0px;  margin-top: 0px! important;"
+				ng-show="!collapsed"></md-icon> <md-icon ng-disabled="true"
+				class=" sm-font-icon expandericon" aria-label="Chat2"
+				md-font-icon="fa fa-angle-right " ng-show="collapsed"></md-icon> <md-progress-circular
+				md-diameter="20" ng-show="this.preloader" class="md-hue-2"
+				style="  left: 50%;  margin-left: -25px; position:absolute "
+				md-mode="indeterminate"></md-progress-circular> </md-list-item>
 		</div>
-
-		<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo">
-			<md-list> <md-list-item class="SecondaryOnLeft"
-				ng-click="1==1">
-			<p style="margin-left: 30px;">{{item.WORD}}</p>
-			 </md-list-item> </md-list>
-		</div>
-
-	
+		</md-list>
 
 
-
-	<!-- 					menu contestuale albero -->
-	<div class="dropdown position-fixed" style="z-index: 999;   margin-left: -25%; width: 200px;"
-		id="WordTree-{{ item.$$hashKey }}">
-		<md-list class="dropdown-menu" role="menu"
-			style="  margin-top: -49px;"> 
-		<md-list-item
-			ng-click='ctrl.newSubItem(this,item)' role="menuitem" tabindex="1"
-			ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  "> <!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
-		<p>Nuovo Nodo Logico</p>
-		</md-list-item> 
-
-		<md-list-item ng-click='1==1' role="menuitem" tabindex="2"
-			ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
-		<p>Nuovo Vocabolo</p>
-		</md-list-item> 
-
-		<md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
-			tabindex="3">
-		<p>Elimina</p>
-		</md-list-item> 
-
-		<md-list-item ng-click='ctrl.newSubItem(this,item,true)' role="menuitem" ng-if=" item.CONTENT_NM != undefined"
-			tabindex="3">
-		<p>Modifica</p>
-		</md-list-item> </md-list>
 	</div>
-<!-- 						fine menu contestuale albero -->
+
+	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo ">
+		<md-list> 
+		<md-list-item class="SecondaryOnLeft"
+			">
+		<p style="margin-left: 30px;">{{item.WORD}}</p>
+		</md-list-item> 
+		</md-list>
+	</div>
+
+
 
 </div>
-				
 
-			
-				
-                <ol ng-if=" item.CONTENT_NM != undefined"   ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]" ui-tree-nodes="options" ng-model="item.CHILD" ng-class="{hideChildren: collapsed}">
-				<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true" ng-include="'items_renderer.html'" class="figlioVisibile"></li>
-				<li  ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox" ></li>				
-				</ol>
+<!-- 					menu contestuale albero -->
+<div class="dropdown position-fixed"
+	style="z-index: 999; margin-left: -25%; width: 200px;"
+	id="WordTree-{{ item.$$hashKey }}">
+	<md-list class="dropdown-menu" role="menu" style="  margin-top: -49px;">
+	<md-list-item ng-click='ctrl.newSubItem(this,item)' role="menuitem"
+		tabindex="1"
+		ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  ">
+	<!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
+	<p>Nuovo Nodo Logico</p>
+	</md-list-item> <md-list-item ng-click='1==1' role="menuitem" tabindex="2"
+		ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
+	<p>Nuovo Vocabolo</p>
+	</md-list-item> <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
+		tabindex="3">
+	<p>Elimina</p>
+	</md-list-item> <md-list-item ng-click='ctrl.newSubItem(this,item,true)'
+		role="menuitem" ng-if=" item.CONTENT_NM != undefined" tabindex="3">
+	<p>Modifica</p>
+	</md-list-item> </md-list>
+</div>
+<!-- 						fine menu contestuale albero -->
 
-				
-              </script>
+
+
+<ol ng-if=" item.CONTENT_NM != undefined"
+	ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]"
+	ui-tree-nodes="options" ng-model="item.CHILD"
+	ng-class="{hideChildren: collapsed}">
+	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
+		ng-include="'items_renderer.html'" class="figlioVisibile"></li>
+	<li ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox"></li>
+</ol>
+</script>
+              
