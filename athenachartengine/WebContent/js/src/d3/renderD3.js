@@ -1,5 +1,17 @@
 function renderWordCloud(chartConf){
-
+	
+	var maxic = 0;
+	
+	for (var i=0; i<chartConf.data[0].length; i++){
+		
+		if (chartConf.data[0][i].value > maxic){
+			
+			maxic = chartConf.data[0][i].value;
+			
+		}
+		
+	}
+	
 	(function() {
 
 		function cloud() {
@@ -408,12 +420,13 @@ function renderWordCloud(chartConf){
 		else (d3.layout || (d3.layout = {})).cloud = cloud;
 	})();
 
-
 	var fill = d3.scale.category20();
+	
+	var maxfontsize=chartConf.chart.maxFontSize;
 
 	d3.layout.cloud().size([800, 700])
 	.words(chartConf.data[0].map(function(d) {
-		return {text: d.name, size: d.value/10+30};
+		return {text: d.name, size: d.value/(maxic/maxfontsize)};
 	}))
 	.padding(chartConf.chart.padding)
 	.rotate(function() {
