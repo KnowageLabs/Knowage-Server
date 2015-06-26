@@ -416,47 +416,7 @@ LogMF.debug(logger, "IN: id = [{0}]", id);
 	
 	
 	
-	/**
-	 * Erases a record from db
-	 * 
-	 * @param clazz
-	 * @param id
-	 */
-	public void deleteWordRef( Serializable id) {
-		Session session = null;
-		Transaction tx = null;
-		LogMF.debug(logger, "IN: id = [{0}]", id);
 
-		try {
-			if (id == null) {
-				throw new IllegalArgumentException("Input parameter [id] cannot be null");
-			}
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				tx = session.beginTransaction();
-				Assert.assertNotNull(tx, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
-			}
-
-			
-			Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
-			q.setParameter("id", id);
-			q.executeUpdate();
-			tx.commit();
-
-		} catch (Throwable t) {
-			if (tx != null)
-				tx.rollback();
-			throw new SpagoBIDOAException("An unexpected error occured while deleting word references where word id is equal to [" + id + "]", t);
-		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
-			logger.debug("OUT");
-		}
-	}
 
 	public <T extends SbiHibernateModel> List<T> list(Class<T> clazz) {
 		if (clazz == null) {

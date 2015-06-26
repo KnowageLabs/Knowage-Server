@@ -56,7 +56,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public void modifyContents(SbiGlContents contents);
 
-	public void modifyContentPosition(Integer contentId, Integer parentId, Integer glossaryId);
+	public boolean modifyContentPosition(Integer contentId, Integer parentId, Integer glossaryId);
 
 	public void deleteContents(Integer contentId);
 
@@ -86,6 +86,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	
 	public List<SbiGlWord> listWlistWord(Integer contentId);
 
+	public SbiGlWlist loadWlist(SbiGlWlistId listId);
+	
 	public SbiGlWlistId insertWlist(SbiGlWlist wlist);
 
 	public void modifyWlist(SbiGlWlist wlist);

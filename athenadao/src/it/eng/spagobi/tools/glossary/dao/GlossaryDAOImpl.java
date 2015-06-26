@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttrId;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
@@ -32,10 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -185,12 +188,19 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	@Override
-	public void modifyContentPosition(Integer contentId, Integer parentId,
-			Integer glossaryId) {
+	public boolean modifyContentPosition(Integer contentId, Integer parentId,Integer glossaryId) {
 		SbiGlContents content = load(SbiGlContents.class, contentId);
+		List<SbiGlContents> parent = listContentsByGlossaryIdAndParentId(glossaryId,parentId);
+		for(SbiGlContents sb : parent){
+			if(sb.getContentNm().toLowerCase().trim().compareTo(content.getContentNm().toLowerCase().trim())==0){
+				return false;
+			}
+		}
+		
 		content.setParentId(parentId);
 		content.setGlossaryId(glossaryId);
 		update(content);
+		return true;
 	}
 
 	@Override
@@ -467,10 +477,26 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 
 		return a;
 	}
+	
+	@Override
+	public SbiGlWlist loadWlist(SbiGlWlistId id) {
+		return load(SbiGlWlist.class, id);
+	}
 
 	@Override
-	public SbiGlWlistId insertWlist(SbiGlWlist wlist) {
-		return (SbiGlWlistId) insert(wlist);
+	public SbiGlWlistId insertWlist(final SbiGlWlist wlist) {
+		return executeOnTransaction(new IExecuteOnTransaction<SbiGlWlistId>() {
+			@Override
+			public SbiGlWlistId execute(Session session) {
+				
+				
+			if(session.get( SbiGlWlist.class, wlist.getId())!=null){
+				//if already exist 
+				return null;
+			}
+				return (SbiGlWlistId) session.save(wlist);
+			}
+		});
 	}
 
 	@Override
@@ -534,8 +560,43 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	@Override
-	public void deleteWordReferences(Integer wordId) {
-		deleteWordRef(wordId);
+	public void deleteWordReferences(Integer id) {
+		
+		Session session = null;
+		Transaction tx = null;
+		LogMF.debug(logger, "IN: id = [{0}]", id);
+
+		try {
+			if (id == null) {
+				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+			}
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				tx = session.beginTransaction();
+				Assert.assertNotNull(tx, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			}
+
+			
+			Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
+			q.setParameter("id", id);
+			q.executeUpdate();
+			tx.commit();
+
+		} catch (Throwable t) {
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIDOAException("An unexpected error occured while deleting word references where word id is equal to [" + id + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+	
+		
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
