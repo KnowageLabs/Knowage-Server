@@ -1446,8 +1446,11 @@ function renderParallelChart(data){
 		if(i%2==1)return "lightgray";
 	})
 	.attr("class","tdata")
-	.on("mouseover",function(d){ return selectSingleLine(d);})
+	.on("mouseover",function(d){
+		d3.select(this).style("outline","solid steelblue");
+		return selectSingleLine(d);})
 	.on("mouseout",function(d){
+		d3.select(this).style("outline","none");
 		foreground.style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
 	})
@@ -1552,8 +1555,12 @@ function renderParallelChart(data){
 			if(i%2==1)return "lightgray";
 		})
 		.attr("class","tdata") 
-		.on("mouseover",function(d){ return selectSingleLine(d);})
+		.on("mouseover",function(d){ 
+			d3.select(this).style("outline","solid steelblue");
+			return selectSingleLine(d);
+			})
 		.on("mouseout",function(d){
+			d3.select(this).style("outline","none");
 			d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 			.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
 		})
@@ -1628,10 +1635,13 @@ function renderParallelChart(data){
 			if(i%2==1)return "lightgray";
 		})
 		.attr("class","tdata") 
-		.on("mouseover",function(d){ return selectSingleLine(d);})
+		.on("mouseover",function(d){
+			d3.select(this).style("outline","solid steelblue");
+			return selectSingleLine(d);
+			})
 		.on("mouseout",function(d){
-
-
+  
+			d3.select(this).style("outline","none");
 			foreground.attr("visible", function(d){
 				return (d[selectedCell.column]===selectedCell.value)?"true":"false";
 			});
@@ -1675,8 +1685,12 @@ function renderParallelChart(data){
 			if(i%2==1)return "lightgray";
 		})
 		.attr("class","tdata") 
-		.on("mouseover",function(d){ return selectSingleLine(d);})
-		.on("mouseout",function(d){
+		.on("mouseover",function(d){ 
+			//console.log("mouseover");
+			d3.select(this).style("outline","solid steelblue");
+			return selectSingleLine(d);})
+		.on("mouseout",function(){
+			d3.select(this).style("outline","none");
 			foreground.attr("visible",function(d){
 				return (allTableData.indexOf(d)!=-1)?"true":"false";
 			});
