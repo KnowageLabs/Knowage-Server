@@ -333,7 +333,8 @@ md-toolbar.md-default-theme.md-blue {
 }
 
 .addFiglioBox.angular-ui-tree-node {
-		  background: rgba(224, 229, 240, 0.05) !important;
+/* 		  background: rgba(224, 229, 240, 0.05) !important; */
+background: rgba(224, 229, 240, 0.05) !important;
 	top: -48px !important;
 	width: 100% !important;
 	right: 0 !important;

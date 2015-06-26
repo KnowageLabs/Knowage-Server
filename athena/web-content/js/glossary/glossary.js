@@ -15,6 +15,8 @@ app.service('translate', function() {
 	};
 });
 
+
+
 app.service('restServices', function($http, ENDPOINT_URI) {
 
 	var service = this;
@@ -734,7 +736,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						}
 
 					},
-					templateUrl : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html',
+					templateUrl : 'dialog-new-glossary.html',
 					targetEvent : ev,
 				})
 
@@ -954,7 +956,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					},
 
 					// "web-content/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html"
-					templateUrl : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html',
+					templateUrl : 'dialog-new-glossary.html',
 					targetEvent : ev,
 				})
 
@@ -1014,6 +1016,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																translate
 																		.load("sbi.glossary.error.save"),
 																3000);
+													} else if (data.Status == "NON OK") {
+														showToast(
+																translate
+																		.load(data.Message),
+																3000);
 													} else {
 														showToast(
 																translate
@@ -1024,14 +1031,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														if (elem.PARENT_ID != null) {
 															event.dest.nodesScope.$nodeScope.$modelValue.HAVE_WORD_CHILD = true;
 														}
-														event.dest.nodesScope
-																.insertNode(
-																		event.dest.index,
-																		elem);
+														event.dest.nodesScope.insertNode(event.dest.index,elem);
 													}
 													if (elem.PARENT_ID != null) {
+														
+														
 														event.dest.nodesScope
 																.expand();
+														
+														ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue);
+														
 													}
 													hidePreloader();
 												})
@@ -1083,18 +1092,18 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
 			console.log("accept TreeOptions")
+			console.log(sourceNodeScope)
 			console.log(destNodesScope)
 
 			// check if is a D&D of word
 			if (sourceNodeScope.$modelValue.hasOwnProperty("WORD")) {
+
 				// check if is glossary root
 				if (destNodesScope.$parent.$modelValue
 						.hasOwnProperty("SBI_GL_CONTENTS")) {
-					// if (destNodesScope.$parent.$modelValue.PARENT_ID == null)
-					// {
+
 					console.log("D&D not avaible on the glossary root");
 					return false;
-					// }
 
 				}
 				// check if have logical node child
@@ -1105,7 +1114,38 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						return false;
 					}
 				}
+
+				// controllo che già non ci sia uno stesso elemento come figlio
+				// del padre
+				for (var i = 0; i < destNodesScope.$parent.$modelValue.CHILD.length; i++) {
+
+					if (sourceNodeScope.$parentNodeScope != null
+							&& sourceNodeScope.$parentNodeScope.$modelValue
+									.hasOwnProperty("$$hashKey")) {
+						// D&D from tree
+						if (destNodesScope.$parent.$modelValue.CHILD[i].WORD_ID == sourceNodeScope.$modelValue.WORD_ID
+								&& sourceNodeScope.$parentNodeScope.$modelValue.$$hashKey != destNodesScope.$parent.$modelValue.$$hashKey) {
+							console.log("word from tree già presente")
+							return false;
+						}
+					} else {
+						// D&D from word list
+						if (destNodesScope.$parent.$modelValue.CHILD[i].WORD_ID == sourceNodeScope.$modelValue.WORD_ID) {
+							console.log("word from list già presente")
+							return false;
+						}
+					}
+
+				}
+
 			} else {
+
+				if (destNodesScope.$parent.$modelValue
+						.hasOwnProperty("SBI_GL_CONTENTS")) {
+					// root
+					return true;
+				}
+
 				// d&d of logical node
 				if (destNodesScope.$parent.$modelValue
 						.hasOwnProperty("HAVE_WORD_CHILD")) {
@@ -1114,6 +1154,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						return false;
 					}
 				}
+
+				for (var i = 0; i < destNodesScope.$parent.$modelValue.CHILD.length; i++) {
+					if (destNodesScope.$parent.$modelValue.CHILD[i].CONTENT_NM == sourceNodeScope.$modelValue.CONTENT_NM
+							&& sourceNodeScope.$parentNodeScope != null
+							&& sourceNodeScope.$parentNodeScope.$modelValue.$$hashKey != destNodesScope.$parent.$modelValue.$$hashKey) {
+						console.log("content già presente")
+						return false;
+					}
+				}
+
 			}
 
 			// if (destNodesScope.hasChild()) {
@@ -1153,8 +1203,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					.then(
 							function() {
 								console.log("accettato");
-								console.log(event.source.nodeScope.item)
-
+								
 								var elem = event.source.nodeScope.item;
 
 								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
@@ -1172,7 +1221,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 										.success(
 												function(data, status, headers,
 														config) {
-
+													console.log(data);
 													if (data
 															.hasOwnProperty("errors")) {
 														showErrorToast(data.errors[0].message);
@@ -1180,31 +1229,71 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																translate
 																		.load("sbi.glossary.error.save"),
 																3000);
+													} else if (data.Status == "NON OK") {
+														showToast(
+																translate
+																		.load(data.Message),
+																3000);
 													} else {
-														showToast(translate.load("sbi.glossary.success.save"),3000);
-														
-														if(elem.hasOwnProperty("WORD_ID")){
-															//confirm that there is a word and check if destination have other word
-															event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD=true;
-															//equal to one because the element actual is no dragged
-															if(event.source.nodesScope.$parent.$modelValue.CHILD.length==1){
-																event.source.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD=false;
-															}
-														}else{
-																//confirm that there is a cont entand check if destination have other contents
-																event.dest.nodeScope.$parent.$modelValue.HAVE_CONTENTS_CHILD=true;	
-																if(event.source.nodesScope.$parent.$modelValue.CHILD.length==1){
-																	event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD=false;
-																	}
-															}
-														event.dest.nodesScope.insertNode(event.dest.index,elem);
-														event.source.nodesScope.$modelValue.splice(event.source.index,1);
 
-														
+														showToast(
+																translate
+																		.load("sbi.glossary.success.save"),
+																3000);
+
+														if (elem
+																.hasOwnProperty("WORD_ID")) {
+															// confirm that
+															// there is a word
+															// and check if
+															// destination have
+															// other word
+															event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = true;
+															// equal to one
+															// because the
+															// element actual is
+															// no dragged
+
+															if (!event.source.nodesScope.$parent.$modelValue
+																	.hasOwnProperty("CHILD")) {
+																event.source.nodesScope.$parent.$modelValue.CHILD = {};
+															}
+															if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
+																event.source.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = false;
+															}
+														} else {
+															// confirm that
+															// there is a cont
+															// entand check if
+															// destination have
+															// other contents
+															event.dest.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = true;
+															if (!event.source.nodesScope.$parent.$modelValue
+																	.hasOwnProperty("CHILD")) {
+																event.source.nodesScope.$parent.$modelValue.CHILD = {};
+															}
+															if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
+																event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = false;
+															}
+														}
+														event.dest.nodesScope
+																.insertNode(
+																		event.dest.index,
+																		elem);
+														event.source.nodesScope.$modelValue
+																.splice(
+																		event.source.index,
+																		1);
+
+														if (elem.PARENT_ID != null) {
+															event.dest.nodesScope.expand();
+															console.log(event.dest)
+															
+															ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue);
+														}
+
 													}
-													if (elem.PARENT_ID != null) {
-														event.dest.nodesScope.expand();
-													}
+
 													hidePreloader();
 												})
 										.error(
@@ -1325,17 +1414,20 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																	.load("sbi.glossary.content.delete.error"),
 															3000);
 												} else {
-													if(ev.$parentNodeScope.$modelValue.CHILD.length==1){
-														console.log("ci sono figli")
-														if(ev.$modelValue.hasOwnProperty("WORD_ID")){
+													if (ev.$parentNodeScope.$modelValue.CHILD.length == 1) {
+														console
+																.log("ci sono figli")
+														if (ev.$modelValue
+																.hasOwnProperty("WORD_ID")) {
 															console.log("word")
-															ev.$parentNodeScope.$modelValue.HAVE_WORD_CHILD=false;
-														}else{
+															ev.$parentNodeScope.$modelValue.HAVE_WORD_CHILD = false;
+														} else {
 															console.log("cont")
-															ev.$parentNodeScope.$modelValue.HAVE_CONTENTS_CHILD=false;
-																}
+															ev.$parentNodeScope.$modelValue.HAVE_CONTENTS_CHILD = false;
+														}
 													}
-													console.log(ev.$parentNodeScope.$modelValue)
+													console
+															.log(ev.$parentNodeScope.$modelValue)
 													ev.remove();
 													showToast(
 															translate
@@ -1366,6 +1458,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	ctr.toggle = function(scope, item, gloss) {
 		console.log("toggle")
+		console.log(scope)
 		scope.preloader = true;
 		if (scope.collapsed) {
 			ctr.getGlossaryNode(gloss, item, scope)
@@ -1491,6 +1584,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													showToast(
 															translate
 																	.load("sbi.glossary.error.save"),
+															3000);
+												} else if (data.Status == "NON OK") {
+													showToast(
+															translate
+																	.load(data.Message),
 															3000);
 												} else {
 
@@ -1802,3 +1900,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		console.log(translate.load("sbi.generic.genericError"));
 	}
 }
+
+
+

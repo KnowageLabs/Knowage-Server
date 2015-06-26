@@ -13,10 +13,66 @@
 
 
 
+<script type="text/ng-template" id="dialog-new-glossary.html">
+<md-dialog aria-label="New glossary" style="width: 80%;  overflow-y: visible;">
+
+  <form name="glossaryForm" class="wordForm md-padding" novalidate    >
+  <md-dialog-content class="sticky-container">
+    <md-header class="md-sticky-no-effect">{{gloCtrl.headerTitle}}</md-header>
+   
+
+	<div layout="row" layout-wrap>
+		<div flex="100">
+
+			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
+			<label>Nome</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
+			<input ng-model="gloCtrl.newGloss.GLOSSARY_NM" type="text" maxlength="100" > </md-input-container>
+		</div>
+	</div>
+	
+	<div layout="row" layout-wrap>
+		<div flex="100">
+
+			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
+			<label>Codice</label> <md-icon md-font-icon="fa   fa-terminal "	class="wo3" ></md-icon> 
+			<input ng-model="gloCtrl.newGloss.GLOSSARY_CD" type="text" maxlength="30" > </md-input-container>
+		</div>
+	</div>
+	
+	
+	<div layout="row" layout-wrap>
+		<div flex="100">
+			<md-input-container class="md-icon-float" ng-class="{ 'md-input-hasnt-value' : gloCtrl.newGloss.GLOSSARY_DS.length === 0  }"> <!-- Use floating label instead of placeholder -->
+			<label>Descrizione</label> 
+			<md-icon md-font-icon="fa  fa-file-text-o "	class="formu" ></md-icon>	
+				 <textarea ng-model="gloCtrl.newGloss.GLOSSARY_DS" columns="1" md-maxlength="500" maxlength="500"  ></textarea>
+				 </md-input-container>
+		</div>
+	</div>
+	
+
+  </md-dialog-content>
+     
+  <div class="md-actions" layout="row">
+   
+    <md-button ng-click="gloCtrl.annulla()" class="md-primary">
+    Annulla
+    </md-button>
+  
+    <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="gloCtrl.newGloss.GLOSSARY_NM.length === 0 "  >
+     Salva
+    </md-button>
+  </div>
+  
+  
+  </form>
+</md-dialog>
+</script>
+
 
 <script type="text/ng-template" id="new.logical.node.dialog.html">
 
-<md-dialog aria-label="nuovo nodo logico " class="newLogicalNode">
+<md-dialog aria-label="nuovo nodo logico " class="newLogicalNode" style="width: 80%;  overflow-y: visible;">
 
 <md-toolbar>
     <div class="md-toolbar-tools">
@@ -34,7 +90,7 @@
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
 			<label>Nome</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
-			<input ng-model="renCtrl.tmpNW.CONTENT_NM" type="text" > </md-input-container>
+			<input ng-model="renCtrl.tmpNW.CONTENT_NM" type="text" maxlength="100" > </md-input-container>
 		</div>
 	</div>
 	
@@ -43,7 +99,7 @@
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
 			<label>Codice</label> <md-icon md-font-icon="fa   fa-terminal "	class="wo3" ></md-icon> 
-			<input ng-model="renCtrl.tmpNW.CONTENT_CD" type="text" > </md-input-container>
+			<input ng-model="renCtrl.tmpNW.CONTENT_CD" type="text" maxlength="30" > </md-input-container>
 		</div>
 	</div>
 	
@@ -53,7 +109,7 @@
 			<md-input-container class="md-icon-float" ng-class="{ 'md-input-hasnt-value' : renCtrl.tmpNW.CONTENT_DS.length === 0  }"> 
 			<label>Descrizione</label> 
 			<md-icon md-font-icon="fa  fa-file-text-o "	class="formu" ></md-icon>	
-				 <textarea ng-model="renCtrl.tmpNW.CONTENT_DS" columns="1" md-maxlength="150" style="  margin-left: 35px;" ></textarea>
+				 <textarea ng-model="renCtrl.tmpNW.CONTENT_DS" columns="1" md-maxlength="500" maxlength="500" style="  margin-left: 35px;" ></textarea>
 				 </md-input-container>
 		</div>
 	</div>
@@ -81,44 +137,6 @@
 </md-dialog>
 </script>
 
-
-
-<script type="text/ng-template" id="rename.dialog.html">
-
-<md-dialog aria-label="Rinomino ">
-
-<md-toolbar>
-    <div class="md-toolbar-tools">
-      <h2>Rinomino:  {{renCtrl.oldValue}} </h2>
-      <span flex></span>
-    
-    </div>
-  </md-toolbar>
-
- <md-dialog-content>
-    <div>
-<p>Inserire il nuovo nome</p>
- <input  type="text" name="nome" ng-model="renCtrl.newName" >
-</div>
-  </md-dialog-content>
-
-
-
-<div class="md-actions" layout="row">
-    
- <md-button ng-click="renCtrl.annulla()" class="md-primary">
-      Annulla
-    </md-button>
-    <md-button ng-click="renCtrl.salva(renCtrl.newName)" class="md-primary">
-     Salva
-    </md-button>
-   
-  </div>
-
-
-
-</md-dialog>
-</script>
 
 
 

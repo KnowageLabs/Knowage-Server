@@ -52,32 +52,45 @@ public class GlossaryService {
 			dao.setUserProfile(profile);
 			System.out.println(req.toString());
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			JSONObject jo = new JSONObject();
+			
 			
 			if(requestVal.has("CONTENT_ID")){
 			//modify content (logical node)
 			Integer contentId = getNumberOrNull(requestVal.opt("CONTENT_ID"));
 			Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
 			Integer glossaryId = getNumberOrNull(requestVal.opt("GLOSSARY_ID"));
-			dao.modifyContentPosition(contentId, parentId, glossaryId);
+			boolean status=dao.modifyContentPosition(contentId, parentId, glossaryId);
+			if(!status){
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.content.duplicate.content");
+				return jo.toString();
+			}
 			}else{
 				//modify word
 				Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
 				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
 				Integer oldparentId = getNumberOrNull(requestVal.opt("OLD_PARENT_ID"));
 				
-				dao.deleteWlist((new SbiGlWlistId(wordId,oldparentId)));
-				
 				SbiGlWlist contw=new SbiGlWlist();
 				contw.setId(new SbiGlWlistId(wordId,parentId));
-				dao.insertWlist(contw);
 				
+			
+				
+				SbiGlWlistId id=dao.insertWlist(contw);
+				if(id==null){
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.content.duplicate.node");
+					return jo.toString();
+					
+				}
+				
+				
+				dao.deleteWlist((new SbiGlWlistId(wordId,oldparentId)));
 				
 				
 			}
 			
-			
-			
-			JSONObject jo = new JSONObject();
 			jo.put("Status", "OK");
 			return jo.toString();
 		} catch (Throwable t) {
@@ -209,7 +222,13 @@ public class GlossaryService {
 //				contw.setContentId(parentId);
 				
 				SbiGlWlistId idw = dao.insertWlist(contw);
-				 jo.put("Status", "OK");
+				if(idw==null){
+					 jo.put("Status", "NON OK");
+					 jo.put("Message", "sbi.glossary.content.duplicate.node");
+				}else{
+					 jo.put("Status", "OK");
+				}
+				
 			}
 			
 			

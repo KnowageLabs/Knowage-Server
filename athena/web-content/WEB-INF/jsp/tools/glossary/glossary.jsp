@@ -283,18 +283,20 @@ var serverPort ='<%=request.getServerPort()%>';
 
 						<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">Selezionare
 							un glossario per visualizzarne la struttura</p>
+							
 						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined "
 							ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
-							data-drag-delay="500">
+							data-drag-delay="500" >
 							<ol ui-tree-nodes ng-model="ctrl.selectedGloss">
-								<div context-menu
-									data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"
-									ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 									<li ui-tree-node data-nodrag ng-repeat="n in [1]">
 										<div ui-tree-handle style="cursor: pointer;">
-											<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p>
-										</div>
-								</div>
+											<div context-menu
+											data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"
+											ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
+												<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p>
+											</div>
+										
+								
 
 
 								<div class="dropdown position-fixed"
@@ -322,8 +324,8 @@ var serverPort ='<%=request.getServerPort()%>';
 								<!-- 						fine menu contestuale albero -->
 
 
-
-
+	
+								</div>
 								</li>
 
 								<ol ui-tree-nodes="options"
@@ -332,7 +334,6 @@ var serverPort ='<%=request.getServerPort()%>';
 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
 										ui-tree-node data-collapsed="true"
 										ng-include="'items_renderer.html'"></li>
-
 									<li ng-if="ctrl.selectedGloss.SBI_GL_CONTENTS.length == 0 "
 										ng-repeat="n in [1]" data-nodrag ui-tree-node
 										class="addFiglioBox"></li>
@@ -373,7 +374,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 							<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
 							<label>Word</label> <md-icon md-font-icon="fa  fa-newspaper-o "
-								class="wo"></md-icon> <input ng-model="ctrl.newWord.WORD"
+								class="wo"></md-icon> <input ng-model="ctrl.newWord.WORD" maxlength="100"
 								type="text"> </md-input-container>
 						</div>
 					</div>
@@ -386,7 +387,7 @@ var serverPort ='<%=request.getServerPort()%>';
 							<!-- Use floating label instead of placeholder --> <label>Descrizione</label>
 							<md-icon md-font-icon="fa  fa-file-text-o " class="des"></md-icon>
 							<textarea ng-model="ctrl.newWord.DESCR" columns="1"
-								md-maxlength="150"></textarea> </md-input-container>
+								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
 						</div>
 					</div>
 
@@ -394,15 +395,14 @@ var serverPort ='<%=request.getServerPort()%>';
 						<div flex="50">
 							<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
 							<label>Stato</label> <md-icon md-font-icon="fa fa-spinner "
-								class="stato"></md-icon> <input ng-model="ctrl.newWord.STATE"
+								class="stato"></md-icon> <input ng-model="ctrl.newWord.STATE" maxlength="30"
 								type="text"> </md-input-container>
 						</div>
 
 						<div flex="50">
 							<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
 							<label>Categoria</label> <md-icon md-font-icon="fa fa-flag-o "
-								class="categoria"> </md-icon> <input
-								ng-model="ctrl.newWord.CATEGORY" type="text"> </md-input-container>
+								class="categoria"> </md-icon> <input ng-model="ctrl.newWord.CATEGORY" maxlength="30" type="text"> </md-input-container>
 
 						</div>
 					</div>
@@ -415,7 +415,7 @@ var serverPort ='<%=request.getServerPort()%>';
 							<!-- Use floating label instead of placeholder --> <label>Formula</label>
 							<md-icon md-font-icon="fa fa-superscript " class="formu"></md-icon>
 							<textarea ng-model="ctrl.newWord.FORMULA" columns="1"
-								md-maxlength="150"></textarea> </md-input-container>
+								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
 						</div>
 					</div>
 
@@ -481,7 +481,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 						<div flex="40">
 							<md-input-container> <!-- Use floating label instead of placeholder -->
-							<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val"
+							<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val" maxlength="500"
 								type="text"> </md-input-container>
 						</div>
 
