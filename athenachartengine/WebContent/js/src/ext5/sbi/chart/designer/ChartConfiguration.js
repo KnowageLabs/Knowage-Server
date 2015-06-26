@@ -12,6 +12,7 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
     	this.viewModel = config.viewModel;
         this.callParent(config);
         this.main = Ext.create('Sbi.chart.designer.ChartConfigurationMainContainer',{
+        	id: "main",
         	viewModel: this.viewModel
         });
 		this.second = Ext.create('Sbi.chart.designer.ChartConfigurationSecondContainer',{

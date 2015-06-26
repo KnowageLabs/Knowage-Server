@@ -34,7 +34,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 		chartTypeColumnSelector: null,
 		
 		selectedChartType: '',
+		
 		// chart types
+		//*_* TODO: Add here new chart types: sunburst, wordcloud and treemap
+		// *_* TODO: Change icon for the sunburst chart (iconUrl)
     	chartTypes : [{
 			name: LN('sbi.chartengine.designer.charttype.bar'), 
 			type: 'BAR',
@@ -47,7 +50,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 			name: LN('sbi.chartengine.designer.charttype.pie'), 
 			type: 'PIE',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}],
+		}, 
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.sunburst'), 
+			type: 'SUNBURST',
+			// TODO: Change the icon for this chart
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		}, 
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.wordcloud'), 
+			type: 'WORDCLOUD',
+			// TODO: Change the icon for this chart
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		}
+		
+		],
 		
 		chartTypeStore: null,
 		chartTypeSelector: null,
@@ -96,6 +115,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {
+						
 			var baseTemplate = {
 					CHART: {
 						type: 'BAR',
@@ -127,14 +147,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 			};
 			
+			var newChart = false;
+			
+			/* *_* This part is executed whenever we don't specify 
+			 * chart (XML template) for the document - at the beginning */
 			if (!jsonTemplate.CHART) {
+				newChart = true;
 				jsonTemplate = baseTemplate;
-			}
+			}			
 			
-			
+			// *_* This part will be executed only when XML template for the chart is already specified
 			// NEWCHARTS call this also for new charts
-			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' || jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST') {
+			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' 
+				|| jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST'
+					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD') {
+
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
+
 			}
 			
 			this.docLabel = docLabel;
@@ -143,17 +172,21 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.jsonTemplateHistory.push(jsonTemplate);
 			this.jsonTemplateHistoryIterator = 0;
 			
-			this.chartLibNamesConfig = chartLibNamesConfig;
+			// *_* List of names of the libraries that we use for rendering the charts
+			this.chartLibNamesConfig = chartLibNamesConfig;	
 			
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
 			this.chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
-			
+						
 			this.hostName = hostName; 
 			this.serverPort = serverPort;
 			
+			// *_* Chart types that we specified at the beginning of the Designer
 			// Creating left panel
 			var chartTypes = this.chartTypes;
+			
+			// *_* Populating store with those chart types ('fields' define the structure of every single chartType)
 			var chartTypeStore = Ext.create('Ext.data.Store', {
 				fields: [
 					{name: 'name', type: 'string'},
@@ -162,69 +195,196 @@ Ext.define('Sbi.chart.designer.Designer', {
 				],
 	 			data: chartTypes
 		    });
+			
 			this.chartTypeStore = chartTypeStore;
+			
+			// *_* ChartTypeSelector.js - maybe needs changes
 			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
  				region: 'north',
  				minHeight: 50,
  				store: chartTypeStore
  			});
+			
+			var onSelectJsonTemplate = "";
+						
+			// *_* Listens when chart type is changed
+			this.chartTypeSelector.on
+			(
+				"newrowclick",
+				
+				function()
+				{					
+					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
+					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);
+					
+					/* Main configuration panel elements for hiding/showing when the SUNBURST is selected */
+					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
+					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
+					var chartWidth = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");
+					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");
+					
+					/* Second configuration panel elements for hiding/showing when the SUNBURST is selected */
+					var colorPallete = secondConfigurationPanel.getComponent("chartColorPallete");
+					var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
+					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
+					
+					/* Second configuration panel elements for hiding/showing when the WORDCLOUD is selected */
+					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
+					
+					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
+					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';					 
+					
+					if (isChartSunburst || isChartWordCloud)
+					{
+						chartLegendCheckBox.hide();
+					}
+					else
+					{
+						chartLegendCheckBox.show();
+					}
+					
+					if (isChartSunburst || isChartWordCloud)
+					{
+						chartOrientation.hide();
+					}
+					else
+					{
+						chartOrientation.show();
+					}
+					
+					if (isChartSunburst)
+					{
+						chartWidth.hide();
+					}
+					else
+					{
+						chartWidth.show();
+					}
+					
+					if (isChartSunburst)
+					{
+						opacityOnMouseOver.show();
+					}
+					else
+					{
+						opacityOnMouseOver.hide();
+					}
+					
+					if (isChartSunburst || isChartWordCloud)
+					{
+						colorPallete.hide();
+					}
+					else
+					{
+						colorPallete.show();
+					}
+					
+					if (isChartSunburst || isChartWordCloud)
+					{
+						chartLegend.hide();
+					}
+					else
+					{
+						chartLegend.show();
+					}
+					
+					if (isChartSunburst)
+					{
+						toolbarAndTip.show();
+					}
+					else 
+					{
+						toolbarAndTip.hide();
+					}
+					
+					if (isChartWordCloud)
+					{
+						wordCloudPanel.show();
+					}
+					else
+					{
+						wordCloudPanel.hide();
+					}
+				}
+			);
+			
 			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
+			
 			this.chartTypeSelector.setChartType(selectedChartType);
 			
+			// *_* Store that contains the data about SERIE column(s) for the chart
 			this.columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
  				sorters: [{
  					property: 'serieColumn',
  					direction: 'ASC'
  				}],
- 				listeners: {
+ 				
+ 				listeners: 
+ 				{
+ 					// *_* When we get the necessary data populate this store
  					dataReady: function(jsonData) {
+ 						
  						var jsonDataObj = Ext.JSON.decode(jsonData);
  						var theData = [];
- 		  				Ext.each(jsonDataObj.results, function(field, index){
- 		  					if(field != 'recNo' && field.nature == 'measure'){
+ 		  				
+ 						Ext.each(jsonDataObj.results, function(field, index){		  					
+ 		  					
+ 		  					if(field != 'recNo' && field.nature == 'measure'){		  						
+ 		  						
  		  						theData.push({
- 		  							serieColumn : field.alias,
- 		  							axisType: 'ATTRIBUTE'
+ 		  							serieColumn : field.alias
  		  						});
  		  					}
  		  				});
- 		  				this.setData(theData);
+ 		  				
+ 		  				this.setData(theData);	// *_* Set the 'data' attribute of the store
  		  			}
  				}
  			});
+			
 			var columnsPickerStore = this.columnsPickerStore;
 			
+			// *_* Store that contains the data about CATEGORY column(s) for the chart
 			this.categoriesPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
+ 				
  				sorters: [{
  					property: 'categoryColumn',
  					direction: 'ASC'
  				}],
- 				listeners: {
- 					dataReady: function(jsonData) {
+ 				
+ 				listeners: 
+ 				{
+ 					dataReady: function(jsonData) 
+ 					{
  		  				var jsonDataObj = Ext.JSON.decode(jsonData);
  						var theData = [];
- 		  				Ext.each(jsonDataObj.results, function(field, index){
- 		  					if(field != 'recNo' && field.nature == 'attribute'){
+ 						
+ 		  				Ext.each(jsonDataObj.results, function(field, index)
+  						{ 		  
+ 		  					if(field != 'recNo' && field.nature == 'attribute')
+ 		  					{
  		  						theData.push({
- 		  							categoryColumn : field.alias,
- 		  							axisType: 'MEASURE'
+ 		  							categoryColumn : field.alias
  		  						});
  		  					}
  		  				});
+ 		  				
  		  				this.setData(theData);
  		  			}
  				}
  			});
+			
 			var categoriesPickerStore = this.categoriesPickerStore;
 			
 			// loading measures and attributes
+			// *_* Fires aforementioned 'dataReady' event that is catch in axis creation (attributes and measure)
   			this.chartServiceManager.run('loadDatasetFields', {}, [datasetLabel], function (response) {
   				columnsPickerStore.fireEvent('dataReady', response.responseText);
   				categoriesPickerStore.fireEvent('dataReady', response.responseText);
 			});
-			
+
 			this.columnsPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'center',
   				flex:  1,
@@ -255,6 +415,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   					}
   				]
   			});
+			
+			// *_* Type: GRID PANEL
 			this.categoriesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'south',
   				flex: 1,
@@ -291,9 +453,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				columnsPicker: this.columnsPicker,
   				categoriesPicker: this.categoriesPicker,
   				region: 'west'
-  			});
-			
-			
+  			});			
 
 			var chartExportWebServiceManager = this.chartExportWebServiceManager;
 			var chartServiceManager = this.chartServiceManager;
@@ -309,8 +469,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
   			
   			var previewPanel = this.previewPanel;
-  			
-
 			
 			var hostName = this.hostName; 
 			var serverPort = this.serverPort;
@@ -390,10 +548,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            	}
   				}]
   			;
+  			
   			this.previewPanel.tools = previewTools;
   			
-
-			
 			this.rightYAxisesPanel = Ext.create('Sbi.chart.designer.ChartAxisesContainer', {
   				id: 'chartRightAxisesContainer',
   				hidden : true
@@ -408,6 +565,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
   				storeId: 'categoriesStore'
 			});
+			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
   				id: 'chartBottomCategoriesContainer',
   				viewConfig: {
@@ -434,8 +592,11 @@ Ext.define('Sbi.chart.designer.Designer', {
   						},
   					}
   				},
+  				
   				store: this.categoriesStore,
+  				
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
+  				
 				plugins: [{
 					ptype:	 'cellediting',
 					clicksToEdit: 1
@@ -563,15 +724,17 @@ Ext.define('Sbi.chart.designer.Designer', {
   				rightYAxisesPanel: this.rightYAxisesPanel,
   				bottomXAxisesPanel: this.bottomXAxisesPanel
   			});
-		
+					
 			// Creating step 2 panel
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
+					
 			this.cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {
   					configModel: this.cModel
 				}
   			});
+						
 			this.chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
   				title: LN('sbi.chartengine.designer.step2'),
   				viewModel: this.cViewModel
@@ -585,6 +748,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// tabs integration
 			var coreServiceManager = this.coreServiceManager;
+			var globalThis = this;
 			
 			this.stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
@@ -600,9 +764,10 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            	click: {
   		            		element: 'el',
   		            		fn: function(){
+  		            			
   		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
-  		            			if (activeTab.getId() == 'advancedEditor') {
-  		            				var json = activeTab.getChartData();
+  		            			if (activeTab.getId() == 'advancedEditor') {  		            				
+  		            				var json = activeTab.getChartData();  		            				
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
@@ -620,9 +785,11 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            						cancel : LN('sbi.generic.cancel')
   		            					},
   		            					fn : function(buttonValue, inputText, showConfig){
-  		            						if (buttonValue == 'ok') {
+  		            						if (buttonValue == 'ok') {  		            							
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
+  		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+
   		            							var parameters = {
   		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
   		            									docLabel: docLabel
@@ -715,6 +882,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		        }],
 				listeners: {
 				    tabchange: function(tabPanel, tab){
+				    	
 				    	if(tab.getId() == 'advancedEditor') {
 				    		Sbi.chart.designer.Designer.chartTypeColumnSelector.disable();
 				    		
@@ -783,8 +951,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
-			
-  			/* LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
+			console.log(jsonTemplate);
+  			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
   			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */
   			this.loadAxesAndSeries(jsonTemplate);
   			/* END LOADING Y AXES, X AXIS AND SERIES <<<<<<<<<<<<<<<<<<<< */
@@ -802,43 +970,80 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// Reset categoriesStore
 			categoriesStore.loadData({});
 			
+			var chartType = jsonTemplate.CHART.type;
+			
 			if(!(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.CATEGORY)) {
 				return;
 			}
 			
-			// NEWCHARTS: MANAGE MULTIPLE CATEGORYES AS A LIST
+			// NEWCHARTS: MANAGE MULTIPLE CATEGORIES AS A LIST
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
-			var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-				axisName: category.name != undefined ? category.name: category.column,
-				axisType: 'ATTRIBUTE', 
-				
-				categoryColumn: category.column,
-				categoryGroupby: category.groupby, 
-				categoryStacked: category.stacked, 
-				categoryStackedType: category.stackedType, 
-				categoryOrderColumn: category.orderColumn, 
-				categoryOrderType: category.orderType
-			});
-			categoriesStore.add(mainCategory);
-
-			var groupBy = category.groupby;
-			var groupByNames = category.groupbyNames;
-
-			if(groupBy) {
-				var gbyCategories = groupBy.split(',');
-				var gbyNames = groupByNames ? groupByNames.split(',') : groupBy.split(',');
-
-				Ext.Array.each(gbyCategories, function(gbyCategory, index) {
-					var newCat = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-						axisName: gbyNames[index],
+			
+			// *_* TODO: Add checking for other new charts also
+			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD")
+			{			
+				if (category.length == undefined || category.length == null)
+				{
+					var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+						axisName: category.name ? category.name: category.column,
 						axisType: 'ATTRIBUTE', 
-
-						categoryColumn: gbyCategory,
-						categoryStacked: ''
+						
+						categoryColumn: category.column
 					});
-					categoriesStore.add(newCat);
-				});
+					
+					categoriesStore.add(mainCategory);
+				}
+				else
+				{
+					for (var i=0; i<category.length; i++)
+					{						
+						var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+							axisName: category[i].name ? category[i].name: category[i].column,
+							axisType: 'ATTRIBUTE', 
+							
+							categoryColumn: category[i].column
+						});
+						
+						categoriesStore.add(mainCategory);
+					}
+				}
+							
 			}
+			else	// If chart type is PIE, BAR or LINE
+			{
+				var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+					axisName: category.name != undefined ? category.name: category.column,
+					axisType: 'ATTRIBUTE', 
+					
+					categoryColumn: category.column,
+					categoryGroupby: category.groupby,
+					categoryStacked: category.stacked,
+					categoryStackedType: category.stackedType, 
+					categoryOrderColumn: category.orderColumn, 
+					categoryOrderType: category.orderType
+				});
+				
+				categoriesStore.add(mainCategory);
+				
+				var groupBy = category.groupby;
+				var groupByNames = category.groupbyNames;
+
+				if(groupBy) {
+					var gbyCategories = groupBy.split(',');
+					var gbyNames = groupByNames ? groupByNames.split(',') : groupBy.split(',');
+
+					Ext.Array.each(gbyCategories, function(gbyCategory, index) {
+						var newCat = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+							axisName: gbyNames[index],
+							axisType: 'ATTRIBUTE', 
+
+							categoryColumn: gbyCategory,
+							categoryStacked: ''
+						});
+						categoriesStore.add(newCat);
+					});
+				}
+			}			
 		},
 		
 		loadAxesAndSeries: function(jsonTemplate) {
@@ -852,6 +1057,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var yCount = 1;
 			
 			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
+				
 				if(axis.type.toUpperCase() == "SERIE"){
 
 					var isDestructible = (yCount > 1);
@@ -888,8 +1094,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				Ext.Array.each(jsonTemplate.CHART.VALUES.SERIE, function(serie, index){
 					var axisAlias = serie.axis ? serie.axis : 'Y';
 					Ext.Array.each(theStorePool, function(store, index){
+						
 						if(store.axisAlias === axisAlias) {
-							
 							var tooltip = serie.TOOLTIP ? serie.TOOLTIP : {};
 							var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
 							var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
@@ -918,7 +1124,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 										serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
 										serieTooltipFontSize: jsonTooltipStyle.fontSize
 							});
-							
 							store.add(newCol);
 						}
 					});
@@ -976,7 +1181,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// resulted json from 1st and 2nd designer steps (without properties catalogue)
 			var exported1st2ndSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
-			
+						
 			// default properties catalogue by used chart library, depending on selected chart type 
     		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
     		chartType = chartType.toLowerCase();

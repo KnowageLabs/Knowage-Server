@@ -94,6 +94,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		CHART['type'] = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
     		
     		var chartData = ChartUtils.getChartDataAsOriginaJson(chartModel);
+    		
     		Ext.apply(CHART, chartData);
     		    		
     		var AXES_LIST = {};
@@ -102,20 +103,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		CHART['AXES_LIST'] = AXES_LIST;
     		
     		var VALUES = {};
+    		
     		var SERIE = ChartUtils.getSeriesDataAsOriginalJson();
+    		    		
     		if(SERIE.length > 0) {
     			VALUES['SERIE'] = SERIE;
     		}
     		var CATEGORY = ChartUtils.getCategoriesDataAsOriginalJson();
+    		
     		if(CATEGORY && CATEGORY != null) {
     			VALUES['CATEGORY'] = CATEGORY;
     		}
     		if (Object.keys(VALUES).length !== 0) {
     			CHART['VALUES'] = VALUES;
-    		}
-    		
+    		}    		
+    		    		
     		result['CHART'] = CHART;
-    		
+    		    		
           	return result;
     	},
     	
@@ -174,7 +178,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';
     				titleStyle += 'fontFamily:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
     				titleStyle += 'fontWeight:' + ((axisData.titleStyleFontWeigh != undefined)? axisData.titleStyleFontWeigh: '') + ';';
-    				titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';
+    				titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';    				
+    				
     				TITLE['style'] = titleStyle;
     				axisAsJson['TITLE'] = TITLE;
     				
@@ -203,12 +208,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			
 			var TITLE = {};
 			TITLE['text'] = (axisData.titleText != undefined)? axisData.titleText: ''; 
+			
 			var titleStyle = '';
 			titleStyle += 'align:' + ((axisData.titleStyleAlign != undefined)? axisData.titleStyleAlign: '') + ';';
 			titleStyle += 'color:' + ((axisData.titleStyleColor != undefined)? axisData.titleStyleColor: '') + ';';
 			titleStyle += 'fontFamily:' + ((axisData.titleStyleFont != undefined)? axisData.titleStyleFont: '') + ';';
 			titleStyle += 'fontWeight:' + ((axisData.titleStyleFontWeigh != undefined)? axisData.titleStyleFontWeigh: '') + ';';
 			titleStyle += 'fontSize:' + ((axisData.titleStyleFontSize != undefined)? axisData.titleStyleFontSize: '') + ';';
+			
 			TITLE['style'] = titleStyle;
 			axisAsJson['TITLE'] = TITLE;
 			
@@ -222,6 +229,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		var result = [];
     		
     		var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+    		
     		for(storeIndex in serieStores) {
     			var store = serieStores[storeIndex];
     			var axisAlias = store.axisAlias;
@@ -244,21 +252,26 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     				serie['showValue'] = serieAsMap.get('serieShowValue') != undefined? serieAsMap.get('serieShowValue'): '';
     				serie['type'] = serieAsMap.get('serieType') != undefined? serieAsMap.get('serieType'): '';
     				
-    				var TOOLTIP = {};
-    				TOOLTIP['backgroundColor'] = serieAsMap.get('serieTooltipBackgroundColor') != undefined? 
-    						serieAsMap.get('serieTooltipBackgroundColor'): '';
-    				TOOLTIP['templateHtml'] = serieAsMap.get('serieTooltipTemplateHtml') != undefined? 
-    						serieAsMap.get('serieTooltipTemplateHtml'): '';
+    				var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();  
+    				    				
+    				if (chartType.toUpperCase() != "SUNBURST" && chartType.toUpperCase() != "WORDCLOUD")
+					{
+    					var TOOLTIP = {};
+        				TOOLTIP['backgroundColor'] = serieAsMap.get('serieTooltipBackgroundColor') != undefined? 
+        						serieAsMap.get('serieTooltipBackgroundColor'): '';
+        				TOOLTIP['templateHtml'] = serieAsMap.get('serieTooltipTemplateHtml') != undefined? 
+        						serieAsMap.get('serieTooltipTemplateHtml'): '';
+        						
+						var tooltipStyle = '';				
+						tooltipStyle += 'color:' + ((serieAsMap.get('serieTooltipColor') != undefined)? serieAsMap.get('serieTooltipColor'): '') + ';';					
+						tooltipStyle += 'fontFamily:' + ((serieAsMap.get('serieTooltipFont') != undefined)? serieAsMap.get('serieTooltipFont'): '') + ';';					
+						tooltipStyle += 'fontWeight:' + ((serieAsMap.get('serieTooltipFontWeight') != undefined)? serieAsMap.get('serieTooltipFontWeight'): '') + ';';					
+						tooltipStyle += 'fontSize:' + ((serieAsMap.get('serieTooltipFontSize') != undefined)? serieAsMap.get('serieTooltipFontSize'): '') + ';';					
+						TOOLTIP['style'] = tooltipStyle; 
+	    				
+						serie['TOOLTIP'] = TOOLTIP;
+					}
     				
-					var tooltipStyle = '';
-					tooltipStyle += 'align:' + ((serieAsMap.get('serieTooltipAlign') != undefined)? serieAsMap.get('serieTooltipAlign'): '') + ';';					
-					tooltipStyle += 'color:' + ((serieAsMap.get('serieTooltipColor') != undefined)? serieAsMap.get('serieTooltipColor'): '') + ';';					
-					tooltipStyle += 'fontFamily:' + ((serieAsMap.get('serieTooltipFont') != undefined)? serieAsMap.get('serieTooltipFont'): '') + ';';					
-					tooltipStyle += 'fontWeight:' + ((serieAsMap.get('serieTooltipFontWeight') != undefined)? serieAsMap.get('serieTooltipFontWeight'): '') + ';';					
-					tooltipStyle += 'fontSize:' + ((serieAsMap.get('serieTooltipFontSize') != undefined)? serieAsMap.get('serieTooltipFontSize'): '') + ';';					
-					TOOLTIP['style'] = tooltipStyle; 
-    				
-					serie['TOOLTIP'] = TOOLTIP;
     				result.push(serie);
     			}
     		}
@@ -269,33 +282,76 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     	getCategoriesDataAsOriginalJson: function() {
     		var categoriesStore = Ext.data.StoreManager.lookup('categoriesStore');
     		
-    		var mainCategory = categoriesStore.getAt(0);
+    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();    		
     		
-    		if(mainCategory == null){
-    			return null;
-    		}
+    		var result = [];
     		
-    		var result = {};
-    		result['name'] = mainCategory.get('axisName') != undefined? mainCategory.get('axisName') : mainCategory.get('categoryColumn');
-    		result['column'] = mainCategory.get('categoryColumn') != undefined? mainCategory.get('categoryColumn') : '';
-    		result['orderColumn'] = mainCategory.get('categoryOrderColumn') != undefined? mainCategory.get('categoryOrderColumn') : '';
-    		result['orderType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
-    		result['stackedType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
-    		result['stacked'] = mainCategory.get('categoryStacked') != undefined? mainCategory.get('categoryStacked') : '';
-    		
-    		var categoriesStoreDataLength = categoriesStore.data.items.length;
-    		
-    		var groupby = ''; 
-    		var groupbyNames = ''; 
-    		if (categoriesStoreDataLength > 1) {
-    			for(var rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
-    				var categorieItem = categoriesStore.getAt(rowIndex);
-    				groupby += categorieItem.get('categoryColumn') != undefined ? categorieItem.get('categoryColumn') + ',' : '';
-    				groupbyNames += categorieItem.get('axisName') != undefined ? categorieItem.get('axisName') + ',' : '';
+    		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD")
+			{
+    			for (var i=0; i<categoriesStore.data.length; i++)
+    			{
+        			var mainCategory = categoriesStore.getAt(i);
+            		
+            		if(mainCategory == null){
+            			continue;
+            		}
+        			
+            		var category = {};
+            		
+            		category['name'] = mainCategory.get('axisName') != undefined? mainCategory.get('axisName') : mainCategory.get('categoryColumn');
+            		category['column'] = mainCategory.get('categoryColumn') != undefined? mainCategory.get('categoryColumn') : '';
+            		category['orderColumn'] = mainCategory.get('categoryOrderColumn') != undefined? mainCategory.get('categoryOrderColumn') : '';
+            		category['orderType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
+            		category['stackedType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
+            		category['stacked'] = mainCategory.get('categoryStacked') != undefined? mainCategory.get('categoryStacked') : '';
+            		
+            		var categoriesStoreDataLength = categoriesStore.data.items.length;
+            		
+            		var groupby = ''; 
+            		var groupbyNames = ''; 
+            		if (categoriesStoreDataLength > 1) {
+            			for(var rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
+            				var categorieItem = categoriesStore.getAt(rowIndex);
+            				groupby += categorieItem.get('categoryColumn') != undefined ? categorieItem.get('categoryColumn') + ',' : '';
+            				groupbyNames += categorieItem.get('axisName') != undefined ? categorieItem.get('axisName') + ',' : '';
+            			}
+            		}
+            		category['groupby'] = groupby.replace(/\,$/,'');
+            		category['groupbyNames'] = groupbyNames.replace(/\,$/,'');  
+            		
+            		result.push(category);
     			}
-    		}
-    		result['groupby'] = groupby.replace(/\,$/,'');
-    		result['groupbyNames'] = groupbyNames.replace(/\,$/,'');;
+			}
+    		else
+			{
+    			var mainCategory = categoriesStore.getAt(0);
+        		
+        		if(mainCategory == null){
+        			return null;
+        		}
+        		
+        		var result = {};
+        		result['name'] = mainCategory.get('axisName') != undefined? mainCategory.get('axisName') : mainCategory.get('categoryColumn');
+        		result['column'] = mainCategory.get('categoryColumn') != undefined? mainCategory.get('categoryColumn') : '';
+        		result['orderColumn'] = mainCategory.get('categoryOrderColumn') != undefined? mainCategory.get('categoryOrderColumn') : '';
+        		result['orderType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
+        		result['stackedType'] = mainCategory.get('categoryOrderType') != undefined? mainCategory.get('categoryOrderType') : '';
+        		result['stacked'] = mainCategory.get('categoryStacked') != undefined? mainCategory.get('categoryStacked') : '';
+        		
+        		var categoriesStoreDataLength = categoriesStore.data.items.length;
+        		
+        		var groupby = ''; 
+        		var groupbyNames = ''; 
+        		if (categoriesStoreDataLength > 1) {
+        			for(var rowIndex = 1; rowIndex < categoriesStoreDataLength; rowIndex++) {
+        				var categorieItem = categoriesStore.getAt(rowIndex);
+        				groupby += categorieItem.get('categoryColumn') != undefined ? categorieItem.get('categoryColumn') + ',' : '';
+        				groupbyNames += categorieItem.get('axisName') != undefined ? categorieItem.get('axisName') + ',' : '';
+        			}
+        		}
+        		result['groupby'] = groupby.replace(/\,$/,'');
+        		result['groupbyNames'] = groupbyNames.replace(/\,$/,'');;
+			}
     		
     		return result;
     	},
@@ -318,6 +374,21 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		chartStyle += 'fontWeight:' + ((chartModel.get('fontWeight') != undefined)? chartModel.get('fontWeight') : '') + ';';
     		chartStyle += 'backgroundColor:' + ((chartModel.get('backgroundColor') != undefined && chartModel.get('backgroundColor') != '')? 
     				'#' + chartModel.get('backgroundColor') : '') + ';';
+    		
+    		if (chartType.toUpperCase() == "SUNBURST")
+			{
+    			chartStyle += 'opacMouseOver:' + ((chartModel.get('opacMouseOver'))? chartModel.get('opacMouseOver'): '') + ';';
+			}    
+    		
+    		if (chartType.toUpperCase() == "WORDCLOUD")
+			{
+    			chartStyle += 'maxWords:' + ((chartModel.get('maxWords'))? chartModel.get('maxWords'): '') + ';';
+    			chartStyle += 'maxAngle:' + ((chartModel.get('maxAngle'))? chartModel.get('maxAngle'): '') + ';';
+    			chartStyle += 'minAngle:' + ((chartModel.get('minAngle'))? chartModel.get('minAngle'): '') + ';';
+    			chartStyle += 'maxFontSize:' + ((chartModel.get('maxFontSize'))? chartModel.get('maxFontSize'): '') + ';';
+    			chartStyle += 'wordPadding:' + ((chartModel.get('wordPadding'))? chartModel.get('wordPadding'): '') + ';';    			
+			}   
+    		
     		CHART['style'] = chartStyle;
     		
     		var COLORPALETTE = {};
@@ -366,6 +437,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		titleStyle += 'fontFamily:' + ((chartModel.get('titleFont') != undefined)? chartModel.get('titleFont') : '') + ';';
     		titleStyle += 'fontWeight:' + ((chartModel.get('titleStyle') != undefined)? chartModel.get('titleStyle') : '') + ';';
     		titleStyle += 'fontSize:' + ((chartModel.get('titleDimension') != undefined)? chartModel.get('titleDimension') : '') + ';';
+    		
     		TITLE['style'] = titleStyle;
     		
     		CHART['TITLE'] = TITLE;
@@ -405,6 +477,48 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		LEGEND['style'] = legendStyle;
     		
     		CHART['LEGEND'] = LEGEND;
+    		
+    		// *_* (START)
+    		if (chartType.toUpperCase() == "SUNBURST")
+			{
+    			var TOOLBAR = {};					
+    			var toolbarStyle = '';
+    			
+    			toolbarStyle += 'position:' + ((chartModel.get('toolbarPosition'))? chartModel.get('toolbarPosition'): '') + ';';					
+    			toolbarStyle += 'height:' + ((chartModel.get('toolbarHeight'))? chartModel.get('toolbarHeight'): '') + ';';					
+    			toolbarStyle += 'width:' + ((chartModel.get('toolbarWidth'))? chartModel.get('toolbarWidth'): '') + ';';					
+    			toolbarStyle += 'spacing:' + ((chartModel.get('toolbarSpacing'))? chartModel.get('toolbarSpacing'): '') + ';';					
+    			toolbarStyle += 'tail:' + ((chartModel.get('toolbarTail'))? chartModel.get('toolbarTail'): '') + ';';					
+    			//toolbarStyle += 'padding:' + ((chartModel.get('serieTooltipFontSize') != undefined)? chartModel.get('serieTooltipFontSize'): '') + ';';
+    			toolbarStyle += 'percFontColor:' + ((chartModel.get('toolbarPercFontColor') != undefined && chartModel.get('toolbarPercFontColor') != '')? 
+        				'#' + chartModel.get('toolbarPercFontColor') : '') + ';';
+    			toolbarStyle += 'fontFamily:' + ((chartModel.get('toolbarFontFamily'))? chartModel.get('toolbarFontFamily'): '') + ';';
+    			toolbarStyle += 'fontWeight:' + ((chartModel.get('toolbarFontWeight'))? chartModel.get('toolbarFontWeight'): '') + ';';	
+    			toolbarStyle += 'fontSize:' + ((chartModel.get('toolbarFontSize'))? chartModel.get('toolbarFontSize'): '') + ';';	
+    			   
+    			TOOLBAR['style'] = toolbarStyle;
+    			CHART['TOOLBAR'] = TOOLBAR;
+    			// *_* (END)
+    			
+    			// *_* (START)
+        		var TIP = {};					
+    			var tipStyle = '';
+    			
+    			tipStyle += 'fontFamily:' + ((chartModel.get('tipFontFamily'))? chartModel.get('tipFontFamily'): '') + ';';
+    			tipStyle += 'fontWeight:' + ((chartModel.get('tipFontWeight'))? chartModel.get('tipFontWeight'): '') + ';';					
+    			tipStyle += 'fontSize:' + ((chartModel.get('tipFontSize'))? chartModel.get('tipFontSize'): '') + ';';
+    			tipStyle += 'color:' + ((chartModel.get('tipColor') != undefined && chartModel.get('tipColor') != '')? 
+        				'#' + chartModel.get('tipColor') : '') + ';';
+    			tipStyle += 'align:' + ((chartModel.get('tipAlign'))? chartModel.get('tipAlign'): '') + ';';
+    			tipStyle += 'width:' + ((chartModel.get('tipWidth'))? chartModel.get('tipWidth'): '') + ';';
+    			//tipStyle += 'position:' + ((chartModel.get('tipPosition'))? chartModel.get('tipPosition'): '') + ';';	
+    			   
+    			TIP['text'] = (chartModel.get('tipText') != undefined)? chartModel.get('tipText') : '';
+    			TIP['style'] = tipStyle;
+    			CHART['TIP'] = TIP;
+    			// *_* (END)
+			}    		
+			
     		return CHART;
     	},
     	
@@ -425,7 +539,46 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return colorWithHash ? colorWithHash.replace("#", '') : colorWithHash;
 		},
 		
+		enableToolbarAndTip: function() 
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+		},
+
+		enablePalette: function() 
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'SUNBURST' &&
+						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'WORDCLOUD';
+		},
+		
+		enableLegend: function() 
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'SUNBURST' &&
+						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'WORDCLOUD';
+		},
+		
+		disableChartWidth: function() 
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+		},
+		
+		disableChartOrientation: function() 
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST' ||
+						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD';
+		},
+		
+		enableOpacityMouseOver: function() 
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
+		},
+		
+		enableWordcloudPanel: function()
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD';
+		},
+		
 		createChartConfigurationModelFromJson: function(jsonTemplate){
+						
 			var jsonChartStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.style);
   			
   			var jsonTitleText = jsonTemplate.CHART.TITLE ? jsonTemplate.CHART.TITLE.text : '';
@@ -439,6 +592,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   			
   			var chartLegend = jsonTemplate.CHART.LEGEND ? jsonTemplate.CHART.LEGEND : '';
   			var jsonLegendStyle = jsonTemplate.CHART.LEGEND ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LEGEND.style) : {};
+  			
+  			// *_* Variables used for SUNBURST chart
+  			/* START */ 
+  			var jsonToolbarStyle = jsonTemplate.CHART.TOOLBAR ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLBAR.style) : '';
+  						
+			var jsonTipText = jsonTemplate.CHART.TIP ? jsonTemplate.CHART.TIP.text : '';
+			var jsonTipStyle = jsonTemplate.CHART.TIP ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TIP.style) : '';
+  			/* END */
   			
   			var colorPalette = [];
   			if(jsonTemplate.CHART.COLORPALETTE && jsonTemplate.CHART.COLORPALETTE.COLOR) {
@@ -462,6 +623,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				fontDimension: jsonChartStyle.fontSize,
   				fontWeight: jsonChartStyle.fontWeight,
   				
+  				// *_* Added for the SUNBURST
+  				opacMouseOver: jsonChartStyle.opacMouseOver,
+  				
+  				// *_* Added for the WORDCLOUD
+  				maxWords: jsonChartStyle.maxWords,
+  		  		maxAngle: jsonChartStyle.maxAngle,
+  		  		minAngle: jsonChartStyle.minAngle,
+  		  		maxFontSize: jsonChartStyle.maxFontSize,
+  		  		wordPadding: jsonChartStyle.wordPadding,
+  				
   				title: jsonTitleText,
   				titleAlign: jsonTitleStyle.align,
   				titleColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTitleStyle.color),
@@ -483,21 +654,47 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				nodataDimension: jsonEmptyMsgStyle.fontSize,
   				nodataStyle: jsonEmptyMsgStyle.fontWeight,
   				
+  				// *_* Added for the SUNBURST (EMPTYMESSAGE tag)
+  				nodataHeight: jsonEmptyMsgStyle.height,
+  				nodataPaddingLeft: jsonEmptyMsgStyle.paddingLeft,
+  				nodataPosition: jsonEmptyMsgStyle.position,
+  				
   				showLegend: chartLegend.show,
   				legendPosition: chartLegend.position,
   				legendLayout: chartLegend.layout,
   				legendFloating: chartLegend.floating,
   				legendX: chartLegend.x,
-  				legendY: chartLegend.y,
+  				legendY: chartLegend.y,  				
   				legendAlign: jsonLegendStyle.align,
-  				legendFont: jsonLegendStyle.fontFamily,
-  				legendDimension: jsonLegendStyle.fontSize,
-  				legendStyle: jsonLegendStyle.fontWeight,
+  				legendFont: jsonLegendStyle.fontFamily, 	
+  				legendDimension: jsonLegendStyle.fontSize, 	
+  				legendStyle: jsonLegendStyle.fontWeight,	
   				legendBorderWidth: jsonLegendStyle.borderWidth,
   				legendColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.color),
   				legendBackgroundColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonLegendStyle.backgroundColor),
   				
-  				colorPalette: colorPalette
+  				colorPalette: colorPalette,
+  				
+  				// *_*	Added for the TOOLBAR tag for the SUNBURST chart			 		
+		 		toolbarPosition: jsonToolbarStyle.position,
+		 		toolbarHeight: jsonToolbarStyle.height,
+		 		toolbarWidth: jsonToolbarStyle.width,
+		 		toolbarSpacing: jsonToolbarStyle.spacing,
+		 		toolbarTail: jsonToolbarStyle.tail,
+		 		toolbarPercFontColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonToolbarStyle.percFontColor),		 		
+		 		
+		 		toolbarFontFamily: jsonToolbarStyle.fontFamily,
+		 		toolbarFontWeight: jsonToolbarStyle.fontWeight,			
+				toolbarFontSize: jsonToolbarStyle.fontSize,
+		 			 		
+		 		// *_*	Added for the TIP tag for the SUNBURST chart
+ 				tipText: jsonTipText,
+ 				tipFontFamily: jsonTipStyle.fontFamily,
+	  			tipFontWeight: jsonTipStyle.fontWeight,
+	  			tipFontSize: jsonTipStyle.fontSize,
+	  			tipColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTipStyle.color),  			
+ 				tipWidth: jsonTipStyle.width
+	  			
   			});
   			
   			return cModel;

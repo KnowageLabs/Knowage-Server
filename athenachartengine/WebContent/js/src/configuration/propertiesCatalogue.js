@@ -29,7 +29,30 @@ var propertiesCatalogue = {
 			}
 		},
 
-		d3js244 : {
-
+		d3js244 : 
+		{
+			CHART: 
+			{
+//				height: 600,
+//				width: 800,				
+				
+				TITLE: 
+				{
+					
+				},
+				
+				VALUES: 
+				{					
+					CATEGORY: 
+					{
+						customProperty: 42
+					},
+					
+					SERIE:
+					{
+						
+					}
+				}
+			}
 		}
 };

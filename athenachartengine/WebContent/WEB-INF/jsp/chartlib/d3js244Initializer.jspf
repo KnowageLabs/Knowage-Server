@@ -39,15 +39,15 @@
 	}
 
 	function renderChart(chartConf){
-		
+
 		//new Highcharts.Chart(chartConf);
 		
-		if(chartConf.chart.type === "wordcloud"){
+		if(chartConf.chart.type.toLowerCase() == "wordcloud"){
 			
 			renderWordCloud(chartConf);
 			
 		}
-		else if (chartConf.chart.type === "sunburst")
+		else if (chartConf.chart.type.toLowerCase() == "sunburst")
 		{
 			renderSunburst(chartConf);
 			

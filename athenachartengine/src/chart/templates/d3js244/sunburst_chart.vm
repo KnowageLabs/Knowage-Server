@@ -1,4 +1,5 @@
 #set($category = $chart.VALUES.CATEGORY)
+
 #set($dataRows = $data.rows)
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
@@ -16,11 +17,12 @@
 
 #set($columnsNeeded = {})
 
-#set($columnCouter = 0)
-			
+#set($columnCounter = 0)
+	$datasettransformer.printOutFromVelocityModel($category)		
 #foreach($value in $category)	
-	#set($columnsNeeded[$columnCouter] = $value.column)
-	#set($columnCouter = $columnCouter + 1)
+
+	#set($columnsNeeded[$columnCounter] = $value.column)
+	#set($columnCounter = $columnCounter + 1)
 #end
 
 #set($serie = $chart.VALUES.SERIE.name)
@@ -29,114 +31,92 @@
 	chart: 
 	{
 		type: '$chart.type',
-		width: '$chart.width',
-		height: '$chart.height',		
-		topPadding: '$chart.topPadding',
-		bottomPadding: '$chart.bottomPadding',
+		height: '$chart.height',				
 		
 		style:
-		{
-			opacMouseOver: '$chart.CHART-STYLE.opacMouseOver',
-			
-			font:
-			{
-				type: '$chart.CHART-STYLE.FONT.type',
-				size: '$chart.CHART-STYLE.FONT.size',
-				color: '$chart.CHART-STYLE.FONT.color'
-			}
+		{			
+			fontFamily: '$chart.style.fontFamily',
+			fontSize: '$chart.style.fontSize',
+			fontWeight: '$chart.style.fontWeight',					
+			backgroundColor: '$chart.style.backgroundColor',			
+			opacMouseOver: '$chart.style.opacMouseOver'
 		}
 	},
 	
-	
 	emptymessage:
 	{
-		text: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.text',
-		height: '$chart.EMPTYMESSAGE.height',
-		paddingLeft: '$chart.EMPTYMESSAGE.paddingLeft',
-		position: '$chart.EMPTYMESSAGE.position',
+		text: '$chart.EMPTYMESSAGE.text',		
 		
 		style:
 		{
-			fontType: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontType',
-			fontStyle: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontStyle',
-			fontSize: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontSize',
-			fontColor: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontColor',
-			textAlign: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.textAlign'
+			align: '$chart.EMPTYMESSAGE.style.align',
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
+			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',			
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			color: '$chart.EMPTYMESSAGE.style.color'
 		}
 	},
 	
 	title:
 	{
-		text: '$chart.TITLE.text',
-		height: '$chart.TITLE.height',
-		paddingLeft: '$chart.TITLE.paddingLeft',
-		position: '$chart.TITLE.position',
+		text: '$chart.TITLE.text',		
 		
 		style:
 		{
-			fontType: '$chart.TITLE.TITLE-STYLE.fontType',
-			fontStyle: '$chart.TITLE.TITLE-STYLE.fontStyle',
-			fontSize: '$chart.TITLE.TITLE-STYLE.fontSize',
-			fontColor: '$chart.TITLE.TITLE-STYLE.fontColor',
-			textAlign: '$chart.TITLE.TITLE-STYLE.textAlign'
+			fontFamily: '$chart.TITLE.style.fontFamily',
+			fontSize: '$chart.TITLE.style.fontSize',
+			fontWeight: '$chart.TITLE.style.fontWeight',
+			color: '$chart.TITLE.style.color',
+			align: '$chart.TITLE.style.align'
 		}
 	},
 	
 	subtitle:
-	{
-		text: '$chart.SUBTITLE.text',
-		height: '$chart.SUBTITLE.height',
-		paddingLeft: '$chart.SUBTITLE.paddingLeft',
-		position: '$chart.SUBTITLE.position',
+	{	
+		text: '$chart.SUBTITLE.text',		
 		
 		style:
 		{
-			fontType: '$chart.SUBTITLE.SUBTITLE-STYLE.fontType',
-			fontStyle: '$chart.SUBTITLE.SUBTITLE-STYLE.fontStyle',
-			fontSize: '$chart.SUBTITLE.SUBTITLE-STYLE.fontSize',
-			fontColor: '$chart.SUBTITLE.SUBTITLE-STYLE.fontColor',
-			textAlign: '$chart.SUBTITLE.SUBTITLE-STYLE.textAlign'
+			fontFamily: '$chart.SUBTITLE.style.fontFamily',
+			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+			fontSize: '$chart.SUBTITLE.style.fontSize',
+			color: '$chart.SUBTITLE.style.color',
+			align: '$chart.SUBTITLE.style.align'
 		}
 	},
-		
+	
+	#* 	Something completely new that define through XML template
+		that we would like to have for the SUNBURST chart.  *# 	
 	tip:
 	{
-		text: '$chart.TIP.text',		
-		width: '$chart.TIP.width',		
-		position: '$chart.TIP.position',
-		
+		text: '$chart.TIP.text',				
+				
 		style:
-		{
-			fontType: '$chart.TIP.TIP-STYLE.fontType',
-			fontStyle: '$chart.TIP.TIP-STYLE.fontStyle',
-			fontSize: '$chart.TIP.TIP-STYLE.fontSize',
-			fontColor: '$chart.TIP.TIP-STYLE.fontColor',
-			textAlign: '$chart.TIP.TIP-STYLE.textAlign'
+		{	
+			fontFamily: '$chart.TIP.style.fontFamily',
+			fontWeight: '$chart.TIP.style.fontWeight',			
+			fontSize: '$chart.TIP.style.fontSize',			
+			color: '$chart.TIP.style.color',
+			width: '$chart.TIP.style.width'				
 		}
 	},
 		
+	#* 	Something completely new that define through XML template
+		that we would like to have for the SUNBURST chart.  *# 	
 	toolbar:
-	{
-		position: '$chart.TOOLBAR.position',
-		height: '$chart.TOOLBAR.height',
-		width: '$chart.TOOLBAR.width',
-		spacing: '$chart.TOOLBAR.spacing',
-		tail: '$chart.TOOLBAR.tail',
-		padding: '$chart.TOOLBAR.padding',
-		
+	{			
 		style:
-		{
-			percFontColor: '$chart.TOOLBAR.TOOLBAR-STYLE.percFontColor'
+		{	
+			position: '$chart.TOOLBAR.style.position',
+			height: '$chart.TOOLBAR.style.height',
+			width: '$chart.TOOLBAR.style.width',
+			spacing: '$chart.TOOLBAR.style.spacing',
+			tail: '$chart.TOOLBAR.style.tail',				
+			percFontColor: '$chart.TOOLBAR.style.percFontColor',		
+			fontFamily: '$chart.TOOLBAR.style.fontFamily',
+			fontWeight: '$chart.TOOLBAR.style.fontWeight',			
+			fontSize: '$chart.TOOLBAR.style.fontSize'
 		}
-	},	
-	
-	legend:
-	{
-		width: '$chart.LEGEND.width',
-		height: '$chart.LEGEND.height',
-		spacing: '$chart.LEGEND.spacing',
-		radius: '$chart.LEGEND.radius',
-		padding: '$chart.LEGEND.padding'
 	},
 		
 	data:

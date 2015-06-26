@@ -7,18 +7,21 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
 
     config: {
     	region: 'west',
+    	
     	chartTypeSelector: {
         	region: 'north',
         	margin: '0 0 5 0',
         	minHeight: 200,
         	html: '<p>Chart type selector</p>'
         },
+        
     	columnsPicker: {
             region: 'center',
             margin: '0 0 5 0',
             minHeight: 200,
             html: '<p>Columns picker</p>'
         },
+        
 		categoriesPicker: {
             region: 'south',
             margin: '0 0 5 0',
@@ -26,6 +29,7 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
             html: '<p>Axises picker</p>'
         }
     },
+    
     collapsible: true,
 	maxWidth: 200,
 	minWidth: 200,

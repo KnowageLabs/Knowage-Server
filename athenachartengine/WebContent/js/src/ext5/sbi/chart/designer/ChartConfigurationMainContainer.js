@@ -16,10 +16,13 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 		bind : '{configModel.height}',
 		fieldLabel : LN('sbi.chartengine.configuration.height'),
 	},
+	
 	width: {
 		xtype : 'numberfield',
+		id: "chartWidthNumberfield",
 		bind : '{configModel.width}',
 		fieldLabel : LN('sbi.chartengine.configuration.width'),
+		hidden: ChartUtils.disableChartWidth()
 	},
 	
 	chartOrientation : Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
@@ -66,7 +69,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
        		fieldBind: '{configModel.backgroundColor}',
        	});
         
-        var colorPickerContainer = this.colorPickerContainer;
+        var colorPickerContainer = this.colorPickerContainer;       
         
         this.stylePanelTitle = Ext.create('Sbi.chart.designer.StylePopup',{
         	title: LN('sbi.chartengine.configuration.titlestyle'),
@@ -76,7 +79,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         	bindFontDim:'{configModel.titleDimension}',
         	bindFontStyle:'{configModel.titleStyle}',
         	bindColor:'{configModel.titleColor}'
-        });
+        });	
+        
         this.stylePanelSubtitle = Ext.create('Sbi.chart.designer.StylePopup', {
     	    title: LN('sbi.chartengine.configuration.subtitlestyle'),
     	    viewModel: this.viewModel,
@@ -86,6 +90,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	    bindFontStyle:'{configModel.subtitleStyle}',
     	    bindColor:'{configModel.subtitleColor}'
     	});
+       
         
     	this.stylePanelNoData = Ext.create('Sbi.chart.designer.StylePopup',{
     	    title: LN('sbi.chartengine.configuration.nodatastyle'),
@@ -104,6 +109,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         var item = [ {
 			xtype : 'fieldcontainer',
 			layout : 'hbox',
+			id: "fieldContainer1",
 			defaults : {
 				margin: '10 20 10 0'
 			},
@@ -183,6 +189,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        xtype: 'checkboxfield',
 	        id: 'showLegend',
 	        bind : '{configModel.showLegend}',
+	        hidden: !ChartUtils.enableLegend(),	// *_*
 	        margin: '20 0 0 0',
 	        labelSeparator: '',
 	        fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
@@ -190,7 +197,43 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 		];
 	        
 	    this.add(item);
-        
+	    
+	    
+	    var toolbarOpacMouseOver = Ext.create
+    	(
+			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */
+            {            
+               	 xtype : 'fieldcontainer',
+               	 layout : 'hbox',
+               	 id: "opacityMouseOver",
+               	 
+               	 defaults : 
+               	 {
+               		 //labelWidth : '100%',
+               		 margin:'5 30 0 0'
+               	 },
+	                    	 
+               	 items: 
+           		 [		                    	         
+       	         	{
+       	         		xtype: 'numberfield',
+       	         		bind: '{configModel.opacMouseOver}',		
+       	         		fieldLabel: LN("sbi.chartengine.configuration.opacityMouseOver"),
+       	         		width: "200",
+       	         		maxValue: '100', 	// opacity: 100%
+       	         		minValue: '1',		// opacity: 1%
+       	         		value: "20"			// default opacity: 20%
+   	         		}
+	         		]		                     
+            }
+    	);
+	    
+	    this.add(toolbarOpacMouseOver);
+    	
+    	if (!ChartUtils.enableOpacityMouseOver())
+		{
+    		this.getComponent("opacityMouseOver").hide();
+		}        
 	},
 	
 	items : [],

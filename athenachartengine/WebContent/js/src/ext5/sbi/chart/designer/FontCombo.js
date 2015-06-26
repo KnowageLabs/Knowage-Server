@@ -2,7 +2,14 @@ Ext.define('Sbi.chart.designer.FontCombo',{
     extend : 'Ext.form.ComboBox',
     store: {
         fields: [ 'name' ],
-        data: [ [ 'Arial' ], [ 'Times New Roman' ], [ 'Tahoma' ], [ 'Verdana' ] ]
+        
+        sorters: [{
+            property: 'name',
+            direction: 'ASC'
+        }],
+        
+        data: [ [ 'Arial' ], [ 'Times New Roman' ], [ 'Tahoma' ], [ 'Verdana' ], ["Impact"],
+        		["Calibri"], ["Cambria"], ["Georgia"], ["Gungsuh"] ]
     },
     displayField : 'name',
     valueField : 'name',

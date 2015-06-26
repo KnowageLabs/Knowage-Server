@@ -6,7 +6,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
     defaults:{
         height: 200,
     },
-    item: [ ],
+    item: [ ],  
     
     constructor: function(config) {
         this.callParent(config);
@@ -19,9 +19,63 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
 			colorPalette: this.viewModel.data.configModel.data.colorPalette
 		});
-        
-        this.add(legend);
+		
+		var toolbarAndTip = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationToolbarAndTip",
+			{
+				viewModel: this.viewModel
+			}
+		); 
+		
+		var wordCloudParameters = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationWordcloud",
+			{
+				viewModel: this.viewModel
+			}
+		); 
+		
+		this.add(toolbarAndTip);
 		this.add(palette);
+		this.add(legend);
+		this.add(wordCloudParameters);
+		
+		if (ChartUtils.enableToolbarAndTip())
+		{
+			this.getComponent("chartToolbarAndTip").show();
+		}
+		else 
+		{
+			this.getComponent("chartToolbarAndTip").hide();
+		}
+		
+		if (ChartUtils.enablePalette())
+		{
+			this.getComponent("chartColorPallete").show();
+		}
+		else 
+		{
+			this.getComponent("chartColorPallete").hide();
+		}
+		
+		if (ChartUtils.enableLegend())
+		{
+			this.getComponent("chartLegend").show();
+		}
+		else 
+		{
+			this.getComponent("chartLegend").hide();
+		}
+		
+		if (ChartUtils.enableWordcloudPanel())
+		{
+			this.getComponent("wordcloudConfiguration").show();
+		}
+		else 
+		{
+			this.getComponent("wordcloudConfiguration").hide();
+		}
     }
     
 });

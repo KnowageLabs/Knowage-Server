@@ -20,9 +20,11 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	        dataIndex: 'name' 
 	    }
 	],
+	
 	listeners : {
 		rowclick: function(table, record, tr, rowIndex, e, eOpts ) {
-			var selectedType = record.get('type');
+			
+			var selectedType = record.get('type');			
 			
 			var store = this.store;
 			var selectionModel = this.getSelectionModel();
@@ -30,6 +32,9 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			var chartTypeSelector = this;
 
 			var thisChartType = this.chartType.toLowerCase();
+			
+			var globalThis = this;
+			
 			if(((thisChartType == 'bar' || thisChartType == 'line') && selectedType.toLowerCase() == 'pie')
 					|| (thisChartType == 'pie' && selectedType.toLowerCase() != 'pie')) {
 				
@@ -46,10 +51,13 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 					},
 					fn : function(buttonValue, inputText, showConfig){
 						if (buttonValue == 'ok') {
+							
 							Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();
 							
 							//Select the new chart type
 							chartTypeSelector.setChartType(selectedType);
+							
+							globalThis.fireEvent("newrowclick");
 						} 
 						else if (buttonValue == 'cancel') {
 							for(var i = 0; i < store.data.length; i++) {
@@ -66,15 +74,18 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			}
 			else {
 				chartTypeSelector.setChartType(selectedType);
+				globalThis.fireEvent("newrowclick");
 			}
 		}
 	},
 	
 	setChartType: function(type) {
-		this.chartType = type;
 		
+		this.chartType = type;
+				
 		// selection on the table
 		for(var i = 0; i < this.store.data.length; i++) {
+			
 			var row = this.store.getAt(i);
 			
 			if(type === row.get('type')) {
@@ -85,6 +96,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 		
 		var chartOrientationCombo = Ext.getCmp('chartOrientationCombo');
 		var chartRightAxisesContainer = Ext.getCmp('chartRightAxisesContainer');
+		
 		if(this.chartType.toUpperCase() == 'PIE') {
 			if(chartOrientationCombo != undefined) {
 				chartOrientationCombo.disable();

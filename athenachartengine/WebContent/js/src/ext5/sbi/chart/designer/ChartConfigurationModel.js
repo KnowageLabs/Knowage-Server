@@ -24,8 +24,26 @@ Ext.define('Sbi.chart.designer.ChartConfigurationModel',{
 		'legendDimension','legendStyle', 
 		'legendBorderWidth', 'legendBackgroundColor',
 		
-		'colorPalette'
+		'colorPalette',
 		
+		// *_* Added for the SUNBURST chart (START)
+		'toolbarPosition',			
+		'toolbarHeight',
+ 		'toolbarWidth',
+ 		'toolbarSpacing',
+ 		'toolbarTail',
+ 		'toolbarPercFontColor',
+ 		'toolbarOpacMouseOver',	
+		
+ 		'tipText',
+		'tipFontFamily',
+		'tipFontWeight',
+		'tipFontSize',
+		'tipColor',
+		'tipAlign',	  			
+		'tipWidth',	
+		'tipPosition'
+		// *_* Added for the SUNBURST chart (END)
 	],
 	
 });

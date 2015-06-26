@@ -1,5 +1,6 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     alternateClassName: ['ChartConfigurationPalette'],
+    id: "chartColorPallete",
 	extend : 'Ext.panel.Panel',
 	columnWidth: 0.3,
 	title : LN('sbi.chartengine.configuration.palette'),

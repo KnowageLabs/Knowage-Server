@@ -8,6 +8,7 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 	fieldLabel : LN('sbi.chartengine.configuration.orientation'),
 	displayField : 'name',
 	valueField : 'value',
+	hidden: ChartUtils.disableChartOrientation(),
 	store : {
 		fields : [ 'name', 'value' ],
 		data : [ {

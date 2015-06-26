@@ -1,6 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	extend : 'Ext.panel.Panel',
 	columnWidth : 0.7,
+	id: "chartLegend",
 	title : LN('sbi.chartengine.configuration.legend'),
 	bodyPadding : 10,
 	items : [],

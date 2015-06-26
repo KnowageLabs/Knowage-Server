@@ -112,6 +112,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
             ];
 		}
 		
+		/* *_* */
+		/* ************ EDITED (CHANGED): start *************** */
+		/* "disable chart type on series popup when one of the 
+		 * new chart types is selected" */
 		this.serieTypesComboBox = Ext.create('Ext.form.ComboBox', {
 			store: {
 				store: 'array',
@@ -123,6 +127,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			displayField: 'name',
 			fieldLabel : LN('sbi.chartengine.designer.seriestype'),
 		});
+		
+		if (chartType.toUpperCase() == 'SUNBURST')
+			this.serieTypesComboBox.disable();
+		/* ************ EDITED (CHANGED): end *************** */
+		
 		this.serieFieldSet.add(this.serieTypesComboBox);		
 		
 		var serieOrder = dataAtRow.get('serieOrderType');
