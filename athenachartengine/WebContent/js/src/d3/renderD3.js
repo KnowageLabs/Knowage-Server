@@ -1098,6 +1098,7 @@ function renderSunburst(jsonObject)
 }
 function renderParallelChart(data){
 
+
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1109,27 +1110,27 @@ function renderParallelChart(data){
 			records.sort(function(obj1, obj2) {
 				return obj1[limitcolumn] - obj2[limitcolumn];
 			});
-
-
-			var len = records.length;
-
-			var max = data.limit.max;
-
-			if (data.limit.order === 'top'){
-
-				var slicedData = records.slice(len-max,len);
-
-				records = slicedData;
-			}
-			else if (data.limit.order === 'bottom'){
-
-				var slicedData = records.slice(0,max);
-
-				records = slicedData;
-			}}
-
+		
+		
+		var len = records.length;
+		
+		var max = data.limit.max;
+		
+		if (data.limit.order === 'top'){
+			
+			var slicedData = records.slice(len-max,len);
+			
+			records = slicedData;
+		}
+		else if (data.limit.order === 'bottom'){
+			
+			var slicedData = records.slice(0,max);
+			
+			records = slicedData;
+		}}
+		
 		var groupcolumn = data.chart.group;
-
+        
 		var group = Ext.decode(data.chart.groups);
 		var column = Ext.decode(data.chart.serie);
 
@@ -1158,24 +1159,24 @@ function renderParallelChart(data){
 			}
 			return selected;
 		}
-
+       
 		var filteredRows;
 
-		var colors = [];
+        var colors = [];
 
 		var colorsResponse = data.chart.colors;
-
-		var colorsResponseDec = Ext.decode(colorsResponse);
-
-		for (var i = 0; i< colorsResponseDec.length; i++){
+	
+	 var colorsResponseDec = Ext.decode(colorsResponse);
+     
+     for (var i = 0; i< colorsResponseDec.length; i++){
 
 			colors.push(colorsResponseDec[i][i]);
-
+		
 		}
 
-		var myColors=d3.scale.ordinal().domain(groups).range(colors);
-
-		var brushWidth = data.axis.brushwidth;
+	var myColors=d3.scale.ordinal().domain(groups).range(colors);
+	
+	    var brushWidth = data.axis.brushwidth;
 
 		var brushx = -Number(brushWidth)/2;
 
@@ -1264,7 +1265,7 @@ function renderParallelChart(data){
 		.attr("dy", ".31em")
 		.text(function(d) {	
 			return " " + groupcolumn +" " + d; });
-
+        
 		//tooltip
 		var tooltip=d3.select("body")
 		.append("div")
@@ -1284,7 +1285,7 @@ function renderParallelChart(data){
 		.style("border",data.tooltip.border+"px")
 		.style("border-radius",data.tooltip.borderradius+"px")
 		.style("pointer-events","none");
-
+		
 		foreground = svg.append("svg:g")
 		.attr("class","foreground")
 		.style({"fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
@@ -1294,11 +1295,11 @@ function renderParallelChart(data){
 		.attr("visible","true")
 		.attr("d", path)
 		.style("stroke", function(d) {return myColors(d[groupcolumn])});
-
+		
 		if (records.length<=20){
 
 			foreground.on("mouseover",function(d){
-
+				
 				if(filteredRows){
 
 					for (var i=0; i<filteredRows.length; i++){
@@ -1317,12 +1318,11 @@ function renderParallelChart(data){
 				}
 				else{
 
-
-					tooltip.transition().duration(50).style("opacity","1");
-					tooltip.style("background",myColors(d[groupcolumn]));
-					tooltip.text(d[data.chart.tooltip])
-					.style("left", (d3.event.pageX) + "px")     
-					.style("top", (d3.event.pageY - 25) + "px");
+				tooltip.transition().duration(50).style("opacity","1");
+				tooltip.style("background",myColors(d[groupcolumn]));
+				tooltip.text(d[data.chart.tooltip])
+				.style("left", (d3.event.pageX) + "px")     
+				.style("top", (d3.event.pageY - 25) + "px");
 
 				}
 
@@ -1334,7 +1334,7 @@ function renderParallelChart(data){
 			});
 
 		}
-
+		
 
 		var g = svg.selectAll(".column")
 		.data(columns)
@@ -1347,7 +1347,7 @@ function renderParallelChart(data){
 				.on("dragstart", dragstart)
 				.on("drag", drag)
 				.on("dragend", dragend));
-
+         
 		// Axis
 		g.append("svg:g")
 		.attr("class","axis")
@@ -1359,7 +1359,7 @@ function renderParallelChart(data){
 		.style({"cursor":"move"});
 
 		g.selectAll(".axis line, .axis path").style({"fill":data.axis.fill,"stroke": data.axis.color,"shape-rendering": "crispEdges"});
-
+         
 		// Add a brush for each axis.
 		g.append("svg:g")
 		.style({"fill-opacity":" .3","stroke":data.axis.brushcolor,"shape-rendering":" crispEdges"})
@@ -1389,53 +1389,81 @@ function renderParallelChart(data){
 		.text(data.emptymessage.text);	
 
 	}
-
+	
 	// TABLE
-	var table= d3.select("body").append("table").style("width",w+m[3]).style("padding-left",m[3]);
+	var initialTableData=records;
+	
+	var allTableData=initialTableData; // all records or filtered records
+	var currentTableData=allTableData.slice(0,5); // up to 5 recoords
+	var firstDisplayed=1;
+	var lastDisplayed=0;
+	if(allTableData.length > 5){
+		lastDisplayed=5;
+	}else{
+		lastDisplayed=allTableData.length;
+	}
+	
+	
+	
+	var tableDiv=d3.select("body").append("div").attr("id","tableDiv");
+	var table= tableDiv.append("table").style("width",w+m[3]).style("padding-left",m[3]);
+	var paginationBar=tableDiv.append("div").attr("id","pBar").style("padding-left",m[3]);
+	var prevButton=paginationBar.append("button").text("<< Prev").on("click",function(){return showPrev();});
+    var paginationText= paginationBar.append("label").text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+	var nextButton=paginationBar.append("button").text("Next >>").on("click",function(){return showNext();});
+	
+	if(firstDisplayed===1){
+	prevButton.attr("disabled","true");	
+	}
+	
+	if(lastDisplayed===allTableData.length){
+	   nextButton.attr("disabled","true");
+	}
+	
 	//columns for table
 	var tableColumns=[];
 	tableColumns.push(groupcolumn);
 	tableColumns.push(data.chart.tooltip);
 	tableColumns=tableColumns.concat(columns);
 
-
+	
 	//table header
 	table.append("thead")
-	.style("background-color","steelblue") 
-	.append("tr")
-	.style("height","30px")
-	.style("border-bottom","2px solid black")
-	.selectAll("th")
-	.data(tableColumns).enter()
-	.append("th")
-	.text(function(d){return d;});
-
+	      .style("background-color","steelblue") 
+	     .append("tr")
+	      .style("height","30px")
+	      .style("border-bottom","2px solid black")
+	     .selectAll("th")
+	     .data(tableColumns).enter()
+	     .append("th")
+	     .text(function(d){return d;});
+	
 	//table body
 	table.append("tbody")
-	.selectAll("tr")
-	.data(records)
-	.enter()
-	.append("tr")
-	.style("background-color",function(d,i){
-		if(i%2==1)return "lightgray";
-	})
-	.attr("class","tdata")
-	.on("mouseover",function(d){ return selectSingleLine(d);})
-	.on("mouseout",function(d){
-		foreground.style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
-		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
-	})
-	.selectAll("td")
-	.data(function(row){
-		return tableColumns.map(function(column) {
-			return {column: column, value: row[column]};
-		});
-	}).enter()
-	.append("td")
-	.on("click",function(){})
-	.text(function(d){return d.value})
-	.style("text-align","center");
-
+	     .selectAll("tr")
+	     .data(currentTableData)
+	     .enter()
+	     .append("tr")
+	     .style("background-color",function(d,i){
+	    	 if(i%2==1)return "lightgray";
+	     })
+	     .attr("class","tdata")
+	     .on("mouseover",function(d){ return selectSingleLine(d);})
+	     .on("mouseout",function(d){
+	    	foreground.style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+	 		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
+           })
+	     .selectAll("td")
+	     .data(function(row){
+	    	 return tableColumns.map(function(column) {
+	                return {column: column, value: row[column]};
+	            });
+	     }).enter()
+	       .append("td")
+	       .on("click",function(d){return filterTable(d,allTableData);})
+	       .text(function(d){return d.value})
+	       .style("text-align","center");
+	       
 
 	function dragstart(d) {
 		i = columns.indexOf(d);
@@ -1481,65 +1509,258 @@ function renderParallelChart(data){
 				return extents[i][0] <= d[p] && d[p] <= extents[i][1];
 			})
 		});
-
+        
 		var allRows=records;
-
-
-		filteredRows=allRows.filter(function(d) {
+		
+         
+	    filteredRows=allRows.filter(function(d) {
 
 			return actives.every(function(p, i) {
 
 				return extents[i][0] <= d[p] && d[p] <= extents[i][1];
 			});
 		});
-
+		
+		nextButton.attr("disabled",null);
+		prevButton.attr("disabled",null);
+		
+		allTableData=filteredRows;
+		currentTableData=allTableData.slice(0,5);
+		firstDisplayed=1;
+		if(allTableData.length > 5){
+			lastDisplayed=5;
+		}else{
+			lastDisplayed=allTableData.length;
+		}
+		
+		if(firstDisplayed===1){
+			prevButton.attr("disabled","true");	
+			}
+			
+			if(lastDisplayed===allTableData.length){
+			   nextButton.attr("disabled","true");
+			}
+		paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
 		var dummy=[];
 		d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
-
-		d3.select("table")
-		.select("tbody")
-		.selectAll("tr")
-		.data(filteredRows)
-		.enter()
-		.append("tr")
-		.style("background-color",function(d,i){
-			if(i%2==1)return "lightgray";
-		})
-		.attr("class","tdata") 
-		.on("mouseover",function(d){ return selectSingleLine(d);})
-		.on("mouseout",function(d){
-			d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
-			.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
-		})
-		.selectAll("td")
-		.data(function(row){
-			return tableColumns.map(function(column) {
-				return {column: column, value: row[column]};
-			});
-		}).enter()
-		.append("td")
-		.text(function(d){return d.value})
-		.style("text-align","center");
-
-
+		
+		 d3.select("table")
+		   .select("tbody")
+		   .selectAll("tr")
+		   .data(currentTableData)
+		   .enter()
+		   .append("tr")
+	       .style("background-color",function(d,i){
+	    	 if(i%2==1)return "lightgray";
+	        })
+		    .attr("class","tdata") 
+	     .on("mouseover",function(d){ return selectSingleLine(d);})
+	     .on("mouseout",function(d){
+	    	d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+	 		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
+           })
+	     .selectAll("td")
+	     .data(function(row){
+	    	 return tableColumns.map(function(column) {
+	                return {column: column, value: row[column]};
+	            });
+	     }).enter()
+	       .append("td")
+	       .on("click",function(d){return filterTable(d,filteredRows);})
+	       .text(function(d){return d.value})
+		   .style("text-align","center");
+		 
+		
 		d3.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
 		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 		.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
 
-
 	}
-
+	
 	function selectSingleLine(selectedRow){
+
 		foreground.attr("visible", function(d){
-			return (d===selectedRow)?"true":"false";
-		});
+          return (d===selectedRow)?"true":"false";
+      });
+		
 
-		//foreground.classed("notfade", function(d) {
-		//   return d===selectedRow;
-		//});
+	
+	d3.select(".foreground").selectAll("[visible=false]").style({"stroke": "#000","stroke-opacity": ".02"}); 
+	d3.select(".foreground").selectAll("[visible=true]").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+	.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
+	}
+	
+	function filterTable(selectedCell,coollectionToFilter){
+		//console.log(selectedCell);
+		nextButton.attr("disabled",null);
+		prevButton.attr("disabled",null);
+		
+		var filteredData=coollectionToFilter.filter(function(d){return d[selectedCell.column]===selectedCell.value;});
+		
+		//console.log(filteredData);
 
-		d3.select(".foreground").selectAll("[visible=false]").style({"stroke": "#000","stroke-opacity": ".02"}); 
-		d3.select(".foreground").selectAll("[visible=true]").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
-		.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
+		
+		 allTableData=filteredData;
+			currentTableData=allTableData.slice(0,5);
+			firstDisplayed=1;
+			if(allTableData.length > 5){
+				lastDisplayed=5;
+			}else{
+				lastDisplayed=allTableData.length;
+			}
+			if(firstDisplayed===1){
+				prevButton.attr("disabled","true");	
+				}
+				
+				if(lastDisplayed===allTableData.length){
+				   nextButton.attr("disabled","true");
+				}
+		 paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		 
+		 var dummy=[];
+		 d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
+		 
+		 d3.select("table")
+		   .select("tbody")
+		   .selectAll("tr")
+		   .data(currentTableData)
+		   .enter()
+		   .append("tr")
+	       .style("background-color",function(d,i){
+	    	 if(i%2==1)return "lightgray";
+	        })
+		    .attr("class","tdata") 
+	     .on("mouseover",function(d){ return selectSingleLine(d);})
+	     .on("mouseout",function(d){
+	    	 
+	    	 
+	    	 foreground.attr("visible", function(d){
+		          return (d[selectedCell.column]===selectedCell.value)?"true":"false";
+		      });
+			
+	    	 d3.selectAll(".fade").attr("visible","false");
+	    	 d3.selectAll(".notfade").attr("visible", function(d){
+		          return (d[selectedCell.column]===selectedCell.value)?"true":"false";
+		      });
+			
+			d3.select(".foreground").selectAll("[visible=false]").style({"stroke": "#000","stroke-opacity": ".02"}); 
+			d3.select(".foreground").selectAll("[visible=true]").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+			.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
+			
+			//foreground.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"});
+         })
+	     .selectAll("td")
+	     .data(function(row){
+	    	 return tableColumns.map(function(column) {
+	                return {column: column, value: row[column]};
+	            });
+	     }).enter()
+	       .append("td")
+	       .text(function(d){return d.value})
+		   .style("text-align","center");
+		 
+			
+		
+	}
+	
+	function updateTable(){
+		var dummy=[];
+		d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
+		
+		 d3.select("table")
+		   .select("tbody")
+		   .selectAll("tr")
+		   .data(currentTableData)
+		   .enter()
+		   .append("tr")
+	       .style("background-color",function(d,i){
+	    	 if(i%2==1)return "lightgray";
+	        })
+		    .attr("class","tdata") 
+	     .on("mouseover",function(d){ return selectSingleLine(d);})
+	     .on("mouseout",function(d){
+	         foreground.attr("visible",function(d){
+	        	 return (allTableData.indexOf(d)!=-1)?"true":"false";
+	         });
+	         
+	         d3.select(".foreground").selectAll("[visible=false]").style({"stroke": "#000","stroke-opacity": ".02"}); 
+				d3.select(".foreground").selectAll("[visible=true]").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+				.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
+	    	 
+	    	 
+           })
+	     .selectAll("td")
+	     .data(function(row){
+	    	 return tableColumns.map(function(column) {
+	                return {column: column, value: row[column]};
+	            });
+	     }).enter()
+	       .append("td")
+	       .on("click",function(d){return filterTable(d,allTableData);})
+	       .text(function(d){return d.value})
+		   .style("text-align","center");
+		 
+		 foreground.attr("visible",function(d){
+        	 return (allTableData.indexOf(d)!=-1)?"true":"false";
+         });
+         
+         d3.select(".foreground").selectAll("[visible=false]").style({"stroke": "#000","stroke-opacity": ".02"}); 
+			d3.select(".foreground").selectAll("[visible=true]").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+			.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
+	}
+	
+	function showNext(){
+		prevButton.attr("disabled",null);
+		firstDisplayed=firstDisplayed+5;
+		lastDisplayed=lastDisplayed+5;
+		if(lastDisplayed>allTableData.length){
+			lastDisplayed=allTableData.length;
+		}
+		
+		
+		
+		currentTableData=[];
+		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
+		
+	
+			
+			if(lastDisplayed === allTableData.length){
+			   nextButton.attr("disabled","true");
+			}
+			
+	
+		
+	    paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		updateTable();	
+			
+		
+	}
+	
+	function showPrev(){
+		nextButton.attr("disabled",null);
+		firstDisplayed=firstDisplayed-5;
+		if(lastDisplayed===allTableData.length){
+			if(allTableData.length%5!=0){
+			lastDisplayed=lastDisplayed-(allTableData.length%5);
+			}else{
+				lastDisplayed=lastDisplayed-5;	
+			}
+		}
+		else{
+			lastDisplayed=lastDisplayed-5;
+			}
+		
+		
+		
+		currentTableData=[];
+		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
+		
+		if(firstDisplayed===1){
+			prevButton.attr("disabled","true");	
+			}
+	
+		paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		updateTable();	
+			
 	}
 }
