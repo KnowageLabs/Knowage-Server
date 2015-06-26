@@ -48,9 +48,9 @@ Ext.define
             		 bind : '{configModel.maxAngle}',	
             		 fieldLabel: LN("sbi.chartengine.configuration.wordcloud.maxAngle"),
             		 width: "200",
-            		 value: "0",
-            		 maxValue: '270',
-            		 minValue: '0'
+            		 value: "60",
+            		 maxValue: '360',
+            		 minValue: '60'
             	},            	
   		  		
             	{
@@ -58,9 +58,9 @@ Ext.define
             		 bind : '{configModel.minAngle}',	
             		 fieldLabel: LN("sbi.chartengine.configuration.wordcloud.minAngle"),
             		 width: "200",
-            		 value: "60",
-            		 maxValue: '360',
-            		 minValue: '60'
+            		 value: "0",
+            		 maxValue: '270',
+            		 minValue: '0'
             	},
             	
             	{
