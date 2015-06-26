@@ -1,0 +1,58 @@
+<chart type="gauge" height="500" width="900"  
+style="backgroundColor:#FFFFFF;font:Verdana;fontWeight:bold;fontSize:16px">
+
+<emptymessage text ="nessun dato da visualizzare"  style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px"  />
+
+<TITLE text="questo è un titolo" 
+style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+
+<SUBTITLE text="questo è un sotto titolo"
+style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+
+
+<AXES_LIST>
+
+	<AXIS id="1" type='Serie' min="0" max="20000" 
+            lineColor= '#339'
+            tickColor= '#339'
+            minorTickColor= '#339'
+            offset= '-25'
+            lineWidth= '2'
+            tickLength= '5'
+            minorTickLength= '5'
+            endOnTick= 'false'>
+	</AXIS>
+	
+	<AXIS id="2" type='Serie' min="0" max="20000"
+            tickPosition= 'outside'
+            lineColor= '#933'
+            lineWidth= '2'
+            minorTickPosition= 'outside'
+            tickColor= '#933'
+            minorTickColor= '#933'
+            tickLength= '5'
+            minorTickLength= '5'
+            offset= '-20'
+            endOnTick= 'false'>
+		<LABELS distance='12' rotation='auto'/>
+	</AXIS>
+	
+</AXES_LIST>
+
+
+<PANE startAngle="-150" endAngle="150" />
+
+<Values>
+	<SERIE name="vendite" column="vendite" color="#4572A7"  precision="2" postfixChar="Euro"  >
+		<DIAL backgroundColor='#339'/>
+		<DATA_LABELS y='30' color='#339' />
+	</SERIE>
+	<SERIE name="ricavi" column="ricavi" color="#4572A7"  precision="2" postfixChar="Euro"  >
+		<DIAL backgroundColor='#933'/>
+		<DATA_LABELS y='60' color='#933' />
+	</SERIE>
+</Values>
+
+<!-- cross navigation -->
+
+</chart>

@@ -1,0 +1,44 @@
+<chart type="gauge" height="500" width="900"  
+style="backgroundColor:#FFFFFF;font:Verdana;fontWeight:bold;fontSize:16px">
+
+<emptymessage text ="nessun dato da visualizzare"  style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px"  />
+
+<TITLE text="questo è un titolo" 
+style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+
+<AXES_LIST>
+
+	<AXIS alias='Y' type='Serie' min="0" max="4000" minorTickInterval= "auto"
+            minorTickWidth= "1"
+            minorTickLength= "10"
+            minorTickPosition= "inside"
+            minorTickColor= "#666"
+            tickPixelInterval= "30"
+            tickWidth= "2"
+            tickPosition= "inside"
+            tickLength= "10"
+            tickColor= "#666">
+		<TITLE text='Valori' style='align:center;color:#003366;fontWeight:bold;fontSize:16px'/>
+		<PLOTBANDS>
+			<PLOT from='0' to='500' color='#55BF3B'/> 
+			<PLOT from='500' to='2000' color='#DDDF0D'/>
+			<PLOT from='2000' to='4000' color='#DF5353'/>
+		</PLOTBANDS>
+	</AXIS>
+	
+</AXES_LIST>
+
+<SUBTITLE text="questo è un sotto titolo"
+style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+
+<PANE startAngle="-150" endAngle="150" />
+
+<Values>
+	<SERIE name="vendite" axis='Y' position="internal" column="vendite" color="#4572A7" precision="2" postfixChar="Euro"  >
+		<TOOLTIP backgroundColor="#FCFFC5" style="align:center;color:#003366;font:Verdana;fontWeight:bold;fontSize:16px" />
+	</SERIE>
+</Values>
+
+<!-- cross navigation -->
+
+</chart>
