@@ -51,8 +51,6 @@
 
 #set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded))
 
-$datasettransformer.printOutFromVelocityModel($chart.type)
-
 {
  	chart: 
  	{
