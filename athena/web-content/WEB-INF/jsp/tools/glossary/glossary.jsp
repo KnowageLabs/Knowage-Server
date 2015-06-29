@@ -284,21 +284,11 @@ var serverPort ='<%=request.getServerPort()%>';
 						<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">Selezionare
 							un glossario per visualizzarne la struttura</p>
 							
-						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined "
-							ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
-							data-drag-delay="500" >
-							<ol ui-tree-nodes ng-model="ctrl.selectedGloss">
-									<li ui-tree-node data-nodrag ng-repeat="n in [1]">
-										<div ui-tree-handle style="cursor: pointer;">
-											<div context-menu
-											data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"
-											ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
+						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined ">
+								<div context-menu data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"	>
 												<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p>
-											</div>
-										
+								</div>
 								
-
-
 								<div class="dropdown position-fixed"
 									style="z-index: 999; margin-left: -25%; margin-top: -40px; width: 200px;"
 									id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}">
@@ -323,26 +313,28 @@ var serverPort ='<%=request.getServerPort()%>';
 
 								<!-- 						fine menu contestuale albero -->
 
-
-	
-								</div>
-								</li>
+							</div>
+							
+							
+							
+						<div id="GlossTree" ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined "
+							ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
+							data-drag-delay="500" >
+							
 
 								<ol ui-tree-nodes="options"
 									ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS"
 									ng-class="{hideChildren: collapsed}">
+									
 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
 										ui-tree-node data-collapsed="true"
 										ng-include="'items_renderer.html'"></li>
+											
 									<li ng-if="ctrl.selectedGloss.SBI_GL_CONTENTS.length == 0 "
 										ng-repeat="n in [1]" data-nodrag ui-tree-node
 										class="addFiglioBox"></li>
 								</ol>
-							</ol>
-
-
-
-
+							
 						</div>
 
 
@@ -448,7 +440,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 							<div class="linkChips">
 								<md-contact-chips ng-model="ctrl.newWord.LINK"
-									md-contacts="ctrl.querySearch($query)" md-contact-name="WORD"
+									md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
 									md-require-match="" filter-selected="true">
 								<md-chip-template> <strong>{{$chip.WORD
 									| uppercase}}</strong> </md-chip-template> </md-contact-chips>
@@ -470,9 +462,12 @@ var serverPort ='<%=request.getServerPort()%>';
 							<md-autocomplete style="  min-width: 0;" flex=""
 								md-input-name="autocompleteField" md-no-cache="true"
 								md-search-text="ctrl.tmpAttr.Prop"
+								md-autoselect=true
 								md-selected-item="ctrl.selectedItem"
 								md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
-								md-item-text="item.ATTRIBUTE_NM" md-require-match=""
+								md-item-text="item.ATTRIBUTE_NM" 
+								md-require-match=""
+								md-delay=500
 								md-floating-label="Proprietà"> <md-item-template>
 							<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
 							</md-item-template> </md-autocomplete>

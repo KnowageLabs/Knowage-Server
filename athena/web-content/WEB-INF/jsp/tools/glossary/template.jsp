@@ -169,7 +169,8 @@
 
 <!-- Nested list template -->
 <script type="text/ng-template" id="items_renderer.html">
-		
+									
+
 <div context-menu data-target="WordTree-{{item.$$hashKey}}"
 	ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 
@@ -177,10 +178,11 @@
 
 	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
 		<md-list>
-		<div ui-tree-handle>
-			<md-list-item class="SecondaryOnLeft"
+			<md-list-item ui-tree-handle class="SecondaryOnLeft"
 				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
-				ng-init="this.preloader=false"> <!--		<p style="  margin-left: 30px;"><input class="transparent_input" type="text" name="nome" ng-model="item.CONTENT_NM"   > </p>  -->
+				ng-init="item.preloader=false"> 
+			
+
 			<p style="margin-left: 30px;">{{item.CONTENT_NM}}</p>
 			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
 				aria-label="Chat" md-font-icon="fa fa-angle-down "
@@ -188,14 +190,12 @@
 				ng-show="!collapsed"></md-icon> <md-icon ng-disabled="true"
 				class=" sm-font-icon expandericon" aria-label="Chat2"
 				md-font-icon="fa fa-angle-right " ng-show="collapsed"></md-icon> <md-progress-circular
-				md-diameter="20" ng-show="this.preloader" class="md-hue-2"
+				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
 				style="  left: 50%;  margin-left: -25px; position:absolute "
 				md-mode="indeterminate"></md-progress-circular> </md-list-item>
 		</div>
 		</md-list>
 
-
-	</div>
 
 	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo ">
 		<md-list> 

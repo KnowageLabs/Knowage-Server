@@ -215,9 +215,15 @@ md-toolbar.md-default-theme.md-blue {
 	min-height: 0px;
 }
 
-.position-fixed {
+.position-fixed{
 	position: fixed !important;
 }
+
+ md-toast {
+	position: fixed !important;
+	  top: 0px !important;
+}
+
 
 /* classe dropdown recuperata da bootstrap */
 .dropdown-menu {
@@ -278,6 +284,10 @@ md-toolbar.md-default-theme.md-blue {
 	background-color: transparent;
 	background-image: none;
 	border: none;
+	display:none;
+}
+
+#GlossTree .angular-ui-tree-empty{
 	display:none;
 }
 
@@ -392,9 +402,12 @@ table tr:nth-child(even) {
 	border-left: 1px dashed #dae2ea;
 	/*      border: 1px solid #dae2ea; */
 	/*     color: #7c9eb2; */
-	/*     padding: 10px 10px; */
+	    padding: 4px 0px;
 	/*     padding-bottom: 20px; */
+
 }
+
+
 
 #wordTree .angular-ui-tree-handle:hover {
 	color: #438eb9;
@@ -548,3 +561,12 @@ md-list-item.md-no-proxy.md-button, md-list-item .md-no-style.md-button
 md-tabs.hideTabs md-tabs-wrapper {
   display: none;
 }
+
+
+
+/* trick to risolve materia autocomplite bug */
+.md-scroll-mask{
+    position: initial;
+}
+
+

@@ -167,6 +167,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.words = [];
 	getAllWords();
 
+	ctr.vovo="";
+	
 	ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 	ctr.glossary;
 	getAllGloss();
@@ -249,13 +251,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	function resetForm(ele) {
 		console.log("resetForm")
 
+
+angular.element(document.querySelector('.md-chip-input-container .md-whiteframe-z1 input')).val("");
+
+		ctr.tmpAttr = {};
+		
 		if (ele == undefined) {
 			ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		} else {
-
 			// scarico tutte le informazioni del word
 			getWord(ele);
-
 			// ctr.newWord = ele;
 		}
 
@@ -263,56 +268,29 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	// querysearch della select autocompleate durante l'inserimento delle
 	// proprietà in new word
-	ctr.tmpPropSearch = "";
+	
+	
+	
 	ctr.prevPropSearch = "";
-
 	ctr.querySearchProp = function(query) {
 		console.log("querySearchProp " + query)
 
-		ctr.tmpPropSearch = query;
-
-		if (ctr.tmpPropSearch != query || ctr.prevPropSearch == query) {
-
-			console.log("(ctr.tmpPropSearch != query)"
-					+ (ctr.tmpPropSearch != query))
-
-			console.log("(ctr.prevPropSearch == query)"
-					+ (ctr.prevPropSearch == query))
-
-			console.log("interrompo la ricerca prop di ele " + query)
-			return;
+		if(ctr.prevPropSearch==query){
+			ctr.prevPropSearch="";
+			console.log("rep")
+			return false;
 		}
-
-		if (ctr.selectedItem != null) {
-			console.log("ctr.selectedItem.ATTRIBUTE_NM="
-					+ ctr.selectedItem.ATTRIBUTE_NM)
-			console.log("query=" + query)
-			if (ctr.selectedItem.ATTRIBUTE_NM === query) {
-				console.log("xxxxxinterrompo la ricerca prop di ele " + query)
-
-				return;
-			}
-		}
+		ctr.prevPropSearch=query;
 
 		var def = $q.defer();
-		$timeout(function() {
-
-			console.log(query)
-			if (ctr.tmpPropSearch != query || ctr.prevPropSearch == query) {
-				console.log((ctr.tmpPropSearch != query)
-						+ "interrompo la ricerca prop di ele "
-						+ (ctr.prevPropSearch == query))
-				return;
-			}
-
-			ctr.prevPropSearch = query;
+		
 
 			restServices.get("glossary", "listAttribute", "ATTR=" + query)
 					.success(function(data, status, headers, config) {
 						console.log("AttributeLike Ottenuto")
 						console.log(data)
 						if (data.hasOwnProperty("errors")) {
-							return;
+							console.log("attributeLike non Ottenuti");
 						} else {
 							def.resolve(data);
 						}
@@ -322,10 +300,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						console.log("AttributeLike non Ottenuti " + status);
 
 					})
-		}, 1000);
-
-		ctr.prevPropSearch = "-1-";
-
+	
 		return def.promise.then(
 				function(val) {
 
@@ -344,13 +319,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 				})
 
-		// var results = $filter('filter')(ctr.propWord, {
-		// ATTRIBUTE_NM : query.toUpperCase()
-		// }, compareForNestedFiltering);
-		//
-		// console.log(results)
-		// return results;
+		
 	}
+
 
 	ctr.addProp = function(prop) {
 		console.log("aggiungo attributo")
@@ -444,7 +415,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						console.log("chipsword Ottenuto")
 						console.log(data)
 						if (data.hasOwnProperty("errors")) {
-
+							console.log("Words non Ottenuti ");
 						} else {
 							def.resolve(data);
 						}
@@ -516,10 +487,15 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					console.log("word salvato  Ottenuto")
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message)
-						showToast(translate
-								.load("sbi.glossary.word.save.error"), 3000);
-					} else {
+						showToast(data.errors[0].message)
+//						showToast(translate
+//								.load("sbi.glossary.word.save.error"), 3000);
+					}  else if (data.Status == "NON OK") {
+						showToast(
+								translate
+										.load(data.Message),
+								3000);
+					}else {
 
 						if (ctr.newWord.SaveOrUpdate == "Save") {
 
@@ -527,13 +503,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							delete ctr.newWord.NEWWORD;
 							product.push(ctr.newWord);
 						} else {
+							ctr.modyfyWordInSelectedGloss(ctr.selectedGloss.SBI_GL_CONTENTS,""+ctr.newWord.oldWord.WORD,""+ctr.newWord.WORD,"modify")
+							
 							ctr.newWord.oldWord.WORD = ctr.newWord.WORD;
+							
+							
 						}
 
 						ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 
-						showToast(translate
-								.load("sbi.glossary.word.save.success"), 3000);
+						showToast(translate.load("sbi.glossary.word.save.success"), 3000);
 						ctr.activeTab = 'Glossari';
 					}
 					hidePreloader();
@@ -546,6 +525,28 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	};
 
+	ctr.modyfyWordInSelectedGloss=function(arrList,oldName,newName,type){
+		if(arrList==undefined || arrlist==null){
+			return;
+		}
+		for(var i=0;i<arrList.length;i++){
+			if(arrList[i].hasOwnProperty("WORD") && arrList[i].WORD==oldName ){
+				if(type=="modify"){
+				arrList[i].WORD=newName;
+				break;  
+				//i break because if is a word , is unique in the list e dont'have child.
+				}else if(type=="delete"){
+					arrList.splice(i, 1);
+					break;
+					//i break because if is a word , is unique in the list e dont'have child.
+				}
+			}
+			if(arrList[i].hasOwnProperty("CHILD") ){
+				ctr.modyfyWordInSelectedGloss(arrList[i].CHILD,oldName,newName,type);
+			}
+		}
+	};
+	
 	ctr.deleteWord = function(ev) {
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
@@ -581,12 +582,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 															3000);
 
 												} else {
+
+													ctr.modyfyWordInSelectedGloss(ctr.selectedGloss.SBI_GL_CONTENTS,""+ev.WORD,"","delete");
 													var index = wds.indexOf(ev);
 													wds.splice(index, 1);
 													showToast(
 															translate
 																	.load("sbi.glossary.word.delete.success"),
 															3000);
+													
+													
 												}
 												hidePreloader();
 
@@ -900,7 +905,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 															translate
 																	.load("sbi.glossary.save.error"),
 															3000);
-												} else {
+												}  else if (data.Status == "NON OK") {
+													showToast(
+															translate
+																	.load(data.Message),
+															3000);
+												}else {
 
 													if (gctl.newGloss.SaveOrUpdate == "Save") {
 														// salvataggio riuscito
@@ -1036,8 +1046,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													if (elem.PARENT_ID != null) {
 														
 														
-														event.dest.nodesScope
-																.expand();
+														event.dest.nodesScope.expand();
 														
 														ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue);
 														
@@ -1095,16 +1104,19 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 			console.log(sourceNodeScope)
 			console.log(destNodesScope)
 
+			var isRootD=false;
+			if(destNodesScope.$parent.$type=="uiTree"){
+				isRootD=true;
+				console.log("isrootd")
+			}
+			
 			// check if is a D&D of word
 			if (sourceNodeScope.$modelValue.hasOwnProperty("WORD")) {
 
-				// check if is glossary root
-				if (destNodesScope.$parent.$modelValue
-						.hasOwnProperty("SBI_GL_CONTENTS")) {
-
+				if (isRootD) {
+					// root
 					console.log("D&D not avaible on the glossary root");
 					return false;
-
 				}
 				// check if have logical node child
 				if (destNodesScope.$parent.$modelValue
@@ -1140,9 +1152,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			} else {
 
-				if (destNodesScope.$parent.$modelValue
-						.hasOwnProperty("SBI_GL_CONTENTS")) {
+//				if (destNodesScope.$parent.$modelValue
+//						.hasOwnProperty("SBI_GL_CONTENTS")) {
+//					// root
+//					return true;
+//				}
+				if (isRootD) {
 					// root
+					console.log("root");
 					return true;
 				}
 
@@ -1187,7 +1204,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					: event.source.nodesScope.$nodeScope.$id;
 
 			if (n1 == n2) {
-				console.log("nessun movimento")
+				console.log("nessun movimento");
+				event.source.nodeScope.$$apply = false;
 				return;
 			}
 
@@ -1204,62 +1222,62 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							function() {
 								console.log("accettato");
 								
+								var isRootS=false;
+								var isRootD=false;
+								if(event.source.nodesScope.$parent.$type=="uiTree"){
+									isRootS=true;
+								}
+								
+								if(event.dest.nodesScope.$parent.$type=="uiTree"){
+									isRootD=true;
+								}
+								
 								var elem = event.source.nodeScope.item;
 
-								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
-										: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
-
+								elem.PARENT_ID = isRootD ? null: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
+								elem.OLD_PARENT_ID = isRootS ? null: event.source.nodesScope.$parent.$modelValue.CONTENT_ID;
 								elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
-
-								elem.OLD_PARENT_ID = event.source.nodesScope == null ? null
-										: event.source.nodesScope.$parent.$modelValue.CONTENT_ID;
-
+								
 								showPreloader();
 								restServices
-										.post("glossary",
-												"ModifyContentsGlossary", elem)
-										.success(
-												function(data, status, headers,
-														config) {
+										.post("glossary","ModifyContentsGlossary", elem)
+										.success(function(data, status, headers,config) {
 													console.log(data);
-													if (data
-															.hasOwnProperty("errors")) {
+													if (data.hasOwnProperty("errors")) {
 														showErrorToast(data.errors[0].message);
 														showToast(
 																translate
 																		.load("sbi.glossary.error.save"),
 																3000);
 													} else if (data.Status == "NON OK") {
-														showToast(
-																translate
-																		.load(data.Message),
-																3000);
+														showToast(translate.load(data.Message),	3000);
 													} else {
 
-														showToast(
-																translate
-																		.load("sbi.glossary.success.save"),
-																3000);
+														showToast(translate.load("sbi.glossary.success.save"),3000);
 
-														if (elem
-																.hasOwnProperty("WORD_ID")) {
+														if (elem.hasOwnProperty("WORD_ID")) {
 															// confirm that
 															// there is a word
 															// and check if
 															// destination have
 															// other word
+															if(!isRootD){
 															event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = true;
+															}
 															// equal to one
 															// because the
 															// element actual is
 															// no dragged
 
-															if (!event.source.nodesScope.$parent.$modelValue
+															
+															if(!isRootS){
+																if (!event.source.nodesScope.$parent.$modelValue
 																	.hasOwnProperty("CHILD")) {
-																event.source.nodesScope.$parent.$modelValue.CHILD = {};
-															}
-															if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
+																	event.source.nodesScope.$parent.$modelValue.CHILD = {};
+																}
+																if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
 																event.source.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = false;
+																}
 															}
 														} else {
 															// confirm that
@@ -1267,15 +1285,20 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 															// entand check if
 															// destination have
 															// other contents
+															if(!isRootD){
 															event.dest.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = true;
-															if (!event.source.nodesScope.$parent.$modelValue
-																	.hasOwnProperty("CHILD")) {
-																event.source.nodesScope.$parent.$modelValue.CHILD = {};
 															}
-															if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
-																event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = false;
+															if(!isRootS){
+																if (!event.source.nodesScope.$parent.$modelValue
+																	.hasOwnProperty("CHILD")) {
+																	event.source.nodesScope.$parent.$modelValue.CHILD = {};
+																}
+																if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
+																	event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = false;
+																}
 															}
 														}
+														
 														event.dest.nodesScope
 																.insertNode(
 																		event.dest.index,
@@ -1285,10 +1308,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																		event.source.index,
 																		1);
 
-														if (elem.PARENT_ID != null) {
+														if (!isRootD) {
 															event.dest.nodesScope.expand();
 															console.log(event.dest)
-															
 															ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue);
 														}
 
@@ -1328,8 +1350,18 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
 			console.log("accept TreeOptionsChips")
 			console.log(sourceNodeScope)
-			console.log(angular.element(document
-					.querySelector('.linkChips .md-chips')))
+			
+			if(sourceNodeScope.$modelValue.WORD_ID==ctr.newWord.WORD_ID){
+				console.log("Link con se stessi");
+					angular.element(document.querySelector('.linkChips .md-chips'))
+						.css("box-shadow", "0 2px rgb(255, 0, 0)");
+				$timeout(function() {
+					angular.element(
+							document.querySelector('.linkChips .md-chips'))
+							.css("box-shadow", "");
+				}, 500);
+				return false;
+			}
 
 			var found = $filter('filter')(ctr.newWord.LINK, {
 				WORD_ID : sourceNodeScope.$modelValue.WORD_ID
@@ -1459,12 +1491,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.toggle = function(scope, item, gloss) {
 		console.log("toggle")
 		console.log(scope)
-		scope.preloader = true;
+		item.preloader = true;
 		if (scope.collapsed) {
 			ctr.getGlossaryNode(gloss, item, scope)
 		} else {
 			scope.toggle();
-			scope.preloader = false;
+			item.preloader = false;
 		}
 	};
 
@@ -1607,7 +1639,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 															parent.CHILD
 																	.push(rn.tmpNW);
 															parent.HAVE_CONTENTS_CHILD = true;
-															scope.expand();
+//															scope.expand();
+															parent.preloader=true;
+															ctr.getGlossaryNode(ctr.selectedGloss,parent,scope);
+															
 														} else {
 															parent.SBI_GL_CONTENTS
 																	.push(rn.tmpNW);
@@ -1623,10 +1658,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														rn.tmpNW = JSON
 																.parse(JSON
 																		.stringify(EmptyLogicalNode));
-														showToast(
-																translate
-																		.load("sbi.glossary.error.modify"),
-																3000);
+//														showToast(translate.load("sbi.glossary.success.modify"),3000);
 
 													}
 
@@ -1856,7 +1888,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 								if (togg != undefined) {
 									togg.toggle();
-									togg.preloader = false;
+									node.preloader = false;
 								}
 							}
 						}).error(function(data, status, headers, config) {
@@ -1864,7 +1896,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					showToast(translate.load("sbi.glossary.load.error"), 3000);
 					if (togg != undefined) {
 						togg.toggle();
-						togg.preloader = false;
+						node.preloader = false;
 					}
 				})
 	}

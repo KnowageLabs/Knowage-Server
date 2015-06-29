@@ -112,30 +112,44 @@ public class GlossaryService {
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 			
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
 			//check if name is present
 			String gn=(String) requestVal.opt("GLOSSARY_NM");
 			if(gn.trim().isEmpty()){
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"Glossary name is request");
+//				throw new SpagoBIServiceException(req.getPathInfo(),
+//						"Glossary name is request");
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.new.name.request");
+				return jo.toString();
+			
 			}
 			
 			
-			JSONObject jo = new JSONObject();
-			jo.put("Status", "OK");
+			
 			SbiGlGlossary gloss;
+			List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal
+					.opt("GLOSSARY_NM"));
+			
 			
 			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save")==0) {
 				// check if there is another glossary with the same name
-				List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal
-						.opt("GLOSSARY_NM"));
 				if (!lg.isEmpty()) {
-					throw new SpagoBIServiceException(req.getPathInfo(),
-							"Glossary Name already defined");
+//					throw new SpagoBIServiceException(req.getPathInfo(),
+//							"Glossary Name already defined");
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.new.name.duplicate");
+					return jo.toString();
 				}
 				
 			 gloss = new SbiGlGlossary();
-			}
-			else{
+			}else{
+				//>0 because currently there is only the gloss that I want to change
+				if (lg.size()>0) {
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.new.name.duplicate");
+					return jo.toString();
+				}
 				gloss=dao.loadGlossary((Integer)requestVal.opt("GLOSSARY_ID"));
 			}
 			
@@ -255,7 +269,7 @@ public class GlossaryService {
 			Integer wordId = getNumberOrNull(req
 					.getParameter("WORD_ID"));
 			
-			dao.deleteWordReferences(wordId);
+//			dao.deleteWordReferences(wordId);
 			dao.deleteWord(wordId);
 
 			JSONObject jo = new JSONObject();
@@ -355,7 +369,6 @@ public class GlossaryService {
 		}
 	}
 	
-	
 	@POST
 	@Path("/addWord")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -371,22 +384,28 @@ public class GlossaryService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			SbiGlWord word;
-
+			JSONObject jo = new JSONObject();
 			boolean update=false;
 			// check uniqueness of name
 			List<SbiGlWord> lg = dao.loadWordByName((String) requestVal.opt("WORD"));
 			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save")==0) {
 				
 				if (!lg.isEmpty()) {
-					throw new SpagoBIServiceException(req.getPathInfo(),
-							"Word Name already defined");
+//					throw new SpagoBIServiceException(req.getPathInfo(),
+//							"Word Name already defined");
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.word.new.name.duplicate");
+					return jo.toString();
 				}
 				word = new SbiGlWord();
 			} else {
-				//>1 because currently there is only the word that I want to change
-				if (lg.size()>1) {
-					throw new SpagoBIServiceException(req.getPathInfo(),
-							"Word Name already defined");
+				//>0 because currently there is only the word that I want to change
+				if (lg.size()>0) {
+//					throw new SpagoBIServiceException(req.getPathInfo(),
+//							"Word Name already defined");
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.word.new.name.duplicate");
+					return jo.toString();
 				}
 				update=true;
 				word = dao.loadWord(getNumberOrNull(requestVal.opt("WORD_ID")));
@@ -426,7 +445,7 @@ public class GlossaryService {
 					}
 
 			Integer id = dao.insertWord(word, objLink, objAttr, MapAttr,MapLink,update);
-			JSONObject jo = new JSONObject();
+			
 			jo.put("Status", "OK");
 			jo.put("id", id);
 			return jo.toString();
