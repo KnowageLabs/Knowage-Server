@@ -52,7 +52,7 @@
 			renderSunburst(chartConf);
 			
 		}
-		else if (chartConf.chart.type === "parallel")
+		else if (chartConf.chart.type.toLowerCase() == "parallel")
 		{
 			renderParallelChart(chartConf);
 			

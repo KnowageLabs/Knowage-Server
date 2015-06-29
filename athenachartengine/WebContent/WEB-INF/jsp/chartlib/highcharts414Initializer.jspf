@@ -38,7 +38,7 @@
 	};
 
 	function renderChart(chartConf){
-		if(chartConf.chart.type == 'treemap'){
+		if(chartConf.chart.type.toLowerCase() == 'treemap'){
 			
 			renderTreemap(chartConf);	
 			
