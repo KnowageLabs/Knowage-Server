@@ -5,6 +5,7 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class SearchContentsByParent implements ICriterion<SbiGlContents> {
@@ -26,6 +27,7 @@ public class SearchContentsByParent implements ICriterion<SbiGlContents> {
 		}else{
 			c.add(Restrictions.isNull("parent.contentId"));
 		}
+		c.addOrder((Order.asc("contentNm")));
 		return c;
 	}
 

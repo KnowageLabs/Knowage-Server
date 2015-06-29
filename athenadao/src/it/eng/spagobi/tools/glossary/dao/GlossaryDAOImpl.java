@@ -40,6 +40,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.validator.Validator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +49,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		IGlossaryDAO {
 
 	static private Logger logger = Logger.getLogger(GlossaryDAOImpl.class);
+//	private  Validator validator;
 
 	@Override
 	public SbiGlGlossary loadGlossary(Integer id) {
@@ -258,7 +260,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) {
-
+//				ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+//			    validator = factory.getValidator();
+//			    Set<ConstraintViolation<Car>> constraintViolations =
+//			    	      validator.validate( car );
+//			    
+				
 				Integer wordId;
 
 				Boolean doUpdate = false;
@@ -458,8 +465,33 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	@Override
-	public void deleteWord(Integer wordId) {
-		delete(SbiGlWord.class, wordId);
+	public void deleteWord(final Integer wordId) {
+		
+		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
+
+			@Override
+			public Boolean execute(Session session) {
+
+					Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
+					q.setParameter("id", wordId);
+					q.executeUpdate();
+				
+					
+					Query q2 = session
+							.createQuery("delete from SbiGlWlist  where word.wordId=:id");
+					q2.setParameter("id", wordId);
+					q2.executeUpdate();
+					
+					Object obj = session.get(SbiGlWord.class, wordId);
+					if (obj != null) {
+						session.delete(obj);
+					}
+					return true;
+			}
+		});
+		
+		
+		
 	}
 
 	@Override

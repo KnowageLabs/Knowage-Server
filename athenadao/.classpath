@@ -38,5 +38,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
+	<classpathentry kind="lib" path="lib/hibernate-validator-3.1.0.GA.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
