@@ -1,5 +1,5 @@
 function renderWordCloud(chartConf){
-		console.log(chartConf);
+//		console.log(chartConf);
 	var maxic = 0;
 	
 	for (var i=0; i<chartConf.data[0].length; i++){
@@ -1115,7 +1115,8 @@ function renderWordCloud(chartConf){
 	
 	function renderParallelChart(data){
 
-
+//	console.log(data);
+		
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1620,7 +1621,6 @@ function renderWordCloud(chartConf){
 		var filteredData=coollectionToFilter.filter(function(d){return d[selectedCell.column]===selectedCell.value;});
 
 		//console.log(filteredData);
-
 
 		allTableData=filteredData;
 		currentTableData=allTableData.slice(0,5);

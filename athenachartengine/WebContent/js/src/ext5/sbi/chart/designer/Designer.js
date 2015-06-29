@@ -65,9 +65,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		},
+		
 		{
 			name: LN('sbi.chartengine.designer.charttype.treemap'), 
 			type: 'TREEMAP',
+			// TODO: Change the icon for this chart
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		},
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.parallel'), 
+			type: 'PARALLEL',
 			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}
@@ -166,10 +174,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// NEWCHARTS call this also for new charts
 			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' 
 				|| jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST'
-					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD') {
+					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD'
+						|| jsonTemplate.CHART.type.toUpperCase() == 'TREEMAP'
+							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL') {
 
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
-			}
+//				console.log(jsonTemplate);
+			}	
 			
 			this.docLabel = docLabel;
 			this.jsonTemplate = jsonTemplate;
@@ -237,10 +248,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
 					
 					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
-					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';	
+					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';		
 					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
+					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';	
 					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap)
+					if (isChartSunburst || isChartWordCloud  || isChartTreemap)
 					{
 						chartLegendCheckBox.hide();
 					}
@@ -249,7 +261,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						chartLegendCheckBox.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel)
 					{
 						chartOrientation.hide();
 					}
@@ -285,7 +297,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						colorPallete.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel)
 					{
 						chartLegend.hide();
 					}
@@ -957,7 +969,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
-			console.log(jsonTemplate);
+//			console.log(jsonTemplate);
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
   			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */
   			this.loadAxesAndSeries(jsonTemplate);
@@ -986,7 +998,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			
 			// *_* TODO: Add checking for other new charts also
-			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD")
+			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || chartType.toUpperCase() == "PARALLEL")
 			{			
 				if (category.length == undefined || category.length == null)
 				{

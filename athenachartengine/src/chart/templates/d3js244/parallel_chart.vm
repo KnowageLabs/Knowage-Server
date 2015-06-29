@@ -51,49 +51,52 @@
 
 #set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded))
 
+$datasettransformer.printOutFromVelocityModel($chart.type)
+
 {
- chart: 
- {
-  type: '$chartType',
-  serie: '$series',
-  groups: '$groups',
-  tooltip: '$columnsNeeded[1]',
-  group: '$columnsNeeded[0]',
-  font: '$font',
-  width: '$width',
-  height: '$height',
-  colors: '$colorsPal'
-  
- },
- tooltip:
- {
-	fontfamily: '$chart.TOOLTIP.FONTFAMILY.value',
-	fontsize: '$chart.TOOLTIP.FONTSIZE.value',
-	minwidth: '$chart.TOOLTIP.MINWIDTH.value',
-	maxwidth: '$chart.TOOLTIP.MAXWIDTH.value',
-	minheight: '$chart.TOOLTIP.MINHEIGHT.value',
-	maxheight: '$chart.TOOLTIP.MAXHEIGHT.value',
-	padding: '$chart.TOOLTIP.PADDING.value',
-	border: '$chart.TOOLTIP.BORDER.value',
- 	borderradius: '$chart.TOOLTIP.BORDERRADIUS.value'
- },
- axis: 
- {
-  color: '$axis.COLOR.value',
-  fill: '$axis.FILL.value',
-  colnamepadd: '$axis.COLNAMEPADD.value',
-  brushcolor: '$axis.BRUSHCOLOR.value',
-  brushwidth: '$axis.BRUSHWIDTH.value'
-  
- },
- limit:
- {
- 	max: '$chart.LIMIT.MAX.value',
- 	serie: '$chart.LIMIT.SERIE.value',
- 	order: '$chart.LIMIT.ORDER.value'
- 
- },
- emptymessage:
+ 	chart: 
+ 	{
+  		type: '$chart.type',
+  		serie: '$series',
+  		groups: '$groups',
+  		tooltip: '$columnsNeeded[1]',
+  		group: '$columnsNeeded[0]',
+  		font: '$chart.style.fontFamily',
+  		width: '$chart.width',
+  		height: '$chart.width',
+  		colors: '$colorsPal'  
+ 	},
+ 	
+ 	tooltip:
+ 	{
+		fontFamily: '$chart.TOOLTIP.style.fontFamily',
+		fontSize: '$chart.TOOLTIP.style.fontSize',
+		minWidth: '$chart.TOOLTIP.style.minWidth',
+		maxWidth: '$chart.TOOLTIP.style.maxWidth',
+		minHeight: '$chart.TOOLTIP.style.minHeight',
+		maxHeight: '$chart.TOOLTIP.style.maxheight',
+		padding: '$chart.TOOLTIP.style.padding',
+		border: '$chart.TOOLTIP.style.border',
+	 	borderRadius: '$chart.TOOLTIP.style.borderRadius'
+ 	},
+ 	
+ 	axis: 
+ 	{
+  		color: '$chart.AXES_LIST.AXIS.style.color',
+  		fillLine: '$chart.AXES_LIST.AXIS.style.fillLine',
+  		colNamePadd: '$chart.AXES_LIST.AXIS.style.colNamePadd',
+  		colorBrush: '$chart.AXES_LIST.AXIS.style.colorBrush',
+  		widthBrush: '$chart.AXES_LIST.AXIS.style.widthBrush'  
+ 	},
+ 	
+ 	limit:
+ 	{
+	 	max: '$chart.LIMIT.MAX.value',
+	 	serie: '$chart.LIMIT.SERIE.value',
+	 	order: '$chart.LIMIT.ORDER.value' 
+ 	},
+ 	
+ 	emptymessage:
 	{
 		text: '$chart.EMPTYMESSAGE.text',
 		height: '$chart.EMPTYMESSAGE.height',
@@ -108,10 +111,9 @@
 			fontColor: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontColor',
 			textAlign: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.textAlign'
 		}
-	},
+	}, 
  
- 
- title:
+ 	title:
 	{
 		text: '$chart.TITLE.text',
 		height: '$chart.TITLE.height',
@@ -144,8 +146,9 @@
 			textAlign: '$chart.SUBTITLE.SUBTITLE-STYLE.textAlign'
 		}
 	},
-data:
- [
- 	$result
- ]
+	
+	data:
+ 	[
+ 		$result
+ 	]
 }

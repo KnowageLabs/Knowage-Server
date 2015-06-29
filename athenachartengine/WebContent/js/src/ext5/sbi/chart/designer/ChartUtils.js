@@ -286,7 +286,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		var result = [];
     		
-    		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || chartType.toUpperCase() == "TREEMAP")
+    		if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL")
 			{
     			for (var i=0; i<categoriesStore.data.length; i++)
     			{
@@ -554,7 +554,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		{
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'SUNBURST' &&
 						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'WORDCLOUD' &&
-							Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'TREEMAP';
+							Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'PARALLEL';
 		},
 		
 		disableChartWidth: function() 
@@ -565,8 +565,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		disableChartOrientation: function() 
 		{
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST' ||
-						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD' ||
-							Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'TREEMAP';
+						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD' || 
+							Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'TREEMAP' || 
+								Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL';
 		},
 		
 		enableOpacityMouseOver: function() 
