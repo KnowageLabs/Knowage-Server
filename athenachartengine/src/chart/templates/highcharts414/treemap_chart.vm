@@ -25,12 +25,20 @@
 
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows))
 
+$datasettransformer.printdata($columnsNeeded,$serie,$dataColumnsMapper,$dataRows)
+
 {
  chart: 
  {
   type: '$chartType',
   font: '$font'
  },
+ 
+ colors: [
+		#foreach($color in $chart.COLORPALETTE.COLOR)
+		'$color.value', 
+		#end
+    ],
  
  emptymessage:
 	{

@@ -64,6 +64,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			type: 'WORDCLOUD',
 			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		},
+		{
+			name: LN('sbi.chartengine.designer.charttype.treemap'), 
+			type: 'TREEMAP',
+			// TODO: Change the icon for this chart
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}
 		
 		],
@@ -163,7 +169,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD') {
 
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
-
 			}
 			
 			this.docLabel = docLabel;
@@ -232,9 +237,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
 					
 					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
-					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';					 
+					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';	
+					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
 					
-					if (isChartSunburst || isChartWordCloud)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap)
 					{
 						chartLegendCheckBox.hide();
 					}
@@ -243,7 +249,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						chartLegendCheckBox.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap)
 					{
 						chartOrientation.hide();
 					}
@@ -279,7 +285,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						colorPallete.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap)
 					{
 						chartLegend.hide();
 					}

@@ -1,5 +1,5 @@
 function renderTreemap(chartConf) {
-    
+	
 	var points = [],
 	level0_p,
 	level0_val,
@@ -18,7 +18,7 @@ function renderTreemap(chartConf) {
 		level0_p = {
 				id: "id_" + level0_i,
 				name: level0,
-				color: Highcharts.getOptions().colors[level0_i]
+				color: chartConf.colors[level0_i]
 		};
 
 		level1_i = 0;
