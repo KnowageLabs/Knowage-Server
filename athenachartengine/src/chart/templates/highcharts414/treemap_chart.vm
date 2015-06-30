@@ -1,6 +1,5 @@
 #set($category = $chart.VALUES.CATEGORY)
 #set($chartType = $CHART.type)
-#set($font = $chart.FONT.type)
 #set($dataRows = $data.rows)
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
@@ -29,9 +28,14 @@
  chart: 
  {
   type: '$chartType',
-  font: '$font'
+  
+  style:
+		{			
+			fontFamily: '$chart.style.fontFamily',
+			fontSize: '$chart.style.fontSize',
+			fontWeight: '$chart.style.fontWeight'
+  		}
  },
- 
  colors: [
 		#foreach($color in $chart.COLORPALETTE.COLOR)
 		'$color.value', 
@@ -41,51 +45,42 @@
  emptymessage:
 	{
 		text: '$chart.EMPTYMESSAGE.text',
-		height: '$chart.EMPTYMESSAGE.height',
-		paddingLeft: '$chart.EMPTYMESSAGE.paddingLeft',
-		position: '$chart.EMPTYMESSAGE.position',
 		
 		style:
 		{
-			fontType: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontType',
-			fontStyle: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontStyle',
-			fontSize: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontSize',
-			fontColor: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.fontColor',
-			textAlign: '$chart.EMPTYMESSAGE.EMPTYMESSAGE-STYLE.textAlign'
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			fontColor: '$chart.EMPTYMESSAGE.style.color',
+			textAlign: '$chart.EMPTYMESSAGE.style.align'
 		}
 	},
 	
 	title:
 	{
 		text: '$chart.TITLE.text',
-		height: '$chart.TITLE.height',
-		paddingLeft: '$chart.TITLE.paddingLeft',
-		position: '$chart.TITLE.position',
 		
 		style:
 		{
-			fontType: '$chart.TITLE.TITLE-STYLE.fontType',
-			fontStyle: '$chart.TITLE.TITLE-STYLE.fontStyle',
-			fontSize: '$chart.TITLE.TITLE-STYLE.fontSize',
-			fontColor: '$chart.TITLE.TITLE-STYLE.fontColor',
-			textAlign: '$chart.TITLE.TITLE-STYLE.textAlign'
+			fontFamily: '$chart.TITLE.style.fontFamily',
+			fontSize: '$chart.TITLE.style.fontSize',
+			fontWeight: '$chart.TITLE.style.fontWeight',
+			fontColor: '$chart.TITLE.style.color',
+			textAlign: '$chart.TITLE.style.align'
 		}
 	},
 	
 	subtitle:
 	{
 		text: '$chart.SUBTITLE.text',
-		height: '$chart.SUBTITLE.height',
-		paddingLeft: '$chart.SUBTITLE.paddingLeft',
-		position: '$chart.SUBTITLE.position',
 		
 		style:
 		{
-			fontType: '$chart.SUBTITLE.SUBTITLE-STYLE.fontType',
-			fontStyle: '$chart.SUBTITLE.SUBTITLE-STYLE.fontStyle',
-			fontSize: '$chart.SUBTITLE.SUBTITLE-STYLE.fontSize',
-			fontColor: '$chart.SUBTITLE.SUBTITLE-STYLE.fontColor',
-			textAlign: '$chart.SUBTITLE.SUBTITLE-STYLE.textAlign'
+			fontFamily: '$chart.SUBTITLE.style.fontFamily',
+			fontSize: '$chart.SUBTITLE.style.fontSize',
+			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+			fontColor: '$chart.SUBTITLE.style.color',
+			textAlign: '$chart.SUBTITLE.style.align'
 		}
 	},
 	data:

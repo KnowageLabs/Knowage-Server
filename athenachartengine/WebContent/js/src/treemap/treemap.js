@@ -55,7 +55,12 @@ function renderTreemap(chartConf) {
 
 	var chart = new Highcharts.Chart({
 		chart: {
-			renderTo: 'mainPanel'
+			renderTo: 'mainPanel',
+			style: {
+	            fontFamily: chartConf.chart.style.fontFamily,
+	            fontSize: chartConf.chart.style.fontSize,
+	            fontWeight: chartConf.chart.style.fontWeight
+	        }
 		},
 		series: [{
 			type: "treemap",
@@ -75,11 +80,36 @@ function renderTreemap(chartConf) {
 			data: points
 		}],
 		subtitle: {
-			text: chartConf.subtitle.text
+			text: chartConf.subtitle.text,
+			style: {
+                color: chartConf.subtitle.style.fontColor,
+                fontWeight: chartConf.subtitle.style.fontWeight,
+                fontSize: chartConf.subtitle.style.fontSize,
+                fontFamily: chartConf.subtitle.style.fontFamily,
+                align: chartConf.subtitle.style.textAlign
+            }
 		},
 		title: {
-			text: chartConf.title.text
+			text: chartConf.title.text,
+			style: {
+                color: chartConf.title.style.fontColor,
+                fontWeight: chartConf.title.style.fontWeight,
+                fontSize: chartConf.title.style.fontSize,
+                fontFamily: chartConf.title.style.fontFamily,
+                align: chartConf.title.style.textAlign
+            }
+		},
+		noData: {
+			text: chartConf.emptymessage.text,
+			style: {
+                color: chartConf.emptymessage.style.fontColor,
+                fontWeight: chartConf.emptymessage.style.fontWeight,
+                fontSize: chartConf.emptymessage.style.fontSize,
+                fontFamily: chartConf.emptymessage.style.fontFamily,
+                align: chartConf.emptymessage.style.textAlign
+            }
 		}
+	
 	});
 
 }
