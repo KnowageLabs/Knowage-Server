@@ -40,7 +40,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.validator.Validator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +48,6 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		IGlossaryDAO {
 
 	static private Logger logger = Logger.getLogger(GlossaryDAOImpl.class);
-//	private  Validator validator;
 
 	@Override
 	public SbiGlGlossary loadGlossary(Integer id) {
@@ -260,12 +258,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) {
-//				ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-//			    validator = factory.getValidator();
-//			    Set<ConstraintViolation<Car>> constraintViolations =
-//			    	      validator.validate( car );
-//			    
-				
+
 				Integer wordId;
 
 				Boolean doUpdate = false;
