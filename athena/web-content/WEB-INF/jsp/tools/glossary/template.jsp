@@ -171,8 +171,7 @@
 <script type="text/ng-template" id="items_renderer.html">
 									
 
-<div context-menu data-target="WordTree-{{item.$$hashKey}}"
-	ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
+<div context-menu data-target="WordTree-{{item.$$hashKey}}" ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 
 
 
@@ -220,7 +219,7 @@
 		ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  ">
 	<!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
 	<p>Nuovo Nodo Logico</p>
-	</md-list-item> <md-list-item ng-click='1==1' role="menuitem" tabindex="2"
+	</md-list-item> <md-list-item ng-click='ctrl.createNewWord(false,this)' role="menuitem" tabindex="2"
 		ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
 	<p>Nuovo Vocabolo</p>
 	</md-list-item> <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"

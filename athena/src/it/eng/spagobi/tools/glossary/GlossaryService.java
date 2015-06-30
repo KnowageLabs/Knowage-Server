@@ -144,8 +144,8 @@ public class GlossaryService {
 				
 			 gloss = new SbiGlGlossary();
 			}else{
-				//>0 because currently there is only the gloss that I want to change
-				if (lg.size()>0) {
+				//>1 because currently there is only the gloss that I want to change
+				if (lg.size()>1) {
 					jo.put("Status", "NON OK");
 					jo.put("Message", "sbi.glossary.new.name.duplicate");
 					return jo.toString();
@@ -373,6 +373,7 @@ public class GlossaryService {
 	@Path("/addWord")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String newWord(@Context HttpServletRequest req) {
+		JSONObject jo = new JSONObject();
 		try {
 			System.out.println("newWord");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
@@ -384,7 +385,7 @@ public class GlossaryService {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			SbiGlWord word;
-			JSONObject jo = new JSONObject();
+			
 			boolean update=false;
 			// check uniqueness of name
 			List<SbiGlWord> lg = dao.loadWordByName((String) requestVal.opt("WORD"));
@@ -399,8 +400,8 @@ public class GlossaryService {
 				}
 				word = new SbiGlWord();
 			} else {
-				//>0 because currently there is only the word that I want to change
-				if (lg.size()>0) {
+				//>1 because currently there is only the word that I want to change
+				if (lg.size()>1) {
 //					throw new SpagoBIServiceException(req.getPathInfo(),
 //							"Word Name already defined");
 					jo.put("Status", "NON OK");
@@ -451,8 +452,20 @@ public class GlossaryService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+//			throw new SpagoBIServiceException(req.getPathInfo(),
+//					"An unexpected error occured while executing service", t);
+		
+			try {
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.word.save.error");
+				jo.put("Error_text",	t.getCause().getCause().getMessage());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+			return jo.toString();
 		}
 	}
 

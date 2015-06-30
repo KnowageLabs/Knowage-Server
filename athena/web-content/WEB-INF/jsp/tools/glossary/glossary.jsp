@@ -116,7 +116,7 @@ var serverPort ='<%=request.getServerPort()%>';
 					<div class="md-toolbar-tools">
 
 						<div>Word</div>
-						<md-button ng-click="ctrl.createNewWord()"
+						<md-button ng-click="ctrl.createNewWord(false)"
 							class="md-fab   md-ExtraMini" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
 							md-font-icon="fa fa-plus fa-2x"
@@ -256,22 +256,19 @@ var serverPort ='<%=request.getServerPort()%>';
 
 
 			</div>
-			<div flex="80" offset="20">
+			
+			<div flex="80" offset="20"  class="rightBox_GLOSS" >
 
 				<!-- class="hideTabs" -->
 
-				<md-content > <md-tabs md-dynamic-height  class="hideTabs"
-					md-border-bottom> <md-tab label="Glossari"
+				<md-content  >
+				 <md-tabs  md-dynamic-height  class="hideTabs" md-border-bottom style="height: 100%;"> 
+					<md-tab  label="Glossari"
 					md-on-select="ctrl.activeTab='Glossari'"
-					md-active="ctrl.activeTab=='Glossari'"> <md-content
-					class="md-padding" style="padding-bottom: 250px;"> <!-- 					<md-toolbar> -->
-				<!-- 				<div class="md-toolbar-tools"> --> <!-- 					<md-button ng-click="ctrl.createNewGlossary($event)" -->
-				<!-- 						class="md-fab   md-mini" aria-label="add word" --> <!-- 						style="margin: 18px;  margin-left: 0px; box-shadow: none ;  background-color: transparent !important;"> -->
-				<!-- 					<md-icon md-font-icon="fa fa-plus fa-2x" --> <!-- 						style="  color: greenyellow;"></md-icon> </md-button> -->
-
-				<!-- 				</div> --> <!-- 				</md-toolbar>  --> <md-content
-					layout-padding>
-
+					md-active="ctrl.activeTab=='Glossari'">
+					 <md-content class="md-padding" style="padding:0px;"> 
+					
+				
 				<div layout="row" layout-wrap>
 					<div flex="100">
 
@@ -288,6 +285,8 @@ var serverPort ='<%=request.getServerPort()%>';
 								<div context-menu data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"	>
 												<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p>
 								</div>
+								
+								
 								
 								<div class="dropdown position-fixed"
 									style="z-index: 999; margin-left: -25%; margin-top: -40px; width: 200px;"
@@ -348,8 +347,7 @@ var serverPort ='<%=request.getServerPort()%>';
 					</div>
 
 				</div>
-
-				</md-content> </md-content> </md-tab> <!-- 				<md-tab label="Vocabolo"> <md-content class="md-padding" -->
+</md-content> </md-tab> <!-- 				<md-tab label="Vocabolo"> <md-content class="md-padding" -->
 				<!-- 					new-word-form newWord="ctrl.newWord"> </md-content> </md-tab> </md-tabs> </md-content> -->
 
 				<md-tab label="Vocabolo" selected="true"
@@ -537,7 +535,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 					<div layout="row" layout-align="end end">
 						<md-button type="button" tabindex="-1" class="md-raised"
-							ng-click="ctrl.createNewWord('reset')" ng-show="ctrl.isEmpty()">Annulla</md-button>
+							ng-click="ctrl.createNewWord(true)" ng-show="ctrl.isEmptyNewWord()">Annulla</md-button>
 						<md-button type="submit" class="md-raised"
 							ng-disabled="ctrl.newWord.DESCR.length === 0  || ctrl.newWord.WORD.length === 0">Salva</md-button>
 					</div>

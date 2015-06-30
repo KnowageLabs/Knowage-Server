@@ -399,12 +399,16 @@ table tr:nth-child(even) {
 
 .angular-ui-tree-handle {
 	/*     background: #f8faff; */
-	border-left: 1px dashed #dae2ea;
+	border-left: 2px double #D3C1C1;
 	/*      border: 1px solid #dae2ea; */
 	/*     color: #7c9eb2; */
 	    padding: 4px 0px;
 	/*     padding-bottom: 20px; */
 
+}
+
+#GlossTree ol.angular-ui-tree-nodes li{
+		border-left: 1px dotted #D3C1C1;
 }
 
 
@@ -569,4 +573,15 @@ md-tabs.hideTabs md-tabs-wrapper {
     position: initial;
 }
 
+
+.rightBox_GLOSS{
+	position: absolute;
+	 width: 100%; 
+	 height: 100%;
+	 padding-left: 20px;
+}
+
+.rightBox_GLOSS md-content,.rightBox_GLOSS div.ng-scope.ng-isolate-scope ,.rightBox_GLOSS md-tab-content,.rightBox_GLOSS md-tabs-content-wrapper,.rightBox_GLOSS md-tabs{
+	height: 100% !important;
+}
 
