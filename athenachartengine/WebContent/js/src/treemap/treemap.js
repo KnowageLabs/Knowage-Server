@@ -81,32 +81,32 @@ function renderTreemap(chartConf) {
 		}],
 		subtitle: {
 			text: chartConf.subtitle.text,
+			align: chartConf.subtitle.style.textAlign,
 			style: {
                 color: chartConf.subtitle.style.fontColor,
                 fontWeight: chartConf.subtitle.style.fontWeight,
                 fontSize: chartConf.subtitle.style.fontSize,
-                fontFamily: chartConf.subtitle.style.fontFamily,
-                align: chartConf.subtitle.style.textAlign
+                fontFamily: chartConf.subtitle.style.fontFamily
             }
 		},
 		title: {
 			text: chartConf.title.text,
+			align: chartConf.title.style.textAlign,
 			style: {
                 color: chartConf.title.style.fontColor,
                 fontWeight: chartConf.title.style.fontWeight,
                 fontSize: chartConf.title.style.fontSize,
-                fontFamily: chartConf.title.style.fontFamily,
-                align: chartConf.title.style.textAlign
+                fontFamily: chartConf.title.style.fontFamily
             }
 		},
 		noData: {
 			text: chartConf.emptymessage.text,
+			align: chartConf.emptymessage.style.textAlign,
 			style: {
                 color: chartConf.emptymessage.style.fontColor,
                 fontWeight: chartConf.emptymessage.style.fontWeight,
                 fontSize: chartConf.emptymessage.style.fontSize,
-                fontFamily: chartConf.emptymessage.style.fontFamily,
-                align: chartConf.emptymessage.style.textAlign
+                fontFamily: chartConf.emptymessage.style.fontFamily
             }
 		}
 	
