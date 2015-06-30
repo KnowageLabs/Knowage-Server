@@ -35,8 +35,31 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			
 			var globalThis = this;
 			
-			if(((thisChartType == 'bar' || thisChartType == 'line') && selectedType.toLowerCase() == 'pie')
-					|| (thisChartType == 'pie' && selectedType.toLowerCase() != 'pie')) {
+			var compatybilityLookup = 
+			{
+				bar: ['line'],
+				line: ['bar'],
+				pie: [],
+				sunburst: [],
+				wordcloud: [],
+				treemap: [],
+				parallel: []
+			};
+			
+			var compatibleTypes = false;
+			
+			// foreach
+			for(i in compatybilityLookup[selectedType.toLowerCase()]) 
+			{
+				var compatibleChart = compatybilityLookup[selectedType.toLowerCase()][i];
+				compatibleTypes = compatibleTypes || compatibleChart == thisChartType;
+			}
+			
+			if(!compatibleTypes) 
+			{		
+		
+//			if(((thisChartType == 'bar' || thisChartType == 'line') && selectedType.toLowerCase() == 'pie')
+//					|| (thisChartType == 'pie' && selectedType.toLowerCase() != 'pie')) {
 				
 				Ext.Msg.show({
 					title : '',

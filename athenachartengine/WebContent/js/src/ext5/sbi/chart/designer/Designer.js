@@ -36,8 +36,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 		selectedChartType: '',
 		
 		// chart types
-		//*_* TODO: Add here new chart types: sunburst, wordcloud and treemap
-		// *_* TODO: Change icon for the sunburst chart (iconUrl)
     	chartTypes : [{
 			name: LN('sbi.chartengine.designer.charttype.bar'), 
 			type: 'BAR',
@@ -55,28 +53,24 @@ Ext.define('Sbi.chart.designer.Designer', {
 		{
 			name: LN('sbi.chartengine.designer.charttype.sunburst'), 
 			type: 'SUNBURST',
-			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}, 
 		
 		{
 			name: LN('sbi.chartengine.designer.charttype.wordcloud'), 
 			type: 'WORDCLOUD',
-			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		},
 		
 		{
 			name: LN('sbi.chartengine.designer.charttype.treemap'), 
 			type: 'TREEMAP',
-			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		},
 		
 		{
 			name: LN('sbi.chartengine.designer.charttype.parallel'), 
 			type: 'PARALLEL',
-			// TODO: Change the icon for this chart
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}
 		
@@ -163,6 +157,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			var newChart = false;
 			
+			// *_*
+			var globalThis = this;
+			
 			/* *_* This part is executed whenever we don't specify 
 			 * chart (XML template) for the document - at the beginning */
 			if (!jsonTemplate.CHART) {
@@ -179,7 +176,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL') {
 
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
-//				console.log(jsonTemplate);
 			}	
 			
 			this.docLabel = docLabel;
@@ -222,14 +218,14 @@ Ext.define('Sbi.chart.designer.Designer', {
  			});
 			
 			var onSelectJsonTemplate = "";
-						
+			
 			// *_* Listens when chart type is changed
 			this.chartTypeSelector.on
 			(
 				"newrowclick",
 				
 				function()
-				{					
+				{				
 					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
 					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);
 					
@@ -247,12 +243,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 					/* Second configuration panel elements for hiding/showing when the WORDCLOUD is selected */
 					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
 					
+					/* Second configuration panel elements for hiding/showing when the PARALLEL is selected */
+					var parallelLimitPanel = secondConfigurationPanel.getComponent("chartParallelLimit");
+					var parallelAxesLinesPanel = secondConfigurationPanel.getComponent("chartParallelAxesLines");					
+					var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
+					
 					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
 					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';		
 					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
 					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';	
 					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap)
+					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel || isChartTreemap)
 					{
 						chartLegendCheckBox.hide();
 					}
@@ -323,16 +324,30 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						wordCloudPanel.hide();
 					}
+					
+					if (isChartParallel)
+					{
+						parallelLimitPanel.show();
+						parallelAxesLinesPanel.show();
+						parallelTooltipPanel.show();
+					}
+					else
+					{
+						parallelLimitPanel.hide();
+						parallelAxesLinesPanel.hide();
+						parallelTooltipPanel.hide();
+					}
 				}
 			);
 			
 			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
 			
-			this.chartTypeSelector.setChartType(selectedChartType);
+			this.chartTypeSelector.setChartType(selectedChartType);			
 			
 			// *_* Store that contains the data about SERIE column(s) for the chart
 			this.columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
+ 				id: "axisesContainerStore",
  				sorters: [{
  					property: 'serieColumn',
  					direction: 'ASC'
@@ -355,11 +370,14 @@ Ext.define('Sbi.chart.designer.Designer', {
  		  						});
  		  					}
  		  				});
- 		  				
+ 						
  		  				this.setData(theData);	// *_* Set the 'data' attribute of the store
  		  			}
  				}
  			});
+			
+			// *_*
+			this.seriesBeforeDropStore = Ext.create("Ext.data.Store",{id:"storeForSeriesBeforeDrop", fields: [{name: 'seriesColumn'}]});
 			
 			var columnsPickerStore = this.columnsPickerStore;
 			
@@ -578,7 +596,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				id: 'chartLeftAxisesContainer',
   				alias: 'Asse Y',
   				otherPanel: this.rightYAxisesPanel
-  			});
+  			});		
 			
 			this.categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
   				storeId: 'categoriesStore'
@@ -766,7 +784,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			// tabs integration
 			var coreServiceManager = this.coreServiceManager;
-			var globalThis = this;
 			
 			this.stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
@@ -969,7 +986,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
-//			console.log(jsonTemplate);
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
   			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */
   			this.loadAxesAndSeries(jsonTemplate);
@@ -997,8 +1013,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// NEWCHARTS: MANAGE MULTIPLE CATEGORIES AS A LIST
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			
-			// *_* TODO: Add checking for other new charts also
-			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || chartType.toUpperCase() == "PARALLEL")
+			// *_*
+			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL")
 			{			
 				if (category.length == undefined || category.length == null)
 				{
@@ -1064,11 +1080,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}			
 		},
 		
+		
+			
+			
 		loadAxesAndSeries: function(jsonTemplate) {
 			var leftYAxisesPanel = this.leftYAxisesPanel;
 			var rightYAxisesPanel = this.rightYAxisesPanel;
 			var bottomXAxisesPanel = this.bottomXAxisesPanel;
-			
+			var globThis = this;
 			Sbi.chart.designer.ChartColumnsContainerManager.resetContainers();
 
 			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
@@ -1142,6 +1161,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 										serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
 										serieTooltipFontSize: jsonTooltipStyle.fontSize
 							});
+							
+							// *_* 
+							globThis.seriesBeforeDropStore.add(newCol);
+							
 							store.add(newCol);
 						}
 					});

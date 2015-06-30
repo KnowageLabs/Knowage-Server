@@ -113,11 +113,6 @@ public class DataSetTransformer {
 		
 		return fr;
 	}
-	
-	public void printOutFromVelocityModel(Object object)
-	{
-		System.out.println(object);
-	}
 
 	/* Merging codes - Sunburst */
 

@@ -29,7 +29,7 @@ Ext.define
 		constructor: function(config) 
 		{
 			this.callParent(config);
-			this.viewModel = config.viewModel;			
+			this.viewModel = config.viewModel;	
 									
 	        var item = 
         	[        	 	
@@ -83,7 +83,7 @@ Ext.define
             		 minValue: '2'
             	}
             ];
-	        
+	        	        
 	        this.add(item);
 		}
 });

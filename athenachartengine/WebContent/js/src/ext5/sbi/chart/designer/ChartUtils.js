@@ -97,7 +97,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     		
     		Ext.apply(CHART, chartData);
     		    		
-    		var AXES_LIST = {};
+    		var AXES_LIST = {};		
+    		
+    		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == "PARALLEL")
+			{
+    			// *_*	Added for the TIP tag for the PARALLEL chart (AXES_LINES tag)   
+     			var axesList = "";
+    			axesList += 'axisColNamePadd:' + ((chartModel.get('axisColNamePadd'))? chartModel.get('axisColNamePadd'): '') + ';';
+    			axesList += 'brushWidth:' + ((chartModel.get('brushWidth'))? chartModel.get('brushWidth'): '') + ';';
+    			axesList += 'axisColor:' + ((chartModel.get('axisColor') != undefined && chartModel.get('axisColor') != '')? 
+        				'#' + chartModel.get('axisColor') : '') + ';';
+    			axesList += 'brushColor:' + ((chartModel.get('brushColor') != undefined && chartModel.get('brushColor') != '')? 
+        				'#' + chartModel.get('brushColor') : '') + ';';
+    			
+     			AXES_LIST['style'] = axesList;
+    			CHART['AXES_LIST'] = AXES_LIST;
+			}			
+    		
     		var AXIS = ChartUtils.getAxesDataAsOriginalJson();
     		AXES_LIST['AXIS'] = AXIS;
     		CHART['AXES_LIST'] = AXES_LIST;
@@ -518,6 +534,36 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
     			CHART['TIP'] = TIP;
     			// *_* (END)
 			}    		
+    		
+    		// *_* (START)
+    		if (chartType.toUpperCase() == "PARALLEL")
+			{	 				 				 			
+    			var LIMIT = {};					
+    			var limitStyle = '';
+    			
+    			limitStyle += 'maxNumberOfLines:' + ((chartModel.get('maxNumberOfLines'))? chartModel.get('maxNumberOfLines'): '') + ';';					
+    			limitStyle += 'serieFilterColumn:' + ((chartModel.get('serieFilterColumn'))? chartModel.get('serieFilterColumn'): '') + ';';					
+    			limitStyle += 'orderTopMinBottomMax:' + ((chartModel.get('orderTopMinBottomMax'))? chartModel.get('orderTopMinBottomMax'): '') + ';';	    			
+    			   
+    			LIMIT['style'] = limitStyle;
+    			CHART['LIMIT'] = LIMIT;   
+    			
+    			var PARALLEL_TOOLTIP = {};
+    			var parallelTooltipStype = "";
+    			
+    			parallelTooltipStype += 'fontFamily:' + ((chartModel.get('parallelTooltipFontFamily'))? chartModel.get('parallelTooltipFontFamily'): '') + ';';	
+    			parallelTooltipStype += 'fontSize:' + ((chartModel.get('parallelTooltipFontSize'))? chartModel.get('parallelTooltipFontSize'): '') + ';';
+    			parallelTooltipStype += 'minWidth:' + ((chartModel.get('parallelTooltipMinWidth'))? chartModel.get('parallelTooltipMinWidth'): '') + ';';
+    			parallelTooltipStype += 'maxWidth:' + ((chartModel.get('parallelTooltipMaxWidth'))? chartModel.get('parallelTooltipMaxWidth'): '') + ';';
+    			parallelTooltipStype += 'minHeight:' + ((chartModel.get('parallelTooltipMinHeight'))? chartModel.get('parallelTooltipMinHeight'): '') + ';';
+    			parallelTooltipStype += 'maxHeight:' + ((chartModel.get('parallelTooltipMaxHeight'))? chartModel.get('parallelTooltipMaxHeight'): '') + ';';
+    			parallelTooltipStype += 'padding:' + ((chartModel.get('parallelTooltipPadding'))? chartModel.get('parallelTooltipPadding'): '') + ';';
+    			parallelTooltipStype += 'border:' + ((chartModel.get('parallelTooltipBorder'))? chartModel.get('parallelTooltipBorder'): '') + ';';
+    			parallelTooltipStype += 'borderRadius:' + ((chartModel.get('parallelTooltipBorderRadius'))? chartModel.get('parallelTooltipBorderRadius'): '') + ';';
+    			
+    			PARALLEL_TOOLTIP['style'] = parallelTooltipStype;
+    			CHART['PARALLEL_TOOLTIP'] = PARALLEL_TOOLTIP;   
+    		} 
 			
     		return CHART;
     	},
@@ -554,7 +600,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		{
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'SUNBURST' &&
 						Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'WORDCLOUD' &&
-							Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'PARALLEL';
+							Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'PARALLEL' &&
+								Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'TREEMAP';
 		},
 		
 		disableChartWidth: function() 
@@ -580,6 +627,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'WORDCLOUD';
 		},
 		
+		enableParallelPanel: function()
+		{
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'PARALLEL';
+		},
+		
 		createChartConfigurationModelFromJson: function(jsonTemplate){
 						
 			var jsonChartStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.style);
@@ -602,6 +654,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   						
 			var jsonTipText = jsonTemplate.CHART.TIP ? jsonTemplate.CHART.TIP.text : '';
 			var jsonTipStyle = jsonTemplate.CHART.TIP ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TIP.style) : '';
+  			/* END */
+			
+			// *_* Variables used for PARALLEL chart
+  			/* START */ 
+  			var jsonParallelLimitStyle = jsonTemplate.CHART.LIMIT ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.LIMIT.style) : '';
+  			var jsonParallelAxisStyle = jsonTemplate.CHART.AXES_LIST ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style) : '';  			
+  			var jsonParallelTooltipStyle = jsonTemplate.CHART.PARALLEL_TOOLTIP ? Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.PARALLEL_TOOLTIP.style) : '';
   			/* END */
   			
   			var colorPalette = [];
@@ -657,11 +716,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
   				nodataDimension: jsonEmptyMsgStyle.fontSize,
   				nodataStyle: jsonEmptyMsgStyle.fontWeight,
   				
-  				// *_* Added for the SUNBURST (EMPTYMESSAGE tag)
-  				nodataHeight: jsonEmptyMsgStyle.height,
-  				nodataPaddingLeft: jsonEmptyMsgStyle.paddingLeft,
-  				nodataPosition: jsonEmptyMsgStyle.position,
-  				
   				showLegend: chartLegend.show,
   				legendPosition: chartLegend.position,
   				legendLayout: chartLegend.layout,
@@ -696,8 +750,29 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 	  			tipFontWeight: jsonTipStyle.fontWeight,
 	  			tipFontSize: jsonTipStyle.fontSize,
 	  			tipColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonTipStyle.color),  			
- 				tipWidth: jsonTipStyle.width
-	  			
+ 				tipWidth: jsonTipStyle.width,
+ 			 				
+ 				// *_*	Added for the TIP tag for the PARALLEL chart (LIMIT tag)
+ 			 	maxNumberOfLines: jsonParallelLimitStyle.maxNumberOfLines,
+ 			 	serieFilterColumn: jsonParallelLimitStyle.serieFilterColumn,
+ 			 	orderTopMinBottomMax: jsonParallelLimitStyle.orderTopMinBottomMax,
+ 				
+ 			 	// *_*	Added for the TIP tag for the PARALLEL chart (AXES_LINES tag) 			 	
+ 			 	axisColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.axisColor),
+	 			axisColNamePadd: jsonParallelAxisStyle.axisColNamePadd,
+	 			brushColor: Sbi.chart.designer.ChartUtils.removeStartingHash(jsonParallelAxisStyle.brushColor),
+	 			brushWidth: jsonParallelAxisStyle.brushWidth,
+	 				 			
+	 			// *_*	Added for the TIP tag for the PARALLEL chart (TOOLTIP tag)
+	 			parallelTooltipFontFamily: jsonParallelTooltipStyle.fontFamily,
+	 			parallelTooltipFontSize: jsonParallelTooltipStyle.fontSize,
+	 			parallelTooltipMinWidth: jsonParallelTooltipStyle.minWidth,
+	 			parallelTooltipMaxWidth: jsonParallelTooltipStyle.maxWidth,
+	 			parallelTooltipMinHeight: jsonParallelTooltipStyle.minHeight,
+	 			parallelTooltipMaxHeight: jsonParallelTooltipStyle.maxHeight,
+	 			parallelTooltipPadding: jsonParallelTooltipStyle.padding,
+	 			parallelTooltipBorder: jsonParallelTooltipStyle.border,
+	 			parallelTooltipBorderRadius: jsonParallelTooltipStyle.borderRadius
   			});
   			
   			return cModel;

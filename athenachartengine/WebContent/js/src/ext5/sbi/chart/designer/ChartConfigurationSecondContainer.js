@@ -34,30 +34,39 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			{
 				viewModel: this.viewModel
 			}
-		); 
+		); 		
 		
-		this.add(toolbarAndTip);
-		this.add(palette);
+		var parallelChartLimit = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationParallelLimit",
+			{
+				viewModel: this.viewModel
+			}
+		);
+		
+		var parallelChartAxesLines = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationParallelAxesLines",
+			{
+				viewModel: this.viewModel
+			}
+		);
+		
+		var parallelChartTooltip = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationParallelTooltip",
+			{
+				viewModel: this.viewModel
+			}
+		);	
+		
 		this.add(legend);
+		this.add(palette);
+		this.add(toolbarAndTip);	
 		this.add(wordCloudParameters);
-		
-		if (ChartUtils.enableToolbarAndTip())
-		{
-			this.getComponent("chartToolbarAndTip").show();
-		}
-		else 
-		{
-			this.getComponent("chartToolbarAndTip").hide();
-		}
-		
-		if (ChartUtils.enablePalette())
-		{
-			this.getComponent("chartColorPallete").show();
-		}
-		else 
-		{
-			this.getComponent("chartColorPallete").hide();
-		}
+		this.add(parallelChartLimit);	
+		this.add(parallelChartAxesLines);
+		this.add(parallelChartTooltip);
 		
 		if (ChartUtils.enableLegend())
 		{
@@ -68,6 +77,24 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartLegend").hide();
 		}
 		
+		if (ChartUtils.enablePalette())
+		{
+			this.getComponent("chartColorPallete").show();
+		}
+		else 
+		{
+			this.getComponent("chartColorPallete").hide();
+		}	
+		
+		if (ChartUtils.enableToolbarAndTip())
+		{
+			this.getComponent("chartToolbarAndTip").show();
+		}
+		else 
+		{
+			this.getComponent("chartToolbarAndTip").hide();
+		}
+		
 		if (ChartUtils.enableWordcloudPanel())
 		{
 			this.getComponent("wordcloudConfiguration").show();
@@ -75,6 +102,19 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		else 
 		{
 			this.getComponent("wordcloudConfiguration").hide();
+		}
+		
+		if (ChartUtils.enableParallelPanel())
+		{
+			this.getComponent("chartParallelLimit").show();
+			this.getComponent("chartParallelAxesLines").show();
+			this.getComponent("chartParallelTooltip").show();
+		}
+		else 
+		{
+			this.getComponent("chartParallelLimit").hide();
+			this.getComponent("chartParallelAxesLines").hide();
+			this.getComponent("chartParallelTooltip").hide();
 		}
     }
     

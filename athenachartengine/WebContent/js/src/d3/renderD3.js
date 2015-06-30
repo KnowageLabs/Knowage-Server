@@ -1,5 +1,5 @@
 function renderWordCloud(chartConf){
-//		console.log(chartConf);
+
 	var maxic = 0;
 	
 	for (var i=0; i<chartConf.data[0].length; i++){
@@ -1114,16 +1114,14 @@ function renderWordCloud(chartConf){
 	}	
 	
 	function renderParallelChart(data){
-
-//	console.log(data);
 		
 	var records = data.data[0];
 
 	if(records.length>0){
 
-		if (records.length>data.limit.max){
+		if (records.length>data.limit.maxNumberOfLines){
 
-			var limitcolumn = data.limit.serie;
+			var limitcolumn = data.limit.serieFilterColumn;
 
 			records.sort(function(obj1, obj2) {
 				return obj1[limitcolumn] - obj2[limitcolumn];
@@ -1132,15 +1130,15 @@ function renderWordCloud(chartConf){
 		
 		var len = records.length;
 		
-		var max = data.limit.max;
+		var max = data.limit.maxNumberOfLines;
 		
-		if (data.limit.order === 'top'){
+		if (data.limit.orderTopMinBottomMax === 'top'){
 			
 			var slicedData = records.slice(len-max,len);
 			
 			records = slicedData;
 		}
-		else if (data.limit.order === 'bottom'){
+		else if (data.limit.orderTopMinBottomMax === 'bottom'){
 			
 			var slicedData = records.slice(0,max);
 			
@@ -1194,7 +1192,7 @@ function renderWordCloud(chartConf){
 
 	var myColors=d3.scale.ordinal().domain(groups).range(colors);
 
-	    var brushWidth = data.axis.brushwidth;
+	    var brushWidth = data.axis.brushWidth;
 
 		var brushx = -Number(brushWidth)/2;
 
@@ -1209,35 +1207,30 @@ function renderWordCloud(chartConf){
 		axis = d3.svg.axis().orient("left"),
 		foreground;
 
-		var titleFontSize = parseInt(data.title.style.fontSize);
-		var titleDivHeight = parseInt(data.title.height);
-		var titleTotal = titleDivHeight+titleFontSize/2;
+//		var titleFontSize = parseInt(data.title.style.fontSize);
+//		var titleDivHeight = parseInt(data.title.height);
+//		var titleTotal = titleDivHeight+titleFontSize/2;
 
+		// Set title
 		d3.select("body").append("div")
-		.style("height",titleTotal)
-		.style("position",data.title.position)
-		.style("left",data.title.paddingLeft)
-		.style("color",data.title.style.fontColor)
-		.style("text-align",data.title.style.textAlign)
-		.style("font-family",data.title.style.fontType)
-		.style("font-style",data.title.style.fontStyle)
-		.style("font-size",titleFontSize)
+		.style("color",data.title.style.color)
+		.style("text-align",data.title.style.align)
+		.style("font-family",data.title.style.fontFamily)
+		.style("font-style",data.title.style.fontWeight)
+		.style("font-size",data.title.style.fontSize)
 		.text(data.title.text);
 
-		var subtitleFontSize = parseInt(data.subtitle.style.fontSize);
-		var subtitleDivHeight = parseInt(data.subtitle.height);
-		var subtitleTotal = subtitleDivHeight+subtitleFontSize/2;
+//		var subtitleFontSize = parseInt(data.subtitle.style.fontSize);
+//		var subtitleDivHeight = parseInt(data.subtitle.height);
+//		var subtitleTotal = subtitleDivHeight+subtitleFontSize/2;
 
 		// Set subtitle
 		d3.select("body").append("div")
-		.style("height",subtitleTotal)
-		.style("position",data.subtitle.position)
-		.style("left",data.subtitle.paddingLeft)
-		.style("color",data.subtitle.style.fontColor)
-		.style("text-align",data.subtitle.style.textAlign)
-		.style("font-family",data.subtitle.style.fontType)
-		.style("font-style",data.subtitle.style.fontStyle)
-		.style("font-size",subtitleFontSize)
+		.style("color",data.subtitle.style.color)
+		.style("text-align",data.subtitle.style.align)
+		.style("font-family",data.subtitle.style.fontFamily)
+		.style("font-style",data.subtitle.style.fontWeight)
+		.style("font-size",data.subtitle.style.fontSize)
 		.text(data.subtitle.text);
 
 		var svg = d3.select("body").append("svg:svg")
@@ -1293,15 +1286,15 @@ function renderWordCloud(chartConf){
 		d3.selectAll(".tooltip")
 		.style("position","absolute")
 		.style("text-align","center")
-		.style("min-width",data.tooltip.minwidth+"px")
-		.style("max-width",data.tooltip.manwidth+"px")
-		.style("min-height",data.tooltip.minheight+"px")
-		.style("max-height",data.tooltip.manheight+"px")
+		.style("min-width",data.tooltip.minWidth+"px")
+		.style("max-width",data.tooltip.maxWidth+"px")
+		.style("min-height",data.tooltip.minHeight+"px")
+		.style("max-height",data.tooltip.maxHeight+"px")
 		.style("padding",data.tooltip.padding+"px")
-		.style("font-size",data.tooltip.fontsize+"px")
-		.style("font-family",data.tooltip.fontfamily)
+		.style("font-size",data.tooltip.fontSize+"px")
+		.style("font-family",data.tooltip.fontFamily)
 		.style("border",data.tooltip.border+"px")
-		.style("border-radius",data.tooltip.borderradius+"px")
+		.style("border-radius",data.tooltip.borderRadius+"px")
 		.style("pointer-events","none");
 		
 		foreground = svg.append("svg:g")
@@ -1372,15 +1365,15 @@ function renderWordCloud(chartConf){
 		.each(function(d) { d3.select(this).call(axis.scale(y[d])); })
 		.append("svg:text")
 		.attr("text-anchor", "middle")
-		.attr("y", data.axis.colnamepadd)
+		.attr("y", -data.axis.axisColNamePadd)
 		.text(String)
 		.style({"cursor":"move"});
 
-		g.selectAll(".axis line, .axis path").style({"fill":data.axis.fill,"stroke": data.axis.color,"shape-rendering": "crispEdges"});
+		g.selectAll(".axis line, .axis path").style({"fill":"none","stroke": data.axis.axisColor,"shape-rendering": "crispEdges"});
 
 		// Add a brush for each axis.
 		g.append("svg:g")
-		.style({"fill-opacity":" .3","stroke":data.axis.brushcolor,"shape-rendering":" crispEdges"})
+		.style({"fill-opacity":" .3","stroke":data.axis.brushColor,"shape-rendering":" crispEdges"})
 		.each(function(d) { d3.select(this).call(y[d].brush); })
 		.selectAll("rect")
 		.attr("x", brushx)
@@ -1390,20 +1383,20 @@ function renderWordCloud(chartConf){
 
 	else{
 
-		var emptyMsgFontSize = parseInt(data.emptymessage.style.fontSize);
-		var emptyMsgDivHeight = parseInt(data.emptymessage.height);
-		var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
+//		var emptyMsgFontSize = parseInt(data.emptymessage.style.fontSize);
+//		var emptyMsgDivHeight = parseInt(data.emptymessage.height);
+//		var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
 
 		// Set title
 		d3.select("body").append("div")
-		.style("height",emptyMsgTotal)
-		.style("position",data.emptymessage.position)
-		.style("left",data.emptymessage.paddingLeft)
-		.style("color",data.emptymessage.style.fontColor)
-		.style("text-align",data.emptymessage.style.textAlign)
-		.style("font-family",data.emptymessage.style.fontType)
-		.style("font-style",data.emptymessage.style.fontStyle)
-		.style("font-size",emptyMsgFontSize)
+//		.style("height",emptyMsgTotal)
+//		.style("position",data.emptymessage.position)
+//		.style("left",data.emptymessage.paddingLeft)
+		.style("color",data.emptymessage.style.color)
+		.style("text-align",data.emptymessage.style.align)
+		.style("font-family",data.emptymessage.style.fontFamily)
+		.style("font-style",data.emptymessage.style.fontWeight)
+		.style("font-size",data.emptymessage.style.fontSize)
 		.text(data.emptymessage.text);	
 
 	}
@@ -1614,13 +1607,11 @@ function renderWordCloud(chartConf){
 	}
 
 	function filterTable(selectedCell,coollectionToFilter){
-		//console.log(selectedCell);
+		
 		nextButton.attr("disabled",null);
 		prevButton.attr("disabled",null);
 
-		var filteredData=coollectionToFilter.filter(function(d){return d[selectedCell.column]===selectedCell.value;});
-
-		//console.log(filteredData);
+		var filteredData=coollectionToFilter.filter(function(d){return d[selectedCell.column]===selectedCell.value;});		
 
 		allTableData=filteredData;
 		currentTableData=allTableData.slice(0,5);
@@ -1702,8 +1693,7 @@ function renderWordCloud(chartConf){
 			if(i%2==1)return "lightgray";
 		})
 		.attr("class","tdata") 
-		.on("mouseover",function(d){ 
-			//console.log("mouseover");
+		.on("mouseover",function(d){ 			
 			d3.select(this).style("outline","solid steelblue");
 			return selectSingleLine(d);})
 		.on("mouseout",function(){

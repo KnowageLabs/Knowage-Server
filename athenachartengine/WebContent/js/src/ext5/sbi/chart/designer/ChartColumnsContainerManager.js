@@ -3,7 +3,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
         'Sbi.chart.designer.ChartColumnsContainer',
         'Sbi.chart.designer.ChartUtils'
     ],
-
+    
 	constructor: function(config) {
 	    this.initConfig(config);
 	    this.callParent();
@@ -21,7 +21,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		storePool: [],
 		
 		yAxisPool: [],
-		
+				
 		resetContainers: function() {
 			var yAxisPool = this.yAxisPool;
 			var storePool = this.storePool;
@@ -115,7 +115,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						dropGroup: dropGroup
 					},
 					listeners: {
-						beforeDrop: function(node, data, dropRec, dropPosition) {
+						beforeDrop: function(node, data, dropRec, dropPosition) {					
+							
 							if(data.view.id != this.id) {
 								data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
 								if( !data.records[0].get('serieGroupingFunction')) {
@@ -124,6 +125,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								if( !data.records[0].get('axisName')) {
 									var serieColumn = data.records[0].get('serieColumn', 'SUM');
 									data.records[0].set('axisName', serieColumn);
+									
+									// *_*
+									if(Ext.getCmp("chartParallelLimit").hidden == false && 
+											Ext.getCmp("chartParallelLimit") != undefined && 
+												Ext.getCmp("chartParallelLimit") != null)
+									{
+										Ext.getCmp("chartParallelLimit").addItem(data.records[0]);
+									}										
 								}
 							}
 						}
@@ -194,7 +203,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				closeAction : 'destroy',
 				beforeDestroy: function(el, eOpts){
 					ChartColumnsContainerManager.instanceCounter--;
-					
 					Ext.Array.remove(ChartColumnsContainerManager.storePool, chartColumnsContainerStore);
 					Ext.Array.remove(ChartColumnsContainerManager.yAxisPool, this);
 				},
@@ -265,6 +273,15 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	            					},
 	            					fn : function(buttonValue, inputText, showConfig){
 	            						if (buttonValue == 'ok') {
+	            							
+	            							// *_* 
+	            							if(Ext.getCmp("chartParallelLimit").hidden == false && 
+	    											Ext.getCmp("chartParallelLimit") != undefined && 
+	    												Ext.getCmp("chartParallelLimit") != null)
+            								{
+	            								Ext.getCmp("chartParallelLimit").removeItem(store.getAt(rowIndex));
+            								}	    							
+	            							
 	            							var rec = store.removeAt(rowIndex);
 	            						}
 	            					}
