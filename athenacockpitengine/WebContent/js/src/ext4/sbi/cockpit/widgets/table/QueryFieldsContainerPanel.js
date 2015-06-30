@@ -122,6 +122,10 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'sortable', type: 'boolean'}
 	      , {name: 'width', type: 'int'}
 	      , {name: 'columnName', type: 'string'}
+	      , {name: 'type', type: 'string'}
+	      , {name: 'typeSecondary', type: 'string'}
+	      , {name: 'decimals', type: 'string'}
+	      , {name: 'scale', type: 'string'}
 	])
 
 		 , renderTpl1: [
@@ -176,7 +180,13 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 'alias', 'funct', 'iconCls', 'nature', 'values', 'valid', 'sortable', 'width','columnName']
+	        fields: ['id', 		'alias', 	'funct', 
+	                 'type', 	'typeSecondary', 'decimals',
+	                 'scale',
+	                 'iconCls', 'nature', 	'values', 
+	                 'valid', 	'sortable', 'width',
+	                 'columnName'
+	                 ]
 		});
 		// if there are initialData, load them into the store
 		if (this.initialData !== undefined) {
@@ -383,10 +393,22 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 //				}
 
 				// pass actual funct value for default case
-				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(record.data.alias, record.data.funct, record.data.nature);
+				var defFormState = {
+					alias: record.data.alias,
+					funct: record.data.funct,
+					nature: record.data.nature,
+					type: record.data.type,
+					typeSecondary: record.data.typeSecondary,
+					decimals: record.data.decimals,
+					scale: record.data.scale,
+					
+				};
+			
+				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(defFormState);
 
 				// on save set aggregation function
 				this.chooserWindow.on('aggregationSave', function(window, formState){
+					console.log('formState: ', formState);
 					
 					var recordIndex  = thisGrid.store.findExact('id', thisRecord.data.id);
 					var record = thisGrid.store.getAt(recordIndex);
@@ -420,13 +442,33 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						}
 					}					
 					
+					var type = formState.type,
+						typeSecondary = formState.typeSecondary,
+						scale = formState.scale,
+						decimals = formState.decimals;
+					
+					if(type !== undefined && type !== null && type !== "") {
+						record.data.type = type;
+					}
+					
+					if(typeSecondary !== undefined && typeSecondary !== null && typeSecondary !== "") {
+						record.data.typeSecondary = typeSecondary;
+					}
+					
+					if(decimals !== undefined && decimals !== null && decimals !== "") {
+						record.data.decimals = decimals;
+					}
+					
+					if(scale !== undefined && scale !== null && scale !== "") {
+						record.data.scale = scale;
+					}
+					
 					thisPanel.getView().refresh();
 
 				});
 
 				this.chooserWindow.show();
 
-//		}
 		}
 		Sbi.trace("[QueryFieldsContainerPanel.rowDblClickHandler]: OUT");
 	}
