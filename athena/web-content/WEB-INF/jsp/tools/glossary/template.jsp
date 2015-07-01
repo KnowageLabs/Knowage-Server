@@ -126,7 +126,7 @@
  <md-button ng-click="renCtrl.annulla()" class="md-primary">
       Annulla
     </md-button>
-    <md-button ng-click="renCtrl.salva()" class="md-primary">
+    <md-button ng-disabled="renCtrl.tmpNW.CONTENT_NM.length === 0 " ng-click="renCtrl.salva()" class="md-primary">
      Salva
     </md-button>
    

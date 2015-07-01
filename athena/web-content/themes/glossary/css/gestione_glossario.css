@@ -36,13 +36,58 @@
 	background-color: rgb(84, 252, 57) !important;
 }
 
+
+.box-list-option div.md-item-text {
+position: relative;
+}
+
+
+.box-list-option p{
+	float: left;
+  width: 20%;
+}
+
+.box-list-option md-input-container{
+  width: 73%;
+  padding: 0px;
+  min-height: 20px;
+  bottom: -14px;
+  padding-left: 6px!important;
+  border-left: 2px solid  rgb(175, 182, 186);
+  margin-top: -14px!important;
+  margin-bottom: 16px !important;
+  padding-bottom: 4px;
+}
+.box-list-option textarea.attText{
+	  float: left;
+  width: 100% !important;
+  margin: 0px !important;
+    padding: 0px !important;
+      border-bottom-width: 0px;
+}
+
+/* .wordForm textarea:not(:focus),.box-list-option md-input-container:not(:focus),.wordForm input:not(:focus) { */
+/*   height: 20px!important; */
+/*   min-height: 0px; */
+/* } */
+
+.wordForm md-autocomplete label {
+	margin-top: -12px;
+}
+
+.wordForm .attr_Value{
+	margin-top: -10px !important;
+}
+
+
 .wordForm textarea, .wordForm .linkChips {
 	margin-left: 35px !important;
 }
 
+
 .wordForm .md-input-focused textarea, .wordForm .md-input-has-value textarea,
 	.wordForm .md-input-has-value-copy .linkChips {
-	padding-top: 12px !important;
+	padding-top: 15px !important;
 }
 
 .wordForm  .linkChips {
@@ -56,7 +101,7 @@
 .wordForm .md-input-hasnt-value textarea {
 	height: 0px !important;
 	min-height: 0px !important;
-	margin-bottom: -12px;
+	margin-bottom: -8px;
 }
 
 .wordForm .md-input-hasnt-value .md-char-counter {
@@ -265,7 +310,8 @@ md-toolbar.md-default-theme.md-blue {
 }
 
 .figlio_vocabolo md-list-item {
-	background-color: gray;
+/* 	background-color: gray; */
+	font-weight: bold;
 }
 .figlio_vocabolo .md-list-item-inner , .nodo_logico .md-list-item-inner ,#wordTree .md-list-item-inner{
   width: 100%;
@@ -307,13 +353,15 @@ md-toolbar.md-default-theme.md-blue {
 }
 
 .box-list-option {
-	width: 187px !important;
+	width: 100%  !important;
 	background-color: rgba(0, 0, 0, 0.09);
 	padding: 0px !important;
 	margin-left: 15px;
 	float: left;
 	margin-bottom: 10px;
+	min-height: 0px;
 }
+
 
 /* rimuovo il focus da tutto */
 *:focus {

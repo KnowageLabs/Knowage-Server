@@ -254,7 +254,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 		} else {
 			resetForm();
-			ctr.activeTab = 'Vocabolo';
+			if (reset == true){
+				ctr.activeTab = 'Glossari';
+			}else{
+				ctr.activeTab = 'Vocabolo';	
+			}
 		}
 		
 
@@ -271,7 +275,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 
 		angular.element(document.querySelector('.md-chip-input-container .md-whiteframe-z1 input')).val("");
-
+		angular.element(document.querySelector('.wordForm .textareaInputBox textarea#formulaText')).val("");
+		angular.element(document.querySelector('.wordForm .textareaInputBox textarea#descrText')).val("");
+		
 		ctr.tmpAttr = {};
 		
 		if (ele == undefined) {
@@ -1770,7 +1776,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
 		// bpw == 0 ? bpw = 30 : bpw = bpw;
-		var nit = parseInt((lbw - tbw - bpw - 23) / 31);
+		var nit = parseInt((lbw - tbw - bpw - 23) / 33);
 		ctr.WordItemPerPage = nit;
 	}
 

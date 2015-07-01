@@ -103,6 +103,7 @@ public class GlossaryService {
 	@Path("/addGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String addGlossary(@Context HttpServletRequest req) {
+		JSONObject jo = new JSONObject();
 		try {
 			System.out.println("addGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
@@ -112,7 +113,12 @@ public class GlossaryService {
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 			
-			JSONObject jo = new JSONObject();
+			if(((String) requestVal.opt("GLOSSARY_NM")).trim().isEmpty()){
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.empty.glossary.name");
+				return jo.toString();
+			}
+			
 			jo.put("Status", "OK");
 			//check if name is present
 			String gn=(String) requestVal.opt("GLOSSARY_NM");
@@ -169,18 +175,28 @@ public class GlossaryService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+//			throw new SpagoBIServiceException(req.getPathInfo(),
+//					"An unexpected error occured while executing service", t);
+			try {
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.error.save");
+				jo.put("Error_text",	t.getCause().getCause().getMessage());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+			return jo.toString();
 		}
 	}
-	
-	
-	
 	
 	@POST
 	@Path("/addContents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String addContents(@Context HttpServletRequest req) {
+		JSONObject jo = new JSONObject();
+		
 		try {
 			System.out.println("addContents");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
@@ -190,10 +206,15 @@ public class GlossaryService {
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
+			if(((String) requestVal.opt("CONTENT_NM")).trim().isEmpty()){
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.empty.content.name");
+				return jo.toString();
+			}
 			
-			JSONObject jo = new JSONObject();
 			
 			Integer id;
+			
 			
 			if(requestVal.has("SaveOrUpdate")){
 				if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Update")==0) {
@@ -250,8 +271,132 @@ public class GlossaryService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+//			throw new SpagoBIServiceException(req.getPathInfo(),
+//					"An unexpected error occured while executing service", t);
+			try {
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.content.load.error");
+				jo.put("Error_text",	t.getCause().getCause().getMessage());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+			return jo.toString();
+		}
+	}
+	
+	@POST
+	@Path("/addWord")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String newWord(@Context HttpServletRequest req) {
+		JSONObject jo = new JSONObject();
+		try {
+			System.out.println("newWord");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			System.out.println(req.toString());
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+
+			SbiGlWord word;
+			
+			if(((String) requestVal.opt("WORD")).trim().isEmpty()){
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.empty.word.name");
+				return jo.toString();
+			}
+			
+			boolean update=false;
+			// check uniqueness of name
+			List<SbiGlWord> lg = dao.loadWordByName((String) requestVal.opt("WORD"));
+			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save")==0) {
+				
+				if (!lg.isEmpty()) {
+//					throw new SpagoBIServiceException(req.getPathInfo(),
+//							"Word Name already defined");
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.word.new.name.duplicate");
+					return jo.toString();
+				}
+				word = new SbiGlWord();
+			} else {
+				//>1 because currently there is only the word that I want to change
+				if (lg.size()>1) {
+//					throw new SpagoBIServiceException(req.getPathInfo(),
+//							"Word Name already defined");
+					jo.put("Status", "NON OK");
+					jo.put("Message", "sbi.glossary.word.new.name.duplicate");
+					return jo.toString();
+				}
+				update=true;
+				word = dao.loadWord(getNumberOrNull(requestVal.opt("WORD_ID")));
+			}
+
+			
+			word.setWord((String) requestVal.opt("WORD"));
+			word.setState((String) requestVal.opt("STATE"));
+			word.setCategory((String) requestVal.opt("CATEGORY"));
+			word.setDescr((String) requestVal.opt("DESCR"));
+			word.setFormula((String) requestVal.opt("FORMULA"));
+			JSONArray refe = (JSONArray) requestVal.opt("LINK");
+			JSONArray attr = (JSONArray) requestVal.opt("SBI_GL_WORD_ATTR");
+
+			
+			Map<Integer, JSONObject> MapLink = new HashMap<Integer, JSONObject>();
+			List<SbiGlWord> objLink = null;
+			if (refe.length() != 0) {
+				Object[] link = new Object[refe.length()];
+				for (int i = 0; i < refe.length(); i++) {
+					link[i] = refe.getJSONObject(i).getInt("WORD_ID");
+					MapLink.put(refe.getJSONObject(i).getInt("WORD_ID"), refe.getJSONObject(i));
+					}
+				objLink = dao.listWordFromArray(link);
+			}
+
+			Map<Integer, JSONObject> MapAttr = new HashMap<Integer, JSONObject>();
+
+			List<SbiGlAttribute> objAttr = null;
+			if (attr.length() != 0) {
+				Object[] att = new Object[attr.length()];
+				for (int i = 0; i < attr.length(); i++) {
+
+					if(attr.getJSONObject(i).getString("VALUE").trim().isEmpty()){
+						jo.put("Status", "NON OK");
+						jo.put("Message", "sbi.glossary.empty.attribute.name");
+						return jo.toString();
+					}
+					
+					att[i] = attr.getJSONObject(i).getInt("ATTRIBUTE_ID");
+					MapAttr.put(attr.getJSONObject(i).getInt("ATTRIBUTE_ID"), attr.getJSONObject(i));
+						}
+				objAttr = dao.listAttrFromArray(att);
+					}
+
+			Integer id = dao.insertWord(word, objLink, objAttr, MapAttr,MapLink,update);
+			
+			jo.put("Status", "OK");
+			jo.put("id", id);
+			return jo.toString();
+
+		} catch (Throwable t) {
+//			throw new SpagoBIServiceException(req.getPathInfo(),
+//					"An unexpected error occured while executing service", t);
+		
+			try {
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.word.save.error");
+				jo.put("Error_text",	t.getMessage());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		
+			return jo.toString();
 		}
 	}
 	
@@ -309,167 +454,6 @@ public class GlossaryService {
 	}
 
 	@POST
-	@Path("/cloneGlossary")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String cloneGlossary(@Context HttpServletRequest req) {
-		try {
-			System.out.println("cloneGlossary");
-			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// TODO check if profile is null
-			dao.setUserProfile(profile);
-			
-			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-
-			Integer glossaryId = (Integer)requestVal.opt("GLOSSARY_ID");
-			
-			if(glossaryId==null){
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"ID non puo essere null");
-			}
-			
-			//check if name is present
-			String gn=(String) requestVal.opt("GLOSSARY_NM");
-			if(gn.trim().isEmpty()){
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"Glossary name is request");
-			}
-			//get glossary
-			 SbiGlGlossary glo=dao.loadGlossary(glossaryId);
-				if (glo==null) {
-					throw new SpagoBIServiceException(req.getPathInfo(),
-							"Glossary not present");
-				}
-				
-				// check if there is another glossary with the same name
-				List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal.opt("GLOSSARY_NM"));
-				if (!lg.isEmpty()) {
-					throw new SpagoBIServiceException(req.getPathInfo(),
-							"Glossary Name already defined");
-				}
-				
-				
-				glo.setGlossaryNm((String) requestVal.opt("GLOSSARY_NM"));
-				glo.setGlossaryCd((String) requestVal.opt("GLOSSARY_CD"));
-				glo.setGlossaryDs((String) requestVal.opt("GLOSSARY_DS"));
-				Integer newGlossId	=dao.insertGlossary(glo);
-			
-			
-			dao.cloneGlossary(glossaryId,newGlossId);
-
-			JSONObject jo = new JSONObject();
-			jo.put("Status", "OK");
-			jo.put("id", newGlossId);
-			return jo.toString();
-
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
-		}
-	}
-	
-	@POST
-	@Path("/addWord")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String newWord(@Context HttpServletRequest req) {
-		JSONObject jo = new JSONObject();
-		try {
-			System.out.println("newWord");
-			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// TODO check if profile is null
-			dao.setUserProfile(profile);
-			System.out.println(req.toString());
-			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-
-			SbiGlWord word;
-			
-			boolean update=false;
-			// check uniqueness of name
-			List<SbiGlWord> lg = dao.loadWordByName((String) requestVal.opt("WORD"));
-			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save")==0) {
-				
-				if (!lg.isEmpty()) {
-//					throw new SpagoBIServiceException(req.getPathInfo(),
-//							"Word Name already defined");
-					jo.put("Status", "NON OK");
-					jo.put("Message", "sbi.glossary.word.new.name.duplicate");
-					return jo.toString();
-				}
-				word = new SbiGlWord();
-			} else {
-				//>1 because currently there is only the word that I want to change
-				if (lg.size()>1) {
-//					throw new SpagoBIServiceException(req.getPathInfo(),
-//							"Word Name already defined");
-					jo.put("Status", "NON OK");
-					jo.put("Message", "sbi.glossary.word.new.name.duplicate");
-					return jo.toString();
-				}
-				update=true;
-				word = dao.loadWord(getNumberOrNull(requestVal.opt("WORD_ID")));
-			}
-
-			
-			word.setWord((String) requestVal.opt("WORD"));
-			word.setState((String) requestVal.opt("STATE"));
-			word.setCategory((String) requestVal.opt("CATEGORY"));
-			word.setDescr((String) requestVal.opt("DESCR"));
-			word.setFormula((String) requestVal.opt("FORMULA"));
-			JSONArray refe = (JSONArray) requestVal.opt("LINK");
-			JSONArray attr = (JSONArray) requestVal.opt("SBI_GL_WORD_ATTR");
-
-			
-			Map<Integer, JSONObject> MapLink = new HashMap<Integer, JSONObject>();
-			List<SbiGlWord> objLink = null;
-			if (refe.length() != 0) {
-				Object[] link = new Object[refe.length()];
-				for (int i = 0; i < refe.length(); i++) {
-					link[i] = refe.getJSONObject(i).getInt("WORD_ID");
-					MapLink.put(refe.getJSONObject(i).getInt("WORD_ID"), refe.getJSONObject(i));
-					}
-				objLink = dao.listWordFromArray(link);
-			}
-
-			Map<Integer, JSONObject> MapAttr = new HashMap<Integer, JSONObject>();
-
-			List<SbiGlAttribute> objAttr = null;
-			if (attr.length() != 0) {
-				Object[] att = new Object[attr.length()];
-				for (int i = 0; i < attr.length(); i++) {
-					att[i] = attr.getJSONObject(i).getInt("ATTRIBUTE_ID");
-					MapAttr.put(attr.getJSONObject(i).getInt("ATTRIBUTE_ID"), attr.getJSONObject(i));
-						}
-				objAttr = dao.listAttrFromArray(att);
-					}
-
-			Integer id = dao.insertWord(word, objLink, objAttr, MapAttr,MapLink,update);
-			
-			jo.put("Status", "OK");
-			jo.put("id", id);
-			return jo.toString();
-
-		} catch (Throwable t) {
-//			throw new SpagoBIServiceException(req.getPathInfo(),
-//					"An unexpected error occured while executing service", t);
-		
-			try {
-				jo.put("Status", "NON OK");
-				jo.put("Message", "sbi.glossary.word.save.error");
-				jo.put("Error_text",	t.getCause().getCause().getMessage());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		
-			return jo.toString();
-		}
-	}
-
-	@POST
 	@Path("/deleteContents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteContents(@Context HttpServletRequest req) {
@@ -496,6 +480,41 @@ public class GlossaryService {
 			jo.put("Status", "OK");
 			return jo.toString();
 
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
+	
+	@GET
+	@Path("/listAttribute")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String listAttribute(@Context HttpServletRequest req) {
+		try {
+			System.out.println("listAttribute");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+
+			String attrib = req.getParameter("ATTR");
+			List<SbiGlAttribute> lst = null;
+			if (attrib != null && !attrib.trim().isEmpty()) {
+				lst = dao.listAttributeFiltered(attrib);
+			} else {
+				lst = dao.listAttribute();
+			}
+
+			JSONArray jarr = new JSONArray();
+			if (lst != null) {
+				for (Iterator<SbiGlAttribute> iterator = lst.iterator(); iterator
+						.hasNext();) {
+					SbiGlAttribute SbiGlAttribute = iterator.next();
+					jarr.put(fromAttrLight(SbiGlAttribute));
+				}
+			}
+			return jarr.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(),
 					"An unexpected error occured while executing service", t);
@@ -681,63 +700,67 @@ public class GlossaryService {
 		}
 	}
 
-	@GET
-	@Path("/listAttribute")
+	@POST
+	@Path("/cloneGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String listAttribute(@Context HttpServletRequest req) {
+	public String cloneGlossary(@Context HttpServletRequest req) {
 		try {
-			System.out.println("listAttribute");
+			System.out.println("cloneGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession()
 					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
+			
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			String attrib = req.getParameter("ATTR");
-			List<SbiGlAttribute> lst = null;
-			if (attrib != null && !attrib.trim().isEmpty()) {
-				lst = dao.listAttributeFiltered(attrib);
-			} else {
-				lst = dao.listAttribute();
+			Integer glossaryId = (Integer)requestVal.opt("GLOSSARY_ID");
+			
+			if(glossaryId==null){
+				throw new SpagoBIServiceException(req.getPathInfo(),
+						"ID non puo essere null");
 			}
-
-			JSONArray jarr = new JSONArray();
-			if (lst != null) {
-				for (Iterator<SbiGlAttribute> iterator = lst.iterator(); iterator
-						.hasNext();) {
-					SbiGlAttribute SbiGlAttribute = iterator.next();
-					jarr.put(fromAttrLight(SbiGlAttribute));
+			
+			//check if name is present
+			String gn=(String) requestVal.opt("GLOSSARY_NM");
+			if(gn.trim().isEmpty()){
+				throw new SpagoBIServiceException(req.getPathInfo(),
+						"Glossary name is request");
+			}
+			//get glossary
+			 SbiGlGlossary glo=dao.loadGlossary(glossaryId);
+				if (glo==null) {
+					throw new SpagoBIServiceException(req.getPathInfo(),
+							"Glossary not present");
 				}
-			}
-			return jarr.toString();
+				
+				// check if there is another glossary with the same name
+				List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal.opt("GLOSSARY_NM"));
+				if (!lg.isEmpty()) {
+					throw new SpagoBIServiceException(req.getPathInfo(),
+							"Glossary Name already defined");
+				}
+				
+				
+				glo.setGlossaryNm((String) requestVal.opt("GLOSSARY_NM"));
+				glo.setGlossaryCd((String) requestVal.opt("GLOSSARY_CD"));
+				glo.setGlossaryDs((String) requestVal.opt("GLOSSARY_DS"));
+				Integer newGlossId	=dao.insertGlossary(glo);
+			
+			
+			dao.cloneGlossary(glossaryId,newGlossId);
+
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
+			jo.put("id", newGlossId);
+			return jo.toString();
+
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(),
 					"An unexpected error occured while executing service", t);
 		}
 	}
-
-	/*
-	 * @POST
-	 * 
-	 * @Path("/saveWord")
-	 * 
-	 * @Produces(MediaType.APPLICATION_JSON) public String saveWord(@Context
-	 * HttpServletRequest req) { UserProfile profile = (UserProfile)
-	 * req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE); //TODO
-	 * check if profile is null try { JSONObject requestBodyJSON =
-	 * RestUtilities.readBodyAsJSONObject(req); IGlossaryDAO dao =
-	 * DAOFactory.getGlossaryDAO();
-	 * 
-	 * if (profile.getIsSuperadmin()) { TenantManager.unset();
-	 * dao.setUserID(profile.getUserId().toString()); } else {
-	 * dao.setUserProfile(profile); }
-	 * 
-	 * SbiGlWord word = from(requestBodyJSON); if(word.getWordId()==null){
-	 * dao.insertWord(word); }else{ dao.modifyWord(word); } return
-	 * jsonWord.toString(); } catch (Throwable t) { throw new
-	 * SpagoBIServiceException(req.getPathInfo(),
-	 * "An unexpected error occured while executing service", t); } }
-	 */
+	
 	private static JSONObject fromWordLight(SbiGlWord sbiGlWord)
 			throws JSONException {
 		JSONObject jobj = new JSONObject();
@@ -790,12 +813,14 @@ public class GlossaryService {
 	}
 
 	private JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary)
+
 			throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
 		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
 		return ret;
 	}
+	
 	private JSONObject fromGlossary(SbiGlGlossary sbiGlGlossary)
 			throws JSONException {
 		JSONObject ret = new JSONObject();
@@ -816,21 +841,7 @@ public class GlossaryService {
 		return ret;
 	}
 
-	/*
-	 * private static SbiGlWord from(JSONObject obj) throws JSONException {
-	 * SbiGlWord word = new SbiGlWord(); int id = obj.optInt("WORD_ID");
-	 * word.setWordId(id!=0?id:null); word.setWord(obj.optString("WORD"));
-	 * word.setDescr(obj.optString("DESCR"));
-	 * word.setState(obj.optString("STATE"));
-	 * word.setFormula(obj.optString("FORMULA"));
-	 * word.setCategory(obj.optString("CATEGORY")); JSONArray links =
-	 * obj.optJSONArray("LINK"); if(links!=null){ word.setReferences(new
-	 * HashSet<SbiGlReferences>()); for (int i=0;i<links.length();i++) {
-	 * JSONObject jsonRef = new JSONObject(links.get(i)); SbiGlReferences ref =
-	 * new SbiGlReferences(); ref.setId(new SbiGlReferencesId(word.getWordId(),
-	 * jsonRef.optInt("REF_WORD_ID"))); ref.set //TODO
-	 * word.getReferences().add(ref ); } } // TODO return word; }
-	 */
+
 	public static void main(String[] args) {
 		try {
 			SbiGlWord refw = new SbiGlWord(2, "test2", "primo test2", "fffff2",

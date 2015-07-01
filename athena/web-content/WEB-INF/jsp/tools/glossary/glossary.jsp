@@ -376,7 +376,7 @@ var serverPort ='<%=request.getServerPort()%>';
 								ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.DESCR.length === 0  }">
 							<!-- Use floating label instead of placeholder --> <label>Descrizione</label>
 							<md-icon md-font-icon="fa  fa-file-text-o " class="des"></md-icon>
-							<textarea ng-model="ctrl.newWord.DESCR" columns="1"
+							<textarea id="descrText" ng-model="ctrl.newWord.DESCR" columns="1"
 								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
 						</div>
 					</div>
@@ -404,7 +404,7 @@ var serverPort ='<%=request.getServerPort()%>';
 								ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.FORMULA.length === 0  }">
 							<!-- Use floating label instead of placeholder --> <label>Formula</label>
 							<md-icon md-font-icon="fa fa-superscript " class="formu"></md-icon>
-							<textarea ng-model="ctrl.newWord.FORMULA" columns="1"
+							<textarea id="formulaText" ng-model="ctrl.newWord.FORMULA" columns="1"
 								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
 						</div>
 					</div>
@@ -472,16 +472,23 @@ var serverPort ='<%=request.getServerPort()%>';
 						</div>
 
 
-						<div flex="40">
-							<md-input-container> <!-- Use floating label instead of placeholder -->
-							<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val" maxlength="500"
-								type="text"> </md-input-container>
+<!-- 						<div flex="40"> -->
+<!-- 							<md-input-container class="attr_Value">  -->
+<!-- 							<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val" maxlength="500" -->
+<!-- 								type="text"> </md-input-container> -->
+						
+<!-- 						</div> -->
+			<div flex="40">
+							<md-input-container class=" attr_Value md-icon-float textareaInputBox" ng-class="{ 'md-input-hasnt-value' : ( ctrl.tmpAttr.Val.length === 0 ||ctrl.tmpAttr.Val == null)  }"> 
+							<label>Valore</label> <textarea ng-model="ctrl.tmpAttr.Val" maxlength="500"
+								></textarea> </md-input-container>
+						
 						</div>
 
 						<div flex="15">
 							<md-button
 								ng-click="ctrl.tmpAttr.Prop=ctrl.selectedItem ;ctrl.addProp(ctrl.tmpAttr)"
-								ng-disabled="  ctrl.selectedItem==undefined || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
+								ng-disabled=" ctrl.tmpAttr.Prop.length==0 || ctrl.tmpAttr.Prop==null || ctrl.selectedItem==undefined || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
 								class="md-fab   md-mini" aria-label="Aggiungi_Attributo">
 							<md-tooltip> Aggiungi Attributo </md-tooltip> <md-icon
 								md-font-icon="fa fa-plus fa-2x" style="   margin-left: 2px;"></md-icon>
@@ -501,25 +508,27 @@ var serverPort ='<%=request.getServerPort()%>';
 								ng-repeat="attr in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
 								layout-wrap>
 							<div class="md-item-text md-whiteframe-z1"
-								style="position: relative;" flex>
-								<p class="margin5">
+								 flex>
+								<p class="margin5 wrapText">
 									<span>{{attr.ATTRIBUTE_NM}}</span>
 									<!-- 									<input class="transparent_input smallFont"	ng-model="attr.ATTRIBUTE_NM" type="text">  -->
 
 								</p>
-								<input type="text" class="transparent_input smallFont "
-									ng-model="attr.VALUE">
+								
+								
+								<md-input-container class=" textareaInputBox"		>
+								<textarea  class="attText" style="   padding-top: 0px !important; "ng-model="attr.VALUE" columns="1"
+								 maxlength="500"></textarea></md-input-container>
 
 								<md-button ng-click="ctrl.removeProp(attr)"
 									class="md-fab   md-ExtraMini" aria-label="add word"
-									style="  background-color: rgb(221, 0, 0) !important;
-  											border-radius: 0px;
-  											border-bottom-left-radius: 18px;
-  											position: absolute;
+									style="    background-color: rgb(176, 190, 197) !important;
+  										border-radius: 0px;
+ 										 position: absolute;
   											top: 0;
   											right: 0;
   											margin: 0;">
-								<md-icon md-font-icon="fa fa-times" style="  color: white;"></md-icon>
+								<md-icon md-font-icon="fa fa-times" style="color: rgb(0, 0, 0);  margin-top: 5px;"></md-icon>
 								</md-button>
 
 
@@ -535,7 +544,7 @@ var serverPort ='<%=request.getServerPort()%>';
 
 					<div layout="row" layout-align="end end">
 						<md-button type="button" tabindex="-1" class="md-raised"
-							ng-click="ctrl.createNewWord(true)" ng-show="ctrl.isEmptyNewWord()">Annulla</md-button>
+							ng-click="ctrl.createNewWord(true)" >Annulla</md-button>
 						<md-button type="submit" class="md-raised"
 							ng-disabled="ctrl.newWord.DESCR.length === 0  || ctrl.newWord.WORD.length === 0">Salva</md-button>
 					</div>
