@@ -127,6 +127,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'typeSecondary', type: 'string'}
 	      , {name: 'decimals', type: 'string'}
 	      , {name: 'scale', type: 'string'}
+	      , {name: 'backgroundColor', type: 'string'}
+	      , {name: 'columnWidth', type: 'string'}
+	      , {name: 'fontSize', type: 'int'}
+	      , {name: 'fontWeight', type: 'string'}
+	      , {name: 'fontColor', type: 'string'}
+	      , {name: 'fontDecoration', type: 'string'}
 	])
 
 		 , renderTpl1: [
@@ -183,10 +189,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		this.store =  new Ext.data.ArrayStore({
 	        fields: ['id', 		'alias', 	'funct', 
 	                 'type', 	'typeSecondary', 'decimals',
-	                 'scale',
-	                 'iconCls', 'nature', 	'values', 
-	                 'valid', 	'sortable', 'width',
-	                 'columnName'
+	                 'scale', 	'backgroundColor', 'columnWidth',
+	                 'fontSize', 'fontWeight', 		'fontColor', 
+	                 'fontDecoration', 'iconCls', 	'nature',
+	                 'values', 	'valid', 	'sortable', 
+	                 'width', 	'columnName'
 	                 ]
 		});
 		// if there are initialData, load them into the store
@@ -256,13 +263,13 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	    		items: 
 	    		[
 					{
-							iconCls: 'icon_configure_tablerow',
-							tooltip: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure'),
-							handler: function(grid, rowIndex, colIndex) {
-								var rec = grid.getStore().getAt(rowIndex);
-								thePanel.rowDblClickHandler(grid, rec);
-								
-							}
+						iconCls: 'icon_configure_tablerow',
+						tooltip: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure'),
+						handler: function(grid, rowIndex, colIndex) {
+							var rec = grid.getStore().getAt(rowIndex);
+							thePanel.rowDblClickHandler(grid, rec);
+							
+						}
 					},
 	    		 	{
 	    		 		iconCls: 'icon_delete_tablerow',
@@ -271,7 +278,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	    		 			var rec = grid.getStore().getAt(rowIndex);
 	    		 			grid.getStore().remove(rec);
 	    		 	        this.fireEvent('storeChanged', grid.getStore().getCount());
-	    		 			
 	    		 		}
 	    		 	}
                 ]
@@ -402,7 +408,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					typeSecondary: record.data.typeSecondary,
 					decimals: record.data.decimals,
 					scale: record.data.scale,
-					
+					backgroundColor: record.data.backgroundColor,
+					columnWidth: record.data.columnWidth,
+					fontSize: record.data.fontSize,
+					fontWeight: record.data.fontWeight,
+					fontColor: record.data.fontColor,
+					fontDecoration: record.data.fontDecoration,
 				};
 			
 				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(defFormState);
@@ -431,7 +442,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						}else{
 							record.data.alias = aliasSelected;
 						}
-						
 					}
 					
 					if (record.data.nature == 'measure'){
@@ -446,7 +456,13 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					var type = formState.type,
 						typeSecondary = formState.typeSecondary,
 						scale = formState.scale,
-						decimals = formState.decimals;
+						decimals = formState.decimals,
+						backgroundColor = formState.backgroundColor,
+						columnWidth = formState.columnWidth,
+						fontSize = formState.fontSize,
+						fontWeight = formState.fontWeight,
+						fontColor = formState.fontColor,
+						fontDecoration = formState.fontDecoration;
 					
 					if(type !== undefined && type !== null && type !== "") {
 						record.data.type = type;
@@ -462,6 +478,30 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					
 					if(scale !== undefined && scale !== null && scale !== "") {
 						record.data.scale = scale;
+					}
+					
+					if(backgroundColor !== undefined && backgroundColor !== null && backgroundColor !== "") {
+						record.data.backgroundColor = backgroundColor;
+					}
+					
+					if(columnWidth !== undefined && columnWidth !== null && columnWidth !== "") {
+						record.data.columnWidth = columnWidth;
+					}
+					
+					if(fontSize !== undefined && fontSize != null && fontSize != "") {
+						record.data.fontSize = fontSize;
+					}
+					
+					if(fontWeight !== undefined && fontWeight != null && fontWeight != "") {
+						record.data.fontWeight = fontWeight;
+					}
+					
+					if(fontColor !== undefined && fontColor != null && fontColor != "") {
+						record.data.fontColor = fontColor;
+					}
+					
+					if(fontDecoration !== undefined && fontDecoration != null && fontDecoration != "") {
+						record.data.fontDecoration = fontDecoration;
 					}
 					
 					thisPanel.getView().refresh();
@@ -595,7 +635,4 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		}
 		return isValid;
 	}
-
-
-
 });

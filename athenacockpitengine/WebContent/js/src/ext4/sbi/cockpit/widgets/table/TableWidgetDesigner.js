@@ -179,13 +179,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	// -----------------------------------------------------------------------------------------------------------------
 	
 	, initFontOptionsTab: function(){
-
 		
 		var fontSizeStore =  Ext.create('Sbi.fonts.stores.FontSizeStore',{});
 		
 		var fontFamilyStore = Ext.create('Sbi.fonts.stores.FontFamilyStore', {});
 		
 		var fontDecorationStore = Ext.create('Sbi.fonts.stores.FontDecorationStore', {});
+
+		var rowsFontDecorationStore = Ext.create('Sbi.fonts.stores.FontDecorationStore', {});
 		
 		var fontWeightStore = Ext.create('Sbi.fonts.stores.FontWeightStore', {});
 		
@@ -229,8 +230,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 
 		});
 		
-		var tableGeneralFontOptions = 
-		{
+		var tableGeneralFontOptions = {
 			xtype: 				'fieldset'
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
@@ -245,22 +245,22 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		/* table font header options */
 		
-		 this.headerFontSizeCombo = Ext.create('Ext.form.ComboBox',{
-				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
-				queryMode:      'local',
-				triggerAction:  'all',
-				forceSelection: true,
-				editable:       false,
-				allowBlank: 	true,
-				typeAhead: 		true,
-				lazyRender:		true,
-				store: 			fontSizeStore,    
-				valueField: 	'name',
-				displayField: 	'description',
-				name:			'headerFontSize',
-				labelWidth:		130,
-				width:			180,
-			});
+		this.headerFontSizeCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'headerFontSize',
+			labelWidth:		130,
+			width:			180,
+		});
 		 
 		
 //		 this.headerFontColorText = Ext.create('Ext.form.field.Text',{
@@ -279,58 +279,54 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 //	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 //		 });
 		 
-		 this.headerFontColorText = Ext.create('Ext.ux.FontColorField', { 
-			 msgTarget: 	'qtip', 
-			 fallback: 		true,
-			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 afterLabelTextTpl : '<span class="help" data-qtip="'
+		this.headerFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			msgTarget: 	'qtip', 
+			fallback: 		true,
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			afterLabelTextTpl : '<span class="help" data-qtip="'
 	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
 	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
-			 name: 			'headerFontColor',
-			 allowBlank: 	true,
-			 labelWidth:	140,
-			 width:			255,
-		 });
+			name: 			'headerFontColor',
+			allowBlank: 	true,
+			labelWidth:	140,
+			width:			255,
+		});
 		 
-		 this.headerFontWeightCombo = Ext.create('Ext.form.ComboBox',{
-				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
-				queryMode:      'local',
-				triggerAction:  'all',
-				forceSelection: true,
-				editable:       false,
-				allowBlank: 	true,
-				typeAhead: 		true,
-				lazyRender:		true,
-				store: 			fontWeightStore, 
-				valueField: 	'name',
-				displayField: 	'description',
-				name:			'headerFontWeight',
-				labelWidth:		130,
-				width:			245
-
-			});
+		this.headerFontWeightCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontWeightStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'headerFontWeight',
+			labelWidth:		130,
+			width:			245
+		});
 		 
-		 this.headerFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
-				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
-				queryMode:      'local',
-				triggerAction:  'all',
-				forceSelection: true,
-				editable:       false,
-				allowBlank: 	true,
-				typeAhead: 		true,
-				lazyRender:		true,
-				store: 			fontDecorationStore, 
-				valueField: 	'name',
-				displayField: 	'description',
-				name:			'headerFontDecoration',
-				labelWidth:		140,
-				width:			255
-
-			});
+		this.headerFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontDecorationStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'headerFontDecoration',
+			labelWidth:		140,
+			width:			255
+		});
 		
-		 
-		var tableHeaderFontOptions = 
-		{
+		var tableHeaderFontOptions = {
 			xtype: 				'fieldset'
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
@@ -345,22 +341,22 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		 
 		 /* table font rows options */
 		 
-		 this.rowsFontSizeCombo = Ext.create('Ext.form.ComboBox',{
-				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
-				typeAhead: 		true,
-				triggerAction: 'all',
-				lazyRender:		true,
-				queryMode:      'local',
-				forceSelection: true,
-				editable:       false,
-				allowBlank: 	true,
-				store: 			fontSizeStore,    
-				valueField: 	'name',
-				displayField: 	'description',
-				name:			'rowsFontSize',
-				labelWidth:		130,
-				width:			180
-			});
+		this.rowsFontSizeCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
+			typeAhead: 		true,
+			triggerAction: 'all',
+			lazyRender:		true,
+			queryMode:      'local',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			store: 			fontSizeStore,    
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'rowsFontSize',
+			labelWidth:		130,
+			width:			180
+		});
 		 
 //		 this.rowsFontColorText = Ext.create('Ext.form.field.Text',{
 //			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
@@ -378,58 +374,55 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 //	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
 //		 });
 		 
-		 this.rowsFontColorText = Ext.create('Ext.ux.FontColorField', { 
-			 msgTarget: 	'qtip', 
-			 fallback: 		true,
-			 fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
-			 afterLabelTextTpl : '<span class="help" data-qtip="'
+		this.rowsFontColorText = Ext.create('Ext.ux.FontColorField', { 
+			msgTarget: 		'qtip', 
+			fallback: 		true,
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+			afterLabelTextTpl : '<span class="help" data-qtip="'
 	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
 	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
-			 name: 			'rowsFontColor',
-			 allowBlank: 	true,
-			 labelWidth:	140,
-			 width:			255,
+			name: 			'rowsFontColor',
+			allowBlank: 	true,
+			labelWidth:		140,
+			width:			255,
 			 
-		 });
+		});
 		 
-		 this.rowsFontWeightCombo = Ext.create('Ext.form.ComboBox',{
-				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
-				queryMode:      'local',
-				triggerAction:  'all',
-				forceSelection: true,
-				editable:       false,
-				allowBlank: 	true,
-				typeAhead: 		true,
-				lazyRender:		true,
-				store: 			fontWeightStore, 
-				valueField: 	'name',
-				displayField: 	'description',
-				name:			'rowsFontWeight',
-				labelWidth:		130,
-				width:			245
-
-			});
+		this.rowsFontWeightCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontWeightStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'rowsFontWeight',
+			labelWidth:		130,
+			width:			245
+		});
 		 
-		 this.rowsFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
-				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
-				queryMode:      'local',
-				triggerAction:  'all',
-				forceSelection: true,
-				editable:       false,
-				allowBlank: 	true,
-				typeAhead: 		true,
-				lazyRender:		true,
-				store: 			fontDecorationStore, 
-				valueField: 	'name',
-				displayField: 	'description',
-				name:			'rowsFontDecoration',
-				labelWidth:		140,
-				width:			255
-
-			});
+		this.rowsFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			rowsFontDecorationStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'rowsFontDecoration',
+			labelWidth:		140,
+			width:			255
+		});
 		 
-		 var tableRowsFontOptions = 
-		{
+		var tableRowsFontOptions = {
 			xtype: 				'fieldset'
 			, fieldDefaults: 	{ margin: 5}
 			, layout: 			{type: 'table', columns: 2}
@@ -441,14 +434,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			, width:			600
 		};
 		 
-		this.fontConfigurationPanel = 
-		{
+		this.fontConfigurationPanel = {
 			xtype: 				'panel'
 			, layout: {
 			    type: 'table',
 			    columns: 1
 			}
-
 	        , title: 			LN('sbi.cockpit.designer.fontConf.fontOptions')
 	    	, items: 			[tableGeneralFontOptions, tableHeaderFontOptions, tableRowsFontOptions]	
 		};
@@ -461,16 +452,16 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		var tableOptionsMargins = '10 0 0 10';
 		
 		this.maxRowsNumberField = Ext.create('Ext.form.field.Number',{
-			 fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber'),
-			 name: 				'maxRowsNumber',
-	         allowBlank: 		true,
-	         minValue: 0,
-//	    	 enforceMaxLength: 	true,
-//	 		 maxLength: 		7,
-//	 		 msgTarget: 		'side',
-			 labelWidth:		tableOptionsLabelWidths,
-			 width:				tableOptionsWidths,
-			 margin:			tableOptionsMargins
+			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber'),
+			name: 				'maxRowsNumber',
+	        allowBlank: 		true,
+	        minValue: 0,
+//	    	enforceMaxLength: 	true,
+//	 		maxLength: 		7,
+//	 		msgTarget: 		'side',
+			labelWidth:		tableOptionsLabelWidths,
+			width:				tableOptionsWidths,
+			margin:			tableOptionsMargins
 		});
 		
 		this.hideGridCheckBox = Ext.create('Ext.form.field.Checkbox',{

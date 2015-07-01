@@ -36,12 +36,12 @@ Ext.ns("Sbi.worksheet.designer");
 
 //Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defAlias, defAggregation, defNature) {
 Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
-	console.log('defFormState: ', defFormState);
 	
 	var c = {
 		title: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure')//LN('sbi.cockpit.aggregationwindow.title')
 		, minWidth: 500
 		, minHeight: 200
+		, resizable : false
 		, nameFieldVisible: true
 		, descriptionFieldVisible: true
 		, hasBuddy: false
@@ -55,6 +55,12 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, typeSecondary: defFormState.typeSecondary
 		, decimals: defFormState.decimals
 		, scale: defFormState.scale
+		, backgroundColor: defFormState.backgroundColor
+		, columnWidth: defFormState.columnWidth
+		, fontSize: defFormState.fontSize
+		, fontWeight: defFormState.fontWeight
+		, fontColor: defFormState.fontColor
+		, fontDecoration: defFormState.fontDecoration
 	};
 
 	Ext.apply(this, c);
@@ -98,11 +104,10 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	}
 	
 	, scales : {
-		m: 'm',
+		NONE: '-',
 		K: 'K',
 		M: 'M',
-		G: 'G',
-		T: 'T',
+		G: 'G'
 	}
 	//private methods
 	, initFormPanel: function(config) {
@@ -112,7 +117,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 		var FIELD_WIDTH = 350;
 
 		this.aliasTextField = Ext.create('Ext.form.Text', {
-			 name: 'fieldAlias',
+			 name: 			'fieldAlias',
 			 fieldLabel: 	LN('sbi.qbe.selectgridpanel.headers.alias'),
 			 allowBlank: 	true,
 			 labelWidth:	LABEL_WIDTH,
@@ -200,50 +205,42 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     	typeContainerItems.push(this.typeComboBox);
 		
     	this.typeSecondaryField = null;
-    		   	
-	   	this.typeContainer = Ext.create('Ext.form.FieldContainer', {
-			fieldLabel: 	LN('sbi.qbe.selectgridpanel.type.label'),
-			labelWidth:		LABEL_WIDTH,
-			width:			FIELD_WIDTH,
-			layout: 		'hbox',
-			items: 			typeContainerItems
-		});
-	   	
-	   	this.decimalsField = Ext.create('Ext.form.field.Number', {
-			 name: 			'decimalsField',
-			 fieldLabel: 	LN('sbi.qbe.selectgridpanel.decimals.label'),
-			 allowBlank: 	true,
-			 minValue: 		0,
-			 labelWidth:	LABEL_WIDTH,
-			 width:			FIELD_WIDTH
-		});
-	   	
-	   	var scaleComboBoxData = [
-	   	                         this.scales.m,
-	   	                         this.scales.K,
-	   	                         this.scales.M,
-	   	                         this.scales.G,
-	   	                         this.scales.T
-	   	                         ];
-	   	             	
-     	var scaleComboBoxStore = new Ext.data.SimpleStore({
-     		fields: ['value'],
-     		data : scaleComboBoxData
-     	});
-     	
-	   	this.scaleField = Ext.create('Ext.form.ComboBox', {
-	   		name: 			'scaleField',
-	   		store: 			scaleComboBoxStore,
-	   		fieldLabel: 	LN('sbi.qbe.selectgridpanel.scale.label'),
-	   		displayField: 	'value',
+    	
+    	this.decimalsField = Ext.create('Ext.form.field.Number', {
+    		name: 			'decimalsField',
+    		fieldLabel: 	LN('sbi.qbe.selectgridpanel.decimals.label'),
+    		allowBlank: 	true,
+    		minValue: 		0,
+    		labelWidth:	LABEL_WIDTH,
+    		width:			FIELD_WIDTH
+    	});
+    	
+    	var scaleComboBoxData = [
+    	                         this.scales.NONE,
+    	                         this.scales.K,
+    	                         this.scales.M,
+    	                         this.scales.G
+    	                         ];
+    	
+    	var scaleComboBoxStore = new Ext.data.SimpleStore({
+    		fields: ['value'],
+    		data : scaleComboBoxData
+    	});
+    	
+    	this.scaleField = Ext.create('Ext.form.ComboBox', {
+    		name: 			'scaleField',
+    		store: 			scaleComboBoxStore,
+    		fieldLabel: 	LN('sbi.qbe.selectgridpanel.scale.label'),
+    		displayField: 	'value',
     		valueField: 	'value',
-    		value:			this.scales.K,
+    		value:			this.scales.NONE,
     		editable : 		false,
-			allowBlank: 	true,
-	   		labelWidth:		LABEL_WIDTH,
-	   		width:			FIELD_WIDTH
-	   	});
-	   	
+    		allowBlank: 	true,
+    		labelWidth:		LABEL_WIDTH,
+    		width:			FIELD_WIDTH
+    	});
+    	
+
 	   	this.decimalsScaleContainer = Ext.create('Ext.form.FieldContainer', {
 			labelWidth:		LABEL_WIDTH,
 			width:			FIELD_WIDTH,
@@ -253,8 +250,6 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			       			 	this.scaleField
 			       			 ]
 		});
-	   	
-
 	   	if(config.type != undefined && config.type != null && config.type != ""){
 	   		this.typeComboBox.select(config.type);
 	   		
@@ -268,8 +263,6 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   				this.typeSecondaryField.setValue(config.typeSecondary);
 	   			}
 	   		}
-	   		
-	   		console.log('config.type: ', config.type);
 	   		
 	   		if(config.type == this.elementTypes.NUMBER || config.type == this.elementTypes.CURRENCY) {
 	   			this.decimalsScaleContainer.setVisible(true);
@@ -290,12 +283,19 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   		}
 	   	} else {
 	   		this.typeComboBox.select(this.elementTypes.TEXT);
+	   		this.decimalsScaleContainer.setVisible(false);
 	   	}
+    	
+	   	this.typeContainer = Ext.create('Ext.form.FieldContainer', {
+			fieldLabel: 	LN('sbi.qbe.selectgridpanel.type.label'),
+			labelWidth:		LABEL_WIDTH,
+			width:			FIELD_WIDTH,
+			layout: 		'hbox',
+			items: 			typeContainerItems
+		});
 	   	
 	   	this.typeComboBox.on('change', function(comboBox) {
 	   		var selectedValue = comboBox.getValue();
-	   		
-	   		console.log('onchange: ', selectedValue);
 	   		
 	   		if(this.typeSecondaryField != null) {
 	   			this.typeSecondaryField.hide();
@@ -312,16 +312,141 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			this.decimalsField.setValue('');
-	   			this.scaleField.setValue(this.scales.K);
+	   			this.scaleField.setValue(this.scales.NONE);
 	   		} else {
 	   			this.decimalsScaleContainer.setVisible(false);
 	   		}
 	   		
 	   	}, this);
+
+	   	this.backgroundColorField = Ext.create('Ext.ux.FontColorField', { 
+			name: 				'backgroundColorField',
+			msgTarget: 			'qtip', 
+			fallback: 			true,
+			allowBlank: 		true,
+			fieldLabel: 		LN('sbi.qbe.selectgridpanel.backgroundcolor.label'),
+			labelWidth:			LABEL_WIDTH,
+			width:				FIELD_WIDTH
+		});
+	   	
+	   	if(config.backgroundColor != undefined && config.backgroundColor != null && config.backgroundColor != ""){
+    		this.backgroundColorField.setValue(config.backgroundColor);
+    	}
+
+	   	this.columnWidthField = Ext.create('Ext.form.field.Number', {
+			 name: 			'columnWidthField',
+			 fieldLabel: 	LN('sbi.qbe.selectgridpanel.columnwidth.label'),
+			 allowBlank: 	true,
+			 minValue: 		0,
+			 labelWidth:	LABEL_WIDTH,
+			 width:			FIELD_WIDTH
+		});
+	   	
+	   	if(config.columnWidth != undefined 
+				&& config.columnWidth != null){
+			this.columnWidthField.setValue(config.columnWidth);
+		}
+	   	
+	   	var fontSizeStore =  Ext.create('Sbi.fonts.stores.FontSizeStore',{});
+	   	this.fontSizeCombo = Ext.create('Ext.form.ComboBox',{
+	   		name:			'fontSizeCombo',
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontSizeStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			labelWidth:		LABEL_WIDTH,
+			width:			FIELD_WIDTH
+		});
+
+	   	if(config.fontSize != undefined 
+				&& config.fontSize != null){
+			this.fontSizeCombo.select(config.fontSize);
+		}
+	   	
+	   	var fontWeightStore = Ext.create('Sbi.fonts.stores.FontWeightStore', {});
+	   	this.fontWeightCombo = Ext.create('Ext.form.ComboBox',{
+	   		name:			'fontWeight',
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontWeightStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			labelWidth:		LABEL_WIDTH,
+			width:			FIELD_WIDTH
+   		});
+
+	   	if(config.fontWeight != undefined 
+				&& config.fontWeight != null
+				&& config.fontWeight != ''){
+			this.fontWeightCombo.select(config.fontWeight);
+		} else {
+			this.fontWeightCombo.select('normal');
+		}
+	   	
+	   	this.fontColorField = Ext.create('Ext.ux.FontColorField', { 
+	   		name: 			'fontColor',
+	   		msgTarget: 		'qtip', 
+	   		fallback: 		true,
+	   		fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontColor'),
+	   		afterLabelTextTpl : '<span class="help" data-qtip="'
+	   				+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+	   				+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+			allowBlank: 	true,
+			labelWidth:		LABEL_WIDTH,
+			width:			FIELD_WIDTH
+	   	});
+	   	
+	   	if(config.fontColor != undefined 
+	   			&& config.fontColor != null
+	   			&& config.fontColor != ''){
+	   		this.fontColorField.setValue(config.fontColor);
+	   	}
+	   	
+	   	var fontDecorationStore = Ext.create('Sbi.fonts.stores.FontDecorationStore', {});
+	   	this.fontDecorationCombo = Ext.create('Ext.form.ComboBox',{
+	   		name:			'fontDecoration',
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontDecorationStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			labelWidth:		LABEL_WIDTH,
+			width:			FIELD_WIDTH
+	   	});
+
+	   	if(config.fontDecoration != undefined 
+				&& config.fontDecoration != null
+				&& config.fontDecoration != ''){
+			this.fontDecorationCombo.select(config.fontDecoration);
+		}
 	   	
 	   	items.push(this.typeContainer);
 	   	items.push(this.decimalsScaleContainer);
-    	
+	   	items.push(this.backgroundColorField);
+	   	items.push(this.columnWidthField);
+	   	items.push(this.fontSizeCombo);
+	   	items.push(this.fontWeightCombo);
+	   	items.push(this.fontColorField);
+	   	items.push(this.fontDecorationCombo);
 
     	this.formPanel = Ext.create('Ext.form.FormPanel',{
     		frame:true,
@@ -405,6 +530,13 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			formState.decimals = null;
 			formState.scale = null;
 		}
+		
+		formState.backgroundColor = this.backgroundColorField.getValue();
+		formState.columnWidth = this.columnWidthField.getValue();
+		formState.fontSize = this.fontSizeCombo.getValue();
+		formState.fontWeight = this.fontWeightCombo.getValue();
+		formState.fontColor = this.fontColorField.getValue();
+		formState.fontDecoration = this.fontDecorationCombo.getValue();
 		
 		return formState;
 	}
