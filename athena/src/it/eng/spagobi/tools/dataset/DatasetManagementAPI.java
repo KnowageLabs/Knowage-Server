@@ -453,14 +453,18 @@ public class DatasetManagementAPI {
 					datasetColumn = association.getFields().get(0).getFieldName();
 					datasetLabel = association.getFields().get(0).getDataSetLabel();
 				} else {
-					datasetColumn = associationName.split("\\.")[1];
-					datasetLabel = associationName.split("\\.")[0];
+					String[] tmpAssociationName = associationName.split("\\.");
+					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
+						datasetColumn = tmpAssociationName[1];
+						datasetLabel = tmpAssociationName[0];
+					}
 				}
-
-				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-				Operand rightOperand = new Operand(valuesList);
-				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
-				filters.add(filterCriteria);
+				if (datasetLabel != null && datasetColumn != null) {
+					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+					Operand rightOperand = new Operand(valuesList);
+					FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+					filters.add(filterCriteria);
+				}
 			}
 
 			joinedDataStore = cache.get(joinedDataSet, null, filters, null);
@@ -519,14 +523,18 @@ public class DatasetManagementAPI {
 					datasetColumn = association.getFields().get(0).getFieldName();
 					datasetLabel = association.getFields().get(0).getDataSetLabel();
 				} else {
-					datasetColumn = associationName.split("\\.")[1];
-					datasetLabel = associationName.split("\\.")[0];
+					String[] tmpAssociationName = associationName.split("\\.");
+					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
+						datasetColumn = tmpAssociationName[1];
+						datasetLabel = tmpAssociationName[0];
+					}
 				}
-
-				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-				Operand rightOperand = new Operand(valuesList);
-				FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
-				filters.add(filter);
+				if (datasetLabel != null && datasetColumn != null) {
+					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+					Operand rightOperand = new Operand(valuesList);
+					FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
+					filters.add(filter);
+				}
 			}
 
 			joinedDataStore = cache.get(joinedDataSet, groupCriteria, filters, projectionCriteria);
