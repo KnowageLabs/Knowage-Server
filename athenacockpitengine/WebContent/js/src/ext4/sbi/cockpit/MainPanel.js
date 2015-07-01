@@ -41,8 +41,8 @@ Sbi.cockpit.MainPanel = function(config) {
 	{
 		c = Ext.apply(c, {
 			id: "mainPanel",
-			bodyCls : "mainPanelVisualizationMode",
-	        items    : [this.widgetContainer]
+			bodyCls : "mainPanelVisualizationMode"
+//	      ,  items    : [this.widgetContainer]
 		});
 	}
 	else
@@ -50,8 +50,8 @@ Sbi.cockpit.MainPanel = function(config) {
 		//Current user is the author of doc..we are not in visualization mode
 		c = Ext.apply(c, {
 			id: "mainPanel",
-			bodyCls : "mainPanel",
-	        items    : [this.widgetContainer]
+			bodyCls : "mainPanel"
+//	       , items    : [this.widgetContainer]
 		});
 	}
 
@@ -59,7 +59,8 @@ Sbi.cockpit.MainPanel = function(config) {
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
 };
 
-Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
+//Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
+Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 
 	// =================================================================================================================
 	// PROPERTIES
@@ -122,6 +123,9 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	, viewSelectionsWindow: null
 
     , msgPanel: null
+    
+//	, widgetContainerList: new Array()
+	, widgetContainerList: null
 
     // TODO remove from global
     , saved: null
@@ -274,7 +278,21 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		Sbi.trace("[MainPanel.getAnalysisState]: IN");
 		var analysisState = {};
 
-		analysisState.widgetsConf = this.widgetContainer.getConfiguration();
+		//gets configuration of all widgetContainer (all sheets)
+		var conf = {};
+    	conf.sheets = [];
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];	
+			var tmpWcConf = tmpWc.getConfiguration();			
+			if (tmpWcConf.widgets.length == 0 && Sbi.isValorized(tmpWc.widgets) && tmpWc.widgets.length > 0){
+				//loads widget configurations for sheets not showed (components aren't loaded yet)
+				tmpWcConf.widgets = tmpWc.widgets;
+			}
+			var sheetConf = {sheetId: tmpWc.id, sheetTitle:tmpWc.title, sheetConf: tmpWcConf};
+			conf.sheets.push(sheetConf);
+		}
+//		analysisState.widgetsConf = this.widgetContainer.getConfiguration();
+		analysisState.widgetsConf = conf.sheets;
 		analysisState.storesConf = Sbi.storeManager.getConfiguration();
 
 		Sbi.trace("[MainPanel.getAnalysisState]: OUT");
@@ -400,24 +418,33 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	}
 
 	, onClearSelections: function() {
-		var widgetManager = this.widgetContainer.getWidgetManager();
-		widgetManager.clearSelections();
+//		var widgetManager = this.widgetContainer.getWidgetManager();
+//		widgetManager.clearSelections();
+		for (var i=0; i<this.widgetContainerList.length; i++){
+			var tmpWc = this.widgetContainerList[i];
+			var tmpWcManager = tmpWc.getWidgetManager();
+			tmpWcManager.clearSelections();
+		}
+		
 	}
 
 	, onShowSelectionsWindow: function(){
 		var config = {};
-		config.widgetManager = this.widgetContainer.getWidgetManager();
-		config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+//		config.widgetManager = this.widgetContainer.getWidgetManager();
+//		config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+		
+		var selectionData = [];
+		for (var i=0; i<this.widgetContainerList.length; i++){
+			var tmpWc = this.widgetContainerList[i];
+			var pippo = tmpWc.getWidgetManager().getSelections() ;
+			selectionData.push(tmpWc.getWidgetManager().getSelections() || []);
+		}
+		
+		config.selections = selectionData;
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: config.selections is equal to [" + Sbi.toSource(config.selections) + "]");
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: instatiating the window");
 
-		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget();
-//		config = {};
-//		config.wtype = "selection";
-//		config.wconf = {
-//				wtype : "selection"
-//		};
-//		config.wlayout = null;
+		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
 
 		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
 	}
@@ -434,24 +461,25 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 			var selectionFields = ['association', 'values'];
 			var selectionData = [];
 			
-			var selections = this.widgetContainer.getWidgetManager().getSelections() || [];
-			//Sbi.trace("[MainPanel.onShowSelectionsView]: config.selections is equal to [" + Sbi.toSource(selections) + "]");
-			//Sbi.trace("[MainPanel.onShowSelectionsView]: instatiating the popup");
-			
-			for(var widgetId in selections)  {
+			for (var i=0; i<this.widgetContainerList.length; i++){
+				var tmpWc = this.widgetContainerList[i];
+//				var selections = this.widgetContainer.getWidgetManager().getSelections() || [];
+				var selections = tmpWc.getWidgetManager().getSelections() || [];
 				
-	    		var selectionsOnWidget = selections[widgetId];
-	    		//Sbi.trace("[MainPanel.onShowSelectionsView]: selections on widget: [" + Sbi.toSource(selectionsOnWidget) + "]");
-	    		
-	    		for(var fieldHeader in selectionsOnWidget) {
-	    			
-	    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
-	    				
-	    				selectionDataEl = [fieldHeader, selectionsOnWidget[fieldHeader].values];
-	    				//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionDataEl: [" + Sbi.toSource(selectionDataEl) + "]");
-	    				selectionData.push(selectionDataEl);
-	    			}
-	    		}
+				for(var widgetId in selections)  {
+					
+		    		var selectionsOnWidget = selections[widgetId];
+		    		
+		    		for(var fieldHeader in selectionsOnWidget) {
+		    			
+		    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
+		    				
+		    				selectionDataEl = [fieldHeader, selectionsOnWidget[fieldHeader].values];
+		    				//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionDataEl: [" + Sbi.toSource(selectionDataEl) + "]");
+		    				selectionData.push(selectionDataEl);
+		    			}
+		    		}
+				}
 			}
 			
 			//Sbi.trace("[MainPanel.onShowSelectionsView]: selectionData: [" + Sbi.toSource(selectionData) + "]");
@@ -509,7 +537,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 	, onSelectionsWindowCancelSingle: function() {
 		Sbi.trace("[MainPanel.onSelectionsWindowCancel]: IN");
-		alert("MainPanel");
+		
 		Sbi.trace("[MainPanel.onSelectionsWindowCancel]: OUT");
 	}
 
@@ -697,6 +725,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 	, onShowFilterEditorWizard: function(){
 		var config = {};
+		config.storesList = Sbi.storeManager.getStoreIds();
+		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.stores is equal to [" + Sbi.toSource(config.stores) + "]");
 		config.filters = Sbi.storeManager.getParameters();
 		Sbi.trace("[MainPanel.onShowFilterEditorWizard]: config.filters is equal to [" + Sbi.toSource(config.filters) + "]");
 		Sbi.trace("[MainPanel.showFilterEditorWizard]: instatiating the editor");
@@ -785,7 +815,8 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 	 */
 	, init: function() {
 		this.initToolbar();
-		this.initWidgetContainer();
+// 		with multiple sheets management the widgetConatainer is created throught the single tab
+//		this.initWidgetContainer();
 	}
 
 	, initToolbar: function() {
@@ -918,6 +949,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 		});
 	}
 
+	/*
 	, initWidgetContainer: function() {
 		Sbi.trace("[MainPanel.initWidgetContainer]: IN");
 
@@ -931,7 +963,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 
 		Sbi.trace("[MainPanel.initWidgetContainer]: OUT");
 	}
-
+*/
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// test methods

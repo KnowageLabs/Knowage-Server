@@ -157,6 +157,7 @@ Ext.define('Sbi.cockpit.widgets.piechart.PieChartWidgetDesigner', {
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
+            , wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
             , tools: [{
             	  id: 'list'
                 , type: 'collapse'

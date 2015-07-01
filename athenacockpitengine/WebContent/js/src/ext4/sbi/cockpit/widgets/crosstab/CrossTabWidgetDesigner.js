@@ -60,6 +60,7 @@ Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner = function(config) {
 			})]
 		,title: LN('sbi.crosstab.crosstabdefinitionpanel.title')
 		,border: false
+		,wcId: this.wcId
 	};
 
 	Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner.superclass.constructor.call(this, c);
@@ -298,6 +299,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, width: 400
 			, initialData: this.crosstabTemplate.columns
 			, ddGroup: this.ddGroup
+			, wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
 		});
 		// propagate events
 		this.columnsContainerPanel.on(
@@ -320,6 +322,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, width: 200
 			, initialData: this.crosstabTemplate.rows
 			, ddGroup: this.ddGroup
+			, wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
 		});
 		// propagate events
 		this.rowsContainerPanel.on(
@@ -344,6 +347,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			, crosstabConfig: this.crosstabTemplate.config
 			, ddGroup: this.ddGroup
 			, isStatic: this.isStatic
+			, wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
 		});
 
 		this.crosstabDefinitionPanel = new Ext.Panel({
@@ -739,6 +743,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.CrossTabWidgetDesigner, Sbi.cockpit.core
 			// applied to child components
 			//, defaults: {height: 150}
 			, items: [tableGeneralFontOptions, tdLevelFontOptions, tdMemberFontOptions, tdDataFontOptions]	
+			, wcId: this.wcId 
 		});
 		
 		

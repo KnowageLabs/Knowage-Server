@@ -103,7 +103,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 
 		var sheredConf = {
 			padding: Ext.isIE ? '10 0 0 35' : '0'
-			, ddGroup: 'worksheetDesignerDDGroup'
+			, ddGroup: this.wcId + '__' + 'cockpitDesignerDDGroup'
+			, wcId: this.wcId
 			, tools:  [{
 				type: 'close'
 			    , handler: this.removeDesigner
@@ -208,7 +209,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		var sheredConf = {padding: Ext.isIE ? '10 0 0 35' : '0'};
 		return new Ext.Panel(Ext.apply({
 			html: msg || 'dummy widget designer'
-			, ddGroup: 'worksheetDesignerDDGroup'
+			, ddGroup: this.wcId + '__' + 'cockpitDesignerDDGroup'
 			, tools:  [{
 				type: 'close'
 		        , handler: this.removeDesigner
@@ -224,7 +225,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 
 //		this.designer = new Sbi.crosstab.CrosstabDefinitionPanel(Ext.apply({
 //			crosstabTemplate: {}
-//			, ddGroup: 'worksheetDesignerDDGroup'
+//			, ddGroup: 'cockpitDesignerDDGroup'
 //			, tools:  [{
 //				id: 'close'
 //	        	, handler: this.removeDesigner
@@ -241,7 +242,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 
 //		this.designer = new Sbi.crosstab.StaticCrosstabDefinitionPanel(Ext.apply({
 //			crosstabTemplate: {}
-//			, ddGroup: 'worksheetDesignerDDGroup'
+//			, ddGroup: 'cockpitDesignerDDGroup'
 //			, tools:  [{
 //				id: 'close'
 //	        	, handler: this.removeDesigner
@@ -257,7 +258,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		this.insertDesigner();
 
 //		this.designer = new Sbi.worksheet.designer.BarChartDesignerPanel(Ext.apply({
-//			ddGroup: 'worksheetDesignerDDGroup'
+//			ddGroup: 'cockpitDesignerDDGroup'
 //			, border: false
 //			, tools:  [{
 //				id: 'close'
@@ -275,7 +276,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		this.insertDesigner();
 
 //		this.designer = new Sbi.worksheet.designer.LineChartDesignerPanel(Ext.apply({
-//			ddGroup: 'worksheetDesignerDDGroup'
+//			ddGroup: 'cockpitDesignerDDGroup'
 //			, border: false
 //			, tools:  [{
 //				id: 'close'
@@ -293,7 +294,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		this.insertDesigner();
 
 //		this.designer = new Sbi.worksheet.designer.PieChartDesignerPanel(Ext.apply({
-//			ddGroup: 'worksheetDesignerDDGroup'
+//			ddGroup: 'cockpitDesignerDDGroup'
 //			, border: false
 //			, tools:  [{
 //				id: 'close'
@@ -311,7 +312,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 		this.insertDesigner();
 
 //		this.designer = new Sbi.worksheet.designer.TableDesignerPanel(Ext.apply({
-//			ddGroup: 'worksheetDesignerDDGroup'
+//			ddGroup: 'cockpitDesignerDDGroup'
 //			, border: false
 //			, tools:  [{
 //				id: 'close'
@@ -374,7 +375,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel, Ext.Panel, {
 
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[WidgetEditorCustomConfPanel.onFieldDrop]: IN");
-		if (ddSource.id === "designer-grid-body") {
+		if (ddSource.id === this.wcId + '__' + "designer-grid-body") {
 			Sbi.trace("[WidgetEditorCustomConfPanel.onFieldDrop]: dragged object comes from palette");
 			this.notifyDropFromPalette(ddSource);
 		} else {

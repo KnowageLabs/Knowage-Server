@@ -146,6 +146,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 
 			preparedItem = this.prepareData(records[i].data, startIndex + i, records[i]);
 
+			//defines new id with dataset label and widget container id (for multisheets management) 
+			preparedItem.id = this.wcId + '__' + preparedItem.label ;
+			
 			if(this.isUsed(preparedItem.label)) {
 				preparedItem.isUsed = 'true';
 				addItem = true;
@@ -184,19 +187,23 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 					'<tpl for=".">',
 					    '{[isUsed=""]}',
 					    '{[label=""]}',
+					    '{[id=""]}',
 					    '{[isSelected=""]}',
 					    '<tpl if="this.checkIsSelected(isSelected, label) == true">'+
-					 		'<dd id="{label}" class="box selectboxBlu">',
+//					 		'<dd id="{label}" class="box selectboxBlu">',
+					 		'<dd id="{id}" class="box selectboxBlu">',
 					 			datasetsTpl,
 						    '</dd>',
 					    '</tpl>'+
 					    '<tpl if="this.checkIsSelected(isSelected, label) == false && this.checkIsUsed(isUsed, label) == true">'+
-					 		'<dd id="{label}" class="box selectboxOrange">',
+//					 		'<dd id="{label}" class="box selectboxOrange">',
+					 		'<dd id="{id}" class="box selectboxOrange">',
 					 			datasetsTpl,
 						    '</dd>',
 					    '</tpl>'+
 				        '<tpl if="this.checkIsSelected(isSelected, label) == false && this.checkIsUsed(isUsed, label) == false">'+
-					        '<dd id="{label}" class="box">',
+//					        '<dd id="{label}" class="box">',
+					        '<dd id="{id}" class="box">',
 					 			datasetsTpl,
 						    '</dd>',
 					    '</tpl>'+
@@ -236,12 +243,14 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 
 		var datasetTpl = ''+
 		'<div class="box-container">'+
-	        '<div id="box-figure-{label}" class="box-figure">'+
+//	        '<div id="box-figure-{label}" class="box-figure">'+
+	        '<div id="box-figure-{id}" class="box-figure">'+
 //				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
 				'<img  align="center" src="' + img + '" '+ classImg +'"></img>' +
 			'</div>'+ //box-figure
 			'<tpl if="this.checkIsUsed(isUsed, label) == true">'+
-				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
+//				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
+				'<div id="box-text-{id}" title="{name}" class="box-text box-text-select">'+
 					'<h3>{[this.shortenTitle(values.name)]}</h3>'+
 					'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
@@ -250,7 +259,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 				'</div>'+
 			'</tpl>'+
 	        '<tpl if="this.checkIsUsed(isUsed, label) == false">'+
-		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
+//		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
+		        '<div id="box-text-{id}" title="{name}" class="box-text">'+
 					'<h3>{[this.shortenTitle(values.name)]}</h3>'+
 						'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
@@ -271,7 +281,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	, selectDatasetComponent: function(datasetLabel) {
 		Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: IN");
 		if(this.rendered === true) {
-			var el = Ext.get(datasetLabel);
+//			var el = Ext.get(datasetLabel);
+			var el = Ext.get(this.wcId+ '__' + datasetLabel);
 	 		if (el) {
 	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: class before [" + el.dom.className + "]");
 	 			// the  class selectboxOrange is used to mark used datatset. a selected dataset is of course also a used dataset but we

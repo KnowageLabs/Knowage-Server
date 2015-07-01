@@ -61,7 +61,7 @@ Sbi.cockpit.widgets.crosstab.AttributesContainerPanel = function(config) {
         //, cm: this.cm
         //, sm: this.sm
         , enableDragDrop: true
-        , ddGroup: this.ddGroup || 'worksheetDesignerDDGroup'
+        , ddGroup: this.ddGroup || 'cockpitDesignerDDGroup'
 	    , layout: 'fit'
 	    , hideHeaders: true
 	    , forceFit: true
@@ -166,7 +166,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.AttributesContainerPanel, Ext.grid.Panel
    ]
 
 	, onFieldDrop: function(ddSource) {
-		if (ddSource.id === "field-grid-body") {
+		if (ddSource.id === this.wcId + '__' + "field-grid-body") {
 			this.notifyDropFromAttributesContainerPanel(ddSource);
 		}
 	}
@@ -430,7 +430,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.AttributesContainerPanel, Ext.grid.Panel
 	, initDropTarget: function() {
 		this.removeListener('render', this.initDropTarget, this);
 		var dropTarget = new Sbi.cockpit.widgets.crosstab.GenericDropTarget(this, {
-			ddGroup: this.ddGroup || 'worksheetDesignerDDGroup'
+			ddGroup: this.ddGroup || 'cockpitDesignerDDGroup'
 			, onFieldDrop: this.onFieldDrop
 		});
 	}

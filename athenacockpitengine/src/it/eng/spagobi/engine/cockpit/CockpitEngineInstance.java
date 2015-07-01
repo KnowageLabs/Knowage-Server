@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit;
 
@@ -25,12 +25,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineInstance extends AbstractEngineInstance {
+	// logger component
+	public static Logger logger = Logger.getLogger(CockpitEngineInstance.class);
 
 	JSONObject template;
 	AssociationManager associationManager;
@@ -45,6 +49,24 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		super(env);
 		try {
 			this.template = new JSONObject(template);
+			// Multisheet management. For retrocompatibility add new sheet section if isn't yet presents.
+			JSONObject widgetsConfJSON = this.template.optJSONObject("widgetsConf");
+			if (widgetsConfJSON != null && widgetsConfJSON.get("widgets") != null) {
+				logger.debug("Cockpit template is in old version, converting it to multisheet format...");
+				JSONObject sheetTemplate = new JSONObject();
+				JSONArray sheets = new JSONArray();
+				JSONObject sheet = new JSONObject();
+				sheet.put("sheetId", "Sheet1");
+				sheet.put("sheetTitle", "Sheet1");
+				sheet.put("sheetConf", widgetsConfJSON);
+				sheets.put(sheet);
+				sheetTemplate.put("widgetsConf", sheets);
+				// completes new template with ohter generic settings (about stores, layout,..)
+				JSONObject storeConfJSON = (JSONObject) this.template.get("storesConf");
+				sheetTemplate.put("storesConf", storeConfJSON);
+				// update internal template variable with the new one
+				this.template = sheetTemplate;
+			}
 			this.associationManager = new AssociationManager();
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", e);

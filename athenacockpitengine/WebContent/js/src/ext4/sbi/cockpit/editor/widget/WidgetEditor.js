@@ -138,7 +138,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	}
 
 	, initSheetsContainerPanel: function(config) {
-		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel();
+		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel({wcId: this.wcId});
 
 		this.mainPanel.on(
 				'attributeDblClick',

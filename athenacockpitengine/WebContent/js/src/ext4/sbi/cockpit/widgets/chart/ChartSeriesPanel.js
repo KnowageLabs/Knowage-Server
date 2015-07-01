@@ -37,6 +37,7 @@ Sbi.cockpit.widgets.chart.ChartSeriesPanel = function(config) {
 		        ]
 		, layout: 'card'
 		, activeItem: 0
+		, wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
 		, tools: [
 	          {
 	        	  id: 'close'
@@ -247,7 +248,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 			 store: this.store
 			 , border: false
 			 , enableDragDrop: true
-		     , ddGroup: this.ddGroup || 'crosstabDesignerDDGroup'
+		     , ddGroup: this.ddGroup || this.wcId + '__' + 'crosstabDesignerDDGroup'
 			 , layout: 'fit'
 			 , cls: 'chart-series-panel'
 			 , viewConfig: {
@@ -328,7 +329,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartSeriesPanel, Ext.Panel, {
 
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[ChartSeriesPanel.onFieldDrop]: IN");
-		if (ddSource.id === "field-grid-body") {
+		if (ddSource.id === this.wcId + '__' +  "field-grid-body") {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
 			alert('Unknown drag source [' + ddSource.id + ']');

@@ -52,7 +52,9 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 
 	this.tableDesigner = new Sbi.cockpit.widgets.table.QueryFieldsCardPanel({
 		ddGroup: this.ddGroup,
-		title: 'Table Designer'
+		title: 'Table Designer',
+		wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
+			
 	});
 	
 	this.initTableOptionsTab();

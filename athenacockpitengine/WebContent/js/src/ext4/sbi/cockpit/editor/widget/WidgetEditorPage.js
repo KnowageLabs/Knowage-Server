@@ -119,7 +119,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.widgetEditorPanel = new Sbi.cockpit.editor.widget.WidgetEditor();
+		this.widgetEditorPanel = new Sbi.cockpit.editor.widget.WidgetEditor({wcId: this.wcId});
 		return this.widgetEditorPanel;
 	}
 

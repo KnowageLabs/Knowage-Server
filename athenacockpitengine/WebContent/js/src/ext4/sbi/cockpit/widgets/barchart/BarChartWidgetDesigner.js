@@ -252,6 +252,7 @@ Ext.extend(Sbi.cockpit.widgets.barchart.BarChartWidgetDesigner, Sbi.cockpit.core
             , height: 70
             , initialData: null
             , ddGroup: this.ddGroup
+            , wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
 		});
 		// propagate events
 		this.categoryContainerPanel.on(

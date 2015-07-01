@@ -72,7 +72,7 @@ Ext.extend(Sbi.cockpit.widgets.chart.ChartCategoryPanel, Ext.Panel, {
 		}
 		*/
 
-		if (ddSource.id === "field-grid-body") {
+		if (ddSource.id === this.wcId + '__' +  "field-grid-body") {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		} else {
 			Ext.Msg.show({

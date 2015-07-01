@@ -243,7 +243,7 @@ Ext.extend(Sbi.cockpit.widgets.crosstab.MeasuresContainerPanel, Ext.grid.Panel, 
 	}
 
 	, onFieldDrop: function(ddSource) {
-		if (ddSource.id === "field-grid-body") {
+		if (ddSource.id === this.wcId + '__' + "field-grid-body") {
 			this.notifyDropFromQueryFieldsPanel(ddSource);
 		}
 

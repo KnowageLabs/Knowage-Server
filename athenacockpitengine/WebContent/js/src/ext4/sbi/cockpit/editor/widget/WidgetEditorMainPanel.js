@@ -58,8 +58,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function(){
-		this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel();
-		this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel();
+		this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel({wcId: this.wcId});
+		this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel({wcId: this.wcId});
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

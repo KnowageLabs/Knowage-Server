@@ -40,6 +40,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetDesigner.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetManager.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetContainerComponent.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/SheetTabMenu.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/SheetsContainerPanel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetContainer.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetExtensionPointManager.js'/></script>
 

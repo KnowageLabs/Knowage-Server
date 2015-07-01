@@ -58,7 +58,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 		this.tpl.compile();
 
 		var gridPanel = Ext.create('Ext.grid.Panel', {
-			id: 'designer-grid', // used to detect drag source in WidgetEditorMainPanel drop area
+			id: this.wcId + '__' + 'designer-grid', // used to detect drag source in WidgetEditorMainPanel drop area
 		    store: Ext.data.StoreManager.lookup('widgetDesignerStore'),
 		    columns: [
 		        {

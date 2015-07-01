@@ -33,13 +33,27 @@ Sbi.data.StoreManager = function(config) {
 	//check if exist a crosstab in order to create a crosstab store
 	if(c && c.storesConf && c.storesConf.stores){
 		var stores = c.storesConf.stores;
-		var widgets = c.template.widgetsConf.widgets;
+//		var widgets = c.template.widgetsConf.widgets;
+//
+//		for(var i=0; i<widgets.length; i++){
+//			var aWidget = widgets[i];
+//			var aStore = stores[i];
+//			if(aWidget.wtype == "crosstab"){
+//				aStore.stype = "crosstab";
+//			}
+//		}
+		//multisheet management
+		var widgetsConf = c.template.widgetsConf;
 
-		for(var i=0; i<widgets.length; i++){
-			var aWidget = widgets[i];
-			var aStore = stores[i];
-			if(aWidget.wtype == "crosstab"){
-				aStore.stype = "crosstab";
+		for(var i=0; i<widgetsConf.length; i++){
+			var sheet = widgetsConf[i];
+			var  widgets = sheet.sheetConf.widgets;
+			for(var i=0; i<widgets.length; i++){
+				var aWidget = widgets[i];
+				var aStore = stores[i];
+				if(aWidget.wtype == "crosstab"){
+					aStore.stype = "crosstab";
+				}
 			}
 		}
 	}
@@ -396,6 +410,10 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 			}
 		}
 		return null;
+	}
+
+	, getAssociationGroups: function() {
+		return this.associationGroups;
 	}
 
 	/**
@@ -1678,14 +1696,18 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
     	Sbi.trace("[StoreManager.createStore]: IN");
     	Sbi.trace("[StoreManager.createStore]: store [" + storeConf.storeId + "] conf is equal to [" + Sbi.toSource(storeConf, true)+ "]");
-
+    	
     	var proxy = new Ext.data.HttpProxy({
 			url: Sbi.config.serviceReg.getServiceUrl('loadDataSetStore', {
 				pathParams: {datasetLabel: storeConf.storeId}
 			})
 			, method: 'GET'
+//			, params: {
+//			    	parameters: Ext.JSON.encode( this.storesConf.parameters )
+//			 },
 	    	//, timeout : this.timeout
 	    });
+    	
     	proxy.on('exception', this.onStoreLoadException, this);
     	Sbi.trace("[StoreManager.createStore]: proxy sucesfully created");
 

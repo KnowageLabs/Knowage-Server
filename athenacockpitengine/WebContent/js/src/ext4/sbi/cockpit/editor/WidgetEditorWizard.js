@@ -132,6 +132,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 
 		this.editorMainPanel = new Sbi.cockpit.editor.WidgetEditorWizardPanel({
 			usedDatasets: this.usedDatasets
+			, wcId: this.wcId
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);

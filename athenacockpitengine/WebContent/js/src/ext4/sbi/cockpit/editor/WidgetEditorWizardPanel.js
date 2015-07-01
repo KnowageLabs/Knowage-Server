@@ -89,7 +89,7 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	, initPages: function(){
+	, initPages: function(){		
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: IN");
 
 		this.pages = new Array();
@@ -108,9 +108,11 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
 	}
 
 	, initDatasetBrowserPage: function() {
+		
 		Sbi.trace("[WidgetEditorWizardPanel.initDatasetBrowserPage]: IN");
 		this.datasetsBrowserPage = new Sbi.cockpit.editor.dataset.DatasetBrowserPage({
 			usedDatasets: this.usedDatasets
+		  , wcId: this.wcId
 		});
 		Sbi.trace("[WidgetEditorWizardPanel.initDatasetBrowserPage]: OUT");
 		return this.datasetsBrowserPage;
@@ -119,7 +121,7 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
 	, initWidgetEditorPage: function() {
 		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
 		this.widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditorPage({
-			// nothing to declare here
+			wcId: this.wcId
 		});
 		//this.widgetEditorPage = new Ext.Panel({html: "this.widgetEditorPage"});
 		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");

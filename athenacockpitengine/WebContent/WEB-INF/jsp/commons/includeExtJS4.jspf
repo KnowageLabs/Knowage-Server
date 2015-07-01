@@ -22,11 +22,13 @@
 <script type="text/javascript" src="/athenacockpitengine/js/lib/ext/4.2.1/compatibility/ext3-compat.js"></script>
 
 <!-- Additional Ext overrides and application-specific includes here -->
+<script type="text/javascript" src="/athenacockpitengine/js/lib/ext/4.2.1/ux/TabCloseMenu.js"></script>
+
 <%
 	if(request.getParameter("theme")!=null && !request.getParameter("theme").equals("")){
 %>
 	<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
-	<link id="theme-access" rel="styleSheet" href ="/athenacockpitengine/js/lib/ext/4.2.1/resources/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />
+	<link id="theme-access" rel="styleSheet" href ="/athenacockpitengine/js/lib/ext/4.2.1/resources/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />	
 <%
 	}
 %>

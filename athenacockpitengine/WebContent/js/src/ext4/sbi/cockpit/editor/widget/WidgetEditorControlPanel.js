@@ -82,7 +82,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 
 	initPanels: function() {
 
-		this.designerPalettePanel = new Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette({});
+		this.designerPalettePanel = new Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette({wcId: this.wcId});
 
 		this.fieldsPalettePanel = new Sbi.cockpit.editor.widget.WidgetEditorFieldPalette({
 			border: false,
@@ -93,7 +93,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorControlPanel, Ext.Panel, {
 			height : 120,
 			width: 275,
 			dataset: this.dataset,
-			services : this.services
+			services : this.services,
+			wcId: this.wcId
 		});
 		this.fieldsPalettePanel.store.on('load', this.fieldsLoadedHandler, this);
 		this.fieldsPalettePanel.store.on('beforeload', this.getGlobalFilters, this); // forces a calculation of global filters

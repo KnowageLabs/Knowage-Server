@@ -226,7 +226,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
         this.template.compile();
 
 		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
-			id: 'field-grid',
+			id: this.wcId + '__' + 'field-grid',
 	        store: this.store,
 	        hideHeaders: true,
 	        autoScroll: false,
@@ -234,7 +234,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 				plugins: {
 					ptype: 'gridviewdragdrop',
 		            dragText: 'Drag and drop to reorganize',
-		            ddGroup: 'worksheetDesignerDDGroup',
+		            ddGroup: this.wcId + '__' + 'cockpitDesignerDDGroup',
 		            enableDrop: false
 		        }
 			},

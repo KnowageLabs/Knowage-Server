@@ -49,7 +49,8 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	    , viewConfig: {
 	    	plugins: {
 				ptype: 'gridviewdragdrop',
-	            ddGroup : this.ddGroup || 'crosstabDesignerDDGroup'
+	            ddGroup : this.ddGroup || 'crosstabDesignerDDGroup',
+	            wcId: this.wcId
 	        },
 	    	forceFit: true
 	    }

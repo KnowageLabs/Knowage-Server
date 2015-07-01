@@ -84,13 +84,14 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	// PROPERTIES
 	// =================================================================================================================
 
-	id:'this'  // TODO remove
+//	id:'this', // TODO remove
+//	id:'this__' + this.wcId,
 
 	/**
      * @property {Array} services
      * This array contains all the services invoked by this class
      */
-	, services: null
+	services: null
 
 	/**
      * @property {Ext.Panel} toolbar
@@ -174,7 +175,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	 *
 	 * If there is a selected dataset it deselects it and the force a GUI refresh
 	 */
-	, resetSelection: function() {
+	, resetSelection: function() {		
 		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: IN");
 		if(this.getSelectedDataset() !== null) {
 			Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: deselected dataset [" + this.getSelectedDataset() + "]");
@@ -318,7 +319,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		this.sort(this.sortOption, updateControl);
 	}
 
-	, refresh: function() {
+	, refresh: function() {		
 		Sbi.trace("[DatasetsBrowserPanel.refreshDatasetList]: IN");
 
 		this.initDatasetListService();
@@ -393,7 +394,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetListService]: OUT");
 	}
 
-	, initDatasetStore: function() {
+	, initDatasetStore: function() {		
 		Sbi.trace("[DatasetsBrowserPanel.initDatasetStore]: IN");
 
 		Ext.define('DataSet', {
@@ -546,7 +547,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	     		activeClass = '';
 	     	}
 	     	buttonsHtml +=
-	     	'<li class="first '+activeClass+'" id="MyDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'MyDataSet\', true)">'+LN('sbi.mydata.mydataset')+'</a></li> ';
+	     	'<li class="first '+activeClass+'" id="MyDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this__' + this.wcId+'\').filter( \'MyDataSet\', true)">'+LN('sbi.mydata.mydataset')+'</a></li> ';
 	     }
 
 	     if (Sbi.settings.mydata.showEnterpriseDataSetFilter){
@@ -556,7 +557,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	     		activeClass = '';
 	     	}
 	     	buttonsHtml +=
-	 		'	    	<li class="'+activeClass+'" id="EnterpriseDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'EnterpriseDataSet\', true)">'+LN('sbi.mydata.enterprisedataset')+'</a></li> ';
+	 		'	    	<li class="'+activeClass+'" id="EnterpriseDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this__' + this.wcId+'\').filter( \'EnterpriseDataSet\', true)">'+LN('sbi.mydata.enterprisedataset')+'</a></li> ';
 	     }
 	     if (Sbi.settings.mydata.showSharedDataSetFilter){
 	      	if (this.filterOption == 'SharedDataSet'){
@@ -565,7 +566,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	     		activeClass = '';
 	     	}
 	      	buttonsHtml +=
-	  		'	    	<li class="'+activeClass+'" id="SharedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'SharedDataSet\', true)">'+LN('sbi.mydata.shareddataset')+'</a></li> ';
+	  		'	    	<li class="'+activeClass+'" id="SharedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this__' + this.wcId+'\').filter( \'SharedDataSet\', true)">'+LN('sbi.mydata.shareddataset')+'</a></li> ';
 	     }
 
 	     if (Sbi.settings.mydata.showAllDataSetFilter){
@@ -575,7 +576,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	     		activeClass = '';
 	     	}
 	       	buttonsHtml +=
-	 		'	    	<li id="AllDataSet" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'AllDataSet\', true)">'+LN('sbi.mydata.alldataset')+'</a></li> ';
+	 		'	    	<li id="AllDataSet" class="last '+activeClass+'"><a href="#" onclick="javascript:Ext.getCmp(\'this__' + this.wcId+'\').filter( \'AllDataSet\', true)">'+LN('sbi.mydata.alldataset')+'</a></li> ';
 	     }
 	     if (Sbi.settings.mydata.showUsedDataSetFilter){
 		    	if (this.filterOption == 'UsedDataSet'){
@@ -584,7 +585,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		    		activeClass = '';
 		    	}
 		    	buttonsHtml +=
-		    	'	    	<li class="first '+activeClass+'" id="UsedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').filter( \'UsedDataSet\', true)">'+LN('sbi.mydata.useddataset')+'</a></li> ';
+		    	'	    	<li class="first '+activeClass+'" id="UsedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this__' + this.wcId+'\').filter( \'UsedDataSet\', true)">'+LN('sbi.mydata.useddataset')+'</a></li> ';
 	      }
 
 	      buttonsHtml+= '</ul>';
@@ -598,7 +599,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
     		'	            <fieldset> '+
     		'	                <div class="field"> '+
     		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').search(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
+    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this__' + this.wcId+'\').search(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
     		'	                </div> '+
     		'	                <div class="submit"> '+
     		'	                    <input type="text" value="Cerca" /> '+
@@ -620,8 +621,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		return html;
 	}
 
-	, initViewPanel: function() {
-
+	, initViewPanel: function() {		
 		Sbi.trace("[DatasetsBrowserPanel.initViewPanel]: IN");
 
 		var config = {};
@@ -632,6 +632,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		config.user = this.user;
 		config.fromMyDataCtx = this.displayToolbar;
 		config.filterOption = this.filterOption;
+		config.wcId = this.wcId;
 
 		this.viewPanel = new Sbi.widgets.DatasetsBrowserView(config);
 		this.viewPanel.addListener('itemclick', this.onClick, this);
@@ -743,7 +744,8 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 		Sbi.trace("[DatasetsBrowserPanel.onClick]: IN");
 
 		var store = obj.getStore();
-		var record = store.getAt(store.findExact('label',node.id));
+//		var record = store.getAt(store.findExact('label',node.id));
+		var record = store.getAt(store.findExact('id',node.id));
 		if (record){
 			record = record.data;
 		}

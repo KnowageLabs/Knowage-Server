@@ -22,8 +22,8 @@ Sbi.cockpit.editor.dataset.DatasetBrowserPage = function(config) {
 
 	// init properties...
 	var defaultSettings = {
-		itemId: 0
-		, layout: "fit"
+		itemId: 0,
+		 layout: "fit"
 		, frame: false
 		, border: false
 	};
@@ -144,10 +144,10 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	, init: function(){
-
+	, init: function(){		
 		this.datasetsBrowserPanel = new Sbi.widgets.DatasetsBrowserPanel({
 			usedDatasets: this.usedDatasets
+		  , wcId: this.wcId
 		});
 		delete this.usedDatasets;
 

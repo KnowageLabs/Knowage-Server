@@ -56,6 +56,7 @@ Sbi.cockpit.widgets.table.QueryFieldsCardPanel = function(config) {
 
 	this.tableDesigner = new Sbi.cockpit.widgets.table.QueryFieldsContainerPanel( {
 		ddGroup: this.ddGroup
+	  , wcId: this.wcId
 	});
 	// propagate events
 	this.tableDesigner.on(
@@ -117,7 +118,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 
 	, onFieldDrop: function(ddSource) {
 		Sbi.trace("[QueryFieldsCardPanel.onFieldDrop]: IN");
-		if (ddSource.id === "field-grid-body") {
+		if (ddSource.id === this.wcId + '__' + "field-grid-body") {
 			this.tableDesigner.notifyDropFromQueryFieldsPanel(ddSource);
 		} else if (this.tableDesigner.view.getId() == ddSource.view.getId()) {
 			this.tableDesigner.notifyDropFromItSelf(ddSource);

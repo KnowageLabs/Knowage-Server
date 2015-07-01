@@ -342,10 +342,11 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.getComponentRegion]: IN");
     	var region = null;
     	if( this.components.contains(component) ) {
+    		//with the multisheet management is necessary get current y from the component instead of the hidden box
     		var box = component.getBox();
     		region = {};
     		region.x = box.x;
-    		region.y = box.y;
+    		region.y = ( box.y > 0)?box.y:component.y;
     		region.width = box.width;
     		region.height = box.height;
 
@@ -435,7 +436,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
     		Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: instatiating the editor");
 
-    		this.widgetEditorWizard = new Sbi.cockpit.editor.WidgetEditorWizard();
+    		this.widgetEditorWizard = new Sbi.cockpit.editor.WidgetEditorWizard({wcId: this.id});
     		this.widgetEditorWizard.on("submit", this.onWidgetEditorWizardSubmit, this);
     		this.widgetEditorWizard.on("cancel", this.onWidgetEditorWizardCancel, this);
     		this.widgetEditorWizard.on("apply", this.onWidgetEditorWizardApply, this);
@@ -443,7 +444,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: editor succesfully instantiated");
     	}
 
-    	var storeIds = Sbi.storeManager.getStoreIds();
+    	var storeIds = Sbi.storeManager.getStoreIds();  	
+    	
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: used dataset ids [" + storeIds + "]");
     	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets( storeIds );
     	this.widgetEditorWizard.setWizardTargetComponent(component);
@@ -600,7 +602,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		if(Sbi.isValorized(unselectedDatasetLabel)) {
 			Sbi.trace("[WidgetContainer.applyStoreUnselection]: removing from store manger unselected store [" + unselectedDatasetLabel + "] ...");
-			if( this.getStoreManager().isStoreUsed(unselectedDatasetLabel) == false ) {
+			if( this.getWidgetManager().isStoreUsed(unselectedDatasetLabel) == false ) {
 				Sbi.storeManager.removeStore(unselectedDatasetLabel);
 				Sbi.trace("[WidgetContainer.applyStoreUnselection]: unselected store [" + unselectedDatasetLabel + "] succesfully removed from store manager");
 			} else {
@@ -965,7 +967,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     // -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------
-    , init: function() {
+    , init: function() {    	
     	this.components = new Ext.util.MixedCollection();
     }
 

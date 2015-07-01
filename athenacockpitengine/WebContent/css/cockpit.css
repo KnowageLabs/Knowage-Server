@@ -813,6 +813,10 @@
 .help {
 	background:url(../img/icon-info15.png) right center no-repeat;
 }
+
+.newTabIcon {
+	 background-image:url(../img/new_tab_icon.png) !important;
+}
 	
 } /* END MEDIA SCREEN*/		
 
