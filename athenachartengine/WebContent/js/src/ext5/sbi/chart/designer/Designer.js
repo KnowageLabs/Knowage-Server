@@ -253,8 +253,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
 					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';	
 					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel || isChartTreemap)
-					{
+					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel)
+					{						
 						chartLegendCheckBox.hide();
 					}
 					else
@@ -661,6 +661,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    	xtype: 'textfield',
 				    	id: 'textfieldAxisTitle',
 						flex: 10,
+						hidden: false, // *_*
 						allowBlank:  true,
 			            emptyText: LN('sbi.chartengine.designer.emptytext.axistitle'),
 						selectOnFocus: true,
@@ -673,6 +674,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 					    type:'gear',
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
+					    hidden: false, // *_*
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -683,8 +685,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    		axisData: thisChartColumnsContainer.getAxisData(),
 								});
 								
-						    	axisStylePopup.show();
-						    	}
+						    	axisStylePopup.show();						    	
+					    	}
 						}
 					}					
 				],
@@ -752,6 +754,24 @@ Ext.define('Sbi.chart.designer.Designer', {
   				}
   				
   			});
+			
+			// *_*
+			/* START: Hiding the bottom (X) axis title textbox and gear tool
+			 *  if the already existing (saved) chart (document) is one of the 
+			 *  specified chart types.
+			 *  */
+			var typeOfChart = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			
+			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
+					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" )
+			{
+				// Hide the bottom (X) axis title textbox
+				Ext.getCmp("chartBottomCategoriesContainer").tools[0].hidden = true;
+				
+				// Hide the gear icon on the bottom (X) axis panel
+				Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;				
+			}
+			// END
 		
 			this.chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
   				title: LN('sbi.chartengine.designer.step1'),
@@ -1014,7 +1034,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			
 			// *_*
-			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL")
+			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || 
+					chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL")
 			{			
 				if (category.length == undefined || category.length == null)
 				{
@@ -1078,10 +1099,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					});
 				}
 			}			
-		},
-		
-		
-			
+		},			
 			
 		loadAxesAndSeries: function(jsonTemplate) {
 			var leftYAxisesPanel = this.leftYAxisesPanel;
@@ -1100,12 +1118,30 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var isDestructible = (yCount > 1);
 					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
 					// pie workaround "!axis.position"
-					if(!axis.position || axis.position.toLowerCase() == 'left') {
-
+					if(!axis.position || axis.position.toLowerCase() == 'left') {											
+						
+						// *_* 					
+						/* START: Hiding the left (Y) axis title textbox, gear and plus tools
+						 *  if the already existing (saved) chart (document) is one of the specified chart types.
+						 *  */
+						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+						var hideAxisTitleTextbox = false;
+						var hideGearTool = false;
+						var hidePlusGear = false;
+						
+						if (chartType == "SUNBURST" || chartType == "PARALLEL" ||
+								chartType == "WORDCLOUD" || chartType == "TREEMAP" )
+						{
+							hideAxisTitleTextbox = true;
+							hideGearTool = true;
+							hidePlusGear = true;
+						}
+						// END
+						
 						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
 								leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
 								Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-								Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
+								Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis, hideAxisTitleTextbox, hideGearTool, hidePlusGear);
 						leftYAxisesPanel.add(newColumn);
 
 					} else {

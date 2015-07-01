@@ -53,7 +53,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		},
 
 		createChartColumnsContainer: function(idAxisesContainer, id, panelWhereAddSeries, isDestructible, 
-				dragGroup, dropGroup, axis) {
+				dragGroup, dropGroup, axis, axisTitleTextboxHidden, gearHidden, plusHidden) {
 
 			if( ChartColumnsContainerManager.instanceCounter == ChartColumnsContainerManager.COUNTER_LIMIT) {
 				Ext.log('Maximum number of ChartColumnsContainer instances reached');
@@ -147,6 +147,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				tools:[
 				       Ext.create('Ext.form.TextField', {
 				    	id: idChartColumnsContainer + '_TitleTextfield',
+				    	
+				    	// *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+				    	hidden: axisTitleTextboxHidden,	
+				    	
 						flex: 10,
 						allowBlank:  true,
 						selectOnFocus: true,
@@ -161,6 +165,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					{
 					    type:'gear',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
+					    
+					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+					    hidden: gearHidden,	
+					    
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -182,6 +190,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					{
 					    type:'plus',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
+					    
+					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+					    hidden: plusHidden || (panelWhereAddSeries == null),
+					    
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -193,8 +205,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
 					    	}
 					    	
-					    },
-					    hidden: (panelWhereAddSeries == null)
+					    }
+						
+						// *_* Old code included in: (hidden: plusHidden || (panelWhereAddSeries == null))
+					    //hidden: (panelWhereAddSeries == null)
 					}
 					
 				],

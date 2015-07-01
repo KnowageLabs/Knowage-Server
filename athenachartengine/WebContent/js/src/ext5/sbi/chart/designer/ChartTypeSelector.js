@@ -33,7 +33,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 
 			var thisChartType = this.chartType.toLowerCase();
 			
-			var globalThis = this;
+			var globalThis = this;		
 			
 			var compatybilityLookup = 
 			{
@@ -80,6 +80,51 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 							//Select the new chart type
 							chartTypeSelector.setChartType(selectedType);
 							
+							// *_*
+							/* START: Hide axis title textbox and gear tool for both left (Y)
+							 * axis panel and bottom (X) axis panel and plus tool of the left
+							 * (Y) panel when new row is clicked. */
+							if (selectedType.toUpperCase()=="SUNBURST" || selectedType.toUpperCase()=="WORDCLOUD" || 
+									selectedType.toUpperCase()=="TREEMAP" || selectedType.toUpperCase()=="PARALLEL")
+							{
+								/* ---------- BOTTOM (X) AXIS PANEL ---------- */
+								// Hide the gear tool on the toolbar of the bottom (X) axis panel
+								Ext.getCmp("chartBottomCategoriesContainer").tools.gear.hide();
+								
+								// Hide the textfield dedicated for the title of the bottom (X) axis
+								Ext.getCmp("chartBottomCategoriesContainer").dockedItems.items[0].items.items[1].hide();
+								
+								/* ---------- LEFT (Y) AXIS PANEL ---------- */
+								// Hide the gear tool on the toolbar of the left (Y) axis panel
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[0].hide();
+								
+								// Hide the plus tool on the toolbar of the left (Y) axis panel
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[1].hide();
+								
+								// Hide the textfield dedicated for the title of the left (Y) axis
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].hide();								
+							}
+							else
+							{
+								/* ---------- BOTTOM (X) AXIS PANEL ---------- */
+								// Show the gear tool on the toolbar of the bottom (X) axis panel
+								Ext.getCmp("chartBottomCategoriesContainer").tools.gear.show();
+								
+								// Show the textfield dedicated for the title of the bottom (X) axis
+								Ext.getCmp("chartBottomCategoriesContainer").dockedItems.items[0].items.items[1].show();
+								
+								/* ---------- LEFT (Y) AXIS PANEL ---------- */
+								// Show the gear tool on the toolbar of the left (Y) axis panel
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[0].show();
+								
+								// Show the plus tool on the toolbar of the left (Y) axis panel
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[1].show();
+								
+								// Show the textfield dedicated for the title of the left (Y) axis
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].show();
+							}
+							/* END */
+							
 							globalThis.fireEvent("newrowclick");
 						} 
 						else if (buttonValue == 'cancel') {
@@ -98,7 +143,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			else {
 				chartTypeSelector.setChartType(selectedType);
 				globalThis.fireEvent("newrowclick");
-			}
+			}		
 		}
 	},
 	
