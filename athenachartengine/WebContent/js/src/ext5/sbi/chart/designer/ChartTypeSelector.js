@@ -96,13 +96,16 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 								
 								/* ---------- LEFT (Y) AXIS PANEL ---------- */
 								// Hide the gear tool on the toolbar of the left (Y) axis panel
-								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[0].hide();
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[0].hide();								
 								
 								// Hide the plus tool on the toolbar of the left (Y) axis panel
 								Ext.getCmp("chartLeftAxisesContainer").items.items[0].tools[1].hide();
 								
 								// Hide the textfield dedicated for the title of the left (Y) axis
-								Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].hide();								
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].hide();	
+								
+								// Hide the serie&tooltip icon for SERIE records inside the left (Y) panel
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].columns[2].items[0].iconCls = "x-hidden";
 							}
 							else
 							{
@@ -122,6 +125,9 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 								
 								// Show the textfield dedicated for the title of the left (Y) axis
 								Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].show();
+								
+								// Show the serie&tooltip icon for SERIE records inside the left (Y) panel
+								Ext.getCmp("chartLeftAxisesContainer").items.items[0].columns[2].items[0].iconCls = "";								
 							}
 							/* END */
 							

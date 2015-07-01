@@ -20,7 +20,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
     	
 		storePool: [],
 		
-		yAxisPool: [],
+		yAxisPool: [],		
 				
 		resetContainers: function() {
 			var yAxisPool = this.yAxisPool;
@@ -312,6 +312,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					clicksToEdit: 1
 				}]
 			});
+			
+			// *_*
+			/* START: If the chart is one of the specified types hide the "createTemplate" 
+			 * icon that is attached to every record (item) inside the left (Y) axis
+			 * panel (between the aggregation type and 'remove' button) and it is dedicated
+			 * for specifying Series and Tooltip details. */
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			
+			if (chartType == "SUNBURST" || chartType == "WORDCLOUD" ||
+					chartType == "TREEMAP" || chartType == "PARALLEL")
+			{
+				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";				
+			}	
+			/* END */
 			
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);
 			
