@@ -97,7 +97,7 @@ Ext.define('Sbi.adhocreporting.AdhocreportingContainer', {
 	}
 	
 	,createCockpit: function(){
-		var cockpitUrl = this.cockpitEngineBaseUrl + '&MYANALYSIS=TRUE';
+		var cockpitUrl = this.cockpitEngineBaseUrl + '&MYANALYSIS=TRUE&documentMode=EDIT';
 		Sbi.debug('cockpitUrl: ' + cockpitUrl);
 		this.documentexecution.load(cockpitUrl);
 		this.getLayout().setActiveItem(1);	
