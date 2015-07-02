@@ -1,0 +1,12 @@
+.documentListBox {
+	height: 60%;
+	position: relative;
+}
+
+.documentListBox .box_pagination {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: 3px;
+}
+

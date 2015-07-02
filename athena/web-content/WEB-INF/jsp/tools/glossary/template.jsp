@@ -69,10 +69,9 @@
 </md-dialog>
 </script>
 
-
 <script type="text/ng-template" id="new.logical.node.dialog.html">
 
-<md-dialog aria-label="nuovo nodo logico " class="newLogicalNode" style="width: 80%;  overflow-y: visible;">
+<md-dialog aria-label="nuovo nodo logico " class="newLogicalNode" id="xoooox" style="width: 80%;  overflow-y: visible;">
 
 <md-toolbar>
     <div class="md-toolbar-tools">
@@ -90,7 +89,7 @@
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
 			<label>Nome</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
-			<input ng-model="renCtrl.tmpNW.CONTENT_NM" type="text" maxlength="100" > </md-input-container>
+			<input ng-model="renCtrl.tmpNW.CONTENT_NM" type="text" maxlength="100" autofocus> </md-input-container>
 		</div>
 	</div>
 	
@@ -123,10 +122,10 @@
 
 <div class="md-actions" layout="row">
     
- <md-button ng-click="renCtrl.annulla()" class="md-primary">
+ <md-button ng-click="renCtrl.annulla()" class="md-primary" tabindex="-1">
       Annulla
     </md-button>
-    <md-button ng-disabled="renCtrl.tmpNW.CONTENT_NM.length === 0 " ng-click="renCtrl.salva()" class="md-primary">
+    <md-button ng-disabled="renCtrl.tmpNW.CONTENT_NM.length === 0 " ng-click="renCtrl.salva()" class="md-primary" >
      Salva
     </md-button>
    
@@ -136,10 +135,6 @@
 
 </md-dialog>
 </script>
-
-
-
-
 
 <script type="text/ng-template" id="dirPagination.tpl.html">
 
@@ -163,10 +158,6 @@
 </ul>
 			</script>
 
-
-
-
-
 <!-- Nested list template -->
 <script type="text/ng-template" id="items_renderer.html">
 									
@@ -176,8 +167,12 @@
 
 
 	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
-		<md-list>
-			<md-list-item ui-tree-handle class="SecondaryOnLeft"
+		
+<div ui-tree-handle>
+<i class=" dragged-icon fa fa-bars fa-2x" style="padding: 12px 0 0 5px;"></i>
+									
+		<md-list >
+			<md-list-item  class="SecondaryOnLeft"
 				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
 				ng-init="item.preloader=false"> 
 			
@@ -194,7 +189,7 @@
 				md-mode="indeterminate"></md-progress-circular> </md-list-item>
 		</div>
 		</md-list>
-
+</div>
 
 	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo ">
 		<md-list> 
@@ -213,7 +208,7 @@
 <div class="dropdown position-fixed"
 	style="z-index: 999; margin-left: -25%; width: 200px;"
 	id="WordTree-{{ item.$$hashKey }}">
-	<md-list class="dropdown-menu" role="menu" style="  margin-top: -49px;">
+	<md-list class="dropdown-menu bottomBorder" role="menu" style="  margin-top: -49px;">
 	<md-list-item ng-click='ctrl.newSubItem(this,item)' role="menuitem"
 		tabindex="1"
 		ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  ">

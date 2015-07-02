@@ -1,13 +1,11 @@
 var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree',
-		'angularUtils.directives.dirPagination', 'ng-context-menu' ]);
+		'angularUtils.directives.dirPagination', 'ng-context-menu','angular_rest' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
 			'blue-grey');
 });
 
-app.constant('ENDPOINT_URI', 'http://' + hostName + ':' + serverPort
-		+ '/athena/restful-services/1.0/');
 
 app.service('translate', function() {
 	this.load = function(key) {
@@ -15,47 +13,6 @@ app.service('translate', function() {
 	};
 });
 
-
-
-app.service('restServices', function($http, ENDPOINT_URI) {
-
-	var service = this;
-	var path = "glossary";
-
-	function getBaseUrl(endP_path) {
-		endP_path == undefined ? endP_path = path : true;
-		return ENDPOINT_URI + endP_path + "/";
-	}
-	;
-
-	service.get = function(endP_path, req_Path, item) {
-		item == undefined ? item = "" : item = "?" + item;
-		console.log("service.get");
-		console.log("endP_path= " + endP_path)
-		console.log("req_Path=" + req_Path)
-		console.log("item=" + item)
-		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item);
-	};
-
-	service.remove = function(endP_path, req_Path, item) {
-		item == undefined ? item = "" : item = "?" + item;
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item);
-	};
-
-	service.post = function(endP_path, req_Path, item) {
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item);
-	};
-
-	// prendo i nodi di un glossario
-
-	service.getGlossNode = function(glossID, nodeID) {
-		console.log(getBaseUrl() + "listContents?GLOSSARY_ID=" + glossID
-				+ "&PARENT_ID=" + nodeID)
-		return $http.get(getBaseUrl() + "listContents?GLOSSARY_ID=" + glossID
-				+ "&PARENT_ID=" + nodeID);
-	};
-
-});
 
 var EmptyWord = {
 	LINK : [],
@@ -90,69 +47,6 @@ var EmptyGloss = {
 // MI SERVE SOLO PER LA CREAZIONE DI UN NODO E POI LO RIMUOVO
 };
 
-// var SBI_GL_ATTRIBUTES = [ {
-// ATTRIBUTE_ID : 1,
-// ATTRIBUTE_CD : 1,
-// ATTRIBUTE_NM : "PROP1",
-// ATTRIBUTE_DS : "DS PROP1",
-// MANDATORY_FL : 1,
-// TYPE : 1,
-// DOMAIN : 1,
-// FORMAT : 1,
-// DISPLAT_TP : 1,
-// ORDER : 1
-// }, {
-// ATTRIBUTE_ID : 2,
-// ATTRIBUTE_CD : 2,
-// ATTRIBUTE_NM : "PROP2",
-// ATTRIBUTE_DS : "DS PROP2",
-// MANDATORY_FL : 2,
-// TYPE : 2,
-// DOMAIN : 2,
-// FORMAT : 2,
-// DISPLAT_TP : 2,
-// ORDER : 2
-// }, {
-// ATTRIBUTE_ID : 3,
-// ATTRIBUTE_CD : 3,
-// ATTRIBUTE_NM : "PROP3",
-// ATTRIBUTE_DS : "DS PROP3",
-// MANDATORY_FL : 3,
-// TYPE : 3,
-// DOMAIN : 3,
-// FORMAT : 3,
-// DISPLAT_TP : 3,
-// ORDER : 3
-// } ];
-//
-// var wor = [ {
-// WORD_ID : 1,
-// WORD : "CLIENTE",
-// DESCR : "IL CLIENTE è ....",
-// FORMULA : "",
-// STATE : "OK",
-// CATEGORY : "PERSONE",
-// LINK : [],
-// SBI_GL_WORD_ATTR : []
-// }, {
-// WORD_ID : 2,
-// WORD : "PROGETTO",
-// DESCR : "UN PROGETTO è....",
-// FORMULA : "",
-// STATE : "OK",
-// CATEGORY : "ALTRO",
-// SBI_GL_WORD_ATTR : [],
-// LINK : []
-// }, {
-// WORD_ID : 3,
-// WORD : "CASA",
-// DESCR : "UNA CASA è ...",
-// FORMULA : "",
-// STATE : "OK",
-// CATEGORY : "ABITAZIONI",
-// SBI_GL_WORD_ATTR : [],
-// LINK : []
-// }, ];
 
 app.controller('Controller', [ "translate", "restServices", "$q", "$scope",
 		"$mdDialog", "$filter", "$timeout", "$mdToast", funzione ]);
@@ -263,6 +157,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		
 
 		if(parent!=undefined){
+			console.log("-------------------------")
 			console.log(parent);
 			ctr.newWord.PARENT=parent.$parent.$modelValue;
 			ctr.expanderNode=parent.$parent;
@@ -530,9 +425,13 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						
 						if(ctr.newWord.hasOwnProperty("PARENT")){
 							console.log("parente presente")
+							var par=ctr.newWord.PARENT;
+							delete ctr.newWord.PARENT;
 							var elem = {};
-							elem.PARENT_ID =ctr.newWord.PARENT.CONTENT_ID;
+							elem.PARENT_ID =par.CONTENT_ID;
 							elem.WORD_ID = ctr.newWord.WORD_ID;
+							elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+							
 
 							showPreloader();
 							restServices
@@ -543,25 +442,30 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												if (data.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
 													showToast(translate.load("sbi.glossary.error.save"),3000);
-													ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 												} else if (data.Status == "NON OK") {
 													showToast(translate.load(data.Message),3000);
-													ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 												} else {
 //													showToast(translate.load("sbi.glossary.success.save"),3000);
 
-													ctr.newWord.PARENT.HAVE_WORD_CHILD = true;
-													ctr.newWord.PARENT.CHILD.push(ctr.newWord);
+												
+													par.HAVE_WORD_CHILD = true;
+													
+													par.CHILD.push(ctr.newWord);
+//													ctr.newWord.PARENT.HAVE_WORD_CHILD = true;
+//													ctr.newWord.PARENT.CHILD.push(ctr.newWord);
+													
+													
+													
 													
 													
 												}
-												
-																				
 												
 												if (ctr.expanderNode!= undefined) {
-													ctr.getGlossaryNode(ctr.selectedGloss,ctr.newWord.PARENT,ctr.expanderNode);
+													ctr.getGlossaryNode(ctr.selectedGloss,par,ctr.expanderNode);
 													ctr.expanderNode=undefined;	
-												}
+												}							
+												
+												
 												ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 												showToast(translate.load("sbi.glossary.word.save.success"), 3000);
 				
@@ -623,6 +527,26 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		}
 	};
 	
+//	ctr.findWordInSelectedGloss=function(arrList,wordId){
+//		if(arrList==undefined){
+//			return false;
+//		}
+//		for(var i=0;i<arrList.length;i++){
+//			if(arrList[i].hasOwnProperty("WORD_ID") && arrList[i].WORD_ID==wordId ){
+//				return true;
+//				break;
+//				}
+//			
+//			if(arrList[i].hasOwnProperty("CHILD") ){
+//				if(ctr.findWordInSelectedGloss(arrList[i].CHILD,wordId)){
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//			
+//	};
+//	
 	ctr.deleteWord = function(ev) {
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
@@ -1036,6 +960,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						};
 						gctl.annulla = function($event) {
 							$mdDialog.hide();
+							ctr.newGloss = JSON
+							.parse(JSON
+									.stringify(EmptyGloss));
 
 						};
 
@@ -1087,6 +1014,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 										: event.dest.nodesScope.$nodeScope.$modelValue.CONTENT_ID
 
 								elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
+								elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 
 								showPreloader();
 								restServices
@@ -1205,6 +1133,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					}
 				}
 
+//				//controllo che il glossario non contenghi gia lo stesso vocabolo
+//				console.log(ctr.selectedGloss)
+//				if(ctr.findWordInSelectedGloss(ctr.selectedGloss.SBI_GL_CONTENTS,sourceNodeScope.$modelValue.WORD_ID)){
+//					console.log("Word presente neol glossario")
+//					return false;
+//					
+//				}
+					
+				
+				
 				// controllo che già non ci sia uno stesso elemento come figlio
 				// del padre
 				for (var i = 0; i < destNodesScope.$parent.$modelValue.CHILD.length; i++) {
@@ -1228,6 +1166,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 				}
 
+				
 			} else {
 
 //				if (destNodesScope.$parent.$modelValue
@@ -1612,6 +1551,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					controllerAs : "renCtrl",
 					controller : function($mdDialog) {
 						var rn = this;
+						
 
 						if (modCont == true) {
 							// load content data
@@ -1725,7 +1665,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														rn.tmpNW = JSON
 																.parse(JSON
 																		.stringify(EmptyLogicalNode));
-
+														$mdDialog.hide();
 													} else {
 														$mdDialog.hide();
 														parent.CONTENT_NM = rn.tmpNW.CONTENT_NM;
@@ -1752,7 +1692,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												hidePreloader();
 											});
 
-							$mdDialog.hide();
+//							$mdDialog.hide();
 						};
 						rn.annulla = function() {
 							console.log("annulla");
@@ -1764,6 +1704,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					parent : angular.element(document.body),
 
 				})
+				
+				
+					
+				
 
 	};
 
@@ -1775,8 +1719,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var tbw = angular.element(document.querySelector('.md-toolbar-tools'))[0].offsetHeight;
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
-		// bpw == 0 ? bpw = 30 : bpw = bpw;
-		var nit = parseInt((lbw - tbw - bpw - 23) / 33);
+		 bpw == 0 ? bpw = 32 : bpw = bpw;
+		var nit = parseInt((lbw - tbw - bpw - 32 ) / 34);
 		ctr.WordItemPerPage = nit;
 	}
 

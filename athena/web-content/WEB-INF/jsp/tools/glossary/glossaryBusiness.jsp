@@ -18,21 +18,23 @@
 
 <head>
 	
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta http-equiv="x-ua-compatible" content="IE=EmulateIE9" >
+	
+	<!-- JavaScript --> 
+ <!--[if IE 8]> 
+ <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
+ <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script> 
+ <![endif]--> 
+	
 	
 	<link rel="stylesheet"
 		href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-	
-	
 	<link rel="stylesheet"
 		href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
-	
 	<!-- <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.css"> -->
 	
 	<link rel="stylesheet"
 		href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
-	
-	
 	<script type="text/javascript"
 		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
 	<script type="text/javascript"
@@ -41,16 +43,13 @@
 		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
 	<script type="text/javascript"
 		src="https://rawgit.com/angular/bower-material/master/angular-material.js"></script>
-	
-	
-	
 	<!-- <script -->
 	<!-- 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script> -->
 	
-	
-	
 	<link rel="stylesheet" type="text/css"
 		href="/athena/themes/glossary/css/gestione_glossario.css">
+			<link rel="stylesheet" type="text/css"
+		href="/athena/themes/glossary/css/generalStyle.css">
 	<link rel="stylesheet"
 		href="/athena/js/glossary/angulartree/angular-ui-tree.min.css">
 	<script type="text/javascript"
@@ -60,15 +59,8 @@
 	<script type="text/javascript"
 		src="/athena/js/glossary/pagination/dirPagination.js"></script>
 	
-
-
-
-	
 	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
-	
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-
-
 	<script type="text/javascript">
 		var locale= '<%=request.getLocale()%>'; 
 		var hostName = '<%=request.getServerName()%>';
@@ -76,7 +68,7 @@
 	</script>
 	
 	
-	
+	<script type="text/javascript" src="/athena/js/glossary/RestService.js"></script>
 	<script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
 	
 </head>
@@ -108,14 +100,6 @@
 
 				<div layout="column" class="wordListBox" style="height: 60%;">
 
-
-
-
-
-
-
-
-
 					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 
@@ -126,19 +110,12 @@
 							md-font-icon="fa fa-plus fa-2x"
 							style="  margin-left: -5px ; color: black;"></md-icon> </md-button>
 					</div>
-
-
 					</md-toolbar>
 
-
-
-
-
-
 					<md-content layout-padding> <md-input-container
-						md-no-float style=" padding-top: 22px;   padding-bottom: 0;">
+						md-no-float style="padding-bottom: 0;">
 					<md-icon md-font-icon="fa fa-search "
-						style="  margin-top: 26px;  color: black;"></md-icon> <input
+						style="  padding :4px 0;  color: black;"></md-icon> <input
 						ng-model="searchValue" Style="margin-left: 15px;"
 						ng-keyup="ctrl.WordLike(searchValue)" type="text"
 						placeholder="Search "> </md-input-container> <md-progress-circular
@@ -164,9 +141,11 @@
 									data-target="WordMenu-{{word.WORD}}">
 
 									<div ui-tree-handle style="border: none;">
-										<md-list> <md-list-item ng-click="1==1"
+									<i class=" dragged-icon fa fa-bars fa-2x"></i>
+									
+										<md-list > <md-list-item   ng-click="1==1"
 											ng-repeat="n in [1]" context-menu
-											data-target="WordMenu-{{word.WORD}}" class="smallListItem"
+											data-target="WordMenu-{{word.WORD}}" class="smallListItem "
 											ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 										<p class="wrapText">{{ word.WORD | uppercase}}</p>
 										</md-list-item> </md-list>
@@ -177,10 +156,10 @@
 								<div class="dropdown position-fixed"
 									style="z-index: 999; left: 10px !important"
 									id="WordMenu-{{ word.WORD }}">
-									<md-list class="dropdown-menu" role="menu"> <md-list-item
+									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item 
 										ng-click='ctrl.modifyWord(word)' role="menuitem" tabindex="1">
 									<p>Modifica</p>
-									</md-list-item> <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem"
+									</md-list-item> <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem" 
 										tabindex="2">
 									<p>Elimina</p>
 									</md-list-item> </md-list>
@@ -209,7 +188,7 @@
 
 
 
-				<div layout="row" layout-wrap class="glossaryListBox">
+				<div layout="column" layout-wrap class="glossaryListBox">
 					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 
@@ -222,15 +201,15 @@
 					</div>
 					</md-toolbar>
 
-
-					<md-list style="  margin-top: 25px;  width: 100%;"> <md-list-item
-						ng-click="1==1" class="smallListItem"
+					<md-content layout-padding>
+					<md-list style="  width: 100%;" class="bottomBorder" > <md-list-item 
+						ng-click="ctrl.showClickedGlossary(gloss);" class="smallListItem "
 						ng-repeat="gloss in ctrl.glossary ">
 
 					<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}"
 						ng-class="{ 'highlight': highlight, 'expanded' : expanded }"
 						style="width: 100%;"
-						ng-click="ctrl.showClickedGlossary(gloss);">
+						>
 						<p>{{ gloss.GLOSSARY_NM | uppercase }}</p>
 					</div>
 
@@ -254,7 +233,7 @@
 					</div>
 
 					<!-- 						fine menu contestuale albero --> </md-list-item> </md-list>
-
+					</md-content>
 				</div>
 
 
@@ -295,7 +274,7 @@
 								<div class="dropdown position-fixed"
 									style="z-index: 999; margin-left: -25%; margin-top: -40px; width: 200px;"
 									id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}">
-									<md-list class="dropdown-menu" role="menu"> <md-list-item
+									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item
 										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)'
 										role="menuitem" tabindex="1">
 									<p>Aggiungi Nodo Logico</p>
@@ -562,38 +541,6 @@
 		</div>
 
 	</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 </body>

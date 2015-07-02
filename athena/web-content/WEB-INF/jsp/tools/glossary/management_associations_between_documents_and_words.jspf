@@ -1,0 +1,66 @@
+<div ng-controller="Controller as ctrl">
+
+
+	<!-- 			LEFT BOX WORD -->
+	<div flex="20" style="width: 20%; border: 1px solid rgb(232, 232, 232)" >
+
+
+		<div layout="column" class="documentListBox">
+
+			<md-toolbar class="md-blue minihead">
+			<div class="md-toolbar-tools">
+				<div>Document</div>
+			</div>
+			</md-toolbar>
+
+			<md-content layout-padding> 
+			
+			<md-input-container
+				md-no-float style="padding-bottom: 0;"> 
+				<md-icon	md-font-icon="fa fa-search " style="  padding :4px 0;  color: black;"></md-icon> 
+				
+				<input	ng-model="searchDoc" Style="margin-left: 15px;"
+				ng-keyup="ctrl.DocumentLike(searchDoc)" type="text"
+				placeholder="Search ">
+			</md-input-container>
+				
+			<md-progress-circular
+				md-diameter="20" ng-show="ctrl.showSearchDocPreloader" class="md-hue-2"
+				style="  left: 50%;  margin-left: -25px; position:absolute "
+				md-mode="indeterminate"> 
+			</md-progress-circular>
+
+
+			<p ng-if="ctrl.listDoc.length==0">List Document Empty</p>
+
+
+		
+					
+
+								<md-list  dir-paginate="doc in ctrl.listDoc | itemsPerPage: 3" class="bottomBorder">
+								 <md-list-item ng-click="1==1"	ng-repeat="n in [1] "  class="smallListItem ">
+								<p class="wrapText">{{ doc.DOCUMENT_NM | uppercase}}</p>
+								</md-list-item> 
+								</md-list>
+						
+			
+
+			</md-content>
+
+			<div class="box_pagination" layout="row" layout-align="center end">
+				<dir-pagination-controls max-size="5"></dir-pagination-controls>
+			</div>
+
+		</div>
+
+
+
+
+	</div>
+
+
+
+
+
+
+</div>

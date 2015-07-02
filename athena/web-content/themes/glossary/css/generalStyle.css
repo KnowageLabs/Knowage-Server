@@ -1,0 +1,106 @@
+.minihead  {
+/*  position: absolute !important; */
+  height: 29px !important;
+  color: black !important;
+}
+
+.md-button.md-fab.md-ExtraMini {
+	line-height: 25px;
+	width: 25px;
+	height: 25px;
+	min-height: 0;
+}
+
+.md-button.md-fab.md-ExtraMini span {
+	margin-top: 5px;
+}
+
+.bodyStyle {
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+}
+
+md-toolbar.minihead {
+	background-color: rgb(232, 232, 232);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
+}
+
+.box_pagination {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: 3px;
+}
+
+
+.pagination>li, .pagination>li>span {
+	position: relative;
+	float: left;
+	margin-left: -1px;
+	text-decoration: none !important;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	display: block;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+}
+
+
+.pagination {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+.pagination>li>a {
+	text-decoration: none !important;
+}
+
+.pagination>.active, .pagination>.active>a, .pagination>.active>a:focus,
+	.pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus,
+	.pagination>.active>span:hover {
+	z-index: 2;
+	color: #000;
+	cursor: default;
+	background-color: rgb(232, 232, 232);
+	border-color: rgb(232, 232, 232);
+}
+
+.pagination>.disabled>a, .pagination>.disabled>a:focus, .pagination>.disabled>a:hover,
+	.pagination>.disabled>span, .pagination>.disabled>span:focus,
+	.pagination>.disabled>span:hover {
+	color: #777;
+	cursor: not-allowed;
+	background-color: #fff;
+	border-color: #ddd;
+}
+
+
+.hidden {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+.smallListItem, .smallListItem button, .smallListItem .md-list-item-inner
+	{
+	min-height: 20px !important;
+}
+
+.smallListItem p {
+	line-height: 15px;
+	margin: 3px;
+}
+
+ md-list.bottomBorder md-list-item button {
+   border-bottom: 1px solid rgb(176, 190, 197);
+  padding: 0;
+   margin-left: 8px;
+  margin-right: 8px;
+  border-radius: 0;
+}
+
