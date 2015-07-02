@@ -16,66 +16,70 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="AIDA_GESTIONE-VOCABOLI">
 
-<link rel="stylesheet"
-	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
-
-<link rel="stylesheet"
-	href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
-
-<!-- <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.css"> -->
-
-<link rel="stylesheet"
-	href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
-
-
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
-<script
-	src="https://rawgit.com/angular/bower-material/master/angular-material.js"></script>
-
-
-
-<!-- <script -->
-<!-- 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script> -->
-
-
-
-<link rel="stylesheet" type="text/css"
-	href="/athena/themes/glossary/css/gestione_glossario.css">
-<link rel="stylesheet"
-	href="/athena/js/glossary/angulartree/angular-ui-tree.min.css">
-<script type="text/javascript"
-	src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script>
-<script type="text/javascript"
-	src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
-<script type="text/javascript"
-	src="/athena/js/glossary/pagination/dirPagination.js"></script>
-
-
-
-
-
-<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
-
-<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-
-
-<script type="text/javascript">
-var locale= '<%=request.getLocale()%>'; 
-var hostName = '<%=request.getServerName()%>';
-var serverPort ='<%=request.getServerPort()%>';
-</script>
+<head>
+	
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	
+	<link rel="stylesheet"
+		href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	
+	
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+	
+	<!-- <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.css"> -->
+	
+	<link rel="stylesheet"
+		href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
+	
+	
+	<script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
+	<script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
+	<script type="text/javascript"
+		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
+	<script type="text/javascript"
+		src="https://rawgit.com/angular/bower-material/master/angular-material.js"></script>
+	
+	
+	
+	<!-- <script -->
+	<!-- 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script> -->
+	
+	
+	
+	<link rel="stylesheet" type="text/css"
+		href="/athena/themes/glossary/css/gestione_glossario.css">
+	<link rel="stylesheet"
+		href="/athena/js/glossary/angulartree/angular-ui-tree.min.css">
+	<script type="text/javascript"
+		src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script>
+	<script type="text/javascript"
+		src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
+	<script type="text/javascript"
+		src="/athena/js/glossary/pagination/dirPagination.js"></script>
+	
 
 
 
-<script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
+	
+	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
+	
+	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 
 
+	<script type="text/javascript">
+		var locale= '<%=request.getLocale()%>'; 
+		var hostName = '<%=request.getServerName()%>';
+		var serverPort ='<%=request.getServerPort()%>';
+	</script>
+	
+	
+	
+	<script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
+	
+</head>
 
 
 <body class="bodyStyle">
@@ -466,7 +470,7 @@ var serverPort ='<%=request.getServerPort()%>';
 								md-item-text="item.ATTRIBUTE_NM" 
 								md-require-match=""
 								md-delay=500
-								md-floating-label="Proprietà"> <md-item-template>
+								md-floating-label="Proprietï¿½"> <md-item-template>
 							<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
 							</md-item-template> </md-autocomplete>
 						</div>
