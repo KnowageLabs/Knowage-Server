@@ -50,11 +50,17 @@
 			<ITEM	title="#menu.LayersCatalogue"
 					functionality="MeasuresCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
-					
+		
+		
+		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary"
 					functionality="MeasuresCatalogueManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/glossary.jsp" />		
-					
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/glossaryBusiness.jsp" />			
+
+		<!--  TODO: fix permissions!!! -->
+			<ITEM	title="#menu.glossary"
+					functionality="MeasuresCatalogueManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/glossaryTechnical.jsp" />		
 					
 		</ITEM>
 		<ITEM	code="server_settings" 
