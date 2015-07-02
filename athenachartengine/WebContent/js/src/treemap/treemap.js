@@ -56,6 +56,8 @@ function renderTreemap(chartConf) {
 	var chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'mainPanel',
+			height: chartConf.chart.height,
+			width: chartConf.chart.width,
 			style: {
 	            fontFamily: chartConf.chart.style.fontFamily,
 	            fontSize: chartConf.chart.style.fontSize,
@@ -115,16 +117,16 @@ function renderTreemap(chartConf) {
 }
 function renderHeatmap(chartConf){
 	
-	(function (H) {
+	/*(function (H) {
 		
         var Series = H.Series,
             each = H.each,
             wrap = H.wrap,
             seriesTypes = H.seriesTypes;
-        /**
+        *//**
          * Create a hidden canvas to draw the graph on. The contents is later copied over 
          * to an SVG image element.
-         */
+         *//*
         Series.prototype.getContext = function () {
             if (!this.canvas) {
                 this.canvas = document.createElement('canvas');
@@ -136,17 +138,17 @@ function renderHeatmap(chartConf){
             return this.ctx;
         };
 
-        /** 
+        *//** 
          * Draw the canvas image inside an SVG image
-         */ 
+         *//* 
         Series.prototype.canvasToSVG = function () {
             this.image.attr({ href: this.canvas.toDataURL('image/png') });
         };
 
-        /**
+        *//**
          * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG,
          * that requires one shape each point.
-         */
+         *//*
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
 
             var ctx = this.getContext();
@@ -177,7 +179,7 @@ function renderHeatmap(chartConf){
             }
         });
         H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
-    }(Highcharts));
+    }(Highcharts));*/
 
 	//var salesdata=[]; 
     var start;
@@ -210,9 +212,9 @@ function renderHeatmap(chartConf){
        
         chart: {
         	renderTo: 'mainPanel',
+        	height: chartConf.chart.height,
+			width: chartConf.chart.width,
             type: 'heatmap',
-            width: 1400,
-            height: 800,
             margin: [80, 10, 80, 80]
         },
         title: {

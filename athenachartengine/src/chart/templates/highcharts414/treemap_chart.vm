@@ -28,6 +28,8 @@
  chart: 
  {
   type: '$chartType',
+  height: '$chart.height',
+  width: '$chart.width',
   
   style:
 		{			

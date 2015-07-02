@@ -42,6 +42,8 @@
   storeresult: $storeresult,
   serie: $serieName,
   columns: $columnNames,
+  height: '$chart.height',
+  width: '$chart.width',
   
   style:
 		{			
