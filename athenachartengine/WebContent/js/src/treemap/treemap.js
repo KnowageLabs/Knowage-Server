@@ -113,3 +113,190 @@ function renderTreemap(chartConf) {
 	});
 
 }
+function renderHeatmap(chartConf){
+	
+	console.log(chartConf);
+	
+	(function (H) {
+		
+		console.log(H);
+		console.log(H.data);
+        var Series = H.Series,
+            each = H.each,
+            wrap = H.wrap,
+            seriesTypes = H.seriesTypes;
+       console.log(H.each);
+       console.log(H.wrap);
+       console.log(H.seriesTypes);
+        /**
+         * Create a hidden canvas to draw the graph on. The contents is later copied over 
+         * to an SVG image element.
+         */
+        Series.prototype.getContext = function () {
+            if (!this.canvas) {
+                this.canvas = document.createElement('canvas');
+                this.canvas.setAttribute('width', this.chart.chartWidth);
+                this.canvas.setAttribute('height', this.chart.chartHeight);
+                this.image = this.chart.renderer.image('', 0, 0, this.chart.chartWidth, this.chart.chartHeight).add(this.group);
+                this.ctx = this.canvas.getContext('2d');
+            }
+            return this.ctx;
+        };
+
+        /** 
+         * Draw the canvas image inside an SVG image
+         */ 
+        Series.prototype.canvasToSVG = function () {
+            this.image.attr({ href: this.canvas.toDataURL('image/png') });
+        };
+
+        /**
+         * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG,
+         * that requires one shape each point.
+         */
+        H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
+
+            var ctx = this.getContext();
+            
+            if (ctx) {
+
+                // draw the columns
+                each(this.points, function (point) {
+                    var plotY = point.plotY,
+                        shapeArgs;
+
+                    if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+                        shapeArgs = point.shapeArgs;
+
+                        ctx.fillStyle = point.pointAttr[''].fill;
+                        ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+                    }
+                });
+
+                this.canvasToSVG();
+
+            } else {
+                this.chart.showLoading("Your browser doesn't support HTML5 canvas, <br>please use a modern browser");
+
+                // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
+                // charts with more than a few thousand points.
+                //proceed.call(this);
+            }
+        });
+        H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
+    }(Highcharts));
+
+	//var salesdata=[]; 
+    var start;
+    //console.log(chartConf.chart.dateresult[0]);
+    var startDate= new Date(chartConf.chart.dateresult[0]);
+    var endDate= new Date(chartConf.chart.dateresult[1]);
+    console.log(startDate,endDate);
+    var points=[];
+    var data=chartConf.data[0];
+    var minValue=data[0]["sales"];
+    var maxValue=data[0]["sales"];
+    for( i=0;i<data.length;i++ ){
+    	if(data[i]["sales"]< minValue){
+    		minValue=data[i]["sales"];
+    	}
+    	
+    	if(data[i]["sales"] > maxValue){
+    		maxValue=data[i]["sales"];
+    	}
+    	
+    	var point={
+    		"x":new Date(data[i]["date"]).getTime(),
+    		"y":chartConf.chart.storeresult.indexOf(data[i]["store"]),
+    		"value":data[i]["sales"]
+    	};
+    	
+    	points.push(point);
+    }
+    
+   // var testPoints=points.slice(0,100);
+    //console.log(points);
+    console.log(minValue,maxValue);
+    var chart = new Highcharts.Chart({
+       
+        chart: {
+        	renderTo: 'mainPanel',
+            type: 'heatmap',
+            width: 1400,
+            height: 800,
+            margin: [80, 10, 80, 80]
+        },
+        title: {
+			text: chartConf.title.text,
+			style: {
+                color: chartConf.title.style.fontColor,
+                fontWeight: chartConf.title.style.fontWeight,
+                fontSize: chartConf.title.style.fontSize,
+                fontFamily: chartConf.title.style.fontFamily,
+                align: chartConf.title.style.textAlign
+            }
+		},
+		subtitle: {
+			text: chartConf.subtitle.text,
+			style: {
+                color: chartConf.subtitle.style.fontColor,
+                textDecoration: chartConf.subtitle.style.fontWeight,
+                fontSize: chartConf.subtitle.style.fontSize,
+                fontFamily: chartConf.subtitle.style.fontFamily,
+                align: chartConf.subtitle.style.textAlign
+            }
+		},
+
+        xAxis: {
+            type: 'datetime', // the numbers are given in milliseconds
+            min: Date.UTC(startDate.getUTCFullYear(),startDate.getUTCMonth(),startDate.getUTCDate()),  // gets range from variables 
+            max: Date.UTC(endDate.getUTCFullYear(),endDate.getUTCMonth(),endDate.getUTCDate()),  
+            labels: {
+                align: 'left',
+                x: 5,
+                y: 15,
+                format: '{value:%B}' // long month
+            },
+            showLastLabel: true,
+            tickLength: 16
+        },
+
+        yAxis: {
+            title: {
+                text: null
+            },
+            categories:chartConf.chart.storeresult,
+            reversed: false
+        },
+
+        colorAxis: {
+        	 stops: [
+                     [0, '#ffff00'],
+                     [0.2, '#009900'],
+                     [0.4, '#e60000'],
+                     [0.6,'#002eb8'],
+                     [0.8,'#ff9900'],
+                     [1, '#000000']
+                 ],
+                 min: minValue,
+                 max: maxValue,
+            labels: {
+                format: '{value}'
+            }
+        },
+
+        series: [{
+            borderWidth: 0,
+            nullColor: '#EFEFEF',
+            colsize: 24 * 36e5, // one day
+            tooltip: {
+                headerFormat: 'Sales<br/>',
+                pointFormat: '{point.x:%e %b, %Y} {point.y}: <b>{point.value}</b>'
+            },
+            data:points,
+            turboThreshold: Number.MAX_VALUE// #3404, remove after 4.0.5 release
+        }]
+
+    });
+	
+}

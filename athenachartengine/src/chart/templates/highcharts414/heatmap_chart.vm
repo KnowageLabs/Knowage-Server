@@ -1,0 +1,99 @@
+#set($category = $chart.VALUES.CATEGORY)
+#set($chartType = $CHART.type)
+#set($dataRows = $data.rows)
+#set($dataFields = $data.metaData.fields) ## columns of data table
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
+	#end
+#end
+
+#set($columnsNeeded = {})
+
+#set($columnCouter = 0)
+
+   
+#foreach($value in $category) 
+ #set($columnsNeeded[$columnCouter] = $value.column)
+ #set($columnCouter = $columnCouter + 1)
+#end
+
+#set($serie = $chart.VALUES.SERIE.name)
+
+#set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper))
+
+#set($dateresult = $datasettransformer.getDateResult($firstresult))
+
+#set($storeresult = $datasettransformer.getStoreResult($firstresult))
+
+#set($result = $datasettransformer.getResult($firstresult))
+
+{
+ chart: 
+ {
+  type: '$chartType',
+  dateresult: $dateresult,
+  storeresult: $storeresult,
+  
+  style:
+		{			
+			fontFamily: '$chart.style.fontFamily',
+			fontSize: '$chart.style.fontSize',
+			fontWeight: '$chart.style.fontWeight'
+			
+  		}
+ },
+ colors: [
+		#foreach($color in $chart.COLORPALETTE.COLOR)
+		'$color.value', 
+		#end
+    ],
+ 
+ emptymessage:
+	{
+		text: '$chart.EMPTYMESSAGE.text',
+		
+		style:
+		{
+			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
+			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			fontColor: '$chart.EMPTYMESSAGE.style.color',
+			textAlign: '$chart.EMPTYMESSAGE.style.align'
+		}
+	},
+	
+	title:
+	{
+		text: '$chart.TITLE.text',
+		
+		style:
+		{
+			fontFamily: '$chart.TITLE.style.fontFamily',
+			fontSize: '$chart.TITLE.style.fontSize',
+			fontWeight: '$chart.TITLE.style.fontWeight',
+			fontColor: '$chart.TITLE.style.color',
+			textAlign: '$chart.TITLE.style.align'
+		}
+	},
+	
+	subtitle:
+	{
+		text: '$chart.SUBTITLE.text',
+		
+		style:
+		{
+			fontFamily: '$chart.SUBTITLE.style.fontFamily',
+			fontSize: '$chart.SUBTITLE.style.fontSize',
+			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+			fontColor: '$chart.SUBTITLE.style.color',
+			textAlign: '$chart.SUBTITLE.style.align'
+		}
+	},
+	data:
+ [
+ 	$result
+ ]
+}

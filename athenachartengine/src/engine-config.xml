@@ -81,6 +81,7 @@
 		<chart type="parallel"	name="d3js244"  		vmName="parallel_chart.vm"/>
 		<chart type="wordcloud"	name="d3js244"  		/>
 		<chart type="treemap" 	name="highcharts414" 	/>
+		<chart type="heatmap" 	name="highcharts414" 	vmName="heatmap_chart.vm"/>
 	</chartConfiguration>
 	
 </ENGINE-CONFIGURATION>
