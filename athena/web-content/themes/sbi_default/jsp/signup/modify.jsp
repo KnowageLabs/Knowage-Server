@@ -27,11 +27,11 @@
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js' /></script>
+	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all-debug.js' ></script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js' /></script>
+	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js' ></script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js' /></script>
+	src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js' ></script>
 
 <%
 	String defaultOrganization = msgBuilder.getMessage(
@@ -279,9 +279,9 @@ function execUpdate(params){
 }
 </script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js' /></script>
+	src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js' ></script>
 <script type="text/javascript"
-	src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js' /></script>
+	src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js' ></script>
 
 <link id="extall" rel="styleSheet"
 	href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css"

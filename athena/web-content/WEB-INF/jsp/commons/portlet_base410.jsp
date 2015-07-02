@@ -242,14 +242,14 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE EXT UX															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'/></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all.js'></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'></script>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE CUSTOM CODE													--%>
 <%-- ---------------------------------------------------------------------- --%>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>   
 <link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
     
@@ -387,4 +387,4 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/overrides.js"/></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
