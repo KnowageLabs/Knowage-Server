@@ -115,19 +115,12 @@ function renderTreemap(chartConf) {
 }
 function renderHeatmap(chartConf){
 	
-	console.log(chartConf);
-	
 	(function (H) {
 		
-		console.log(H);
-		console.log(H.data);
         var Series = H.Series,
             each = H.each,
             wrap = H.wrap,
             seriesTypes = H.seriesTypes;
-       console.log(H.each);
-       console.log(H.wrap);
-       console.log(H.seriesTypes);
         /**
          * Create a hidden canvas to draw the graph on. The contents is later copied over 
          * to an SVG image element.
@@ -188,35 +181,31 @@ function renderHeatmap(chartConf){
 
 	//var salesdata=[]; 
     var start;
-    //console.log(chartConf.chart.dateresult[0]);
     var startDate= new Date(chartConf.chart.dateresult[0]);
     var endDate= new Date(chartConf.chart.dateresult[1]);
-    console.log(startDate,endDate);
     var points=[];
     var data=chartConf.data[0];
-    var minValue=data[0]["sales"];
-    var maxValue=data[0]["sales"];
+    var minValue=data[0][chartConf.chart.serie.value];
+    var maxValue=data[0][chartConf.chart.serie.value];
     for( i=0;i<data.length;i++ ){
-    	if(data[i]["sales"]< minValue){
-    		minValue=data[i]["sales"];
+    	if(data[i][chartConf.chart.serie.value]< minValue){
+    		minValue=data[i][chartConf.chart.serie.value];
     	}
     	
-    	if(data[i]["sales"] > maxValue){
-    		maxValue=data[i]["sales"];
+    	if(data[i][chartConf.chart.serie.value] > maxValue){
+    		maxValue=data[i][chartConf.chart.serie.value];
     	}
     	
     	var point={
-    		"x":new Date(data[i]["date"]).getTime(),
-    		"y":chartConf.chart.storeresult.indexOf(data[i]["store"]),
-    		"value":data[i]["sales"]
+    		"x":new Date(data[i][chartConf.chart.columns[0].value]).getTime(),
+    		"y":chartConf.chart.storeresult.indexOf(data[i][chartConf.chart.columns[1].value]),
+    		"value":data[i][chartConf.chart.serie.value]
     	};
     	
     	points.push(point);
     }
     
    // var testPoints=points.slice(0,100);
-    //console.log(points);
-    console.log(minValue,maxValue);
     var chart = new Highcharts.Chart({
        
         chart: {
@@ -290,7 +279,7 @@ function renderHeatmap(chartConf){
             nullColor: '#EFEFEF',
             colsize: 24 * 36e5, // one day
             tooltip: {
-                headerFormat: 'Sales<br/>',
+                headerFormat: chartConf.chart.serie.value+'<br/>',
                 pointFormat: '{point.x:%e %b, %Y} {point.y}: <b>{point.value}</b>'
             },
             data:points,

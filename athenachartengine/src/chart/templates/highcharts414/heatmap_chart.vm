@@ -22,13 +22,17 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
+#set($serieName = $datasettransformer.getSerieName($serie))
+
+#set($columnNames = $datasettransformer.getColumnNames($columnsNeeded))
+
 #set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper))
 
-#set($dateresult = $datasettransformer.getDateResult($firstresult))
+#set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
 
-#set($storeresult = $datasettransformer.getStoreResult($firstresult))
+#set($storeresult = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[1]))
 
-#set($result = $datasettransformer.getResult($firstresult))
+#set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded))
 
 {
  chart: 
@@ -36,6 +40,8 @@
   type: '$chartType',
   dateresult: $dateresult,
   storeresult: $storeresult,
+  serie: $serieName,
+  columns: $columnNames,
   
   style:
 		{			

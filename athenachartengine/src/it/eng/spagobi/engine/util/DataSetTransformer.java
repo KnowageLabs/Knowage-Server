@@ -483,8 +483,8 @@ public class DataSetTransformer {
 
 	}
 
-	public JSONArray getDateResult(Map<Integer,HashMap> firstresult) throws ParseException{
-
+	public JSONArray getDateResult(Map<Integer,HashMap> firstresult, Object column) throws ParseException{
+		
 		JSONArray dateResult = new JSONArray();
 
 		ArrayList<Date> dates = new ArrayList<Date>();
@@ -493,7 +493,7 @@ public class DataSetTransformer {
 
 		for (int i=0; i<firstresult.size();i++){
 
-			Date date = df.parse(firstresult.get(i).get("thedate").toString());
+			Date date = df.parse(firstresult.get(i).get(column.toString()).toString());
 
 			dates.add(date);
 
@@ -529,7 +529,7 @@ public class DataSetTransformer {
 
 	}
 
-	public JSONArray getStoreResult(Map<Integer,HashMap> firstresult){
+	public JSONArray getStoreResult(Map<Integer,HashMap> firstresult, Object column){
 
 		JSONArray storeResult = new JSONArray();
 
@@ -539,9 +539,9 @@ public class DataSetTransformer {
 
 		for (int i =0; i<firstresult.size();i++){
 
-			if (!storeResultMap.containsValue(firstresult.get(i).get("store"))){
+			if (!storeResultMap.containsValue(firstresult.get(i).get(column.toString()))){
 
-				storeResultMap.put(value, (String) (firstresult.get(i).get("store")));
+				storeResultMap.put(value, (String) (firstresult.get(i).get(column.toString())));
 
 				value++;
 
@@ -559,34 +559,66 @@ public class DataSetTransformer {
 
 	}
 	
-	public JSONArray getResult(Map<Integer,HashMap> firstresult) throws JSONException, ParseException{
+	public JSONArray getResult(Map<Integer,HashMap> firstresult, Object serie, HashMap<String, String> columns) throws JSONException, ParseException{
 		
 		JSONArray result = new JSONArray();
 		
 		for (int i =0; i<firstresult.size();i++){
 			
 			JSONObject jo = new JSONObject();
+
+			Double serieValue =Double.valueOf((String) firstresult.get(i).get(serie.toString()));
 			
-			String store = (String) firstresult.get(i).get("store");
-			
-			jo.put("store", store);
-			
-			Double sales =Double.valueOf((String) firstresult.get(i).get("sales"));
-			
-			jo.put("sales", sales);
+			jo.put(serie.toString(), serieValue);
 			
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 			
-			Date date = df.parse(firstresult.get(i).get("thedate").toString());
-			
-			String trueDate = df.format(date);
-			
-			jo.put("date", trueDate);
+			for (int j=0;j<columns.size();j++){
+				
+				Date date = df.parse(firstresult.get(i).get(columns.get(0)).toString());
+				
+				String trueDate = df.format(date);
+				
+				jo.put(columns.get(j).toString(), trueDate);
+				
+				String value = (String) firstresult.get(i).get(columns.get(1).toString());
+				
+				jo.put(columns.get(1).toString(), value);
+				
+			}
 			
 			result.put(jo);
 		}
 		
 		return result;
+		
+	}
+	
+	public JSONObject getSerieName(Object serie) throws JSONException{
+		
+		JSONObject jo = new JSONObject();
+		
+		jo.put("value", serie);
+		
+		return jo;
+		
+	}
+	
+	public JSONArray getColumnNames(Map columns) throws JSONException{
+		
+		JSONArray ja = new JSONArray();
+		
+		for (int i=0;i<columns.size();i++){
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("value", columns.get(i));
+			
+			ja.put(jo);
+			
+		}
+		
+		return ja;
 		
 	}
 
