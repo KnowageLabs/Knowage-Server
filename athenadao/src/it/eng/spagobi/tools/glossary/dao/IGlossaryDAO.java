@@ -93,6 +93,9 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public void modifyWlist(SbiGlWlist wlist);
 
 	public void deleteWlist(SbiGlWlistId wlistId);
+	
+	public List<SbiGlWlist> listWlistByGlossaryIdAndWordId(Integer glossaryId, Integer wordId);
+
 
 	//
 	// Attribute

@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchtWlistByGlossaryIdAndWordId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -176,7 +177,9 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			Integer glossaryId, Integer parentId) {
 		return list(new SearchContentsByParent(glossaryId, parentId));
 	}
+	
 
+	
 	@Override
 	public Integer insertContents(SbiGlContents contents) {
 		return (Integer) insert(contents);
@@ -533,6 +536,13 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	public void deleteWlist(SbiGlWlistId wlistId) {
 		delete(SbiGlWlist.class, wlistId);
 	}
+	
+	@Override
+	public List<SbiGlWlist> listWlistByGlossaryIdAndWordId(Integer glossaryId, Integer wordId) {
+		return list(new SearchtWlistByGlossaryIdAndWordId(glossaryId, wordId));
+	}
+	
+	
 
 	@Override
 	public SbiGlAttribute loadAttribute(Integer attributeId) {
