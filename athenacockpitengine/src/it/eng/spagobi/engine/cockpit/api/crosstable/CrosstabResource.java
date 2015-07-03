@@ -1,11 +1,10 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engine.cockpit.api.crosstable;
 
-import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.WhereField.Operand;
@@ -14,11 +13,9 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.FilteringBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.SelectableFieldsBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -30,7 +27,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.tools.dataset.utils.datamart.DefaultEngineDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -71,7 +67,7 @@ import com.jamonapi.MonitorFactory;
 
 /**
  * @author Alberto Alagna
- * 
+ *
  */
 @Path("/1.0/crosstab")
 public class CrosstabResource extends AbstractCockpitEngineResource {
@@ -189,8 +185,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return sortKeys;
 	}
 
-	private String createCrossTable(String jsonData, String datasetLabel, Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
-			Integer myGlobalId) {
+	private String createCrossTable(String jsonData, String datasetLabel, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) {
 
 		CrossTab crossTab;
 		IDataStore valuesDataStore = null;
@@ -216,7 +212,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(this.getUserProfile());
 			IDataSet dataset = dataSetDao.loadDataSetByLabel(datasetLabel);
-			checkQbeDataset(dataset);
+			// checkQbeDataset(dataset);
 
 			IDataSource dataSource = dataset.getDataSource();
 
@@ -248,9 +244,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			Assert.assertNotNull(valuesDataStore, "Datastore obatined is null!!");
 
 			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does
-			 * not contain information about measures/attributes, fields' name
-			 * and alias... therefore we adjust its metadata
+			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
+			 * therefore we adjust its metadata
 			 */
 			this.adjustMetadata((DataStore) valuesDataStore, dataset, descriptor);
 			LogMF.debug(logger, "Adjusted metadata: {0}", valuesDataStore.getMetaData());
@@ -374,7 +369,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 	/**
 	 * Build the sql statement to query the temporary table
-	 * 
+	 *
 	 * @param crosstabDefinition
 	 *            definition of the crosstab
 	 * @param descriptor
@@ -550,15 +545,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			this.recordTemporaryTable(tableName, dataSource);
 
 			/**
-			 * Do not remove comments from the following line: we cannot change
-			 * the datatset state, since we are only temporarily persisting the
-			 * dataset, but the dataset itself could change during next user
-			 * interaction (example: the user is using Qbe and he will change
-			 * the dataset itself). We will use TemporaryTableManager to store
-			 * this kind of information.
-			 * 
-			 * dataset.setDataSourceForReading(getEngineInstance().
-			 * getDataSourceForWriting()); dataset.setPersisted(true);
+			 * Do not remove comments from the following line: we cannot change the datatset state, since we are only temporarily persisting the dataset, but
+			 * the dataset itself could change during next user interaction (example: the user is using Qbe and he will change the dataset itself). We will use
+			 * TemporaryTableManager to store this kind of information.
+			 *
+			 * dataset.setDataSourceForReading(getEngineInstance(). getDataSourceForWriting()); dataset.setPersisted(true);
 			 * dataset.setPersistTableName(td.getTableName());
 			 */
 
@@ -736,27 +727,27 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private void checkQbeDataset(IDataSet dataSet) {
-
-		IDataSet ds = null;
-		if (dataSet instanceof VersionedDataSet) {
-			VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
-			ds = versionedDataSet.getWrappedDataset();
-		} else {
-			ds = dataSet;
-		}
-
-		if (ds instanceof QbeDataSet) {
-			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			String userId = userProfile.getUserId().toString();
-			MetamodelServiceProxy proxy = new MetamodelServiceProxy(userId, servletRequest.getSession());
-			DefaultEngineDatamartRetriever retriever = new DefaultEngineDatamartRetriever(proxy);
-			Map parameters = ds.getParamsMap();
-			if (parameters == null) {
-				parameters = new HashMap();
-				ds.setParamsMap(parameters);
-			}
-			ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-		}
-	}
+	// private void checkQbeDataset(IDataSet dataSet) {
+	//
+	// IDataSet ds = null;
+	// if (dataSet instanceof VersionedDataSet) {
+	// VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
+	// ds = versionedDataSet.getWrappedDataset();
+	// } else {
+	// ds = dataSet;
+	// }
+	//
+	// if (ds instanceof QbeDataSet) {
+	// UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
+	// String userId = userProfile.getUserId().toString();
+	// MetamodelServiceProxy proxy = new MetamodelServiceProxy(userId, servletRequest.getSession());
+	// DefaultEngineDatamartRetriever retriever = new DefaultEngineDatamartRetriever(proxy);
+	// Map parameters = ds.getParamsMap();
+	// if (parameters == null) {
+	// parameters = new HashMap();
+	// ds.setParamsMap(parameters);
+	// }
+	// ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// }
+	// }
 }
