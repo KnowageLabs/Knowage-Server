@@ -27,13 +27,7 @@ Sbi.cockpit.widgets.text.TextWidgetDesigner = function(config) {
 	c = {
 		layout: 'fit',
 		height: 350,
-		items: [
-		        new Ext.Panel({
-		        	border: false
-		        	, bodyStyle: 'width: 100%; height: 100%'
-		        	, items:[this.textPanel]
-		        })
-		]
+		items: [this.textPanel]
 	};
 
 	Sbi.cockpit.widgets.text.TextWidgetDesigner.superclass.constructor.call(this, c);
@@ -96,7 +90,6 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidgetDesigner, Sbi.cockpit.core.WidgetD
 	            labelWidth: 55
 	        },
 	        /*url: 'save-form.php',*/
-	        defaultType: 'textfield',
 	        bodyPadding: 5,
 
 	        items: [this.textField]

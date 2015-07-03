@@ -26,9 +26,10 @@ Sbi.cockpit.widgets.text.TextWidget = function(config) {
 	this.createContent();
 	
 	this.on("afterrender", function(){
-//		this.refresh();
-		this.getParentComponent().refreshTitle();
-		Sbi.trace("[TextWidget]: afterrender - calling refresh");
+		this.textTitle.html = this.wgeneric.title;
+//		this.doLayout();
+//		this.getParentComponent().setTitle('');
+		Sbi.trace("[TextWidget]: afterrender - refresh title");
 	}, this);
 	
 	Sbi.trace("[TextWidget.constructor]: OUT");
@@ -76,7 +77,6 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 			, height: '100%'
 			, html: this.wconf.textValue
 		});
-		
 		this.textTitle = new Ext.Panel({
 			border: false
 			, bodyBorder: false
