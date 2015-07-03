@@ -306,7 +306,8 @@
 	<!-- glossary -->
 	<CONFIGURATOR path="/WEB-INF/conf/tools/glossary/business_map.xml" /> 
 	
-	
+	<!-- image widget service -->
+	<CONFIGURATOR path="/WEB-INF/conf/images/business_map.xml" /> 
 	
 
     <!-- TestServices -->

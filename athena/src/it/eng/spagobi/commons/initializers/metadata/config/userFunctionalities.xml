@@ -58,6 +58,8 @@
 <USER_FUNCTIONALITY productType="AthenaBD" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
 <USER_FUNCTIONALITY productType="AthenaBD" name="CreateChartFunctionality" description="CreateChartFunctionality"/>
 <USER_FUNCTIONALITY productType="AthenaBD" name="GlossaryManagement" description="GlossaryManagement"/>
+<USER_FUNCTIONALITY productType="AthenaBD" name="ImagesManagement" description="ImagesManagement"/>
+
 <!-- Athena Social Functionalities --> 
 <USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement" description="EnginesManagement"/>
 <USER_FUNCTIONALITY productType="AthenaSocial" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
@@ -112,5 +114,6 @@
 <USER_FUNCTIONALITY productType="AthenaSocial" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
 <USER_FUNCTIONALITY productType="AthenaSocial" name="GeoLayersManagement" description="GeoLayersManagement"/>
 <USER_FUNCTIONALITY productType="AthenaSocial" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
+<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement" description="ImagesManagement"/>
 </USER_FUNCTIONALITIES>
 

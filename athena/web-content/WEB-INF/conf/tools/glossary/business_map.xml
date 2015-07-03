@@ -9,9 +9,4 @@
     	<MAP_REST_SERVICE serviceUrl="/glossary.*" businessProcess="GlossaryManagement" />
     </MAP_REST_SERVICES>
     
-<!-- <MAP_EXTERNAL_REST_SERVICES>
-		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/glossary.*" businessProcess="GlossaryManagement" />
-	</MAP_EXTERNAL_REST_SERVICES> -->
-    
-    
 </BUSINESS_MAP>

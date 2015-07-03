@@ -78,6 +78,8 @@
 	  	
 	  	<DAO name="GlossaryDAO" implementation="it.eng.spagobi.tools.glossary.dao.GlossaryDAOImpl"/>
 	  	
+	  	<DAO name="ImagesDAO" implementation="it.eng.spagobi.images.dao.ImagesDAOImpl"/>
+	  	
 
 	 </DAO-CONF>     
      

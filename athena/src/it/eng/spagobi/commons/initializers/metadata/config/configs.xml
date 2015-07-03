@@ -181,5 +181,9 @@
 <CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE" name="SPAGOBI SOCIAL ANALYSIS STATUS" description="SPAGOBI SOCIAL ANALYSIS STATUS" isActive="true" valueCheck="true" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.DATASET.PREVIEW_ROWS" name="Number of rows to show for dataset preview" description="Number of rows to show for dataset preview" isActive="true" valueCheck="1000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.DATASET.PERSIST.TABLE_PREFIX" name="Table name prefix for dataset persistence" description="Table name prefix for dataset persistence" isActive="true" valueCheck="D_" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+
+<CONFIG label="IMAGE_GALLERY.MAX_IMAGE_SIZE_KB" name="Max image size in Kb" description="Max image size in Kb" isActive="true" valueCheck="1024" valueType="NUM" category="IMAGE_GALLERY"/>
+<CONFIG label="IMAGE_GALLERY.MAX_USER_IMAGES" name="Max number of images uploadable per user" description="Max number of images uploadable per user" isActive="true" valueCheck="10" valueType="NUM" category="IMAGE_GALLERY"/>
+<CONFIG label="IMAGE_GALLERY.MAX_TENANT_IMAGES" name="Max number of images uploadable per tenant" description="Max number of images uploadable per tenant" isActive="true" valueCheck="100" valueType="NUM" category="IMAGE_GALLERY"/>
 </CONFIGS>
 
