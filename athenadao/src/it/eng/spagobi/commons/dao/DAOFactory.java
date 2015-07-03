@@ -35,6 +35,7 @@ import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
+import it.eng.spagobi.images.dao.IImagesDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmContactDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmEventDAO;
@@ -858,6 +859,16 @@ public class DAOFactory {
 	 */
 	public static IGlossaryDAO getGlossaryDAO() throws EMFUserError {
 		return (IGlossaryDAO) createDAOInstance("GlossaryDAO");
+	}
+
+	/**
+	 * Gets the Images dao.
+	 * 
+	 * @return the Images dao
+	 * @throws EMFUserError
+	 */
+	public static IImagesDAO getImagesDAO() throws EMFUserError {
+		return (IImagesDAO) createDAOInstance("ImagesDAO");
 	}
 
 }
