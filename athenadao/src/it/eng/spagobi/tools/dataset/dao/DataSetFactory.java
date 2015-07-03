@@ -1,12 +1,13 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -27,6 +28,7 @@ import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -34,13 +36,15 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class DataSetFactory {
 
@@ -146,7 +150,7 @@ public class DataSetFactory {
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet) {
 		return toDataSet(sbiDataSet, null);
 	}
-	
+
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;
 		VersionedDataSet versionDS = null;
@@ -178,7 +182,8 @@ public class DataSetFactory {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
+				if (userProfile != null)
+					dataSourceDao.setUserProfile(userProfile);
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 
 				if (dataSource != null && dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
@@ -206,9 +211,9 @@ public class DataSetFactory {
 					if (!dataSource.checkIsReadOnly()) {
 						ds.setDataSourceForWriting(dataSource);
 					}
-				}
-				else {
-					logger.error("Could not retrieve datasource with label " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " for dataset " + sbiDataSet.getLabel());
+				} else {
+					logger.error("Could not retrieve datasource with label " + jsonConf.getString(DataSetConstants.DATA_SOURCE) + " for dataset "
+							+ sbiDataSet.getLabel());
 				}
 
 			}
@@ -249,8 +254,21 @@ public class DataSetFactory {
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 				((QbeDataSet) ds).setDatamarts(jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
+
+				// START -> This code should work instead of CheckQbeDataSets around the projects
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = ds.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					ds.setParamsMap(parameters);
+				}
+				ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+				logger.debug("Datamart retriever correctly added to Qbe dataset");
+				// END
+
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
+				if (userProfile != null)
+					dataSourceDao.setUserProfile(userProfile);
 				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 				if (dataSource != null) {
 					((QbeDataSet) ds).setDataSource(dataSource);
@@ -266,10 +284,9 @@ public class DataSetFactory {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
-				IDataSource dataSource = dataSourceDao
-						.loadDataSourceByLabel(jsonConf
-								.getString(DataSetConstants.DATA_SOURCE));
+				if (userProfile != null)
+					dataSourceDao.setUserProfile(userProfile);
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 				((FlatDataSet) ds).setDataSource(dataSource);
 				((FlatDataSet) ds).setTableName(jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
 				ds.setDsType(FLAT_DS_TYPE);
@@ -303,11 +320,9 @@ public class DataSetFactory {
 				ds.setDsMetadata(sbiDataSet.getDsMetadata());
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
-				if (ds.getPivotColumnName() != null
-						&& ds.getPivotColumnValue() != null
-						&& ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(
-							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
+					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
+							.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -324,7 +339,8 @@ public class DataSetFactory {
 				if (ds.getDataSourceForWriting() == null) {
 					logger.debug("take write default data source as data source for writing");
 					DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-					if(userProfile != null) dataSourceDao.setUserProfile(userProfile);
+					if (userProfile != null)
+						dataSourceDao.setUserProfile(userProfile);
 					IDataSource dataSourceWriteDef = dataSourceDao.loadDataSourceWriteDefault();
 					if (dataSourceWriteDef != null) {
 						logger.debug("data source write default is " + dataSourceWriteDef.getLabel());
