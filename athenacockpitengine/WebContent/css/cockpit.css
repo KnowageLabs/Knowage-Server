@@ -818,6 +818,9 @@
 	 background-image:url(../img/new_tab_icon.png) !important;
 }
 	
+.thumb-wrap.x-item-over{background-color:#efefef;border-color:#dddddd}
+.thumb-wrap.x-item-selected{background-color:#e0e0e0;border-color:#bfb8b8;}
+
 } /* END MEDIA SCREEN*/		
 
 

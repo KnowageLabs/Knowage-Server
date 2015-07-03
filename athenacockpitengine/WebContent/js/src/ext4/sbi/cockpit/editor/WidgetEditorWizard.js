@@ -79,7 +79,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			var widgetConf = widget.getConfiguration();
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widget conf is equal to [" + Sbi.toSource(widgetConf) + "]");
 
-			if ((widgetConf.storeId) || (widget.wtype == 'selection') || (widget.wtype == 'text') || (widget.wtype == 'picture')){
+			if ((widgetConf.storeId) || (widget.wtype == 'selection') || (widget.wtype == 'text') || (widget.wtype == 'image')){
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: select dataset [" + widgetConf.storeId + "]");
 				this.getDatasetBrowserPage().setPageState({
 					dataset: widgetConf.storeId
