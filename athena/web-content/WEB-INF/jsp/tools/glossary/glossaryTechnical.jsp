@@ -38,16 +38,15 @@
 	
 	
 	
-<!-- 	<link rel="stylesheet" -->
-<!-- 		href="/athena/js/glossary/angulartree/angular-ui-tree.min.css"> -->
-<!-- 	<script type="text/javascript" -->
-<!-- 		src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script> -->
+ 	<link rel="stylesheet"  href="/athena/js/glossary/angulartree/angular-ui-tree.min.css"> 
+ 	<script type="text/javascript"  src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script> 
+ 	
 <!-- 	<script type="text/javascript" -->
 <!-- 		src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script> -->
 	<script type="text/javascript"
 		src="/athena/js/glossary/pagination/dirPagination.js"></script>
 	
-	
+	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 	<script type="text/javascript">
 		var locale= '<%=request.getLocale()%>'; 
@@ -67,8 +66,8 @@
 
 	
 	
-<div>
-  <md-content >
+
+  <md-content  class="glossaryTec">
     <md-tabs md-dynamic-height md-border-bottom>
      
       
@@ -85,8 +84,18 @@
     
     </md-tabs>
   </md-content>
-</div>
+
 	
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+

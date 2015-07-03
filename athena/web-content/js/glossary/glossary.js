@@ -1540,7 +1540,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		} else {
 			ctr.selectedGloss = gloss;
 			ctr.activeTab = 'Glossari';
-			ctr.getGlossaryNode(gloss, null)
+			ctr.getGlossaryNode(gloss, null);
 		}
 
 	}
@@ -1719,7 +1719,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var tbw = angular.element(document.querySelector('.md-toolbar-tools'))[0].offsetHeight;
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
-		 bpw == 0 ? bpw = 32 : bpw = bpw;
+		 bpw == 0 ? bpw = 19 : bpw = bpw;
 		var nit = parseInt((lbw - tbw - bpw - 32 ) / 34);
 		ctr.WordItemPerPage = nit;
 	}
@@ -1916,7 +1916,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					console.log("nodi non ottenuti " + status);
 					showToast(translate.load("sbi.glossary.load.error"), 3000);
 					if (togg != undefined) {
-						togg.toggle();
+						togg.expand();
 						node.preloader = false;
 					}
 				})

@@ -158,7 +158,7 @@
 </ul>
 			</script>
 
-<!-- Nested list template -->
+<!-- Nested list template in glossary business -->
 <script type="text/ng-template" id="items_renderer.html">
 									
 
@@ -169,7 +169,7 @@
 	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
 		
 <div ui-tree-handle>
-<i class=" dragged-icon fa fa-bars fa-2x" style="padding: 12px 0 0 5px;"></i>
+<i class=" dragged-icon fa fa-bars fa-2x"></i>
 									
 		<md-list >
 			<md-list-item  class="SecondaryOnLeft"
@@ -177,7 +177,7 @@
 				ng-init="item.preloader=false"> 
 			
 
-			<p style="margin-left: 30px;">{{item.CONTENT_NM}}</p>
+			<p>{{item.CONTENT_NM}}</p>
 			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
 				aria-label="Chat" md-font-icon="fa fa-angle-down "
 				style=" left: 0px;  margin-top: 0px! important;"
@@ -192,9 +192,9 @@
 </div>
 
 	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo ">
-		<md-list> 
-		<md-list-item class="SecondaryOnLeft"
-			">
+		<md-list class="noPadding"> 
+		<md-list-item>
+		<i class=" dragged-icon fa fa-bars fa-2x" ></i>
 		<p style="margin-left: 30px;">{{item.WORD}}</p>
 		</md-list-item> 
 		</md-list>
@@ -238,4 +238,67 @@
 	<li ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox"></li>
 </ol>
 </script>
-              
+    
+    
+    <!-- Nested list template in glossary tec-->
+<script type="text/ng-template" id="tree_glossary_tec.html">
+									
+
+<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
+		
+	<div ui-tree-handle class="smallTree">
+	
+									
+		<md-list>
+			<md-list-item  class="SecondaryOnLeft"
+				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
+				ng-init="item.preloader=false"> 
+			
+
+			<p >{{item.CONTENT_NM}}</p>
+			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+				aria-label="Chat" md-font-icon="fa fa-angle-down "
+				style=" left: 0px;  margin-top: 0px! important;"
+				ng-show="!collapsed">
+			</md-icon>
+				
+			<md-icon ng-disabled="true"
+				class=" sm-font-icon expandericon" aria-label="Chat2"
+				md-font-icon="fa fa-angle-right " ng-show="collapsed">
+			</md-icon> 
+			
+			<md-progress-circular
+				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
+				style="  left: 50%;  margin-left: -25px; position:absolute "
+				md-mode="indeterminate">
+			</md-progress-circular>
+			
+			</md-list-item>
+		
+		</md-list>
+	</div>
+</div>
+
+	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo  smallTree">
+		<md-list class="noPadding"> 
+		<md-list-item>
+	<i class=" dragged-icon fa fa-bars fa-2x" ></i>
+		<p style="margin-left: 30px;">{{item.WORD}}</p>
+		</md-list-item> 
+		</md-list>
+	</div>
+
+
+
+
+
+<ol ng-if=" item.CONTENT_NM != undefined"
+	ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]"
+	ui-tree-nodes="options" ng-model="item.CHILD"
+	ng-class="{hideChildren: collapsed}">
+	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
+		ng-include="'tree_glossary_tec.html'" class="figlioVisibile"></li>
+</ol>
+
+</script>
+                
