@@ -100,9 +100,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini
- *          (monica.franceschini@eng.it)
- * 
+ * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
+ *
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -398,7 +397,7 @@ public class SelfServiceDataSetCRUD {
 					dataset.setPersistTableName(name);
 				}
 
-				checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
+				// checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
 				checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
 				PersistedTableManager ptm = new PersistedTableManager(profile);
@@ -431,8 +430,7 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	/*
-	 * Change the scope of the dataset. If the dataset is private change it to
-	 * public (SHARE) If the dataset is public change it to private (UNSHARE)
+	 * Change the scope of the dataset. If the dataset is private change it to public (SHARE) If the dataset is public change it to private (UNSHARE)
 	 */
 	@POST
 	@Path("/share")
@@ -1356,10 +1354,8 @@ public class SelfServiceDataSetCRUD {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1661,17 +1657,17 @@ public class SelfServiceDataSetCRUD {
 
 	}
 
-	private void checkQbeDataset(IDataSet dataSet) {
-		if (dataSet instanceof QbeDataSet) {
-			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-			Map parameters = dataSet.getParamsMap();
-			if (parameters == null) {
-				parameters = new HashMap();
-				dataSet.setParamsMap(parameters);
-			}
-			dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-		}
-	}
+	// private void checkQbeDataset(IDataSet dataSet) {
+	// if (dataSet instanceof QbeDataSet) {
+	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// Map parameters = dataSet.getParamsMap();
+	// if (parameters == null) {
+	// parameters = new HashMap();
+	// dataSet.setParamsMap(parameters);
+	// }
+	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// }
+	// }
 
 	private void checkFileDataset(IDataSet dataSet) {
 		if (dataSet instanceof FileDataSet) {

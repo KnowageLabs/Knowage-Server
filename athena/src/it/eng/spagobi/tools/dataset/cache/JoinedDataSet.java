@@ -11,26 +11,21 @@
  */
 package it.eng.spagobi.tools.dataset.cache;
 
-import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.AbstractDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -142,7 +137,7 @@ public class JoinedDataSet extends AbstractDataSet {
 		List<IDataSet> datsets = new ArrayList<IDataSet>();
 		for (String dataSetLabel : dataSetLabels) {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
-			checkQbeDataset(dataSet);
+			// checkQbeDataset(dataSet);
 			datsets.add(dataSet);
 		}
 		setDataSets(datsets);
@@ -166,26 +161,26 @@ public class JoinedDataSet extends AbstractDataSet {
 		return dataSetDao;
 	}
 
-	private void checkQbeDataset(IDataSet dataSet) {
-
-		IDataSet ds = null;
-		if (dataSet instanceof VersionedDataSet) {
-			VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
-			ds = versionedDataSet.getWrappedDataset();
-		} else {
-			ds = dataSet;
-		}
-
-		if (ds instanceof QbeDataSet) {
-			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-			Map parameters = ds.getParamsMap();
-			if (parameters == null) {
-				parameters = new HashMap();
-				ds.setParamsMap(parameters);
-			}
-			ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-		}
-	}
+	// private void checkQbeDataset(IDataSet dataSet) {
+	//
+	// IDataSet ds = null;
+	// if (dataSet instanceof VersionedDataSet) {
+	// VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
+	// ds = versionedDataSet.getWrappedDataset();
+	// } else {
+	// ds = dataSet;
+	// }
+	//
+	// if (ds instanceof QbeDataSet) {
+	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// Map parameters = ds.getParamsMap();
+	// if (parameters == null) {
+	// parameters = new HashMap();
+	// ds.setParamsMap(parameters);
+	// }
+	// ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// }
+	// }
 
 	public AssociationGroup getAssociations() {
 		return associationGroup;
@@ -198,7 +193,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getUserProfileAttributes()
 	 */
 	public Map getUserProfileAttributes() {
@@ -208,7 +203,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setUserProfileAttributes(java .util.Map)
 	 */
 	public void setUserProfileAttributes(Map<String, Object> attributes) {
@@ -239,7 +234,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDataStore()
 	 */
 	public IDataStore getDataStore() {
@@ -248,7 +243,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setAbortOnOverflow(boolean)
 	 */
 	public void setAbortOnOverflow(boolean abortOnOverflow) {
@@ -258,7 +253,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#addBinding(java.lang.String, java.lang.Object)
 	 */
 	public void addBinding(String bindingName, Object bindingValue) {
@@ -268,7 +263,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#test()
 	 */
 	public IDataStore test() {
@@ -278,7 +273,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#test(int, int, int)
 	 */
 	public IDataStore test(int offset, int fetchSize, int maxResults) {
@@ -288,7 +283,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getSignature()
 	 */
 	public String getSignature() {
@@ -301,7 +296,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#decode(it.eng.spagobi.tools. dataset.common.datastore.IDataStore)
 	 */
 	public IDataStore decode(IDataStore datastore) {
@@ -310,7 +305,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#isCalculateResultNumberOnLoadEnabled ()
 	 */
 	public boolean isCalculateResultNumberOnLoadEnabled() {
@@ -319,7 +314,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setCalculateResultNumberOnLoad (boolean)
 	 */
 	public void setCalculateResultNumberOnLoad(boolean enabled) {
@@ -329,7 +324,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#setDataSource(it.eng.spagobi .tools.datasource.bo.IDataSource)
 	 */
 	public void setDataSource(IDataSource dataSource) {
@@ -338,7 +333,7 @@ public class JoinedDataSet extends AbstractDataSet {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.bo.IDataSet#getDataSource()
 	 */
 	public IDataSource getDataSource() {

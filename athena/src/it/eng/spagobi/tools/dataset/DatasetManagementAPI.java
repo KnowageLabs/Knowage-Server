@@ -5,19 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset;
 
-import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.JoinedDataSet;
@@ -44,7 +41,6 @@ import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -139,9 +135,9 @@ public class DatasetManagementAPI {
 			List<IDataSet> dataSets = null;
 			if (UserUtilities.isTechnicalUser(getUserProfile())) {
 				dataSets = getDataSetDAO().loadDataSets();
-				for (IDataSet dataSet : dataSets) {
-					checkQbeDataset(dataSet);
-				}
+				// for (IDataSet dataSet : dataSets) {
+				// checkQbeDataset(dataSet);
+				// }
 			} else {
 				dataSets = getMyDataDataSet();
 			}
@@ -263,26 +259,26 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void checkQbeDataset(IDataSet dataSet) {
-
-		IDataSet ds = null;
-		if (dataSet instanceof VersionedDataSet) {
-			VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
-			ds = versionedDataSet.getWrappedDataset();
-		} else {
-			ds = dataSet;
-		}
-
-		if (ds instanceof QbeDataSet) {
-			SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-			Map parameters = ds.getParamsMap();
-			if (parameters == null) {
-				parameters = new HashMap();
-				ds.setParamsMap(parameters);
-			}
-			ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-		}
-	}
+	// private void checkQbeDataset(IDataSet dataSet) {
+	//
+	// IDataSet ds = null;
+	// if (dataSet instanceof VersionedDataSet) {
+	// VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
+	// ds = versionedDataSet.getWrappedDataset();
+	// } else {
+	// ds = dataSet;
+	// }
+	//
+	// if (ds instanceof QbeDataSet) {
+	// SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+	// Map parameters = ds.getParamsMap();
+	// if (parameters == null) {
+	// parameters = new HashMap();
+	// ds.setParamsMap(parameters);
+	// }
+	// ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+	// }
+	// }
 
 	/**
 	 *
@@ -296,7 +292,7 @@ public class DatasetManagementAPI {
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			checkQbeDataset(dataSet);
+			// checkQbeDataset(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -365,7 +361,7 @@ public class DatasetManagementAPI {
 		try {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			checkQbeDataset(dataSet);
+			// checkQbeDataset(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -421,9 +417,9 @@ public class DatasetManagementAPI {
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
-			for (IDataSet dataSet : joinedDatasets) {
-				checkQbeDataset(dataSet);
-			}
+			// for (IDataSet dataSet : joinedDatasets) {
+			// checkQbeDataset(dataSet);
+			// }
 
 			joinedDataSet.setParamsMaps(parametersValues);
 
@@ -650,7 +646,7 @@ public class DatasetManagementAPI {
 		try {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			checkQbeDataset(dataSet);
+			// checkQbeDataset(dataSet);
 
 			ICache cache = SpagoBICacheManager.getCache();
 			IDataStore cachedResultSet = cache.get(dataSet);
@@ -729,9 +725,9 @@ public class DatasetManagementAPI {
 	public List<IDataSet> getEnterpriseDataSet() {
 		try {
 			List<IDataSet> dataSets = getDataSetDAO().loadEnterpriseDataSets();
-			for (IDataSet dataSet : dataSets) {
-				checkQbeDataset(dataSet);
-			}
+			// for (IDataSet dataSet : dataSets) {
+			// checkQbeDataset(dataSet);
+			// }
 			return dataSets;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
@@ -750,9 +746,9 @@ public class DatasetManagementAPI {
 				userId = this.getUserId();
 			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(userId);
-			for (IDataSet dataSet : dataSets) {
-				checkQbeDataset(dataSet);
-			}
+			// for (IDataSet dataSet : dataSets) {
+			// checkQbeDataset(dataSet);
+			// }
 			return dataSets;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
@@ -772,9 +768,9 @@ public class DatasetManagementAPI {
 				userId = this.getUserId();
 			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser(userId);
-			for (IDataSet dataSet : dataSets) {
-				checkQbeDataset(dataSet);
-			}
+			// for (IDataSet dataSet : dataSets) {
+			// checkQbeDataset(dataSet);
+			// }
 			return dataSets;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
@@ -793,9 +789,9 @@ public class DatasetManagementAPI {
 				userId = this.getUserId();
 			}
 			List<IDataSet> dataSets = getDataSetDAO().loadDatasetOwnedAndShared(userId);
-			for (IDataSet dataSet : dataSets) {
-				checkQbeDataset(dataSet);
-			}
+			// for (IDataSet dataSet : dataSets) {
+			// checkQbeDataset(dataSet);
+			// }
 			return dataSets;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
@@ -814,9 +810,9 @@ public class DatasetManagementAPI {
 				userId = this.getUserId();
 			}
 			List<IDataSet> dataSets = getDataSetDAO().loadMyDataDataSets(userId);
-			for (IDataSet dataSet : dataSets) {
-				checkQbeDataset(dataSet);
-			}
+			// for (IDataSet dataSet : dataSets) {
+			// checkQbeDataset(dataSet);
+			// }
 			return dataSets;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
@@ -868,7 +864,7 @@ public class DatasetManagementAPI {
 		logger.debug("check the dataset not alreaduy present with same label");
 
 		IDataSet datasetLab = DAOFactory.getDataSetDAO().loadDataSetByLabel(dataSet.getLabel());
-		checkQbeDataset(datasetLab);
+		// checkQbeDataset(datasetLab);
 
 		if (datasetLab != null) {
 			throw new ValidationException("Dataset with label " + dataSet.getLabel() + " already found");
@@ -1107,7 +1103,7 @@ public class DatasetManagementAPI {
 
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-						checkQbeDataset(dataset);
+						// checkQbeDataset(dataset);
 
 						// check datasets are cached otherwise cache it
 						IDataStore cachedResultSet = cache.get(dataset);
