@@ -1,6 +1,6 @@
-<div ng-controller="Controller as ctrl" >
+<div ng-controller="Controller as ctrl" class="h100">
 
-<div layout="row" clayout-wrap>
+<div layout="row" layout-wrap class="h100">
 	<!-- 			LEFT BOX document -->
 	<div flex="20"  class="boxItemGlo"  >
 
@@ -33,7 +33,7 @@
 
 			<p ng-if="ctrl.listDoc.length==0">List Document Empty</p>
 
-								<md-list  dir-paginate="doc in ctrl.listDoc | itemsPerPage: 3" class="bottomBorder">
+								<md-list  dir-paginate="doc in ctrl.listDoc | itemsPerPage: ctrl.DocItemPerPage" pagination-id="docPagination" class="bottomBorder">
 								 <md-list-item ng-click="1==1"	ng-repeat="n in [1] "  class="smallListItem ">
 								<p class="wrapText">{{ doc.DOCUMENT_NM | uppercase}}</p>
 								</md-list-item> 
@@ -42,7 +42,7 @@
 			</md-content>
 
 			<div class="box_pagination" layout="row" layout-align="center end">
-				<dir-pagination-controls max-size="5"></dir-pagination-controls>
+				<dir-pagination-controls pagination-id="docPagination" max-size="5"></dir-pagination-controls>
 			</div>
 
 		</div>
@@ -65,24 +65,20 @@
 			
 			
 
-			<p ng-if="ctrl.listDoc.length==0">nessun vocabolo</p>
+			<p ng-if="ctrl.words.length==0">nessun vocabolo</p>
 
 	
-			<div id="wordTree" ng-if="ctrl.listDoc.length>0" 
-						ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"  data-clone-enabled="true">
+			<div id="wordTree" 		ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"  data-clone-enabled="true">
 
-						<ol ui-tree-nodes ng-model="ctrl.listDoc" >
+						<ol ui-tree-nodes ng-model="ctrl.words" >
 
-							<li dir-paginate="word in ctrl.listDoc | itemsPerPage:	3 ">
+							<li dir-paginate="word in ctrl.words | itemsPerPage: ctrl.WordItemPerPage  " pagination-id="wordPagination">
 
 								<div ui-tree-node data-nodrag style=" min-height: 15px !important;">
-
 									<div ui-tree-handle style="border: none; min-height: 15px !important;">
-									
-									
 										<md-list class="noPadding deleteButton"> <md-list-item class="smallListItem "  ng-click="1==1"
 											ng-repeat="n in [1]"  >
-										<p class="wrapText" style="border-bottom: 1px solid rgb(176, 190, 197);" >{{ word.DOCUMENT_NM  | uppercase}}</p>
+										<p class="wrapText" style="border-bottom: 1px solid rgb(176, 190, 197);" >{{ word.WORD  | uppercase}}</p>
 										 <md-icon md-font-icon="fa fa-times" ng-click="doSecondaryAction($event)" aria-label="Open Chat" class="md-secondary md-hue-3"></md-icon> 
 										</md-list-item> </md-list>
 									</div>
@@ -97,7 +93,7 @@
 			</md-content>
 
 			<div class="box_pagination" layout="row" layout-align="center end">
-				<dir-pagination-controls max-size="5"></dir-pagination-controls>
+				<dir-pagination-controls pagination-id="wordPagination" max-size="5"></dir-pagination-controls>
 			</div>
 
 		</div>
@@ -115,13 +111,13 @@
 			</md-toolbar>
 
 			<md-content layout-padding> 
-			 <div layout="row">
+			 <div layout="row" style="margin-bottom: 7px;">
 			<p style="  margin: 0 10px 0 0;" >Glossary:</p>
 			 <md-select style="padding: 0;" placeholder="Select glossary" ng-model="ctrl.selGlo">
        		 <md-option ng-repeat="gloss in ctrl.glossary" value="{{gloss}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
-       		 	<md-input-container
-				md-no-float style="  margin-top: -12px; position: absolute; right: 0;"> 
+       		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;"
+				md-no-float style="  margin-top: -12px; position: absolute; right: 0; padding: 2px;"> 
 				<md-icon	md-font-icon="fa fa-search " style="  padding :4px 0;  color: black;"></md-icon> 
 				<input	ng-model="searchDoc" Style="margin-left: 15px;"
 				ng-keyup="ctrl.SearchWordInSelectedGloss(searchDoc)" type="text"
@@ -131,7 +127,7 @@
 			
 			
 			<div id="GlossTree"  ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
-							data-drag-delay="300" >
+							data-drag-delay="300" data-clone-enabled="true" >
 							
 
 								<ol ui-tree-nodes="options"

@@ -30,7 +30,6 @@
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
-	
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
@@ -68,17 +67,17 @@
 	
 
   <md-content  class="glossaryTec">
-    <md-tabs md-dynamic-height md-border-bottom>
+    <md-tabs  md-border-bottom>
      
       
       <md-tab label="2.1.4.2.2"">
-        <md-content class="md-padding">
+        <md-content class="abs100">
          <%@include file="/WEB-INF/jsp/tools/glossary/management_associations_between_documents_and_words.jspf"%>
         </md-content>
       </md-tab>
       
        <md-tab label="2.1.4.2.1">
-        <md-content class="md-padding">
+        <md-content class="abs100">
         </md-content>
       </md-tab>
     

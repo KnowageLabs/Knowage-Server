@@ -157,8 +157,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		
 
 		if(parent!=undefined){
-			console.log("-------------------------")
-			console.log(parent);
 			ctr.newWord.PARENT=parent.$parent.$modelValue;
 			ctr.expanderNode=parent.$parent;
 		}

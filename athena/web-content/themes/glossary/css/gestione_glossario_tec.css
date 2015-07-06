@@ -1,4 +1,6 @@
-
+.documentListBox{
+	height:100%;
+}
 .documentListBox .box_pagination {
 	position: absolute;
 	bottom: 0;
@@ -7,13 +9,14 @@
 }
 
 .documentListBox md-content{
-  padding-bottom: 37px;
+  padding-bottom: 20px;
 }
 
 .boxItemGlo{
 	 border: 1px solid rgb(232, 232, 232);  
 	  margin: 0 3px;
 	    position: relative;
+	    height:100%;
 }
 
 md-list.deleteButton button.md-secondary-container{

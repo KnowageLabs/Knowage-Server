@@ -800,6 +800,31 @@ public class GlossaryService {
 		}
 	}
 
+
+	@GET
+	@Path("/glosstreeLike")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String glosstreeLike(@Context HttpServletRequest req) {
+
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+			JSONObject jo = new JSONObject();
+			
+			String word = req.getParameter("WORD");
+			String glossaryId = req.getParameter("GLOSSARY_ID");
+			dao.glosstreeLike(glossaryId,word);
+		
+			return jo.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
+
+	
 	private static JSONObject fromWordLight(SbiGlWord sbiGlWord)
 			throws JSONException {
 		JSONObject jobj = new JSONObject();

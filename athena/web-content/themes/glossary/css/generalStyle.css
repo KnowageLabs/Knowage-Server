@@ -112,12 +112,7 @@ md-toolbar.minihead {
 	border: none !important;
 }
 
- .dragged-icon{
-	font-size: 20px;
-	 float: left;
-	  padding:  2px 0;
-	  color: rgb(176, 190, 197);
-}
+
  
  .preloader md-progress-circular {
 	top: 50%;
@@ -174,6 +169,14 @@ background: rgba(224, 229, 240, 0.05) !important;
 		border-left: 1px dotted #D3C1C1;
 }
 
+#GlossTree .angular-ui-tree-empty{
+	display:none;
+}
+
+.angular-ui-tree-empty {
+  background-color: white !important;
+}
+
 
 
 .preloader {
@@ -209,13 +212,21 @@ p.wrapText {
 {
 	height: 25px !important;
   min-height: 25px !important;
+  cursor: pointer;
 }
 
-  .angular-ui-tree-handle .dragged-icon{
-  padding: 0 0 0 5px;
- }
 
-.angular-ui-tree-handle p{
+ 
+  .dragged-icon i, i.dragged-icon{
+	font-size: 20px;
+	 float: left;
+	  padding: 2px 0 2px 2px;
+	  color: rgb(176, 190, 197);
+	    cursor: move;
+}
+
+
+.dragged-icon  p, .expander-icon p{
 	margin-left: 20px !important;
 	 line-height: 20px !important;
 }
@@ -231,3 +242,19 @@ p.wrapText {
 	border: 2px dashed #bed2db;
 	box-sizing: border-box;
 }
+
+.glossaryTec{
+	  height: 100%;
+  position: relative;
+}
+
+.glossaryTec md-tabs,
+.h100
+{
+	height:100% !important;
+}
+
+ md-content.abs100{
+height: 100%;
+  position: absolute;
+  width: 100%;}

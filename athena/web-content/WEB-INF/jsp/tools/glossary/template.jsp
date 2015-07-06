@@ -166,10 +166,10 @@
 
 
 
-	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
+	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico dragged-icon">
 		
 <div ui-tree-handle>
-<i class=" dragged-icon fa fa-bars fa-2x"></i>
+<i class="fa fa-bars fa-2x"></i>
 									
 		<md-list >
 			<md-list-item  class="SecondaryOnLeft"
@@ -191,10 +191,10 @@
 		</md-list>
 </div>
 
-	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo ">
+	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo dragged-icon expander-icon ">
 		<md-list class="noPadding"> 
 		<md-list-item>
-		<i class=" dragged-icon fa fa-bars fa-2x" ></i>
+		<i class="  fa fa-bars fa-2x" ></i>
 		<p style="margin-left: 30px;">{{item.WORD}}</p>
 		</md-list-item> 
 		</md-list>
@@ -235,7 +235,7 @@
 	ng-class="{hideChildren: collapsed}">
 	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
 		ng-include="'items_renderer.html'" class="figlioVisibile"></li>
-	<li ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox"></li>
+	<li ng-repeat="n in [1]"   ui-tree-node class="addFiglioBox"></li>
 </ol>
 </script>
     
@@ -244,9 +244,9 @@
 <script type="text/ng-template" id="tree_glossary_tec.html">
 									
 
-<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico">
+<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico expander-icon" data-nodrag>
 		
-	<div ui-tree-handle class="smallTree">
+	<div ui-tree-handle class="smallTree" style="  cursor: pointer;">
 	
 									
 		<md-list>
@@ -279,10 +279,10 @@
 	</div>
 </div>
 
-	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo  smallTree">
+	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo dragged-icon smallTree">
 		<md-list class="noPadding"> 
 		<md-list-item>
-	<i class=" dragged-icon fa fa-bars fa-2x" ></i>
+	<i class=" fa fa-bars fa-2x" ></i>
 		<p style="margin-left: 30px;">{{item.WORD}}</p>
 		</md-list-item> 
 		</md-list>

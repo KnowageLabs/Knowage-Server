@@ -140,7 +140,7 @@
 								<div ui-tree-node context-menu
 									data-target="WordMenu-{{word.WORD}}">
 
-									<div ui-tree-handle style="border: none;">
+									<div ui-tree-handle style="border: none;" >
 									<i class=" dragged-icon fa fa-bars fa-2x"></i>
 									
 										<md-list > <md-list-item   ng-click="1==1"
