@@ -93,7 +93,8 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 				Criteria c = session.createCriteria(SbiImages.class).setProjection(Projections.rowCount());
 				if (restrictByUser)
 					c.add(Restrictions.eq("commonInfo.userIn", user));
-				return (Long) c.uniqueResult();
+				Object result = c.uniqueResult();
+				return result == null ? 0 : (Long) result;
 			}
 		}).longValue();
 	}
