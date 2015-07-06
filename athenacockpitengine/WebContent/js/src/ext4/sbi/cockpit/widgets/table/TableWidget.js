@@ -24,6 +24,8 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		border: false,
 		gridConfig: {
 			height: 400,
+			columnLines: false,
+			rowLines: false,
 			clicksToEdit:1,
 		    frame: false,
 		    border:false,
@@ -34,7 +36,8 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		        autoFill: true,
 		        enableRowBody:true,
 		        showPreview:true,
-		        loadMask: false
+		        loadMask: false,
+		        stripeRows : true
 		    },
 		    layout: "fit"
 		},
@@ -50,6 +53,9 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 	Ext.apply(this, c);
 
 	this.initServices();
+
+	this.setTableOptions();
+	
 	this.init();
 
 	this.addEvents('contentloaded');
@@ -125,7 +131,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, redraw: function() {
 		Sbi.trace("[TableWidget.refresh]: IN");
-		this.initFontOptions();		
+		this.initFontOptions();
+		
+		this.setTableOptions();
+		
 		Sbi.cockpit.widgets.table.TableWidget.superclass.redraw.call(this);
 		this.doLayout();
 		Sbi.trace("[TableWidget.refresh]: OUT");
@@ -436,7 +445,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, init: function() {
 		Sbi.trace("[TableWidget.init]: IN");
 
-
 		if(this.wconf.series || this.wconf.category){
 			this.aggregations = {};
 //			this.aggregations.series = this.wconf.series;
@@ -457,7 +465,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 			this.aggregations.measures = this.wconf.series;
 			this.aggregations.categories = categories;
-
 		}
 
 		this.boundStore();
@@ -620,8 +627,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	}
 
-	,
-	extractSelectionsFromRecord : function (cellIndex, record) {
+	, extractSelectionsFromRecord : function (cellIndex, record) {
     	var selection = {};
 
     	var meta = Sbi.storeManager.getRecordMeta(record);
@@ -803,6 +809,111 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}, this);
 
 		return this.pagingTBar;
+	}
+	
+	// table grid settings
+	, setTableOptions: function() {
+		
+		console.log('setTableOptions(): this.wconf -> ', this.wconf);
+		
+		if(this.wconf === undefined || this.wconf === null){
+			//do not change the CSS, do nothing
+		} else {
+			var tableConfig = {};
+			
+			tableConfig.columnLines = !(this.wconf.hideGrid);
+			tableConfig.rowLines = !(this.wconf.hideGrid);
+			tableConfig.viewConfig = {};
+			tableConfig.viewConfig.stripeRows = this.wconf.alternateRowsColors;
+			
+			var clsClass = 'tableConfigCSSClass';
+			
+			var clsClassDefaultId = clsClass + 'Default';
+			var clsClassDefault = '.' + clsClass + ' .x-grid-cell {' 
+				+ 'border-style: solid; '
+				+ 'border-width: 0px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px 0px; '
+				+ 'border-color: #'+ this.wconf.gridColor + ';'
+			+'}';
+			
+			var clsClassFirstTdId = clsClass + 'FirstTd';
+			var clsClassFirstTd = '.' + clsClass + ' .x-grid-cell.x-grid-cell-first {' 
+				+ 'border-width: 0px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px; '
+			+'}';
+			
+			var clsClassFirstTrId = clsClass + 'FirstTr';
+			var clsClassFirstTr = '.' + clsClass + ' tr:first-child .x-grid-cell {' 
+				+ 'border-width: ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px 0px; '
+			+'}';
+			
+			var clsClassFirstTrFirstTdId = clsClass + 'FirstTrFirstTd';
+			var clsClassFirstTrFirstTd = '.' + clsClass + ' tr:first-child .x-grid-cell.x-grid-cell-first {' 
+				+ 'border-width: ' + this.wconf.lineSize + 'px; '
+			+'}';
+
+			if (this.wconf.hideGrid != undefined && this.wconf.hideGrid == false) {
+				if(Ext.util.CSS.getRule(clsClassDefault) !== undefined || Ext.util.CSS.getRule(clsClassDefault) !== null){
+					Ext.util.CSS.removeStyleSheet(clsClassDefaultId);
+					Ext.util.CSS.createStyleSheet(clsClassDefault, clsClassDefaultId);
+				} else {
+					Ext.util.CSS.createStyleSheet(clsClassDefault, clsClassDefaultId);
+				}
+				if(Ext.util.CSS.getRule(clsClassFirstTd) !== undefined || Ext.util.CSS.getRule(clsClassFirstTd) !== null){
+					Ext.util.CSS.removeStyleSheet(clsClassFirstTdId);
+					Ext.util.CSS.createStyleSheet(clsClassFirstTd, clsClassFirstTdId);
+				} else {
+					Ext.util.CSS.createStyleSheet(clsClassFirstTd, clsClassFirstTdId);
+				}
+				if(Ext.util.CSS.getRule(clsClassFirstTr) !== undefined || Ext.util.CSS.getRule(clsClassFirstTr) !== null){
+					Ext.util.CSS.removeStyleSheet(clsClassFirstTrId);
+					Ext.util.CSS.createStyleSheet(clsClassFirstTr, clsClassFirstTrId);
+				} else {
+					Ext.util.CSS.createStyleSheet(clsClassFirstTr, clsClassFirstTrId);
+				}
+				if(Ext.util.CSS.getRule(clsClassFirstTrFirstTd) !== undefined || Ext.util.CSS.getRule(clsClassFirstTrFirstTd) !== null){
+					Ext.util.CSS.removeStyleSheet(clsClassFirstTrFirstTdId);
+					Ext.util.CSS.createStyleSheet(clsClassFirstTrFirstTd, clsClassFirstTrFirstTdId);
+				} else {
+					Ext.util.CSS.createStyleSheet(clsClassFirstTrFirstTd, clsClassFirstTrFirstTdId);
+				}
+			} else {
+				Ext.util.CSS.removeStyleSheet(clsClassDefaultId);
+				Ext.util.CSS.removeStyleSheet(clsClassFirstTdId);
+				Ext.util.CSS.removeStyleSheet(clsClassFirstTrId);
+				Ext.util.CSS.removeStyleSheet(clsClassFirstTrFirstTdId);
+			}
+			
+			var alternateRowsFirstClassId = clsClass + 'First';
+			var alternateRowsFirst = '.' + clsClass + ' .x-grid-row .x-grid-cell {' 
+					+ 'background-color: #'+ this.wconf.alternateRowsColorsFirst + ';'
+				+'}';
+			var alternateRowsSecondClassId = clsClass + 'Second';
+			var alternateRowsSecond = '.' + clsClass + ' .x-grid-row-alt .x-grid-cell {' 
+					+ 'background-color: #'+ this.wconf.alternateRowsColorsSecond + ';'
+				+'}';
+			
+			if(this.wconf.alternateRowsColors != undefined && this.wconf.alternateRowsColors == true) {
+				if(Ext.util.CSS.getRule(alternateRowsFirst) !== undefined || Ext.util.CSS.getRule(alternateRowsFirst) !== null){
+					Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
+					Ext.util.CSS.createStyleSheet(alternateRowsFirst, alternateRowsFirstClassId);
+				} else {
+					Ext.util.CSS.createStyleSheet(alternateRowsFirst, alternateRowsFirstClassId);
+				}
+				
+				if(Ext.util.CSS.getRule(alternateRowsSecond) !== undefined || Ext.util.CSS.getRule(alternateRowsSecond) !== null){
+					Ext.util.CSS.removeStyleSheet(alternateRowsSecondClassId);
+					Ext.util.CSS.createStyleSheet(alternateRowsSecond, alternateRowsSecondClassId);
+				} else {
+					Ext.util.CSS.createStyleSheet(alternateRowsSecond, alternateRowsSecondClassId);
+				}
+			} else {
+				Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
+				Ext.util.CSS.removeStyleSheet(alternateRowsSecondClassId);
+			}
+		    
+		    tableConfig.componentCls = clsClass;
+		    tableConfig.cls = clsClass;
+		    Ext.apply(this.gridConfig, tableConfig);
+		}	
 	}
 	
 	//grid font setting
