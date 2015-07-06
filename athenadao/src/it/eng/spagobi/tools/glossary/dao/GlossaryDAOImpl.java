@@ -8,6 +8,7 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchAttributeByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
@@ -156,6 +157,26 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 
 	}
 
+	@Override
+	public SbiGlGlossary glosstreeLike(final String glossId,final String word){
+		return executeOnTransaction(new IExecuteOnTransaction<SbiGlGlossary>() {
+			@Override
+			public SbiGlGlossary execute(Session session) {
+				SbiGlGlossary glo=new SbiGlGlossary();
+				
+				List<SbiGlWlist>  wordl=list(new SearchGlossaryStructureWithWordLike(glossId, word));
+				
+				
+				
+			
+				
+				return glo;
+			}
+
+		});
+			
+	}
+	
 	@Override
 	public SbiGlContents loadContents(Integer contentId) {
 		return load(SbiGlContents.class, contentId);

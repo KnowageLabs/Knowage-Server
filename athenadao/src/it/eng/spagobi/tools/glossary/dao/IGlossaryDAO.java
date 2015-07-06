@@ -38,6 +38,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public void deleteGlossary(Integer glossaryId);
 
 	public void cloneGlossary(Integer glossaryId,Integer newGlossId);
+	
+	public SbiGlGlossary glosstreeLike(String glossId,String word);
 
 	
 	
@@ -59,6 +61,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public boolean modifyContentPosition(Integer contentId, Integer parentId, Integer glossaryId);
 
 	public void deleteContents(Integer contentId);
+	
 
 	//
 	// Word
