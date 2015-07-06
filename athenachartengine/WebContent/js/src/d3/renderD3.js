@@ -1418,7 +1418,7 @@ function renderWordCloud(chartConf){
 	var table= tableDiv.append("table").style("width",w+m[3]).style("padding-left",m[3]);
 	var paginationBar=tableDiv.append("div").attr("id","pBar").style("padding-left",w/2+m[3]/2);
 	var prevButton=paginationBar.append("button").text("<< Prev").on("click",function(){return showPrev();});
-	var paginationText= paginationBar.append("label").text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+	var paginationText= paginationBar.append("label").text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 	var nextButton=paginationBar.append("button").text("Next >>").on("click",function(){return showNext();});
 
 	if(firstDisplayed===1){
@@ -1438,11 +1438,12 @@ function renderWordCloud(chartConf){
 	
 	//table header
 	table.append("thead")
-	      .style("background-color","steelblue") 
+	      .style("background-color","silver") 
+	      .style("border","1px solid black")
+	      .attr("border-collapse","collapse")
 	     .append("tr")
 	      .style("height","30px")
-	      .style("border-bottom","2px solid black")
-	     .selectAll("th")
+	      .selectAll("th")
 	     .data(tableColumns).enter()
 	     .append("th")
 	     .text(function(d){return d;});
@@ -1458,7 +1459,7 @@ function renderWordCloud(chartConf){
 	     })
 	     .attr("class","tdata")
 	.on("mouseover",function(d){
-		d3.select(this).style("outline","solid steelblue");
+		d3.select(this).style("outline","solid dimgray");
 		return selectSingleLine(d);})
 	     .on("mouseout",function(d){
 		d3.select(this).style("outline","none");
@@ -1552,7 +1553,7 @@ function renderWordCloud(chartConf){
 		if(lastDisplayed===allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-		paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 		var dummy=[];
 		d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
 		
@@ -1567,7 +1568,7 @@ function renderWordCloud(chartConf){
 	        })
 		    .attr("class","tdata") 
 		.on("mouseover",function(d){ 
-			d3.select(this).style("outline","solid steelblue");
+			d3.select(this).style("outline","solid dimgray");
 			return selectSingleLine(d);
 			})
 	     .on("mouseout",function(d){
@@ -1628,7 +1629,7 @@ function renderWordCloud(chartConf){
 		if(lastDisplayed===allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-		paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 
 		var dummy=[];
 		d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
@@ -1644,7 +1645,7 @@ function renderWordCloud(chartConf){
 		})
 		.attr("class","tdata") 
 		.on("mouseover",function(d){
-			d3.select(this).style("outline","solid steelblue");
+			d3.select(this).style("outline","solid dimgray");
 			return selectSingleLine(d);
 			})
 		.on("mouseout",function(d){
@@ -1694,7 +1695,7 @@ function renderWordCloud(chartConf){
 		})
 		.attr("class","tdata") 
 		.on("mouseover",function(d){ 			
-			d3.select(this).style("outline","solid steelblue");
+			d3.select(this).style("outline","solid dimgray");
 			return selectSingleLine(d);})
 		.on("mouseout",function(){
 			d3.select(this).style("outline","none");
@@ -1749,7 +1750,7 @@ function renderWordCloud(chartConf){
 
 
 
-		paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 		updateTable();	
 
 
@@ -1778,7 +1779,7 @@ function renderWordCloud(chartConf){
 			prevButton.attr("disabled","true");	
 		}
 
-		paginationText.text(" "+firstDisplayed+"-"+lastDisplayed+"/"+allTableData.length).style("font-weight","bold");
+		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 		updateTable();	
 
 	}
