@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
@@ -43,6 +44,8 @@ public class ImagesService {
 	private final long defaultMaxImageSize = 1024;
 	private final long defaultMaxUserImages = 10;
 	private final long defaultMaxTenantImages = 100;
+
+	private static transient Logger logger = Logger.getLogger(ImagesService.class);
 
 	@GET
 	@Path("/listImages")
@@ -70,7 +73,8 @@ public class ImagesService {
 			ret.put("data", images);
 			return ret.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+			logger.error("An unexpected error occured while executing service \"listImages\"", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service \"listImages\"", t);
 		}
 	}
 
@@ -94,7 +98,8 @@ public class ImagesService {
 			}
 			flushFileToResponse(resp, contentType, content.getBytes(1, (int) content.length()));
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+			logger.error("An unexpected error occured while executing service \"getImage\"", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service \"getImage\"", t);
 		}
 	}
 
@@ -152,6 +157,7 @@ public class ImagesService {
 
 			}
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service \"addImage\"", t);
 			msg = "An unexpected error occured while executing service \"addImage\"";
 			success = false;
 		}
@@ -188,6 +194,7 @@ public class ImagesService {
 			success = false;
 			msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.deleteKO";
 		} catch (Throwable t) {
+			logger.error("An unexpected error occured while executing service \"deleteImage\"", t);
 			msg = "An unexpected error occured while executing service \"deleteImage\"";
 			success = false;
 		}
