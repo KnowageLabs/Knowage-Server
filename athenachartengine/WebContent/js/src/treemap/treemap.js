@@ -150,12 +150,12 @@ function renderHeatmap(chartConf){
         	height: chartConf.chart.height,
 			width: chartConf.chart.width,
             type: 'heatmap',
-            margin: [80, 10, 80, 80],
+            margin: [80, 80, 80, 80],
 			style: {
 	            fontFamily: chartConf.chart.style.fontFamily,
 	            fontSize: chartConf.chart.style.fontSize,
 	            fontWeight: chartConf.chart.style.fontWeight
-	        },
+	        }
         },
         title: {
 			text: chartConf.title.text,
@@ -197,8 +197,10 @@ function renderHeatmap(chartConf){
                 align: 'left',
                 x: 5,
                 y: 15,
-                format: '{value:%B}' // long month
+                format: '{value:%B %Y}' // long month
+                	
             },
+            tickInterval:30*24*3600*1000,
             showLastLabel: true,
             tickLength: 16
         },
@@ -213,12 +215,9 @@ function renderHeatmap(chartConf){
 
         colorAxis: {
         	 stops: [
-                     [0, '#ffff00'],
-                     [0.2, '#009900'],
-                     [0.4, '#e60000'],
-                     [0.6,'#002eb8'],
-                     [0.8,'#ff9900'],
-                     [1, '#000000']
+                     [0, '#2b2b92'],
+                     [0.5, '#ffff99'],
+                     [1, '#a30000']
                  ],
                  min: minValue,
                  max: maxValue,
@@ -226,6 +225,15 @@ function renderHeatmap(chartConf){
                 format: '{value}'
             }
         },
+        
+        legend: {
+            layout: 'horizontal',
+            margin: 0,
+            align: 'center', // configurable???
+            symbolWidth:800,  // ???
+            margin: 0
+        },
+        
 
         series: [{
             borderWidth: 0,
