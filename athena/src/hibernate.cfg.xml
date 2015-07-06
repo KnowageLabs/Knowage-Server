@@ -25,6 +25,7 @@
         <property name="hibernate.cache.use_query_cache">false</property>
 		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
         
+        
         <!--
         <property name="hibernate.show_sql">true</property>
 		<property name="hibernate.cache.use_minimal_puts">true</property>                
@@ -187,7 +188,9 @@
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWlist.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWordAttr.hbm.xml" />
-		        
+		
+		<!-- IMAGES -->
+		<mapping resource="it/eng/spagobi/images/metadata/mapping/SbiImages.hbm.xml" />        
         
         <!-- end mapping -->
         
