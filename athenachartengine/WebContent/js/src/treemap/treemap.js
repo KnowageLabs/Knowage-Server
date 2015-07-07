@@ -115,7 +115,10 @@ function renderTreemap(chartConf) {
 	});
 
 }
+
+
 function renderHeatmap(chartConf){
+	
 	
     var start;
     var startDate= new Date(chartConf.chart.dateresult[0]);
@@ -143,6 +146,13 @@ function renderHeatmap(chartConf){
     	points.push(point);
     }
     
+    var colors=chartConf.colors;
+    var colorStops=[];
+    for(i=0;i<colors.length;i++){
+    	var stop=[i*(1/(colors.length-1)),colors[i]];
+    	colorStops.push(stop);
+    }
+    
     var chart = new Highcharts.Chart({
        
         chart: {
@@ -150,6 +160,7 @@ function renderHeatmap(chartConf){
         	height: chartConf.chart.height,
 			width: chartConf.chart.width,
             type: 'heatmap',
+            backgroundColor:chartConf.chart.style.backgroundColor,
             margin: [80, 80, 80, 80],
 			style: {
 	            fontFamily: chartConf.chart.style.fontFamily,
@@ -197,8 +208,13 @@ function renderHeatmap(chartConf){
                 align: 'left',
                 x: 5,
                 y: 15,
-                format: '{value:%B %Y}' // long month
-                	
+                format: '{value:%B %Y}',// long month
+                style:{
+           		 color: chartConf.xaxis.style.fontColor,
+                    fontWeight: chartConf.xaxis.style.fontWeight,
+                    fontSize: chartConf.xaxis.style.fontSize,
+                    fontFamily: chartConf.xaxis.style.fontFamily
+           	}	
             },
             tickInterval:30*24*3600*1000,
             showLastLabel: true,
@@ -209,16 +225,20 @@ function renderHeatmap(chartConf){
             title: {
                 text: null
             },
+            labels:{
+            	style:{
+            		 color: chartConf.yaxis.style.fontColor,
+                     fontWeight: chartConf.yaxis.style.fontWeight,
+                     fontSize: chartConf.yaxis.style.fontSize,
+                     fontFamily: chartConf.yaxis.style.fontFamily
+            	}
+            },
             categories:chartConf.chart.storeresult,
             reversed: false
         },
 
         colorAxis: {
-        	 stops: [
-                     [0, '#2b2b92'],
-                     [0.5, '#ffff99'],
-                     [1, '#a30000']
-                 ],
+        	 stops:colorStops ,
                  min: minValue,
                  max: maxValue,
             labels: {
@@ -228,21 +248,23 @@ function renderHeatmap(chartConf){
         
         legend: {
             layout: 'horizontal',
-            margin: 0,
-            align: 'center', // configurable???
-            symbolWidth:800,  // ???
-            margin: 0
+            align: chartConf.legend.style.align, 
+            symbolWidth: Number(chartConf.legend.style.symbolWidth)
+          
         },
-        
-
+        tooltip: {
+        	headerFormat: '<b>'+chartConf.chart.serie.value+'</b><br/>',
+            pointFormat: '{point.x:%e %b, %Y} | {point.label}: <b>{point.value}</b>',
+            style:{ 
+            	 color: chartConf.tooltip.style.fontColor,
+                 fontSize: chartConf.tooltip.style.fontSize,
+                 fontFamily: chartConf.tooltip.style.fontFamily
+            }
+        },
         series: [{
             borderWidth: 0,
             nullColor: '#EFEFEF',
-            colsize: 24 * 36e5, // one day
-            tooltip: {
-                headerFormat: '<b>'+chartConf.chart.serie.value+'</b><br/>',
-                pointFormat: '{point.x:%e %b, %Y} | {point.label}: <b>{point.value}</b>'
-            },
+            colsize: 24 * 36e5, // one day    
             data:points,
             turboThreshold: Number.MAX_VALUE// #3404, remove after 4.0.5 release
         }]
