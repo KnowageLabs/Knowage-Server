@@ -33,6 +33,10 @@
  <ACTION name="INSERT_NOTES_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.InsertNotesAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
+
+ <ACTION name="DELETE_PREVIEW_FILE_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.DeletePreviewFileAction" scope="REQUEST">
+    <CONFIG/>
+ </ACTION>
  
   <ACTION name="RATING_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.DocumentRatingAction" scope="REQUEST">
  	<CONFIG/>

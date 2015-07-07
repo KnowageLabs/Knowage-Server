@@ -76,6 +76,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <script>
 var versionTemplateChanged = 'false';
 var fileUploadChanged = 'false';
+var fileDeleted = 'false';
 
 function versionTemplateSelected () {
 	versionTemplateChanged = 'true';
@@ -83,6 +84,7 @@ function versionTemplateSelected () {
 
 function fileToUploadInserted() {
 	fileUploadChanged = 'true';
+	fileDeleted = 'false';
 }
 
 function showEngField(docType) {
@@ -820,6 +822,19 @@ function saveDocument(goBack) {
 				}
 				</script>
 				
+				
+				<%
+				
+                String deletePreviewFileActionURL = GeneralUtilities
+                .getSpagoBIProfileBaseUrl(userUniqueIdentifier);
+				
+				String deletePreviewFileActionPars = "&ACTION_NAME=DELETE_PREVIEW_FILE_ACTION"
+                + "&DOCUMENT_ID="+obj.getId()+"&"
+                + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED
+                + "=TRUE";
+
+				%>
+				
 				 <!-- DISPLAY FORM FOR PREVIEW FILE  UPLOAD -->
 				<div id="preview_upload">
 					<div class='div_detail_label'>
@@ -830,8 +845,75 @@ function saveDocument(goBack) {
 					<div class='div_detail_form'>
 						<input class='portlet-form-input-field' type="file" 
 			      		       name="previewFile" id="previewFile" onchange='fileToUploadInserted()' />
+
+<% if(obj.getPreviewFile() != null) {%>
+
+                    <a id="deletePreviewLink" href='javascript:void(0);'>
+                        <img src="<%=urlBuilder.getResourceLinkByTheme(request,
+                    "/img/delete.gif", currTheme)%>" title="Delete preview file" alt="Delete preview" />
+                    </a> 		
+
+<% } %>
+
+
 					</div>
 				</div>	
+
+        <script>
+            Ext.get('deletePreviewLink').on('click', function(){
+                
+            	
+            	<% if(obj.getPreviewFile()!= null){ %>
+            	
+
+                
+                Ext.MessageBox.confirm(
+                	       "<%=msgBuilder.getMessage("SBISet.devObjects.confirmDeletePreviewTitle", locale)%>"
+                        , "<%=msgBuilder.getMessage("SBISet.devObjects.confirmDeletePreviewDescr", locale)%>"
+                        , function(btn, text) {
+                        	if ( btn == 'yes' ) {
+                                fileDeleted = true; 
+                                document.getElementById('previewFile').value = '';
+                        		Ext.Ajax.request({
+                        	        url: '<%=deletePreviewFileActionURL%>',
+                        	        method: 'post',
+                        	        success: function (result, request) {
+                        	            response = result.responseText || "";
+                                        document.getElementById('deletePreviewLink').style.visibility = "hidden";
+
+                        	            Ext.MessageBox.show({
+                        	                title: "<spagobi:message key = 'SBIDev.docConf.docDet.deletedPreviewTitle' />",
+                        	                msg: "<spagobi:message key = 'SBIDev.docConf.docDet.deletedPreviewMsg' />",
+                        	                buttons: Ext.MessageBox.OK
+                        	            });
+                        	            
+                        	            
+                        	        },
+                        	        params: '<%=deletePreviewFileActionPars%>',
+                        	        failure: function (result, request) {
+                                        response = result.responseText || "";
+
+                                        Ext.MessageBox.show({
+                                            title: "<spagobi:message key = 'SBIDev.docConf.docDet.notDeletedPreviewTitle' />",
+                                            msg: "<spagobi:message key = 'SBIDev.docConf.docDet.notDeletedPreviewMsg' />",
+                                            buttons: Ext.MessageBox.ERROR
+                                        });
+                                        
+                                        
+                                    }
+                        	    });
+                        	}
+                        }
+                        , this
+                    );
+
+                <% }%>
+            	}
+     );
+            
+        </script>
+
+
 
 				<!-- DISPLAY FORM FOR TEMPLATE  UPLOAD -->
 				<div id="form_upload">

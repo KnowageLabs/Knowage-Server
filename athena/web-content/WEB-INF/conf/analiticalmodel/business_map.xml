@@ -4,6 +4,7 @@
 		<MAP_ACTION actionName="MOVE_UP_LOWFUNCTIONALITY" businessProcess="FunctionalitiesManagement" />
 		<MAP_ACTION actionName="MOVE_DOWN_LOWFUNCTIONALITY" businessProcess="FunctionalitiesManagement" />
 		<MAP_ACTION actionName="DOWNLOAD_BIOBJ_TEMPLATE" businessProcess="DocumentDevManagement" />
+        <MAP_ACTION actionName="DELETE_PREVIEW_FILE_ACTION" businessProcess="DocumentDevManagement" />
 		<!-- 
 		<MAP_ACTION actionName="GET_FTREE_FOLDERS_ACTION"  businessProcess="DocumentUserManagement"/>
 		<MAP_ACTION actionName="GET_FOLDER_CONTENT_ACTION" businessProcess="DocumentUserManagement"/>
