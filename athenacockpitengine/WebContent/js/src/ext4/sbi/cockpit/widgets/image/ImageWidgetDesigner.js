@@ -80,17 +80,58 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 		        type: 'ajax',
 		        url: Sbi.config.contextName+'/restful-services/1.0/images/listImages',
 		        method: 'GET',
-		        params: {'SBI_EXECUTION_ID': Sbi.config.SBI_EXECUTION_ID, 'user_id':Sbi.config.userId},
+		        params: {'SBI_EXECUTION_ID': Sbi.config.SBI_EXECUTION_ID,
+		        		'user_id':Sbi.config.userId,
+		        		'ORDER_BY':'name',
+		        		'ASCENDING':true},
 		        reader: {
 		            type: 'json',
 		            root: 'data'
 		        }
 		    },
+		    /* Allowed values are defined in IImagesDAO */
+		    sorters: [{
+		    	property : 'name',
+		    	direction: 'asc'
+		    }],
+		    remoteSort: true,
 		    model: 'ImageDataModel'
 		});
 		imageStore.load();
 		this.imagePanel = Ext.create('Ext.Panel', {
 			id: 'mainImagePanel',
+			tools:[{xtype:'label',html:'Order by',padding:'0 5 0 0'},
+			       {xtype:'button',
+					padding:'0 5 0 0',
+					text: LN('sbi.cockpit.widgets.image.imageWidgetDesigner.nameField')+' '+LN('sbi.cockpit.widgets.image.imageWidgetDesigner.desc'),
+					handler: function(obj) {
+//			    		var store = Ext.data.StoreManager.lookup('imagesDataStore');
+						var mainPanel = obj.up('panel');
+						imageStore.sorters = new Ext.util.MixedCollection();
+						imageStore.sorters.add(new Ext.util.Sorter({
+    	        		    property : 'name',
+    	        		    direction: mainPanel.sort.name
+    	        		}));
+			    		imageStore.sort();
+			    		mainPanel.sort.name = mainPanel.sort.name=='asc'?'desc':'asc';
+			    		obj.setText(LN('sbi.cockpit.widgets.image.imageWidgetDesigner.nameField')+' '+LN('sbi.cockpit.widgets.image.imageWidgetDesigner.'+mainPanel.sort.name));
+			    	}},
+			    	{xtype:'button',
+			    	padding:'0 5 0 0',
+					text:LN('sbi.cockpit.widgets.image.imageWidgetDesigner.timeInField')+' '+LN('sbi.cockpit.widgets.image.imageWidgetDesigner.desc'),
+			    	handler: function(obj) {
+			    		var mainPanel = obj.up('panel');
+			    		imageStore.sorters = new Ext.util.MixedCollection();
+			    		imageStore.sorters.add(new Ext.util.Sorter({
+    	        		    property : 'timeIn',
+    	        		    direction: mainPanel.sort.timeIn
+    	        		}));
+			    		imageStore.sort();
+			    		mainPanel.sort.timeIn = mainPanel.sort.timeIn=='asc'?'desc':'asc';
+			    		obj.setText(LN('sbi.cockpit.widgets.image.imageWidgetDesigner.timeInField')+' '+LN('sbi.cockpit.widgets.image.imageWidgetDesigner.'+mainPanel.sort.timeIn));
+			    	}
+			}],
+			sort: {'name':'desc','timeIn':'desc'},
 	        itemSelected: null,
 	        layout: {type: 'hbox',align:'stretch'},
 	        frame: false,
@@ -112,7 +153,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 				    tpl: [
 				        '<tpl for=".">',
 				            '<div class="thumb-wrap" id="{name}" style="float:left;margin:4px;margin-right:0;padding:5px;">',
-				            '<div class="thumb" style="min-height:80px;"><img src="{urlPreview}" title="{name}"></div>',
+				            '<div class="thumb" style="min-width:80px;min-height:80px;"><img src="{urlPreview}" title="{name}"></div>',
 				            '<span >{shortName}</span></div>',
 				        '</tpl>',
 				        '<div class="x-clear"></div>'
@@ -151,7 +192,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 				items:[
 					Ext.create('Ext.form.Panel', {
 					    frame: true,
-					    flex: 1,
+					    flex: 3,
 					    buttonAlign: 'center',
 					    items: [{
 					        xtype: 'filefield',
@@ -184,8 +225,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 					}),
 					Ext.create('Ext.panel.Panel',{
 						html: LN('sbi.cockpit.widgets.image.imageWidgetDesigner.dropToDelete'),
-						flex: 1,
-//						layout: 'fit',
+						flex: 3,
 						style: 'text-align:center',
 						buttonAlign: 'center',
 						frame: true,

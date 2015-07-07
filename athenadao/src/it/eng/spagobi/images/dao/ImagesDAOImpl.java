@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Blob;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -36,8 +37,8 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 	}
 
 	@Override
-	public List<SbiImages> listImages(String name, String description) {
-		return list(new SearchImages(name, description));
+	public List<SbiImages> listImages(String name, String description, Map<OrderBy, Direction> sort) {
+		return list(new SearchImages(name, description, sort));
 	}
 
 	@Override
@@ -97,5 +98,9 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 				return result == null ? 0 : (Long) result;
 			}
 		}).longValue();
+	}
+
+	public static void main(String[] args) {
+		System.out.println(OrderBy.valueOf("CommonInfo").valueOf("timeIn"));
 	}
 }

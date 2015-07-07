@@ -5,6 +5,8 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.images.dao.IImagesDAO;
+import it.eng.spagobi.images.dao.IImagesDAO.Direction;
+import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
 import it.eng.spagobi.images.metadata.SbiImages;
 import it.eng.spagobi.tools.glossary.util.Util;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -14,6 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +60,10 @@ public class ImagesService {
 			dao.setUserProfile(profile);
 			String name = req.getParameter("IMAGES_NAME");
 			String descr = req.getParameter("IMAGES_DESCRIPTION");
+			Map<OrderBy, Direction> sort = getOrderMap(req.getParameter("sort"));
 			JSONObject ret = new JSONObject();
 			JSONArray images = new JSONArray();
-			for (SbiImages imageDB : dao.listImages(name, descr)) {
+			for (SbiImages imageDB : dao.listImages(name, descr, sort)) {
 				Date lastMod = imageDB.getCommonInfo().getTimeUp() != null ? imageDB.getCommonInfo().getTimeUp() : imageDB.getCommonInfo().getTimeIn();
 				String url = "/1.0/images/getImage?IMAGES_ID=" + imageDB.getImageId();
 				JSONObject o = new JSONObject();
@@ -254,4 +258,24 @@ public class ImagesService {
 		return ret;
 	}
 
+	private Map<OrderBy, Direction> getOrderMap(String parameter) {
+		if (parameter != null) {
+			try {
+				Map<OrderBy, Direction> map = new HashMap<OrderBy, Direction>();
+				JSONArray arr = new JSONArray(parameter);
+				for (int i = 0; i < arr.length(); i++) {
+					JSONObject s = arr.getJSONObject(i);
+					try {
+						OrderBy field = OrderBy.valueOf(s.getString("property"));
+						Direction dir = Direction.valueOf(s.getString("direction"));
+						map.put(field, dir);
+					} catch (Exception e) {
+					}
+				}
+				return map;
+			} catch (JSONException e) {
+			}
+		}
+		return null;
+	}
 }
