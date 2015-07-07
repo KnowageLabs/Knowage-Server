@@ -167,6 +167,7 @@ Ext.define('Sbi.behavioural.lov.TestLovPanel', {
     	}else{
     		lovConfiguration = this.lovTestConfigurationTree.getValues();
     	}
+    	if(!lovConfiguration) return;
     	
     	var callbackUrl = this.contextName+ "?PAGE=ListLovsPage&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
     	var callback = function(){window.location = callbackUrl};

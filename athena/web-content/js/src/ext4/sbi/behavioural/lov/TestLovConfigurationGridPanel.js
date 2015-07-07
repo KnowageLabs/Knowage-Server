@@ -64,8 +64,8 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 		
 		this.store  = Ext.create('Ext.data.Store', {
 		    fields: ['name', 'isValue', 'isDescription', 'isVisible'],
-		    data : [{'name':'a','isValue':false, 'isDescription':true, 'isVisible':false }]
-	
+		    //data : [{'name':'a','isValue':false, 'isDescription':true, 'isVisible':false }]
+		    data : [{}]
 		});
 
 		this.columnsDefinition = [{
@@ -146,6 +146,11 @@ Ext.define('Sbi.behavioural.lov.TestLovConfigurationGridPanel', {
 					visible.push(aItem.data.name);
 				}
 			}
+		}
+		
+		if(!value){
+			 Sbi.exception.ExceptionHandler.showErrorMessage(LN("sbi.behavioural.lov.missingValueColumn"));
+			 return null;
 		}
 		
 		var LOVConfiguration = {

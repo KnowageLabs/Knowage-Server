@@ -54,7 +54,17 @@ Ext.define('Sbi.behavioural.lov.TestLovResultPanel', {
     	});
     	
     	this.callParent([defautlConf]);
-    	this.store.on('load',function(){this.fireEvent('storeLoad')},this);
+    	this.store.on('load',function(store, records, success){
+			if(!success){				
+				 Sbi.exception.ExceptionHandler.showErrorMessage(LN("sbi.behavioural.lov.errorLoading"));
+			}
+			else{
+				this.fireEvent('storeLoad')
+			}
+			},
+    		this);
+
+    	
     	Sbi.debug('TestLovPanel costructor OUT');
     }
     

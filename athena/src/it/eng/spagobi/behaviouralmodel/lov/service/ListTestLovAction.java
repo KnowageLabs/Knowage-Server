@@ -67,6 +67,8 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 	private static final String PAGINATION_START = "start";
 	private static final String PAGINATION_LIMIT = "limit";
 
+	public static final String SERVICE_NAME = "LIST_TEST_LOV_ACTION";
+
 	@Override
 	public void doService() {
 		try {
@@ -219,9 +221,14 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 					JSONObject errorStackTrace = new JSONObject();
 					errorStackTrace.put("stacktrace", responseFailure);
 					errorStackTrace.put("error", "error");
-					JSONObject errorJSON = new JSONObject();
-					errorJSON.put("metaData", errorStackTrace);
-					writeBackToClient(new JSONSuccess(errorJSON));
+
+					JSONObject error = new JSONObject();
+					error.put("success", "false");
+					error.put("message", "Error");
+					error.put("data", errorStackTrace);
+
+					writeBackToClient(new JSONSuccess(error));
+
 				} catch (IOException e) {
 					SpagoBIEngineServiceException serviceError = new SpagoBIEngineServiceException("Execution", "Error executing the cockpit");
 					try {
@@ -298,6 +305,9 @@ public class ListTestLovAction extends AbstractSpagoBIAction {
 			List temp = Arrays.asList(scrollableDataResult.getColumnNames());
 			columnsNames.addAll(temp);
 			result = scrollableDataResult.getSourceBean();
+		} catch (Exception e) {
+			logger.error("Error in executing LOV query: " + statement);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error inn executing LOV query");
 		} finally {
 			Utils.releaseResources(dataConnection, sqlCommand, dataResult);
 		}
