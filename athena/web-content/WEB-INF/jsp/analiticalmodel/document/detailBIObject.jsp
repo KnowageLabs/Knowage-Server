@@ -1280,8 +1280,52 @@ function isBIParameterFormChanged () {
 	var par_Id = document.getElementById('par_Id').value;
 	var parurl_nm = document.getElementById('parurl_nm').value;
 	var view_fl = document.getElementById('view_fl').checked ? 1 : 0;
-
 	
+	var modes = document.getElementsByName('mult_fl');
+	var mult_fl;
+	for(var i = 0; i < modes.length; i++){
+	    if(modes[i].checked){
+	    	mult_fl = modes[i].value;
+	    }
+	}
+
+	var reqs = document.getElementsByName('req_fl');
+	var req_fl;
+	for(var i = 0; i < reqs.length; i++){
+		if(reqs[i].checked){
+	        req_fl = reqs[i].value;
+	    }
+	 }
+	    
+    var priorityV = document.getElementsByName('priority');
+    if(!priorityV.selectedIndex){
+        priorityV = priorityV[0];	
+    }
+    var priorityIndex = priorityV.selectedIndex;
+    var priorityOption = priorityV.options;
+    var priority = priorityOption[priorityIndex].value;
+
+    var colspanV = document.getElementsByName('colspan');
+    
+    var colspan = false;
+    if(colspanV){
+        if(colspanV.selectedIndex == undefined){
+        	   colspanV = colspanV[0];   
+        	    }
+        if(colspanV && colspanV.selectedIndex != undefined){
+            var colspanIndex = colspanV.selectedIndex;
+            var colspanOption = colspanV.options;
+            colspan = colspanOption[colspanIndex].value;
+        }
+    }
+    
+    var sliderThick = false;
+    var sliderV = document.getElementById('doc_thickPerc');
+    if(sliderV){
+    	sliderThick = sliderV.value;
+    }
+    
+    
 	if ((objParLabel != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
 						.escapeHtml(initialBIObjectParameter.getLabel()))%>')
 		|| (par_Id != '<%=(initialBIObjectParameter.getParID() == null || initialBIObjectParameter
@@ -1291,6 +1335,12 @@ function isBIParameterFormChanged () {
 						.escapeHtml(initialBIObjectParameter
 								.getParameterUrlName()))%>') 
 		|| (view_fl != '<%=initialBIObjectParameter.getVisible()%>') 
+        || (mult_fl != '<%=initialBIObjectParameter.isMultivalue() ? 1 : 0%>') 	
+        || (req_fl != '<%=initialBIObjectParameter.isRequired() ? 1 : 0%>')  
+        || (priority != '<%=initialBIObjectParameter.getPriority()%>')  
+        || (colspan != false && colspan != '<%=initialBIObjectParameter.getColSpan()%>')  
+        || (sliderThick != false && sliderThick != '<%=StringEscapeUtils.escapeJavaScript(StringEscapeUtils
+            .escapeHtml(initialBIObjectParameter.getThickPerc() != null ?  initialBIObjectParameter.getThickPerc().toString() : "0"))%>') 
 	)
 	{
 		biobjParFormModified = 'true';

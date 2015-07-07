@@ -1,4 +1,4 @@
-/* SpagoBI, the Open Source Business  Intelligence suite
+/* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
@@ -466,6 +466,9 @@ public class DetBIObjModHelper {
 		objParClone.setProg(biObjPar.getProg());
 		objParClone.setRequired(biObjPar.getRequired());
 		objParClone.setVisible(biObjPar.getVisible());
+		objParClone.setPriority(biObjPar.getPriority());
+		objParClone.setThickPerc(biObjPar.getThickPerc());
+		objParClone.setColSpan(biObjPar.getColSpan());
 		return objParClone;
 	}
 
