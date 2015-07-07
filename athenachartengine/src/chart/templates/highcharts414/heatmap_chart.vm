@@ -34,6 +34,33 @@
 
 #set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded))
 
+#set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		
+		 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+		 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+	 		
+		 		#set($yAxisCounter = $yAxisCounter + 1)
+	 		
+	 	#end
+	#end
+
 {
  chart: 
  {
@@ -49,7 +76,8 @@
 		{			
 			fontFamily: '$chart.style.fontFamily',
 			fontSize: '$chart.style.fontSize',
-			fontWeight: '$chart.style.fontWeight'
+			fontWeight: '$chart.style.fontWeight',
+			backgroundColor: '$chart.style.backgroundColor'
 			
   		}
  },
@@ -98,6 +126,43 @@
 			fontWeight: '$chart.SUBTITLE.style.fontWeight',
 			fontColor: '$chart.SUBTITLE.style.color',
 			textAlign: '$chart.SUBTITLE.style.align'
+		}
+	},
+	legend:
+	{
+		style:
+		{
+			align: '$chart.LEGEND.style.align',
+			symbolWidth: '$chart.LEGEND.style.symbolWidth'
+		}
+	},
+	tooltip:
+	{
+		style:
+		{
+			fontFamily: '$chart.TOOLTIP.style.fontFamily',
+			fontSize: '$chart.TOOLTIP.style.fontSize',
+			fontColor: '$chart.TOOLTIP.style.color'
+		}
+	},
+	yaxis:
+	{
+		style:
+		{
+			fontFamily: '$yAxisList.Y.style.fontFamily',
+			fontWeight: '$yAxisList.Y.style.fontWeight',
+			fontSize: '$yAxisList.Y.style.fontSize',
+			fontColor: '$yAxisList.Y.style.color'
+		}
+	},
+	xaxis:
+	{
+		style:
+		{
+			fontFamily: '$xAxisList.X.style.fontFamily',
+			fontWeight: '$xAxisList.X.style.fontWeight',
+			fontSize: '$xAxisList.X.style.fontSize',
+			fontColor: '$xAxisList.X.style.color'
 		}
 	},
 	data:
