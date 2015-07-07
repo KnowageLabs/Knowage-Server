@@ -68,7 +68,7 @@ null as USER_UP,null as USER_DE, ds_h.TIME_IN, null as TIME_UP, null as TIME_DE,
 ds_h.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, ds_h.META_VERSION,
 ds_h.ORGANIZATION,
 CASE WHEN ds_h.OBJECT_TYPE = 'SbiQueryDataSet' THEN 
-'{"Query":"' + REPLACE(ds_h.QUERY,'"','\\"') + '","queryScript":"' + REPLACE(NVL(DS_H.QUERY_SCRIPT,''),'"','\\"') + '","queryScriptLanguage":"' + NVL(QUERY_SCRIPT_LANGUAGE,'') + '","dataSource":"' + NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') + '"}' 
+'{"Query":"' + REPLACE(ds_h.QUERY,'\"','\\\"') + '","queryScript":"' + REPLACE(NVL(DS_H.QUERY_SCRIPT,''),'\"','\\\"') + '","queryScriptLanguage":"' + NVL(QUERY_SCRIPT_LANGUAGE,'') + '","dataSource":"' + NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') + '"}' 
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN 
 '{"fileName":"' + NVL(DS_H.FILE_NAME,'') + '"}'
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN 
@@ -76,11 +76,11 @@ WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN
 WHEN ds_h.OBJECT_TYPE = 'SbiFileDataSet' THEN 
 '{"wsAddress":"' + NVL(DS_H.ADRESS,'') + '","wsOperation":"' + NVL(DS_H.OPERATION,'') + '"}'
 WHEN ds_h.OBJECT_TYPE = 'SbiScriptDataSet' THEN 
-'{"Script":"' + REPLACE(NVL(DS_H.SCRIPT,''),'"','\\"') + '","scriptLanguage":"' + NVL(DS_H.LANGUAGE_SCRIPT,'') + '"}'
+'{"Script":"' + REPLACE(NVL(DS_H.SCRIPT,''),'\"','\\\"') + '","scriptLanguage":"' + NVL(DS_H.LANGUAGE_SCRIPT,'') + '"}'
 WHEN ds_h.OBJECT_TYPE = 'SbiCustomDataSet' THEN 
-'{"customData":"' + REPLACE(NVL(DS_H.CUSTOM_DATA,'"{}"'),'"','\\"') + '","jClassName":"' + NVL(DS_H.JCLASS_NAME,'') + '"}'
+'{"customData":"' + REPLACE(NVL(DS_H.CUSTOM_DATA,'"{}"'),'\"','\\\"') + '","jClassName":"' + NVL(DS_H.JCLASS_NAME,'') + '"}'
 WHEN ds_h.OBJECT_TYPE = 'SbiQbeDataSet' THEN 
-'{"qbeDatamarts":"' + NVL(DS_H.DATAMARTS,'') + '","qbeDataSource":"' + NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') + '","qbeJSONQuery":"' + REPLACE(NVL(DS_H.JSON_QUERY,''),'"','\\"') + '"}'
+'{"qbeDatamarts":"' + NVL(DS_H.DATAMARTS,'') + '","qbeDataSource":"' + NVL((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID),'') + '","qbeJSONQuery":"' + REPLACE(NVL(DS_H.JSON_QUERY,''),'\"','\\\"') + '"}'
 end AS CONFIGURATION
 FROM SBI_DATA_SET DS INNER JOIN SBI_DATA_SET_HISTORY DS_H ON (DS.DS_ID = DS_H.DS_ID)
 order by ds_id, version_num ;

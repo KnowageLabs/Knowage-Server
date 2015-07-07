@@ -279,7 +279,7 @@ null as USER_UP,null as USER_DE, DS_H.TIME_IN, null as TIME_UP, null as TIME_DE,
 DS_H.SBI_VERSION_IN, null as SBI_VERSION_UP,  null as SBI_VERSION_DE, DS_H.META_VERSION,
 DS_H.ORGANIZATION,
 case when DS_H.OBJECT_TYPE = 'SbiQueryDataSet' then 
-concat('{"Query":"',REPLACE(DS_H.QUERY,'"','\\"'),'","queryScript":"',REPLACE(COALESCE(DS_H.QUERY_SCRIPT,''),'"','\\"'),'","queryScriptLanguage":"',COALESCE(QUERY_SCRIPT_LANGUAGE,''),'","dataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'"}')  
+concat('{"Query":"',REPLACE(DS_H.QUERY,'\"','\\\"'),'","queryScript":"',REPLACE(COALESCE(DS_H.QUERY_SCRIPT,''),'\"','\\\"'),'","queryScriptLanguage":"',COALESCE(QUERY_SCRIPT_LANGUAGE,''),'","dataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'"}')  
 WHEN DS_H.OBJECT_TYPE = 'SbiFileDataSet' then 
 CONCAT('{"fileName":"',COALESCE(DS_H.FILE_NAME,''),'"}')
 WHEN DS_H.OBJECT_TYPE = 'SbiFileDataSet' then 
@@ -287,11 +287,11 @@ CONCAT('{"SbiJClassDataSet":"',COALESCE(DS_H.JCLASS_NAME,''),'"}')
 WHEN DS_H.OBJECT_TYPE = 'SbiWSDataSet' then 
 CONCAT('{"wsAddress":"',COALESCE(DS_H.ADRESS,''),'","wsOperation":"',COALESCE(DS_H.OPERATION,''),'"}')
 WHEN DS_H.OBJECT_TYPE = 'SbiScriptDataSet' then 
-CONCAT('{"Script":"',REPLACE(COALESCE(DS_H.SCRIPT,''),'"','\\"'),'","scriptLanguage":"',COALESCE(DS_H.LANGUAGE_SCRIPT,''),'"}')
+CONCAT('{"Script":"',REPLACE(COALESCE(DS_H.SCRIPT,''),'\"','\\\"'),'","scriptLanguage":"',COALESCE(DS_H.LANGUAGE_SCRIPT,''),'"}')
 WHEN DS_H.OBJECT_TYPE = 'SbiCustomDataSet' then 
-CONCAT('{"customData":"',REPLACE(COALESCE(DS_H.CUSTOM_DATA,'"{}"'),'"','\\"'),'","jClassName":"',COALESCE(DS_H.JCLASS_NAME,''),'"}')
+CONCAT('{"customData":"',REPLACE(COALESCE(DS_H.CUSTOM_DATA,'"{}"'),'\"','\\\"'),'","jClassName":"',COALESCE(DS_H.JCLASS_NAME,''),'"}')
 WHEN DS_H.OBJECT_TYPE = 'SbiQbeDataSet' then 
-CONCAT('{"qbeDatamarts":"',COALESCE(DS_H.DATAMARTS,''),'","qbeDataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'","qbeJSONQuery":"',REPLACE(COALESCE(DS_H.JSON_QUERY,''),'"','\\"'),'"}')
+CONCAT('{"qbeDatamarts":"',COALESCE(DS_H.DATAMARTS,''),'","qbeDataSource":"',COALESCE(CAST((SELECT LABEL FROM SBI_DATA_SOURCE WHERE DS_ID = DATA_SOURCE_ID) AS CHAR),''),'","qbeJSONQuery":"',REPLACE(COALESCE(DS_H.JSON_QUERY,''),'\"','\\\"'),'"}')
 end AS CONFIGURATION
 FROM 
 SBI_DATA_SET DS INNER JOIN SBI_DATA_SET_HISTORY DS_H ON (DS.DS_ID = DS_H.DS_ID)
