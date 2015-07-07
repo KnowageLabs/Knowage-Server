@@ -61,10 +61,10 @@ Sbi.cockpit.core.WidgetExtensionPointManager = {
 	 * @param {String} descriptor.designerClass The name of the class used as widget's designer. It must extend Sbi.cockpit.core.WidgetDesigner
 	 */
 	, registerWidget: function(wtype, descriptor) {
-		Sbi.trace("[WidgetExtensionPoint.registerWidget]: IN");
-		Sbi.debug("[WidgetExtensionPoint.registerWidget]: registered widget extension type [" + wtype + "]");
+		Sbi.trace("[WidgetExtensionPointManager.registerWidget]: IN");
+		Sbi.debug("[WidgetExtensionPointManager.registerWidget]: registered widget extension type [" + wtype + "]");
 		Sbi.cockpit.core.WidgetExtensionPointManager.registry[wtype] = descriptor;
-		Sbi.trace("[WidgetExtensionPoint.registerWidget]: OUT");
+		Sbi.trace("[WidgetExtensionPointManager.registerWidget]: OUT");
 	}
 
 	/**
@@ -76,7 +76,7 @@ Sbi.cockpit.core.WidgetExtensionPointManager = {
 	 * @return {Object} The descriptor of the unregistered widget extension (see #registerWidget to have more info about the structure of the descriptor object)
 	 */
 	, unregisterWidget: function(wtype) {
-		Sbi.debug("[WidgetExtensionPoint.registerWidget]: unregistered widget extension type [" + wtype + "]");
+		Sbi.debug("[WidgetExtensionPointManager.registerWidget]: unregistered widget extension type [" + wtype + "]");
 		var wdescriptor = Sbi.cockpit.core.WidgetExtensionPointManager.registry[wtype];
 		delete Sbi.cockpit.core.WidgetExtensionPointManager.registry[wtype];
 		return wdescriptor;
@@ -184,26 +184,26 @@ Sbi.cockpit.core.WidgetExtensionPointManager.getWidget(widget);
 	, getWidgetRuntime: function(widget) {
 		var w = null;
 
-		Sbi.trace("[WidgetExtensionPoint.getWidgetRuntime]: IN");
+		Sbi.trace("[WidgetExtensionPointManager.getWidgetRuntime]: IN");
 		if(Sbi.isNotValorized(widget)) {
-    		Sbi.warn("[WidgetExtensionPoint.getWidgetRuntime]: Input parameter [widget] is not valorized.");
+    		Sbi.warn("[WidgetExtensionPointManager.getWidgetRuntime]: Input parameter [widget] is not valorized.");
     	} else if( (widget instanceof Sbi.cockpit.core.WidgetRuntime) === true) {
     		var wtype = widget.getWType();
-    		Sbi.warn("[WidgetExtensionPoint.getWidgetRuntime]: Input parameter [widget] is a widget object of type [" + wtype + "]");
+    		Sbi.warn("[WidgetExtensionPointManager.getWidgetRuntime]: Input parameter [widget] is a widget object of type [" + wtype + "]");
     		if( this.isWidgetRegistered(wtype) ) {
     			w = widget;
     		} else {
-    			Sbi.warn("[WidgetExtensionPoint.getWidgetRuntime]: Input parameter [widget] is of an unregistered type");
+    			Sbi.warn("[WidgetExtensionPointManager.getWidgetRuntime]: Input parameter [widget] is of an unregistered type");
     		}
     	} else {
     		if(typeof widget === 'object' && (widget instanceof Ext.util.Observable) === false) {
-    			Sbi.trace("[WidgetExtensionPoint.getWidgetRuntime]: Input parameter [widget] is a widget configuration object equlas to [" + Sbi.toSource(widget, true) + "]");
+    			Sbi.trace("[WidgetExtensionPointManager.getWidgetRuntime]: Input parameter [widget] is a widget configuration object equals to [" + Sbi.toSource(widget, true) + "]");
     			w = Sbi.cockpit.core.WidgetExtensionPointManager.createWidgetRuntime(widget);
     		} else {
-    			Sbi.error("[WidgetExtensionPoint.getWidgetRuntime]: Input parameter [widget] of type [" + (typeof widget) + "] is not valid");
+    			Sbi.error("[WidgetExtensionPointManager.getWidgetRuntime]: Input parameter [widget] of type [" + (typeof widget) + "] is not valid");
     		}
     	}
-		Sbi.trace("[WidgetExtensionPoint.getWidgetRuntime]: OUT");
+		Sbi.trace("[WidgetExtensionPointManager.getWidgetRuntime]: OUT");
 
 		return w;
 	}
@@ -223,18 +223,19 @@ Sbi.cockpit.core.WidgetExtensionPointManager.getWidget(widget);
 	 * @return {Sbi.cockpit.core.WidgetRuntime} The new widget runtime
 	 */
 	, createWidgetRuntime: function(conf) {
-		Sbi.trace("[WidgetExtensionPoint.createWidgetRuntime]: IN");
+		Sbi.trace("[WidgetExtensionPointManager.createWidgetRuntime]: IN");
 
 		var wdescriptor = Sbi.cockpit.core.WidgetExtensionPointManager.registry[conf.wtype];
 
 		if(wdescriptor !== undefined) {
-			Sbi.trace("[WidgetExtensionPoint.createWidgetRuntime]: runtime class for widget of type [" + conf.wtype + "] is equal to [" + wdescriptor.runtimeClass + "]");
+			Sbi.trace("[WidgetExtensionPointManager.createWidgetRuntime]: runtime class for widget of type [" + conf.wtype + "] is equal to [" + wdescriptor.runtimeClass + "]");
 			var widget = Sbi.createObjectByClassName(wdescriptor.runtimeClass, conf);
+			Sbi.trace("[WidgetExtensionPointManager.createWidgetRuntime]: OUT");
 			return widget;
 		} else {
 			alert("Widget of type [" + conf.wtype +"] not supprted. Supported types are [" + Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetTypes().join() + "]");
 		}
-		Sbi.trace("[WidgetExtensionPoint.createWidgetRuntime]: OUT");
+		Sbi.trace("[WidgetExtensionPointManager.createWidgetRuntime]: OUT");
 	}
 
 	/**
@@ -250,26 +251,26 @@ Sbi.cockpit.core.WidgetExtensionPointManager.createWidgetDesigner(designer);
 	, getWidgetDesigner: function(designer) {
 		var d = null;
 
-		Sbi.trace("[WidgetExtensionPoint.getWidgetDesigner]: IN");
+		Sbi.trace("[WidgetExtensionPointManager.getWidgetDesigner]: IN");
 		if(Sbi.isNotValorized(designer)) {
-    		Sbi.warn("[WidgetExtensionPoint.getWidgetDesigner]: Input parameter [designer] is not valorized.");
+    		Sbi.warn("[WidgetExtensionPointManager.getWidgetDesigner]: Input parameter [designer] is not valorized.");
     	} else if( (designer instanceof Sbi.cockpit.core.WidgetDesigner) === true) {
     		var wtype = designer.getWType();
-    		Sbi.warn("[WidgetExtensionPoint.getWidgetDesigner]: Input parameter [designer] is a widget designer object of type [" + wtype + "]");
+    		Sbi.warn("[WidgetExtensionPointManager.getWidgetDesigner]: Input parameter [designer] is a widget designer object of type [" + wtype + "]");
     		if( this.isWidgetRegistered(wtype) ) {
     			d = designer;
     		} else {
-    			Sbi.warn("[WidgetExtensionPoint.getWidgetDesigner]: Input parameter [designer] is of an unregistered type");
+    			Sbi.warn("[WidgetExtensionPointManager.getWidgetDesigner]: Input parameter [designer] is of an unregistered type");
     		}
     	} else {
     		if(typeof designer === 'object' && (designer instanceof Ext.util.Observable) === false) {
-    			Sbi.trace("[WidgetExtensionPoint.getWidgetDesigner]: Input parameter [designer] is a widget designer configuration object equlas to [" + Sbi.toSource(designer, true) + "]");
+    			Sbi.trace("[WidgetExtensionPointManager.getWidgetDesigner]: Input parameter [designer] is a widget designer configuration object equals to [" + Sbi.toSource(designer, true) + "]");
     			d = Sbi.cockpit.core.WidgetExtensionPointManager.createWidgetDesigner(designer);
     		} else {
-    			Sbi.error("[WidgetExtensionPoint.getWidgetDesigner]: Input parameter [designer] of type [" + (typeof designer) + "] is not valid");
+    			Sbi.error("[WidgetExtensionPointManager.getWidgetDesigner]: Input parameter [designer] of type [" + (typeof designer) + "] is not valid");
     		}
     	}
-		Sbi.trace("[WidgetExtensionPoint.getWidgetDesigner]: OUT");
+		Sbi.trace("[WidgetExtensionPointManager.getWidgetDesigner]: OUT");
 
 		return d;
 	}
@@ -284,7 +285,7 @@ Sbi.cockpit.core.WidgetExtensionPointManager.createWidgetDesigner(designer);
 	 * @return {Sbi.cockpit.core.WidgetDesigner} The new widget designer
 	 */
 	, createWidgetDesigner: function(conf) {
-		Sbi.trace("[WidgetExtensionPoint.createWidgetDesigner]: IN");
+		Sbi.trace("[WidgetExtensionPointManager.createWidgetDesigner]: IN");
 
 		var wdescriptor = Sbi.cockpit.core.WidgetExtensionPointManager.registry[conf.wtype];
 
@@ -297,7 +298,7 @@ Sbi.cockpit.core.WidgetExtensionPointManager.createWidgetDesigner(designer);
 		} else {
 			alert("Widget of type [" + wtype +"] not supported. Supported types are [" + Sbi.cockpit.core.WidgetExtensionPointManager.getWidgetTypes().join() + "]");
 		}
-		Sbi.trace("[WidgetExtensionPoint.createWidgetDesigner]: OUT");
+		Sbi.trace("[WidgetExtensionPointManager.createWidgetDesigner]: OUT");
 	}
 };
 

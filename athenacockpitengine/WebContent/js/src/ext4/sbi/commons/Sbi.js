@@ -133,7 +133,7 @@ Sbi.createObjectByClassName = function(fnName, fnArgs) {
 
 	var output;
 
-	Sbi.trace("[Sbi.execFunctionByName]: IN");
+	Sbi.trace("[Sbi.createObjectByClassName]: IN");
 
 	Sbi.trace("[Sbi.createObjectByClassName]: function name is equal to [" + fnName + "]");
 	if( Sbi.isNotValorized(fnName)) {
@@ -146,14 +146,14 @@ Sbi.createObjectByClassName = function(fnName, fnArgs) {
 
 	// is object a function?
 	if (typeof fn === "function") {
-		Sbi.trace("Function [" + fnName + "] found in scope");
+		Sbi.trace("[Sbi.createObjectByClassName]: Function [" + fnName + "] found in scope");
 		output =  new fn(fnArgs);
-		Sbi.trace("Function [" + fnName + "] sucesfully called in scope");
+		Sbi.trace("[Sbi.createObjectByClassName]: Function [" + fnName + "] successfully called in scope");
 	} else {
-		Sbi.showErrorMessage("Impossible to find a function named [" + fnName + "] in scope");
+		Sbi.showErrorMessage("[Sbi.createObjectByClassName]: Impossible to find a function named [" + fnName + "] in scope");
 	}
 
-	Sbi.trace("[Sbi.execFunctionByName]: OUT");
+	Sbi.trace("[Sbi.createObjectByClassName]: OUT");
 
 	return output;
 };

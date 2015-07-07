@@ -420,8 +420,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 				// on save set aggregation function
 				this.chooserWindow.on('aggregationSave', function(window, formState){
-					console.log('formState: ', formState);
-					
 					var recordIndex  = thisGrid.store.findExact('id', thisRecord.data.id);
 					var record = thisGrid.store.getAt(recordIndex);
 					

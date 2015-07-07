@@ -200,7 +200,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 	        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is valorized");
 	        		widget.setLayoutConfiguration(layoutConf);
 	        	} else {
-	        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is not valorized so it will e replaced with the [wlayout] property of the widget]");
+	        		Sbi.trace("[WidgetContainer.addWidget]: Input parameter [layoutConf] is not valorized so it will be replaced with the [wlayout] property of the widget]");
 	        		layoutConf = widget.getLayoutConfiguration();
 	        	}
 	    	} else {
