@@ -14,7 +14,6 @@ Sbi.cockpit.widgets.image.ImageWidgetDesigner = function(config) {
 		name: 'imageWidgetDesigner',
 		title: LN('sbi.cockpit.widgets.image.imageWidgetDesigner.title'),
 	};
-
 	
 	if (Sbi.settings && Sbi.settings.cockpit && Sbi.settings.cockpit.widgets && Sbi.settings.cockpit.widgets.image && Sbi.settings.cockpit.widgets.image.imageWidgetDesigner) {
 		defaultSettings = Ext.apply(defaultSettings, Sbi.settings.cockpit.widgets.image.imageWidgetDesigner);
@@ -27,7 +26,7 @@ Sbi.cockpit.widgets.image.ImageWidgetDesigner = function(config) {
 	
 	c = {
 		layout: 'fit',
-		height: 350,
+		height: 400,
 		items: [this.imagePanel]
 	};
 
@@ -71,7 +70,6 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 
 	, validate: function(validFields){
 		Sbi.trace("[ImageWidgetDesigner.validate]");
-		//TODO verificare che itemSelected sia valorizzato
 		return Sbi.cockpit.widgets.image.ImageWidgetDesigner.superclass.validate(this, validFields);
 	}
 
@@ -94,8 +92,9 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 		this.imagePanel = Ext.create('Ext.Panel', {
 			id: 'mainImagePanel',
 	        itemSelected: null,
-//	        frame: true,
-	        layout: {type: 'hbox',align: 'stretch'},
+	        layout: {type: 'hbox',align:'stretch'},
+	        frame: false,
+	        bodyStyle: {border: 0},
 	        title: LN('sbi.cockpit.widgets.image.imageWidgetDesigner.selectItem'),
 	        refreshPanelTitle: function(){
 	    		if(this.itemSelected){
@@ -107,6 +106,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 	        items: [
 				Ext.create('Ext.view.View', {
 					id: 'galleryView',
+					frame : false,
 					flex: 3,
 				    store: imageStore,
 				    tpl: [
@@ -145,12 +145,14 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 				    }
 				}),
 				{xtype: 'panel',
-				type: 'vbox',
-				frame: true,
-				flex:1,
+				layout: {type:'vbox',align:'stretch'},
+				flex: 1,
+				frame: false,
 				items:[
 					Ext.create('Ext.form.Panel', {
 					    frame: true,
+					    flex: 1,
+					    buttonAlign: 'center',
 					    items: [{
 					        xtype: 'filefield',
 					        name: 'uploadedImage',
@@ -178,14 +180,14 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 					                form.submit(params);
 					            }
 					        }
-					    }],
-					    listeners: {
-					    	actioncomplete: function(){}
-					    }
+					    }]
 					}),
 					Ext.create('Ext.panel.Panel',{
 						html: LN('sbi.cockpit.widgets.image.imageWidgetDesigner.dropToDelete'),
-//						height: 100,
+						flex: 1,
+//						layout: 'fit',
+						style: 'text-align:center',
+						buttonAlign: 'center',
 						frame: true,
 						cls: 'x-dd-drop-ok',
 						buttons: [{
@@ -286,10 +288,10 @@ Ext.define('ImageDataModel', {
        {name: 'size', type: 'float'},
        {name:'lastmod', type:'date', dateFormat:'timestamp'},
        {name: 'url', type: 'string', convert:function(o){
-    	   return '/athena/restful-services'+o;
+    	   return Sbi.config.contextName+'/restful-services'+o;
        }},
        {name: 'urlPreview', type: 'string', convert:function(o){
-    	   return '/athena/restful-services'+o;
+    	   return Sbi.config.contextName+'/restful-services'+o;
        }}
     ]
 });
