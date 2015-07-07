@@ -1,4 +1,4 @@
-/* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business  Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
@@ -33,22 +33,16 @@ import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.file.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,25 +51,27 @@ import java.util.Vector;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class DetBIObjModHelper {
 	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
-	
+
 	private static final List<String> VALID_FILE_EXTENSIONS = Arrays.asList("BMP", "JPG", "JPEG", "PNG", "GIF");
-	
+
 	SourceBean request = null;
 	SourceBean response = null;
 	RequestContainer reqCont = null;
 	ResponseContainer respCont = null;
-	IEngUserProfile profile=null;
+	IEngUserProfile profile = null;
+
 	/**
 	 * Instantiates a new det bi obj mod helper.
 	 * 
-	 * @param reqCont the req cont
-	 * @param request the request
-	 * @param response the response
+	 * @param reqCont
+	 *            the req cont
+	 * @param request
+	 *            the request
+	 * @param response
+	 *            the response
 	 */
 	public DetBIObjModHelper(RequestContainer reqCont, ResponseContainer respCont, SourceBean request, SourceBean response) {
 		this.request = request;
@@ -86,27 +82,28 @@ public class DetBIObjModHelper {
 		SessionContainer permanentSession = session.getPermanentContainer();
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
-	
-	
+
 	/**
 	 * Recover bi object details.
 	 * 
-	 * @param mod the mod
+	 * @param mod
+	 *            the mod
 	 * 
 	 * @return the bI object
 	 * 
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	public BIObject recoverBIObjectDetails(String mod) throws Exception {
 		// GET THE USER PROFILE
 
-		//String userId=(String)profile.getUserUniqueIdentifier();
-		String userId=(String)((UserProfile)profile).getUserId();
-		// GET THE INITIAL PATH 
-		String initialPath = (String)ChannelUtilities.getPreferenceValue(reqCont, TreeObjectsModule.PATH_SUBTREE, "");
+		// String userId=(String)profile.getUserUniqueIdentifier();
+		String userId = (String) ((UserProfile) profile).getUserId();
+		// GET THE INITIAL PATH
+		String initialPath = ChannelUtilities.getPreferenceValue(reqCont, TreeObjectsModule.PATH_SUBTREE, "");
 		// CREATE AN EMPTY BIOBJECT
 		BIObject obj = new BIObject();
-		// RECOVER FROM REQUEST ALL THE DATA USEFUL TO BUILD A BIOBJECT 
+		// RECOVER FROM REQUEST ALL THE DATA USEFUL TO BUILD A BIOBJECT
 		String idStr = (String) request.getAttribute("id");
 		String name = (String) request.getAttribute("name");
 		String label = (String) request.getAttribute("label");
@@ -116,42 +113,45 @@ public class DetBIObjModHelper {
 		String visibleStr = (String) request.getAttribute("visible");
 		String profiledVisibilityStr = (String) request.getAttribute("profileVisibility");
 		// path is unused
-		//String path = (String) request.getAttribute("path");
+		// String path = (String) request.getAttribute("path");
 		String typeAttr = (String) request.getAttribute("type");
 		String engineIdStr = (String) request.getAttribute("engine");
 		String stateAttr = (String) request.getAttribute("state");
 		String parametersRegion = (String) request.getAttribute("parametersRegion");
-		
+
 		String refreshSecondsString = (String) request.getAttribute("refreshseconds");
-		if(refreshSecondsString==null || refreshSecondsString.equalsIgnoreCase(""))refreshSecondsString="0";
-		Integer refreshSeconds=Integer.valueOf(refreshSecondsString);
-		
-		//previewFile management
+		if (refreshSecondsString == null || refreshSecondsString.equalsIgnoreCase(""))
+			refreshSecondsString = "0";
+		Integer refreshSeconds = Integer.valueOf(refreshSecondsString);
+
+		// previewFile management
 		String previewFileName = null;
-		ArrayList arUploaded = (ArrayList) request.getAttribute("UPLOADED_FILE");		
+		ArrayList arUploaded = (ArrayList) request.getAttribute("UPLOADED_FILE");
 		FileItem uploaded = getFileItemByFieldName(arUploaded, "previewFile");
 		if (uploaded != null) {
 			String fileName = GeneralUtilities.getRelativeFileNames(uploaded.getName());
 			if (fileName != null && !fileName.trim().equals("")) {
-				try{
+				try {
 					previewFileName = uploadFile(uploaded);
-				}catch(EMFUserError e){
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file",e.getErrorCode());
-					this.respCont.getErrorHandler().addError(error);	
-				}
-				catch(Exception e){
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file",e.getMessage());
-					this.respCont.getErrorHandler().addError(error);	
+				} catch (EMFUserError e) {
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file", e.getErrorCode());
+					this.respCont.getErrorHandler().addError(error);
+				} catch (Exception e) {
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "preview file", e.getMessage());
+					this.respCont.getErrorHandler().addError(error);
 				}
 			}
 		}
-		
+
 		// ELABORATE DATA RECOVERED FROM REQUEST
 		Integer id = null;
-		if(idStr!=null) id = new Integer(idStr);
-		if(criptableStr==null) criptableStr = "0";
+		if (idStr != null)
+			id = new Integer(idStr);
+		if (criptableStr == null)
+			criptableStr = "0";
 		Integer encrypt = new Integer(criptableStr);
-		if(visibleStr==null) visibleStr = "0";
+		if (visibleStr == null)
+			visibleStr = "0";
 		Integer visible = new Integer(visibleStr);
 		StringTokenizer tokentype = new StringTokenizer(typeAttr, ",");
 		String typeIdStr = tokentype.nextToken();
@@ -166,7 +166,7 @@ public class DetBIObjModHelper {
 		if (engineIdStr == null || engineIdStr.equals("")) {
 			// if engine id is not specified take the first engine for the biobject type
 			List engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(typeCode);
-			if(engines.size() == 0) {
+			if (engines.size() == 0) {
 				Domain domain = DAOFactory.getDomainDAO().loadDomainById(typeIdInt);
 				Vector vector = new Vector();
 				vector.add(domain.getValueName());
@@ -177,60 +177,59 @@ public class DetBIObjModHelper {
 			Integer engineIdInt = new Integer(engineIdStr);
 			engine = DAOFactory.getEngineDAO().loadEngineByID(engineIdInt);
 		}
-		
+
 		String dsIdStr = (String) request.getAttribute("datasource");
 		IDataSource ds = null;
 		if (dsIdStr != null && !dsIdStr.equals("")) {
 			Integer dsIdInt = new Integer(dsIdStr);
 			ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(dsIdInt);
 		}
-		
+
 		logger.debug("If engine requires datasource and datasource is not defined throw error");
-		if(engine != null && engine.getUseDataSource()){
-			if(ds == null){
-				logger.error("Engine "+engine.getLabel()+" do requires datasource but it is nodt defined");
+		if (engine != null && engine.getUseDataSource()) {
+			if (ds == null) {
+				logger.error("Engine " + engine.getLabel() + " do requires datasource but it is nodt defined");
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, ObjectsTreeConstants.FUNCT_ID, "1087");
-				this.respCont.getErrorHandler().addError(error);		
+				this.respCont.getErrorHandler().addError(error);
 			}
 		}
-		
-		
+
 		String datasetIdStr = (String) request.getAttribute("dataset");
-		IDataSet dataset  = null;
+		IDataSet dataset = null;
 		if (datasetIdStr != null && !datasetIdStr.equals("")) {
 			Integer datasetIdInt = new Integer(datasetIdStr);
 			dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetIdInt);
 		}
-		
+
 		// TRY TO LOAD ALL THE FUNCTIONALITIES ASSOCIATED (into request) TO THE BIOBEJCT
 		List functionalities = new ArrayList();
 		List functionalitiesStr = request.getAttributeAsList(ObjectsTreeConstants.FUNCT_ID);
-		String communityFunctCode = (String)request.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES);
+		String communityFunctCode = (String) request.getAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES);
 		if (functionalitiesStr.size() == 0 && (communityFunctCode == null || communityFunctCode.equals(""))) {
 			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, ObjectsTreeConstants.FUNCT_ID, "1008");
 			this.respCont.getErrorHandler().addError(error);
 		} else {
-			if(functionalitiesStr!= null && functionalitiesStr.size() != 0){
-				for (Iterator it = functionalitiesStr.iterator(); it.hasNext(); ) {
+			if (functionalitiesStr != null && functionalitiesStr.size() != 0) {
+				for (Iterator it = functionalitiesStr.iterator(); it.hasNext();) {
 					String functIdStr = (String) it.next();
-					Integer functId = new Integer (functIdStr);
+					Integer functId = new Integer(functIdStr);
 					functionalities.add(functId);
 				}
 			}
-//			if(communityFunctCode != null && !communityFunctCode.equals("")){
-//				LowFunctionality commF = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFunctCode, false);
-//				functionalities.add(commF.getId());
-//			}
+			// if(communityFunctCode != null && !communityFunctCode.equals("")){
+			// LowFunctionality commF = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFunctCode, false);
+			// functionalities.add(commF.getId());
+			// }
 		}
 		// lOAD ALL THE FUNCTIONALITIES ASSOCIATED TO THE BIOBJECT (but not into request)
 		// First case: the current user is not an administrator (so he cannot see all the functionalities)
-		// and the modality is Modify. In this case some functionalities, that the user cannot see, can be 
+		// and the modality is Modify. In this case some functionalities, that the user cannot see, can be
 		// already associated to the object (by different users). This associations mustn't be erased.
 		if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 			IBIObjectDAO objDAO = DAOFactory.getBIObjectDAO();
 			BIObject prevObj = objDAO.loadBIObjectById(id);
 			List prevFuncsId = prevObj.getFunctionalities();
-			for (Iterator it = prevFuncsId.iterator(); it.hasNext(); ) {
+			for (Iterator it = prevFuncsId.iterator(); it.hasNext();) {
 				Integer funcId = (Integer) it.next();
 				if (!ObjectsAccessVerifier.canDev(stateCode, funcId, profile)) {
 					functionalities.add(funcId);
@@ -239,9 +238,8 @@ public class DetBIObjModHelper {
 		}
 		// Second case: the current user is a local administrator (he can admin only a part of the tree)
 		// and the modality is Modify. In this case some funtionalities in oder part of the tree, which the
-		// user cannot see, can be already associated to the object. This associations mustn't be erased. 
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-				&& initialPath != null && !initialPath.trim().equals("")  
+		// user cannot see, can be already associated to the object. This associations mustn't be erased.
+		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && initialPath != null && !initialPath.trim().equals("")
 				&& mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 			IBIObjectDAO objDAO = DAOFactory.getBIObjectDAO();
 			BIObject prevObj = objDAO.loadBIObjectById(id);
@@ -280,39 +278,37 @@ public class DetBIObjModHelper {
 		obj.setRelName(relname);
 		obj.setStateCode(stateCode);
 		obj.setStateID(stateId);
-		//obj.setPath(path);
+		// obj.setPath(path);
 		obj.setCreationUser(userId);
-		//obj.setRating(Rating == null ? null : new Short(Rating));
+		// obj.setRating(Rating == null ? null : new Short(Rating));
 		obj.setRefreshSeconds(refreshSeconds);
 		obj.setParametersRegion(parametersRegion);
-		obj.setPreviewFile((previewFileName == null && aBIObject != null && aBIObject.getPreviewFile() != null)? aBIObject.getPreviewFile():previewFileName);
+		obj.setPreviewFile((previewFileName == null && aBIObject != null && aBIObject.getPreviewFile() != null) ? aBIObject.getPreviewFile() : previewFileName);
 		// RETURN OBJECT
 		return obj;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Recover bi obj template details.
 	 * 
 	 * @return the obj template
 	 * 
-	 * @throws Exception the exception
+	 * @throws Exception
+	 *             the exception
 	 */
 	public ObjTemplate recoverBIObjTemplateDetails() throws Exception {
 		// GET THE USER PROFILE
 		SessionContainer session = reqCont.getSessionContainer();
-		SessionContainer permanentSession = session.getPermanentContainer();	    
+		SessionContainer permanentSession = session.getPermanentContainer();
 		IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		//String userId=(String)profile.getUserUniqueIdentifier();
-		String userId=(String)((UserProfile)profile).getUserId();
-	    ObjTemplate templ = null;
-	    
-		//FileItem uploaded = (FileItem) request.getAttribute("UPLOADED_FILE");
-		ArrayList arUploaded = (ArrayList) request.getAttribute("UPLOADED_FILE");		
+		// String userId=(String)profile.getUserUniqueIdentifier();
+		String userId = (String) ((UserProfile) profile).getUserId();
+		ObjTemplate templ = null;
+
+		// FileItem uploaded = (FileItem) request.getAttribute("UPLOADED_FILE");
+		ArrayList arUploaded = (ArrayList) request.getAttribute("UPLOADED_FILE");
 		FileItem uploaded = getFileItemByFieldName(arUploaded, "uploadFile");
-		if (uploaded != null) {			
+		if (uploaded != null) {
 			String fileName = GeneralUtilities.getRelativeFileNames(uploaded.getName());
 			if (fileName != null && !fileName.trim().equals("")) {
 				if (uploaded.getSize() == 0) {
@@ -329,41 +325,44 @@ public class DetBIObjModHelper {
 				templ = new ObjTemplate();
 				templ.setActive(new Boolean(true));
 				templ.setCreationUser(userId);
-				templ.setDimension(Long.toString(uploaded.getSize()/1000)+" KByte");
-		        templ.setName(fileName);
-		        byte[] uplCont = uploaded.get();
-		        templ.setContent(uplCont);
+				templ.setDimension(Long.toString(uploaded.getSize() / 1000) + " KByte");
+				templ.setName(fileName);
+				byte[] uplCont = uploaded.get();
+				templ.setContent(uplCont);
 			}
 		}
-	   
+
 		return templ;
 	}
 
-	
 	/**
 	 * Recover bi object parameter details.
 	 * 
-	 * @param biobjIdInt the biobj id int
+	 * @param biobjIdInt
+	 *            the biobj id int
 	 * 
 	 * @return the bI object parameter
 	 */
 	public BIObjectParameter recoverBIObjectParameterDetails(Integer biobjIdInt) {
 		String idStr = (String) request.getAttribute("objParId");
 		Integer idInt = null;
-		if (idStr == null || idStr.trim().equals("")) idInt = new Integer (-1);
-		else idInt = new Integer(idStr);
+		if (idStr == null || idStr.trim().equals(""))
+			idInt = new Integer(-1);
+		else
+			idInt = new Integer(idStr);
 		String parIdStr = (String) request.getAttribute("par_id");
 		Integer parIdInt = null;
-		if (parIdStr == null || parIdStr.trim().equals("")) 
-			parIdInt = new Integer (-1);
-		else parIdInt = new Integer (parIdStr);
+		if (parIdStr == null || parIdStr.trim().equals(""))
+			parIdInt = new Integer(-1);
+		else
+			parIdInt = new Integer(parIdStr);
 		String label = (String) request.getAttribute("objParLabel");
-	    String parUrlNm = (String)request.getAttribute("parurl_nm");
-		String priorityStr = (String)request.getAttribute("priority");
+		String parUrlNm = (String) request.getAttribute("parurl_nm");
+		String priorityStr = (String) request.getAttribute("priority");
 		Integer priority = new Integer(priorityStr);
 		Integer colSpan = request.getAttribute("colSpan") != null ? new Integer(request.getAttribute("colSpan").toString()) : 1;
 		Integer thickPerc = request.getAttribute("thickPerc") != null ? new Integer(request.getAttribute("thickPerc").toString()) : 0;
-		String reqFl = (String)request.getAttribute("req_fl");
+		String reqFl = (String) request.getAttribute("req_fl");
 		Integer reqFlBD = new Integer(reqFl);
 		String modFl = (String) request.getAttribute("mod_fl");
 		Integer modFlBD = new Integer(modFl);
@@ -374,59 +373,57 @@ public class DetBIObjModHelper {
 		Integer viewFlBD = new Integer(viewFl);
 		String multFl = (String) request.getAttribute("mult_fl");
 		Integer multFlBD = new Integer(multFl);
-		BIObjectParameter objPar  = new BIObjectParameter();
+		BIObjectParameter objPar = new BIObjectParameter();
 		objPar.setId(idInt);
 		objPar.setBiObjectID(biobjIdInt);
 		objPar.setParID(parIdInt);
-        Parameter par = new Parameter();
-        par.setId(parIdInt);
-        objPar.setParameter(par);
-        objPar.setLabel(label);
-        objPar.setParameterUrlName(parUrlNm);
-        objPar.setRequired(reqFlBD);
-        objPar.setModifiable(modFlBD);
-        objPar.setVisible(viewFlBD);
-        objPar.setMultivalue(multFlBD);
-        objPar.setPriority(priority); 
-        objPar.setColSpan(colSpan);
-        objPar.setThickPerc(thickPerc);
+		Parameter par = new Parameter();
+		par.setId(parIdInt);
+		objPar.setParameter(par);
+		objPar.setLabel(label);
+		objPar.setParameterUrlName(parUrlNm);
+		objPar.setRequired(reqFlBD);
+		objPar.setModifiable(modFlBD);
+		objPar.setVisible(viewFlBD);
+		objPar.setMultivalue(multFlBD);
+		objPar.setPriority(priority);
+		objPar.setColSpan(colSpan);
+		objPar.setThickPerc(thickPerc);
 		return objPar;
 	}
-	
-	
-	
+
 	/**
 	 * Fills the response SourceBean with some needed BI Objects information.
 	 * 
-	 * @param initialPath the initial path
-	 * @throws Exception 
+	 * @param initialPath
+	 *            the initial path
+	 * @throws Exception
 	 */
 	public void fillResponse(String initialPath) throws EMFUserError {
 		try {
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
-			domaindao.setUserProfile((UserProfile)profile);
-			List types = domaindao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");	   
-			
-	        //List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");	       
-	        // load list of states and engines
-	        List states = domaindao.loadListDomainsByType("STATE");
-	        IEngineDAO enginedao= DAOFactory.getEngineDAO();
-	        enginedao.setUserProfile(profile);
-	        List engines =  enginedao.loadAllEngines();
-	        
-	        List datasource =  DAOFactory.getDataSourceDAO().loadAllDataSources();
-	        List dataset=DAOFactory.getDataSetDAO().loadDataSets();
+			domaindao.setUserProfile(profile);
+			List types = domaindao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");
+
+			// List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");
+			// load list of states and engines
+			List states = domaindao.loadListDomainsByType("STATE");
+			IEngineDAO enginedao = DAOFactory.getEngineDAO();
+			enginedao.setUserProfile(profile);
+			List engines = enginedao.loadAllEngines();
+
+			List datasource = DAOFactory.getDataSourceDAO().loadAllDataSources();
+			List dataset = DAOFactory.getDataSetDAO().loadDataSets();
 			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
-			
-			
-	        // List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
-		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES, engines);
-		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DS, datasource);
-		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DATASET, dataset);
-		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_OBJ_TYPES, types);
-		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_STATES, states);
-		    response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES, communities);
-		   // response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_LANGUAGES, languages);
+
+			// List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
+			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_ENGINES, engines);
+			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DS, datasource);
+			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_DATASET, dataset);
+			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_OBJ_TYPES, types);
+			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_STATES, states);
+			response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_COMMUNITIES, communities);
+			// response.setAttribute(DetailBIObjectModule.NAME_ATTR_LIST_LANGUAGES, languages);
 			List functionalities = new ArrayList();
 			try {
 				if (initialPath != null && !initialPath.trim().equals("")) {
@@ -436,29 +433,26 @@ public class DetBIObjModHelper {
 					functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
 				}
 			} catch (EMFUserError e) {
-				SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, 
-						"DetailBIObjectsMOdule", 
-						"fillResponse", 
-						"Error loading functionalities", e);
+				SpagoBITracer.debug(SpagoBIConstants.NAME_MODULE, "DetailBIObjectsMOdule", "fillResponse", "Error loading functionalities", e);
 			}
 			response.setAttribute(SpagoBIConstants.FUNCTIONALITIES_LIST, functionalities);
 		} catch (Exception e) {
-			logger.error("Cannot fill the response",e);
-			throw new EMFUserError( "",1);
+			logger.error("Cannot fill the response", e);
+			throw new EMFUserError("", 1);
 		}
 	}
-	
-	
-	
+
 	/**
 	 * Clone.
 	 * 
-	 * @param biObjPar the bi obj par
+	 * @param biObjPar
+	 *            the bi obj par
 	 * 
 	 * @return the bI object parameter
 	 */
-	public static BIObjectParameter clone (BIObjectParameter biObjPar) {
-		if (biObjPar == null) return null;
+	public static BIObjectParameter clone(BIObjectParameter biObjPar) {
+		if (biObjPar == null)
+			return null;
 		BIObjectParameter objParClone = new BIObjectParameter();
 		objParClone.setId(biObjPar.getId());
 		objParClone.setBiObjectID(biObjPar.getBiObjectID());
@@ -475,16 +469,17 @@ public class DetBIObjModHelper {
 		return objParClone;
 	}
 
-
 	/**
 	 * Clone.
 	 * 
-	 * @param obj the obj
+	 * @param obj
+	 *            the obj
 	 * 
 	 * @return the bI object
 	 */
-	public static BIObject clone (BIObject obj) {
-		if (obj == null) return null;
+	public static BIObject clone(BIObject obj) {
+		if (obj == null)
+			return null;
 		BIObject objClone = new BIObject();
 		objClone.setBiObjectTypeCode(obj.getBiObjectTypeCode());
 		objClone.setBiObjectTypeID(obj.getBiObjectTypeID());
@@ -507,16 +502,16 @@ public class DetBIObjModHelper {
 		return objClone;
 	}
 
-
-
 	/**
 	 * Creates the new bi object parameter.
 	 * 
-	 * @param objId the obj id
+	 * @param objId
+	 *            the obj id
 	 * 
 	 * @return the bI object parameter
 	 * 
-	 * @throws EMFUserError the EMF user error
+	 * @throws EMFUserError
+	 *             the EMF user error
 	 */
 	public static BIObjectParameter createNewBIObjectParameter(Integer objId) throws EMFUserError {
 		BIObjectParameter biObjPar = new BIObjectParameter();
@@ -534,20 +529,21 @@ public class DetBIObjModHelper {
 		int objParsNumber = 0;
 		IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
 		List objPars = objParDAO.loadBIObjectParametersById(objId);
-		if (objPars != null) objParsNumber = objPars.size();
+		if (objPars != null)
+			objParsNumber = objPars.size();
 		biObjPar.setPriority(new Integer(objParsNumber + 1));
 		return biObjPar;
 	}
 
-	
 	/**
 	 * Find bi obj par id.
 	 * 
-	 * @param objParIdObj the obj par id obj
+	 * @param objParIdObj
+	 *            the obj par id obj
 	 * 
 	 * @return the int
 	 */
-	public static int findBIObjParId (Object objParIdObj) {
+	public static int findBIObjParId(Object objParIdObj) {
 		String objParIdStr = "";
 		if (objParIdObj instanceof String) {
 			objParIdStr = (String) objParIdObj;
@@ -556,56 +552,58 @@ public class DetBIObjModHelper {
 			Iterator it = objParIdList.iterator();
 			while (it.hasNext()) {
 				Object item = it.next();
-				if (item instanceof SourceBean) continue;
-				if (item instanceof String) objParIdStr = (String) item;
+				if (item instanceof SourceBean)
+					continue;
+				if (item instanceof String)
+					objParIdStr = (String) item;
 			}
 		}
 		int objParId = Integer.parseInt(objParIdStr);
 		return objParId;
 	}
 
-	private FileItem getFileItemByFieldName (ArrayList lst, String fn){
+	private FileItem getFileItemByFieldName(ArrayList lst, String fn) {
 		FileItem toReturn = null;
-		for (int i=0; i<lst.size();i++){
-			FileItem item = (FileItem)lst.get(i);
-			if (item.getFieldName().equals(fn)){
+		for (int i = 0; i < lst.size(); i++) {
+			FileItem item = (FileItem) lst.get(i);
+			if (item.getFieldName().equals(fn)) {
 				toReturn = item;
 				break;
 			}
 		}
 		return toReturn;
 	}
-	
+
 	private String uploadFile(FileItem uploaded) throws Exception {
-		
+
 		if (uploaded.getSize() == 0) {
 			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "201");
 			this.respCont.getErrorHandler().addError(error);
 			return null;
 		}
-		
-		logger.info("User [id : " + ((UserProfile)profile).getUserId() + ", name : " + ((UserProfile)profile).getUserName() + "] " +
-				"is uploading file [" + uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
-		
-		int maxSize = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE") );
+
+		logger.info("User [id : " + ((UserProfile) profile).getUserId() + ", name : " + ((UserProfile) profile).getUserName() + "] " + "is uploading file ["
+				+ uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
+
+		int maxSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE"));
 		if (uploaded.getSize() > maxSize) {
 			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "202");
 			this.respCont.getErrorHandler().addError(error);
 			return null;
 		}
-		
-		String fileExtension = FileUtils.getFileExtension( uploaded.getName() );
+
+		String fileExtension = FileUtils.getFileExtension(uploaded.getName());
 		if (!VALID_FILE_EXTENSIONS.contains(fileExtension.toLowerCase()) && !VALID_FILE_EXTENSIONS.contains(fileExtension.toUpperCase())) {
 			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "uploadFile", "203");
 			this.respCont.getErrorHandler().addError(error);
 			return null;
 		}
-		
+
 		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
-		
+
 		// check if number of existing images is the max allowed
-		int maxFilesAllowed = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM") );
-		
+		int maxFilesAllowed = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM"));
+
 		File[] existingImages = FileUtils.getContainedFiles(targetDirectory);
 		int existingImagesNumber = existingImages.length;
 		if (existingImagesNumber >= maxFilesAllowed) {
@@ -613,13 +611,13 @@ public class DetBIObjModHelper {
 			this.respCont.getErrorHandler().addError(error);
 			return null;
 		}
-		
+
 		logger.debug("Saving file...");
 		File saved = FileUtils.saveFileIntoDirectory(uploaded, targetDirectory);
 		logger.debug("File saved");
-	
+
 		return saved.getName();
 
 	}
-	
+
 }
