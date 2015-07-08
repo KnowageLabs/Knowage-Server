@@ -121,7 +121,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'nature', type: 'string'}
 	      , {name: 'values', type: 'string'}
 	      , {name: 'sortable', type: 'boolean'}
-	      , {name: 'width', type: 'int'}
+//	      , {name: 'width', type: 'int'}
 	      , {name: 'columnName', type: 'string'}
 	      , {name: 'type', type: 'string'}
 	      , {name: 'typeSecondary', type: 'string'}
@@ -193,7 +193,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	                 'fontSize', 'fontWeight', 		'fontColor', 
 	                 'fontDecoration', 'iconCls', 	'nature',
 	                 'values', 	'valid', 	'sortable', 
-	                 'width', 	'columnName'
+	                 /*'width', */	'columnName'
 	                 ]
 		});
 		// if there are initialData, load them into the store
@@ -466,7 +466,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						record.data.type = type;
 					}
 					
-					if(typeSecondary !== undefined && typeSecondary !== null && typeSecondary !== "") {
+					if(typeSecondary !== undefined && typeSecondary !== null) {
 						record.data.typeSecondary = typeSecondary;
 					}
 					
@@ -474,11 +474,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						record.data.decimals = decimals;
 					}
 					
-					if(scale !== undefined && scale !== null && scale !== "") {
+					if(scale !== undefined && scale !== null) {
 						record.data.scale = scale;
 					}
 					
-					if(backgroundColor !== undefined && backgroundColor !== null && backgroundColor !== "") {
+					if(backgroundColor !== undefined && backgroundColor !== null) {
 						record.data.backgroundColor = backgroundColor;
 					}
 					
@@ -494,7 +494,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						record.data.fontWeight = fontWeight;
 					}
 					
-					if(fontColor !== undefined && fontColor != null && fontColor != "") {
+					if(fontColor !== undefined && fontColor != null) {
 						record.data.fontColor = fontColor;
 					}
 					
@@ -545,7 +545,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		}	
 		
 		field.sortable = true;
-		field.width = 150;
+//		field.width = 150;
 		if(field.nature == 'measure'){
 			if(field.funct == null || field.funct == ''){
 				field.funct = null;

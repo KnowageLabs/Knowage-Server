@@ -197,12 +197,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 						meta.fields[i].header = this.wconf.visibleselectfields[j].alias;
 					}
 					
-					this.applyRendererOnField(meta.fields[i], this.wconf.visibleselectfields[j].funct);
+					this.applyRendererOnField(meta.fields[i], this.wconf.visibleselectfields[j]);
 					this.applySortableOnField(meta.fields[i]);
-
+					/*
 					if (this.wconf.visibleselectfields[j].width) {
 						meta.fields[i].width = this.wconf.visibleselectfields[j].width;
 					}
+					 */
 
 					fields.push(meta.fields[i]);
 					columns.push(meta.fields[i].header);
@@ -301,10 +302,25 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
      	}
 	}
 
-	, applyRendererOnField: function(field) {
+	, applyRendererOnField: function(field, visibleField) {
 		Sbi.trace("[TableWidget.applyRendererOnField]: IN");
-		Sbi.trace("[TableWidget.applyRendererOnField]: field: " + field);
+		
+		console.log("[TableWidget.applyRendererOnField]: field: ", field);
+		console.log("[TableWidget.applyRendererOnField]: visibleField: ", visibleField);
 
+		var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
+		var scales = Sbi.cockpit.widgets.table.AggregationChooserWindow.scales;
+		
+		/*
+		fields: ['id', 		'alias', 	'funct', 
+		         'type', 	'typeSecondary', 'decimals',
+		         'scale', 	'backgroundColor', 'columnWidth',
+		         'fontSize', 'fontWeight', 		'fontColor', 
+		         'fontDecoration', 'iconCls', 	'nature',
+		         'values', 	'valid', 	'sortable', 
+		         'columnName'
+		         ] 
+		*/
 		var rendererFunction = null;
 
 		if(field.type) {
@@ -365,6 +381,43 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    	}
 			return value;
 		};
+		
+		/* Styling */
+		var columnClassName = field.header + 'CustomColumnClass';
+		var columnClassId = columnClassName + 'Id';
+		
+		var columnClass = '';
+		
+		if (visibleField.backgroundColor && visibleField.backgroundColor != '') {
+			columnClass += 'background-color:#' + visibleField.backgroundColor + ';'
+		}
+		
+		if (visibleField.fontSize && visibleField.fontSize != '') {
+			columnClass += 'font-size:' + visibleField.fontSize + 'px;'
+		}
+		
+		if (visibleField.fontWeight && visibleField.fontWeight != '') {
+			columnClass += 'font-weight:' + visibleField.fontWeight + ';'
+		}
+		
+		if (visibleField.fontColor && visibleField.fontColor != '') {
+			columnClass += 'color:#' + visibleField.fontColor + ';'
+		}
+		
+		if (visibleField.fontDecoration && visibleField.fontDecoration != '') {
+			columnClass += 'text-decoration:' + visibleField.fontDecoration + ';'
+		}
+		
+		if(columnClass != '') {
+			columnClass = '.x-grid-row .' + columnClassName + ' .x-grid-cell-inner {'
+				+ columnClass + '}';
+			
+			Ext.util.CSS.removeStyleSheet(columnClassId);
+			Ext.util.CSS.createStyleSheet(columnClass, columnClassId);
+			
+			field.tdCls = columnClassName;
+		}
+		/* END Styling */
 
 		field.renderer = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
 		field.scope = this;
@@ -822,8 +875,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		if(this.wconf === undefined || this.wconf === null){
 			//do not change the CSS, do nothing
 		} else {
-			var tableConfig = {};
-			
 			var clsClass = 'tableConfigCSSClass';
 			
 			var clsClassDefaultId = clsClass + 'Default';
@@ -891,9 +942,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			Ext.util.CSS.removeStyleSheet(alternateRowsSecondClassId);
 			Ext.util.CSS.createStyleSheet(alternateRowsSecond, alternateRowsSecondClassId);
 		    
-			
-		    tableConfig.componentCls = clsClass;
-		    tableConfig.cls = clsClass;
+			var tableConfig = {
+				componentCls: clsClass,
+				cls: clsClass
+			};
+		    
 		    Ext.apply(this.gridConfig, tableConfig);
 		}
 		Sbi.trace("[TableWidget.setTableOptions]: OUT");

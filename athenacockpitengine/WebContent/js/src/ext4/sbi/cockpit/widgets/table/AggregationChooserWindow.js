@@ -95,20 +95,23 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	, attribute 	: null // the json object representing the attribute: it must be in the constructor input object
 	, params : null // the json object with the parameters for store loading: it must be in the constructor input object
 	
-	, elementTypes : {
-		TEXT: 'TEXT',
-		NUMBER: 'NUMBER',
-		CURRENCY: 'CURRENCY',
-		PERCENTAGE: 'PERCENTAGE',
-		DATE: 'DATE',
+	, statics : {
+		elementTypes : {
+			TEXT: 'TEXT',
+			NUMBER: 'NUMBER',
+			CURRENCY: 'CURRENCY',
+			PERCENTAGE: 'PERCENTAGE',
+			DATE: 'DATE',
+		}
+		
+		, scales : {
+			NONE: '-',
+			K: 'K',
+			M: 'M',
+			G: 'G'
+		}
 	}
 	
-	, scales : {
-		NONE: '-',
-		K: 'K',
-		M: 'M',
-		G: 'G'
-	}
 	//private methods
 	, initFormPanel: function(config) {
 
@@ -177,12 +180,13 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     		items.push(this.aggregationField);
     	}
     	
+    	var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
     	var typeComboBoxData = [
-            [ this.elementTypes.TEXT, LN('sbi.qbe.selectgridpanel.type.name.text'), LN('sbi.qbe.selectgridpanel.type.name.text')],
-            [ this.elementTypes.NUMBER, LN('sbi.qbe.selectgridpanel.type.name.number'), LN('sbi.qbe.selectgridpanel.type.name.number')],
-			[ this.elementTypes.CURRENCY, LN('sbi.qbe.selectgridpanel.type.name.currency'), LN('sbi.qbe.selectgridpanel.type.name.currency')],
-			[ this.elementTypes.PERCENTAGE, LN('sbi.qbe.selectgridpanel.type.name.percentage'), LN('sbi.qbe.selectgridpanel.type.name.percentage')],
-			[ this.elementTypes.DATE, LN('sbi.qbe.selectgridpanel.type.name.date'), LN('sbi.qbe.selectgridpanel.type.name.date')],
+            [ elementTypes.TEXT, LN('sbi.qbe.selectgridpanel.type.name.text'), LN('sbi.qbe.selectgridpanel.type.name.text')],
+            [ elementTypes.NUMBER, LN('sbi.qbe.selectgridpanel.type.name.number'), LN('sbi.qbe.selectgridpanel.type.name.number')],
+			[ elementTypes.CURRENCY, LN('sbi.qbe.selectgridpanel.type.name.currency'), LN('sbi.qbe.selectgridpanel.type.name.currency')],
+			[ elementTypes.PERCENTAGE, LN('sbi.qbe.selectgridpanel.type.name.percentage'), LN('sbi.qbe.selectgridpanel.type.name.percentage')],
+			[ elementTypes.DATE, LN('sbi.qbe.selectgridpanel.type.name.date'), LN('sbi.qbe.selectgridpanel.type.name.date')],
 		];
     	
     	var typeComboBoxStore = new Ext.data.SimpleStore({
@@ -215,11 +219,12 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     		width:			FIELD_WIDTH
     	});
     	
+    	var scales = Sbi.cockpit.widgets.table.AggregationChooserWindow.scales;
     	var scaleComboBoxData = [
-    	                         this.scales.NONE,
-    	                         this.scales.K,
-    	                         this.scales.M,
-    	                         this.scales.G
+    	                         scales.NONE,
+    	                         scales.K,
+    	                         scales.M,
+    	                         scales.G
     	                         ];
     	
     	var scaleComboBoxStore = new Ext.data.SimpleStore({
@@ -233,7 +238,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     		fieldLabel: 	LN('sbi.qbe.selectgridpanel.scale.label'),
     		displayField: 	'value',
     		valueField: 	'value',
-    		value:			this.scales.NONE,
+    		value:			scales.NONE,
     		editable : 		false,
     		allowBlank: 	true,
     		labelWidth:		LABEL_WIDTH,
@@ -264,7 +269,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			}
 	   		}
 	   		
-	   		if(config.type == this.elementTypes.NUMBER || config.type == this.elementTypes.CURRENCY) {
+	   		if(config.type == elementTypes.NUMBER || config.type == elementTypes.CURRENCY) {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			if(config.decimals != undefined 
@@ -282,7 +287,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			this.decimalsScaleContainer.setVisible(false);
 	   		}
 	   	} else {
-	   		this.typeComboBox.select(this.elementTypes.TEXT);
+	   		this.typeComboBox.select(elementTypes.TEXT);
 	   		this.decimalsScaleContainer.setVisible(false);
 	   	}
     	
@@ -308,11 +313,11 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			this.typeContainer.add(this.typeSecondaryField);
 	   		}
 	   		
-	   		if(selectedValue == this.elementTypes.NUMBER || selectedValue == this.elementTypes.CURRENCY) {
+	   		if(selectedValue == elementTypes.NUMBER || selectedValue == elementTypes.CURRENCY) {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			this.decimalsField.setValue('');
-	   			this.scaleField.setValue(this.scales.NONE);
+	   			this.scaleField.setValue(scales.NONE);
 	   		} else {
 	   			this.decimalsScaleContainer.setVisible(false);
 	   		}
@@ -476,14 +481,15 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 
 	,createTypeSecondaryField : function(type) {
 		var field = null;
+		var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
 		
-		if(type == this.elementTypes.CURRENCY) {
+		if(type == elementTypes.CURRENCY) {
 			field = Ext.create('Ext.form.Text', {
 				 name: 'typeSecondaryField',
 				 allowBlank: 	true,
 				 flex:			1,
 			});
-		} else if(type == this.elementTypes.DATE) {
+		} else if(type == elementTypes.DATE) {
 			var dateFormats = [
                 ['dd/mm/yyyy', 'dd/mm/yyyy'],
                 ['mm/dd/yyyy', 'mm/dd/yyyy'],
