@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CHART height="" orientation="vertical"
+    style="fontFamily:;fontSize:;fontWeight:;backgroundColor:;"
+    type="RADAR" width="">
+    <LEGEND floating="" layout="" position="" show="false"
+        style="align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;"
+        x="" y=""/>
+    <SUBTITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text="Sottotitolo"/>
+    <AXES_LIST>
+        <AXIS alias="Y" position=""
+            style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" type="Serie">
+            <MINORGRID interval="" style="typeline:;color:;"/>
+            <TITLE
+                style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+            <MAJORGRID interval="" style="typeline:;color:;"/>
+        </AXIS>
+        <AXIS alias="X" position=""
+            style="rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;" type="Category">
+            <TITLE
+                style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+        </AXIS>
+    </AXES_LIST>
+    <COLORPALETTE>
+        <COLOR gradient="" name="7cb5ec" order="1" value="#7cb5ec"/>
+        <COLOR gradient="" name="434348" order="2" value="#434348"/>
+        <COLOR gradient="" name="90ed7d" order="3" value="#90ed7d"/>
+        <COLOR gradient="" name="f7a35c" order="4" value="#f7a35c"/>
+        <COLOR gradient="" name="8085e9" order="5" value="#8085e9"/>
+        <COLOR gradient="" name="f45b5b" order="9" value="#f45b5b"/>
+        <COLOR gradient="" name="91e8e1" order="10" value="#91e8e1"/>
+    </COLORPALETTE>
+    <EMPTYMESSAGE
+        style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+    <VALUES>
+        <CATEGORY column="city" groupby="" groupbyNames="" name="city"
+            orderColumn="" orderType="" stacked="" stackedType=""/>
+        <SERIE animation="true" axis="Y" borderColor="#FFFFFF" color=""
+            column="num_cars_owned" groupingFunction="SUM"
+            name="num_cars_owned" orderType="" pointInterval="1"
+            postfixChar="" precision="" prefixChar=""
+            showInLegend="true" showValue="" type="">
+            <TOOLTIP backgroundColor=""
+                style="align:;color:;fontFamily:;fontWeight:;fontSize:;" templateHtml=""/>
+        </SERIE>
+    </VALUES>
+    <TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text="Titolo"/>
+</CHART>
