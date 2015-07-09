@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. **/
 
 
-
 /**
   * Object name
   *
@@ -32,9 +31,6 @@ Sbi.commons.Format = function(){
          */
         date : function(v, format){
 
-
-
-
 			format = format || "m/d/Y";
 
 			if(typeof format === 'string') {
@@ -44,7 +40,6 @@ Sbi.commons.Format = function(){
 				};
 			}
 
-
             if(!v){
                 return format.nullValue;
             }
@@ -52,7 +47,6 @@ Sbi.commons.Format = function(){
             if(!(v instanceof Date)){
                 v = new Date(Date.parse(v));
             }
-
 
             v = v.dateFormat(format.dateFormat);
 
@@ -68,7 +62,6 @@ Sbi.commons.Format = function(){
             };
         }
 
-
         /**
          * thanks to Condor: http://www.extjs.com/forum/showthread.php?t=48600
          */
@@ -80,8 +73,8 @@ Sbi.commons.Format = function(){
 	    		groupingSeparator: ',',
 	    		groupingSize: 3,
 	    		currencySymbol: '',
+	    		currencyAtEnd: false,
 	    		nullValue: ''
-
     		});
 
         	if(v === undefined || v === null) {
@@ -118,7 +111,11 @@ Sbi.commons.Format = function(){
     			}
     		}
     		if (format.currencySymbol) {
-    			v = format.currencySymbol + v;
+    			if(format.currencyAtEnd == true) {
+    				v = v + format.currencySymbol;
+    			} else {
+    				v = format.currencySymbol + v;
+    			}
     		}
     		if (neg) {
     			v = '-' + v;
@@ -235,16 +232,6 @@ Sbi.commons.Format = function(){
         	}
 
         	return toReturn;
-
         }
-
 	};
-
 }();
-
-
-
-
-
-
-

@@ -215,7 +215,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     		fieldLabel: 	LN('sbi.qbe.selectgridpanel.decimals.label'),
     		allowBlank: 	true,
     		minValue: 		0,
-    		labelWidth:	LABEL_WIDTH,
+    		labelWidth:		LABEL_WIDTH,
     		width:			FIELD_WIDTH
     	});
     	
@@ -273,8 +273,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			if(config.decimals != undefined 
-	   					&& config.decimals != null 
-	   					&& config.decimals != "") {
+	   					&& config.decimals != null) {
 	   				this.decimalsField.setValue(config.decimals);
 	   			}
 	   			
@@ -358,8 +357,9 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			queryMode:      'local',
 			triggerAction:  'all',
-			forceSelection: true,
-			editable:       false,
+			forceSelection: false,
+			maskRe: 		/\d/i,
+			editable:       true,
 			allowBlank: 	true,
 			typeAhead: 		true,
 			lazyRender:		true,
@@ -384,6 +384,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			forceSelection: true,
 			editable:       false,
 			allowBlank: 	true,
+			value:			'normal',
 			typeAhead: 		true,
 			lazyRender:		true,
 			store: 			fontWeightStore, 
@@ -432,6 +433,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			typeAhead: 		true,
 			lazyRender:		true,
 			store: 			fontDecorationStore, 
+			value: 			'none',
 			valueField: 	'name',
 			displayField: 	'description',
 			labelWidth:		LABEL_WIDTH,
@@ -491,9 +493,9 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			});
 		} else if(type == elementTypes.DATE) {
 			var dateFormats = [
-                ['dd/mm/yyyy', 'dd/mm/yyyy'],
-                ['mm/dd/yyyy', 'mm/dd/yyyy'],
-                ['yyyy/mm/dd', 'yyyy/mm/dd'],
+                ['d/m/Y', 'dd/mm/YYYY'],
+                ['m/d/Y', 'mm/dd/YYYY'],
+                ['Y/m/d', 'YYYY/mm/dd']
     		];
 			
 			field = Ext.create('Ext.form.ComboBox',{
@@ -504,7 +506,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 				flex:			1,
 				displayField: 	'field',
 				valueField: 	'value',
-				value:		'dd/mm/yyyy',
+				value:		'd/m/Y',
 				store : new Ext.data.SimpleStore({
 		    		fields: ['value', 'field'],
 		    		data : dateFormats

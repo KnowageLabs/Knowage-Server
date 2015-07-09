@@ -125,7 +125,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'columnName', type: 'string'}
 	      , {name: 'type', type: 'string'}
 	      , {name: 'typeSecondary', type: 'string'}
-	      , {name: 'decimals', type: 'string'}
+	      , {name: 'decimals', type: 'int'}
 	      , {name: 'scale', type: 'string'}
 	      , {name: 'backgroundColor', type: 'string'}
 	      , {name: 'columnWidth', type: 'string'}
@@ -470,7 +470,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						record.data.typeSecondary = typeSecondary;
 					}
 					
-					if(decimals !== undefined && decimals !== null && decimals !== "") {
+					if(decimals !== undefined) {
 						record.data.decimals = decimals;
 					}
 					
@@ -482,11 +482,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						record.data.backgroundColor = backgroundColor;
 					}
 					
-					if(columnWidth !== undefined && columnWidth !== null && columnWidth !== "") {
+					if(columnWidth !== undefined) {
 						record.data.columnWidth = columnWidth;
 					}
 					
-					if(fontSize !== undefined && fontSize != null && fontSize != "") {
+					if(fontSize !== undefined) {
 						record.data.fontSize = fontSize;
 					}
 					

@@ -199,12 +199,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					
 					this.applyRendererOnField(meta.fields[i], this.wconf.visibleselectfields[j]);
 					this.applySortableOnField(meta.fields[i]);
-					/*
-					if (this.wconf.visibleselectfields[j].width) {
-						meta.fields[i].width = this.wconf.visibleselectfields[j].width;
-					}
-					 */
-
+					
 					fields.push(meta.fields[i]);
 					columns.push(meta.fields[i].header);
 					break;
@@ -304,29 +299,41 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 	, applyRendererOnField: function(field, visibleField) {
 		Sbi.trace("[TableWidget.applyRendererOnField]: IN");
-		
-		console.log("[TableWidget.applyRendererOnField]: field: ", field);
-		console.log("[TableWidget.applyRendererOnField]: visibleField: ", visibleField);
 
 		var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
 		var scales = Sbi.cockpit.widgets.table.AggregationChooserWindow.scales;
 		
-		/*
-		fields: ['id', 		'alias', 	'funct', 
-		         'type', 	'typeSecondary', 'decimals',
-		         'scale', 	'backgroundColor', 'columnWidth',
-		         'fontSize', 'fontWeight', 		'fontColor', 
-		         'fontDecoration', 'iconCls', 	'nature',
-		         'values', 	'valid', 	'sortable', 
-		         'columnName'
-		         ] 
-		*/
 		var rendererFunction = null;
+		var numberFormatterFunction = null;
 
 		if(field.type) {
 			var t = field.type;
+
+			var customFormat = {};
+			if((visibleField.type == elementTypes.NUMBER || visibleField.type == elementTypes.CURRENCY) 
+					&& (visibleField.decimals != undefined && visibleField.decimals != null)) {
+				
+					customFormat.decimalPrecision = visibleField.decimals;
+			}
+			
+			if(visibleField.type == elementTypes.CURRENCY
+					&& (visibleField.typeSecondary 
+							&& visibleField.typeSecondary != null 
+							&& visibleField.typeSecondary.trim() != '')) {
+				
+				customFormat.currencySymbol = visibleField.typeSecondary;
+			}
+			
+			if(visibleField.type == elementTypes.PERCENTAGE) {
+				customFormat.currencySymbol = '%';
+				customFormat.currencyAtEnd = true;
+			}
+			
+			if(Object.keys(customFormat).length > 0) {
+				field.format = customFormat;
+			}
+			
 			if (field.format) { // format is applied only to numbers
-				var format = Sbi.commons.Format.getFormatFromJavaPattern(field.format);
 				var formatDataSet = field.format;
 				if((typeof formatDataSet == "string") || (typeof formatDataSet == "String")){
 					try {
@@ -337,19 +344,26 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				}
 				var f = Ext.apply( {}, Sbi.locale.formats[t]);
 				f = Ext.apply( f, formatDataSet);
-
-				numberFormatterFunction = Sbi.qbe.commons.Format.numberRenderer(f);
+				
+				numberFormatterFunction = Sbi.commons.Format.numberRenderer(f);
 			} else {
 				numberFormatterFunction = Sbi.locale.formatters[t];
 			}
 
+			if(visibleField.type == elementTypes.NUMBER || visibleField.type == elementTypes.CURRENCY) {
+				field.measureScaleFactor = visibleField.scale;
+			}
 			if (field.measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
 				rendererFunction = this.applyScaleRendererOnField(numberFormatterFunction, field);
 			} else {
 				rendererFunction = numberFormatterFunction;
 			}
 		}
-
+		
+		if(field.type && field.type == 'date' && visibleField.type && visibleField.type == elementTypes.DATE) {
+			rendererFunction = Sbi.commons.Format.dateRenderer(visibleField.typeSecondary);
+		}
+		
 		if(field.subtype && field.subtype === 'html') {
 			rendererFunction = Sbi.locale.formatters['html'];
 		}
@@ -383,7 +397,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		};
 		
 		/* Styling */
-		var columnClassName = field.header + 'CustomColumnClass';
+		var columnClassName = field.name.trim() + 'CustomColumnClass';
 		var columnClassId = columnClassName + 'Id';
 		
 		var columnClass = '';
@@ -392,7 +406,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			columnClass += 'background-color:#' + visibleField.backgroundColor + ';'
 		}
 		
-		if (visibleField.fontSize && visibleField.fontSize != '') {
+		if (visibleField.fontSize && visibleField.fontSize != '' && visibleField.fontSize > 0) {
 			columnClass += 'font-size:' + visibleField.fontSize + 'px;'
 		}
 		
@@ -418,6 +432,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			field.tdCls = columnClassName;
 		}
 		/* END Styling */
+		
+		if (visibleField.columnWidth && visibleField.columnWidth != null) {
+			field.width = visibleField.columnWidth;
+		} else {
+			field.flex = 1;
+		}
 
 		field.renderer = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
 		field.scope = this;
@@ -432,17 +452,19 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var toReturn = null;
 
 		var scaleFactor = field.measureScaleFactor;
+		
+		var scales = Sbi.cockpit.widgets.table.AggregationChooserWindow.scales;
 
-		if(scaleFactor!=null && scaleFactor!=null && scaleFactor!='NONE'){
+		if(scaleFactor && scaleFactor != null){
 			var scaleFactorNumber;
 			switch (scaleFactor){
-				case 'K':
+				case scales.K :
 					scaleFactorNumber=1000;
 					break;
-				case 'M':
+				case scales.M :
 					scaleFactorNumber=1000000;
 					break;
-				case 'G':
+				case scales.G :
 					scaleFactorNumber=1000000000;
 					break;
 				default:
@@ -454,7 +476,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				 return numberFormatterFunction.call(this, scaledValue);
 			};
 
-			field.header = field.header +' '+ LN('sbi.worksheet.config.options.measurepresentation.'+scaleFactor);
+			if(scaleFactor != scales.NONE) {
+				field.header = field.header + ' (' + scaleFactor + ')';
+			}
 		} else {
 			toReturn = numberFormatterFunction;
 		}
@@ -869,8 +893,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	// table grid settings
 	, setTableOptions: function() {
 		Sbi.trace("[TableWidget.setTableOptions]: IN");
-		
-		console.log('setTableOptions(): this.wconf -> ', this.wconf);
 		
 		if(this.wconf === undefined || this.wconf === null){
 			//do not change the CSS, do nothing
