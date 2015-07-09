@@ -28,39 +28,16 @@ var listDocument = [{
 function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		$timeout, $mdToast) {
 	ctrl=this;
-	ctrl.listDoc=listDocument;
+	ctrl.listDoc;
 	ctrl.glossary;
 	ctrl.showPreloader = false;
+	ctrl.preloaderTree= false;
 	ctrl.selectedGloss;
+	ctrl.selectedDocument;
 	getAllGloss();
+	getAllDoc();
+	 ctrl.words = [];
 	
-	ctrl.words = [];
-	getAllWords();
-	function getAllWords() {
-		console.log("getAllWords")
-		return;
-		showPreloader();
-		restServices.get("glossary", "listWords").success(
-				function(data, status, headers, config) {
-					console.log("Words Ottenuti " + status)
-						if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message);
-						showToast(translate.load("sbi.glossary.load.error"),
-								3000);
-
-					} else {
-						ctrl.words = data;
-					}
-
-					hidePreloader();
-				}).error(function(data, status, headers, config) {
-			console.log("Words non Ottenuti " + status);
-			showErrorToast('Ci sono errori! \n status ' + status);
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
-
-			hidePreloader();
-		})
-	}
 	
 
 	ctrl.DocumentLike= function(ele){
@@ -81,8 +58,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 			ctrl.prevSWSG = ele;
 			
 			console.log("cerco "+ele)
-
-			ctrl.showSearchPreloader = true;
+			showPreloader("preloaderTree");
 			restServices.get("glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+ctrl.selectedGloss.GLOSSARY_ID).success(
 					function(data, status, headers, config) {
 						console.log("glosstreeLike Ottenuti " + status)
@@ -95,24 +71,125 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									3000);
 
 						} else {
-							console.log(data);
+							ctrl.selectedGloss=data.GlossSearch;
+							
+							if(ele!=""){
+							$timeout(function() {
+								ctrl.expandAllTree("GlossTree");
+							},500);
+							}
 						}
+						hidePreloader("preloaderTree");
 
 					}).error(function(data, status, headers, config) {
 				console.log("glosstreeLike non Ottenuti " + status);
 				showToast(translate.load("sbi.glossary.load.error"), 3000);
 
-				ctr.showSearchPreloader = false;
+				hidePreloader("preloaderTree");
 			})
 
 		}, 1000);
 	}
 	
+	ctrl.removeWord= function(word){
+		console.log("remove word");
+		console.log(word);
+		
+		var confirm = $mdDialog.confirm().title(
+				translate.load("sbi.glossary.word.delete")).content(
+				translate.load("sbi.glossary.word.delete.message")).ariaLabel(
+				'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
+				translate.load("sbi.myanalysis.delete.cancel")).targetEvent(word);
+		
+			$mdDialog.show(confirm).then(
+						function() {
+						
+							showPreloader();
+							restServices.remove("glossary", "deleteDocWlist",
+											"WORD_ID=" + word.WORD_ID+"&DOCUMENT_ID="+ctrl.selectedDocument)
+									.success(
+											function(data, status, headers,
+													config) {
+												console.log("Word eliminato")
+												console.log(data)
+												if (data.hasOwnProperty("errors")) {
+													showErrorToast(data.errors[0].message)
+													showToast(translate.load("sbi.glossary.word.delete.error"),3000);
+
+												} else {
+													ctrl.words.splice(ctrl.words.indexOf(word), 1);
+													showToast(translate.load("sbi.glossary.word.delete.success"),3000);
+													
+													
+												}
+												hidePreloader();
+
+											})
+									.error(
+											function(data, status, headers,
+													config) {
+												console.log("WORD NON ELMINIATO "+ status);
+												showErrorToast("word non eliminato "+ status);
+												showToast(translate.load("sbi.glossary.word.delete.error"),3000);
+												hidePreloader();
+											})
+
+
+						}, function() {
+							console.log('Annullo.');
+						});
+		
+		
+		
+		
+	}
+	
+	
+	ctrl.loadDocumentInfo= function(DOCUMENT_ID){
+		console.log("loadDocumentInfo");
+		ctrl.words=[];
+		ctrl.searchDoc="";
+		showPreloader("preloader");
+		restServices
+				.get(
+						"glossary","getDocumentInfo","DOCUMENT_ID=" + DOCUMENT_ID )
+				.success(
+						function(data, status, headers, config) {
+							console.log("loadDocumentInfo ottnuti")
+							console.log(data)
+
+							if (data.hasOwnProperty("errors")) {
+								showErrorToast(data.errors[0].message);
+								showToast(translate.load("sbi.glossary.load.error"), 3000);
+
+							} else {
+								ctrl.words=data.word;
+								
+								
+								
+							}
+							
+							hidePreloader("preloader");
+						}).error(function(data, status, headers, config) {
+					console.log("nodi non ottenuti " + status);
+					showToast(translate.load("sbi.glossary.load.error"), 3000);
+					if (togg != undefined) {
+						togg.expand();
+						hidePreloader("preloader");
+					}
+				})
+	}
+	
 	
 	ctrl.showSelectedGlossary = function(gloss) {
+		if(ctrl.selectedGloss!=undefined && ctrl.selectedGloss.GLOSSARY_ID==gloss.GLOSSARY_ID){return;}
+		
+		
 		ctrl.selectedGloss=gloss;
 		ctrl.getGlossaryNode(ctrl.selectedGloss, null);
 	}
+	
+	
 	
 	ctrl.getGlossaryNode = function(gloss, node, togg) {
 		console.log("getGlossaryNode")
@@ -122,7 +199,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var PARENT_ID = (node == null ? null : node.CONTENT_ID);
 		var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 	
-
+		showPreloader("preloaderTree");
 		restServices
 				.get(
 						"glossary",
@@ -156,19 +233,34 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								if(node!=null && node.hasOwnProperty("preloader")){
 									node.preloader = false;
 								}
+								hidePreloader("preloaderTree");
 							}
 						}).error(function(data, status, headers, config) {
 					console.log("nodi non ottenuti " + status);
 					showToast(translate.load("sbi.glossary.load.error"), 3000);
 					if (togg != undefined) {
 						togg.expand();
-						node.preloader = false;
+						hidePreloader("preloaderTree");
 					}
 				})
 	}
 	
+	
+	ctrl.expandAllTree= function(tree){
+		console.log("expand")
+		angular.element(document.getElementById(tree)).scope().expandAll();
+	}
+	
+	
 	ctrl.toggle = function(scope, item, gloss) {
+		
 		console.log("toggle")
+		
+		if(ctrl.searchDoc!="" && ctrl.searchDoc!=undefined ){
+			scope.toggle();
+			return;	
+		}
+		
 		console.log(scope)
 		item.preloader = true;
 		if (scope.collapsed) {
@@ -207,7 +299,32 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 	
 	
-	
+	function getAllDoc() {
+		console.log("getAllDoc")
+		showPreloader();
+		restServices.get("glossary", "listDocument").success(
+				function(data, status, headers, config) {
+					console.log("doc Ottenuti " + status)
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						showErrorToast(data.errors[0].message);
+						showToast(translate.load("sbi.glossary.load.error"),
+								3000);
+
+					} else {
+						ctrl.listDoc = data;
+					}
+
+					hidePreloader();
+				}).error(function(data, status, headers, config) {
+			console.log("Glossary non Ottenuti " + status);
+			showErrorToast('Ci sono errori! \n status ' + status);
+			showToast(translate.load("sbi.glossary.load.error"), 3000);
+
+			hidePreloader();
+		})
+
+	}
 	
 	
 	ctrl.WordItemPerPage=10;
@@ -256,14 +373,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctrl.TreeOptionsWord = {
 
 			accept : function(sourceNodeScope, destNodesScope, destIndex) {
-				console.log(sourceNodeScope)
-				console.log(destNodesScope)
 				
 //				if(destNodesScope.hasChild(sourceNodeScope.$modelValue)){
 //					console.log(destNodesScope.hasChild(sourceNodeScope.$modelValue))
 //					return false;
 //				}
-				console.log(destNodesScope.$modelValue.toString());
+//				console.log(destNodesScope.$modelValue.toString());
 				var present=false;
 				for(var i=0;i<destNodesScope.$modelValue.length;i++){
 					if(destNodesScope.$modelValue[i].WORD_ID==sourceNodeScope.$modelValue.WORD_ID){
@@ -273,11 +388,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					}
 				}
 				if(present){ return false;}
+				else{console.log("accepted");
+				return true;}
 				
 				
-				return true;
+				
 			},
 			beforeDrop : function(event) {
+				console.log("dropped")
 			},
 			dragStart : function(event) {
 			},
@@ -288,9 +406,69 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctrl.TreeOptions = {
 
 			accept : function(sourceNodeScope, destNodesScope, destIndex) {
+				console.log("accept")
 				return false;
 			},
 			beforeDrop : function(event) {
+			console.log("beforeDrop TreeOptions")
+			console.log(event)
+			
+			if(event.source.nodesScope.$id==event.dest.nodesScope.$id){
+				console.log("no drop ")
+				return false;
+			}
+			
+				var elem = {};
+
+				elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
+				elem.DOCUMENT_ID=ctrl.selectedDocument;
+				console.log(elem)
+			
+				showPreloader();
+				restServices
+				.post("glossary", "addDocWlist", elem)
+				.success(
+						function(data, status, headers,
+								config) {
+
+							if (data
+									.hasOwnProperty("errors")) {
+								showErrorToast(data.errors[0].message)
+								showToast(
+										translate
+												.load("sbi.glossary.error.save"),
+										3000);
+							} else if (data.Status == "NON OK") {
+								showToast(
+										translate
+												.load(data.Message),
+										3000);
+							} else {
+//								showToast(
+//										translate
+//												.load("sbi.glossary.success.save"),
+//										3000);
+
+							
+//								event.dest.nodesScope.insertNode(event.dest.index,elem);
+							}
+							
+							
+							
+							hidePreloader();
+						})
+				.error(
+						function(data, status, headers,
+								config) {
+							hidePreloader();
+							showToast(
+									translate
+											.load("sbi.glossary.error.save"),
+									3000);
+						});
+				
+				
+				
 			},
 			dragStart : function(event) {
 			},
@@ -318,10 +496,21 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	function showPreloader(pre) {
-		ctrl.showPreloader = true;
-
+		switch(pre){
+		case 'preloaderTree':ctrl.preloaderTree=true;
+							break;
+		default:ctrl.showPreloader = true;
+				break;
+		}
 	}
+	
 	function hidePreloader(pre) {
-		ctrl.showPreloader = false;
+		switch(pre){
+		case 'preloaderTree':ctrl.preloaderTree=false;
+							break;
+		default:ctrl.showPreloader = false;
+				break;
+		}
 	}
+	
 }

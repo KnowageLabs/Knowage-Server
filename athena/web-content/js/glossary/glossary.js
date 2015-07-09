@@ -58,11 +58,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.showSearchPreloader = false;
 	ctr.activeTab = 'Glossari';
 	ctr.filterSelected = true;
-	ctr.words = [];
-	getAllWords();
-
-	ctr.expanderNode; //when create vocable from contex-menu in tree i use this variable to store node object and then expand it
 	
+	
+	ctr.expanderNode; //when create vocable from contex-menu in tree i use this variable to store node object and then expand it
 	ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 	ctr.glossary;
 	getAllGloss();
@@ -71,6 +69,46 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.querySearchProp = "";
 	self.searchTextProp = null;
 	ctr.selectedGloss = {};
+	
+	ctr.words = [];
+	ctr.WordItemPerPage = 5;
+	ctr.totalWord=0;
+	changeWordItemPP();
+//	getAllWords();
+	ctr.pagination = {current: 1 };
+	 ctr.pageChanged = function(newPage) {
+	        ctr.getResultsPage(newPage);
+	    };
+	
+	     ctr.getResultsPage = function(pageNumber) {
+	    	 var item="Page=" + pageNumber+"&ItemPerPage="+ctr.WordItemPerPage;
+	    	 if(ctr.tmpWordSearch!=undefined && ctr.tmpWordSearch.trim()!=""){
+	    		 item+="&WORD=" + ctr.tmpWordSearch;
+	    	 }
+	    	 ctr.showSearchPreloader = true;
+	        restServices.get("glossary", "listWords", item)
+			.success(function(data, status, headers, config) {
+				console.log(data)
+				if (data.hasOwnProperty("errors")) {
+					console.log("word non Ottenuti");
+				} else {
+					ctr.words = data.item;
+					ctr.totalWord=data.itemCount;
+					
+				}
+				ctr.showSearchPreloader = false;
+
+			}).error(function(data, status, headers, config) {
+				console.log("word non Ottenuti " + status);
+				ctr.showSearchPreloader = false;
+			})
+
+	        
+	    }
+
+	     ctr.getResultsPage(1);
+	 	
+	
 
 	ctr.modifyWord = function(word) {
 		if (ctr.isEmptyNewWord()) {
@@ -84,7 +122,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							translate.load("sbi.general.continue")).cancel(
 							translate.load("sbi.general.cancel"));
 
-			console.log
+			
 			$mdDialog.show(confirm).then(function() {
 
 				resetForm(word)
@@ -132,7 +170,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					text.content).ariaLabel('Lucky day').ok(text.ok).cancel(
 					text.cancel);
 
-			console.log
+			
 			$mdDialog.show(confirm).then(function() {
 
 				resetForm();
@@ -143,7 +181,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				}
 				
 			}, function() {
-				console.log('You decided to keep your debt.');
+				console.log('Annulla');
 			});
 
 		} else {
@@ -164,9 +202,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	function resetForm(ele) {
-		console.log("resetForm")
-
-
 		angular.element(document.querySelector('.md-chip-input-container .md-whiteframe-z1 input')).val("");
 		angular.element(document.querySelector('.wordForm .textareaInputBox textarea#formulaText')).val("");
 		angular.element(document.querySelector('.wordForm .textareaInputBox textarea#descrText')).val("");
@@ -190,11 +225,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	
 	ctr.prevPropSearch = "";
 	ctr.querySearchProp = function(query) {
-		console.log("querySearchProp " + query)
-
+		
 		if(ctr.prevPropSearch==query){
 			ctr.prevPropSearch="";
-			console.log("rep")
 			return false;
 		}
 		ctr.prevPropSearch=query;
@@ -204,8 +237,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			restServices.get("glossary", "listAttribute", "ATTR=" + query)
 					.success(function(data, status, headers, config) {
-						console.log("AttributeLike Ottenuto")
-						console.log(data)
 						if (data.hasOwnProperty("errors")) {
 							console.log("attributeLike non Ottenuti");
 						} else {
@@ -215,7 +246,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 					}).error(function(data, status, headers, config) {
 						console.log("AttributeLike non Ottenuti " + status);
-
 					})
 	
 		return def.promise.then(
@@ -232,7 +262,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					}
 					return val;
 				}, function(val) {
-					console.log("promisenonok")
+					console.log("promise non ok")
 
 				})
 
@@ -241,9 +271,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 
 	ctr.addProp = function(prop) {
-		console.log("aggiungo attributo")
-		console.log(prop)
-
 		var np = {};
 		np.ATTRIBUTE_NM = prop.Prop.ATTRIBUTE_NM;
 		np.ATTRIBUTE_ID = prop.Prop.ATTRIBUTE_ID;
@@ -254,7 +281,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	};
 
 	ctr.removeProp = function(prop) {
-		console.log("removeprop")
 		ctr.newWord.SBI_GL_WORD_ATTR.splice(ctr.newWord.SBI_GL_WORD_ATTR
 				.indexOf(prop), 1)
 	}
@@ -264,16 +290,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 			return false;
 		}
 
-		console.log(query)
-
 		var results;
 		if (typeof query !== 'object') {
-			console.log("non obj")
 			results = $filter('filter')(ctr.propWord, {
 				ATTRIBUTE_NM : query.toUpperCase()
 			}, true);
 		} else {
-			console.log(" obj")
 			results = $filter('filter')(ctr.propWord, {
 				ATTRIBUTE_NM : query.ATTRIBUTE_NM.toUpperCase()
 			}, true);
@@ -287,7 +309,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	// chips
 	compareForNestedFiltering = function(actual, expected) {
-		console.log("compareForNestedFiltering")
 		function contains(actualVal, expectedVal) {
 			return actualVal.toString().toLowerCase().indexOf(
 					expectedVal.toString().trim().toLowerCase()) !== -1;
@@ -304,7 +325,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	// non sincronizzato( sulla base dei word presenti)
 	ctr.querySearchold = function(chip) {
-		console.log("querySearch")
 		var found = $filter('filter')(ctr.words, {
 			WORD : chip.toUpperCase()
 		}, compareForNestedFiltering);
@@ -321,7 +341,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		$timeout(function() {
 
 			if (ctr.tmpWordChipsSearch != chip || ctr.prevChipsSearch == chip) {
-				console.log("interrompo la ricerca chips di ele " + chip)
 				return;
 			}
 
@@ -329,8 +348,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			restServices.get("glossary", "listWords", "WORD=" + chip).success(
 					function(data, status, headers, config) {
-						console.log("chipsword Ottenuto")
-						console.log(data)
 						if (data.hasOwnProperty("errors")) {
 							console.log("Words non Ottenuti ");
 						} else {
@@ -368,24 +385,17 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		}, true);
 
 		if (found.length) {
-			console.log("found");
-			console.log(found);
 			return found[0];
 		} else {
 			console.log("not found ds");
-
 		}
 
 	};
 
 	ctr.addWord = function(product) {
-		console.log(ctr.newWord.NEWWORD)
-
 		if (ctr.newWord.NEWWORD != undefined) {
-			console.log("salvo")
 			ctr.newWord.SaveOrUpdate = "Save";
 		} else {
-			console.log("modificato")
 			ctr.newWord.SaveOrUpdate = "Update";
 			// ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		}
@@ -401,8 +411,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		showPreloader();
 		restServices.post("glossary", "addWord", ctr.newWord).success(
 				function(data, status, headers, config) {
-					console.log("word salvato  Ottenuto")
-					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						showToast(data.errors[0].message)
 					}  else if (data.Status == "NON OK") {
@@ -422,7 +430,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						}
 						
 						if(ctr.newWord.hasOwnProperty("PARENT")){
-							console.log("parente presente")
 							var par=ctr.newWord.PARENT;
 							delete ctr.newWord.PARENT;
 							var elem = {};
@@ -496,7 +503,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
 			showErrorToast("word non salvato " + status)
-			console.log("Words non salvato " + status);
 			showToast(translate.load("sbi.glossary.word.save.error"), 3000);
 			hidePreloader();
 		})
@@ -548,14 +554,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.deleteWord = function(ev) {
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
-		console.log("deleteWord")
 		var confirm = $mdDialog.confirm().title(
 				translate.load("sbi.glossary.word.delete")).content(
 				translate.load("sbi.glossary.word.delete.message")).ariaLabel(
 				'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
 				translate.load("sbi.myanalysis.delete.cancel")).targetEvent(ev);
-		console.log(confirm)
-
+		
 		var wds = ctr.words;
 		var nw = ctr.newWord;
 		$mdDialog
@@ -569,10 +573,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console.log("Word eliminato")
-												console.log(data)
-												if (data
-														.hasOwnProperty("errors")) {
+											
+												if (data.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
 													showToast(
 															translate
@@ -606,20 +608,18 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														translate
 																.load("sbi.glossary.word.delete.error"),
 														3000);
-
+												hidePreloader();
 											})
 
 							// controllo se l'elemento
 							// che si vule eliminare è
 							// in fase di modifica
 							if (nw.WORD_ID === ev.WORD_ID) {
-								// console.log("Sto modificando l'elemento che
-								// sto eliminando")
-								nw.NEWWORD = true;
+							nw.NEWWORD = true;
 							}
 
 						}, function() {
-							console.log('You decided to keep your debt.');
+							console.log('annulla');
 						});
 	};
 
@@ -643,19 +643,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.get("glossary", "getGlossary",
 											"GLOSSARY_ID=" + gl.GLOSSARY_ID)
 									.success(
-											function(data, status, headers,
-													config) {
-												console
-														.log("glossary Ottenuto "
-																+ status)
-												console.log(data)
-												if (data
-														.hasOwnProperty("errors")) {
+											function(data, status, headers,config) {
+												
+												if (data.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message);
 													$mdDialog.hide();
-													showToast(
-															translate
-																	.load("sbi.glossary.load.error"),
+													showToast(translate.load("sbi.glossary.load.error"),
 															3000);
 												} else {
 													gctl.newGloss = data;
@@ -666,9 +659,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.error(
 											function(data, status, headers,
 													config) {
-												console
-														.log("glossary non Ottenuto "
-																+ status);
+											
 												showErrorToast('Ci sono errori! \n status '
 														+ status);
 												hidePreloader();
@@ -692,7 +683,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 						gctl.submit = function() {
 
-							console.log(gl)
+					
 							showPreloader();
 							restServices
 									.post("glossary", "cloneGlossary",
@@ -700,8 +691,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console.log("Gloss clonato")
-												console.log(data)
+												
 												if (data
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message);
@@ -748,14 +738,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.deleteGlossary = function(ev) {
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
-		console.log("deleteGloss")
 		var confirm = $mdDialog.confirm().title(
 				translate.load("sbi.glossary.delete")).content(
 				translate.load("sbi.glossary.delete.message")).ariaLabel(
 				'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
 				translate.load("sbi.ds.wizard.cancel")).targetEvent(ev);
-		console.log(confirm)
-
+		
 		var wds = ctr.glossary;
 		$mdDialog
 				.show(confirm)
@@ -768,9 +756,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console
-														.log("GLOSSARIO eliminato")
-												console.log(data)
+											
 												if (data
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
@@ -810,7 +796,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 											})
 
 						}, function() {
-							console.log('You decided to keep your debt.');
+							console.log('Annulla');
 						});
 	};
 
@@ -833,9 +819,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console.log("Words Ottenuti "
-														+ status)
-												console.log(data)
+												
 												if (data
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
@@ -875,14 +859,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						}
 
 						gctl.submit = function() {
-							console.log(gctl.newGloss)
-
-							console.log("salvo o modifico")
+							
 							if (gctl.newGloss.NEWGLOSS != undefined) {
-								console.log("salvo")
+							
 								gctl.newGloss.SaveOrUpdate = "Save";
 							} else {
-								console.log("modificato")
+								
 								gctl.newGloss.SaveOrUpdate = "Update";
 							}
 							showPreloader();
@@ -892,9 +874,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console
-														.log("glossary salvato  Ottenuto")
-												console.log(data)
+												
 												if (data
 														.hasOwnProperty("errors")) {
 
@@ -979,13 +959,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.TreeOptionsWord = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
-			console.log("accept TreeOptionsWord")
 			return false;
 		},
 		beforeDrop : function(event) {
-			console.log("beforeDropWord")
-			console.log(event)
-
 			// if is D&D to newWord chisp link return true
 			if (event.dest.nodesScope.$parent.$element[0].id == "chipsTree"
 					|| event.dest.nodesScope.$parent.$element[0].id == "wordTree") {
@@ -1004,10 +980,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					.show(confirm)
 					.then(
 							function() {
-								console.log("accettato");
-
 								var elem = {};
-
 								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
 										: event.dest.nodesScope.$nodeScope.$modelValue.CONTENT_ID
 
@@ -1104,14 +1077,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.TreeOptions = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
-			console.log("accept TreeOptions")
-			console.log(sourceNodeScope)
-			console.log(destNodesScope)
-
-			var isRootD=false;
+		var isRootD=false;
 			if(destNodesScope.$parent.$type=="uiTree"){
 				isRootD=true;
-				console.log("isrootd")
 			}
 			
 			// check if is a D&D of word
@@ -1174,7 +1142,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 //				}
 				if (isRootD) {
 					// root
-					console.log("root");
 					return true;
 				}
 
@@ -1210,16 +1177,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		},
 
 		beforeDrop : function(event) {
-			console.log("beforeDrop")
-			console.log(event)
-
 			var n1 = event.dest.nodesScope.$nodeScope == null ? null
 					: event.dest.nodesScope.$nodeScope.$id;
 			var n2 = event.source.nodesScope.$nodeScope == null ? null
 					: event.source.nodesScope.$nodeScope.$id;
 
 			if (n1 == n2) {
-				console.log("nessun movimento");
 				event.source.nodeScope.$$apply = false;
 				return;
 			}
@@ -1235,8 +1198,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					.show(confirm)
 					.then(
 							function() {
-								console.log("accettato");
-								
 								var isRootS=false;
 								var isRootD=false;
 								if(event.source.nodesScope.$parent.$type=="uiTree"){
@@ -1257,7 +1218,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								restServices
 										.post("glossary","ModifyContentsGlossary", elem)
 										.success(function(data, status, headers,config) {
-													console.log(data);
 													if (data.hasOwnProperty("errors")) {
 														showErrorToast(data.errors[0].message);
 														showToast(
@@ -1312,7 +1272,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 														if (!isRootD) {
 															event.dest.nodesScope.expand();
-															console.log(event.dest)
 															ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue,event.dest.nodesScope.$parent);
 														}else{
 															ctr.selectedGloss.SBI_GL_CONTENTS.sort(function(a,b) {return (a.CONTENT_NM > b.CONTENT_NM) ? 1 : ((b.CONTENT_NM > a.CONTENT_NM) ? -1 : 0);} ); 
@@ -1359,11 +1318,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	ctr.TreeOptionsChips = {
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
-			console.log("accept TreeOptionsChips")
-			console.log(sourceNodeScope)
-			
 			if(sourceNodeScope.$modelValue.WORD_ID==ctr.newWord.WORD_ID){
-				console.log("Link con se stessi");
 					angular.element(document.querySelector('.linkChips .md-chips'))
 						.css("box-shadow", "0 2px rgb(255, 0, 0)");
 				$timeout(function() {
@@ -1379,8 +1334,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 			}, true);
 
 			if (found != 0) {
-				console.log("WORD GIa PRESENTE")
-
 				angular.element(document.querySelector('.linkChips .md-chips'))
 						.css("box-shadow", "0 2px rgb(255, 0, 0)");
 				$timeout(function() {
@@ -1391,7 +1344,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 				return false;
 			}
-			console.log("WORD non PRESENTE")
 			return true;
 		},
 
@@ -1409,23 +1361,18 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	};
 
 	ctr.remove = function(scope) {
-		console.log("remove")
 		scope.remove();
 	};
 
 	ctr.removeContents = function(ev) {
-		console.log("removeContents")
-		console.log(ev)
-		// ev.remove();
-
+		
 		var confirm = $mdDialog.confirm().title(
 				translate.load("sbi.glossary.content.delete")).content(
 				translate.load("sbi.glossary.content.delete.message"))
 				.ariaLabel('Lucky day')
 				.ok(translate.load("sbi.generic.delete")).cancel(
 						translate.load("sbi.general.cancel")).targetEvent(ev);
-		console.log(confirm)
-
+		
 		var req = "";
 		if (ev.$modelValue.hasOwnProperty("CONTENT_ID")) {
 			// delete logical node
@@ -1446,9 +1393,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console
-														.log("Contents eliminato")
-												console.log(data)
+												
 												if (data
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
@@ -1462,10 +1407,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																.log("ci sono figli")
 														if (ev.$modelValue
 																.hasOwnProperty("WORD_ID")) {
-															console.log("word")
 															ev.$parentNodeScope.$modelValue.HAVE_WORD_CHILD = false;
 														} else {
-															console.log("cont")
 															ev.$parentNodeScope.$modelValue.HAVE_CONTENTS_CHILD = false;
 														}
 													}
@@ -1494,14 +1437,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 											})
 
 						}, function() {
-							console.log('You decided to keep your debt.');
+							console.log('annulla');
 						});
 
 	};
 
 	ctr.toggle = function(scope, item, gloss) {
-		console.log("toggle")
-		console.log(scope)
 		item.preloader = true;
 		if (scope.collapsed) {
 			ctr.getGlossaryNode(gloss, item, scope)
@@ -1524,7 +1465,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							translate.load("sbi.general.continue")).cancel(
 							translate.load("sbi.general.cancel"));
 
-			console.log
 			$mdDialog.show(confirm).then(function() {
 				resetForm();
 				ctr.selectedGloss = gloss;
@@ -1532,7 +1472,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				ctr.getGlossaryNode(gloss, null)
 
 			}, function() {
-				console.log('You decided to keep your debt.');
+				console.log('Annulla');
 			});
 
 		} else {
@@ -1562,9 +1502,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console.log("Content Ottenuti "
-														+ status)
-												console.log(data)
+									
 												if (data
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
@@ -1603,14 +1541,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 						rn.salva = function() {
 
-							console.log("salvo o modifico")
 							if (rn.tmpNW.NEWCONT != undefined) {
-								console.log("salvo")
 								rn.tmpNW.SaveOrUpdate = "Save";
 								rn.tmpNW.PARENT_ID = parent.CONTENT_ID;
 								rn.tmpNW.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 							} else {
-								console.log("modificato")
 								rn.tmpNW.SaveOrUpdate = "Update";
 								rn.tmpNW.CONTENT_ID = parent.CONTENT_ID;
 							}
@@ -1621,7 +1556,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.success(
 											function(data, status, headers,
 													config) {
-												console.log("ok")
 												if (data
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
@@ -1680,7 +1614,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.error(
 											function(data, status, headers,
 													config) {
-												console.log("nonok")
 												showToast("Errore nel salvataggio del nuovo nodo logico "
 														+ status);
 												showToast(
@@ -1718,12 +1651,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
 		 bpw == 0 ? bpw = 19 : bpw = bpw;
-		var nit = parseInt((lbw - tbw - bpw - 32 ) / 34);
+		var nit = parseInt((lbw - tbw - bpw - 33 ) / 27);
 		ctr.WordItemPerPage = nit;
 	}
 
-	$scope
-			.$watch(
+	$scope.$watch(
 					function() {
 						return angular.element(document
 								.querySelector('.leftBox_word'))[0].offsetHeight;
@@ -1733,18 +1665,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						}
 					}, true);
 
-	ctr.WordItemPerPage = 5;
-	changeWordItemPP();
+	
 
 	// rest call function
 
 	function getAllWords() {
-		console.log("getAllWords")
 		showPreloader();
 		restServices.get("glossary", "listWords").success(
 				function(data, status, headers, config) {
-					console.log("Words Ottenuti " + status)
-					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
 						showToast(translate.load("sbi.glossary.load.error"),
@@ -1756,7 +1684,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
-			console.log("Words non Ottenuti " + status);
 			showErrorToast('Ci sono errori! \n status ' + status);
 			showToast(translate.load("sbi.glossary.load.error"), 3000);
 
@@ -1766,12 +1693,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	function getAllGloss() {
-		console.log("getAllGloss")
 		showPreloader();
 		restServices.get("glossary", "listGlossary").success(
 				function(data, status, headers, config) {
-					console.log("Glossary Ottenuti " + status)
-					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
 						showToast(translate.load("sbi.glossary.load.error"),
@@ -1783,7 +1707,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
-			console.log("Glossary non Ottenuti " + status);
 			showErrorToast('Ci sono errori! \n status ' + status);
 			showToast(translate.load("sbi.glossary.load.error"), 3000);
 
@@ -1796,21 +1719,21 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.prevSearch = "";
 
 	ctr.WordLike = function(ele) {
-		console.log("WordLike" + ele)
 		ctr.tmpWordSearch = ele;
 		$timeout(function() {
 
 			if (ctr.tmpWordSearch != ele || ctr.prevSearch == ele) {
-				console.log("interrompo la ricerca  di ele " + ele)
 				return;
 			}
 
 			ctr.prevSearch = ele;
 			ctr.showSearchPreloader = true;
-			restServices.get("glossary", "listWords", "WORD=" + ele).success(
+			var item="Page=1&ItemPerPage="+ctr.WordItemPerPage;
+	    	if(ctr.tmpWordSearch!=undefined && ctr.tmpWordSearch.trim()!=""){
+	    		 item+="&WORD=" + ele;
+	    	 }
+			restServices.get("glossary", "listWords", item).success(
 					function(data, status, headers, config) {
-						console.log("WordLike Ottenuti " + status)
-						console.log(data)
 
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
@@ -1819,12 +1742,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									3000);
 
 						} else {
-							ctr.words = data;
+							ctr.words = data.item;
+							ctr.totalWord=data.itemCount;
 							ctr.showSearchPreloader = false;
 						}
 
 					}).error(function(data, status, headers, config) {
-				console.log("WordLike non Ottenuti " + status);
 				showToast(translate.load("sbi.glossary.load.error"), 3000);
 
 				ctr.showSearchPreloader = false;
@@ -1835,14 +1758,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	function getWord(ele) {
-		console.log("getWord")
 		showPreloader();
 		restServices
 				.get("glossary", "getWord", "WORD_ID=" + ele.WORD_ID)
 				.success(
 						function(data, status, headers, config) {
-							console.log("Word Ottenuto")
-							console.log(data)
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
 								showToast(translate
@@ -1859,7 +1779,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							hidePreloader();
 
 						}).error(function(data, status, headers, config) {
-					console.log("Words non Ottenuti " + status);
 					showErrorToast('Ci sono errori! \n status ' + status);
 					showToast(translate.load("sbi.glossary.load.error"), 3000);
 					hidePreloader();
@@ -1868,10 +1787,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	ctr.getGlossaryNode = function(gloss, node, togg) {
-		console.log("getGlossaryNode")
-		console.log(node)
-		console.log(gloss)
-		console.log(togg);
 		var PARENT_ID = (node == null ? null : node.CONTENT_ID);
 		var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 	
@@ -1884,8 +1799,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								+ PARENT_ID)
 				.success(
 						function(data, status, headers, config) {
-							console.log("nodi ottnuti")
-							console.log(data)
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
@@ -1897,7 +1810,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								//check if parent is node or glossary
 								node==null ? gloss.SBI_GL_CONTENTS = data : node.CHILD = data;
 								}else{
-									console.log("riordino manualmente");
 									if(node!=null){
 										node.CHILD.sort(function(a,b) {return (a.CONTENT_NM > b.CONTENT_NM) ? 1 : ((b.CONTENT_NM > a.CONTENT_NM) ? -1 : 0);} ); 
 									}
@@ -1911,7 +1823,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								}
 							}
 						}).error(function(data, status, headers, config) {
-					console.log("nodi non ottenuti " + status);
 					showToast(translate.load("sbi.glossary.load.error"), 3000);
 					if (togg != undefined) {
 						togg.expand();
@@ -1946,10 +1857,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		ctr.showPreloader = false;
 	}
 
-	ctr.prova = function() {
-		console.log("prova")
-		console.log(translate.load("sbi.generic.genericError"));
-	}
+
 }
 
 

@@ -15,19 +15,19 @@ Restapp.service('restServices', function($http, ENDPOINT_URI) {
 
 	service.get = function(endP_path, req_Path, item) {
 		item == undefined ? item = "" : item = "?" + item;
-		console.log("service.get");
-		console.log("endP_path= " + endP_path)
-		console.log("req_Path=" + req_Path)
-		console.log("item=" + item)
+		console.log("GET: "+getBaseUrl(endP_path) + "" + req_Path + "" + item);
 		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item);
 	};
 
 	service.remove = function(endP_path, req_Path, item) {
 		item == undefined ? item = "" : item = "?" + item;
+		console.log("REMOVE: "+getBaseUrl(endP_path) + "" + req_Path + "" + item);
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item);
 	};
 
 	service.post = function(endP_path, req_Path, item) {
+		console.log("POST: "+getBaseUrl(endP_path) + "" + req_Path);
+		console.log(item);
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item);
 	};
 

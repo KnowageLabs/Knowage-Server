@@ -27,37 +27,22 @@
  <![endif]--> 
 	
 	
-	<link rel="stylesheet"
-		href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-	<link rel="stylesheet"
-		href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
-	<!-- <link rel="stylesheet" href="https://rawgit.com/angular/bower-material/master/angular-material.css"> -->
+	<script type="text/javascript" src="/athena/js/glossary/angular/angular.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/athena/js/glossary/angular/material_0.10.0/angular-material.min.css">
+	<script type="text/javascript" src="/athena/js/glossary/angular/material_0.10.0/angular-material.js"></script>
 	
-	<link rel="stylesheet"
-		href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
-	<script type="text/javascript"
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
-	<script type="text/javascript"
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
-	<script type="text/javascript"
-		src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
-	<script type="text/javascript"
-		src="https://rawgit.com/angular/bower-material/master/angular-material.js"></script>
-	<!-- <script -->
-	<!-- 	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script> -->
+	<script type="text/javascript" 	src="/athena/js/glossary/angular/angular-animate.min.js"></script>
+	<script type="text/javascript" src="/athena/js/glossary/angular/angular-aria.min.js"></script>
 	
-	<link rel="stylesheet" type="text/css"
-		href="/athena/themes/glossary/css/gestione_glossario.css">
-			<link rel="stylesheet" type="text/css"
-		href="/athena/themes/glossary/css/generalStyle.css">
-	<link rel="stylesheet"
-		href="/athena/js/glossary/angulartree/angular-ui-tree.min.css">
-	<script type="text/javascript"
-		src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script>
-	<script type="text/javascript"
-		src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
-	<script type="text/javascript"
-		src="/athena/js/glossary/pagination/dirPagination.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario.css">
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
+	<link rel="stylesheet" 	href="/athena/js/glossary/angulartree/angular-ui-tree.min.css">
+	<script type="text/javascript" src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script>
+	<script type="text/javascript" src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
+	<script type="text/javascript" src="/athena/js/glossary/pagination/dirPagination.js"></script>
 	
 	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
@@ -112,7 +97,7 @@
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding> <md-input-container
+					<md-content layout-padding style="padding: 0 8px;"> <md-input-container
 						md-no-float style="padding-bottom: 0;">
 					<md-icon md-font-icon="fa fa-search "
 						style="  padding :4px 0;  color: black;"></md-icon> <input
@@ -134,8 +119,7 @@
 
 						<ol ui-tree-nodes ng-model="ctrl.words" data-nodrop-enabled="true">
 
-							<li
-								dir-paginate="word in ctrl.words | filter:filter_word:strict | itemsPerPage:	ctrl.WordItemPerPage ">
+							<li dir-paginate="word in ctrl.words |  itemsPerPage:	ctrl.WordItemPerPage " total-items="ctrl.totalWord" current-page="ctrl.pagination.current">
 
 								<div ui-tree-node context-menu
 									data-target="WordMenu-{{word.WORD}}">
@@ -172,7 +156,7 @@
 					</md-content>
 
 					<div class="box_pagination" layout="row" layout-align="center end">
-						<dir-pagination-controls max-size="5"></dir-pagination-controls>
+						<dir-pagination-controls max-size="5"  on-page-change="ctrl.pageChanged(newPageNumber)"></dir-pagination-controls>
 					</div>
 
 				</div>
@@ -272,7 +256,7 @@
 								
 								
 								<div class="dropdown position-fixed"
-									style="z-index: 999; margin-left: -25%; margin-top: -40px; width: 200px;"
+									style="z-index: 999; margin-left: calc(-25% - 20px);  width: 200px;"
 									id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}">
 									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item
 										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)'

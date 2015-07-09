@@ -26,15 +26,14 @@
  <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script> 
  <![endif]--> 
 	
-	
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<script type="text/javascript" src="/athena/js/glossary/angular/angular.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
-	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/0.10.0/angular-material.min.css">
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
-	<script type="text/javascript" src="https://rawgit.com/angular/bower-material/master/angular-material.js"></script>
+	<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/athena/js/glossary/angular/material_0.10.0/angular-material.min.css">
+	<script type="text/javascript" src="/athena/js/glossary/angular/material_0.10.0/angular-material.js"></script>
 	
+	<script type="text/javascript" 	src="/athena/js/glossary/angular/angular-animate.min.js"></script>
+	<script type="text/javascript" src="/athena/js/glossary/angular/angular-aria.min.js"></script>
 	
 	
  	<link rel="stylesheet"  href="/athena/js/glossary/angulartree/angular-ui-tree.min.css"> 
@@ -61,7 +60,7 @@
 </head>
 
 
-<body class="bodyStyle">
+<body class="bodyStyle" style="overflow: hidden !important;"">
 
 	
 	

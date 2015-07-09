@@ -200,7 +200,7 @@ p.wrapText {
 .SecondaryOnLeft .expandericon {
 	position: absolute;
 	left: 0px;
-	top: 3px;
+	top: 4px;
 	margin-left: 19px;
 }
 
@@ -208,19 +208,29 @@ p.wrapText {
 .angular-ui-tree-node md-list-item,
 .angular-ui-tree-node md-list-item button,
 .angular-ui-tree-node md-list-item button .md-list-item-inner,
- .md-ripple-container
+.angular-ui-tree-node .md-ripple-container
 {
-	height: 25px !important;
-  min-height: 25px !important;
+	height: 21px !important;
+  min-height: 21px !important;
   cursor: pointer;
 }
 
 
+.dropdown p,
+.dropdown md-list-item,
+.dropdown md-list-item button,
+.dropdown md-list-item button .md-list-item-inner,
+ .dropdown .md-ripple-container
+{
+	height: 29px !important;
+	 min-height: 29px !important;
+}
  
   .dragged-icon i, i.dragged-icon{
 	font-size: 20px;
 	 float: left;
-	  padding: 2px 0 2px 2px;
+/* 	  padding: 2px 0 2px 2px; */
+  padding-left: 4px;
 	  color: rgb(176, 190, 197);
 	    cursor: move;
 }
@@ -231,7 +241,7 @@ p.wrapText {
 	 line-height: 20px !important;
 }
 .angular-ui-tree-handle {
-	border-left: 2px double #D3C1C1;
+/* 	border-left: 2px double #D3C1C1; */
     padding: 4px 0px;
     	height: 27px !important;
   min-height: 27px !important;
@@ -241,6 +251,16 @@ p.wrapText {
 	background: #f0f9ff;
 	border: 2px dashed #bed2db;
 	box-sizing: border-box;
+}
+
+
+.indicator-child{
+	  border-top: 1px dotted #D3C1C1;
+  position: absolute;
+  width: 16px;
+  top: 50%;
+  margin-top: -1px;
+  left: 0px;
 }
 
 .glossaryTec{

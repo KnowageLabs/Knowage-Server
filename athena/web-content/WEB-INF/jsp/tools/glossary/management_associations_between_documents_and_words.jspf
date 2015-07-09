@@ -1,5 +1,7 @@
 <div ng-controller="Controller as ctrl" class="h100">
-
+<div class="preloader" ng-show="ctrl.showPreloader">
+<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
+		</div>
 <div layout="row" layout-wrap class="h100">
 	<!-- 			LEFT BOX document -->
 	<div flex="20"  class="boxItemGlo"  >
@@ -33,9 +35,9 @@
 
 			<p ng-if="ctrl.listDoc.length==0">List Document Empty</p>
 
-								<md-list  dir-paginate="doc in ctrl.listDoc | itemsPerPage: ctrl.DocItemPerPage" pagination-id="docPagination" class="bottomBorder">
-								 <md-list-item ng-click="1==1"	ng-repeat="n in [1] "  class="smallListItem ">
-								<p class="wrapText">{{ doc.DOCUMENT_NM | uppercase}}</p>
+								<md-list   class="bottomBorder">
+								 <md-list-item ng-click="ctrl.loadDocumentInfo(doc.DOCUMENT_ID); ctrl.selectedDocument=doc.DOCUMENT_ID;" 	dir-paginate="doc in ctrl.listDoc | itemsPerPage: ctrl.DocItemPerPage" pagination-id="docPagination"  class="smallListItem ">
+								<p class="wrapText" ng-class="{'selectedRow': ctrl.selectedDocument==doc.DOCUMENT_ID}">{{ doc.DOCUMENT_NM | uppercase}}</p>
 								</md-list-item> 
 								</md-list>
 								
@@ -79,7 +81,7 @@
 										<md-list class="noPadding deleteButton"> <md-list-item class="smallListItem "  ng-click="1==1"
 											ng-repeat="n in [1]"  >
 										<p class="wrapText" style="border-bottom: 1px solid rgb(176, 190, 197);" >{{ word.WORD  | uppercase}}</p>
-										 <md-icon md-font-icon="fa fa-times" ng-click="doSecondaryAction($event)" aria-label="Open Chat" class="md-secondary md-hue-3"></md-icon> 
+										 <md-icon md-font-icon="fa fa-times" ng-click="ctrl.removeWord(word)" aria-label="delete word" class="md-secondary md-hue-3"></md-icon> 
 										</md-list-item> </md-list>
 									</div>
 								</div> 
@@ -102,25 +104,31 @@
 	<!--  tree  -->
 	
 	<div flex  class="boxItemGlo" >
+	
 	<div layout="column" class="documentListBox">
 
 			<md-toolbar class="md-blue minihead">
 			<div class="md-toolbar-tools">
-				<div>Gloss</div>
+				<div >Gloss</div>
 			</div>
 			</md-toolbar>
 
+
+			<div class="preloaderTree" ng-show="ctrl.preloaderTree"> <md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular> </div>
 			<md-content layout-padding> 
+			
+			
+  
 			 <div layout="row" style="margin-bottom: 7px;">
 			<p style="  margin: 0 10px 0 0;" >Glossary:</p>
-			 <md-select style="padding: 0;" placeholder="Select glossary" ng-model="ctrl.selGlo">
-       		 <md-option ng-repeat="gloss in ctrl.glossary" value="{{gloss}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
+			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;" placeholder="Select glossary" ng-model="ctrl.selGlo">
+       		 <md-option ng-repeat="gloss in ctrl.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;"
 				md-no-float style="  margin-top: -12px; position: absolute; right: 0; padding: 2px;"> 
 				<md-icon	md-font-icon="fa fa-search " style="  padding :4px 0;  color: black;"></md-icon> 
-				<input	ng-model="searchDoc" Style="margin-left: 15px;"
-				ng-keyup="ctrl.SearchWordInSelectedGloss(searchDoc)" type="text"
+				<input	ng-model="ctrl.searchDoc" Style="margin-left: 15px;"
+				ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text"
 				placeholder="Search ">
 			</md-input-container>
 			</div>

@@ -163,33 +163,30 @@
 									
 
 <div context-menu data-target="WordTree-{{item.$$hashKey}}" ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
-
-
-
 	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico dragged-icon">
-		
-<div ui-tree-handle>
-<i class="fa fa-bars fa-2x"></i>
-									
-		<md-list >
-			<md-list-item  class="SecondaryOnLeft"
-				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
-				ng-init="item.preloader=false"> 
-			
-
-			<p>{{item.CONTENT_NM}}</p>
-			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
-				aria-label="Chat" md-font-icon="fa fa-angle-down "
-				style=" left: 0px;  margin-top: 0px! important;"
-				ng-show="!collapsed"></md-icon> <md-icon ng-disabled="true"
-				class=" sm-font-icon expandericon" aria-label="Chat2"
-				md-font-icon="fa fa-angle-right " ng-show="collapsed"></md-icon> <md-progress-circular
-				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
-				style="  left: 50%;  margin-left: -25px; position:absolute "
-				md-mode="indeterminate"></md-progress-circular> </md-list-item>
+		<div ui-tree-handle>
+			<i class="fa fa-bars fa-2x"></i>
+			<md-list>
+				<md-list-item  class="SecondaryOnLeft" ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)" ng-init="item.preloader=false"> 
+			 		<p>{{item.CONTENT_NM}}</p>
+					<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+						aria-label="Chat" md-font-icon="fa fa-angle-down "
+						style=" left: 0px;  margin: 3px 0px 0 17px!important;"
+						ng-show="!collapsed">
+					</md-icon>
+					<md-icon ng-disabled="true"
+						class=" sm-font-icon expandericon" aria-label="Chat2"
+						md-font-icon="fa fa-angle-right " ng-show="collapsed">
+					</md-icon> 
+					<md-progress-circular
+						md-diameter="20" ng-show="item.preloader" class="md-hue-2"
+						style="  left: 50%;   margin-top: -14px; margin-left: -25px; position:absolute "
+						md-mode="indeterminate">
+					</md-progress-circular>
+				 </md-list-item>
+			</md-list>
 		</div>
-		</md-list>
-</div>
+	</div>
 
 	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo dragged-icon expander-icon ">
 		<md-list class="noPadding"> 
@@ -199,36 +196,28 @@
 		</md-list-item> 
 		</md-list>
 	</div>
-
-
-
 </div>
-
 <!-- 					menu contestuale albero -->
-<div class="dropdown position-fixed"
-	style="z-index: 999; margin-left: -25%; width: 200px;"
-	id="WordTree-{{ item.$$hashKey }}">
-	<md-list class="dropdown-menu bottomBorder" role="menu" style="  margin-top: -49px;">
-	<md-list-item ng-click='ctrl.newSubItem(this,item)' role="menuitem"
-		tabindex="1"
-		ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  ">
-	<!--item.CONTENT_NM != undefined  && ctrl.hasVocabolaryChild(item)-->
-	<p>Nuovo Nodo Logico</p>
-	</md-list-item> <md-list-item ng-click='ctrl.createNewWord(false,this)' role="menuitem" tabindex="2"
-		ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
-	<p>Nuovo Vocabolo</p>
-	</md-list-item> <md-list-item ng-click='ctrl.removeContents(this)' role="menuitem"
-		tabindex="3">
-	<p>Elimina</p>
-	</md-list-item> <md-list-item ng-click='ctrl.newSubItem(this,item,true)'
-		role="menuitem" ng-if=" item.CONTENT_NM != undefined" tabindex="3">
-	<p>Modifica</p>
-	</md-list-item> </md-list>
+<div class="dropdown position-fixed" style="z-index: 999; margin-left: calc(-25% - 20px); width: 200px;" id="WordTree-{{ item.$$hashKey }}">
+	<md-list class="dropdown-menu bottomBorder" role="menu">
+		<md-list-item ng-click='ctrl.newSubItem(this,item)' role="menuitem" tabindex="1" ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  ">
+ 		<p>Nuovo Nodo Logico</p>
+    	</md-list-item>
+
+ 		<md-list-item ng-click='ctrl.createNewWord(false,this)' role="menuitem" tabindex="2" ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
+		<p>Nuovo Vocabolo</p>
+		</md-list-item>
+
+		<md-list-item ng-click='ctrl.removeContents(this)' role="menuitem" tabindex="3">
+		<p>Elimina</p>
+		</md-list-item>
+	
+		<md-list-item ng-click='ctrl.newSubItem(this,item,true)' role="menuitem" ng-if=" item.CONTENT_NM != undefined" tabindex="4">
+		<p>Modifica</p>
+		</md-list-item> 
+	</md-list>
 </div>
 <!-- 						fine menu contestuale albero -->
-
-
-
 <ol ng-if=" item.CONTENT_NM != undefined"
 	ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]"
 	ui-tree-nodes="options" ng-model="item.CHILD"
@@ -254,11 +243,13 @@
 				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
 				ng-init="item.preloader=false"> 
 			
+			<div class="indicator-child"></div>
 
 			<p >{{item.CONTENT_NM}}</p>
+
 			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
 				aria-label="Chat" md-font-icon="fa fa-angle-down "
-				style=" left: 0px;  margin-top: 0px! important;"
+				style=" left: 0px;  margin: 5px 0px 0 17px!important; "
 				ng-show="!collapsed">
 			</md-icon>
 				
@@ -269,7 +260,7 @@
 			
 			<md-progress-circular
 				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
-				style="  left: 50%;  margin-left: -25px; position:absolute "
+				style="  left: 50%;  margin-left: -25px;   margin-top: -14px; position:absolute "
 				md-mode="indeterminate">
 			</md-progress-circular>
 			
