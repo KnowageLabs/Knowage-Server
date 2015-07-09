@@ -148,6 +148,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	
 	public SbiGlDocWlistId insertDocWlist(SbiGlDocWlist docwlist);
 	
+	public SbiGlDocWlist getDocWlistOrNull(SbiGlDocWlistId id);
+	
 	public void deleteDocWlist(SbiGlDocWlistId id);
 	
 }

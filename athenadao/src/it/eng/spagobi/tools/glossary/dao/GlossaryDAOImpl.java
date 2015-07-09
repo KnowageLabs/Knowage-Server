@@ -17,6 +17,7 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchtWlistByGlossaryIdAndWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadContentsParent;
+import it.eng.spagobi.tools.glossary.dao.criterion.loadDocWlistByDocumentAndWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
@@ -864,6 +865,17 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		@Override
 		public SbiGlDocWlist loadDocWlist(SbiGlDocWlistId id){
 			return load(SbiGlDocWlist.class, id);
+		}
+		
+		@Override
+		public SbiGlDocWlist getDocWlistOrNull(SbiGlDocWlistId id){
+			List<SbiGlDocWlist> l = list(new loadDocWlistByDocumentAndWord(id.getDocumentId(),id.getWordId()));
+			if (l.isEmpty()) {
+				return null;
+			} else {
+				return l.get(0);
+			}
+			
 		}
 		
 		@Override
