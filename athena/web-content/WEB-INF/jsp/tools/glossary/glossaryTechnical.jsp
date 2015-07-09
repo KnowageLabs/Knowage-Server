@@ -27,7 +27,6 @@
  <![endif]--> 
 	
 	<script type="text/javascript" src="/athena/js/glossary/angular/angular.js"></script>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 	<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/athena/js/glossary/angular/material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="/athena/js/glossary/angular/material_0.10.0/angular-material.js"></script>
@@ -68,17 +67,19 @@
   <md-content  class="glossaryTec">
     <md-tabs  md-border-bottom>
      
+       <md-tab label="NAVIGAZIONE">
+        <md-content class="abs100">
+         <%@include file="/WEB-INF/jsp/tools/glossary/glossary_navigation.jspf"%>
+        </md-content>
+      </md-tab>
       
-      <md-tab label="2.1.4.2.2"">
+      <md-tab label="GESTIONE" >
         <md-content class="abs100">
          <%@include file="/WEB-INF/jsp/tools/glossary/management_associations_between_documents_and_words.jspf"%>
         </md-content>
       </md-tab>
       
-       <md-tab label="2.1.4.2.1">
-        <md-content class="abs100">
-        </md-content>
-      </md-tab>
+      
     
     </md-tabs>
   </md-content>

@@ -9,9 +9,9 @@
 
 		<div layout="column" class="documentListBox">
 
-			<md-toolbar class="md-blue minihead">
+			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div>Document</div>
+				<div>Documenti</div>
 			</div>
 			</md-toolbar>
 
@@ -57,7 +57,7 @@
 
 		<div layout="column" class="documentListBox">
 
-			<md-toolbar class="md-blue minihead">
+			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
 				<div>Vocaboli</div>
 			</div>
@@ -107,9 +107,9 @@
 	
 	<div layout="column" class="documentListBox">
 
-			<md-toolbar class="md-blue minihead">
+			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div >Gloss</div>
+				<div >Glossari</div>
 			</div>
 			</md-toolbar>
 

@@ -13,10 +13,9 @@
 }
 
 .boxItemGlo{
-	 border: 1px solid rgb(232, 232, 232);  
-	  margin: 0 3px;
-	    position: relative;
-	    height:100%;
+border-right: 1px solid rgb(210, 210, 210);
+  position: relative;
+  height: 100%;
 }
 
 md-list.deleteButton button.md-secondary-container{

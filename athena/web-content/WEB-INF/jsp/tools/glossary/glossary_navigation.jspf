@@ -1,0 +1,84 @@
+<div ng-controller="Controller_navigation as ctrl" class="h100">
+	<div class="preloader" ng-show="ctrl.showPreloader">
+		<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div layout="row" layout-wrap class="h100">
+
+		<div flex="20" class="boxItemGlo">
+			<md-toolbar class="md-blue xs-head">
+			<div class="md-toolbar-tools">
+				<div>Vocaboli</div>
+			</div>
+			</md-toolbar>
+
+			<md-content layout-padding> </md-content>
+		</div>
+
+		<div flex="80" class="boxItemGlo">
+
+			<md-toolbar class="md-blue xs-head" style="  border-bottom: 1px solid rgb(210, 210, 210);">
+			<div class="md-toolbar-tools">
+				<div>Elementi</div>
+			</div>
+			</md-toolbar>
+
+			<md-content style="height: calc(100% - 30px);position: absolute;  width: 100%;">
+			<div layout="row" layout-wrap class="h100">
+				<div flex="25" class="boxItemGlo">
+					<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div style="text-align: center; width: 100%;">Documenti</div>
+					</div>
+					</md-toolbar>
+
+					<md-content layout-padding> </md-content>
+				</div>
+
+				<div flex="25" class="boxItemGlo">
+					<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div style="text-align: center; width: 100%;">Data set</div>
+					</div>
+					</md-toolbar>
+
+					<md-content layout-padding> </md-content>
+				</div>
+
+				<div flex="25" class="boxItemGlo">
+					<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div style="text-align: center; width: 100%;">Business class</div>
+					</div>
+					</md-toolbar>
+
+					<md-content layout-padding> </md-content>
+				</div>
+
+				<div flex="25" class="boxItemGlo">
+					<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div style="text-align: center; width: 100%;">Tabelle</div>
+					</div>
+					</md-toolbar>
+
+					<md-content layout-padding> </md-content>
+				</div>
+
+
+
+
+
+
+			</div>
+
+
+
+
+			</md-content>
+		</div>
+
+
+
+	</div>
+
+</div>

@@ -12,9 +12,8 @@ app.service('translate', function() {
 	};
 });
 
-app.controller('Controller', [ "translate", "restServices", "$q", "$scope",
-                       		"$mdDialog", "$filter", "$timeout", "$mdToast", funzione ]);
-
+app.controller('Controller', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione ]);
+app.controller('Controller_navigation', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_navigazione ]);
 
 var listDocument = [{
 	DOCUMENT_ID :0,
@@ -25,8 +24,14 @@ var listDocument = [{
 }
 				]
 
-function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
-		$timeout, $mdToast) {
+function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+	ctrl=this;
+	
+}
+
+
+
+function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	ctrl=this;
 	ctrl.listDoc;
 	ctrl.glossary;
@@ -333,7 +338,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	function changeItemPP() {
 		console.log("changeItemPP")
 		var boxItemGlo = angular.element(document.querySelector('.boxItemGlo'))[0].offsetHeight;
-		var tbw = angular.element(document.querySelector('.minihead'))[0].offsetHeight;
+		var tbw = angular.element(document.querySelector('.xs-head'))[0].offsetHeight;
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
 		 bpw == 0 ? bpw = 19 : bpw = bpw;

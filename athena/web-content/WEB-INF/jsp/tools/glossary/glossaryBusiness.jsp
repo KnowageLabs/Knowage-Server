@@ -28,7 +28,6 @@
 	
 	
 	<script type="text/javascript" src="/athena/js/glossary/angular/angular.js"></script>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/athena/js/glossary/angular/material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="/athena/js/glossary/angular/material_0.10.0/angular-material.js"></script>

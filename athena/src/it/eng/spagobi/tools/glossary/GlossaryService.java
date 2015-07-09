@@ -351,7 +351,16 @@ public class GlossaryService {
 			
 			
 			SbiGlDocWlist docwl=new SbiGlDocWlist();
-			docwl.setId(new SbiGlDocWlistId(wordId, documentId));
+			SbiGlDocWlistId dwlid=new SbiGlDocWlistId(wordId, documentId);
+			SbiGlDocWlist wo=dao.getDocWlistOrNull(dwlid);
+			
+			if(wo!=null){
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.word.new.name.duplicate");
+				return jo.toString();
+			}
+			
+			docwl.setId(dwlid);
 			dao.insertDocWlist(docwl);
 			
 			

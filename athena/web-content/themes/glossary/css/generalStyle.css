@@ -4,6 +4,15 @@
   color: black !important;
 }
 
+.xs-head{
+	  height: 16px !important;
+  color: black !important;
+}
+
+.xs-head .md-title, .md-toolbar-tools{
+	font-size: 12px!important;
+}
+
 .md-button.md-fab.md-ExtraMini {
 	line-height: 25px;
 	width: 25px;
@@ -26,6 +35,13 @@ md-toolbar.minihead {
 	background-color: rgb(232, 232, 232);
 	color: rgb(255, 255, 255);
 	height: 50px;
+	min-height: 0px;
+}
+
+md-toolbar.xs-head {
+	background-color: rgb(232, 232, 232);
+	color: rgb(255, 255, 255);
+	height: 29px;
 	min-height: 0px;
 }
 
