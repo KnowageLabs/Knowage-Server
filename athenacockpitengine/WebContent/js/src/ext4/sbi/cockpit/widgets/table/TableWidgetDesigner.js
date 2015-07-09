@@ -262,23 +262,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			width:			180,
 		});
 		 
-		
-//		 this.headerFontColorText = Ext.create('Ext.form.field.Text',{
-//				 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-//				 name: 				'headerFontColor',
-//		         allowBlank: 		true,
-//		         regex: 			hexColorReg,
-//		         regextText: 		'Not a valid HEX color',
-//		    	 enforceMaxLength: 	true,
-//		 		 maxLength: 		7,
-//		 		 msgTarget: 		'side',
-//	 			labelWidth:			140,
-//				width:				250,
-//				afterLabelTextTpl : '<span class="help" data-qtip="'
-//					+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-//	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
-//		 });
-		 
 		this.headerFontColorText = Ext.create('Ext.ux.FontColorField', { 
 			msgTarget: 	'qtip', 
 			fallback: 		true,
@@ -357,22 +340,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			labelWidth:		130,
 			width:			180
 		});
-		 
-//		 this.rowsFontColorText = Ext.create('Ext.form.field.Text',{
-//			 fieldLabel: 		LN('sbi.cockpit.designer.fontConf.fontColor'),
-//			 name: 				'rowsFontColor',
-//	         allowBlank: 		true,
-//	         regex: 			hexColorReg,
-//	         regextText: 		'Not a valid HEX color',
-//	    	 enforceMaxLength: 	true,
-//	 		 maxLength: 		7,
-//	 		 msgTarget: 		'side',
-//			 labelWidth:		140,
-//			 width:				250,
-//			 afterLabelTextTpl : '<span class="help" data-qtip="'
-//	         	+ LN('sbi.cockpit.designer.fontConf.fontColorTip')
-//	         	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
-//		 });
 		 
 		this.rowsFontColorText = Ext.create('Ext.ux.FontColorField', { 
 			msgTarget: 		'qtip', 
@@ -456,9 +423,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			name: 				'maxRowsNumber',
 	        allowBlank: 		true,
 	        minValue: 0,
-//	    	enforceMaxLength: 	true,
-//	 		maxLength: 		7,
-//	 		msgTarget: 		'side',
 			labelWidth:		tableOptionsLabelWidths,
 			width:				tableOptionsWidths,
 			margin:			tableOptionsMargins
@@ -495,6 +459,15 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			margin:				tableOptionsMargins
 		});
 		
+		var lineSizeField = this.lineSizeField,
+			gridColorField = this.gridColorField;
+		
+		this.hideGridCheckBox.on('change', function(chBox){
+			lineSizeField.setDisabled(chBox.getValue());
+			gridColorField.setDisabled(chBox.getValue());
+		});
+		
+		
 		this.alternateRowsColorsChBox = Ext.create('Ext.form.field.Checkbox', {
 			name: 				'alternateRowsColorsChBox',
             flex: 1
@@ -516,6 +489,14 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			allowBlank: 		true,
 			margin:				'0 0 0 10',
             flex: 3
+		});
+
+		var alternateRowsColorsFirstColorField = this.alternateRowsColorsFirstColorField,
+			alternateRowsColorsSecondColorField = this.alternateRowsColorsSecondColorField;
+		
+		this.alternateRowsColorsChBox.on('change', function(chBox){
+			alternateRowsColorsFirstColorField.setDisabled(!chBox.getValue());
+			alternateRowsColorsSecondColorField.setDisabled(!chBox.getValue());
 		});
 		
 		this.alternateRowsColorsContainer = Ext.create('Ext.form.FieldContainer', {
@@ -627,7 +608,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		if (state.hideGrid) this.hideGridCheckBox.setValue(state.hideGrid);
 		if (state.lineSize) this.lineSizeField.setValue(state.lineSize);
 		if (state.gridColor) this.gridColorField.setValue(state.gridColor);
-		if (state.alternateRowsColors) this.alternateRowsColorsChBox.setValue(state.alternateRowsColors);
+		if (state.alternateRowsColors != undefined) {
+			this.alternateRowsColorsChBox.setValue(state.alternateRowsColors);
+			this.alternateRowsColorsFirstColorField.setDisabled(!state.alternateRowsColors);
+			this.alternateRowsColorsSecondColorField.setDisabled(!state.alternateRowsColors);
+		}
 		if (state.alternateRowsColorsFirst) this.alternateRowsColorsFirstColorField.setValue(state.alternateRowsColorsFirst);
 		if (state.alternateRowsColorsSecond) this.alternateRowsColorsSecondColorField.setValue(state.alternateRowsColorsSecond);
 
@@ -792,20 +777,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		Sbi.trace("[TableWidgetDesigner.findTableFont]: IN");
 		
 		var tableFonts = Sbi.storeManager.getFont("tableFonts");
-//		var fonts = Sbi.storeManager.getFonts();
-//		
-//		var tabIndex = -1;
-//		
-//		for(var i = 0; i < fonts.length; i++) {
-//			if(Sbi.isValorized(fonts[i]) && fonts[i].tabId === "tableFonts") {
-//				tabIndex = i;
-//				break;
-//			}
-//		}
-//		
-//		if(tabIndex >= 0){
-//			tableFonts = fonts[tabIndex]
-//		}
 		
 		return tableFonts		
 		
@@ -858,12 +829,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		if(this.rowsFontDecorationCombo !== null) {	
 			state.rowsFontDecoration = this.rowsFontDecorationCombo.getValue();
 		}
-		
-		
+				
 		Sbi.trace("[TableWidgetDesigner.getFontState]: OUT");		
 	}
-	
-
-
-
 });
