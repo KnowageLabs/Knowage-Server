@@ -29,7 +29,7 @@ public class SearchGlossaryStructureWithWordLike implements ICriterion<SbiGlWlis
 		c.createAlias("wlist.content", "contentWl"); 
 		c.createAlias("contentWl.glossary", "glossaryWl"); 
 		c.createAlias("word", "wordWl");
-		c.createAlias("contentWl.parent", "parent"); // get parent info
+//		c.createAlias("contentWl.parent", "parent"); // get parent info
 		c.add(Restrictions.eq("glossaryWl.glossaryId", Integer.parseInt(glossaryId)));
 		c.add(Restrictions.like("wordWl.word",  word, MatchMode.ANYWHERE).ignoreCase());
 		

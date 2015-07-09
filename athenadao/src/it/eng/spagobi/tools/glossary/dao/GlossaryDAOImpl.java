@@ -9,14 +9,18 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchListDocWlist;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordAttrByWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchtWlistByGlossaryIdAndWordId;
+import it.eng.spagobi.tools.glossary.dao.criterion.loadContentsParent;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlReferencesId;
@@ -41,6 +45,8 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -91,9 +97,10 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			@Override
 			public Boolean execute(Session session) {
 
-				List<SbiGlContents> lc=listContentsByGlossaryIdAndParentId(glossaryId,null);
-				
-				for(SbiGlContents sb:lc){
+				List<SbiGlContents> lc = listContentsByGlossaryIdAndParentId(
+						glossaryId, null);
+
+				for (SbiGlContents sb : lc) {
 					deleteContents(sb.getContentId());
 				}
 				delete(SbiGlGlossary.class, glossaryId);
@@ -102,84 +109,224 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		});
 
 	}
-	
+
 	@Override
-	public void cloneGlossary(final Integer glossaryId,final Integer newGlossId ) {
+	public void cloneGlossary(final Integer glossaryId, final Integer newGlossId) {
 
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 
 			@Override
 			public Boolean execute(Session session) {
-				
-//					//get glossary
-//				 SbiGlGlossary glo=loadGlossary(glossaryId);
-//					if (glo==null) {
-//						return false;
-//					}
-//					glo.setGlossaryNm(glo.getGlossaryNm()+"-copy");
-//					Integer newGlossId	=insertGlossary(glo);
-					
-					Map<Integer,Integer> newID = new HashMap<Integer,Integer>();
-					
-				List<SbiGlContents> toClone=new ArrayList<SbiGlContents>();
-				//add first level child
-				toClone.addAll(listContentsByGlossaryIdAndParentId(glossaryId,null));
-				
-				
-				while(!toClone.isEmpty()){
-					SbiGlContents tmp=toClone.remove(0);
+
+				// //get glossary
+				// SbiGlGlossary glo=loadGlossary(glossaryId);
+				// if (glo==null) {
+				// return false;
+				// }
+				// glo.setGlossaryNm(glo.getGlossaryNm()+"-copy");
+				// Integer newGlossId =insertGlossary(glo);
+
+				Map<Integer, Integer> newID = new HashMap<Integer, Integer>();
+
+				List<SbiGlContents> toClone = new ArrayList<SbiGlContents>();
+				// add first level child
+				toClone.addAll(listContentsByGlossaryIdAndParentId(glossaryId,
+						null));
+
+				while (!toClone.isEmpty()) {
+					SbiGlContents tmp = toClone.remove(0);
 					tmp.setGlossaryId(newGlossId);
 					tmp.setParentId(newID.get(tmp.getParentId()));
-					Integer oldID=	tmp.getContentId();
-					Integer ni=insertContents(tmp);
+					Integer oldID = tmp.getContentId();
+					Integer ni = insertContents(tmp);
 					newID.put(oldID, ni);
-					
-					
-					List<SbiGlContents> chlis=listContentsByGlossaryIdAndParentId(glossaryId,oldID);
-					for(SbiGlContents glc : chlis){
+
+					List<SbiGlContents> chlis = listContentsByGlossaryIdAndParentId(
+							glossaryId, oldID);
+					for (SbiGlContents glc : chlis) {
 						toClone.add(glc);
 					}
-					if(chlis.isEmpty()){
-						//check if have node child
-						 List<SbiGlWord> wl=listWlistWord(oldID);
-						for(SbiGlWord sgw:wl){
-						SbiGlWlist contw=new SbiGlWlist();
-						contw.setId(new SbiGlWlistId(sgw.getWordId(),ni));
-						insertWlist(contw);
+					if (chlis.isEmpty()) {
+						// check if have node child
+						List<SbiGlWord> wl = listWlistWord(oldID);
+						for (SbiGlWord sgw : wl) {
+							SbiGlWlist contw = new SbiGlWlist();
+							contw.setId(new SbiGlWlistId(sgw.getWordId(), ni));
+							insertWlist(contw);
 						}
 					}
-					
+
 				}
-				
+
 				return true;
 			}
 		});
 
 	}
 
-	@Override
-	public SbiGlGlossary glosstreeLike(final String glossId,final String word){
-		return executeOnTransaction(new IExecuteOnTransaction<SbiGlGlossary>() {
-			@Override
-			public SbiGlGlossary execute(Session session) {
-				SbiGlGlossary glo=new SbiGlGlossary();
-				
-				List<SbiGlWlist>  wordl=list(new SearchGlossaryStructureWithWordLike(glossId, word));
-				
-				
+	public static JSONObject fromContentsLight(SbiGlContents sbiGlContents,
+			boolean wordChild, boolean ContentsChild) throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("CONTENT_ID", sbiGlContents.getContentId());
+		ret.put("CONTENT_NM", sbiGlContents.getContentNm());
+		ret.put("HAVE_WORD_CHILD", wordChild);
+		ret.put("HAVE_CONTENTS_CHILD", ContentsChild);
+		ret.put("CHILD", new JSONArray());
+		return ret;
+	}
+
+	private static JSONObject fromWordLight(SbiGlWord sbiGlWord)
+			throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("WORD_ID", sbiGlWord.getWordId());
+		jobj.put("WORD", sbiGlWord.getWord());
+		return jobj;
+	}
+
+	private void addAll(JSONArray a,JSONArray b) throws JSONException{
+		for(int i=0;i<b.length();i++){
+			a.put(b.get(i));
+		}
+	}
+	private JSONArray createTreeStructureFromMap(JSONArray start,
+			Map<String, JSONObject> map) throws JSONException {
+		JSONArray fin = new JSONArray();
+		while (start.length() != 0) {
+			String tmp = start.remove(0).toString();
+			// recupero l'oggetto
+			JSONObject jo = map.get(tmp);
+			// recupero i suoi figli
+
+			JSONArray jaf = new JSONArray();
+			
+			if(jo.has("CHILD")){
+			JSONArray ch = jo.getJSONArray("CHILD");
+			
+				for (int i = 0; i < ch.length(); i++) {
+					if(jo.getBoolean("HAVE_CONTENTS_CHILD")){
+					addAll(jaf,createTreeStructureFromMap(map.get(ch.get(i)).getJSONArray("CHILD"), map));
+					}else{
+						jaf.put(map.get(ch.get(i)));
+					}
+				}
 				
 			
-				
-				return glo;
+			
+			jo.put("CHILD", jaf);
+			
+			}
+			fin.put(jo);
+
+		}
+
+		return fin;
+	}
+
+	@Override
+	public JSONObject glosstreeLike(final String glossId, final String word) {
+		return executeOnTransaction(new IExecuteOnTransaction<JSONObject>() {
+			@Override
+			public JSONObject execute(Session session) {
+				JSONObject jo = new JSONObject();
+				try {
+
+					SbiGlGlossary glo = loadGlossary(Integer.parseInt(glossId));
+
+					jo.put("GLOSSARY_ID", glo.getGlossaryId());
+					jo.put("GLOSSARY_NM", glo.getGlossaryNm());
+					jo.put("SBI_GL_CONTENTS", new JSONArray());
+					//
+
+					List<SbiGlWlist> wordl = list(new SearchGlossaryStructureWithWordLike(
+							glossId, word));
+					// Map<Integer,SbiGlContents> cont = new
+					// HashMap<Integer,SbiGlContents>();
+
+					Map<String, JSONObject> map = new HashMap<String, JSONObject>();
+
+					for (SbiGlWlist wl : wordl) {
+						// cont.put(wl.getContent().getContentId(),
+						// wl.getContent());
+
+						// first element have word child and haven't logical
+						// children
+
+						map.put("W-" + wl.getWord().getWordId(),
+								fromWordLight(wl.getWord()));
+
+						if (!map.containsKey("L-"+ wl.getContent().getContentId())) {
+							JSONObject tmpwl = fromContentsLight(wl.getContent(), true, false);
+							tmpwl.getJSONArray("CHILD").put("W-" + wl.getWord().getWordId());
+							// add logical node
+							map.put("L-" + wl.getContent().getContentId(),tmpwl);
+						} else {
+							map.get("L-" + wl.getContent().getContentId()).getJSONArray("CHILD").put("W-" + wl.getWord().getWordId());
+						}
+
+						SbiGlContents par;
+						String child = "L-" + wl.getContent().getContentId();
+						do {
+							par = loadContentsByParent(Integer.parseInt(child
+									.split("-")[1]));
+							if (par != null) {
+								if (map.containsKey("L-" + par.getContentId())) {
+									if (map.get("L-" + par.getContentId())
+											.getJSONArray("CHILD").toString()
+											.indexOf(child) == -1) {
+										// add a node to present parent
+										map.get("L-" + par.getContentId())
+												.getJSONArray("CHILD")
+												.put(child);
+									}
+								} else {
+									// parent non present in map
+									JSONObject tmp = fromContentsLight(par,
+											false, true);
+									tmp.getJSONArray("CHILD").put(child);
+									map.put("L-" + par.getContentId(), tmp);
+								}
+								child = "L-" + par.getContentId();
+
+							}
+
+						} while (par != null);
+
+						if (jo.getJSONArray("SBI_GL_CONTENTS").toString()
+								.indexOf(child) == -1) {
+							jo.getJSONArray("SBI_GL_CONTENTS").put(child);
+						}
+
+					}
+
+					JSONArray fin = createTreeStructureFromMap(
+							jo.getJSONArray("SBI_GL_CONTENTS"), map);
+					jo.put("SBI_GL_CONTENTS", fin);
+
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				return jo;
 			}
 
 		});
-			
+
 	}
-	
+
 	@Override
 	public SbiGlContents loadContents(Integer contentId) {
 		return load(SbiGlContents.class, contentId);
+	}
+
+	@Override
+	public SbiGlContents loadContentsByParent(Integer contentId) {
+		List<SbiGlContents> l = list(new loadContentsParent(contentId));
+		if (l.isEmpty()) {
+			return null;
+		} else {
+			return l.get(0).getParent();
+		}
 	}
 
 	@Override
@@ -199,8 +346,19 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		return list(new SearchContentsByParent(glossaryId, parentId));
 	}
 	
-
+	@Override
+	public Integer CountContentChild(final Integer contentId) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) {
+				
+		return ((Long) session.createCriteria(SbiGlContents.class).setProjection(Projections.rowCount()).add(Restrictions.eq("parent.contentId", contentId)).uniqueResult()).intValue();
 	
+			}
+			
+		});
+	}
+
 	@Override
 	public Integer insertContents(SbiGlContents contents) {
 		return (Integer) insert(contents);
@@ -212,15 +370,18 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	@Override
-	public boolean modifyContentPosition(Integer contentId, Integer parentId,Integer glossaryId) {
+	public boolean modifyContentPosition(Integer contentId, Integer parentId,
+			Integer glossaryId) {
 		SbiGlContents content = load(SbiGlContents.class, contentId);
-		List<SbiGlContents> parent = listContentsByGlossaryIdAndParentId(glossaryId,parentId);
-		for(SbiGlContents sb : parent){
-			if(sb.getContentNm().toLowerCase().trim().compareTo(content.getContentNm().toLowerCase().trim())==0){
+		List<SbiGlContents> parent = listContentsByGlossaryIdAndParentId(
+				glossaryId, parentId);
+		for (SbiGlContents sb : parent) {
+			if (sb.getContentNm().toLowerCase().trim()
+					.compareTo(content.getContentNm().toLowerCase().trim()) == 0) {
 				return false;
 			}
 		}
-		
+
 		content.setParentId(parentId);
 		content.setGlossaryId(glossaryId);
 		update(content);
@@ -243,10 +404,14 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 					}
 				} else {
 					// check if have word references
+					
+					
 					Query q = session
 							.createQuery("delete from SbiGlWlist  where content.contentId="
 									+ contentId);
 					q.executeUpdate();
+					
+				
 				}
 
 				Object obj = session.get(SbiGlContents.class, contentId);
@@ -263,15 +428,29 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	public SbiGlWord loadWord(Integer wordId) {
 		return load(SbiGlWord.class, wordId);
 	}
-
 	@Override
-	public List<SbiGlWord> listWord() {
-		return list(new SearchWord());
+	public Integer wordCount(final String word){
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) {
+				if (word != null && !word.trim().isEmpty()){
+						return ((Long) session.createCriteria(SbiGlWord.class).setProjection(Projections.rowCount()).add(Restrictions.like("word", word, MatchMode.ANYWHERE).ignoreCase()).uniqueResult()).intValue();
+					}
+				return ((Long) session.createCriteria(SbiGlWord.class).setProjection(Projections.rowCount()).uniqueResult()).intValue();
+	
+			}
+			
+		});
+			}
+	
+	@Override
+	public List<SbiGlWord> listWord(Integer page,Integer item_per_page) {
+		return list(new SearchWord( page, item_per_page));
 	}
 
 	@Override
-	public List<SbiGlWord> listWordFiltered(String word) {
-		return list(new SearchWordByWord(word));
+	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page) {
+		return list(new SearchWordByWord(word,page, item_per_page));
 	}
 
 	@Override
@@ -483,37 +662,55 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 
 	@Override
 	public void deleteWord(final Integer wordId) {
-		
+
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 
 			@Override
 			public Boolean execute(Session session) {
 
-					Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
-					q.setParameter("id", wordId);
-					q.executeUpdate();
+				Query q = session
+						.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
+				q.setParameter("id", wordId);
+				q.executeUpdate();
+
+				Query q3 = session
+						.createQuery("delete from SbiGlDocWlist  where id.wordId=:id");
+				q3.setParameter("id", wordId);
+				q3.executeUpdate();
 				
-					
-					Query q2 = session
-							.createQuery("delete from SbiGlWlist  where word.wordId=:id");
-					q2.setParameter("id", wordId);
-					q2.executeUpdate();
-					
-					Object obj = session.get(SbiGlWord.class, wordId);
-					if (obj != null) {
-						session.delete(obj);
-					}
-					return true;
+				Query q2 = session
+						.createQuery("delete from SbiGlWlist  where word.wordId=:id");
+				q2.setParameter("id", wordId);
+				q2.executeUpdate();
+
+				
+				
+				Object obj = session.get(SbiGlWord.class, wordId);
+				if (obj != null) {
+					session.delete(obj);
+				}
+				return true;
 			}
 		});
-		
-		
-		
+
 	}
 
 	@Override
 	public List<SbiGlWlist> listWlist(Integer contentId) {
 		return list(new SearchWlistByContentId(contentId));
+	}
+	
+	@Override
+	public Integer CountWlistByContent(final Integer contentId) {
+		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
+			@Override
+			public Integer execute(Session session) {
+				
+		return ((Long) session.createCriteria(SbiGlWlist.class).setProjection(Projections.rowCount()).add(Restrictions.eq("content.contentId", contentId)).uniqueResult()).intValue();
+	
+			}
+			
+		});
 	}
 
 	@Override
@@ -526,7 +723,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 
 		return a;
 	}
-	
+
 	@Override
 	public SbiGlWlist loadWlist(SbiGlWlistId id) {
 		return load(SbiGlWlist.class, id);
@@ -537,12 +734,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		return executeOnTransaction(new IExecuteOnTransaction<SbiGlWlistId>() {
 			@Override
 			public SbiGlWlistId execute(Session session) {
-				
-				
-			if(session.get( SbiGlWlist.class, wlist.getId())!=null){
-				//if already exist 
-				return null;
-			}
+
+				if (session.get(SbiGlWlist.class, wlist.getId()) != null) {
+					// if already exist
+					return null;
+				}
 				return (SbiGlWlistId) session.save(wlist);
 			}
 		});
@@ -557,13 +753,12 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	public void deleteWlist(SbiGlWlistId wlistId) {
 		delete(SbiGlWlist.class, wlistId);
 	}
-	
+
 	@Override
-	public List<SbiGlWlist> listWlistByGlossaryIdAndWordId(Integer glossaryId, Integer wordId) {
+	public List<SbiGlWlist> listWlistByGlossaryIdAndWordId(Integer glossaryId,
+			Integer wordId) {
 		return list(new SearchtWlistByGlossaryIdAndWordId(glossaryId, wordId));
 	}
-	
-	
 
 	@Override
 	public SbiGlAttribute loadAttribute(Integer attributeId) {
@@ -617,14 +812,15 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 
 	@Override
 	public void deleteWordReferences(Integer id) {
-		
+
 		Session session = null;
 		Transaction tx = null;
 		LogMF.debug(logger, "IN: id = [{0}]", id);
 
 		try {
 			if (id == null) {
-				throw new IllegalArgumentException("Input parameter [id] cannot be null");
+				throw new IllegalArgumentException(
+						"Input parameter [id] cannot be null");
 			}
 			try {
 				session = getSession();
@@ -632,11 +828,13 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 				tx = session.beginTransaction();
 				Assert.assertNotNull(tx, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDOAException(
+						"An error occured while creating the new transaction",
+						t);
 			}
 
-			
-			Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
+			Query q = session
+					.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
 			q.setParameter("id", id);
 			q.executeUpdate();
 			tx.commit();
@@ -644,17 +842,42 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		} catch (Throwable t) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDOAException("An unexpected error occured while deleting word references where word id is equal to [" + id + "]", t);
+			throw new SpagoBIDOAException(
+					"An unexpected error occured while deleting word references where word id is equal to ["
+							+ id + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
 			logger.debug("OUT");
 		}
-	
-		
+
 	}
 
+	
+		@Override
+		public List<SbiGlDocWlist> listDocWlist(Integer docwId){
+
+			return list(new SearchListDocWlist(docwId));
+		}
+		
+		@Override
+		public SbiGlDocWlist loadDocWlist(SbiGlDocWlistId id){
+			return load(SbiGlDocWlist.class, id);
+		}
+		
+		@Override
+		public SbiGlDocWlistId insertDocWlist(SbiGlDocWlist docwlist){
+			return (SbiGlDocWlistId) insert(docwlist);
+		}
+		
+		@Override
+		public void deleteDocWlist(SbiGlDocWlistId id){
+			delete(SbiGlDocWlist.class, id);
+		}
+	
+	
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<SbiGlWord> listWordFromArray(final Object[] arr) {
@@ -681,5 +904,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			}
 		});
 	}
+	
+	
 
 }

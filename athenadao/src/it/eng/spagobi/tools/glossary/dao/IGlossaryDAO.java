@@ -3,6 +3,8 @@ package it.eng.spagobi.tools.glossary.dao;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
@@ -39,7 +41,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public void cloneGlossary(Integer glossaryId,Integer newGlossId);
 	
-	public SbiGlGlossary glosstreeLike(String glossId,String word);
+	public JSONObject glosstreeLike(String glossId,String word);
 
 	
 	
@@ -47,7 +49,11 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// Contents
 	//
 	public SbiGlContents loadContents(Integer contentId);
-
+	
+	public Integer CountContentChild(Integer contentId);
+	
+	public SbiGlContents loadContentsByParent(Integer contentId);
+	
 	public List<SbiGlContents> loadContentsByName(String contentNM);
 
 	public List<SbiGlContents> listContents();
@@ -68,13 +74,15 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	//
 	public SbiGlWord loadWord(Integer wordId);
 	
+	public Integer wordCount(String word);
+	
 	public List<SbiGlWord> loadWordByName(String wordNM);
 
-	public List<SbiGlWord> listWord();
+	public List<SbiGlWord> listWord(Integer page,Integer item_per_page);
 	
 	public List<SbiGlWord> listWordFromArray(Object[] arr);
 
-	public List<SbiGlWord> listWordFiltered(String word);
+	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page);
 
 	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
 
@@ -86,6 +94,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	// Wishlist
 	//
 	public List<SbiGlWlist> listWlist(Integer contentId);
+	
+	public Integer CountWlistByContent( Integer contentId) ;
 	
 	public List<SbiGlWord> listWlistWord(Integer contentId);
 
@@ -130,4 +140,14 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	
 	//references
 	public void deleteWordReferences(Integer wordId);
+	
+	//docWlist
+	public List<SbiGlDocWlist> listDocWlist(Integer docwId);
+	
+	public SbiGlDocWlist loadDocWlist(SbiGlDocWlistId docwlistId);
+	
+	public SbiGlDocWlistId insertDocWlist(SbiGlDocWlist docwlist);
+	
+	public void deleteDocWlist(SbiGlDocWlistId id);
+	
 }
