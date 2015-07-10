@@ -131,7 +131,11 @@ public interface IDataSet {
 	
 	boolean isPersisted();
 	void setPersisted(boolean persisted);
-		
+
+	boolean isScheduled();
+
+	void setScheduled(boolean scheduled);
+
 	boolean isFlatDataset();
 	
 	String getFlatTableName();

@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
@@ -48,8 +48,9 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
-import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
-import it.eng.spagobi.commons.metadata.SbiOrganizationEngineId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
@@ -123,8 +124,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 
 /**
- * Implements the interface which defines methods for managing the import
- * requests
+ * Implements the interface which defines methods for managing the import requests
  */
 public class ImportManager extends AbstractHibernateDAO implements IImportManager, Serializable {
 
@@ -160,14 +160,14 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Prepare the environment for the import procedure.
-	 * 
+	 *
 	 * @param pathImpTmpFold
 	 *            The path of the temporary import folder
 	 * @param archiveName
 	 *            the name of the compress exported file
 	 * @param archiveContent
 	 *            the bytes of the compress exported file
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -280,10 +280,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports the exported objects.
-	 * 
+	 *
 	 * @param overwrite
 	 *            the overwrite
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -362,11 +362,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		metaLog.log("-------SbiObjMetacontents -----");
 		importObjMetacontent(overwrite);
 		/*
-		 * metaLog.log("-------UDP -----"); importUdp(overwrite);
-		 * metaLog.log("-------UDP values -----"); importUdpValues(overwrite);
-		 * metaLog.log("-------OU grants -----"); importOuGrants(overwrite);
-		 * metaLog.log("-------OU grant nodes -----");
-		 * importOuGrantNodes(overwrite);
+		 * metaLog.log("-------UDP -----"); importUdp(overwrite); metaLog.log("-------UDP values -----"); importUdpValues(overwrite);
+		 * metaLog.log("-------OU grants -----"); importOuGrants(overwrite); metaLog.log("-------OU grant nodes -----"); importOuGrantNodes(overwrite);
 		 */
 
 		logger.debug("OUT");
@@ -374,7 +371,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the SpagoBI version of the exported file.
-	 * 
+	 *
 	 * @return The SpagoBI version of the exported file
 	 */
 	public String getExportVersion() {
@@ -383,7 +380,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the current SpagobI version.
-	 * 
+	 *
 	 * @return The current SpagoBI version
 	 */
 	public String getCurrentVersion() {
@@ -397,9 +394,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the list of all exported roles.
-	 * 
+	 *
 	 * @return The list of exported roles
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -411,9 +408,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the list of all exported engines.
-	 * 
+	 *
 	 * @return The list of exported engines
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -424,16 +421,13 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * checks if two or more exported roles are associate to the same current
-	 * role.
-	 * 
+	 * checks if two or more exported roles are associate to the same current role.
+	 *
 	 * @param roleAssociations
-	 *            Map of assocaition between exported roles and roles of the
-	 *            portal in use
-	 * 
+	 *            Map of assocaition between exported roles and roles of the portal in use
+	 *
 	 * @throws EMFUserError
-	 *             if two ore more exported roles are associate to the same
-	 *             current role
+	 *             if two ore more exported roles are associate to the same current role
 	 */
 	public void checkRoleReferences(Map roleAssociations) throws EMFUserError {
 		logger.debug("IN");
@@ -460,21 +454,17 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Update the data source name for each list of values of type query based
-	 * on association between exported data sources and current system data
-	 * sources.
-	 * 
+	 * Update the data source name for each list of values of type query based on association between exported data sources and current system data sources.
+	 *
 	 * @param mapDataSources
-	 *            Map of the associations between exported data sources and
-	 *            current system data sources
-	 * 
+	 *            Map of the associations between exported data sources and current system data sources
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
 	public void updateDataSourceReferences(Map mapDataSources) throws EMFUserError {
 		/*
-		 * The key of the map are the name of the exported data sources Each key
-		 * value is the name of the current system data source associate
+		 * The key of the map are the name of the exported data sources Each key value is the name of the current system data source associate
 		 */
 		importer.updateDSRefs(mapDataSources, sessionExpDB, metaLog);
 	}
@@ -512,9 +502,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Commits all changes made on exported and current databases.
-	 * 
+	 *
 	 * @return the import result info
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -613,7 +603,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Authorizations
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importAuthorizations() throws EMFUserError {
@@ -726,7 +716,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported roles
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importRoles(boolean overwrite) throws EMFUserError {
@@ -801,8 +791,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/*
-	 * error case user is not superadmin and datasource is not associated to
-	 * current tenant (not superadmin cannot do association)
+	 * error case user is not superadmin and datasource is not associated to current tenant (not superadmin cannot do association)
 	 */
 	void checkIfCanImportEngine(SbiDataSource dataSource, Integer existingDatasourceId) throws EMFUserError {
 		logger.debug("IN");
@@ -814,18 +803,18 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports exported engines
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importEngines() throws EMFUserError {
 		logger.debug("IN");
-		SbiEngines engine = null;
+		SbiEngines exportedEngine = null;
 		try {
 			List exportedEngines = importer.getAllExportedSbiObjects(sessionExpDB, "SbiEngines", null);
 			Iterator iterSbiEngines = exportedEngines.iterator();
 			while (iterSbiEngines.hasNext()) {
-				engine = (SbiEngines) iterSbiEngines.next();
-				Integer oldId = engine.getEngineId();
+				exportedEngine = (SbiEngines) iterSbiEngines.next();
+				Integer oldId = exportedEngine.getEngineId();
 				Map engIdAss = metaAss.getEngineIDAssociation();
 				Set engIdAssSet = engIdAss.keySet();
 				if (engIdAssSet.contains(oldId)) {
@@ -834,18 +823,22 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					// own existing associated engine an error must be thrown
 					if (!isSuperadmin) {
 						boolean engineFound = false;
-						List<SbiOrganizationEngine> orgDs = DAOFactory.getTenantsDAO().loadSelectedEngines(getTenant());
-						for (Iterator iterator = orgDs.iterator(); iterator.hasNext() && !engineFound;) {
-							SbiOrganizationEngine sbiOrganizationEngine = (SbiOrganizationEngine) iterator.next();
-							if (sbiOrganizationEngine.getSbiEngines().getEngineId().equals(engIdAss.get(oldId)))
-								engineFound = true;
+						List<SbiOrganizationProductType> orgProds = DAOFactory.getTenantsDAO().loadSelectedProductTypes(getTenant());
+						for (Iterator productTypeIterator = orgProds.iterator(); productTypeIterator.hasNext() && !engineFound;) {
+							SbiProductType productType = ((SbiOrganizationProductType) productTypeIterator.next()).getSbiProductType();
+							List<SbiProductTypeEngine> orgEngs = DAOFactory.getProductTypeDAO().loadSelectedEngines(productType.getLabel());
+							for (Iterator engineIterator = orgEngs.iterator(); engineIterator.hasNext() && !engineFound;) {
+								SbiEngines engine = ((SbiProductTypeEngine) engineIterator.next()).getSbiEngines();
+								if (engine.getEngineId().equals(engIdAss.get(oldId)))
+									engineFound = true;
+							}
 						}
 						if (engineFound == false) {
-							logger.error("Exported engine " + engine.getLabel() + " is not associated to current tenant " + getTenant()
-									+ "and user is not superadmin and thus cannot do association");
+							logger.error("The exported engine " + exportedEngine.getLabel()
+									+ " is not associated to any of the product currently purchased by tenant " + getTenant());
 							List params = new ArrayList();
-							if (engine != null)
-								params.add(engine.getLabel());
+							if (exportedEngine != null)
+								params.add(exportedEngine.getLabel());
 							else
 								params.add("");
 							params.add(getTenant());
@@ -854,15 +847,15 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 					}
 
-					metaLog.log("Exported engine " + engine.getName() + " not inserted"
+					metaLog.log("Exported engine " + exportedEngine.getName() + " not inserted"
 							+ " because it has been associated to an existing engine or it has the same label " + " of an existing engine");
-					logger.debug("Exported engine " + engine.getName() + " not inserted"
+					logger.debug("Exported engine " + exportedEngine.getName() + " not inserted"
 							+ " because it has been associated to an existing engine or it has the same label " + " of an existing engine");
 					continue;
 				}
 
-				SbiEngines newEng = importUtilities.makeNew(engine);
-				SbiDomains engineTypeDomain = engine.getEngineType();
+				SbiEngines newEng = importUtilities.makeNew(exportedEngine);
+				SbiDomains engineTypeDomain = exportedEngine.getEngineType();
 				Map uniqueEngineType = new HashMap();
 				uniqueEngineType.put("valuecd", engineTypeDomain.getValueCd());
 				uniqueEngineType.put("domaincd", "ENGINE_TYPE");
@@ -870,7 +863,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existEngineTypeDomain != null) {
 					newEng.setEngineType(existEngineTypeDomain);
 				}
-				SbiDomains biobjectTypeDomain = engine.getBiobjType();
+				SbiDomains biobjectTypeDomain = exportedEngine.getBiobjType();
 				Map uniqueBiobjectType = new HashMap();
 				uniqueBiobjectType.put("valuecd", biobjectTypeDomain.getValueCd());
 				uniqueBiobjectType.put("domaincd", "BIOBJ_TYPE");
@@ -888,8 +881,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					if (!isSuperadmin) {
 						logger.error("Current user is not superadmin and cannot insert new Engines");
 						List params = new ArrayList();
-						if (engine != null)
-							params.add(engine.getLabel());
+						if (exportedEngine != null)
+							params.add(exportedEngine.getLabel());
 						else
 							params.add("");
 						params.add(getTenant());
@@ -899,47 +892,47 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 					sessionCurrDB.save(newEng);
 					sessionCurrDB.flush();
 
-					SbiTenant sbiOrganizations = DAOFactory.getTenantsDAO().loadTenantByName(getTenant());
-					SbiOrganizationEngine sbiOrganizationEngine = new SbiOrganizationEngine();
-					sbiOrganizationEngine.setSbiEngines(newEng);
-					sbiOrganizationEngine.setSbiOrganizations(sbiOrganizations);
-					SbiOrganizationEngineId idRel = new SbiOrganizationEngineId();
-					idRel.setEngineId(newEng.getEngineId());
-					idRel.setOrganizationId(sbiOrganizations.getId());
-					sbiOrganizationEngine.setId(idRel);
-					sbiOrganizationEngine.getCommonInfo().setOrganization(getTenant());
-					updateSbiCommonInfo4Insert(sbiOrganizationEngine);
+					// SbiTenant sbiOrganizations = DAOFactory.getTenantsDAO().loadTenantByName(getTenant());
+					// SbiOrganizationEngine sbiOrganizationEngine = new SbiOrganizationEngine();
+					// sbiOrganizationEngine.setSbiEngines(newEng);
+					// sbiOrganizationEngine.setSbiOrganizations(sbiOrganizations);
+					// SbiOrganizationEngineId idRel = new SbiOrganizationEngineId();
+					// idRel.setEngineId(newEng.getEngineId());
+					// idRel.setOrganizationId(sbiOrganizations.getId());
+					// sbiOrganizationEngine.setId(idRel);
+					// sbiOrganizationEngine.getCommonInfo().setOrganization(getTenant());
+					// updateSbiCommonInfo4Insert(sbiOrganizationEngine);
+					//
+					// sessionCurrDB.save(sbiOrganizationEngine);
+					// sessionCurrDB.flush();
+					// logger.debug("Association made between engine " + newEng.getDescr() + " with current tenant " + getTenant());
 
-					sessionCurrDB.save(sbiOrganizationEngine);
-					sessionCurrDB.flush();
-					logger.debug("Association made between engine " + newEng.getDescr() + " with current tenant " + getTenant());
-
-					metaLog.log("Inserted new engine " + engine.getName());
-					logger.debug("Inserted new engine " + engine.getName());
+					metaLog.log("Inserted new engine " + exportedEngine.getName());
+					logger.debug("Inserted new engine " + exportedEngine.getName());
 					Integer newId = newEng.getEngineId();
 					metaAss.insertCoupleEngine(oldId, newId);
 
 				} else {
-					metaLog.log("Could not insert engine " + engine.getName() + " because user is not superadmin");
-					logger.debug("Could not insert engine " + engine.getName() + " because user is not superadmin");
+					metaLog.log("Could not insert engine " + exportedEngine.getName() + " because user is not superadmin");
+					logger.debug("Could not insert engine " + exportedEngine.getName() + " because user is not superadmin");
 
 					// trace the engine that will not be inserted because
 					// documetns using it must be ignored!
-					enginesDiscarded.add(engine.getLabel());
+					enginesDiscarded.add(exportedEngine.getLabel());
 				}
 
 			}
 		} catch (EMFUserError he) {
 			throw he;
 		} catch (Exception e) {
-			if (engine != null) {
-				logger.error("Error while importing exported engine with label [" + engine.getLabel() + "].", e);
+			if (exportedEngine != null) {
+				logger.error("Error while importing exported engine with label [" + exportedEngine.getLabel() + "].", e);
 			}
 			logger.error("Error while inserting object ", e);
 			List params = new ArrayList();
 			params.add("SbiEngines");
-			if (engine != null)
-				params.add(engine.getLabel());
+			if (exportedEngine != null)
+				params.add(exportedEngine.getLabel());
 			else
 				params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
@@ -950,7 +943,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * function to import ObjMetada
-	 * 
+	 *
 	 * @param overwrite
 	 * @throws EMFUserError
 	 */
@@ -1016,10 +1009,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/*
-	 * Two error cases user is not superadmin and exported datsource is of type
-	 * JNDI and not associated to any current datasource 8022 user is not
-	 * superadmin and datasource esisting and is not associated to current
-	 * tenant (not superadmin cannot do association) 8023
+	 * Two error cases user is not superadmin and exported datsource is of type JNDI and not associated to any current datasource 8022 user is not superadmin
+	 * and datasource esisting and is not associated to current tenant (not superadmin cannot do association) 8023
 	 */
 	void checkIfCanImportDataSource(SbiDataSource dataSource, Integer existingDatasourceId) throws EMFUserError {
 		logger.debug("IN");
@@ -1427,7 +1418,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports exported functionalities
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importFunctionalities(boolean overwrite) throws EMFUserError {
@@ -1571,7 +1562,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported lovs
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importLovs(boolean overwrite) throws EMFUserError {
@@ -1637,7 +1628,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported checks
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importChecks() throws EMFUserError {
@@ -1695,7 +1686,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported parameters
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importParameters(boolean overwrite) throws EMFUserError {
@@ -1825,7 +1816,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * import exported biobjects
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importBIObjects(boolean overwrite) throws EMFUserError {
@@ -1950,7 +1941,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports viewpoint associated to object
-	 * 
+	 *
 	 * @param exportedBIObjectId
 	 *            The id of the current exported object
 	 * @throws EMFUserError
@@ -2287,9 +2278,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Controls if a subobject is already existing (i.e. they have the same
-	 * name, owner, visibility, creation date and last modification date)
-	 * 
+	 * Controls if a subobject is already existing (i.e. they have the same name, owner, visibility, creation date and last modification date)
+	 *
 	 * @param expSubObject
 	 * @param currentSubObjList
 	 * @return the subobject if is already existing, null otherwise
@@ -2312,9 +2302,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Controls if a subobject is already existing (i.e. they have the same
-	 * name, owner, visibility, creation date and last modification date)
-	 * 
+	 * Controls if a subobject is already existing (i.e. they have the same name, owner, visibility, creation date and last modification date)
+	 *
 	 * @param expSubObject
 	 * @param currentSubObjList
 	 * @return the subobject if is already existing, null otherwise
@@ -2435,9 +2424,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Handle already present parameter's paruse if a paruse is not present
-	 * between exported delete
-	 * 
+	 * Handle already present parameter's paruse if a paruse is not present between exported delete
+	 *
 	 */
 
 	public void deleteOldParametersUse(Integer existingParId, Integer exportParId, List sbiExistingParuses, List sbiExpParuses, Session currSessDB)
@@ -2540,9 +2528,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	// }
 
 	/**
-	 * Handle already present parameter's paruse if a paruse is not present
-	 * between exported delete
-	 * 
+	 * Handle already present parameter's paruse if a paruse is not present between exported delete
+	 *
 	 */
 
 	public void deletePreviousObjParameter(Integer exstingObjectId, Integer exportObjectId, SbiObjects object) throws EMFUserError {
@@ -2560,7 +2547,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports exported paruses
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	// overwrite will be surely true or the paramete is new
@@ -2754,7 +2741,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported paruses association with roles
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	// private void importParuseDet() throws EMFUserError {
@@ -2891,7 +2878,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between parameter uses and checks
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importParuseCheck(Integer paruseOldId) throws EMFUserError {
@@ -2975,7 +2962,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports biobject links
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importBIObjectLinks() throws EMFUserError {
@@ -3049,7 +3036,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between functionalities and current object
-	 * 
+	 *
 	 * @param exportedBIObjectId
 	 *            The id of the current exported object
 	 * @throws EMFUserError
@@ -3124,7 +3111,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between functionalities and roles
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importFunctRoles() throws EMFUserError {
@@ -3198,7 +3185,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between parameters and current exported biobject
-	 * 
+	 *
 	 * @param exportedBIObjectId
 	 *            The id of the current exported object
 	 * @throws EMFUserError
@@ -3299,9 +3286,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * check existing correlation: correlation must be mantained if the filter
-	 * column is still present in the LOV columns
-	 * 
+	 * check existing correlation: correlation must be mantained if the filter column is still present in the LOV columns
+	 *
 	 * @param existingParId
 	 * @param exportParId
 	 * @param sbiExistingParuses
@@ -3336,10 +3322,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports biobjParuse dependencies for current exported biobject
-	 * 
-	 * a previous BiObjectParuse is: - updated if there is the modality the lov
-	 * did not change metadata - otherwise is cancelled
-	 * 
+	 *
+	 * a previous BiObjectParuse is: - updated if there is the modality the lov did not change metadata - otherwise is cancelled
+	 *
 	 * @param exportedBIObjectId
 	 *            The id of the current exported biobject
 	 * @throws EMFUserError
@@ -3475,7 +3460,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports biparameter visual dependencies for current exported biobject
-	 * 
+	 *
 	 * @param exportedBIObjectId
 	 *            The id of the current exported biobject
 	 * @throws EMFUserError
@@ -3587,9 +3572,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the list of exported data sources.
-	 * 
+	 *
 	 * @return List of the exported data sources
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3622,10 +3607,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Check the existance of the exported metadata into the current system
-	 * metadata and insert their associations into the association object
+	 * Check the existance of the exported metadata into the current system metadata and insert their associations into the association object
 	 * MeatadataAssociation.
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4170,57 +4154,31 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 		// TODO cambiare con i nuovi UDP VAlues
 		/*
-		 * List exportedKpiModelAttrs =
-		 * importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttr",
-		 * null); Iterator iterSbiKpiModelAttr =
-		 * exportedKpiModelAttrs.iterator(); while
-		 * (iterSbiKpiModelAttr.hasNext()) { SbiKpiModelAttr attrExp =
-		 * (SbiKpiModelAttr) iterSbiKpiModelAttr.next(); SbiDomains sbiDomain =
-		 * attrExp.getSbiDomains(); String kpiModelAttrCd =
-		 * attrExp.getKpiModelAttrCd(); // get new sbi Domain ID Integer
-		 * newIdDomain =
-		 * (Integer)metaAss.getDomainIDAssociation().get(sbiDomain.
-		 * getValueId()); Object existObj =
-		 * importer.checkExistenceKpiModelAttr(newIdDomain, kpiModelAttrCd,
-		 * sessionCurrDB, new SbiKpiModelAttr()); if (existObj != null) {
-		 * SbiKpiModelAttr attrCurr = (SbiKpiModelAttr) existObj;
-		 * metaAss.insertCoupleSbiKpiModelAttrID(attrExp.getKpiModelAttrId(),
-		 * attrCurr.getKpiModelAttrId());
-		 * metaLog.log("Found an existing model attr with code " +
-		 * attrCurr.getKpiModelAttrCd() + " " + " and referring to domain "+
-		 * sbiDomain.getDomainCd()+" - "+ sbiDomain.getValueCd() +" with " +
-		 * "the same name of one exported kpi model attr"); } }
+		 * List exportedKpiModelAttrs = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttr", null); Iterator iterSbiKpiModelAttr =
+		 * exportedKpiModelAttrs.iterator(); while (iterSbiKpiModelAttr.hasNext()) { SbiKpiModelAttr attrExp = (SbiKpiModelAttr) iterSbiKpiModelAttr.next();
+		 * SbiDomains sbiDomain = attrExp.getSbiDomains(); String kpiModelAttrCd = attrExp.getKpiModelAttrCd(); // get new sbi Domain ID Integer newIdDomain =
+		 * (Integer)metaAss.getDomainIDAssociation().get(sbiDomain. getValueId()); Object existObj = importer.checkExistenceKpiModelAttr(newIdDomain,
+		 * kpiModelAttrCd, sessionCurrDB, new SbiKpiModelAttr()); if (existObj != null) { SbiKpiModelAttr attrCurr = (SbiKpiModelAttr) existObj;
+		 * metaAss.insertCoupleSbiKpiModelAttrID(attrExp.getKpiModelAttrId(), attrCurr.getKpiModelAttrId());
+		 * metaLog.log("Found an existing model attr with code " + attrCurr.getKpiModelAttrCd() + " " + " and referring to domain "+
+		 * sbiDomain.getDomainCd()+" - "+ sbiDomain.getValueCd() +" with " + "the same name of one exported kpi model attr"); } }
 		 * 
 		 * 
 		 * // Model Attr Val
 		 * 
-		 * List exportedKpiModelAttrVals =
-		 * importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttrVal",
-		 * null); Iterator iterSbiKpiModelAttrVal =
-		 * exportedKpiModelAttrVals.iterator(); while
-		 * (iterSbiKpiModelAttrVal.hasNext()) { SbiKpiModelAttrVal attrValExp =
-		 * (SbiKpiModelAttrVal) iterSbiKpiModelAttrVal.next(); Integer
-		 * kpiModelId = attrValExp.getSbiKpiModel().getKpiModelId(); Integer
-		 * kpiModelAttrId = attrValExp.getSbiKpiModelAttr().getKpiModelAttrId();
+		 * List exportedKpiModelAttrVals = importer.getAllExportedSbiObjects(sessionExpDB, "SbiKpiModelAttrVal", null); Iterator iterSbiKpiModelAttrVal =
+		 * exportedKpiModelAttrVals.iterator(); while (iterSbiKpiModelAttrVal.hasNext()) { SbiKpiModelAttrVal attrValExp = (SbiKpiModelAttrVal)
+		 * iterSbiKpiModelAttrVal.next(); Integer kpiModelId = attrValExp.getSbiKpiModel().getKpiModelId(); Integer kpiModelAttrId =
+		 * attrValExp.getSbiKpiModelAttr().getKpiModelAttrId();
 		 * 
-		 * // get the new Ids Integer newModelId =
-		 * (Integer)metaAss.getModelIDAssociation().get(kpiModelId); Integer
-		 * newModelAttrId =
-		 * (Integer)metaAss.getSbiKpiModelAttrIDAssociation().get
-		 * (kpiModelAttrId);
+		 * // get the new Ids Integer newModelId = (Integer)metaAss.getModelIDAssociation().get(kpiModelId); Integer newModelAttrId =
+		 * (Integer)metaAss.getSbiKpiModelAttrIDAssociation().get (kpiModelAttrId);
 		 * 
-		 * // get new sbi Domain ID Object existObj =
-		 * importer.checkExistenceKpiModelAttrVal(newModelAttrId, newModelId,
-		 * sessionCurrDB, new SbiKpiModelAttrVal()); if (existObj != null) {
-		 * SbiKpiModelAttrVal attrValCurr = (SbiKpiModelAttrVal) existObj;
-		 * metaAss
-		 * .insertCoupleSbiKpiModelAttrValID(attrValExp.getKpiModelAttrValId(),
-		 * attrValCurr.getKpiModelAttrValId());
-		 * metaLog.log("Found an existing model attribute value referring to model"
-		 * + attrValCurr.getSbiKpiModel().getKpiModelNm()+ " " +
-		 * " and referring to attribute "+
-		 * attrValCurr.getSbiKpiModelAttr().getKpiModelAttrCd()+" with " +
-		 * "the same name of one exported kpi model attr"); } }
+		 * // get new sbi Domain ID Object existObj = importer.checkExistenceKpiModelAttrVal(newModelAttrId, newModelId, sessionCurrDB, new
+		 * SbiKpiModelAttrVal()); if (existObj != null) { SbiKpiModelAttrVal attrValCurr = (SbiKpiModelAttrVal) existObj; metaAss
+		 * .insertCoupleSbiKpiModelAttrValID(attrValExp.getKpiModelAttrValId(), attrValCurr.getKpiModelAttrValId());
+		 * metaLog.log("Found an existing model attribute value referring to model" + attrValCurr.getSbiKpiModel().getKpiModelNm()+ " " +
+		 * " and referring to attribute "+ attrValCurr.getSbiKpiModelAttr().getKpiModelAttrCd()+" with " + "the same name of one exported kpi model attr"); } }
 		 */
 
 		logger.debug("check existence of Object MetaContent, only for Objects!");
@@ -4287,14 +4245,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 			// logical unique key but table just looks for label
 			/*
-			 * Map uniqueMap = new HashMap(); Map doaminAss =
-			 * metaAss.getDomainIDAssociation(); Integer newTypeId =
-			 * (Integer)doaminAss.get(udp.getTypeId()); uniqueMap.put("typeId",
-			 * newTypeId); Integer newFamilyId =
-			 * (Integer)doaminAss.get(udp.getFamilyId());
-			 * uniqueMap.put("familyId", newFamilyId); uniqueMap.put("label",
-			 * udp.getLabel()); Object existObj =
-			 * importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdp());
+			 * Map uniqueMap = new HashMap(); Map doaminAss = metaAss.getDomainIDAssociation(); Integer newTypeId = (Integer)doaminAss.get(udp.getTypeId());
+			 * uniqueMap.put("typeId", newTypeId); Integer newFamilyId = (Integer)doaminAss.get(udp.getFamilyId()); uniqueMap.put("familyId", newFamilyId);
+			 * uniqueMap.put("label", udp.getLabel()); Object existObj = importer.checkExistence(uniqueMap, sessionCurrDB, new SbiUdp());
 			 */
 			String label = udp.getLabel();
 			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiUdp());
@@ -4380,14 +4333,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				metaLog.log("Found an existing ou hierarchy " + dsCurr.getName() + " with " + "the same label of one exported ou hierarchy");
 			}
 			/*
-			 * String label = ouHierVal.getLabel(); Object existObj =
-			 * importer.checkExistence(label, sessionCurrDB, new
-			 * SbiOrgUnitHierarchies()); if (existObj != null) {
-			 * SbiOrgUnitHierarchies dsCurr = (SbiOrgUnitHierarchies) existObj;
-			 * metaAss.insertCoupleIdOuHierarchyAssociation(ouHierVal.getId(),
-			 * dsCurr.getId()); metaLog.log("Found an existing ou hierarchy " +
-			 * dsCurr.getName() + " with " +
-			 * "the same label of one exported ou hierarchy"); }
+			 * String label = ouHierVal.getLabel(); Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiOrgUnitHierarchies()); if (existObj
+			 * != null) { SbiOrgUnitHierarchies dsCurr = (SbiOrgUnitHierarchies) existObj; metaAss.insertCoupleIdOuHierarchyAssociation(ouHierVal.getId(),
+			 * dsCurr.getId()); metaLog.log("Found an existing ou hierarchy " + dsCurr.getName() + " with " + "the same label of one exported ou hierarchy"); }
 			 */
 		}// OU node SbiOrgUnitNodes
 		List exportedSbiOrgUnitNodeList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiOrgUnitNodes", null);
@@ -4456,11 +4404,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Gets the object which contains the association between exported metadata
-	 * and the current system metadata.
-	 * 
-	 * @return MetadataAssociation the object which contains the association
-	 *         between exported metadata and the current system metadata
+	 * Gets the object which contains the association between exported metadata and the current system metadata.
+	 *
+	 * @return MetadataAssociation the object which contains the association between exported metadata and the current system metadata
 	 */
 	public MetadataAssociations getMetadataAssociation() {
 		return metaAss;
@@ -4469,9 +4415,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.importexport.IImportManager#getExistingObject(java
-	 * .lang.Integer, java.lang.Class)
+	 * @see it.eng.spagobi.tools.importexport.IImportManager#getExistingObject(java .lang.Integer, java.lang.Class)
 	 */
 	public Object getExistingObject(Integer id, Class objClass) {
 		return importer.getObject(id, objClass, txCurrDB, sessionCurrDB);
@@ -4480,9 +4424,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.importexport.IImportManager#getExportedObject(java
-	 * .lang.Integer, java.lang.Class)
+	 * @see it.eng.spagobi.tools.importexport.IImportManager#getExportedObject(java .lang.Integer, java.lang.Class)
 	 */
 	public Object getExportedObject(Integer id, Class objClass) {
 		return importer.getObject(id, objClass, txExpDB, sessionExpDB);
@@ -4491,8 +4433,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.importexport.IImportManager#getUserAssociation()
+	 * @see it.eng.spagobi.tools.importexport.IImportManager#getUserAssociation()
 	 */
 	public UserAssociationsKeeper getUserAssociation() {
 		return usrAss;
@@ -4500,7 +4441,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getImpAssMode()
 	 */
 	public String getImpAssMode() {
@@ -4510,9 +4451,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.importexport.IImportManager#setImpAssMode(java.lang
-	 * .String)
+	 * @see it.eng.spagobi.tools.importexport.IImportManager#setImpAssMode(java.lang .String)
 	 */
 	public void setImpAssMode(String impAssMode) {
 		this.impAssMode = impAssMode;
@@ -4521,8 +4460,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.importexport.IImportManager#getAssociationFile()
+	 * @see it.eng.spagobi.tools.importexport.IImportManager#getAssociationFile()
 	 */
 	public AssociationFile getAssociationFile() {
 		return associationFile;
@@ -4531,9 +4469,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * it.eng.spagobi.tools.importexport.IImportManager#setAssociationFile(it
-	 * .eng.spagobi.tools.importexport.bo.AssociationFile)
+	 * @see it.eng.spagobi.tools.importexport.IImportManager#setAssociationFile(it .eng.spagobi.tools.importexport.bo.AssociationFile)
 	 */
 	public void setAssociationFile(AssociationFile associationFile) {
 		this.associationFile = associationFile;
@@ -4542,8 +4478,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spagobi.tools.importexport.IImportManager#
-	 * associateAllExportedRolesByUserAssociation()
+	 * @see it.eng.spagobi.tools.importexport.IImportManager# associateAllExportedRolesByUserAssociation()
 	 */
 	public boolean associateAllExportedRolesByUserAssociation() throws EMFUserError {
 		logger.debug("IN");
@@ -4579,8 +4514,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spagobi.tools.importexport.IImportManager#
-	 * associateAllExportedEnginesByUserAssociation()
+	 * @see it.eng.spagobi.tools.importexport.IImportManager# associateAllExportedEnginesByUserAssociation()
 	 */
 	public boolean associateAllExportedEnginesByUserAssociation() throws EMFUserError {
 		logger.debug("IN");
@@ -4616,8 +4550,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spagobi.tools.importexport.IImportManager#
-	 * associateAllExportedDataSourcesByUserAssociation()
+	 * @see it.eng.spagobi.tools.importexport.IImportManager# associateAllExportedDataSourcesByUserAssociation()
 	 */
 	public boolean associateAllExportedDataSourcesByUserAssociation() throws EMFUserError {
 		logger.debug("IN");
@@ -4806,33 +4739,17 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			}
 
 			/*
-			 * // copy all exported map files File mapsDir = new
-			 * File(ConfigSingleton.getRootPath() +
-			 * "/components/mapcatalogue/maps"); if (!mapsDir.exists())
-			 * mapsDir.mkdirs(); File exportedmapsDir = new File(pathBaseFolder
-			 * + "/components/mapcatalogue/maps"); if (exportedmapsDir.exists()
-			 * && exportedmapsDir.isDirectory()) { File[] exportedMapsFiles =
-			 * exportedmapsDir.listFiles(); for (int i = 0; i <
-			 * exportedMapsFiles.length; i++) { File exportedMapFile =
-			 * exportedMapsFiles[i]; if (exportedMapFile.isFile()) {
-			 * FileOutputStream fos = null; InputStream is = null; try { File
-			 * copy = new File(mapsDir.getAbsolutePath() + "/" +
-			 * exportedMapFile.getName()); if (copy.exists()) { if (!overwrite)
-			 * continue; if (!copy.delete()) {
-			 * logger.warn("Could not delete file [" + copy.getAbsolutePath() +
-			 * "]. Map cannot be updated.");
-			 * metaLog.log("Could not delete file [" + copy.getAbsolutePath() +
-			 * "]. Map cannot be updated."); continue; } } fos = new
-			 * FileOutputStream(copy); is = new
-			 * FileInputStream(exportedMapFile); int read = 0; while ((read =
-			 * is.read()) != -1) { fos.write(read); } fos.flush(); } catch
-			 * (Exception e) {
-			 * logger.error("Error while coping map catalogue files ", e); throw
-			 * new EMFUserError(EMFErrorSeverity.ERROR, "8004",
-			 * ImportManager.messageBundle); } finally { try { if (fos != null)
-			 * { fos.close(); } if (is != null) { is.close(); } } catch
-			 * (Exception e) { logger.error("Error while closing streams " , e);
-			 * } } } } }
+			 * // copy all exported map files File mapsDir = new File(ConfigSingleton.getRootPath() + "/components/mapcatalogue/maps"); if (!mapsDir.exists())
+			 * mapsDir.mkdirs(); File exportedmapsDir = new File(pathBaseFolder + "/components/mapcatalogue/maps"); if (exportedmapsDir.exists() &&
+			 * exportedmapsDir.isDirectory()) { File[] exportedMapsFiles = exportedmapsDir.listFiles(); for (int i = 0; i < exportedMapsFiles.length; i++) {
+			 * File exportedMapFile = exportedMapsFiles[i]; if (exportedMapFile.isFile()) { FileOutputStream fos = null; InputStream is = null; try { File copy
+			 * = new File(mapsDir.getAbsolutePath() + "/" + exportedMapFile.getName()); if (copy.exists()) { if (!overwrite) continue; if (!copy.delete()) {
+			 * logger.warn("Could not delete file [" + copy.getAbsolutePath() + "]. Map cannot be updated."); metaLog.log("Could not delete file [" +
+			 * copy.getAbsolutePath() + "]. Map cannot be updated."); continue; } } fos = new FileOutputStream(copy); is = new FileInputStream(exportedMapFile);
+			 * int read = 0; while ((read = is.read()) != -1) { fos.write(read); } fos.flush(); } catch (Exception e) {
+			 * logger.error("Error while coping map catalogue files ", e); throw new EMFUserError(EMFErrorSeverity.ERROR, "8004", ImportManager.messageBundle);
+			 * } finally { try { if (fos != null) { fos.close(); } if (is != null) { is.close(); } } catch (Exception e) {
+			 * logger.error("Error while closing streams " , e); } } } } }
 			 */
 
 		} finally {
@@ -4842,7 +4759,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported model
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importModel(boolean overwrite) throws EMFUserError {
@@ -4916,7 +4833,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported model instance
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importModelInstance(boolean overwrite) throws EMFUserError {
@@ -4982,7 +4899,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported kpi
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importKpi(boolean overwrite) throws EMFUserError {
@@ -5109,7 +5026,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported kpi inst
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importKpiInstance(boolean overwrite) throws EMFUserError {
@@ -5175,7 +5092,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported threshold Value
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importThresholdValue(boolean overwrite) throws EMFUserError {
@@ -5247,7 +5164,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Threshold
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importThreshold(boolean overwrite) throws EMFUserError {
@@ -5318,7 +5235,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported resources
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importResources(boolean overwrite) throws EMFUserError {
@@ -5384,7 +5301,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported resources
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importModelResources(boolean overwrite) throws EMFUserError {
@@ -5458,7 +5375,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported periodicity
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importPeriodicity(boolean overwrite) throws EMFUserError {
@@ -5525,7 +5442,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported kpiInstPeriod
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importKpiInstPeriod(boolean overwrite) throws EMFUserError {
@@ -5599,7 +5516,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Alarms
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importAlarm(boolean overwrite) throws EMFUserError {
@@ -5826,7 +5743,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Alarms Contacts
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importAlarmContact(boolean overwrite) throws EMFUserError {
@@ -5894,7 +5811,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported ObjMetacontent
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importObjMetacontent(boolean overwrite) throws EMFUserError {
@@ -5985,7 +5902,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Udp
-	 * 
+	 *
 	 * @throws EMFUserError
 	 */
 	private void importUdp(Integer udpId, boolean overwrite) throws EMFUserError {
@@ -6059,7 +5976,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import Udp values
-	 * 
+	 *
 	 * @param referenceId
 	 * @param overwrite
 	 * @param family
@@ -6144,7 +6061,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import kpi relations
-	 * 
+	 *
 	 * @param kpiParentId
 	 * @param overwrite
 	 * @throws EMFUserError
@@ -6371,9 +6288,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	// }
 
 	/**
-	 * Handle already present parameter's paruse if a paruse is not present
-	 * between exported delete
-	 * 
+	 * Handle already present parameter's paruse if a paruse is not present between exported delete
+	 *
 	 */
 
 }

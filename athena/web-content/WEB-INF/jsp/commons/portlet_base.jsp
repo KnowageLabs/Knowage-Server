@@ -3,23 +3,22 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-<%@ page language="java"
-         contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"
-         session="true" 
-         import="it.eng.spago.base.*,
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8" session="true"
+	import="it.eng.spago.base.*,
          		 it.eng.spagobi.commons.utilities.urls.IUrlBuilder,
-         		 it.eng.spagobi.commons.utilities.messages.IMessageBuilder"
-%>
+         		 it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%--
 The following directive catches exceptions thrown by jsps, must be commented in development environment
 --%>
 <%@page errorPage="/WEB-INF/jsp/commons/genericError.jsp"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page
+	import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
+<%@page
+	import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.Map"%>
@@ -28,7 +27,8 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="java.util.Enumeration"%>
 <%@page import="it.eng.spagobi.container.CoreContextManager"%>
 <%@page import="it.eng.spagobi.container.SpagoBISessionContainer"%>
-<%@page import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
+<%@page
+	import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
@@ -41,7 +41,7 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="java.util.ArrayList"%>
 
 <!-- IMPORT TAG LIBRARY  -->
-<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi" %>
+<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi"%>
 
 <%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
 commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
@@ -176,31 +176,36 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	%>
 
 
-<!-- based on ecexution mode include initial html  -->   
-<% if (sbiMode.equalsIgnoreCase("WEB")){ %> 
+<!-- based on ecexution mode include initial html  -->
+<% if (sbiMode.equalsIgnoreCase("WEB")){ %>
 
 
 
-<%@page import="it.eng.spagobi.commons.SingletonConfig"%><html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%><html
+	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
-	<title>SpagoBI</title>
-	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<title>SpagoBI</title>
+<link rel="shortcut icon"
+	href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
 </head>
 <body>
-<%} %>
+	<%} %>
 
 
 
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/adapter/ext/ext-base.js")%>"></script>
-<%-- Ext lib debug: --%>
-<%--<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/ext-all-debug.js")%>"></script>--%>  
-<%-- Ext lib for release --%>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/ext-all.js")%>"></script>
-<%-- Ext js overrides --%>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.js")%>"></script>
+	<script type="text/javascript"
+		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/adapter/ext/ext-base.js")%>"></script>
+	<%-- Ext lib debug: --%>
+	<%--<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/ext-all-debug.js")%>"></script>--%>
+	<%-- Ext lib for release --%>
+	<script type="text/javascript"
+		src="<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/ext-all.js")%>"></script>
+	<%-- Ext js overrides --%>
+	<script type="text/javascript"
+		src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.js")%>"></script>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
 
 	// See https://spagobi.eng.it/jira/browse/SPAGOBI-1916
@@ -300,60 +305,60 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	// Sbi.user.functionalities is a javascript array containing all user functionalities' names
 	Sbi.user.functionalities = <%= buffer.toString() %>;
 </script>
- 
-<SCRIPT language='JavaScript' src='<%=linkSbijs%>'></SCRIPT>
 
-<!-- import css  --> 
-<%
+	<SCRIPT language='JavaScript' src='<%=linkSbijs%>'></SCRIPT>
+
+	<!-- import css  -->
+	<%
 	// based on mode import right css 
 	if (sbiMode.equalsIgnoreCase("WEB")) {
 %>
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_wa.css",currTheme)%>' 
-      type='text/css' />
-<%  } else {  %>
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_portlet.css",currTheme)%>' 
-      type='text/css' />
-<%	} %>
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_wa.css",currTheme)%>'
+		type='text/css' />
+	<%  } else {  %>
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_portlet.css",currTheme)%>'
+		type='text/css' />
+	<%	} %>
 
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' 
-      type='text/css' />
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>'
+		type='text/css' />
 
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/jsr168.css",currTheme)%>' 
-      type='text/css' />
-      
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/external.css",currTheme)%>' 
-      type='text/css' />
-      
-<LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/menu.css",currTheme)%>' 
-      type='text/css' />
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/jsr168.css",currTheme)%>'
+		type='text/css' />
 
-<LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/ext-all.css")%>' 
-	  type='text/css' />
-<%-- Ext css overrides --%>
-<LINK rel='StyleSheet' 
-	  href='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.css")%>' 
-	  type='text/css' />
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/external.css",currTheme)%>'
+		type='text/css' />
 
-	 
-	 <% // get the current ext theme
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "css/menu.css",currTheme)%>'
+		type='text/css' />
+
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/ext-all.css")%>'
+		type='text/css' />
+	<%-- Ext css overrides --%>
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/overrides/overrides.css")%>'
+		type='text/css' />
+
+
+	<% // get the current ext theme
 	 String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	 %>
-	  	  
-<LINK rel='StyleSheet'
-      href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/"+extTheme)%>'
-      type='text/css' />
-      
-<LINK rel='StyleSheet'
-      href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/overrides/resources/css/"+extTheme)%>'
-      type='text/css' />
 
-<script>
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/resources/css/"+extTheme)%>'
+		type='text/css' />
+
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLink(request, "js/lib/ext-2.0.1/overrides/resources/css/"+extTheme)%>'
+		type='text/css' />
+
+	<script>
 	document.onselectstart = function() { return true; }
 </script>

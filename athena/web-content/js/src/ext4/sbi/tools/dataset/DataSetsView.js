@@ -70,7 +70,12 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		fromMyDataCtx : true,
 		
 	    DETAIL_DOCUMENT: 'DocumentDetailManagement',
-	    CREATE_DOCUMENT: 'CreateDocument'
+	    CREATE_DOCUMENT: 'CreateDocument',
+	    
+	    ckanFilter: 'NOFILTER',
+	    ckanCounter: 0,
+	    
+	    CKAN_COUNTER_STEP: 200
 
 	}
 
@@ -102,7 +107,8 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		this.addListener('itemmouseleave', this.onMouseOutX, this);
 		
 		this.addEvents('detail');
-		this.addEvents('share');		
+		this.addEvents('share');
+		this.addEvents('info');
 
 	}
 	
@@ -124,7 +130,6 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		var author = LN('sbi.generic.author');
 		var currentUser = this.config.user;
-		
 
 		this.tpl = new Ext.XTemplate(
 				'<div id="list-container" class="main-datasets-list">', 	            
@@ -146,7 +151,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 								            '    <ul class="box-actions">'+	    
 								            '		<tpl for="actions">'+  
 								        	' 			<tpl if="name != \'delete\' && this.includeAction(name) == true ">'+
-								        	'					<tpl if="name == \'detaildataset\' && ( parent.dsTypeCd == \'File\' || parent.dsTypeCd == \'Qbe\' ) ">'+
+								        	'					<tpl if="name == \'detaildataset\' && ( parent.dsTypeCd == \'File\' || parent.dsTypeCd == \'Qbe\' || parent.dsTypeCd == \'Ckan\' ) ">'+
 									        ' 	       				<li class="{name}"><a href="#" title="{description}"></a></li>'+
 									        '					</tpl>													  '+
 								        	'					<tpl if="name != \'detaildataset\' ">'+
@@ -165,9 +170,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'</div>',
 									'<div title="{name}" class="box-text">',
 										'<h2>{name}</h2>',
-										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>',
-										'<p><b>'+author+':</b> {owner}</p>',
-										'<p class="modified">'+changed+' {dateIn}</p>',
+										'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
+										'<tpl if="dsTypeCd != \'Ckan\'">'+
+											'<p><b>'+author+':</b> {owner}</p>'+
+											'<p class="modified">'+changed+' {dateIn}</p>'+
+										'</tpl>'+
 									'</div>',
 								'</div>',
 //								'<div class="fav-container" >',
@@ -175,7 +182,21 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 //									'    <span class="icon"><a href="#" onclick="alert(\'Functionality not supported yet!\');"/></span> '+
 //									'</div>',
 //								'</div>',
-								'<tpl if="owner == \''+currentUser+'\'">'+
+//								'<tpl if="dsTypeCd == \'Ckan\'">'+
+//									'<div class="fav-container" >',
+//							            '<tpl if="configuration.spagobi.isBookmarked == false">'+
+//										'	<div class="bookmark"  title="'+LN('sbi.mydata.notbookmarkeddataset')+'">',
+//										'   <span class="icon"></span> '+
+//										'	</div>',
+//							            '</tpl>'+
+//							            '<tpl if="configuration.spagobi.isBookmarked == true">'+
+//										'	<div class="bookmark"  title="'+LN('sbi.mydata.bookmarkeddataset')+'">',
+//										'   <span class="iconActive"></span> '+
+//										'	</div>',
+//							            '</tpl>'+					            
+//									'</div>',		
+//								'</tpl>'+
+								'<tpl if="owner == \''+currentUser+'\' && dsTypeCd != \'Ckan\'">'+
 									'<div class="fav-container" >',
 						            '<tpl if="isPublic == false">'+
 									'	<div class="share"  title="'+LN('sbi.mydata.sharedataset')+'">',
@@ -188,10 +209,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									'	</div>',
 						            '</tpl>'+					            
 									'</div>',		
-								'</tpl>'+	
+								'</tpl>'+
 							'</dd>',
-						 '</tpl>',	 
-						 '<div style="clear:left"></div>',
+							'<tpl if="xindex === xcount-1 && dsTypeCd == \'Ckan\'">'+
+							'<div style="clear:left"></div>'+
+			 				'<div><ul class="list-tab" id="footer-dataview"><li class="active" id="moreDatasets"><a href="#" onclick="javascript:Ext.getCmp(\'this\').moreDataset()">'+LN('sbi.mydata.ckandataset.more')+'</a></li></ul></div>'+
+			 				'</tpl>'+
+						 '</tpl>'+
+						'<div style="clear:left"></div>'+
 //					'</ul>',
 //				'</div>',
 			'</div>',{
@@ -231,10 +256,11 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
     	var actionWorksheet = e.getTarget('li[class=worksheet]', 10, true);
     	var actionQbe = e.getTarget('li[class=qbe]', 10, true);
     	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
-        var actionDelete = e.getTarget('a[class=delete]', 10, true);       
+        var actionInfo = e.getTarget('li[class=info]',10,true);				// for CKAN
+        var actionDelete = e.getTarget('a[class=delete]', 10, true);
        // var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
         
-        var actionShareDataset = e.getTarget('div[class=share]',10,true)
+        var actionShareDataset = e.getTarget('div[class=share]',10,true);
         
         //if (!this.fromMyDataCtx) actionWorksheet = true;
         
@@ -246,19 +272,19 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         	Sbi.debug('DataSetView delete dataset raise event...');        	
         	scope.fireEvent('delete', record.data);
         } else if (actionWorksheet != null){
-        	Sbi.debug('DataSetView actionWorksheet raise event...'); 
-        	if (record.data.pars != undefined && record.data.pars != ''){
-        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
-        		return true;
-        	}
-   			scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);
+        	Sbi.debug('DataSetView actionWorksheet raise event...');
+	        if (record.data.pars != undefined && record.data.pars != ''){
+	        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
+	        	return true;
+	        }
+	   		scope.fireEvent('executeDocument','WORKSHEET','DATASET',record);
         } else if (actionQbe != null){
         	Sbi.debug('DataSetView actionQbe raise event...'); 
-        	if (record.data.pars != undefined && record.data.pars != ''){
-        		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noQbeDesigner'));
-        		return true;
-        	}
-   			scope.fireEvent('executeDocument','QBE','DATASET',record);
+	        if (record.data.pars != undefined && record.data.pars != ''){
+	        	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noQbeDesigner'));
+	        	return true;
+	        }
+	   		scope.fireEvent('executeDocument','QBE','DATASET',record);
         } else if (actionGeoreport != null){
         	Sbi.debug('DataSetView actionGeoreport raise event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){
@@ -268,9 +294,14 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
    			scope.fireEvent('executeDocument','GEOREPORT','DATASET',record);
         } else if (actionShareDataset != null){
         	Sbi.debug('DataSetView actionShareDataset raise event...'); 
-        	scope.fireEvent('share', record.data);   
-
-   			
+        	scope.fireEvent('share', record.data);
+//        } else if (actionBookmarkDataset != null) {
+//        	Sbi.debug('DataSetView actionBookmarkDataset raise event...'); 
+//        	scope.fireEvent('detail', record.data);
+        } else if (actionInfo != null) {
+        	Sbi.debug('DataSetView actionInfo raise event...'); 
+        	scope.fireEvent('info', record.data);
+        	
         } /*else {
         	Sbi.debug('DataSetView default click event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){

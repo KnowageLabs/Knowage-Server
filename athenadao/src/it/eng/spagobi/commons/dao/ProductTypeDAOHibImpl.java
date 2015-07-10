@@ -1,6 +1,7 @@
 package it.eng.spagobi.commons.dao;
 
 import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
@@ -36,6 +37,33 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 			if (tx != null)
 				tx.rollback();
 			throw new SpagoBIRuntimeException("Error getting product types", he);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+	}
+
+	@Override
+	public List<SbiProductTypeEngine> loadSelectedEngines(String productType) {
+
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query hibQuery = aSession.createQuery("from SbiProductTypeEngine pe where pe.sbiProductType.label = :productTypeLabel");
+			hibQuery.setString("productTypeLabel", productType);
+			ArrayList<SbiProductTypeEngine> result = (ArrayList<SbiProductTypeEngine>) hibQuery.list();
+			return result;
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIRuntimeException("Error getting Product type Engines", he);
 		} finally {
 			logger.debug("OUT");
 			if (aSession != null) {

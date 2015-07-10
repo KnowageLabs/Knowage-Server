@@ -96,8 +96,28 @@ Ext.extend(Sbi.formbuilder.QueryFieldsPanel, Ext.Panel, {
     // private
     
     , initGrid: function(c) {
+    	
+    	ExtendedStore = Ext.extend(Ext.data.JsonStore, {
+
+		    getMetadataFn : null,
+		    getMetadata : function () {
+		            var reader  = this.reader;
+		            var getMetadata = this.getMetadataFn;
+		            var rawData;
+
+		        if (!getMetadata) {
+		        	getMetadata = this.getMetadataFn = reader.createAccessor('metadata');
+		        }
+
+		        return (function () {
+		            rawData = reader.jsonData;
+
+		            return getMetadata(rawData);
+		        })();
+		    }
+		});
 	
-		this.store = new Ext.data.JsonStore({
+		this.store = new ExtendedStore({
 			autoLoad : false
 			, idProperty : 'alias'
 			, root: 'results'

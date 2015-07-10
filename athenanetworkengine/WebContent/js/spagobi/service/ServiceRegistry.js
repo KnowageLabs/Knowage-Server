@@ -40,7 +40,7 @@ Ext.define('Sbi.service.ServiceRegistry', {
     		protocol: 'http'     
     		, host: 'localhost'
     	    , port: '8080'
-    	    , contextPath: 'SpagoBIChartEngine'
+    	    , contextPath: 'athenachartengine'
     	    , controllerPath: 'servlet/AdapterHTTP'    
     	});
     	

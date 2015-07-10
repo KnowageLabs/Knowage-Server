@@ -617,7 +617,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		InternalEngineIFace internalEngine = null;
 		// tries to instantiate the class for the internal engine
 		try {
-			if (className == null && className.trim().equals(""))
+			if (className == null || className.trim().equals(""))
 				throw new ClassNotFoundException();
 			internalEngine = (InternalEngineIFace) Class.forName(className).newInstance();
 		} catch (ClassNotFoundException cnfe) {

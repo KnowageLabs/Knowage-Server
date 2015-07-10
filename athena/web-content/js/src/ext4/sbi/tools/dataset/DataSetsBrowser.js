@@ -155,12 +155,28 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			
 			var bannerHTML = this.createBannerHtml({});
 			this.bannerPanel = new Ext.Panel({
+				id: 'bannerDs',
 				height: 105,
 				border:0,
 			   	autoScroll: false,
 			   //	style:"position:'absolute';z-index:800000;float:left;width:100%;",
 			   	html: bannerHTML
-			});			
+			});	
+		}
+	}
+	
+    , changeToolbar: function(searchOnCkan) {
+		
+		if (this.displayToolbar) {
+			if(searchOnCkan){
+				Ext.get('search').dom.removeAttribute("onkeyup");	
+				Ext.get('searchButton').dom.setAttribute("onclick", "javascript:Ext.getCmp(\'this\').showDataset( \'CkanDataSet\', Ext.get('search').dom.value)");
+			}
+			else {
+				//Ext.get('searchForm').dom.setAttribute("action", "#");
+				Ext.get('search').dom.setAttribute("onkeyup", "javascript:Ext.getCmp(\'this\').filterStore(this.value)");
+				Ext.get('searchButton').dom.removeAttribute("onclick");
+			}
 		}
 	}
 	
@@ -172,13 +188,19 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		config.actions = this.actions;
 		config.user = this.user;
 		config.fromMyDataCtx = this.displayToolbar;
+		config.ckanFilter = 'NOFILTER';
+	    config.ckanCounter = 0;
+	    config.CKAN_COUNTER_STEP = 200;
 		this.viewPanel = Ext.create('Sbi.tools.dataset.DataSetsView', config);
 		this.viewPanel.on('detail', this.modifyDataset, this);
 		this.viewPanel.on('delete', this.deleteDataset, this);
 		this.viewPanel.on('share', this.shareDataset, this);
-		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
-			this.fireEvent('executeDocument',docType, inputType,  record);
-		},this);
+		//this.viewPanel.on('bookmark', this.bookmarkDataset, this);
+		this.viewPanel.on('info', this.infoCkan, this);
+//		this.viewPanel.on('executeDocument',function(docType, inputType,  record){
+//			this.fireEvent('executeDocument',docType, inputType,  record);
+//		},this);
+		this.viewPanel.on('executeDocument', this.executeDocument, this);
 	}
 	
 	, activateFilter: function(datasetType){
@@ -211,6 +233,20 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
 			baseParams.typeDoc = this.typeDoc;
+
+			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
+				serviceName : 'certificateddatasets',
+				baseParams : baseParams
+			});
+			
+		} else if (datasetType == 'CkanDataSet'){
+			baseParams ={};
+			baseParams.isTech = false;
+			baseParams.showOnlyOwner = true;
+			baseParams.typeDoc = this.typeDoc;
+			baseParams.ckanDs = true;
+			baseParams.ckanFilter = arguments[1];
+			baseParams.ckanOffset = arguments[2];
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
 				serviceName : 'certificateddatasets',
@@ -334,6 +370,18 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 	
 	,
+	executeDocument : function( docType, inputType, record){
+		if(record !== undefined) {
+			if(record.data.dsTypeCd == 'Ckan' && record.data.meta == ""){
+				Sbi.debug("Forwarding action to addNewDatasetFromCkan()");
+				this.addNewDatasetFromCkan(record.data);
+			} else {
+				this.fireEvent('executeDocument', docType, inputType, record);
+			}
+		}
+	}
+	
+	,
 	addNewDataset : function() {		 
 		var config =  {};
 		config.categoriesStore = this.categoriesStore;
@@ -351,38 +399,79 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
     	this.wizardWin.show();
 	}
 	
+	,
+	addNewDatasetFromCkan : function(rec) {		 
+		var config =  {};
+		config.categoriesStore = this.categoriesStore;
+		config.datasetGenericPropertiesStore = this.datasetGenericPropertiesStore;
+		config.datasetPropertiesStore = this.datasetPropertiesStore;
+		config.datasetValuesStore = this.datasetValuesStore;
+		config.scopeStore = this.scopeStore;
+		config.user = this.user;
+		config.isNew = true;
+		config.userCanPersist = this.userCanPersist;
+		config.tablePrefix = this.tablePrefix;
+
+		config.ckanUrl = rec.configuration.Resource.url;
+		config.ckanId = rec.configuration.ckanId;
+		config.ckanFormat = rec.configuration.Resource.format;
+		config.ckanName = rec.configuration.Resource.name;
+		config.ckanDescription = rec.configuration.Resource.description;
+		this.wizardWin =  Ext.create('Sbi.tools.dataset.CkanDataSetsWizard',config);	
+		this.wizardWin.on('save', this.saveDataset, this);
+		this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+    	this.wizardWin.show();
+	}
+	
 	, 
 	modifyDataset: function(rec){
 		if (rec != undefined){
-			var config =  {};
-			config.categoriesStore = this.categoriesStore;
-			config.datasetGenericPropertiesStore = this.datasetGenericPropertiesStore;
-			config.datasetPropertiesStore = this.datasetPropertiesStore;
-			config.datasetValuesStore = this.datasetValuesStore;
-			config.scopeStore = this.scopeStore;
-			config.user = this.user;
-			config.record = rec;
-			config.isNew = false;
-			config.qbeEditDatasetUrl = this.qbeEditDatasetUrl;
-			config.userCanPersist = this.userCanPersist;
-			config.tablePrefix = this.tablePrefix;
-			switch (rec.dsTypeCd) {
-				case 'File' : 
-					this.wizardWin = Ext.create('Sbi.tools.dataset.DataSetsWizard', config);	
-					this.wizardWin.on('save', this.saveDataset, this);
-					this.wizardWin.on('delete', this.deleteDataset, this);
-					this.wizardWin.on('getMetaValues', this.getMetaValues, this);
-			    	this.wizardWin.show();
-					break;
-				case 'Qbe' :
-					config.width = this.getWidth() - 50,
-					config.height = this.getHeight() - 50,
-					this.wizardWin = Ext.create('Sbi.tools.dataset.QbeDataSetsWizard', config);	
-					this.wizardWin.on('save', this.saveDataset, this);
-					this.wizardWin.on('delete', this.deleteDataset, this);
-					this.wizardWin.on('getMetaValues', this.getMetaValues, this);
-			    	this.wizardWin.show();
-			    	break;
+			if(rec.dsTypeCd == 'Ckan' && rec.meta == ""){
+				Sbi.debug("Forwarding action to addNewDatasetFromCkan()");
+				this.addNewDatasetFromCkan(rec);
+			} else {
+				var config =  {};
+				config.categoriesStore = this.categoriesStore;
+				config.datasetGenericPropertiesStore = this.datasetGenericPropertiesStore;
+				config.datasetPropertiesStore = this.datasetPropertiesStore;
+				config.datasetValuesStore = this.datasetValuesStore;
+				config.scopeStore = this.scopeStore;
+				config.user = this.user;
+				config.record = rec;
+				config.isNew = false;
+				config.qbeEditDatasetUrl = this.qbeEditDatasetUrl;
+				config.userCanPersist = this.userCanPersist;
+				config.tablePrefix = this.tablePrefix;
+				switch (rec.dsTypeCd) {
+					case 'File' : 
+						this.wizardWin = Ext.create('Sbi.tools.dataset.DataSetsWizard', config);	
+						this.wizardWin.on('save', this.saveDataset, this);
+						this.wizardWin.on('delete', this.deleteDataset, this);
+						this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+				    	this.wizardWin.show();
+						break;
+					case 'Ckan' : 
+						config.ckanUrl = rec.ckanUrl;
+						config.ckanId = rec.ckanId;
+						config.ckanFormat = rec.fileType;
+						config.ckanName = rec.name;
+						config.ckanDescription = rec.description;
+						this.wizardWin = Ext.create('Sbi.tools.dataset.CkanDataSetsWizard', config);	
+						this.wizardWin.on('save', this.saveDataset, this);
+						this.wizardWin.on('delete', this.deleteDataset, this);
+						this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+				    	this.wizardWin.show();
+						break;
+					case 'Qbe' :
+						config.width = this.getWidth() - 50,
+						config.height = this.getHeight() - 50,
+						this.wizardWin = Ext.create('Sbi.tools.dataset.QbeDataSetsWizard', config);	
+						this.wizardWin.on('save', this.saveDataset, this);
+						this.wizardWin.on('delete', this.deleteDataset, this);
+						this.wizardWin.on('getMetaValues', this.getMetaValues, this);
+				    	this.wizardWin.show();
+				    	break;
+				}
 			}
 		}
 	}
@@ -424,7 +513,6 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		}
 	}
 		
-	
 	,
 	saveDataset: function(values){
 		var metaConfiguration = values.meta || [];
@@ -522,8 +610,107 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			},
 			scope: this,
 			failure: Sbi.exception.ExceptionHandler.handleFailure      
+		});	
+	}
+	
+	,
+	infoCkan: function(rec){
+		
+		var detail = rec.configuration.Package;
+		var keyArray = Ext.Object.getKeys(detail);
+		var msgBase = "sbi.mydata.ckan.info."
+		var infoData = [];
+		
+		keyArray.forEach( function (key)
+		{
+			var val = detail[key];
+			if(val){
+				var key = msgBase.concat(key);
+				var obj = {"name":LN(key), "value":val, "referenceTo":"Package"};
+				infoData.push(obj);
+			}
 		});
 		
+		detail = rec.configuration.Resource;
+		keyArray = Ext.Object.getKeys(detail);
+		
+		keyArray.forEach( function (key)
+		{
+			var val = detail[key];
+				if(val){
+				var key = msgBase.concat(key);
+				var obj = {"name":LN(key), "value":val, "referenceTo":"Resource"};
+				infoData.push(obj);
+			}
+		});
+		
+		detail = rec.configuration.Owner;
+		keyArray = Ext.Object.getKeys(detail);
+		
+		keyArray.forEach( function (key)
+		{
+			var val = detail[key];
+			if(val){
+				var key = msgBase.concat(key);
+				var obj = {"name":LN(key), "value":val, "referenceTo":"Owner"};
+				infoData.push(obj);
+			}
+		});
+		
+		// wrapped in closure to prevent global vars.
+	    Ext.define('Detail', {
+	        extend: 'Ext.data.Model',
+	        fields: ['name', 'value', 'referenceTo']
+	    });
+	
+	    var Details = Ext.create('Ext.data.Store', {
+	        storeId: 'restaraunts',
+	        model: 'Detail',
+	        sorters: ['referenceTo','name','value'],
+	        groupField: 'referenceTo',
+	        data: infoData
+	    });
+	    
+	    var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
+	        groupHeaderTpl: '{name} details'
+	    });
+	    
+	    var details_window= new Ext.Window({
+			frame: false,
+			style:"background-color: white",
+			id:'ckan_info_window',            				
+			layout:'fit',
+			autoScroll: true,
+			items: {
+				xtype: 'grid',
+		        store: Details,
+		        width: 700,
+		        height: 300,
+		        collapsible: false,
+		        frame: false,
+                hideHeaders: true,
+                viewConfig: {
+                    stripeRows: false
+                },
+		        features: [groupingFeature],
+		        columns: [{
+		            text: 'Name',
+		            flex: 1,
+		            dataIndex: 'name'
+		        },{
+		            text: 'Cuisine',
+		            flex: 2,
+		            dataIndex: 'value'
+		        }],
+			},
+			width:710,
+			height:300,
+			closeAction:'destroy',
+			buttonAlign : 'left',
+			modal: true,
+			title: LN('sbi.mydata.info')
+		});	
+		details_window.show();
 	}
 	
 	
@@ -590,22 +777,42 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		for(var i=0; i< tabEls.length; i++){
 			//nodeType == 1 is  Node.ELEMENT_NODE
 			if (tabEls[i].nodeType == 1){
-				if (tabEls[i].id == datasetType){					
-					tabEls[i].className += ' active '; //append class name to existing others
+				if (tabEls[i].id == datasetType){
+					if(datasetType == 'CkanDataSet') {
+						// bug fix for CKAN search
+						tabEls[i].className = 'active'; //set class name
+					} else {
+						tabEls[i].className += ' active '; //append class name to existing others
+					}
 				} else {
 					tabEls[i].className = tabEls[i].className.replace( /(?:^|\s)active(?!\S)/g , '' ); //remove active class
 				}
 			}
 		}
 		//Change content of DatasetView
-		this.activateFilter(datasetType);
+		if(datasetType == 'CkanDataSet') {
+			this.ckanFilter = arguments[1];
+			this.ckanCounter = 0;
+			this.CKAN_COUNTER_STEP = 200;
+			this.activateFilter(datasetType, this.ckanFilter, this.ckanCounter);
+		}
+		else {
+			this.activateFilter(datasetType);
+		}
 		if (datasetType == 'MyDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(true);
 		} else if (datasetType == 'EnterpriseDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(false);
 		} else if (datasetType == 'SharedDataSet'){
+			this.changeToolbar(false);
+			this.createButtonVisibility(false);
+		} else if (datasetType == 'CkanDataSet'){
+			this.changeToolbar(true);
 			this.createButtonVisibility(false);
 		} else if (datasetType == 'AllDataSet'){
+			this.changeToolbar(false);
 			this.createButtonVisibility(true);
 		}	
 		
@@ -630,8 +837,49 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		    //console.log('***DATASETS BROWSER loaded records***');
 		});
 		this.viewPanel.bindStore(this.store);
+		this.ckanCounter += this.CKAN_COUNTER_STEP;
 		this.viewPanel.refresh();
 
+	}
+	
+	//Show more dataset of the passed type
+	, moreDataset: function() {
+		var activeDatasets = Ext.get('CkanDataSet').dom.getAttribute('class');
+		if(activeDatasets == "active") {
+			//Change content of DatasetView
+			this.activateFilter('CkanDataSet', this.ckanFilter, this.ckanCounter);
+			
+			this.storeConfig = Ext.apply({
+				model : this.getModelName(),
+				filteredProperties : this.filteredProperties, 
+				sorters: [],
+				proxy: {
+			        type: 'ajax'
+			        , url: this.services["list"]
+		         	, reader : {
+		        		type : 'json',
+		        		root : 'root'
+		        	}
+			     }
+			}, {});
+			
+			var tempStore = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+			// loading more datasets
+			tempStore.load({scope: this, callback: this.storeMoreDataset});
+		} else {
+			// datasets paging only enabled for CKAN
+			Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.wizard.ckan.noMoreDataset'), '');
+		}
+	}
+		
+	, storeMoreDataset: function(records, operation, success) {
+	    if(records.length > 0) {
+		    this.store.loadRecords(records, {addRecords: true})
+		    this.ckanCounter += this.CKAN_COUNTER_STEP;
+			this.viewPanel.refresh();
+	    } else {
+	    	Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.wizard.ckan.noMoreDataset'), '');
+	    }
 	}
 	
 	, createButtonVisibility: function(visible){
@@ -709,6 +957,15 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
          	bannerHTML = bannerHTML+	
      		'	    	<li class="'+activeClass+'" id="SharedDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'SharedDataSet\')">'+LN('sbi.mydata.shareddataset')+'</a></li> ';    	
          }
+         if (Sbi.settings.mydata.showCkanDataSetFilter){
+          	if (Sbi.settings.mydata.defaultFilter == 'CkanDataSet'){
+         		activeClass = 'active';
+         	} else {
+         		activeClass = '';
+         	}
+          	bannerHTML = bannerHTML+	
+      		'	    	<li class="'+activeClass+'" id="CkanDataSet"><a href="#" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'CkanDataSet\', \'NOFILTER\')">'+LN('sbi.mydata.ckandataset')+'</a></li> ';    	
+          }
          if (Sbi.settings.mydata.showAllDataSetFilter){
           	if (Sbi.settings.mydata.defaultFilter == 'AllDataSet'){
         		activeClass = 'active';
@@ -721,36 +978,35 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //    		'	    	<li class="active first"><a href="#" onclick="javascript:Ext.getCmp(\'this\').loadFolder(null, null, \'ALL\')">'+LN('sbi.generic.all')+'</a></li> '+
 //    					communityString+
 //    		'	        <li class="favourite last"><a href="#">'+LN('sbi.browser.document.favourites')+'</a></li> '+
-        bannerHTML = bannerHTML+
-            '		</ul> '+
-    		'	    <div id="list-actions" class="list-actions"> '+
-    					createButton +
-    		'	        <form action="#" method="get" class="search-form"> '+
-    		'	            <fieldset> '+
-    		'	                <div class="field"> '+
-    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
-    		'	                </div> '+
-    		'	                <div class="submit"> '+
-    		'	                    <input type="text" value="Cerca" /> '+
-    		'	                </div> '+
-    		'	            </fieldset> '+
-    		'	        </form> '+
-    		'	         <ul class="order" id="sortList">'+
-    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
-//    		'	            <li id="label"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
-    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
-    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
-    		'	        </ul> '+
-    		'	    </div> '+
-    		'	</div> '+
-    		'</div>' ;
+
+	        bannerHTML = bannerHTML+
+	            '		</ul> '+
+	    		'	    <div id="list-actions" class="list-actions"> '+
+	    					createButton +
+	    		'	        <form id="searchForm" action="#" method="get" class="search-form"> '+
+	    		'	            <fieldset> '+
+	    		'	                <div class="field"> '+
+	    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
+	    		'	                    <input type="text" name="search" id="search" onclick="this.value=\'\'" onkeyup="javascript:Ext.getCmp(\'this\').filterStore(this.value)" value="'+LN('sbi.browser.document.searchKeyword')+'" /> '+
+	    		'	                </div> '+
+	    		'	                <div class="submit"> '+
+	    		'	                    <input id="searchButton" type="text" value="Cerca" /> '+
+	    		'	                </div> '+
+	    		'	            </fieldset> '+
+	    		'	        </form> '+
+	    		'	         <ul class="order" id="sortList">'+
+	    		'	            <li id="dateIn" class="active"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'dateIn\')">'+LN('sbi.ds.moreRecent')+'</a> </li> '+
+	//    		'	            <li id="label"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'label\')">'+LN('sbi.ds.label')+'</a></li> '+
+	    		'	            <li id="name"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'name\')">'+LN('sbi.ds.name')+'</a></li> '+
+	    		'	            <li id="owner"><a href="#" onclick="javascript:Ext.getCmp(\'this\').sortStore(\'owner\')">'+LN('sbi.ds.owner')+'</a></li> '+
+	    		'	        </ul> '+
+	    		'	    </div> '+
+	    		'	</div> '+
+	    		'</div>' ;
 //        var dh = Ext.DomHelper;
 //        var b = this.bannerPanel.getEl().update(bannerHTML);
 
         return bannerHTML;
     }
-	
-
 });
   

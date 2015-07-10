@@ -287,7 +287,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 		this.csvOptionsPanel.setVisible(false);		
 		
 		//Upload file fields
-		this.fileType = new Ext.form.Field({name : 'fileType',hidden:true});
+		this.fileType = new Ext.form.Field({name : 'fileType', id:'fileType', hidden:true});
 		
 		this.fileNameField = new Ext.form.DisplayField({
 			fieldLabel : '',
@@ -351,6 +351,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
 	         layout: 'vbox',
 	         border: false, 
 	         padding: '15px 15px 15px 230px;',
+	         id: 'buttonsPanel',
 	         items:[this.uploadField,this.uploadButton ]
 		});
 		
@@ -362,7 +363,7 @@ Ext.extend(Sbi.tools.dataset.FileDatasetPanel, Ext.Panel, {
           layout: 'column',
 		  fileUpload: true,
 		  id: 'fileUploadPanel',
-		  items: [this.fileDetailText, this.buttonsPanel, this.uploadButton,  this.fileType, this.csvOptionsPanel, this.xlsOptionsPanel]
+		  items: [this.fileDetailText, this.buttonsPanel, this.uploadButton, this.fileNameField, this.fileType, this.csvOptionsPanel, this.xlsOptionsPanel]
 		
 		});
 		return this.fileUploadFormPanel;

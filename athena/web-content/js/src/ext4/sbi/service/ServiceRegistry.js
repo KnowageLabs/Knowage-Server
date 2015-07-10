@@ -31,7 +31,7 @@ Ext.define("Sbi.service.ServiceRegistry",{
 			protocol: 'http'     
 				, host: 'localhost'
 					, port: '8081'
-						, contextPath: 'SpagoBI'
+						, contextPath: 'athena'
 							, controllerPath: 'servlet/AdapterHTTP' 
 								, restServicesPath: 'restful-services' 
 		});

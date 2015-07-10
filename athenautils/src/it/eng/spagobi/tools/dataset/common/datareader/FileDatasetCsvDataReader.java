@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.utilities.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -135,7 +136,8 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			// Create Datastore Metadata with header file
 			for (int i = 0; i < header.length; i++) {
 				FieldMetadata fieldMeta = new FieldMetadata();
-				fieldMeta.setName(header[i]);
+				String fieldName = StringUtils.escapeForSQLColumnName(header[i]);
+				fieldMeta.setName(fieldName);
 				fieldMeta.setType(String.class);
 				dataStoreMeta.addFiedMeta(fieldMeta);
 			}

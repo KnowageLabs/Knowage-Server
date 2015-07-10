@@ -3,7 +3,7 @@ package it.eng.spagobi.api;
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was  not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import it.eng.spago.error.EMFUserError;
@@ -67,10 +67,10 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 @Path("/documents")
-public class DocumentCRUD {
+public class DocumentCRUD extends AbstractSpagoBIResource {
 
 	public static final String OBJECT_ID = "docId";
 	public static final String OBJECT_FUNCTS = "functs";
@@ -83,7 +83,7 @@ public class DocumentCRUD {
 
 	/**
 	 * Service to clone a document
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -101,7 +101,7 @@ public class DocumentCRUD {
 			logger.error("Error cloning the document.. Impossible to parse the id of the document " + ids, e);
 			throw new SpagoBIRuntimeException("Error cloning the document.. Impossible to parse the id of the document " + ids, e);
 		}
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = this.getUserProfile();
 
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
 		logger.debug("Execute clone");
@@ -112,7 +112,7 @@ public class DocumentCRUD {
 
 	/**
 	 * Service to send e-mail Feedback about a document
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -149,7 +149,7 @@ public class DocumentCRUD {
 			String message = req.getParameter("msg");
 
 			// 4 - User sending the feedback (from session)
-			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = this.getUserProfile();
 			String userSendingFeedback = null;
 			if (profile.getUserUniqueIdentifier() instanceof String) {
 				userSendingFeedback = (String) profile.getUserUniqueIdentifier();
@@ -197,7 +197,7 @@ public class DocumentCRUD {
 
 		logger.debug("Searching documents inside personal folder of user [" + user + "]");
 
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = this.getUserProfile();
 		List userFunctionalties;
 		LowFunctionality personalFolder = null;
 		try {
@@ -302,7 +302,7 @@ public class DocumentCRUD {
 
 	/**
 	 * Service to share/unshare a document
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -321,7 +321,7 @@ public class DocumentCRUD {
 			logger.error("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
 			throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
 		}
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = this.getUserProfile();
 
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
 		String oper = ("true".equalsIgnoreCase(isShare)) ? "Sharing" : "Unsharing";
@@ -373,7 +373,7 @@ public class DocumentCRUD {
 
 	/**
 	 * Creates a json array with children document informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -394,7 +394,7 @@ public class DocumentCRUD {
 
 	/**
 	 * Creates a json array with children folders informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -411,7 +411,7 @@ public class DocumentCRUD {
 
 	/**
 	 * Creates a json array with children document informations
-	 * 
+	 *
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -486,9 +486,7 @@ public class DocumentCRUD {
 				props.put("mail.smtps.socketFactory.port", Integer.toString(smptPort));
 				if ((!StringUtilities.isEmpty(trustedStorePath))) {
 					/*
-					 * Dynamic configuration of trustedstore for CA Using Custom
-					 * SSLSocketFactory to inject certificates directly from
-					 * specified files
+					 * Dynamic configuration of trustedstore for CA Using Custom SSLSocketFactory to inject certificates directly from specified files
 					 */
 
 					props.put("mail.smtps.socketFactory.class", CUSTOM_SSL_FACTORY);

@@ -21,41 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **/
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import it.eng.qbe.dataset.QbeDataSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.configuration.FileCreatorConfiguration;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
+import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.DataType;
-import it.eng.spagobi.dataset.cache.test.FakeDatamartRetriever;
-import it.eng.spagobi.dataset.cache.test.TestConstants;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -66,8 +38,12 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import junit.framework.TestCase;
+import it.eng.spagobi.utilities.cache.CacheItem;
+
+import java.math.BigDecimal;
+import java.util.Random;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)

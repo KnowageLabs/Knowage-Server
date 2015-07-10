@@ -126,6 +126,7 @@ Ext.extend(Sbi.worksheet.designer.DesignToolsPanel, Ext.Panel, {
 	}
 	
 	, fieldsLoadedHandler : function (store, records, options) {
+		smartFilterMetadata = Sbi.commons.JSON.decode(store.getMetadata());
 		store.each(this.initOptions, this);
 		store.each(this.initAttributeValues, this);
 	}

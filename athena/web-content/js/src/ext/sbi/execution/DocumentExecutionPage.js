@@ -468,8 +468,8 @@ Ext.extend(Sbi.execution.DocumentExecutionPage, Ext.Panel, {
 			Sbi.trace('[DocumentExecutionPage.documentPage.on(\'loadurlfailure\')]: OUT');
 		}, this);
 		//event comung from the document
-		this.documentPage.on('managebutton', function(button, property, value ) {
-			this.toolbar.manageButton(button, property, value);
+		this.documentPage.on('managebutton', function(button, property, value, target) {
+			this.toolbar.manageButton(button, property, value, target);
 		},this);
 		this.documentPage.on('closeDocument', function(config) {
 			this.fireEvent('closeDocument', config);

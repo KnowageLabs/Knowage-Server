@@ -97,6 +97,10 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_LABEL);
 	}
 
+	public Integer getDocumentId() {
+		return (Integer) this.getEnv().get(EngineConstants.ENV_DOCUMENT_ID);
+	}
+
 	public String getDocumentVersion() {
 		return (String) this.getEnv().get(EngineConstants.ENV_DOCUMENT_VERSION);
 	}

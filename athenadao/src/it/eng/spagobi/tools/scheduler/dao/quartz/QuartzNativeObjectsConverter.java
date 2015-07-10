@@ -94,7 +94,12 @@ class QuartzNativeObjectsConverter {
 					quartzTrigger = new org.quartz.SimpleTrigger();
 				} else {
 					org.quartz.CronTrigger quartzCronTrigger = new org.quartz.CronTrigger();
-					String quartzCronExpression = convertCronExpressionToNativeObject(spagobiTrigger.getChronExpression(), spagobiTrigger.getStartTime());
+					String quartzCronExpression = null;
+					if (org.quartz.CronExpression.isValidExpression(spagobiTrigger.getChronExpression().getExpression())) {
+						quartzCronExpression = spagobiTrigger.getChronExpression().getExpression();
+					} else {
+						quartzCronExpression = convertCronExpressionToNativeObject(spagobiTrigger.getChronExpression(), spagobiTrigger.getStartTime());
+					}
 					quartzCronTrigger.setCronExpression(quartzCronExpression);
 					quartzTrigger = quartzCronTrigger;
 					// dirty trick
@@ -108,9 +113,11 @@ class QuartzNativeObjectsConverter {
 				} else {
 					quartzTrigger.setGroup(spagobiTrigger.getGroupName());
 				}
-						
-				quartzTrigger.setStartTime(spagobiTrigger.getStartTime());
-				if(spagobiTrigger.getEndTime() != null) {
+
+				if (spagobiTrigger.getStartTime() != null) {
+					quartzTrigger.setStartTime(spagobiTrigger.getStartTime());
+				}
+				if (spagobiTrigger.getEndTime() != null) {
 					quartzTrigger.setEndTime(spagobiTrigger.getEndTime());
 				}
 				quartzTrigger.setJobName(spagobiTrigger.getJob().getName());

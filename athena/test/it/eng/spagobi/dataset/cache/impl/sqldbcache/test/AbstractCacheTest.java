@@ -42,7 +42,6 @@ import it.eng.spago.configuration.FileCreatorConfiguration;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.CacheFactory;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
@@ -67,6 +66,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import junit.framework.TestCase;
 
 /**

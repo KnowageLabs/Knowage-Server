@@ -24,6 +24,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -51,6 +54,12 @@ import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.tools.scheduler.jobs.ExecutePersistDatasetJob;
+import it.eng.spagobi.tools.scheduler.to.JobInfo;
+import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
+import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -59,6 +68,7 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,6 +91,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	public static final String NUMBER_TYPE = "number";
 	public static final String RAW_TYPE = "raw";
 	public static final String GENERIC_TYPE = "generic";
+	public static final String JOB_GROUP = "PersistDatasetExecutions";
+	public static final String TRIGGER_GROUP = "DEFAULT";
+	public static final String TRIGGER_NAME_PREFIX = "persist_";
 
 	public static final String PUBLIC = "PUBLIC";
 	protected IEngUserProfile profile;
@@ -139,13 +152,53 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private void returnDatasetList(IDataSetDAO dsDao, Locale locale) {
+		logger.debug("IN");
 		try {
 			Integer totalItemsNum = dsDao.countDatasets();
 			List<IDataSet> items = getListOfGenericDatasets(dsDao);
 			logger.debug("Loaded items list");
 			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
-			JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
-			writeBackToClient(new JSONSuccess(responseJSON));
+			ISchedulerDAO schedulerDAO;
+			try {
+				schedulerDAO = DAOFactory.getSchedulerDAO();
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
+			}
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				for (int i = 0; i < items.size(); i++) {
+					if (items.get(i).isPersisted()) {
+						List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, items.get(i).getLabel());
+						if (triggers.isEmpty()) {
+							itemsJSON.getJSONObject(i).put("isScheduled", false);
+						} else {
+							// Dataset scheduling is mono-trigger
+							Trigger trigger = triggers.get(0);
+							if (!trigger.isRunImmediately()) {
+								itemsJSON.getJSONObject(i).put("isScheduled", true);
+								if (trigger.getStartTime() != null) {
+									itemsJSON.getJSONObject(i).put("startDate", sdf.format(trigger.getStartTime()));
+								} else {
+									itemsJSON.getJSONObject(i).put("startDate", "");
+								}
+								if (trigger.getEndTime() != null) {
+									itemsJSON.getJSONObject(i).put("endDate", sdf.format(trigger.getEndTime()));
+								} else {
+									itemsJSON.getJSONObject(i).put("endDate", "");
+								}
+								itemsJSON.getJSONObject(i).put("schedulingCronLine", trigger.getChronExpression().getExpression());
+							}
+						}
+					}
+				}
+				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
+				writeBackToClient(new JSONSuccess(responseJSON));
+
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger list for datasets", t);
+			} finally {
+				logger.debug("OUT");
+			}
 
 		} catch (Throwable e) {
 			logger.error("Exception occurred while retrieving items", e);
@@ -215,6 +268,35 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					PersistedTableManager ptm = new PersistedTableManager(profile);
 					ptm.persistDataSet(dataset);
 					logger.debug("Persistence ended succesfully!");
+					if (ds.isScheduled()) {
+						String jobName = saveDatasetJobWithTrigger(ds, logParam);
+						if (jobName != null) {
+							saveTriggerForDatasetJob(jobName);
+						} else {
+							logger.error("The job is not saved correctly!");
+							throw new SpagoBIServiceException(SERVICE_NAME, "The job is not saved correctly!");
+						}
+					} else {
+						ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+						String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
+						SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+						if (execOutSB != null) {
+							String outcome = (String) execOutSB.getAttribute("outcome");
+							if (outcome.equalsIgnoreCase("fault")) {
+								try {
+									AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+							}
+						}
+						try {
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 				}
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, operation, logParam, "OK");
 				writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
@@ -248,6 +330,164 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 	}
 
+	private String saveDatasetJobWithTrigger(IDataSet ds, HashMap<String, String> logParam) {
+
+		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+		JobInfo jobInfo = new JobInfo();
+
+		jobInfo.setSchedulerAdminstratorIdentifier(profile.getUserUniqueIdentifier().toString());
+		jobInfo.setJobName(ds.getLabel());
+		jobInfo.setJobDescription(JOB_GROUP);
+		String jobGroupName = JOB_GROUP;
+
+		StringBuffer message = new StringBuffer();
+		message.append("<SERVICE_REQUEST ");
+		message.append(" jobName=\"" + jobInfo.getJobName() + "\" ");
+		message.append(" jobDescription=\"" + jobInfo.getJobDescription() + "\" ");
+		message.append(" jobGroupName=\"" + jobGroupName + "\" ");
+		message.append(" jobRequestRecovery=\"false\" ");
+		message.append(" jobClass=\"" + ExecutePersistDatasetJob.class.getName() + "\" ");
+		message.append(">");
+		message.append("   <PARAMETERS>");
+		message.append("   </PARAMETERS>");
+		message.append("</SERVICE_REQUEST>");
+		String servoutStr = schedulerService.defineJob(message.toString());
+		SourceBean schedModRespSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+		if (schedModRespSB == null) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.SAVE", logParam, "KO");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "Incomplete response returned by the Web service " + "during job " + jobInfo.getJobName()
+					+ " creation");
+		}
+		if (!SchedulerUtilities.checkResultOfWSCall(schedModRespSB)) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Job " + jobInfo.getJobName() + " not created by the web service");
+		}
+		try {
+			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.SAVE", logParam, "OK");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return jobInfo.getJobName();
+	}
+
+	private void saveTriggerForDatasetJob(String jobName) {
+
+		HashMap<String, String> logParam = new HashMap();
+		String quartzMsg = "";
+		try {
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String jobDetail = schedulerService.getJobDefinition(jobName, JOB_GROUP);
+			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
+
+			if (jobDetailSB == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot recover job " + jobName);
+			}
+
+			JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
+			TriggerInfo triggerInfo = new TriggerInfo();
+			triggerInfo.setJobInfo(jobInfo);
+			setTriggerInfoFromRequest(triggerInfo);
+
+			logParam.put("TRIGGER NAME", triggerInfo.getTriggerName());
+			logParam.put("JOB GROUP", triggerInfo.getJobInfo().getJobGroupName());
+			logParam.put("JOB NAME", triggerInfo.getJobInfo().getJobName());
+
+			StringBuffer message = createMessageSaveSchedulation(triggerInfo, false, profile);
+			String servoutStr = schedulerService.scheduleJob(message.toString());
+			SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+			if (execOutSB != null) {
+				String outcome = (String) execOutSB.getAttribute("outcome");
+				if (outcome.equalsIgnoreCase("fault")) {
+					quartzMsg = (String) execOutSB.getAttribute("msg");
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					throw new SpagoBIServiceException(SERVICE_NAME, "Trigger " + triggerInfo.getTriggerName() + " not created by the web service");
+				}
+			}
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception ex) {
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String errorMsgToUser = "Error while saving schedule for job";
+			if (quartzMsg != null && !quartzMsg.isEmpty()) {
+				errorMsgToUser += ": " + quartzMsg;
+			}
+
+			logger.error(errorMsgToUser, ex);
+			throw new SpagoBIServiceException(SERVICE_NAME, errorMsgToUser, ex);
+		}
+	}
+
+	private void setTriggerInfoFromRequest(TriggerInfo triggerInfo) {
+		triggerInfo.setTriggerName("persist_" + triggerInfo.getJobInfo().getJobName());
+		triggerInfo.setTriggerDescription("It is used to schedule data update for " + triggerInfo.getJobInfo().getJobName() + " dataset");
+		String tempdate = getAttributeAsString("startDate");
+		String startdate = "";
+		// change date format
+		if (!tempdate.isEmpty()) {
+			startdate = tempdate.substring(8, 10) + "-" + tempdate.substring(5, 7) + "-" + tempdate.substring(0, 4);
+		}
+		triggerInfo.setStartDate(startdate);
+		// triggerInfo.setStartTime("");
+		String chronstr = getAttributeAsString("schedulingCronLine");
+		triggerInfo.setChronString(chronstr);
+		String enddate = getAttributeAsString("endDate");
+		triggerInfo.setEndDate(enddate);
+		// triggerInfo.setEndTime("");
+		// triggerInfo.setRepeatInterval("");
+	}
+
+	private StringBuffer createMessageSaveSchedulation(TriggerInfo triggerInfo, boolean runImmediately, IEngUserProfile profile) {
+
+		StringBuffer message = new StringBuffer();
+		JobInfo jobInfo = triggerInfo.getJobInfo();
+
+		message.append("<SERVICE_REQUEST ");
+
+		message.append(" jobName=\"" + jobInfo.getJobName() + "\" ");
+
+		message.append(" jobGroup=\"" + jobInfo.getJobGroupName() + "\" ");
+		if (runImmediately) {
+			message.append(" runImmediately=\"true\" ");
+		} else {
+			message.append(" triggerName=\"" + triggerInfo.getTriggerName() + "\" ");
+
+			message.append(" triggerDescription=\"" + triggerInfo.getTriggerDescription() + "\" ");
+
+			String startdate = triggerInfo.getStartDate();
+			String enddate = triggerInfo.getEndDate();
+
+			if (!startdate.trim().equals("")) {
+				message.append(" startDate=\"" + triggerInfo.getStartDate() + "\" ");
+			}
+			if (!enddate.trim().equals("")) {
+				message.append(" endDate=\"" + enddate + "\" ");
+			}
+
+			// message.append(" startTime=\"" + triggerInfo.getStartTime() + "\" ");
+
+			message.append(" chronString=\"" + triggerInfo.getChronString() + "\" ");
+		}
+		message.append(">");
+		message.append("</SERVICE_REQUEST>");
+
+		return message;
+	}
+
 	private void datatsetTest(IDataSetDAO dsDao, Locale locale) {
 		try {
 			JSONObject dataSetJSON = getDataSetResultsAsJSON();
@@ -279,6 +519,25 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dsDao.deleteDataSet(dsID);
 			deleteDatasetFile(ds); // for FileDatase
 			logger.debug("Dataset deleted");
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
+			SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+			if (execOutSB != null) {
+				String outcome = (String) execOutSB.getAttribute("outcome");
+				if (outcome.equalsIgnoreCase("fault")) {
+					try {
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+				}
+			}
+			try {
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "OK");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SET.DELETE", logParam, "OK");
 			writeBackToClient(new JSONAcknowledge("Operation succeded"));
 		} catch (Throwable e) {
@@ -543,8 +802,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private void getPersistenceInfo(IDataSet ds) throws EMFUserError {
 		Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED);
+		Boolean isScheduled = getAttributeAsBoolean(DataSetConstants.IS_SCHEDULED);
 		if (isPersisted != null) {
 			ds.setPersisted(isPersisted.booleanValue());
+			if (isScheduled != null) {
+				ds.setScheduled(isScheduled.booleanValue());
+			}
 		}
 		if (isPersisted) {
 			// String dataSourcePersistLabel =
@@ -841,6 +1104,91 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		}
 
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
+			// added
+			String dsId = getAttributeAsString(DataSetConstants.DS_ID);
+			String dsLabel = getAttributeAsString(DataSetConstants.LABEL);
+			String fileType = getAttributeAsString(DataSetConstants.CKAN_FILE_TYPE);
+
+			String csvDelimiter = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+			String csvQuote = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+
+			String skipRows = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+			String limitRows = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+			String xslSheetNumber = getAttributeAsString(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
+
+			String ckanUrl = getAttributeAsString(DataSetConstants.CKAN_URL);
+
+			String ckanId = getAttributeAsString(DataSetConstants.CKAN_ID);
+			String scopeCd = DataSetConstants.DS_SCOPE_USER;
+
+			String ckanEncodig = getAttributeAsString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
+
+			Boolean newFileUploaded = false;
+			if (getAttributeAsString("fileUploaded") != null) {
+				newFileUploaded = Boolean.valueOf(getAttributeAsString("fileUploaded"));
+			}
+
+			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, csvDelimiter);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_QUOTE_CHARACTER, csvQuote);
+			jsonDsConfig.put(DataSetConstants.CSV_FILE_ENCODING, ckanEncodig);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SKIP_ROWS, skipRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
+			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
+			jsonDsConfig.put(DataSetConstants.CKAN_URL, ckanUrl);
+			jsonDsConfig.put(DataSetConstants.CKAN_ID, ckanId);
+			jsonDsConfig.put(DataSetConstants.DS_SCOPE, scopeCd);
+
+			dataSet = new CkanDataSet();
+			((CkanDataSet) dataSet).setResourcePath(ckanUrl);
+			((CkanDataSet) dataSet).setCkanUrl(ckanUrl);
+
+			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
+			if (savingDataset) {
+				// when saving the dataset the file associated will get the
+				// dataset label name
+				if (dsLabel != null) {
+					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel + "." + fileType.toLowerCase());
+				}
+			} else {
+				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
+			}
+
+			dataSet.setConfiguration(jsonDsConfig.toString());
+
+			if ((dsId == null) || (dsId.isEmpty())) {
+				// creating a new dataset, the file uploaded has to be renamed
+				// and moved
+				if (savingDataset) {
+					// delete the file
+					String resourcePath = DAOConfig.getResourcePath();
+					deleteDatasetFile(fileName, resourcePath, fileType);
+				}
+			} else {
+				// reading or modifying a existing dataset
+				if (newFileUploaded) {
+					// modifying an existing dataset with a new file uploaded
+					// saving the existing dataset with a new file associated
+					if (savingDataset) {
+						// rename and move the file
+						String resourcePath = DAOConfig.getResourcePath();
+						deleteDatasetFile(fileName, resourcePath, fileType);
+					}
+				}
+			}
+
+			((CkanDataSet) dataSet).setFileType(fileType);
+
+			if (savingDataset) {
+				// the file used will have the name equals to dataset's label
+				((CkanDataSet) dataSet).setFileName(dsLabel + "." + fileType.toLowerCase());
+			} else {
+				((CkanDataSet) dataSet).setFileName(fileName);
+			}
+
+		}
+
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 			String query = getAttributeAsString(DataSetConstants.QUERY);
 			String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT);
@@ -1032,6 +1380,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 		}
 
+	}
+
+	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
+		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
+
+		File datasetFile = new File(filePath + fileName);
+		if (datasetFile.exists()) {
+			datasetFile.delete();
+		}
 	}
 
 	private IDataSet setTransformer(IDataSet ds, String trasfTypeCd) {

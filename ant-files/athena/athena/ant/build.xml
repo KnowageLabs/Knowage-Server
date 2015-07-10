@@ -495,6 +495,7 @@
 				<file name="./lib/ext-3.1.1/ux/grid/Ext.grid.ButtonColumn.js" /> 
 				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.ColorField.js" />
 				<file name="./lib/ext-3.1.1/ux/grid/Ext.ux.grid.RowEditor.js" />
+				<file name="./lib/ext-3.1.1/ux/form/MultiSelect.js" />
 
 				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridSorter.js" />
 				<file name="./lib/ext-3.1.1/ux/treegrid/TreeGridColumnResizer.js" />
@@ -683,7 +684,7 @@
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
-				<!--file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" /-->
+				<file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" />
 				<file name="./src/ext4/sbi/tools/dataset/QbeDataSetsWizard.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DatasetMetadataMainPage.js" />
 				<file name="./src/ext4/sbi/tools/dataset/GeoBIDatasetFieldMetadata.js" />

@@ -28,6 +28,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
@@ -62,6 +63,7 @@ import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
@@ -301,6 +303,18 @@ public class DAOFactory {
 	 */
 	public static IDataSetDAO getDataSetDAO() throws EMFUserError {
 		return (IDataSetDAO) createDAOInstance("DataSetDAO");
+	}
+
+	/**
+	 * Gets the sbi data set dao.
+	 *
+	 * @return the sbi data set dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ISbiDataSetDAO getSbiDataSetDAO() throws EMFUserError {
+		return (ISbiDataSetDAO) createDAOInstance("SbiDataSetDAO");
 	}
 
 	/**
@@ -843,6 +857,10 @@ public class DAOFactory {
 
 	public static ISbiGeoLayersDAO getSbiGeoLayerDao() {
 		return (ISbiGeoLayersDAO) createDAOInstance("GeoLayersDAO");
+	}
+
+	public static ICacheDAO getCacheDao() {
+		return (ICacheDAO) createDAOInstance("CacheDAO");
 	}
 
 	public static IProductTypeDAO getProductTypeDAO() {

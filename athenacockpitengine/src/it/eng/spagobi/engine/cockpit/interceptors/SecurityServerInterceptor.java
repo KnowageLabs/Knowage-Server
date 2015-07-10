@@ -16,6 +16,7 @@ import it.eng.spagobi.engine.cockpit.api.SecurityServiceSupplierFactory;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -75,6 +76,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		try {
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
+			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
+
 			int index = serviceUrl.indexOf("/", 1);
 			if (index > 0) {
 				serviceUrl = serviceUrl.substring(0, index);
@@ -225,7 +228,8 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		logger.debug("User id = " + userId);
 		if (StringUtilities.isNotEmpty(userId)) {
 			try {
-				engProfile = GeneralUtilities.createNewUserProfile(userId);
+				SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
+				engProfile = proxy.getUserProfile();
 			} catch (Exception e) {
 				logger.error("Error while creating user profile with user id = [" + userId + "]", e);
 			}

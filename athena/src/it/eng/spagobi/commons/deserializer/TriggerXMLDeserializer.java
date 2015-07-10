@@ -166,23 +166,22 @@ public class TriggerXMLDeserializer implements Deserializer {
 	 * get the start date param (format dd-mm-yyyy) and end time (format hh:mm:ss)
 	 */
 	private Date deserializeStartTimeAttribute(SourceBean xml) {
-		Calendar calendar;
-		
-		String startDateStr = (String)xml.getAttribute( TRIGGER_START_DATE );
-		String startTimeStr = (String)xml.getAttribute( TRIGGER_START_TIME );
-		
-		String startDay = startDateStr.substring(0,2);
-		String startMonth = startDateStr.substring(3, 5);
-		String startYear = startDateStr.substring(6,10);
-		
-		calendar = new GregorianCalendar(new Integer(startYear).intValue(), 
-				                                  new Integer(startMonth).intValue()-1, 
-				                                  new Integer(startDay).intValue());
-		if(startTimeStr != null) {
-			String startHour = startTimeStr.substring(0, 2);
-			String startMinute = startTimeStr.substring(3, 5);
-			calendar.set(calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
-			calendar.set(calendar.MINUTE, new Integer(startMinute).intValue());
+		Calendar calendar = null;
+
+		String startDateStr = (String) xml.getAttribute(TRIGGER_START_DATE);
+		if (startDateStr != null) {
+			String startDay = startDateStr.substring(0, 2);
+			String startMonth = startDateStr.substring(3, 5);
+			String startYear = startDateStr.substring(6, 10);
+
+			calendar = new GregorianCalendar(new Integer(startYear).intValue(), new Integer(startMonth).intValue() - 1, new Integer(startDay).intValue());
+			String startTimeStr = (String) xml.getAttribute(TRIGGER_START_TIME);
+			if (startTimeStr != null) {
+				String startHour = startTimeStr.substring(0, 2);
+				String startMinute = startTimeStr.substring(3, 5);
+				calendar.set(calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
+				calendar.set(calendar.MINUTE, new Integer(startMinute).intValue());
+			}
 		}
 		
 		return calendar != null? calendar.getTime(): null;
@@ -193,9 +192,9 @@ public class TriggerXMLDeserializer implements Deserializer {
 	 */
 	private Date deserializeEndTimeAttribute(SourceBean xml) {
 		Calendar calendar = null;
-		String endDateStr = (String)xml.getAttribute( TRIGGER_END_DATE );
-		if(endDateStr!=null){
-			String endDay = endDateStr.substring(8);
+		String endDateStr = (String) xml.getAttribute(TRIGGER_END_DATE);
+		if (endDateStr != null) {
+			String endDay = endDateStr.substring(8, 10);
 			String endMonth = endDateStr.substring(5, 7);
 			String endYear = endDateStr.substring(0, 4);
 			calendar = new GregorianCalendar(new Integer(endYear).intValue(), 

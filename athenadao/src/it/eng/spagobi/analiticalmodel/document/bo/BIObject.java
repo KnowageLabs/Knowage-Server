@@ -1,24 +1,45 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.Xss;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Range;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 /**
  * Defines a Business Intelligence object.
-
  */
 public class BIObject implements Serializable, Cloneable {
 
@@ -26,39 +47,55 @@ public class BIObject implements Serializable, Cloneable {
 	private Integer id = null;
 
 	// ENGINE_ID NUMBER N Engine idenitifier (FK)
+	@NotNull
 	private Engine engine = null;
-	
+
 	// DATA_SOURCE_ID NUMBER N DataSource idenitifier (FK)
 	private Integer dataSourceId = null;
 
 	// DATA_SOURCE_ID NUMBER N DataSource idenitifier (FK)
 	private Integer dataSetId = null;
-	
+
 	// DESCR VARCHAR2(128) Y BI Object description
+	@NotEmpty
+	@ExtendedAlphanumeric
+	@Size(max = 200)
 	private String name = null;
-	
+
 	// DESCR VARCHAR2(128) Y BI Object description
+	@ExtendedAlphanumeric
+	@Size(max = 400)
 	private String description = null;
 
 	// LABEL VARCHAR2(36) Y Engine label (short textual identifier)
+	@NotEmpty
+	@Alphanumeric
+	@Size(max = 20)
 	private String label = null;
 
 	// ENCRYPT NUMBER Y Parameter encryption request.
 	private Integer encrypt = null;
-	
+
 	// VISIBLE NUMBER Y Parameter visible request.
+	@Range(min = 0, max = 1)
 	private Integer visible = null;
-	
+
+	@Xss
+	@Size(max = 400)
 	private String profiledVisibility;
 
 	// REL_NAME VARCHAR2(256) Y Relative path + file object name
+	@Xss
+	@Size(max = 400)
 	private String relName = null;
 
 	// STATE_ID NUMBER N State identifier (actually not used)
+	@NotNull
 	private Integer stateID = null;
 
 	// STATE_CD VARCHAR2(18) N State code. Initially hard-coded valued, in the
 	// future, managed by a states workflow with historical storage.
+	@NotEmpty
 	private String stateCode = null;
 
 	// BIOBJ_TYPE_ID NUMBER N Business Intelligence Object Type identifier.
@@ -69,36 +106,35 @@ public class BIObject implements Serializable, Cloneable {
 	// SBI_DOMAINS.
 	private String biObjectTypeCode = null;
 
-	private List biObjectParameters = null;
+	private List<BIObjectParameter> biObjectParameters = null;
 
 	private String path = null;
-	
-	private String uuid = null;
-	
-	private List functionalities = null;
-	
-	// add this properties for metadata
-	private Date creationDate=null;
-	private String creationUser=null;	
 
-	private Integer refreshSeconds=null;	
+	private String uuid = null;
+
+	private List functionalities = null;
+
+	// add this properties for metadata
+	private Date creationDate = null;
+	private String creationUser = null;
+
+	private Integer refreshSeconds = null;
 
 	private List<DocumentMetadataProperty> objMetaDataAndContents = null;
-	
+
 	private String tenant = null;
-	
-	private String previewFile = null;	
 
-	private boolean publicDoc = false;	
-	
-	private Integer docVersion =null; //defines the version of template if is different by the default (last version)
+	private String previewFile = null;
 
-	private String parametersRegion = null;	
+	private boolean publicDoc = false;
 
-	
+	private Integer docVersion = null; // defines the version of template if is different by the default (last version)
+
+	private String parametersRegion = null;
+
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return Returns the id.
 	 */
 	public Integer getId() {
@@ -107,8 +143,9 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the id.
-	 * 
-	 * @param businessObjectID The id to set.
+	 *
+	 * @param businessObjectID
+	 *            The id to set.
 	 */
 	public void setId(Integer businessObjectID) {
 		this.id = businessObjectID;
@@ -116,25 +153,27 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the bi object parameters.
-	 * 
+	 *
 	 * @return Returns the biObjectParameters.
 	 */
-	public List getBiObjectParameters() {
+	@JsonIgnore
+	public List<BIObjectParameter> getBiObjectParameters() {
 		return biObjectParameters;
 	}
 
 	/**
 	 * Sets the bi object parameters.
-	 * 
-	 * @param businessObjectParameters The biObjectParameters to set.
+	 *
+	 * @param businessObjectParameters
+	 *            The biObjectParameters to set.
 	 */
-	public void setBiObjectParameters(List businessObjectParameters) {
+	public void setBiObjectParameters(List<BIObjectParameter> businessObjectParameters) {
 		this.biObjectParameters = businessObjectParameters;
 	}
 
 	/**
 	 * Gets the description.
-	 * 
+	 *
 	 * @return Returns the description.
 	 */
 	public String getDescription() {
@@ -143,8 +182,9 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the description.
-	 * 
-	 * @param description The description to set.
+	 *
+	 * @param description
+	 *            The description to set.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -155,6 +195,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the encrypt.
 	 */
+	@JsonIgnore
 	public Integer getEncrypt() {
 		return encrypt;
 	}
@@ -173,6 +214,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the visible
 	 */
+	@JsonIgnore
 	public Integer getVisible() {
 		return visible;
 	}
@@ -182,12 +224,14 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param visible the new visible
 	 */
+	@JsonIgnore
 	public void setVisible(Integer visible) {
 		this.visible = visible;
 	}
-	
+
+	@JsonProperty(value = "visible")
 	public void setVisible(boolean visible) {
-		this.visible = visible? new Integer(1): new Integer(0);
+		this.visible = visible ? new Integer(1) : new Integer(0);
 	}
 	
 	public boolean isVisible() {
@@ -199,8 +243,14 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the engine.
 	 */
+	@JsonIgnore
 	public Engine getEngine() {
 		return engine;
+	}
+
+	@JsonProperty(value = "engine")
+	public String getEngineLabel() {
+		return engine.getLabel();
 	}
 
 	/**
@@ -208,15 +258,30 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param engine The engine to set.
 	 */
+	@JsonIgnore
 	public void setEngine(Engine engine) {
 		this.engine = engine;
 	}
-	
+
+	@JsonProperty(value = "engine")
+	public void setEngineWithName(String engineName) {
+		try {
+			IEngineDAO dao = DAOFactory.getEngineDAO();
+			dao.setUserID(creationUser);
+			dao.setTenant(tenant);
+
+			this.engine = dao.loadEngineByLabel(engineName);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while retrieving the engine [" + engineName + "]", e);
+		}
+	}
+
 	/**
 	 * Gets the data source id.
 	 * 
 	 * @return Returns the datasource.
 	 */
+	@JsonIgnore
 	public Integer getDataSourceId() {
 		return dataSourceId;
 	}
@@ -230,7 +295,22 @@ public class BIObject implements Serializable, Cloneable {
 		this.dataSourceId = dataSourceId;
 	}
 
-	
+	public String getDataSourceLabel() throws EMFUserError {
+		if (dataSourceId == null)
+			return null;
+
+		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+		return dataSourceDAO.loadDataSourceByID(dataSourceId).getLabel();
+	}
+
+	public void setDataSourceLabel(String label) throws EMFUserError {
+		if (label != null) {
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+
+			this.dataSourceId = dataSourceDAO.loadDataSourceByLabel(label).getDsId();
+		}
+	}
+
 	/**
 	 * Gets the label.
 	 * 
@@ -254,6 +334,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the relName.
 	 */
+	@JsonIgnore
 	public String getRelName() {
 		return relName;
 	}
@@ -263,6 +344,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param relName The relName to set.
 	 */
+	@JsonSetter
 	public void setRelName(String relName) {
 		this.relName = relName;
 	}
@@ -272,6 +354,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the biObjectTypeCode.
 	 */
+	@JsonProperty(value = "typeCode")
 	public String getBiObjectTypeCode() {
 		return biObjectTypeCode;
 	}
@@ -281,8 +364,24 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param businessObjectTypeCD The biObjectTypeCode to set.
 	 */
+	@JsonIgnore
 	public void setBiObjectTypeCode(String businessObjectTypeCD) {
 		this.biObjectTypeCode = businessObjectTypeCD;
+	}
+
+	/**
+	 * Sets the bi object type code and update the type id.
+	 *
+	 * @param businessObjectTypeCD
+	 *            The biObjectTypeCode to set.
+	 * @throws EMFUserError
+	 */
+	@JsonProperty(value = "typeCode")
+	public void setTypeCodeAndId(String businessObjectTypeCD) throws EMFUserError {
+		this.biObjectTypeCode = businessObjectTypeCD;
+
+		IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+		this.biObjectTypeID = domainDAO.loadDomainByCodeAndValue("BIOBJ_TYPE", businessObjectTypeCD).getValueId();
 	}
 
 	/**
@@ -290,6 +389,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the biObjectTypeID.
 	 */
+	@JsonIgnore
 	public Integer getBiObjectTypeID() {
 		return biObjectTypeID;
 	}
@@ -308,6 +408,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the stateCode.
 	 */
+	@JsonGetter
 	public String getStateCode() {
 		return stateCode;
 	}
@@ -317,8 +418,24 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param stateCD The stateCode to set.
 	 */
+	@JsonIgnore
 	public void setStateCode(String stateCD) {
 		this.stateCode = stateCD;
+	}
+
+	/**
+	 * Sets the state code and update the state id.
+	 *
+	 * @param stateCD
+	 *            The stateCode to set.
+	 * @throws EMFUserError
+	 */
+	@JsonProperty(value = "stateCode")
+	public void setStateCodeAndId(String stateCD) throws EMFUserError {
+		this.stateCode = stateCD;
+
+		IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+		this.stateID = domainDAO.loadDomainByCodeAndValue("STATE", stateCD).getValueId();
 	}
 
 	/**
@@ -326,6 +443,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the stateID.
 	 */
+	@JsonIgnore
 	public Integer getStateID() {
 		return stateID;
 	}
@@ -344,6 +462,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return Returns the path.
 	 */
+	@JsonIgnore
 	public String getPath() {
 		return path;
 	}
@@ -380,6 +499,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the uuid
 	 */
+	@JsonIgnore
 	public String getUuid() {
 		return uuid;
 	}
@@ -398,6 +518,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the functionalities
 	 */
+	@JsonIgnore
 	public List getFunctionalities() {
 		return functionalities;
 	}
@@ -411,12 +532,33 @@ public class BIObject implements Serializable, Cloneable {
 		this.functionalities = functionalities;
 	}
 
-	
+	@JsonProperty(value = "functionalities")
+	public List getFunctionalitiesNames() throws EMFUserError {
+		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
+		List<String> list = new ArrayList<String>();
+
+		for (Integer functionalityID : (List<Integer>) functionalities) {
+			list.add(functionalitiesDao.loadLowFunctionalityByID(functionalityID, false).getPath());
+		}
+
+		return list;
+	}
+
+	public void setFunctionalitiesNames(List<String> paths) throws EMFUserError {
+		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
+		this.functionalities = new ArrayList<Integer>();
+
+		for (String path : paths) {
+			this.functionalities.add(functionalitiesDao.loadLowFunctionalityByPath(path, false).getId());
+		}
+	}
+
 	/**
 	 * Gets the active template.
 	 * 
 	 * @return the active template
 	 */
+	@JsonIgnore
 	public ObjTemplate getActiveTemplate() {
 		ObjTemplate template = null;
 		try{
@@ -435,6 +577,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the template list
 	 */
+	@JsonIgnore
 	public List getTemplateList() {
 		List templates = new ArrayList();
 		try{
@@ -452,8 +595,14 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the creation date
 	 */
+	@JsonIgnore
 	public Date getCreationDate() {
-	    return creationDate;
+		return creationDate;
+	}
+
+	@JsonProperty(value = "creationDate")
+	public String getFormattedDate() {
+		return creationDate.toString();
 	}
 
 	/**
@@ -470,6 +619,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the creation user
 	 */
+	@JsonGetter
 	public String getCreationUser() {
 	    return creationUser;
 	}
@@ -479,6 +629,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param creationUser the new creation user
 	 */
+	@JsonIgnore
 	public void setCreationUser(String creationUser) {
 	    this.creationUser = creationUser;
 	}
@@ -488,6 +639,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the data set id
 	 */
+	@JsonIgnore
 	public Integer getDataSetId() {
 		return dataSetId;
 	}
@@ -501,12 +653,29 @@ public class BIObject implements Serializable, Cloneable {
 		this.dataSetId = dataSetId;
 	}
 
+	public String getDataSetLabel() throws EMFUserError {
+		if (dataSetId == null)
+			return null;
+
+		IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+
+		return dataSetDao.loadDataSetById(dataSetId).getLabel();
+	}
+
+	public void setDataSetLabel(String label) throws EMFUserError {
+		if (label != null) {
+			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+
+			this.dataSetId = dataSetDao.loadDataSetByLabel(label).getId();
+		}
+	}
+
 	/**
 	 * Gets refresh Seconds.
 	 * 
 	 * @return refresh Seconds
 	 */
-	
+	@JsonIgnore
 	public Integer getRefreshSeconds() {
 		return refreshSeconds;
 	}
@@ -521,10 +690,12 @@ public class BIObject implements Serializable, Cloneable {
 		this.refreshSeconds = refreshSeconds;
 	}
 
+	@JsonIgnore
 	public String getProfiledVisibility() {
 		return profiledVisibility;
 	}
 
+	@JsonSetter
 	public void setProfiledVisibility(String profiledVisibility) {
 		this.profiledVisibility = profiledVisibility;
 	}
@@ -563,6 +734,7 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * @return the publicDoc
 	 */
+	@JsonProperty(value = "public")
 	public boolean isPublicDoc() {
 		return publicDoc;
 	}
@@ -593,8 +765,6 @@ public class BIObject implements Serializable, Cloneable {
 		return "Document [label=" + label + "]";
 	}
 
-	
-
 	public String getParametersRegion() {
 		return parametersRegion;
 	}
@@ -606,7 +776,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Clone the object.. NOTE: it does not clone the id property
 	 */
-	public BIObject clone(){
+	@Override
+	public BIObject clone() {
 		BIObject clone = new BIObject();
 		clone.setEngine(this.engine);
 		clone.setDataSourceId(dataSourceId);

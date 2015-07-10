@@ -321,7 +321,7 @@ Ext.extend(Sbi.execution.DocumentPage, Ext.Panel, {
 	, initManageButton: function() {
 		return {
     		fn: function(srcFrame, message) {
-	        	this.fireEvent("managebutton",message.data.button, message.data.property, message.data.value) 
+	        	this.fireEvent("managebutton",message.data.button, message.data.property, message.data.value, message.data.target) 
     		}
     		, scope: this
     	};

@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 20-giu-2005
@@ -15,6 +15,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,32 +32,32 @@ import org.hibernate.criterion.Expression;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
- * 
+ *
  * @author zoppello e Monia Spinelli
  */
-public class DomainDAOHibImpl extends AbstractHibernateDAO implements
-		IDomainDAO {
+public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO {
 
 	// logger component
 	private static Logger logger = Logger.getLogger(DomainDAOHibImpl.class);
+
 	/**
 	 * Load list domains by type.
-	 * 
+	 *
 	 * @param domainType
 	 *            the domain type
-	 * 
+	 *
 	 * @return the list
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomainsByType(java.lang.String)
 	 */
+	@Override
 	public List loadListDomainsByType(String domainType) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS
-		 * VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM
-		 * SBI_DOMAINS T WHERE DOMAIN_CD = ? "/>
+		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM SBI_DOMAINS T WHERE
+		 * DOMAIN_CD = ? "/>
 		 */
 		Session aSession = null;
 		Transaction tx = null;
@@ -66,8 +67,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion domainCdCriterrion = Expression
-					.eq("domainCd", domainType);
+			Criterion domainCdCriterrion = Expression.eq("domainCd", domainType);
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(domainCdCriterrion);
 
@@ -98,8 +98,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
-	public List loadListDomainsByTypeAndTenant(String domainType)
-			throws EMFUserError {
+	@Override
+	public List loadListDomainsByTypeAndTenant(String domainType) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -107,37 +107,41 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
 
-			
-			Criterion domainCdCriterrion = Expression
-					.eq("domainCd", domainType);
+			Criterion domainCdCriterrion = Expression.eq("domainCd", domainType);
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(domainCdCriterrion);
 
 			List hibList = criteria.list();
-			
+			Iterator domainIt = hibList.iterator();
+
 			String tenant = getTenant();
 
+			while (domainIt.hasNext()) {
 
-			Iterator it = hibList.iterator();
+				Query hibQueryProd = aSession.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt "
+						+ "where opt.sbiOrganizations.name = :tenant ");
+				hibQueryProd.setString("tenant", tenant);
 
-			while (it.hasNext()) {
-				Query hibQueryEng = aSession.createQuery("from SbiOrganizationEngine oe "
-						+ "where oe.sbiOrganizations.name = :tenant "
-						+ "and oe.sbiEngines.biobjType.valueCd = :valueCd"
-						);
+				List hibListProd = hibQueryProd.list();
+				Iterator productIt = hibListProd.iterator();
 
-				hibQueryEng.setString("tenant", tenant);				
-				SbiDomains domain = (SbiDomains) it.next();
-				hibQueryEng.setString("valueCd", domain.getValueCd());
-				
-				List hibListEng  =hibQueryEng.list();
-				if(!hibListEng.isEmpty()){
-					realResult.add(toDomain(domain));
+				while (productIt.hasNext()) {
+					SbiProductType productType = (SbiProductType) productIt.next();
+
+					Query hibQueryEng = aSession.createQuery("from SbiProductTypeEngine pte " + "where pte.sbiProductType.label = :productType "
+							+ "and pte.sbiEngines.biobjType.valueCd = :valueCd");
+
+					hibQueryEng.setString("productType", productType.getLabel());
+					SbiDomains domain = (SbiDomains) domainIt.next();
+					hibQueryEng.setString("valueCd", domain.getValueCd());
+
+					List hibListEng = hibQueryEng.list();
+					if (!hibListEng.isEmpty()) {
+						realResult.add(toDomain(domain));
+					}
 				}
-				
-				
+
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -158,28 +162,27 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		return realResult;
 
 	}
+
 	/**
 	 * Load domain by code and value.
-	 * 
+	 *
 	 * @param codeDomain
 	 *            the code domain
 	 * @param codeValue
 	 *            the code value
-	 * 
+	 *
 	 * @return the domain
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
-	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
-	 *      java.lang.String)
+	 *
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
 	 */
-	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue)
-			throws EMFUserError {
+	@Override
+	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
-		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
-		 * VALUE_CD FROM SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
+		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS VALUE_CD FROM
+		 * SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
 		 */
 		Domain aDomain = null;
 		Session aSession = null;
@@ -188,8 +191,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd",
-					codeDomain), Expression.eq("valueCd", codeValue));
+			Criterion aCriterion = Expression.and(Expression.eq("domainCd", codeDomain), Expression.eq("valueCd", codeValue));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
@@ -220,26 +222,24 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	/**
 	 * Load domain by code and value.
-	 * 
+	 *
 	 * @param codeDomain
 	 *            the code domain
 	 * @param codeValue
 	 *            the code value
-	 * 
+	 *
 	 * @return the domain
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
-	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
-	 *      java.lang.String)
+	 *
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
 	 */
-	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain,
-			String codeValue) throws EMFUserError {
+	@Override
+	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
-		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
-		 * VALUE_CD FROM SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
+		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS VALUE_CD FROM
+		 * SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
 		 */
 		SbiDomains aSbiDomains = null;
 		Session aSession = null;
@@ -248,8 +248,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd",
-					codeDomain), Expression.eq("valueCd", codeValue));
+			Criterion aCriterion = Expression.and(Expression.eq("domainCd", codeDomain), Expression.eq("valueCd", codeValue));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
@@ -277,12 +276,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	}
 
 	/**
-	 * From the hibernate domain object at input, gives the corrispondent
-	 * <code>Domain</code> object.
-	 * 
+	 * From the hibernate domain object at input, gives the corrispondent <code>Domain</code> object.
+	 *
 	 * @param hibDomain
 	 *            The hybernate Domain object
-	 * 
+	 *
 	 * @return The corrispondent <code>Domain</code>
 	 */
 	public Domain toDomain(SbiDomains hibDomain) {
@@ -298,17 +296,18 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	/**
 	 * Load domain by id.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return the domain
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainById(java.lang.Integer)
 	 */
+	@Override
 	public Domain loadDomainById(Integer id) throws EMFUserError {
 
 		Domain toReturn = null;
@@ -319,8 +318,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiDomains hibDomain = (SbiDomains) aSession.load(SbiDomains.class,
-					id);
+			SbiDomains hibDomain = (SbiDomains) aSession.load(SbiDomains.class, id);
 
 			toReturn = toDomain(hibDomain);
 			tx.commit();
@@ -348,6 +346,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
 	 */
+	@Override
 	public List loadListDomains() throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
@@ -378,12 +377,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 	}
 
 	/**
-	 * to the hibernate domain object at input, from the corrispondent
-	 * <code>Domain</code> object.
-	 * 
+	 * to the hibernate domain object at input, from the corrispondent <code>Domain</code> object.
+	 *
 	 * @param Domain
 	 *            object
-	 * 
+	 *
 	 * @return The corrispondent <code>SbiDomain</code>
 	 */
 	public SbiDomains fromDomain(Domain Domain) {
@@ -399,18 +397,19 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	/**
 	 * Save domain by id.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return void
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 */
+	@Override
 	public void saveDomain(Domain domain) throws EMFUserError {
-		
+
 		Domain toSave = null;
 		Session aSession = null;
 		Transaction tx = null;
@@ -419,12 +418,12 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			SbiDomains hibDomains = null;
 			Integer id = domain.getValueId();
-			
-			if(id!=null){
-				//modification
+
+			if (id != null) {
+				// modification
 				logger.debug("Update Domain");
 				hibDomains = (SbiDomains) aSession.load(SbiDomains.class, id);
 				updateSbiCommonInfo4Update(hibDomains);
@@ -434,21 +433,20 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 				hibDomains.setValueDs(domain.getValueDescription());
 				hibDomains.setValueId(domain.getValueId());
 				hibDomains.setValueNm(domain.getValueName());
-			}
-			else{
-				//insertion
+			} else {
+				// insertion
 				logger.debug("Insert new Domain");
 				hibDomains = fromDomain(domain);
 				updateSbiCommonInfo4Insert(hibDomains);
 				hibDomains.setValueId(domain.getValueId());
 			}
-			
+
 			Integer newId = (Integer) aSession.save(hibDomains);
-				
+
 			tx.commit();
-			
+
 			domain.setValueId(newId);
-			
+
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -467,20 +465,19 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 
 	}
 
-
-
 	/**
 	 * Delete domain by id.
-	 * 
+	 *
 	 * @param id
 	 *            the id
-	 * 
+	 *
 	 * @return void
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
+	 *
 	 */
+	@Override
 	public void delete(Integer idDomain) throws EMFUserError {
 		logger.debug("IN");
 		Session sess = null;
@@ -490,7 +487,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			sess = getSession();
 			tx = sess.beginTransaction();
 
-			Criterion aCriterion = Expression.eq("valueId",idDomain);
+			Criterion aCriterion = Expression.eq("valueId", idDomain);
 			Criteria criteria = sess.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
@@ -504,7 +501,6 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			if (tx != null)
 				tx.rollback();
 			throw new RuntimeException("Impossible to delete domain [" + idDomain + "]", he);
-			
 
 		} finally {
 			if (sess != null) {
@@ -513,6 +509,5 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements
 			}
 		}
 	}
-
 
 }

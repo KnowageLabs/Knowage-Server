@@ -63,6 +63,7 @@ public class DataSetConstants {
 	public static final String JCLASS_NAME = "jClassName";
 	public static final String CUSTOM_DATA = "customData";
 	public static final String FILE = "File";
+	public static final String CKAN = "Ckan";
 	public static final String JAVA_CLASS = "Java Class";
 	public static final String WEB_SERVICE = "Web Service";
 	public static final String QBE = "Qbe";
@@ -78,6 +79,7 @@ public class DataSetConstants {
 	
 	public static final String DS_WS = "SbiWSDataSet";
 	public static final String DS_FILE = "SbiFileDataSet";
+	public static final String DS_CKAN = "SbiCkanDataSet";
 	public static final String DS_JCLASS = "SbiJClassDataSet";
 	public static final String DS_QUERY = "SbiQueryDataSet";
 	public static final String DS_SCRIPT = "SbiScriptDataSet";
@@ -93,6 +95,7 @@ public class DataSetConstants {
 	public static final String SOURCE_DS_LABEL = "sourceDatasetLabel";
 	
 	public static final String IS_PERSISTED = "isPersisted";
+	public static final String IS_SCHEDULED = "isScheduled";
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";
@@ -114,19 +117,34 @@ public class DataSetConstants {
 	public static final String XSL_FILE_SKIP_ROWS = "skipRows";
 	public static final String XSL_FILE_LIMIT_ROWS = "limitRows";
 	public static final String XSL_FILE_SHEET_NUMBER = "xslSheetNumber";
-	
+
+	// CKAN dataset constants
+
+	public static final String CKAN_FILE_TYPE = "ckanFileType";
+	public static final String CKAN_CSV_FILE_DELIMITER_CHARACTER = "ckanCsvDelimiter";
+	public static final String CKAN_CSV_FILE_QUOTE_CHARACTER = "ckanCsvQuote";
+	public static final String CKAN_CSV_FILE_ENCODING = "ckanCsvEncoding";
+
+	public static final String CKAN_XSL_FILE_SKIP_ROWS = "ckanSkipRows";
+	public static final String CKAN_XSL_FILE_LIMIT_ROWS = "ckanLimitRows";
+	public static final String CKAN_XSL_FILE_SHEET_NUMBER = "ckanXslSheetNumber";
+
+	public static final String CKAN_ID = "ckanId";
+	public static final String CKAN_URL = "ckanUrl";
+
 	public static final Map<String, String> name2Code;
 	
 	static {
 		name2Code = new HashMap<String, String>();
-		name2Code.put("Web Service", DataSetConstants.DS_WS );
-		name2Code.put("File", DataSetConstants.DS_FILE );
-		name2Code.put("Java Class", DataSetConstants.DS_JCLASS );
-		name2Code.put("Query", DataSetConstants.DS_QUERY );
-		name2Code.put("Script", DataSetConstants.DS_SCRIPT );
-		name2Code.put("Qbe", DataSetConstants.DS_QBE );
-		name2Code.put("Custom", DataSetConstants.DS_CUSTOM );
-		name2Code.put("Flat", DataSetConstants.DS_FLAT );
+		name2Code.put("Web Service", DataSetConstants.DS_WS);
+		name2Code.put("File", DataSetConstants.DS_FILE);
+		name2Code.put("Ckan", DataSetConstants.DS_CKAN);
+		name2Code.put("Java Class", DataSetConstants.DS_JCLASS);
+		name2Code.put("Query", DataSetConstants.DS_QUERY);
+		name2Code.put("Script", DataSetConstants.DS_SCRIPT);
+		name2Code.put("Qbe", DataSetConstants.DS_QBE);
+		name2Code.put("Custom", DataSetConstants.DS_CUSTOM);
+		name2Code.put("Flat", DataSetConstants.DS_FLAT);
 	}
 	
 	public static final Map<String, String> code2name;
@@ -135,6 +153,7 @@ public class DataSetConstants {
 		code2name = new HashMap<String, String>();
 		code2name.put(DataSetConstants.DS_WS, "Web Service");
 		code2name.put(DataSetConstants.DS_FILE, "File");
+		code2name.put(DataSetConstants.DS_CKAN, "Ckan");
 		code2name.put(DataSetConstants.DS_JCLASS, "Java Class");
 		code2name.put(DataSetConstants.DS_QUERY, "Query");
 		code2name.put(DataSetConstants.DS_SCRIPT, "Script");

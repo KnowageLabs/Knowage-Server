@@ -1,114 +1,203 @@
- <!-- 
+
+<!-- 
 IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
 create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
  -->
- 
+
 <!-- Persist library -->
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/persist-0.1.0/persist-all-min.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/persist-0.1.0/persist-all-min.js")%>'></script>
 
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/main.css", currTheme)%>'/>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/standard.css",currTheme)%>'/>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/listview.css", currTheme)%>'/>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/groupview.css",currTheme)%>'/>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css",currTheme)%>'/>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/commons/loadmask.css", currTheme)%>' />
-<LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/domain/domain.css",currTheme)%>' />
+<link rel='stylesheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/main.css", currTheme)%>' />
+<link rel='stylesheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/standard.css",currTheme)%>' />
+<link rel='stylesheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/listview.css", currTheme)%>' />
+<link rel='stylesheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/browser/groupview.css",currTheme)%>' />
+<link rel='stylesheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css",currTheme)%>' />
+<link rel='stylesheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/commons/loadmask.css", currTheme)%>' />
+<LINK rel='StyleSheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/domain/domain.css",currTheme)%>' />
 
-<LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/andrie/Select.css",currTheme)%>' />
+<LINK rel='StyleSheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/andrie/Select.css",currTheme)%>' />
 <!--  
 <LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.css",currTheme)%>' />
 -->
-<LINK rel='StyleSheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.css",currTheme)%>' />
+<LINK rel='StyleSheet' type='text/css'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.css",currTheme)%>' />
 
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/" + locale.getLanguage() + ".js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/" + locale.getLanguage() + ".js")%>'></script>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Settings.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Settings.js")%>'></script>
 
 <!-- START-DEBUG -->
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/exception/ExceptionHandler.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Log.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/decorator/LoadMask.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/JSON.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>		
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/formats/LocaleUtils.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/exception/ExceptionHandler.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Log.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/decorator/LoadMask.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Format.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/JSON.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/commons/Session.js")%>'></script>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/SampleData.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/SearchField.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/Toolbar.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocumentsTree.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FilterPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/SearchPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/ProgressPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FolderViewTemplate.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FolderView.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FolderDetailPanel.js")%>'></script>  
-																						
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizard.js")%>'></script> 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js")%>'></script> 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js")%>'></script> 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/SampleData.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/SearchField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/Toolbar.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocumentsTree.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FilterPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/SearchPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/ProgressPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FolderViewTemplate.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FolderView.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/FolderDetailPanel.js")%>'></script>
+
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizard.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardOptionsPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/mexport/MassiveExportWizardParametersPage.js")%>'></script>
 
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/FilteringToolbar.js")%>'></script>  
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/PagingToolbar.js")%>'></script>      
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/LookupField.js")%>'></script>  
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderTip.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/SliderField.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/CheckboxField.js")%>'></script> 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/RadioField.js")%>'></script> 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/SaveWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/EditablePanel.js")%>'></script>  
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/TreeLookUpField.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/FileUploadPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/cookies/Cookies.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/FilteringToolbar.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/PagingToolbar.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/LookupField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-2.2.1-extensions/CheckboxGroup.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/Slider.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-3.2.1-extensions/SliderTip.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/ext-2.0.1-extensions/SliderField2.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/SliderField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/CheckboxField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/RadioField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/SaveWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/EditablePanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/TreeLookUpField.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/FileUploadPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/cookies/Cookies.js")%>'></script>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SubobjectsPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SnapshotsPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ViewpointsPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ShortcutsPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/HotlinksPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ParametersPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/LookupFieldWithMaximize.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SessionParametersManager.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/RoleSelectionPage.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/InfoPage.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/DocumentPage.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ParametersSelectionPage.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SaveDocumentWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/ExportersMenu.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SaveSubObjectWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/DocumentExecutionPage.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExecutionWizard.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExecutionPanel.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocumentsBrowser.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocBrowserContainer.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/andrie/Select.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SubobjectsPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SnapshotsPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ViewpointsPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ShortcutsPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/HotlinksPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ParametersPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/LookupFieldWithMaximize.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SessionParametersManager.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/RoleSelectionPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/InfoPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/DocumentPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ParametersSelectionPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SaveDocumentWindow.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/SaveDatasetWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/ExportersMenu.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SaveSubObjectWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/DocumentExecutionPageToolbar.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/DocumentExecutionPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExecutionWizard.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExecutionPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocumentsBrowser.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/browser/DocBrowserContainer.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/grid/Ext.grid.ButtonColumn.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/andrie/Select.js")%>'></script>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/decorator/ComponentBuddy.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SendToWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/NotesWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/MetadataWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/RatingWindow.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/Footer.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/Banner.js")%>'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/ListNotesWindow.js")%>'></script> 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/DefaultRoleWindow.js")%>'></script> 
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/decorator/ComponentBuddy.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SendToWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/SaveRememberMeWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/NotesWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/MetadataWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/RatingWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/Footer.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/Banner.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/toolbar/ListNotesWindow.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/home/DefaultRoleWindow.js")%>'></script>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/KpiTreeOuTreePanel.js")%>'></script>  
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/widgets/KpiTreeOuTreePanel.js")%>'></script>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/worksheet/WorksheetEditorIframePanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/worksheet/WorksheetEditorIframePanel.js")%>'></script>
 
 <!-- END-DEBUG -->
 
@@ -118,7 +207,8 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
  END-PRODUCTION -->
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExporterUtils.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/execution/ExporterUtils.js")%>'></script>
 
 <script>
 	// Session parameters manager must be initialized
@@ -126,8 +216,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 </script>
 
 <%-- js custom overrides --%>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/customization/custom.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLinkByTheme(request, "js/commons/Settings.js",currTheme)%>"></script>
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLink(request, "js/src/ext/sbi/customization/custom.js")%>"></script>
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLinkByTheme(request, "js/commons/Settings.js",currTheme)%>"></script>
 
 <!-- 
 <script type="text/javascript">

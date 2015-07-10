@@ -7,6 +7,8 @@ package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
 import it.eng.spago.base.SessionContainer;
 import it.eng.spagobi.analiticalmodel.documentsbrowser.utils.FolderContentUtil;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -38,12 +40,17 @@ public class GetFolderContentAction extends AbstractSpagoBIAction {
 
 		try {
 
-			String folderIdStr = getAttributeAsString(FOLDER_ID);		
+			String folderIdStr = getAttributeAsString(FOLDER_ID);
 			logger.debug("Parameter [" + FOLDER_ID + "] is equal to [" + folderIdStr + "]");
 			
 			FolderContentUtil fcUtil = new FolderContentUtil();
+			LowFunctionality folder = null;
 			if (folderIdStr != null && !folderIdStr.equalsIgnoreCase(FolderContentUtil.ROOT_NODE_ID)) {
-				boolean canSee = fcUtil.checkRequiredFolder(folderIdStr, this.getUserProfile());
+				int folderId = new Integer(folderIdStr);
+				logger.debug("Folder id is " + folderId);
+				folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+				logger.debug("Folder is " + folder);
+				boolean canSee = fcUtil.checkRequiredFolder(folder, this.getUserProfile());
 				if (!canSee) {
 					logger.error("Required folder does not exist or you don't have priviledges to see it");
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required folder does not exist or you don't have priviledges to see it");
@@ -52,10 +59,10 @@ public class GetFolderContentAction extends AbstractSpagoBIAction {
 			
 			HttpServletRequest httpRequest = getHttpRequest();
 			SessionContainer sessCont = getSessionContainer();
-			
-			JSONObject folderContent = fcUtil.getFolderContent(folderIdStr, this.getServiceRequest(), this.getServiceResponse(), httpRequest, sessCont);
+
+			JSONObject folderContent = fcUtil.getFolderContent(folder, this.getServiceRequest(), this.getServiceResponse(), httpRequest, sessCont);
 			try {
-				writeBackToClient( new JSONSuccess( folderContent ) );
+				writeBackToClient(new JSONSuccess(folderContent));
 			} catch (IOException e) {
 				throw new SpagoBIException("Impossible to write back the responce to the client", e);
 			}

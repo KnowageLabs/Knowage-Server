@@ -231,8 +231,10 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			}
 						
 			dataSetWriter = new JSONDataWriter();
-			gridDataFeed = (JSONObject)dataSetWriter.write(dataStore);
-			
+			gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
+			gridDataFeed.put("query", sqlQuery);
+			gridDataFeed.put("dataSource", dataSet.getDataSource().getLabel());
+
 			try {
 				writeBackToClient( new JSONSuccess(gridDataFeed) );
 			} catch (IOException e) {

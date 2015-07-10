@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PRODUCT_TYPES>
-	<PRODUCT_TYPE label="AthenaBD" />
-	<PRODUCT_TYPE label="AthenaSocial" />
+	<PRODUCT_TYPE label="AthenaBD">
+		<ENGINE label="athenaofficeengine" />
+		<ENGINE label="athenacompositedoce" />
+		<ENGINE label="athenabirtreporteng" />
+		<ENGINE label="athenachartengine" />
+		<ENGINE label="athenacockpitengine" />
+		<ENGINE label="athenaqbeengine" />
+		<ENGINE label="athenaworksheeteng" />
+		<ENGINE label="athenagisengine" />
+		<ENGINE label="athenadataminingengine" />
+		<ENGINE label="athenanetworkengine" />
+		<ENGINE label="athenatalendengine" />
+	</PRODUCT_TYPE>
+	<PRODUCT_TYPE label="AthenaSocial">
+		<ENGINE label="athenabirtreporteng" />
+		<ENGINE label="athenachartengine" />
+		<ENGINE label="athenacockpitengine" />
+		<ENGINE label="athenaqbeengine" />
+		<ENGINE label="athenaworksheeteng" />
+		<ENGINE label="athenadataminingengine" />
+		<ENGINE label="athenanetworkengine" />
+	</PRODUCT_TYPE>
+	
 </PRODUCT_TYPES>

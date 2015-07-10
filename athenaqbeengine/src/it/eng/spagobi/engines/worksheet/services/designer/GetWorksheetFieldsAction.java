@@ -5,14 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.worksheet.services.designer;
 
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.dataset.DataSetDataSource;
+import it.eng.qbe.statement.sql.SQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.worksheet.WorksheetEngineInstance;
 import it.eng.spagobi.engines.worksheet.services.AbstractWorksheetEngineAction;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
@@ -20,6 +26,7 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -65,6 +72,9 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			logger.debug(fieldsJSON);
 			resultsJSON = new JSONObject();
 			resultsJSON.put("results", fieldsJSON);
+			if (dataset instanceof SQLDataSet) {
+				insertDsMetadataIntoJson(resultsJSON, dataset);
+			}
 
 			try {
 				writeBackToClient( new JSONSuccess( resultsJSON ) );
@@ -76,7 +86,41 @@ public class GetWorksheetFieldsAction  extends AbstractWorksheetEngineAction {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {			
 			logger.debug("OUT");
-		}	
+		}
+	}
+
+	private void insertDsMetadataIntoJson(JSONObject resultsJSON, IDataSet dataSetSQL) {
+
+		IDataSource dataSource = ((SQLDataSet) dataSetSQL).getStatement().getDataSource();
+		if (dataSource instanceof DataSetDataSource) {
+			try {
+				List<IDataSet> datasets = ((DataSetDataSource) dataSource).getDatasets();
+				if (datasets.size() == 1) {
+					MetaData metadata = cleanAndGetMetadata((MetaData) dataSetSQL.getMetadata(), datasets.get(0).getDsMetadata());
+					String metadataJson = JsonConverter.objectToJson(metadata, MetaData.class);
+					resultsJSON.put("metadata", metadataJson);
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIEngineServiceException(getActionName(), "Impossible to get metadata from the original dataset", t);
+
+			}
+		}
+	}
+
+	private MetaData cleanAndGetMetadata(MetaData formMetadata, String xmlMetadata) throws Throwable {
+
+		MetaData metadata = new MetaData();
+
+		DatasetMetadataParser dsMetaParser = new DatasetMetadataParser();
+		MetaData dsMetadata = (MetaData) dsMetaParser.xmlToMetadata(xmlMetadata);
+		Iterator<Object> formIterator = formMetadata.getFieldsMeta().iterator();
+		while (formIterator.hasNext()) {
+			IFieldMetaData field = (IFieldMetaData) formIterator.next();
+			int index = dsMetadata.getFieldIndex(field.getAlias());
+			field.setType(dsMetadata.getFieldMeta(index).getType());
+			field.setProperties(new HashMap());
+		}
+		return formMetadata;
 	}
 
 	public JSONArray writeFields(IMetaData metadata) throws Exception {

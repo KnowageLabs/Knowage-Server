@@ -34,6 +34,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -54,6 +58,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	private static transient Logger logger = Logger.getLogger(RoleDAOHibImpl.class);
 
+	public static final String DEFAULT_CACHE_SUFFIX = "_ROLE_CACHE";
+
+	public static CacheManager cacheManager = null;
+
 	/**
 	 * Load by id.
 	 *
@@ -72,26 +80,31 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		Role toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
+		toReturn = getFromCache(String.valueOf(roleID));
+		if (toReturn == null) {
+			logger.debug("Not found a Role [ " + roleID + " ] into the cache");
+			try {
+				aSession = getSession();
+				tx = aSession.beginTransaction();
 
-			SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleID);
+				SbiExtRoles hibRole = (SbiExtRoles) aSession.load(SbiExtRoles.class, roleID);
 
-			toReturn = toRole(hibRole);
-			tx.commit();
-		} catch (HibernateException he) {
-			logException(he);
+				toReturn = toRole(hibRole);
+				putIntoCache(String.valueOf(toReturn.getId()), toReturn);
+				tx.commit();
+			} catch (HibernateException he) {
+				logException(he);
 
-			if (tx != null)
-				tx.rollback();
+				if (tx != null)
+					tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
+			} finally {
+				if (aSession != null) {
+					if (aSession.isOpen())
+						aSession.close();
+				}
 			}
 		}
 		return toReturn;
@@ -144,28 +157,33 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		Role toReturn = null;
 		Session aSession = null;
 		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
+		toReturn = getFromCache(roleName);
+		if (toReturn == null) {
+			logger.debug("Not found a Role [ " + roleName + " ] into the cache");
+			try {
+				aSession = getSession();
+				tx = aSession.beginTransaction();
 
-			SbiExtRoles hibRole = loadByNameInSession(roleName, aSession);
-			if (hibRole == null)
-				return null;
+				SbiExtRoles hibRole = loadByNameInSession(roleName, aSession);
+				if (hibRole == null)
+					return null;
 
-			toReturn = toRole(hibRole);
-			tx.commit();
-		} catch (HibernateException he) {
-			logException(he);
+				toReturn = toRole(hibRole);
+				putIntoCache(roleName, toReturn);
+				tx.commit();
+			} catch (HibernateException he) {
+				logException(he);
 
-			if (tx != null)
-				tx.rollback();
+				if (tx != null)
+					tx.rollback();
 
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
+			} finally {
+				if (aSession != null) {
+					if (aSession.isOpen())
+						aSession.close();
+				}
 			}
 		}
 		return toReturn;
@@ -208,7 +226,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toRole((SbiExtRoles) it.next()));
+				Role role = toRole((SbiExtRoles) it.next());
+				putIntoCache(String.valueOf(role.getId()), role);
+				realResult.add(role);
 			}
 		} catch (HibernateException he) {
 			logException(he);
@@ -259,8 +279,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [insertRole] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 			}
 		}
 	}
@@ -280,6 +303,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		hibRole.getCommonInfo().setOrganization(aRole.getOrganization());
 		updateSbiCommonInfo4Insert(hibRole);
 		aSession.save(hibRole);
+
+		logger.debug("The [insertRoleWithSession] occurs. Role cache will be cleaned.");
+		this.clearCache();
 	}
 
 	/**
@@ -345,11 +371,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [eraseRole] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 			}
 		}
-
 	}
 
 	/**
@@ -475,8 +503,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [modifyRole] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 			}
 		}
 
@@ -529,7 +560,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			Iterator it = hibListAllRoles.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toRole((SbiExtRoles) it.next()));
+				Role role = toRole((SbiExtRoles) it.next());
+				putIntoCache(String.valueOf(role.getId()), role);
+				realResult.add(role);
 			}
 
 			tx.commit();
@@ -606,7 +639,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			Iterator it = hibListAllRoles.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toRole((SbiExtRoles) it.next()));
+				Role role = toRole((SbiExtRoles) it.next());
+				putIntoCache(String.valueOf(role.getId()), role);
+				realResult.add(role);
 			}
 
 			tx.commit();
@@ -931,8 +966,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [insertRoleComplete] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 			}
 			return roleId;
 		}
@@ -1008,6 +1046,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				for (Iterator iterator = toTransform.iterator(); iterator.hasNext();) {
 					SbiExtRoles hibRole = (SbiExtRoles) iterator.next();
 					Role role = toRole(hibRole);
+					putIntoCache(String.valueOf(role.getId()), role);
 					toReturn.add(role);
 				}
 			}
@@ -1068,8 +1107,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [insertRoleMetaModelCategory] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 				logger.debug("OUT");
 
 			}
@@ -1119,8 +1161,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [removeRoleMetaModelCategory] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 				logger.debug("OUT");
 
 			}
@@ -1396,6 +1441,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			logException(he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
+			logger.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
+			this.clearCache();
 		}
 		logger.debug("OUT");
 	}
@@ -1427,8 +1474,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} finally {
 			if (aSession != null) {
-				if (aSession.isOpen())
+				if (aSession.isOpen()) {
 					aSession.close();
+					logger.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
+					this.clearCache();
+				}
 			}
 		}
 
@@ -1461,4 +1511,79 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		return productTypesId;
 	}
 
+	private Role getFromCache(String key) {
+		logger.debug("IN");
+		String tenantId = this.getTenant();
+		Role role = null;
+		if (tenantId != null) {
+			// The tenant is set, so let's find it into the cache
+			String cacheName = tenantId + DEFAULT_CACHE_SUFFIX;
+			try {
+				if (cacheManager == null) {
+					cacheManager = CacheManager.create();
+					logger.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
+					logger.debug("OUT");
+					return null;
+				} else {
+					if (!cacheManager.cacheExists(cacheName)) {
+						logger.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
+						logger.debug("OUT");
+						return null;
+					} else {
+						Element el = cacheManager.getCache(cacheName).get(key);
+						if (el != null) {
+							role = (Role) el.getValue();
+						}
+					}
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Error while getting a Role cache item with key " + key + " for tenant " + tenantId, t);
+			}
+		}
+		logger.debug("OUT");
+		return role;
+	}
+
+	private void putIntoCache(String key, Role role) {
+		logger.debug("IN");
+		String tenantId = this.getTenant();
+		if (tenantId != null) {
+			// The tenant is set, so let's find it into the cache
+			String cacheName = tenantId + DEFAULT_CACHE_SUFFIX;
+			try {
+				if (cacheManager == null) {
+					cacheManager = CacheManager.create();
+				}
+				if (!cacheManager.cacheExists(cacheName)) {
+					logger.debug("Cache for tenant " + tenantId + "does not exist. It will be create.");
+					Cache cache = new Cache(cacheName, 300, true, false, 20, 20);
+					cacheManager.addCache(cache);
+				}
+				cacheManager.getCache(cacheName).put(new Element(key, role));
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Error while putting Role cache item with key " + key + " for tenant " + tenantId, t);
+			}
+		}
+		logger.debug("OUT");
+	}
+
+	private void clearCache() {
+		logger.debug("IN");
+		String tenantId = this.getTenant();
+		if (tenantId != null) {
+			// The tenant is set, so let's find it into the cache
+			String cacheName = tenantId + DEFAULT_CACHE_SUFFIX;
+			try {
+				if (cacheManager != null) {
+					if (cacheManager.cacheExists(cacheName)) {
+						cacheManager.getCache(cacheName).removeAll();
+					}
+					// else nothing to do, no cache existed for the current tenant
+				}
+				// else nothing to do, no cache manager exists
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("Error during Role cache full cleaning process for tenant " + tenantId, t);
+			}
+		}
+	}
 }

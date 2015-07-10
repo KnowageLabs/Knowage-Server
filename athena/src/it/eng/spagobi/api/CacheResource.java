@@ -14,10 +14,10 @@ package it.eng.spagobi.api;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Iterator;
@@ -108,7 +108,7 @@ public class CacheResource extends AbstractSpagoBIResource {
 				IDataSet dataSet = (new DatasetManagementAPI(profile)).getDataSet(label);
 				ICache cache = SpagoBICacheManager.getCache();
 				logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
-				cache.deleteDatasetAndJoined(dataSet.getSignature());
+				cache.delete(dataSet.getSignature());
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while cleaning cache for dataset with label "
 						+ label, t);

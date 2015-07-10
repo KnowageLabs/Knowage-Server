@@ -9,6 +9,7 @@ package it.eng.spagobi.tools.datasource.service.rest;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -49,7 +50,7 @@ import org.json.JSONObject;
  *
  */
 @Path("/datasources")
-public class DataSourceCRUD {
+public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	static private Logger logger = Logger.getLogger(DataSourceCRUD.class);
 	static private String deleteNullIdDataSourceError = "error.mesage.description.data.source.cannot.be.null";
@@ -64,7 +65,7 @@ public class DataSourceCRUD {
 		IDomainDAO domaindao = null;
 		List<DataSource> dataSources;
 		List<Domain> dialects = null;
-		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = getUserProfile();
 		JSONObject datasorcesJSON = new JSONObject();
 		try {
 			dataSourceDao = DAOFactory.getDataSourceDAO();
@@ -93,7 +94,7 @@ public class DataSourceCRUD {
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteDataSource(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = getUserProfile();
 		HashMap<String, String> logParam = new HashMap();
 
 		try {
@@ -133,7 +134,7 @@ public class DataSourceCRUD {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveDataSource(@Context HttpServletRequest req) {
-		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = getUserProfile();
 
 		try {
 

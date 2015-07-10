@@ -36,6 +36,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadDataSetsOwnedByUser(String user);
 	public List<IDataSet> loadDatasetsSharedWithUser(String user);
 	public List<IDataSet> loadDatasetOwnedAndShared(String user);
+
+	public List<IDataSet> loadCkanDataSets(String user);
+
 	public List<IDataSet> loadMyDataDataSets(String owner);
 	
 	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String visibility

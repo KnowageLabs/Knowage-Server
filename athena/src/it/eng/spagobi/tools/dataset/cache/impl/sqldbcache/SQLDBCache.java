@@ -22,11 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
-import it.eng.spagobi.tools.dataset.cache.CacheItem;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
@@ -50,6 +50,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
@@ -57,6 +58,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -78,6 +80,8 @@ public class SQLDBCache implements ICache {
 	private boolean enabled;
 	private IDataSource dataSource;
 
+	private UserProfile userProfile;
+
 	private final SQLDBCacheMetadata cacheMetadata;
 
 	private WorkManager spagoBIWorkManager;
@@ -97,8 +101,6 @@ public class SQLDBCache implements ICache {
 		this.cacheMetadata = new SQLDBCacheMetadata(cacheConfiguration);
 
 		this.spagoBIWorkManager = cacheConfiguration.getWorkManager();
-
-		eraseExistingTables(cacheMetadata.getTableNamePrefix().toUpperCase());
 
 		String databaseSchema = cacheConfiguration.getSchema();
 		if (databaseSchema != null) {
@@ -217,6 +219,9 @@ public class SQLDBCache implements ICache {
 			if (getMetadata().containsCacheItem(resultsetSignature)) {
 				logger.debug("Resultset with signature [" + resultsetSignature + "] found");
 				CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+				cacheItem.setLastUsedDate(new Date());
+				// update DB information about this cacheItem
+				getMetadata().updateCacheItem(cacheItem);
 				String tableName = cacheItem.getTable();
 				logger.debug("The table associated to dataset [" + resultsetSignature + "] is [" + tableName + "]");
 				dataStore = dataSource.executeStatement("SELECT * FROM " + tableName, 0, 0);
@@ -298,6 +303,9 @@ public class SQLDBCache implements ICache {
 	private IDataStore queryJoinedCachedDataset(JoinedDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, String resultsetSignature) {
 		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+		cacheItem.setLastUsedDate(new Date());
+		// update DB information about this cacheItem
+		getMetadata().updateCacheItem(cacheItem);
 		String tableName = cacheItem.getTable();
 		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
@@ -482,6 +490,9 @@ public class SQLDBCache implements ICache {
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
 			String resultsetSignature) {
 		CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
+		cacheItem.setLastUsedDate(new Date());
+		// update DB information about this cacheItem
+		getMetadata().updateCacheItem(cacheItem);
 		String tableName = cacheItem.getTable();
 		logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
@@ -633,7 +644,7 @@ public class SQLDBCache implements ICache {
 				dataStore = dataSet.getDataStore();
 				dataStores.add(dataStore);
 
-				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet);
+				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet, userProfile);
 				works.add(cacheWriteWork);
 			}
 
@@ -702,7 +713,7 @@ public class SQLDBCache implements ICache {
 				}
 
 				commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
-				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet);
+				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet, userProfile);
 				workManager.schedule(cacheWriteWork);
 			}
 		} catch (Throwable t) {
@@ -812,10 +823,11 @@ public class SQLDBCache implements ICache {
 			// dataStore.getMetaData().setProperty("COLUMN_NAMES", columnNames);
 			// dataStore.getMetaData().setProperty("DATASET_ALIAS", datasetAliases);
 
-			CacheItem item = getMetadata().addCacheItem(joinedDataSet.getSignature(), tableName, dataStore);
-			item.setProperty("BREAK_INDEXES", columnBreakIndexes);
-			item.setProperty("COLUMN_NAMES", columnNames);
-			item.setProperty("DATASET_ALIAS", datasetAliases);
+			Map<String, Object> properties = new HashMap<String, Object>();
+			properties.put("BREAK_INDEXES", columnBreakIndexes);
+			properties.put("COLUMN_NAMES", columnNames);
+			properties.put("DATASET_ALIAS", datasetAliases);
+			getMetadata().addCacheItem(joinedDataSet.getSignature(), properties, tableName, dataStore);
 
 			logger.debug("dataset " + joinedDataSet.getLabel() + " is a joined dataset, add reference in map");
 			List<IDataSet> dsReferred = joinedDataSet.getDataSets();
@@ -868,20 +880,23 @@ public class SQLDBCache implements ICache {
 			if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 				String signature = dataSet.getSignature();
 				String tableName = persistStoreInCache(dataSet, signature, dataStore);
-				CacheItem item = getMetadata().addCacheItem(signature, tableName, dataStore);
+				Map<String, Object> properties = new HashMap<String, Object>();
 				List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
 				if (breakIndexes != null) {
-					item.setProperty("BREAK_INDEXES", breakIndexes);
+					properties.put("BREAK_INDEXES", breakIndexes);
 				}
 				Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
 				if (columnNames != null) {
-					item.setProperty("COLUMN_NAMES", columnNames);
+					properties.put("COLUMN_NAMES", columnNames);
 				}
 				// a
 				Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
 				if (datasetAlias != null) {
-					item.setProperty("DATASET_ALIAS", datasetAlias);
+					properties.put("DATASET_ALIAS", datasetAlias);
 				}
+
+				getMetadata().addCacheItem(signature, properties, tableName, dataStore);
+
 				// if it is a joined dataset update references
 				if (dataSet instanceof JoinedDataSet) {
 					logger.debug("dataset " + dataSet.getLabel() + " is a joined dataset, add reference in map");
@@ -948,10 +963,15 @@ public class SQLDBCache implements ICache {
 		try {
 			if (dataSet != null) {
 				String dataSetSignature = dataSet.getSignature();
-				result = delete(dataSetSignature);
-
-				// delete also Joined dataset using current dataset
-
+				List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(dataSetSignature);
+				if (!joinedSignatures.isEmpty()) {
+					// delete also Joined dataset related to current dataset
+					for (String joinedSignature : joinedSignatures) {
+						// this will trigger a DB constraint -> joined references are deleted automatically
+						delete(joinedSignature);
+					}
+				}
+				result = dropTableAndRemoveCacheItem(dataSetSignature);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -973,13 +993,43 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
+		boolean result = false;
+
+		logger.debug("IN");
+		try {
+			if (signature != null) {
+				List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(signature);
+				if (!joinedSignatures.isEmpty()) {
+					// delete also Joined dataset related to current dataset
+					for (String joinedSignature : joinedSignatures) {
+						// this will trigger a DB constraint -> joined references are deleted automatically
+						delete(joinedSignature);
+					}
+				}
+				result = dropTableAndRemoveCacheItem(signature);
+			} else {
+				logger.warn("Input parameter [dataSet] is null");
+			}
+		} catch (Throwable t) {
+			if (t instanceof CacheException)
+				throw (CacheException) t;
+			else
+				throw new CacheException("An unexpected error occure while deleting dataset from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return result;
+	}
+
+	private boolean dropTableAndRemoveCacheItem(String signature) {
 		logger.debug("IN");
 		logger.debug("delete " + signature);
 		if (getMetadata().containsCacheItem(signature)) {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
 			String tableName = getMetadata().getCacheItem(signature).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-			getMetadata().removeCacheItem(tableName);
+			getMetadata().removeCacheItem(signature);
 			logger.debug("Removed table " + tableName + " from [SQLDBCache] corresponding to the result Set: " + signature);
 			logger.debug("OUT deleted");
 
@@ -992,64 +1042,31 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 */
-	public void deleteDatasetAndJoined(String signature) {
-		logger.debug("IN");
-
-		boolean deleted = delete(signature);
-
-		// keep track of signatures of joined removed so that they can later be removed from map
-		List<String> removed = new ArrayList<String>();
-
-		if (deleted == true) {
-			logger.debug("delete joined dataset cache referring to " + signature);
-			List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(signature);
-			List<String> toRemove = new ArrayList<String>();
-			if (joinedSignatures != null) {
-
-				for (Iterator iterator = joinedSignatures.iterator(); iterator.hasNext();) {
-					String joinedSignature = (String) iterator.next();
-					logger.debug("Joined signature cache to delete " + joinedSignature);
-					boolean del = delete(joinedSignature);
-					logger.debug("joined dataset cache " + joinedSignature + " deleted? " + del);
-					if (del) {
-						removed.add(joinedSignature);
-					}
-				}
-
-				// remove from map all signature in removed List
-				for (Iterator iterator = removed.iterator(); iterator.hasNext();) {
-					String sigToRemove = (String) iterator.next();
-					Set<String> cachedSignatures = getMetadata().getDatasetToJoinedMap().keySet();
-					for (Iterator iterator2 = cachedSignatures.iterator(); iterator2.hasNext();) {
-						String cachedSignature = (String) iterator2.next();
-						List<String> list = getMetadata().getDatasetToJoinedMap().get(cachedSignature);
-						if (list != null && list.contains(sigToRemove)) {
-							list.remove(sigToRemove);
-						}
-					}
-				}
-
-			}
-
-		}
-
-		logger.debug("OUT");
-	}
-
-	/*
-	 * (non-Javadoc)
 	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
 	public void deleteToQuota() {
 		logger.trace("IN");
+		boolean isEnough = false;
 		try {
-			List<String> signatures = getMetadata().getSignatures();
-			for (String signature : signatures) {
-				delete(signature);
-				if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
-					break;
+			List<CacheItem> items = getMetadata().getCacheItems();
+			for (CacheItem item : items) {
+				long elapsedTime = (System.currentTimeMillis() - item.getLastUsedDate().getTime()) / 1000;
+				if (elapsedTime > getMetadata().getCacheDsLastAccessTtl()) {
+					delete(item.getSignature());
+					if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
+						isEnough = true;
+						break;
+					}
+				}
+			}
+			// Second loop through datasets
+			if (!isEnough) {
+				for (String signature : getMetadata().getSignatures()) {
+					delete(signature);
+					if (getMetadata().getAvailableMemoryAsPercentage() > getMetadata().getCleaningQuota()) {
+						break;
+					}
 				}
 			}
 		} catch (Throwable t) {
@@ -1070,19 +1087,31 @@ public class SQLDBCache implements ICache {
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 
-		List<String> signatureToDelete = new ArrayList<String>();
-
 		List<String> signatures = getMetadata().getSignatures();
 		for (String signature : signatures) {
-			CacheItem item = getMetadata().getCacheItem(signature);
-			signatureToDelete.add(item.getSignature());
-		}
-
-		for (String signature : signatureToDelete) {
 			delete(signature);
 		}
-
+		// Delete any other cache tables, even if not recorded as cache item
+		// eraseExistingTables(getMetadata().getTableNamePrefix().toUpperCase());
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
+	 */
+	public void deleteOnlyStale() {
+		logger.debug("Removing all stale tables from [SQLDBCache]");
+
+		List<CacheItem> items = getMetadata().getCacheItems();
+		for (CacheItem item : items) {
+			long elapsedTime = (System.currentTimeMillis() - item.getLastUsedDate().getTime()) / 1000;
+			if (elapsedTime > getMetadata().getCacheDsLastAccessTtl()) {
+				delete(item.getSignature());
+			}
+		}
+		logger.debug("[SQLDBCache] All stale tables removed, Cache cleaned ");
 	}
 
 	/**
@@ -1213,7 +1242,7 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 	public void enable(boolean enable) {
-		this.enabled = enabled;
+		this.enabled = enable;
 
 	}
 
@@ -1232,6 +1261,14 @@ public class SQLDBCache implements ICache {
 
 	public void setSpagoBIWorkManager(WorkManager spagoBIWorkManager) {
 		this.spagoBIWorkManager = spagoBIWorkManager;
+	}
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
 	}
 
 	/*

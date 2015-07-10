@@ -18,12 +18,6 @@
         <property name="theme" type="string">
             <column name="THEME" length="100" not-null="false" />
         </property>
-        <set name="sbiOrganizationEngines" inverse="true">
-            <key>
-                <column name="ORGANIZATION_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationEngine" />
-        </set>
         <set name="sbiOrganizationDatasources" inverse="true">
             <key>
                 <column name="ORGANIZATION_ID" not-null="true" />

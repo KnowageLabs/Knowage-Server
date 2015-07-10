@@ -32,7 +32,7 @@
          <many-to-one name="transformer" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="TRANSFORMER_ID" not-null="false"/>
         </many-to-one>
-        <many-to-one name="scope" class="it.eng.spagobi.commons.metadata.SbiDomains">
+        <many-to-one name="scope" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false">
             <column name="SCOPE_ID" not-null="false"/>
         </many-to-one>
         <property name="active" type="boolean">

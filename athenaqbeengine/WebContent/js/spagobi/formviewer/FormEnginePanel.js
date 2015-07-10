@@ -103,20 +103,21 @@ Ext.extend(Sbi.formviewer.FormEnginePanel, Ext.Panel, {
 	, initResultsPage: function(config) {
 		this.resultsPage = new Sbi.formviewer.ResultsPage(config);
 		this.resultsPage.on('edit', this.moveToFormPage, this);
-		this.resultsPage.on('activate', this.getSaveWorksheetButtonEnabler(false), this);
+		this.resultsPage.on('activate', this.getSaveWorksheetButtonEnabler(true, 'dataset'), this);
 	}
 	
 	, initWorksheetPage: function(config) {
 		this.worksheetPage = new Sbi.formviewer.WorksheetPage(config);
 		this.worksheetPage.on('edit', this.moveToFormPage, this);
 		this.worksheetPage.on('contentexported', function(){sendMessage({}, 'contentexported');}, this);
-		this.worksheetPage.on('activate', this.getSaveWorksheetButtonEnabler(true), this);
+		this.worksheetPage.on('activate', this.getSaveWorksheetButtonEnabler(true, 'worksheet'), this);
 	}
-
-	, getSaveWorksheetButtonEnabler : function (enabled) {
+	
+	// it is actually used to save worksheet and form as dataset!
+	, getSaveWorksheetButtonEnabler : function (enabled, target) {
 		var toReturn = function () {
 			if (typeof sendMessage == 'function') { // check if function is existing (when building a Smart Filter document it does not)
-				sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + ""}, "managebutton");
+				sendMessage({button: "saveworksheet", property:"visibility", value:"" + enabled + "", target:"" + target + ""}, "managebutton");
 			}
 		};
 		return toReturn;

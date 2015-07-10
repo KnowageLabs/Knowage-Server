@@ -63,11 +63,22 @@ Ext.define('Sbi.selfservice.SelfServiceExecutionIFrame', {
 			this.tbar.add({
 				iconCls : 'icon-saveas' 
 				, tooltip: LN('sbi.execution.executionpage.toolbar.saveas')
+				, id: 'selfserviceSaveBtn'
 				, scope : this
 			    , handler : this.saveHandler
 			});
 		}
 		
+	}
+	
+	, hideSaveButton : function () {
+		var btn = Ext.getCmp('selfserviceSaveBtn')
+		btn.hide();	
+	}
+	
+	, showSaveButton : function () {
+		var btn = Ext.getCmp('selfserviceSaveBtn')
+		btn.show();	
 	}
 	
 	, returnToMyAnalysis : function() {

@@ -102,11 +102,11 @@
             </key>
             <one-to-many class="it.eng.spagobi.engines.config.metadata.SbiExporters" />
         </set>   
-        <set name="sbiOrganizationEngines" inverse="true">
+        <set name="sbiProductTypeEngine" inverse="true">
             <key>
                 <column name="ENGINE_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiOrganizationEngine" />
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiProductTypeEngine" />
         </set>     
     </class>
 

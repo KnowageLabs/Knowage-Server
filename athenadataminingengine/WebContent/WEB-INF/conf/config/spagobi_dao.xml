@@ -20,6 +20,7 @@
  		<DAO name="ViewpointDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ViewpointDAOHimpl"/>	
  		<DAO name="DataSourceDAO" implementation="it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl"/>
  		<DAO name="DataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl"/>
+		<DAO name="SbiDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.SbiDataSetDAOImpl"/>
  		<DAO name="BinContentDAO" implementation="it.eng.spagobi.commons.dao.BinContentDAOHibImpl"/>
  		<DAO name="ObjTemplateDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjTemplateDAOHibImpl"/>	
  		<DAO name="ObjNoteDAO" implementation="it.eng.spagobi.analiticalmodel.document.dao.ObjNoteDAOHibImpl"/>	
@@ -73,6 +74,8 @@
 	  	<DAO name="CommunityDAO" implementation="it.eng.spagobi.community.dao.SbiCommunityDAOImpl"/>
 	  	
 	  	<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl"/>
+		
+		<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl" />
 	  	
 
 	 </DAO-CONF>     

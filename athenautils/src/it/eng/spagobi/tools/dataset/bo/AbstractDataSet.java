@@ -68,44 +68,45 @@ public abstract class AbstractDataSet implements IDataSet {
     protected IDataSource datasourceForReading;
     
 	protected IDataStoreTransformer dataSetTransformer;
-    
-    // hook for extension points
-    private Map behaviours;
-    
-    private String dsMetadata;
-    private String userIn;
-    private Date dateIn;
-    
-    private String dsType;   	
 
-    // Attribute related to the particular dataset implementation
-    // TODO the do not belong here. just store at this level a generic
-    // configuration object that it s then handled properly by the
-    // specific subclasses
-    protected String resPath;
-    protected Object query;	
-    protected String queryScript;	
-    protected String queryScriptLanguage;	
+	// hook for extension points
+	private final Map behaviours;
 
-    protected boolean persisted;
-    protected String persistTableName;	
-    protected String configuration;
-    protected List noActiveVersions;
-    
-    protected String owner;
-    protected boolean isPublic;
-    
-    protected Integer scopeId;
-    protected String scopeCd;
-    
-    private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
+	private String dsMetadata;
+	private String userIn;
+	private Date dateIn;
 
-    public AbstractDataSet() {
-    	super();
-    	behaviours = new HashMap();
-    }
-    
-    public Integer getScopeId() {
+	private String dsType;
+
+	// Attribute related to the particular dataset implementation
+	// TODO the do not belong here. just store at this level a generic
+	// configuration object that it s then handled properly by the
+	// specific subclasses
+	protected String resPath;
+	protected Object query;
+	protected String queryScript;
+	protected String queryScriptLanguage;
+
+	protected boolean persisted;
+	protected String persistTableName;
+	protected boolean scheduled;
+	protected String configuration;
+	protected List noActiveVersions;
+
+	protected String owner;
+	protected boolean isPublic;
+
+	protected Integer scopeId;
+	protected String scopeCd;
+
+	private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
+
+	public AbstractDataSet() {
+		super();
+		behaviours = new HashMap();
+	}
+
+	public Integer getScopeId() {
 		return scopeId;
 	}
 
@@ -140,6 +141,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		setDsMetadata(dataSet.getDsMetadata());
 		setPersisted(dataSet.isPersisted());
 		setPersistTableName(dataSet.getPersistTableName());
+		setScheduled(dataSet.isScheduled());
 		SpagoBiDataSource dsDataSourceForReading = dataSet.getDataSourceForReading();
 		setDataSourceForReading(dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
 		setPublic(dataSet.is_public());
@@ -176,6 +178,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setNumRows(isNumRows());
 		sbd.setPersisted(isPersisted());
 		sbd.setPersistTableName(getPersistTableName());
+		sbd.setScheduled(isScheduled());
 		IDataSource dataSourceForReading = getDataSourceForReading();
 		sbd.setDataSourceForReading(dataSourceForReading != null ? dataSourceForReading.toSpagoBiDataSource() : null);
 		sbd.set_public(isPublic());
@@ -451,7 +454,21 @@ public abstract class AbstractDataSet implements IDataSet {
 		this.persisted = persisted;
 	}
 
-	
+	/**
+	 * @return the scheduled
+	 */
+	public boolean isScheduled() {
+		return scheduled;
+	}
+
+	/**
+	 * @param scheduled
+	 *            the scheduled to set
+	 */
+	public void setScheduled(boolean scheduled) {
+		this.scheduled = scheduled;
+	}
+
 	/**
 	 * @return the flatDataset
 	 */

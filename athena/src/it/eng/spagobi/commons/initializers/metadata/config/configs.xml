@@ -1,186 +1,480 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIGS>
-<CONFIG label="internal.security.encript.password" name="encript password" description="Enable the password encription" isActive="false" valueCheck="true" valueType="NUM" category="SECURITY"/>
-<CONFIG label="changepwdmodule.len_min" name="Password Len Min" description="Minimum length" isActive="false" valueCheck="8" valueType="NUM" category="SECURITY"/>
-<CONFIG label="changepwdmodule.special_char" name="Special char" description="Special chars" isActive="false" valueCheck="_|-#$" valueType="STRING" category="SECURITY"/>
-<CONFIG label="changepwdmodule.upper_char" name="Upper char" description="Minimum a char must be in upper case" isActive="false" valueCheck="ABCDEFGJKLMNOPQRSTUVWXYZ" valueType="STRING" category="SECURITY"/>
-<CONFIG label="changepwdmodule.lower_char" name="Lower char" description="Minimum a char must be in lower case" isActive="false" valueCheck="abcdefghjklmnopqrstuwxyz" valueType="STRING" category="SECURITY"/>
-<CONFIG label="changepwdmodule.number" name="Number" description="Minimum a char must be a number" isActive="false" valueCheck="0123456789" valueType="STRING" category="SECURITY"/>
-<CONFIG label="changepwdmodule.alphabetical" name="Alaphabetical" description="Minimum a char must be a letter" isActive="false" valueCheck="abcdefghjklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" valueType="STRING" category="SECURITY"/>
-<CONFIG label="changepwdmodule.change" name="Change from last" description="The new pwd must be different from the lastest" isActive="false" valueCheck="" valueType="" category="SECURITY"/>
-<CONFIG label="changepwd.change_first" name="Change at first login " description="The pwd must be changed at first login" isActive="false" valueCheck="" valueType="" category="SECURITY"/>
-<CONFIG label="changepwd.disactivation_time" name="Disactivation time" description="Number of months before disactivation" isActive="false" valueCheck="6" valueType="NUM" category="SECURITY"/>
-<CONFIG label="changepwd.expired_time" name="Expired time" description="Number of days fo the expiration" isActive="false" valueCheck="90" valueType="NUM" category="SECURITY"/>
+	<CONFIG label="internal.security.encript.password" name="encript password"
+		description="Enable the password encription" isActive="false"
+		valueCheck="true" valueType="NUM" category="SECURITY" />
+	<CONFIG label="changepwdmodule.len_min" name="Password Len Min"
+		description="Minimum length" isActive="false" valueCheck="8"
+		valueType="NUM" category="SECURITY" />
+	<CONFIG label="changepwdmodule.special_char" name="Special char"
+		description="Special chars" isActive="false" valueCheck="_|-#$"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="changepwdmodule.upper_char" name="Upper char"
+		description="Minimum a char must be in upper case" isActive="false"
+		valueCheck="ABCDEFGJKLMNOPQRSTUVWXYZ" valueType="STRING" category="SECURITY" />
+	<CONFIG label="changepwdmodule.lower_char" name="Lower char"
+		description="Minimum a char must be in lower case" isActive="false"
+		valueCheck="abcdefghjklmnopqrstuwxyz" valueType="STRING" category="SECURITY" />
+	<CONFIG label="changepwdmodule.number" name="Number"
+		description="Minimum a char must be a number" isActive="false"
+		valueCheck="0123456789" valueType="STRING" category="SECURITY" />
+	<CONFIG label="changepwdmodule.alphabetical" name="Alaphabetical"
+		description="Minimum a char must be a letter" isActive="false"
+		valueCheck="abcdefghjklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="changepwdmodule.change" name="Change from last"
+		description="The new pwd must be different from the lastest" isActive="false"
+		valueCheck="" valueType="" category="SECURITY" />
+	<CONFIG label="changepwd.change_first" name="Change at first login "
+		description="The pwd must be changed at first login" isActive="false"
+		valueCheck="" valueType="" category="SECURITY" />
+	<CONFIG label="changepwd.disactivation_time" name="Disactivation time"
+		description="Number of months before disactivation" isActive="false"
+		valueCheck="6" valueType="NUM" category="SECURITY" />
+	<CONFIG label="changepwd.expired_time" name="Expired time"
+		description="Number of days fo the expiration" isActive="false"
+		valueCheck="90" valueType="NUM" category="SECURITY" />
 
-<CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="SpagoBI mode" description="Enable the WebApplication or Portal mode" isActive="false" valueCheck="WEB" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.HOME.BANNER.view" name="show the banner" description="banner" isActive="false" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.HOME.FOOTER.view" name="show the footer" description="footer" isActive="false" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked" description="pathTracked" isActive="false" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.LOOKUP.numberRows" name="SPAGOBI LOOKUP numberRows" description="The numnber of rows showed in each list" isActive="true" valueCheck="20" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.SPAGOBI-MODE.mode" name="SpagoBI mode"
+		description="Enable the WebApplication or Portal mode" isActive="false"
+		valueCheck="WEB" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.HOME.BANNER.view" name="show the banner"
+		description="banner" isActive="false" valueCheck="true" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.HOME.FOOTER.view" name="show the footer"
+		description="footer" isActive="false" valueCheck="true" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.MENU.pathTracked" name="pathTracked"
+		description="pathTracked" isActive="false" valueCheck="true"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.LOOKUP.numberRows" name="SPAGOBI LOOKUP numberRows"
+		description="The numnber of rows showed in each list" isActive="true"
+		valueCheck="20" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
-<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="RESOURCE PATH JNDI NAME" description="The name of the JNDI variable that contains the RESOURCE PATH" isActive="true" valueCheck="java://comp/env/spagobi_resource_path" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.RESOURCE_PATH_JNDI_NAME" name="RESOURCE PATH JNDI NAME"
+		description="The name of the JNDI variable that contains the RESOURCE PATH"
+		isActive="true" valueCheck="java://comp/env/spagobi_resource_path"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
 
-<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI" description="HOST JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL" description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.TEMPLATE_MAX_SIZE" name="TEMPLATE MAX SIZE" description="TEMPLATE MAX SIZE" isActive="true" valueCheck="5242880" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI CONTEXT" description="SPAGOBI CONTEXT" isActive="true" valueCheck="/athena" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.SESSION_EXPIRED_URL" name="SESSION EXPIRED URL" description="SESSION EXPIRED URL" isActive="true" valueCheck="/WEB-INF/jsp/commons/sessionExpired.jsp" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DATASET.maxResult" name="DATASET maxResult" description="maxResult" isActive="true" valueCheck="500000" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled" name="SESSION PARAMETERS MANAGER" description="enabled" isActive="true" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DATASET_FILE_MAX_SIZE" name="DATASET FILE MAX SIZE" description="Max size for a file used as a dataset" isActive="true" valueCheck="10485760" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.SPAGOBI_HOST_JNDI" name="SPAGOBI HOST JNDI"
+		description="HOST JNDI" isActive="true" valueCheck="java://comp/env/spagobi_host_url"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.SPAGO_ADAPTERHTTP_URL" name="ADAPTERHTTP URL"
+		description="ADAPTERHTTP URL" isActive="true" valueCheck="/servlet/AdapterHTTP"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.TEMPLATE_MAX_SIZE" name="TEMPLATE MAX SIZE"
+		description="TEMPLATE MAX SIZE" isActive="true" valueCheck="5242880"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI CONTEXT"
+		description="SPAGOBI CONTEXT" isActive="true" valueCheck="/athena"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.SESSION_EXPIRED_URL" name="SESSION EXPIRED URL"
+		description="SESSION EXPIRED URL" isActive="true"
+		valueCheck="/WEB-INF/jsp/commons/sessionExpired.jsp" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DATASET.maxResult" name="DATASET maxResult"
+		description="maxResult" isActive="true" valueCheck="500000" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled" name="SESSION PARAMETERS MANAGER"
+		description="enabled" isActive="true" valueCheck="false" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DATASET_FILE_MAX_SIZE" name="DATASET FILE MAX SIZE"
+		description="Max size for a file used as a dataset" isActive="true"
+		valueCheck="10485760" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
-<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.statePersistenceEnabled" name="Parameter state persistence enabled" description="if true the default value for each parameter will be set automatically equal to the last value selected by the user" isActive="true" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.statePersistenceScope" name="Parameter state persistence scope" description="if equals SESSION the parameter state will be saved in session (i.e. reseted after each logout). If equals to BROWSER the parameter state will be saved in a cookie and preserver over different login sessions" isActive="true" valueCheck="SESSION" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceEnabled" name="Parameter memento persistence enabled" description="if true the last N values selected from a parameter by the user will be stored and used as selection shortcut for future executions" isActive="true" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceScope" name="Parameter memento persistence scope" description="if equals SESSION the parameter memento will be saved in session (i.e. reseted after each logout). If equals to BROWSER the parameter memento will be saved in a cookie and preserver over different login sessions" isActive="true" valueCheck="BROWSER" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceDepth" name="Parameter memento persistence depth" description="The number of values to save into the memento object associated to each parameter" isActive="true" valueCheck="5" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-
-
-<CONFIG label="SPAGOBI.DATE-FORMAT-SERVER.format" name="SERVE DATE FORMAT" description="Date format for communications with the server (both on sending and receiving) format attribute is for server side services, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-SERVER.extJsFormat" name="EXTJS SERVER DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT.format" name="DATE FORMAT" description="Date visual format if language is not found" isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT.extJsFormat" name="EXTJS DATE FORMAT" description="Date visual format if language is not found" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-IT_IT.format" name="IT DATE FORMAT" description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-IT_IT.extJsFormat" name="EXTJS IT DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-EN_US.format" name="US DATE FORMAT" description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="MM/dd/yyyy" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-EN_US.extJsFormat" name="EXTJS US DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="m/d/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-FR_FR.format" name="FR DATE FORMAT" description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-FR_FR.extJsFormat" name="EXTJS RF DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-ES_ES.format" name="ES DATE FORMAT" description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY." isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DATE-FORMAT-ES_ES.extJsFormat" name="EXTJS ES DATE FORMAT" description="extJsFormat" isActive="true" valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.format" name="TIMESTAMP FORMAT" description="TimeStamp Format of SpagoBI DB" isActive="true" valueCheck="dd/MM/yyyy HH:mm:ss" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.extJsFormat" name="EXTJS TIMESTAMP FORMAT" description="TimeStamp Format of SpagoBI DB" isActive="true" valueCheck="d/m/Y H:i:s" valueType="STRING" category="DATE-FORMAT"/>
-
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.jndiDatasource" name="jndiDatasource" description="jndiDatasource" isActive="true" valueCheck="java:comp/env/jdbc/foodmart" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getHierarchiesQuery" name="getHierarchiesQuery" description="getHierarchiesQuery" isActive="true" valueCheck="SELECT distinct store_country as HIERARCHY, ' ' as COMPANY FROM store" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getOUsQuery" name="getOUsQuery" description="getOUsQuery" isActive="true" valueCheck="SELECT distinct a.store_state as name, a.store_state as code FROM store a union select b.store_city as name, b.store_city as code from store b union select c.store_name as name , c.store_name as code from store c" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootByHierarchy" name="getRootByHierarchy" description="getRootByHierarchy" isActive="true" valueCheck="SELECT distinct store_country as code, store_country as name FROM store where store_country = ?" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getChildrenByLevel" name="getChildrenByLevel" description="getChildrenByLevel" isActive="true" valueCheck="select distinct ! as code, ! as name from store where store_country = ? " valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootLeaves" name="getRootLeaves" description="getRootLeaves" isActive="true" valueCheck="" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.provider" name="provider" description="provider" isActive="true" valueCheck="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderFoodmart" valueType="STRING" category="ORGANIZATIONAL-UNIT"/>
-
-<CONFIG label="SPAGOBI.SECURITY.DEFAULT_USER" name="DEFAULT_USER" description="DEFAULT_USER used by portal environment" isActive="true" valueCheck="biadmin" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className" name="Security Info provider" description="Security Info provider" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className" name="Security Service Supplier" description="Security Service Supplier" isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityServiceSupplierImpl" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS.className" name="Security Initializer" description="Security Initializer" isActive="true" valueCheck="it.eng.spagobi.security.init.InternalSecurityInitializer" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE-NAME-PATTERN-FILTER" name="ROLE NAME PATTERN FILTER" description="ROLE-NAME-PATTERN-FILTER" isActive="true" valueCheck=".*" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV_ROLE-PATTERN" name="DEV ROLE PATTERN" description="DEV ROLE PATTERN" isActive="true" valueCheck="/spagobi/dev" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST_ROLE-PATTERN" name="TEST ROLE PATTERN" description="TEST ROLE PATTERN" isActive="true" valueCheck="/spagobi/test" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN" name="MODEL ADMIN PATTERN" description="MODEL ADMIN PATTERN" isActive="true" valueCheck="/spagobi/modeladmin" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN" name="ADMIN -PATTERN" description="ADMIN -PATTERN" isActive="true" valueCheck="/spagobi/admin" valueType="STRING" category="SECURITY"/>
-<CONFIG label="CAS_SSO.VALIDATE-USER.URL" name="CAS VALIDATE USER URL" description="CAS VALIDATE USER URL" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas" valueType="STRING" category="SECURITY"/>
-<CONFIG label="CAS_SSO.VALIDATE-USER.SERVICE" name="CAS VALIDATE USER SERVICE" description="CAS VALIDATE USER SERVICE" isActive="true" valueCheck="http://localhost:58080/SpagoBI/proxyCallback" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.PORTLET_EDIT_MODE_ROLES.ROLE.name" name="PORTLET EDIT MODE ROLES" description="PORTLET EDIT MODE ROLES" isActive="true" valueCheck="/spagobi/admin" valueType="STRING" category="SECURITY"/>
-
-
-<CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE SSO FLAG" description="ACTIVE SSO FLAG" isActive="true" valueCheck="false" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI_SSO.PASS" name="PASS String" description="Some proxy element use this string to do some security check" isActive="true" valueCheck="PASS" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SECURITY LOGOUT URL" description="" isActive="true" valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI" description="SSO INTEGRATION CLASS JNDI" isActive="true" valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING" category="SECURITY"/>
-
-    <!--  TimeStamp Format of SpagoBI DB-->          
-    <!--  PostgresSQL: Uncomment the row below and edit the file to provide Db timestamp info  -->
-    <!--  yyyy-MM-dd HH:mm:ss -->
-    <!--  MySQL: (Default) -->
-    <!--  yyyy-MM-dd HH:mm:ss -->
-    <!--  Oracle: Uncomment the row below and edit the file to provide Db timestamp  info -->
-    <!--  dd-MMM-yy HH:mm:ss-->
-    <!--  Hsqldb: Uncomment the row below and edit the file to provide Db timestamp  info -->
-    <!--  yyyy-MM-dd HH:mm:ss --> 
-<CONFIG label="SPAGOBI.DB-TIMESTAMP-FORMAT.format" name="DB TIMESTAMP FORMAT" description="DB TIMESTAMP FORMAT" isActive="true" valueCheck="yyyy-MM-dd HH:mm:ss" valueType="STRING" category="DATE-FORMAT"/>
-<CONFIG label="SPAGOBI.DB_LOG.value" name="DB LOG" description="DB LOG" isActive="true" valueCheck="false" valueType="STRING" category="DATE-FORMAT"/>
-
-<!-- for each themes you have to define 3 properties: view_name,ext_theme,name-->
-<CONFIG label="SPAGOBI.THEMES.THEMES" name="THEMEs" description="All themes" isActive="true" valueCheck="sbi_default" valueType="STRING" category="THEMES"/>
-<CONFIG label="SPAGOBI.THEMES.THEME.default" name="THEME default" description="THEME.default" isActive="true" valueCheck="sbi_default" valueType="STRING" category="THEMES"/>
-<CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.view_name" name="THEME view_name" description="THEME.view_name" isActive="true" valueCheck="default" valueType="STRING" category="THEMES"/>
-<CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.ext_theme" name="THEME ext_theme" description="THEME.ext_theme" isActive="true" valueCheck="xtheme-gray.css" valueType="STRING" category="THEMES"/>
-<CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.name" name="default THEME name" description="THEME.default" isActive="true" valueCheck="sbi_default" valueType="STRING" category="THEMES"/>
-
-
-<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES" name="LANGUAGES" description="All languages supported" isActive="true" valueCheck="[it,IT],[en,US],[fr,FR],[es,ES]" valueType="STRING" category="LANGUAGE_SUPPORTED"/>
-<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default" name="default" description="default" isActive="true" valueCheck="en,US" valueType="STRING" category="LANGUAGE_SUPPORTED"/>
-
-<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="java://comp/env/spagobi_resource_path" valueType="STRING" category="SEARCH_ENGINE"/>
-<CONFIG label="INDEX_INITIALIZATION.name" name="INDEX_INITIALIZATION.jndiResourcePath" description="" isActive="true" valueCheck="//idx" valueType="STRING" category="SEARCH_ENGINE"/>
-
-<CONFIG label="SCRIPT_LANGUAGE_DEFAULT" name="SCRIPT LANGUAGE DEFAULT" description="" isActive="true" valueCheck="groovy" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.groovy.name" name="SCRIPT LANGUAGE.groovy.name" description="" isActive="true" valueCheck="groovy" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.groovy.engineclass" name="SCRIPT LANGUAGE.groovy.engineclass" description="" isActive="true" valueCheck="org.codehaus.groovy.bsf.GroovyEngine" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.groovy.shortidentifier" name="SCRIPT LANGUAGE.groovy.shortidentifier" description="" isActive="true" valueCheck="gy" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.groovy.predefinedScriptFile" name="SCRIPT LANGUAGE.groovy.predefinedScriptFile" description="" isActive="true" valueCheck="predefinedGroovyScript.groovy" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.groovy.identifier" name="SCRIPT LANGUAGE.groovy.identifier" description="" isActive="true" valueCheck="groovy" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.javascript.name" name="SCRIPT LANGUAGE.groovy.name" description="" isActive="true" valueCheck="javascript" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.javascript.shortidentifier" name="SCRIPT LANGUAGE.groovy.shortidentifier" description="" isActive="true" valueCheck="js" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.javascript.predefinedScriptFile" name="SCRIPT LANGUAGE.groovy.predefinedScriptFile" description="" isActive="true" valueCheck="predefinedJavascriptScript.js" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-<CONFIG label="SCRIPT_LANGUAGE.javascript.identifier" name="SCRIPT LANGUAGE.groovy.identifier" description="" isActive="true" valueCheck="javascript" valueType="STRING" category="SCRIPT_LANGUAGE"/>
-
-<CONFIG label="MAIL.PROFILES.trustedStore.file" name="Trusted Store File Path" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.trustedStore.password" name="Trusted Store Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.keyStore.file" name="Key Store File Path" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.keyStore.password" name="Key Store Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
+	<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.statePersistenceEnabled"
+		name="Parameter state persistence enabled"
+		description="if true the default value for each parameter will be set automatically equal to the last value selected by the user"
+		isActive="true" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.statePersistenceScope"
+		name="Parameter state persistence scope"
+		description="if equals SESSION the parameter state will be saved in session (i.e. reseted after each logout). If equals to BROWSER the parameter state will be saved in a cookie and preserver over different login sessions"
+		isActive="true" valueCheck="SESSION" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceEnabled"
+		name="Parameter memento persistence enabled"
+		description="if true the last N values selected from a parameter by the user will be stored and used as selection shortcut for future executions"
+		isActive="true" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceScope"
+		name="Parameter memento persistence scope"
+		description="if equals SESSION the parameter memento will be saved in session (i.e. reseted after each logout). If equals to BROWSER the parameter memento will be saved in a cookie and preserver over different login sessions"
+		isActive="true" valueCheck="BROWSER" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.EXECUTION.PARAMETERS.mementoPersistenceDepth"
+		name="Parameter memento persistence depth"
+		description="The number of values to save into the memento object associated to each parameter"
+		isActive="true" valueCheck="5" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
 
-<CONFIG label="MAIL.PROFILES.scheduler.smtphost" name="Scheduler Smtp Host" description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.scheduler.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="465" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.scheduler.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@spagobidomain.com" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.scheduler.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.scheduler.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.scheduler.useSSL" name="Use SSL Connection" description="" isActive="true" valueCheck="false" valueType="STRING" category="MAIL"/>
+	<CONFIG label="SPAGOBI.DATE-FORMAT-SERVER.format" name="SERVE DATE FORMAT"
+		description="Date format for communications with the server (both on sending and receiving) format attribute is for server side services, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY."
+		isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-SERVER.extJsFormat" name="EXTJS SERVER DATE FORMAT"
+		description="extJsFormat" isActive="true" valueCheck="d/m/Y"
+		valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT.format" name="DATE FORMAT"
+		description="Date visual format if language is not found" isActive="true"
+		valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT.extJsFormat" name="EXTJS DATE FORMAT"
+		description="Date visual format if language is not found" isActive="true"
+		valueCheck="d/m/Y" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-IT_IT.format" name="IT DATE FORMAT"
+		description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY."
+		isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-IT_IT.extJsFormat" name="EXTJS IT DATE FORMAT"
+		description="extJsFormat" isActive="true" valueCheck="d/m/Y"
+		valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-EN_US.format" name="US DATE FORMAT"
+		description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY."
+		isActive="true" valueCheck="MM/dd/yyyy" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-EN_US.extJsFormat" name="EXTJS US DATE FORMAT"
+		description="extJsFormat" isActive="true" valueCheck="m/d/Y"
+		valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-FR_FR.format" name="FR DATE FORMAT"
+		description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY."
+		isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-FR_FR.extJsFormat" name="EXTJS RF DATE FORMAT"
+		description="extJsFormat" isActive="true" valueCheck="d/m/Y"
+		valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-ES_ES.format" name="ES DATE FORMAT"
+		description="Date format used while displaying dates according to user current locale.Format attribute is for old presentation mechanism, see java.text.SimpleDateFormat for details, while extJsFormat is for ExtJs client, that use another standard, see http://extjs.com/deploy/dev/docs/. IF YOU CHANGE ONE FORMAT YOU MUST CHANGE THE OTHER ONE ACCORDINGLY."
+		isActive="true" valueCheck="dd/MM/yyyy" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DATE-FORMAT-ES_ES.extJsFormat" name="EXTJS ES DATE FORMAT"
+		description="extJsFormat" isActive="true" valueCheck="d/m/Y"
+		valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.format" name="TIMESTAMP FORMAT"
+		description="TimeStamp Format of SpagoBI DB" isActive="true"
+		valueCheck="dd/MM/yyyy HH:mm:ss" valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.TIMESTAMP-FORMAT.extJsFormat" name="EXTJS TIMESTAMP FORMAT"
+		description="TimeStamp Format of SpagoBI DB" isActive="true"
+		valueCheck="d/m/Y H:i:s" valueType="STRING" category="DATE-FORMAT" />
 
-<CONFIG label="MAIL.PROFILES.user.smtphost" name="Scheduler Smtp Host" description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.user.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="465" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.user.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@spagobidomain.com" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.user.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.user.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.user.useSSL" name="Use SSL Connection" description="" isActive="true" valueCheck="false" valueType="STRING" category="MAIL"/>
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.jndiDatasource" name="jndiDatasource"
+		description="jndiDatasource" isActive="true" valueCheck="java:comp/env/jdbc/foodmart"
+		valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getHierarchiesQuery"
+		name="getHierarchiesQuery" description="getHierarchiesQuery" isActive="true"
+		valueCheck="SELECT distinct store_country as HIERARCHY, ' ' as COMPANY FROM store"
+		valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getOUsQuery" name="getOUsQuery"
+		description="getOUsQuery" isActive="true"
+		valueCheck="SELECT distinct a.store_state as name, a.store_state as code FROM store a union select b.store_city as name, b.store_city as code from store b union select c.store_name as name , c.store_name as code from store c"
+		valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootByHierarchy"
+		name="getRootByHierarchy" description="getRootByHierarchy" isActive="true"
+		valueCheck="SELECT distinct store_country as code, store_country as name FROM store where store_country = ?"
+		valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getChildrenByLevel"
+		name="getChildrenByLevel" description="getChildrenByLevel" isActive="true"
+		valueCheck="select distinct ! as code, ! as name from store where store_country = ? "
+		valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.getRootLeaves" name="getRootLeaves"
+		description="getRootLeaves" isActive="true" valueCheck="" valueType="STRING"
+		category="ORGANIZATIONAL-UNIT" />
+	<CONFIG label="SPAGOBI.ORGANIZATIONAL-UNIT.provider" name="provider"
+		description="provider" isActive="true"
+		valueCheck="it.eng.spagobi.kpi.ou.provider.OrganizationalUnitListProviderFoodmart"
+		valueType="STRING" category="ORGANIZATIONAL-UNIT" />
+
+	<CONFIG label="SPAGOBI.SECURITY.DEFAULT_USER" name="DEFAULT_USER"
+		description="DEFAULT_USER used by portal environment" isActive="true"
+		valueCheck="biadmin" valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-CLASS.className"
+		name="Security Info provider" description="Security Info provider"
+		isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityInfoProviderImpl"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className"
+		name="Security Service Supplier" description="Security Service Supplier"
+		isActive="true" valueCheck="it.eng.spagobi.security.InternalSecurityServiceSupplierImpl"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.PORTAL-SECURITY-INIT-CLASS.className"
+		name="Security Initializer" description="Security Initializer"
+		isActive="true" valueCheck="it.eng.spagobi.security.init.InternalSecurityInitializer"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ROLE-NAME-PATTERN-FILTER" name="ROLE NAME PATTERN FILTER"
+		description="ROLE-NAME-PATTERN-FILTER" isActive="true" valueCheck=".*"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.DEV_ROLE-PATTERN"
+		name="DEV ROLE PATTERN" description="DEV ROLE PATTERN" isActive="true"
+		valueCheck="/spagobi/dev" valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.TEST_ROLE-PATTERN"
+		name="TEST ROLE PATTERN" description="TEST ROLE PATTERN" isActive="true"
+		valueCheck="/spagobi/test" valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.MODEL_ADMIN-PATTERN"
+		name="MODEL ADMIN PATTERN" description="MODEL ADMIN PATTERN" isActive="true"
+		valueCheck="/spagobi/modeladmin" valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN"
+		name="ADMIN -PATTERN" description="ADMIN -PATTERN" isActive="true"
+		valueCheck="/spagobi/admin" valueType="STRING" category="SECURITY" />
+	<CONFIG label="CAS_SSO.VALIDATE-USER.URL" name="CAS VALIDATE USER URL"
+		description="CAS VALIDATE USER URL" isActive="true"
+		valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas" valueType="STRING"
+		category="SECURITY" />
+	<CONFIG label="CAS_SSO.VALIDATE-USER.SERVICE" name="CAS VALIDATE USER SERVICE"
+		description="CAS VALIDATE USER SERVICE" isActive="true"
+		valueCheck="http://localhost:58080/SpagoBI/proxyCallback" valueType="STRING"
+		category="SECURITY" />
+	<CONFIG label="SPAGOBI.PORTLET_EDIT_MODE_ROLES.ROLE.name" name="PORTLET EDIT MODE ROLES"
+		description="PORTLET EDIT MODE ROLES" isActive="true" valueCheck="/spagobi/admin"
+		valueType="STRING" category="SECURITY" />
 
 
-<CONFIG label="MAIL.PROFILES.kpi_alarm.smtphost" name="Scheduler Smtp Host" description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.kpi_alarm.smtpport" name="Scheduler Smtp Port" description="" isActive="true" valueCheck="465" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.kpi_alarm.from" name="Scheduler From" description="" isActive="true" valueCheck="spagobi@spagobidomain.com" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.kpi_alarm.user" name="Scheduler User" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password" description="" isActive="true" valueCheck="" valueType="STRING" category="MAIL"/>
-<CONFIG label="MAIL.PROFILES.kpi_alarm.useSSL" name="Use SSL Connection" description="" isActive="true" valueCheck="false" valueType="STRING" category="MAIL"/>
-<CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE" description="Default value to replace null dataset values" isActive="true" valueCheck="%" valueType="STRING" category="MAIL"/>
-<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER" description="Jndi to build work manager" isActive="true" valueCheck="java:/comp/env/wm/SpagoWorkManager" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI_SSO.ACTIVE" name="ACTIVE SSO FLAG"
+		description="ACTIVE SSO FLAG" isActive="true" valueCheck="false"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI_SSO.PASS" name="PASS String"
+		description="Some proxy element use this string to do some security check"
+		isActive="true" valueCheck="PASS" valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI_SSO.SECURITY_LOGOUT_URL" name="SECURITY LOGOUT URL"
+		description="" isActive="true"
+		valueCheck="https://athos.engilab.ewebpd.eng.it:1447/cas/logout"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI_SSO.INTEGRATION_CLASS_JNDI" name="SSO INTEGRATION CLASS JNDI"
+		description="SSO INTEGRATION CLASS JNDI" isActive="true"
+		valueCheck="java://comp/env/spagobi_sso_class" valueType="STRING"
+		category="SECURITY" />
 
-<CONFIG label="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" name="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" description="Check the correct role in login action" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ROLE_LOGIN" name="SPAGOBI.SECURITY.ROLE_LOGIN" description="The value of the role to check at login module" isActive="false" valueCheck="" valueType="STRING" category="SECURITY"/>
+	<!-- TimeStamp Format of SpagoBI DB -->
+	<!-- PostgresSQL: Uncomment the row below and edit the file to provide Db 
+		timestamp info -->
+	<!-- yyyy-MM-dd HH:mm:ss -->
+	<!-- MySQL: (Default) -->
+	<!-- yyyy-MM-dd HH:mm:ss -->
+	<!-- Oracle: Uncomment the row below and edit the file to provide Db timestamp 
+		info -->
+	<!-- dd-MMM-yy HH:mm:ss -->
+	<!-- Hsqldb: Uncomment the row below and edit the file to provide Db timestamp 
+		info -->
+	<!-- yyyy-MM-dd HH:mm:ss -->
+	<CONFIG label="SPAGOBI.DB-TIMESTAMP-FORMAT.format" name="DB TIMESTAMP FORMAT"
+		description="DB TIMESTAMP FORMAT" isActive="true" valueCheck="yyyy-MM-dd HH:mm:ss"
+		valueType="STRING" category="DATE-FORMAT" />
+	<CONFIG label="SPAGOBI.DB_LOG.value" name="DB LOG" description="DB LOG"
+		isActive="true" valueCheck="false" valueType="STRING" category="DATE-FORMAT" />
 
-<CONFIG label="SPAGOBI.SECURITY.USE_PUBLIC_USER" name="SPAGOBI.SECURITY.USE_PUBLIC_USER" description="Enables the use of the public user. Usable only without SSO!" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
+	<!-- for each themes you have to define 3 properties: view_name,ext_theme,name -->
+	<CONFIG label="SPAGOBI.THEMES.THEMES" name="THEMEs" description="All themes"
+		isActive="true" valueCheck="sbi_default" valueType="STRING" category="THEMES" />
+	<CONFIG label="SPAGOBI.THEMES.THEME.default" name="THEME default"
+		description="THEME.default" isActive="true" valueCheck="sbi_default"
+		valueType="STRING" category="THEMES" />
+	<CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.view_name" name="THEME view_name"
+		description="THEME.view_name" isActive="true" valueCheck="default"
+		valueType="STRING" category="THEMES" />
+	<CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.ext_theme" name="THEME ext_theme"
+		description="THEME.ext_theme" isActive="true" valueCheck="xtheme-gray.css"
+		valueType="STRING" category="THEMES" />
+	<CONFIG label="SPAGOBI.THEMES.THEME.sbi_default.name" name="default THEME name"
+		description="THEME.default" isActive="true" valueCheck="sbi_default"
+		valueType="STRING" category="THEMES" />
 
-<CONFIG label="SPAGOBI.DOCUMENTBROWSER.HOME" name="SPAGOBI DOCUMENT BROWSER HOME" description="Default folder (by label) to visualize when opening document browser." isActive="false" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
-<CONFIG label="SPAGOBI.DOCUMENTBROWSER.FLAT" name="SPAGOBI DOCUMENT BROWSER FLAT VIEW" description="Use a flat view to visualize only documents inside a folder" isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DOCUMENTBROWSER.RECURSIVE" name="SPAGOBI DOCUMENT BROWSER RECURSIVE VIEW" description="Use a recursive view to visualize documents inside a folder and all his subfolders" isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES" name="LANGUAGES"
+		description="All languages supported" isActive="true"
+		valueCheck="[it,IT],[en,US],[fr,FR],[es,ES]" valueType="STRING"
+		category="LANGUAGE_SUPPORTED" />
+	<CONFIG label="SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default"
+		name="default" description="default" isActive="true" valueCheck="en,US"
+		valueType="STRING" category="LANGUAGE_SUPPORTED" />
+
+	<CONFIG label="INDEX_INITIALIZATION.jndiResourcePath" name="INDEX_INITIALIZATION.jndiResourcePath"
+		description="" isActive="true" valueCheck="java://comp/env/spagobi_resource_path"
+		valueType="STRING" category="SEARCH_ENGINE" />
+	<CONFIG label="INDEX_INITIALIZATION.name" name="INDEX_INITIALIZATION.jndiResourcePath"
+		description="" isActive="true" valueCheck="//idx" valueType="STRING"
+		category="SEARCH_ENGINE" />
+
+	<CONFIG label="SCRIPT_LANGUAGE_DEFAULT" name="SCRIPT LANGUAGE DEFAULT"
+		description="" isActive="true" valueCheck="groovy" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.groovy.name" name="SCRIPT LANGUAGE.groovy.name"
+		description="" isActive="true" valueCheck="groovy" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.groovy.engineclass" name="SCRIPT LANGUAGE.groovy.engineclass"
+		description="" isActive="true" valueCheck="org.codehaus.groovy.bsf.GroovyEngine"
+		valueType="STRING" category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.groovy.shortidentifier" name="SCRIPT LANGUAGE.groovy.shortidentifier"
+		description="" isActive="true" valueCheck="gy" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.groovy.predefinedScriptFile"
+		name="SCRIPT LANGUAGE.groovy.predefinedScriptFile" description=""
+		isActive="true" valueCheck="predefinedGroovyScript.groovy" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.groovy.identifier" name="SCRIPT LANGUAGE.groovy.identifier"
+		description="" isActive="true" valueCheck="groovy" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.javascript.name" name="SCRIPT LANGUAGE.groovy.name"
+		description="" isActive="true" valueCheck="javascript" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.javascript.shortidentifier" name="SCRIPT LANGUAGE.groovy.shortidentifier"
+		description="" isActive="true" valueCheck="js" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.javascript.predefinedScriptFile"
+		name="SCRIPT LANGUAGE.groovy.predefinedScriptFile" description=""
+		isActive="true" valueCheck="predefinedJavascriptScript.js" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+	<CONFIG label="SCRIPT_LANGUAGE.javascript.identifier" name="SCRIPT LANGUAGE.groovy.identifier"
+		description="" isActive="true" valueCheck="javascript" valueType="STRING"
+		category="SCRIPT_LANGUAGE" />
+
+	<CONFIG label="MAIL.PROFILES.trustedStore.file" name="Trusted Store File Path"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.trustedStore.password" name="Trusted Store Password"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.keyStore.file" name="Key Store File Path"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.keyStore.password" name="Key Store Password"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
 
 
-<CONFIG label="SPAGOBI.CUBE.MODEL.NAME" name="Model Name" description="The name of the model used to extract valid dimension definitions" isActive="false" valueCheck="validation" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="MAIL.PROFILES.scheduler.smtphost" name="Scheduler Smtp Host"
+		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.scheduler.smtpport" name="Scheduler Smtp Port"
+		description="" isActive="true" valueCheck="465" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.scheduler.from" name="Scheduler From"
+		description="" isActive="true" valueCheck="spagobi@spagobidomain.com"
+		valueType="STRING" category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.scheduler.user" name="Scheduler User"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.scheduler.password" name="Scheduler Password"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.scheduler.useSSL" name="Use SSL Connection"
+		description="" isActive="true" valueCheck="false" valueType="STRING"
+		category="MAIL" />
 
-<!-- SIGNUP -->
-<CONFIG label="MAIL.SIGNUP.expired_time" name="Signup expired time" description="Signup expired time" isActive="false" valueCheck="1" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="MAIL.SIGNUP.body" name="Signup mail body" description="Signup mail body" isActive="false" valueCheck="Per confermare l'attivazione dell'account utilizza il link riportato" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="MAIL.SIGNUP.subject" name="Signup mail subject" description="Signup mail subject" isActive="false" valueCheck="Creazione account SpagoBI" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="MAIL.PROFILES.user.smtphost" name="Scheduler Smtp Host"
+		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.user.smtpport" name="Scheduler Smtp Port"
+		description="" isActive="true" valueCheck="465" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.user.from" name="Scheduler From"
+		description="" isActive="true" valueCheck="spagobi@spagobidomain.com"
+		valueType="STRING" category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.user.user" name="Scheduler User"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.user.password" name="Scheduler Password"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.user.useSSL" name="Use SSL Connection"
+		description="" isActive="true" valueCheck="false" valueType="STRING"
+		category="MAIL" />
 
-<CONFIG label="SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP" name="Default user role name" description="Default user role on signup" isActive="true" valueCheck="/spagobi/user" valueType="STRING" category="SECURITY"/>
-<CONFIG label="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" name="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" description="Enables the signup functionality for the final user" isActive="false" valueCheck="false" valueType="STRING" category="SECURITY"/>
 
-<CONFIG label="SPAGOBI.CACHE.NAMEPREFIX" name="SPAGOBI.CACHE.NAMEPREFIX" description="Prefix for cache tables name" isActive="true" valueCheck="sbicache" valueType="STRING" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.CACHE.SPACE_AVAILABLE" name="SPAGOBI.CACHE.SPACE_AVAILABLE" description="Bytes of dimension available for cache management" isActive="true" valueCheck="10000000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.smtphost" name="Scheduler Smtp Host"
+		description="" isActive="true" valueCheck="mail.eng.it" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.smtpport" name="Scheduler Smtp Port"
+		description="" isActive="true" valueCheck="465" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.from" name="Scheduler From"
+		description="" isActive="true" valueCheck="spagobi@spagobidomain.com"
+		valueType="STRING" category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.user" name="Scheduler User"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.password" name="Scheduler Password"
+		description="" isActive="true" valueCheck="" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="MAIL.PROFILES.kpi_alarm.useSSL" name="Use SSL Connection"
+		description="" isActive="true" valueCheck="false" valueType="STRING"
+		category="MAIL" />
+	<CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE"
+		description="Default value to replace null dataset values" isActive="true"
+		valueCheck="%" valueType="STRING" category="MAIL" />
+	<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER"
+		description="Jndi to build work manager" isActive="true"
+		valueCheck="java:/comp/env/wm/SpagoWorkManager" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+
+	<CONFIG label="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN" name="SPAGOBI.SECURITY.CHECK_ROLE_LOGIN"
+		description="Check the correct role in login action" isActive="false"
+		valueCheck="false" valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ROLE_LOGIN" name="SPAGOBI.SECURITY.ROLE_LOGIN"
+		description="The value of the role to check at login module" isActive="false"
+		valueCheck="" valueType="STRING" category="SECURITY" />
+
+	<CONFIG label="SPAGOBI.SECURITY.USE_PUBLIC_USER" name="SPAGOBI.SECURITY.USE_PUBLIC_USER"
+		description="Enables the use of the public user. Usable only without SSO!"
+		isActive="false" valueCheck="false" valueType="STRING" category="SECURITY" />
+
+	<CONFIG label="SPAGOBI.DOCUMENTBROWSER.HOME" name="SPAGOBI DOCUMENT BROWSER HOME"
+		description="Default folder (by label) to visualize when opening document browser."
+		isActive="false" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+	<CONFIG label="SPAGOBI.DOCUMENTBROWSER.FLAT" name="SPAGOBI DOCUMENT BROWSER FLAT VIEW"
+		description="Use a flat view to visualize only documents inside a folder"
+		isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DOCUMENTBROWSER.RECURSIVE" name="SPAGOBI DOCUMENT BROWSER RECURSIVE VIEW"
+		description="Use a recursive view to visualize documents inside a folder and all his subfolders"
+		isActive="false" valueCheck="false" valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+
+	<CONFIG label="SPAGOBI.CUBE.MODEL.NAME" name="Model Name"
+		description="The name of the model used to extract valid dimension definitions"
+		isActive="false" valueCheck="validation" valueType="STRING"
+		category="GENERIC_CONFIGURATION" />
+
+	<!-- SIGNUP -->
+	<CONFIG label="MAIL.SIGNUP.expired_time" name="Signup expired time"
+		description="Signup expired time" isActive="false" valueCheck="1"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="MAIL.SIGNUP.body" name="Signup mail body"
+		description="Signup mail body" isActive="false"
+		valueCheck="Per confermare l'attivazione dell'account utilizza il link riportato"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="MAIL.SIGNUP.subject" name="Signup mail subject"
+		description="Signup mail subject" isActive="false" valueCheck="Creazione account SpagoBI"
+		valueType="STRING" category="GENERIC_CONFIGURATION" />
+
+	<CONFIG label="SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP" name="Default user role name"
+		description="Default user role on signup" isActive="true" valueCheck="/spagobi/user"
+		valueType="STRING" category="SECURITY" />
+	<CONFIG label="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY"
+		name="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" description="Enables the signup functionality for the final user"
+		isActive="false" valueCheck="false" valueType="STRING" category="SECURITY" />
+
+	<CONFIG label="SPAGOBI.CACHE.NAMEPREFIX" name="SPAGOBI.CACHE.NAMEPREFIX" description="Prefix for cache tables name" isActive="true" valueCheck="sbicache" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.CACHE.SPACE_AVAILABLE" name="SPAGOBI.CACHE.SPACE_AVAILABLE" description="Bytes of dimension available for cache management" isActive="true" valueCheck="1073741824" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.CACHE.LIMIT_FOR_CLEAN" name="SPAGOBI.CACHE.LIMIT_FOR_CLEAN" description="% of dimension of space cleaned when the cache is full" isActive="true" valueCheck="50" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN" name="SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN" description="Scheduling configuration to perform a full cleaning action on the cache (this deletes any dataset into the cache!)" isActive="true" valueCheck="DAILY" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+<CONFIG label="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL" name="SPAGOBI.CACHE.DS_LAST_ACCESS_TTL" description="Time To Live (from the last access) for a cached datasets" isActive="true" valueCheck="3600" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 <CONFIG label="SPAGOBI.CACHE.DATABASE_SCHEMA" name="SPAGOBI.CACHE.DATABASE_SCHEMA" description="name of the schema where the cache tables are created" isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION"/>
 
-<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size" description="Max dimension for a document's preview image" isActive="true" valueCheck="1048576" valueType="NUM" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM" name="Max preview images" description="Max number for documents' preview images" isActive="true" valueCheck="200" valueType="NUM" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DOCUMENTS.PARAMETERS_REGION_DEFAULT" name="Parameters Region Default" description="Where parameters form is shown (north or east) by default" isActive="true" valueCheck="east" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size"
+		description="Max dimension for a document's preview image" isActive="true"
+		valueCheck="1048576" valueType="NUM" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM" name="Max preview images"
+		description="Max number for documents' preview images" isActive="true"
+		valueCheck="200" valueType="NUM" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DOCUMENTS.PARAMETERS_REGION_DEFAULT"
+		name="Parameters Region Default" description="Where parameters form is shown (north or east) by default"
+		isActive="true" valueCheck="east" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
-<CONFIG label="SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN" name="SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN" description="Show the logout button in case of silent login" isActive="true" valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN" name="SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"
+		description="Show the logout button in case of silent login" isActive="true"
+		valueCheck="true" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
-<CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_URL" name="SPAGOBI SOCIAL ANALYSIS URL" description="SPAGOBI SOCIAL ANALYSIS URL" isActive="true" valueCheck="/SpagoBISocialAnalysis/restful-services/start" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE" name="SPAGOBI SOCIAL ANALYSIS STATUS" description="SPAGOBI SOCIAL ANALYSIS STATUS" isActive="true" valueCheck="true" valueType="STRING" category="SOCIAL_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DATASET.PREVIEW_ROWS" name="Number of rows to show for dataset preview" description="Number of rows to show for dataset preview" isActive="true" valueCheck="1000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
-<CONFIG label="SPAGOBI.DATASET.PERSIST.TABLE_PREFIX" name="Table name prefix for dataset persistence" description="Table name prefix for dataset persistence" isActive="true" valueCheck="D_" valueType="STRING" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_URL" name="SPAGOBI SOCIAL ANALYSIS URL"
+		description="SPAGOBI SOCIAL ANALYSIS URL" isActive="true"
+		valueCheck="/SpagoBISocialAnalysis/restful-services/start" valueType="STRING"
+		category="SOCIAL_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE" name="SPAGOBI SOCIAL ANALYSIS STATUS"
+		description="SPAGOBI SOCIAL ANALYSIS STATUS" isActive="true"
+		valueCheck="true" valueType="STRING" category="SOCIAL_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DATASET.PREVIEW_ROWS" name="Number of rows to show for dataset preview"
+		description="Number of rows to show for dataset preview" isActive="true"
+		valueCheck="1000" valueType="NUM" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="SPAGOBI.DATASET.PERSIST.TABLE_PREFIX" name="Table name prefix for dataset persistence"
+		description="Table name prefix for dataset persistence" isActive="true"
+		valueCheck="D_" valueType="STRING" category="GENERIC_CONFIGURATION" />
 
 <CONFIG label="IMAGE_GALLERY.MAX_IMAGE_SIZE_KB" name="Max image size in Kb" description="Max image size in Kb" isActive="true" valueCheck="1024" valueType="NUM" category="IMAGE_GALLERY"/>
 <CONFIG label="IMAGE_GALLERY.MAX_USER_IMAGES" name="Max number of images uploadable per user" description="Max number of images uploadable per user" isActive="true" valueCheck="10" valueType="NUM" category="IMAGE_GALLERY"/>

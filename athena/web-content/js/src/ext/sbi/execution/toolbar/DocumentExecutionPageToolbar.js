@@ -108,6 +108,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
    
 	, isInsert: false
 	
+	, currentView: null
+	
 	, exportersMenu : null
 	
 	// =================================================================================================================
@@ -1004,7 +1006,7 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			var documentWindowsParams = this.getSaveDocumentWindowsParams(templateJSON);
 			documentWindowsParams.fromMyAnalysis = this.fromMyAnalysis;
 			documentWindowsParams.isInsert = this.isInsert;
-			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);		
+			this.win_saveDoc = new Sbi.execution.SaveDocumentWindow(documentWindowsParams);
 			this.win_saveDoc.on('returnToMyAnalysis', this.returnToMyAnalysis, this);
 			this.win_saveDoc.show();
 		}
@@ -1094,11 +1096,25 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 		}
    }
 	 
+	 , saveFormAsDataSet: function(){
+		 // these var are set in DataStorePanel once the data preview are loaded
+		 var query = this.controller.getFrame().getWindow().smartFilterQuery;
+		 var dataSource = this.controller.getFrame().getWindow().smartFilterDataSource;
+		 var metadata = this.controller.getFrame().getWindow().smartFilterMetadata;
+		 
+		 var config = {};
+		 config.query = query;
+		 config.dataSource = dataSource;
+		 config.metadata = metadata;
+		 var win = new Sbi.execution.SaveDatasetWindow(config);
+		 win.show();
+	 }
 	 
-	 , manageButton: function(button, property, value){
+	 , manageButton: function(button, property, value, target){
 		 var aButton;
 		 if(button == "saveworksheet" && this.saveButton){
 			 aButton = this.saveButton;
+			 this.currentView = target;
 		 }
 		 if(aButton){
 			 if(button == "saveworksheet"){
@@ -1127,9 +1143,13 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 			   this.saveDocumentAs();
 			   return;
 			case 'SMART_FILTER':
-				   this.isInsert = true;
-				   this.saveDocumentAs();
-				   return;
+				if(this.currentView === 'dataset') {
+					this.saveFormAsDataSet();
+				} else {	// currentView = 'worksheet'
+					this.isInsert = true;
+					this.saveDocumentAs();
+				}
+				return;
 			default:
 				throw "Cannot save document type " + this.executionInstance.document.typeCode;
 		}

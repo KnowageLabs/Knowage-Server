@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -34,11 +36,13 @@ public class MetaData implements IMetaData, Cloneable {
 		fieldsMeta = new ArrayList<IFieldMetaData>();
 		properties = new HashMap<String, Object>();
 	}
-	
+
+	@JsonIgnore
 	public int getFieldCount() {
 		return fieldsMeta.size();
 	}
-	
+
+	@JsonIgnore
 	public int getIdFieldIndex() {
 		return idFieldIndex;
 	}
@@ -63,8 +67,8 @@ public class MetaData implements IMetaData, Cloneable {
 	public IFieldMetaData getFieldMeta(int fieldIndex) {
 		IFieldMetaData fieldMeta = null;
 
-		fieldMeta = (IFieldMetaData)fieldsMeta.get( fieldIndex );
-		
+		fieldMeta = fieldsMeta.get(fieldIndex);
+
 		return fieldMeta;
 	}
 	
@@ -148,6 +152,7 @@ public class MetaData implements IMetaData, Cloneable {
 		name2IndexMap.put(fieldName.toUpperCase(), fieldIndex);
 	}
 
+	@Override
 	public String toString() {
 		return fieldsMeta.toString();
 	}
@@ -167,6 +172,14 @@ public class MetaData implements IMetaData, Cloneable {
 	
 	public List getFieldsMeta() {
 		return fieldsMeta;
+	}
+
+	public void setFieldsMeta(FieldMetadata[] fieldsMeta) {
+		this.fieldsMeta = new ArrayList<IFieldMetaData>(fieldsMeta.length);
+
+		for (FieldMetadata fm : fieldsMeta) {
+			this.fieldsMeta.add(fm);
+		}
 	}
 
 	public void changeFieldAlias(int fieldIndex, String newAlias) {

@@ -13,8 +13,6 @@ import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
@@ -300,6 +298,8 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		
 		try {
 			// TODO delete trigger associated to the job first (?)
+			// Reply: no need to delete trigger because deleteJob(...) loops through all the triggers having a reference to this job,
+			// to unschedule them and removes the job from the jobstore
 			String actualJobGroupName = this.applyTenant(jobGroupName);
 			scheduler.deleteJob(jobName, actualJobGroupName);
 		} catch(Throwable t) {

@@ -72,7 +72,11 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 	}
 	
 	public DataSetDataSourceConfiguration getDataSetDataSourceConfiguration() {
-		return (DataSetDataSourceConfiguration)configuration;
+		return (DataSetDataSourceConfiguration) configuration;
+	}
+
+	public List<IDataSet> getDatasets() {
+		return datasets;
 	}
 	
 

@@ -95,7 +95,19 @@ public class DataSetJSONSerializer implements Serializer {
 	
 	private static final String SCOPE_CD = "scopeCd";
 	private static final String SCOPE_ID = "scopeId";
-	
+
+	public static final String CKAN_CSV_FILE_DELIMITER_CHARACTER = "ckanCsvDelimiter";
+	public static final String CKAN_CSV_FILE_QUOTE_CHARACTER = "ckanCsvQuote";
+	public static final String CKAN_CSV_FILE_ENCODING = "ckanCsvEncoding";
+	public static final String CKAN_FILE_TYPE = "ckanFileType";
+
+	public static final String CKAN_XSL_FILE_SKIP_ROWS = "ckanSkipRows";
+	public static final String CKAN_XSL_FILE_LIMIT_ROWS = "ckanLimitRows";
+	public static final String CKAN_XSL_FILE_SHEET_NUMBER = "ckanXslSheetNumber";
+
+	public static final String CKAN_URL = "ckanUrl";
+	public static final String CKAN_ID = "ckanId";
+
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
@@ -226,8 +238,56 @@ public class DataSetJSONSerializer implements Serializer {
 					if(xslSheetNumber!=null){
 						result.put(XSL_FILE_SHEET_NUMBER, xslSheetNumber);				
 					}
-					
-				}else if(type.equalsIgnoreCase(DataSetConstants.QUERY)){
+
+					if (type.equalsIgnoreCase(DataSetConstants.CKAN)) {
+
+						String ckanFileType = jsonConf.getString(DataSetConstants.CKAN_FILE_TYPE);
+						if (ckanFileType != null) {
+							result.put(CKAN_FILE_TYPE, ckanFileType);
+						}
+						String ckanCsvDelimiter = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+						if (ckanCsvDelimiter != null) {
+							result.put(CKAN_CSV_FILE_DELIMITER_CHARACTER, ckanCsvDelimiter);
+						}
+						String ckanCsvQuote = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER);
+						if (ckanCsvQuote != null) {
+							result.put(CKAN_CSV_FILE_QUOTE_CHARACTER, ckanCsvQuote);
+						}
+						// added this check for retrocompatibility
+						if (jsonConf.has(DataSetConstants.CKAN_CSV_FILE_ENCODING)) {
+							String ckanCsvEncoding = jsonConf.getString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
+							if (ckanCsvEncoding != null) {
+								result.put(CKAN_CSV_FILE_ENCODING, ckanCsvEncoding);
+							}
+						} else {
+							result.put(CKAN_CSV_FILE_ENCODING, "");
+						}
+
+						String ckanSkipRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS);
+						if (ckanSkipRows != null) {
+							result.put(CKAN_XSL_FILE_SKIP_ROWS, ckanSkipRows);
+						}
+						String ckanLimitRows = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS);
+						if (ckanLimitRows != null) {
+							result.put(CKAN_XSL_FILE_LIMIT_ROWS, ckanLimitRows);
+						}
+						String ckanXslSheetNumber = jsonConf.getString(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER);
+						if (ckanXslSheetNumber != null) {
+							result.put(CKAN_XSL_FILE_SHEET_NUMBER, ckanXslSheetNumber);
+						}
+
+						String ckanUrl = jsonConf.getString(DataSetConstants.CKAN_URL);
+						if (ckanUrl != null) {
+							result.put(CKAN_URL, ckanUrl);
+						}
+
+						String ckanId = jsonConf.getString(DataSetConstants.CKAN_ID);
+						if (ckanId != null) {
+							result.put(CKAN_ID, ckanId);
+						}
+					}
+
+				} else if (type.equalsIgnoreCase(DataSetConstants.QUERY)) {
 					result.put(QUERY, jsonConf.getString(DataSetConstants.QUERY));
 					result.put(QUERY_SCRIPT, jsonConf.getString(DataSetConstants.QUERY_SCRIPT));
 					result.put(QUERY_SCRIPT_LANGUAGE, jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE));

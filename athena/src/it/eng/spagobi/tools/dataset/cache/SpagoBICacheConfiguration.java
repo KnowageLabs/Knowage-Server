@@ -38,6 +38,8 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
+	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
 	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
 	private static final String JNDI_THREAD_MANAGER = "JNDI_THREAD_MANAGER";
 
@@ -49,6 +51,8 @@ public class SpagoBICacheConfiguration {
 		cacheConfiguration.setTableNamePrefix(getTableNamePrefix());
 		cacheConfiguration.setCacheSpaceAvailable(getCacheSpaceAvailable());
 		cacheConfiguration.setCachePercentageToClean(getCachePercentageToClean());
+		cacheConfiguration.setCacheDsLastAccessTtl(getCacheDsLastAccessTtl());
+		cacheConfiguration.setCacheSchedulingFullClean(getCacheSchedulingFullClean());
 		cacheConfiguration.setSchema(getCacheDatabaseSchema());
 		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
 		cacheConfiguration.setWorkManager(getWorkManager());
@@ -108,6 +112,32 @@ public class SpagoBICacheConfiguration {
 				cachePercentageToClean = Integer.valueOf(propertyValue);
 			}
 			return cachePercentageToClean;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+		}
+	}
+
+	private static Integer getCacheDsLastAccessTtl() {
+		try {
+			Integer cacheDsLastAccessTtl = null;
+			String propertyValue = getSpagoBIConfigurationProperty(CACHE_DS_LAST_ACCESS_TTL);
+			if (propertyValue != null) {
+				cacheDsLastAccessTtl = Integer.valueOf(propertyValue);
+			}
+			return cacheDsLastAccessTtl;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+		}
+	}
+
+	private static String getCacheSchedulingFullClean() {
+		try {
+			String cacheSchedulingFullClean = null;
+			String propertyValue = getSpagoBIConfigurationProperty(CACHE_SCHEDULING_FULL_CLEAN);
+			if (propertyValue != null) {
+				cacheSchedulingFullClean = propertyValue;
+			}
+			return cacheSchedulingFullClean;
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
 		}

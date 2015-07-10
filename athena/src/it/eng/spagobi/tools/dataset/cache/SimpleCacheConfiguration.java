@@ -30,6 +30,8 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
+	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
+	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
 	private static final String CACHE_WORK_MANAGER = "SPAGOBI.CACHE.WORK_MANAGER";
 
 	
@@ -80,7 +82,37 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	public void setCachePercentageToClean(Integer cachePercentageToClean) {
 		setProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG, cachePercentageToClean);
 	}
-	
+
+	/**
+	 * @return the cacheDsLastAccessTtl
+	 */
+	public Integer getCacheDsLastAccessTtl() {
+		return (Integer) getProperty(CACHE_DS_LAST_ACCESS_TTL);
+	}
+
+	/**
+	 * @param cacheDsLastAccessTtl
+	 *            the cacheDsLastAccessTtl to set
+	 */
+	public void setCacheDsLastAccessTtl(Integer cacheDsLastAccessTtl) {
+		setProperty(CACHE_DS_LAST_ACCESS_TTL, cacheDsLastAccessTtl);
+	}
+
+	/**
+	 * @return the cacheSchedulingFullClean
+	 */
+	public String getCacheSchedulingFullClean() {
+		return (String) getProperty(CACHE_SCHEDULING_FULL_CLEAN);
+	}
+
+	/**
+	 * @param cacheSchedulingFullClean
+	 *            the cacheSchedulingFullClean to set
+	 */
+	public void setCacheSchedulingFullClean(String cacheSchedulingFullClean) {
+		setProperty(CACHE_SCHEDULING_FULL_CLEAN, cacheSchedulingFullClean);
+	}
+
 	/**
 	 * @return the work manger used by cache to perform task in background
 	 */

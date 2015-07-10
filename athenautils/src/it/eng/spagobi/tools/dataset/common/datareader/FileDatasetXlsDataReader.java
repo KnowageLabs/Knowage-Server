@@ -13,6 +13,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.utilities.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -210,7 +211,8 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			}
 
 			FieldMetadata fieldMeta = new FieldMetadata();
-			fieldMeta.setName(valueField);
+			String fieldName = StringUtils.escapeForSQLColumnName(valueField);
+			fieldMeta.setName(fieldName);
 			fieldMeta.setType(String.class);
 			dataStoreMeta.addFiedMeta(fieldMeta);
 		}

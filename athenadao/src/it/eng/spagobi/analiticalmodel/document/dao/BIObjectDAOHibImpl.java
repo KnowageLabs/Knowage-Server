@@ -195,6 +195,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectById(java.lang.Integer)
 	 */
+	@Override
 	public BIObject loadBIObjectById(Integer biObjectID) throws EMFUserError {
 		logger.debug("IN");
 		BIObject toReturn = null;
@@ -220,9 +221,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		return toReturn;
 	}
 
-
-
-
 	/**
 	 * Load bi object for detail.
 	 * 
@@ -234,6 +232,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForDetail(java.lang.Integer)
 	 */
+	@Override
 	public BIObject loadBIObjectForDetail(Integer id) throws EMFUserError {
 		logger.debug("IN");
 		BIObject biObject = null;
@@ -275,6 +274,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectByLabel(java.lang.String)
 	 */
+	@Override
 	public BIObject loadBIObjectByLabel(String label) throws EMFUserError {
 		logger.debug("IN");
 		BIObject biObject = null;
@@ -305,15 +305,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		return biObject;
 	}
 
-
-
-
-
-
-
-
-
-
 	/**
 	 * Load bi object for tree.
 	 * 
@@ -325,6 +316,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadBIObjectForTree(java.lang.Integer)
 	 */
+	@Override
 	public BIObject loadBIObjectForTree(Integer id) throws EMFUserError {
 		logger.debug("IN. start method with input id:" + id);
 		BIObject biObject = null;
@@ -372,6 +364,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#modifyBIObject(it.eng.spagobi.analiticalmodel.document.bo.BIObject)
 	 */
+	@Override
 	public void modifyBIObject(BIObject obj) throws EMFUserError {
 		internalModify(obj, null, false);
 	}
@@ -479,8 +472,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setParametersRegion(biObject.getParametersRegion());
 			
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
-			
-			
 
 			// functionalities erasing
 			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
@@ -638,18 +629,19 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (obj.getDataSetId() != null) {
 				Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?" );
 				hibQuery.setBoolean(0, true);
-				hibQuery.setInteger(1,  obj.getDataSetId());	
-				dSet =(SbiDataSet)hibQuery.uniqueResult();
-				//dSet = (SbiDataSet) aSession.load(SbiDataSet.class, obj.getDataSetId());
+				hibQuery.setInteger(1, obj.getDataSetId());
+				dSet = (SbiDataSet) hibQuery.uniqueResult();
+				// dSet = (SbiDataSet) aSession.load(SbiDataSet.class, obj.getDataSetId());
 			}
-			//hibBIObject.setDataSet(dSet);
-			hibBIObject.setDataSet((dSet==null)?null:dSet.getId().getDsId());
+			// hibBIObject.setDataSet(dSet);
+			hibBIObject.setDataSet((dSet == null) ? null : dSet.getId().getDsId());
 
-			Integer refreshSeconds=obj.getRefreshSeconds();
-			if(refreshSeconds==null)refreshSeconds=new Integer(0);
+			Integer refreshSeconds = obj.getRefreshSeconds();
+			if (refreshSeconds == null)
+				refreshSeconds = new Integer(0);
 			hibBIObject.setRefreshSeconds(refreshSeconds);
-			
-			// parameters region			
+
+			// parameters region
 			hibBIObject.setParametersRegion(obj.getParametersRegion());
 
 			// uuid generation
@@ -1469,8 +1461,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			//String hql = " from SbiObjects where path = '" + path + "'";
-			String hql = " from SbiObjects where path = ? " ;
+			// String hql = " from SbiObjects where path = '" + path + "'";
+			String hql = " from SbiObjects where path = ? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setSerializable(0, path);
@@ -1810,7 +1802,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				}
 
 				if (folderID != null && roles != null && roles.size() > 0 ) {
-					buffer.append("select o from SbiObjects o, SbiObjFunc sof, SbiFunctions f,  SbiFuncRole fr " +
+					buffer.append("select distinct o from SbiObjects o, SbiObjFunc sof, SbiFunctions f,  SbiFuncRole fr " +
 							"where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId  " +
 							" and fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) " +
 							" and fr.id.function.functId = f.functId " + 
@@ -1842,7 +1834,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				}		
 			}else{
 				if (folderID != null ){
-					buffer.append("select o from SbiObjects o, SbiObjFunc sof, SbiFunctions f " +
+					buffer.append("select distinct o from SbiObjects o, SbiObjFunc sof, SbiFunctions f " +
 							"where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId  " +
 					" and f.functId = :FOLDER_ID  " );
 

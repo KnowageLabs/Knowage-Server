@@ -1,119 +1,208 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <USER_FUNCTIONALITIES>
-<!-- Athena BD Functionalities --> 
-<USER_FUNCTIONALITY productType="AthenaBD" name="EnginesManagement" description="EnginesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="LovsManagement" description="LovsManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ConstraintManagement" description="ConstraintManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ParameterManagement" description="ParameterManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentAdministration" description="DocumentAdministration"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentDevManagement" description="DocumentDevManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentTestManagement" description="DocumentTestManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ImportExportManagement" description="ImportExportManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="SchedulerManagement" description="SchedulerManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="EventsManagement" description="EventsManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="WorkspaceManagement" description="WorkspaceManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="WorklistManagement" description="WorklistManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentManagement" description="DocumentManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DataSourceManagement" description="DataSourceManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentUserManagement" description="DocumentUserManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentStateManagement" description="DocumentStateManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DistributionListUser" description="DistributionListUser"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DistributionListManagement" description="DistributionListManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="LovsView" description="LovsView"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ConstraintView" description="ConstraintView"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ParameterView" description="ParameterView"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DatasetManagement" description="DatasetManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ModifyRefresh" description="ModifyRefresh"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="MenuManagement" description="MenuManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="HotLinkManagement" description="HotLinkManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="KpiManagement" description="KpiManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ProfileManagement" description="ProfileManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="DomainManagement" description="DomainManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ConfigManagement" description="ConfigManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="GeoLayersManagement" description="GeoLayersManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="HierarchiesManagement" description="HierarchiesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="CreateChartFunctionality" description="CreateChartFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="GlossaryManagement" description="GlossaryManagement"/>
-<USER_FUNCTIONALITY productType="AthenaBD" name="ImagesManagement" description="ImagesManagement"/>
+	<!-- Athena BD Functionalities -->
+	<USER_FUNCTIONALITY productType="AthenaBD" name="EnginesManagement"
+		description="EnginesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ReadEnginesManagement" description="ReadEnginesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="LovsManagement"
+		description="LovsManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ConstraintManagement" description="ConstraintManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ParameterManagement" description="ParameterManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentAdministration" description="DocumentAdministration" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentDevManagement" description="DocumentDevManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentTestManagement" description="DocumentTestManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentAdminManagement" description="DocumentAdminManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ImportExportManagement" description="ImportExportManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="SchedulerManagement" description="SchedulerManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="EventsManagement"
+		description="EventsManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="WorkspaceManagement" description="WorkspaceManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="WorklistManagement"
+		description="WorklistManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentManagement"
+		description="DocumentManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DataSourceManagement" description="DataSourceManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentUserManagement" description="DocumentUserManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentStateManagement" description="DocumentStateManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentDetailManagement" description="DocumentDetailManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="ViewMyFolderAdmin"
+		description="ViewMyFolderAdmin" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DistributionListUser" description="DistributionListUser" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DistributionListManagement" description="DistributionListManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="LovsView"
+		description="LovsView" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="ConstraintView"
+		description="ConstraintView" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="ParameterView"
+		description="ParameterView" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="DatasetManagement"
+		description="DatasetManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentMoveDownState" description="DocumentMoveDownState" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="DocumentMoveUpState" description="DocumentMoveUpState" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="ModifyRefresh"
+		description="ModifyRefresh" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="MenuManagement"
+		description="MenuManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="HotLinkManagement"
+		description="HotLinkManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ObjMetadataManagement" description="ObjMetadataManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="ProfileManagement"
+		description="ProfileManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="DomainManagement"
+		description="DomainManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" name="ConfigManagement"
+		description="ConfigManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="GeoLayersManagement" description="GeoLayersManagement" />
 
-<!-- Athena Social Functionalities --> 
-<USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement" description="EnginesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsManagement" description="LovsManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ConstraintManagement" description="ConstraintManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ParameterManagement" description="ParameterManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentAdministration" description="DocumentAdministration"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentDevManagement" description="DocumentDevManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentTestManagement" description="DocumentTestManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ImportExportManagement" description="ImportExportManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="SchedulerManagement" description="SchedulerManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="EventsManagement" description="EventsManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="WorkspaceManagement" description="WorkspaceManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="WorklistManagement" description="WorklistManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentManagement" description="DocumentManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DataSourceManagement" description="DataSourceManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentUserManagement" description="DocumentUserManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentStateManagement" description="DocumentStateManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DistributionListUser" description="DistributionListUser"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DistributionListManagement" description="DistributionListManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsView" description="LovsView"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ConstraintView" description="ConstraintView"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ParameterView" description="ParameterView"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DatasetManagement" description="DatasetManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ModifyRefresh" description="ModifyRefresh"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="MenuManagement" description="MenuManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="HotLinkManagement" description="HotLinkManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="KpiManagement" description="KpiManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ProfileManagement" description="ProfileManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="DomainManagement" description="DomainManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ConfigManagement" description="ConfigManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="GeoLayersManagement" description="GeoLayersManagement"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
-<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement" description="ImagesManagement"/>
+	<!-- Athena Social Functionalities -->
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement"
+		description="EnginesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ReadEnginesManagement" description="ReadEnginesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsManagement"
+		description="LovsManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ConstraintManagement" description="ConstraintManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ParameterManagement" description="ParameterManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentAdministration" description="DocumentAdministration" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentDevManagement" description="DocumentDevManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentTestManagement" description="DocumentTestManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentAdminManagement" description="DocumentAdminManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ImportExportManagement" description="ImportExportManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="SchedulerManagement" description="SchedulerManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="EventsManagement"
+		description="EventsManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="WorkspaceManagement" description="WorkspaceManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="WorklistManagement"
+		description="WorklistManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="MapCatalogueManagement" description="MapCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="MapFeaturesManagement" description="MapFeaturesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentManagement"
+		description="DocumentManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DataSourceManagement" description="DataSourceManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentUserManagement" description="DocumentUserManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentStateManagement" description="DocumentStateManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentDetailManagement" description="DocumentDetailManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ViewMyFolderAdmin"
+		description="ViewMyFolderAdmin" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DistributionListUser" description="DistributionListUser" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DistributionListManagement" description="DistributionListManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsView"
+		description="LovsView" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ConstraintView"
+		description="ConstraintView" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ParameterView"
+		description="ParameterView" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="DatasetManagement"
+		description="DatasetManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentMoveDownState" description="DocumentMoveDownState" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="DocumentMoveUpState" description="DocumentMoveUpState" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ModifyRefresh"
+		description="ModifyRefresh" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="MenuManagement"
+		description="MenuManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="HotLinkManagement"
+		description="HotLinkManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="KpiManagement"
+		description="KpiManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ObjMetadataManagement" description="ObjMetadataManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ProfileManagement"
+		description="ProfileManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="DomainManagement"
+		description="DomainManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ConfigManagement"
+		description="ConfigManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="GeoLayersManagement" description="GeoLayersManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement"
+		description="ImagesManagement" />
 </USER_FUNCTIONALITIES>
-

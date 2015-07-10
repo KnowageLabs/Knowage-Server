@@ -5,18 +5,24 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api;
 
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
 import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
@@ -33,7 +39,10 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.crosstab.CrossTab;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -50,6 +59,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -59,6 +69,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -72,16 +83,24 @@ import org.json.JSONObject;
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(DataSetResource.class);
+	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDataSets(@QueryParam("typeDoc") String typeDoc) {
+	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
+
 		try {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
-			return serializeDataSets(dataSets, typeDoc);
+			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
+
+			for (IDataSet dataset : dataSets) {
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+					toBeReturned.add(dataset);
+			}
+
+			return serializeDataSets(toBeReturned, typeDoc);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
@@ -102,6 +121,87 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@POST
+	@Path("/{label}/content")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response execute(@PathParam("label") String label, String body) {
+		SDKDataSetParameter[] parameters = null;
+		if (body != null && !body.equals("")) {
+			parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
+		}
+
+		return Response.ok(executeDataSet(label, parameters)).build();
+	}
+
+	private String executeDataSet(String label, SDKDataSetParameter[] params) {
+		logger.debug("IN: label in input = " + label);
+
+		try {
+			if (label == null) {
+				logger.warn("DataSet identifier in input is null!");
+				return null;
+			}
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			if (dataSet == null) {
+				logger.warn("DataSet with label [" + label + "] not existing.");
+				return null;
+			}
+			if (params != null && params.length > 0) {
+				HashMap parametersFilled = new HashMap();
+				for (int i = 0; i < params.length; i++) {
+					SDKDataSetParameter par = params[i];
+					parametersFilled.put(par.getName(), par.getValues()[0]);
+					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
+				}
+				dataSet.setParamsMap(parametersFilled);
+			}
+
+			// add the jar retriver in case of a Qbe DataSet
+			if (dataSet instanceof QbeDataSet
+					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
+				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
+				Map parameters = dataSet.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					dataSet.setParamsMap(parameters);
+				}
+				dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
+			}
+
+			dataSet.loadData();
+			// toReturn = dataSet.getDataStore().toXml();
+
+			JSONDataWriter writer = new JSONDataWriter();
+			return (writer.write(dataSet.getDataStore())).toString();
+		} catch (Exception e) {
+			logger.error("Error while executing dataset", e);
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
+		}
+	}
+
+	@DELETE
+	@Path("/{label}")
+	public Response deleteDataset(@PathParam("label") String label) {
+		IDataSetDAO datasetDao = null;
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+
+		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
+
+		try {
+			datasetDao.deleteDataSet(dataset.getId());
+		} catch (Exception e) {
+			logger.error("Error while deleting the specified dataset", e);
+			throw new SpagoBIRuntimeException("Error while deleting the specified dataset", e);
+		}
+
+		return Response.ok().build();
 	}
 
 	@GET
@@ -732,11 +832,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return getUserProfile().getUserUniqueIdentifier().toString();
 	}
 
-	private UserProfile getUserProfile() {
-		UserProfile profile = this.getIOManager().getUserProfile();
-		return profile;
-	}
-
 	// private IDataSetDAO getDataSetDAO() {
 	// IDataSetDAO dataSetDao = null;
 	// try {
@@ -750,7 +845,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	// return dataSetDao;
 	// }
 
-	private DatasetManagementAPI getDatasetManagementAPI() {
+	protected DatasetManagementAPI getDatasetManagementAPI() {
 		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getUserProfile());
 		return managementAPI;
 	}
@@ -877,7 +972,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return fieldColumnType;
 	}
 
-	private String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
+	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
 		try {
 			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
 			JSONArray datasetsJSONArray = new JSONArray();
@@ -889,7 +984,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
+	protected String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
 			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
 			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);

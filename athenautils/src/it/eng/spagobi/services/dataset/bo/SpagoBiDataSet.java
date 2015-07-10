@@ -41,6 +41,8 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     private java.lang.String persistTableName;
 
     private boolean persisted;
+    
+    private boolean scheduled;
 
     private java.lang.String pivotColumnName;
 
@@ -82,6 +84,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String parameters,
            java.lang.String persistTableName,
            boolean persisted,
+           boolean scheduled,
            java.lang.String pivotColumnName,
            java.lang.String pivotColumnValue,
            java.lang.String pivotRowName,
@@ -108,6 +111,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.parameters = parameters;
            this.persistTableName = persistTableName;
            this.persisted = persisted;
+           this.scheduled = scheduled;
            this.pivotColumnName = pivotColumnName;
            this.pivotColumnValue = pivotColumnValue;
            this.pivotRowName = pivotRowName;
@@ -473,6 +477,21 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     public void setPersisted(boolean persisted) {
         this.persisted = persisted;
     }
+    
+    /**
+	 * @return the scheduled
+	 */
+	public boolean isScheduled() {
+		return scheduled;
+	}
+
+	/**
+	 * @param scheduled
+	 *            the scheduled to set
+	 */
+	public void setScheduled(boolean scheduled) {
+		this.scheduled = scheduled;
+	}
 
 
     /**
@@ -666,7 +685,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.persistTableName==null && other.getPersistTableName()==null) || 
              (this.persistTableName!=null &&
               this.persistTableName.equals(other.getPersistTableName()))) &&
-            this.persisted == other.isPersisted() &&
+            this.persisted == other.isPersisted() && this.scheduled == other.isScheduled() &&
             ((this.pivotColumnName==null && other.getPivotColumnName()==null) || 
              (this.pivotColumnName!=null &&
               this.pivotColumnName.equals(other.getPivotColumnName()))) &&
@@ -738,6 +757,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             _hashCode += getPersistTableName().hashCode();
         }
         _hashCode += (isPersisted() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        _hashCode += (isScheduled() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         if (getPivotColumnName() != null) {
             _hashCode += getPivotColumnName().hashCode();
         }
@@ -866,6 +886,11 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("persisted");
         elemField.setXmlName(new javax.xml.namespace.QName("", "persisted"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField.setFieldName("scheduled");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "scheduled"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);

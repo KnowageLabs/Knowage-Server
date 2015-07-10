@@ -7,7 +7,6 @@ package it.eng.spagobi.commons.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
-import it.eng.spagobi.commons.metadata.SbiOrganizationEngine;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -26,7 +25,7 @@ public interface ITenantsDAO extends ISpagoBIDao {
 
 	public SbiTenant loadTenantById(Integer id) throws EMFUserError;
 
-	public List<SbiOrganizationEngine> loadSelectedEngines(String tenant) throws EMFUserError;
+	// public List<SbiOrganizationEngine> loadSelectedEngines(String tenant) throws EMFUserError;
 
 	public List<SbiOrganizationDatasource> loadSelectedDS(String tenant) throws EMFUserError;
 

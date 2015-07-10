@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-mag-2015 12.23.30 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.cache.metadata.SbiCacheItem" table="SBI_CACHE_ITEM">
+        <id name="signature" type="string">
+            <column name="SIGNATURE" length="100" />
+            <generator class="assigned" />
+        </id>
+        <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="true" />
+	        </property> 
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" not-null="false" />
+	        </property> 
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" not-null="false" />
+	        </property>                 
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" not-null="true" />
+	        </property> 
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" not-null="false" />
+	        </property> 
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" not-null="false" />
+	        </property>                      
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+	        </property>                 
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" not-null="false" />
+	        </property>      
+  		</component>
+        <property name="tableName" type="string">
+            <column name="TABLE_NAME" length="100" not-null="true" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="100" />
+        </property>
+        <property name="dimension" type="java.lang.Long">
+            <column name="DIMENSION" precision="10" scale="0" />
+        </property>
+        <property name="creationDate" type="timestamp">
+            <column name="CREATION_DATE" length="19" />
+        </property>
+        <property name="lastUsedDate" type="timestamp">
+            <column name="LAST_USED_DATE" length="19" />
+        </property>
+        <property name="properties" type="string">
+            <column name="PROPERTIES" length="65535" />
+        </property>
+        <set name="sbiCacheJoinedItemsForSignature" table="sbi_cache_joined_item" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="SIGNATURE" length="100" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.cache.metadata.SbiCacheJoinedItem" />
+        </set>
+        <set name="sbiCacheJoinedItemsForJoinedSignature" table="sbi_cache_joined_item" inverse="true" lazy="false" fetch="select">
+            <key>
+                <column name="JOINED_SIGNATURE" length="100" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.cache.metadata.SbiCacheJoinedItem" />
+        </set>
+    </class>
+</hibernate-mapping>

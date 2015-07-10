@@ -5,11 +5,34 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.metadata;
 
+import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * This is the class used by the DAO to map the table 
@@ -34,16 +57,26 @@ public class SbiDataSet extends SbiHibernateModel {
 	
 	private SbiDataSetId id;
 
-	private String name=null;
-	private String description=null;
-	private String label=null;
-	
+	@ExtendedAlphanumeric
+	@Size(max = 50)
+	private String name = null;
+
+	@ExtendedAlphanumeric
+	@Size(max = 160)
+	private String description = null;
+
+	@NotEmpty
+	@Alphanumeric
+	@Size(max = 50)
+	private String label = null;
+
 	private boolean active = true;
 
 	private SbiDomains category  = null;
 	private String parameters=null;
 	private String dsMetadata=null;
 	private String type = null;
+	@JsonRawValue
 	private String configuration = null;
 	
 	private SbiDomains transformer = null;
@@ -83,6 +116,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	 * 
 	 * @param id the id
 	 */
+	@JsonIgnore
 	public SbiDataSet(SbiDataSetId id) {
 		this.id = id;
 	}
@@ -95,6 +129,17 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	public void setScope(SbiDomains scope) {
 		this.scope = scope;
+	}
+
+	public Integer getScopeId() {
+		if (scope != null)
+			return scope.getValueId();
+		else
+			return null;
+	}
+
+	public void setScopeId(Integer id) {
+		scope = getDomain(id);
 	}
 
 	/**
@@ -210,6 +255,7 @@ public class SbiDataSet extends SbiHibernateModel {
 	 * 
 	 * @return the parameters
 	 */
+	@JsonIgnore
 	public String getParameters() {
 	    return parameters;
 	}
@@ -220,7 +266,28 @@ public class SbiDataSet extends SbiHibernateModel {
 	 * @param parameters the new parameters
 	 */
 	public void setParameters(String parameters) {
-	    this.parameters = parameters;
+		this.parameters = parameters;
+	}
+
+	@JsonProperty(value = "parameters")
+	public List<DataSetParameterItem> getParametersList() {
+		if (parameters != null) {
+			try {
+				DataSetParametersList list = DataSetParametersList.fromXML(parameters);
+				return list.getItems();
+			} catch (SourceBeanException e) {
+				throw new SpagoBIRuntimeException("Error while getting dataset's parameters", e);
+			}
+		}
+		return null;
+	}
+
+	public void setParametersList(List<DataSetParameterItem> parameters) {
+		if (parameters != null) {
+			DataSetParametersList list = new DataSetParametersList();
+			list.setPars(parameters);
+			this.parameters = list.toXML();
+		}
 	}
 	
 	/**
@@ -267,6 +334,7 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.pivotRowName = pivotRowName;
 	}
 
+	@JsonIgnore
 	public SbiDomains getCategory() {
 		return category;
 	}
@@ -275,29 +343,54 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.category = category;
 	}
 
+	public Integer getCategoryId() {
+		if (category != null)
+			return category.getValueId();
+		else
+			return null;
+	}
+
+	public void setCategoryId(Integer id) {
+		category = getDomain(id);
+	}
+
 	/**
 	 * Gets the transformer.
 	 * 
 	 * @return the transformer
 	 */
+	@JsonIgnore
 	public SbiDomains getTransformer() {
-        return this.transformer;
-    }
-    
-    /**
-     * Sets the transformer.
-     * 
-     * @param transformer the new transformer
-     */
-    public void setTransformer(SbiDomains transformer) {
-        this.transformer = transformer;
-    }
+		return this.transformer;
+	}
 
-    /**
-     * Gets the metadata.
-     * 
-     * @return metadata
-     */
+	/**
+	 * Sets the transformer.
+	 *
+	 * @param transformer
+	 *            the new transformer
+	 */
+	public void setTransformer(SbiDomains transformer) {
+		this.transformer = transformer;
+	}
+
+	public Integer getTransformerId() {
+		if (transformer != null)
+			return transformer.getValueId();
+		else
+			return null;
+	}
+
+	public void setTransformerId(Integer id) {
+		transformer = getDomain(id);
+	}
+
+	/**
+	 * Gets the metadata.
+	 *
+	 * @return metadata
+	 */
+	@JsonIgnore
 	public String getDsMetadata() {
 		return dsMetadata;
 	}
@@ -312,7 +405,25 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
     	
 
-	
+	public MetaData getMetadata() {
+		if (dsMetadata != null) {
+			DatasetMetadataParser parser = new DatasetMetadataParser();
+
+			try {
+				return (MetaData) parser.xmlToMetadata(dsMetadata);
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Error while getting dataset's metadata", e);
+			}
+		}
+		return null;
+	}
+
+	public void setMetadata(MetaData metadata) {
+		if (metadata != null) {
+			DatasetMetadataParser parser = new DatasetMetadataParser();
+			dsMetadata = parser.metadataToXML(metadata);
+		}
+	}
 
 	/**
 	 * @return the isPersisted
@@ -352,8 +463,22 @@ public class SbiDataSet extends SbiHibernateModel {
 	/**
 	 * @param configuration the configuration to set
 	 */
+	@JsonDeserialize(using = JsonRawDeserializer.class)
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
+	}
+
+	/**
+	 * Used to deserialize raw json data as is
+	 * */
+	private static class JsonRawDeserializer extends JsonDeserializer<String> {
+
+		@Override
+		public String deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+
+			TreeNode tree = parser.getCodec().readTree(parser);
+			return tree.toString();
+		}
 	}
 
 	/**
@@ -503,5 +628,17 @@ public class SbiDataSet extends SbiHibernateModel {
 		this.publicDS = publicDS;
 	}
 
-	
+	private SbiDomains getDomain(Integer id) {
+		if (id != null) {
+			try {
+				SbiDomains sbiDomain = new SbiDomains();
+				sbiDomain.setValueId(id);
+
+				return sbiDomain;
+			} catch (Exception e) {
+				throw new SpagoBIRuntimeException("Impossible to load domain with id [" + id + "]", e);
+			}
+		} else
+			return null;
+	}
 }

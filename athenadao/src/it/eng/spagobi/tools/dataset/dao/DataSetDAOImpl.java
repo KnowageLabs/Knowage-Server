@@ -181,6 +181,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	public List<IDataSet> loadCkanDataSets(String user) {
+		return loadDataSets(user, true, false, null, "USER", null, "SbiCkanDataSet");
+	}
+
+	@Override
 	public List<IDataSet> loadMyDataDataSets(String user) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
 

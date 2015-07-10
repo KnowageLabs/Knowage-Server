@@ -61,30 +61,30 @@ public class GetFolderPathAction extends AbstractSpagoBIAction {
 			logger.debug("Parameter [" + ROOT_FOLDER_ID + "] is equal to [" + rootFolderID + "]");
 			
 			FolderContentUtil fcUtil = new FolderContentUtil();
+			LowFunctionality folder = null;
 			if (folderIdStr != null && !folderIdStr.equalsIgnoreCase(FolderContentUtil.ROOT_NODE_ID)) {
-				boolean canSee = fcUtil.checkRequiredFolder(folderIdStr, this.getUserProfile());
+				int folderId = new Integer(folderIdStr);
+				logger.debug("Folder id is " + folderId);
+				folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
+				logger.debug("Folder is " + folder);
+				boolean canSee = fcUtil.checkRequiredFolder(folder, this.getUserProfile());
 				if (!canSee) {
 					logger.error("Required folder does not exist or you don't have priviledges to see it");
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required folder does not exist or you don't have priviledges to see it");
 				}
 			}
-			
-			//Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
-			if (folderIdStr == null){
-				Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
-				if (documentBrowserHomeConfig != null){
-					if (documentBrowserHomeConfig.isActive()){
-						
-						String folderLabel = documentBrowserHomeConfig.getValueCheck();
-						
-						if (!StringUtils.isEmpty(folderLabel)){
-							LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
-							
-							if (funct != null){
-								folderIdStr = String.valueOf(funct.getId());
 
-							}
-							
+			// Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
+			if (folder == null) {
+				Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
+				if (documentBrowserHomeConfig != null) {
+					if (documentBrowserHomeConfig.isActive()) {
+
+						String folderLabel = documentBrowserHomeConfig.getValueCheck();
+
+						if (!StringUtils.isEmpty(folderLabel)) {
+							folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
+
 						}
 
 					}
@@ -92,17 +92,15 @@ public class GetFolderPathAction extends AbstractSpagoBIAction {
 
 				
 			}
-			//------------------
-			
-			
-			
-			if (folderIdStr == null || folderIdStr.equalsIgnoreCase(ROOT_NODE_ID)){
-				//getting default folder (root)
-				LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-				functionalities.add(rootFunct);
+			// ------------------
+
+			if (folder == null || folderIdStr.equalsIgnoreCase(ROOT_NODE_ID)) {
+				// getting default folder (root)
+				folder = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
+				functionalities.add(folder);
 			} else {
-				functionalities = DAOFactory.getLowFunctionalityDAO()
-					.loadParentFunctionalities(Integer.valueOf(folderIdStr), (rootFolderID==null?null:Integer.valueOf(rootFolderID)) );	
+				functionalities = DAOFactory.getLowFunctionalityDAO().loadParentFunctionalities(folder.getId(),
+						(rootFolderID == null ? null : Integer.valueOf(rootFolderID)));
 			}
 			
 			HttpServletRequest httpRequest = getHttpRequest();

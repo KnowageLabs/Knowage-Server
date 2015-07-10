@@ -11,6 +11,7 @@ public class SbiProductType extends SbiHibernateModel {
 	private Set sbiOrganizationProductType = new HashSet(0);
 	private Set sbiUserFunctionality = new HashSet(0);
 	private Set sbiAuthorizations = new HashSet(0);
+	private Set sbiProductTypeEngine = new HashSet(0);
 
 	public SbiProductType() {
 	}
@@ -57,6 +58,14 @@ public class SbiProductType extends SbiHibernateModel {
 
 	public void setSbiAuthorizations(Set sbiAuthorizations) {
 		this.sbiAuthorizations = sbiAuthorizations;
+	}
+
+	public Set getSbiProductTypeEngine() {
+		return sbiProductTypeEngine;
+	}
+
+	public void setSbiProductTypeEngine(Set sbiProductTypeEngine) {
+		this.sbiProductTypeEngine = sbiProductTypeEngine;
 	}
 
 }

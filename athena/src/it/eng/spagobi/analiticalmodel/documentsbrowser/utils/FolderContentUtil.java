@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.utils;
 
@@ -24,7 +24,6 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +52,7 @@ public class FolderContentUtil {
 
 	// logger component
 	private static Logger logger = Logger.getLogger(FolderContentUtil.class);
-	
+
 	public JSONObject getDocuments() {
 		return documents;
 	}
@@ -64,99 +63,87 @@ public class FolderContentUtil {
 
 	private JSONObject documents;
 	private JSONObject folders;
-	
-	public JSONObject getFolderContent(String functID, SourceBean request, SourceBean response,HttpServletRequest httpRequest, SessionContainer sessCont) throws Exception{
-		
+
+	public JSONObject getFolderContent(LowFunctionality folder, SourceBean request, SourceBean response, HttpServletRequest httpRequest,
+			SessionContainer sessCont) throws Exception {
+
 		List functionalities;
 		List objects;
 		boolean isHome = false;
-		//Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
-		if (functID == null){
+		// Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
+		if (folder == null) {
 			Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
-			if (documentBrowserHomeConfig != null){
-				if (documentBrowserHomeConfig.isActive()){
-					
-					String folderLabel = documentBrowserHomeConfig.getValueCheck();
-					
-					if (!StringUtils.isEmpty(folderLabel)){
-						LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
-						
-						if (funct != null){
-							functID = String.valueOf(funct.getId());
+			if (documentBrowserHomeConfig != null) {
+				if (documentBrowserHomeConfig.isActive()) {
 
-						}
-						
+					String folderLabel = documentBrowserHomeConfig.getValueCheck();
+
+					if (!StringUtils.isEmpty(folderLabel)) {
+						folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folderLabel, false);
 					}
 
 				}
 			}
 
-			
 		}
-		//------------------
+		// ------------------
 
-		//getting default folder (root)
-		LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-		if (functID == null || functID.equalsIgnoreCase(ROOT_NODE_ID)) {
-			functID = String.valueOf(rootFunct.getId());
+		// getting default folder (root)
+		// LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
+		if (folder == null || String.valueOf(folder.getId()).equalsIgnoreCase(ROOT_NODE_ID)) {
+			folder = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
+			// folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(rootFunct.getId(), false);
 		}
 
-
-		
 		SessionContainer permCont = sessCont.getPermanentContainer();
-		IEngUserProfile profile = (IEngUserProfile)permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-		LowFunctionality targetFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(new Integer(functID), false);
-		if(UserUtilities.isAdministrator(profile)){
-			isHome = UserUtilities.isAPersonalFolder(targetFunct);
-		}else{
-			isHome = UserUtilities.isPersonalFolder(targetFunct, (UserProfile) profile);
+		if (UserUtilities.isAdministrator(profile)) {
+			isHome = UserUtilities.isAPersonalFolder(folder);
+		} else {
+			isHome = UserUtilities.isPersonalFolder(folder, (UserProfile) profile);
 		}
-		
-		
-		//Recursive view Management: Get all the documents inside a folder and his subfolders with a recursive visit 
+
+		// Recursive view Management: Get all the documents inside a folder and his subfolders with a recursive visit
 		List allSubDocuments = null;
 		Config documentBrowserRecursiveConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.RECURSIVE");
-		if (documentBrowserRecursiveConfig.isActive()){
+		if (documentBrowserRecursiveConfig.isActive()) {
 			String propertyValue = documentBrowserRecursiveConfig.getValueCheck();
-			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))){
-				allSubDocuments = getAllSubDocuments(functID,profile,isHome);
-			} 
+			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))) {
+				allSubDocuments = getAllSubDocuments(String.valueOf(folder.getId()), profile, isHome);
+			}
 		}
-		//------------
-		
-		//getting children documents
-		//LowFunctionality lowFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functID, true);
-		//objects = lowFunct.getBiObjects();
+		// ------------
+
+		// getting children documents
+		// LowFunctionality lowFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functID, true);
+		// objects = lowFunct.getBiObjects();
 		if (allSubDocuments == null) {
-			List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, isHome);
+			List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(folder.getId(), profile, isHome);
 			objects = new ArrayList();
-			if(tmpObjects != null) {
-				for(Iterator it = tmpObjects.iterator(); it.hasNext();) {
-					BIObject obj = (BIObject)it.next();
-						if (ObjectsAccessVerifier.canSee(obj, profile)){
-							objects.add(obj);
-						}
+			if (tmpObjects != null) {
+				for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
+					BIObject obj = (BIObject) it.next();
+					if (ObjectsAccessVerifier.canSee(obj, profile)) {
+						objects.add(obj);
+					}
 				}
 			}
 		} else {
-			objects = allSubDocuments ;
+			objects = allSubDocuments;
 		}
 
-		
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(httpRequest);
-		JSONArray documentsJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( objects ,locale);
-		DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, targetFunct);
-		
+		JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects, locale);
+		DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, folder);
+
 		JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
 
-		//getting children folders
+		// getting children folders
 		/*
-		if (isRoot)
-			functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(true, false, profile);	
-		else
-			functionalities = DAOFactory.getLowFunctionalityDAO().loadChildFunctionalities(Integer.valueOf(functID), false);	
+		 * if (isRoot) functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(true, false, profile); else functionalities =
+		 * DAOFactory.getLowFunctionalityDAO().loadChildFunctionalities(Integer.valueOf(functID), false);
 		 */
 		boolean recoverBiObjects = false;
 		// for massive export must also get the objects to check if there are worksheets
@@ -164,10 +151,10 @@ public class FolderContentUtil {
 		if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
 			recoverBiObjects = true;
 		}
-		
-			functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), recoverBiObjects, profile);
 
-		JSONArray foldersJSON = (JSONArray)SerializerFactory.getSerializer("application/json").serialize( functionalities,locale );			
+		functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(folder.getId(), recoverBiObjects, profile);
+
+		JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(functionalities, locale);
 
 		JSONObject exportAction = new JSONObject();
 		exportAction.put("name", "export");
@@ -181,101 +168,94 @@ public class FolderContentUtil {
 		if (userFunctionalities.contains("DoMassiveExportFunctionality")) {
 			Map<String, Boolean> folderToWorksheet = checkIfWorksheetContained(functionalities);
 
-			for(int i = 0; i < foldersJSON.length(); i++) {
+			for (int i = 0; i < foldersJSON.length(); i++) {
 				JSONObject folderJSON = foldersJSON.getJSONObject(i);
 				String code = folderJSON.getString("code");
 				Boolean isWorksheet = folderToWorksheet.get(code);
-				if(isWorksheet){
+				if (isWorksheet) {
 					folderJSON.getJSONArray("actions").put(exportAction);
 					folderJSON.getJSONArray("actions").put(scheduleAction);
 				}
 			}
 		}
 
-
-		//Flat View Management: show only documents inside a folder and no subfolders
+		// Flat View Management: show only documents inside a folder and no subfolders
 		JSONObject foldersResponseJSON;
 		Config documentBrowserFlatConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.FLAT");
-		if (documentBrowserFlatConfig.isActive()){
+		if (documentBrowserFlatConfig.isActive()) {
 			String propertyValue = documentBrowserFlatConfig.getValueCheck();
-			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))){
-				foldersJSON = new JSONArray(); //set an empty array for hiding subfolders
-			} 
-		} 
+			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))) {
+				foldersJSON = new JSONArray(); // set an empty array for hiding subfolders
+			}
+		}
 
-		foldersResponseJSON =  createJSONResponseFolders(foldersJSON);
-		
-		//version 4.0--------------------//
-		//find add into folder grants
-		
-		JSONObject canAddResponseJSON =null;
-		
-		return createJSONResponse(foldersResponseJSON, documentsResponseJSON, canAddResponseJSON) ;
+		foldersResponseJSON = createJSONResponseFolders(foldersJSON);
+
+		// version 4.0--------------------//
+		// find add into folder grants
+
+		JSONObject canAddResponseJSON = null;
+
+		return createJSONResponse(foldersResponseJSON, documentsResponseJSON, canAddResponseJSON);
 	}
 
-	//Get All Documents inside a folder and his sub-folders with recursive visit
-	private List getAllSubDocuments(String functID, IEngUserProfile profile, Boolean isHome) throws NumberFormatException, EMFUserError,EMFInternalError {
+	// Get All Documents inside a folder and his sub-folders with recursive visit
+	private List getAllSubDocuments(String functID, IEngUserProfile profile, Boolean isHome) throws NumberFormatException, EMFUserError, EMFInternalError {
 		List allDocuments = new ArrayList();
-
 
 		List tmpObjects;
 
 		tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, isHome);
 		List objects = new ArrayList();
-		if(tmpObjects != null) {
-			for(Iterator it = tmpObjects.iterator(); it.hasNext();) {
-				BIObject obj = (BIObject)it.next();
-				if(ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
+		if (tmpObjects != null) {
+			for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
+				BIObject obj = (BIObject) it.next();
+				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
 					objects.add(obj);
 			}
 		}
 
 		allDocuments.addAll(objects);
 
-
 		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), true, profile);
-		for (LowFunctionality functionality : functionalities){
+		for (LowFunctionality functionality : functionalities) {
 			Set folderDocuments = new HashSet();
-			Set subDocuments = visitFolder(functionality.getId(),folderDocuments,profile);
+			Set subDocuments = visitFolder(functionality.getId(), folderDocuments, profile);
 			allDocuments.addAll(subDocuments);
 		}
 
 		return allDocuments;
 
-		
-		
 	}
-	
-	public Set visitFolder(Integer functID,Set allDocuments,IEngUserProfile profile) throws EMFUserError, EMFInternalError,NumberFormatException{
+
+	public Set visitFolder(Integer functID, Set allDocuments, IEngUserProfile profile) throws EMFUserError, EMFInternalError, NumberFormatException {
 		List tmpObjects;
 
 		tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, false);
 		List objects = new ArrayList();
-		if(tmpObjects != null) {
-			for(Iterator it = tmpObjects.iterator(); it.hasNext();) {
-				BIObject obj = (BIObject)it.next();
-				if(ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
+		if (tmpObjects != null) {
+			for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
+				BIObject obj = (BIObject) it.next();
+				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
 					objects.add(obj);
 			}
 		}
 
 		allDocuments.addAll(objects);
 
-
 		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), true, profile);
-		for (LowFunctionality functionality : functionalities){
-			Set subDocuments = visitFolder(functionality.getId(),allDocuments,profile);
+		for (LowFunctionality functionality : functionalities) {
+			Set subDocuments = visitFolder(functionality.getId(), allDocuments, profile);
 			allDocuments.addAll(subDocuments);
 		}
-
 
 		return allDocuments;
 
 	}
-	
-	
+
 	/**
 	 * Creates a json array to display add button or not
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -286,8 +266,10 @@ public class FolderContentUtil {
 		results.put("can-add", Boolean.valueOf(canCreate));
 		return results;
 	}
+
 	/**
 	 * Creates a json array with children document informations
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -305,6 +287,7 @@ public class FolderContentUtil {
 
 	/**
 	 * Creates a json array with children folders informations
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -322,6 +305,7 @@ public class FolderContentUtil {
 
 	/**
 	 * Creates a json array with children document informations
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -332,7 +316,7 @@ public class FolderContentUtil {
 
 		folderContent.put(folders);
 		folderContent.put(documents);
-		if(canAdd != null){
+		if (canAdd != null) {
 			folderContent.put(canAdd);
 		}
 		results.put("folderContent", folderContent);
@@ -340,7 +324,7 @@ public class FolderContentUtil {
 		return results;
 	}
 
-	private Map checkIfWorksheetContained(List functionalities) throws SpagoBIException{
+	private Map checkIfWorksheetContained(List functionalities) throws SpagoBIException {
 		logger.debug("IN");
 		// link each functionality to bo0olean indicating if containing worksheets
 		Domain worksheetDomain;
@@ -348,34 +332,37 @@ public class FolderContentUtil {
 			worksheetDomain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.BIOBJ_TYPE, SpagoBIConstants.WORKSHEET_TYPE_CODE);
 		} catch (EMFUserError e) {
 			logger.error("Could not recover Worksheet domain type", e);
-			throw new SpagoBIException("Could not recover Worksheet domain type", e );
+			throw new SpagoBIException("Could not recover Worksheet domain type", e);
 		}
 
 		Map<String, Boolean> functWorksheet = new HashMap<String, Boolean>();
 		for (Iterator iterator = functionalities.iterator(); iterator.hasNext();) {
 			LowFunctionality lowFunc = (LowFunctionality) iterator.next();
 			boolean isThereWorksheet = false;
-			if(lowFunc.getBiObjects() != null){
+			if (lowFunc.getBiObjects() != null) {
 				for (Iterator iterator2 = lowFunc.getBiObjects().iterator(); iterator2.hasNext() && !isThereWorksheet;) {
 					BIObject biObj = (BIObject) iterator2.next();
 					Integer typeId = biObj.getBiObjectTypeID();
-					if(typeId.equals(worksheetDomain.getValueId())){
+					if (typeId.equals(worksheetDomain.getValueId())) {
 						isThereWorksheet = true;
 					}
 				}
 			}
-			logger.debug("functionality "+lowFunc.getCode()+" has worksheets inside? "+isThereWorksheet);
+			logger.debug("functionality " + lowFunc.getCode() + " has worksheets inside? " + isThereWorksheet);
 			functWorksheet.put(lowFunc.getCode(), isThereWorksheet);
 
 		}
 		logger.debug("OUT");
 		return functWorksheet;
 	}
-	
+
 	/**
 	 * Returns true if the folder specified by folderIdStr exists and the user can see it, false otherwise
-	 * @param folderIdStr The string representing the folder id
-	 * @param profile The user profile object
+	 * 
+	 * @param folderIdStr
+	 *            The string representing the folder id
+	 * @param profile
+	 *            The user profile object
 	 * @return true if the folder specified by folderIdStr exists and the user can see it, false otherwise
 	 */
 	public boolean checkRequiredFolder(String folderIdStr, IEngUserProfile profile) {
@@ -391,7 +378,26 @@ public class FolderContentUtil {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot retrieve folder informations", e);
 		}
-		
+
 	}
 
+	/**
+	 * Returns true if the folder specified by folderIdStr exists and the user can see it, false otherwise
+	 *
+	 * @param folderIdStr
+	 *            The string representing the folder id
+	 * @param profile
+	 *            The user profile object
+	 * @return true if the folder specified by folderIdStr exists and the user can see it, false otherwise
+	 */
+	public boolean checkRequiredFolder(LowFunctionality folder, IEngUserProfile profile) {
+		try {
+			if (folder == null || !ObjectsAccessVerifier.canSee(folder, profile)) {
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Cannot retrieve folder informations", e);
+		}
+	}
 }

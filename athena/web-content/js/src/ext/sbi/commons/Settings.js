@@ -49,6 +49,7 @@ Sbi.settings.mydata = {
 	, showEnterpriseDataSetFilter: true
 	, showSharedDataSetFilter: true
 	, showAllDataSetFilter: true
+	, showCkanDataSetFilter: true
 	/**
 	 * MY DATA :
 	 * put false for previous behavior (all USER public ds + owned)
@@ -60,6 +61,7 @@ Sbi.settings.mydata = {
 	 */
 	, showDataSetTab: true
 	, showModelsTab: true
+	, showSmartFilterTab: true
 	/**
 	 * Visibility of MyData TabToolbar (this hide the whole tab toolbar)
 	 */
@@ -113,6 +115,7 @@ Sbi.settings.execution = {
 			, fieldLabelWidth: 100
 			, moveInMementoUsingCtrlKey: false
 			, maxFieldHeight : 300  // max height to be available for rendering an input field; in case the field exceeds, scroll bars will appear
+			, labelSeparator : ':'   // separator between the driver's label and the input field, e.g. ':', an empty string or others...
 		}
 
 		, shortcutsPanel: {
@@ -129,7 +132,7 @@ Sbi.settings.execution = {
 		
 		, parametersselectionpage : {
 			//parametersRegion : "east" // admissible values: east/north, now in document detail with values top and right
-			parametersSliderWidth : 300 // valid in case of east region
+			parametersSliderWidth : 320 // valid in case of east region
 			, parametersSliderHeight : 200 // valid in case of north region
 			, parametersSliderCollapsed : false // applied only in case there are no parameters to fill
 			, parametersSliderFloatable : false // true to allow clicking on collapsed parameters panel's bar to display the parameters' panel floated above the layout, 

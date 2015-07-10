@@ -26,7 +26,7 @@ Sbi.commons.ServiceRegistry = function(config) {
 		protocol: 'http'     
 		, host: 'localhost'
 	    , port: '8080'
-	    , contextPath: 'SpagoBI'
+	    , contextPath: 'athena'
 	    , controllerPath: 'servlet/AdapterHTTP'    
 	});
 	

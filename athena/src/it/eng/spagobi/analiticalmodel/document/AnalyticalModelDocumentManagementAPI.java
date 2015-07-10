@@ -16,6 +16,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.SubObjectDAOHibImpl;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.MetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
@@ -281,7 +282,8 @@ public class AnalyticalModelDocumentManagementAPI {
 			logger.debug("Document [" + document.getLabel() + "] succesfully updated");
 		} else {
 			try {
-				documentDAO.insertBIObject(document, template);
+				Integer id = documentDAO.insertBIObject(document, template);
+				document.setId(id);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("Impossible to insert object [" + document.getLabel() + "]", t);
 			}
@@ -292,7 +294,29 @@ public class AnalyticalModelDocumentManagementAPI {
 		
 		return overwrite;
 	}
-	
+
+	/**
+	 *
+	 * @param document
+	 *            The document whose parameters have to be saved (insert or modify)
+	 */
+	public void saveDocumentParameters(BIObject document) {
+		IParameterDAO parameterDAO;
+		try {
+			parameterDAO = DAOFactory.getParameterDAO();
+
+			// It inserts all the parameters of the object
+			for (BIObjectParameter parameter : document.getBiObjectParameters()) {
+				parameter.setParameter(parameterDAO.loadForDetailByParameterID(parameter.getParID()));
+
+				parameter.setBiObjectID(document.getId());
+				DAOFactory.getBIObjectParameterDAO().insertBIObjectParameter(parameter);
+			}
+		} catch (Exception e) {
+			logger.error("Error while inserting parameters", e);
+			throw new SpagoBIRuntimeException("Error while inserting parameters", e);
+		}
+	}
 
 	/**
 	 * Clone a document

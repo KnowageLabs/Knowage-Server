@@ -48,6 +48,8 @@
             "meta",
         	"qbeDataSource",
         	"qbeDatamarts",
-        	"qbeJSONQuery"
+        	"qbeJSONQuery",
+        	"ckanId",
+        	"ckanUrl"
         ]
 }); 

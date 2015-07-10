@@ -35,6 +35,15 @@ public interface ICacheConfiguration {
 	void setCacheSpaceAvailable(BigDecimal cacheSpaceAvailable);
 	Integer getCachePercentageToClean();
 	public void setCachePercentageToClean(Integer cachePercentageToClean);
+
+	public Integer getCacheDsLastAccessTtl();
+
+	public void setCacheDsLastAccessTtl(Integer cacheDsLastAccessTtl);
+
+	public String getCacheSchedulingFullClean();
+
+	public void setCacheSchedulingFullClean(String cacheSchedulingFullClean);
+
 	WorkManager getWorkManager();
 	void setWorkManager(WorkManager workManager);
 	

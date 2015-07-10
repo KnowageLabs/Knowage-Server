@@ -22,9 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.cache;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.utilities.cache.CacheItem;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it) Antonella Giachino (antonella.giachino@eng.it)
@@ -97,7 +99,12 @@ public interface ICacheMetadata {
 	/**
 	 * add a cacheItem
 	 */
-	public CacheItem addCacheItem(String resultsetSignature, String tableName, IDataStore resultset);
+	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset);
+
+	/**
+	 * update the cacheItem
+	 */
+	public void updateCacheItem(CacheItem cacheItem);
 
 	/**
 	 * remove the cacheItem

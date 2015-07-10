@@ -17,7 +17,6 @@ public class SbiTenant  extends SbiHibernateModel {
 	private Integer id;
 	private String name;
 	private String theme;
-	private Set sbiOrganizationEngines = new HashSet(0);
 	private Set sbiOrganizationDatasources = new HashSet(0);
 	private Set sbiOrganizationProductType = new HashSet(0);
 	
@@ -65,13 +64,6 @@ public class SbiTenant  extends SbiHibernateModel {
 
 	public void setTheme(String theme) {
 		this.theme = theme;
-	}
-	public Set getSbiOrganizationEngines() {
-		return this.sbiOrganizationEngines;
-	}
-
-	public void setSbiOrganizationEngines(Set sbiOrganizationEngines) {
-		this.sbiOrganizationEngines = sbiOrganizationEngines;
 	}
 
 	public Set getSbiOrganizationDatasources() {

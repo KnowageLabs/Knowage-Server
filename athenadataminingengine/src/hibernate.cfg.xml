@@ -91,10 +91,9 @@
         <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionList.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionListsObjects.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionListUser.hbm.xml" />
-        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationEngine.hbm.xml" />
+        <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiProductTypeEngine.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationDatasource.hbm.xml" />
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiOrganizationProductType.hbm.xml" />
-        
         
         <mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiBinContents.hbm.xml" />
         <mapping resource="it/eng/spagobi/analiticalmodel/document/metadata/mapping/SbiObjTemplates.hbm.xml" />

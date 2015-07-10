@@ -4,24 +4,20 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
-<%@ page language="java"
-         
-         pageEncoding="utf-8"
-         session="true" 
-%>
+<%@ page language="java" pageEncoding="utf-8" session="true"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- ERROR PAGE																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- The following directive catches exceptions thrown by jsps.				--%>
-<%-- must be commented in development environment.							--%>												
+<%-- must be commented in development environment.							--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%@page errorPage="/WEB-INF/jsp/commons/genericError.jsp"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- TAG LIBRARIES													--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi" %>
+<%@ taglib uri="/WEB-INF/tlds/spagobi.tld" prefix="spagobi"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
@@ -29,11 +25,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page
+	import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.WebUrlBuilder"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.PortletUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page
+	import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
+<%@page
+	import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.Map"%>
@@ -42,7 +41,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="java.util.Enumeration"%>
 <%@page import="it.eng.spagobi.container.CoreContextManager"%>
 <%@page import="it.eng.spagobi.container.SpagoBISessionContainer"%>
-<%@page import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
+<%@page
+	import="it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
@@ -198,40 +198,42 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<!-- based on ecexution mode include initial html  -->   
-<% if (sbiMode.equalsIgnoreCase("WEB")){ %> 
-	<html lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
-		<head>
-			<title>SpagoBI</title>
-			<% if (forceIE8Compatibility == true){ %> 
-			<meta http-equiv="X-UA-Compatible" content="IE=8" />
-			<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-			
-			<%} %>
-			<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
-		</head>
-		
-		<!--[if IE 8]>
+<!-- based on ecexution mode include initial html  -->
+<% if (sbiMode.equalsIgnoreCase("WEB")){ %>
+<html
+	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
+<head>
+<title>SpagoBI</title>
+<% if (forceIE8Compatibility == true){ %>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+
+<%} %>
+<link rel="shortcut icon"
+	href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
+</head>
+
+<!--[if IE 8]>
 	        <body class="lte-8 ie-8">
 	    <![endif]-->
-	    <!--[if lte IE 7]>
+<!--[if lte IE 7]>
 	        <body class="lte-8 lte-7">
 	    <![endif]-->
-	    <!--[if gt IE 8]>
+<!--[if gt IE 8]>
 	        <body class="ie-9">
 	    <![endif]-->
-	    <!--[if !IE]><!-->
-        <body>
-        <script>  
+<!--[if !IE]><!-->
+<body>
+	<script>  
 			if (/*@cc_on!@*/false) {  
 				document.documentElement.className+=' ie10';  
 			}  
 		</script>
-     	<!--<![endif]-->
-<%} %>
+	<!--<![endif]-->
+	<%} %>
 
 
-<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
+	<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
 commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library
 <script type="text/javascript">
 	document.domain='<%= GeneralUtilities.getSpagoBiDomain() %>';
@@ -246,20 +248,28 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'></script>
 
-<%-- ---------------------------------------------------------------------- --%>
-<%-- INCLUDE CUSTOM CODE													--%>
-<%-- ---------------------------------------------------------------------- --%>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'></script>
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>   
-<link id="spagobi-ext-4" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css" type="text/css" />
-    
-<%-- ---------------------------------------------------------------------- --%>
-<%-- INCLUDE CUSTOM EXT													--%>
-<%-- ---------------------------------------------------------------------- --%>
-<link id="extall"     rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css" type="text/css" />
-<link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css" type="text/css" />
+	<%-- ---------------------------------------------------------------------- --%>
+	<%-- INCLUDE CUSTOM CODE													--%>
+	<%-- ---------------------------------------------------------------------- --%>
+	<script type="text/javascript"
+		src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js' /></script>
+	<script type="text/javascript"
+		src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>
+	<link id="spagobi-ext-4" rel="styleSheet"
+		href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css"
+		type="text/css" />
 
-<script type="text/javascript">
+	<%-- ---------------------------------------------------------------------- --%>
+	<%-- INCLUDE CUSTOM EXT													--%>
+	<%-- ---------------------------------------------------------------------- --%>
+	<link id="extall" rel="styleSheet"
+		href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css"
+		type="text/css" />
+	<link id="theme-gray" rel="styleSheet"
+		href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css"
+		type="text/css" />
+
+	<script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
 	Ext.LEAF_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-4.1.1a/resources/themes/images/default/tree/leaf.gif")%>';
 
@@ -371,19 +381,18 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	// Sbi.user.functionalities is a javascript array containing all user functionalities' names
 	Sbi.user.functionalities = <%= buffer.toString() %>;
 </script>
- 
-<script type="text/javascript" src='<%=linkSbijs%>'></script>
+
+	<script type="text/javascript" src='<%=linkSbijs%>'></script>
 
 
-<% // get the current ext theme
+	<% // get the current ext theme
 String extTheme=ThemesManager.getTheExtTheme(currTheme);
 %>
-	  	  
 
-<script>
+
+	<script>
 	document.onselectstart = function() { return true; }
 </script>
-
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>

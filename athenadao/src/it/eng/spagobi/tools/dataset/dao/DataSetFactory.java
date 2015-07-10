@@ -11,6 +11,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -50,6 +51,7 @@ public class DataSetFactory {
 
 	public static final String JDBC_DS_TYPE = "Query";
 	public static final String FILE_DS_TYPE = "File";
+	public static final String CKAN_DS_TYPE = "Ckan";
 	public static final String SCRIPT_DS_TYPE = "Script";
 	public static final String JCLASS_DS_TYPE = "Java Class";
 	public static final String WS_DS_TYPE = "Web Service";
@@ -85,6 +87,10 @@ public class DataSetFactory {
 
 		if (dataSet instanceof FileDataSet) {
 			toReturn.setDsType(FILE_DS_TYPE);
+		}
+
+		if (dataSet instanceof CkanDataSet) {
+			toReturn.setDsType(CKAN_DS_TYPE);
 		}
 
 		if (dataSet instanceof JDBCDataSet) {
@@ -176,6 +182,49 @@ public class DataSetFactory {
 				}
 				fds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
 				fds.setDsType(FILE_DS_TYPE);
+			}
+
+			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
+				ds = new CkanDataSet();
+				CkanDataSet cds = (CkanDataSet) ds;
+
+				String resourcePath = jsonConf.optString("ckanUrl");
+				// String ckanResourceId = jsonConf.optString("ckanResourceId");
+				cds.setResourcePath(resourcePath);
+				cds.setCkanUrl(resourcePath);
+
+				if (!jsonConf.isNull(DataSetConstants.FILE_TYPE)) {
+					jsonConf.put(DataSetConstants.CKAN_FILE_TYPE, jsonConf.getString(DataSetConstants.FILE_TYPE));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_QUOTE_CHARACTER)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_QUOTE_CHARACTER, jsonConf.getString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CSV_FILE_ENCODING)) {
+					jsonConf.put(DataSetConstants.CKAN_CSV_FILE_ENCODING, jsonConf.getString(DataSetConstants.CSV_FILE_ENCODING));
+				}
+				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SKIP_ROWS)) {
+					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SKIP_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_SKIP_ROWS));
+				}
+				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_LIMIT_ROWS)) {
+					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_LIMIT_ROWS, jsonConf.getString(DataSetConstants.XSL_FILE_LIMIT_ROWS));
+				}
+				if (!jsonConf.isNull(DataSetConstants.XSL_FILE_SHEET_NUMBER)) {
+					jsonConf.put(DataSetConstants.CKAN_XSL_FILE_SHEET_NUMBER, jsonConf.getString(DataSetConstants.XSL_FILE_SHEET_NUMBER));
+				}
+				if (!jsonConf.isNull(DataSetConstants.CKAN_ID)) {
+					jsonConf.put(DataSetConstants.CKAN_ID, jsonConf.getString(DataSetConstants.CKAN_ID));
+				}
+
+				cds.setConfiguration(jsonConf.toString());
+
+				if (jsonConf.getString(DataSetConstants.FILE_TYPE) != null) {
+					cds.setFileType(jsonConf.getString(DataSetConstants.FILE_TYPE));
+				}
+				cds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
+				cds.setDsType(CKAN_DS_TYPE);
 
 			}
 
@@ -304,7 +353,8 @@ public class DataSetFactory {
 					ds.setCategoryId(sbiDataSet.getCategory().getValueId());
 				}
 				// ds.setConfiguration(sbiDataSet.getConfiguration());
-				ds.setId(sbiDataSet.getId().getDsId());
+				if (sbiDataSet.getId().getDsId() != null)
+					ds.setId(sbiDataSet.getId().getDsId());
 				ds.setName(sbiDataSet.getName());
 				ds.setLabel(sbiDataSet.getLabel());
 				ds.setDescription(sbiDataSet.getDescription());

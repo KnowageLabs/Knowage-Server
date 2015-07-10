@@ -415,7 +415,7 @@ Ext.define('Sbi.tools.dataset.DataSetsWizard', {
 		var queryStr = completeUrl.substr(completeUrl.indexOf("?") + 1);
 		var params = Ext.urlDecode(queryStr);
 
-		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");		
+		Sbi.debug("[DatasetWizard.uploadFileButtonHandler]: form is valid [" + form.isValid() + "]");
 		var fileNameUploaded = Ext.getCmp('fileUploadField').getValue();
 		//get only the file name from the path (for IE)
 		fileNameUploaded = fileNameUploaded.replace(/^.*[\\\/]/, '');

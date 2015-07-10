@@ -38,12 +38,33 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 	 * @property {Panel} documentexecution
 	 *  Tab panel that contains the execution of the engine
 	 */
-    documentexecution: null
+    documentexecution: null,
+    
+    roleSelectionWindow: null,
+    
+    services : null,
+    params : null,
+    commonParams: null
 	
 	, constructor : function(config) {
 		this.initConfig(config);
 		
 		this.layout =  'card';
+		
+		// INIT SERVICES
+		this.services = new Array();
+		this.commonParams = {LIGHT_NAVIGATOR_DISABLED: 'TRUE', SBI_EXECUTION_ID: null};
+		
+		this.services['getParametersForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_PARAMETERS_FOR_EXECUTION_ACTION'
+			, baseParams: this.commonParams
+		});
+		
+		this.services['getUrlForExecutionService'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'GET_URL_FOR_EXECUTION_ACTION'
+			, baseParams: this.commonParams
+		});
+		// END INIT SERVICES
 		
 		this.fromMyAnalysis = config.fromMyAnalysis;
 		this.fromDocBrowser = config.fromDocBrowser;
@@ -61,8 +82,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			, typeDoc : config.typeDoc
 			, userCanPersist: config.userCanPersist
 			, tablePrefix: config.tablePrefix			
-		}); 
-		
+		});	
 					
 		this.items = [ this.manageSelfService, this.documentexecution]
 		this.callParent(arguments);
@@ -91,8 +111,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		} else {
 			alert('Impossible to execute document of type [' + docType + ']');
 		}
-		
-		this.getLayout().setActiveItem(1);	
+			this.getLayout().setActiveItem(1);
 	}
 	
 	, executeQbe: function(inputType, record){
@@ -125,6 +144,18 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.datasetLabel = datasetLabel;
 			
 		}
+		if(inputType == "SMART_FILTER"){
+			this.params = this.commonParams;
+			var doc = record.data;
+			this.params.OBJECT_ID=doc.id;
+		   	this.params.OBJECT_LABEL=doc.label;
+		   	var url = Sbi.config.serviceRegistry.getServiceUrl({
+		   						serviceName: 'EXECUTE_DOCUMENT_ACTION'
+		   						, baseParams: this.params
+		   					});
+		   	this.documentexecution.hideSaveButton();
+		   	this.documentexecution.load(url);
+		}
 	}
 	
 	, executeGeoreport: function(inputType, record){
@@ -140,7 +171,4 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.datasetLabel = datasetLabel;
 		}
 	}
-	
-   
-	
 });

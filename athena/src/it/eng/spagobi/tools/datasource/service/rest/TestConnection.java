@@ -1,12 +1,11 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.datasource.service.rest;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,13 +20,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 @Path("/datasources")
 public class TestConnection {
@@ -79,7 +79,7 @@ public class TestConnection {
 						database.getCollectionNames();
 
 						logger.debug("Connection OK");
-						return ("{}");
+						return new JSONObject().toString();
 					} catch (Exception e) {
 						logger.error("Error connecting to the mongoDB", e);
 					} finally {
@@ -95,19 +95,17 @@ public class TestConnection {
 			}
 			if (connection != null) {// test ok
 				logger.debug("Connection OK");
-				return ("{}");
+				return new JSONObject().toString();
 			} else {
-				return "{error: ''}";
+				JSONObject toReturn = new JSONObject();
+				toReturn.put("error", "");
+				return toReturn.toString();
 			}
 		} catch (Exception ex) {
 			logger.error("Error testing datasources", ex);
-			try {
-				return "{error: '" + ex.getMessage() + "'}";
-			} catch (Exception e) {
-				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException(
-						"Cannot fill response container", e);
-			}
+			JSONObject toReturn = new JSONObject();
+			toReturn.put("error", ex.getMessage());
+			return toReturn.toString();
 		}
 	}
 

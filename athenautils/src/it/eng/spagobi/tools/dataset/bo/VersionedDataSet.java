@@ -312,8 +312,15 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setPersisted(persisted);
 	}
 
-	
-	public boolean isFlatDataset(){
+	public boolean isScheduled() {
+		return wrappedDataset.isScheduled();
+	}
+
+	public void setScheduled(boolean scheduled) {
+		wrappedDataset.setScheduled(scheduled);
+	}
+
+	public boolean isFlatDataset() {
 		return wrappedDataset.isFlatDataset();
 	}
 	

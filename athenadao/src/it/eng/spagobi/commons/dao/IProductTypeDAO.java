@@ -1,6 +1,7 @@
 package it.eng.spagobi.commons.dao;
 
 import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
 
 import java.util.List;
 
@@ -11,5 +12,7 @@ import java.util.List;
 public interface IProductTypeDAO extends ISpagoBIDao {
 
 	public List<SbiProductType> loadAllProductType();
+
+	public List<SbiProductTypeEngine> loadSelectedEngines(String productType);
 
 }

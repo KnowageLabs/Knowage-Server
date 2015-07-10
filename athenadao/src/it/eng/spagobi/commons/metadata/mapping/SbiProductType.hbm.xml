@@ -67,6 +67,12 @@
                 <column name="PRODUCT_TYPE_ID" not-null="true" />
             </key>
             <one-to-many class="it.eng.spagobi.commons.metadata.SbiAuthorizations" />
+        </set>
+        <set name="sbiProductTypeEngine" inverse="true">
+            <key>
+                <column name="PRODUCT_TYPE_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiProductTypeEngine" />
         </set>           
     </class>
 </hibernate-mapping>

@@ -1095,6 +1095,9 @@
           "text": "RowEditor.css",
           "path": "examples/ux/css/"
        },{
+          "text": "MultiSelect.css",
+          "path": "examples/ux/css/"
+       },{
           "text": "Spinner.css",
           "path": "examples/ux/css/"
        },{

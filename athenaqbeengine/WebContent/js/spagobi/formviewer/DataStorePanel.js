@@ -129,6 +129,43 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	
 	, initStore: function(config) {
 		
+		ExtendedStore = Ext.extend(Ext.data.Store, {
+
+		    getQueryFn : null,
+		    getQuery : function () {
+		            var reader  = this.reader;
+		            var getQuery = this.getQueryFn;
+		            var rawData;
+
+		        if (!getQuery) {
+		        	getQuery = this.getQueryFn = reader.createAccessor('query');
+		        }
+
+		        return (function () {
+		            rawData = reader.jsonData;
+
+		            return getQuery(rawData);
+		        })();
+		    },
+		    
+		    getDataSourceFn : null,
+		    getDataSource : function () {
+	            var reader  = this.reader;
+	            var getDataSource = this.getDataSourceFn;
+	            var rawData;
+
+	        if (!getDataSource) {
+	        	getDataSource = this.getDataSourceFn = reader.createAccessor('dataSource');
+	        }
+
+	        return (function () {
+	            rawData = reader.jsonData;
+
+	            return getDataSource(rawData);
+	        })();
+	    }
+		});
+		
 		var numberFormatterFunction;
 		
 		this.proxy = new Ext.data.HttpProxy({
@@ -137,11 +174,17 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	   		   , failure: this.onDataStoreLoadException
 	    });
 		
-		this.store = new Ext.data.Store({
+		this.store = new ExtendedStore({
 	        proxy: this.proxy,
 	        reader: new Ext.data.JsonReader(),
 	        remoteSort: true
 	    });
+		
+//		this.store = new Ext.data.Store({
+//	        proxy: this.proxy,
+//	        reader: new Ext.data.JsonReader(),
+//	        remoteSort: true
+//	    });
 		
 		this.store.on('metachange', function( store, meta ) {
 
@@ -335,7 +378,10 @@ Ext.extend(Sbi.formviewer.DataStorePanel, Ext.Panel, {
 	}
 
 	, onDataStoreLoaded: function(store) {
-		
+		 // GLOBAL VARIABLE TO LET ACCESS OTHER WEBAPPS TO SMART FILTER QUERY 
+		 smartFilterQuery = store.getQuery();
+		 smartFilterDataSource = store.getDataSource();
+		 
 		 this.fireEvent('contentloaded');
 		
 		 var recordsNumber = store.getTotalCount();

@@ -10,7 +10,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import java.io.Serializable;
 import java.util.List;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Defines a <code>Parameter</code> object.
@@ -251,6 +251,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @param isFunctional the new checks if is functional
 	 */
+	@JsonProperty(value = "functional")
 	public void setIsFunctional(boolean isFunctional) {
 		this.isFunctional = isFunctional;
 	}
@@ -270,6 +271,7 @@ public class Parameter implements Serializable {
 	 * 
 	 * @param isTemporal the new checks if is temporal
 	 */
+	@JsonProperty(value = "temporal")
 	public void setIsTemporal(boolean isTemporal) {
 		this.isTemporal = isTemporal;
 	}
