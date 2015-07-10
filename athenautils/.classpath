@@ -68,5 +68,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
+	<classpathentry kind="lib" path="lib/commons-validator-1.1.4.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-oro-2.0.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
