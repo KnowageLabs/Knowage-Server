@@ -294,3 +294,15 @@ p.wrapText {
 height: 100%;
   position: absolute;
   width: 100%;}
+  
+md-input-container.search-input input{
+	height:20px;
+	margin-left: 15px;
+}
+
+md-input-container.search-input md-icon{
+	color: black;
+	margin-top: 2px;
+}
+  
+  

@@ -65,7 +65,7 @@
 	
 
   <md-content  class="glossaryTec">
-    <md-tabs  md-border-bottom>
+    <md-tabs  md-border-bottom class="mini-tabs">
      
        <md-tab label="NAVIGAZIONE">
         <md-content class="abs100">

@@ -47,3 +47,23 @@ md-list.deleteButton button.md-secondary-container{
   
   .selectedRow{
     font-weight: bold;}
+    
+    
+md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
+	height:24px!important;
+}
+    
+md-tabs.mini-tabs md-tab-item{
+	  padding: 0 24px;
+}
+
+md-tabs.mini-tabs  md-tabs-content-wrapper{
+	 top:24px !important;
+}
+   
+ md-content.xs-head-max-content  {
+   height: calc(100% - 16px);
+   }
+     
+    
+    
