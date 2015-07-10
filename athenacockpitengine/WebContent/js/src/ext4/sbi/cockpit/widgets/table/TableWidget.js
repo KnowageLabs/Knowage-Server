@@ -31,6 +31,9 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		    border:false,
 		    autoScroll: true,
 		    collapsible: false,
+		    features: [{
+		        ftype: 'summary'
+		    }],		    
 		    viewConfig: {
 		    	forceFit:false,
 		        autoFill: true,
@@ -98,6 +101,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	, enableExport: false
 	, fireSelectionEvent: true
 	, aggregations : null
+	, tableConfigCSSClass : 'tableConfigCSSClass'
 
     // =================================================================================================================
 	// METHODS
@@ -210,7 +214,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
 		
-		this.grid.reconfigure(this.getStore(), fields);		
+		this.grid.reconfigure(this.getStore(), fields);
 
 		Sbi.trace("[TableWidget.onStoreMetaChange][" + this.getId() + "]: OUT");
 	}
@@ -897,7 +901,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		if(this.wconf === undefined || this.wconf === null){
 			//do not change the CSS, do nothing
 		} else {
-			var clsClass = 'tableConfigCSSClass';
+			var clsClass = this.tableConfigCSSClass;
 			
 			var clsClassDefaultId = clsClass + 'Default';
 			var clsClassDefault = '.' + clsClass + ' .x-grid-cell {' 
@@ -963,7 +967,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 			Ext.util.CSS.removeStyleSheet(alternateRowsSecondClassId);
 			Ext.util.CSS.createStyleSheet(alternateRowsSecond, alternateRowsSecondClassId);
-		    
+			
+			var summaryRowClassId = clsClass + 'SummaryRow';
+			var summaryRowClass = '.' + clsClass + ' .x-grid-row-summary .x-grid-cell {'
+				+ ( this.wconf.summaryRow != undefined && this.wconf.summaryRow == true ? 
+						'background-color: #'+ this.wconf.summaryRowBackgroundColor + ' !important;' :
+						'display: none;')
+			+'}';
+			
+			Ext.util.CSS.removeStyleSheet(summaryRowClassId);
+			Ext.util.CSS.createStyleSheet(summaryRowClass, summaryRowClassId);
+					    
 			var tableConfig = {
 				componentCls: clsClass,
 				cls: clsClass
