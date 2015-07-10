@@ -680,22 +680,27 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		node.expandChildNodes();
 		     
 		if( node.childNodes && node.childNodes.length > 0 ) {
+			this.tree.getSelectionModel().suspendEvents(false);  // workaround (work-around): when GUI is initialized, the first node is selected twice (why?)
+															     // therefore we suspend (and resume just after) events to avoid this 
 			this.tree.getSelectionModel().select( node.childNodes[0] );
+			this.tree.getSelectionModel().resumeEvents();
 		}
 		
 		this.fireEvent('load', this);
 	}
 	
 	, onSelect: function(sm, newnode, oldnode) {
-		var allowSelection = true;
-		if(newnode.id !== this.rootNode.id) {
-			var oldquery = oldnode?  oldnode.props.query: undefined;
-			var b = this.fireEvent('beforeselect', this, newnode.props.query, oldquery);
-			if(b === false) allowSelection = b;
-		} else {
-			allowSelection = false;
+		if (newnode.id == this.rootNode.id) {
+			return false;
+		}
+		if (oldnode && oldnode != null && newnode.id == oldnode.id) {
+			return false; // in case the user selects the old node, we don't allow this just to avoid unuseful calls to the server
 		}
 		
+		var allowSelection = true;
+		var oldquery = oldnode ? oldnode.props.query: undefined;
+		var b = this.fireEvent('beforeselect', this, newnode.props.query, oldquery);
+		if(b === false) allowSelection = b;
 		return allowSelection;
 	}
 	
