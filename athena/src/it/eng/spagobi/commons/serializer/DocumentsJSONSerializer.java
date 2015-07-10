@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
@@ -17,7 +16,6 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +28,7 @@ import org.json.JSONObject;
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
 public class DocumentsJSONSerializer implements Serializer {
-	
+
 	// please modify also documentBrowser.xml properly everytime this serializer is modified
 	public static final String ID = "id";
 	public static final String LABEL = "label";
@@ -54,35 +52,35 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String CREATIONUSER = "creationUser";
 	public static final String REFRESHSECONDS = "refreshSeconds";
 	public static final String PREVIEWFILE = "previewFile";
-	public static final String PATH_RESOURCES ="pathResources";
+	public static final String PATH_RESOURCES = "pathResources";
 	public static final String ACTIONS = "actions";
 	public static final String EXPORTERS = "exporters";
 	public static final String IS_PUBLIC = "isPublic";
 	public static final String DOC_VERSION = "docVersion";
 	public static final String PARAMETERS_REGION = "parametersRegion";
-	
+
 	public Object serialize(Object o, Locale locale) throws SerializationException {
-		JSONObject  result = null;
-		
-		if( !(o instanceof BIObject) ) {
+		JSONObject result = null;
+
+		if (!(o instanceof BIObject)) {
 			throw new SerializationException("DocumentsJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
-		
+
 		try {
-			BIObject obj = (BIObject)o;
+			BIObject obj = (BIObject) o;
 			result = new JSONObject();
-			
-			result.put(ID, obj.getId() );
-			result.put(LABEL, obj.getLabel() );
-			MessageBuilder msgBuild=new MessageBuilder();
-			String objName=null;
-			//objName = msgBuild.getUserMessage(obj.getName(),null, locale);
-			objName =msgBuild.getI18nMessage(locale, obj.getName());
-			result.put(NAME, objName );
-			String description= null;
-			//description = msgBuild.getUserMessage( obj.getDescription() ,null, locale);
-			description =msgBuild.getI18nMessage(locale, obj.getDescription());
-			result.put(DESCRIPTION, description);		
+
+			result.put(ID, obj.getId());
+			result.put(LABEL, obj.getLabel());
+			MessageBuilder msgBuild = new MessageBuilder();
+			String objName = null;
+			// objName = msgBuild.getUserMessage(obj.getName(),null, locale);
+			objName = msgBuild.getI18nMessage(locale, obj.getName());
+			result.put(NAME, objName);
+			String description = null;
+			// description = msgBuild.getUserMessage( obj.getDescription() ,null, locale);
+			description = msgBuild.getI18nMessage(locale, obj.getDescription());
+			result.put(DESCRIPTION, description);
 			result.put(TYPECODE, obj.getBiObjectTypeCode());
 			result.put(TYPEID, obj.getBiObjectTypeID());
 			result.put(ENCRYPT, obj.getEncrypt());
@@ -90,13 +88,13 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(PROFILEDVISIBILITY, obj.getProfiledVisibility());
 			// engine property MUST be not null because it is iproperly used for the moment
 			// by the extjs template class to discriminate between folders and document
-			if(obj.getEngine().getDescription() != null && !obj.getEngine().getDescription().equals("")) {
+			if (obj.getEngine().getDescription() != null && !obj.getEngine().getDescription().equals("")) {
 				result.put(ENGINE, obj.getEngine().getDescription());
 			}
-			if(obj.getEngine().getName() != null && !obj.getEngine().getName().equals("")) {
+			if (obj.getEngine().getName() != null && !obj.getEngine().getName().equals("")) {
 				result.put(ENGINE, obj.getEngine().getName());
 			}
-			
+
 			result.put(ENGINE_ID, obj.getEngine().getId());
 			result.put(DATASOURCE, obj.getDataSourceId());
 			result.put(DATASET, obj.getDataSetId());
@@ -109,56 +107,55 @@ public class DocumentsJSONSerializer implements Serializer {
 			result.put(CREATIONUSER, obj.getCreationUser());
 			result.put(REFRESHSECONDS, obj.getRefreshSeconds());
 			result.put(PARAMETERS_REGION, obj.getParametersRegion());
-			
-			if (obj.getPreviewFile() != null){
+
+			if (obj.getPreviewFile() != null) {
 				SingletonConfig configSingleton = SingletonConfig.getInstance();
-				String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-				String resourcePath= SpagoBIUtilities.readJndiResource(path);
-				result.put(PATH_RESOURCES,resourcePath);
-				result.put(PREVIEWFILE,obj.getPreviewFile());
+				String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+				String resourcePath = SpagoBIUtilities.readJndiResource(path);
+				result.put(PATH_RESOURCES, resourcePath);
+				result.put(PREVIEWFILE, obj.getPreviewFile());
 			}
 			result.put(IS_PUBLIC, obj.isPublicDoc());
-			if (obj.getDocVersion()!=null)	result.put(DOC_VERSION, obj.getDocVersion());
+			if (obj.getDocVersion() != null)
+				result.put(DOC_VERSION, obj.getDocVersion());
 			result.put(ACTIONS, new JSONArray());
-			 
-			Integer engineId=null;
-				Engine engineObj=obj.getEngine();
-				JSONArray prova = new JSONArray();
-				if(engineObj!=null){	
-					
-					IEngineDAO engineDao=DAOFactory.getEngineDAO();
-					List exporters=new ArrayList();
-					exporters=engineDao.getAssociatedExporters(engineObj);			
-					if(!exporters.isEmpty()){
-						for (Iterator iterator = exporters.iterator(); iterator.hasNext();) {
-							
-							 Exporters exp = (Exporters) iterator.next();
-							 Integer domainId=exp.getDomainId();
-							 
-							 IDomainDAO domainDao=DAOFactory.getDomainDAO();
-							 Domain domain=domainDao.loadDomainById(domainId);
-							 if(domain!=null){
-								 String value_cd=domain.getValueCd();
-								 String urlExporter=null;	
-								 if (value_cd!=null){
-									 prova.put(value_cd);
-								 }
-							 }
+
+			Integer engineId = null;
+			Engine engineObj = obj.getEngine();
+			JSONArray prova = new JSONArray();
+			if (engineObj != null) {
+
+				IEngineDAO engineDao = DAOFactory.getEngineDAO();
+				List exporters = new ArrayList();
+				exporters = engineDao.getAssociatedExporters(engineObj);
+				if (!exporters.isEmpty()) {
+					for (Iterator iterator = exporters.iterator(); iterator.hasNext();) {
+
+						Exporters exp = (Exporters) iterator.next();
+						Integer domainId = exp.getDomainId();
+
+						IDomainDAO domainDao = DAOFactory.getDomainDAO();
+						Domain domain = domainDao.loadDomainById(domainId);
+						if (domain != null) {
+							String value_cd = domain.getValueCd();
+							String urlExporter = null;
+							if (value_cd != null) {
+								prova.put(value_cd);
+							}
 						}
 					}
 				}
-				
-				result.put(EXPORTERS, prova);
-			
-		
+			}
+
+			result.put(EXPORTERS, prova);
+
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
-			
+
 		}
-		
+
 		return result;
 	}
-	
-	
+
 }
