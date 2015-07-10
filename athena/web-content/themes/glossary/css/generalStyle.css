@@ -52,6 +52,10 @@ md-toolbar.xs-head {
 	margin-bottom: 3px;
 }
 
+[layout-padding] .box_pagination {
+		margin-left: -8px!important;
+}
+
 
 .pagination>li, .pagination>li>span {
 	  position: relative;
@@ -122,6 +126,10 @@ md-toolbar.xs-head {
 
 .noPadding {
 	padding: 0 !important;
+}
+.noTBPadding {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
 }
 
 .noBorder {

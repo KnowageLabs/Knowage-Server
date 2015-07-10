@@ -1,8 +1,8 @@
-<div ng-controller="Controller_navigation as ctrl" class="h100">
+<div ng-controller="Controller_navigation as ctrl" class="h100 navig-tab-content">
 	<div class="preloader" ng-show="ctrl.showPreloader">
 		<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
 	</div>
-	<div layout="row" layout-wrap class="h100">
+	<div layout="row" layout-wrap class=" h100">
 
 		<div flex="20" class="boxItemGlo">
 			<md-toolbar class="md-blue xs-head">
@@ -11,19 +11,33 @@
 			</div>
 			</md-toolbar>
 
-			<md-content layout-padding layout="column"> 
+			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
 			 <md-select  style="padding: 0 0 2px 0;" placeholder="Select Gerarchia" ng-model="ctrl.selGlo">
-       		 <md-option ng-repeat="gloss in ctrl.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
+			 <md-option value="all" selected>Select Gerarchia</md-option>
+       		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 
        		 
        		 <md-input-container md-no-float class="noPadding search-input" >
        		 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       		 <input	ng-model="ctrl.searchWor" 
-				ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
+       		 <input	ng-model="ctrl.pagination.word.search" ng-keyup="global.WordLike(ctrl.pagination.word)" type="text" placeholder="Search ">
        		 </md-input-container>
-       		 
+
+				<md-list class="bottomBorder" >
+					<md-list-item dir-paginate="word in ctrl.pagination.word.item |  itemsPerPage:ctrl.pagination.word.item_number "
+						total-items="ctrl.pagination.word.total" current-page="ctrl.pagination.word.current" pagination-id="ctrl.pagination.word.id" 
+						ng-click="ctrl.toggleFilter('words',word)" ng-repeat="n in [1]" class="smallListItem " 
+						ng-class="{selected_item: ctrl.isSelected('words',word)}">
+							<p class="wrapText">{{ word.WORD | uppercase}}</p>
+					</md-list-item> 
+				</md-list>
+		
+			<div class="box_pagination" layout="row" layout-align="center end">
+				<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.word.id"
+					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.word)"></dir-pagination-controls>
+			</div>
 			</md-content>
+			
 		</div>
 
 		<div flex="80" class="boxItemGlo">
@@ -35,7 +49,7 @@
 			</div>
 			</md-toolbar>
 
-			<md-content class="xs-head-max-content" style="position: absolute;  width: 100%;">
+			<md-content class="xs-head-max-content noTBPadding" style="position: absolute;  width: 100%;">
 			<div layout="row" layout-wrap class="h100">
 				<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
@@ -44,7 +58,7 @@
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content"> 
+					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
 						<md-input-container md-no-float class="noPadding search-input" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchDoc" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
@@ -59,7 +73,7 @@
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content"> 
+					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
 						<md-input-container md-no-float class="noPadding search-input" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchDataS" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
@@ -74,7 +88,7 @@
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content"> 
+					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
 						<md-input-container md-no-float class="noPadding search-input" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchBusCl" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
@@ -89,7 +103,7 @@
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content"> 
+					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
 						 <md-input-container md-no-float class="noPadding search-input" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchTab" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
@@ -110,8 +124,6 @@
 			</md-content>
 		</div>
 
-
-
+{{ctrl.filters}}
 	</div>
-
 </div>

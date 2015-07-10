@@ -63,7 +63,7 @@
 
 	
 	
-
+<div ng-controller="Controller_tec as global" class="h100">
   <md-content  class="glossaryTec">
     <md-tabs  md-border-bottom class="mini-tabs">
      
@@ -79,11 +79,9 @@
         </md-content>
       </md-tab>
       
-      
-    
     </md-tabs>
   </md-content>
-
+</div>
 	
 
 </body>

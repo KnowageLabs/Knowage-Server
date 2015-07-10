@@ -122,7 +122,7 @@
 			 <div layout="row" style="margin-bottom: 7px;">
 			<p style="  margin: 0 10px 0 0;" >Glossary:</p>
 			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;" placeholder="Select glossary" ng-model="ctrl.selGlo">
-       		 <md-option ng-repeat="gloss in ctrl.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
+       		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;"
 				md-no-float style="  margin-top: -12px; position: absolute; right: 0; padding: 2px;"> 

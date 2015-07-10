@@ -65,5 +65,8 @@ md-tabs.mini-tabs  md-tabs-content-wrapper{
    height: calc(100% - 16px);
    }
      
-    
+.selected_item button{
+/* 	  background-color: rgb(176, 190, 197); */
+ background-color:red;
+}
     

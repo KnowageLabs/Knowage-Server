@@ -12,6 +12,8 @@ app.service('translate', function() {
 	};
 });
 
+
+app.controller('Controller_tec', [ "restServices", funzione_tec ]);
 app.controller('Controller', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione ]);
 app.controller('Controller_navigation', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_navigazione ]);
 
@@ -24,9 +26,147 @@ var listDocument = [{
 }
 				]
 
-function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
-	ctrl=this;
+var global;
+
+function funzione_tec(restServices) {
+	global=this;
+	global.glossary;
+	getAllGloss();
+	function getAllGloss() {
+		console.log("getAllGloss")
 	
+		restServices.get("glossary", "listGlossary").success(
+				function(data, status, headers, config) {
+					console.log("Glossary Ottenuti " + status)
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						showErrorToast(data.errors[0].message);
+						showToast(translate.load("sbi.glossary.load.error"),
+								3000);
+
+					} else {
+						global.glossary= data;
+					}
+
+				}).error(function(data, status, headers, config) {
+			console.log("Glossary non Ottenuti " + status);
+			showErrorToast('Ci sono errori! \n status ' + status);
+			showToast(translate.load("sbi.glossary.load.error"), 3000);
+
+	
+		})
+
+	}
+	
+}
+
+
+function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+	navi=this;
+	
+	// pagination
+	navi.WordItemPerPage=5;
+	navi.pagination={};
+	navi.pagination.word = {item:[],current: 1,total:10,item_number:3,id:"word_pagination",search:"",rest:"listWords"};
+	changeItemPP();
+	
+	
+	
+	navi.filters={words:[]};
+	
+
+	function arrayObjectIndexOf(myArray, searchTerm) {
+		if(searchTerm==undefined)return -1;
+		var prop=propid(searchTerm)
+	    for(var i = 0, len = myArray.length; i < len; i++) {
+	        if (myArray[i][prop] == searchTerm[prop]) return i;
+	    }
+	    return -1;
+	}
+	
+	function propid(item){
+		if(item.hasOwnProperty("WORD_ID")){
+			return 'WORD_ID'}
+		
+	}
+	
+	navi.toggleFilter=function(category,item){
+		console.log(item)
+		var index=arrayObjectIndexOf(navi.filters[category],item);
+		console.log(index)
+		index!=-1?navi.filters[category].splice(index,1):navi.filters[category].push(item);
+	};
+	
+	navi.isSelected=function(category,item){
+		
+		return arrayObjectIndexOf(navi.filters[category],item)!=-1?  true: false;
+	};
+	
+	
+	navi.pageChanged = function(newPage,pagin_item) {
+	        navi.getResultsPage(newPage,pagin_item);
+	    };
+	
+	     navi.getResultsPage = function(pageNumber,pagin_item) {
+	    	 console.log("getResultsPage")
+	    	 var item="Page=" + pageNumber+"&ItemPerPage="+pagin_item.item_number;
+	    	 
+	    	 
+	    	 if(pagin_item.search!=undefined && pagin_item.search.trim()!=""){
+	    		 item+="&WORD=" +pagin_item.search;
+	    	 }
+	    	
+	        restServices.get("glossary", pagin_item.rest, item)
+			.success(function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.log("non Ottenuti");
+				} else {
+					pagin_item.item=data.item;
+					pagin_item.total=data.itemCount;
+					
+				}
+				
+
+			}).error(function(data, status, headers, config) {
+				console.log(" non Ottenuti " + status);
+			
+			})
+
+	        
+	    }
+
+	     navi.getResultsPage(1,navi.pagination.word);
+	     
+	     
+	     
+	   
+	 	function changeItemPP() {
+	 		console.log("changeItemPP-nav")
+	 		var boxsize = angular.element(document.querySelector('.navig-tab-content'))[0].offsetHeight;
+	 		var tbw = angular.element(document.querySelector('.xs-head'))[0].offsetHeight;
+	 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
+	 		var search = angular.element(document.querySelector('.search-input'))[0].offsetHeight;
+
+	 		 bpw == 0 ? bpw = 19 : bpw = bpw;
+	 	
+	 		var WordItemPerPage=parseInt((boxsize - tbw - search- bpw -32 -3 ) / 16);
+	 		var elemItemPerPage=parseInt((boxsize - tbw*2 - search- bpw -3  ) / 16);
+	 		
+	 		navi.pagination.word.item_number= WordItemPerPage;
+	 		
+	 			
+	 	}
+	 	
+	 	$scope
+	 	.$watch(
+	 			function() {
+	 				return angular.element(document.querySelector('.glossaryTec'))[0].offsetHeight;
+	 			}, function(newValue, oldValue) {
+	 				console.log("watch")
+	 				if (newValue != oldValue) {
+	 					changeItemPP();
+	 				}
+	 			}, true);
 }
 
 
@@ -34,14 +174,12 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	ctrl=this;
 	ctrl.listDoc;
-	ctrl.glossary;
 	ctrl.showPreloader = false;
 	ctrl.preloaderTree= false;
 	ctrl.selectedGloss;
 	ctrl.selectedDocument;
-	getAllGloss();
 	getAllDoc();
-	 ctrl.words = [];
+	ctrl.words = [];
 	
 	
 
@@ -149,7 +287,6 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 		
 	}
 	
-	
 	ctrl.loadDocumentInfo= function(DOCUMENT_ID){
 		console.log("loadDocumentInfo");
 		ctrl.words=[];
@@ -185,7 +322,6 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 				})
 	}
 	
-	
 	ctrl.showSelectedGlossary = function(gloss) {
 		if(ctrl.selectedGloss!=undefined && ctrl.selectedGloss.GLOSSARY_ID==gloss.GLOSSARY_ID){return;}
 		
@@ -193,8 +329,6 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 		ctrl.selectedGloss=gloss;
 		ctrl.getGlossaryNode(ctrl.selectedGloss, null);
 	}
-	
-	
 	
 	ctrl.getGlossaryNode = function(gloss, node, togg) {
 		console.log("getGlossaryNode")
@@ -223,7 +357,7 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 							} else {
 								
 								if(togg==undefined || togg.collapsed){
-								//check if parent is node or glossary
+								// check if parent is node or glossary
 								node==null ? gloss.SBI_GL_CONTENTS = data : node.CHILD = data;
 								}else{
 									console.log("riordino manualmente");
@@ -250,12 +384,10 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 				})
 	}
 	
-	
 	ctrl.expandAllTree= function(tree){
 		console.log("expand")
 		angular.element(document.getElementById(tree)).scope().expandAll();
 	}
-	
 	
 	ctrl.toggle = function(scope, item, gloss) {
 		
@@ -275,34 +407,6 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 			item.preloader = false;
 		}
 	};
-	
-	function getAllGloss() {
-		console.log("getAllGloss")
-		showPreloader();
-		restServices.get("glossary", "listGlossary").success(
-				function(data, status, headers, config) {
-					console.log("Glossary Ottenuti " + status)
-					console.log(data)
-					if (data.hasOwnProperty("errors")) {
-						showErrorToast(data.errors[0].message);
-						showToast(translate.load("sbi.glossary.load.error"),
-								3000);
-
-					} else {
-						ctrl.glossary = data;
-					}
-
-					hidePreloader();
-				}).error(function(data, status, headers, config) {
-			console.log("Glossary non Ottenuti " + status);
-			showErrorToast('Ci sono errori! \n status ' + status);
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
-
-			hidePreloader();
-		})
-
-	}
-	
 	
 	function getAllDoc() {
 		console.log("getAllDoc")
@@ -336,24 +440,17 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 	ctrl.DocItemPerPage=10;
 	changeItemPP();
 	function changeItemPP() {
-		console.log("changeItemPP")
 		var boxItemGlo = angular.element(document.querySelector('.boxItemGlo'))[0].offsetHeight;
 		var tbw = angular.element(document.querySelector('.xs-head'))[0].offsetHeight;
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
 		 bpw == 0 ? bpw = 19 : bpw = bpw;
 		
-		 
-		 console.log(boxItemGlo)
-		 		 console.log(tbw)
-		 		 		 console.log(bpw)
-		  
-		 		 		 
+	
 		 
 		ctrl.WordItemPerPage=parseInt((boxItemGlo - tbw - bpw -5 ) / 28);
 		ctrl.DocItemPerPage=parseInt((boxItemGlo - tbw - bpw -5  ) / 16);
-		console.log(ctrl.WordItemPerPage) 		
-		console.log(ctrl.DocItemPerPage) 		
+	
 	}
 	
 	$scope
@@ -368,22 +465,15 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 			}, true);
 	
 	
-	
-	
-	
-	
-	
-	
-	
 	ctrl.TreeOptionsWord = {
 
 			accept : function(sourceNodeScope, destNodesScope, destIndex) {
 				
-//				if(destNodesScope.hasChild(sourceNodeScope.$modelValue)){
-//					console.log(destNodesScope.hasChild(sourceNodeScope.$modelValue))
-//					return false;
-//				}
-//				console.log(destNodesScope.$modelValue.toString());
+// if(destNodesScope.hasChild(sourceNodeScope.$modelValue)){
+// console.log(destNodesScope.hasChild(sourceNodeScope.$modelValue))
+// return false;
+// }
+// console.log(destNodesScope.$modelValue.toString());
 				var present=false;
 				for(var i=0;i<destNodesScope.$modelValue.length;i++){
 					if(destNodesScope.$modelValue[i].WORD_ID==sourceNodeScope.$modelValue.WORD_ID){
@@ -449,13 +539,13 @@ function funzione_associazione(translate, restServices, $q, $scope, $mdDialog, $
 												.load(data.Message),
 										3000);
 							} else {
-//								showToast(
-//										translate
-//												.load("sbi.glossary.success.save"),
-//										3000);
+// showToast(
+// translate
+// .load("sbi.glossary.success.save"),
+// 3000);
 
 							
-//								event.dest.nodesScope.insertNode(event.dest.index,elem);
+// event.dest.nodesScope.insertNode(event.dest.index,elem);
 							}
 							
 							
