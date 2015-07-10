@@ -1318,18 +1318,23 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				</span>
 				<div id="mail_<%=biobj.getId()%>__<%=index%>" style="margin-left:50px;margin-top:10px;"> 
 				
+				<%
+				if(index==1){
+				%>
 				
-				<input id="uniqueMail_<%=biobj.getId()%>__<%=index%>" type="checkbox" name="uniqueMail_<%=biobj.getId()%>__<%=index%>" value="true"
+			     <input id="uniqueMail_<%=biobj.getId()%>__<%=index%>" type="checkbox" name="uniqueMail_<%=biobj.getId()%>__<%=index%>" value="true"
                         <%= sInfo.isUniqueMail() ? "checked='checked'" : "" %> />
                      <span class='portlet-form-field-label'>
                      <spagobi:message key="scheduler.uniqueMail" bundle="component_scheduler_messages" />
                   </span>
                 <br/>
-                <br/>       
+                <br/>          
+                
+                <%} %> 
 				
                   <input id="zipMailDocument_<%=biobj.getId()%>__<%=index%>" type="checkbox" name="zipMailDocument_<%=biobj.getId()%>__<%=index%>" value="true"
                         <%= sInfo.isZipMailDocument() ? "checked='checked'" : "" %> />
-        
+		
                   <span class='portlet-form-field-label'>
                      <spagobi:message key="scheduler.zipMailDocument" bundle="component_scheduler_messages" />
                   </span>
