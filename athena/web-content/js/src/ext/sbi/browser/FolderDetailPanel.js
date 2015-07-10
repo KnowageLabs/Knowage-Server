@@ -427,6 +427,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
         var actionExport = e.getTarget('a[class=export]', 10, true);
         var actionSchedule = e.getTarget('a[class=schedule]', 10, true);
+        var actionViewMore = e.getTarget('a[class=viewMore]', 10, true);
+        var actionViewLess = e.getTarget('a[class=viewLess]', 10, true);
       
     	var action = null;
 
@@ -453,7 +455,13 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		 }else if (actionSchedule != null){
 		     	Sbi.debug('schedule');        	
 		     	action = actionSchedule.dom.className;
-		}   
+		}else if (actionViewMore != null){
+	     	Sbi.debug('View More');        	
+	     	action = actionViewMore.dom.className;
+		}else if (actionViewLess != null){
+	     	Sbi.debug('View Less');        	
+	     	action = actionViewLess.dom.className;
+	}    
     	
 		 var r; 
 		 if (node.id && node.id !== "" && node.id.indexOf("ext-gen") < 0){
@@ -464,7 +472,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 	 
     	if(r.engine) {
     		if(action !== null) {
-    			this.performActionOnDocument(r, action);
+    			this.performActionOnDocument(r, action, node);
     		} else {
     			this.fireEvent('ondocumentclick', this, r, e);
     		}
@@ -574,7 +582,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     }
     
     
-    , performActionOnDocument: function(docRecord, action) {
+    , performActionOnDocument: function(docRecord, action, node) {
     	if(this.fireEvent('beforeperformactionondocument', this, docRecord, action) !== false){
     		if(action === 'delete') {
     			Ext.MessageBox.confirm(
@@ -608,7 +616,26 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 				var urlToCall = this.services['detailDocument'];
 				urlToCall += '&OBJECT_ID='+docRecord.id;
 				window.location.href=urlToCall;	
+    		}  
+    			else if(action === 'viewMore') {
+						if(node){
+    					var innerHTML = node.innerHTML;
+    					innerHTML = innerHTML.replace('synthesis-box-visible', "synthesis-box-hidden");
+    					innerHTML	 = innerHTML.replace('detail-box-hidden', "detail-box-visible");
+    					innerHTML	 = innerHTML.replace('box-container-browser-synthesis', "box-container-browser-detail");
+    					node.innerHTML = innerHTML;
+    					}
     		}
+    			else if(action === 'viewLess') {
+				if(node){
+					var innerHTML = node.innerHTML;
+					innerHTML = innerHTML.replace('synthesis-box-hidden','synthesis-box-visible');
+					innerHTML	 = innerHTML.replace('detail-box-visible', 'detail-box-hidden' );
+					innerHTML	 = innerHTML.replace('box-container-browser-detail','box-container-browser-synthesis');
+					node.innerHTML = innerHTML;
+				}
+		}
+
     	}
     }
     

@@ -291,13 +291,16 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box{margin:0 2.665245% 25px 0;float:left;cursor:pointer;color:#434343;font-family: cabinregular, sans-serif;width:22%;/*min-height:305px;*/height:auto !important;height:305px;background:#fff;position:relative;border:1px solid #eeeeee;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box.counter-3{margin-right:0}
 .box .box-container{color:#434343;padding:23px 4.832714%;min-height:310px;max-height:310px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.box .box-container-browser{color:#434343;padding:23px 4.832714%;min-height:250px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .box-container-browser{color:#434343;padding:23px 4.832714%;min-height:250px;max-height:250px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .box-container-browser-synthesis{color:#434343;padding:23px 4.832714%;min-height:220px;max-height:220px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .box-container-browser-detail{color:#434343;padding:23px 4.832714%;min-height:350px;max-height:350px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-container-myanalysis{color:#434343;padding:23px 4.832714%;min-height:300px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-figure{margin-bottom:5px;width:100%;position:relative}
 .box .box-figure img{width:100%;display:block}
 .box .box-figure .shadow{opacity:0.20;filter:alpha(opacity = 20);width:100%;height:100%;display:block;position:absolute;top:0;left:0;box-shadow:0 0 10px #000 inset}
 .main-datasets-list .box .box-figure .shadow{opacity:0.05;filter:alpha(opacity = 5)}
-.box .box-text{min-height:66px;height:auto !important;height:66px;position:relative;padding:0 2px 20px 2px}
+.box .box-text{min-height:66px;height:auto !important;height:66px;position:relative;padding:0 2px 20px 2px;word-wrap: break-word}
+.box .box-text-name{min-height:56px;height:auto !important;font-weight:normal;font-size:1.20em;height:56px;position:relative;padding:0 2px 2px 0px;word-wrap: break-word;word-break:normal;white-space: normal;}
 .box h2{font-family:cabinmedium, sans-serif;line-height:140%;font-weight:normal;font-size:1.60em;margin:0 0 5px 0;
 	white-space: nowrap;
     overflow: hidden;
@@ -336,6 +339,15 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 
 .main-datasets-list .box .hover .box-actions{}
 .main-maps-list .box .hover .box-actions{}
+.box .hover{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:url(../../../images/bg-hover.png) 0 0 repeat}
+.box:hover .hover{display:block}
+.box .hover .box-actions-container{float:left;position:relative;left:50%;top:38%}
+.box .hover .box-actions{float:left;position:relative;left:-50%}
+.box .hover a{text-indent:-9999px;font-size:0;line-height:0}
+/*.main-datasets-list .box .hover .box-actions .view a{background-image:url(../../../images/ico-view-cian.png)}
+.main-maps-list .box .hover .box-actions .view a{background-image:url(../../../images/ico-view-green.png)}
+*/
+/* not more used in box-actions:
 .box .hover .box-actions li{float:left;margin:0 4px 0 0}
 .box .hover .box-actions li.last{margin-left:0}
 .box .hover .box-actions a{width:49px;height:45px;background:#fff;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
@@ -369,10 +381,19 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 /*.box .hover .delete{position:relative;top:110px;left:60px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-delete.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}*/
 .box .hover .delete:hover{/*background-position:9px -25px*/background-color:#E4E4E4}
 
-.box .hover .clone{position:absolute;right:50px;bottom:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-clone.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .hover .clone .viewMore{position:absolute;right:50px;bottom:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-clone.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 /*.box .hover .clone{position:relative;top:110px;left:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-clone.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}*/
 .box .hover .clone:hover{/*background-position:9px -25px*/background-color:#E4E4E4}
 
+.detail-box-visible{display: inline;}
+.detail-box-hidden{display: none;}
+
+.synthesis-box-visible{display: inline;}
+.synthesis-box-hidden{display: none;}
+.box p.modifiedDate{color:#b1b1b1;font-size:0.91em;}
+
+.button-detail{content:url("../../../img/detail.png");float: right;}
+.button-syntethize{content:url("../../../img/treenolines_minus.gif");float: right;}
 
 	/* ============================================================= */
 	/*	item icon layout					  			 		     */

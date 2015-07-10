@@ -33,6 +33,7 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String ID = "id";
 	public static final String LABEL = "label";
 	public static final String NAME = "name";
+	public static final String SHORT_NAME = "shortName";
 	public static final String DESCRIPTION = "description";
 	public static final String TYPECODE = "typeCode";
 	public static final String TYPEID = "typeId";
@@ -59,6 +60,8 @@ public class DocumentsJSONSerializer implements Serializer {
 	public static final String DOC_VERSION = "docVersion";
 	public static final String PARAMETERS_REGION = "parametersRegion";
 
+	public static final Integer SHORT_NAME_CHARACTERS_LIMIT = 60;
+
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
@@ -77,6 +80,12 @@ public class DocumentsJSONSerializer implements Serializer {
 			// objName = msgBuild.getUserMessage(obj.getName(),null, locale);
 			objName = msgBuild.getI18nMessage(locale, obj.getName());
 			result.put(NAME, objName);
+			if (objName.length() > SHORT_NAME_CHARACTERS_LIMIT) {
+				result.put(SHORT_NAME, objName.substring(0, SHORT_NAME_CHARACTERS_LIMIT - 1));
+			} else {
+				result.put(SHORT_NAME, objName);
+			}
+
 			String description = null;
 			// description = msgBuild.getUserMessage( obj.getDescription() ,null, locale);
 			description = msgBuild.getI18nMessage(locale, obj.getDescription());

@@ -34,8 +34,11 @@ Sbi.browser.FolderViewTemplate = function(config) {
 
 	var changed = LN('sbi.ds.changedon');
 	var author = LN('sbi.generic.author');
+	var viewDetail = LN('sbi.browser.folderdetailpanel.viewDetail');
+	var hideDetail = LN('sbi.browser.folderdetailpanel.hideDetail');
+	
 	var documentTpl = ''+
-	'<div class="box-container-browser">'+
+	'<div class="box-container-browser-synthesis">'+
 		'<div id="document-item-icon" class="box-figure">'+
 			'<tpl if="this.isSearchResult(summary) == true">'+
 				'<tpl if="this.exists(previewFile) == true">'+
@@ -68,14 +71,35 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	            '</tpl>' +
 	        '</div>'+ //hover
 		'</div>'+ //box-figure
-		'<div title="{name}" class="box-text">'+
-			'<h2>{name}</h2>'+
-//			'<p>{[Ext.String.ellipsis(values.description, 100, false)]}</p>'+
+		
+	// Synthesis case
+		'<div title="{name}" class="box-text synthesis-box-visible">'+
+		//'<h2  style="color: #223300;">{name}</h2>'+
+		//'<b><div  style="color: #223300;word-break:normal;white-space: normal;overflow:hidden;text-overflow:ellipsis;">{name}</div></b>'+
+		//{[Ext.String.ellipsis(values.post_text_teaser,4,false)]}
+		
+		// if name is longer than 60 use short text
+		'<tpl if="this.isLonger({name}) == true">' + 
+	    	//'<p style="color: #223300;word-break:normal;white-space: normal;overflow:hidden;text-overflow:ellipsis;"><h2>{shortName}...</h2></p></b>'+	    
+			'<p class="box-text-name">{shortName}...</p>'+
+	    	'</tpl>' +
+	    '<tpl if="this.isLonger({name}) == false">' + 
+			'<p class="box-text-name">{name}</p>'+
+		'</tpl>' +
+		//' <a class="viewMore" title="View Detail"><img align="right" class="button-detail" > </img> </a>'+
+		'<a class="viewMore" title="View Detail" style="float: right;">'+viewDetail+' </a>'+
+		'</div>'+
+
+	// Detail case
+		'<div title="{name}" class="box-text detail-box-hidden">'+
+		'<p class="box-text-name">{name}</p>'+
 			'<p>{description}</p>'+
 			'<p><b>'+author+':</b> {creationUser}</p>'+
-			'<p class="modified">'+changed+' {creationDate}</p>'+
-		'</div>'+
-//		'<div class="fav-container"> '+
+			'<p class="modifiedDate">'+changed+' {creationDate}</p>'+
+			//'<a class="viewLess" title="Hide Detail"> <img align="right" class="button-syntethize" > </img> </a>'+
+			'<a class="viewLess" title="Hide Detail" style="float: right;"> '+hideDetail+'</a>'+
+			'</div>'+
+		//		'<div class="fav-container"> '+
 //		'  	<div class="fav" title="Favourites" > '+
 //		'         <span class="icon"><a href="#" onclick="javascript:alert(\'Functionality not supported yet!\');"></a></span> '+
 //		'         <span class="counter">12</span> '+
@@ -168,6 +192,10 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        	exists: function(o){
 	        		return typeof o != 'undefined' && o != null && o!='';
 	        	}
+				, isLonger: function(s) {
+						return s.name.length > 60;
+
+				}
 	        	, isHomeFolder: function(s) {
 	        		return s == 'USER_FUNCT';
 	        	}
