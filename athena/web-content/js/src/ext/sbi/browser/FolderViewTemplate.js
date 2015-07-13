@@ -79,13 +79,8 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		//{[Ext.String.ellipsis(values.post_text_teaser,4,false)]}
 		
 		// if name is longer than 60 use short text
-		'<tpl if="this.isLonger({name}) == true">' + 
 	    	//'<p style="color: #223300;word-break:normal;white-space: normal;overflow:hidden;text-overflow:ellipsis;"><h2>{shortName}...</h2></p></b>'+	    
-			'<p class="box-text-name">{shortName}...</p>'+
-	    	'</tpl>' +
-	    '<tpl if="this.isLonger({name}) == false">' + 
-			'<p class="box-text-name">{name}</p>'+
-		'</tpl>' +
+			'<p class="box-text-name">{shortName}</p>'+
 		//' <a class="viewMore" title="View Detail"><img align="right" class="button-detail" > </img> </a>'+
 		'<a class="viewMore" title="View Detail" style="float: right;">'+viewDetail+' </a>'+
 		'</div>'+
@@ -191,11 +186,7 @@ Sbi.browser.FolderViewTemplate = function(config) {
 	        '</div>', {
 	        	exists: function(o){
 	        		return typeof o != 'undefined' && o != null && o!='';
-	        	}
-				, isLonger: function(s) {
-						return s.name.length > 60;
-
-				}
+	        	}			
 	        	, isHomeFolder: function(s) {
 	        		return s == 'USER_FUNCT';
 	        	}

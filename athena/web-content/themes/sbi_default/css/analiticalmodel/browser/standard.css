@@ -293,7 +293,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .box-container{color:#434343;padding:23px 4.832714%;min-height:310px;max-height:310px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-container-browser{color:#434343;padding:23px 4.832714%;min-height:250px;max-height:250px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-container-browser-synthesis{color:#434343;padding:23px 4.832714%;min-height:220px;max-height:220px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.box .box-container-browser-detail{color:#434343;padding:23px 4.832714%;min-height:350px;max-height:350px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .box-container-browser-detail{color:#434343;padding:23px 4.832714%;min-height:300px;max-height:300px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-container-myanalysis{color:#434343;padding:23px 4.832714%;min-height:300px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-figure{margin-bottom:5px;width:100%;position:relative}
 .box .box-figure img{width:100%;display:block}
@@ -381,7 +381,7 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 /*.box .hover .delete{position:relative;top:110px;left:60px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-delete.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}*/
 .box .hover .delete:hover{/*background-position:9px -25px*/background-color:#E4E4E4}
 
-.box .hover .clone .viewMore{position:absolute;right:50px;bottom:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-clone.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .hover .clone{position:absolute;right:50px;bottom:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-clone.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 /*.box .hover .clone{position:relative;top:110px;left:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-clone.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}*/
 .box .hover .clone:hover{/*background-position:9px -25px*/background-color:#E4E4E4}
 

@@ -81,7 +81,7 @@ public class DocumentsJSONSerializer implements Serializer {
 			objName = msgBuild.getI18nMessage(locale, obj.getName());
 			result.put(NAME, objName);
 			if (objName.length() > SHORT_NAME_CHARACTERS_LIMIT) {
-				result.put(SHORT_NAME, objName.substring(0, SHORT_NAME_CHARACTERS_LIMIT - 1));
+				result.put(SHORT_NAME, objName.substring(0, SHORT_NAME_CHARACTERS_LIMIT - 1) + "...");
 			} else {
 				result.put(SHORT_NAME, objName);
 			}
