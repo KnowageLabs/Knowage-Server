@@ -3,13 +3,14 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-  
- 
-  
+
+
+
+
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-<%@page import="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule"%>
+<%@page
+	import="it.eng.spagobi.analiticalmodel.document.service.ExecuteBIObjectModule"%>
 
 <%
 ExecutionInstance instanceO = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
@@ -33,19 +34,21 @@ if (modalityO != null && modalityO.equalsIgnoreCase(SpagoBIConstants.DOCUMENT_CO
 	}
 	String uuid = instanceO.getExecutionId();
 	%>
-	
-	<%-- div with "wait while loading" message: it will disappear when iframe below will be loaded --%>
-	<div id="divLoadingMessage<%= uuid %>" style="display:block;text-align:left;">
-		<img src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/analiticalmodel/loading.gif", currTheme)%>' />
-		<spagobi:message key='sbi.execution.pleaseWait'/>
-	</div>
-	
-	<iframe id="iframeexec<%=uuid%>" name="iframeexec<%=uuid%>" src="" style="width:100%;height:100%" frameborder="0" >
-	</iframe>
-	
-	<form name="formexecution<%=uuid%>" id='formexecution<%=uuid%>' method="get"
-         	      action="<%=instanceO.getBIObject().getEngine().getUrl()%>"
-         	      target='_self'>
+
+<%-- div with "wait while loading" message: it will disappear when iframe below will be loaded --%>
+<div id="divLoadingMessage<%= uuid %>"
+	style="display: block; text-align: left;">
+	<img
+		src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/analiticalmodel/loading.gif", currTheme)%>' />
+	<spagobi:message key='sbi.execution.pleaseWait' />
+</div>
+
+<iframe id="iframeexec<%=uuid%>" name="iframeexec<%=uuid%>" src=""
+	style="width: 100%; height: 100%" frameborder="0"> </iframe>
+
+<form name="formexecution<%=uuid%>" id='formexecution<%=uuid%>'
+	method="get" action="<%=instanceO.getBIObject().getEngine().getUrl()%>"
+	target='_self'>
 	<%
 	java.util.Set keys = executionParameters.keySet();
 	Iterator iterKeys = keys.iterator();
@@ -53,16 +56,16 @@ if (modalityO != null && modalityO.equalsIgnoreCase(SpagoBIConstants.DOCUMENT_CO
 		String key = iterKeys.next().toString();
 		String value = executionParameters.get(key).toString();
 		%>
-		<input type="hidden" name="<%=key%>" value="<%=value%>" />
-		<%
+	<input type="hidden" name="<%=key%>" value="<%=value%>" />
+	<%
 	}
 	%>
-	</form>
-	
-	<script>
+</form>
+
+<script>
 	document.getElementById('formexecution<%=uuid%>').submit();
 	</script>
-	<%
+<%
 } else {
 %>
 <%@ include file="/WEB-INF/jsp/analiticalmodel/execution/header.jsp"%>
@@ -113,7 +116,7 @@ if (heightArea == null || heightArea.trim().equals("")) {
 	}
 	</script>
 	--%>
-	<script>
+<script>
 		
 		pos<%=uuid%> = null; 
 	
@@ -212,14 +215,19 @@ if (heightArea == null || heightArea.trim().equals("")) {
 %>
 
 <%-- div with "wait while loading" message: it will disappear when window is loaded thanks to SbiJsInitializer.hideLoadingMessage property --%>
-<div id="divLoadingMessage<%= uuid %>" style="display:block;text-align:left;">
-	<img src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/analiticalmodel/loading.gif", currTheme)%>' />
-	<spagobi:message key='sbi.execution.pleaseWait'/>
+<div id="divLoadingMessage<%= uuid %>"
+	style="display: block; text-align: left;">
+	<img
+		src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/analiticalmodel/loading.gif", currTheme)%>' />
+	<spagobi:message key='sbi.execution.pleaseWait' />
 </div>
 
 <%-- Start execution iframe --%>
-<div id="divIframe<%= uuid %>" style="width:100%;overflow=auto;border: 0;display:inline;<%= heightStr %>">
-	<iframe id="iframeexec<%= uuid %>" name="iframeexec<%= uuid %>" src="<%= StringEscapeUtils.escapeHtml(GeneralUtilities.getUrl(obj.getEngine().getUrl(), executionParameters)) %>&EXECUTION_ID=<%= uuid %>" style="width:100%;height:300px;z-index:0;" frameborder="0" >
+<div id="divIframe<%= uuid %>"
+	style="width:100%;overflow=auto;border: 0;display:inline;<%= heightStr %>">
+	<iframe id="iframeexec<%= uuid %>" name="iframeexec<%= uuid %>"
+		src="<%= StringEscapeUtils.escapeHtml(GeneralUtilities.getUrl(obj.getEngine().getUrl(), executionParameters)) %>&EXECUTION_ID=<%= uuid %>"
+		style="width: 100%; height: 300px; z-index: 0;" frameborder="0">
 	</iframe>
 </div>
 
@@ -238,9 +246,12 @@ crossNavigationParameters.put(LightNavigationManager.LIGHT_NAVIGATOR_DISABLED, "
 String crossNavigationUrl = urlBuilder.getUrl(request, crossNavigationParameters);
 %>
 
-<form id="crossNavigationForm<%= uuid %>" method="post" action="<%= crossNavigationUrl %>" style="display:none;">
-	<input type="hidden" id="targetDocumentLabel<%= uuid %>" name="<%= ObjectsTreeConstants.OBJECT_LABEL %>" value="" />
-	<input type="hidden" id="targetDocumentParameters<%= uuid %>" name="<%= ObjectsTreeConstants.PARAMETERS %>" value="" />
+<form id="crossNavigationForm<%= uuid %>" method="post"
+	action="<%= crossNavigationUrl %>" style="display: none;">
+	<input type="hidden" id="targetDocumentLabel<%= uuid %>"
+		name="<%= ObjectsTreeConstants.OBJECT_LABEL %>" value="" /> <input
+		type="hidden" id="targetDocumentParameters<%= uuid %>"
+		name="<%= ObjectsTreeConstants.PARAMETERS %>" value="" />
 </form>
 
 <script>

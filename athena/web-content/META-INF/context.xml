@@ -1,9 +1,17 @@
-      <Context docBase="athena" path="/athena" reloadable="true" source="org.eclipse.jst.j2ee.server:athena">	
-        <ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
-        <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
-        <ResourceLink global="spagobi_resource_path" name="spagobi_resource_path" type="java.lang.String"/>
-        <ResourceLink global="spagobi_sso_class" name="spagobi_sso_class" type="java.lang.String"/>
-        <ResourceLink global="spagobi_host_url" name="spagobi_host_url" type="java.lang.String"/>
-        <!--ResourceLink global="spagobi_domain" name="spagobi_domain" type="java.lang.String"/-->
-		<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="jcommonj.work.WorkManager"/>
+
+<Context docBase="athena" path="/athena" reloadable="true"
+	source="org.eclipse.jst.j2ee.server:athena">
+	<ResourceLink global="jdbc/spagobi" name="jdbc/spagobi"
+		type="javax.sql.DataSource" />
+	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart"
+		type="javax.sql.DataSource" />
+	<ResourceLink global="spagobi_resource_path" name="spagobi_resource_path"
+		type="java.lang.String" />
+	<ResourceLink global="spagobi_sso_class" name="spagobi_sso_class"
+		type="java.lang.String" />
+	<ResourceLink global="spagobi_host_url" name="spagobi_host_url"
+		type="java.lang.String" />
+	<!--ResourceLink global="spagobi_domain" name="spagobi_domain" type="java.lang.String"/ -->
+	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager"
+		type="jcommonj.work.WorkManager" />
 </Context>

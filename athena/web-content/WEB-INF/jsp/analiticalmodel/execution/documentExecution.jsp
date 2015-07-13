@@ -7,13 +7,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-<%@page import="it.eng.spagobi.commons.serializer.DocumentsJSONDecorator"%>
+<%@page
+	import="it.eng.spagobi.commons.serializer.DocumentsJSONDecorator"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>    
+<%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="org.apache.log4j.Logger"%>
-<%@page import="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction"%>
+<%@page
+	import="it.eng.spagobi.analiticalmodel.execution.service.ExecuteDocumentAction"%>
 <%@page import="it.eng.spagobi.commons.bo.Domain"%>
 <%@page import="it.eng.spagobi.commons.dao.IDomainDAO"%>
 <%@page import="it.eng.spagobi.engines.config.dao.IEngineDAO"%>
@@ -27,19 +29,23 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spagobi.commons.serializer.SerializerFactory"%>
 
 <!--  jQuery (HighCharts dependency) -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.5.1/jquery-1.5.1.js")%>"></script>
 
 <!--  HighCharts -->
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts-more.js")%>"></script>
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/modules/exporting.js")%>"></script>
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts.js")%>"></script>
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/highcharts-more.js")%>"></script>
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLink(request, "js/lib/highcharts-3.0.7/modules/exporting.js")%>"></script>
 
 <%! private static transient Logger logger = Logger.getLogger(ExecuteDocumentAction.class);%>
 
-	<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
-	<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
-	
-	<script type="text/javascript">
+<%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
+<%@ include file="/WEB-INF/jsp/commons/importSbiJS.jspf"%>
+
+<script type="text/javascript">
     Ext.BLANK_IMAGE_URL = '<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/resources/images/default/s.gif")%>';
     
     Sbi.config = {};

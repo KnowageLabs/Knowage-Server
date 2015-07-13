@@ -3,18 +3,19 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-  
+
+
 
 <%@page import="it.eng.spagobi.profiling.bean.SbiAttribute"%>
 <%@ include file="/WEB-INF/jsp/commons/portlet_base311.jsp"%>
 
 <%@page import="it.eng.spagobi.services.common.SsoServiceInterface"%>
-<%@page import="it.eng.spagobi.commons.bo.Domain,
+<%@page
+	import="it.eng.spagobi.commons.bo.Domain,
 				 it.eng.spagobi.tools.datasource.bo.*,
 				 java.util.ArrayList,
 				 java.util.List,
-				 org.json.JSONArray" %>
+				 org.json.JSONArray"%>
 <%@page import="it.eng.spagobi.tools.udp.bo.Udp"%>
 <%@page import="it.eng.spagobi.commons.serializer.UdpJSONSerializer"%>
 <%@page import="org.json.JSONObject"%>
@@ -35,7 +36,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 %>
 
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
 
 <script type="text/javascript">
 

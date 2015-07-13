@@ -3,12 +3,13 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-  
- 
-  
+
+
+
+
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
-<%@ taglib prefix="execution" tagdir="/WEB-INF/tags/analiticalmodel/execution" %>
+<%@ taglib prefix="execution"
+	tagdir="/WEB-INF/tags/analiticalmodel/execution"%>
 
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
@@ -17,18 +18,24 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 <%@page import="it.eng.spagobi.commons.bo.Role"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
-<%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
+<%@page
+	import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
 <%@page import="java.util.List"%>
 
 <script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
 <script type="text/javascript" src="<%=linkProtoEff%>"></script>
-<link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css"/>
-<link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
+<link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css" />
+<link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css" />
 
-<LINK rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/portal_admin.css",currTheme)%>' type='text/css' />
-<LINK rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/form.css",currTheme)%>' type='text/css' />
-<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/analiticalmodel/execution/box.js")%>"></script>
+<LINK rel='StyleSheet'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/portal_admin.css",currTheme)%>'
+	type='text/css' />
+<LINK rel='StyleSheet'
+	href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/form.css",currTheme)%>'
+	type='text/css' />
+<script type="text/javascript"
+	src="<%=urlBuilder.getResourceLink(request, "js/analiticalmodel/execution/box.js")%>"></script>
 
 <%
 ExecutionInstance instance = contextManager.getExecutionInstance(ExecutionInstance.class.getName());
@@ -63,40 +70,51 @@ String title = obj.getName();
 	<%=msgBuilder.getI18nMessage(title, request)%>
 </div>
 
-<spagobi:error/>
+<spagobi:error />
 
 <div class="header">
 	<div class="slider_header">
 		<ul>
-		    <li class="arrow"><a href="javascript:void(0);" id="toggle_Parameters<%= uuid %>" >&nbsp;<spagobi:message key='sbi.execution.parameters'/></a></li>
-			<% if (viewpointsSliderVisible) { %><li class="arrow"><a href="javascript:void(0);" id="toggle_ViewPoint<%= uuid %>" >&nbsp;<spagobi:message key='sbi.execution.viewpoints'/></a></li><% } %>
-			<li class="arrow"><a href="javascript:void(0);" id="toggle_SubObject<%= uuid %>" >&nbsp;<spagobi:message key='sbi.execution.subobjects'/></a></li>
-			<% if (snapshotsSliderVisible) { %><li class="arrow"><a href="javascript:void(0);" id="toggle_Snapshot<%= uuid %>" >&nbsp;<spagobi:message key='sbi.execution.snapshots'/></a></li><% } %>
+			<li class="arrow"><a href="javascript:void(0);"
+				id="toggle_Parameters<%= uuid %>">&nbsp;<spagobi:message
+						key='sbi.execution.parameters' /></a></li>
+			<% if (viewpointsSliderVisible) { %><li class="arrow"><a
+				href="javascript:void(0);" id="toggle_ViewPoint<%= uuid %>">&nbsp;<spagobi:message
+						key='sbi.execution.viewpoints' /></a></li>
+			<% } %>
+			<li class="arrow"><a href="javascript:void(0);"
+				id="toggle_SubObject<%= uuid %>">&nbsp;<spagobi:message
+						key='sbi.execution.subobjects' /></a></li>
+			<% if (snapshotsSliderVisible) { %><li class="arrow"><a
+				href="javascript:void(0);" id="toggle_Snapshot<%= uuid %>">&nbsp;<spagobi:message
+						key='sbi.execution.snapshots' /></a></li>
+			<% } %>
 		</ul>
 	</div>
 	<div class="toolbar_header">
 		<ul>
 			<% if (!modality.equalsIgnoreCase(SpagoBIConstants.SINGLE_OBJECT_EXECUTION_MODALITY)) { %>
-		    <li>
-		    	<%
+			<li>
+				<%
 		    	Map backUrlPars = new HashMap();
 		    	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
-		    	%>
-				<a href='<%= urlBuilder.getUrl(request, backUrlPars) %>'>
-					<img width="22px" height="22px" title='<spagobi:message key = "SBIDev.docConf.execBIObjectParams.backButt" />'
-						src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/back.png", currTheme)%>'
-						alt='<spagobi:message key = "SBIDev.docConf.execBIObjectParams.backButt" />' />
-				</a>
-		    </li>
-		    <% } %>
+		    	%> <a href='<%= urlBuilder.getUrl(request, backUrlPars) %>'>
+					<img width="22px" height="22px"
+					title='<spagobi:message key = "SBIDev.docConf.execBIObjectParams.backButt" />'
+					src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/back.png", currTheme)%>'
+					alt='<spagobi:message key = "SBIDev.docConf.execBIObjectParams.backButt" />' />
+			</a>
+			</li>
+			<% } %>
 		</ul>
 	</div>
 </div>
 
 <%-- Parameters --%>
-<div style="display:none">
+<div style="display: none">
 	<div id="parametersContentEl<%= uuid %>">
-		<spagobi:ParametersGenerator modality="EXECUTION_MODALITY"  requestIdentity="<%=uuid%>"/>
+		<spagobi:ParametersGenerator modality="EXECUTION_MODALITY"
+			requestIdentity="<%=uuid%>" />
 	</div>
 </div>
 <div id="popout_Parameters<%= uuid %>" class="popout"></div>
@@ -108,9 +126,10 @@ createToggledBox('<spagobi:message key='sbi.execution.parameters'/>:', 'paramete
 
 <%-- ViewPoints --%>
 <% if (viewpointsSliderVisible) { %>
-<div style="display:none">
+<div style="display: none">
 	<div id="viewpointsContentEl<%= uuid %>">
-		<execution:viewpointsList viewpointsList="<%= viewpointsList %>" uuid="<%=uuid%>" />
+		<execution:viewpointsList viewpointsList="<%= viewpointsList %>"
+			uuid="<%=uuid%>" />
 	</div>
 </div>
 <div id="popout_ViewPoint<%= uuid %>" class="popout"></div>
@@ -122,9 +141,10 @@ createToggledBox('<spagobi:message key='sbi.execution.viewpoints'/>:', 'viewpoin
 <%-- End viewPoints --%>
 
 <%-- SubObjects --%>
-<div style="display:none">
+<div style="display: none">
 	<div id="subobjectsContentEl<%= uuid %>">
-		<execution:subobjectsList subobjectsList="<%= subobjectsList %>" uuid="<%=uuid%>" />
+		<execution:subobjectsList subobjectsList="<%= subobjectsList %>"
+			uuid="<%=uuid%>" />
 	</div>
 </div>
 <div id="popout_SubObject<%= uuid %>" class="popout"></div>
@@ -136,10 +156,11 @@ createToggledBox('<spagobi:message key='sbi.execution.subobjects'/>:', 'subobjec
 
 <%-- Snapshots --%>
 <% if (snapshotsSliderVisible) { %>
-<div style="display:none">
+<div style="display: none">
 	<div id="snapshotsContentEl<%= uuid %>">
 		<%--<spagobi:snapshotsList snapshotsList="<%= snapshotsList %>" />--%>
-		<execution:snapshotsList snapshotsList="<%= snapshotsList %>" uuid="<%=uuid%>" />
+		<execution:snapshotsList snapshotsList="<%= snapshotsList %>"
+			uuid="<%=uuid%>" />
 	</div>
 </div>
 <div id="popout_Snapshot<%= uuid %>" class="popout"></div>

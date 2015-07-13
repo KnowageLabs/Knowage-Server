@@ -3,31 +3,33 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-  
- 
+
+
+
 
 
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
-<%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
+<%@page
+	import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance"%>
 <script type="text/javascript" src="<%=linkProto%>"></script>
 <script type="text/javascript" src="<%=linkProtoWin%>"></script>
 <script type="text/javascript" src="<%=linkProtoEff%>"></script>
-<link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css"/>
-<link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css"/>
+<link href="<%=linkProtoDefThem%>" rel="stylesheet" type="text/css" />
+<link href="<%=linkProtoAlphaThem%>" rel="stylesheet" type="text/css" />
 
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="java.io.File"%>
-<%@page import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionManager"%>
+<%@page
+	import="it.eng.spagobi.analiticalmodel.document.handlers.ExecutionManager"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlUtilities"%>
 <%@page import="it.eng.spago.base.SessionContainer"%>
 <%@page import="it.eng.spago.configuration.ConfigSingleton"%>
 
 <div class="div_no_background">
-	
+
 	<%
 	String styleName = "";
 	if(ChannelUtilities.isWebRunning()) {
@@ -40,24 +42,28 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	File styleFile = new File(styleFilePath);
 	if (styleFile.exists()) {
 		%>
-		<LINK rel='StyleSheet' href='<%=urlBuilder.getResourceLinkByTheme(request, "/css/guiComponents/" + styleName, currTheme)%>' type='text/css' />
-		<div class="executionWorkspace">
+	<LINK rel='StyleSheet'
+		href='<%=urlBuilder.getResourceLinkByTheme(request, "/css/guiComponents/" + styleName, currTheme)%>'
+		type='text/css' />
+	<div class="executionWorkspace">
 		<%
 	}
 	%>
-	<div class='workspaceTopBox' >
-		<spagobi:treeObjects moduleName="ExecutionWorkspaceModule" attributeToRender="FIRST_LEVEL_FOLDERS"
+		<div class='workspaceTopBox'>
+			<spagobi:treeObjects moduleName="ExecutionWorkspaceModule"
+				attributeToRender="FIRST_LEVEL_FOLDERS"
 				htmlGeneratorClass="it.eng.spagobi.analiticalmodel.functionalitytree.presentation.TitleBarHtmlGenerator" />
-	</div>
+		</div>
 
-	<div class='workspaceLeftBox' >
-		<spagobi:treeObjects moduleName="ExecutionWorkspaceModule" attributeToRender="SUB_TREE"
-			htmlGeneratorClass="it.eng.spagobi.analiticalmodel.functionalitytree.presentation.NestedMenuHtmlGenerator"/>
-	</div>
-	
-	
-	<div class='workspaceRightBox' >
-		<%
+		<div class='workspaceLeftBox'>
+			<spagobi:treeObjects moduleName="ExecutionWorkspaceModule"
+				attributeToRender="SUB_TREE"
+				htmlGeneratorClass="it.eng.spagobi.analiticalmodel.functionalitytree.presentation.NestedMenuHtmlGenerator" />
+		</div>
+
+
+		<div class='workspaceRightBox'>
+			<%
 	    // get spagobi url
 	    String spagobiurl = ChannelUtilities.getSpagoBIContextName(request);
 	    if (!spagobiurl.endsWith("/")) spagobiurl += "/";
@@ -70,7 +76,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	    String requestIdentity = (String) moduleResponse.getAttribute("spagobi_execution_id");
 		%>
 
-		<script>
+			<script>
 	
 			pos<%=requestIdentity%> = null; 
 	
@@ -154,17 +160,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	    	}
 	
 		</script>
-		
-		<%
+
+			<%
 		if (objLabel == null) {
 			%>
 			<div class='noDocumentSelectedBox'>
-				<br/>
-				<br/>
-				<br/>
-				<br/>
+				<br /> <br /> <br /> <br />
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<spagobi:message key = "execBIObject.selectDocument"/>
+				<spagobi:message key="execBIObject.selectDocument" />
 			</div>
 			<%
 		} else {
@@ -177,28 +180,32 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			
 			%>
 
-			
+
 			<div class='navBarContainerEW'>
-				<div id='navigationBarContainer<%=requestIdentity%>' class='navBarTextContainerEW'>
-					<div id="navigationBar<%=requestIdentity%>" class='documentNameNavBarEW'>
+				<div id='navigationBarContainer<%=requestIdentity%>'
+					class='navBarTextContainerEW'>
+					<div id="navigationBar<%=requestIdentity%>"
+						class='documentNameNavBarEW'>
 						&nbsp;
 						<%-- this div we be filled by js code --%>
 					</div>
 				</div>
-			<!-- ***************************************************************** -->
-			<!-- ***************************************************************** -->
-			<!-- **************** START MAXIMIZE ********************************* -->
-			<!-- ***************************************************************** -->
-			<!-- ***************************************************************** -->
-				<div class='navBarBottonContainerEW'>	
+				<!-- ***************************************************************** -->
+				<!-- ***************************************************************** -->
+				<!-- **************** START MAXIMIZE ********************************* -->
+				<!-- ***************************************************************** -->
+				<!-- ***************************************************************** -->
+				<div class='navBarBottonContainerEW'>
 					<div class='documentMaximizeNavBarEW'>
-						<div id='maximizeDiv<%=requestIdentity%>' style='visibility:visible;'>
-							<a class='documentMaximizeLinkNavBarEW' href='javascript:maximize<%=requestIdentity%>();'>
-								<img class='documentMaximizeIconNavBarEW'
-									src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/maximize32.jpg", currTheme)%>'
-									name='maximize'
-									alt='<%=msgBuilder.getMessage("SBIExecution.maximize", "messages", request)%>'
-									title='<%=msgBuilder.getMessage("SBIExecution.maximize", "messages", request)%>' />
+						<div id='maximizeDiv<%=requestIdentity%>'
+							style='visibility: visible;'>
+							<a class='documentMaximizeLinkNavBarEW'
+								href='javascript:maximize<%=requestIdentity%>();'> <img
+								class='documentMaximizeIconNavBarEW'
+								src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/maximize32.jpg", currTheme)%>'
+								name='maximize'
+								alt='<%=msgBuilder.getMessage("SBIExecution.maximize", "messages", request)%>'
+								title='<%=msgBuilder.getMessage("SBIExecution.maximize", "messages", request)%>' />
 							</a>
 						</div>
 					</div>
@@ -209,25 +216,26 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	        		$('maximizeDiv<%=requestIdentity%>').style.visibility	= 'hidden';
 	        	}   
 			</script>
-			<div id='maximizebackground<%=requestIdentity%>' class='maximizeContainer'>
+			<div id='maximizebackground<%=requestIdentity%>'
+				class='maximizeContainer'>
 				<table width="100%" class='maximizeTitleTable'>
 					<tr width="100%">
 						<td width="95%">
-					        <div id='maximizeNavigationBarContainer<%=requestIdentity%>'>
+							<div id='maximizeNavigationBarContainer<%=requestIdentity%>'>
 							</div>
 						</td>
-						<td width="5%" align='center'>
-							<a class='documentMaximizeLinkNavBarEW' href='javascript:minimize<%=requestIdentity%>()' >
-								<img class='closeMaximizeIcon'
-									src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/erase32.png", currTheme)%>'
-									name='close'
-									alt='<%=msgBuilder.getMessage("SBIExecution.close", "messages", request)%>'
-									title='<%=msgBuilder.getMessage("SBIExecution.close", "messages", request)%>' />
-							</a>
-						</td>
+						<td width="5%" align='center'><a
+							class='documentMaximizeLinkNavBarEW'
+							href='javascript:minimize<%=requestIdentity%>()'> <img
+								class='closeMaximizeIcon'
+								src='<%= urlBuilder.getResourceLinkByTheme(request, "/img/erase32.png", currTheme)%>'
+								name='close'
+								alt='<%=msgBuilder.getMessage("SBIExecution.close", "messages", request)%>'
+								title='<%=msgBuilder.getMessage("SBIExecution.close", "messages", request)%>' />
+						</a></td>
 					</tr>
 				</table>
-			</div> 
+			</div>
 			<script>
 			      dimensionHolder<%=requestIdentity%> = new functDimensionHolder<%=requestIdentity%>();
 			    
@@ -295,49 +303,51 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<!-- **************** END MAXIMIZE *********************************** -->
 			<!-- ***************************************************************** -->
 			<!-- ***************************************************************** -->
-			
-			<div style="clear:left;"></div>
+
+			<div style="clear: left;"></div>
 
 			<center>
-				<div id="divIframe<%=requestIdentity%>" style="width:100%;overflow=auto;">
+				<div id="divIframe<%=requestIdentity%>"
+					style="width: 100%;overflow=auto;">
 					<iframe id="iframeexec<%=requestIdentity%>"
-							name="iframeexec<%=requestIdentity%>"
-				            src=""
-				            style="width:100%;"
-				            frameborder="0"></iframe>
-	
-					<form 	name="formexecution<%=requestIdentity%>"
-							id='formexecution<%=requestIdentity%>' method="post"
-							action="<%=spagobiurl%>"
-							target='iframeexec<%=requestIdentity%>'>
-						
+						name="iframeexec<%=requestIdentity%>" src="" style="width: 100%;"
+						frameborder="0"></iframe>
+
+					<form name="formexecution<%=requestIdentity%>"
+						id='formexecution<%=requestIdentity%>' method="post"
+						action="<%=spagobiurl%>" target='iframeexec<%=requestIdentity%>'>
+
 						<%
 						if (!isRefreshRequest) {
 
 							%>
-							<input type="hidden" name="NEW_SESSION" value="TRUE" />
-							<input type="hidden" name="PAGE" value="DirectExecutionPage" />
-					        <input type="hidden" name="USERNAME" value="<%=userId%>" />
-					        <input type="hidden" name="DOCUMENT_LABEL" value="<%=objLabel%>" />
-					        <input type="hidden" name="spagobi_flow_id" value="<%=requestIdentity%>" />
-					        <input type="hidden" name="spagobi_execution_id" value="<%=requestIdentity%>" />
-							<%
+						<input type="hidden" name="NEW_SESSION" value="TRUE" /> <input
+							type="hidden" name="PAGE" value="DirectExecutionPage" /> <input
+							type="hidden" name="USERNAME" value="<%=userId%>" /> <input
+							type="hidden" name="DOCUMENT_LABEL" value="<%=objLabel%>" /> <input
+							type="hidden" name="spagobi_flow_id" value="<%=requestIdentity%>" />
+						<input type="hidden" name="spagobi_execution_id"
+							value="<%=requestIdentity%>" />
+						<%
 						} else {
 							%>
-							<input type="hidden" name="NEW_SESSION" value="TRUE" />
-							<input type="hidden" name="PAGE" value="DirectExecutionPage" />
-							<input type="hidden" name="OPERATION" value="RECOVER_EXECUTION_FROM_DRILL_FLOW" />
-							<input type="hidden" name="spagobi_flow_id" value="<%=requestIdentity%>" />
-							<input type="hidden" name="spagobi_execution_id" value="<%=instance.getExecutionId()%>" />
-							<%
+						<input type="hidden" name="NEW_SESSION" value="TRUE" /> <input
+							type="hidden" name="PAGE" value="DirectExecutionPage" /> <input
+							type="hidden" name="OPERATION"
+							value="RECOVER_EXECUTION_FROM_DRILL_FLOW" /> <input
+							type="hidden" name="spagobi_flow_id" value="<%=requestIdentity%>" />
+						<input type="hidden" name="spagobi_execution_id"
+							value="<%=instance.getExecutionId()%>" />
+						<%
 						}
-						%>						
-				        <center>
-				        	<input id="button<%=requestIdentity%>" type="submit" value="View Output"  style='display:inline;'/>
+						%>
+						<center>
+							<input id="button<%=requestIdentity%>" type="submit"
+								value="View Output" style='display: inline;' />
 						</center>
 					</form>
-				
-				    <script>
+
+					<script>
 				    button = document.getElementById('button<%=requestIdentity%>');
 				    button.style.display='none';
 				    button.click();
@@ -347,16 +357,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<%
 		}
 		%>
-	</div>
-	<%
-	if (styleFile.exists()) {
-		%>
 		</div>
 		<%
+	if (styleFile.exists()) {
+		%>
+	</div>
+	<%
 	}
 	%>
-	
-</div>	
+
+</div>
 
 <script>
 

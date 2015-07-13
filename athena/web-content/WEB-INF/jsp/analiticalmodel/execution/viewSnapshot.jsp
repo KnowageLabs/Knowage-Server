@@ -3,9 +3,9 @@
 Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
- 
-  
- 
+
+
+
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
 
@@ -66,7 +66,7 @@ if (heightArea == null || heightArea.trim().equals("")) {
 	}
 	</script>
 	-->
-	<script>
+<script>
 		
 		pos<%=uuid%> = null; 
 	
@@ -142,14 +142,11 @@ if (heightArea == null || heightArea.trim().equals("")) {
 }
 %>
 
-<div id="divIframe<%=uuid%>" style="width:98%;float:left;padding-left:2%;<%= heightStr %>">
-	<iframe src="<%=url%>"
-		style='display:inline;' 
-		id='iframeexec<%=uuid%>' 
-		name='iframeexec<%=uuid%>'
-		frameborder=0  
-		width='100%' >
-	</iframe> 
+<div id="divIframe<%=uuid%>"
+	style="width:98%;float:left;padding-left:2%;<%= heightStr %>">
+	<iframe src="<%=url%>" style='display: inline;'
+		id='iframeexec<%=uuid%>' name='iframeexec<%=uuid%>' frameborder=0
+		width='100%'> </iframe>
 </div>
 
 <%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
