@@ -119,6 +119,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 			while (domainIt.hasNext()) {
 
+				SbiDomains domain = (SbiDomains) domainIt.next();
+
 				Query hibQueryProd = aSession.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt "
 						+ "where opt.sbiOrganizations.name = :tenant ");
 				hibQueryProd.setString("tenant", tenant);
@@ -133,7 +135,6 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 							+ "and pte.sbiEngines.biobjType.valueCd = :valueCd");
 
 					hibQueryEng.setString("productType", productType.getLabel());
-					SbiDomains domain = (SbiDomains) domainIt.next();
 					hibQueryEng.setString("valueCd", domain.getValueCd());
 
 					List hibListEng = hibQueryEng.list();
@@ -343,7 +344,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
 	 */
 	@Override
