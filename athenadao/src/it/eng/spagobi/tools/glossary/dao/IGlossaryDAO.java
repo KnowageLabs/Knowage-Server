@@ -74,7 +74,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	//
 	public SbiGlWord loadWord(Integer wordId);
 	
-	public Integer wordCount(String word);
+	public Integer wordCount(String word,Integer gloss);
 	
 	public List<SbiGlWord> loadWordByName(String wordNM);
 
@@ -82,7 +82,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	
 	public List<SbiGlWord> listWordFromArray(Object[] arr);
 
-	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page);
+	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page,Integer gloss_id);
 
 	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
 
@@ -151,5 +151,8 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public SbiGlDocWlist getDocWlistOrNull(SbiGlDocWlistId id);
 	
 	public void deleteDocWlist(SbiGlDocWlistId id);
+	
+	//navigation
+	public Map<String, Object> NavigationItem(JSONObject  elem);
 	
 }

@@ -1,5 +1,5 @@
 package it.eng.spagobi.tools.glossary.dao;
-
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
@@ -46,9 +46,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.hibernate.transform.Transformers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -430,17 +433,43 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		return load(SbiGlWord.class, wordId);
 	}
 	@Override
-	public Integer wordCount(final String word){
+	public Integer wordCount(final String word, final Integer glossary_id) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) {
-				if (word != null && !word.trim().isEmpty()){
-						return ((Long) session.createCriteria(SbiGlWord.class).setProjection(Projections.rowCount()).add(Restrictions.like("word", word, MatchMode.ANYWHERE).ignoreCase()).uniqueResult()).intValue();
+				if ((word != null && !word.trim().isEmpty())
+						|| glossary_id != null) {
+
+					Criteria c;
+
+					if (glossary_id == null) {
+						c = session.createCriteria(SbiGlWord.class, "gl_word");
+					} else {
+						// filter by glossary
+						c = session.createCriteria(SbiGlWlist.class, "wlist");
+						c.createAlias("wlist.word", "gl_word");
+						c.createAlias("wlist.content", "gl_cont");
+						c.add(Restrictions
+								.eq("gl_cont.glossaryId", glossary_id));
 					}
-				return ((Long) session.createCriteria(SbiGlWord.class).setProjection(Projections.rowCount()).uniqueResult()).intValue();
-	
+
+					if (word != null && !word.isEmpty()) {
+						c.add(Restrictions.like("gl_word.word", word,
+								MatchMode.ANYWHERE).ignoreCase());
+					}
+
+					c.setProjection(Projections.rowCount());
+
+					return ((Long) c.uniqueResult()).intValue();
+
+				}
+
+				return ((Long) session.createCriteria(SbiGlWord.class)
+						.setProjection(Projections.rowCount()).uniqueResult())
+						.intValue();
+
 			}
-			
+
 		});
 			}
 	
@@ -450,8 +479,8 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	@Override
-	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page) {
-		return list(new SearchWordByWord(word,page, item_per_page));
+	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page,Integer gloss_id) {
+		return list(new SearchWordByWord(word,page, item_per_page,gloss_id));
 	}
 
 	@Override
@@ -917,6 +946,41 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		});
 	}
 	
+	@Override
+	public Map<String, Object> NavigationItem(final JSONObject elem) {
+
+		return executeOnTransaction(new IExecuteOnTransaction<Map<String, Object>>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public Map<String, Object> execute(Session session) throws JSONException {
+				Map<String, Object> map = new HashMap<String, Object>();
+
+				
+				//get document associated with selected word
+				int sizeW=elem.getJSONObject("word").getJSONArray("selected").length();
+				String listid="";
+				
+				for (int i = 0; i < sizeW; i++) {
+					listid += elem.getJSONObject("word").getJSONArray("selected").getJSONObject(i).getInt("WORD_ID");
+					if (i != sizeW - 1) {
+						listid += ",";
+					}
+				}
+				List<SbiObjects> doclist=new ArrayList<SbiObjects>();
+				if(sizeW>0){
+				 doclist=session.createQuery( "select dw.document.biobjId as biobjId  ,dw.document.label as label "
+						+ "FROM SbiGlDocWlist dw "
+						+ "where dw.id.wordId in ("+listid+") group by dw.document.biobjId  having count(dw.id.wordId) =  "+sizeW)
+						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
+				}
+				
+				map.put("document", (Object)doclist);
+				
+				return map;
+			}
+		});
+
+	}
 	
 
 }

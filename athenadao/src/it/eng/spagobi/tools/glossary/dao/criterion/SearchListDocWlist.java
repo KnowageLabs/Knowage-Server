@@ -18,12 +18,12 @@ public class SearchListDocWlist implements ICriterion<SbiGlDocWlist> {
 
 	@Override
 	public Criteria evaluate(Session session) {
-		Criteria c = session.createCriteria(SbiGlDocWlist.class,"dwlist");
+		Criteria c = session.createCriteria(SbiGlDocWlist.class, "dwlist");
 		if (iddoc != null) {
 			c.createAlias("dwlist.word", "wordWl");
 			c.add(Restrictions.eq("id.documentId", iddoc));
 		}
-//		c.addOrder(Order.asc("word"));
+		// c.addOrder(Order.asc("word"));
 		return c;
 	}
 
