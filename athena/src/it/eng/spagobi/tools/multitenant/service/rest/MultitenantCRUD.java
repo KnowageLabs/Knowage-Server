@@ -292,6 +292,7 @@ public class MultitenantCRUD {
 		try {
 			String saveType = "INSERT";
 			SbiUser newAdminUser = null;
+
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 
 			ITenantsDAO dao = DAOFactory.getTenantsDAO();

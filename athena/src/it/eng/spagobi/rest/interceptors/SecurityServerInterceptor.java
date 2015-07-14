@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.POST;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
@@ -307,6 +308,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 	}
 
 	public boolean accept(Class declaring, Method method) {
-		return true;
+		return !method.isAnnotationPresent(POST.class);
+		// return true;
 	}
 }

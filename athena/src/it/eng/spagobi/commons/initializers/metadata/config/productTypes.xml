@@ -22,5 +22,30 @@
 		<ENGINE label="athenadataminingengine" />
 		<ENGINE label="athenanetworkengine" />
 	</PRODUCT_TYPE>
+	<PRODUCT_TYPE label="AthenaFake">
+		<ENGINE label="athenaofficeengine" />
+		<ENGINE label="athenacompositedoce" />
+		<ENGINE label="athenakpiengine" />
+		<ENGINE label="athenabirtreporteng" />
+		<ENGINE label="athenageoengine" />
+		<ENGINE label="athenajpivotengine" />
+		<ENGINE label="athenajasperreporte" />
+		<ENGINE label="athenaqbeengine" />
+		<ENGINE label="athenatalendengine" />
+		<ENGINE label="athenadataminingengine" />
+		<ENGINE label="athenaaccessibleeng" />
+		<ENGINE label="athenaprocessengine" />
+		<ENGINE label="athenasmartfilteren" />
+		<ENGINE label="athenagisengine" />
+		<ENGINE label="athenaconsoleengine" />
+		<ENGINE label="athenaworksheeteng" />
+		<ENGINE label="athenachartengine" />
+		<ENGINE label="athenatablemobileen" />
+		<ENGINE label="athenachartmobileen" />
+		<ENGINE label="athenacockpitmobile" />
+		<ENGINE label="athenanetworkengine" />
+		<ENGINE label="athenacockpitengine" />
+		<ENGINE label="athenawhatifengine" />
+	</PRODUCT_TYPE>
 	
 </PRODUCT_TYPES>
