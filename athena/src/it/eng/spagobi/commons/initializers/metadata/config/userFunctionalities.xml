@@ -205,4 +205,6 @@
 		name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement"
 		description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="GlossaryManagement"
+		description="GlossaryManagement" />
 </USER_FUNCTIONALITIES>

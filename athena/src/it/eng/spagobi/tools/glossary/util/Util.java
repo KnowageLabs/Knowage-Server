@@ -1,5 +1,7 @@
 package it.eng.spagobi.tools.glossary.util;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 
 import org.json.JSONException;
@@ -22,6 +24,21 @@ public class Util {
 		ret.put("CONTENT_NM", sbiGlContents.getContentNm());
 		ret.put("HAVE_WORD_CHILD", wordChild);
 		ret.put("HAVE_CONTENTS_CHILD", ContentsChild);
+		
+		return ret;
+	}
+
+	public static JSONObject fromDocumentLight(BIObject sbiob)throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("DOCUMENT_ID", sbiob.getId());
+		ret.put("DOCUMENT_NM", sbiob.getLabel());
+		
+		return ret;
+	}
+	public static JSONObject fromDocumentLight(SbiObjects sbiob)throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("DOCUMENT_ID", sbiob.getBiobjId());
+		ret.put("DOCUMENT_NM", sbiob.getLabel());
 		
 		return ret;
 	}

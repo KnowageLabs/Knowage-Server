@@ -12,22 +12,22 @@
 			</md-toolbar>
 
 			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-			 <md-select  style="padding: 0 0 2px 0;" placeholder="Select Gerarchia" ng-model="ctrl.selGlo">
-			 <md-option value="all" selected>Select Gerarchia</md-option>
-       		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
+			 <md-select  style="padding: 0 0 2px 0;" placeholder="Select Gerarchia" ng-model="ctrl.pagination.word.selGlo" >
+			 <md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">Select Gerarchia</md-option>
+       		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 
        		 
        		 <md-input-container md-no-float class="noPadding search-input" >
        		 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       		 <input	ng-model="ctrl.pagination.word.search" ng-keyup="global.WordLike(ctrl.pagination.word)" type="text" placeholder="Search ">
+       		 <input	ng-model="ctrl.pagination.word.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.word)" type="text" placeholder="Search ">
        		 </md-input-container>
 
 				<md-list class="bottomBorder" >
 					<md-list-item dir-paginate="word in ctrl.pagination.word.item |  itemsPerPage:ctrl.pagination.word.item_number "
 						total-items="ctrl.pagination.word.total" current-page="ctrl.pagination.word.current" pagination-id="ctrl.pagination.word.id" 
-						ng-click="ctrl.toggleFilter('words',word)" ng-repeat="n in [1]" class="smallListItem " 
-						ng-class="{selected_item: ctrl.isSelected('words',word)}">
+						ng-click="ctrl.toggleFilter(word)" ng-repeat="n in [1]" class="smallListItem " 
+						ng-class="{selected_item: ctrl.isSelected(word)}">
 							<p class="wrapText">{{ word.WORD | uppercase}}</p>
 					</md-list-item> 
 				</md-list>
@@ -45,7 +45,7 @@
 			<md-toolbar class="md-blue xs-head" style="  border-bottom: 1px solid rgb(210, 210, 210);">
 			<div class="md-toolbar-tools">
 				<div>Elementi</div>
-				   <md-button class="md-primary md-hue-1" style="position:absolute; right:10px;">Cancella selezioni</md-button>
+				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">Cancella selezioni</md-button>
 			</div>
 			</md-toolbar>
 
@@ -63,6 +63,24 @@
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchDoc" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
        					</md-input-container>
+       					
+       					
+       				<md-list class="bottomBorder" >
+					<md-list-item dir-paginate="document in ctrl.pagination.document.item |  itemsPerPage:ctrl.pagination.document.item_number "
+						total-items="ctrl.pagination.document.total" current-page="ctrl.pagination.document.current" pagination-id="ctrl.pagination.document.id" 
+						ng-click="ctrl.toggleFilter(document)" ng-repeat="n in [1]" class="smallListItem " 
+						ng-class="{selected_item: ctrl.isSelected(document)}">
+							<p class="wrapText">{{ document.DOCUMENT_NM | uppercase}}</p>
+					</md-list-item> 
+					</md-list>
+		
+				<div class="box_pagination" layout="row" layout-align="center end">
+					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.document.id"
+					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.document)"></dir-pagination-controls>
+				</div>
+			
+			
+			
 		       		</md-content>
 				</div>
 
@@ -124,6 +142,6 @@
 			</md-content>
 		</div>
 
-{{ctrl.filters}}
+{{ctrl.pagination}}
 	</div>
 </div>
