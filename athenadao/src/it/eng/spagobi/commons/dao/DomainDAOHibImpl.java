@@ -138,8 +138,9 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 					hibQueryEng.setString("valueCd", domain.getValueCd());
 
 					List hibListEng = hibQueryEng.list();
-					if (!hibListEng.isEmpty()) {
-						realResult.add(toDomain(domain));
+					Domain aDomain = toDomain(domain);
+					if (!hibListEng.isEmpty() && !realResult.contains(aDomain)) {
+						realResult.add(aDomain);
 					}
 				}
 
@@ -344,7 +345,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
 	 */
 	@Override
