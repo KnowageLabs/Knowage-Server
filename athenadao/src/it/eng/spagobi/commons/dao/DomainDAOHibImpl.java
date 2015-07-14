@@ -18,8 +18,10 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -103,7 +105,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Domain> realResult = new ArrayList<Domain>();
+		Set<String> alreadyAdded = new HashSet<String>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -139,7 +142,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 					List hibListEng = hibQueryEng.list();
 					Domain aDomain = toDomain(domain);
-					if (!hibListEng.isEmpty() && !realResult.contains(aDomain)) {
+					if (!hibListEng.isEmpty() && alreadyAdded.add(aDomain.getValueName())) {
 						realResult.add(aDomain);
 					}
 				}
