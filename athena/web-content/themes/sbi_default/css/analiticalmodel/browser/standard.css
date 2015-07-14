@@ -288,12 +288,12 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box-folder .hover .schedule{position:absolute;right:50px;bottom:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-scheduler.png) 9px 6px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box-folder .hover .schedule:hover{/*background-position:9px -25px*/background-color:#E4E4E4}
 
-.box{margin:0 2.665245% 25px 0;float:left;cursor:pointer;color:#434343;font-family: cabinregular, sans-serif;width:22%;/*min-height:305px;*/height:auto !important;height:305px;background:#fff;position:relative;border:1px solid #eeeeee;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box{margin:0 2.665245% 25px 0;display: inline-block; vertical-align: top;cursor:pointer;color:#434343;font-family: cabinregular, sans-serif;width:22%;min-height:305px;height:auto !important;height:305px;background:#fff;position:relative;border:1px solid #eeeeee;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;display: inline-block;vertical-align: top;}
 .box.counter-3{margin-right:0}
 .box .box-container{color:#434343;padding:23px 4.832714%;min-height:310px;max-height:310px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-container-browser{color:#434343;padding:23px 4.832714%;min-height:250px;max-height:250px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.box .box-container-browser-synthesis{color:#434343;padding:23px 4.832714%;min-height:220px;max-height:220px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
-.box .box-container-browser-detail{color:#434343;padding:23px 4.832714%;min-height:300px;max-height:300px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .box-container-browser-synthesis{color:#434343;padding:23px 4.832714%;min-height:220px;max-height:220px;/* display:block; */-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
+.box .box-container-browser-detail{color:#434343;padding:23px 4.832714%;min-height:300px;max-height:30px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-container-myanalysis{color:#434343;padding:23px 4.832714%;min-height:300px;display:block;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .box-figure{margin-bottom:5px;width:100%;position:relative}
 .box .box-figure img{width:100%;display:block}
