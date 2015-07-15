@@ -569,11 +569,12 @@ Ext.extend(Sbi.profiling.ManageUsers, Sbi.widgets.ListDetailForm, {
 				    this.changePwdButton.hide();					 
 					
 			    }else{
-//					 userId.setDisabled(false);
-//			    	 userId.getEl().dom.setAttribute('readOnly', false);
 			    	 userId.getEl().dom.removeAttribute('readOnly');
-					 this.detailFieldPwd.setDisabled(false); 
-				   	 this.detailFieldConfirmPwd.setDisabled(false);
+			    	 //for default pwd is disabled. It will be active through the Change Pwd button
+//					 this.detailFieldPwd.setDisabled(false); 
+//				   	 this.detailFieldConfirmPwd.setDisabled(false);
+			    	 this.detailFieldPwd.setDisabled(true); 
+				   	 this.detailFieldConfirmPwd.setDisabled(true);
 					 this.changePwdButton.show();
 				}
 				break;
