@@ -189,7 +189,7 @@ Sbi.qbe.commons.Format = function(){
             };
         }
         
-        , boolean : function(v, format) {
+        , 'boolean' : function(v, format) {
         	format = Ext.apply({}, format || {}, {
 	    		trueSymbol: 'true',
 	    		falseSymbol: 'false',
@@ -209,7 +209,7 @@ Sbi.qbe.commons.Format = function(){
         
         , booleanRenderer : function(format){
             return function(v){
-                return Sbi.qbe.commons.Format.boolean(v, format);
+                return Sbi.qbe.commons.Format['boolean'](v, format);
             };
         }
         
