@@ -138,7 +138,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			if (e instanceof ChartEngineRuntimeException) {
 				// ok it's a known exception
 			} else {
-				new ChartEngineRuntimeException("An unexpected error occured while preprocessing service request", e);
+				throw new ChartEngineRuntimeException("An unexpected error occured while preprocessing service request", e);
 			}
 			String msg = e.getMessage();
 			if (e.getCause() != null && e.getCause().getMessage() != null)
@@ -218,6 +218,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			userId = getUserIdentifier();
 		} catch (Exception e) {
 			logger.debug("User identifier not found");
+			throw new SpagoBIRuntimeException("User identifier not found", e);
 		}
 
 		logger.debug("User id = " + userId);
@@ -226,6 +227,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 				engProfile = GeneralUtilities.createNewUserProfile(userId);
 			} catch (Exception e) {
 				logger.error("Error while creating user profile with user id = [" + userId + "]", e);
+				throw new SpagoBIRuntimeException("Error while creating user profile with user id = [" + userId + "]", e);
 			}
 			setUserProfileInSession(engProfile);
 		}

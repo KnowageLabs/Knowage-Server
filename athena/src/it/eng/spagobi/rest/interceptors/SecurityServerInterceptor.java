@@ -151,7 +151,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			if (t instanceof SpagoBIRuntimeException) {
 				// ok it's a known exception
 			} else {
-				new SpagoBIRuntimeException("An unexpected error occured while preprocessing service request", t);
+				throw new SpagoBIRuntimeException("An unexpected error occured while preprocessing service request", t);
 			}
 			String msg = t.getMessage();
 			if (t.getCause() != null && t.getCause().getMessage() != null)
@@ -213,6 +213,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 				userId = getUserIdentifier();
 			} catch (Exception e) {
 				logger.debug("User identifier not found");
+				throw new SpagoBIRuntimeException("User identifier not found", e);
 			}
 			if (userId != null && userId.equals(engProfile.getUserUniqueIdentifier().toString()) == false) {
 				logger.debug("User is authenticated but the profile store in session need to be updated");
@@ -241,6 +242,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			userId = getUserIdentifier();
 		} catch (Exception e) {
 			logger.debug("User identifier not found");
+			throw new SpagoBIRuntimeException("User identifier not found", e);
 		}
 
 		logger.debug("User id = " + userId);
