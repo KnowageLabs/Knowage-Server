@@ -233,7 +233,7 @@ Ext.define('Sbi.adhocreporting.MyAnalysisMetadataWindow', {
 	 */
     , initGeneralMetadataGridPanel : function() {
                      
-        var generalMetadataGridPanel = new Ext.grid.GridPanel({
+        var generalMetadataGridPanel = new Ext.grid.Panel({
             store : this.generalMetadataStore,
             autoHeight : true,
             columns : [ {
@@ -243,11 +243,41 @@ Ext.define('Sbi.adhocreporting.MyAnalysisMetadataWindow', {
                 dataIndex : 'meta_name'
             }, {
                 header : LN('sbi.execution.metadata.metavalue'),
-                width : 540,
+                width : 515,
                 sortable : true,
                 dataIndex : 'meta_content',
                 renderer: Ext.util.Format.htmlEncode
             } ],
+            listeners: {
+    	        viewready: function (grid) {
+    	            var view = grid.view;
+    	            
+    	            // record the current cellIndex
+    	            grid.mon(view, {
+    	                uievent: function (type, view, cell, recordIndex, cellIndex, e) {
+    	                    grid.cellIndex = cellIndex;
+    	                    grid.recordIndex = recordIndex;
+    	                }
+    	            });
+    	           
+	            	var value = undefined;
+    	            grid.tip = Ext.create('Ext.tip.ToolTip', {
+    	                target: view.el,
+    	                delegate: '.x-grid-cell',
+    	                trackMouse: true,
+    	                renderTo: Ext.getBody(),
+    	                listeners: {
+    	                    beforeshow: function updateTipBody(tip) {    	                    	 
+    	                        if (!Ext.isEmpty(grid.cellIndex) && grid.cellIndex !== -1) {
+    	                        	header = grid.headerCt.getGridColumns()[grid.cellIndex];    	                           
+    	                            value = grid.getStore().getAt(grid.recordIndex).get(header.dataIndex);
+    	                            tip.update(grid.getStore().getAt(grid.recordIndex).get(header.dataIndex));
+    	                        }
+    	                    }
+    	                }
+    	            });
+	            }
+    		},          
             viewConfig : {
                 forceFit : true,
                 scrollOffset : 2
@@ -260,16 +290,21 @@ Ext.define('Sbi.adhocreporting.MyAnalysisMetadataWindow', {
             collapsible : true,
             collapsed : false,
             items : [ generalMetadataGridPanel ],
-            autoWidth : true,
+//            autoWidth : true,
             autoHeight : true
 
         });
     }    
     , initShortTextMetadataGridPanel : function() {
+    	
+    	var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+	        clicksToEdit: 1
+	    });
         
-        var shortTextMetadataGridPanel = new Ext.grid.GridPanel({
+        var shortTextMetadataGridPanel = new Ext.grid.Panel({
             store : this.shortTextMetadataStore,
             autoHeight : true,
+            plugins: [cellEditing],
             columns : [ {
                 header : LN('sbi.execution.metadata.metaname'),
                 width : 100,
@@ -277,11 +312,42 @@ Ext.define('Sbi.adhocreporting.MyAnalysisMetadataWindow', {
                 dataIndex : 'meta_name'
             }, {
                 header : LN('sbi.execution.metadata.metavalue'),
-                width : 540,
+                width : 515,
                 sortable : true,
                 dataIndex : 'meta_content',
-                editor : Sbi.user.functionalities.contains('SaveMetadataFunctionality') ? new Ext.form.TextField({}) : undefined
-            } ],
+                editor : Sbi.user.functionalities.contains('SaveMetadataFunctionality') ? new Ext.form.TextField({}) : undefined,
+              } ],
+              listeners: {
+      	        viewready: function (grid) {
+      	            var view = grid.view;
+      	            
+      	            // record the current cellIndex
+      	            grid.mon(view, {
+      	                uievent: function (type, view, cell, recordIndex, cellIndex, e) {
+      	                    grid.cellIndex = cellIndex;
+      	                    grid.recordIndex = recordIndex;
+      	                }
+      	            });
+      	           
+  	            	
+      	            grid.tip = Ext.create('Ext.tip.ToolTip', {
+      	                target: view.el,
+      	                delegate: '.x-grid-cell',
+      	                trackMouse: true,
+      	                renderTo: Ext.getBody(),
+      	                listeners: {
+      	                    beforeshow: function updateTipBody(tip) {    	
+      	                    	var value = undefined;
+      	                        if (!Ext.isEmpty(grid.cellIndex) && grid.cellIndex !== -1) {
+      	                        	header = grid.headerCt.getGridColumns()[grid.cellIndex];    	                           
+      	                            value = grid.getStore().getAt(grid.recordIndex).get(header.dataIndex);      	                               	                            
+      	                            tip.update(grid.getStore().getAt(grid.recordIndex).get(header.dataIndex));
+      	                        }
+      	                    }
+      	                }
+      	            });
+  	            }
+      		},          
             viewConfig : {
                 forceFit : true,
                 scrollOffset : 2
@@ -304,7 +370,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisMetadataWindow', {
     , initLongTextMetadataTabPanel : function() {
 
         this.longTextMetadataTabPanel = new Ext.TabPanel({
-            activeTab : 0
+            activeTab : 0,
+            enableTabScroll : true
         });
 
         this.longTextMetadataPanel = new Ext.Panel( {
@@ -358,5 +425,8 @@ Ext.define('Sbi.adhocreporting.MyAnalysisMetadataWindow', {
         });
     }    
     
-    
+    , addTooltip: function(value, metadata, record, rowIndex, colIndex, store){
+        metadata.attr = 'ext:qtip="' + value + '"';
+        return value;
+    }
 });		

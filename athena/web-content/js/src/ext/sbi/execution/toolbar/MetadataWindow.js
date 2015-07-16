@@ -18,7 +18,7 @@ Sbi.execution.toolbar.MetadataWindow = function(config) {
 	var defaultSettings = {
 		id : 'win_metadata',
 		title : LN('sbi.execution.metadata'),
-		width : 650,
+		width : 650,		
 		height : 400,
 		plain : true,
 		modal: true,
@@ -264,7 +264,7 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
         if(this.shortTextMetadataStore.getCount() !== 0 ){
 	    	this.add(this.shortTextMetadataPanel);
 	    }
-     
+
         if(this.longTextMetadataStore.getCount() !== 0 ){
     		 this.add(this.longTextMetadataPanel);
     	} 
@@ -294,8 +294,9 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
                 width : 540,
                 sortable : true,
                 dataIndex : 'meta_content',
-                renderer: Ext.util.Format.htmlEncode
-            } ],
+//                renderer: Ext.util.Format.htmlEncode,
+                renderer: this.addTooltip
+            } ],            
             viewConfig : {
                 forceFit : true,
                 scrollOffset : 2
@@ -310,7 +311,6 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             items : [ generalMetadataGridPanel ],
             autoWidth : true,
             autoHeight : true
-
         });
     }
 
@@ -319,6 +319,8 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
         var shortTextMetadataGridPanel = new Ext.grid.EditorGridPanel({
             store : this.shortTextMetadataStore,
             autoHeight : true,
+            autoWidth : true,
+            autoScroll : true,
             columns : [ {
                 header : LN('sbi.execution.metadata.metaname'),
                 width : 100,
@@ -326,10 +328,13 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
                 dataIndex : 'meta_name'
             }, {
                 header : LN('sbi.execution.metadata.metavalue'),
+                id: 'meta_content',
                 width : 540,
                 sortable : true,
                 dataIndex : 'meta_content',
-                editor : Sbi.user.functionalities.contains('SaveMetadataFunctionality') ? new Ext.form.TextField({}) : undefined
+                editor : Sbi.user.functionalities.contains('SaveMetadataFunctionality') ? new Ext.form.TextField({}) : undefined,
+                renderer: this.addTooltip
+                	
             } ],
             viewConfig : {
                 forceFit : true,
@@ -346,15 +351,16 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             collapsed : false,
             items : [ shortTextMetadataGridPanel ],
             autoWidth : true,
-            autoHeight : true
+            autoHeight : true,
+            autoScroll : true
         });
-    }
+    }   
     
     , initLongTextMetadataTabPanel : function() {
 
         this.longTextMetadataTabPanel = new Ext.TabPanel({
-            activeTab : 0
-            //enableTabScroll : true
+            activeTab : 0,            
+            enableTabScroll : true
             //, autoScroll : true
             //, height: 210
             //, frame: false
@@ -366,9 +372,9 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             collapsible : true,
             collapsed : false,
             items : [ this.longTextMetadataTabPanel ],
-            height : 190
-            //width: 620
-            , animCollapse : false
+            height : 190,
+            //width: 620,
+            animCollapse : false
         });
         
     }
@@ -417,6 +423,11 @@ Ext.extend(Sbi.execution.toolbar.MetadataWindow, Ext.Window, {
             scope: this,
             params: params
         });
+    }
+    
+    , addTooltip: function(value, metadata, record, rowIndex, colIndex, store){
+        metadata.attr = 'ext:qtip="' + value + '"';
+        return value;
     }
 
 });
