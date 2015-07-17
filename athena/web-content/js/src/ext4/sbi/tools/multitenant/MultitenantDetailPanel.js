@@ -31,7 +31,7 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		this.services = [];
 		this.initServices();
 		this.initTabs();
-		this.items = [this.detailTab, this.engineTab, this.dsTab, this.productTypeTab];
+		this.items = [this.detailTab, this.dsTab, this.productTypeTab];
 
 		this.addEvents('save');
 		this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[{name:'->'},{name:'save'}]},this);
@@ -61,11 +61,6 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	, initServices: function(baseParams){
 		this.services["getThemes"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'multitenant/themes'
-				, baseParams: baseParams
-		});
-		
-		this.services["getEngines"]= Sbi.config.serviceRegistry.getRestServiceUrl({
-			serviceName: 'multitenant/engines'
 				, baseParams: baseParams
 		});
 		
@@ -114,17 +109,6 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 				dsList[dsCount++] = dsRow;
 		};
 		
-		var engArray = this.enginesList.getStore().getRange();
-		var engList = [];
-		
-		var engCount = 0;
-		for (var i = 0, len = engArray.length; i < len; i++) {
-			var engRow = engArray[i].getData();
-			if(engRow.CHECKED)
-				engList[engCount++] = engRow;
-		};
-		
-		
 		//product types list
 		var productTypesArray = this.productTypesList.getStore().getRange();
 		var productTypesList = [];
@@ -139,7 +123,6 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 		
 		values.PRODUCT_TYPE_LIST = productTypesList;
 		values.DS_LIST = dsList;	
-		values.ENG_LIST = engList;
 
 		return values;
 	}
@@ -198,54 +181,6 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 	        valueField:'VALUE_CHECK',
 	        allowBlank: false
 		});
-		
-		// Engine
-		Ext.define("EngineModel", {
-    		extend: 'Ext.data.Model',
-            fields: ["ID", "NAME", "CHECKED"]
-    	});
-		
-		this.enginesStore = Ext.create('Ext.data.Store', {
-		        model: 'EngineModel',
-		        proxy: {
-		            type: 'ajax',
-		            extraParams : {DOMAIN_TYPE:"DIALECT_HIB"},
-	    			url:  this.services['getEngines'],
-		            reader: {
-		                type: 'json',
-		                root: 'root'
-		            },		         
-		        }
-		    });
-//		this.enginesStore.load();
-		
-		this.enginesList = Ext.create('Ext.grid.Panel', {
-	        store: this.enginesStore,
-	       // autoScroll: true,
-	        scroll: true,
-	        layout: 'fit',
-	        height: 750,
-	        autoScroll: true,
-	        style: 'overflow: hidden;',
-	        columns: [{
-	        	hidden: true,
-	            dataIndex: 'ID'
-	          }, {
-	            text: LN('sbi.generic.name'),
-	            flex: 1,
-	            sortable: true,
-	            dataIndex: 'NAME',
-	            field: {
-	                xtype: 'textfield'
-	            }
-	          }, {
-	        	  xtype: 'checkcolumn',
-	        	  header: '',
-	        	  dataIndex: 'CHECKED',
-	        	  sortable: false,
-	        	  width: 40  
-	          }]
-	    });	
 		
 		// Data Source
 		Ext.define("DSModel", {
@@ -358,14 +293,6 @@ Ext.define('Sbi.tools.multitenant.MultitenantDetailPanel', {
 			items: [this.tenantId, this.tenantName, this.tenantTheme],
 			bodyBorder : false,
 			bodyPadding : 10,
-			border: false
-		});
-		
-		this.engineTab = new Ext.form.Panel({
-			title: 'Engines',
-			items: [this.enginesList],
-//			autoScroll: true,
-			layout: 'fit',
 			border: false
 		});
 		
