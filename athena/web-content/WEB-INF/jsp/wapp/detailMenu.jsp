@@ -71,6 +71,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	sysRoles[i][2] = role.getDescription();
     	
     }
+    
+    String contextTheme = (String)moduleResponse.getAttribute(DetailMenuModule.PATH_THEME);
 %>
 
 <%@page import="it.eng.spagobi.commons.utilities.SpagoBIUtilities"%>
@@ -733,7 +735,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		%>
 		<script language="JavaScript1.2">
 	   	var nameTree = 'treeFunct';
-	   	treeFunct = new dTree('treeFunct', '<%= request.getContextPath() %>');
+	   	// treeFunct = new dTree('treeFunct', '<%= request.getContextPath() %>');
+	 	treeFunct = new dTree('treeFunct', '<%= contextTheme %>');
 	   	treeFunct.config.useSelection = false;
 	   	treeFunct.add(-100,-1,'<%= StringEscapeUtils.escapeJavaScript(nameTree) %>');
 	   	<%
