@@ -285,7 +285,10 @@ public interface IBIObjectDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public List loadAllBIObjects(String filterOrder) throws EMFUserError;
+	
+	public List loadPaginatedSearchBIObjects(String filterOrder,Integer page,Integer item_per_page) throws EMFUserError;
 
+	
 	public List loadPagedObjectsList(Integer offset, Integer fetchSize)throws EMFUserError ;
 	
 	public Integer countBIObjects()throws EMFUserError ;

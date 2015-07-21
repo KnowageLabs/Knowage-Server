@@ -1299,6 +1299,47 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 
+	/* (non-Javadoc)
+	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
+	 */
+	public List loadPaginatedSearchBIObjects(String search,Integer page,Integer item_count) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query hibQuery = aSession.createQuery(" from SbiObjects s where s.label like :search order by s.label");
+			
+			if(page!=null && item_count!=null){
+				hibQuery.setFirstResult((page - 1) * item_count);
+				hibQuery.setMaxResults(item_count);
+			}
+			
+			if(search==null || search.trim().isEmpty()){
+				search="";
+			}
+			List hibList = hibQuery.setString("search", "%" + search + "%").list();
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				realResult.add(toBIObject((SbiObjects) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+	
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
