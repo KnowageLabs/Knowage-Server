@@ -7,7 +7,6 @@ package it.eng.spagobi.engine.chart.interceptor;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engine.chart.ChartEngineRuntimeException;
@@ -16,6 +15,7 @@ import it.eng.spagobi.engine.chart.api.SecurityServiceSupplierFactory;
 import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -73,6 +73,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		try {
 			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
 			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
+			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
 			int index = serviceUrl.indexOf("/", 1);
 			if (index > 0) {
 				serviceUrl = serviceUrl.substring(0, index);
@@ -218,16 +219,15 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 			userId = getUserIdentifier();
 		} catch (Exception e) {
 			logger.debug("User identifier not found");
-			throw new SpagoBIRuntimeException("User identifier not found", e);
 		}
 
 		logger.debug("User id = " + userId);
 		if (StringUtilities.isNotEmpty(userId)) {
 			try {
-				engProfile = GeneralUtilities.createNewUserProfile(userId);
+				SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
+				engProfile = proxy.getUserProfile();
 			} catch (Exception e) {
 				logger.error("Error while creating user profile with user id = [" + userId + "]", e);
-				throw new SpagoBIRuntimeException("Error while creating user profile with user id = [" + userId + "]", e);
 			}
 			setUserProfileInSession(engProfile);
 		}
