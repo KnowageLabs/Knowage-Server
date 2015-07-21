@@ -5,12 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api.v2;
 
+import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
+import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
@@ -23,9 +27,12 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,11 +41,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -260,4 +270,40 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			return DocumentResource.this.getUserProfile();
 		}
 	}
+	
+	@GET
+	@Path("/listDocument")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDocumentSearchandPaginate(@Context HttpServletRequest req) {
+		IBIObjectDAO documentsDao = null;
+		List<BIObject> filterObj = null;
+		String search = req.getParameter("WORD");
+		Integer page =  getNumberOrNull(req.getParameter("Page"));
+		Integer item_per_page =  getNumberOrNull(req.getParameter("ItemPerPage"));
+		try {
+			documentsDao = DAOFactory.getBIObjectDAO();
+			
+			filterObj = documentsDao.loadPaginatedSearchBIObjects(search,page,item_per_page);
+			JSONArray jarr = new JSONArray();
+			if (filterObj != null) {
+				for (Iterator<BIObject> iterator = filterObj.iterator(); iterator
+						.hasNext();) {
+					BIObject sbiob = iterator.next();
+					jarr.put(fromDocumentLight(sbiob));
+				}
+			}
+			String itemFiltered = JsonConverter.objectToJson(filterObj, filterObj.getClass());
+			JSONObject jo=new JSONObject();
+			jo.put("item", jarr);
+			jo.put("itemCount", documentsDao.countBIObjects());
+
+			return jo.toString();
+		} catch (Exception e) {
+			logger.error("Error while getting the list of documents", e);
+			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
 }
