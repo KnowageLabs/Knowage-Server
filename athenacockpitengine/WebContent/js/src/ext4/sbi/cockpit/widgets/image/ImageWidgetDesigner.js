@@ -81,9 +81,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidgetDesigner, Sbi.cockpit.core.Widge
 		        url: Sbi.config.contextName+'/restful-services/1.0/images/listImages',
 		        method: 'GET',
 		        params: {'SBI_EXECUTION_ID': Sbi.config.SBI_EXECUTION_ID,
-		        		'user_id':Sbi.config.userId,
-		        		'ORDER_BY':'name',
-		        		'ASCENDING':true},
+		        		'user_id':Sbi.config.userId},
 		        reader: {
 		            type: 'json',
 		            root: 'data'

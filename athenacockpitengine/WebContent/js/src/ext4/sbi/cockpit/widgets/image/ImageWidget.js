@@ -11,7 +11,6 @@ Sbi.cockpit.widgets.image.ImageWidget = function(config) {
 	Sbi.trace("[ImageWidget.constructor]: IN");
 	// init properties...
 	var defaultSettings = {
-		itemSelected: ''
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.image.ImageWidget', defaultSettings);
