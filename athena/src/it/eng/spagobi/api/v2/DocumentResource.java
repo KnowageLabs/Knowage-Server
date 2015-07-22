@@ -14,6 +14,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.bo.CriteriaParameter;
+import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -29,10 +31,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -41,7 +41,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -52,7 +51,7 @@ import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -66,6 +65,19 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 		List<BIObjectParameter> parameters = document.getBiObjectParameters();
 		return JsonConverter.objectToJson(parameters, parameters.getClass());
+	}
+
+	@GET
+	@Path("/{id}/roles")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getRolesByDocumentId(@PathParam("id") Integer id) {
+		try {
+			List<String> lst = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
+			return JsonConverter.objectToJson(lst, lst.getClass());// SbiExtRoles.class
+		} catch (EMFUserError e) {
+			logger.error("Error while try to retrieve the specified parameter", e);
+			throw new SpagoBIRuntimeException("Error while try to retrieve roles by document id [" + id + "]", e);
+		}
 	}
 
 	@GET
@@ -270,30 +282,43 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			return DocumentResource.this.getUserProfile();
 		}
 	}
-	
+
 	@GET
 	@Path("/listDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDocumentSearchandPaginate(@Context HttpServletRequest req) {
+	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
+			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr, @QueryParam("excludeType") String excludeType) {
+		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> filterObj = null;
-		String search = req.getParameter("WORD");
-		Integer page =  getNumberOrNull(req.getParameter("Page"));
-		Integer item_per_page =  getNumberOrNull(req.getParameter("ItemPerPage"));
+		Integer page = getNumberOrNull(pageStr);
+		Integer item_per_page = getNumberOrNull(itemPerPageStr);
+		List<CriteriaParameter> disjunctions = new ArrayList<CriteriaParameter>();
+		if (label != null) {
+			disjunctions.add(new CriteriaParameter("label", label, Match.ILIKE));
+		}
+		if (name != null) {
+			disjunctions.add(new CriteriaParameter("name", name, Match.ILIKE));
+		}
+		if (descr != null) {
+			disjunctions.add(new CriteriaParameter("descr", descr, Match.ILIKE));
+		}
+		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
+		if (excludeType != null) {
+			restritions.add(new CriteriaParameter("biObjectTypeCode", excludeType, Match.NOT_EQ));
+		}
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
-			
-			filterObj = documentsDao.loadPaginatedSearchBIObjects(search,page,item_per_page);
+
+			filterObj = documentsDao.loadPaginatedSearchBIObjects(page, item_per_page, disjunctions, restritions);
 			JSONArray jarr = new JSONArray();
 			if (filterObj != null) {
-				for (Iterator<BIObject> iterator = filterObj.iterator(); iterator
-						.hasNext();) {
-					BIObject sbiob = iterator.next();
-					jarr.put(fromDocumentLight(sbiob));
+				for (BIObject sbiob : filterObj) {
+					if (ObjectsAccessVerifier.canSee(sbiob, profile))
+						jarr.put(fromDocumentLight(sbiob));
 				}
 			}
-			String itemFiltered = JsonConverter.objectToJson(filterObj, filterObj.getClass());
-			JSONObject jo=new JSONObject();
+			JSONObject jo = new JSONObject();
 			jo.put("item", jarr);
 			jo.put("itemCount", documentsDao.countBIObjects());
 
@@ -305,5 +330,5 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 }

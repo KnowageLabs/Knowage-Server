@@ -36,6 +36,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDA
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -70,7 +71,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -1302,28 +1306,38 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects()
 	 */
-	public List loadPaginatedSearchBIObjects(String search,Integer page,Integer item_count) throws EMFUserError {
+	public List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer item_count, Collection<CriteriaParameter> disjunctions,
+			Collection<CriteriaParameter> restrictions) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<BIObject> realResult = new ArrayList<BIObject>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hibQuery = aSession.createQuery(" from SbiObjects s where s.label like :search order by s.label");
-			
-			if(page!=null && item_count!=null){
+			Criteria hibQuery = aSession.createCriteria(SbiObjects.class);
+			if (disjunctions != null && !disjunctions.isEmpty()) {
+				Disjunction disjunction = Restrictions.disjunction();
+				for (CriteriaParameter cp : disjunctions) {
+					disjunction.add(cp.toHibernateCriterion());
+				}
+				hibQuery.add(disjunction);
+			}
+			if (restrictions != null) {
+				for (CriteriaParameter cp : restrictions) {
+					hibQuery.add(cp.toHibernateCriterion());
+				}
+			}
+			hibQuery.addOrder(Order.asc("label"));
+
+			if (page != null && item_count != null) {
 				hibQuery.setFirstResult((page - 1) * item_count);
 				hibQuery.setMaxResults(item_count);
 			}
-			
-			if(search==null || search.trim().isEmpty()){
-				search="";
-			}
-			List hibList = hibQuery.setString("search", "%" + search + "%").list();
-			Iterator it = hibList.iterator();
+
+			Iterator<SbiObjects> it = hibQuery.list().iterator();
 			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next()));
+				realResult.add(toBIObject(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1332,14 +1346,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 		}
 		logger.debug("OUT");
 		return realResult;
 	}
-	
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
