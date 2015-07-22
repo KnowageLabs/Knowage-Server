@@ -4,11 +4,14 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchAttributeByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchContentsByParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchGlossaryStructureWithWordLike;
+import it.eng.spagobi.tools.glossary.dao.criterion.SearchListDataSetWlist;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchListDocWlist;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWlistByContentId;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWord;
@@ -20,6 +23,7 @@ import it.eng.spagobi.tools.glossary.dao.criterion.loadContentsParent;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDocWlistByDocumentAndWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -885,6 +889,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	}
 
 	
+
 		@Override
 		public List<SbiGlDocWlist> listDocWlist(Integer docwId){
 
@@ -946,6 +951,14 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 		});
 	}
 	
+	
+	
+	@Override
+	public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId){
+
+		return list(new SearchListDataSetWlist(datasetId));
+	}
+	
 	@Override
 	public Map<String, Object> NavigationItem(final JSONObject elem) {
 
@@ -954,9 +967,19 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			@Override
 			public Map<String, Object> execute(Session session) throws JSONException {
 				Map<String, Object> map = new HashMap<String, Object>();
-
+				String tmpSearch="";
+				Integer tmpPage=null;
+				Integer tmp_item_count=null;
 				
-				//get document associated with selected word
+				String type=elem.getString("type");
+				String item="";
+				if(elem.has("item"))item=elem.getString("item");
+				
+				String hql="";
+				String countHql="";
+				Integer v=null;
+				
+				//get selected word
 				int sizeW=elem.getJSONObject("word").getJSONArray("selected").length();
 				String listid="";
 				
@@ -966,15 +989,278 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 						listid += ",";
 					}
 				}
+				
+//#########################################################DOCUMENT############################################################			
+							
+				if(type.compareTo("all")==0 ||	(item.compareTo("document")==0 && (type.compareTo("search")==0 || type.compareTo("pagination")==0)) ||	( type.compareTo("click")==0 && item.compareTo("word")==0 )){
 				List<SbiObjects> doclist=new ArrayList<SbiObjects>();
+			
+				tmpSearch=elem.getJSONObject("document").getString("search");
+				tmpPage= elem.getJSONObject("document").getInt("page");
+				tmp_item_count= elem.getJSONObject("document").getInt("item_number");	
 				if(sizeW>0){
-				 doclist=session.createQuery( "select dw.document.biobjId as biobjId  ,dw.document.label as label "
-						+ "FROM SbiGlDocWlist dw "
-						+ "where dw.id.wordId in ("+listid+") group by dw.document.biobjId  having count(dw.id.wordId) =  "+sizeW)
-						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
+					hql= 
+							"SELECT  "
+							+ "	dw.document.biobjId AS biobjId  ,"
+							+ "	dw.document.label AS label  "
+							+ "FROM "
+							+ "	SbiGlDocWlist dw "
+							+ "WHERE "
+							+ "	dw.id.wordId IN ("+listid+") "
+							+ "	AND dw.document.label LIKE :searchName  "
+							+ "GROUP BY "
+							+ "	dw.document.biobjId HAVING COUNT(dw.id.wordId) =  "+sizeW;
+					
+					countHql= "SELECT"
+							+ " COUNT(*)  "
+							+ "FROM"
+							+ " SbiGlDocWlist dw "
+							+ "WHERE"
+							+ " dw.id.wordId in ("+listid+")"
+							+ " AND dw.document.label like :searchName "
+							+ "GROUP BY dw.document.biobjId  "
+							+ "HAVING COUNT(dw.id.wordId) =  "+sizeW;
+					 v=session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+					}else{
+						hql = "select distinct dw.document.biobjId as biobjId  ,dw.document.label as label "
+								+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName";
+					 countHql= "select count(distinct dw.document.biobjId) "
+								+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName";
+					 v=((Long)session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
+				}
+				Query q=session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						q.setResultTransformer(Transformers.aliasToBean(SbiObjects.class));
+						
+						if(type.compareTo("pagination")==0){
+							q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
+						}else{
+							q.setFirstResult(0).setMaxResults(tmp_item_count);
+						}
+						
+						doclist=q.list();
+				
+					map.put("document", (Object)doclist);
+					map.put("document_size", (Object)v);
+				
+						}
+				
+	//#########################################################DATASET############################################################			
+				if(type.compareTo("all")==0 ||	(item.compareTo("dataset")==0 && (type.compareTo("search")==0 || type.compareTo("pagination")==0)) ||	( type.compareTo("click")==0 && item.compareTo("word")==0 )){
+				List<Object[]> objlist=new ArrayList<Object[]>();
+				List<SbiDataSet> dslist=new ArrayList<SbiDataSet>();
+				
+			
+				tmpSearch=elem.getJSONObject("dataset").getString("search");
+				tmpPage= elem.getJSONObject("dataset").getInt("page");
+				tmp_item_count= elem.getJSONObject("dataset").getInt("item_number");
+				
+				if(sizeW>0){
+						hql = "SELECT DISTINCT"
+								+ " dataset.id.dsId ,"
+								+ " dataset.id.organization ,"
+								+ " dataset.label "
+								+ "FROM "
+								+ " SbiDataSet dataset, "
+								+ " SbiGlDataSetWlist wl "
+								+ "WHERE "
+								+ " dataset.id.dsId = wl.id.datasetId "
+								+ " AND dataset.id.organization = wl.id.organization "
+								+ " AND dataset.active=true"
+								+ " AND wl.id.wordId in (" + listid + ")"
+								+ " AND dataset.label like :searchName "
+								+ "GROUP BY dataset.id.dsId  "
+								+ "HAVING COUNT(wl.id.wordId) =  " + sizeW;
+
+						countHql = "SELECT"
+								+ " COUNT(*) "
+								+ "FROM "
+								+ "	SbiDataSet dataset,"
+								+ " SbiGlDataSetWlist wl "
+								+ "WHERE"
+								+ " dataset.id.dsId = wl.id.datasetId "
+								+ "	AND dataset.id.organization = wl.id.organization "
+								+ "	AND dataset.active=true"
+								+ " AND wl.id.wordId in (" + listid + ") "
+								+ " AND dataset.label like :searchName  "
+								+ "GROUP BY dataset.id.dsId  " + "HAVING "
+								+ "	COUNT(wl.id.wordId) =  " + sizeW;
+
+					v=session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+					}else{
+						hql = "SELECT DISTINCT "
+								+ " dataset.id.dsId  ,"
+								+ " dataset.id.organization ,"
+								+ " dataset.label "
+								+ "FROM"
+								+ " SbiDataSet dataset,"
+								+ " SbiGlDataSetWlist wl "
+								+ "WHERE dataset.id.dsId = wl.id.datasetId"
+								+ " AND dataset.id.organization = wl.id.organization"
+								+ " AND dataset.active=true"
+								+ " AND dataset.label like :searchName ";
+
+						countHql = "SELECT "
+								+ " COUNT(DISTINCT dataset.id.dsId) "
+								+ "FROM "
+								+ " SbiDataSet dataset,"
+								+ " SbiGlDataSetWlist wl "
+								+ "WHERE dataset.id.dsId = wl.id.datasetId"
+								+ " AND dataset.id.organization = wl.id.organization"
+								+ " AND dataset.active=true"
+								+ " AND dataset.label like :searchName ";
+					 v=((Long)session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
+				}
+				Query q=session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+//						q.setResultTransformer(Transformers.aliasToBean(SbiDataSet.class));
+						
+						if(type.compareTo("pagination")==0){
+							q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
+						}else{
+							q.setFirstResult(0).setMaxResults(tmp_item_count);
+						}
+						
+						objlist=q.list();
+						for(Object[] o :objlist){
+							SbiDataSet tmp=new SbiDataSet();
+							tmp.setId(new SbiDataSetId(Integer.parseInt(o[0].toString()),null,(String)o[1]));
+							tmp.setLabel(o[2].toString());
+							dslist.add(tmp);
+						}
+				
+					map.put("dataset", (Object)dslist);
+					map.put("dataset_size", (Object)v);
+				
+						}		
+				
+	//###########################################################WORD############################################################	
+				
+				if(! ((type.compareTo("search")==0 || type.compareTo("pagination")==0) && item.compareTo("word")!=0) && ((item.compareTo("word")==0 && (type.compareTo("search")==0 || type.compareTo("pagination")==0)) || type.compareTo("all")==0 || type.compareTo("click")==0 && item.compareTo("word")!=0 )){
+				List<SbiGlWord> wordList=new ArrayList<SbiGlWord>();
+				List<SbiGlWord> DocWordList=new ArrayList<SbiGlWord>();
+				List<SbiGlWord> DataSetWordList=new ArrayList<SbiGlWord>();
+				v=null;
+				int sizeD=elem.getJSONObject("document").getJSONArray("selected").length();
+				int sizeDS=elem.getJSONObject("dataset").getJSONArray("selected").length();
+				String listDocid="";
+				for (int i = 0; i < sizeD; i++) {
+					listDocid += elem.getJSONObject("document").getJSONArray("selected").getJSONObject(i).getInt("DOCUMENT_ID");
+					if (i != sizeD - 1) {
+						listDocid += ",";
+					}
 				}
 				
-				map.put("document", (Object)doclist);
+				String listDataSetid="";
+				for (int i = 0; i < sizeDS; i++) {
+					listDataSetid += elem.getJSONObject("dataset").getJSONArray("selected").getJSONObject(i).getInt("DATASET_ID");
+					if (i != sizeDS - 1) {
+						listDataSetid += ",";
+					}
+				}
+				
+				tmpSearch=elem.getJSONObject("word").getString("search");
+				tmpPage= elem.getJSONObject("word").getInt("page");
+				tmp_item_count= elem.getJSONObject("word").getInt("item_number");	
+				Integer gloId=null;
+				String addGloToQuery="  WHERE";
+				if(elem.getJSONObject("word").has("GLOSSARY_ID")){
+					gloId=elem.getJSONObject("word").getInt("GLOSSARY_ID");
+					addGloToQuery=",SbiGlWlist wlc WHERE wlc.id.wordId=sl.word.wordId AND wlc.content.glossaryId="+gloId+" and";
+				}
+				
+				if(sizeD>0){
+						hql = "SELECT" + " sl.word.wordId as wordId,"
+								+ " sl.word.word as word "
+								+ "FROM SbiGlDocWlist sl " + addGloToQuery
+								+ " sl.id.documentId in (" + listDocid + ")"
+								+ " AND sl.word.word like :searchName "
+								+ "GROUP BY sl.word.wordId "
+								+ "HAVING count(sl.id.documentId) =  " + sizeD;
+						countHql = "SELECT" + " COUNT(*) " + "FROM "
+								+ "SbiGlDocWlist sl " + addGloToQuery
+								+ " sl.id.documentId in (" + listDocid + ")"
+								+ " AND sl.word.word like :searchName  "
+								+ "GROUP BY sl.word.wordId "
+								+ "HAVING count(sl.id.documentId) =  " + sizeD;
+					int tmpv=session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+					v=(v==null || tmpv<v) ? tmpv: v;
+					Query q=session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+						DocWordList=q.list();
+				}
+				
+				if(sizeDS>0){
+//					hql= "select sl.word.wordId as wordId  ,sl.word.word as word  FROM SbiDataSet dataset,SbiGlDataSetWlist sl "
+//							+ "where dataset.id.dsId = sl.id.datasetId and dataset.id.organization = sl.id.organization and dataset.active=true"
+//							+ " and sl.id.datasetId in ("+listDataSetid+") and sl.word.word like :searchName  group by sl.word.wordId  having count(sl.id.datasetId) =  "+sizeDS;
+					
+					
+					hql= "SELECT "
+							+ "sl.word.wordId as wordId ,"
+							+ "sl.word.word as word "
+							+ "FROM "
+							+ "SbiDataSet dataset,"
+							+ "SbiGlDataSetWlist sl"
+							+ addGloToQuery
+							+ "  dataset.id.dsId = sl.id.datasetId "
+							+ " AND dataset.id.organization = sl.id.organization "
+							+ " AND dataset.active=true"
+							+ " AND sl.id.datasetId in ("+listDataSetid+")"
+							+ " AND sl.word.word like :searchName "
+							+ "GROUP BY sl.word.wordId  "
+							+ "HAVING COUNT(sl.id.datasetId) =  "+sizeDS;
+					
+					countHql= "SELECT"
+							+ " COUNT(*)"
+							+ "FROM "
+							+ " SbiDataSet dataset,"
+							+ " SbiGlDataSetWlist sl "
+							+ addGloToQuery
+							+" dataset.id.dsId = sl.id.datasetId"
+							+ " AND dataset.id.organization = sl.id.organization"
+							+ " AND dataset.active=true"
+							+ " AND sl.id.datasetId in ("+listDataSetid+")"
+							+ " AND sl.word.word like :searchName  "
+							+ "GROUP BY sl.word.wordId "
+							+ "HAVING COUNT(sl.id.datasetId) =  "+sizeDS;
+					 int tmpv=session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+					 v=(v==null || tmpv<v) ? tmpv: v;
+					 Query q=session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+						DataSetWordList=q.list();
+				}
+				
+				if(sizeD==0 && sizeDS==0){
+					wordList=listWordFiltered(tmpSearch,tmpPage,tmp_item_count,gloId);
+					v=wordCount(tmpSearch ,gloId);
+				}else{
+					
+					Set<SbiGlWord> wordSet = new HashSet<SbiGlWord>();
+					wordSet.addAll(DataSetWordList);
+					wordSet.addAll(DocWordList);
+					
+
+					if(!DataSetWordList.isEmpty()|| sizeDS>0)wordSet.retainAll(DataSetWordList);
+					if(!DocWordList.isEmpty()|| sizeD>0)wordSet.retainAll(DocWordList);
+					
+					wordList.addAll(wordSet);
+					
+					//faccio una paginazione dei risultati spezzando l'array
+					int endV=((tmpPage - 1) * tmp_item_count)+tmp_item_count;
+					endV=endV>wordList.size()? wordList.size():endV;
+					if(type.compareTo("pagination")==0){
+						wordList=wordList.subList(((tmpPage - 1) * tmp_item_count),endV );
+					}else{
+					wordList=wordList.subList(0, endV);	
+					}
+				}
+				map.put("word", (Object)wordList);
+				map.put("word_size", (Object)v);
+				
+			}
 				
 				return map;
 			}

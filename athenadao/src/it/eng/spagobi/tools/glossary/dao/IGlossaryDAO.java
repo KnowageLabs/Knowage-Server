@@ -1,8 +1,10 @@
 package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -83,7 +85,7 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public List<SbiGlWord> listWordFromArray(Object[] arr);
 
 	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page,Integer gloss_id);
-
+	
 	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
 
 	public void modifyWord(SbiGlWord word);
@@ -152,6 +154,13 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	
 	public void deleteDocWlist(SbiGlDocWlistId id);
 	
+	
+	
+	
+	//datasetWlist
+		public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId);
+		
+		
 	//navigation
 	public Map<String, Object> NavigationItem(JSONObject  elem);
 	

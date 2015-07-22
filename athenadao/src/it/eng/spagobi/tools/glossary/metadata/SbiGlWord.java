@@ -160,4 +160,34 @@ public class SbiGlWord extends SbiHibernateModel {
 		this.attributes = attributes;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return wordId==null?super.hashCode():wordId.intValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SbiGlWord other = (SbiGlWord) obj;
+		if (wordId == null) {
+			if (other.wordId != null)
+				return false;
+		} else if (!wordId.equals(other.wordId))
+			return false;
+		return true;
+	}
+
+
+	
 }
