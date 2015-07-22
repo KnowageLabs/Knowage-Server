@@ -41,8 +41,8 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	Ext.apply(c, {
         store: this.store
 //        , width: 250
-        , width: 450
-        , height: 280
+        , width: 650
+        , height: 380
         , cls : 'table'
         , hideHeaders: true
 	    , layout: 'fit'
@@ -66,12 +66,21 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 //			            }
 //			          }
 //		          ,
-		        {
-	        	  type: 'close'
-	        	, handler: this.removeAllValues
-	          	, scope: this
-	          	, qtip: LN('sbi.crosstab.attributescontainerpanel.tools.tt.removeall')
-	          }
+			{ // PLUS BUTTON
+				type:'plus'
+				, handler: function(){
+					this.showInLineCalculatedFieldWizard(null);
+				
+				}
+				, scope: this
+				, qtip: LN('sbi.cockpit.widgets.table.tabledesignerpanel.fields.addcalculated')
+			}
+			, {
+				type: 'close'
+				, handler: this.removeAllValues
+				, scope: this
+				, qtip: LN('sbi.crosstab.attributescontainerpanel.tools.tt.removeall')
+			}
 		]
         , listeners: {
 			render: function(grid) { // hide the grid header
@@ -123,7 +132,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'sortable', type: 'boolean'}
 //	      , {name: 'width', type: 'int'}
 	      , {name: 'columnName', type: 'string'}
-	      , {name: 'type', type: 'string'}
+	      , {name: 'columnType', type: 'string'}
 	      , {name: 'typeSecondary', type: 'string'}
 	      , {name: 'decimals', type: 'int'}
 	      , {name: 'scale', type: 'string'}
@@ -133,52 +142,57 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'fontWeight', type: 'string'}
 	      , {name: 'fontColor', type: 'string'}
 	      , {name: 'fontDecoration', type: 'string'}
+	      , {name: 'calculatedFieldFlag', type: 'boolean'}
+	      , {name: 'calculatedFieldFormula', type: 'string'}
 	])
+	
+	, calculatedFieldWizard : null
+	, inLineCalculatedFieldWizard : null
 
-		 , renderTpl1: [
-	                '<a id="button-{id}" class="x-btn x-unselectable x-btn-default-medium x-icon-text-left x-btn-icon-text-left x-btn-default-medium-icon-text-left" tabindex="0" unselectable="on" hidefocus="on" role="button">',
-	                '<span id="{id}-btnWrap" class="{baseCls}-wrap',
-	                     '<tpl if="splitCls"> {splitCls}</tpl>',
-	                     '{childElCls}" unselectable="on">',
-	                     '<span id="{id}-btnEl" class="{baseCls}-button">',
-	                         '<span id="{id}-btnInnerEl" class="{baseCls}-inner {innerCls}',
-	                             '{childElCls}" unselectable="on">',
-	                             '{text}',
-	                         '</span>',
-	                         '<span role="img" id="{id}-btnIconEl" class="{baseCls}-icon-el {iconCls}',
-	                             '{childElCls} {glyphCls}" unselectable="on" style="',
-	                             '<tpl if="iconUrl">background-image:url({iconUrl});</tpl>',
-	                             '<tpl if="glyph && glyphFontFamily">font-family:{glyphFontFamily};</tpl>">',
-	                             '<tpl if="glyph">&#{glyph};</tpl><tpl if="iconCls || iconUrl">&#160;</tpl>',
-	                         '</span>',
-	                     '</span>',
-	                 '</span>',
-	                 // if "closable" (tab) add a close element icon
-	                 '<tpl if="closable">',
-	                     '<span id="{id}-closeEl" class="{baseCls}-close-btn" title="{closeText}" tabIndex="0"></span>',
-	                 '</tpl>'
-	                 , '</a>'
+	, renderTpl1: [
+		'<a id="button-{id}" class="x-btn x-unselectable x-btn-default-medium x-icon-text-left x-btn-icon-text-left x-btn-default-medium-icon-text-left" tabindex="0" unselectable="on" hidefocus="on" role="button">',
+		'<span id="{id}-btnWrap" class="{baseCls}-wrap',
+		     '<tpl if="splitCls"> {splitCls}</tpl>',
+		     '{childElCls}" unselectable="on">',
+		     '<span id="{id}-btnEl" class="{baseCls}-button">',
+		         '<span id="{id}-btnInnerEl" class="{baseCls}-inner {innerCls}',
+		             '{childElCls}" unselectable="on">',
+		             '{text}',
+		         '</span>',
+		         '<span role="img" id="{id}-btnIconEl" class="{baseCls}-icon-el {iconCls}',
+		             '{childElCls} {glyphCls}" unselectable="on" style="',
+		             '<tpl if="iconUrl">background-image:url({iconUrl});</tpl>',
+		             '<tpl if="glyph && glyphFontFamily">font-family:{glyphFontFamily};</tpl>">',
+		             '<tpl if="glyph">&#{glyph};</tpl><tpl if="iconCls || iconUrl">&#160;</tpl>',
+		         '</span>',
+		     '</span>',
+		 '</span>',
+		 // if "closable" (tab) add a close element icon
+		 '<tpl if="closable">',
+		     '<span id="{id}-closeEl" class="{baseCls}-close-btn" title="{closeText}" tabIndex="0"></span>',
+		 '</tpl>'
+		 , '</a>'
 
-	    ]
+    ]
 
-	  	, renderTpl2: ['<table id="{id}" cellspacing="0" class="x-btn x-btn-text-icon"><tbody class="x-btn-small x-btn-icon-small-left">',
-	  	                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
-	  	                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="button" class=" x-btn-text {iconCls}"></button>{text}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
-	  	                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
-	  	                '</tbody></table>']
+  	, renderTpl2: ['<table id="{id}" cellspacing="0" class="x-btn x-btn-text-icon"><tbody class="x-btn-small x-btn-icon-small-left">',
+  	                '<tr><td class="x-btn-tl"><i>&#160;</i></td><td class="x-btn-tc"></td><td class="x-btn-tr"><i>&#160;</i></td></tr>',
+  	                '<tr><td class="x-btn-ml"><i>&#160;</i></td><td class="x-btn-mc"><button type="button" class=" x-btn-text {iconCls}"></button>{text}</td><td class="x-btn-mr"><i>&#160;</i></td></tr>',
+  	                '<tr><td class="x-btn-bl"><i>&#160;</i></td><td class="x-btn-bc"></td><td class="x-btn-br"><i>&#160;</i></td></tr>',
+  	                '</tbody></table>']
 
-	 	, templateArgs: {
-	         innerCls : '',
-	         splitCls : '',
-	         baseCls : Ext.baseCSSPrefix + 'btn',
-	         //iconUrl  : me.icon,
-	         iconCls  : '',//me.iconCls,
-	         //glyph: glyph,
-	         glyphCls: '',
-	         glyphFontFamily: Ext._glyphFontFamily,
-	         text     : '&#160;',
-	         funct : ''
-	     }
+ 	, templateArgs: {
+         innerCls : '',
+         splitCls : '',
+         baseCls : Ext.baseCSSPrefix + 'btn',
+         //iconUrl  : me.icon,
+         iconCls  : '',//me.iconCls,
+         //glyph: glyph,
+         glyphCls: '',
+         glyphFontFamily: Ext._glyphFontFamily,
+         text     : '&#160;',
+         funct : ''
+    }
 
 	, init: function(c) {
 		this.initStore(c);
@@ -188,12 +202,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
 	        fields: ['id', 		'alias', 	'funct', 
-	                 'type', 	'typeSecondary', 'decimals',
+	                 'columnType', 	'typeSecondary', 'decimals',
 	                 'scale', 	'backgroundColor', 'columnWidth',
 	                 'fontSize', 'fontWeight', 		'fontColor', 
-	                 'fontDecoration', 'iconCls', 	'nature',
-	                 'values', 	'valid', 	'sortable', 
-	                 /*'width', */	'columnName'
+	                 'fontDecoration', 'calculatedFieldFlag', 'calculatedFieldFormula', 
+	                 'iconCls',  'nature', 'values', 
+	                 'valid',  'sortable', /*'width', */ 'columnName'
 	                 ]
 		});
 		// if there are initialData, load them into the store
@@ -404,7 +418,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					alias: record.data.alias,
 					funct: record.data.funct,
 					nature: record.data.nature,
-					type: record.data.type,
+					columnType: record.data.columnType,
 					typeSecondary: record.data.typeSecondary,
 					decimals: record.data.decimals,
 					scale: record.data.scale,
@@ -414,6 +428,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					fontWeight: record.data.fontWeight,
 					fontColor: record.data.fontColor,
 					fontDecoration: record.data.fontDecoration,
+					calculatedFieldFlag: record.data.calculatedFieldFlag,
+					calculatedFieldFormula: record.data.calculatedFieldFormula,
 				};
 			
 				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(defFormState);
@@ -451,7 +467,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						}
 					}					
 					
-					var type = formState.type,
+					var columnType = formState.columnType,
 						typeSecondary = formState.typeSecondary,
 						scale = formState.scale,
 						decimals = formState.decimals,
@@ -461,9 +477,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						fontWeight = formState.fontWeight,
 						fontColor = formState.fontColor,
 						fontDecoration = formState.fontDecoration;
+						calculatedFieldFlag = formState.calculatedFieldFlag;
+						calculatedFieldFormula = formState.calculatedFieldFormula;
 					
-					if(type !== undefined && type !== null && type !== "") {
-						record.data.type = type;
+					if(columnType !== undefined && columnType !== null && columnType !== "") {
+						record.data.columnType = columnType;
 					}
 					
 					if(typeSecondary !== undefined && typeSecondary !== null) {
@@ -500,6 +518,14 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					
 					if(fontDecoration !== undefined && fontDecoration != null && fontDecoration != "") {
 						record.data.fontDecoration = fontDecoration;
+					}
+					
+					if(calculatedFieldFlag !== undefined && calculatedFieldFlag != null) {
+						record.data.calculatedFieldFlag = calculatedFieldFlag;
+						
+						if(calculatedFieldFormula !== undefined && calculatedFieldFormula != null) {
+							record.data.calculatedFieldFormula = calculatedFieldFormula;
+						}
 					}
 					
 					thisPanel.getView().refresh();
@@ -545,7 +571,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		}	
 		
 		field.sortable = true;
-//		field.width = 150;
 		if(field.nature == 'measure'){
 			if(field.funct == null || field.funct == ''){
 				field.funct = null;
@@ -633,4 +658,120 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		}
 		return isValid;
 	}
+	
+	, showInLineCalculatedFieldWizard: function(targetRecord) { //copied by SelectGridPanel.js
+		
+		// get all records
+		var records = this.store.queryBy( function(record) {
+			return record;
+		});
+		
+		var fields = new Array();
+		//removes from the fields the calculated fields
+		records.each(function(r) {
+//			if(r.data.type != Sbi.commons.Constants.FIELD_TYPE_INLINE_CALCULATED){
+			if( ! r.data.calculatedFieldFlag ){
+				var field = Ext.apply(r.data, {
+						uniqueName: r.data.id,
+						alias: r.data.alias,
+						text: r.data.alias, 
+						qtip: r.data.entity + ' : ' + r.data.field, 
+						type: 'field', 
+						value: 'fields[\'' + r.data.alias + '\']'
+				});
+				fields.push(field);
+			}
+		});			
+		
+		if(this.inLineCalculatedFieldWizard != null) {
+			this.inLineCalculatedFieldWizard.close();
+		}
+		this.initInLineCalculatedFieldWizard(fields);
+		
+		this.inLineCalculatedFieldWizard.show();
+		this.inLineCalculatedFieldWizard.validationService.params = {
+			fields: (fields.length > 0)? Ext.JSON.encode(fields) : ''
+		};
+
+		this.inLineCalculatedFieldWizard.setExpItems('fields', fields);
+		this.inLineCalculatedFieldWizard.setTargetRecord(targetRecord);
+		this.inLineCalculatedFieldWizard.show();
+	}
+
+	, initInLineCalculatedFieldWizard: function(fields) {
+		
+		fields = (fields && fields != null)? fields : new Array();
+		
+		this.inLineCalculatedFieldWizard = new Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard({
+    		title: LN('sbi.cockpit.widgets.table.inlineCalculatedFields.title'),
+    		expItemGroups: [
+    		    {name:'fields', text: LN('sbi.cockpit.widgets.table.calculatedFields.fields')}, 
+    		    {name:'arithmeticFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.functions.arithmentic')},
+    		    {name:'aggregationFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')},
+    		    {name:'dateFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.datefunctions')}
+    		],
+    		fields: fields,
+    		arithmeticFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
+    		aggregationFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS, // aggregationFunctions,
+    		dateFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
+    		expertMode: false,
+        	scopeComboBoxData :[
+        	     ['STRING','String', LN('sbi.cockpit.widgets.table.calculatedFields.string.type')],
+    	         ['NUMBER', 'Number', LN('sbi.cockpit.widgets.table.calculatedFields.num.type')],
+    	         ['DATE', 'Date', LN('sbi.cockpit.widgets.table.calculatedFields.num.type')]
+    	    ],
+    		validationService: {
+				serviceName: 'VALIDATE_EXPRESSION_ACTION'
+				, baseParams: {contextType: 'query'}
+				, params: null
+			}
+    	});
+		
+//     	this.inLineCalculatedFieldWizard.mainPanel.on('notexpert', this.onPassToExpertMode, this);
+		
+    	this.inLineCalculatedFieldWizard.on('apply', function(win, formState, targetRecord){
+    		var field = {
+				id: formState, 
+				alias: formState.alias, 
+//				type: Sbi.commons.Constants.FIELD_TYPE_INLINE_CALCULATED, 
+				longDescription: formState.expression,
+				calculatedFieldFlag: true,
+				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim()
+			};
+    		
+    		if(targetRecord) {
+    			Ext.apply(targetRecord.data, field);
+    			this.store.fireEvent('datachanged', this.store);
+    		} else {
+    			this.addField({id: formState, 
+    				alias: formState.alias, 
+//    				type: Sbi.commons.Constants.FIELD_TYPE_INLINE_CALCULATED, 
+    				calculatedFieldFlag: true, 
+    				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim(), 
+    				longDescription: formState.expression});
+    		}
+    	}, this);
+	}
+
+//	, onPassToExpertMode: function() {
+//		var alias;
+//		if(this.inLineCalculatedFieldWizard != null &&  this.inLineCalculatedFieldWizard != undefined &&
+//		   this.inLineCalculatedFieldWizard.inputFields !== null && this.inLineCalculatedFieldWizard.inputFields !== undefined){
+//      			alias = this.inLineCalculatedFieldWizard.inputFields.alias.getValue();
+//      	}
+//		this.showCalculatedFieldWizard(null);
+//		this.inLineCalculatedFieldWizard.hide();
+//    	this.calculatedFieldWizard.mainPanel.setCFAlias(alias);
+//    }
+//	
+//	, onPassToNormalMode: function(){
+//		var alias;
+//		if(this.calculatedFieldWizard!=null && this.calculatedFieldWizard != undefined &&
+// 				this.calculatedFieldWizard.inputFields !== null && this.calculatedFieldWizard.inputFields !== undefined){
+// 			alias = this.calculatedFieldWizard.inputFields.alias.getValue();
+// 		}
+// 		this.showInLineCalculatedFieldWizard(null);
+// 		this.calculatedFieldWizard.hide();
+// 		this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
+// 	}
 });

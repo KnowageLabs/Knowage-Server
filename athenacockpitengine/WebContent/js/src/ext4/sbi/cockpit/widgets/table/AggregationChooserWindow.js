@@ -51,7 +51,7 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, fieldAlias: defFormState.alias
 		, funct: defFormState.funct
 		, fieldNature: defFormState.nature
-		, type : defFormState.type
+		, columnType : defFormState.columnType
 		, typeSecondary: defFormState.typeSecondary
 		, decimals: defFormState.decimals
 		, scale: defFormState.scale
@@ -61,6 +61,7 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, fontWeight: defFormState.fontWeight
 		, fontColor: defFormState.fontColor
 		, fontDecoration: defFormState.fontDecoration
+		, calculatedFieldFlag: defFormState.calculatedFieldFlag
 	};
 
 	Ext.apply(this, c);
@@ -182,11 +183,11 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     	
     	var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
     	var typeComboBoxData = [
-            [ elementTypes.TEXT, LN('sbi.qbe.selectgridpanel.type.name.text'), LN('sbi.qbe.selectgridpanel.type.name.text')],
-            [ elementTypes.NUMBER, LN('sbi.qbe.selectgridpanel.type.name.number'), LN('sbi.qbe.selectgridpanel.type.name.number')],
-			[ elementTypes.CURRENCY, LN('sbi.qbe.selectgridpanel.type.name.currency'), LN('sbi.qbe.selectgridpanel.type.name.currency')],
-			[ elementTypes.PERCENTAGE, LN('sbi.qbe.selectgridpanel.type.name.percentage'), LN('sbi.qbe.selectgridpanel.type.name.percentage')],
-			[ elementTypes.DATE, LN('sbi.qbe.selectgridpanel.type.name.date'), LN('sbi.qbe.selectgridpanel.type.name.date')],
+            [ elementTypes.TEXT, LN('sbi.qbe.selectgridpanel.columnType.name.text'), LN('sbi.qbe.selectgridpanel.columnType.name.text')],
+            [ elementTypes.NUMBER, LN('sbi.qbe.selectgridpanel.columnType.name.number'), LN('sbi.qbe.selectgridpanel.columnType.name.number')],
+			[ elementTypes.CURRENCY, LN('sbi.qbe.selectgridpanel.columnType.name.currency'), LN('sbi.qbe.selectgridpanel.columnType.name.currency')],
+			[ elementTypes.PERCENTAGE, LN('sbi.qbe.selectgridpanel.columnType.name.percentage'), LN('sbi.qbe.selectgridpanel.columnType.name.percentage')],
+			[ elementTypes.DATE, LN('sbi.qbe.selectgridpanel.columnType.name.date'), LN('sbi.qbe.selectgridpanel.columnType.name.date')],
 		];
     	
     	var typeComboBoxStore = new Ext.data.SimpleStore({
@@ -255,10 +256,10 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			       			 	this.scaleField
 			       			 ]
 		});
-	   	if(config.type != undefined && config.type != null && config.type != ""){
-	   		this.typeComboBox.select(config.type);
+	   	if(config.columnType != undefined && config.columnType != null && config.columnType != ""){
+	   		this.typeComboBox.select(config.columnType);
 	   		
-	   		this.typeSecondaryField = this.createTypeSecondaryField(config.type);
+	   		this.typeSecondaryField = this.createTypeSecondaryField(config.columnType);
 	   		typeContainerItems.push(this.typeSecondaryField);
 	   		
 	   		if(this.typeSecondaryField != null) {
@@ -269,7 +270,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			}
 	   		}
 	   		
-	   		if(config.type == elementTypes.NUMBER || config.type == elementTypes.CURRENCY) {
+	   		if(config.columnType == elementTypes.NUMBER || config.columnType == elementTypes.CURRENCY) {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			if(config.decimals != undefined 
@@ -291,7 +292,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   	}
     	
 	   	this.typeContainer = Ext.create('Ext.form.FieldContainer', {
-			fieldLabel: 	LN('sbi.qbe.selectgridpanel.type.label'),
+			fieldLabel: 	LN('sbi.qbe.selectgridpanel.columnType.label'),
 			labelWidth:		LABEL_WIDTH,
 			width:			FIELD_WIDTH,
 			layout: 		'hbox',
@@ -481,17 +482,17 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
     	});
 	}
 
-	,createTypeSecondaryField : function(type) {
+	, createTypeSecondaryField : function(columnType) {
 		var field = null;
 		var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
 		
-		if(type == elementTypes.CURRENCY) {
+		if(columnType == elementTypes.CURRENCY) {
 			field = Ext.create('Ext.form.Text', {
 				 name: 'typeSecondaryField',
 				 allowBlank: 	true,
 				 flex:			1,
 			});
-		} else if(type == elementTypes.DATE) {
+		} else if(columnType == elementTypes.DATE) {
 			var dateFormats = [
                 ['d/m/Y', 'dd/mm/YYYY'],
                 ['m/d/Y', 'mm/dd/YYYY'],
@@ -525,7 +526,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			// non dovrebbe essere "formState.funct" ???
 			formState.aggregation= this.aggregationField.getValue();
 		}
-		formState.type= this.typeComboBox.getValue();
+		formState.columnType= this.typeComboBox.getValue();
 		
 		if (this.typeSecondaryField != undefined && this.typeSecondaryField != null) {
 			formState.typeSecondary= this.typeSecondaryField.getValue();

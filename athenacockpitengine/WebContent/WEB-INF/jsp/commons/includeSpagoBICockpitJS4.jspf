@@ -23,6 +23,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/service/RestService.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/service/ServiceReg.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Constants.js'/></script>
 
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/StoreManager.js'/></script>
 
@@ -121,6 +122,9 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/TableWidget.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/AggregationChooserWindow.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/wizard/CalculatedFieldWizard.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/wizard/CalculatedFieldEditorPanel.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/wizard/SaveWindow.js'/></script>
 
 <!-- Cross Tab widget -->
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidget.js'/></script>
