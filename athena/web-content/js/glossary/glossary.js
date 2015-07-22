@@ -86,7 +86,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	    		 item+="&WORD=" + ctr.tmpWordSearch;
 	    	 }
 	    	 ctr.showSearchPreloader = true;
-	        restServices.get("glossary", "listWords", item)
+	        restServices.get("1.0/glossary", "listWords", item)
 			.success(function(data, status, headers, config) {
 				console.log(data)
 				if (data.hasOwnProperty("errors")) {
@@ -235,7 +235,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var def = $q.defer();
 		
 
-			restServices.get("glossary", "listAttribute", "ATTR=" + query)
+			restServices.get("1.0/glossary", "listAttribute", "ATTR=" + query)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("attributeLike non Ottenuti");
@@ -346,7 +346,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			ctr.prevChipsSearch = chip;
 
-			restServices.get("glossary", "listWords", "WORD=" + chip).success(
+			restServices.get("1.0/glossary", "listWords", "WORD=" + chip).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("Words non Ottenuti ");
@@ -409,7 +409,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		}
 
 		showPreloader();
-		restServices.post("glossary", "addWord", ctr.newWord).success(
+		restServices.post("1.0/glossary", "addWord", ctr.newWord).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showToast(data.errors[0].message)
@@ -440,7 +440,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 							showPreloader();
 							restServices
-									.post("glossary", "addContents", elem)
+									.post("1.0/glossary", "addContents", elem)
 									.success(
 											function(data) {
 
@@ -568,7 +568,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						function() {
 							showPreloader();
 							restServices
-									.remove("glossary", "deleteWord",
+									.remove("1.0/glossary", "deleteWord",
 											"WORD_ID=" + ev.WORD_ID)
 									.success(
 											function(data, status, headers,
@@ -640,7 +640,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 							showPreloader();
 							restServices
-									.get("glossary", "getGlossary",
+									.get("1.0/glossary", "getGlossary",
 											"GLOSSARY_ID=" + gl.GLOSSARY_ID)
 									.success(
 											function(data, status, headers,config) {
@@ -686,7 +686,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					
 							showPreloader();
 							restServices
-									.post("glossary", "cloneGlossary",
+									.post("1.0/glossary", "cloneGlossary",
 											gctl.newGloss)
 									.success(
 											function(data, status, headers,
@@ -751,7 +751,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						function() {
 							showPreloader();
 							restServices
-									.remove("glossary", "deleteGlossary",
+									.remove("1.0/glossary", "deleteGlossary",
 											"GLOSSARY_ID=" + ev.GLOSSARY_ID)
 									.success(
 											function(data, status, headers,
@@ -814,7 +814,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.load("sbi.glossary.modify");
 							showPreloader();
 							restServices
-									.get("glossary", "getGlossary",
+									.get("1.0/glossary", "getGlossary",
 											"GLOSSARY_ID=" + gl.GLOSSARY_ID)
 									.success(
 											function(data, status, headers,
@@ -869,7 +869,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							}
 							showPreloader();
 							restServices
-									.post("glossary", "addGlossary",
+									.post("1.0/glossary", "addGlossary",
 											gctl.newGloss)
 									.success(
 											function(data, status, headers,
@@ -989,7 +989,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 								showPreloader();
 								restServices
-										.post("glossary", "addContents", elem)
+										.post("1.0/glossary", "addContents", elem)
 										.success(
 												function(data, status, headers,
 														config) {
@@ -1216,7 +1216,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								
 								showPreloader();
 								restServices
-										.post("glossary","ModifyContentsGlossary", elem)
+										.post("1.0/glossary","ModifyContentsGlossary", elem)
 										.success(function(data, status, headers,config) {
 													if (data.hasOwnProperty("errors")) {
 														showErrorToast(data.errors[0].message);
@@ -1389,7 +1389,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						function() {
 
 							restServices
-									.remove("glossary", "deleteContents", req)
+									.remove("1.0/glossary", "deleteContents", req)
 									.success(
 											function(data, status, headers,
 													config) {
@@ -1497,7 +1497,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									.load("sbi.glossary.content.modify");
 							showPreloader();
 							restServices
-									.get("glossary", "getContent",
+									.get("1.0/glossary", "getContent",
 											"CONTENT_ID=" + parent.CONTENT_ID)
 									.success(
 											function(data, status, headers,
@@ -1552,7 +1552,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 							showPreloader();
 							restServices
-									.post("glossary", "addContents", rn.tmpNW)
+									.post("1.0/glossary", "addContents", rn.tmpNW)
 									.success(
 											function(data, status, headers,
 													config) {
@@ -1671,7 +1671,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	function getAllWords() {
 		showPreloader();
-		restServices.get("glossary", "listWords").success(
+		restServices.get("1.0/glossary", "listWords").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
@@ -1694,7 +1694,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	function getAllGloss() {
 		showPreloader();
-		restServices.get("glossary", "listGlossary").success(
+		restServices.get("1.0/glossary", "listGlossary").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
@@ -1732,7 +1732,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	    	if(ctr.tmpWordSearch!=undefined && ctr.tmpWordSearch.trim()!=""){
 	    		 item+="&WORD=" + ele;
 	    	 }
-			restServices.get("glossary", "listWords", item).success(
+			restServices.get("1.0/glossary", "listWords", item).success(
 					function(data, status, headers, config) {
 
 						if (data.hasOwnProperty("errors")) {
@@ -1760,7 +1760,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	function getWord(ele) {
 		showPreloader();
 		restServices
-				.get("glossary", "getWord", "WORD_ID=" + ele.WORD_ID)
+				.get("1.0/glossary", "getWord", "WORD_ID=" + ele.WORD_ID)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
@@ -1793,7 +1793,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 		restServices
 				.get(
-						"glossary",
+						"1.0/glossary",
 						"listContents",
 						"GLOSSARY_ID=" + GLOSSARY_ID + "&PARENT_ID="
 								+ PARENT_ID)

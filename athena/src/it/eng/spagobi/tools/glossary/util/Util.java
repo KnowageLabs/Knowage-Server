@@ -2,6 +2,8 @@ package it.eng.spagobi.tools.glossary.util;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 
 import org.json.JSONException;
@@ -37,12 +39,30 @@ public class Util {
 		ret.put("DOCUMENT_DESCR", sbiob.getDescription());
 		return ret;
 	}
+	
+	public static JSONObject fromDataSetLight(IDataSet datas)throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("DATASET_ID", datas.getId());
+		ret.put("DATASET_NM", datas.getLabel());
+		ret.put("DATASET_ORG", datas.getOrganization());
+		return ret;
+	}
+	
+	public static JSONObject fromDataSetLight(SbiDataSet sbidataset)
+			throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("DATASET_ID", sbidataset.getId().getDsId());
+		jobj.put("DATASET_NM", sbidataset.getLabel());
+		return jobj;
+	}
+	
 
 	public static JSONObject fromDocumentLight(SbiObjects sbiob) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("DOCUMENT_ID", sbiob.getBiobjId());
 		ret.put("DOCUMENT_NM", sbiob.getLabel());
-
+		ret.put("DOCUMENT_NAME", sbiob.getName());
+		ret.put("DOCUMENT_DESCR", sbiob.getDescr());
 		return ret;
 	}
 }

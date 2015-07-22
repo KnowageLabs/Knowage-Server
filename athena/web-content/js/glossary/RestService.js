@@ -1,11 +1,11 @@
 var Restapp = angular.module('angular_rest', []);
 Restapp.constant('ENDPOINT_URI', 'http://' + hostName + ':' + serverPort
-		+ '/athena/restful-services/1.0/');
+		+ '/athena/restful-services/');
 
 Restapp.service('restServices', function($http, ENDPOINT_URI) {
 
 	var service = this;
-	var path = "glossary";
+	var path = "1.0/glossary";
 
 	function getBaseUrl(endP_path) {
 		endP_path == undefined ? endP_path = path : true;

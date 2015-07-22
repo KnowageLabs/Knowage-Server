@@ -84,25 +84,30 @@
 
 				<div layout="column" class="wordListBox" style="height: 60%;">
 
-					<md-toolbar class="md-blue minihead">
+					<md-toolbar class="md-blue minihead ">
 					<div class="md-toolbar-tools">
 
 						<div>Word</div>
 						<md-button ng-click="ctrl.createNewWord(false)"
-							class="md-fab   md-ExtraMini" aria-label="add word"
+							class="md-fab   md-ExtraMini addButton" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
-							md-font-icon="fa fa-plus fa-2x"
-							style="  margin-left: -5px ; color: black;"></md-icon> </md-button>
+							md-font-icon="fa fa-plus"
+							style="  margin-top: 6px ; color: white;"></md-icon> </md-button>
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding style="padding: 0 8px;"> <md-input-container
-						md-no-float style="padding-bottom: 0;">
-					<md-icon md-font-icon="fa fa-search "
-						style="  padding :4px 0;  color: black;"></md-icon> <input
-						ng-model="searchValue" Style="margin-left: 15px;"
+					<md-content layout-padding  style="padding: 0 8px;"> 
+					
+					
+					<md-input-container class="searchBar" md-no-float >
+					<md-icon md-font-icon="fa fa-search "></md-icon> 
+					<input
+						ng-model="searchValue" 
 						ng-keyup="ctrl.WordLike(searchValue)" type="text"
-						placeholder="Search "> </md-input-container> <md-progress-circular
+						placeholder="Search "> 
+					</md-input-container> 
+						
+						<md-progress-circular
 						md-diameter="20" ng-show="ctrl.showSearchPreloader"
 						class="md-hue-2"
 						style="  left: 50%;  margin-left: -25px; position:absolute "
@@ -177,10 +182,10 @@
 
 						<div>Glossari</div>
 						<md-button ng-click="ctrl.createNewGlossary($event)"
-							class="md-fab   md-ExtraMini" aria-label="add word"
+							class="md-fab   md-ExtraMini addButton" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
-							md-font-icon="fa fa-plus fa-2x"
-							style="  margin-left: -5px ; color: black;"></md-icon> </md-button>
+							md-font-icon="fa fa-plus "
+							style="  margin-top: 6px ; color: white;"></md-icon> </md-button>
 					</div>
 					</md-toolbar>
 

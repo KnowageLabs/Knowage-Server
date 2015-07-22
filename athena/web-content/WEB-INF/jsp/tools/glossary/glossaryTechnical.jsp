@@ -38,8 +38,7 @@
  	<link rel="stylesheet"  href="/athena/js/glossary/angulartree/angular-ui-tree.min.css"> 
  	<script type="text/javascript"  src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script> 
  	
-<!-- 	<script type="text/javascript" -->
-<!-- 		src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script> -->
+	<script type="text/javascript" src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
 	<script type="text/javascript"
 		src="/athena/js/glossary/pagination/dirPagination.js"></script>
 	
@@ -65,7 +64,7 @@
 	
 <div ng-controller="Controller_tec as global" class="h100">
   <md-content  class="glossaryTec">
-    <md-tabs  md-border-bottom class="mini-tabs">
+    <md-tabs  md-border-bottom class="mini-tabs" style="  min-height: 40px;">
      
        <md-tab label="NAVIGAZIONE">
         <md-content class="abs100">

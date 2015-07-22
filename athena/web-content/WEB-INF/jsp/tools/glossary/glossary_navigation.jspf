@@ -1,5 +1,5 @@
 <div ng-controller="Controller_navigation as ctrl" class="h100 navig-tab-content">
-	<div class="preloader" ng-show="ctrl.showPreloader">
+	<div class="preloader" ng-show="ctrl.bigPreloader">
 		<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
 	</div>
 	<div layout="row" layout-wrap class=" h100">
@@ -8,7 +8,9 @@
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
 				<div>Vocaboli</div>
+				<md-progress-circular ng-show="ctrl.pagination.word.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 			</div>
+			
 			</md-toolbar>
 
 			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
@@ -18,17 +20,20 @@
        		 </md-select>
        		 
        		 
-       		 <md-input-container md-no-float class="noPadding search-input" >
+       		 <md-input-container md-no-float class="noPadding searchBar" >
        		 <md-icon md-font-icon="fa fa-search"></md-icon> 
        		 <input	ng-model="ctrl.pagination.word.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.word)" type="text" placeholder="Search ">
+       		 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('word')" class="filter-icon" 
+       		 	ng-class="{ 'not_empty' : (ctrl.pagination.word.selected.length !== 0 || ctrl.pagination.word.search.length !== 0 || ctrl.pagination.word.selGlo!=='---')  }"></md-icon> 
        		 </md-input-container>
 
-				<md-list class="bottomBorder" >
-					<md-list-item dir-paginate="word in ctrl.pagination.word.item |  itemsPerPage:ctrl.pagination.word.item_number "
+				<md-list class="bottomBorder info_button" >
+				 <md-list-item dir-paginate="word in ctrl.pagination.word.item |  itemsPerPage:ctrl.pagination.word.item_number "
 						total-items="ctrl.pagination.word.total" current-page="ctrl.pagination.word.current" pagination-id="ctrl.pagination.word.id" 
 						ng-click="ctrl.toggleFilter(word)" ng-repeat="n in [1]" class="smallListItem " 
 						ng-class="{selected_item: ctrl.isSelected(word)}">
-							<p class="wrapText">{{ word.WORD | uppercase}}</p>
+					<p class="wrapText">{{ word.WORD | uppercase}}</p>
+							 <md-icon class="md-secondary " ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
 					</md-list-item> 
 				</md-list>
 		
@@ -55,22 +60,28 @@
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
 						<div style="text-align: center; width: 100%;">Documenti</div>
+							<md-progress-circular ng-show="ctrl.pagination.document.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+		
 					</div>
 					</md-toolbar>
 
 					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						<md-input-container md-no-float class="noPadding search-input" >
+						<md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.searchDoc" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
-       					</md-input-container>
+       					 <input	ng-model="ctrl.pagination.document.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.document)" type="text" placeholder="Search ">
+       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('document')" class="filter-icon" 
+       		 			ng-class="{ 'not_empty' : (ctrl.pagination.document.selected.length !== 0 || ctrl.pagination.document.search.length !== 0 )  }"></md-icon> 
+       		 </md-input-container>
        					
        					
-       				<md-list class="bottomBorder" >
+       				<md-list class="bottomBorder info_button" >
 					<md-list-item dir-paginate="document in ctrl.pagination.document.item |  itemsPerPage:ctrl.pagination.document.item_number "
 						total-items="ctrl.pagination.document.total" current-page="ctrl.pagination.document.current" pagination-id="ctrl.pagination.document.id" 
 						ng-click="ctrl.toggleFilter(document)" ng-repeat="n in [1]" class="smallListItem " 
 						ng-class="{selected_item: ctrl.isSelected(document)}">
 							<p class="wrapText">{{ document.DOCUMENT_NM | uppercase}}</p>
+							 <md-icon class="md-secondary" ng-click="ctrl.showInfoDOC($event,document.DOCUMENT_NM,document.DOCUMENT_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+				
 					</md-list-item> 
 					</md-list>
 		
@@ -88,14 +99,38 @@
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
 						<div style="text-align: center; width: 100%;">Data set</div>
+					<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+		
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						<md-input-container md-no-float class="noPadding search-input" >
+						<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
+						<md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.searchDataS" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
+       					 <input	ng-model="ctrl.pagination.dataset.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.dataset)" type="text" placeholder="Search ">
+       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('dataset')" class="filter-icon" 
+       		 			ng-class="{ 'not_empty' : (ctrl.pagination.dataset.selected.length !== 0 || ctrl.pagination.dataset.search.length !== 0 )  }"></md-icon> 
        					</md-input-container>
+       					
+       					
+       				<md-list class="bottomBorder info_button" >
+					<md-list-item dir-paginate="dataset in ctrl.pagination.dataset.item |  itemsPerPage:ctrl.pagination.dataset.item_number "
+						total-items="ctrl.pagination.dataset.total" current-page="ctrl.pagination.dataset.current" pagination-id="ctrl.pagination.dataset.id" 
+						ng-click="ctrl.toggleFilter(dataset)" ng-repeat="n in [1]" class="smallListItem " 
+						ng-class="{selected_item: ctrl.isSelected(dataset)}">
+							<p class="wrapText">{{ dataset.DATASET_NM | uppercase}} </p>
+							 <md-icon class="md-secondary" ng-click="ctrl.showInfoDS($event,dataset.DATASET_NM)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+				
+					</md-list-item> 
+					</md-list>
+		
+				<div class="box_pagination" layout="row" layout-align="center end">
+					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.dataset.id"
+					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.dataset)"></dir-pagination-controls>
+				</div>
+			
+			
+			
 		       		</md-content>
 				</div>
 
@@ -107,7 +142,7 @@
 					</md-toolbar>
 
 					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						<md-input-container md-no-float class="noPadding search-input" >
+						<md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchBusCl" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
        					</md-input-container>
@@ -122,7 +157,7 @@
 					</md-toolbar>
 
 					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						 <md-input-container md-no-float class="noPadding search-input" >
+						 <md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
        					 <input	ng-model="ctrl.searchTab" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
        					</md-input-container>

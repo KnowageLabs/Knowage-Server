@@ -2,15 +2,20 @@ package it.eng.spagobi.tools.glossary;
 
 import static it.eng.spagobi.tools.glossary.util.Util.fromContentsLight;
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
+import static it.eng.spagobi.tools.glossary.util.Util.fromDataSetLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -332,8 +337,6 @@ public class GlossaryService {
 		}
 	}
 
-	
-	
 	@POST
 	@Path("/addDocWlist")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -373,8 +376,6 @@ public class GlossaryService {
 		}
 		return jo.toString();
 	}
-	
-	
 	
 	@POST
 	@Path("/addWord")
@@ -606,7 +607,6 @@ public class GlossaryService {
 		}
 	}
 	
-	
 	@SuppressWarnings("unchecked")
 	@POST
 	@Path("/loadNavigationItem")
@@ -623,13 +623,35 @@ public class GlossaryService {
 			JSONObject jo = new JSONObject();
 			Map<String, Object> fin=dao.NavigationItem(requestVal);
 
-			List<SbiObjects> doc=(List<SbiObjects>)fin.get("document");
-			JSONArray ja=new JSONArray();
-			for(SbiObjects tmp: doc){
-				ja.put(fromDocumentLight(tmp));
+			if (fin.containsKey("document")) {
+				List<SbiObjects> doc = (List<SbiObjects>) fin.get("document");
+				JSONArray ja = new JSONArray();
+				for (SbiObjects tmp : doc) {
+					ja.put(fromDocumentLight(tmp));
+				}
+				jo.put("document", ja);
+				jo.put("document_size",(Integer) fin.get("document_size"));
 			}
-			jo.put("document",ja);
 			
+			if (fin.containsKey("word")) {
+				List<SbiGlWord> doc = (List<SbiGlWord>) fin.get("word");
+				JSONArray ja = new JSONArray();
+				for (SbiGlWord tmp : doc) {
+					ja.put(fromWordLight(tmp));
+				}
+				jo.put("word", ja);
+				jo.put("word_size",(Integer) fin.get("word_size"));
+			}
+			
+			if (fin.containsKey("dataset")) {
+				List<SbiDataSet> doc = (List<SbiDataSet>) fin.get("dataset");
+				JSONArray ja = new JSONArray();
+				for (SbiDataSet tmp : doc) {
+					ja.put(fromDataSetLight(tmp));
+				}
+				jo.put("dataset", ja);
+				jo.put("dataset_size",(Integer) fin.get("dataset_size"));
+			}
 			
 			jo.put("Status", "OK");
 			return jo.toString();
@@ -640,7 +662,6 @@ public class GlossaryService {
 		}
 	}
 	
-
 	@GET
 	@Path("/listAttribute")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -753,11 +774,23 @@ public class GlossaryService {
 	public String listDocument(@Context HttpServletRequest req) {
 		try {
 			IBIObjectDAO sbiObjectsDAO = DAOFactory.getBIObjectDAO();
+			
 			IEngUserProfile profile = (IEngUserProfile) req.getSession()
 					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			sbiObjectsDAO.setUserProfile(profile);
-			List<BIObject> lst = sbiObjectsDAO.loadAllBIObjects();
+			String word = req.getParameter("WORD");
+			Integer page = getNumberOrNull(req.getParameter("Page"));
+			Integer itempp = getNumberOrNull(req.getParameter("ItemPerPage"));
+			
+			
+			List<BIObject> lst=null;
+			if ((word != null && !word.trim().isEmpty())) {
+				lst= sbiObjectsDAO.searchBIObjects(word, "CONTAINS", "label", null, null, profile);
+				
+			}else{
+				lst= sbiObjectsDAO.loadAllBIObjects();
+			}
 			JSONArray jarr = new JSONArray();
 			if (lst != null) {
 				for (Iterator<BIObject> iterator = lst.iterator(); iterator
@@ -766,6 +799,15 @@ public class GlossaryService {
 					jarr.put(fromDocumentLight(sbiob));
 				}
 			}
+			if(page!=null && itempp!=null ){
+				JSONObject fin=new JSONObject();
+				fin.put("item", jarr);
+//				fin.put("itemCount", dao.wordCount(word,gloss_id));
+				fin.put("itemCount", 5);
+				
+				return fin.toString();
+			}
+			
 			return jarr.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(),
@@ -773,7 +815,73 @@ public class GlossaryService {
 		}
 	}
 
+	@GET
+	@Path("/listDataSet")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String listDataSet(@Context HttpServletRequest req) {
+		try {
+			IDataSetDAO DAO = DAOFactory.getDataSetDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			DAO.setUserProfile(profile);
+			
+			String word = req.getParameter("WORD");
+			Integer page = getNumberOrNull(req.getParameter("Page"));
+			Integer itempp = getNumberOrNull(req.getParameter("ItemPerPage"));
+			List<IDataSet> lst=null;
+			if ((word != null && !word.trim().isEmpty())) {
+//				lst = DAO.loadFilteredDatasetList(" from SbiDataSet h where h.label like '%"+word+"%'", page, itempp);
+				lst = DAO.loadDataSets();
+				} else {
+				lst = DAO.loadDataSets();
+			}
+
+			JSONArray jarr = new JSONArray();
+			if (lst != null) {
+				for (Iterator<IDataSet> iterator = lst.iterator(); iterator
+						.hasNext();) {
+					IDataSet ds = iterator.next();
+					jarr.put(fromDataSetLight(ds));
+				}
+			}
+			
+			if(page!=null && itempp!=null ){
+				JSONObject fin=new JSONObject();
+				fin.put("item", jarr);
+//				fin.put("itemCount", dao.wordCount(word,gloss_id));
+				fin.put("itemCount", 1);
+				
+				return fin.toString();
+			}
+			
+			return jarr.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
 	
+	
+	@GET
+	@Path("/gnegne")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String prova(@Context HttpServletRequest req) {
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			List<SbiGlDataSetWlist> lst =dao.listDataSetWlist(1);
+			JSONArray jarr = new JSONArray();
+		
+			return jarr.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
 	
 	@GET
 	@Path("/listWords")
@@ -1024,6 +1132,9 @@ public class GlossaryService {
 		jobj.put("WORD", sbiGlWord.getWord());
 		return jobj;
 	}
+	
+
+	
 
 	private static JSONObject fromAttrLight(SbiGlAttribute SbiGlAttribute)
 			throws JSONException {

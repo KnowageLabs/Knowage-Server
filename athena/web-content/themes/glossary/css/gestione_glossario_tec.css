@@ -70,6 +70,15 @@ md-tabs.mini-tabs  md-tabs-content-wrapper{
  background-color:red!important;
 }
 
+.navig-tab-content .boxItemGlo md-list md-list-item button.md-secondary-container{
+  min-width: 0;
+  min-height: 0!important;
+  height: 13px;
+  width: 13px;
+  right: -6px;
+  background-color: transparent !important;
+  border: none;}
+
 .delete_select {
 	position: absolute;
 	right: 10px;
@@ -79,4 +88,8 @@ md-tabs.mini-tabs  md-tabs-content-wrapper{
 	line-height: 10px;
 	color: black!important;
 	font-size: 10px;
+}
+
+.navig-tab-content .searchBar input{
+	margin-right: 8px;
 }

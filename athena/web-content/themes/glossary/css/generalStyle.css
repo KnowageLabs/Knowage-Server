@@ -13,6 +13,16 @@
 	font-size: 12px!important;
 }
 
+.xs-head .md-title, .md-toolbar-tools md-progress-circular{
+	font-size: 12px!important;
+	position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: -17px;
+  margin-right: -11px;
+}
+
+
 .md-button.md-fab.md-ExtraMini {
 	line-height: 25px;
 	width: 25px;
@@ -32,7 +42,7 @@
 }
 
 md-toolbar.minihead {
-	background-color: rgb(232, 232, 232);
+	  background-color: rgb(176, 190, 197);
 	color: rgb(255, 255, 255);
 	height: 50px;
 	min-height: 0px;
@@ -313,4 +323,75 @@ md-input-container.search-input md-icon{
 	margin-top: 2px;
 }
   
+.searchBar{
+	padding: 0;
+  background-color: white;
+  margin-top: 3px;
+  height: 22px;
+}
+.searchBar md-icon{
+	  color: rgb(177, 169, 174);
+  height: 100%;
+  top: 50%;
+  margin-top: -5px;
+}
+
+.searchBar md-icon.filter-icon{
+  left: 100%;
+  margin-left: -10px;
+  display:none;
+}
+.searchBar md-icon.filter-icon.not_empty{
+  color:red;
+  display: block;
+}
+
+.searchBar input{
+	margin: 0px;
+  margin-left: 15px;
+}
+
+.addButton{
+	position: absolute ;
+  right: 11px;
+  background-color: rgb(0, 148, 255)!important;
+}
+
+md-dialog.infoBox{
+	max-height: 100%;
+	width: 50%; 
+	overflow-y: visible;
+}
+.infoBox ul{
+	padding: 0 20px;
+}
+
+.infoBox ul li{
+	display: block;
+}
+
+.infoBox ul li span{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.infoBox ul li p{
+  margin-left: 20px;
+  margin-top: 5px;
+
+	}
+
+.infoBox ul li.sub-list ul{
+  height: 16px;
+  padding: 0;
+  margin-top: 5px;
+  margin-left: 20px;
+  margin-bottom: 13px;
+  margin-right: 0px;}
+
+.infoBox ul li.sub-list ul li	{  
+	float: left;
+  margin-right: 10px;
+  border-bottom: 1px solid;}
+
   

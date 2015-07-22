@@ -292,4 +292,72 @@
 </ol>
 
 </script>
+
+
+<script type="text/ng-template" id="info_word.html">
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" style="color:white">{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+<div layout="column">
+<ul>
+<li><span>{{infCtrl.translate.load("sbi.glossary.word");}}:</span><p> {{infCtrl.info.WORD}} </p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.status");}}:</span><p> {{infCtrl.info.STATE}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.category");}}:</span><p> {{infCtrl.info.CATEGORY}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.description");}}:</span><p>  {{infCtrl.info.DESCR}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.formula");}}:</span><p> {{infCtrl.info.FORMULA}}</p></li>
+<li class="sub-list"><span>{{infCtrl.translate.load("sbi.glossary.link");}}:</span>
+		<ul><li ng-repeat="lnk in infCtrl.info.LINK ">{{lnk.WORD}}</li></ul>
+</li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.attributes");}}:</span><p> {{infCtrl.info.SBI_GL_WORD_ATTR}}</p></li>
+</ul>
+</div>
+</md-dialog-content>
+</md-dialog>
+</script>
+
+<script type="text/ng-template" id="info_document.html">
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" style="color:white">{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+<div layout="column">
+<ul>
+<li><span>{{infCtrl.translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info.label}} </p></li>
+<li><span>{{infCtrl.translate.load("sbi.browser.document.name");}}:</span><p> {{infCtrl.info.name}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.hierarchies.scope");}}:</span><p> {{infCtrl.info.functionalities[0]}}</p></li>
+<li class="sub-list"><span>{{infCtrl.translate.load("sbi.browser.document.profiledVisibility");}}:</span>
+		<ul><li ng-repeat="lnk in infCtrl.info.access ">{{lnk}}</li></ul>
+</li>
+</ul>
+</div>
+</md-dialog-content>
+</md-dialog>
+</script>
+
+<script type="text/ng-template" id="info_dataset.html">
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" style="color:white">{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+<div layout="column">
+<ul>
+<li><span>{{infCtrl.translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info[0].label}} </p></li>
+<li><span>{{infCtrl.translate.load("sbi.browser.document.name");}}:</span><p> {{infCtrl.info[0].name}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.generic.type");}}:</span><p> {{infCtrl.info[0].dsTypeCd}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.ds.dataSource");}}:</span><p>  {{infCtrl.info[0].dataSource}} </p></li>
+</ul>
+</div>
+</md-dialog-content>
+</md-dialog>
+</script>
                 
