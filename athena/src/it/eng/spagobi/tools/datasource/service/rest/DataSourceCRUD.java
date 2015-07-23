@@ -134,7 +134,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveDataSource(@Context HttpServletRequest req) {
-		UserProfile profile = getUserProfile();
+		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		try {
 
