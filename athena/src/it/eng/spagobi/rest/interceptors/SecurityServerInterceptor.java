@@ -9,9 +9,12 @@ import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.proxy.SecurityServiceProxy;
+import it.eng.spagobi.services.rest.AbstractSecurityServerInterceptor;
 import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.user.UserProfileManager;
@@ -49,128 +52,22 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 @Provider
 @ServerInterceptor
 @Precedence("SECURITY")
-public class SecurityServerInterceptor implements PreProcessInterceptor, AcceptedByMethod {
+public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor implements PreProcessInterceptor, AcceptedByMethod {
 
 	static private Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
 
 	@Context
 	private HttpServletRequest servletRequest;
 
-	/**
-	 * Preprocess all the REST requests.
-	 *
-	 * Get the UserProfile from the session and checks if has the grants to execute the service
-	 */
-	public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
-
-		ServerResponse response;
-
-		logger.trace("IN");
-
-		response = null;
-		try {
-			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
-			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
-			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
-
-			String methodName = resourceMethod.getMethod().getName();
-
-			logger.info("Receiving request from: " + servletRequest.getRemoteAddr());
-			logger.info("Attempt to invoke method [" + methodName + "] on class [" + resourceMethod.getResourceClass().getName() + "]");
-
-			// Check for Services that can be invoked externally without user login in SpagoBI
-			ExternalServiceController externalServiceController = ExternalServiceController.getInstance();
-			boolean isExternalService = externalServiceController.isExternalService(serviceUrl);
-			if (isExternalService == true) {
-				// TODO check if here we need to create and put in session a profile for the guest user
-				return null; // we return null to continue with the service execution
-			}
-
-			UserProfile profile = null;
-
-			// Other checks are required
-			boolean authenticated = isUserAuthenticatedInSpagoBI();
-			if (!authenticated) {
-				// try to authenticate the user on the fly using simple-authentication schema
-				profile = authenticateUser();
-			} else {
-				// get the user profile from session
-				profile = (UserProfile) getUserProfileFromSession();
-			}
-
-			if (profile == null) {
-				// TODO check if the error can be processed by the client
-				// throws unlogged user exception that will be managed by RestExcepionMapper
-				// logger.info("User not logged");
-				// throw new LoggableFailure(request.getUri().getRequestUri().getPath());
-				Headers<Object> header = new Headers<Object>();
-				header.add("WWW-Authenticate", "Basic realm='spagobi'");
-				response = new ServerResponse("", 401, header);
-				return response;
-			}
-			// Profile is not null
-			UserProfileManager.setProfile(profile);
-
-			boolean authorized = false;
-
-			// If the resource class is annotated with @ManageAuthorization authorizations are specified using the @UserConstraint annotation
-			if (resourceMethod.getMethod().getDeclaringClass().isAnnotationPresent(ManageAuthorization.class)) {
-				// Functionalities annotation parser
-				CheckFunctionalitiesParser checkFunctionalitiesParser = new CheckFunctionalitiesParser();
-
-				// If the security annotation is not present on the method, this method is public
-				boolean isPublicService = checkFunctionalitiesParser.isPublicService(resourceMethod.getMethod());
-
-				if (isPublicService)
-					authorized = true;
-				else {
-					// authorized = profile.isAbleToExecuteService(serviceUrl);
-					authorized = checkFunctionalitiesParser.checkFunctionalitiesByAnnotation(resourceMethod.getMethod(), profile);
-				}
-			} else { // Old method for authorization (without annotation)
-				try {
-					authorized = profile.isAbleToExecuteService(serviceUrl);
-				} catch (Throwable e) {
-					logger.debug("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service [" + serviceUrl + "]", e);
-					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["
-							+ serviceUrl + "]", e);
-				}
-			}
-
-			if (!authorized) {
-				try {
-					return new ServerResponse(ExceptionUtilities.serializeException("not-enabled-to-call-service", null), 400, new Headers<Object>());
-				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["
-							+ serviceUrl + "]", e);
-				}
-			} else {
-				logger.debug("The user [" + profile.getUserName() + "] is enabled to execute the service [" + serviceUrl + "]");
-			}
-		} catch (Throwable t) {
-			if (t instanceof SpagoBIRuntimeException) {
-				// ok it's a known exception
-			} else {
-				throw new SpagoBIRuntimeException("An unexpected error occured while preprocessing service request", t);
-			}
-			String msg = t.getMessage();
-			if (t.getCause() != null && t.getCause().getMessage() != null)
-				msg += ": " + t.getCause().getMessage();
-			response = new ServerResponse(msg, 400, new Headers<Object>());
-		} finally {
-			logger.trace("OUT");
-		}
-
-		return response;
+	protected ServerResponse notAuthenticated(){
+		/* This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the
+		 * header. The browser will show a popup that requires the user credential.*/
+		Headers<Object> header = new Headers<Object>();
+		header.add("WWW-Authenticate", "Basic realm='spagobi'");
+		return new ServerResponse("", 401, header);
 	}
 
-	public void postProcess(ServerResponse response) {
-		logger.debug("IN");
-		UserProfileManager.unset();
-		logger.debug("OUT");
-	}
-
-	private UserProfile authenticateUser() {
+	protected UserProfile authenticateUser() {
 		UserProfile profile = null;
 
 		logger.trace("IN");
@@ -200,7 +97,7 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		return profile;
 	}
 
-	private boolean isUserAuthenticatedInSpagoBI() {
+	protected boolean isUserAuthenticatedInSpagoBI() {
 
 		boolean authenticated = true;
 
@@ -234,59 +131,19 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 
 		return authenticated;
 	}
-
-	private IEngUserProfile getUserProfileFromUserId() {
-		IEngUserProfile engProfile = null;
-		String userId = null;
+	
+	protected IEngUserProfile createProfile(String userId){
+		SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
+		
 		try {
-			userId = getUserIdentifier();
+			return GeneralUtilities.createNewUserProfile(userId);
 		} catch (Exception e) {
-			logger.debug("User identifier not found");
-			throw new SpagoBIRuntimeException("User identifier not found", e);
+			logger.error("Error while creating user profile with user id = [" + userId + "]", e);
+			throw new SpagoBIRuntimeException("Error while creating user profile with user id = [" + userId + "]", e);
 		}
-
-		logger.debug("User id = " + userId);
-		if (StringUtilities.isNotEmpty(userId)) {
-			try {
-				engProfile = GeneralUtilities.createNewUserProfile(userId);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			setUserProfileInSession(engProfile);
-		}
-
-		return engProfile;
 	}
 
-	/**
-	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
-	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
-	 *
-	 * @param httpRequest
-	 *            The http request
-	 *
-	 * @return the current user unique identified
-	 *
-	 * @throws Exception
-	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
-	 */
-
-	private String getUserIdentifier() throws Exception {
-		logger.debug("IN");
-		String userId = null;
-		try {
-			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
-			userId = userProxy.readUserIdentifier(servletRequest);
-		} finally {
-			logger.debug("OUT");
-		}
-		return userId;
-	}
-
-	// these methods should be abstract because are different in SpagoBI and in the engines. In the first case the object is
-	// set and get from session in the second the object is set and get from a specific context withing session(in particular there should
-	// be one different context for each distinct executions lunched by the same user on the same borwser.
-	private IEngUserProfile getUserProfileFromSession() {
+	protected IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
 		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
 		ioManager.initConetxtManager();
@@ -301,11 +158,9 @@ public class SecurityServerInterceptor implements PreProcessInterceptor, Accepte
 		return engProfile;
 	}
 
-	private void setUserProfileInSession(IEngUserProfile engProfile) {
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();
-		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-
+	protected void setUserProfileInSession(IEngUserProfile engProfile) {
+		super.setUserProfileInSession(engProfile);
+		
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 
