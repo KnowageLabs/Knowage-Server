@@ -99,7 +99,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 		try {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			String id = (String) requestBodyJSON.opt("DATASOURCE_ID");
+			String id = ((Integer) requestBodyJSON.opt("DATASOURCE_ID")).toString();
 			Assert.assertNotNull(id, deleteNullIdDataSourceError);
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error
