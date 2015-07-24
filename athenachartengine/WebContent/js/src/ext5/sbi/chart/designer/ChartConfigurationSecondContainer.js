@@ -20,25 +20,40 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			colorPalette: this.viewModel.data.configModel.data.colorPalette
 		});
 		
+		/**
+		 * This panel is needed for the SUNBURST chart
+		 * (danilo.ristovski@mht.net)
+		 */
 		var toolbarAndTip = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationToolbarAndTip",
+			
 			{
 				viewModel: this.viewModel
 			}
 		); 
 		
+		/**
+		 * This panel is needed for the WORDCLOUD chart
+		 * (danilo.ristovski@mht.net)
+		 */
 		var wordCloudParameters = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationWordcloud",
+			
 			{
 				viewModel: this.viewModel
 			}
 		); 		
 		
+		/**
+		 * These three panels are needed for the PARALLEL chart
+		 * (danilo.ristovski@mht.net)
+		 */
 		var parallelChartLimit = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationParallelLimit",
+			
 			{
 				viewModel: this.viewModel
 			}
@@ -47,6 +62,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		var parallelChartAxesLines = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationParallelAxesLines",
+			
 			{
 				viewModel: this.viewModel
 			}
@@ -55,18 +71,45 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		var parallelChartTooltip = Ext.create
 		(
 			"Sbi.chart.designer.ChartConfigurationParallelTooltip",
+			
 			{
 				viewModel: this.viewModel
 			}
 		);	
 		
+		// (danilo.ristovski@mht.net)
+		var scatterConfiguration = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationScatterConfiguration",
+			
+			{
+				viewModel: this.viewModel
+			}	
+		);
+		
+		
+		/**
+		 * These three panels are needed for the HEATMAP chart
+		 * (danilo.ristovski@mht.net)
+		 */
+		var heatmapChartLegendAndTooltip = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip",
+			
+			{
+				viewModel: this.viewModel
+			}	
+		);
+		
 		this.add(legend);
 		this.add(palette);
+		this.add(heatmapChartLegendAndTooltip);
 		this.add(toolbarAndTip);	
 		this.add(wordCloudParameters);
 		this.add(parallelChartLimit);	
 		this.add(parallelChartAxesLines);
 		this.add(parallelChartTooltip);
+		this.add(scatterConfiguration);
 		
 		if (ChartUtils.enableLegend())
 		{
@@ -115,6 +158,24 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartParallelLimit").hide();
 			this.getComponent("chartParallelAxesLines").hide();
 			this.getComponent("chartParallelTooltip").hide();
+		}
+		
+		if (ChartUtils.enableHeatmapLegendAndTooltip())
+		{
+			this.getComponent("chartHeatmapLegendAndTooltip").show();
+		}
+		else
+		{
+			this.getComponent("chartHeatmapLegendAndTooltip").hide();
+		}
+		
+		if (ChartUtils.enableScatterElements())
+		{
+			this.getComponent("chartScatterConfiguration").show();
+		}
+		else
+		{
+			this.getComponent("chartScatterConfiguration").hide();
 		}
     }
     

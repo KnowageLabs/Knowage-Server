@@ -45,7 +45,7 @@
     
     #foreach($axis in $axisList)
 	 	#if($axis.type == 'Category')
-	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias, $axis))
 	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
 	 		
 	 		#set($xAxisCounter = $xAxisCounter + 1)
@@ -62,32 +62,29 @@
 	#end
 
 {
- chart: 
- {
-  type: '$chartType',
-  dateresult: $dateresult,
-  storeresult: $storeresult,
-  serie: $serieName,
-  columns: $columnNames,
-  height: '$chart.height',
-  width: '$chart.width',
+ 	chart: 
+ 	{
+ 		type: '$chartType',
+	  	height: '$chart.height',
+	  	width: '$chart.width',
   
-  style:
+  		style:
 		{			
 			fontFamily: '$chart.style.fontFamily',
 			fontSize: '$chart.style.fontSize',
 			fontWeight: '$chart.style.fontWeight',
-			backgroundColor: '$chart.style.backgroundColor'
-			
+			backgroundColor: '$chart.style.backgroundColor'			
   		}
- },
- colors: [
+ 	},
+ 
+ 	colors: 
+ 	[
 		#foreach($color in $chart.COLORPALETTE.COLOR)
-		'$color.value', 
+			'$color.value', 
 		#end
     ],
  
- emptymessage:
+ 	emptymessage:
 	{
 		text: '$chart.EMPTYMESSAGE.text',
 		
@@ -128,6 +125,7 @@
 			textAlign: '$chart.SUBTITLE.style.align'
 		}
 	},
+	
 	legend:
 	{
 		style:
@@ -136,37 +134,72 @@
 			symbolWidth: '$chart.LEGEND.style.symbolWidth'
 		}
 	},
+	
 	tooltip:
 	{
 		style:
 		{
+			align: '$chart.TOOLTIP.style.align',
 			fontFamily: '$chart.TOOLTIP.style.fontFamily',
 			fontSize: '$chart.TOOLTIP.style.fontSize',
+			fontWeight: '$chart.TOOLTIP.style.fontWeight',
 			fontColor: '$chart.TOOLTIP.style.color'
 		}
 	},
-	yaxis:
-	{
-		style:
-		{
-			fontFamily: '$yAxisList.Y.style.fontFamily',
-			fontWeight: '$yAxisList.Y.style.fontWeight',
-			fontSize: '$yAxisList.Y.style.fontSize',
-			fontColor: '$yAxisList.Y.style.color'
-		}
-	},
+	
+	
 	xaxis:
-	{
-		style:
-		{
-			fontFamily: '$xAxisList.X.style.fontFamily',
-			fontWeight: '$xAxisList.X.style.fontWeight',
-			fontSize: '$xAxisList.X.style.fontSize',
-			fontColor: '$xAxisList.X.style.color'
-		}
+	{		
+		## We have only one X-axis, hence use the only present key of this axis (the single X-axis key)
+		## (danilo.ristovski@mht.net)
+		
+		#foreach($xAxisKey in $xAxisList.keySet())
+			
+			#set($xAxis = $xAxisList.get($xAxisKey))
+			
+			style:
+			{
+				fontFamily: '$xAxis.style.fontFamily',
+				fontWeight: '$xAxis.style.fontWeight',
+				fontSize: '$xAxis.style.fontSize',
+				fontColor: '$xAxis.style.color'
+			}
+		
+		#end
 	},
+	
+	yaxis:
+	{		
+		## We have only one Y-axis, hence use the only present key of this axis (the single Y-axis key)
+		## (danilo.ristovski@mht.net)
+		
+		#foreach($yAxisKey in $yAxisList.keySet())
+			
+			#set($yAxis = $yAxisList.get($yAxisKey))
+			
+			style:
+			{
+				fontFamily: '$yAxis.style.fontFamily',
+				fontWeight: '$yAxis.style.fontWeight',
+				fontSize: '$yAxis.style.fontSize',
+				fontColor: '$yAxis.style.color'
+			}
+					
+		#end
+	},
+	
+	## Additional data needed for rendering the HEATMAP chart	
+	## (danilo.ristovski@mht.net)	
+	additionalData:
+	{
+		dateresult: $dateresult,
+  		storeresult: $storeresult,
+  		serie: $serieName,
+  		columns: $columnNames
+	},
+	
 	data:
- [
- 	$result
- ]
+ 	[
+ 		$result
+ 	]
 }

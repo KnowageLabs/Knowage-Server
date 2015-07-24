@@ -185,56 +185,66 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            }
 	        }
 	     	]
-	    },{
-	        xtype: 'checkboxfield',
-	        id: 'showLegend',
-	        bind : '{configModel.showLegend}',
-	        hidden: !ChartUtils.enableLegend(),	// *_*
-	        margin: '20 0 0 0',
-	        labelSeparator: '',
-	        fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
 	    }
 		];
-	        
-	    this.add(item);
-	    
-	    
-	    var toolbarOpacMouseOver = Ext.create
+        
+        this.add(item);        
+ 
+        /***
+         * Toolbar opacity mouse over number field that is needed for the
+         * SUNBURST chart type (danilo.ristovski@mht.net)
+         */
+    	var toolbarOpacMouseOver = Ext.create
+     	(
+ 			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */
+             {            
+                	 xtype : 'fieldcontainer',
+                	 layout : 'hbox',
+                	 id: "opacityMouseOver",
+                	 
+                	 defaults : 
+                	 {
+                		 //labelWidth : '100%',
+                		 margin:'5 30 0 0'
+                	 },
+ 	                    	 
+                	 items: 
+            		 [		                    	         
+        	         	{
+        	         		xtype: 'numberfield',
+        	         		bind: '{configModel.opacMouseOver}',		
+        	         		fieldLabel: LN("sbi.chartengine.configuration.opacityMouseOver"),
+        	         		width: "200",
+        	         		maxValue: '100', 	// opacity: 100%
+        	         		minValue: '1',		// opacity: 1%
+        	         		value: "20"			// default opacity: 20%
+    	         		}
+          		]		                     
+             }
+     	);
+ 	    
+ 	    this.add(toolbarOpacMouseOver);
+     	
+     	if (!ChartUtils.enableOpacityMouseOver())
+ 		{
+     		this.getComponent("opacityMouseOver").hide();
+ 		}     	
+     	
+    	var showLegend = Ext.create
     	(
-			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */
-            {            
-               	 xtype : 'fieldcontainer',
-               	 layout : 'hbox',
-               	 id: "opacityMouseOver",
-               	 
-               	 defaults : 
-               	 {
-               		 //labelWidth : '100%',
-               		 margin:'5 30 0 0'
-               	 },
-	                    	 
-               	 items: 
-           		 [		                    	         
-       	         	{
-       	         		xtype: 'numberfield',
-       	         		bind: '{configModel.opacMouseOver}',		
-       	         		fieldLabel: LN("sbi.chartengine.configuration.opacityMouseOver"),
-       	         		width: "200",
-       	         		maxValue: '100', 	// opacity: 100%
-       	         		minValue: '1',		// opacity: 1%
-       	         		value: "20"			// default opacity: 20%
-   	         		}
-	         		]		                     
-            }
+			{
+		        xtype: 'checkboxfield',
+		        id: 'showLegend',
+		        bind : '{configModel.showLegend}',
+		        hidden: ChartUtils.disableShowLegendCheck(),	// (danilo.ristovski@mht.net)
+		        margin: '20 0 0 0',
+		        labelSeparator: '',
+		        fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
+		    }	
     	);
-	    
-	    this.add(toolbarOpacMouseOver);
-    	
-    	if (!ChartUtils.enableOpacityMouseOver())
-		{
-    		this.getComponent("opacityMouseOver").hide();
-		}        
+        	    
+    	this.add(showLegend);    	    	
 	},
 	
-	items : [],
+	items : []
 });

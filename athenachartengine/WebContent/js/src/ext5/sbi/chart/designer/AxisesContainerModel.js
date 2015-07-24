@@ -5,10 +5,12 @@ Ext.define('Sbi.chart.designer.AxisesContainerModel',{
 		
 		'categoryColumn', 'categoryGroupby', 'categoryStacked', 
 		'categoryStackedType', 'categoryOrderColumn', 'categoryOrderType', 
+		'categoryDataType',
 		
 		'serieAxis', 'serieGroupingFunction', 'serieType', 'serieOrderType', 
 		'serieColumn', 'serieColor', 'serieShowValue', 'seriePrecision',
-		'seriePrefixChar', 'seriePostfixChar',
+		'seriePrefixChar', 'seriePostfixChar', 
+		'serieDataType',
 		
 		'serieTooltipTemplateHtml', 'serieTooltipBackgroundColor', 'serieTooltipAlign', 
 		'serieTooltipColor', 'serieTooltipFont', 'serieTooltipFontWeight', 'serieTooltipFontSize'

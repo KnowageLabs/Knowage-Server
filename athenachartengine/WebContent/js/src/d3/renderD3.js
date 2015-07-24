@@ -667,6 +667,8 @@ function renderWordCloud(chartConf){
 		 * will be the color that is going to be assigned to each element. */
 		var colors = {}; 
 		
+		var colorArrangement = new Array();
+		
 		// Total size of all segments; we set this later, after loading the data.
 		var totalSize = 0; 
 		
@@ -724,7 +726,45 @@ function renderWordCloud(chartConf){
 					return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
 				}
 			);
-
+			
+			// NEW
+			
+			/* Dark colors for the chart's first layer items */
+			var storeFirstLayerColor = 
+			[
+			 	"#CC0000", 	// red
+			 	"#003D00", 	// green
+			 	"#151B54", 	// blue	
+			 	"#CC3399",	// purple
+			 	"#808080",	// gray
+			 	"#FF9900"	// orange			 			 	
+		 	];
+			
+			var storeColors = 
+			[
+			 	"red", "green", "blue"
+			 ];
+			
+			var varietiesOfMainColors = 
+			{
+				red: 	["#CC0000", "#FF4747", "#FF7A7A", "#FF9595", "#FFAAAA", "#FFBBBB", "#FFC9C9", "#FFD4D4", "#FFDDDD", "#FFE4E4", "#FFECEC"],
+				green: 	["#003D00", "#003100", "#194619", "#305830", "#456945", "#587858", "#698669", "#789278", "#869D86", "#92A792", "#9DB09D"],
+				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"]
+			};
+			
+//			var rrr = 
+//			[
+//				["#CC0000", "#FF4747", "#FF7A7A", "#FF9595", "#FFAAAA", "#FFBBBB", "#FFC9C9", "#FFD4D4", "#FFDDDD", "#FFE4E4", "#FFECEC"],
+//				["#003D00", "#003100", "#194619", "#305830", "#456945", "#587858", "#698669", "#789278", "#869D86", "#92A792", "#9DB09D"],
+//				["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"]
+//			];
+			
+			var firstLayerPairs = {};
+			var aaaa = aaa(nodes);
+			var iii = 0;
+			
+			var counter = 0;
+			
 			var path = vis.data([json]).selectAll("path")
 				.data(nodes)
 				.enter().append("svg:path")
@@ -735,16 +775,50 @@ function renderWordCloud(chartConf){
 				(
 						"fill", 
 						
-						function(d) 
-						{   	    	
+						function(d,i) 
+						{   	    								
 							  /* Go through the array of key-value pairs (elements of the chart and their color)
 							   * and check if there is unique element-color mapping. */
-							  if (colors[d.name] == undefined && d.name != "root")
-							  {
-								  var numberOfColor = Math.floor(Math.random()*children.length);
-								  colors[d.name] = children[numberOfColor];
-							  }
-						
+//							  if (colors[d.name] == undefined && d.name != "root")
+//							  {
+//								  var numberOfColor = Math.floor(Math.random()*children.length);
+//								  colors[d.name] = children[numberOfColor];								  
+//							  }
+							  
+							  // NEW ***
+							  
+							  /* If current node is not a root */
+							  if (d.name != "root")
+							  {								  
+								  /* If current node's parent name is root
+								   * (if this node is part of the first layer) */
+								  					  
+								  if (d.parent.name=="root")
+								  {
+									  colors[d.name] = varietiesOfMainColors[storeColors[iii]][0];									 
+									  iii++;
+								  }		
+								  else
+								  {
+//									  console.log(d);
+//									  console.log(d.layer);
+//									  console.log(varietiesOfMainColors);
+//									  
+//									  console.log(aaaa);									  
+//									  console.log(aaaa.indexOf(d.firstLayerParent));
+//									  
+//									  
+//									  //console.log(rrr);
+//									  console.log(storeColors);
+									  colors[d.name] = varietiesOfMainColors[storeColors[aaaa.indexOf(d.firstLayerParent)]][d.layer+1];
+								  }
+								  
+								  d['color'] = colors[d.name];
+							  }		
+							  
+//							  console.log(colors);
+//							  console.log(colors[d.name]);
+							  colorArrangement[i] = colors[d.name];
 							  return colors[d.name];	  
 						}
 				)					
@@ -760,6 +834,34 @@ function renderWordCloud(chartConf){
 				totalSize = path.node().__data__.value;
 		 };
 		
+		 function aaa(nodes)
+		 {			 
+			 /* Dark colors for the chart's first layer items */
+				var storeFirstLayerColor = 
+				[
+				 	"#CC0000", 	// red
+				 	"#003D00", 	// green
+				 	"#151B54", 	// blue	
+				 	"#CC3399",	// purple
+				 	"#808080",	// gray
+				 	"#FF9900"	// orange			 			 	
+			 	];
+			 
+				var arrayOfParents = [];
+				
+			 for (var i=0; i<nodes.length; i++)
+			 {
+				 if (nodes[i].parent && nodes[i].parent.name=="root")
+				 {
+					 arrayOfParents.push(nodes[i].name);
+				 }
+			 }
+			 
+//			 console.log(arrayOfParents);
+			 
+			 return arrayOfParents;
+		 };
+		 
 		// Fade all but the current sequence, and show it in the breadcrumb trail.
 		function mouseover(d) 
 		{	
@@ -931,9 +1033,11 @@ function renderWordCloud(chartConf){
 		  // Add breadcrumb and label for entering nodes.
 		  var entering = g.enter().append("svg:g");
 		
+		  /* TODO: see how could possible be realized that breadcrumb items
+		   * get different color for different levels, even if the same name. */
 		  entering.append("svg:polygon")
 		      .attr("points", breadcrumbPoints)
-		      .style("fill", function(d) { return colors[d.name]; });
+		      .style("fill", function(d) { return d.color; });
 		  
 		  entering.append("svg:text")
 		      .attr("x", (b.w + b.t) / 2)
@@ -1045,11 +1149,12 @@ function renderWordCloud(chartConf){
 		  /* Total number of data received when requesting dataset. */
 		  var dataLength = jsonObject.length;
 		  
+		  var counter = 0;
 		  for (var i = 0; i < dataLength; i++) 
 		  {
 		    //var sequence = jsonObject[i].column_1;
 		   // var size =+ jsonObject[i].column_2;
-			  
+			  //console.log(i);
 			  var sequence = jsonObject[i].sequence;
 			  var size =+ jsonObject[i].value;
 			  		
@@ -1064,10 +1169,13 @@ function renderWordCloud(chartConf){
 		     * data. */
 		    var parts = sequence.split("-");
 		    
-		    var currentNode = root;
+		    var currentNode = root;		    
 		    
 		    for (var j = 0; j < parts.length; j++) 
 		    {
+		    	currentNode["layer"] = j-1;
+	    		currentNode["firstLayerParent"] = parts[0];	    
+	    		
 		    	var children = currentNode["children"];
 		    	var nodeName = parts[j];
 		    	var childNode;
@@ -1078,7 +1186,7 @@ function renderWordCloud(chartConf){
 		    		var foundChild = false;
 		    		
 		    		for (var k = 0; k < children.length; k++) 
-		    		{
+		    		{				    			
 		    			if (children[k]["name"] == nodeName) 
 		    			{
 		    				childNode = children[k];
@@ -1089,20 +1197,25 @@ function renderWordCloud(chartConf){
 		    		
 		    		// If we don't already have a child node for this branch, create it.
 		    		if (!foundChild) 
-		    		{
-		    			childNode = {"name": nodeName, "children": []};
+		    		{		    			
+		    			childNode = {"name": nodeName, "children": []};		    	
 		    			children.push(childNode);
 		    		}
 	    		
 		    		currentNode = childNode;
+		    		
+		    		currentNode["firstLayerParent"] = parts[0];
+		    		currentNode["layer"] = j-1;
 		    	} 
 		    	
 		    	else 
 		    	{
 				 	// Reached the end of the sequence; create a leaf node.
 				 	childNode = {"name": nodeName, "size": size};
+				 	childNode["layer"] = j;
+				 	childNode["firstLayerParent"] = parts[0];
 				 	children.push(childNode);
-		    	}
+		    	}	    		
 		    
 		    } 	// inner for loop
 		    
@@ -1443,7 +1556,7 @@ function renderWordCloud(chartConf){
 	      .attr("border-collapse","collapse")
 	     .append("tr")
 	      .style("height","30px")
-	      .selectAll("th")
+	     .selectAll("th")
 	     .data(tableColumns).enter()
 	     .append("th")
 	     .text(function(d){return d;});

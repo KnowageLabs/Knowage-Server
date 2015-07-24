@@ -9,7 +9,6 @@
 
 #set($rows = $data.rows) ## data in table rows
 
-
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
 
@@ -142,11 +141,12 @@
         align: '$chart.LEGEND.style.align',
         #end
         
-        #if ($chart.LEGEND.floating)
+        
+        #if ($chart.LEGEND.floating && $chart.LEGEND.floating != '')
         floating: $chart.LEGEND.floating,
         #end
         
-    	#if($chart.LEGEND.floating == 'true')
+    	#if($chart.LEGEND.floating && $chart.LEGEND.floating == 'true')
     	
 	        #if($chart.LEGEND.x != '')
 	        x: $chart.LEGEND.x,
@@ -157,6 +157,7 @@
 	    	#end
     	
     	#end
+    	   	
         
         #if($chart.LEGEND.style.backgroundColor != '')
         backgroundColor: '$chart.LEGEND.style.backgroundColor',
@@ -249,12 +250,14 @@
 		 #if( $xAxis.startOnTick )
 		 	startOnTick: $xAxis.startOnTick,
 		 #end
+		 
 		 #if( $xAxis.endOnTick )
 		 	endOnTick: $xAxis.endOnTick,
 		 #end
+		 
 		 #if( $xAxis.showLastLabel )
 		 	showLastLabel: $xAxis.showLastLabel,
-		 #end
+		 #end		 
 			    
 		 type: 'category',
 	 },
@@ -314,7 +317,7 @@
             },
         	
         	#if($yAxis.MAJORGRID)
-		        #if($yAxis.MAJORGRID.interval)
+		        #if($yAxis.MAJORGRID.interval != '')
 	        		tickInterval: $yAxis.MAJORGRID.interval,
 			    #end
 			    
@@ -338,7 +341,7 @@
         	#end
         	
         	#if($yAxis.MINORGRID)
-		        #if($yAxis.MINORGRID.interval)
+		        #if($yAxis.MINORGRID.interval != '')
 	        	minorTickInterval: $yAxis.MINORGRID.interval,
 			    #end
 			    
@@ -353,13 +356,14 @@
 	        		#set($convertedMinorTpeline = 'Dot')
 	    		#elseif($typeline == 'solid')
 	        		#set($convertedMinorTpeline = 'Solid')
+	        	#else
+	        		#set($convertedMinorTpeline = $typeline)
 	        	#end
 	        	minorGridLineDashStyle: '$convertedMinorTpeline',
         	#end
         	
-        	#if($yAxis.position == 'right')
-        	opposite: true,
-        	#end
+        	## (by danilo.ristovski@mht.net)
+        	opposite: $yAxis.style.opposite
         	
         },
         #end

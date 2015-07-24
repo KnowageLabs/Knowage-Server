@@ -43,11 +43,16 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         });
 		this.add(dim);
         
+		/**
+		 * Added for the Heatmap (danilo.ristovski@mht.net)
+		 */
+		if(this.config.bindFontAlign) {
 		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
         	viewModel: this.viewModel,
         	bind : this.config.bindFontStyle
         });
 		this.add(style);
+		}
 		
 		if(this.config.bindBorderWidth){
 			var borderWidth = Ext.create('Ext.form.field.Number',{

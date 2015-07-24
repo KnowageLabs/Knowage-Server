@@ -21,7 +21,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		storePool: [],
 		
 		yAxisPool: [],		
-				
+		
 		resetContainers: function() {
 			var yAxisPool = this.yAxisPool;
 			var storePool = this.storePool;
@@ -52,9 +52,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			serieStylePopup.show();
 		},
 
-		createChartColumnsContainer: function(idAxisesContainer, id, panelWhereAddSeries, isDestructible, 
-				dragGroup, dropGroup, axis, axisTitleTextboxHidden, gearHidden, plusHidden) {
+		createChartColumnsContainer: function(config) {
 
+			// (danilo.ristovski@mht.net)
+			var idAxisesContainer = config.idAxisesContainer;
+			var id = config.id;
+			var panelWhereAddSeries = config.panelWhereAddSeries;
+			var isDestructible = config.isDestructible;
+			var dragGroup = config.dragGroup;
+			var dropGroup = config.dropGroup;
+			var axis = config.axis;
+			var axisTitleTextboxHidden = config.axisTitleTextboxHidden ? config.axisTitleTextboxHidden : false;
+			var gearHidden = config.gearHidden ? config.gearHidden : false;
+			var plusHidden = config.plusHidden ? config.plusHidden : false;
+			
 			if( ChartColumnsContainerManager.instanceCounter == ChartColumnsContainerManager.COUNTER_LIMIT) {
 				Ext.log('Maximum number of ChartColumnsContainer instances reached');
 				return null;
@@ -62,7 +73,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	    	
 			ChartColumnsContainerManager.instanceIdFeed++;
 	    	var idChartColumnsContainer = (id && id != '')? id: 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
-	    	
+	    		    	
 	    	ChartColumnsContainerManager.instanceCounter++;
 	    	
 	    	var axisAlias = (axis && axis != null)? axis.alias: idChartColumnsContainer;
@@ -79,6 +90,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
+				
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -115,26 +127,54 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						dropGroup: dropGroup
 					},
 					listeners: {
-						beforeDrop: function(node, data, dropRec, dropPosition) {					
+						beforeDrop: function(node, data, dropRec, dropPosition) {	
 							
-							if(data.view.id != this.id) {
-								data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
-								if( !data.records[0].get('serieGroupingFunction')) {
-									data.records[0].set('serieGroupingFunction', 'SUM');
-								}
-								if( !data.records[0].get('axisName')) {
-									var serieColumn = data.records[0].get('serieColumn', 'SUM');
-									data.records[0].set('axisName', serieColumn);
-									
-									// *_*
-									if(Ext.getCmp("chartParallelLimit").hidden == false && 
-											Ext.getCmp("chartParallelLimit") != undefined && 
-												Ext.getCmp("chartParallelLimit") != null)
-									{
-										Ext.getCmp("chartParallelLimit").addItem(data.records[0]);
-									}										
-								}
+							/**
+							 * Prevent user from defining multiple serie items; if this part is 
+							 * not provided, error appears
+							 * (danilo.ristovski@mht.net)
+							 */
+							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
+													chartType != 'TREEMAP' && chartType != 'HEATMAP';
+								
+							/**
+  	  						 * Prevent taking more than one serie from the container when we have
+  	  						 * one of these chart types.
+  	  						 * (danilo.ristovski@mht.net)
+  	  						 */
+  	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
+									chartType == 'TREEMAP' || chartType == 'HEATMAP'))
+  							{
+  	  							return false;
+  							}  
+							
+							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0))
+							{
+								// *_* The original code
+								if(data.view.id != this.id) {
+									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
+									if( !data.records[0].get('serieGroupingFunction')) {
+										data.records[0].set('serieGroupingFunction', 'SUM');
+									}
+									if( !data.records[0].get('axisName')) {
+										var serieColumn = data.records[0].get('serieColumn', 'SUM');
+										data.records[0].set('axisName', serieColumn);
+										
+										// (danilo.ristovski@mht.net)								
+										if(Ext.getCmp("chartParallelLimit").hidden == false && 
+												Ext.getCmp("chartParallelLimit") != undefined && 
+													Ext.getCmp("chartParallelLimit") != null)
+										{
+											Ext.getCmp("chartParallelLimit").addItem(data.records[0]);
+										}										
+									}
+								}								
 							}
+							else 
+							{
+								return false;
+							}								
 						}
 					}
 				},
@@ -146,9 +186,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				}, 
 				tools:[
 				       Ext.create('Ext.form.TextField', {
+				    	   
 				    	id: idChartColumnsContainer + '_TitleTextfield',
 				    	
-				    	// *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+				    	/**
+				    	 * True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+				    	 * (danilo.ristovski@mht.net)
+				    	 */ 
 				    	hidden: axisTitleTextboxHidden,	
 				    	
 						flex: 10,
@@ -165,8 +209,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					{
 					    type:'gear',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
-					    
-					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+					    id: "stylePopupLeftAxis_"+idChartColumnsContainer, // (danilo.ristovski@mht.net)
+					    // True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts (danilo.ristovski@mht.net)
 					    hidden: gearHidden,	
 					    
 					    flex: 1,
@@ -179,6 +223,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    			axisData: thisChartColumnsContainer.getAxisData(),
 					    			isYAxis: true
 					    		});
+					    				
+					    		/**
+					    		 * (danilo.ristovski@mht.net)
+					    		 */
+						    	if (chartType.toUpperCase() == 'HEATMAP')
+					    		{
+						    		axisStylePopup.getComponent('titleFieldSetForAxis').hide();
+						    		axisStylePopup.getComponent('majorGridFieldSetYAxis').hide();
+						    		axisStylePopup.getComponent('minorGridFieldSetYAxis').hide();
+					    		}						    		
 					    		
 					    		axisStylePopup.show();
 					    	}
@@ -190,18 +244,21 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					{
 					    type:'plus',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
-					    
+					    id: "plusLeftAxis_"+idChartColumnsContainer, // (danilo.ristovski@mht.net)
 					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
+					    	
+					    	
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+					    						    	
 					    	if(chartType.toUpperCase() != 'PIE') {
 					    		if (!panelWhereAddSeries.isVisible()) {
 					    			panelWhereAddSeries.setVisible(true);
 					    		}
-					    		
+					    	
 					    		ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
 					    	}
 					    	
@@ -254,8 +311,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						flex: 1,
   						align : 'center',
 						xtype: 'actioncolumn',
+						id: "actionColumnLeftAxis_"+idChartColumnsContainer,
 						items: [{
 							icon: '/athena/themes/sbi_default/img/createTemplate.jpg',
+							
 							tooltip: LN('sbi.chartengine.columnscontainer.tooltip.style'),
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();
@@ -313,19 +372,21 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				}]
 			});
 			
-			// *_*
-			/* START: If the chart is one of the specified types hide the "createTemplate" 
+			/** 
+			 * START: If the chart is one of the specified types hide the "createTemplate" 
 			 * icon that is attached to every record (item) inside the left (Y) axis
 			 * panel (between the aggregation type and 'remove' button) and it is dedicated
-			 * for specifying Series and Tooltip details. */
+			 * for specifying Series and Tooltip details. 
+			 * (danilo.ristovski@mht.net)
+			 * */
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			if (chartType == "SUNBURST" || chartType == "WORDCLOUD" ||
-					chartType == "TREEMAP" || chartType == "PARALLEL")
+					chartType == "TREEMAP" || chartType == "PARALLEL" ||
+						chartType == "HEATMAP")
 			{
 				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";				
 			}	
-			/* END */
 			
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);
 			

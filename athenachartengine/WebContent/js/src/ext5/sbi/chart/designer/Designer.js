@@ -72,6 +72,24 @@ Ext.define('Sbi.chart.designer.Designer', {
 			name: LN('sbi.chartengine.designer.charttype.parallel'), 
 			type: 'PARALLEL',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		},
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.radar'), 
+			type: 'RADAR',
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		},
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.scatter'), 
+			type: 'SCATTER',
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		},
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.heatmap'), 
+			type: 'HEATMAP',
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}
 		
 		],
@@ -122,8 +140,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 		serverPort: '',
 		
 		
-		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {
-						
+		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {			
+			
 			var baseTemplate = {
 					CHART: {
 						type: 'BAR',
@@ -157,26 +175,40 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			var newChart = false;
 			
-			// *_*
+			/**
+			 * Global scope (scope of the Designer). 
+			 * (danilo.ristovski@mht.net)
+			 */
 			var globalThis = this;
 			
-			/* *_* This part is executed whenever we don't specify 
-			 * chart (XML template) for the document - at the beginning */
+			/**
+			 * This part is executed whenever we create the fresh document (chart)
+			 * and start the initialization of the chart through the Designer interface
+			 * (when we open in Designer completely new chart, not the existing one).
+			 * (danilo.ristovski@mht.net)
+			 */
 			if (!jsonTemplate.CHART) {
 				newChart = true;
 				jsonTemplate = baseTemplate;
 			}			
 			
-			// *_* This part will be executed only when XML template for the chart is already specified
-			// NEWCHARTS call this also for new charts
+			/**
+			 * Merging JSON templates of specified chart types with the base JSON template
+			 * (of type BAR) in order to make the union of all of the JSON elements within
+			 * these two types - the base one and the current one. 			 
+			 * (danilo.ristovski@mht.net)
+			 */
 			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' 
 				|| jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST'
 					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD'
 						|| jsonTemplate.CHART.type.toUpperCase() == 'TREEMAP'
-							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL') {
+							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL'
+								|| jsonTemplate.CHART.type.toUpperCase() == 'RADAR'
+									|| jsonTemplate.CHART.type.toUpperCase() == 'SCATTER'
+										|| jsonTemplate.CHART.type.toUpperCase() == 'HEATMAP') {
 
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
-			}	
+			}				
 			
 			this.docLabel = docLabel;
 			this.jsonTemplate = jsonTemplate;
@@ -184,7 +216,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.jsonTemplateHistory.push(jsonTemplate);
 			this.jsonTemplateHistoryIterator = 0;
 			
-			// *_* List of names of the libraries that we use for rendering the charts
+			/**
+			 * List of names of the libraries that we use for rendering the charts. 
+			 * (danilo.ristovski@mht.net)
+			 */
 			this.chartLibNamesConfig = chartLibNamesConfig;	
 			
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
@@ -194,11 +229,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.hostName = hostName; 
 			this.serverPort = serverPort;
 			
-			// *_* Chart types that we specified at the beginning of the Designer
-			// Creating left panel
+			/**
+			 * Chart types that we specified at the beginning of the Designer and
+			 * that are available through the Chart Type Selector (needed for creating
+			 * of the top left panel on the Designer page. 
+			 * (danilo.ristovski@mht.net)
+			 */
 			var chartTypes = this.chartTypes;
 			
-			// *_* Populating store with those chart types ('fields' define the structure of every single chartType)
+			/**
+			 * Populating store with those chart types ('fields' define the structure 
+			 * of every single chartType).
+			 * (danilo.ristovski@mht.net)
+			 */
 			var chartTypeStore = Ext.create('Ext.data.Store', {
 				fields: [
 					{name: 'name', type: 'string'},
@@ -208,9 +251,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 	 			data: chartTypes
 		    });
 			
-			this.chartTypeStore = chartTypeStore;
+			this.chartTypeStore = chartTypeStore;			
 			
-			// *_* ChartTypeSelector.js - maybe needs changes
+			/**
+			 * One of the main roles of this JS class (file) is listening to the 
+			 * event of changing the chart types inside of it (the selector), i.e.
+			 * clicking on the row of the Selector.
+			 * (danilo.ristovski@mht.net)
+			 */
 			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
  				region: 'north',
  				minHeight: 50,
@@ -248,12 +296,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var parallelAxesLinesPanel = secondConfigurationPanel.getComponent("chartParallelAxesLines");					
 					var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
 					
+					/* Second configuration panel elements for hiding/showing when the SCATTER is selected */
+					var scatterConfiguration = secondConfigurationPanel.getComponent("chartScatterConfiguration");
+					
+					/**
+					 * Second configuration panel elements for hiding/showing when the HEATMAP is selected
+					 * (danilo.ristovski@mht.net)
+					 */
+					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
+					
 					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
 					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';		
 					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
-					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';	
+					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';					
+					var isChartScatter = this.chartType.toUpperCase() == 'SCATTER';						
+					var isChartHeatmap = this.chartType.toUpperCase() == 'HEATMAP';	
 					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel)
+					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel || isChartHeatmap)
 					{						
 						chartLegendCheckBox.hide();
 					}
@@ -262,7 +321,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 						chartLegendCheckBox.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap 
+							|| isChartParallel || isChartHeatmap)
 					{
 						chartOrientation.hide();
 					}
@@ -289,7 +349,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						opacityOnMouseOver.hide();
 					}
 					
-					if (isChartSunburst || isChartWordCloud)
+					if (isChartSunburst || isChartWordCloud || isChartScatter)
 					{
 						colorPallete.hide();
 					}
@@ -298,7 +358,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						colorPallete.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel)
+					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel || isChartHeatmap)
 					{
 						chartLegend.hide();
 					}
@@ -337,6 +397,24 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelAxesLinesPanel.hide();
 						parallelTooltipPanel.hide();
 					}
+					
+					if (isChartScatter)
+					{
+						scatterConfiguration.show();
+					}
+					else
+					{
+						scatterConfiguration.hide();
+					}
+					
+					if (isChartHeatmap)
+					{
+						showLegendAndTooltip.show();
+					}
+					else
+					{
+						showLegendAndTooltip.hide();
+					}
 				}
 			);
 			
@@ -344,7 +422,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			this.chartTypeSelector.setChartType(selectedChartType);			
 			
-			// *_* Store that contains the data about SERIE column(s) for the chart
+			// Store that contains the data about SERIE column(s) for the chart (danilo.ristovski@mht.net)
 			this.columnsPickerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
  				data: [],
  				id: "axisesContainerStore",
@@ -366,7 +444,8 @@ Ext.define('Sbi.chart.designer.Designer', {
  		  					if(field != 'recNo' && field.nature == 'measure'){		  						
  		  						
  		  						theData.push({
- 		  							serieColumn : field.alias
+ 		  							serieColumn : field.alias,
+ 		  							serieDataType: field.colType // (danilo.ristovski@mht.net)
  		  						});
  		  					}
  		  				});
@@ -398,11 +477,12 @@ Ext.define('Sbi.chart.designer.Designer', {
  						var theData = [];
  						
  		  				Ext.each(jsonDataObj.results, function(field, index)
-  						{ 		  
+  						{ 		   		  					
  		  					if(field != 'recNo' && field.nature == 'attribute')
  		  					{
  		  						theData.push({
- 		  							categoryColumn : field.alias
+ 		  							categoryColumn : field.alias,
+ 		  							categoryDataType: field.colType // (danilo.ristovski@mht.net)
  		  						});
  		  					}
  		  				});
@@ -437,7 +517,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						enableDrop: false
   					},
   					listeners: {
-  						drop: function(node, data, dropRec, dropPosition) {
+  						drop: function(node, data, dropRec, dropPosition) {  							
   							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('serieColumn') : ' on empty view';
   						}
   					}
@@ -582,8 +662,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            			html: LN('sbi.chartengine.refreshpreview')
 	            		});
 	            	}
-  				}]
-  			;
+  				}];
   			
   			this.previewPanel.tools = previewTools;
   			
@@ -611,16 +690,141 @@ Ext.define('Sbi.chart.designer.Designer', {
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute
   					},
-  					listeners: {
-  	  					beforeDrop: function(node, data, dropRec, dropPosition) {
+  					listeners: {  						
+  						
+  	  					beforeDrop: function(node, data, dropRec, dropPosition) {   	  						
+  	  						
+  	  						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+  	  						
+  	  						/**
+  	  						 * Taking care of the order of the categories (based on their type) for the 
+  	  						 * HEATMAP chart type
+  	  						 * (danilo.ristovski@mht.net)
+  	  						 */  	  						
+  	  						if (chartType == "HEATMAP")
+  							{
+	  	  						if (this.store.data.length == 0 && data.records.length == 1)
+  	  							{
+	  	  							if (data.records[0].data.categoryDataType != "Timestamp")
+  	  								{	  	  								
+	  	  								/**
+	  	  								 * Show the message that tells user that he should firstly define
+	  	  								 * (drop) the item for the categories (attributes) container that
+	  	  								 * is of a DATE type (Timestamp)
+	  	  								 * (danilo.ristovski@mht.net)
+	  	  								 */
+		  	  							Ext.Msg.show
+		  	  							(
+	  	  									{
+		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.title"),
+		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongdatatypefirst.warningmessage"),
+		  		            					icon : Ext.Msg.WARNING,
+		  		            					closable : false,
+		  		            					buttons : Ext.Msg.OK,
+		  		            					minWidth: 200,
+		  		            					
+		  		            					buttonText : 
+		  		            					{
+		  		            						ok : LN('sbi.chartengine.generic.ok')
+		  		            					}
+	  	  									}
+  	  									);	
+	  	  								
+	  	  								return false;
+  	  								}	  	  								
+  	  							}
+	  	  						else if (this.store.data.length == 1 && data.records.length == 1)
+  	  							{	  	  	
+	  	  							if (dropPosition == "after" && data.records[0].data.categoryDataType == "Timestamp" ||
+	  	  								dropPosition == "before" && data.records[0].data.categoryDataType != "Timestamp")
+  	  								{
+		  	  							Ext.Msg.show
+		  	  							(
+	  	  									{
+		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.title"),	
+		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.wrongorderafterbefore.warningmessage"),	
+		  		            					icon : Ext.Msg.WARNING,
+		  		            					closable : false,
+		  		            					buttons : Ext.Msg.OK
+  	  										}
+  	  									);
+	  	  								
+		  	  							return false;
+  	  								}	 
+	  	  							
+	  	  							/**
+	  	  							 * If we already have one item in the CATEGORY (X-axis) container 
+	  	  							 * and we want to add the second (the last one) item, we should
+	  	  							 * check if that item inside the container is of type that is not
+	  	  							 * the DATE (Timestamp). In that case user MUST drop the item that
+	  	  							 * is of DATE (Timestamp) type.
+	  	  							 * (danilo.ristovski@mht.net)
+	  	  							 */
+	  	  							if (this.store.data.items[0].data.categoryDataType != "Timestamp" && 
+	  	  									data.records[0].data.categoryDataType != "Timestamp")
+  	  								{
+	  	  								Ext.Msg.show
+	  	  								(	
+  	  										{
+		  		            					title : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.title"),	
+		  		            					message : LN("sbi.chartengine.categorypanelitemsorder.heatmapchart.timestampdataneeded.warningmessage"),	
+		  		            					icon : Ext.Msg.WARNING,
+		  		            					closable : false,
+		  		            					buttons : Ext.Msg.OK
+	  										}
+	  									);
+	  	  								
+	  	  								return false;
+  	  								}
+  	  							}
+	  	  						else
+  	  							{
+	  	  							/**
+	  	    						 * Preventing rearranging categories if the chart type is the HEATMAP
+	  	    						 * (danilo.ristovski@mht.net)
+	  	    						 */
+	  	  							return false;
+  	  							}
+  							}  	  
+  	  						
+  	  						/**
+  	  						 * Prevent taking more than one category from the container when we have
+  	  						 * one of these chart types.
+  	  						 * (danilo.ristovski@mht.net)
+  	  						 */
+  	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
+  	  								chartType == "PARALLEL" || chartType == "TREEMAP" || chartType == "HEATMAP"))
+  							{
+  	  							return false;
+  							}  	  						
+  	  						
   	  						if(dropRec && data.view.id != this.id) { // if the dropping item comes from another container
 	  	  						var thisStore = dropRec.store;
-		  	  					var storeCategoriesLength = thisStore.data.items.length;
-	
+		  	  					var storeCategoriesLength = thisStore.data.items.length;		  	  					
+		  	  					
 		  	  					for(var rowIndex = 0; rowIndex < storeCategoriesLength; rowIndex++) {
 			  	      				var categoryItem = thisStore.getAt(rowIndex);
-	
-			  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn')) {
+			  	      				 		  	      				
+			  	      				/**
+			  	      				 * (0)	Any chart: 		If we already have category that we are trying to 
+			  	      				 * 						drop in this panel for any - prevent dropping.
+			  	      				 * 
+			  	      				 * (1) 	RADAR chart: 	If we already have one category column inside the 
+			  	      				 * 						X-axis panel (bottom panel, category container). It
+			  	      				 * 						must have exactly one category inside the X-axis panel.
+			  	      				 * 
+			  	      				 * (2) 	SCATTER chart: 	also MUST have only one category
+			  	      				 * 
+			  	      				 * (3) 	PARALLEL, TREEMAP and HEATMAP chart: MUST have exactly 2 categories
+			  	      				 * 
+			  	      				 * (danilo.ristovski@mht.net)
+			  	      				 */			  	      				
+			  	      				if(data.records[0].get('categoryColumn') == categoryItem.get('categoryColumn') 
+			  	      						|| (this.store.data.length == 1 && 
+			  	      								(chartType == "RADAR" || chartType == "SCATTER")) 
+			  	      									|| (this.store.data.length == 2 && 
+			  	      											(chartType == "PARALLEL" || chartType == "TREEMAP" || 
+			  	      													chartType == "HEATMAP"))) {
 			  	      					return false;
 			  	      				}
 			  	      			}
@@ -674,6 +878,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 					    type:'gear',
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
+					    id: "stylePopupBottomPanel", // (danilo.ristovski@mht.net)
 					    hidden: false, // *_*
 					    flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
@@ -685,6 +890,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    		axisData: thisChartColumnsContainer.getAxisData(),
 								});
 								
+						    	/**
+					    		 * (danilo.ristovski@mht.net)
+					    		 */
+						    	if (chartType.toUpperCase() == 'HEATMAP')
+					    		{
+						    		axisStylePopup.getComponent('titleFieldSetForAxis').hide();
+					    		}	
+						    	
 						    	axisStylePopup.show();						    	
 					    	}
 						}
@@ -755,21 +968,25 @@ Ext.define('Sbi.chart.designer.Designer', {
   				
   			});
 			
-			// *_*
 			/* START: Hiding the bottom (X) axis title textbox and gear tool
 			 *  if the already existing (saved) chart (document) is one of the 
 			 *  specified chart types.
+			 * (danilo.ristovski@mht.net)
 			 *  */
 			var typeOfChart = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
-					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" )
+					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
+						typeOfChart == "HEATMAP")
 			{
-				// Hide the bottom (X) axis title textbox
+				// Hide the bottom (X) axis title textbox				
 				Ext.getCmp("chartBottomCategoriesContainer").tools[0].hidden = true;
 				
 				// Hide the gear icon on the bottom (X) axis panel
-				Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;				
+				if (typeOfChart != "HEATMAP")
+				{
+					Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;
+				}
 			}
 			// END
 		
@@ -1023,7 +1240,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var categoriesStore = this.categoriesStore;
 			// Reset categoriesStore
 			categoriesStore.loadData({});
-			
 			var chartType = jsonTemplate.CHART.type;
 			
 			if(!(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.CATEGORY)) {
@@ -1033,16 +1249,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// NEWCHARTS: MANAGE MULTIPLE CATEGORIES AS A LIST
 			var category = jsonTemplate.CHART.VALUES.CATEGORY;
 			
-			// *_*
+			// (danilo.ristovski@mht.net)
 			if (chartType.toUpperCase() == "SUNBURST" || chartType.toUpperCase() == "WORDCLOUD" || 
-					chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL")
-			{			
+					chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "PARALLEL" || 
+						chartType.toUpperCase() == "HEATMAP")
+			{	
 				if (category.length == undefined || category.length == null)
 				{
 					var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 						axisName: category.name ? category.name: category.column,
 						axisType: 'ATTRIBUTE', 
-						
+						//categoryDataType: 
 						categoryColumn: category.column
 					});
 					
@@ -1051,7 +1268,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				else
 				{
 					for (var i=0; i<category.length; i++)
-					{						
+					{	
 						var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 							axisName: category[i].name ? category[i].name: category[i].column,
 							axisType: 'ATTRIBUTE', 
@@ -1077,7 +1294,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					categoryOrderColumn: category.orderColumn, 
 					categoryOrderType: category.orderType
 				});
-				
+						
 				categoriesStore.add(mainCategory);
 				
 				var groupBy = category.groupby;
@@ -1130,25 +1347,57 @@ Ext.define('Sbi.chart.designer.Designer', {
 						var hidePlusGear = false;
 						
 						if (chartType == "SUNBURST" || chartType == "PARALLEL" ||
-								chartType == "WORDCLOUD" || chartType == "TREEMAP" )
+								chartType == "WORDCLOUD" || chartType == "TREEMAP")
 						{
 							hideAxisTitleTextbox = true;
 							hideGearTool = true;
 							hidePlusGear = true;
 						}
+						// (danilo.ristovski@mht.net)
+						else if (chartType == "RADAR" || chartType == "SCATTER" || chartType == "HEATMAP")	
+						{
+							hidePlusGear = true;
+							
+							if (chartType == "HEATMAP")
+							{
+								hideAxisTitleTextbox = true;
+							}
+						}
 						// END
 						
-						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-								leftYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
-								Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-								Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis, hideAxisTitleTextbox, hideGearTool, hidePlusGear);
+						// (danilo.ristovski@mht.net)
+						var config = 
+						{
+							"idAxisesContainer":leftYAxisesPanel.id , 
+							"id": '', 
+							"panelWhereAddSeries":panelWhereAddSeries, 
+							"isDestructible":isDestructible, 
+							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
+							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+							"axis":axis, 
+							"axisTitleTextboxHidden":hideAxisTitleTextbox, 
+							"gearHidden":hideGearTool, 
+							"plusHidden":hidePlusGear
+						};
+						
+						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(config);
 						leftYAxisesPanel.add(newColumn);
 
 					} else {
-						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-								rightYAxisesPanel.id , '', panelWhereAddSeries, isDestructible, 
-								Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-								Sbi.chart.designer.ChartUtils.ddGroupMeasure, axis);
+						
+						// (danilo.ristovski@mht.net)
+						var config = 
+						{
+							"idAxisesContainer":rightYAxisesPanel.id, 
+							"id": '', 
+							"panelWhereAddSeries":panelWhereAddSeries, 
+							"isDestructible":isDestructible, 
+							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
+							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
+							"axis":axis
+						};
+						
+						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(config);
 						rightYAxisesPanel.add(newColumn);
 						rightYAxisesPanel.show();
 					}
@@ -1329,16 +1578,34 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		/**
 		 * Returns a list of validation errors as string format
-		 * */
+		 * */		
 		validateTemplate: function() {
 			var errorMsg = '';
 			
 			if (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
 			}
+			
 			if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson() == null) {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
+			}						
+			else // (danilo.ristovski@mht.net)
+			{
+				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();
+				var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+				
+				if ((chartType == "PARALLEL" || chartType == "HEATMAP") &&
+						categoriesAsJson.length != 2)
+				{
+					errorMsg += "- " + LN("sbi.chartengine.validation.exactlyTwoCategories") + '<br>'; 
+				}
+				else if (chartType == "TREEMAP" && categoriesAsJson.length < 2)
+				{
+					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
+				}
 			}
+			
+			
 			
 			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();
 			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
@@ -1386,6 +1653,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
 			
 			leftColumnsContainer.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(false, true));
+		},
+		
+		/**
+		 * TODO: Added 16.07 (ask if this is ok) - called inside the ChartTypeSelector. Removes everything from the
+		 * X-axis panel if we move from BAR or LINE to SCATTER or RADAR, because for the last to we can have ONLY ONE
+		 * CATEGORY, while we can have more than one for the first pair (BAR/LINE).
+		 * (danilo.ristovski@mht.net)
+		 */ 
+		cleanCategoriesAxis: function()
+		{
+			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));			
+			this.categoriesStore.removeAll();
 		},
 		
 		tabChangeChecksMessages: function(oldJson, newJson) {

@@ -5,15 +5,14 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "wordcloudConfiguration",
-		columnWidth: 0.2,
+		//columnWidth: 0.3,
+		width: 245,
 		title: LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 		bodyPadding: 10,
 		items: [],
 		height: 225,
 		
-		requires : [
-			            'Sbi.chart.designer.StylePopupTip',
-			            'Sbi.chart.designer.StylePopupToolbar'],
+		requires : [ 'Sbi.chart.designer.StylePopupTip', 'Sbi.chart.designer.StylePopupToolbar' ],
 	
 	    fieldDefaults: 
 	    {

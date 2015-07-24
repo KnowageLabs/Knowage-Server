@@ -82,6 +82,7 @@
 		<chart type="wordcloud"	name="d3js244"  		/>
 		<chart type="treemap" 	name="highcharts414" 	/>
 		<chart type="heatmap" 	name="highcharts414" 	vmName="heatmap_chart.vm"/>
+		<chart type="chord" 	name="d3js244" 			vmName="chord_chart.vm"/>
 	</chartConfiguration>
 	
 </ENGINE-CONFIGURATION>

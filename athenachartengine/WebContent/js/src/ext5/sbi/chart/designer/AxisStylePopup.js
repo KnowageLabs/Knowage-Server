@@ -80,6 +80,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		this.titleFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
+			id: 'titleFieldSetForAxis',	// (danilo.ristovski@mht.net)
 			title: 'Title',
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
@@ -93,6 +94,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.majorgridFieldSet = Ext.create('Ext.form.FieldSet', {
 				collapsible: true,
 				collapsed : true,
+				id: "majorGridFieldSetYAxis",	// (danilo.ristovski@mht.net)
 				title: LN('sbi.chartengine.axisstylepopup.majorgrid'),
 				defaults: {anchor: '100%',
 					labelAlign : 'left',
@@ -105,6 +107,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.minorgridFieldSet = Ext.create('Ext.form.FieldSet', {
 				collapsible: true,
 				collapsed : true,
+				id: "minorGridFieldSetYAxis", // (danilo.ristovski@mht.net)
 				title: LN('sbi.chartengine.axisstylepopup.minorgrid'),
 				defaults: {anchor: '100%',
 					labelAlign : 'left',
@@ -200,6 +203,26 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			fieldLabel : LN('sbi.chartengine.axisstylepopup.fontsize'),
 		});
 		this.axisFieldSet.add(this.styleFontSizeComboBox);
+		
+		/**
+		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type
+		 * (danilo.ristovski@mht.net)
+		 */		
+		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER")
+		{
+			this.styleOpposite = Ext.create
+	    	(
+				{
+			        xtype: 'checkboxfield',
+			        id: 'oppositeAxis',
+			        value: this.axisData.styleOpposite,
+			        labelSeparator: '',
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.opposite"), 
+			    }	
+	    	);
+			
+			this.axisFieldSet.add(this.styleOpposite);
+		}		
 		
 		if(isYAxis) {
 			var majorgridInterval = '' + this.axisData.majorgridInterval;
@@ -422,6 +445,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 
 		var styleFontSize = this.styleFontSizeComboBox.getValue();
 		this.axisData.styleFontSize = styleFontSize;
+		
+		var styleOpposite = this.styleOpposite.getValue();
+		this.axisData.styleOpposite = styleOpposite;
 
 		if(isYAxis) {
 			var majorgridInterval = this.majorgridIntervalNumberField.getValue();

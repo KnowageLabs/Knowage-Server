@@ -18,10 +18,19 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 	
 	statics: {
 		addToAxisesContainer: function (panel) {
-			var newPanel = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(
-					panel.id , '' , null, true, 
-					Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
-					Sbi.chart.designer.ChartUtils.ddGroupMeasure);
+			
+			// (danilo.ristovski@mht.net)
+			var config = 
+			{
+				"idAxisesContainer":panel.id,
+				"id": '', 
+				"panelWhereAddSeries":null, 
+				"isDestructible":true, 
+				"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
+				"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure
+			};
+			
+			var newPanel = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(config);
 			
 			if(newPanel != null) {
 				panel.add(newPanel);

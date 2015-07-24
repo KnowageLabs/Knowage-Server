@@ -121,26 +121,28 @@ function renderHeatmap(chartConf){
 	
 	
     var start;
-    var startDate= new Date(chartConf.chart.dateresult[0]);
-    var endDate= new Date(chartConf.chart.dateresult[1]);
+    
+    var startDate= new Date(chartConf.additionalData.dateresult[0]);
+    var endDate= new Date(chartConf.additionalData.dateresult[1]);
     var points=[];
     var data=chartConf.data[0];
-    var minValue=data[0][chartConf.chart.serie.value];
-    var maxValue=data[0][chartConf.chart.serie.value];
+    var minValue=data[0][chartConf.additionalData.serie.value];
+    var maxValue=data[0][chartConf.additionalData.serie.value];
+    
     for( i=0;i<data.length;i++ ){
-    	if(data[i][chartConf.chart.serie.value]< minValue){
-    		minValue=data[i][chartConf.chart.serie.value];
+    	if(data[i][chartConf.additionalData.serie.value]< minValue){
+    		minValue=data[i][chartConf.additionalData.serie.value];
     	}
     	
-    	if(data[i][chartConf.chart.serie.value] > maxValue){
-    		maxValue=data[i][chartConf.chart.serie.value];
+    	if(data[i][chartConf.additionalData.serie.value] > maxValue){
+    		maxValue=data[i][chartConf.additionalData.serie.value];
     	}
     	
     	var point={
-    		"x":new Date(data[i][chartConf.chart.columns[0].value]).getTime(),
-    		"y":chartConf.chart.storeresult.indexOf(data[i][chartConf.chart.columns[1].value]),
-    		"value":data[i][chartConf.chart.serie.value],
-    		"label":data[i][chartConf.chart.columns[1].value]
+    		"x":new Date(data[i][chartConf.additionalData.columns[0].value]).getTime(),
+    		"y":chartConf.additionalData.storeresult.indexOf(data[i][chartConf.additionalData.columns[1].value]),
+    		"value":data[i][chartConf.additionalData.serie.value],
+    		"label":data[i][chartConf.additionalData.columns[1].value]
     	};
     	
     	points.push(point);
@@ -152,13 +154,15 @@ function renderHeatmap(chartConf){
     	var stop=[i*(1/(colors.length-1)),colors[i]];
     	colorStops.push(stop);
     }
+     
+    console.log();
     
     var chart = new Highcharts.Chart({
        
         chart: {
         	renderTo: 'mainPanel',
-        	height: chartConf.chart.height,
-			width: chartConf.chart.width,
+        	height: Number(chartConf.chart.height),
+			width: Number(chartConf.chart.width),
             type: 'heatmap',
             backgroundColor:chartConf.chart.style.backgroundColor,
             margin: [80, 80, 80, 80],
@@ -233,7 +237,7 @@ function renderHeatmap(chartConf){
                      fontFamily: chartConf.yaxis.style.fontFamily
             	}
             },
-            categories:chartConf.chart.storeresult,
+            categories:chartConf.additionalData.storeresult,
             reversed: false
         },
 
@@ -250,10 +254,10 @@ function renderHeatmap(chartConf){
             layout: 'horizontal',
             align: chartConf.legend.style.align, 
             symbolWidth: Number(chartConf.legend.style.symbolWidth)
-          
         },
+        
         tooltip: {
-        	headerFormat: '<b>'+chartConf.chart.serie.value+'</b><br/>',
+        	headerFormat: '<b>'+chartConf.additionalData.serie.value+'</b><br/>',
             pointFormat: '{point.x:%e %b, %Y} | {point.label}: <b>{point.value}</b>',
             style:{ 
             	 color: chartConf.tooltip.style.fontColor,
