@@ -34,6 +34,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/commons/Log.js'></script>
 
 <script type="text/javascript" src='../js/spagobi/qbe/filterwizard/filterWizard.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/temporalfilterwizard/temporalFilterWizard.js'></script>
 		
 <script type="text/javascript" src='../js/spagobi/qbe/DataStorePanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/DataMartStructurePanel.js'></script>

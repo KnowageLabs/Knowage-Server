@@ -490,6 +490,11 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		}
 	}
 	
+	, showTemporalWizard: function() {
+		it.eng.spagobi.engines.qbe.temporalfilterwizard.show(this);
+	}
+	
+	
 	, setWizardExpression: function(b) {
 		if(b) {
 			this.wizardExpression = true;
@@ -771,6 +776,17 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 						}
 				    }
 				} , {
+			        text: LN('sbi.qbe.filtergridpanel.buttons.text.addTemporal'),
+			        tooltip: LN('sbi.qbe.filtergridpanel.buttons.tt.addTemporal'),
+			        iconCls:'option',
+			        //hidden: (this.enableTbAddCalculatedBtn === false),
+			        listeners: {
+					  'click': {
+						fn: this.showTemporalWizard,
+						scope: this
+					  }
+			        }
+			     } , {
 					text: LN('sbi.qbe.filtergridpanel.buttons.text.delete'),
 				    tooltip: LN('sbi.qbe.filtergridpanel.buttons.tt.delete'),
 				    iconCls:'remove',
@@ -792,7 +808,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			    			scope: this
 			    		}
 				    }
-				} /*, {
+				} , {
 				  	text: 'Debug',
 				    tooltip: 'Remove before release',
 				    iconCls:'option',
@@ -804,7 +820,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			    			scope: this
 			    		}
 				    }
-				} */
+				} 
 			]
 		});
 	}
