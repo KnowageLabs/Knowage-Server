@@ -134,7 +134,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	scriptTypes = scriptTypes.replaceAll("\"","'");
 	
 	JSONArray trasfTypesArray = new JSONArray();
-	trasfTypesArray.put(empty);
+	//trasfTypesArray.put(empty);
+	JSONArray emptyValue = new JSONArray();
+	emptyValue.put("&nbsp;");
+	trasfTypesArray.put(emptyValue);
 	if(trasfTypesList != null){
 		for(int i=0; i< trasfTypesList.size(); i++){
 			Domain domain = (Domain)trasfTypesList.get(i);

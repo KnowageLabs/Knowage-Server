@@ -227,6 +227,17 @@ Ext
 					,
 					activateTransfForm : function(combo, record, index) {
 						var transfSelected = record.get('trasfTypeCd');
+						if (transfSelected != null 	&& transfSelected == '&nbsp;'){
+							//set null in value
+							transfSelected = null;
+							combo.setValue(transfSelected);
+							//reset all transformation values
+							var trasValues = this.trasfDetail.items.items;
+							for (t in trasValues){
+								var tv = trasValues[t];
+								if (tv.reset) tv.reset();
+							}
+						}
 						if (transfSelected != null
 								&& transfSelected == 'PIVOT_TRANSFOMER') {
 							this.trasfDetail.setVisible(true);
@@ -1800,7 +1811,7 @@ Ext
 								this.activateTransfForm, this);
 
 						this.trasfTypeDetail = new Ext.form.FieldSet(
-								{
+								{									
 									labelWidth : 120,
 									defaults : {
 										width : 350,// 260,
@@ -1827,7 +1838,7 @@ Ext
 							minLength : 1,
 							regexText : LN('sbi.roles.alfanumericString'),
 							fieldLabel : LN('sbi.ds.pivotColName'),
-							allowBlank : true,
+							allowBlank : false,
 							validationEvent : true,
 							name : 'pivotColName'
 						};
@@ -1837,7 +1848,7 @@ Ext
 							minLength : 1,
 							regexText : LN('sbi.roles.alfanumericString'),
 							fieldLabel : LN('sbi.ds.pivotColValue'),
-							allowBlank : true,
+							allowBlank : false,
 							validationEvent : true,
 							name : 'pivotColValue'
 						};
@@ -3110,6 +3121,12 @@ Ext
 					save : function() {
 						this.setSchedulingCronLine();
 						var values = this.getValues();
+						if (!this.validValues(values)){
+							Ext.MessageBox
+								.alert(LN('sbi.generic.error'),LN('sbi.generic.validationError') +
+											' [' + LN('sbi.ds.transfType') + ' Tab]');
+								return;
+						}
 						var idRec = values['id'];
 						if (idRec == 0 || idRec == null || idRec === '') {
 							this.doSave("yes");
@@ -3121,6 +3138,21 @@ Ext
 											this.doSave, this);
 						}
 					}
+					
+					/**
+					 * Validation forms' values
+					 */
+					, validValues: function(values) {
+						var toReturn = true;
+						//TRANFORMATION VALIDATION
+						if (values['trasfTypeCd'] == 'PIVOT_TRANSFOMER'){
+							if (values['pivotColName'] === "" || values['pivotColValue'] === ""){
+								toReturn = false;
+							}
+						}
+						return toReturn;
+					}
+					
 					/**
 					 * Opens the loading mask
 					 */
