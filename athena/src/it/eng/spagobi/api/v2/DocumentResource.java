@@ -13,7 +13,9 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -51,7 +53,7 @@ import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- * 
+ *
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -64,6 +66,11 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		List<BIObjectParameter> parameters = document.getBiObjectParameters();
+
+		for (BIObjectParameter parameter : parameters) {
+			parameter.setParameter(loadAnalyticalDriver(parameter));
+		}
+
 		return JsonConverter.objectToJson(parameters, parameters.getClass());
 	}
 
@@ -88,8 +95,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		BIObjectParameter parameter = null;
 		try {
 			parameterDAO = DAOFactory.getBIObjectParameterDAO();
-
 			parameter = parameterDAO.loadBiObjParameterById(id);
+
+			parameter.setParameter(loadAnalyticalDriver(parameter));
 		} catch (EMFUserError e) {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
@@ -107,6 +115,17 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		}
 
 		return JsonConverter.objectToJson(parameter, BIObjectParameter.class);
+	}
+
+	private Parameter loadAnalyticalDriver(BIObjectParameter biPar) {
+		try {
+			ParameterDAOHibImpl parameterDAO = (ParameterDAOHibImpl) DAOFactory.getParameterDAO();
+
+			return parameterDAO.loadForDetailByParameterID(biPar.getParameter().getId());
+		} catch (EMFUserError e) {
+			logger.error("Error while retrieving analytical driver associated with the parameter", e);
+			throw new SpagoBIRuntimeException("Error while retrieving analytical driver associated with the parameter", e);
+		}
 	}
 
 	@POST
