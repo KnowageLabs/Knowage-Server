@@ -64,8 +64,12 @@ public class UdpResource {
 			
 			JSONArray jarr = new JSONArray();
 			for (Udp o : lst){
-//				jarr.put(JsonConverter.objectToJson(o, Udp.getClass()));
-				jarr.put(fromUdpLight(o));
+				if(fam.compareTo("Glossary")==0){
+					jarr.put(fromUdpLight(o));
+				}else{
+					jarr.put(JsonConverter.objectToJson(o, Udp.class));
+				}
+				
 			}
 			return jarr.toString();
 		} catch (Throwable t) {

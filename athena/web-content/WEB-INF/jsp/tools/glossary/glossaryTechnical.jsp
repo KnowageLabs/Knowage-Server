@@ -44,11 +44,7 @@
 	
 	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-	<script type="text/javascript">
-		var locale= '<%=request.getLocale()%>'; 
-		var hostName = '<%=request.getServerName()%>';
-		var serverPort ='<%=request.getServerPort()%>';
-	</script>
+	
 	
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario_tec.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">

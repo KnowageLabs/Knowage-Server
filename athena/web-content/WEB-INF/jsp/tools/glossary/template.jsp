@@ -25,7 +25,7 @@
 		<div flex="100">
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-			<label>Nome</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
+			<label>{{gloCtrl.translate.load("sbi.generic.name");}}</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
 			<input ng-model="gloCtrl.newGloss.GLOSSARY_NM" type="text" maxlength="100" > </md-input-container>
 		</div>
 	</div>
@@ -34,7 +34,7 @@
 		<div flex="100">
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-			<label>Codice</label> <md-icon md-font-icon="fa   fa-terminal "	class="wo3" ></md-icon> 
+			<label>{{gloCtrl.translate.load("sbi.generic.code");}}</label> <md-icon md-font-icon="fa   fa-terminal "	class="wo3" ></md-icon> 
 			<input ng-model="gloCtrl.newGloss.GLOSSARY_CD" type="text" maxlength="30" > </md-input-container>
 		</div>
 	</div>
@@ -43,7 +43,7 @@
 	<div layout="row" layout-wrap>
 		<div flex="100">
 			<md-input-container class="md-icon-float" ng-class="{ 'md-input-hasnt-value' : gloCtrl.newGloss.GLOSSARY_DS.length === 0  }"> <!-- Use floating label instead of placeholder -->
-			<label>Descrizione</label> 
+			<label>{{gloCtrl.translate.load("sbi.generic.descr");}}</label> 
 			<md-icon md-font-icon="fa  fa-file-text-o "	class="formu" ></md-icon>	
 				 <textarea ng-model="gloCtrl.newGloss.GLOSSARY_DS" columns="1" md-maxlength="500" maxlength="500"  ></textarea>
 				 </md-input-container>
@@ -56,11 +56,11 @@
   <div class="md-actions" layout="row">
    
     <md-button ng-click="gloCtrl.annulla()" class="md-primary">
-    Annulla
+   {{gloCtrl.translate.load("sbi.ds.wizard.cancel");}}
     </md-button>
   
     <md-button ng-click="gloCtrl.submit()" class="md-primary" ng-disabled="gloCtrl.newGloss.GLOSSARY_NM.length === 0 "  >
-     Salva
+     {{gloCtrl.translate.load("sbi.generic.update");}}
     </md-button>
   </div>
   
@@ -88,7 +88,7 @@
 		<div flex="100">
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-			<label>Nome</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
+			<label>{{renCtrl.translate.load("sbi.generic.name");}}</label> <md-icon md-font-icon="fa  fa-sitemap "	class="wo2" ></md-icon> 
 			<input ng-model="renCtrl.tmpNW.CONTENT_NM" type="text" maxlength="100" autofocus> </md-input-container>
 		</div>
 	</div>
@@ -97,7 +97,7 @@
 		<div flex="100">
 
 			<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-			<label>Codice</label> <md-icon md-font-icon="fa   fa-terminal "	class="wo3" ></md-icon> 
+			<label>{{renCtrl.translate.load("sbi.generic.code");}}</label> <md-icon md-font-icon="fa   fa-terminal "	class="wo3" ></md-icon> 
 			<input ng-model="renCtrl.tmpNW.CONTENT_CD" type="text" maxlength="30" > </md-input-container>
 		</div>
 	</div>
@@ -106,7 +106,7 @@
 	<div layout="row" layout-wrap>
 		<div flex="100">
 			<md-input-container class="md-icon-float" ng-class="{ 'md-input-hasnt-value' : renCtrl.tmpNW.CONTENT_DS.length === 0  }"> 
-			<label>Descrizione</label> 
+			<label>{{renCtrl.translate.load("sbi.generic.descr");}}</label> 
 			<md-icon md-font-icon="fa  fa-file-text-o "	class="formu" ></md-icon>	
 				 <textarea ng-model="renCtrl.tmpNW.CONTENT_DS" columns="1" md-maxlength="500" maxlength="500" style="  margin-left: 35px;" ></textarea>
 				 </md-input-container>
@@ -123,10 +123,10 @@
 <div class="md-actions" layout="row">
     
  <md-button ng-click="renCtrl.annulla()" class="md-primary" tabindex="-1">
-      Annulla
+      {{renCtrl.translate.load("sbi.ds.wizard.cancel");}}
     </md-button>
     <md-button ng-disabled="renCtrl.tmpNW.CONTENT_NM.length === 0 " ng-click="renCtrl.salva()" class="md-primary" >
-     Salva
+     {{renCtrl.translate.load("sbi.generic.update");}}
     </md-button>
    
   </div>
@@ -201,19 +201,19 @@
 <div class="dropdown position-fixed" style="z-index: 999; margin-left: calc(-25% - 20px); width: 200px;" id="WordTree-{{ item.$$hashKey }}">
 	<md-list class="dropdown-menu bottomBorder" role="menu">
 		<md-list-item ng-click='ctrl.newSubItem(this,item)' role="menuitem" tabindex="1" ng-if="!item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined  ">
- 		<p>Nuovo Nodo Logico</p>
+ 		<p>{{ctrl.translate.load("sbi.glossary.messages.add.child");}}</p>
     	</md-list-item>
 
  		<md-list-item ng-click='ctrl.createNewWord(false,this)' role="menuitem" tabindex="2" ng-if=" item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
-		<p>Nuovo Vocabolo</p>
+		<p>{{ctrl.translate.load("sbi.glossary.messages.add.word");}}</p>
 		</md-list-item>
 
 		<md-list-item ng-click='ctrl.removeContents(this)' role="menuitem" tabindex="3">
-		<p>Elimina</p>
+		<p>{{ctrl.translate.load("sbi.generic.delete");}}</p>
 		</md-list-item>
 	
 		<md-list-item ng-click='ctrl.newSubItem(this,item,true)' role="menuitem" ng-if=" item.CONTENT_NM != undefined" tabindex="4">
-		<p>Modifica</p>
+		<p>{{ctrl.translate.load("sbi.generic.modify");}}</p>
 		</md-list-item> 
 	</md-list>
 </div>

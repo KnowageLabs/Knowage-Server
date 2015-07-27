@@ -1,6 +1,6 @@
 var Restapp = angular.module('angular_rest', []);
-Restapp.constant('ENDPOINT_URI', 'http://' + hostName + ':' + serverPort
-		+ '/athena/restful-services/');
+Restapp.constant('ENDPOINT_URI', 'http://' + window.parent.url.host + ':' + window.parent.url.port+"/"+window.parent.url.contextPath
+		+ '/restful-services/');
 
 Restapp.service('restServices', function($http, ENDPOINT_URI) {
 

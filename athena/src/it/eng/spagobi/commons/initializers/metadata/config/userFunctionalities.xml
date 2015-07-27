@@ -95,6 +95,8 @@
 		name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
 	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="GeoLayersManagement" description="GeoLayersManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
 
 	<!-- Athena Social Functionalities -->
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement"
@@ -207,4 +209,6 @@
 		description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="GlossaryManagement"
 		description="GlossaryManagement" />
+	<USER_FUNCTIONALITY productType="AthenaSocial"
+		name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
 </USER_FUNCTIONALITIES>

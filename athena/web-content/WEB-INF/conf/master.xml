@@ -176,6 +176,7 @@
     <CONFIGURATOR path="/WEB-INF/conf/tools/udp/publishers.xml" /> 
 	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/validation.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/business_map.xml" />
+	<CONFIGURATOR path="/WEB-INF/conf/tools/udp/business_map2.xml" />
 
 	<!-- tools.massiveExport -->	
 	<CONFIGURATOR path="/WEB-INF/conf/tools/massiveExport/actions.xml" />

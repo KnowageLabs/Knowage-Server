@@ -93,7 +93,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 					if (ObjectsAccessVerifier.canSee(obj, profile))
 						objects.add(obj);
 				}
-			}
+			}  
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 
 			return Response.ok(toBeReturned).build();

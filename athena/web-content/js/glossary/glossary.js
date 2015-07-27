@@ -150,6 +150,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	ctr.createNewWord = function(reset,parent) {
+		console.log(window.parent)
 		var text;
 		if (reset == true) {
 			text = {};
@@ -636,6 +637,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					controllerAs : 'gloCtrl',
 					controller : function($mdDialog) {
 						var gctl = this;
+						gctl.translate=translate;
 
 						if (gl != undefined) {
 							// load glossary data
@@ -811,6 +813,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					controllerAs : 'gloCtrl',
 					controller : function($mdDialog) {
 						var gctl = this;
+						gctl.translate=translate;
 
 						if (gl != undefined) {
 							// load glossary data
@@ -1493,6 +1496,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					controllerAs : "renCtrl",
 					controller : function($mdDialog) {
 						var rn = this;
+						rn.translate=translate;
 						
 
 						if (modCont == true) {
