@@ -174,41 +174,65 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var columns = [];
 
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
-			for(var i = 0; i < meta.fields.length; i++) {
+			
+			var visibleSelectField = this.wconf.visibleselectfields[j];
+			var columnIndexer = meta.fields.length + 1;
+			
+			if(visibleSelectField.calculatedFieldFlag != undefined && visibleSelectField.calculatedFieldFlag) {
+				var newColumnName = "column_" + columnIndexer;
+				var calculatedField = {
+						dataIndex: newColumnName,
+						header: visibleSelectField.alias,
+						name: newColumnName,
+						type: "string"
+				};
+				columnIndexer++;
 				
-				var propToCheck;
+				console.log('Calculated formula for field: "' + visibleSelectField.alias + '": ', visibleSelectField.calculatedFieldFormula);
 				
-				//attribute can appear once
-				if(this.wconf.visibleselectfields[j].nature == 'attribute' || 
-						this.wconf.visibleselectfields[j].funct === null ||
-						this.wconf.visibleselectfields[j].funct == ''){
-					propToCheck = this.wconf.visibleselectfields[j].columnName;
-				}else{
-					//measures can have the same field with different aggregation
-					propToCheck = this.wconf.visibleselectfields[j].alias
-				}
+				this.applyRendererOnField(calculatedField, visibleSelectField);
+				this.applySortableOnField(calculatedField);
 				
+				fields.push(calculatedField);
+				columns.push(calculatedField.header);
 				
-				if(meta.fields[i].header === propToCheck) {
-//					if(this.wconf.visibleselectfields[j].funct != null &&
-//							this.wconf.visibleselectfields[j].funct != 'NaN'
-//								&& this.wconf.visibleselectfields[j].funct != ''){
-//						meta.fields[i].header = this.wconf.visibleselectfields[j].funct+'('+this.wconf.visibleselectfields[j].alias+')';
-//					}
-					if(this.wconf.visibleselectfields[j].alias != null && 
-							this.wconf.visibleselectfields[j].alias != ''){
-						
-						meta.fields[i].header = this.wconf.visibleselectfields[j].alias;
+			} else {
+				for(var i = 0; i < meta.fields.length; i++) {
+					var metaField = meta.fields[i];				
+					var propToCheck = null;
+					
+					//attribute can appear once
+					if(visibleSelectField.nature == 'attribute' || 
+							visibleSelectField.funct === null ||
+							visibleSelectField.funct == ''){
+						propToCheck = visibleSelectField.columnName;
+					}else{
+						//measures can have the same field with different aggregation
+						propToCheck = visibleSelectField.alias
 					}
 					
-					this.applyRendererOnField(meta.fields[i], this.wconf.visibleselectfields[j]);
-					this.applySortableOnField(meta.fields[i]);
 					
-					fields.push(meta.fields[i]);
-					columns.push(meta.fields[i].header);
-					break;
-				} else {
-					Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + this.wconf.visibleselectfields[j].id + "] is not equal to [" + meta.fields[i].header + "]");
+					if(metaField.header === propToCheck) {
+//					if(visibleSelectField.funct != null &&
+//							visibleSelectField.funct != 'NaN'
+//								&& visibleSelectField.funct != ''){
+//						metaField.header = visibleSelectField.funct+'('+visibleSelectField.alias+')';
+//					}
+						if(visibleSelectField.alias != null && 
+								visibleSelectField.alias != ''){
+							
+							metaField.header = visibleSelectField.alias;
+						}
+						
+						this.applyRendererOnField(metaField, visibleSelectField);
+						this.applySortableOnField(metaField);
+						
+						fields.push(metaField);
+						columns.push(metaField.header);
+						break;
+					} else {
+						Sbi.trace("[TableWidget.onStoreMetaChange]: field [" + this.wconf.visibleselectfields[j].id + "] is not equal to [" + metaField.header + "]");
+					}
 				}
 			}
 		}
