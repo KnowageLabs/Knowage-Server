@@ -324,7 +324,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		}
 		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
 		if (excludeType != null) {
-			restritions.add(new CriteriaParameter("biObjectTypeCode", excludeType, Match.NOT_EQ));
+			restritions.add(new CriteriaParameter("objectTypeCode", excludeType, Match.NOT_EQ));
 		}
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
