@@ -56,6 +56,21 @@ position: relative;
 /*   min-height: 0px; */
 /* } */
 
+.wordForm md-select{
+	  margin: 0;
+  padding: 0;
+  margin-left: 35px;
+  margin-top: 14px;
+}
+
+.selectLabel {
+  margin-top: -25px;
+  color: rgba(0,0,0,0.54);
+  font-size: 10px;
+}
+.wordForm md-select md-select-label{
+	width: 95%;
+	}
 .wordForm md-autocomplete label {
 	margin-top: -12px;
 }
@@ -204,17 +219,30 @@ md-icon.sm-font-icon {
 	position: absolute;
 	width: 100%;
 	min-height: 0px;
-	background-color: transparent;
+	background-color: transparent !important;
 	background-image: none;
 	border: none;
 	display:none;
 }
 
-
+.chipsTree .angular-ui-tree-placeholder{
+	background-color: rgba(232, 244, 250, 0.35) !important;
+	position: absolute;
+	width: 100%;
+	height:50px !important;
+	margin-left: 18px;
+	margin-top:18px;
+	
+}
 
 .linkChips  .md-contact-chips .md-chips .md-chip .md-contact-avatar,
 	.md-contact-suggestion img {
 	display: none !important;
+}
+
+.md-autocomplete-suggestions li .highlight {
+  color: rgb(49, 5, 255);
+  font-weight: bolder;
 }
 
 .box-list-option {
@@ -318,7 +346,7 @@ padding:0;
 .wordListBox {
 	height: 60%;
 	position: relative;
-	background-color: rgb(207, 216, 220);
+	background-color: rgb(236, 236, 236);
 }
 
 .wordListBox md-content,.glossaryListBox md-content {
@@ -328,7 +356,7 @@ padding:0;
 .glossaryListBox  {
 	height: 40%;
 	overflow-y: auto;
-	background-color: rgb(207, 216, 220);
+	background-color: rgb(236, 236, 236);
 /* 	-webkit-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
 /* 	-moz-box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */
 /* 	box-shadow: 0px -4px 3px -2px rgba(102, 102, 102, 1); */

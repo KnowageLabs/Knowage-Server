@@ -305,14 +305,18 @@
 <div layout="column">
 <ul>
 <li><span>{{infCtrl.translate.load("sbi.glossary.word");}}:</span><p> {{infCtrl.info.WORD}} </p></li>
-<li><span>{{infCtrl.translate.load("sbi.glossary.status");}}:</span><p> {{infCtrl.info.STATE}}</p></li>
-<li><span>{{infCtrl.translate.load("sbi.glossary.category");}}:</span><p> {{infCtrl.info.CATEGORY}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.status");}}:</span><p ng-if="infCtrl.info.STATE_NM==undefined"></p><p ng-if="infCtrl.info.STATE_NM!=undefined"> {{infCtrl.translate.load(infCtrl.info.STATE_NM);}}</p></p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.category");}}:</span><p  ng-if="infCtrl.info.CATEGORY_NM==undefined"></p><p ng-if="infCtrl.info.CATEGORY_NM!=undefined"> {{infCtrl.translate.load(infCtrl.info.CATEGORY_NM);}}</p></p></li>
 <li><span>{{infCtrl.translate.load("sbi.glossary.description");}}:</span><p>  {{infCtrl.info.DESCR}}</p></li>
 <li><span>{{infCtrl.translate.load("sbi.glossary.formula");}}:</span><p> {{infCtrl.info.FORMULA}}</p></li>
 <li class="sub-list"><span>{{infCtrl.translate.load("sbi.glossary.link");}}:</span>
-		<ul><li ng-repeat="lnk in infCtrl.info.LINK ">{{lnk.WORD}}</li></ul>
+		<ul><li ng-repeat="lnk in infCtrl.info.LINK ">{{lnk.WORD}} <a ng-if="!$last">- </span></li></ul>
 </li>
-<li><span>{{infCtrl.translate.load("sbi.glossary.attributes");}}:</span><p> {{infCtrl.info.SBI_GL_WORD_ATTR}}</p></li>
+<li><span>{{infCtrl.translate.load("sbi.glossary.attributes");}}:</span>
+		<ul><li style="  display: list-item;" ng-repeat="attr in infCtrl.info.SBI_GL_WORD_ATTR ">{{attr.ATTRIBUTE_NM}}:
+<ul><li> {{attr.VALUE}}</li></ul></li></ul>
+</li>
+
 </ul>
 </div>
 </md-dialog-content>

@@ -150,7 +150,12 @@
 									</md-list-item> <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem" 
 										tabindex="2">
 									<p>Elimina</p>
-									</md-list-item> </md-list>
+									</md-list-item> 
+									<md-list-item ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" role="menuitem" 
+										tabindex="3">
+									<p>Info</p>
+									</md-list-item> 
+									</md-list>
 								</div>
 
 							</li>
@@ -351,20 +356,30 @@
 								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
 						</div>
 					</div>
-
-					<div layout="row" layout-wrap>
+					<div layout="row"  layout-wrap>
 						<div flex="50">
-							<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-							<label>Stato</label> <md-icon md-font-icon="fa fa-spinner "
-								class="stato"></md-icon> <input ng-model="ctrl.newWord.STATE" maxlength="30"
-								type="text"> </md-input-container>
+							<md-input-container class="md-icon-float " > 
+						<label class="selectLabel" ng-hide="ctrl.newWord.STATE==-1 || ctrl.newWord.STATE.length==0 || ctrl.newWord.STATE==undefined" >State</label>
+							<md-icon md-font-icon="fa fa-spinner " class="stato"></md-icon> 
+							<md-select 	placeholder="Select state" ng-model="ctrl.newWord.STATE">
+								 <md-option value="-1">Select state</md-option>
+								 <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">{{ctrl.translate.load(st.VALUE_NM)}}</md-option>
+							</md-select> </md-input-container>
 						</div>
 
 						<div flex="50">
-							<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-							<label>Categoria</label> <md-icon md-font-icon="fa fa-flag-o "
-								class="categoria"> </md-icon> <input ng-model="ctrl.newWord.CATEGORY" maxlength="30" type="text"> </md-input-container>
-
+							<md-input-container class="md-icon-float"> 
+						<label class="selectLabel" ng-hide="ctrl.newWord.CATEGORY==-1 || ctrl.newWord.CATEGORY.length==0 || ctrl.newWord.CATEGORY==undefined" >Category</label>
+						
+						<md-icon md-font-icon="fa fa-flag-o " class="categoria"> </md-icon>
+						<md-select
+								placeholder="Select category" ng-model="ctrl.newWord.CATEGORY">
+								 <md-option value="-1">Select category</md-option>
+								 <md-option
+								ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}">{{ctrl.translate.load(ct.VALUE_NM)}}</md-option>
+							</md-select>
+						
+					
 						</div>
 					</div>
 
@@ -411,7 +426,7 @@
 								<md-contact-chips ng-model="ctrl.newWord.LINK"
 									md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
 									md-require-match="" filter-selected="true">
-								<md-chip-template> <strong>{{$chip.WORD
+								<md-chip-template > <strong>{{$chip.WORD
 									| uppercase}}</strong> </md-chip-template> </md-contact-chips>
 							</div>
 
@@ -426,7 +441,6 @@
 								style="  margin-top: 25px;"></md-icon>
 
 						</div>
-
 						<div flex="40">
 							<md-autocomplete style="  min-width: 0;" flex=""
 								md-input-name="autocompleteField" md-no-cache="true"
@@ -437,8 +451,8 @@
 								md-item-text="item.ATTRIBUTE_NM" 
 								md-require-match=""
 								md-delay=500
-								md-floating-label="Proprietï¿½"> <md-item-template>
-							<span md-highlight-text="ctrl.tmpAttr.Prop">{{item.ATTRIBUTE_NM}}</span>
+								md-floating-label="Proprietà"> <md-item-template>
+							<span md-highlight-text="ctrl.tmpAttr.Prop.toUpperCase()">{{item.ATTRIBUTE_NM | uppercase}}</span>
 							</md-item-template> </md-autocomplete>
 						</div>
 

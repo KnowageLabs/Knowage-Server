@@ -61,8 +61,6 @@ public class Util {
 		JSONObject ret = new JSONObject();
 		ret.put("DOCUMENT_ID", sbiob.getBiobjId());
 		ret.put("DOCUMENT_NM", sbiob.getLabel());
-		ret.put("DOCUMENT_NAME", sbiob.getName());
-		ret.put("DOCUMENT_DESCR", sbiob.getDescr());
 		return ret;
 	}
 }

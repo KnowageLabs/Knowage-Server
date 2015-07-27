@@ -260,13 +260,11 @@
         <mapping resource="it/eng/spagobi/cache/metadata/mapping/SbiCacheJoinedItem.hbm.xml" />
         
         <!-- GLOSSARY -->
-        <mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlAttributes.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlContents.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlGlossary.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlReferences.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWlist.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
-		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWordAttr.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlDocWlist.hbm.xml" />     
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlDataSetWlist.hbm.xml" />       
 		

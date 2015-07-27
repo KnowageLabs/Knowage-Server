@@ -58,7 +58,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.showSearchPreloader = false;
 	ctr.activeTab = 'Glossari';
 	ctr.filterSelected = true;
-	
+	ctr.translate=translate;
 	
 	ctr.expanderNode; //when create vocable from contex-menu in tree i use this variable to store node object and then expand it
 	ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
@@ -69,6 +69,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.querySearchProp = "";
 	self.searchTextProp = null;
 	ctr.selectedGloss = {};
+	ctr.state=[];
+	ctr.category=[];
+	
 	
 	ctr.words = [];
 	ctr.WordItemPerPage = 5;
@@ -235,7 +238,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var def = $q.defer();
 		
 
-			restServices.get("1.0/glossary", "listAttribute", "ATTR=" + query)
+			restServices.get("1.0/udp", "loadUdp", "LABEL=" + query+"&FAMILY=Glossary")
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("attributeLike non Ottenuti");
@@ -278,6 +281,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 		ctr.newWord.SBI_GL_WORD_ATTR.push(np)
 		ctr.tmpAttr = {};
+		ctr.prevPropSearch="";
 	};
 
 	ctr.removeProp = function(prop) {
@@ -365,7 +369,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			for (var i = 0; i < val.length; i++) {
 				if (JSON.stringify(ctr.newWord.LINK).toString().toLowerCase()
-						.indexOf(val[i].WORD.toString().toLowerCase()) != -1) {
+						.indexOf(val[i].WORD.toString().toLowerCase()) != -1 || val[i].WORD.toString().toLowerCase()==ctr.newWord.WORD.toString().toLowerCase() ) {
 					val.splice(i, 1);
 					i--;
 				}
@@ -1635,15 +1639,40 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					parent : angular.element(document.body),
 
 				})
-				
-				
-					
-				
-
 	};
 
 	// <!-- fine tree -->
 
+	ctr.showInfoWORD=function(ev,wordid){
+		console.log("showInfo");
+		console.log(event)
+		console.log(wordid)
+		$mdDialog
+			.show({  
+					controllerAs : 'infCtrl',
+				controller : function($mdDialog) {
+					var iwctrl = this;
+					iwctrl.translate=translate;
+			restServices.get("1.0/glossary", "getWord", "WORD_ID=" + wordid)
+					.success(
+							function(data, status, headers, config) {
+								if (data.hasOwnProperty("errors")) {
+									showToast(translate.load("sbi.glossary.load.error"), 3000);
+								} else {
+									iwctrl.info = data;
+								}
+							}).error(function(data, status, headers, config) {
+						showToast(translate.load("sbi.glossary.load.error"), 3000);
+						
+					})
+				},
+				templateUrl : 'info_word.html',
+				targetEvent : ev,
+				clickOutsideToClose :true
+			})
+	}
+	
+	
 	// pagination word
 	function changeWordItemPP() {
 		var lbw = angular.element(document.querySelector('.wordListBox'))[0].offsetHeight;
@@ -1857,7 +1886,38 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		ctr.showPreloader = false;
 	}
 
-
+	ctr.loadState=function(){
+		restServices.get("domains", "listValueDescriptionByType", "DOMAIN_TYPE=GLS_STATE")
+		.success(
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						showToast(translate.load("sbi.glossary.load.error"), 3000);
+					} else {
+						ctr.state = data;
+					}
+				}).error(function(data, status, headers, config) {
+			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			
+		})
+	}
+	ctr.loadState();
+	
+	ctr.loadCategory=function(){
+		restServices.get("domains", "listValueDescriptionByType", "DOMAIN_TYPE=GLS_CATEGORY")
+		.success(
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						showToast(translate.load("sbi.glossary.load.error"), 3000);
+					} else {
+						ctr.category = data;
+					}
+				}).error(function(data, status, headers, config) {
+			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			
+		})
+	}
+	ctr.loadCategory();
+		
 }
 
 

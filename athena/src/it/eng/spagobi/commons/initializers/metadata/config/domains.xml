@@ -289,6 +289,8 @@
 		domainNm="Udp family" valueDs="Predefined udp family" />
 	<DOMAIN valueCd="Kpi" valueNm="Kpi_Family" domainCd="UDP_FAMILY"
 		domainNm="Udp famil" valueDs="Predefined udp family" />
+	<DOMAIN valueCd="Glossary" valueNm="Glossary Family" domainCd="UDP_FAMILY"
+		domainNm="Udp family" valueDs="Predefined udp family" />
 	<DOMAIN valueCd="groovy" valueNm="Groovy" domainCd="SCRIPT_TYPE"
 		domainNm="Script Type" valueDs="Script Type" />
 	<DOMAIN valueCd="ECMAScript" valueNm="Javascript" domainCd="SCRIPT_TYPE"
@@ -396,5 +398,17 @@
 
 	<DOMAIN valueCd="licence" valueNm="licence" domainCd="DS_GEN_META_PROPERTY"
 		domainNm="Data Set General Metadata Property" valueDs="Data Set General Metadata Property" />
+
+	<DOMAIN valueCd="GLS_STATE_ACTIVE" valueNm="sbi.generic.active"
+	domainCd="GLS_STATE" domainNm="GLOSSARY STATE" valueDs="" />
+	
+	<DOMAIN valueCd="GLS_STATE_NON_ACTIVE" valueNm="sbi.generic.non.active"
+		domainCd="GLS_STATE" domainNm="GLOSSARY STATE" valueDs="" />
+		
+	<DOMAIN valueCd="GLS_CATEGORY_WORD" valueNm="sbi.glossary.word"
+	domainCd="GLS_CATEGORY" domainNm="GLOSSARY CATEGORY " valueDs="" />
+	
+	<DOMAIN valueCd="GLS_CATEGORY_ATTR" valueNm="sbi.glossary.attributes"
+	domainCd="GLS_CATEGORY" domainNm="GLOSSARY CATEGORY " valueDs="" />
 
 </DOMAINS>

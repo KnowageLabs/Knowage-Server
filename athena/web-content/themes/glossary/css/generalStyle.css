@@ -39,6 +39,7 @@
 	font-size: 10pt;
 	font-weight: normal;
 	color: black;
+	overflow: auto !important;
 }
 
 md-toolbar.minihead {
@@ -392,6 +393,7 @@ md-dialog.infoBox{
 .infoBox ul li.sub-list ul li	{  
 	float: left;
   margin-right: 10px;
-  border-bottom: 1px solid;}
+/*   border-bottom: 1px solid; */
+  }
 
   

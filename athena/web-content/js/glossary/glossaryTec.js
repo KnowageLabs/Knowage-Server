@@ -271,9 +271,6 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 							showToast(translate.load("sbi.glossary.load.error"), 3000);
 							
 						})
-						
-				
-					
 					},
 					templateUrl : 'info_word.html',
 					targetEvent : ev,
@@ -298,9 +295,6 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 										global.showToast(translate.load("sbi.glossary.load.error"), 3000);
 									} else {
 										idctrl.info = data;
-										
-										
-										
 										restServices.get("2.0/documents", docID+"/roles")
 										.success(
 												function(data, status, headers, config) {
@@ -312,20 +306,10 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 											}).error(function(data, status, headers, config) {
 													global.showToast(translate.load("sbi.glossary.load.error"), 3000);
 											})
-										
-										
-										
-										
-										
-										
-										
-										
 									}
 								}).error(function(data, status, headers, config) {
 									global.showToast(translate.load("sbi.glossary.load.error"), 3000);
-							
 						})
-						
 					},
 					templateUrl : 'info_document.html',
 					targetEvent : ev,
