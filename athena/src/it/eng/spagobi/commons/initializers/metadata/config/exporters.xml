@@ -1,68 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EXPORTERS>
-	<EXPORTER domain="PDF" engine="SpagoBIKpiEngine" defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBIJasperReportE"
+	<EXPORTER domain="PDF" engine="athenakpiengine" defaultValue="true" />
+	<EXPORTER domain="PDF" engine="athenajasperreporte"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="SpagoBIJasperReportE"
+	<EXPORTER domain="XLS" engine="athenajasperreporte"
 		defaultValue="false" />
-	<EXPORTER domain="RTF" engine="SpagoBIJasperReportE"
+	<EXPORTER domain="RTF" engine="athenajasperreporte"
 		defaultValue="false" />
-	<EXPORTER domain="JPG" engine="SpagoBIJasperReportE"
+	<EXPORTER domain="JPG" engine="athenajasperreporte"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="SpagoBIBirtReportEng"
+	<EXPORTER domain="PDF" engine="athenabirtreporteng"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="SpagoBIBirtReportEng"
+	<EXPORTER domain="XLS" engine="athenabirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="RTF" engine="SpagoBIBirtReportEng"
+	<EXPORTER domain="RTF" engine="athenabirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="JPG" engine="SpagoBIBirtReportEng"
+	<EXPORTER domain="JPG" engine="athenabirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="CSV" engine="SpagoBIBirtReportEng"
+	<EXPORTER domain="CSV" engine="athenabirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="SpagoBIJPivotEngine"
+	<EXPORTER domain="PDF" engine=athenajpivotengine
 		defaultValue="false" />
-	<EXPORTER domain="XLS" engine="SpagoBIJPivotEngine"
+	<EXPORTER domain="XLS" engine=athenajpivotengine
 		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBIJFreeChartEng"
+	<!-- <EXPORTER domain="PDF" engine="SpagoBIJFreeChartEng"
+		defaultValue="true" />  -->
+	<EXPORTER domain="PDF" engine="athenaqbeengine" defaultValue="true" />
+	<EXPORTER domain="XLS" engine="athenaqbeengine" defaultValue="false" />
+	<EXPORTER domain="XLSX" engine="athenaqbeengine"
+		defaultValue="false" />
+	<EXPORTER domain="CSV" engine="athenaqbeengine" defaultValue="false" />
+	<EXPORTER domain="RTF" engine="athenaqbeengine" defaultValue="false" />
+	<EXPORTER domain="JRXML" engine="athenaqbeengine"
+		defaultValue="false" />
+	<EXPORTER domain="PDF" engine="athenageoengine" defaultValue="true" />
+	<EXPORTER domain="JPG" engine="athenageoengine" defaultValue="true" />
+	<EXPORTER domain="PDF" engine="athenasmartfilteren"
 		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBIQbeEngine" defaultValue="true" />
-	<EXPORTER domain="XLS" engine="SpagoBIQbeEngine" defaultValue="false" />
-	<EXPORTER domain="XLSX" engine="SpagoBIQbeEngine"
+	<EXPORTER domain="XLS" engine="athenasmartfilteren"
 		defaultValue="false" />
-	<EXPORTER domain="CSV" engine="SpagoBIQbeEngine" defaultValue="false" />
-	<EXPORTER domain="RTF" engine="SpagoBIQbeEngine" defaultValue="false" />
-	<EXPORTER domain="JRXML" engine="SpagoBIQbeEngine"
+	<EXPORTER domain="CSV" engine="athenasmartfilteren"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="SpagoBIGeoEngine" defaultValue="true" />
-	<EXPORTER domain="JPG" engine="SpagoBIGeoEngine" defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBISmartFilterEn"
+	<EXPORTER domain="RTF" engine="athenasmartfilteren"
+		defaultValue="false" />
+	<EXPORTER domain="XLS" engine="athenaworksheeteng"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="SpagoBISmartFilterEn"
+	<EXPORTER domain="XLSX" engine="athenaworksheeteng"
 		defaultValue="false" />
-	<EXPORTER domain="CSV" engine="SpagoBISmartFilterEn"
+	<EXPORTER domain="PDF" engine="athenaworksheeteng"
 		defaultValue="false" />
-	<EXPORTER domain="RTF" engine="SpagoBISmartFilterEn"
-		defaultValue="false" />
-	<EXPORTER domain="XLS" engine="SpagoBIWorksheetEng"
+	<!-- <EXPORTER domain="PDF" engine="SpagoBIDashboardEng"
+		defaultValue="true" /> -->
+	<EXPORTER domain="PDF" engine="athenaconsoleengine"
 		defaultValue="true" />
-	<EXPORTER domain="XLSX" engine="SpagoBIWorksheetEng"
+	<EXPORTER domain="JPG" engine="athenachartengine"
+		defaultValue="true" />
+	<EXPORTER domain="PDF" engine="athenachartengine"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="SpagoBIWorksheetEng"
+	<EXPORTER domain="GRAPHML" engine="athenanetworkengine"
+		defaultValue="true" />
+	<EXPORTER domain="PNG" engine="athenanetworkengine"
+		defaultValue="true" />
+	<EXPORTER domain="PDF" engine="athenanetworkengine"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="SpagoBIDashboardEng"
-		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBIConsoleEngine"
-		defaultValue="true" />
-	<EXPORTER domain="JPG" engine="SpagoBIJSChartEngine"
-		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBIJSChartEngine"
-		defaultValue="false" />
-	<EXPORTER domain="GRAPHML" engine="SpagoBINetworkEngine"
-		defaultValue="true" />
-	<EXPORTER domain="PNG" engine="SpagoBINetworkEngine"
-		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="SpagoBINetworkEngine"
-		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="SpagoBICompositeDocE"
+	<EXPORTER domain="PDF" engine="athenacompositedoce"
 		defaultValue="true" />
 </EXPORTERS>

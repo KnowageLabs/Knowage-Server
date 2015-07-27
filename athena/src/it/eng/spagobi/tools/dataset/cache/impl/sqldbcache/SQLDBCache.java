@@ -968,10 +968,10 @@ public class SQLDBCache implements ICache {
 					// delete also Joined dataset related to current dataset
 					for (String joinedSignature : joinedSignatures) {
 						// this will trigger a DB constraint -> joined references are deleted automatically
-						delete(joinedSignature);
+						deleteJoined(joinedSignature);
 					}
 				}
-				result = dropTableAndRemoveCacheItem(dataSetSignature);
+				result = dropTableAndRemoveCacheItem(dataSetSignature, false);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -1003,18 +1003,18 @@ public class SQLDBCache implements ICache {
 					// delete also Joined dataset related to current dataset
 					for (String joinedSignature : joinedSignatures) {
 						// this will trigger a DB constraint -> joined references are deleted automatically
-						delete(joinedSignature);
+						deleteJoined(joinedSignature);
 					}
 				}
-				result = dropTableAndRemoveCacheItem(signature);
+				result = dropTableAndRemoveCacheItem(signature, false);
 			} else {
-				logger.warn("Input parameter [dataSet] is null");
+				logger.warn("Input parameter [" + signature + "] is null");
 			}
 		} catch (Throwable t) {
 			if (t instanceof CacheException)
 				throw (CacheException) t;
 			else
-				throw new CacheException("An unexpected error occure while deleting dataset from cache", t);
+				throw new CacheException("An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1022,14 +1022,36 @@ public class SQLDBCache implements ICache {
 		return result;
 	}
 
-	private boolean dropTableAndRemoveCacheItem(String signature) {
+	private boolean deleteJoined(String joinedSignature) {
+		boolean result = false;
+
+		logger.debug("IN");
+		try {
+			if (joinedSignature != null) {
+				result = dropTableAndRemoveCacheItem(joinedSignature, true);
+			} else {
+				logger.warn("Input parameter [" + joinedSignature + "] is null");
+			}
+		} catch (Throwable t) {
+			if (t instanceof CacheException)
+				throw (CacheException) t;
+			else
+				throw new CacheException("An unexpected error occure while deleting joined dataset [" + joinedSignature + "] from cache", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return result;
+	}
+
+	private boolean dropTableAndRemoveCacheItem(String signature, boolean isHash) {
 		logger.debug("IN");
 		logger.debug("delete " + signature);
-		if (getMetadata().containsCacheItem(signature)) {
+		if (getMetadata().containsCacheItem(signature, isHash)) {
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
-			String tableName = getMetadata().getCacheItem(signature).getTable();
+			String tableName = getMetadata().getCacheItem(signature, isHash).getTable();
 			persistedTableManager.dropTableIfExists(getDataSource(), tableName);
-			getMetadata().removeCacheItem(signature);
+			getMetadata().removeCacheItem(signature, isHash);
 			logger.debug("Removed table " + tableName + " from [SQLDBCache] corresponding to the result Set: " + signature);
 			logger.debug("OUT deleted");
 
@@ -1098,7 +1120,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
 	 */
 	public void deleteOnlyStale() {

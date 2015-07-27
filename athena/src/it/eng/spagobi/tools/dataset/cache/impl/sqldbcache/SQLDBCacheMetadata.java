@@ -216,6 +216,14 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		cacheDao.deleteCacheItemBySignature(getHashedSignature(signature));
 	}
 
+	public void removeCacheItem(String signature, boolean isHash) {
+		if (isHash) {
+			cacheDao.deleteCacheItemBySignature(signature);
+		} else {
+			removeCacheItem(signature);
+		}
+	}
+
 	public void removeAllCacheItems() {
 		cacheDao.deleteAllCacheItem();
 	}
@@ -228,12 +236,28 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheDao.loadCacheItemBySignature(getHashedSignature(resultSetSignature));
 	}
 
+	public CacheItem getCacheItem(String resultSetSignature, boolean isHash) {
+		if (isHash) {
+			return cacheDao.loadCacheItemBySignature(resultSetSignature);
+		} else {
+			return getCacheItem(resultSetSignature);
+		}
+	}
+
 	public boolean containsCacheItemByTableName(String tableName) {
 		return getCacheItemByResultSetTableName(tableName) != null;
 	}
 
 	public boolean containsCacheItem(String resultSetSignature) {
 		return getCacheItem(resultSetSignature) != null;
+	}
+
+	public boolean containsCacheItem(String resultSetSignature, boolean isHash) {
+		if (isHash) {
+			return getCacheItem(resultSetSignature, isHash) != null;
+		} else {
+			return getCacheItem(resultSetSignature) != null;
+		}
 	}
 
 	/*
