@@ -2,7 +2,6 @@ package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlAttribute;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
@@ -11,7 +10,9 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
-import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
+//import it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.List;
 import java.util.Map;
@@ -86,8 +87,11 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 
 	public List<SbiGlWord> listWordFiltered(String word,Integer page,Integer item_per_page,Integer gloss_id);
 	
-	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
-
+//	public Integer insertWordOld(SbiGlWord word,List<SbiGlWord> objLink,List<SbiGlAttribute> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
+	
+	public Integer insertWord(SbiGlWord word,List<SbiGlWord> objLink,List<SbiUdp> objAttr,Map<Integer, JSONObject> MapAttr,Map<Integer, JSONObject> MapLink,final boolean modify);
+	
+	
 	public void modifyWord(SbiGlWord word);
 
 	public void deleteWord(Integer wordId);
@@ -112,31 +116,31 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	public List<SbiGlWlist> listWlistByGlossaryIdAndWordId(Integer glossaryId, Integer wordId);
 
 
-	//
-	// Attribute
-	//
-	public SbiGlAttribute loadAttribute(Integer attributeId);
-
-	public List<SbiGlAttribute> listAttribute();
-
-	public List<SbiGlAttribute> listAttrFromArray(Object[] arr);
-	
-	public List<SbiGlAttribute> listAttributeFiltered(String attribute);
-	
-	public Integer insertAttribute(SbiGlAttribute attribute);
-
-	public void modifyAttribute(SbiGlAttribute attribute);
-
-	public void deleteAttribute(Integer attributeId);
+//	//
+//	// Attribute
+//	//
+//	public SbiGlAttribute loadAttribute(Integer attributeId);
+//
+//	public List<SbiGlAttribute> listAttribute();
+//
+//	public List<SbiGlAttribute> listAttrFromArray(Object[] arr);
+//	
+//	public List<SbiGlAttribute> listAttributeFiltered(String attribute);
+//	
+//	public Integer insertAttribute(SbiGlAttribute attribute);
+//
+//	public void modifyAttribute(SbiGlAttribute attribute);
+//
+//	public void deleteAttribute(Integer attributeId);
 
 	//
 	// WordAttr
 	//
-	public List<SbiGlWordAttr> listWordAttr(Integer wordId);
+	public List<SbiUdpValue> listWordAttr(Integer wordId);
 
-	public Integer insertWordAttr(SbiGlWordAttr wordAttr);
+	public Integer insertWordAttr(SbiUdpValue wordAttr);
 
-	public void modifyWordAttr(SbiGlWordAttr wordAttr);
+	public void modifyWordAttr(SbiUdpValue wordAttr);
 
 	public void deleteWordAttr(Integer wordId);
 	

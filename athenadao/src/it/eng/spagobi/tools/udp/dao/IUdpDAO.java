@@ -36,7 +36,11 @@ public interface IUdpDAO extends ISpagoBIDao{
     public List<SbiUdp> findAll();
 
     public List<Udp> loadAllByFamily(String familyCode) throws EMFUserError;
+    
+    public List<Udp> loadByFamilyAndLikeLabel(String familyCode,String lab) throws EMFUserError;
 
+    public List<SbiUdp> listUdpFromArray(Object[] arr);
+    
     public Udp loadByLabel(String label) throws EMFUserError;
 
     public Udp loadByLabelAndFamily(String label, String family) throws EMFUserError;

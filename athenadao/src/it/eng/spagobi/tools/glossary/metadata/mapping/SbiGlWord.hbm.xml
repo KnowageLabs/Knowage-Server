@@ -56,12 +56,21 @@
         <property name="formula" type="string">
             <column name="FORMULA" length="500" />
         </property> 
-        <property name="state" type="string">
-            <column name="STATE" length="30" />
+        <property name="state_id" type="integer">
+            <column name="STATE"  />
         </property> 
-        <property name="category" type="string">
-            <column name="CATEGORY" length="30" />
+        <property name="category_id" type="integer">
+            <column name="CATEGORY"  />
         </property>
+        
+        <many-to-one name="state" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" update="false" insert="false" fetch="select">
+            <column name="STATE" not-null="false" />
+        </many-to-one>
+        
+         <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" update="false" insert="false" fetch="select">
+            <column name="CATEGORY" not-null="false" />
+        </many-to-one>
+        
         
         <set name="references" inverse="true" order-by="REFERENCES_ORDER" lazy="false"  cascade="all-delete-orphan">
             <key>
@@ -70,11 +79,11 @@
             <one-to-many class="it.eng.spagobi.tools.glossary.metadata.SbiGlReferences" />
         </set>
         
-        <set name="attributes" inverse="true" order-by="ATTR_ORDER" lazy="false"  cascade="all-delete-orphan" >
+        <set name="attributes" inverse="true"  lazy="false"  cascade="all-delete-orphan" >
             <key>
-                <column name="WORD_ID" not-null="true" />
+                <column name="REFERENCE_ID" not-null="true" />
             </key>
-            <one-to-many class="it.eng.spagobi.tools.glossary.metadata.SbiGlWordAttr" />
+            <one-to-many class="it.eng.spagobi.tools.udp.metadata.SbiUdpValue" />
         </set> 
     </class>
 </hibernate-mapping>

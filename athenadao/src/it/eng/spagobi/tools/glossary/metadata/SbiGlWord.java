@@ -1,6 +1,8 @@
 package it.eng.spagobi.tools.glossary.metadata;
 
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
 import java.util.Set;
 
@@ -13,11 +15,17 @@ public class SbiGlWord extends SbiHibernateModel {
 	private String word;
 	private String descr;
 	private String formula;
-	private String state;
-	private String category;
+//	private String state;
+//	private String category;
 
+	private Integer state_id;
+	private Integer category_id;
+	
+	private SbiDomains state;
+	private SbiDomains category;
+	
 	private Set<SbiGlReferences> references;
-	private Set<SbiGlWordAttr> attributes;
+	private Set<SbiUdpValue> attributes;
 
 	public SbiGlWord() {
 	}
@@ -30,7 +38,30 @@ public class SbiGlWord extends SbiHibernateModel {
 	 * @param state
 	 * @param category
 	 */
-	public SbiGlWord(Integer wordId, String word, String descr, String formula, String state, String category) {
+	public SbiGlWord(Integer wordId, String word, String descr, String formula, Integer state, Integer category) {
+		super();
+		this.wordId = wordId;
+		this.word = word;
+		this.descr = descr;
+		this.formula = formula;
+		this.state_id = state;
+		this.category_id = category;
+	}
+
+	
+	/**
+	 * @param wordId
+	 * @param word
+	 * @param descr
+	 * @param formula
+	 * @param state
+	 * @param category
+	 * @param references
+	 * @param attributes
+	 */
+	public SbiGlWord(Integer wordId, String word, String descr, String formula,
+			SbiDomains state, SbiDomains category,
+			Set<SbiGlReferences> references, Set<SbiUdpValue> attributes) {
 		super();
 		this.wordId = wordId;
 		this.word = word;
@@ -38,6 +69,8 @@ public class SbiGlWord extends SbiHibernateModel {
 		this.formula = formula;
 		this.state = state;
 		this.category = category;
+		this.references = references;
+		this.attributes = attributes;
 	}
 
 	/**
@@ -100,33 +133,61 @@ public class SbiGlWord extends SbiHibernateModel {
 		this.formula = formula;
 	}
 
+	
+
+	/**
+	 * @return the state_id
+	 */
+	public Integer getState_id() {
+		return state_id;
+	}
+
+	/**
+	 * @param state_id the state_id to set
+	 */
+	public void setState_id(Integer state_id) {
+		this.state_id = state_id;
+	}
+
+	/**
+	 * @return the category_id
+	 */
+	public Integer getCategory_id() {
+		return category_id;
+	}
+
+	/**
+	 * @param category_id the category_id to set
+	 */
+	public void setCategory_id(Integer category_id) {
+		this.category_id = category_id;
+	}
+
 	/**
 	 * @return the state
 	 */
-	public String getState() {
+	public SbiDomains getState() {
 		return state;
 	}
 
 	/**
-	 * @param state
-	 *            the state to set
+	 * @param state the state to set
 	 */
-	public void setState(String state) {
+	public void setState(SbiDomains state) {
 		this.state = state;
 	}
 
 	/**
 	 * @return the category
 	 */
-	public String getCategory() {
+	public SbiDomains getCategory() {
 		return category;
 	}
 
 	/**
-	 * @param category
-	 *            the category to set
+	 * @param category the category to set
 	 */
-	public void setCategory(String category) {
+	public void setCategory(SbiDomains category) {
 		this.category = category;
 	}
 
@@ -148,7 +209,7 @@ public class SbiGlWord extends SbiHibernateModel {
 	/**
 	 * @return the attributes
 	 */
-	public Set<SbiGlWordAttr> getAttributes() {
+	public Set<SbiUdpValue> getAttributes() {
 		return attributes;
 	}
 
@@ -156,7 +217,7 @@ public class SbiGlWord extends SbiHibernateModel {
 	 * @param attributes
 	 *            the attributes to set
 	 */
-	public void setAttributes(Set<SbiGlWordAttr> attributes) {
+	public void setAttributes(Set<SbiUdpValue> attributes) {
 		this.attributes = attributes;
 	}
 

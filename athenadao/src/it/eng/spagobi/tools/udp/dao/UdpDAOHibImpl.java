@@ -11,6 +11,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
@@ -27,6 +28,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * 
@@ -301,7 +303,78 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 		}
 	}	
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<SbiUdp> listUdpFromArray(final Object[] arr) {
+		return list(new ICriterion() {
 
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiUdp.class);
+				c.add(Restrictions.in("udpId", arr));
+				return c;
+			}
+		});
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Udp> loadByFamilyAndLikeLabel(String familyCd,String lab) throws EMFUserError {
+		logger.debug("IN");
+		Session session = getSession();
+		List<Udp> toReturn = null;
+		// get Domain id form KPI family
+		Transaction tx = null;
+		try {
+
+			Integer domainId;
+			SbiDomains domain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("UDP_FAMILY", familyCd);
+
+			if(domain== null){
+				logger.error("could not find domain of type UDP_FAMILY with value code "+familyCd);
+				return null;
+			}
+			else{
+				domainId = domain.getValueId();
+			}
+
+
+			tx = session.beginTransaction();
+			Query query = session.createQuery("from SbiUdp s where s.familyId = :idFamily and s.label like :labelLike");
+			query.setInteger("idFamily", domainId);
+			query.setString("labelLike", "%"+lab+"%");
+
+			List<SbiUdp> list = (List<SbiUdp>)query.list();
+			if(list != null){
+				toReturn = new ArrayList<Udp>();
+				for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+					SbiUdp sbiUdp = (SbiUdp) iterator.next();
+					Udp udp = toUdp(sbiUdp);
+					toReturn.add(udp);
+				}
+			}
+			tx.commit();
+
+		} catch (HibernateException e) {
+			if( tx != null && tx.isActive() ){
+				tx.rollback();
+			}
+			throw e;
+
+		}catch (EMFUserError e) {
+			logger.error("error probably in getting asked UDP_FAMILY domain", e);
+			if( tx != null && tx.isActive() ){
+				tx.rollback();
+			}
+			throw e;
+
+		}finally{
+			session.close();
+		}
+		logger.debug("OUT");
+		return toReturn;
+	}	
+	
+	
 	@SuppressWarnings("unchecked")
 	public List<Udp> loadAllByFamily(String familyCd) throws EMFUserError {
 		logger.debug("IN");

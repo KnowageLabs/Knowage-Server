@@ -5,6 +5,7 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.Transformers;
 
@@ -22,6 +23,7 @@ public class SearchWord implements ICriterion<SbiGlWord> {
 	@Override
 	public Criteria evaluate(Session session) {
 		Criteria c = session.createCriteria(SbiGlWord.class);
+		c.addOrder(Order.asc("word"));
 		c.setProjection(Projections.projectionList().add(Projections.property("wordId"), "wordId").add(Projections.property("word"), "word"))
 				.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
 		
