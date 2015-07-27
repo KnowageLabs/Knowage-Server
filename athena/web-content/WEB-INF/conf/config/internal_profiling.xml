@@ -158,6 +158,32 @@
 			productType="AthenaSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
 			productType="AthenaSocial" organization="SPAGOBI" />
+		
+		<!-- Authorizations for AthenaFake -->
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_SUBOBJECTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_VIEWPOINTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_SNAPSHOTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_NOTES" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEND_MAIL" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_INTO_FOLDER" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_REMEMBER_ME" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_METADATA" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_METADATA" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="BUILD_QBE_QUERY" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="DO_MASSIVE_EXPORT" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="EDIT_WORKSHEET" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="MANAGE_USERS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_DOCUMENT_BROWSER" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_FAVOURITES" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_SUBSCRIPTIONS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
+		<AUTHORIZATION productType="AthenaFake" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="SPAGOBI"/>	
 	</DEFAULT_AUTHORIZATIONS>
 
 
