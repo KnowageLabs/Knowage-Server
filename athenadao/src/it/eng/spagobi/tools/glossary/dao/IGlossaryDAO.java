@@ -2,11 +2,13 @@ package it.eng.spagobi.tools.glossary.dao;
 
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
@@ -167,5 +169,16 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 		
 	//navigation
 	public Map<String, Object> NavigationItem(JSONObject  elem);
+	
+	
+	//
+	// Business Class
+	//
+	public SbiGlBnessCls loadBnessCls(Integer bcId);
+	
+	//
+	// Business Class
+	//
+	public SbiGlTable loadTable(Integer tableId);
 	
 }
