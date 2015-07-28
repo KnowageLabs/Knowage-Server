@@ -3,13 +3,10 @@
 <%@page import="java.util.Locale"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-
-
+<%@page import="it.eng.spago.message.MessageBundle"%>
 <%
-Locale locale = request.getLocale(); 	
-	String sbiMode = "WEB";
-	IUrlBuilder urlBuilder = null;
-	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+	Locale locale =  MessageBundle.getUserLocale(); 
+	IUrlBuilder urlBuilder=UrlBuilderFactory.getUrlBuilder("WEB");
 %>
 
 

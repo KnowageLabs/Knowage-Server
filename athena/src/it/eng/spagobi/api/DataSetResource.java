@@ -1082,8 +1082,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			boolean isGeoDataset = false;
 			try {
+				if(datasetJSON.has("meta")){
 				String meta = datasetJSON.getString("meta");
 				isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
+				}
 			} catch (Exception e) {
 				logger.error("Error during check of Geo spatial column", e);
 			}

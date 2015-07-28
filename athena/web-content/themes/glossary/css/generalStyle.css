@@ -330,6 +330,13 @@ md-input-container.search-input md-icon{
   margin-top: 3px;
   height: 22px;
 }
+
+.navig-tab-content .searchBar{
+  margin-top: -2px !important;
+  margin-bottom: 4px !important;;
+  
+}
+
 .searchBar md-icon{
 	  color: rgb(177, 169, 174);
   height: 100%;
@@ -350,6 +357,7 @@ md-input-container.search-input md-icon{
 .searchBar input{
 	margin: 0px;
   margin-left: 15px;
+  height: 18px;
 }
 
 .addButton{
@@ -395,5 +403,12 @@ md-dialog.infoBox{
   margin-right: 10px;
 /*   border-bottom: 1px solid; */
   }
-
+.md-toolbar-tools h4{
+color: white;
+    padding: 0;
+    margin: 0;
+    font-size: large;
+    width: 100%;
+    text-align: center;
+}
   

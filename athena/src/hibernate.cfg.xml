@@ -266,7 +266,15 @@
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWlist.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlWord.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlDocWlist.hbm.xml" />     
-		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlDataSetWlist.hbm.xml" />       
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlDataSetWlist.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlBnessClsWlist.hbm.xml" />
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiGlTableWlist.hbm.xml" />       
+		
+		<!-- BUSINESS CLASS -->
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiBnessCls.hbm.xml" />
+		
+		<!-- TABLE -->
+		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiTable.hbm.xml" />
 		
 		<!-- IMAGES -->
 		<mapping resource="it/eng/spagobi/images/metadata/mapping/SbiImages.hbm.xml" />        

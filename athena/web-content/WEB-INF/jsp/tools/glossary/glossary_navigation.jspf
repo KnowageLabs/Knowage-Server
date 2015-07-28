@@ -7,15 +7,15 @@
 		<div flex="20" class="boxItemGlo">
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div>Vocaboli</div>
+				<div>{{global.translate.load("sbi.glossary.word");}}</div>
 				<md-progress-circular ng-show="ctrl.pagination.word.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 			</div>
 			
 			</md-toolbar>
 
 			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-			 <md-select  style="padding: 0 0 2px 0;" placeholder="Select Gerarchia" ng-model="ctrl.pagination.word.selGlo" >
-			 <md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">Select Gerarchia</md-option>
+			 <md-select  style="padding: 0 0 2px 0;" placeholder='{{global.translate.load("sbi.generic.select");}} {{global.translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
+			 <md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{global.translate.load("sbi.generic.select");}} {{global.translate.load("sbi.glossary.glossary");}}</md-option>
        		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 
@@ -49,8 +49,8 @@
 
 			<md-toolbar class="md-blue xs-head" style="  border-bottom: 1px solid rgb(210, 210, 210);">
 			<div class="md-toolbar-tools">
-				<div>Elementi</div>
-				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">Cancella selezioni</md-button>
+				<div>{{global.translate.load("sbi.glossary.elements");}}</div>
+				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">{{global.translate.load("sbi.config.manageconfig.fields.clearFilter");}}</md-button>
 			</div>
 			</md-toolbar>
 
@@ -59,7 +59,7 @@
 				<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">Documenti</div>
+						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.kpis.documents");}}</div>
 							<md-progress-circular ng-show="ctrl.pagination.document.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 		
 					</div>
@@ -98,7 +98,7 @@
 				<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">Data set</div>
+						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
 					<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 		
 					</div>
@@ -129,38 +129,82 @@
 					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.dataset)"></dir-pagination-controls>
 				</div>
 			
-			
-			
 		       		</md-content>
 				</div>
 
-				<div flex="25" class="boxItemGlo">
+
+<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">Business class</div>
+						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.glossary.businessclass");}}</div>
+					<md-progress-circular ng-show="ctrl.pagination.bness_cls.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+		
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
+						<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
 						<md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.searchBusCl" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
+       					 <input	ng-model="ctrl.pagination.bness_cls.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.bness_cls)" type="text" placeholder="Search ">
+       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('bness_cls')" class="filter-icon" 
+       		 			ng-class="{ 'not_empty' : (ctrl.pagination.bness_cls.selected.length !== 0 || ctrl.pagination.bness_cls.search.length !== 0 )  }"></md-icon> 
        					</md-input-container>
+       					
+       					
+       				<md-list class="bottomBorder info_button" >
+					<md-list-item dir-paginate="bness_cls in ctrl.pagination.bness_cls.item |  itemsPerPage:ctrl.pagination.bness_cls.item_number "
+						total-items="ctrl.pagination.bness_cls.total" current-page="ctrl.pagination.bness_cls.current" pagination-id="ctrl.pagination.bness_cls.id" 
+						ng-click="ctrl.toggleFilter(bness_cls)" ng-repeat="n in [1]" class="smallListItem " 
+						ng-class="{selected_item: ctrl.isSelected(bness_cls)}">
+							<p class="wrapText">{{ bness_cls.BC_NM | uppercase}} </p>
+							 <md-icon class="md-secondary" ng-click="ctrl.showInfoBC($event,bness_cls.BC_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+				
+					</md-list-item> 
+					</md-list>
+		
+				<div class="box_pagination" layout="row" layout-align="center end">
+					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.bness_cls.id"
+					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.bness_cls)"></dir-pagination-controls>
+				</div>
+			
 		       		</md-content>
 				</div>
 
-				<div flex="25" class="boxItemGlo">
+				
+			<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">Tabelle</div>
+						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.glossary.tables");}}</div>
+					<md-progress-circular ng-show="ctrl.pagination.table.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+		
 					</div>
 					</md-toolbar>
 
-					<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-						 <md-input-container md-no-float class="noPadding searchBar" >
+						<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
+						<md-input-container md-no-float class="noPadding searchBar" >
        					 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       					 <input	ng-model="ctrl.searchTab" ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchDoc)" type="text" placeholder="Search ">
+       					 <input	ng-model="ctrl.pagination.table.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.table)" type="text" placeholder="Search ">
+       					 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('table')" class="filter-icon" 
+       		 			ng-class="{ 'not_empty' : (ctrl.pagination.table.selected.length !== 0 || ctrl.pagination.table.search.length !== 0 )  }"></md-icon> 
        					</md-input-container>
+       					
+       					
+       				<md-list class="bottomBorder info_button" >
+					<md-list-item dir-paginate="table in ctrl.pagination.table.item |  itemsPerPage:ctrl.pagination.table.item_number "
+						total-items="ctrl.pagination.table.total" current-page="ctrl.pagination.table.current" pagination-id="ctrl.pagination.table.id" 
+						ng-click="ctrl.toggleFilter(table)" ng-repeat="n in [1]" class="smallListItem " 
+						ng-class="{selected_item: ctrl.isSelected(table)}">
+							<p class="wrapText">{{ table.TABLE_NM | uppercase}} </p>
+							 <md-icon class="md-secondary" ng-click="ctrl.showInfoTB($event,table.TABLE_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+				
+					</md-list-item> 
+					</md-list>
+		
+				<div class="box_pagination" layout="row" layout-align="center end">
+					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.table.id"
+					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.table)"></dir-pagination-controls>
+				</div>
+			
 		       		</md-content>
 				</div>
 
@@ -177,6 +221,5 @@
 			</md-content>
 		</div>
 
-{{ctrl.pagination}}
 	</div>
 </div>

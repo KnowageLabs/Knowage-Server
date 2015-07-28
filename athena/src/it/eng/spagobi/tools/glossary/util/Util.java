@@ -4,7 +4,9 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +55,22 @@ public class Util {
 		JSONObject jobj = new JSONObject();
 		jobj.put("DATASET_ID", sbidataset.getId().getDsId());
 		jobj.put("DATASET_NM", sbidataset.getLabel());
+		return jobj;
+	}
+	
+	public static JSONObject fromBnessClsLight(SbiGlBnessCls sbibnesscls)
+			throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("BC_ID", sbibnesscls.getBcId());
+		jobj.put("BC_NM", sbibnesscls.getLabel());
+		return jobj;
+	}
+	
+	public static JSONObject fromTableLight(SbiGlTable sbitable)
+			throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("TABLE_ID", sbitable.getTableId());
+		jobj.put("TABLE_NM", sbitable.getLabel());
 		return jobj;
 	}
 	

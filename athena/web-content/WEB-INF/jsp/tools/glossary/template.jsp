@@ -298,7 +298,7 @@
 <md-dialog aria-label="Info word"  class="infoBox">
  <md-toolbar class="md-blue minihead">
     <div class="md-toolbar-tools">
-      <h4 class="md-flex" style="color:white">{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+      <h4 class="md-flex" >{{infCtrl.translate.load("sbi.generic.details");}}</h4>
     </div>
   </md-toolbar>
 <md-dialog-content class="noPadding">
@@ -327,7 +327,7 @@
 <md-dialog aria-label="Info word"  class="infoBox">
  <md-toolbar class="md-blue minihead">
     <div class="md-toolbar-tools">
-      <h4 class="md-flex" style="color:white">{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+      <h4 class="md-flex" >{{infCtrl.translate.load("sbi.generic.details");}}</h4>
     </div>
   </md-toolbar>
 <md-dialog-content class="noPadding">
@@ -337,7 +337,7 @@
 <li><span>{{infCtrl.translate.load("sbi.browser.document.name");}}:</span><p> {{infCtrl.info.name}}</p></li>
 <li><span>{{infCtrl.translate.load("sbi.hierarchies.scope");}}:</span><p> {{infCtrl.info.functionalities[0]}}</p></li>
 <li class="sub-list"><span>{{infCtrl.translate.load("sbi.browser.document.profiledVisibility");}}:</span>
-		<ul><li ng-repeat="lnk in infCtrl.info.access ">{{lnk}}</li></ul>
+		<ul><li  ng-repeat="lnk in infCtrl.info.access ">{{lnk}}</li></ul>
 </li>
 </ul>
 </div>
@@ -349,7 +349,7 @@
 <md-dialog aria-label="Info word"  class="infoBox">
  <md-toolbar class="md-blue minihead">
     <div class="md-toolbar-tools">
-      <h4 class="md-flex" style="color:white">{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+      <h4 class="md-flex" >{{infCtrl.translate.load("sbi.generic.details");}}</h4>
     </div>
   </md-toolbar>
 <md-dialog-content class="noPadding">
@@ -364,4 +364,42 @@
 </md-dialog-content>
 </md-dialog>
 </script>
+
+
+<script type="text/ng-template" id="info_bness_cls.html">
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" >{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+<div layout="column">
+<ul>
+<li><span>{{infCtrl.translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info.label}} </p></li>
+
+</ul>
+</div>
+</md-dialog-content>
+</md-dialog>
+</script>
+        
+        
+        <script type="text/ng-template" id="info_table.html">
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" >{{infCtrl.translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+<div layout="column">
+<ul>
+<li><span>{{infCtrl.translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info.label}} </p></li>
+
+</ul>
+</div>
+</md-dialog-content>
+</md-dialog>
+</script>        
                 

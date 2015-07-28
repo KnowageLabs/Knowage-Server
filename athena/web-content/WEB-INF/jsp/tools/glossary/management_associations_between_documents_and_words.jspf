@@ -11,7 +11,7 @@
 
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div>Documenti</div>
+				<div>{{global.translate.load("sbi.kpis.documents");}}</div>
 			</div>
 			</md-toolbar>
 
@@ -31,7 +31,7 @@
 			</md-progress-circular>
 
 
-			<p ng-if="ctrl.listDoc.length==0">List Document Empty</p>
+			<p ng-if="ctrl.listDoc.length==0">{{global.translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
 
 								<md-list   class="bottomBorder">
 								 <md-list-item ng-click="ctrl.loadDocumentInfo(doc.DOCUMENT_ID); ctrl.selectedDocument=doc.DOCUMENT_ID;" 	
@@ -58,7 +58,7 @@
 
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div>Vocaboli</div>
+				<div>{{global.translate.load("sbi.glossary.word");}}</div>
 			</div>
 			</md-toolbar>
 
@@ -66,7 +66,7 @@
 			
 			
 
-			<p ng-if="ctrl.words.length==0">nessun vocabolo</p>
+			<p ng-if="ctrl.words.length==0">{{global.translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
 
 	
 			<div id="wordTree" 		ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"  data-clone-enabled="true">
@@ -108,7 +108,7 @@
 
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div >Glossari</div>
+				<div >{{global.translate.load("sbi.glossary.glossary");}}</div>
 			</div>
 			</md-toolbar>
 
@@ -119,8 +119,9 @@
 			
   
 			 <div layout="row" style="margin-bottom: 7px;">
-			<p style="  margin: 0 10px 0 0;" >Glossary:</p>
-			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;" placeholder="Select glossary" ng-model="ctrl.selGlo">
+			<p style="  margin: 0 10px 0 0;" >{{global.translate.load("sbi.glossary.glossary");}}:</p>
+			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;" 
+			 placeholder='{{global.translate.load("sbi.generic.select");}} {{global.translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.selGlo">
        		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;"

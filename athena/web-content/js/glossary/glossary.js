@@ -1684,7 +1684,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
 
 		 bpw == 0 ? bpw = 19 : bpw = bpw;
-		var nit = parseInt((lbw - tbw - bpw - 33 ) / 27);
+		var nit = parseInt((lbw - tbw - bpw - 30 ) / 27);
 		ctr.WordItemPerPage = nit;
 	}
 

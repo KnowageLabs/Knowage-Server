@@ -13,7 +13,7 @@ app.service('translate', function() {
 });
 
 
-app.controller('Controller_tec', [ "restServices","$mdToast", funzione_tec ]);
+app.controller('Controller_tec', [ "translate","restServices","$mdToast", funzione_tec ]);
 app.controller('Controller', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione ]);
 app.controller('Controller_navigation', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_navigazione ]);
 
@@ -29,8 +29,9 @@ var listDocument = [{
 var global;
 var navi;
 
-function funzione_tec(restServices,$mdToast) {
+function funzione_tec(translate,restServices,$mdToast) {
 	global=this;
+	global.translate=translate;
 	global.glossary;
 	global.listDoc;
 	getAllGloss();
@@ -101,6 +102,9 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 	navi.pagination.word = {item_type:"word",item:[],selected:[],selGlo:"---",current: 1,total:10,item_number:3,id:"word_pagination",search:"",prev_search:"",prev_glo:"---",tmp_search:"",preloader:false};
 	navi.pagination.document = {item_type:"document",item:[],selected:[],current: 1,total:10,item_number:7,id:"document_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
 	navi.pagination.dataset = {item_type:"dataset",item:[],selected:[],current: 1,total:10,item_number:7,id:"dataset_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
+	navi.pagination.bness_cls = {item_type:"bness_cls",item:[],selected:[],current: 1,total:10,item_number:7,id:"bness_cls_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
+	navi.pagination.table = {item_type:"table",item:[],selected:[],current: 1,total:10,item_number:7,id:"table_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
+	
 	navi.bigPreloader=false;
 	changeItemPP();
 	navi.showPreloader=function(item,type){
@@ -175,7 +179,22 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 							if(type!="pagination"  && item=="dataset"){
 								navi.pagination.dataset.current=1;
 							}
-							
+						}
+						
+						if(data.hasOwnProperty("bness_cls")){
+							navi.pagination.bness_cls.item=data.bness_cls;
+							navi.pagination.bness_cls.total=data.bness_cls_size;
+							if(type!="pagination"  && item=="bness_cls"){
+								navi.pagination.bness_cls.current=1;
+							}
+						}
+						
+						if(data.hasOwnProperty("table")){
+							navi.pagination.table.item=data.table;
+							navi.pagination.table.total=data.table_size;
+							if(type!="pagination"  && item=="table"){
+								navi.pagination.table.current=1;
+							}
 						}
 						
 						
@@ -232,13 +251,25 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			navi.pagination.dataset.search="";			
 		}
 		
+		if(item=="bness_cls" || item==undefined){
+			navi.pagination.bness_cls.selected=[];
+			navi.pagination.bness_cls.search="";			
+		}
+		
+		if(item=="table" || item==undefined){
+			navi.pagination.table.selected=[];
+			navi.pagination.table.search="";			
+		}
+		
 		if(item==undefined){
 			navi.pagination.word.current=1;
 			navi.pagination.document.current=1;
 			navi.pagination.dataset.current=1;
+			navi.pagination.bness_cls.current=1;
+			navi.pagination.table.current=1;
 			navi.loadNavItem();
 		}else{
-			navi.loadNavItem("click",item);
+			navi.loadNavItem("reset",item);
 		}
 	}
 	
@@ -347,6 +378,64 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 				})
 		}
 		
+		navi.showInfoBC=function(ev,bclab){
+			console.log("showInfo");
+			console.log(event)
+			console.log(bclab)
+			$mdDialog
+				.show({
+					controllerAs : 'infCtrl',
+					controller : function($mdDialog) {
+						var idsctrl = this;
+						idsctrl.translate=translate;
+						restServices.get("1.0/glossary","getBnessCls", "BC_ID=" +bclab)
+						.success(
+								function(data, status, headers, config) {
+									if (data.hasOwnProperty("errors")) {
+										showToast(translate.load("sbi.glossary.load.error"), 3000);
+									} else {
+										idsctrl.info = data;
+									}
+								}).error(function(data, status, headers, config) {
+							showToast(translate.load("sbi.glossary.load.error"), 3000);
+							
+						})
+						
+					},
+					templateUrl : 'info_bness_cls.html',
+					targetEvent : ev,
+					clickOutsideToClose :true
+				})
+		}
+		
+		navi.showInfoTB=function(ev,tblab){
+			
+			$mdDialog
+				.show({
+					controllerAs : 'infCtrl',
+					controller : function($mdDialog) {
+						var idsctrl = this;
+						idsctrl.translate=translate;
+						restServices.get("1.0/glossary","getTable", "TABLE_ID=" +tblab)
+						.success(
+								function(data, status, headers, config) {
+									if (data.hasOwnProperty("errors")) {
+										showToast(translate.load("sbi.glossary.load.error"), 3000);
+									} else {
+										idsctrl.info = data;
+									}
+								}).error(function(data, status, headers, config) {
+							showToast(translate.load("sbi.glossary.load.error"), 3000);
+							
+						})
+						
+					},
+					templateUrl : 'info_table.html',
+					targetEvent : ev,
+					clickOutsideToClose :true
+				})
+		}
+		
 		
 		
 	navi.SearchLike = function(arr) {
@@ -390,6 +479,8 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 	 		navi.pagination.word.item_number= WordItemPerPage;
 	 		navi.pagination.document.item_number= elemItemPerPage;
 	 		navi.pagination.dataset.item_number= elemItemPerPage;
+	 		navi.pagination.bness_cls.item_number= elemItemPerPage;
+	 		navi.pagination.table.item_number= elemItemPerPage;
 	 		
 	 			
 	 	}
@@ -423,6 +514,10 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			return 'DOCUMENT_ID'
 		} else if (item.hasOwnProperty("DATASET_ID")) {
 			return 'DATASET_ID'
+		}else if (item.hasOwnProperty("BC_ID")) {
+			return 'BC_ID'
+		}else if (item.hasOwnProperty("TABLE_ID")) {
+			return 'TABLE_ID'
 		}
 	}
 		
@@ -434,6 +529,10 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			return 'document'
 		} else if (item.hasOwnProperty("DATASET_ID")) {
 			return 'dataset'
+		} else if (item.hasOwnProperty("BC_ID")) {
+			return 'bness_cls'
+		} else if (item.hasOwnProperty("TABLE_ID")) {
+			return 'table'
 		}
 	}
 			
