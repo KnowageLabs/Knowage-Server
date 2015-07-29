@@ -22,7 +22,6 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.ckan.CKANClient;
-import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.dataset.ckan.Connection;
 import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
 import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
@@ -82,6 +81,7 @@ public class GetCertificatedDatasets {
 			String ckanDS = request.getParameter("ckanDs");
 			String ckanFilter = request.getParameter("ckanFilter");
 			String ckanOffset = request.getParameter("ckanOffset");
+			String ckanRepository = request.getParameter("ckanRepository");
 			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc"))) ? request
 					.getParameter("typeDoc") : null;
 
@@ -93,7 +93,7 @@ public class GetCertificatedDatasets {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
 					dataSets = dataSetDao.loadMyDataDataSets(((UserProfile) profile).getUserId().toString());
 				} else if (ckanDS != null && ckanDS.equals("true")) {
-					ckanJSONArray = getOnlineCkanDatasets(profile, ckanFilter, ckanOffset);
+					ckanJSONArray = getOnlineCkanDatasets(profile, ckanRepository, ckanFilter, ckanOffset);
 					dataSets = dataSetDao.loadCkanDataSets(((UserProfile) profile).getUserId().toString());
 					synchronizeDatasets(dataSets, ckanJSONArray);
 				} else {
@@ -256,15 +256,18 @@ public class GetCertificatedDatasets {
 		return JSONReturn.toString();
 	}
 
-	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String filter, String offset) throws JSONException {
+	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String url, String filter, String offset) throws JSONException {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
-		Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
-				profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString());
-		// Connection demoConnection = new Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
+		/*
+		 * Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
+		 * profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString()); Connection demoConnection = new
+		 * Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
+		 */
+		Connection customConnection = new Connection(url, null, null);
 
-		CKANClient client = new CKANClient(fiwareConnection);
+		CKANClient client = new CKANClient(customConnection);
 		try {
 			logger.debug("Getting resources...");
 			long start = System.currentTimeMillis();

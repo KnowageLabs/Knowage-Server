@@ -75,7 +75,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 	    ckanFilter: 'NOFILTER',
 	    ckanCounter: 0,
 	    
-	    CKAN_COUNTER_STEP: 200
+	    CKAN_COUNTER_STEP: 200,
+	    
+	    ckanRepository: 'http://datahub.io'
 
 	}
 

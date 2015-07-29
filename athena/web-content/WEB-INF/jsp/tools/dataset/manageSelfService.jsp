@@ -4,9 +4,12 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
+<%@page import="it.eng.spagobi.user.UserProfileManager"%>
 <%@page
 	import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="java.util.Collection"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
 <link rel='stylesheet' type='text/css'
@@ -40,7 +43,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
     String userCanPersist = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.USER_CAN_PERSIST);
 	String tablePrefix = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TABLE_NAME_PREFIX);
-
+	String isCkanEnabled = userProfile.getFunctionalities().contains(SpagoBIConstants.CKAN_FUNCTIONALITY) ? "true" : "false";
 %>
 
 <script type="text/javascript">
@@ -48,6 +51,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 
 
     Ext.onReady(function(){
+    	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>;
     	Sbi.settings.mydata.showDataSetTab = <%=isMyData%>;
     	Sbi.settings.mydata.showModelsTab = <%=(typeDoc != null && "GEO".equalsIgnoreCase(typeDoc))?false:true%>;
     	Sbi.settings.mydata.showSmartFilterTab = <%=isMyData%>;

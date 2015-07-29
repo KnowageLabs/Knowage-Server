@@ -391,7 +391,6 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 			//Scope of the dataset (default is private otherwise is public-shared)
 			var valueScope = (this.record.isPublic==true)?'true':'false' ;
 			values.isPublicDS = valueScope;
-			//values.fileName = this.ckanUrl;
 			values.type = 'Ckan';
 			values.ckanUrl = this.ckanUrl;
 			values.ckanId = this.ckanId;
@@ -472,16 +471,9 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 			this.closeWin();
 		}
 		else {
-		
-//		this.fileUpload.getComponent('fileUploadPanel').getComponent('fileType').setValue(fileDetail.filetype);
-//		this.fileUpload.getComponent('fileUploadPanel').getComponent('fileNameField').setValue(fileDetail.filename);
-//		this.fileUpload.getComponent('fileUploadPanel').getComponent('buttonsPanel').getComponent('fileUploadField').setValue(fileDetail.filepath);		
-//		console.log(this.fileUpload.getComponent('fileUploadPanel').getComponent('buttonsPanel').getComponent('fileUploadField'));
-				
+			
 		Ext.getCmp('fileNameField').setValue(fileDetail.filename); //hidden field
 		Ext.getCmp('fileDetailText').setText(LN('sbi.ds.wizard.ckan.dataset') +" " + LN('sbi.ds.wizard.successLoad') );
-//		Ext.getCmp('fileUploadField').hide();
-//		Ext.getCmp('fileUploadButton').hide();
 				
 		this.fileUpload.activateFileTypePanel(fileDetail.filetype);
 		this.fileUploaded = true;

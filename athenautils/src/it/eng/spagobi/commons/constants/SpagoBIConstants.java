@@ -373,6 +373,9 @@ public class SpagoBIConstants {
 	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
 	public static final String VIEW_SOCIAL_ANALYSIS = "ViewSocialAnalysis";
 	public static final String HIERARCHIES_MANAGEMENT = "HierarchiesManagement";
+	public static final String CKAN_FUNCTIONALITY = "CkanIntegrationFunctionality";
+	public static final String IMAGES_MANAGEMENT = "ImagesManagement";
+	public static final String GLOSSARY_MANAGEMENT = "GlossaryManagement";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
