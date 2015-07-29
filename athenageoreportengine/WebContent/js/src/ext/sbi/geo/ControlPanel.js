@@ -24,7 +24,7 @@ Sbi.geo.ControlPanel = function(config) {
 		split       			: false,
 		width       			: 365,
 		collapsible 			: true,
-		collapsed   			: false,
+		collapsed   			: config.layerPanelConf.collapsed,
 		autoScroll				: true,
 		layout					: 'fit',
 		margins     			: '0 0 0 0',
@@ -147,7 +147,9 @@ Ext.extend(Sbi.geo.ControlPanel, Ext.Panel, {
 	 *
 	 */
 	, adjustConfigObject: function(config) {
-
+		if(config.layerPanelConf == null || config.layerPanelConf == undefined ){
+			config.layerPanelConf = {collapsed:false};
+		}
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------
