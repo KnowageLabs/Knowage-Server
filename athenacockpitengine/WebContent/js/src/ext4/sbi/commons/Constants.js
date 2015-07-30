@@ -191,7 +191,7 @@ Sbi.commons.Constants = {
 	, DATE_FUNCTIONS : [
        {
            text: 'GG_between_dates'
-           , qtip: LN('sbi.qbe.selectgridpanel.datefunc.desc.ggbetweendates')
+           , qtip: LN('sbi.cockpit.selectgridpanel.datefunc.desc.ggbetweendates')
            , type: 'function'
            , value: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')
            , alias: Ext.util.Format.htmlEncode('GG_between_dates(op1,op2)')

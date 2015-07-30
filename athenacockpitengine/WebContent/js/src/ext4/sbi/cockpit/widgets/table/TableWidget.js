@@ -183,6 +183,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				var calculatedField = {
 						dataIndex: newColumnName,
 						header: visibleSelectField.alias,
+						columnId: visibleSelectField.id,
 						name: newColumnName,
 						type: "string"
 				};
@@ -222,6 +223,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 								visibleSelectField.alias != ''){
 							
 							metaField.header = visibleSelectField.alias;
+							metaField.columnId = visibleSelectField.id;
 						}
 						
 						this.applyRendererOnField(metaField, visibleSelectField);
@@ -338,13 +340,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var t = field.type;
 
 			var customFormat = {};
-			if((visibleField.type == elementTypes.NUMBER || visibleField.type == elementTypes.CURRENCY) 
+			if((visibleField.columnType == elementTypes.NUMBER || visibleField.columnType == elementTypes.CURRENCY) 
 					&& (visibleField.decimals != undefined && visibleField.decimals != null)) {
 				
 					customFormat.decimalPrecision = visibleField.decimals;
 			}
 			
-			if(visibleField.type == elementTypes.CURRENCY
+			if(visibleField.columnType == elementTypes.CURRENCY
 					&& (visibleField.typeSecondary 
 							&& visibleField.typeSecondary != null 
 							&& visibleField.typeSecondary.trim() != '')) {
@@ -352,7 +354,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				customFormat.currencySymbol = visibleField.typeSecondary;
 			}
 			
-			if(visibleField.type == elementTypes.PERCENTAGE) {
+			if(visibleField.columnType == elementTypes.PERCENTAGE) {
 				customFormat.currencySymbol = '%';
 				customFormat.currencyAtEnd = true;
 			}
@@ -378,7 +380,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				numberFormatterFunction = Sbi.locale.formatters[t];
 			}
 
-			if(visibleField.type == elementTypes.NUMBER || visibleField.type == elementTypes.CURRENCY) {
+			if(visibleField.columnType == elementTypes.NUMBER || visibleField.columnType == elementTypes.CURRENCY) {
 				field.measureScaleFactor = visibleField.scale;
 			}
 			if (field.measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
@@ -388,7 +390,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		}
 		
-		if(field.type && field.type == 'date' && visibleField.type && visibleField.type == elementTypes.DATE) {
+		if(field.type && field.type == 'date' && visibleField.columnType && visibleField.columnType == elementTypes.DATE) {
 			rendererFunction = Sbi.commons.Format.dateRenderer(visibleField.typeSecondary);
 		}
 		
@@ -466,8 +468,59 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		} else {
 			field.flex = 1;
 		}
+		
+		var finalRendererFunction = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
+		
+		if(visibleField.calculatedFieldFlag != undefined && visibleField.calculatedFieldFlag) {
+			var calculatedRendererFunction = function(value, metaData, record, rowIndex, colIndex, store) {
+				var calculatedFieldFormula = visibleField.calculatedFieldFormula;
+				//necessary for the next substitution
+				calculatedFieldFormula = ' ' + calculatedFieldFormula + ' ';
+				
+				var fieldsMeta = store.fieldsMeta;
+				var fieldsMetaKeys = Object.keys(store.fieldsMeta);
+				
+				var columnIdDataIndexMap = {};
+				
+				for(var index = 0; index < fieldsMetaKeys.length; index++) {
+					var key = fieldsMetaKeys[index];
+					
+					var dataIndex = fieldsMeta[key].dataIndex;
+					var columnId = fieldsMeta[key].columnId;
+					columnId = columnId //regex substitution
+						.replace(/\\/g, '\\\\') //NB. this must be the first replace!!
+						.replace(/\(/g, '\\(')
+						.replace(/\)/g, '\\)')
+						.replace(/\^/g, '\\^')
+						.replace(/\$/g, '\\$')
+						.replace(/\{/g, '\\{')
+						.replace(/\}/g, '\\{')
+						.replace(/\[/g, '\\[')
+						.replace(/\]/g, '\\]')
+						.replace(/\./g, '\\.')
+						.replace(/\*/g, '\\*')
+						.replace(/\+/g, '\\+')
+						.replace(/\?/g, '\\?')
+						.replace(/\|/g, '\\|')
+						.replace(/\</g, '\\<')
+						.replace(/\>/g, '\\>')
+						.replace(/\-/g, '\\-')
+						.replace(/\&/g, '\\&')
+					;
+					
+					var re = new RegExp('\\s+' + columnId + '\\s+', 'g');
+					calculatedFieldFormula = calculatedFieldFormula.replace(re, " (record.get('" + dataIndex + "')) ");
+					
+				}
+				
+				return eval(calculatedFieldFormula);
+			};
+			
+			finalRendererFunction = Ext.Function.createSequence(calculatedRendererFunction, finalRendererFunction);
+//			finalRendererFunction = calculatedRendererFunction;
+		}
 
-		field.renderer = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
+		field.renderer = finalRendererFunction;
 		field.scope = this;
 
 		Sbi.trace("[TableWidget.applyRendererOnField]: OUT");

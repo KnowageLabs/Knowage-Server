@@ -676,7 +676,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						alias: r.data.alias,
 						text: r.data.alias, 
 						qtip: r.data.entity + ' : ' + r.data.field, 
-						type: 'field', 
+//						type: 'field', 
 						value: 'fields[\'' + r.data.alias + '\']'
 				});
 				fields.push(field);
@@ -707,13 +707,13 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     		expItemGroups: [
     		    {name:'fields', text: LN('sbi.cockpit.widgets.table.calculatedFields.fields')}, 
     		    {name:'arithmeticFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.functions.arithmentic')},
-    		    {name:'aggregationFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')},
-    		    {name:'dateFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.datefunctions')}
+//    		    {name:'aggregationFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')},
+//    		    {name:'dateFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.datefunctions')}
     		],
     		fields: fields,
     		arithmeticFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
-    		aggregationFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS, // aggregationFunctions,
-    		dateFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
+//    		aggregationFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS, // aggregationFunctions,
+//    		dateFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
         	     ['STRING','String', LN('sbi.cockpit.widgets.table.calculatedFields.string.type')],
@@ -727,14 +727,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 			}
     	});
 		
-//     	this.inLineCalculatedFieldWizard.mainPanel.on('notexpert', this.onPassToExpertMode, this);
-		
     	this.inLineCalculatedFieldWizard.on('apply', function(win, formState, targetRecord){
+    		var calculatedId = 'calculated_' + formState.alias.replace(/\s+/g, '_');
     		var field = {
-				id: formState, 
+				id: calculatedId, 
 				alias: formState.alias, 
-//				type: Sbi.commons.Constants.FIELD_TYPE_INLINE_CALCULATED, 
-				longDescription: formState.expression,
 				calculatedFieldFlag: true,
 				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim()
 			};
@@ -743,35 +740,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     			Ext.apply(targetRecord.data, field);
     			this.store.fireEvent('datachanged', this.store);
     		} else {
-    			this.addField({id: formState, 
+    			this.addField({
+    				id: calculatedId, 
     				alias: formState.alias, 
-//    				type: Sbi.commons.Constants.FIELD_TYPE_INLINE_CALCULATED, 
     				calculatedFieldFlag: true, 
-    				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim(), 
-    				longDescription: formState.expression});
+    				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim()});
     		}
     	}, this);
 	}
-
-//	, onPassToExpertMode: function() {
-//		var alias;
-//		if(this.inLineCalculatedFieldWizard != null &&  this.inLineCalculatedFieldWizard != undefined &&
-//		   this.inLineCalculatedFieldWizard.inputFields !== null && this.inLineCalculatedFieldWizard.inputFields !== undefined){
-//      			alias = this.inLineCalculatedFieldWizard.inputFields.alias.getValue();
-//      	}
-//		this.showCalculatedFieldWizard(null);
-//		this.inLineCalculatedFieldWizard.hide();
-//    	this.calculatedFieldWizard.mainPanel.setCFAlias(alias);
-//    }
-//	
-//	, onPassToNormalMode: function(){
-//		var alias;
-//		if(this.calculatedFieldWizard!=null && this.calculatedFieldWizard != undefined &&
-// 				this.calculatedFieldWizard.inputFields !== null && this.calculatedFieldWizard.inputFields !== undefined){
-// 			alias = this.calculatedFieldWizard.inputFields.alias.getValue();
-// 		}
-// 		this.showInLineCalculatedFieldWizard(null);
-// 		this.calculatedFieldWizard.hide();
-// 		this.inLineCalculatedFieldWizard.mainPanel.setCFAlias(alias);
-// 	}
 });

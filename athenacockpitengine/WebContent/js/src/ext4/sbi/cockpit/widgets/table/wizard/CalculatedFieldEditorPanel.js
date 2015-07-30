@@ -68,7 +68,7 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 	
 	, target: null
 	
-	, validationService:  null
+//	, validationService:  null
 	, expertMode:  false
 	
 	, expItemGroups: null
@@ -88,15 +88,17 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 		var expression;
 		if(this.expressionEditor) {
 	  		expression = this.expressionEditor.getValue();
-	  		expression = Ext.util.Format.stripTags( expression );
+//	  		expression = expression.replace(/<span recordid="(.+?)">.*?span>/ig,"$1 ").trim();
+//	  		
+//	  		expression = Ext.util.Format.stripTags( expression );
 	  		expression = expression.replace(/&nbsp;/g," ");
 	  		expression = expression.replace(/\u200B/g,"");
-	  		expression = expression.replace(/&gt;/g,">");
-	  		expression = expression.replace(/&lt;/g,"<");
-	  		
-	  		if(!this.expertMode){
-	  			expression = this.replaceFieldAliasesWithFieldUniqueNames(expression);
-	  		}
+//	  		expression = expression.replace(/&gt;/g,">");
+//	  		expression = expression.replace(/&lt;/g,"<");
+//	  		
+//	  		if(!this.expertMode){
+//	  			expression = this.replaceFieldAliasesWithFieldUniqueNames(expression);
+//	  		}
 	  	}
 		return expression;
 	}
@@ -126,14 +128,11 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 				
 		newExpression = expression;
 		var fieldNodes = this.groupRootNodes['fields'];
-//		var childNodes = fieldNodes.childNodes;
 		var childNodes = fieldNodes.children;
 		var aliasToUniqueNameMap = new Object();
 		var aliasOrderedByLengthList = new Array();
 		for(var i = 0; i < childNodes.length; i++) {
 			var childNode = childNodes[i];
-//			var alias = childNode.attributes['alias'];
-//			var uniqueName = childNode.attributes['uniqueName'];
 			var alias = childNode.alias;
 			var uniqueName = childNode.uniqueName;
 			aliasToUniqueNameMap[alias] = uniqueName;
@@ -265,20 +264,20 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 			nodeType = node.attributes.type || node.attributes.attributes.type;
 			if(nodeType === Sbi.constants.qbe.NODE_TYPE_ENTITY) {
 				this.inputFields.alias.reset();
-				this.inputFields.type.reset();
-				this.inputFields.nature.reset();
+//				this.inputFields.type.reset();
+//				this.inputFields.nature.reset();
 				this.expressionEditor.reset();
 			} else if(nodeType === Sbi.constants.qbe.NODE_TYPE_SIMPLE_FIELD) {
 				Sbi.qbe.commons.unimplementedFunction('handle [field] target');
 			} else if(nodeType === Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD) {
 				this.inputFields.alias.setValue( node.attributes.attributes.formState.alias );
-				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
-				this.inputFields.nature.setValue( node.attributes.attributes.formState.nature );
+//				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
+//				this.inputFields.nature.setValue( node.attributes.attributes.formState.nature );
 				this.setExpression.defer(100,this, [node.attributes.attributes.formState.expression] );
 			} else if(nodeType === Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
 				this.inputFields.alias.setValue( node.attributes.attributes.formState.alias );
-				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
-				this.inputFields.nature.setValue( node.attributes.attributes.formState.nature );
+//				this.inputFields.type.setValue( node.attributes.attributes.formState.type );
+//				this.inputFields.nature.setValue( node.attributes.attributes.formState.nature );
 				this.setExpression.defer(100,this,[node.attributes.attributes.formState.expression] );
 			} else {
 				alert('Impossible to edit node of type [' + nodeType +']');
@@ -290,47 +289,47 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 		this.inputFields.alias.setValue(alias);
 	}
 
-	, validate: function() {
-		if(this.expertMode) {
-			var serviceUrl;
-			var params;
-			if(typeof this.validationService === 'object') {
-				serviceUrl = Sbi.config.serviceRegistry.getServiceUrl(this.validationService);
-				params = this.validationService.params || {};
-			} else {
-				serviceUrl = this.validationService;
-				params = {};
-			}
-			
-			params.expression = this.getExpression();
-			
-			Ext.Ajax.request({
-			    url: serviceUrl,
-			    success: this.onValidationSuccess,
-			    failure: Sbi.exception.ExceptionHandler.handleFailure,	
-			    scope: this,
-			    params: params
-			}); 
-			
-		}else{
-			var error = SQLExpressionParser.module.validateInLineCalculatedField(this.getExpression());
-			if(error==""){
-				Sbi.exception.ExceptionHandler.showInfoMessage(
-						LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.text'), 
-						LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.title'));
-			}else{
-				Sbi.exception.ExceptionHandler.showWarningMessage(error, LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.fail.title'));
-			}
-		}		
-	}
-	
-	, onValidationSuccess: function(response) {
-		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.text'), LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.title'));
-	}
-	
-	, onValidationFailure: function(response) {
-		
-	}
+//	, validate: function() {
+//		if(this.expertMode) {
+//			var serviceUrl;
+//			var params;
+//			if(typeof this.validationService === 'object') {
+//				serviceUrl = Sbi.config.serviceRegistry.getServiceUrl(this.validationService);
+//				params = this.validationService.params || {};
+//			} else {
+//				serviceUrl = this.validationService;
+//				params = {};
+//			}
+//			
+//			params.expression = this.getExpression();
+//			
+//			Ext.Ajax.request({
+//			    url: serviceUrl,
+//			    success: this.onValidationSuccess,
+//			    failure: Sbi.exception.ExceptionHandler.handleFailure,	
+//			    scope: this,
+//			    params: params
+//			}); 
+//			
+//		}else{
+//			var error = SQLExpressionParser.module.validateInLineCalculatedField(this.getExpression());
+//			if(error==""){
+//				Sbi.exception.ExceptionHandler.showInfoMessage(
+//						LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.text'), 
+//						LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.title'));
+//			}else{
+//				Sbi.exception.ExceptionHandler.showWarningMessage(error, LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.fail.title'));
+//			}
+//		}		
+//	}
+//	
+//	, onValidationSuccess: function(response) {
+//		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.text'), LN('sbi.cockpit.widgets.table.calculatedFields.validationwindow.success.title'));
+//	}
+//	
+//	, onValidationFailure: function(response) {
+//		
+//	}
 	//--------------------------------------------------------------------------------------------
 	//private methods
 	//--------------------------------------------------------------------------------------------
@@ -409,13 +408,13 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
     		data: this.scopeComboBoxData 
     	});  
     	
-    	var natureComboBoxStore = new Ext.data.SimpleStore({
-    		fields: ['value', 'field', 'description'],
-    		data: [
-    		    ['ATTRIBUTE', 'Attribute', 'Attribite is ...']
-    		    , ['MEASURE', 'Measure', 'Measure is ...']
-    		] 
-    	});  
+//    	var natureComboBoxStore = new Ext.data.SimpleStore({
+//    		fields: ['value', 'field', 'description'],
+//    		data: [
+//    		    ['ATTRIBUTE', 'Attribute', 'Attribite is ...']
+//    		    , ['MEASURE', 'Measure', 'Measure is ...']
+//    		] 
+//    	});  
     	
 //    	this.inputFields['type'] = new Ext.form.ComboBox({
 //    		tpl: '<tpl for="."><div ext: qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	
@@ -444,45 +443,46 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 //    		items: [this.inputFields['type'] ]
 //    	});
     	
-    	this.inputFields['nature'] = new Ext.form.ComboBox({
-    		tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	
-    		editable: false,
-    		fieldLabel: 'Nature',
-    		forceSelection: true,
-    		allowBlank: false,
-    		mode: 'local',
-    		name: 'scope',
-    		store: natureComboBoxStore,
-    		displayField: 'field',
-    		valueField: 'value',
-    		//value: 'ATTRIBUTE',
-    		emptyText: 'Select nature...',
-    		typeAhead: true,
-    		triggerAction: 'all',
-    		width: fieldsWidth,
-    		labelWidth: fieldsLabelWidth,
-    		margin: fieldsMargins,
-    		selectOnFocus: true,
-    		value: 'ATTRIBUTE'
-    	});
-    	
-    	var naturePanel = new  Ext.form.FormPanel({
-    		bodyStyle: "background-color: transparent; border-color: transparent; padding-left: 10px;",
-    		width: 280,
-    		items: [this.inputFields['nature']]
-    	});
+//    	this.inputFields['nature'] = new Ext.form.ComboBox({
+//    		tpl: '<tpl for="."><div ext:qtip="{field}: {description}" class="x-combo-list-item">{field}</div></tpl>',	
+//    		editable: false,
+//    		fieldLabel: 'Nature',
+//    		forceSelection: true,
+//    		allowBlank: false,
+//    		mode: 'local',
+//    		name: 'scope',
+//    		store: natureComboBoxStore,
+//    		displayField: 'field',
+//    		valueField: 'value',
+//    		//value: 'ATTRIBUTE',
+//    		emptyText: 'Select nature...',
+//    		typeAhead: true,
+//    		triggerAction: 'all',
+//    		width: fieldsWidth,
+//    		labelWidth: fieldsLabelWidth,
+//    		margin: fieldsMargins,
+//    		selectOnFocus: true,
+//    		value: 'ATTRIBUTE'
+//    	});
+//    	
+//    	var naturePanel = new  Ext.form.FormPanel({
+//    		bodyStyle: "background-color: transparent; border-color: transparent; padding-left: 10px;",
+//    		width: 280,
+//    		items: [this.inputFields['nature']]
+//    	});
 
     	this.detailsFormPanel = new Ext.Panel(
 	    	 Ext.apply({
 		    	 layout: 'table',
 		    	 layoutConfig: {
 //		    		 columns: 3
-			        columns: 2
+//		    		 columns: 2
+			        columns: 1
 			     },
 	    		 items: [
 	    		     aliasPanel,
 //	    		     typePanel,
-	    		     naturePanel
+//	    		     naturePanel
 	    		 ]
 	    	 }, c || {})
 
@@ -584,22 +584,14 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 		buttons.clear = new Ext.button.Button({
 		    text: 'Clear All',
 		    tooltip: 'Clear all selected fields',
-		    iconCls: 'remove'
+//		    iconCls: 'remove'
+		    iconCls: 'delete'
 		});
 		buttons.clear.addListener('click', function(){this.expressionEditor.reset();}, this);
 		
-		buttons.validate = new Ext.button.Button({
-		    text: 'Validate',
-		    tooltip: 'Syntatic validation of the expression',
-		    iconCls: 'option'
-		});
-		buttons.validate.addListener('click', function(){this.validate();}, this);
-
 		var ddGroup = this.ddGroup;
 		
 		this.expressionEditor = new Ext.form.HtmlEditor({
-//		this.expressionEditor = new Ext.form.TextArea({
-//		var expressionEditor = new Ext.form.TextArea({
     		name: 'expression',
     	    frame: true,
     	    enableAlignments: false,
@@ -616,7 +608,7 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
     	    	'render': function(editor){
 					var tb = editor.getToolbar();
 					tb.add(buttons.clear);
-					tb.add(buttons.validate);
+//					tb.add(buttons.validate);
     	        },
     	        'activate': function(){
     	          //active = true;
@@ -668,14 +660,14 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
         if (record == null || record.leaf == false) {
         	return false;
         } else {
-//        	console.log('record: ', record);
+//        	target.insertAtCursor(' ' + (record.id? record.id : record.value ));
+//        			'<div recordId="' + (record.id? record.id : record.value ) + '"> ' + record.alias + '</div>');
+//        	
+        	var prevValue = ' ' + target.getValue() + ' ';
         	
-        	target.insertAtCursor(' ' + record.alias);
-//        	
-//        	var value = target.getValue().trim() + ' ';
-//        	value.replace(/\s+/g, ' ');
-//        	
-//        	target.setValue(value);
+        	target.setValue(prevValue + 
+//        			'<span recordId="' + (record.id? record.id : record.value ) + '"> ' + record.alias + '</span>');
+        			(record.id? record.id : record.value ) + '  ');
         }
 	}	
 });

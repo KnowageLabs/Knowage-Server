@@ -23,8 +23,8 @@ Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard = function(config) {
 		title: 'Expression wizard ...'
 		, width: 700
 		, minWidth: 400
-		, height: 350
-		, minHeight: 300
+		, height: 450
+		, minHeight: 400
 		, hasBuddy: false	
 		, constrainHeader : true
 	});
@@ -83,13 +83,13 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard, Ext.Window, {
 			expItemGroups: c.expItemGroups
 			, fields: c.fields
 			, functions: c.functions
-			, aggregationFunctions: c.aggregationFunctions
+//			, aggregationFunctions: c.aggregationFunctions
 			, arithmeticFunctions : c.arithmeticFunctions
 			, groovyFunctions : c.groovyFunctions
 			, dateFunctions: c.dateFunctions
 			, expertMode: c.expertMode
 			, scopeComboBoxData: c.scopeComboBoxData   		
-			, validationService: c.validationService
+//			, validationService: c.validationService
 		});
     }
 
