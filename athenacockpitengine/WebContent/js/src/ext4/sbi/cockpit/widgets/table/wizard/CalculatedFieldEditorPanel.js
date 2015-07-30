@@ -660,14 +660,14 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
         if (record == null || record.leaf == false) {
         	return false;
         } else {
-//        	target.insertAtCursor(' ' + (record.id? record.id : record.value ));
+        	target.insertAtCursor((record.id? record.id : record.value ) + '&nbsp;');
 //        			'<div recordId="' + (record.id? record.id : record.value ) + '"> ' + record.alias + '</div>');
 //        	
-        	var prevValue = ' ' + target.getValue() + ' ';
-        	
-        	target.setValue(prevValue + 
-//        			'<span recordId="' + (record.id? record.id : record.value ) + '"> ' + record.alias + '</span>');
-        			(record.id? record.id : record.value ) + '  ');
+//        	var prevValue = target.getValue() + '&nbsp;';
+//        	
+//        	target.setValue(prevValue + 
+////        			'<span recordId="' + (record.id? record.id : record.value ) + '"> ' + record.alias + '</span>');
+//        			(record.id? record.id : record.value ) + '&nbsp;');
         }
 	}	
 });

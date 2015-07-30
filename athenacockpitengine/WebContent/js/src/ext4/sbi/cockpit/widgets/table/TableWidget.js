@@ -172,11 +172,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var fields = new Array();
 
 		var columns = [];
+		var columnIndexer = meta.fields.length + 1;
 
 		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
 			
 			var visibleSelectField = this.wconf.visibleselectfields[j];
-			var columnIndexer = meta.fields.length + 1;
 			
 			if(visibleSelectField.calculatedFieldFlag != undefined && visibleSelectField.calculatedFieldFlag) {
 				var newColumnName = "column_" + columnIndexer;
@@ -401,30 +401,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		if(field.subtype && field.subtype === 'timestamp') {
 			rendererFunction = Sbi.locale.formatters['timestamp'];
 		}
-
-		// the following renderer will apply a style to previously selected cells
-		var applyCellStyleRenderer = function (value, metadata, record, rowIndex, colIndex, store, view, fieldHeader) {
-			// optimization: we could retrieve the current selections by
-			// this.getWidgetManager().getWidgetSelections(this.getId()) || {};
-			// but this takes a long time!!! and therefore the rendering of the grid
-			// takes a long time because it is evaluated for all cells!!!
-			// Solution: we put selections on this.selectionsForColumnRenderers variable when
-			// the grid's 'beforerefresh' event is fired (see setSelectionsForColumnRenderers method)
-			// in a way that this.getWidgetManager().getWidgetSelections(this.getId()) || {};
-			// is evaluated one time for all the cells
-			var selections = this.selectionsForColumnRenderers;
-			
-	    	for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
-				if(fieldHeader === this.wconf.visibleselectfields[j].alias) {				
-					fieldHeader = this.wconf.visibleselectfields[j].columnName;
-				}
-	    	}
-			
-	    	if (selections[fieldHeader] !== undefined && selections[fieldHeader].values.indexOf(value) != -1) {
-	    		metadata.attr = 'style="background-color: #D1D1D1;font-weight: bold;"';
-	    	}
-			return value;
-		};
 		
 		/* Styling */
 		var columnClassName = field.name.trim() + 'CustomColumnClass';
@@ -469,10 +445,44 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			field.flex = 1;
 		}
 		
+
+		// the following renderer will apply a style to previously selected cells
+		var applyCellStyleRenderer = function (value, metadata, record, rowIndex, colIndex, store, view, fieldHeader) {
+			
+			/*
+			 optimization: we could retrieve the current selections by
+			 this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+			 but this takes a long time!!! and therefore the rendering of the grid
+			 takes a long time because it is evaluated for all cells!!!
+			 Solution: we put selections on this.selectionsForColumnRenderers variable when
+			 the grid's 'beforerefresh' event is fired (see setSelectionsForColumnRenderers method)
+			 in a way that this.getWidgetManager().getWidgetSelections(this.getId()) || {};
+			 is evaluated one time for all the cells
+			*/
+			var selections = this.selectionsForColumnRenderers;
+			
+	    	for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
+				if(fieldHeader === this.wconf.visibleselectfields[j].alias) {				
+					fieldHeader = this.wconf.visibleselectfields[j].columnName;
+				}
+	    	}
+			
+	    	if (selections[fieldHeader] !== undefined && selections[fieldHeader].values.indexOf(value) != -1) {
+	    		metadata.attr = 'style="background-color: #D1D1D1;font-weight: bold;"';
+	    	}
+			return value;
+		};
 		var finalRendererFunction = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
 		
 		if(visibleField.calculatedFieldFlag != undefined && visibleField.calculatedFieldFlag) {
 			var calculatedRendererFunction = function(value, metaData, record, rowIndex, colIndex, store) {
+				console.log('value: ', value);
+				console.log('metaData: ', metaData);
+				console.log('record: ', record);
+//				console.log('rowIndex: ', rowIndex);
+//				console.log('colIndex: ', colIndex);
+				console.log('store: ', store);
+				
 				var calculatedFieldFormula = visibleField.calculatedFieldFormula;
 				//necessary for the next substitution
 				calculatedFieldFormula = ' ' + calculatedFieldFormula + ' ';
@@ -513,9 +523,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					
 				}
 				
-				return eval(calculatedFieldFormula);
+				value = eval(calculatedFieldFormula);
+				return value;
 			};
 			
+//			finalRendererFunction = Ext.Function.createSequence(finalRendererFunction, calculatedRendererFunction);
 			finalRendererFunction = Ext.Function.createSequence(calculatedRendererFunction, finalRendererFunction);
 //			finalRendererFunction = calculatedRendererFunction;
 		}
