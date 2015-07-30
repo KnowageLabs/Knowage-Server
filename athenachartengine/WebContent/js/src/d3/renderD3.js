@@ -1167,7 +1167,7 @@ function renderWordCloud(chartConf){
 		    /* ME: Split single parts within received data in order
 		     * to create visualization of levels that represent those
 		     * data. */
-		    var parts = sequence.split("-");
+		    var parts = sequence.split("_SEP_");
 		    
 		    var currentNode = root;		    
 		    

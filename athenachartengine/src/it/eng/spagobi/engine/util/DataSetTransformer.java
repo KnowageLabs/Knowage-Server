@@ -142,6 +142,7 @@ public class DataSetTransformer {
 		for (int i=0; i<columns.size(); i++)
 		{
 			Object z = columns.get(i);
+			
 			listColumns.add(mapper.get(z).toString());
 		}
 
@@ -156,6 +157,7 @@ public class DataSetTransformer {
 			for (int j=0; j<listColumns.size(); j++)
 			{
 				Object x = row.get(listColumns.get(j));
+				
 				record.put(columns.get(j).toString(), x.toString());				
 			}
 
@@ -171,6 +173,7 @@ public class DataSetTransformer {
 
 	public JSONArray countSequence(Map<String,Object> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException
 	{		
+		
 		HashMap<String,Double> endresult = new HashMap<String, Double>();
 		JSONArray ja = new JSONArray();
 
@@ -189,7 +192,7 @@ public class DataSetTransformer {
 				}
 				else 
 				{
-					sequence = sequence + "-" + singleRecord.get(columns.get(j)).toString();	
+					sequence = sequence + "_SEP_" + singleRecord.get(columns.get(j)).toString();	
 				}
 			}
 
