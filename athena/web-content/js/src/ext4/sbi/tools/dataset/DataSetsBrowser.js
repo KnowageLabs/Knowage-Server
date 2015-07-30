@@ -844,33 +844,33 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			this.createButtonVisibility(true);
 		}	
 		
+		this.storeConfig = Ext.apply({
+			model : this.getModelName(),
+			filteredProperties : this.filteredProperties, 
+			sorters: [],
+			proxy: {
+				type: 'ajax'
+			    , url: this.services["list"]
+		        , reader : {
+		        	type : 'json',
+		        	root : 'root'
+		        }
+			}
+		}, {});
+			
+		this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
+			
 		if(datasetType == 'CkanDataSet' && ckanRepository == 'NOURL') {
-			return;
+			this.store.loadData([],false);
 		} else {
-			this.storeConfig = Ext.apply({
-				model : this.getModelName(),
-				filteredProperties : this.filteredProperties, 
-				sorters: [],
-				proxy: {
-			        type: 'ajax'
-			        , url: this.services["list"]
-		         	, reader : {
-		        		type : 'json',
-		        		root : 'root'
-		        	}
-			     }
-			}, {});
-			
-			this.store = Ext.create('Sbi.widgets.store.InMemoryFilteredStore', this.storeConfig);				
-			
 			//load store and refresh datasets view
 			this.store.load(function(records, operation, success) {
 			    //console.log('***DATASETS BROWSER loaded records***');
 			});
-			this.viewPanel.bindStore(this.store);
 			this.ckanCounter += this.CKAN_COUNTER_STEP;
-			this.viewPanel.refresh();
 		}
+		this.viewPanel.bindStore(this.store);
+		this.viewPanel.refresh();
 	}
 	
 	//Show more dataset of the passed type

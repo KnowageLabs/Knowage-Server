@@ -95,7 +95,9 @@ public class CkanHelper {
 				int statusCode = -1;
 				HttpClient httpClient = CKANClient.getHttpClient();
 				// For FIWARE CKAN instance
-				httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+				if (ckanApiKey != null) {
+					httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+				}
 				// For ANY CKAN instance
 				// httpget.setRequestHeader("Authorization", ckanApiKey);
 				statusCode = httpClient.executeMethod(httpget);
