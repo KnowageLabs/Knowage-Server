@@ -19,9 +19,9 @@
 		defaultValue="false" />
 	<EXPORTER domain="CSV" engine="athenabirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine=athenajpivotengine
+	<EXPORTER domain="PDF" engine="athenajpivotengine"
 		defaultValue="false" />
-	<EXPORTER domain="XLS" engine=athenajpivotengine
+	<EXPORTER domain="XLS" engine="athenajpivotengine"
 		defaultValue="true" />
 	<!-- <EXPORTER domain="PDF" engine="SpagoBIJFreeChartEng"
 		defaultValue="true" />  -->
