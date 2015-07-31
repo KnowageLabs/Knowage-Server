@@ -19,10 +19,13 @@ import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByName;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchWordByWord;
 import it.eng.spagobi.tools.glossary.dao.criterion.SearchtWlistByGlossaryIdAndWordId;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadContentsParent;
+import it.eng.spagobi.tools.glossary.dao.criterion.loadDataSetWlistByDataset;
+import it.eng.spagobi.tools.glossary.dao.criterion.loadDataSetWlistByDatasetAndWordAndColumn;
 import it.eng.spagobi.tools.glossary.dao.criterion.loadDocWlistByDocumentAndWord;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -1107,9 +1110,28 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			return load(SbiGlDocWlist.class, id);
 		}
 		
+		
+		//this function is like loadDocWlist but if element dont'exist not generate exception
 		@Override
 		public SbiGlDocWlist getDocWlistOrNull(SbiGlDocWlistId id){
 			List<SbiGlDocWlist> l = list(new loadDocWlistByDocumentAndWord(id.getDocumentId(),id.getWordId()));
+			if (l.isEmpty()) {
+				return null;
+			} else {
+				return l.get(0);
+			}
+			
+		}
+		
+		
+		@Override
+		public List<SbiGlDataSetWlist> loadDataSetWlist(Integer  datasetId,String Organiz){
+			return list(new loadDataSetWlistByDataset(datasetId,Organiz));
+		}
+		
+		@Override
+		public SbiGlDataSetWlist getDataSetWlistOrNull(SbiGlDataSetWlistId id){
+			List<SbiGlDataSetWlist> l = list(new loadDataSetWlistByDatasetAndWordAndColumn(id.getWordId(),id.getDatasetId(),id.getColumn_name()));
 			if (l.isEmpty()) {
 				return null;
 			} else {
@@ -1128,7 +1150,22 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			delete(SbiGlDocWlist.class, id);
 		}
 	
-	
+		@Override
+		public SbiGlDataSetWlistId insertDataSetWlist(SbiGlDataSetWlist datasetwlist){
+			return (SbiGlDataSetWlistId) insert(datasetwlist);
+		}
+		
+		@Override
+		public void deleteDataSetWlist(SbiGlDataSetWlistId id){
+			delete(SbiGlDataSetWlist.class, id);
+		}
+		
+		@Override
+		public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId,String Organiz){
+
+			return list(new SearchListDataSetWlist(datasetId,Organiz));
+		}
+		
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -1159,11 +1196,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 	
 	
 	
-	@Override
-	public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId){
-
-		return list(new SearchListDataSetWlist(datasetId));
-	}
+	
 	
 	@Override
 	public Map<String, Object> NavigationItem(final JSONObject elem) {

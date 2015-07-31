@@ -14,20 +14,23 @@
             <key-property name="organization" type="string">
                 <column name="ORGANIZATION" />
             </key-property>
+            <key-property name="column_name" type="string">
+                <column name="COLUMN_NAME" />
+            </key-property>
         </composite-id>
         
 		
         <many-to-one name="word" class="it.eng.spagobi.tools.glossary.metadata.SbiGlWord" update="false" insert="false" fetch="select">
             <column name="WORD_ID" not-null="true" />
         </many-to-one>
-        <!-- 
+      
          <many-to-one name="dataset" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" update="false" insert="false" fetch="select">
             <column name="DS_ID" not-null="true" />
               <column name="VERSION_NUM" not-null="true" />
              <column name="ORGANIZATION" not-null="true" />
             
         </many-to-one>
-         -->
+        
         
 	<component name="commonInfo" insert="true" update="true"
 		class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

@@ -1,16 +1,26 @@
 package it.eng.spagobi.tools.dataset.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
 public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataSetDAO {
 
@@ -62,6 +72,54 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	@Override
 	public List<SbiDataSet> loadSbiDataSets() {
 		return loadDataSets(null, null, null, null, null, null, null);
+	}
+	
+	@Override
+	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id,String organiz){
+		Session session;
+		 List<SbiDataSet> list=null;
+		 SbiDataSet sbiDataSet=null;
+		try {
+			session = getSession();
+			Criteria c = session.createCriteria(SbiDataSet.class);
+			c.addOrder(Order.asc("label"));
+			c.add(Restrictions.eq("id.dsId", id));
+			c.add(Restrictions.eq("id.organization", organiz));
+			c.add(Restrictions.eq("active",true));
+
+			sbiDataSet = (SbiDataSet) c.uniqueResult();
+
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  sbiDataSet;
+	}
+	
+	
+	@Override
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search,Integer page, Integer item_per_page){
+		Session session;
+		 List<SbiDataSet> list=null;
+		 
+		try {
+			session = getSession();
+			Criteria c = session.createCriteria(SbiDataSet.class);
+			c.addOrder(Order.asc("label"));
+			
+			if(page!=null && item_per_page!=null ){
+				c.setFirstResult((page - 1) * item_per_page);
+				c.setMaxResults(item_per_page);
+			}
+			
+			c.add(Restrictions.like("label", search==null?"":search, MatchMode.ANYWHERE).ignoreCase());
+			c.add(Restrictions.eq("active",true));
+			
+
+			list=c.list();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override
@@ -163,5 +221,37 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 		return transaction;
 	}
+	
+	public Integer countSbiDataSet(String search) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer resultNumber;
+		
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+		
+			String hql = "select count(*) from SbiDataSet where active=true and label like '%"+search+"%'";
+			Query hqlQuery = aSession.createQuery(hql);
+			Long temp = (Long)hqlQuery.uniqueResult();
+			resultNumber = new Integer(temp.intValue());
+
+		} catch (HibernateException he) {
+			logger.error("Error while loading the list of SbiDataSet", he);	
+			if (tx != null)
+				tx.rollback();	
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
+		
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+		return resultNumber;
+	}
+
 
 }

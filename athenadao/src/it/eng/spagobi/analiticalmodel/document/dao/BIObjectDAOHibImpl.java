@@ -2130,7 +2130,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 
 
-	public Integer countBIObjects() throws EMFUserError {
+	public Integer countBIObjects(String search) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -2141,6 +2141,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			tx = aSession.beginTransaction();
 		
 			String hql = "select count(*) from SbiObjects ";
+			
+			if(search!=null){
+			 hql = "select count(*) from SbiObjects where label like '%"+search+"%'";
+			}
 			Query hqlQuery = aSession.createQuery(hql);
 			Long temp = (Long)hqlQuery.uniqueResult();
 			resultNumber = new Integer(temp.intValue());

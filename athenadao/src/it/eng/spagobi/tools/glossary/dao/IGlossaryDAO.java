@@ -5,6 +5,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -163,11 +164,19 @@ public interface IGlossaryDAO extends ISpagoBIDao {
 	
 	
 	
+	
 	//datasetWlist
-		public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId);
+		public List<SbiGlDataSetWlist> listDataSetWlist(Integer datasetId,String Organiz);
 		
+		public SbiGlDataSetWlist getDataSetWlistOrNull(SbiGlDataSetWlistId id);
 		
-	//navigation
+		public SbiGlDataSetWlistId insertDataSetWlist(SbiGlDataSetWlist docwlist);
+		
+		public void deleteDataSetWlist(SbiGlDataSetWlistId id);
+		
+		public List<SbiGlDataSetWlist> loadDataSetWlist(Integer  datasetId,String Organiz);
+	
+		//navigation
 	public Map<String, Object> NavigationItem(JSONObject  elem);
 	
 	

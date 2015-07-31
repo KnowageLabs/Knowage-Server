@@ -9,6 +9,8 @@ public class SbiGlDataSetWlistId implements Serializable {
 	private int wordId;
 	private int datasetId;
 	private String organization;
+	private String column_name;
+	
 
 	public SbiGlDataSetWlistId() {
 	}
@@ -32,12 +34,16 @@ public class SbiGlDataSetWlistId implements Serializable {
 	 * @param datasetId
 	 * @param organization
 	 */
-	public SbiGlDataSetWlistId(int wordId, int datasetId, String organization) {
+	public SbiGlDataSetWlistId(int wordId, int datasetId, String organization,String column_name) {
 		super();
 		this.wordId = wordId;
 		this.datasetId = datasetId;
 		this.organization = organization;
+		this.column_name = column_name;
 	}
+
+
+
 
 
 
@@ -94,6 +100,42 @@ public class SbiGlDataSetWlistId implements Serializable {
 
 
 
+	/**
+	 * @return the column_name
+	 */
+	public String getColumn_name() {
+		return column_name;
+	}
+
+
+
+	/**
+	 * @param column_name the column_name to set
+	 */
+	public void setColumn_name(String column_name) {
+		this.column_name = column_name;
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((column_name == null) ? 0 : column_name.hashCode());
+		result = prime * result + datasetId;
+		result = prime * result
+				+ ((organization == null) ? 0 : organization.hashCode());
+		result = prime * result + wordId;
+		return result;
+	}
+
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -106,6 +148,11 @@ public class SbiGlDataSetWlistId implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		SbiGlDataSetWlistId other = (SbiGlDataSetWlistId) obj;
+		if (column_name == null) {
+			if (other.column_name != null)
+				return false;
+		} else if (!column_name.equals(other.column_name))
+			return false;
 		if (datasetId != other.datasetId)
 			return false;
 		if (organization == null) {
@@ -118,21 +165,8 @@ public class SbiGlDataSetWlistId implements Serializable {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + datasetId;
-		result = prime * result
-				+ ((organization == null) ? 0 : organization.hashCode());
-		result = prime * result + wordId;
-		return result;
-	}
 
-	
+
 	
 	
 }

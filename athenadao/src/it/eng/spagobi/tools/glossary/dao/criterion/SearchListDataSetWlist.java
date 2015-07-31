@@ -10,9 +10,11 @@ import org.hibernate.criterion.Restrictions;
 public class SearchListDataSetWlist implements ICriterion<SbiGlDataSetWlist> {
 
 	private final Integer iddoc;
+	private final String  organiz;
 
-	public SearchListDataSetWlist(Integer iddoc) {
+	public SearchListDataSetWlist(Integer iddoc,String organiz) {
 		this.iddoc = iddoc;
+		this.organiz=organiz;
 	}
 
 	@Override
@@ -21,6 +23,7 @@ public class SearchListDataSetWlist implements ICriterion<SbiGlDataSetWlist> {
 		if (iddoc != null) {
 			c.createAlias("dwlist.word", "wordWl");
 			c.add(Restrictions.eq("dwlist.id.datasetId", iddoc));
+			c.add(Restrictions.eq("dwlist.id.organization", organiz));
 		}
 		// c.addOrder(Order.asc("word"));
 		return c;
