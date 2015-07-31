@@ -446,8 +446,10 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var styleFontSize = this.styleFontSizeComboBox.getValue();
 		this.axisData.styleFontSize = styleFontSize;
 		
-		var styleOpposite = this.styleOpposite.getValue();
-		this.axisData.styleOpposite = styleOpposite;
+		if(this.styleOpposite ) {
+			var styleOpposite = this.styleOpposite.getValue();
+			this.axisData.styleOpposite = styleOpposite;
+		}
 
 		if(isYAxis) {
 			var majorgridInterval = this.majorgridIntervalNumberField.getValue();

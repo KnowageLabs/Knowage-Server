@@ -31,9 +31,12 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     },
     
     collapsible: true,
-	maxWidth: 200,
-	minWidth: 200,
-	width: 200,
+    scrollable: true,
+//    overflowY: 'auto',
+//    overflowX: 'auto',
+	maxWidth: 220,
+	minWidth: 220,
+	width: 220,
     bodyBorder: true,
     defaults: {
         split: true,

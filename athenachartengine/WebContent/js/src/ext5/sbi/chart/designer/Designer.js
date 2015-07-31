@@ -312,107 +312,74 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var isChartScatter = this.chartType.toUpperCase() == 'SCATTER';						
 					var isChartHeatmap = this.chartType.toUpperCase() == 'HEATMAP';	
 					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel || isChartHeatmap)
-					{						
+					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel || isChartHeatmap) {						
 						chartLegendCheckBox.hide();
-					}
-					else
-					{
+					} else {
 						chartLegendCheckBox.show();
 					}
 					
 					if (isChartSunburst || isChartWordCloud || isChartTreemap 
-							|| isChartParallel || isChartHeatmap)
-					{
+							|| isChartParallel || isChartHeatmap) {
 						chartOrientation.hide();
-					}
-					else
-					{
+					} else {
 						chartOrientation.show();
 					}
 					
-					if (isChartSunburst)
-					{
+					if (isChartSunburst) {
 						chartWidth.hide();
-					}
-					else
-					{
+					} else {
 						chartWidth.show();
 					}
 					
-					if (isChartSunburst)
-					{
+					if (isChartSunburst) {
 						opacityOnMouseOver.show();
-					}
-					else
-					{
+					} else {
 						opacityOnMouseOver.hide();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartScatter)
-					{
+					if (isChartSunburst || isChartWordCloud || isChartScatter) {
 						colorPallete.hide();
-					}
-					else
-					{
+					} else {
 						colorPallete.show();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel || isChartHeatmap)
-					{
+					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel || isChartHeatmap) {
 						chartLegend.hide();
-					}
-					else
-					{
+					} else {
 						chartLegend.show();
 					}
 					
-					if (isChartSunburst)
-					{
+					if (isChartSunburst) {
 						toolbarAndTip.show();
-					}
-					else 
-					{
+					} else  {
 						toolbarAndTip.hide();
 					}
 					
-					if (isChartWordCloud)
-					{
+					if (isChartWordCloud) {
 						wordCloudPanel.show();
-					}
-					else
-					{
+					} else {
 						wordCloudPanel.hide();
 					}
 					
-					if (isChartParallel)
-					{
+					if (isChartParallel) {
 						parallelLimitPanel.show();
 						parallelAxesLinesPanel.show();
 						parallelTooltipPanel.show();
-					}
-					else
-					{
+					} else {
 						parallelLimitPanel.hide();
 						parallelAxesLinesPanel.hide();
 						parallelTooltipPanel.hide();
 					}
 					
-					if (isChartScatter)
-					{
+					if (isChartScatter) {
 						scatterConfiguration.show();
-					}
-					else
-					{
+					} else {
 						scatterConfiguration.hide();
 					}
 					
-					if (isChartHeatmap)
-					{
+					if (isChartHeatmap) {
 						showLegendAndTooltip.show();
-					}
-					else
-					{
+					} else {
 						showLegendAndTooltip.hide();
 					}
 				}
@@ -503,8 +470,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 
 			this.columnsPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'center',
-  				flex:  1,
-  				margin: '0 0 5 0',
+//  				flex:  1,
+//  				margin: '0 15 5 0',
   				store: columnsPickerStore,
   				viewConfig: {
   					copy: true,
@@ -535,8 +502,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// *_* Type: GRID PANEL
 			this.categoriesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'south',
-  				flex: 1,
-  				margin: '0 0 5 0',
+//  				flex: 1,
+//  				margin: '0 0 5 0',
   				store: categoriesPickerStore, 
   				viewConfig: {
   					copy: true,
@@ -1223,6 +1190,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
+			//Handle resize event for making the designer responsive
+			Ext.on('resize', function(w, h){
+				this.designerMainPanel.updateLayout();
+				this.chartConfiguration.updateLayout();
+				this.advancedEditor.updateLayout();
+			}, this);
+			
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
   			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */
   			this.loadAxesAndSeries(jsonTemplate);
@@ -1267,8 +1241,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 				else
 				{
-					for (var i=0; i<category.length; i++)
-					{	
+					for (var i=0; i<category.length; i++) {	
 						var mainCategory = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 							axisName: category[i].name ? category[i].name: category[i].column,
 							axisType: 'ATTRIBUTE', 

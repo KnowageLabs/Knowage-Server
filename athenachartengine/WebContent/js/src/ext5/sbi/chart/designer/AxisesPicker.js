@@ -6,9 +6,9 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
         'Sbi.chart.designer.AxisesContainerStore'
     ],        
     config:{
-        flex: 1,
-		margin: '5 0 5 0',
-		minHeight: 150
+//        flex: 1,
+//		margin: '5 0 5 0',
+		minHeight: 50
     },	
     model: Sbi.chart.designer.AxisesContainerModel,    
     columns: [
@@ -21,5 +21,5 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
     ],
     enableDragDrop: true,    
     enableColumnHide:false,    
-    margin: '0 5 0 0'    
+    margin: '5 15 5 0'    
 });
