@@ -189,8 +189,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				};
 				columnIndexer++;
 				
-				console.log('Calculated formula for field: "' + visibleSelectField.alias + '": ', visibleSelectField.calculatedFieldFormula);
-				
 				this.applyRendererOnField(calculatedField, visibleSelectField);
 				this.applySortableOnField(calculatedField);
 				
@@ -383,7 +381,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			if(visibleField.columnType == elementTypes.NUMBER || visibleField.columnType == elementTypes.CURRENCY) {
 				field.measureScaleFactor = visibleField.scale;
 			}
-			if (field.measureScaleFactor && (t === 'float' || t ==='int')) { // format is applied only to numbers
+			if (field.measureScaleFactor /*&& (t === 'float' || t ==='int')*/) { // format is applied only to numbers
 				rendererFunction = this.applyScaleRendererOnField(numberFormatterFunction, field);
 			} else {
 				rendererFunction = numberFormatterFunction;
@@ -472,16 +470,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 	    	}
 			return value;
 		};
+		
 		var finalRendererFunction = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
 		
 		if(visibleField.calculatedFieldFlag != undefined && visibleField.calculatedFieldFlag) {
 			var calculatedRendererFunction = function(value, metaData, record, rowIndex, colIndex, store) {
-				console.log('value: ', value);
-				console.log('metaData: ', metaData);
-				console.log('record: ', record);
-//				console.log('rowIndex: ', rowIndex);
-//				console.log('colIndex: ', colIndex);
-				console.log('store: ', store);
 				
 				var calculatedFieldFormula = visibleField.calculatedFieldFormula;
 				//necessary for the next substitution
@@ -527,9 +520,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				return value;
 			};
 			
-//			finalRendererFunction = Ext.Function.createSequence(finalRendererFunction, calculatedRendererFunction);
-			finalRendererFunction = Ext.Function.createSequence(calculatedRendererFunction, finalRendererFunction);
-//			finalRendererFunction = calculatedRendererFunction;
+			var customCreateSequenceFn = function(originalFn, newFn, scope) {
+	            return function() {
+	                var result = originalFn.apply(this, arguments);
+	                arguments[0] = result;
+	                
+	                return newFn.apply(scope || this, arguments);
+	            };
+		    };
+			
+//		    finalRendererFunction = Ext.Function.createSequence(calculatedRendererFunction, finalRendererFunction, this);
+			finalRendererFunction = customCreateSequenceFn(calculatedRendererFunction, finalRendererFunction);
 		}
 
 		field.renderer = finalRendererFunction;
