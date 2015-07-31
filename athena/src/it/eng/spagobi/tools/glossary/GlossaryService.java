@@ -14,11 +14,14 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlist;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlDataSetWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlist;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlDocWlistId;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -384,6 +387,48 @@ public class GlossaryService {
 		return jo.toString();
 	}
 	
+	
+	@POST
+	@Path("/addDataSetWlist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String addDataSetWlist(@Context HttpServletRequest req) {
+		JSONObject jo = new JSONObject();
+		try {
+			System.out.println("addDataSetWlist");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+
+			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+			Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
+			Integer datasetId = getNumberOrNull(requestVal.opt("DATASET_ID"));
+			String column=requestVal.opt("COLUMN_NAME").toString();
+			String organization=requestVal.opt("ORGANIZATION").toString();
+			
+			SbiGlDataSetWlist dswl=new SbiGlDataSetWlist();
+			SbiGlDataSetWlistId dslid=new SbiGlDataSetWlistId(wordId, datasetId,organization,column);
+			SbiGlDataSetWlist wo=dao.getDataSetWlistOrNull(dslid);
+			
+			if(wo!=null){
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.glossary.word.new.name.duplicate");
+				return jo.toString();
+			}
+			
+			dswl.setId(dslid);
+			dao.insertDataSetWlist(dswl);
+			
+			
+
+		} catch (Throwable t) {
+			 throw new SpagoBIServiceException(req.getPathInfo(),
+			 "An unexpected error occured while executing service", t);
+		}
+		return jo.toString();
+	}
+	
 	@POST
 	@Path("/addWord")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -547,6 +592,36 @@ public class GlossaryService {
 			SbiGlDocWlistId id=new SbiGlDocWlistId(wordId,  documentId);
 			
 			dao.deleteDocWlist(id);
+
+			JSONObject jo = new JSONObject();
+			jo.put("Status", "OK");
+			return jo.toString();
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
+	
+	@POST
+	@Path("/deleteDatasetWlist")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String deleteDatasetWlist(@Context HttpServletRequest req) {
+		try {
+			System.out.println("deleteDatasetWlist");
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
+			Integer wordId = getNumberOrNull(req.getParameter("WORD_ID"));
+			Integer datasetId = getNumberOrNull(req.getParameter("DATASET_ID"));
+			String column=req.getParameter("COLUMN").toString();
+			String organiz=req.getParameter("ORGANIZATION").toString();
+			
+			SbiGlDataSetWlistId id=new SbiGlDataSetWlistId(wordId,  datasetId,organiz,column);
+			
+			dao.deleteDataSetWlist(id);
 
 			JSONObject jo = new JSONObject();
 			jo.put("Status", "OK");
@@ -998,6 +1073,57 @@ public class GlossaryService {
 			
 			
 			return jobj.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		}
+	}
+	
+	@GET
+	@Path("/getDataSetInfo")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDataSetInfo(@Context HttpServletRequest req) {
+		
+		try {
+			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession()
+					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+			
+			Integer datasetId = getNumberOrNull(req.getParameter("DATASET_ID"));
+			if (datasetId==null) {
+				throw new SpagoBIServiceException(req.getPathInfo(),
+						"Input param Id [" + datasetId + "] not valid or null");
+			}
+			
+			String organiz = req.getParameter("ORGANIZATION").toString();
+			
+			List<SbiGlDataSetWlist> listDatasetWlist=dao.listDataSetWlist(datasetId,organiz);
+			JSONObject jo=new JSONObject();
+			JSONArray ja=new JSONArray();
+			Map<String, Integer> map = new HashMap<String,Integer>();
+			
+			SbiDataSet datas=DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(datasetId, organiz);
+			MetaData m=datas.getMetadata();
+			if(m!=null){
+				for(int i=0;i<m.getFieldCount();i++){
+					map.put(m.getFieldAlias(i), ja.length());
+					JSONObject tmp =new JSONObject();
+					tmp.put("alias", m.getFieldAlias(i));
+					tmp.put("organization", datas.getId().getOrganization());
+					tmp.put("datasetId", datas.getId().getDsId());
+					tmp.put("word",new JSONArray());
+					ja.put(tmp);
+				}
+				if(!listDatasetWlist.isEmpty()){
+					for(SbiGlDataSetWlist sb:listDatasetWlist){
+						ja.getJSONObject(map.get(sb.getId().getColumn_name())).getJSONArray("word").put(fromWordLight(sb.getWord()));
+					}
+				}
+		}
+			jo.put("SbiGlDataSetWlist", ja);
+			jo.put("DataSet", JSON.parse(JsonConverter.objectToJson(datas, SbiDataSet.class)));
+			return jo.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(),
 					"An unexpected error occured while executing service", t);

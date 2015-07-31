@@ -339,7 +339,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			}
 			JSONObject jo = new JSONObject();
 			jo.put("item", jarr);
-			jo.put("itemCount", documentsDao.countBIObjects());
+			jo.put("itemCount", documentsDao.countBIObjects( label!=null? label:""));
 
 			return jo.toString();
 		} catch (Exception e) {

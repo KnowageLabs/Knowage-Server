@@ -55,6 +55,7 @@ public class Util {
 		JSONObject jobj = new JSONObject();
 		jobj.put("DATASET_ID", sbidataset.getId().getDsId());
 		jobj.put("DATASET_NM", sbidataset.getLabel());
+		jobj.put("DATASET_ORG", sbidataset.getId().getOrganization());
 		return jobj;
 	}
 	

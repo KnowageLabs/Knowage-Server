@@ -80,7 +80,7 @@
 					<md-toolbar class="md-blue minihead ">
 					<div class="md-toolbar-tools">
 
-						<div>{{ctrl.translate.load("sbi.glossary.word");}}</div>
+						<div>{{translate.load("sbi.glossary.word");}}</div>
 						<md-button ng-click="ctrl.createNewWord(false)"
 							class="md-fab   md-ExtraMini addButton" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
@@ -107,7 +107,7 @@
 						md-mode="indeterminate"></md-progress-circular>
 
 
-					<p ng-if="ctrl.words.length==0">{{ctrl.translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
+					<p ng-if="ctrl.words.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
 
 
 					<div id="wordTree" ng-if="ctrl.words.length>0"
@@ -134,19 +134,19 @@
 								</div> <!-- 					menu contestuale -->
 
 
-								<div class="dropdown position-fixed"
+								<div class="dropdown position-fixed blockedMenu"
 									style="z-index: 999; left: 10px !important"
 									id="WordMenu-{{ word.WORD }}">
 									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item 
 										ng-click='ctrl.modifyWord(word)' role="menuitem" tabindex="1">
-									<p>{{ctrl.translate.load("sbi.generic.modify");}}</p>
+									<p>{{translate.load("sbi.generic.modify");}}</p>
 									</md-list-item> <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem" 
 										tabindex="2">
-									<p>{{ctrl.translate.load("sbi.generic.delete");}}</p>
+									<p>{{translate.load("sbi.generic.delete");}}</p>
 									</md-list-item> 
 									<md-list-item ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" role="menuitem" 
 										tabindex="3">
-									<p>{{ctrl.translate.load("sbi.generic.details");}}</p>
+									<p>{{translate.load("sbi.generic.details");}}</p>
 									</md-list-item> 
 									</md-list>
 								</div>
@@ -178,7 +178,7 @@
 					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 
-						<div>{{ctrl.translate.load("sbi.glossary.glossary");}}</div>
+						<div>{{translate.load("sbi.glossary.glossary");}}</div>
 						<md-button ng-click="ctrl.createNewGlossary($event)"
 							class="md-fab   md-ExtraMini addButton" aria-label="add word"
 							style="position:absolute; right:11px;"> <md-icon
@@ -200,21 +200,20 @@
 					</div>
 
 					<!-- 					menu contestuale glossario -->
-					<div class="dropdown position-fixed"
+					<div class="dropdown position-fixed blockedMenu"
 						style="z-index: 999; left: 10px !important"
 						id="Gloss-{{  gloss.GLOSSARY_NM }}">
 						<md-list class="dropdown-menu" role="menu"> <md-list-item
-							style="  height: 40px! important;"
 							ng-click='ctrl.createNewGlossary($event,gloss)' role="menuitem"
 							tabindex="1">
-						<p>{{ctrl.translate.load("sbi.generic.modify");}}</p>
-						</md-list-item> <md-list-item style="  height: 40px! important;"
+						<p>{{translate.load("sbi.generic.modify");}}</p>
+						</md-list-item> <md-list-item 
 							ng-click='ctrl.CloneGloss($event,gloss)' role="menuitem"
 							tabindex="2">
-						<p>{{ctrl.translate.load("sbi.generic.clone");}}</p>
+						<p>{{translate.load("sbi.generic.clone");}}</p>
 						</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(gloss)'
-							style="  height: 40px! important;" role="menuitem" tabindex="3">
-						<p>{{ctrl.translate.load("sbi.generic.delete");}}</p>
+							role="menuitem" tabindex="3">
+						<p>{{translate.load("sbi.generic.delete");}}</p>
 						</md-list-item> </md-list>
 					</div>
 
@@ -247,7 +246,7 @@
 
 
 
-						<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">{{ctrl.translate.load("sbi.glossary.select.messages");}}</p>
+						<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">{{translate.load("sbi.glossary.select.messages");}}</p>
 							
 						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined ">
 								<div context-menu data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"	>
@@ -262,19 +261,19 @@
 									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item
 										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)'
 										role="menuitem" tabindex="1">
-									<p>{{ctrl.translate.load("sbi.glossary.messages.add.child");}}</p>
+									<p>{{translate.load("sbi.glossary.messages.add.child");}}</p>
 									</md-list-item> <md-list-item
 										ng-click='ctrl.createNewGlossary($event,ctrl.selectedGloss)'
 										role="menuitem" tabindex="1">
-									<p>{{ctrl.translate.load("sbi.generic.modify");}}</p>
+									<p>{{translate.load("sbi.generic.modify");}}</p>
 									</md-list-item> <md-list-item
 										ng-click='ctrl.CloneGloss($event,ctrl.selectedGloss)'
 										role="menuitem" tabindex="2">
-									<p>{{ctrl.translate.load("sbi.generic.clone");}}</p>
+									<p>{{translate.load("sbi.generic.clone");}}</p>
 									</md-list-item> <md-list-item
 										ng-click='ctrl.deleteGlossary(ctrl.selectedGloss)'
 										role="menuitem" tabindex="3">
-									<p>{{ctrl.translate.load("sbi.generic.delete");}}</p>
+									<p>{{translate.load("sbi.generic.delete");}}</p>
 									</md-list-item> </md-list>
 								</div>
 
@@ -315,23 +314,39 @@
 					</div>
 
 				</div>
-</md-content> </md-tab> <!-- 				<md-tab label="Vocabolo"> <md-content class="md-padding" -->
-				<!-- 					new-word-form newWord="ctrl.newWord"> </md-content> </md-tab> </md-tabs> </md-content> -->
+</md-content> </md-tab> 
+
+
 
 				<md-tab label="Vocabolo" selected="true"
 					md-on-select="ctrl.activeTab='Vocabolo'"
-					md-active="ctrl.activeTab=='Vocabolo'"> <md-content
-					class="md-padding">
+					md-active="ctrl.activeTab=='Vocabolo'" > 
+					
+					<md-toolbar class="md-blue minihead" >
+					<div class="md-toolbar-tools h100" >
+						<div style="   text-align: center;    font-size: 30px;">{{translate.load("sbi.glossary.word");}}</div>
+						
+						<div  style="position: absolute;right: 0px" class="h100">
+						<md-button type="button" tabindex="-1" class="md-raised md-ExtraMini "  style=" margin-top: 2px;"
+							ng-click="ctrl.createNewWord(true)" >{{translate.load("sbi.browser.defaultRole.cancel");}}</md-button>
+						<md-button type="submit" class="md-raised md-ExtraMini " style=" margin-top: 2px;"
+							ng-disabled="ctrl.newWord.DESCR.length === 0  || ctrl.newWord.WORD.length === 0">{{translate.load("sbi.browser.defaultRole.save");}}</md-button>
+					</div>
+						
+				 	  	</div>
+					</md-toolbar>
+			
+					<md-content class="ToolbarBox miniToolbar">
 
 
-				<form name="wordForm" class="wordForm md-padding" novalidate
+				<form name="wordForm" class="wordForm " novalidate
 					ng-submit=" ctrl.newWord.DESCR.length > 0  &&  ctrl.newWord.WORD.length > 0 && ctrl.addWord(ctrl.words)">
 
 					<div layout="row" layout-wrap>
 						<div flex="100">
 
 							<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-							<label>{{ctrl.translate.load("sbi.glossary.word");}}</label> <md-icon md-font-icon="fa  fa-newspaper-o "
+							<label>{{translate.load("sbi.glossary.word");}}</label> <md-icon md-font-icon="fa  fa-newspaper-o "
 								class="wo"></md-icon> <input ng-model="ctrl.newWord.WORD" maxlength="100"
 								type="text"> </md-input-container>
 						</div>
@@ -342,7 +357,7 @@
 						<div flex="100">
 							<md-input-container class="md-icon-float textareaInputBox"
 								ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.DESCR.length === 0  }">
-							<!-- Use floating label instead of placeholder --> <label>{{ctrl.translate.load("sbi.glossary.description");}}</label>
+							<!-- Use floating label instead of placeholder --> <label>{{translate.load("sbi.glossary.description");}}</label>
 							<md-icon md-font-icon="fa  fa-file-text-o " class="des"></md-icon>
 							<textarea id="descrText" ng-model="ctrl.newWord.DESCR" columns="1"
 								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
@@ -353,9 +368,9 @@
 							<md-input-container class="md-icon-float " > 
 						<label class="selectLabel" ng-hide="ctrl.newWord.STATE==-1 || ctrl.newWord.STATE.length==0 || ctrl.newWord.STATE==undefined" >State</label>
 							<md-icon md-font-icon="fa fa-spinner " class="stato"></md-icon> 
-							<md-select 	placeholder='{{ctrl.translate.load("sbi.generic.select");}} {{ctrl.translate.load("sbi.glossary.status");}}' ng-model="ctrl.newWord.STATE">
-								 <md-option value="-1">{{ctrl.translate.load("sbi.generic.select");}} {{ctrl.translate.load("sbi.glossary.status");}}</md-option>
-								 <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">{{ctrl.translate.load(st.VALUE_NM)}}</md-option>
+							<md-select 	placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}' ng-model="ctrl.newWord.STATE">
+								 <md-option value="-1">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}</md-option>
+								 <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">{{translate.load(st.VALUE_NM)}}</md-option>
 							</md-select> </md-input-container>
 						</div>
 
@@ -365,10 +380,10 @@
 						
 						<md-icon md-font-icon="fa fa-flag-o " class="categoria"> </md-icon>
 						<md-select
-								placeholder='{{ctrl.translate.load("sbi.generic.select");}} {{ctrl.translate.load("sbi.glossary.category");}}' ng-model="ctrl.newWord.CATEGORY">
-								 <md-option value="-1">{{ctrl.translate.load("sbi.glossary.category");}}</md-option>
+								placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.category");}}' ng-model="ctrl.newWord.CATEGORY">
+								 <md-option value="-1">{{translate.load("sbi.glossary.category");}}</md-option>
 								 <md-option
-								ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}">{{ctrl.translate.load("sbi.generic.select");}} {{ctrl.translate.load(ct.VALUE_NM)}}</md-option>
+								ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}">{{translate.load("sbi.generic.select");}} {{translate.load(ct.VALUE_NM)}}</md-option>
 							</md-select>
 						
 					
@@ -380,7 +395,7 @@
 						<div flex="100">
 							<md-input-container class="md-icon-float textareaInputBox"
 								ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.FORMULA.length === 0  }">
-							<!-- Use floating label instead of placeholder --> <label>{{ctrl.translate.load("sbi.glossary.formula");}}</label>
+							<!-- Use floating label instead of placeholder --> <label>{{translate.load("sbi.glossary.formula");}}</label>
 							<md-icon md-font-icon="fa fa-superscript " class="formu"></md-icon>
 							<textarea id="formulaText" ng-model="ctrl.newWord.FORMULA" columns="1"
 								md-maxlength="500" maxlength="500"></textarea> </md-input-container>
@@ -411,7 +426,7 @@
 								</div>
 							</div>
 
-							<label>{{ctrl.translate.load("sbi.glossary.link");}}</label> <md-icon md-font-icon="fa fa-link "
+							<label>{{translate.load("sbi.glossary.link");}}</label> <md-icon md-font-icon="fa fa-link "
 								class="lin"></md-icon>
 
 							<div class="linkChips">
@@ -443,7 +458,7 @@
 								md-item-text="item.ATTRIBUTE_NM" 
 								md-require-match=""
 								md-delay=500
-								md-floating-label='{{ctrl.translate.load("sbi.glossary.attributes");}}'> <md-item-template>
+								md-floating-label='{{translate.load("sbi.glossary.attributes");}}'> <md-item-template>
 							<span md-highlight-text="ctrl.tmpAttr.Prop.toUpperCase()">{{item.ATTRIBUTE_NM | uppercase}}</span>
 							</md-item-template> </md-autocomplete>
 						</div>
@@ -457,7 +472,7 @@
 <!-- 						</div> -->
 			<div flex="40">
 							<md-input-container class=" attr_Value md-icon-float textareaInputBox" ng-class="{ 'md-input-hasnt-value' : ( ctrl.tmpAttr.Val.length === 0 ||ctrl.tmpAttr.Val == null)  }"> 
-							<label>{{ctrl.translate.load("sbi.generic.value");}}</label> <textarea ng-model="ctrl.tmpAttr.Val" maxlength="500"
+							<label>{{translate.load("sbi.generic.value");}}</label> <textarea ng-model="ctrl.tmpAttr.Val" maxlength="500"
 								></textarea> </md-input-container>
 						
 						</div>
@@ -467,7 +482,7 @@
 								ng-click="ctrl.tmpAttr.Prop=ctrl.selectedItem ;ctrl.addProp(ctrl.tmpAttr)"
 								ng-disabled=" ctrl.tmpAttr.Prop.length==0 || ctrl.tmpAttr.Prop==null || ctrl.selectedItem==undefined || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
 								class="md-fab   md-mini" aria-label="Aggiungi_Attributo">
-							<md-tooltip> {{ctrl.translate.load("sbi.generic.add");}} {{ctrl.translate.load("sbi.glossary.attributes");}} </md-tooltip> <md-icon
+							<md-tooltip> {{translate.load("sbi.generic.add");}} {{translate.load("sbi.glossary.attributes");}} </md-tooltip> <md-icon
 								md-font-icon="fa fa-plus fa-2x" style="   margin-left: 2px;"></md-icon>
 							</md-button>
 						</div>
@@ -519,12 +534,7 @@
 
 
 
-					<div layout="row" layout-align="end end">
-						<md-button type="button" tabindex="-1" class="md-raised"
-							ng-click="ctrl.createNewWord(true)" >{{ctrl.translate.load("sbi.browser.defaultRole.cancel");}}</md-button>
-						<md-button type="submit" class="md-raised"
-							ng-disabled="ctrl.newWord.DESCR.length === 0  || ctrl.newWord.WORD.length === 0">{{ctrl.translate.load("sbi.browser.defaultRole.save");}}</md-button>
-					</div>
+					
 				</form>
 
 

@@ -59,15 +59,21 @@
   <md-content  class="glossaryTec">
     <md-tabs  md-border-bottom class="mini-tabs" style="  min-height: 40px;">
      
-       <md-tab label="NAVIGAZIONE">
+       <md-tab label="NAVIGAZIONE" md-on-select="global.init('navigation')">
         <md-content class="abs100">
          <%@include file="/WEB-INF/jsp/tools/glossary/glossary_navigation.jspf"%>
         </md-content>
       </md-tab>
       
-      <md-tab label="GESTIONE" >
+      <md-tab label="GESTIONE DOCUMENTI" md-on-select="global.init('docAssoc')">
         <md-content class="abs100">
-         <%@include file="/WEB-INF/jsp/tools/glossary/management_associations_between_documents_and_words.jspf"%>
+         <%@include file="/WEB-INF/jsp/tools/glossary/documents&wordsAssociations.jspf"%>
+        </md-content>
+      </md-tab>
+      
+      <md-tab label="GESTIONE DATA SET" md-on-select="global.init('datasetAssoc')">
+        <md-content class="abs100">
+         <%@include file="/WEB-INF/jsp/tools/glossary/dataset&wordsAssociations.jspf"%>
         </md-content>
       </md-tab>
       

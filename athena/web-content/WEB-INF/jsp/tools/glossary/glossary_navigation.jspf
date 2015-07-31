@@ -7,15 +7,15 @@
 		<div flex="20" class="boxItemGlo">
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
-				<div>{{global.translate.load("sbi.glossary.word");}}</div>
+				<div>{{translate.load("sbi.glossary.word");}}</div>
 				<md-progress-circular ng-show="ctrl.pagination.word.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 			</div>
 			
 			</md-toolbar>
 
 			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-			 <md-select  style="padding: 0 0 2px 0;" placeholder='{{global.translate.load("sbi.generic.select");}} {{global.translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
-			 <md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{global.translate.load("sbi.generic.select");}} {{global.translate.load("sbi.glossary.glossary");}}</md-option>
+			 <md-select  style="padding: 0 0 2px 0;" placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
+			 <md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}</md-option>
        		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
        		 </md-select>
        		 
@@ -49,8 +49,8 @@
 
 			<md-toolbar class="md-blue xs-head" style="  border-bottom: 1px solid rgb(210, 210, 210);">
 			<div class="md-toolbar-tools">
-				<div>{{global.translate.load("sbi.glossary.elements");}}</div>
-				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">{{global.translate.load("sbi.config.manageconfig.fields.clearFilter");}}</md-button>
+				<div>{{translate.load("sbi.glossary.elements");}}</div>
+				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">{{translate.load("sbi.config.manageconfig.fields.clearFilter");}}</md-button>
 			</div>
 			</md-toolbar>
 
@@ -59,7 +59,7 @@
 				<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.kpis.documents");}}</div>
+						<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpis.documents");}}</div>
 							<md-progress-circular ng-show="ctrl.pagination.document.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 		
 					</div>
@@ -98,7 +98,7 @@
 				<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
+						<div style="text-align: center; width: 100%;">{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
 					<md-progress-circular ng-show="ctrl.pagination.dataset.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 		
 					</div>
@@ -119,7 +119,7 @@
 						ng-click="ctrl.toggleFilter(dataset)" ng-repeat="n in [1]" class="smallListItem " 
 						ng-class="{selected_item: ctrl.isSelected(dataset)}">
 							<p class="wrapText">{{ dataset.DATASET_NM | uppercase}} </p>
-							 <md-icon class="md-secondary" ng-click="ctrl.showInfoDS($event,dataset.DATASET_NM)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+							 <md-icon class="md-secondary" ng-click="ctrl.showInfoDS($event,dataset.DATASET_ID,dataset.DATASET_ORG)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
 				
 					</md-list-item> 
 					</md-list>
@@ -136,7 +136,7 @@
 <div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.glossary.businessclass");}}</div>
+						<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.businessclass");}}</div>
 					<md-progress-circular ng-show="ctrl.pagination.bness_cls.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 		
 					</div>
@@ -174,7 +174,7 @@
 			<div flex="25" class="boxItemGlo">
 					<md-toolbar class="md-blue xs-head">
 					<div class="md-toolbar-tools">
-						<div style="text-align: center; width: 100%;">{{global.translate.load("sbi.glossary.tables");}}</div>
+						<div style="text-align: center; width: 100%;">{{translate.load("sbi.glossary.tables");}}</div>
 					<md-progress-circular ng-show="ctrl.pagination.table.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
 		
 					</div>

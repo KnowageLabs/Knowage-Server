@@ -69,6 +69,9 @@ md-tabs.mini-tabs  md-tabs-content-wrapper{
 /* 	  background-color: rgb(176, 190, 197); */
  background-color:red!important;
 }
+li.selected_item{
+	color:red;
+}
 
 .navig-tab-content .boxItemGlo md-list md-list-item button.md-secondary-container{
   min-width: 0;

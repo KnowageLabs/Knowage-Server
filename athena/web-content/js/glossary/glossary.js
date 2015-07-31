@@ -54,6 +54,7 @@ app.controller('Controller', [ "translate", "restServices", "$q", "$scope",
 function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		$timeout, $mdToast) {
 	ctr = this;
+	$scope.translate=translate;
 	ctr.showPreloader = false;
 	ctr.showSearchPreloader = false;
 	ctr.activeTab = 'Glossari';
@@ -635,10 +636,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		$mdDialog
 				.show({
 					controllerAs : 'gloCtrl',
+					 scope: $scope,preserveScope: true,
 					controller : function($mdDialog) {
 						var gctl = this;
-						gctl.translate=translate;
-
+						
 						if (gl != undefined) {
 							// load glossary data
 							gctl.headerTitle = translate
@@ -810,11 +811,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 		$mdDialog
 				.show({
+					 scope: $scope,preserveScope: true,
 					controllerAs : 'gloCtrl',
 					controller : function($mdDialog) {
 						var gctl = this;
-						gctl.translate=translate;
-
 						if (gl != undefined) {
 							// load glossary data
 							gctl.headerTitle = translate
@@ -1494,9 +1494,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		$mdDialog
 				.show({
 					controllerAs : "renCtrl",
+					 scope: $scope,preserveScope: true,
 					controller : function($mdDialog) {
 						var rn = this;
-						rn.translate=translate;
 						
 
 						if (modCont == true) {
@@ -1654,9 +1654,9 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		$mdDialog
 			.show({  
 					controllerAs : 'infCtrl',
+					 scope: $scope,preserveScope: true,
 				controller : function($mdDialog) {
 					var iwctrl = this;
-					iwctrl.translate=translate;
 			restServices.get("1.0/glossary", "getWord", "WORD_ID=" + wordid)
 					.success(
 							function(data, status, headers, config) {
