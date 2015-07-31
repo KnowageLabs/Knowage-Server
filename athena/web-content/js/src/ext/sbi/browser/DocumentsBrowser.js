@@ -23,8 +23,9 @@ Sbi.browser.DocumentsBrowser = function(config) {
 	this.defaultFolderId = null;
 
 	//for "custom" Document Browser we have a defaultFolder id
-	if ((config.defaultFolderId != null) && (config.defaultFolderId != undefined )){
-		this.defaultFolderId = config.defaultFolderId ;
+	if (config.browserConfig != undefined && 
+			config.browserConfig.defaultFolderId != null && config.browserConfig.defaultFolderId != undefined ){
+		this.defaultFolderId = config.browserConfig.defaultFolderId ;
 	} else {
 		this.defaultFolderId = this.getLastVisitedFolderId();
 	}
