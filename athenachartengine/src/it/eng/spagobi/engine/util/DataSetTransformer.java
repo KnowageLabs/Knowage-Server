@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 public class DataSetTransformer {
 
-	public JSONArray toWordcloud(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serie) throws JSONException{
+	public JSONArray toWordcloud(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serie, Object sizeCriteria) throws JSONException{
 
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
 
@@ -58,13 +58,13 @@ public class DataSetTransformer {
 			result.put(new Integer(i),record);			
 		}
 
-		JSONArray res = toWordcloudArray(columns,serie,result);
+		JSONArray res = toWordcloudArray(columns,serie,result, sizeCriteria);
 
 		return res;
 
 	}
 
-	private JSONArray toWordcloudArray(Map<String, String> columns, Object serie, HashMap<Integer, HashMap> result) throws JSONException {
+	private JSONArray toWordcloudArray(Map<String, String> columns, Object serie, HashMap<Integer, HashMap> result, Object sizeCriteria) throws JSONException {
 
 		JSONArray fr = new JSONArray();
 
@@ -77,8 +77,19 @@ public class DataSetTransformer {
 				if (!res.containsKey(result.get(i).get(columns.get(j)))){
 
 					String name = (String) result.get(i).get(columns.get(j));
+					
+					Double value = 0.00;
 
-					Double value = Double.parseDouble(result.get(i).get(serie).toString());
+					if (sizeCriteria.toString().equals("serie")){
+
+					value = value + Double.parseDouble(result.get(i).get(serie).toString());
+					
+					}
+					else if (sizeCriteria.toString().equals("occurrences")){
+						
+					value++;	
+						
+					}
 
 					res.put(name, value);
 
@@ -89,11 +100,23 @@ public class DataSetTransformer {
 					String name = (String) result.get(i).get(columns.get(j));
 
 					Double oldvalue = res.get(name);
+					
+					Double newValue = 0.00;
+					
+					if (sizeCriteria.toString().equals("serie")){
 
 					Double value = Double.parseDouble(result.get(i).get(serie).toString());
 
-					Double newValue = oldvalue+value;
-
+					newValue = oldvalue+value;
+					
+					}
+					else if (sizeCriteria.toString().equals("occurrences")){
+						
+						newValue = oldvalue+1;	
+							
+					}
+					
+					
 					res.remove(name);
 
 					res.put(name, newValue);
@@ -115,7 +138,7 @@ public class DataSetTransformer {
 			fr.put(jo);
 
 		}
-
+		
 		return fr;
 	}
 

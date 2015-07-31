@@ -30,7 +30,9 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
-#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serie))
+#set($sizeCriteria = $chart.sizeCriteria)
+
+#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serie, $sizeCriteria))
 
 {
  	chart: 
@@ -38,6 +40,7 @@
   		type: '$chart.type',
   		width: '$chart.width',
 		height: '$chart.height',
+  		sizeCriteria: '$chart.sizeCriteria',
   		
   		style:
   		{

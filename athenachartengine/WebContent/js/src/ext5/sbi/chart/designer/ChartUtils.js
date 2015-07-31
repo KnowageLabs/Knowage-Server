@@ -497,8 +497,6 @@ Ext.define(
 							var categoriesStore = Ext.data.StoreManager
 									.lookup('categoriesStore');
 							
-//							console.log(categoriesStore);
-
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector
 									.getChartType();
 
@@ -652,6 +650,10 @@ Ext.define(
 							if (chartType.toUpperCase() == "SCATTER") 
 							{
 								CHART['zoomType'] = (chartModel.get('scatterZoomType')) ? chartModel.get('scatterZoomType') : '';
+							}
+							
+							if (chartType.toUpperCase() == "WORDCLOUD"){
+								CHART['sizeCriteria'] = (chartModel.get('sizeCriteria')) ? chartModel.get('sizeCriteria') : '';
 							}
 							
 							if (chartModel.get('orientation') != undefined) {
@@ -1332,7 +1334,7 @@ Ext.define(
 															});
 												});
 							}
-
+							
 							var cModel = Ext
 									.create(
 											'Sbi.chart.designer.ChartConfigurationModel',
@@ -1356,6 +1358,7 @@ Ext.define(
 												minAngle : jsonChartStyle.minAngle,
 												maxFontSize : jsonChartStyle.maxFontSize,
 												wordPadding : jsonChartStyle.wordPadding,
+												sizeCriteria : jsonTemplate.CHART.sizeCriteria,
 
 												title : jsonTitleText,
 												titleAlign : jsonTitleStyle.align,
