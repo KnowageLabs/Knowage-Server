@@ -726,7 +726,7 @@ function renderWordCloud(chartConf){
 					return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
 				}
 			);
-			
+
 			// NEW
 			
 			/* Dark colors for the chart's first layer items */
@@ -776,7 +776,7 @@ function renderWordCloud(chartConf){
 						"fill", 
 						
 						function(d,i) 
-						{   	    								
+						{   	    	
 							  /* Go through the array of key-value pairs (elements of the chart and their color)
 							   * and check if there is unique element-color mapping. */
 //							  if (colors[d.name] == undefined && d.name != "root")
@@ -799,7 +799,7 @@ function renderWordCloud(chartConf){
 									  iii++;
 								  }		
 								  else
-								  {
+							  {
 //									  console.log(d);
 //									  console.log(d.layer);
 //									  console.log(varietiesOfMainColors);
@@ -814,8 +814,8 @@ function renderWordCloud(chartConf){
 								  }
 								  
 								  d['color'] = colors[d.name];
-							  }		
-							  
+							  }
+						
 //							  console.log(colors);
 //							  console.log(colors[d.name]);
 							  colorArrangement[i] = colors[d.name];
@@ -1169,7 +1169,7 @@ function renderWordCloud(chartConf){
 		     * data. */
 		    var parts = sequence.split("_SEP_");
 		    
-		    var currentNode = root;		    
+		    var currentNode = root;
 		    
 		    for (var j = 0; j < parts.length; j++) 
 		    {
@@ -1186,7 +1186,7 @@ function renderWordCloud(chartConf){
 		    		var foundChild = false;
 		    		
 		    		for (var k = 0; k < children.length; k++) 
-		    		{				    			
+		    		{
 		    			if (children[k]["name"] == nodeName) 
 		    			{
 		    				childNode = children[k];
@@ -1197,8 +1197,8 @@ function renderWordCloud(chartConf){
 		    		
 		    		// If we don't already have a child node for this branch, create it.
 		    		if (!foundChild) 
-		    		{		    			
-		    			childNode = {"name": nodeName, "children": []};		    	
+		    		{
+		    			childNode = {"name": nodeName, "children": []};
 		    			children.push(childNode);
 		    		}
 	    		
@@ -1215,7 +1215,7 @@ function renderWordCloud(chartConf){
 				 	childNode["layer"] = j;
 				 	childNode["firstLayerParent"] = parts[0];
 				 	children.push(childNode);
-		    	}	    		
+		    	}
 		    
 		    } 	// inner for loop
 		    
@@ -1309,7 +1309,7 @@ function renderWordCloud(chartConf){
 
 		var brushx = -Number(brushWidth)/2;
 
-       var m = [40, 300, 40, 100],
+       var m = [40, 40, 40, 100],
 		w = data.chart.width - m[1] - m[3],
 		h = data.chart.height - m[0] - m[2];
 
@@ -1345,8 +1345,23 @@ function renderWordCloud(chartConf){
 		.style("font-style",data.subtitle.style.fontWeight)
 		.style("font-size",data.subtitle.style.fontSize)
 		.text(data.subtitle.text);
-
-		var svg = d3.select("body").append("svg:svg")
+       
+		var groupsHeight=groups.length*20+60;
+		var svgHeight;
+		if(groupsHeight > (h + m[0] + m[2])){
+			svgHeight=groupsHeight;
+		}else{
+			svgHeight=h + m[0] + m[2];
+		}
+		
+		d3.select("body").append("div").attr("id","chart").style("width",w + m[1] + m[3]+300)
+		
+		var svg = d3.select("#chart")
+		.append("div")
+		.style("float","left")
+		.style("width",w + m[1] + m[3])
+		.style("height", h + m[0] + m[2])
+		.append("svg:svg")
 		.style("font-size",18)
 		.attr("width", w + m[1] + m[3])
 		.attr("height", h + m[0] + m[2])
@@ -1365,15 +1380,42 @@ function renderWordCloud(chartConf){
 			.on("brush", brush);
 
 		});
+		
+		var legend=d3.select("#chart").append("div")
+		         .style("float","right")
+		        
+		         .style("width",300)
+		         .style("height",h + m[0] + m[2])
+		         .style("overflow","scroll")
+		         .style("padding-righ","40px")
+		         .append("svg:svg")
+		         .style("font-size",18)
+		         .attr("width", 400)
+		         .attr("height", svgHeight)
+		         .append("svg:g")
+		         .attr("transform", "translate("+0 + "," + m[0] + ")");
 
-		var legend = svg.selectAll("g.legend")
+		
+		legend.append("svg:g")
+		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
+		.style("height",30)
+		.append("svg:text").style("font-family",data.chart.font)
+		.style("font-size",18)
+		.style("font-weight",'bold')
+		.attr("x", 15)
+		.attr("dy", ".31em")
+		.text( groupcolumn);
 
-		.data(groups)
+       
+		 legend.selectAll("g.legend")
+        .data(groups)
 		.enter().append("svg:g")
 		.attr("class", "legend")
-		.attr("transform", function(d, i) { return "translate("+ (w+10) +"," + (i * 20 + 20) + ")"; });
+		.attr("transform", function(d, i) {
+			return "translate("+ 20 +"," + (i* 20 + 20) + ")"; 
+			});
 
-		legend.append("svg:rect")
+		legend.selectAll("g.legend").append("svg:rect")
 		//.attr("class", String)
 		.style({"stroke":function(d) { return myColors(d); }, "stroke-width":"3px", "fill": function(d) { return myColors(d); }})
 		.attr("x", 0)
@@ -1381,14 +1423,14 @@ function renderWordCloud(chartConf){
 		.attr("width", 10)
 		.attr("height", 10);
 
-		legend.append("svg:text")
+		legend.selectAll("g.legend").append("svg:text")
 		.style("font-family",data.chart.font)
 		.style("font-size",18)
 		.style("font-style",'normal')
 		.attr("x", 15)
 		.attr("dy", ".31em")
 		.text(function(d) {	
-			return " " + groupcolumn +" " + d; });
+			return d; });
 
 		//tooltip
 		var tooltip=d3.select("body")
@@ -1527,7 +1569,7 @@ function renderWordCloud(chartConf){
 		lastDisplayed=allTableData.length;
 	}
 
-	var tableDiv=d3.select("body").append("div").attr("id","tableDiv");
+	var tableDiv=d3.select("body").append("div").attr("id","tableDiv").style("padding-top",20);
 	var table= tableDiv.append("table").style("width",w+m[3]).style("padding-left",m[3]);
 	var paginationBar=tableDiv.append("div").attr("id","pBar").style("padding-left",w/2+m[3]/2);
 	var prevButton=paginationBar.append("button").text("<< Prev").on("click",function(){return showPrev();});
@@ -1556,7 +1598,7 @@ function renderWordCloud(chartConf){
 	      .attr("border-collapse","collapse")
 	     .append("tr")
 	      .style("height","30px")
-	     .selectAll("th")
+	      .selectAll("th")
 	     .data(tableColumns).enter()
 	     .append("th")
 	     .text(function(d){return d;});
