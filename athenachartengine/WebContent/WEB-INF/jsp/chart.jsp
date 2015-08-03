@@ -60,6 +60,14 @@ author:
 	String userId;
 	String isTechnicalUser;
 	List<String> includes;
+	String datasetLabel;
+	
+	//from cockpit
+	boolean isCockpit = false;
+	String aggregations = "";
+	String selections = "";
+	String associations = "";
+	String widgetId = "";
 
 	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -74,7 +82,16 @@ author:
 	isTechnicalUser = (engineInstance.isTechnicalUser()==null)?"":engineInstance.isTechnicalUser().toString();
 	template = engineInstance.getTemplate().toString(0);
 	
-	String datasetLabel = engineInstance.getDataSet().getLabel();
+	if(env.get("EXECUTE_COCKPIT") != null){
+		isCockpit = true;
+		datasetLabel = env.get(EngineConstants.ENV_DATASET_LABEL)!=null?(String)env.get(EngineConstants.ENV_DATASET_LABEL):"";
+		aggregations = env.get("AGGREGATIONS")!=null?(String)env.get("AGGREGATIONS"):"";
+		selections = env.get("SELECTIONS")!=null?(String)env.get("SELECTIONS"):"";
+		associations = env.get("ASSOCIATIONS")!=null?(String)env.get("ASSOCIATIONS"):"";
+		widgetId = env.get("WIDGETID")!=null?(String)env.get("WIDGETID"):"";
+	}else{
+		datasetLabel = engineInstance.getDataSet().getLabel();
+	}
 	
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	docVersion = (engineInstance.getDocumentVersion()==null)?"":engineInstance.getDocumentVersion().toString();
@@ -156,17 +173,59 @@ author:
  					LN('sbi.chartengine.viewer.thousandsep'));
  			
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
-
+ 			Sbi.chart.viewer.ChartTemplateContainer.datasetLabel = '<%=datasetLabel%>';
+ 			
  			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
-			
-			var parameters = {
-				jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
-			};
-			chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-				var chartConf = Ext.JSON.decode(response.responseText, true);
-				renderChart(chartConf);
-			});
+ 			
+ 			if(<%=isCockpit%>) {
+ 				
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.aggregations = '<%=aggregations %>';
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.selections = '<%= selections %>';
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.associations = '<%=associations %>';
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
+ 				
+ 				var templateContainer = Ext.create('Ext.mixin.Observable', {
+ 					listeners: {
+ 						dataReady: function(jsonData) {
+ 							var parameters = {
+ 									jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 									jsonData: jsonData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
+ 							};
+ 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+ 								var chartConf = Ext.JSON.decode(response.responseText, true);
+ 								renderChart(chartConf);
+ 							});
+ 						}
+ 					}
+ 				});
+ 				
+ 			 	var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+ 				
+ 				var dataParameters = {
+ 					aggregations: Sbi.chart.viewer.ChartTemplateContainer.aggregations,
+ 					selections: Sbi.chart.viewer.ChartTemplateContainer.selections,
+ 				};
+ 				
+ 				var pathParameters = [
+ 						Sbi.chart.viewer.ChartTemplateContainer.datasetLabel
+ 				];
 
+	 			coreServiceManager.run('loadData', dataParameters, pathParameters, function (response) {
+	 				templateContainer.fireEvent('dataReady', response.responseText);
+	 			});	
+ 				
+ 			}else { 				
+ 				
+ 				var parameters = {
+ 						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 					};
+ 					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+ 						var chartConf = Ext.JSON.decode(response.responseText, true);
+ 						renderChart(chartConf);
+ 					});
+ 				
+ 			} 
+ 			
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });

@@ -75,6 +75,32 @@
 		}
 	};
 	
+	function handleCockpitSelection(e) {
+		if (!e.seriesOptions) {
+// 			debugger;
+			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
+			var cockpitWidgets = cockpitWidgetManager.widgets;
+			var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
+			
+			var selections = {};
+// 			selections[e.point.name] = {values: [e.point.series.name]};
+			
+			for(var i = 0; i < cockpitWidgets.getCount(); i++) {
+				var widget = cockpitWidgets.get(i);
+				
+				if(Sbi.isValorized(widget) && widget.wtype === 'chart' && widget.id === widgetId){
+					
+					var fieldMeta = widget.getFieldMetaByValue(e.point.name);
+					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
+					
+					selections[categoryFieldHeader] = {values: [e.point.name]};					
+					
+					cockpitWidgetManager.onSelection(widget, selections);
+				}
+			}		
+		}
+	};
+	
 	function handleDrillup() {
 		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
 	}

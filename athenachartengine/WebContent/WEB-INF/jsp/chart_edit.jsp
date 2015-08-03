@@ -62,6 +62,7 @@ author:
 	String isTechnicalUser;
 	List<String> includes;
 	String datasetLabel;
+	boolean isCockpit = false;
 
 	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -69,7 +70,13 @@ author:
 	profileJSONStr = new ObjectMapper().writeValueAsString(profile);
 	locale = engineInstance.getLocale();
 	
-	datasetLabel = engineInstance.getDataSet().getLabel();
+	if(env.get("EDIT_COCKPIT") != null){
+		datasetLabel = (String)env.get(EngineConstants.ENV_DATASET_LABEL);
+		isCockpit = true;
+	}else{
+		datasetLabel = engineInstance.getDataSet().getLabel();
+	}
+	
 	contextName = request.getParameter(SpagoBIConstants.SBI_CONTEXT); 
 	environment = request.getParameter("SBI_ENVIRONMENT"); 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
@@ -148,6 +155,8 @@ author:
  			
  			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
  			
+ 			var isCockpit = <%=isCockpit%>;
+ 			
  			Sbi.chart.designer.Designer.initialize(
  					sbiExecutionId, 
  					userId, 
@@ -156,7 +165,8 @@ author:
  					docLabel, 
  					jsonTemplate, 
  					datasetLabel,
- 					chartLibNamesConfig
+ 					chartLibNamesConfig,
+ 					isCockpit
  					);
 
  		  });
