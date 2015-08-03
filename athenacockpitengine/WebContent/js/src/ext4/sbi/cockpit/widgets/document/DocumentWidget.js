@@ -55,32 +55,21 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
 
 	createContent: function() {
     	Sbi.trace("[DocumentWidget.createContent]: IN");
-    	
     	var parametersString = "";
     	var parameters = this.wconf.parameters;
     	if(parameters){
-    		parametersString = "&PARAMETERS=";
+    		parametersString = "";
     		Object.keys(parameters).forEach(function(key){
-    			parametersString += key + "%3D" + parameters[key] + "%26";
+    			parametersString += key + "=" + parameters[key] + "&";
     		});
+    		parametersString = "&PARAMETERS="+encodeURIComponent(parametersString);
     	}
-    	var url = Sbi.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&OBJECT_LABEL='+this.wconf.documentLabel+parametersString;
-    	
+    	var url = Sbi.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&TOOLBAR_VISIBLE=FALSE&OBJECT_LABEL='+this.wconf.documentLabel+parametersString;
     	this.widgetContent = new Ext.ux.IFrame({
     		src: url,
-    		style: {height: '100%', width: '100%'},
-    		listeners: {
-    	        click: {
-    	            element: 'el', //bind to the underlying el property on the panel
-    	            fn: function(){ console.log('click el',el);alert('click!'); }
-    	        },
-    	        dblclick: {
-    	            element: 'body', //bind to the underlying body property on the panel
-    	            fn: function(){ console.log('dblclick body');alert('dblclickbody'); }
-    	        }
-    	    }
+    		style: {height: '100%', width: '100%'}
     	});
-    	
+    	this.widgetContent.suspendEvents();
 		if(this.items){
 			this.items.each( function(item) {
 				this.items.remove(item);
@@ -88,9 +77,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
 			}, this);
 		}
 		
-		if(this.widgetContent !== null) {
-			this.add(this.widgetContent);
-	    }
+		this.add(this.widgetContent);
 		
 		Sbi.trace("[DocumentWidget.createContent]: OUT");
 	}

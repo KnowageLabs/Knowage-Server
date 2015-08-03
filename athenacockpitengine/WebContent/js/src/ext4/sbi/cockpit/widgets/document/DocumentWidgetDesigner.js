@@ -199,7 +199,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 				                }
 				        	});
 				        	myParamStore.load();
-//				        	Sbi.storeManager.addStore('myParamStore');
+				        	Sbi.storeManager.addStore(myParamStore);
 				        	Ext.getCmp('documentLabel').setValue(record.data.label);
 				        	Ext.getCmp('documentName').setValue(record.data.name);
 				        	Ext.getCmp('documentsWindow').close();

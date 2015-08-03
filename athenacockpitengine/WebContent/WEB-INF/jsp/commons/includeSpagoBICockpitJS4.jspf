@@ -12,6 +12,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- Include localized labels  -->
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
 
+<!-- Plugins -->
+<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ux/Draggable.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ux/IFrame.js'/></script>
+
 <!-- START-DEBUG -->
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Settings.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/overrides/overrides.js'/></script>
@@ -114,12 +118,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/text/TextWidgetDesigner.js'/></script>
 
 <!-- Image widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ux/Draggable.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidget.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidgetDesigner.js'/></script>
 
 <!-- Document widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ux/IFrame.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/document/DocumentWidget.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/document/DocumentWidgetDesigner.js'/></script>
 
