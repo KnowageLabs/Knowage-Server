@@ -2,14 +2,23 @@ package it.eng.spagobi.engine.util;
 
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
 import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
@@ -22,6 +31,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class ChartEngineUtil {
 
@@ -176,6 +187,60 @@ public class ChartEngineUtil {
 		StringWriter jsonChartTemplate = new StringWriter();
 		velocityTemplate.merge(velocityContext, jsonChartTemplate);
 		return jsonChartTemplate.toString();
+	}
+
+	public static JSONObject cockpitSelectionsFromAssociations(HttpServletRequest request, String selections, String associationGroup, String dataset) {
+
+		JSONObject result = new JSONObject();
+
+		try {
+
+			AssociationGroup associationGroupObject = null;
+			try {
+				AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+				associationGroupObject = serializer.deserialize(new JSONObject(associationGroup));
+			} catch (Throwable t) {
+				throw new SpagoBIServiceParameterException(request.getPathInfo(), "Parameter [associationGroup] value [" + associationGroup
+						+ "] is not a valid JSON object", t);
+			}
+
+			JSONObject selectionsJSON = new JSONObject(selections);
+
+			Iterator<String> it = selectionsJSON.keys();
+			while (it.hasNext()) {
+				String associationName = it.next();
+				JSONArray values = selectionsJSON.getJSONArray(associationName);
+				if (values.length() == 0) {
+					continue;
+				}
+				List<String> valuesList = new ArrayList<String>();
+				for (int i = 0; i < values.length(); i++) {
+					valuesList.add(values.get(i).toString());
+				}
+
+				String datasetColumn = null;
+				String datasetLabel = null;
+				Association association = associationGroupObject.getAssociation(associationName);
+
+				if (association != null) {
+
+					for (Field field : association.getFields()) {
+						if (field.getDataSetLabel().equals(dataset)) {
+							datasetColumn = field.getFieldName();
+							datasetLabel = field.getDataSetLabel();
+						}
+					}
+				}
+				if (datasetLabel != null && datasetColumn != null) {
+					result.put(datasetLabel, new JSONObject().put(datasetColumn, valuesList));
+				}
+			}
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(request.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+
+		return result;
 	}
 
 }

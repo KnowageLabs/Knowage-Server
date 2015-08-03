@@ -38,7 +38,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("driverParams") String driverParams,
-			@Context HttpServletResponse servletResponse) {
+			@FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
 		try {
 			ChartEngineInstance engineInstance = getEngineInstance();
 			if (driverParams != null && !driverParams.isEmpty()) {
@@ -48,7 +48,10 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			IDataSet dataSet = engineInstance.getDataSet();
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
-			String jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
+
+			if (jsonData != null && !jsonData.isEmpty()) {
+				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
+			}
 
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData);
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
