@@ -4,6 +4,7 @@ Ext.define('Sbi.chart.designer.ChartStructure', {
         'Ext.layout.container.Column'
     ],
 	layout: 'column',
+	scrollable: true,
     config :
     {
         title : '',

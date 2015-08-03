@@ -1192,6 +1192,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			//Handle resize event for making the designer responsive
 			Ext.on('resize', function(w, h){
+				this.chartStructure.updateLayout();
 				this.designerMainPanel.updateLayout();
 				this.chartConfiguration.updateLayout();
 				this.advancedEditor.updateLayout();
