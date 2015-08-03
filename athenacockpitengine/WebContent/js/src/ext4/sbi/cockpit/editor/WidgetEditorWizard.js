@@ -25,7 +25,8 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 		title: "Widget editor"
 	    , layout:'fit'
 	    , width: 1000
-	    , height: 510
+//	    , height: 510
+	    , height: 600
 	    , closeAction:'hide'
 	    , plain: true
 	    , modal: true
@@ -41,6 +42,11 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 
 
 	c.items = [this.editorMainPanel];
+	
+	this.listeners = {
+        close:this.onCancel,
+        scope:this
+    }
 
 	Sbi.cockpit.editor.WidgetEditorWizard.superclass.constructor.call(this, c);
 
@@ -79,18 +85,30 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 			var widgetConf = widget.getConfiguration();
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widget conf is equal to [" + Sbi.toSource(widgetConf) + "]");
 
-			if ((widgetConf.storeId) || (widget.wtype == 'selection') || (widget.wtype == 'text') || (widget.wtype == 'image') || (widget.wtype == 'document')){
+			if ((widgetConf.storeId) || (widget.wtype == 'selection')){
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: select dataset [" + widgetConf.storeId + "]");
-				this.getDatasetBrowserPage().setPageState({
-					dataset: widgetConf.storeId
-				});
+				
+				if(Sbi.isValorized(this.getDatasetBrowserPage())){
+					this.getDatasetBrowserPage().setPageState({
+						dataset: widgetConf.storeId
+					});
+				}
+
 				this.getWidgetEditorPage().setPageState(widgetConf);
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 1 + "]");
 				this.editorMainPanel.moveToPage (1);
 				// if opening in editing mode open second tab page
 				if(widget.wtype != 'selection'){
-					this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);
+					if(widget.wtype === Sbi.constants.cockpit.chart){
+						this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(0);
+					}else{
+						this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);
+					}					
 				}
+				}else if((widget.wtype == 'text') || (widget.wtype == 'image') || (widget.wtype == 'document')) {
+					this.getWidgetEditorPage().setPageState(widgetConf);
+					this.editorMainPanel.moveToPage (0);
+					this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);					
 				} else {
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: there are no a used dataset");
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: widgetConf [" + Sbi.toSource(widgetConf) + "]");
@@ -133,6 +151,7 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		this.editorMainPanel = new Sbi.cockpit.editor.WidgetEditorWizardPanel({
 			usedDatasets: this.usedDatasets
 			, wcId: this.wcId
+			, widgetType: this.widgetType
 		});
 		this.editorMainPanel.on('cancel', this.onCancel, this);
 		this.editorMainPanel.on('submit', this.onSubmit, this);

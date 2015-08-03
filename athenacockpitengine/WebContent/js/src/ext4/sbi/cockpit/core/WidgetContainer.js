@@ -425,37 +425,53 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
     	Sbi.trace("[WidgetContainer.showWidgetConfiguration]: OUT");
     }
-
-    , showWidgetEditorWizard: function(component) {
+    
+    , showAdvancedWidgetEditorWizard: function(component, widgetType) {
 
     	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: IN");
 
     	var widget = component.getWidget();
 
-    	if(this.widgetEditorWizard === null) {
+    	//create a new wizard editor if it's the first time or the previous widget type was different
+    	if(this.widgetEditorWizard === null || this.widgetEditorWizard !== widgetType) {
 
-    		Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: instatiating the editor");
+    		Sbi.trace("[WidgetContainer.showAdvancedWidgetEditorWizard]: instatiating the editor");
 
-    		this.widgetEditorWizard = new Sbi.cockpit.editor.WidgetEditorWizard({wcId: this.id});
+    		this.widgetEditorWizard = new Sbi.cockpit.editor.WidgetEditorWizard({wcId: this.id, widgetType: widgetType});
     		this.widgetEditorWizard.on("submit", this.onWidgetEditorWizardSubmit, this);
     		this.widgetEditorWizard.on("cancel", this.onWidgetEditorWizardCancel, this);
     		this.widgetEditorWizard.on("apply", this.onWidgetEditorWizardApply, this);
 
-	    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: editor succesfully instantiated");
+	    	Sbi.trace("[WidgetContainer.showAdvancedWidgetEditorWizard]: editor succesfully instantiated");
     	}
 
-    	var storeIds = Sbi.storeManager.getStoreIds();  	
     	
-    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: used dataset ids [" + storeIds + "]");
-    	this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets( storeIds );
+    	if(widgetType === Sbi.constants.cockpit.chart || widgetType === Sbi.constants.cockpit.tables){
+    		
+    		var storeIds = Sbi.storeManager.getStoreIds();  	
+        	
+        	Sbi.trace("[WidgetContainer.showAdvancedWidgetEditorWizard]: used dataset ids [" + storeIds + "]");
+    		this.widgetEditorWizard.getDatasetBrowserPage().setUsedDatasets( storeIds );
+    	}
+    	
     	this.widgetEditorWizard.setWizardTargetComponent(component);
 
     	this.widgetEditorWizard.show();
 
-    	Sbi.trace("[WidgetContainer.showWidgetEditorWizard]: OUT");
+    	Sbi.trace("[WidgetContainer.showAdvancedWidgetEditorWizard]: OUT");
     }
 
     , hideWidgetEditorWizard: function() {
+    	if(Sbi.isValorized(this.widgetEditorWizard.getDatasetBrowserPage())){
+        	this.widgetEditorWizard.getDatasetBrowserPage().resetPageState();
+        	this.widgetEditorWizard.getDatasetBrowserPage().datasetsBrowserPanel.viewPanel.destroy();
+    	}
+    	if(Sbi.isValorized(this.widgetEditorWizard.getWidgetEditorPage().widgetEditorPanel.mainPanel)){
+    		this.widgetEditorWizard.getWidgetEditorPage().widgetEditorPanel.mainPanel.destroy();
+    	}
+    	if(Sbi.isValorized(this.widgetEditorWizard.getWidgetEditorPage().widgetEditorPanel.controlPanel)){
+    		this.widgetEditorWizard.editorMainPanel.getWidgetEditorPage().widgetEditorPanel.controlPanel.destroy();
+    	}
     	this.widgetEditorWizard.hide();
     }
 
@@ -489,7 +505,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 
 		// must select widget to confirm
 		if(!wizardState.wconf){
-			Sbi.trace("Must define widget on custom configuration before confirming");
+			Sbi.trace("You have to define the widget before confirming");
 			Ext.Msg.show({
 				title: 'Warning',
 				msg: LN('Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'),
@@ -498,23 +514,34 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			});
 			return;
 		}
-
-
-		Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: Title validation");
-
-		var re = this.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.genericConfPanel.re;
-
-		var titleRegExp = new RegExp(re);
-	    
-	    var titleWithoutHtml = Ext.util.Format.stripTags(wizardState.wgeneric.title);
-
-		if (!titleRegExp.test(titleWithoutHtml)){
-			Ext.Msg.alert('Message', 'Title not valid');
-
-			return false;
+		
+		if(wizardState.wtype === Sbi.constants.cockpit.chart && !Sbi.isValorized(wizardState.wconf.chartTemplate)){
+			Ext.Msg.show({
+				title: 'Warning',
+				msg: LN('Sbi.cockpit.core.WidgetContainer.applyWidgetEditorChartTemplate'),
+				buttons: Ext.Msg.OK,
+				icon: Ext.MessageBox.WARNING
+			});
+			return;
+			
 		}
+		
+		if(wizardState.wtype !== Sbi.constants.cockpit.chart){
+			
+			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: Title validation");
+			
+			var re = this.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.genericConfPanel.re;
 
+			var titleRegExp = new RegExp(re);
+		    
+		    var titleWithoutHtml = Ext.util.Format.stripTags(wizardState.wgeneric.title);
 
+			if (!titleRegExp.test(titleWithoutHtml)){
+				Ext.Msg.alert('Message', 'Title not valid');
+
+				return false;
+			}
+		}
 
 		wizardState.storeId = wizardState.selectedDatasetLabel;
 
@@ -523,37 +550,46 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			if(wizardState.wtype.indexOf("crosstab")>=0){
 				storeConf.stype = "crosstab";
 			}
-			if(wizardState.wconf.series && wizardState.wconf.category) {
-				var categories = [];
+			
+			if(wizardState.wtype === Sbi.constants.cockpit.chart){
+				
+				storeConf.aggregations = wizardState.wconf.aggregations;
+				wizardState.storeConf = storeConf;
+				
+			}else{
+				if(wizardState.wconf.series && wizardState.wconf.category) {
+					var categories = [];
 
-				// category may be nowan array (keep single name for compatibility)
+					// category may be nowan array (keep single name for compatibility)
 
-				if(wizardState.wconf.category instanceof Array){
+					if(wizardState.wconf.category instanceof Array){
 
-					for(var i = 0; i<wizardState.wconf.category.length;i++){
-						var cat = wizardState.wconf.category[i];
-						categories.push(cat);
+						for(var i = 0; i<wizardState.wconf.category.length;i++){
+							var cat = wizardState.wconf.category[i];
+							categories.push(cat);
+						}
+
+					}
+					else{
+						categories.push(wizardState.wconf.category);
 					}
 
-				}
-				else{
-					categories.push(wizardState.wconf.category);
-				}
+					if(wizardState.wconf.groupingVariable){
+						categories.push(wizardState.wconf.groupingVariable);
+					}
 
-				if(wizardState.wconf.groupingVariable){categories.push(wizardState.wconf.groupingVariable);}
-
-				var aggregations = {
-					measures: wizardState.wconf.series,
-					categories: categories
-				};
-				storeConf.aggregations = aggregations;
-				wizardState.storeConf = storeConf;
-				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] with aggregations");
-			} else {
-				Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] without aggregations");
+					var aggregations = {
+						measures: wizardState.wconf.series,
+						categories: categories
+					};
+					storeConf.aggregations = aggregations;
+					wizardState.storeConf = storeConf;
+					Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] with aggregations");
+				} else {
+					Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: add store [" + wizardState.storeId + "] without aggregations");
+				}
 			}
-
-
+			
 			// the method addStore add the store only if it is not contained yet in the manager
 			Sbi.storeManager.addStore(storeConf);
 			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
@@ -929,7 +965,27 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     }
 
     , onShowWidgetEditorWizard: function(component) {
-    	this.showWidgetEditorWizard(component);
+    	if(Sbi.isValorized(component) && Sbi.isValorized(component.widget)){
+    		
+    		var editorWizardType;
+    		
+    		if(component.widget.wtype === Sbi.constants.cockpit.chart  ){
+    			editorWizardType = Sbi.constants.cockpit.chart;
+    		}
+    		
+    		if(component.widget.wtype === Sbi.constants.cockpit.table || component.widget.wtype === Sbi.constants.cockpit.crosstab  ){
+    			editorWizardType = Sbi.constants.cockpit.tables;
+    		}
+    		
+    		if(component.widget.wtype === Sbi.constants.cockpit.image 
+    				|| component.widget.wtype === Sbi.constants.cockpit.text 
+    				|| component.widget.wtype === Sbi.constants.cockpit.document ){
+    			editorWizardType = Sbi.constants.cockpit.staticWidgets;
+    		}
+    		
+    		this.showAdvancedWidgetEditorWizard(component, editorWizardType);
+    	}
+    	
     }
 
     , onWidgetEditorWizardSubmit: function(wizard) {

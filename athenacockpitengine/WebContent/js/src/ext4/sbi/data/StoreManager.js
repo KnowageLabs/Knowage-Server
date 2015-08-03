@@ -1751,11 +1751,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		store.on('metachange', this.onStoreMetaChange, this);
 		Sbi.trace("[StoreManager.createStore]: store sucesfully created");
 
-
-
-
-
-
 		if(Sbi.isValorized(storeConf.aggregations)) {
 			this.setAggregationOnStore(store, storeConf.aggregations);
 			Sbi.trace("[StoreManager.createStore]: aggregations sucesfully add to store");

@@ -78,9 +78,10 @@ Ext.extend(Sbi.cockpit.editor.dataset.DatasetBrowserPage, Ext.Panel, {
 
 		var selectedDatasets = this.datasetsBrowserPanel.getSelection();
 		/* by the introduction of Selection Widget, dataset selection is not mandatory */
-//		if(selectedDatasets.length === 0) {
-//			msg = "Per procedere e' necessario selezionare un dataset";
-//		}
+		// Selection Widget isn't in the palette anymore, so we can check again dataset presence 
+		if(selectedDatasets.length === 0) {
+			msg = LN('sbi.cockpit.core.wizardeditor.datasetbrowserpage.noseldataset');
+		}
 
 		Sbi.trace("[DatasetBrowserPage.getValidationErrorMessage]: OUT");
 

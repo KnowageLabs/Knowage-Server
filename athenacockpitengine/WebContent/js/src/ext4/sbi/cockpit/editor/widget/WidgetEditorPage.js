@@ -59,7 +59,12 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 		Sbi.trace("[WidgetEditorPage.updateValues]: IN");
 
 		Sbi.trace("[WidgetEditorPage.updateValues]: Input parameter values is equal to [" + Sbi.toSource(values) + "]");
-		this.widgetEditorPanel.controlPanel.updateValues(values);
+		if(this.widgetType === Sbi.constants.cockpit.chart){
+			this.widgetEditorPanel.mainPanel.updateValues(values);
+		}else{
+			this.widgetEditorPanel.controlPanel.updateValues(values);
+		}
+		
 		Sbi.trace("[WidgetEditorPage.updateValues]: OUT");
 	}
 
@@ -90,8 +95,12 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 		if(this.widgetEditorPanel.mainPanel.customConfPanel.designer) {
 			state.wtype = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerType();
 			state.wconf = this.widgetEditorPanel.mainPanel.customConfPanel.designer.getDesignerState(running);
+			
+		}
+		if(Sbi.isValorized(this.widgetEditorPanel.mainPanel.genericConfPanel)){
 			state.wgeneric = this.widgetEditorPanel.mainPanel.genericConfPanel.getFormState();
 		}
+		
 		Sbi.trace("[WidgetEditorPage.applyPageState]: OUT");
 		return state;
 	}
@@ -99,18 +108,32 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 	, setPageState: function(state) {
 		Sbi.trace("[WidgetEditorPage.setPageState]: IN");
 		Sbi.trace("[WidgetEditorPage.setPageState]: state parameter is equal to [" + Sbi.toSource(state, true) + "]");
-		this.widgetEditorPanel.mainPanel.customConfPanel.setDesigner(state.wconf);
-		this.widgetEditorPanel.mainPanel.genericConfPanel.setFormState(state.wgeneric);
+		if(Sbi.isValorized(this.widgetEditorPanel.mainPanel.customConfPanel)){			
+			this.widgetEditorPanel.mainPanel.customConfPanel.setDesigner(state.wconf);
+		}
+		if(Sbi.isValorized(this.widgetEditorPanel.mainPanel.genericConfPanel)){
+			this.widgetEditorPanel.mainPanel.genericConfPanel.setFormState(state.wgeneric);
+		}		
 
 		Sbi.trace("[WidgetEditorPage.setPageState]: OUT");
 	}
 
 	, resetPageState: function() {
 		Sbi.trace("[WidgetEditorPage.resetPageState]: IN");
-		this.widgetEditorPanel.mainPanel.customConfPanel.removeAllDesigners();
-		this.widgetEditorPanel.mainPanel.genericConfPanel.resetFormState();
+		
+		if(Sbi.isValorized(this.widgetEditorPanel.mainPanel.customConfPanel)){
+			this.widgetEditorPanel.mainPanel.customConfPanel.removeAllDesigners();
+		}
+		if(Sbi.isValorized(this.widgetEditorPanel.mainPanel.genericConfPanel)){
+			this.widgetEditorPanel.mainPanel.genericConfPanel.resetFormState();
+		}
+		
 		this.widgetEditorPanel.mainPanel.setDefaultActiveTab();
-		this.widgetEditorPanel.controlPanel.designerPalettePanel.expand();
+		
+		if(Sbi.isValorized(this.widgetEditorPanel.controlPanel)){
+			this.widgetEditorPanel.controlPanel.designerPalettePanel.expand();
+		}		
+		
 		Sbi.trace("[WidgetEditorPage.resetPageState]: OUT");
 	}
 
@@ -119,7 +142,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorPage, Ext.Panel, {
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, init: function(){
-		this.widgetEditorPanel = new Sbi.cockpit.editor.widget.WidgetEditor({wcId: this.wcId});
+		this.widgetEditorPanel = new Sbi.cockpit.editor.widget.WidgetEditor({wcId: this.wcId, widgetType: this.widgetType});
 		return this.widgetEditorPanel;
 	}
 

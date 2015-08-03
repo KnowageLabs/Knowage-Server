@@ -305,6 +305,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[WidgetManager.clearSelections]: selections is equal to [" + Sbi.toSource(this.selections) + "]");
 
 		this.selections = {};
+	
+    	this.setChartEngineSelections(this.selections);
 
 		this.fireEvent('selectionChange');
 		Sbi.storeManager.loadAllStores();
@@ -610,6 +612,64 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
 		return selectionsByAssociations;
 	}
+	
+	/**
+	 * Set selections for chart engine widgets
+	 */
+	, setChartEngineSelections: function(selections, widget){		
+		
+		var widgets;
+		var widgetsLength;
+		var flag;
+		
+		if(Sbi.isValorized(widget)){
+			widgets = this.getWidgetsByStore(widget.getStoreId());
+			flag = true;
+		} else {
+			widgets = this.widgets;
+			flag = false;
+		}
+		
+		for(var i = 0; i < widgets.getCount(); i++) {
+			var widget = widgets.get(i);
+			
+			if(Sbi.isValorized(widget) && widget.wtype === Sbi.constants.cockpit.chart){
+				widget.setChartEngineSelection(selections, flag);
+			}
+		}		
+	}
+	
+	/**
+	 * Set selections for chart engine widgets with associations
+	 */
+	, setChartEngineAssociationsSelections: function(associationGroup, selections, widget){		
+		
+		var widgets;
+		var widgetsLength;
+		var flag;
+		
+		for(var j = 0; j < associationGroup.datasets.length; j++){
+			
+			var tmpStoreId = associationGroup.datasets[j];
+			
+			if(tmpStoreId != widget.storeId){
+				widgets = this.getWidgetsByStore(tmpStoreId);
+				flag = true;
+				
+				for(var i = 0; i < widgets.getCount(); i++) {
+					var widget = widgets.get(i);
+					
+					if(Sbi.isValorized(widget) && widget.wtype === Sbi.constants.cockpit.chart){
+						widget.setChartEngineSelection(selections, flag);
+						widget.setChartEngineAssociations(associationGroup, flag);	
+					}
+				}
+			}
+		}	
+	}
+		
+
+		
 
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
@@ -647,8 +707,9 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	var selections = this.getSelectionsByAssociations();
 
     	for(var widgetId in this.selections)  {
-    		var selectionsOnWidget = this.selections[widgetId];
+    		var selectionsOnWidget = this.selections[widgetId];    		
     		var widget = this.getWidget(widgetId);
+    		
 			Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: widget [" + widgetId +"] allow selection on field [" + widget.fieldsSelectionEnabled+ "]");
 			if(widget && widget.fieldsSelectionEnabled === true) {
 				for(var fieldHeader in selectionsOnWidget) {
@@ -659,6 +720,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 			}
 
     	}
+    	
+    	this.setChartEngineAssociationsSelections(associationGroup, selections, widget);
 
     	//alert("[WidgetManager.applySelectionsOnAssociationGroup]: " + Sbi.toSource(selections));
 
@@ -675,8 +738,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     }
 
     , onSelection: function(widget, selectionsOnWidget){
-    	Sbi.trace("[WidgetManager.onSelection]: IN");
-
+    	Sbi.trace("[WidgetManager.onSelection]: IN");    	
+    	
     	this.setWidgetSelections(widget.getId(), selectionsOnWidget);
 
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
@@ -684,6 +747,8 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	if(Sbi.isValorized(associationGroup)) {
     		this.applySelectionsOnAssociationGroup(associationGroup);
     	} else {
+        	var selectionsForChart = this.getSelectionsByStores();
+        	this.setChartEngineSelections(selectionsForChart, widget);
     		this.applySelectionsOnAggregation(widget.getStore());
     	}
 

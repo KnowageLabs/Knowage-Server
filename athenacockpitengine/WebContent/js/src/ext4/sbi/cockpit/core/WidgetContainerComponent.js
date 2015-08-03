@@ -171,10 +171,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	, refreshTitle: function() {
 		var config = this.getWidgetConfiguration();
 
+		if(!Sbi.isValorized(config)){
+			return;
+		}
+		
 		var buildTitle = config.wgeneric.title;
 
 		if(this.cacheDate != null){
-			if(buildTitle != ''){
+			if(buildTitle != undefined && buildTitle != null && buildTitle != ''){
 				this.northPanel.setVisible(true);
 				this.northPanel.update(buildTitle);
 				

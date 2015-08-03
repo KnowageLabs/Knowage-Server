@@ -307,9 +307,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	}
 
 	, unselectDatasetComponent: function(datasetLabel) {
-		Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: IN");
+		Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: IN");
 		if(this.rendered === true) {
-			var el = Ext.get(datasetLabel);
+			var el = Ext.get(this.wcId+ '__' + datasetLabel);
 	 		if (el) {
 	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class before [" + el.dom.className + "]");
 	 			el.dom.className = el.dom.className.replace( /(?:^|\s)selectboxBlu(?!\S)/g , '' ); //remove active class
@@ -318,7 +318,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 	 			}
 	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class after [" + el.dom.className + "]");
 	 		} else {
-	 			Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
+	 			Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: Impossible to find dataset [" + datasetLabel +"]");
 	 		}
 
 	 		var elText = Ext.get('box-text-' + datasetLabel);
@@ -328,8 +328,9 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 		 		Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: class after [" + elText.dom.className + "]");
 		 	}
 
-		 	Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: dataset [" + datasetLabel +"] succesfully unselected");
+		 	Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: dataset [" + datasetLabel +"] succesfully unselected");
 		}
-		Sbi.trace("[DatasetsBrowserView.selectDatasetComponent]: OUT");
+		Sbi.trace("[DatasetsBrowserView.unselectDatasetComponent]: OUT");
 	}
+	
 });

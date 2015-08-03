@@ -27,31 +27,50 @@ Sbi.cockpit.editor.widget.WidgetEditor = function(config) {
 
 	this.init(config);
 
-	c = Ext.apply(c, {
-			layout: 'border',
+	if(this.widgetType === Sbi.constants.cockpit.chart){
+		c = Ext.apply(c, {
+//			layout: 'fit',
 			autoScroll: false,
 			items: [
-		        {
-		        	region: 'west',
-		        	width: 280,
-		        	collapseMode:'mini',
-		        	autoScroll: false,
-		        	split: true,
-		        	layout: 'fit',
-		        	//items: [{html: "this.controlPanel"}]
-		        	items: [this.controlPanel]
-		        },
-		        {
-		        	region: 'center',
-		        	split: true,
-		        	collapseMode:'mini',
-		        	autoScroll: true,
-		        	layout: 'fit',
-		        	//items: [{html: "this.mainPanel"}]
-		        	items: [this.mainPanel]
-		        }
-			]
-	});
+			        {
+			        	region: 'center',
+			        	split: true,
+			        	collapseMode:'mini',
+			        	autoScroll: true,
+			        	layout: 'fit',
+			        	//items: [{html: "this.mainPanel"}]
+			        	items: [this.mainPanel]
+			        }
+				]
+		});
+	}else {
+	
+		c = Ext.apply(c, {
+				layout: 'border',
+				autoScroll: false,
+				items: [
+			        {
+			        	region: 'west',
+			        	width: 280,
+			        	collapseMode:'mini',
+			        	autoScroll: false,
+			        	split: true,
+			        	layout: 'fit',
+			        	//items: [{html: "this.controlPanel"}]
+			        	items: [this.controlPanel]
+			        },
+			        {
+			        	region: 'center',
+			        	split: true,
+			        	collapseMode:'mini',
+			        	autoScroll: true,
+			        	layout: 'fit',
+			        	//items: [{html: "this.mainPanel"}]
+			        	items: [this.mainPanel]
+			        }
+				]
+		});
+	}
 
 
 	Sbi.cockpit.editor.widget.WidgetEditor.superclass.constructor.call(this, c);
@@ -138,7 +157,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditor, Ext.Panel, {
 	}
 
 	, initSheetsContainerPanel: function(config) {
-		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel({wcId: this.wcId});
+		this.mainPanel = new Sbi.cockpit.editor.widget.WidgetEditorMainPanel({wcId: this.wcId, widgetType: this.widgetType});
 
 		this.mainPanel.on(
 				'attributeDblClick',

@@ -114,6 +114,12 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorDesignerPalette, Ext.Panel, {
 
 		Sbi.cockpit.core.WidgetExtensionPointManager.forEachWidget(function(wtype, wdescriptor) {
 			if(wtype === 'selection') return;
+			if(this.widgetType === Sbi.constants.cockpit.tables){
+				if(wtype === 'text' || wtype === 'image' || wtype === 'document' || wtype === Sbi.constants.cockpit.chart) return;
+			}
+			if(this.widgetType === Sbi.constants.cockpit.staticWidgets){
+				if(wtype === 'table' || wtype === 'crosstab' || wtype === Sbi.constants.cockpit.chart) return;
+			}
 			pallette.push({
 				type: wtype
 				, name: wdescriptor.name

@@ -224,7 +224,7 @@ Sbi.cockpit.core.WidgetExtensionPointManager.getWidget(widget);
 	 */
 	, createWidgetRuntime: function(conf) {
 		Sbi.trace("[WidgetExtensionPointManager.createWidgetRuntime]: IN");
-
+		
 		var wdescriptor = Sbi.cockpit.core.WidgetExtensionPointManager.registry[conf.wtype];
 
 		if(wdescriptor !== undefined) {

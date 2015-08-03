@@ -176,13 +176,13 @@ Ext.extend(Sbi.widgets.DatasetsBrowserPanel, Ext.Panel, {
 	 * If there is a selected dataset it deselects it and the force a GUI refresh
 	 */
 	, resetSelection: function() {		
-		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: IN");
+		Sbi.trace("[DatasetsBrowserPanel.resetSelection]: IN");
 		if(this.getSelectedDataset() !== null) {
-			Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: deselected dataset [" + this.getSelectedDataset() + "]");
+			Sbi.trace("[DatasetsBrowserPanel.resetSelection]: deselected dataset [" + this.getSelectedDataset() + "]");
 			this.setSelectedDataset(null);
 			this.refreshView();
 		}
-		Sbi.trace("[DatasetsBrowserPanel.resetDatasetSelection]: OUT");
+		Sbi.trace("[DatasetsBrowserPanel.resetSelection]: OUT");
 	}
 
 	/**

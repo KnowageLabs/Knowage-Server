@@ -94,10 +94,13 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
 
 		this.pages = new Array();
 
-		this.initDatasetBrowserPage();
-		this.pages.push(this.datasetsBrowserPage);
-		Sbi.trace("[WidgetEditorWizardPanel.initPages]: dataset browser page succesfully adedd");
-
+		//static widgets don't have a dataset browser page
+		if(this.widgetType !== Sbi.constants.cockpit.staticWidgets){
+			this.initDatasetBrowserPage();
+			this.pages.push(this.datasetsBrowserPage);
+			Sbi.trace("[WidgetEditorWizardPanel.initPages]: dataset browser page succesfully adedd");
+		}
+	
 		this.initWidgetEditorPage();
 		this.pages.push(this.widgetEditorPage);
 		Sbi.trace("[WidgetEditorWizardPanel.initPages]: widget editor page succesfully adedd");
@@ -121,13 +124,13 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
 	, initWidgetEditorPage: function() {
 		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
 		this.widgetEditorPage = new Sbi.cockpit.editor.widget.WidgetEditorPage({
-			wcId: this.wcId
+			wcId: this.wcId,
+			widgetType: this.widgetType
 		});
 		//this.widgetEditorPage = new Ext.Panel({html: "this.widgetEditorPage"});
 		Sbi.trace("[WidgetEditorWizardPanel.initWidgetEditorPage]: IN");
 		return this.widgetEditorPage;
 	}
-
 
 
 	// -----------------------------------------------------------------------------------------------------------------
