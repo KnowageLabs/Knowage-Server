@@ -8,7 +8,14 @@ Ext.define(
 						ddGroupMeasure : 'MEASURE',
 						ddGroupAttribute : 'ATTRIBUTE',
 						globThis : this,
-						convertJsonAxisObjToAxisData : function(axis) {
+						
+						isCockpitEngine: false,
+						
+						setCockpitEngine: function(isCockpit){
+							Sbi.chart.designer.ChartUtils.isCockpitEngine = isCockpit;
+						}
+						
+						, convertJsonAxisObjToAxisData : function(axis) {
 							var result = {};
 
 							result['id'] = axis.alias && axis.alias != '' ? axis.alias
@@ -646,6 +653,8 @@ Ext.define(
 							CHART['width'] = (chartModel.get('width') != undefined) ? chartModel
 									.get('width')
 									: '';									
+							
+							CHART['isCockpitEngine'] = Sbi.chart.designer.ChartUtils.isCockpitEngine;		
 									
 							if (chartType.toUpperCase() == "SCATTER") 
 							{

@@ -140,7 +140,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 		serverPort: '',
 		
 		
-		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig) {			
+		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit) {
+						
+			
+			Sbi.chart.designer.ChartUtils.setCockpitEngine(isCockpit);			
 			
 			var baseTemplate = {
 					CHART: {
@@ -1026,15 +1029,24 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					fn : function(buttonValue, inputText, showConfig){
   		            						if (buttonValue == 'ok') {  		            							
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
-  		            							
+  		            							  		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-
-  		            							var parameters = {
-  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
-  		            									docLabel: docLabel
-  		            							};
-  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
-  		            							Ext.getBody().unmask();
+  		            							
+  		            							if(isCockpit){
+  		            								var chartEngineWidgetDesigner = window.parent.cockpitPanel.widgetContainer.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.customConfPanel.designer;
+  		            								
+  		            								chartEngineWidgetDesigner.chartTemplate = exportedAsOriginalJson;
+  		            								chartEngineWidgetDesigner.setAggregationsOnChartEngine();
+  		            								Ext.getBody().unmask();
+  		            							}else{
+  		            								var parameters = {
+  	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+  	  		            									docLabel: docLabel
+  	  		            							};
+  	  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
+  	  		            							Ext.getBody().unmask();
+  		            							}
+  		            								
   		            						}
   		            					}
   		            				});
@@ -1061,6 +1073,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            xtype: 'image',
   		            src: '/athenachartengine/img/saveAndGoBack.png',
   		            cls: 'tool-icon',
+  		            hidden: isCockpit,
   		            listeners: {
   		            	click: {
   		            		element: 'el',

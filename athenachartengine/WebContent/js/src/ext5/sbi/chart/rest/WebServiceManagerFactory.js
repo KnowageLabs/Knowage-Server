@@ -75,7 +75,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 				
 				coreServiceManager.registerService('loadData', {
 					service: 'datasets/{0}/data',
-					method: 'POST'
+					method: 'GET'
 				});
 				
 				coreServiceManager.registerService('loadDatasetFields', {
