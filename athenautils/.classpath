@@ -35,6 +35,7 @@
 	<classpathentry kind="lib" path="lib/jaxb-api-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-logging-3.2.1.Final.jar"/>
 	<classpathentry kind="lib" path="lib/validation-api-1.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>
