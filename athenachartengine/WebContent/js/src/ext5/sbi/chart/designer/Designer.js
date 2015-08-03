@@ -480,7 +480,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   					copy: true,
   					plugins: {
   						ptype: 'gridviewdragdrop',
-  						containerScroll: true,
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupMeasure,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupMeasure,
   						dragText: LN('sbi.chartengine.designer.tooltip.drop.series'),
@@ -512,7 +511,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   					copy: true,
   					plugins: {
   						ptype: 'gridviewdragdrop',
-  						containerScroll: true,
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dragText: LN('sbi.chartengine.designer.tooltip.drop.categories'),
@@ -656,7 +654,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   				viewConfig: {
   					plugins: {
   						ptype: 'gridviewdragdrop',
-  						containerScroll: true,
   						dragGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute,
   						dropGroup: Sbi.chart.designer.ChartUtils.ddGroupAttribute
   					},
@@ -1206,9 +1203,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			//Handle resize event for making the designer responsive
 			Ext.on('resize', function(w, h){
 				this.chartStructure.updateLayout();
-				this.designerMainPanel.updateLayout();
 				this.chartConfiguration.updateLayout();
 				this.advancedEditor.updateLayout();
+				this.designerMainPanel.updateLayout();
 			}, this);
 			
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
@@ -1640,6 +1637,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
 			
 			leftColumnsContainer.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(false, true));
+			
+			//Since it remained only one serieStore let's update its data for it complies with the new leftColumnsContainer data
+			serieStorePool[0].axisAlias = leftColumnsContainer.axisData.alias;
+			serieStorePool[0].idAxisesContainer = leftColumnsContainer.axisData.id;
 		},
 		
 		/**

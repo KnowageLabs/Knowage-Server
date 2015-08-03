@@ -118,11 +118,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   					return this.axisData;
   				},
 				minHeight: 300,
+				height: 300,
 				flex: 1,
 				viewConfig: {
 					plugins: {
 						ptype: 'gridviewdragdrop',
-						containerScroll: true,
+//						containerScroll: true,
 						dragGroup: dragGroup,
 						dropGroup: dropGroup
 					},
@@ -144,13 +145,11 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   	  						 * (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
-									chartType == 'TREEMAP' || chartType == 'HEATMAP'))
-  							{
+									chartType == 'TREEMAP' || chartType == 'HEATMAP')) {
   	  							return false;
   							}  
 							
-							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0))
-							{
+							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) {
 								// *_* The original code
 								if(data.view.id != this.id) {
 									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
@@ -170,9 +169,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										}										
 									}
 								}								
-							}
-							else 
-							{
+							} else  {
 								return false;
 							}								
 						}

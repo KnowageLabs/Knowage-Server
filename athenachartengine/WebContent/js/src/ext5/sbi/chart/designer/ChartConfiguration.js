@@ -6,6 +6,10 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
     main:null,
     second:null,
     
+    requires: [
+               'Sbi.chart.designer.ChartConfigurationSecondContainer'
+           ],
+    
     constructor: function(config) {
     	
     	this.title = config.title && config.title != null ? config.title: this.title;

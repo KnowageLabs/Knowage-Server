@@ -1,8 +1,15 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Ext.panel.Panel',
 	requires : [
-	            'Sbi.chart.designer.StylePopup',
-	            'Sbi.chart.designer.FontStyleCombo'],
+	            'Sbi.chart.designer.ChartConfigurationToolbarAndTip',
+	            'Sbi.chart.designer.ChartOrientationCombo',
+	            'Sbi.chart.designer.ColorPickerContainer',
+	            'Sbi.chart.designer.FontCombo',
+	            'Sbi.chart.designer.FontDimCombo',
+	            'Sbi.chart.designer.FontStyleCombo',
+	            'Sbi.chart.designer.StylePopup'
+	            
+	            ],
 	title : LN('sbi.chartengine.configuration'),
 	bodyPadding : 10,
 	
@@ -11,24 +18,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	},
 	//**********************//
 	
-	height: {
-		xtype : 'numberfield',
-		bind : '{configModel.height}',
-		fieldLabel : LN('sbi.chartengine.configuration.height'),
-	},
+	height: null,
 	
-	width: {
-		xtype : 'numberfield',
-		id: "chartWidthNumberfield",
-		bind : '{configModel.width}',
-		fieldLabel : LN('sbi.chartengine.configuration.width'),
-		hidden: ChartUtils.disableChartWidth()
-	},
+	width: null,
 	
-	chartOrientation : Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
-		id: 'chartOrientationCombo',
-		bind : '{configModel.orientation}'
-	}),
+	chartOrientation : null,
 	
 	font : Ext.create('Sbi.chart.designer.FontCombo',{
 		bind : '{configModel.font}'
@@ -54,11 +48,30 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	
 	
 	constructor: function(config) {
+		
         this.callParent(config);
         this.viewModel = config.viewModel;
-        var height = this.height;
-        var width = this.width;
-        var chartOrientation = this.chartOrientation;
+        
+        this.height = {
+    		xtype : 'numberfield',
+    		bind : '{configModel.height}',
+    		fieldLabel : LN('sbi.chartengine.configuration.height')
+    	};
+        
+        this.width = {
+    		xtype : 'numberfield',
+    		id: "chartWidthNumberfield",
+    		bind : '{configModel.width}',
+    		fieldLabel : LN('sbi.chartengine.configuration.width'),
+    		hidden: ChartUtils.disableChartWidth()
+    	};
+        
+        this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
+    		id: 'chartOrientationCombo',
+    		bind : '{configModel.orientation}',
+    		hidden: ChartUtils.disableChartOrientation(),
+    	});
+        
         var font = this.font;
         var fontSize = this.fontSize;
         var fontStyle = this.fontStyle;
@@ -90,7 +103,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     	    bindFontStyle:'{configModel.subtitleStyle}',
     	    bindColor:'{configModel.subtitleColor}'
     	});
-       
         
     	this.stylePanelNoData = Ext.create('Sbi.chart.designer.StylePopup',{
     	    title: LN('sbi.chartengine.configuration.nodatastyle'),
@@ -114,9 +126,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				margin: '10 20 10 0'
 			},
 			items : [
-			    height, 
-			    width,
-			    chartOrientation
+			    this.height, 
+			    this.width,
+			    this.chartOrientation
 			    ]
 		}, {
 			xtype : 'fieldcontainer',
@@ -130,7 +142,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				fontStyle
 			]
 		}, 
-		colorPickerContainer,
+			colorPickerContainer,
 		{
 			xtype : 'fieldcontainer',
 			layout : 'hbox',
@@ -147,8 +159,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            handler: function(){
 	            	stylePanelTitle.show();
 	            }
-			}    
-			]
+			}]
 	    }, {
 	        xtype : 'fieldcontainer',
 	        layout : 'hbox',
@@ -166,8 +177,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            handler: function(){
 	            	stylePanelSubtitle.show();
 	            }
-	        }
-	     	]
+	        }]
 	    }, {
 	        xtype : 'fieldcontainer',
 	        layout : 'hbox',
@@ -183,10 +193,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            handler: function(){
 	            	stylePanelNoData.show();
 	            }
-	        }
-	     	]
-	    }
-		];
+	        }]
+	    }];
         
         this.add(item);        
  
@@ -194,54 +202,44 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
          * Toolbar opacity mouse over number field that is needed for the
          * SUNBURST chart type (danilo.ristovski@mht.net)
          */
-    	var toolbarOpacMouseOver = Ext.create
-     	(
+    	var toolbarOpacMouseOver = Ext.create({
  			/* Horizontal line with one number field - OPACITY ON MOUSE OVER */
-             {            
-                	 xtype : 'fieldcontainer',
-                	 layout : 'hbox',
-                	 id: "opacityMouseOver",
-                	 
-                	 defaults : 
-                	 {
-                		 //labelWidth : '100%',
-                		 margin:'5 30 0 0'
-                	 },
- 	                    	 
-                	 items: 
-            		 [		                    	         
-        	         	{
-        	         		xtype: 'numberfield',
-        	         		bind: '{configModel.opacMouseOver}',		
-        	         		fieldLabel: LN("sbi.chartengine.configuration.opacityMouseOver"),
-        	         		width: "200",
-        	         		maxValue: '100', 	// opacity: 100%
-        	         		minValue: '1',		// opacity: 1%
-        	         		value: "20"			// default opacity: 20%
-    	         		}
-          		]		                     
-             }
-     	);
+                        
+			xtype : 'fieldcontainer',
+			layout : 'hbox',
+			id: "opacityMouseOver",
+
+			defaults : {
+				//labelWidth : '100%',
+				margin:'5 30 0 0'
+			},
+
+			items: [{
+				xtype: 'numberfield',
+				bind: '{configModel.opacMouseOver}',		
+				fieldLabel: LN("sbi.chartengine.configuration.opacityMouseOver"),
+				width: "200",
+				maxValue: '100', 	// opacity: 100%
+				minValue: '1',		// opacity: 1%
+				value: "20"			// default opacity: 20%
+			}]		                     
+        });
  	    
  	    this.add(toolbarOpacMouseOver);
      	
-     	if (!ChartUtils.enableOpacityMouseOver())
- 		{
+     	if (!ChartUtils.enableOpacityMouseOver()) {
      		this.getComponent("opacityMouseOver").hide();
  		}     	
      	
-    	var showLegend = Ext.create
-    	(
-			{
-		        xtype: 'checkboxfield',
-		        id: 'showLegend',
-		        bind : '{configModel.showLegend}',
-		        hidden: ChartUtils.disableShowLegendCheck(),	// (danilo.ristovski@mht.net)
-		        margin: '20 0 0 0',
-		        labelSeparator: '',
-		        fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
-		    }	
-    	);
+    	var showLegend = Ext.create({
+			xtype: 'checkboxfield',
+			id: 'showLegend',
+			bind : '{configModel.showLegend}',
+			hidden: ChartUtils.disableShowLegendCheck(),	// (danilo.ristovski@mht.net)
+			margin: '20 0 0 0',
+			labelSeparator: '',
+			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
+		});
         	    
     	this.add(showLegend);    	    	
 	},

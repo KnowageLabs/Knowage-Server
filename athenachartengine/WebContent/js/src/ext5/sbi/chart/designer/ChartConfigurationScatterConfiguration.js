@@ -5,6 +5,9 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "chartScatterConfiguration",
+		requires: [
+		           'Sbi.chart.designer.ChartConfigurationScatterZoomType'
+		           ],
 		columnWidth: 0.3,
 		title: LN("sbi.chartengine.configuration.scatter.panelTitle"),
 		bodyPadding: 10,

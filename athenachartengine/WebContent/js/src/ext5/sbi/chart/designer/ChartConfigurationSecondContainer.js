@@ -1,6 +1,17 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
     extend: 'Ext.panel.Panel',
     xtype: 'layout-column',
+    requires: [
+               'Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip',
+               'Sbi.chart.designer.ChartConfigurationLegend',
+               'Sbi.chart.designer.ChartConfigurationPalette',
+               'Sbi.chart.designer.ChartConfigurationParallelAxesLines',
+               'Sbi.chart.designer.ChartConfigurationParallelLimit',
+               'Sbi.chart.designer.ChartConfigurationParallelTooltip',
+               'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
+               'Sbi.chart.designer.ChartConfigurationToolbarAndTip',
+               'Sbi.chart.designer.ChartConfigurationWordcloud',
+           ],
     border:false,
     layout: 'column',
     defaults:{

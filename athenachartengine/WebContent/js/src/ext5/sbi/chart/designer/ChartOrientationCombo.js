@@ -1,5 +1,8 @@
 Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
     extend : 'Ext.form.ComboBox',
+    requires : [
+	            'Sbi.chart.designer.ChartUtils'
+	            ],
 	queryMode : 'local',
 	value : 'vertical',
 	triggerAction : 'all',
@@ -8,7 +11,6 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 	fieldLabel : LN('sbi.chartengine.configuration.orientation'),
 	displayField : 'name',
 	valueField : 'value',
-	hidden: ChartUtils.disableChartOrientation(),
 	store : {
 		fields : [ 'name', 'value' ],
 		data : [ {

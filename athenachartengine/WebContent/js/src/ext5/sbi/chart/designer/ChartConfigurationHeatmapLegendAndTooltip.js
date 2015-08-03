@@ -5,6 +5,10 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "chartHeatmapLegendAndTooltip",
+		requires: [
+		           'Sbi.chart.designer.StylePopup',
+		           'Sbi.chart.designer.StylePopupLegendHeatmap'
+		           ],
 		columnWidth: 0.2,
 		title: LN("sbi.chartengine.configuration.heatmap.panelTitle"),
 		bodyPadding: 10,

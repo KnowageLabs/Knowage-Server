@@ -13,7 +13,8 @@ Ext.define
 		
 		requires : [
 			            'Sbi.chart.designer.StylePopupTip',
-			            'Sbi.chart.designer.StylePopupToolbar'],
+			            'Sbi.chart.designer.StylePopupToolbar'
+			            ],
 	
 	    fieldDefaults: 
 	    {

@@ -59,8 +59,21 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopup.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationLegend.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationPalette.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelAxesLines.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopupLegendHeatmap.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationHeatmapLegendAndTooltip.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLimit.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelTooltip.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterZoomType.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterConfiguration.js' ></script>
+
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopupToolbar.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopupTip.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationToolbarAndTip.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationWordcloud.js' ></script>
+
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationMainContainer.js' ></script>
+<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' ></script>
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfiguration.js' ></script>
 
 <script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/Designer.js' ></script>

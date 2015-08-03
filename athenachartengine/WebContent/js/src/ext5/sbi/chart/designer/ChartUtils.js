@@ -1191,24 +1191,18 @@ Ext.define(
 						 * values of the undefined one (Designer = undefined).
 						 */
 						
-						disableChartWidth : function() 
-						{		
-							return Sbi.chart.designer.Designer.chartTypeSelector
-									.getChartType() == 'SUNBURST';
+						disableChartWidth : function() {		
+							return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() == 'SUNBURST';
 						},
 
-						disableChartOrientation : function() 
-						{
-							return Sbi.chart.designer.Designer.chartTypeSelector
-									.getChartType() == 'SUNBURST'
-									|| Sbi.chart.designer.Designer.chartTypeSelector
-											.getChartType() == 'WORDCLOUD'
-									|| Sbi.chart.designer.Designer.chartTypeSelector
-											.getChartType() == 'TREEMAP'
-									|| Sbi.chart.designer.Designer.chartTypeSelector
-											.getChartType() == 'PARALLEL'
-									|| Sbi.chart.designer.Designer.chartTypeSelector
-											.getChartType() == 'HEATMAP';
+						disableChartOrientation : function() {
+							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+							
+							return chartType == 'SUNBURST'
+									|| chartType == 'WORDCLOUD'
+									|| chartType == 'TREEMAP'
+									|| chartType == 'PARALLEL'
+									|| chartType == 'HEATMAP';
 						},
 
 						enableOpacityMouseOver : function() {
