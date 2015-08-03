@@ -300,7 +300,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
 			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
-			if (aggregations != null) {
+			if (aggregations != null && !aggregations.equals("")) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
 				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
@@ -310,7 +310,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
-			if (selections != null) {
+			if (selections != null && !selections.equals("")) {
 				JSONObject selectionsObject = new JSONObject(selections);
 				filterCriteria = getFilterCriteria(label, selectionsObject);
 			}
