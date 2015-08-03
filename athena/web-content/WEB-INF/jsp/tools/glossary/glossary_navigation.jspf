@@ -6,41 +6,43 @@
 
 		<div flex="20" class="boxItemGlo">
 			<md-toolbar class="md-blue xs-head">
-			<div class="md-toolbar-tools">
-				<div>{{translate.load("sbi.glossary.word");}}</div>
-				<md-progress-circular ng-show="ctrl.pagination.word.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
-			</div>
-			
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.glossary.word");}}</div>
+					<md-progress-circular ng-show="ctrl.pagination.word.preloader" md-mode="indeterminate" md-diameter="15"  class="md-warn"></md-progress-circular>
+				</div>
 			</md-toolbar>
 
 			<md-content layout-padding layout="column" class="xs-head-max-content noTBPadding"> 
-			 <md-select  style="padding: 0 0 2px 0;" placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
-			 <md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}</md-option>
-       		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
-       		 </md-select>
-       		 
-       		 
-       		 <md-input-container md-no-float class="noPadding searchBar" >
-       		 <md-icon md-font-icon="fa fa-search"></md-icon> 
-       		 <input	ng-model="ctrl.pagination.word.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.word)" type="text" placeholder="Search ">
-       		 <md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('word')" class="filter-icon" 
-       		 	ng-class="{ 'not_empty' : (ctrl.pagination.word.selected.length !== 0 || ctrl.pagination.word.search.length !== 0 || ctrl.pagination.word.selGlo!=='---')  }"></md-icon> 
-       		 </md-input-container>
-
+				<md-select  style="padding: 0 0 2px 0;" placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.pagination.word.selGlo" >
+					<md-option value="---" ng-click="ctrl.SearchLike(ctrl.pagination.word);">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}</md-option>
+					<md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.SearchLike(ctrl.pagination.word);" >{{gloss.GLOSSARY_NM}}</md-option>
+				</md-select>
+				
+				
+				<md-input-container md-no-float class="noPadding searchBar" >
+					<md-icon md-font-icon="fa fa-search"></md-icon> 
+					<input	ng-model="ctrl.pagination.word.search" ng-keyup="ctrl.SearchLike(ctrl.pagination.word)" type="text" placeholder="Search ">
+					<md-icon md-font-icon="fa fa-filter" ng-click="ctrl.deleteSelect('word')" class="filter-icon" 
+						ng-class="{ 'not_empty' : (ctrl.pagination.word.selected.length !== 0 || ctrl.pagination.word.search.length !== 0 || ctrl.pagination.word.selGlo!=='---')  }"></md-icon> 
+				</md-input-container>
+				
 				<md-list class="bottomBorder info_button" >
-				 <md-list-item dir-paginate="word in ctrl.pagination.word.item |  itemsPerPage:ctrl.pagination.word.item_number "
+					<md-list-item dir-paginate="word in ctrl.pagination.word.item |  itemsPerPage:ctrl.pagination.word.item_number "
 						total-items="ctrl.pagination.word.total" current-page="ctrl.pagination.word.current" pagination-id="ctrl.pagination.word.id" 
 						ng-click="ctrl.toggleFilter(word)" ng-repeat="n in [1]" class="smallListItem " 
 						ng-class="{selected_item: ctrl.isSelected(word)}">
-					<p class="wrapText">{{ word.WORD | uppercase}}</p>
-							 <md-icon class="md-secondary " ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+						
+						<p class="wrapText">{{ word.WORD | uppercase}}</p>
+						
+						<md-icon class="md-secondary " ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" aria-label="info" md-font-icon="fa fa-info"></md-icon>
+					
 					</md-list-item> 
 				</md-list>
-		
-			<div class="box_pagination" layout="row" layout-align="center end">
-				<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.word.id"
-					on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.word)"></dir-pagination-controls>
-			</div>
+				
+				<div class="box_pagination" layout="row" layout-align="center end">
+					<dir-pagination-controls max-size="5" pagination-id="ctrl.pagination.word.id"
+						on-page-change="ctrl.pageChanged(newPageNumber,ctrl.pagination.word)"></dir-pagination-controls>
+				</div>
 			</md-content>
 			
 		</div>

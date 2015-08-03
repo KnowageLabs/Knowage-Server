@@ -4,7 +4,12 @@
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
 <%@page import="it.eng.spago.message.MessageBundle"%>
-<%
+<% 
+System.out.println(request.getAttribute("LANGUAGE_ID"));
+System.out.println(request.getParameter("locale"));
+System.out.println(request.getParameter("LANGUAGE_ID"));
+
+System.out.println(request.getLocale());
 	Locale locale =  MessageBundle.getUserLocale(); 
 	IUrlBuilder urlBuilder=UrlBuilderFactory.getUrlBuilder("WEB");
 %>
@@ -23,22 +28,26 @@
  <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script> 
  <![endif]--> 
 	
-	
-	<script type="text/javascript" src="/athena/js/glossary/angular/angular.js"></script>
 		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="/athena/js/glossary/angular/material_0.10.0/angular-material.min.css">
-	<script type="text/javascript" src="/athena/js/glossary/angular/material_0.10.0/angular-material.js"></script>
 	
-	<script type="text/javascript" 	src="/athena/js/glossary/angular/angular-animate.min.js"></script>
-	<script type="text/javascript" src="/athena/js/glossary/angular/angular-aria.min.js"></script>
+	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular.js"></script>
+	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
+	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+	
+	
+	
+	<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
+	<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 	
 	
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
-	<link rel="stylesheet" 	href="/athena/js/glossary/angulartree/angular-ui-tree.min.css">
-	<script type="text/javascript" src="/athena/js/glossary/angulartree/angular-ui-tree.js"></script>
-	<script type="text/javascript" src="/athena/js/glossary/contextmenu/ng-context-menu.min.js"></script>
-	<script type="text/javascript" src="/athena/js/glossary/pagination/dirPagination.js"></script>
+	
+	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
+	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+	
+	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
+	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
 	
 	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>

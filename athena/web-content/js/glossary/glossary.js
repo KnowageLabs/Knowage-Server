@@ -953,13 +953,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 					},
 
-					// "web-content/WEB-INF/jsp/tools/glossary/dialog-new-glossary.html"
-					templateUrl : 'dialog-new-glossary.html',
+					//  "/athena/js/dialog-new-glossary.html"
+					templateUrl :'/athena/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html',
 					targetEvent : ev,
 				})
 
 	};
-
 	// <!-- tree -->
 	ctr.selectedItem = {};
 
