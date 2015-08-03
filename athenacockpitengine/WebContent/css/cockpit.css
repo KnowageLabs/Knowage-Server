@@ -177,6 +177,14 @@
 	.icon_add_widget {
 		background-image: url('../img/ico_add_widget.png') !important;
 	}
+		
+	.icon_add_charts {
+		background-image: url('../img/ico_add_charts.png') !important;
+	}
+	
+	.icon_add_tables {
+		background-image: url('../img/ico_add_tables.png') !important;
+	}
 
     .icon_clean_cache_widget {
         background-image: url('../img/ico-delete.gif') !important;
