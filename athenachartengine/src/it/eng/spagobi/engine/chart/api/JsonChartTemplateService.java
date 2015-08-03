@@ -2,6 +2,7 @@ package it.eng.spagobi.engine.chart.api;
 
 import static it.eng.spagobi.engine.util.ChartEngineUtil.ve;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
 import it.eng.spagobi.engine.util.ChartEngineDataUtil;
@@ -49,7 +50,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 
-			if (jsonData != null && !jsonData.isEmpty()) {
+			if (StringUtilities.isEmpty(jsonData)) {
 				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
 			}
 
