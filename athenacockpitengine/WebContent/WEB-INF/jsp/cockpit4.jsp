@@ -9,6 +9,8 @@
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="java.util.HashMap"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -28,6 +30,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -97,6 +100,34 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	}
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
+    
+    String param2="?"+SpagoBIConstants.SBI_CONTEXT+"="+contextName;
+	String host=GeneralUtilities.getSpagoBiHost();
+	String param3="&"+SpagoBIConstants.SBI_HOST+"="+host;
+    
+    StringBuffer chartDesignerUrlTemp = new StringBuffer("/athenachartengine/api/1.0/pages/edit_cockpit");
+    StringBuffer chartRuntimeUrlTemp = new StringBuffer("/athenachartengine/api/1.0/pages/execute_cockpit");
+    
+    chartDesignerUrlTemp.append(param2);
+    chartRuntimeUrlTemp.append(param2);
+    
+    chartDesignerUrlTemp.append(param3);
+    chartRuntimeUrlTemp.append(param3);
+    
+    chartDesignerUrlTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
+    chartRuntimeUrlTemp.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
+    
+    chartDesignerUrlTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
+    chartRuntimeUrlTemp.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
+    
+    Map testMap = new HashMap();
+    testMap.put("user_id", userId);
+    
+    
+    String chartDesignerUrl = StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(chartDesignerUrlTemp.toString(), testMap));
+    String chartRuntimeUrl = StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(chartRuntimeUrlTemp.toString(), testMap));
+
+    
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -354,6 +385,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.environment = "<%=environment%>";
 		Sbi.config.contextName =  '<%= contextName %>';
 		Sbi.config.documentMode = "<%=documentMode%>";
+		Sbi.config.chartDesignerUrl = "<%=chartDesignerUrl%>";
+		Sbi.config.chartRuntimeUrl = "<%=chartRuntimeUrl%>"
 		
 		var cockpitPanel = null;
 		    
