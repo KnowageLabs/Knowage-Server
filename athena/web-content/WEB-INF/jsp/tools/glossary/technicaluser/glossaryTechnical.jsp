@@ -25,30 +25,36 @@
 	<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
 	
 	
+	<!-- angular reference-->
 	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular.js"></script>
 	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
 	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
 	
 	
+	<!-- angular-material-->
 	<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 	
-	
+	<!-- angular tree -->
 	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
 	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 	
- 	
- 	
+	<!-- context menu -->
 	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
+	
+	<!--pagination-->
 	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
 	
-	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
+		
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 	
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario_tec.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
-	<script type="text/javascript" src="/athena/js/glossary/RestService.js"></script>
-	<script type="text/javascript" src="/athena/js/glossary/glossaryTec.js"></script>
+	
+	
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/technicaluser/glossaryTec.js"></script>
+	
 	
 </head>
 
@@ -63,19 +69,19 @@
      
        <md-tab label="NAVIGAZIONE" md-on-select="global.init('navigation')">
         <md-content class="abs100">
-         <%@include file="/WEB-INF/jsp/tools/glossary/glossary_navigation.jspf"%>
+         <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/glossary_navigation.jspf"%>
         </md-content>
       </md-tab>
       
       <md-tab label="GESTIONE DOCUMENTI" md-on-select="global.init('docAssoc')">
         <md-content class="abs100">
-         <%@include file="/WEB-INF/jsp/tools/glossary/documents_and_wordsAssociations.jspf"%>
+         <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/documents_and_wordsAssociations.jspf"%>
         </md-content>
       </md-tab>
       
       <md-tab label="GESTIONE DATA SET" md-on-select="global.init('datasetAssoc')">
         <md-content class="abs100">
-         <%@include file="/WEB-INF/jsp/tools/glossary/dataset_and_wordsAssociations.jspf"%>
+         <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/dataset_and_wordsAssociations.jspf"%>
         </md-content>
       </md-tab>
       

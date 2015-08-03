@@ -30,32 +30,35 @@ System.out.println(request.getLocale());
 	
 		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
 	
+	<!-- angular reference-->
 	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular.js"></script>
 	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
 	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
 	
 	
-	
+	<!-- angular-material-->
 	<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 	
+	<!-- angular tree -->
+	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
+	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+	
+	<!-- context menu -->
+	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
+	
+	<!--pagination-->
+	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 	
-	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
-	
-	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
-	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
-	
-	<%@ include file="/WEB-INF/jsp/tools/glossary/template.jsp"%>
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 
 	
 	
-	<script type="text/javascript" src="/athena/js/glossary/RestService.js"></script>
-	<script type="text/javascript" src="/athena/js/glossary/glossary.js"></script>
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
 	
 </head>
 
@@ -303,7 +306,7 @@ System.out.println(request.getLocale());
 									
 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
 										ui-tree-node data-collapsed="true"
-										ng-include="'items_renderer.html'"></li>
+										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_items_renderer.html'"></li>
 											
 									<li ng-if="ctrl.selectedGloss.SBI_GL_CONTENTS.length == 0 "
 										ng-repeat="n in [1]" data-nodrag ui-tree-node
@@ -348,7 +351,7 @@ System.out.println(request.getLocale());
 					<md-content class="ToolbarBox miniToolbar">
 
 
-				<form name="wordForm" class="wordForm " novalidate
+				<form name="wordForm" class="wordForm " novalidate style="    padding-top: 4px;"
 					ng-submit=" ctrl.newWord.DESCR.length > 0  &&  ctrl.newWord.WORD.length > 0 && ctrl.addWord(ctrl.words)">
 
 					<div layout="row" layout-wrap>
@@ -420,7 +423,7 @@ System.out.println(request.getLocale());
 							<md-input-container class="md-icon-float"
 								ng-class="{ 'md-input-has-value-copy' : ctrl.newWord.LINK.length > 0  }">
 							<div>
-								<div id="chipsTree" ui-tree="ctrl.TreeOptionsChips"
+								<div  id="chipsTree" ui-tree="ctrl.TreeOptionsChips"
 									data-drag-enabled="true" data-drag-delay="500"
 									data-empty-placeholder-enabled="false" class="chipsTree">
 									<ol id="olchiproot" ui-tree-nodes ng-model="ctrl.newWord.LINK"

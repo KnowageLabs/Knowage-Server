@@ -58,7 +58,7 @@ import com.mongodb.util.JSON;
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  *
- */
+ */ 
 @Path("/1.0/glossary")
 public class GlossaryService {
 

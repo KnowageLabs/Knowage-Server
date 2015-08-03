@@ -1,0 +1,31 @@
+<md-dialog aria-label="Info word"  class="infoBox">
+ <md-toolbar class="md-blue minihead">
+    <div class="md-toolbar-tools">
+      <h4 class="md-flex" >{{translate.load("sbi.generic.details");}}</h4>
+    </div>
+  </md-toolbar>
+<md-dialog-content class="noPadding">
+<div layout="column">
+<ul>
+<li><span>{{translate.load("sbi.browser.document.label");}}:</span><p> {{infCtrl.info.DataSet.label}} </p></li>
+<li><span>{{translate.load("sbi.browser.document.name");}}:</span><p> {{infCtrl.info.DataSet.name}}</p></li>
+<li><span>{{translate.load("sbi.generic.type");}}:</span><p> {{infCtrl.info.DataSet.type}}</p></li>
+<li><span>{{translate.load("sbi.ds.dataSource");}}:</span><p>  {{infCtrl.info.DataSet.configuration.dataSource}} </p></li>
+<li>
+	<span>{{translate.load("sbi.ds.metadata.column.column");}}:</span>
+	<ul>
+		<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.SbiGlDataSetWlist ">
+			{{colu.alias}}
+			<ul>
+				<li ng-class="{selected_item: ctrl.isSelected(wor)}" style="  display: list-item;" ng-repeat="wor in colu.word ">
+				{{wor.WORD}}
+				</li>
+			</ul>
+		</li>
+	</ul>
+</li>
+
+</ul>
+</div>
+</md-dialog-content>
+</md-dialog>

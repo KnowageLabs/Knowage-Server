@@ -1,0 +1,59 @@
+
+<div class="nodo_logico expander-icon" data-nodrag>
+		
+	<div ui-tree-handle class="smallTree" style="  cursor: pointer;">
+	
+									
+		<md-list>
+			<md-list-item  class="SecondaryOnLeft" ng-click="this.toggle()"> 
+			
+			<div class="indicator-child"></div>
+
+			<p >{{item.alias}}</p>
+
+			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+				aria-label="Chat" md-font-icon="fa fa-angle-down "
+				style=" left: 0px;  margin: 5px 0px 0 17px!important; "
+				ng-show="!collapsed">
+			</md-icon>
+				
+			<md-icon ng-disabled="true"
+				class=" sm-font-icon expandericon" aria-label="Chat2"
+				md-font-icon="fa fa-angle-right " ng-show="collapsed">
+			</md-icon> 
+			
+			<md-progress-circular
+				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
+				style="  left: 50%;  margin-left: -25px;   margin-top: -14px; position:absolute "
+				md-mode="indeterminate">
+			</md-progress-circular>
+			
+			</md-list-item>
+		
+		</md-list>
+	</div>
+</div>
+
+
+<ol	ui-tree-nodes="options" ng-model="item.word" ng-class="{hideChildren: collapsed}">
+	<li ng-repeat="itemW in item.word" ui-tree-node data-collapsed="true" class="figlioVisibile">
+		
+	<div  class="figlio_vocabolo smallTree">
+		<md-list class="noPadding"> 
+		<md-list-item>
+		<div class="indicator-child"></div>
+			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+				aria-label="Chat" md-font-icon="fa fa-angle-right "
+				style=" left: 0px;  margin: 5px 0px 0 17px!important; " >
+			</md-icon>
+		<p style="margin-left: 10px;">{{itemW.WORD}}</p>
+ 		<md-icon style="    margin: 0;    position: absolute;    right: 0;    width: 10px;    height: 14px;" md-font-icon="fa fa-times" ng-click="ctrl.removeWord(item,itemW)" aria-label="delete word" class="md-secondary md-hue-3"></md-icon> 
+     
+
+	 
+		</md-list-item> 
+		</md-list>
+	</div>
+
+</li>
+</ol>

@@ -143,6 +143,7 @@ md-input-container.md-icon-float.md-input-focused label,
 	/* 	height: 40px; */
 	min-height: 40px;
 	margin-top: 0;
+	    margin: 0px;
 }
 
 .wordForm md-input-container.md-input-has-value {

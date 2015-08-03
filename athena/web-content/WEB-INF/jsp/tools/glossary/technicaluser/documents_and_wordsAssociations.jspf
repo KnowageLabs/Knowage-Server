@@ -144,7 +144,7 @@
 									
 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
 										ui-tree-node data-collapsed="true"
-										ng-include="'tree_glossary_tec.html'"></li>
+										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'"></li>
 									
 
 								</ol>
