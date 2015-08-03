@@ -18,6 +18,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 
 <!-- START-DEBUG -->
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Settings.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/WidgetTypesConstants.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/overrides/overrides.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Sbi.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Log.js'/></script>
@@ -149,10 +150,10 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractCartesianChartWidgetRuntime.js'/></script>
 
 <!-- NEW Line Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script>
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script> -->
 
 <!-- NEW Bar Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/BarChartWidgetRuntime.js'/></script>
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/BarChartWidgetRuntime.js'/></script> -->
 
 
 <!-- Chart widget -->
@@ -165,20 +166,20 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/DefaultChartDimensionRetrieverStrategy.js'/></script>
 
 <!-- NEW Pie Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/PieChartWidgetRuntime.js'/></script>
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/PieChartWidgetRuntime.js'/></script> -->
 
 
 <!-- Bar Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidgetDesigner.js'/></script>
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidget.js'/></script> -->
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidgetDesigner.js'/></script> -->
 
 <!-- Pie Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidgetDesigner.js'/></script>
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidget.js'/></script> -->
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidgetDesigner.js'/></script> -->
 
 <!-- Line Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script>
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script> -->
+<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script> -->
 
 <!-- Selection widget  -->
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidget.js'/></script>
@@ -187,9 +188,13 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js'/></script>
 
+<!-- NEW Chart Engine widget  -->
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chartengine/ChartEngineWidget.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chartengine/ChartEngineWidgetDesigner.js'/></script>
 
-
-
+<!-- Image widget -->
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidget.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidgetDesigner.js'/></script>
 
 
 <!-- END-DEBUG -->
