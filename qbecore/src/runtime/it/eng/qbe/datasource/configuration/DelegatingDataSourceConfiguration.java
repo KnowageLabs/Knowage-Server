@@ -1,11 +1,12 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.configuration;
 
 import it.eng.qbe.datasource.configuration.dao.ICalculatedFieldsDAO;
+import it.eng.qbe.datasource.configuration.dao.IHierarchiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IInLineFunctionsDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelI18NPropertiesDAO;
 import it.eng.qbe.datasource.configuration.dao.IModelPropertiesDAO;
@@ -14,6 +15,7 @@ import it.eng.qbe.datasource.configuration.dao.IViewsDAO;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
+import it.eng.qbe.model.structure.HierarchicalDimensionField;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -28,67 +30,81 @@ import java.util.Map;
  *
  */
 public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfiguration {
-	
+
 	IModelI18NPropertiesDAO modelLabelsDAOFileImpl;
 	IModelPropertiesDAO modelPropertiesDAO;
 	ICalculatedFieldsDAO calculatedFieldsDAO;
 	IInLineFunctionsDAO functionsDAO;
-	
+	IHierarchiesDAO hierarchiesDAO;
+
 	IRelationshipsDAO relationshipsDAO;
 	IViewsDAO viewsDAO;
-	
-	
-	
+
+
+
 
 	public DelegatingDataSourceConfiguration(String modelName) {
 		super(modelName);
 	}
-	
+
 	// ====================================================================
 	// overrides
 	// ====================================================================
-	
+
 	// datasource properties are managed in memory -> no delegation here
 	// public Map<String, Object> loadDataSourceProperties() { ...
-	
+
+	@Override
 	public IModelProperties loadModelProperties() {
 		return modelPropertiesDAO.loadModelProperties();
 	}
-	
+
+	@Override
 	public IModelProperties loadModelI18NProperties() {
 		return loadModelI18NProperties(null);
 	}
-	
+
+	@Override
 	public IModelProperties loadModelI18NProperties(Locale locale) {
 		SimpleModelProperties properties = modelLabelsDAOFileImpl.loadProperties(locale);
 		return properties;
 	}
 
+	@Override
 	public Map loadCalculatedFields() {
 		return calculatedFieldsDAO.loadCalculatedFields();
 	}
 
+	@Override
+	public Map<String, HierarchicalDimensionField> loadHierarchicalDimension() {
+		return hierarchiesDAO.loadHierarchicalDimensions();
+	}
+
+	@Override
 	public void saveCalculatedFields(Map<String, List<ModelCalculatedField>> calculatedFields) {
 		calculatedFieldsDAO.saveCalculatedFields( calculatedFields );
 	}
 
 
+	@Override
 	public List<IModelRelationshipDescriptor> loadRelationships() {
 		return relationshipsDAO.loadModelRelationships();
 	}
-	
+
+	@Override
 	public List<IModelViewEntityDescriptor> loadViews() {
 		return viewsDAO.loadModelViews();
 	}
-	
+
+	@Override
 	public HashMap<String, InLineFunction> loadInLineFunctions(String dialect) {
 		return functionsDAO.loadInLineFunctions(dialect);
 	}
-	
+
 	// ====================================================================
-	// Accessor methods	
+	// Accessor methods
 	// ====================================================================
-	
+
 	public IModelPropertiesDAO getModelPropertiesDAO() {
 		return modelPropertiesDAO;
 	}
@@ -105,6 +121,15 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 		this.calculatedFieldsDAO = calculatedFieldsDAO;
 	}
 
+
+	public void setHierarchiesDAO(IHierarchiesDAO hierarchiesDAO) {
+		this.hierarchiesDAO = hierarchiesDAO;
+	}
+
+	public IHierarchiesDAO getHierarchiesDAO() {
+		return hierarchiesDAO;
+	}
+
 	public IModelI18NPropertiesDAO getModelLabelsDAOFileImpl() {
 		return modelLabelsDAOFileImpl;
 	}
@@ -113,7 +138,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 			IModelI18NPropertiesDAO modelLabelsDAOFileImpl) {
 		this.modelLabelsDAOFileImpl = modelLabelsDAOFileImpl;
 	}
-	
+
 	public IInLineFunctionsDAO getFunctionsDAO() {
 		return functionsDAO;
 	}
@@ -121,7 +146,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	public void setFunctionsDAO(IInLineFunctionsDAO functionsDAO) {
 		this.functionsDAO = functionsDAO;
 	}
-	
+
 	public IRelationshipsDAO getRelationshipsDAO() {
 		return relationshipsDAO;
 	}
@@ -129,7 +154,7 @@ public class DelegatingDataSourceConfiguration extends InMemoryDataSourceConfigu
 	public void setRelationshipsDAO(IRelationshipsDAO relationshipsDAO) {
 		this.relationshipsDAO = relationshipsDAO;
 	}
-	
+
 	public IViewsDAO getViewsDAO() {
 		return viewsDAO;
 	}

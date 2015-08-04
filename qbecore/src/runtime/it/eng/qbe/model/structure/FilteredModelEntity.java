@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.model.structure;
 
@@ -18,7 +18,7 @@ public class FilteredModelEntity implements IModelEntity{
 	private QbeTreeFilter qbeTreeFilter;
 	private IDataSource dataSource;
 	private IModelEntity wrappedModelEntity;
-	
+
 	public FilteredModelEntity(IModelEntity wrappedModelEntity, IDataSource dataSource, QbeTreeFilter qbeTreeFilter ) {
 		this.qbeTreeFilter=qbeTreeFilter;
 		this.dataSource=dataSource;
@@ -27,21 +27,21 @@ public class FilteredModelEntity implements IModelEntity{
 		}else{
 			this.wrappedModelEntity = wrappedModelEntity;
 		}
-		
+
 	}
-	
+
 	public List<IModelField> getKeyFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getKeyFields());
 	}
-	
+
 	public List<IModelField> getNormalFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getNormalFields());
 	}
-	
+
 	public List<ModelCalculatedField>  getCalculatedFields() {
 		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getCalculatedFields());
 	}
-	
+
 	public List<IModelEntity> getSubEntities() {
 		List<IModelEntity> modelEntities = qbeTreeFilter.filterEntities(getDataSource(), wrappedModelEntity.getSubEntities());
 		List<IModelEntity> filteredModelEntities = new ArrayList<IModelEntity>();
@@ -86,7 +86,7 @@ public class FilteredModelEntity implements IModelEntity{
 
 	public void setName(String name) {
 		wrappedModelEntity.setName(name);
-		
+
 	}
 
 	public Map<String, Object> getProperties() {
@@ -127,7 +127,7 @@ public class FilteredModelEntity implements IModelEntity{
 		}
 		return filteredList.get(0);
 	}
-	
+
 	public IModelField getFieldByName(String fieldName) {
 		List<IModelField> list = new ArrayList<IModelField>();
 		List<IModelField> filteredList;
@@ -145,11 +145,18 @@ public class FilteredModelEntity implements IModelEntity{
 
 	public void addCalculatedField(ModelCalculatedField calculatedField) {
 		wrappedModelEntity.addCalculatedField(calculatedField);
-		
 	}
 
 	public void deleteCalculatedField(String fieldName) {
 		wrappedModelEntity.deleteCalculatedField(fieldName);
+	}
+
+	public List<HierarchicalDimensionField> getHierarchicalDimensionFields() {
+		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getHierarchicalDimensionFields());
+	}
+
+	public void addHierarchicalDimension(HierarchicalDimensionField hierarchicalDimensionField){
+		wrappedModelEntity.addHierarchicalDimension(hierarchicalDimensionField);
 	}
 
 	public List<IModelField> getAllFields() {
@@ -171,7 +178,7 @@ public class FilteredModelEntity implements IModelEntity{
 
 	public void addSubEntity(IModelEntity entity) {
 		wrappedModelEntity.addSubEntity(entity);
-		
+
 	}
 
 	public IModelEntity getSubEntity(String entityUniqueName) {
@@ -208,7 +215,7 @@ public class FilteredModelEntity implements IModelEntity{
 
 	public void setPath(String path) {
 		wrappedModelEntity.setPath(path);
-		
+
 	}
 
 	public String getRole() {
@@ -217,7 +224,7 @@ public class FilteredModelEntity implements IModelEntity{
 
 	public void setRole(String role) {
 		wrappedModelEntity.setRole(role);
-		
+
 	}
 
 	public String getType() {
@@ -273,20 +280,20 @@ public class FilteredModelEntity implements IModelEntity{
 	public void setWrappedModelEntity(IModelEntity wrappedModelEntity) {
 		this.wrappedModelEntity = wrappedModelEntity;
 	}
-	
+
 	public Object getProperty(String name) {
 		return wrappedModelEntity.getProperty(name);
 	}
-	
+
 	public String getPropertyAsString(String name) {
 		return wrappedModelEntity.getPropertyAsString(name);
 	}
-	
+
 	public boolean getPropertyAsBoolean(String name) {
 		return wrappedModelEntity.getPropertyAsBoolean(name);
 	}
-	
-	public int getPropertyAsInt(String name) {	
+
+	public int getPropertyAsInt(String name) {
 		return wrappedModelEntity.getPropertyAsInt(name);
 	}
 
@@ -306,7 +313,7 @@ public class FilteredModelEntity implements IModelEntity{
 	 */
 	public void addField(IModelField field) {
 		wrappedModelEntity.addField(field);
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -314,7 +321,7 @@ public class FilteredModelEntity implements IModelEntity{
 	 */
 	public void setRoot(IModelEntity root) {
 		wrappedModelEntity.setRoot(root);
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -353,5 +360,5 @@ public class FilteredModelEntity implements IModelEntity{
 			return 0;
 		}
 	}
-	
+
 }

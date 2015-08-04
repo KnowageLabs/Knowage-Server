@@ -1,14 +1,14 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.model.structure;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
-import it.eng.qbe.model.structure.filter.QbeTreeFilter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,14 +18,14 @@ import java.util.Map;
 import java.util.Set;
 
 public class FilteredModelStructure extends AbstractModelObject implements IModelStructure {
-	
+
 
 	private QbeTreeFilter qbeTreeFilter;
 	private IDataSource dataSource;
 	private IModelStructure wrappedModelStructure;
-	
+
 	private int maxRecursionLevel;
-	
+
 	public FilteredModelStructure(IModelStructure wrappedModelStructure, IDataSource dataSource, QbeTreeFilter qbeTreeFilter){
 		this.qbeTreeFilter=qbeTreeFilter;
 		this.dataSource=dataSource;
@@ -35,7 +35,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 			this.wrappedModelStructure = wrappedModelStructure;
 		}
 	}
-	
+
 	public List<IModelEntity> getRootEntities(String modelName){
 		List<IModelEntity> iModelEntities = qbeTreeFilter.filterEntities(dataSource,wrappedModelStructure.getRootEntities(modelName));
 		List<IModelEntity> filteredModelEntities = new ArrayList<IModelEntity>();
@@ -53,25 +53,30 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		this.qbeTreeFilter = qbeTreeFilter;
 	}
 
+	@Override
 	public long getId() {
 		return wrappedModelStructure.getId();
 	}
 
+	@Override
 	public String getName() {
 		return wrappedModelStructure.getName();
 	}
 
+	@Override
 	public void setName(String name) {
-		wrappedModelStructure.setName(name);		
+		wrappedModelStructure.setName(name);
 	}
 
+	@Override
 	public Map<String, Object> getProperties() {
 		return wrappedModelStructure.getProperties();
 	}
 
+	@Override
 	public void setProperties(Map<String, Object> properties) {
 		wrappedModelStructure.setProperties(properties);
-		
+
 	}
 
 	public long getNextId() {
@@ -96,7 +101,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		}
 		return filteredList.get(0);
 	}
-	
+
 	public void addRootEntity(String modelName, IModelEntity entity) {
 		wrappedModelStructure.addRootEntity(modelName, entity);
 	}
@@ -149,21 +154,21 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public Iterator<IModelEntity> getRootEntityIterator(String modelName) {
 		return getRootEntities(modelName).iterator();
 	}
-	
+
 	public boolean areRootEntitiesConnected(Set<IModelEntity> entities){
 		return wrappedModelStructure.areRootEntitiesConnected(entities);
 	}
-	
+
 
 	public void addEntity(IModelEntity entity) {
 		wrappedModelStructure.addEntity(entity);
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelStructure#addRootEntityRelationship(java.lang.String, it.eng.qbe.model.structure.IModelEntity, it.eng.qbe.model.structure.IModelEntity, java.lang.String)
 	 */
-	public void addRootEntityRelationship(String modelName, 
+	public void addRootEntityRelationship(String modelName,
 			IModelEntity fromEntity, List<IModelField> fromFields,
 			IModelEntity toEntity, List<IModelField> toFields,
 			String type, String relationName) {
@@ -173,7 +178,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 //	public Set<Relationship> getRootEntitiesConnections(Set<IModelEntity> entities) {
 //		return wrappedModelStructure.getRootEntitiesConnections(entities);
 //	}
-	
+
 	public IModelEntity getEntity(String entityUniqueName) {
 		List<IModelEntity> list = new ArrayList<IModelEntity>();
 		List<IModelEntity> filteredList;
@@ -191,7 +196,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	public void addField(IModelField field) {
 		wrappedModelStructure.addField(field);
-		
+
 	}
 
 	public IModelField getField(String fieldUniqueName) {
@@ -219,7 +224,9 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		}
 		return filteredCalculatedFields;
 	}
-
+	public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() {
+		return null;
+	}
 	public List<ModelCalculatedField> getCalculatedFieldsByEntity(
 			String entityName) {
 		return qbeTreeFilter.filterFields(dataSource,wrappedModelStructure.getCalculatedFieldsByEntity(entityName));
@@ -227,19 +234,19 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	public void setCalculatedFields(
 			Map<String, List<ModelCalculatedField>> calculatedFields) {
-		wrappedModelStructure.setCalculatedFields(calculatedFields);		
+		wrappedModelStructure.setCalculatedFields(calculatedFields);
 	}
 
 	public void addCalculatedField(String entityName,
 			ModelCalculatedField calculatedFiled) {
 		wrappedModelStructure.addCalculatedField(entityName, calculatedFiled);
-		
+
 	}
 
 	public void removeCalculatedField(String entityName,
 			ModelCalculatedField calculatedFiled) {
 		wrappedModelStructure.removeCalculatedField(entityName, calculatedFiled);
-		
+
 	}
 
 	public IDataSource getDataSource() {
@@ -257,7 +264,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public void setWrappedModelStructure(IModelStructure wrappedModelStructure) {
 		this.wrappedModelStructure = wrappedModelStructure;
 	}
-	
+
 	private FilteredModelEntity toFilteredModelEntity(IModelEntity modelEntity){
 		FilteredModelEntity filteredModelEntity;
 		if(modelEntity instanceof FilteredModelEntity){
@@ -274,7 +281,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public void setMaxRecursionLevel(int maxRecursionLevel) {
 		this.maxRecursionLevel = maxRecursionLevel;
 	}
-	
+
 
 	public int getMaxRecursionLevel() {
 		return this.maxRecursionLevel;
@@ -293,6 +300,6 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
 		return wrappedModelStructure.getRootEntityDirectConnections(entity);
 	}
-	
+
 
 }

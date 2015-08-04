@@ -1,12 +1,13 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.configuration;
 
 
 import it.eng.qbe.datasource.configuration.dao.fileimpl.CalculatedFieldsDAOFileImpl;
+import it.eng.qbe.datasource.configuration.dao.fileimpl.HierarchiesDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.ModelI18NPropertiesDAOFileImpl;
 import it.eng.qbe.datasource.configuration.dao.fileimpl.ModelPropertiesDAOFileImpl;
@@ -20,20 +21,21 @@ import java.io.File;
  *
  */
 public class FileDataSourceConfiguration extends DelegatingDataSourceConfiguration {
-	
+
 	File file;
-	
+
 	public FileDataSourceConfiguration(String modelName, File file) {
 		super(modelName);
 		this.file = file;
 		this.modelPropertiesDAO = new ModelPropertiesDAOFileImpl(file);
 		this.modelLabelsDAOFileImpl = new ModelI18NPropertiesDAOFileImpl(file);
-		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);	
-		this.viewsDAO = new ViewsDAOFileImpl(file);	
-		this.relationshipsDAO = new RelationshipsDAOFileImpl(file);	
+		this.calculatedFieldsDAO = new CalculatedFieldsDAOFileImpl(file);
+		this.hierarchiesDAO = new HierarchiesDAOFileImpl(file);
+		this.viewsDAO = new ViewsDAOFileImpl(file);
+		this.relationshipsDAO = new RelationshipsDAOFileImpl(file);
 		this.functionsDAO = new InLineFunctionsDAOFileImpl();
 	}
-	
+
 	public File getFile() {
 		return file;
 	}
