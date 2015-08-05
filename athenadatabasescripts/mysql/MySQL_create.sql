@@ -1999,6 +1999,8 @@ CREATE TABLE SBI_META_MODELS (
        ID                   INTEGER NOT NULL,
        NAME                 VARCHAR(100) NOT NULL,
        DESCR                VARCHAR(500) NULL,
+       MODEL_LOCKED 		TINYINT(1) NULL DEFAULT NULL,
+       MODEL_LOCKER			VARCHAR(100) NULL DEFAULT NULL,
        USER_IN              VARCHAR(100) NOT NULL,
        USER_UP              VARCHAR(100),
        USER_DE              VARCHAR(100),
