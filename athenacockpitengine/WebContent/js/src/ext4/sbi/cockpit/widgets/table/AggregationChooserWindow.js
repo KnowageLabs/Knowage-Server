@@ -62,6 +62,7 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, fontColor: defFormState.fontColor
 		, fontDecoration: defFormState.fontDecoration
 		, calculatedFieldFlag: defFormState.calculatedFieldFlag
+		, calculatedFieldFormula: defFormState.calculatedFieldFormula
 	};
 
 	Ext.apply(this, c);
@@ -455,6 +456,22 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   	items.push(this.fontWeightCombo);
 	   	items.push(this.fontColorField);
 	   	items.push(this.fontDecorationCombo);
+	   	
+	   	if(config.calculatedFieldFlag != undefined 
+				&& config.calculatedFieldFlag){
+			this.calculatedFieldEditor = Ext.create('Ext.form.field.TextArea', {
+				name:			'calculatedField',
+				fieldLabel: 	LN('sbi.cockpit.designer.fontConf.calculatedField'),
+				labelWidth:		LABEL_WIDTH,
+				width:			FIELD_WIDTH
+			});
+			
+			if(config.calculatedFieldFormula){
+				this.calculatedFieldEditor.setValue(config.calculatedFieldFormula);
+			}
+			
+			items.push(this.calculatedFieldEditor);
+		}
 
     	this.formPanel = Ext.create('Ext.form.FormPanel',{
     		frame:true,
@@ -546,6 +563,10 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 		formState.fontWeight = this.fontWeightCombo.getValue();
 		formState.fontColor = this.fontColorField.getValue();
 		formState.fontDecoration = this.fontDecorationCombo.getValue();
+		if(this.calculatedFieldEditor) {
+			formState.calculatedFieldFlag = true;
+			formState.calculatedFieldFormula = this.calculatedFieldEditor.getValue();
+		}
 		
 		return formState;
 	}

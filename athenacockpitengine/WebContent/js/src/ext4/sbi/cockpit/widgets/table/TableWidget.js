@@ -515,6 +515,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					calculatedFieldFormula = calculatedFieldFormula.replace(re, " (record.get('" + dataIndex + "')) ");
 					
 				}
+				console.log('calculatedFieldFormula', calculatedFieldFormula);
 				
 				value = eval(calculatedFieldFormula);
 				return value;
