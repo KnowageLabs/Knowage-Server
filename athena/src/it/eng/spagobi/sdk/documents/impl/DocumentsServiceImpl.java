@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.documents.impl;
 
@@ -732,10 +732,9 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * Executes a document and return an object containing the result
-	 * 
+	 *
 	 * @param: document : the document
-	 * @param: parameters: ana array of SDKDocumentParameters, already filled
-	 *         with values
+	 * @param: parameters: ana array of SDKDocumentParameters, already filled with values
 	 * @param: roleName : name of the role
 	 */
 
@@ -948,19 +947,24 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 				String modelName = sdkTemplate.getFolderName();
 				MetaModel metaModel = metaModelsDAO.loadMetaModelByName(modelName);
 				if (metaModel != null) {
-					logger.debug("Meta Model " + metaModel + " already present: go on with update");
-					// in update data source is not changeable
-					// //Data Source update
-					// if(dataSourceLabel != null){
-					// metaModel.setDataSourceLabel(dataSourceLabel);
-					// }
-					// metaModelsDAO.modifyMetaModel(metaModel);
+					String lockerUserId = metaModel.getModelLocker();
+					String uploaderUserId = userProfile.getUserId().toString();
+
+					// Check if the model is locked by another user
+					if (!lockerUserId.equals(uploaderUserId)) {
+						// model locked by another user, cannot proceed with the update
+						logger.debug("Cannot update, the metamodel [" + metaModel.getName() + "] is currently locked by user [" + lockerUserId + "]");
+						throw new SpagoBIRuntimeException("The metamodel [" + metaModel.getName() + "] is currently locked by user [" + lockerUserId + "]");
+					}
 
 				} else {
-					logger.debug("Meta Model " + metaModel + " not aready present: go on with insert");
+					logger.debug("Meta Model " + metaModel + " not already present: go on with insert");
 					metaModel = new MetaModel();
 					metaModel.setName(modelName);
 					metaModel.setDescription(modelName);
+					// upload model locked by default
+					metaModel.setModelLocked(true);
+					metaModel.setModelLocker(userProfile.getUserId().toString());
 					// Data Source update
 					if (dataSourceLabel != null) {
 						metaModel.setDataSourceLabel(dataSourceLabel);
@@ -998,7 +1002,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 			} catch (Exception e) {
 				logger.error("Could not insert meta model into meta model catalogue", e);
-				throw new SpagoBIRuntimeException("Could not insert meta model into meta model  catalogue: " + e.getMessage());
+				throw new SpagoBIRuntimeException("Could not insert meta model into meta model catalogue: " + e.getMessage());
 			} finally {
 				try {
 					if (is != null)
@@ -1012,8 +1016,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 				/***********************************************************************************************************/
 				/*
-				 * STEP 3: template creation in SpagoBI Metadata (under the
-				 * personal folder) to use the previous datamart.
+				 * STEP 3: template creation in SpagoBI Metadata (under the personal folder) to use the previous datamart.
 				 */
 				/***********************************************************************************************************/
 				UserProfile userProfile = (UserProfile) this.getUserProfile();
@@ -1131,7 +1134,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	/**
 	 * search for model file inside content parameter and return byte array
-	 * 
+	 *
 	 * @param content
 	 * @param toReturn
 	 */
@@ -1355,9 +1358,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	}
 
 	/**
-	 * Add the schema mondrian to the catalogue and upload a template that uses
-	 * it
-	 * 
+	 * Add the schema mondrian to the catalogue and upload a template that uses it
+	 *
 	 * @param SDKSchema
 	 *            . The object with all informations
 	 */
@@ -1529,9 +1531,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			logger.debug("Upload file template....");
 			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
 			/*
-			 * ----------- test code --------- String ss = new
-			 * String(templateContent); System.out.println(ss); ----------- test
-			 * code ---------
+			 * ----------- test code --------- String ss = new String(templateContent); System.out.println(ss); ----------- test code ---------
 			 */
 
 			osFile.write(templateContent);

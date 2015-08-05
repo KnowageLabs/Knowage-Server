@@ -431,6 +431,10 @@ public class SpagoBIConstants {
 	public static final String SBI_ARTIFACT_LOCKER = "SBI_ARTIFACT_LOCKER";
 	public static final String SBI_ARTIFACT_ID = "SBI_ARTIFACT_ID";
 
+	public static final String SBI_META_MODEL_VALUE_LOCKED_BY_USER = "locked_by_user";
+	public static final String SBI_META_MODEL_VALUE_LOCKED_BY_OTHER = "locked_by_other";
+	public static final String SBI_META_MODEL_VALUE_UNLOCKED = "unlocked";
+
 	public static final String DATAMART_RETRIEVER = "DATAMART_RETRIEVER";
 
 	public static final String DS_SCOPE_USER = "USER";

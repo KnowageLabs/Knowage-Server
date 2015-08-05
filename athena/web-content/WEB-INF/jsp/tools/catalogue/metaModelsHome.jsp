@@ -26,6 +26,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 Ext.onReady(function(){
     Ext.QuickTips.init();
     var cataloguePanel = new Sbi.tools.catalogue.MetaModelsCatalogue({});
+    cataloguePanel.on('rowSelected', function () {
+    	cataloguePanel.rowSelectedListener();
+    });
     var viewport = new Ext.Viewport({
         layout: 'border'
         , items: [

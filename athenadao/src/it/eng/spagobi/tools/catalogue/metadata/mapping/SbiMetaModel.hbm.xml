@@ -55,6 +55,12 @@
 		<property name="category" type="integer">
 			<column name="CATEGORY_ID" />
 		</property>
+		<property name="modelLocked" type="boolean">
+            <column name="MODEL_LOCKED" />
+        </property>
+        <property name="modelLocker" type="string">
+            <column name="MODEL_LOCKER" length="200" not-null="false" />
+        </property>
 		  <many-to-one
 		   class="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" fetch="join" name="dataSource">
 		   <column name="DATA_SOURCE_ID" not-null="false"/>
