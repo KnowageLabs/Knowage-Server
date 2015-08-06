@@ -222,7 +222,12 @@ public class PageResource extends AbstractChartEngineResource {
 				break;
 			}
 
-			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+				request.getRequestDispatcher(dispatchUrl).include(request, response);
+			} else {
+				request.getRequestDispatcher(dispatchUrl).forward(request, response);
+			}
+
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
