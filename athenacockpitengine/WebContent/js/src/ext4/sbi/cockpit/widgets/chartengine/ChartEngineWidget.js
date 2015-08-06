@@ -121,7 +121,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	
 	, chartEngineServicePostCall: function(){
 		
-		var wData = this.getWidgetDataAsJson();
+		var wData = Ext.JSON.encode(this.getWidgetDataAsJson());
 		
 		var thePanel = this;
 		
@@ -130,7 +130,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	        url: Sbi.config.chartRuntimeUrl, 
 	        method: 'POST',
 	        params: {
-	        	widgetData: Ext.JSON.encode(wData)
+	        	widgetData: wData
 	        },
 	        scope: thePanel,
 	        success: function(response){
