@@ -377,6 +377,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		//addKeyFields(dataMartEntity);
 		List<IModelEntity> subEntities = addNormalFields(entity);
 		addCalculatedFields(entity);
+		addHierarchies(entity);
 		addSubEntities(entity, subEntities, 0);
 	}
 
@@ -511,23 +512,25 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 	}
 
 
-//	private void addHierarchies(IModelEntity dataMartEntity) {
-//		logger.debug("Adding hierarchies "+dataMartEntity.getName());
-//
-//		HierarchicalDimensionField dimension = dataMartEntity.getStructure().getHiearchicalDimensions().get(dataMartEntity.getName());
-//		dataMartEntity.addHierarchicalDimension(dimension);
-//
-//	}
-//
-//	private void addHierarchiesForViews(IModelEntity dataMartEntity) {
-//		addHierarchies(dataMartEntity);
-//
-//		for(int i = 0; i < dataMartEntity.getSubEntities().size(); i++) {
-//			if(!(dataMartEntity.getSubEntities().get(i) instanceof ModelViewEntity)){
-//				addHierarchiesForViews(dataMartEntity.getSubEntities().get(i));
-//			}
-//		}
-//	}
+	private void addHierarchies(IModelEntity dataMartEntity) {
+		logger.debug("Adding hierarchies "+dataMartEntity.getName());
+
+		HierarchicalDimensionField dimension = dataMartEntity.getStructure().getHiearchicalDimensions().get(dataMartEntity.getUniqueType());
+		if (dimension!=null){
+			dimension.getProperties().put("visible", "true");
+			dataMartEntity.addHierarchicalDimension(dimension);
+		}
+	}
+
+	private void addHierarchiesForViews(IModelEntity dataMartEntity) {
+		addHierarchies(dataMartEntity);
+
+		for(int i = 0; i < dataMartEntity.getSubEntities().size(); i++) {
+			if(!(dataMartEntity.getSubEntities().get(i) instanceof ModelViewEntity)){
+				addHierarchiesForViews(dataMartEntity.getSubEntities().get(i));
+			}
+		}
+	}
 
 	private void addSubEntities(IModelEntity modelEntity, List<IModelEntity> subEntities, int recursionLevel) {
 
@@ -555,6 +558,7 @@ public class JPAModelStructureBuilder implements IModelStructureBuilder {
 		//addKeyFields(dataMartEntity);
 		List<IModelEntity> subEntities = addNormalFields(dataMartEntity);
 		addCalculatedFields(dataMartEntity);
+		addHierarchies(dataMartEntity);
 		addSubEntities(dataMartEntity, subEntities, recursionLevel);
 		logger.debug("Added the sub entity field "+subEntity.getName()+" child of "+parentEntity.getName());
 	}

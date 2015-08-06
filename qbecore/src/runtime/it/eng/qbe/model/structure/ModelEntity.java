@@ -176,6 +176,12 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 
 	public void addHierarchicalDimension(HierarchicalDimensionField hierarchicalDimensionField) {
+		hierarchicalDimensionField.setId(getStructure().getNextId());
+		hierarchicalDimensionField.setStructure(getStructure());
+		hierarchicalDimensionField.setParent(this);
+		hierarchicalDimensionFields.put(hierarchicalDimensionField.getEntity(), hierarchicalDimensionField);
+
+		getStructure().addHierarchicalDimensionField(getUniqueName(), hierarchicalDimensionField);
 	}
 
 	public void deleteCalculatedField(String fieldName) {
@@ -188,9 +194,6 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	}
 
-	public List<HierarchicalDimensionField> getHierarchicalDimensions(){
-		return new ArrayList<HierarchicalDimensionField>(hierarchicalDimensionFields.values());
-	}
 
 
 	public List<ModelCalculatedField>  getCalculatedFields() {
@@ -206,8 +209,8 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 		return list;
 	}
 
-	public List<HierarchicalDimensionField> getHierarchicalDimensionFields(){
-		return new ArrayList<HierarchicalDimensionField>(this.hierarchicalDimensionFields.values());
+	public HierarchicalDimensionField getHierarchicalDimensionByEntity(String entity){
+		return this.hierarchicalDimensionFields.get(entity);
 	}
 
 	public List<IModelField> getAllFields() {

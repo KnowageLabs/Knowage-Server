@@ -10,6 +10,8 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.FilteredModelStructure;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
+import it.eng.qbe.model.structure.Hierarchy;
+import it.eng.qbe.model.structure.HierarchyLevel;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.ModelCalculatedField;
@@ -233,6 +235,21 @@ public class ExtJsQbeTreeBuilder  {
 
 		JSONArray children = new JSONArray();
 
+		// add hierarchy fields
+		HierarchicalDimensionField dimField = entity.getHierarchicalDimensionByEntity(entity.getType());
+		if(dimField!=null){
+			List<Hierarchy> hierarchies = dimField.getHierarchies();
+			Iterator<Hierarchy> hierarchiesIterator = hierarchies.iterator();
+			while (hierarchiesIterator.hasNext() ) {
+				Hierarchy hierarchy = hierarchiesIterator.next();
+				JSONObject jsObject = getHierarchyNode(entity, hierarchy);
+
+				if(jsObject != null) {
+					children.put( jsObject );
+				}
+			}
+		}
+
 		// add key fields
 		List keyFields = entity.getKeyFields();
 
@@ -253,18 +270,6 @@ public class ExtJsQbeTreeBuilder  {
 		while (normalFieldIterator.hasNext() ) {
 			IModelField field = (IModelField)normalFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
-			if(jsObject != null) {
-				children.put( jsObject );
-			}
-		}
-
-
-		List<HierarchicalDimensionField> hierarchicalDimensions = entity.getHierarchicalDimensionFields();
-		Iterator hierarchiesIterator = hierarchicalDimensions.iterator();
-		while (hierarchiesIterator.hasNext() ) {
-			HierarchicalDimensionField field = (HierarchicalDimensionField)hierarchiesIterator.next();
-
-			JSONObject jsObject = getHierarchyNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
 			}
@@ -349,12 +354,32 @@ public class ExtJsQbeTreeBuilder  {
 	}
 
 
-	public JSONObject getHierarchyNode(IModelEntity parentEntity, HierarchicalDimensionField field) {
+	public JSONObject getHierarchyNode(IModelEntity parentEntity, Hierarchy hierarchy) {
 		JSONObject fieldNode = new JSONObject();
 		try{
-			fieldNode.put("id", field.getUniqueName());
-			fieldNode.put("text", field.getName());
-			fieldNode.put("leaf", true);
+			fieldNode.put("text", hierarchy.getName());
+			fieldNode.put("leaf", false);
+
+			if(hierarchy.getIsDefault()){
+				fieldNode.put("cls", "default_hierarchy");
+			}
+			JSONArray jsonlevels = new JSONArray();
+
+			List<HierarchyLevel> levels = hierarchy.getLevels();
+			Iterator<HierarchyLevel> levelsIterator = levels.iterator();
+			while (levelsIterator.hasNext() ) {
+				HierarchyLevel level = levelsIterator.next();
+				JSONObject jsObject = new JSONObject();
+				jsObject.put("text", level.getName());
+				jsObject.put("leaf", true);
+				if(jsObject != null) {
+					jsonlevels.put( jsObject );
+				}
+			}
+
+			fieldNode.put("children", jsonlevels);
+
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -15,8 +15,12 @@ public class HierarchicalDimensionField extends ModelField{
 	private List<Hierarchy> hierarchies;
 
 
-	public HierarchicalDimensionField(String name) {
+	public HierarchicalDimensionField() {
+	}
+
+	public HierarchicalDimensionField(String name, String entity) {
 		setName(name);
+		setEntity(entity);
 		setHierarchies(new ArrayList<Hierarchy>());
 	}
 

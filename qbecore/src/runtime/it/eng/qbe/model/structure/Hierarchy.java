@@ -10,11 +10,13 @@ import java.util.List;
 
 public class Hierarchy {
 	private String name;
+	private Boolean isDefault;
 	private List<HierarchyLevel> levels;
 
 
-	public Hierarchy(String name) {
+	public Hierarchy(String name, Boolean isDefault) {
 		setName(name);
+		setIsDefault(isDefault);
 	}
 
 	/**
@@ -40,6 +42,20 @@ public class Hierarchy {
 	 */
 	public void setLevels(List<HierarchyLevel> levels) {
 		this.levels = levels;
+	}
+
+	/**
+	 * @return the isDefault
+	 */
+	public Boolean getIsDefault() {
+		return isDefault;
+	}
+
+	/**
+	 * @param isDefault the isDefault to set
+	 */
+	public void setIsDefault(Boolean isDefault) {
+		this.isDefault = isDefault;
 	}
 
 

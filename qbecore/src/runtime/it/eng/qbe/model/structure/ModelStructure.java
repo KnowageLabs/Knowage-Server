@@ -359,6 +359,12 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		calculatedFiledsOnTargetEntity.add(calculatedFiled);
 	}
 
+	public void addHierarchicalDimensionField(String entityName, HierarchicalDimensionField hierarchicalDimensionField) {
+		if(!hierarchicalDimensions.containsKey(entityName)) {
+			hierarchicalDimensions.put(entityName, new HierarchicalDimensionField());
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see it.eng.qbe.model.structure.IModelStructure#removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled)

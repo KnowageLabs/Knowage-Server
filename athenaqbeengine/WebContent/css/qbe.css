@@ -87,28 +87,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  ********************************************************************************************************/
   
 .calculation {
-	 background-image:url(../img/datamartstructure/calculation.gif) !important;
+	background-image:url(../img/datamartstructure/calculation.gif) !important;
 }
 
 .measure {
-	 background-image:url(../img/datamartstructure/measure.gif) !important;
+	background-image:url(../img/datamartstructure/measure.gif) !important;
 }
 
 .attribute {
-	 background-image:url(../img/datamartstructure/attribute.gif) !important;
+	background-image:url(../img/datamartstructure/attribute.gif) !important;
 }
 
 .relation {
-	 background-image:url(../img/datamartstructure/relation.gif) !important;
+	background-image:url(../img/datamartstructure/relation.gif) !important;
 }
 
 .time_dimension {
-	 background-image:url(../img/timeIcon.gif) !important;
+	background-image:url(../img/timeIcon.gif) !important;
 }
 .temporal_dimension {
-	 background-image:url(../img/calendar.gif) !important;
+	background-image:url(../img/calendar.gif) !important;
 }
-
+.default_hierarchy {
+	font-weight: bold;
+}
 .segment_attribute {
 background-image:url(../img/datamartstructure/attribute.gif) !important;
 }

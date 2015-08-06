@@ -224,9 +224,6 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 		}
 		return filteredCalculatedFields;
 	}
-	public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() {
-		return null;
-	}
 	public List<ModelCalculatedField> getCalculatedFieldsByEntity(
 			String entityName) {
 		return qbeTreeFilter.filterFields(dataSource,wrappedModelStructure.getCalculatedFieldsByEntity(entityName));
@@ -240,6 +237,16 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 	public void addCalculatedField(String entityName,
 			ModelCalculatedField calculatedFiled) {
 		wrappedModelStructure.addCalculatedField(entityName, calculatedFiled);
+
+	}
+
+	public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() {
+		return null;
+	}
+
+	public void addHierarchicalDimensionField(String entityName,
+			HierarchicalDimensionField hierarchicalDimensionFiled) {
+		wrappedModelStructure.addHierarchicalDimensionField(entityName, hierarchicalDimensionFiled);
 
 	}
 

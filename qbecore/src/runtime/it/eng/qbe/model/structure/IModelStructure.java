@@ -186,6 +186,8 @@ public interface IModelStructure extends IModelObject {
 
 		public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() ;
 
+		public void addHierarchicalDimensionField(String entityName, HierarchicalDimensionField hierarchicalDimensionField) ;
+
 		public void setMaxRecursionLevel(int maxRecursionLevel);
 
 		public int getMaxRecursionLevel();

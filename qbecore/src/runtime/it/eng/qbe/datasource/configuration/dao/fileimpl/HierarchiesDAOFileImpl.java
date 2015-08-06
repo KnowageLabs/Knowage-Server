@@ -10,10 +10,6 @@ import it.eng.qbe.datasource.configuration.dao.IHierarchiesDAO;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
 import it.eng.qbe.model.structure.Hierarchy;
 import it.eng.qbe.model.structure.HierarchyLevel;
-import it.eng.qbe.model.structure.ModelCalculatedField.Slot;
-import it.eng.qbe.model.structure.ModelCalculatedField.Slot.IMappedValuesDescriptor;
-import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesPunctualDescriptor;
-import it.eng.qbe.model.structure.ModelCalculatedField.Slot.MappedValuesRangeDescriptor;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -27,21 +23,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 
-/**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- */
 public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 
 	protected File modelJarFile;
@@ -62,16 +53,6 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 	public final static String FIELD_TAG_TYPE_ATTR = "type";
 	public final static String FIELD_TAG_NATURE_ATTR = "nature";
 	public final static String FIELD_TAG_IN_LINE_ATTR = "isInLine";
-
-	public final static String EXPRESSION_TAG = "EXPRESSION";
-	public final static String SLOTS_TAG = "SLOTS";
-	public final static String SLOT_TAG = "SLOT";
-
-	public final static String VALUESET_TAG = "VALUESET";
-	public final static String FROM_TAG = "FROM";
-	public final static String TO_TAG = "TO";
-	public final static String VALUE_TAG = "VALUE";
-
 
 
 
@@ -135,38 +116,21 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 					name = dimensionFieldNode.valueOf("@" + FIELD_TAG_NAME_ATTR);
 					entity = dimensionFieldNode.valueOf("@" + FIELD_TAG_ENTIY_ATTR);
 
-					hierarchicalDimensionField = new HierarchicalDimensionField(name);
-
+					hierarchicalDimensionField = new HierarchicalDimensionField(name,entity);
 
 					// parse hierarchies
 					List<Hierarchy> hierarchies = loadHierarchies(dimensionFieldNode);
 					hierarchicalDimensionField.setHierarchies(hierarchies);
 
-//					if(hierarchies.size() > 0) {
-//						String defaultSlotValue = loadDefaultSlotValue(calculatedFieldNode);
-//						hierarchicalDimensionField.setDefaultSlotValue(defaultSlotValue);
-//					}
 					hierarchicalDimensionFieldsMap.put(entity, hierarchicalDimensionField);
 
 //					if(!hierarchicalDimensionFieldsMap.containsKey(entity)) {
 //						hierarchicalDimensionFieldsMap.put(entity, new ArrayList<HierarchicalDimensionField>());
 //					}
 
-//					hierarchicalDimension = hierarchicalDimensionFieldsMap.get(entity);
-//					ModelCalculatedField calculatedFieldToRemove = null;
-//					for(HierarchicalDimensionField cf : dimension) {
-//						if(cf.getName().equals(hierarchicalDimensionField.getName())) {
-//							calculatedFieldToRemove = cf;
-//							break;
-//						}
-//					}
-//
-//					if(calculatedFieldToRemove != null) {
-//						logger.debug("Calculated field [" + calculatedFieldToRemove.getName() + "] already defined. The old version will be replaced with this one");
-//					}
 //					hierarchicalDimensions.add(hierarchicalDimensionField);
 
-//					logger.debug("Calculated filed [" + hierarchicalDimensionField.getName() + "] loaded succesfully");
+					logger.debug("Hierarchical dimension field [" + hierarchicalDimensionField.getName() + "] loaded succesfully");
 				}
 			} else {
 				logger.debug("File [" + hierarchicalDimensionsFile + "] does not exist. No calculated fields have been loaded.");
@@ -208,7 +172,8 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 
 	private Hierarchy loadHierarchy(Node hierarchyNode){
 		String name = hierarchyNode.valueOf("@name");
-		Hierarchy hierarchy = new Hierarchy(name);
+		Boolean isDefault = Boolean.getBoolean(hierarchyNode.valueOf("@default"));
+		Hierarchy hierarchy = new Hierarchy(name,isDefault);
 		List<?> levelNodes = hierarchyNode.selectNodes(LEVEL_TAG);
 
 		List<HierarchyLevel> levels = new ArrayList<HierarchyLevel>();
@@ -220,37 +185,9 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 			HierarchyLevel level = new HierarchyLevel(levelName, levelColumn, levelType);
 			levels.add(level);
 		}
+		hierarchy.setLevels(levels);
 		return hierarchy;
 
-	}
-
-
-	public void saveValueSets(Slot slot, Element slotElement) {
-		List<IMappedValuesDescriptor> descriptors = slot.getMappedValuesDescriptors();
-		for(IMappedValuesDescriptor descriptor : descriptors) {
-			Element valuesetElement = slotElement.addElement(VALUESET_TAG);
-
-			if(descriptor instanceof MappedValuesPunctualDescriptor) {
-				MappedValuesPunctualDescriptor punctualDescriptor = (MappedValuesPunctualDescriptor)descriptor;
-				valuesetElement.addAttribute("type", "punctual");
-				Set<String> values = punctualDescriptor.getValues();
-				for(String value : values) {
-					valuesetElement.addElement(VALUE_TAG).addAttribute("value", value);
-				}
-			} else if(descriptor instanceof MappedValuesRangeDescriptor) {
-				MappedValuesRangeDescriptor rangeDescriptor = (MappedValuesRangeDescriptor)descriptor;
-				valuesetElement.addAttribute("type", "range");
-				valuesetElement.addElement(FROM_TAG)
-					.addAttribute("value", rangeDescriptor.getMinValue())
-					.addAttribute("include", "" + rangeDescriptor.isIncludeMinValue());
-				valuesetElement.addElement(TO_TAG)
-					.addAttribute("value", rangeDescriptor.getMaxValue())
-					.addAttribute("include", "" + rangeDescriptor.isIncludeMaxValue());
-			} else {
-				throw new DAOException("An unpredicetd error occurred while saving valueset of slot [" + slot.getName() + "]");
-			}
-
-		}
 	}
 
 

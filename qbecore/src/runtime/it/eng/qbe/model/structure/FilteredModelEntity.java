@@ -151,8 +151,15 @@ public class FilteredModelEntity implements IModelEntity{
 		wrappedModelEntity.deleteCalculatedField(fieldName);
 	}
 
-	public List<HierarchicalDimensionField> getHierarchicalDimensionFields() {
-		return qbeTreeFilter.filterFields(dataSource, wrappedModelEntity.getHierarchicalDimensionFields());
+	public HierarchicalDimensionField getHierarchicalDimensionByEntity(String entity) {
+		ArrayList<HierarchicalDimensionField> list = new ArrayList<HierarchicalDimensionField>();
+		HierarchicalDimensionField dimension = wrappedModelEntity.getHierarchicalDimensionByEntity(entity);
+		if(dimension != null){
+			list.add(dimension);
+			return (HierarchicalDimensionField) qbeTreeFilter.filterFields(dataSource, list).get(0);
+		}else{
+			return null;
+		}
 	}
 
 	public void addHierarchicalDimension(HierarchicalDimensionField hierarchicalDimensionField){

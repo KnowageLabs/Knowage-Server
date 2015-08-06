@@ -44,7 +44,7 @@ public interface IModelEntity extends IModelNode {
 		public void addCalculatedField(ModelCalculatedField calculatedField);
 		public void deleteCalculatedField(String fieldName);
 
-		public List<HierarchicalDimensionField> getHierarchicalDimensionFields();
+		public HierarchicalDimensionField getHierarchicalDimensionByEntity(String entity);
 		public void addHierarchicalDimension(HierarchicalDimensionField hierarchicalDimensionField);
 
 		public IModelEntity addSubEntity(String subEntityName, String subEntityRole, String subEntityType) ;
