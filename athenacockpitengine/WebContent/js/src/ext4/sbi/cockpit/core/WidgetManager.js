@@ -306,7 +306,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
 		this.selections = {};
 	
-    	this.setChartEngineSelections(this.selections);
+    	this.clearSelectionOnChartWidgets();
 
 		this.fireEvent('selectionChange');
 		Sbi.storeManager.loadAllStores();
@@ -611,65 +611,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		Sbi.trace("[SelectionsPanel.getSelectionsByAssociations]: OUT");
 
 		return selectionsByAssociations;
-	}
-	
-	/**
-	 * Set selections for chart engine widgets
-	 */
-	, setChartEngineSelections: function(selections, widget){		
-		
-		var widgets;
-		var widgetsLength;
-		var flag;
-		
-		if(Sbi.isValorized(widget)){
-			widgets = this.getWidgetsByStore(widget.getStoreId());
-			flag = true;
-		} else {
-			widgets = this.widgets;
-			flag = false;
-		}
-		
-		for(var i = 0; i < widgets.getCount(); i++) {
-			var widget = widgets.get(i);
-			
-			if(Sbi.isValorized(widget) && widget.wtype === Sbi.constants.cockpit.chart){
-				widget.setChartEngineSelection(selections, flag);
-			}
-		}		
-	}
-	
-	/**
-	 * Set selections for chart engine widgets with associations
-	 */
-	, setChartEngineAssociationsSelections: function(associationGroup, selections, widget){		
-		
-		var widgets;
-		var widgetsLength;
-		var flag;
-		
-		for(var j = 0; j < associationGroup.datasets.length; j++){
-			
-			var tmpStoreId = associationGroup.datasets[j];
-			
-			if(tmpStoreId != widget.storeId){
-				widgets = this.getWidgetsByStore(tmpStoreId);
-				flag = true;
-				
-				for(var i = 0; i < widgets.getCount(); i++) {
-					var widget = widgets.get(i);
-					
-					if(Sbi.isValorized(widget) && widget.wtype === Sbi.constants.cockpit.chart){
-						widget.setChartEngineSelection(selections, flag);
-						widget.setChartEngineAssociations(associationGroup, flag);	
-					}
-				}
-			}
-		}	
-	}
-		
-
-		
+	}	
 
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
@@ -721,7 +663,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
     	}
     	
-    	this.setChartEngineAssociationsSelections(associationGroup, selections, widget);
+    	this.setChartWidgetsAssociationsSelections(associationGroup, selections, widget);
 
     	//alert("[WidgetManager.applySelectionsOnAssociationGroup]: " + Sbi.toSource(selections));
 
@@ -747,8 +689,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	if(Sbi.isValorized(associationGroup)) {
     		this.applySelectionsOnAssociationGroup(associationGroup);
     	} else {
-        	var selectionsForChart = this.getSelectionsByStores();
-        	this.setChartEngineSelections(selectionsForChart, widget);
+        	this.setChartWidgetsSelections(this, widget);
     		this.applySelectionsOnAggregation(widget.getStore());
     	}
 
@@ -756,6 +697,81 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
     }
+    
+	/**
+	 * Set selections for chart widgets
+	 */
+	, setChartWidgetsSelections: function(widgetManager, widget){				
+		
+		var selections = widgetManager.getSelectionsByStores();
+		
+		if(Sbi.isValorized(widget)){
+			var widgetContainer = widget.getParentContainer();
+			
+			if(widgetContainer != null && Sbi.isValorized(widgetContainer.ownerCt)){
+				
+				var widgetContainerList = widgetContainer.ownerCt.widgetContainerList;
+				
+				widgetContainerList.forEach(function(tempWc, index){
+					
+					var widgets = tempWc.getWidgetManager().getWidgetsByStore(widget.getStoreId());
+					
+					for(var i = 0; i < widgets.getCount(); i++) {
+						var tmpWidget = widgets.get(i);
+						if(Sbi.isValorized(tmpWidget) && tmpWidget.wtype === Sbi.constants.cockpit.chart){
+							tmpWidget.setChartEngineSelection(selections, true);
+						}
+					}					
+				});			
+			}
+		} 	
+	}
+	
+	/**
+	 * Set selections for chart widgets with associations
+	 */
+	, setChartWidgetsAssociationsSelections: function(associationGroup, selections, widget){			
+			
+		if(Sbi.isValorized(widget)){
+			var widgetContainer = widget.getParentContainer();
+			
+			if(widgetContainer != null && Sbi.isValorized(widgetContainer.ownerCt)){
+				
+				var widgetContainerList = widgetContainer.ownerCt.widgetContainerList;
+				
+				widgetContainerList.forEach(function(tempWc, index){
+					
+					for(var j = 0; j < associationGroup.datasets.length; j++){
+						
+						var tmpStoreId = associationGroup.datasets[j];
+						
+						var widgets = tempWc.getWidgetManager().getWidgetsByStore(tmpStoreId);
+					
+						for(var i = 0; i < widgets.getCount(); i++) {
+							var tmpWidget = widgets.get(i);
+							if(Sbi.isValorized(tmpWidget) && tmpWidget.wtype === Sbi.constants.cockpit.chart){
+								tmpWidget.setChartEngineSelection(selections, true);
+								tmpWidget.setChartEngineAssociations(associationGroup, true);
+							}
+						}
+					}
+				});			
+			}
+		}
+	}
+	
+	, clearSelectionOnChartWidgets: function(){
+		
+		var widgets = this.widgets;
+		
+		for(var i = 0; i < widgets.getCount(); i++) {
+			var widget = widgets.get(i);
+			
+			if(Sbi.isValorized(widget) && widget.wtype === Sbi.constants.cockpit.chart){
+				widget.setChartEngineSelection(this.selections, false);
+			}
+		}
+	}
 
 
 

@@ -508,7 +508,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			Sbi.trace("You have to define the widget before confirming");
 			Ext.Msg.show({
 				title: 'Warning',
-				msg: LN('Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'),
+				msg: LN('sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'),
 				buttons: Ext.Msg.OK,
 				icon: Ext.MessageBox.WARNING
 			});

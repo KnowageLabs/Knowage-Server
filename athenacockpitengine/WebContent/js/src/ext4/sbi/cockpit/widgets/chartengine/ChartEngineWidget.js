@@ -20,15 +20,9 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidget = function(config) {
 	Ext.apply(this, c);
 	
 	this.aggregations = this.wconf.aggregations;
-
-	this.iFrameId = Ext.id();
-	
-	this.createContent();
 	
 	c = {
 			layout: 'fit',
-			height: 500,
-			items: [this.iFrameContent]
 		};
 	
 	// constructor
@@ -55,12 +49,8 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
-
-	widgetContent: null,
 	
 	iFrameContent: null,
-	
-	iFrameId: null,
 	
 	selections: null,
 	
@@ -98,53 +88,60 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
 
-	, createContent: function() {
+	, createContent: function(responseText) {
 		
     	Sbi.trace("[ChartEngineWidget.createContent]: IN");
     	    	
-    	var chartRuntimeUrl = Sbi.config.chartRuntimeUrl;
-    	
-    	var widgetData = this.getWidgetDataAsJson();
-    	
-    	var charTemplate = 	
-    	
-    	this.widgetContent = Ext.create('Ext.form.FormPanel',{
-    		standardSubmit: true,
-    		url: chartRuntimeUrl,
-    		border: false,
-    		hideBorders: true,
-    		items: 
-    		[
-    	    {
-    	        xtype: 'hiddenfield',
-    	        name: 'widgetData',
-    	        value: Ext.JSON.encode(widgetData)
-    	    }
-    		]
-    	});
-    	
-		this.iFrameContent = Ext.create('Ext.panel.Panel',{
+    	this.iFrameContent = Ext.create('Ext.panel.Panel',{
 		    autoScroll: true,		    
-		    html: '<iframe name="' + this.iFrameId + '"  src="" width="100%" height="100%"></iframe>',
-		    listeners: {
-                render: function () {
-                    this.up('window').body.mask('Loading...');
-                },
-                afterrender: function () {
-                	
-                	var thePanel = this;
-                	
-                	var el = this.getEl();
-    				var iFrameHTML = Ext.DomQuery.selectNode("iframe", el.dom);
-    				
-    				iFrameHTML.onload = function () {
-    					thePanel.up('window').body.unmask();
-                    };
-                }
-            }
+		    html: '<iframe src="" width="100%" height="100%" frameborder="no"></iframe>',
 		});
+    	
+		if(this.items){
+			this.items.each( function(item) {
+				this.items.remove(item);
+				item.destroy();
+			}, this);
+		}
 		
+		this.add(this.iFrameContent);
+		
+		var el = this.getEl();
+		var iFrameHTML = Ext.DomQuery.selectNode("iframe", el.dom);
+		iFrameHTML.contentWindow.document.open();
+		iFrameHTML.contentWindow.document.write(responseText);
+		iFrameHTML.contentWindow.document.close();
+		
+		this.doLayout();
+		
+		this.up().body.unmask();
+    	
 		Sbi.trace("[ChartEngineWidget.createContent]: OUT");
+	}
+	
+	, chartEngineServicePostCall: function(){
+		
+		var wData = this.getWidgetDataAsJson();
+		
+		var thePanel = this;
+		
+		Ext.Ajax.request 
+	    ({ 
+	        url: Sbi.config.chartRuntimeUrl, 
+	        method: 'POST',
+	        params: {
+	        	widgetData: Ext.JSON.encode(wData)
+	        },
+	        scope: thePanel,
+	        success: function(response){
+	        	this.successFunction(response.responseText);
+	        },
+			failure: function(response){
+					this.failureFunction();				
+			}
+	    });
+		
+		this.up().body.mask('Loading...');
 	}
 	
 	, getFieldMetaByValue: function(fieldValue) {
@@ -206,12 +203,9 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	
 	, onStoreLoad: function() {
 		Sbi.trace("[ChartEngineWidget.onStoreLoad]: IN");
-		Sbi.cockpit.widgets.extjs.abstractchart.AbstractChartWidgetRuntime.superclass.onStoreLoad.call(this, this.getStore());
 		
-    	this.createContent();
-		
-		var form = this.widgetContent.getForm();				
-		form.submit({target: this.iFrameId});
+		this.chartEngineServicePostCall();
+		Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.onStoreLoad.call(this, this.getStore());
 		
      	Sbi.trace("[ChartEngineWidget.onStoreLoad]: OUT");
 	}
@@ -219,20 +213,23 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	, refresh:  function() {
     	Sbi.trace("[ChartEngineWidget.refresh]: IN");
 		
-    	this.createContent();
-		
-		var form = this.widgetContent.getForm();				
-		form.submit({target: this.iFrameId});
-
-		this.doLayout();
-		this.up('window').body.mask('Loading...');
+    	this.chartEngineServicePostCall();
 
 		Sbi.trace("[ChartEngineWidget.refresh]: OUT");
 	}
+	
+	, successFunction: function(responseText) {
+		
+		this.createContent(responseText);		
+		
+    }
+	
+	, failureFunction: function() {
+		Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.cockpit.widgets.chartengine.chartEngine.serverError'), 'Server Error');
+		this.up().body.unmask();
+    }
 
 });
-
-
 
 
 Sbi.registerWidget(Sbi.constants.cockpit.chart, {
