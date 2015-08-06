@@ -179,22 +179,46 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance = ChartEngine.createInstance(chartTemplate, getIOManager().getEnv());
 				engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
-				if (!jsonWidgetDataIn.isNull("aggregations") && jsonWidgetDataIn.getString("aggregations") != null) {
-					engineInstance.getEnv().put("AGGREGATIONS", jsonWidgetDataIn.getString("aggregations"));
-				}
+				if (!jsonWidgetDataIn.isNull("aggregations") && jsonWidgetDataIn.get("aggregations") != null) {
 
-				if (!jsonWidgetDataIn.isNull("selections") && jsonWidgetDataIn.getString("selections") != null
-						&& !jsonWidgetDataIn.getString("selections").equals("")) {
+					String aggregations = null;
 
-					if (!jsonWidgetDataIn.isNull("associations") && jsonWidgetDataIn.getString("associations") != null) {
-						JSONObject selections = ChartEngineUtil.cockpitSelectionsFromAssociations(request, jsonWidgetDataIn.getString("selections"),
-								jsonWidgetDataIn.getString("associations"), datasetLabel);
-						Assert.assertNotNull(selections, "Invalid values for [selections] param");
-						engineInstance.getEnv().put("SELECTIONS", selections.toString());
-					} else {
-						engineInstance.getEnv().put("SELECTIONS", jsonWidgetDataIn.getString("selections"));
+					if (jsonWidgetDataIn.get("aggregations") instanceof String) {
+						aggregations = jsonWidgetDataIn.getString("aggregations");
+					} else if (jsonWidgetDataIn.get("aggregations") instanceof JSONObject) {
+						aggregations = jsonWidgetDataIn.getJSONObject("aggregations").toString();
 					}
 
+					engineInstance.getEnv().put("AGGREGATIONS", aggregations);
+				}
+
+				if (!jsonWidgetDataIn.isNull("selections") && jsonWidgetDataIn.get("selections") != null) {
+					String selections = null;
+
+					if (jsonWidgetDataIn.get("selections") instanceof String) {
+						selections = jsonWidgetDataIn.getString("selections");
+					} else if (jsonWidgetDataIn.get("selections") instanceof JSONObject) {
+						selections = jsonWidgetDataIn.getJSONObject("selections").toString();
+					}
+
+					if (!selections.equals("")) {
+						if (!jsonWidgetDataIn.isNull("associations") && jsonWidgetDataIn.get("associations") != null) {
+							String associations = null;
+
+							if (jsonWidgetDataIn.get("associations") instanceof String) {
+								associations = jsonWidgetDataIn.getString("associations");
+							} else if (jsonWidgetDataIn.get("associations") instanceof JSONObject) {
+								associations = jsonWidgetDataIn.getJSONObject("associations").toString();
+							}
+
+							JSONObject jsonSelections = ChartEngineUtil.cockpitSelectionsFromAssociations(request, selections, associations, datasetLabel);
+							Assert.assertNotNull(jsonSelections, "Invalid values for [selections] param");
+							engineInstance.getEnv().put("SELECTIONS", jsonSelections.toString());
+						} else {
+							engineInstance.getEnv().put("SELECTIONS", selections);
+						}
+
+					}
 				}
 
 				if (!jsonWidgetDataIn.isNull("widgetId") && jsonWidgetDataIn.getString("widgetId") != null) {
