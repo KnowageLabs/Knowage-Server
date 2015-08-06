@@ -42,12 +42,12 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			@FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
 		try {
 			ChartEngineInstance engineInstance = getEngineInstance();
-			if (driverParams != null && !driverParams.isEmpty()) {
-				refreshDriverParams(getEngineInstance().getEnv(), driverParams);
-				engineInstance = ChartEngine.createInstance(jsonTemplate, getEngineInstance().getEnv());
-			}
 			IDataSet dataSet = engineInstance.getDataSet();
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
+			if (driverParams != null && !driverParams.isEmpty()) {
+				refreshDriverParams(analyticalDrivers, driverParams);
+				engineInstance = ChartEngine.createInstance(jsonTemplate, getEngineInstance().getEnv());
+			}
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 
 			if (StringUtilities.isEmpty(jsonData)) {

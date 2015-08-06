@@ -149,16 +149,16 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		var records = store.getRange();
 		var column;
 		
-		outerloop: for(var r in records) {
-			var tmpData = records[r].getData();
+		outerloop: for(var i = 0; i < records.length; i++) {
+				
+			var tmpData = records[i].getData();
 			
 			for (var key in tmpData) {
-				  if (tmpData[key] === fieldValue) {
-					  column = key;
-					  break outerloop;
-				  }
+				if (tmpData[key] === fieldValue) {
+					column = key;
+					break outerloop;
+				}
 			}
-			
 		}
 		
 		var fieldMeta = this.getFieldMetaByName(column);

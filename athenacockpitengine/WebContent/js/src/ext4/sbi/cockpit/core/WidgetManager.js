@@ -639,7 +639,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	Sbi.trace("[WidgetManager.onDeselectionOnAssociation]: OUT");
     }
 
-    , applySelectionsOnAssociationGroup: function(associationGroup) {
+    , applySelectionsOnAssociationGroup: function(associationGroup, docOnly) {
     	Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: IN");
 
     	if(Sbi.isNotValorized(associationGroup)) {
@@ -651,24 +651,24 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	for(var widgetId in this.selections)  {
     		var selectionsOnWidget = this.selections[widgetId];    		
     		var widget = this.getWidget(widgetId);
-    		
-			Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: widget [" + widgetId +"] allow selection on field [" + widget.fieldsSelectionEnabled+ "]");
-			if(widget && widget.fieldsSelectionEnabled === true) {
-				for(var fieldHeader in selectionsOnWidget) {
-	    			if(Sbi.isNotValorized(selections[fieldHeader]) && selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0){
-	    				selections[widget.getStore().storeId  + "." + fieldHeader] = selectionsOnWidget[fieldHeader].values;
-	    			}
-	    		}
-			}
+    		Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: widget [" + widgetId +"] allow selection on field [" + widget.fieldsSelectionEnabled+ "]");
+    		if(widget && widget.fieldsSelectionEnabled === true) {
+    			for(var fieldHeader in selectionsOnWidget) {
+    				if(Sbi.isNotValorized(selections[fieldHeader]) && selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0){
+    					selections[widget.getStore().storeId  + "." + fieldHeader] = selectionsOnWidget[fieldHeader].values;
+    				}
+    			}
+    		}
 
     	}
     	
-    	this.setChartWidgetsAssociationsSelections(associationGroup, selections, widget);
+    	this.setChartWidgetsAssociationsSelections(associationGroup, selections, widget, docOnly);
 
     	//alert("[WidgetManager.applySelectionsOnAssociationGroup]: " + Sbi.toSource(selections));
-
-
-    	Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+    	
+    	if(!docOnly){
+    		Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
+    	}
     	Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: OUT");
     }
 
@@ -687,7 +687,13 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	var associationGroup = Sbi.storeManager.getAssociationGroupByStore( widget.getStore() );
 
     	if(Sbi.isValorized(associationGroup)) {
-    		this.applySelectionsOnAssociationGroup(associationGroup);
+    		if(this.hasOnlyDocumentAssociations(associationGroup)){
+    			this.applySelectionsOnAssociationGroup(associationGroup, true);
+    			this.setChartWidgetsSelections(this, widget);
+        		this.applySelectionsOnAggregation(widget.getStore());
+    		}else{
+    			this.applySelectionsOnAssociationGroup(associationGroup);
+    		}
     	} else {
         	this.setChartWidgetsSelections(this, widget);
     		this.applySelectionsOnAggregation(widget.getStore());
@@ -697,7 +703,6 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
     	Sbi.trace("[WidgetManager.onSelection]: OUT");
     }
-    
 	/**
 	 * Set selections for chart widgets
 	 */
@@ -730,7 +735,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	/**
 	 * Set selections for chart widgets with associations
 	 */
-	, setChartWidgetsAssociationsSelections: function(associationGroup, selections, widget){			
+	, setChartWidgetsAssociationsSelections: function(associationGroup, selections, widget, docOnly){			
 			
 		if(Sbi.isValorized(widget)){
 			var widgetContainer = widget.getParentContainer();
@@ -742,18 +747,20 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 				widgetContainerList.forEach(function(tempWc, index){
 					
 					for(var j = 0; j < associationGroup.datasets.length; j++){
-						
-						var tmpStoreId = associationGroup.datasets[j];
-						
-						var widgets = tempWc.getWidgetManager().getWidgetsByStore(tmpStoreId);
-					
-						for(var i = 0; i < widgets.getCount(); i++) {
-							var tmpWidget = widgets.get(i);
-							if(Sbi.isValorized(tmpWidget) && tmpWidget.wtype === Sbi.constants.cockpit.chart){
-								tmpWidget.setChartEngineSelection(selections, true);
-								tmpWidget.setChartEngineAssociations(associationGroup, true);
+//						if(!docOnly){
+							var tmpStoreId = associationGroup.datasets[j];
+							
+							var widgets = tempWc.getWidgetManager().getWidgetsByStore(tmpStoreId);
+							
+							for(var i = 0; i < widgets.getCount(); i++) {
+								var tmpWidget = widgets.get(i);
+								if(Sbi.isValorized(tmpWidget) && tmpWidget.wtype === Sbi.constants.cockpit.chart){
+									tmpWidget.setChartEngineSelection(selections, true);
+									tmpWidget.setChartEngineAssociations(associationGroup, true);
+								}
 							}
-						}
+//						}
+						tempWc.getWidgetManager().propagateAssociationsToDocumentWidgets(selections, associationGroup);
 					}
 				});			
 			}
@@ -767,14 +774,56 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		for(var i = 0; i < widgets.getCount(); i++) {
 			var widget = widgets.get(i);
 			
-			if(Sbi.isValorized(widget) && widget.wtype === Sbi.constants.cockpit.chart){
-				widget.setChartEngineSelection(this.selections, false);
+			if(Sbi.isValorized(widget)){
+				if(widget.wtype === Sbi.constants.cockpit.chart){
+					widget.setChartEngineSelection(this.selections, false);
+				}
 			}
 		}
 	}
 
-
-
+	/**
+	 * TODO to insert comment here
+	 */
+	, hasOnlyDocumentAssociations: function(associationGroup){
+		var associations = associationGroup.associations;
+		var ret = true;
+		for(var i = 0; i < associations.length; i++){
+			var fields = associations[i].fields;
+			var docFound = false;
+			for(var j = 0; j < fields.length; j++){
+				if(fields[j].store.indexOf(Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX)==0){
+					docFound = true;
+					break;
+				}
+			}
+			if(docFound==false){
+				ret = false;
+				break;
+			}
+		}
+		return ret;
+    }
+	, propagateAssociationsToDocumentWidgets: function(selections, associationGroup){
+		var widgets = this.getDocumentWidgets();
+		for(var i = 0; i < widgets.getCount(); i++) {
+			var widget = widgets.get(i);
+			widget.setExternalParameters(selections, associationGroup);
+			widget.refresh();
+		}
+	}
+	, getDocumentWidgets: function(){
+		Sbi.trace("[WidgetManager.getDocumentWidgets]: IN");
+		var toReturn = new Ext.util.MixedCollection();
+		for(var i=0; i < this.widgets.getCount(); i++) {
+			var w = this.widgets.get(i);
+			if (w.wtype == Sbi.constants.cockpit.document){
+				toReturn.add(w);
+			}
+		}
+		return toReturn;
+		Sbi.trace("[WidgetManager.getDocumentWidgets]: OUT");
+	}
     // -----------------------------------------------------------------------------------------------------------------
     // init methods
 	// -----------------------------------------------------------------------------------------------------------------

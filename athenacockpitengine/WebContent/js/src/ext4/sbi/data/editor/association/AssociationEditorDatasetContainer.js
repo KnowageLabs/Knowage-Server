@@ -34,13 +34,24 @@ Ext.define('Sbi.data.editor.association.AssociationEditorDatasetContainer', {
 		var items = new Array();
 
 		for (var i=0; i < this.stores.length; i++){
+			var storeId = this.stores[i];
+			if(storeId.indexOf(Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX)==0){
+				var item = new Sbi.data.editor.association.AssociationEditorDocument({
+					border: false,
+					height : 225,
+					width : 180,
+					dataset: storeId
+				});
+				items.push(item);
+			} else {
 				var item = new Sbi.data.editor.association.AssociationEditorDataset({
 					border: false,
 					height : 225,
 					width : 180,
-					dataset: this.stores[i]
+					dataset: storeId
 				});
 				items.push(item);
+			}
 		}
 
 		this.items = items;

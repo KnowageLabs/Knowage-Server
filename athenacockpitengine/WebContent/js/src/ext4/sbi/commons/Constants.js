@@ -31,7 +31,10 @@ Sbi.commons.Constants = {
 	, NODE_TYPE_RELATION: 'relation'
 	, NODE_TYPE_CALCULATED_FIELD: 'calculatedField'
 	, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'	
-		
+	
+	// DocumentWidget uses a fake store whose storeId has this prefix
+	, DOCUMENT_WIDGET_STORE_PREFIX: 'Document#'
+	
 	, WHERE_CLAUSE_COMPARISON_FUNCTIONS: [
 	    ['NONE', LN('sbi.cockpit.filtergridpanel.foperators.name.none'), LN('sbi.cockpit.filtergridpanel.foperators.desc.none')],
 	    ['EQUALS TO', LN('sbi.cockpit.filtergridpanel.foperators.name.eq'),  LN('sbi.cockpit.filtergridpanel.foperators.desc.eq')],

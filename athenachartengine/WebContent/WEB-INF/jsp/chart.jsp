@@ -24,6 +24,7 @@ author:
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
@@ -117,6 +118,16 @@ author:
 	}
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
+    Map driverParamsMap = new HashMap();
+	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
+		if(key instanceof String && !key.equals("widgetData")){
+			String value = request.getParameter((String)key);
+			if(value!=null){
+				driverParamsMap.put(key, value);
+			}
+		}
+	}
+	String driverParams = new JSONObject(driverParamsMap).toString(0);
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -189,6 +200,7 @@ author:
  						dataReady: function(jsonData) {
  							var parameters = {
  									jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 									driverParams: '<%=driverParams%>',
  									jsonData: jsonData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
  							};
  							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
@@ -218,6 +230,7 @@ author:
  				
  				var parameters = {
  						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 						driverParams: '<%=driverParams%>'
  					};
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
  						var chartConf = Ext.JSON.decode(response.responseText, true);

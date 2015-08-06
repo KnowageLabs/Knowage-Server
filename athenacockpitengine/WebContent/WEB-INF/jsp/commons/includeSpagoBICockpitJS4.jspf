@@ -70,6 +70,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/DatasetFieldsModel.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorList.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDataset.js'/></script>
+<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDocument.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDatasetContainer.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditor.js'/></script>
 <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorPage.js'/></script>

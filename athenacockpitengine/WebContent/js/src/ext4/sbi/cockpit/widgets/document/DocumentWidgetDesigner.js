@@ -51,9 +51,9 @@ Sbi.cockpit.widgets.document.DocumentWidgetDesigner = function(config) {
 	        	var parameters = thePanel.parameters;
 	        	myParamStore.load(function(records, operation, success) {
 	        	    if(parameters){
-	        	    	Object.keys(parameters).forEach(function(key){
-	        	    		myParamStore.getById(key).set('value',parameters[key]);
-	        	    	});
+	        	    	Ext.Array.forEach( parameters, function(param){
+	        	    		myParamStore.getById(param.label).set('value',param.value);
+	            		});
 	        	    }
 	        	});
 			}
@@ -80,9 +80,9 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 		state.documentName=this.documentNameText.getValue();
 		var myParamStore = Ext.data.StoreManager.lookup('myParamStore');
 		if(myParamStore){
-			state.parameters={};
+			state.parameters=[];
 			myParamStore.each(function(rec){
-				state.parameters[rec.data.label]=rec.data.value;
+				Ext.Array.push(state.parameters,{label: rec.data.label, value: rec.data.value, fieldType: rec.data.fieldType});
 			});
 		}
 		
@@ -199,7 +199,6 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 				                }
 				        	});
 				        	myParamStore.load();
-				        	Sbi.storeManager.addStore(myParamStore);
 				        	Ext.getCmp('documentLabel').setValue(record.data.label);
 				        	Ext.getCmp('documentName').setValue(record.data.name);
 				        	Ext.getCmp('documentsWindow').close();
@@ -212,12 +211,10 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 		this.panel = Ext.create('Ext.grid.Panel', {
 			store: 'myParamStore',
 		    columns: [
-		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.paramName'),
-		        dataIndex: 'label'},
-		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.default'),
-		        dataIndex: 'value',
-		        flex: 1,
-		        editor: 'textfield'}
+		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.paramName'),dataIndex: 'label'},
+		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.paramType'),dataIndex: 'fieldType'},
+		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.default'),dataIndex: 'value',
+		        	flex: 1, editor: 'textfield'}
 		    ],
 		    selType: 'cellmodel',
 		    plugins: [
@@ -238,13 +235,6 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 			id: 'mainDocumentPanel',
 			items: items
 		});
-		
-		this.documentPanel.on('beforerender' ,
-			function (thePanel, attribute) {
-//				thePanel.refreshPanelTitle();
-			},
-			this
-		);
 	}
 	
 });
@@ -263,7 +253,8 @@ Ext.define('DocumentParamModel', {
     idProperty: 'label',
     fields: [
        {name: 'label', type: 'string'},
-       {name: 'parameterUrlName', type: 'string'}
+       {name: 'parameterUrlName', type: 'string'},
+       {name: 'fieldType', type: 'string', mapping: 'parameter.type'}
     ]
 });
 
