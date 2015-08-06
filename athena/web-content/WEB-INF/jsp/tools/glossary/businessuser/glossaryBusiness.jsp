@@ -1,17 +1,75 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="ISO-8859-1"%>
-<%@page import="java.util.Locale"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spago.message.MessageBundle"%>
-<% 
-System.out.println(request.getAttribute("LANGUAGE_ID"));
-System.out.println(request.getParameter("locale"));
-System.out.println(request.getParameter("LANGUAGE_ID"));
+<%@ page language="java" pageEncoding="utf-8" session="true"%>
 
-System.out.println(request.getLocale());
-	Locale locale =  MessageBundle.getUserLocale(); 
-	IUrlBuilder urlBuilder=UrlBuilderFactory.getUrlBuilder("WEB");
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import="it.eng.spago.base.*"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="java.util.Locale"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
+
+<%
+	RequestContainer aRequestContainer = null;
+	ResponseContainer aResponseContainer = null;
+	SessionContainer aSessionContainer = null;
+	IUrlBuilder urlBuilder = null;
+	IMessageBuilder msgBuilder = null;
+	String sbiMode = null;
+		
+	// case of portlet mode
+	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
+	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
+	if (aRequestContainer == null) {
+		// case of web mode
+		aRequestContainer = RequestContainer.getRequestContainer();
+		if(aRequestContainer == null){
+			//case of REST 
+			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+		}
+		aResponseContainer = ResponseContainer.getResponseContainer();
+		if(aResponseContainer == null){
+			//case of REST
+			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
+		}
+	}
+	
+	String channelType = aRequestContainer.getChannelType();
+	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
+	else sbiMode = "WEB";
+	
+	// create url builder 
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+	
+	// create message builder
+	msgBuilder = MessageBuilderFactory.getMessageBuilder();
+	
+	// get other spago object
+	SourceBean aServiceRequest = aRequestContainer.getServiceRequest();
+	SourceBean aServiceResponse = aResponseContainer.getServiceResponse();
+	aSessionContainer = aRequestContainer.getSessionContainer();
+	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
+	
+	// If Language is alredy defined keep it
+	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	Locale locale = null;
+	
+	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
+		locale = new Locale(curr_language, curr_country, "");
+	} else {
+		if (sbiMode.equals("PORTLET")) {
+			locale = PortletUtilities.getLocaleForMessage();
+		} else {
+			locale = MessageBuilder.getBrowserLocaleFromSpago();
+		}
+	}
+	
 %>
 
 
@@ -55,10 +113,14 @@ System.out.println(request.getLocale());
 	
 	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 
-	
+	<!-- glossary tree -->
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 	
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
+	
+	
 	
 </head>
 
@@ -95,7 +157,7 @@ System.out.println(request.getLocale());
 						<div>{{translate.load("sbi.glossary.word");}}</div>
 						<md-button ng-click="ctrl.createNewWord(false)"
 							class="md-fab   md-ExtraMini addButton" aria-label="add word"
-							style="position:absolute; right:11px;"> <md-icon
+							style="position:absolute; right:11px; top:0px;"> <md-icon
 							md-font-icon="fa fa-plus"
 							style="  margin-top: 6px ; color: white;"></md-icon> </md-button>
 					</div>
@@ -128,12 +190,12 @@ System.out.println(request.getLocale());
 
 						<ol ui-tree-nodes ng-model="ctrl.words" data-nodrop-enabled="true">
 
-							<li dir-paginate="word in ctrl.words |  itemsPerPage:	ctrl.WordItemPerPage " total-items="ctrl.totalWord" current-page="ctrl.pagination.current">
+							<li style="border: none;" dir-paginate="word in ctrl.words |  itemsPerPage:	ctrl.WordItemPerPage " total-items="ctrl.totalWord" current-page="ctrl.pagination.current">
 
 								<div ui-tree-node context-menu
 									data-target="WordMenu-{{word.WORD}}">
 
-									<div ui-tree-handle style="border: none;" >
+									<div ui-tree-handle  >
 									<i class=" dragged-icon fa fa-bars fa-2x"></i>
 									
 										<md-list > <md-list-item   ng-click="1==1"
@@ -176,16 +238,6 @@ System.out.println(request.getLocale());
 				</div>
 
 
-
-
-				<!-- 				<div> -->
-				<!-- 				<md-whiteframe class="md-whiteframe-z1  box_pagination" layout="row" -->
-				<!-- 					layout-align="center end"> <dir-pagination-controls -->
-				<!-- 					max-size="5"></dir-pagination-controls> </md-whiteframe> -->
-				<!-- 				</div> -->
-
-
-
 				<div layout="column" layout-wrap class="glossaryListBox">
 					<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
@@ -193,7 +245,7 @@ System.out.println(request.getLocale());
 						<div>{{translate.load("sbi.glossary.glossary");}}</div>
 						<md-button ng-click="ctrl.createNewGlossary($event)"
 							class="md-fab   md-ExtraMini addButton" aria-label="add word"
-							style="position:absolute; right:11px;"> <md-icon
+							style="position:absolute; right:11px; top:0px;"> <md-icon
 							md-font-icon="fa fa-plus "
 							style="  margin-top: 6px ; color: white;"></md-icon> </md-button>
 					</div>
@@ -237,7 +289,7 @@ System.out.println(request.getLocale());
 
 			</div>
 			
-			<div flex="80" offset="20"  class="rightBox_GLOSS" >
+			<div flex="80" offset="20"  class="rightBox_GLOSS md-padding" >
 
 				<!-- class="hideTabs" -->
 
@@ -246,7 +298,7 @@ System.out.println(request.getLocale());
 					<md-tab  label="Glossari"
 					md-on-select="ctrl.activeTab='Glossari'"
 					md-active="ctrl.activeTab=='Glossari'">
-					 <md-content class="md-padding" style="padding:0px;"> 
+					 <md-content  style="padding:0px;"> 
 					
 				
 				<div layout="row" layout-wrap>
@@ -260,65 +312,79 @@ System.out.println(request.getLocale());
 
 						<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">{{translate.load("sbi.glossary.select.messages");}}</p>
 							
-						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined ">
-								<div context-menu data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"	>
-												<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p>
-								</div>
+<!-- 						<div ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined "> -->
+<!-- 								<div context-menu data-target="WordTreeRoot-{{ctrl.selectedGloss.GLOSSARY_NM}}"	> -->
+<!-- 												<p>{{ctrl.selectedGloss.GLOSSARY_NM | uppercase}}</p> -->
+<!-- 								</div> -->
 								
 								
 								
-								<div class="dropdown position-fixed"
-									style="z-index: 999; margin-left: calc(-25% - 20px);  width: 200px;"
-									id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}">
-									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item
-										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)'
-										role="menuitem" tabindex="1">
-									<p>{{translate.load("sbi.glossary.messages.add.child");}}</p>
-									</md-list-item> <md-list-item
-										ng-click='ctrl.createNewGlossary($event,ctrl.selectedGloss)'
-										role="menuitem" tabindex="1">
-									<p>{{translate.load("sbi.generic.modify");}}</p>
-									</md-list-item> <md-list-item
-										ng-click='ctrl.CloneGloss($event,ctrl.selectedGloss)'
-										role="menuitem" tabindex="2">
-									<p>{{translate.load("sbi.generic.clone");}}</p>
-									</md-list-item> <md-list-item
-										ng-click='ctrl.deleteGlossary(ctrl.selectedGloss)'
-										role="menuitem" tabindex="3">
-									<p>{{translate.load("sbi.generic.delete");}}</p>
-									</md-list-item> </md-list>
-								</div>
+<!-- 								<div class="dropdown position-fixed" -->
+<!-- 									style="z-index: 999; margin-left: calc(-25% - 20px);  width: 200px;" -->
+<!-- 									id="WordTreeRoot-{{ ctrl.selectedGloss.GLOSSARY_NM }}"> -->
+<!-- 									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item -->
+<!-- 										ng-click='ctrl.newSubItem(this,ctrl.selectedGloss)' -->
+<!-- 										role="menuitem" tabindex="1"> -->
+<!-- 									<p>{{translate.load("sbi.glossary.messages.add.child");}}</p> -->
+<!-- 									</md-list-item> <md-list-item -->
+<!-- 										ng-click='ctrl.createNewGlossary($event,ctrl.selectedGloss)' -->
+<!-- 										role="menuitem" tabindex="1"> -->
+<!-- 									<p>{{translate.load("sbi.generic.modify");}}</p> -->
+<!-- 									</md-list-item> <md-list-item -->
+<!-- 										ng-click='ctrl.CloneGloss($event,ctrl.selectedGloss)' -->
+<!-- 										role="menuitem" tabindex="2"> -->
+<!-- 									<p>{{translate.load("sbi.generic.clone");}}</p> -->
+<!-- 									</md-list-item> <md-list-item -->
+<!-- 										ng-click='ctrl.deleteGlossary(ctrl.selectedGloss)' -->
+<!-- 										role="menuitem" tabindex="3"> -->
+<!-- 									<p>{{translate.load("sbi.generic.delete");}}</p> -->
+<!-- 									</md-list-item> </md-list> -->
+<!-- 								</div> -->
 
-								<!-- 						fine menu contestuale albero -->
 
-							</div>
+<!-- 							</div> -->
 							
 							
 							
-						<div id="GlossTree" ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined "
-							ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
-							data-drag-delay="500" >
+<!-- 						<div id="GlossTree" ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined " -->
+<!-- 							ui-tree="ctrl.TreeOptions" data-drag-enabled="true" -->
+<!-- 							data-drag-delay="500" > -->
 							
 
-								<ol ui-tree-nodes="options"
-									ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS"
-									ng-class="{hideChildren: collapsed}">
+<!-- 								<ol ui-tree-nodes="options" -->
+<!-- 									ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS" -->
+<!-- 									ng-class="{hideChildren: collapsed}"> -->
 									
-									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
-										ui-tree-node data-collapsed="true"
-										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_items_renderer.html'"></li>
+<!-- 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS" -->
+<!-- 										ui-tree-node data-collapsed="true" -->
+<!-- 										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_items_renderer.html'"></li> -->
 											
-									<li ng-if="ctrl.selectedGloss.SBI_GL_CONTENTS.length == 0 "
-										ng-repeat="n in [1]" data-nodrag ui-tree-node
-										class="addFiglioBox"></li>
-								</ol>
+<!-- 									<li ng-if="ctrl.selectedGloss.SBI_GL_CONTENTS.length == 0 " -->
+<!-- 										ng-repeat="n in [1]" data-nodrag ui-tree-node -->
+<!-- 										class="addFiglioBox"></li> -->
+<!-- 								</ol> -->
 							
-						</div>
+<!-- 						</div> -->
 
 
 
 
-
+					<glossary-tree
+						tree-id="GlossTree" 
+						tree-options=ctrl.TreeOptions 
+						glossary=ctrl.selectedGloss 
+						add-child="ctrl.newSubItem(scope,parent)"
+						add-word="ctrl.createNewWord(reset,parent)"
+						remove-child="ctrl.removeContents(item)"
+						modify-child="ctrl.newSubItem(scope,parent,modCont)"
+						modify-glossary="ctrl.createNewGlossary(event,glossary)"
+						clone-glossary="ctrl.CloneGloss(event,glossary)"
+						delete-glossary="ctrl.deleteGlossary(glossary)"
+						 drag-logical-node=true
+        				drag-word-node=true
+        				show-info-menu=true
+						ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined ">
+					</glossary-tree>
 
 
 
@@ -326,7 +392,7 @@ System.out.println(request.getLocale());
 					</div>
 
 				</div>
-</md-content> </md-tab> 
+					</md-content> </md-tab> 
 
 
 
@@ -341,7 +407,7 @@ System.out.println(request.getLocale());
 						<div  style="position: absolute;right: 0px" class="h100">
 						<md-button type="button" tabindex="-1" class="md-raised md-ExtraMini "  style=" margin-top: 2px;"
 							ng-click="ctrl.createNewWord(true)" >{{translate.load("sbi.browser.defaultRole.cancel");}}</md-button>
-						<md-button type="submit" class="md-raised md-ExtraMini " style=" margin-top: 2px;"
+						<md-button type="button"ng-click="ctrl.addWord(ctrl.words)" class="md-raised md-ExtraMini " style=" margin-top: 2px;"
 							ng-disabled="ctrl.newWord.DESCR.length === 0  || ctrl.newWord.WORD.length === 0">{{translate.load("sbi.browser.defaultRole.save");}}</md-button>
 					</div>
 						
@@ -351,8 +417,9 @@ System.out.println(request.getLocale());
 					<md-content class="ToolbarBox miniToolbar">
 
 
-				<form name="wordForm" class="wordForm " novalidate style="    padding-top: 4px;"
-					ng-submit=" ctrl.newWord.DESCR.length > 0  &&  ctrl.newWord.WORD.length > 0 && ctrl.addWord(ctrl.words)">
+				<form name="wordForm" class="wordForm " novalidate style="    padding-top: 4px;">
+<!-- 					ng-submit=" ctrl.newWord.DESCR.length > 0  &&  ctrl.newWord.WORD.length > 0 && ctrl.addWord(ctrl.words)" >-->
+					
 
 					<div layout="row" layout-wrap>
 						<div flex="100">
@@ -393,9 +460,9 @@ System.out.println(request.getLocale());
 						<md-icon md-font-icon="fa fa-flag-o " class="categoria"> </md-icon>
 						<md-select
 								placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.category");}}' ng-model="ctrl.newWord.CATEGORY">
-								 <md-option value="-1">{{translate.load("sbi.glossary.category");}}</md-option>
+								 <md-option value="-1">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.category");}}</md-option>
 								 <md-option
-								ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}">{{translate.load("sbi.generic.select");}} {{translate.load(ct.VALUE_NM)}}</md-option>
+								ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}"> {{translate.load(ct.VALUE_NM)}}</md-option>
 							</md-select>
 						
 					
@@ -443,10 +510,11 @@ System.out.println(request.getLocale());
 
 							<div class="linkChips">
 								<md-contact-chips ng-model="ctrl.newWord.LINK"
-									md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
+								md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
 									md-require-match="" filter-selected="true">
-								<md-chip-template > <strong>{{$chip.WORD
-									| uppercase}}</strong> </md-chip-template> </md-contact-chips>
+<!-- 								<md-chip-template > <strong>{{$chip.WORD | uppercase}}</strong> </md-chip-template>  -->
+								
+								</md-contact-chips>
 							</div>
 
 							</md-input-container>

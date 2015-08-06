@@ -1,5 +1,5 @@
 var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree',
-		'angularUtils.directives.dirPagination', 'ng-context-menu','angular_rest' ]);
+		'angularUtils.directives.dirPagination', 'ng-context-menu','angular_rest','glossary_tree' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -1083,6 +1083,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.TreeOptions = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
+			console.log("sourceNodeScope",sourceNodeScope)
+			console.log("destNodesScope",destNodesScope)
 		var isRootD=false;
 			if(destNodesScope.$parent.$type=="uiTree"){
 				isRootD=true;
@@ -1372,6 +1374,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	ctr.removeContents = function(ev) {
 		
+		console.log(ev)
+		
 		var confirm = $mdDialog.confirm().title(
 				translate.load("sbi.glossary.content.delete")).content(
 				translate.load("sbi.glossary.content.delete.message"))
@@ -1490,6 +1494,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	ctr.newSubItem = function(scope, parent, modCont) {
+		console.log(parent)
 		$mdDialog
 				.show({
 					controllerAs : "renCtrl",

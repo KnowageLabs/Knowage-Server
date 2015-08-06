@@ -43,7 +43,7 @@
 }
 
 md-toolbar.minihead {
-	  background-color: rgb(176, 190, 197);
+	background-color: rgb(176, 190, 197);
 	color: rgb(255, 255, 255);
 	height: 50px;
 	min-height: 0px;
@@ -149,68 +149,13 @@ md-toolbar.xs-head {
 
 
  
- .preloader md-progress-circular {
-	top: 50%;
-	margin-top: -25px;
-	left: 50%;
-	margin-left: -25px;
-}
+ 
 
  md-toast {
 	position: fixed !important;
 	  top: 0px !important;
 }
 
-
-.figlio_vocabolo md-list-item {
-/* 	background-color: gray; */
-	font-weight: bold;
-}
-
-.figlio_vocabolo .md-list-item-inner , .nodo_logico .md-list-item-inner ,#wordTree .md-list-item-inner{
-  width: 100%;
-  height: 100%;
-}
-
-
-.nodo_logico:hover {
-	/* 	border:2px solid rgb(232, 232, 232); !important; */
-	box-shadow: -2px -2px 7px 0px rgba(50, 50, 50, 0.09);
-}
-
-.nodo_logico md-list {
-	padding: 0px !important;
-}
-
-.addFiglioBox.angular-ui-tree-node {
-/* 		  background: rgba(224, 229, 240, 0.05) !important; */
-background: rgba(224, 229, 240, 0.05) !important;
-	top: -24px !important;
-	width: 100% !important;
-	right: 0 !important;
-	position: absolute !important;
-	  height: 24px !important;
-  display: none;
-}
-
-.hideChildren .figlioVisibile {
-	display: none !important;
-	visibility: hidden !important;
-}
-
-
-
-#GlossTree ol.angular-ui-tree-nodes li{
-		border-left: 1px dotted #D3C1C1;
-}
-
-#GlossTree .angular-ui-tree-empty{
-	display:none;
-}
-
-.angular-ui-tree-empty {
-  background-color: white !important;
-}
 
 
 
@@ -220,6 +165,12 @@ background: rgba(224, 229, 240, 0.05) !important;
 	width: 100%;
 	z-index: 99999;
 	background-color: rgba(0, 0, 0, 0.12);
+}
+.preloader md-progress-circular {
+	top: 50%;
+	margin-top: -25px;
+	left: 50%;
+	margin-left: -25px;
 }
 
 p.wrapText {
@@ -239,64 +190,8 @@ p.wrapText {
 	margin-left: 19px;
 }
 
-.angular-ui-tree-node p,
-.angular-ui-tree-node md-list-item,
-.angular-ui-tree-node md-list-item button,
-.angular-ui-tree-node md-list-item button .md-list-item-inner,
-.angular-ui-tree-node .md-ripple-container
-{
-	height: 21px !important;
-  min-height: 21px !important;
-  cursor: pointer;
-}
 
 
-.dropdown p,
-.dropdown md-list-item,
-.dropdown md-list-item button,
-.dropdown md-list-item button .md-list-item-inner,
- .dropdown .md-ripple-container
-{
-	height: 29px !important;
-	 min-height: 29px !important;
-}
- 
-  .dragged-icon i, i.dragged-icon{
-	font-size: 20px;
-	 float: left;
-/* 	  padding: 2px 0 2px 2px; */
-  padding-left: 4px;
-	  color: rgb(176, 190, 197);
-	    cursor: move;
-}
-
-
-.dragged-icon  p, .expander-icon p{
-	margin-left: 20px !important;
-	 line-height: 20px !important;
-}
-.angular-ui-tree-handle {
-/* 	border-left: 2px double #D3C1C1; */
-    padding: 4px 0px;
-    	height: 27px !important;
-  min-height: 27px !important;
-}
-
-.angular-ui-tree-placeholder {
-	background: #f0f9ff;
-	border: 2px dashed #bed2db;
-	box-sizing: border-box;
-}
-
-
-.indicator-child{
-	  border-top: 1px dotted #D3C1C1;
-  position: absolute;
-  width: 16px;
-  top: 50%;
-  margin-top: -1px;
-  left: 0px;
-}
 
 .glossaryTec{
 	  height: 100%;
@@ -428,5 +323,47 @@ height: calc(100% - 31px) !important;
 
 md-content.ToolbarBox.xsToolbar  {
 height: calc(100% - 20px) !important;
+}
+
+.dragged-icon i, i.dragged-icon {
+	    font-size: 15px;
+    float: left;
+    color: rgb(176, 190, 197);
+    cursor: move;
+    margin-top: 4px;
+}
+
+.dragged-icon  p {
+	margin-left: 20px !important;
+	line-height: 20px !important;
+}
+
+.dropdown{
+	    margin-top: -25px;
+}
+
+.dropdown md-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+.dropdown.open md-list {
+	display: block;
 }
 

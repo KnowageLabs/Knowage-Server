@@ -1,0 +1,164 @@
+.default_tree{
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+}
+
+
+
+.angular-ui-tree-node p, .angular-ui-tree-node md-list-item,
+	.angular-ui-tree-node md-list-item button, .angular-ui-tree-node md-list-item button .md-list-item-inner,
+	.angular-ui-tree-node .md-ripple-container {
+	height: 21px !important;
+	min-height: 21px !important;
+	cursor: pointer;
+}
+
+.dropdown p, .dropdown md-list-item, .dropdown md-list-item button,
+	.dropdown md-list-item button .md-list-item-inner, .dropdown .md-ripple-container
+	{
+	height: 29px !important;
+	min-height: 29px !important;
+}
+
+.figlio_vocabolo md-list-item {
+	font-weight: bold;
+    padding: 0;
+}
+
+.figlio_vocabolo .md-list-item-inner, .nodo_logico .md-list-item-inner,
+	#wordTree .md-list-item-inner {
+	width: 100%;
+	height: 100%;
+}
+
+
+
+.nodo_logico:hover  .text_item,.figlio_vocabolo:hover  .text_item{
+    text-decoration: underline;
+}
+.nodo_logico md-list ,.figlio_vocabolo md-list {
+	padding: 0px !important;
+}
+
+.nodo_logico md-list md-list-item button ,.figlio_vocabolo md-list md-list-item button{
+	padding: 0px 8px !important;
+}
+
+.addFiglioBox.angular-ui-tree-node {
+	background: rgba(224, 229, 240, 0.05) !important;
+	top: -24px !important;
+	width: 100% !important;
+	right: 0 !important;
+	position: absolute !important;
+	height: 24px !important;
+	display: none;
+}
+
+.hideChildren .figlioVisibile {
+	display: none !important;
+	visibility: hidden !important;
+}
+
+ol.angular-ui-tree-nodes li {
+	border-left: 1px dotted #D3C1C1;
+}
+
+.angular-ui-tree-empty {
+	display: none;
+	background-color: white !important;
+}
+
+.dragged-icon-tree{
+	    font-size: 15px;
+    float: left;
+       margin-right: 2px;
+    color: rgb(176, 190, 197);
+    cursor: move;
+    margin-top: 2px;
+}
+
+.nodo_logico  p, .figlio_vocabolo p {
+
+	line-height: 19px !important;
+}
+
+
+
+.angular-ui-tree-handle {
+	/* 	border-left: 2px double #D3C1C1; */
+	padding: 4px 0px;
+	height: 27px !important;
+	min-height: 27px !important;
+	    cursor: pointer;
+}
+
+.angular-ui-tree-placeholder {
+	background: #f0f9ff;
+	border: 2px dashed #bed2db;
+	box-sizing: border-box;
+}
+
+.indicator-child {
+	border-top: 1px dotted #D3C1C1;
+    width: 16px;
+    margin-top: 8px;
+    left: 0px;
+    float: left;
+    margin-right: 10px;
+    height: 10px!important;
+}
+
+.SecondaryOnLeft .expandericon,.expandericon_ext {
+	position: absolute;
+	left: 0px;
+	top: 6px;
+	margin-left: 16px;
+}
+
+ol.collapsed li{
+	height: 27px;
+}
+
+.position-fixed{
+	position: fixed !important;
+}
+
+*:focus {
+	outline: none;
+}
+
+.noPadding {
+	padding: 0 !important;
+}
+.preloaderTree {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 99999;
+	background-color: rgba(0, 0, 0, 0.12);
+}
+.preloaderTree md-progress-circular {
+	top: 50%;
+	margin-top: -25px;
+	left: 50%;
+	margin-left: -25px;
+}
+
+.treeInfoIcon{
+	float: left !important;
+    margin: 2px 0 0 0 !important;
+    line-height: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+    min-height: 0 !important;
+    border: 1px solid green;
+}
+
+.treeInfoIcon md-icon{
+	margin-top: 0px !important;
+}
+
+.treeInfoIcon .md-ripple-container	{
+	margin-top: -4px !important;
+}

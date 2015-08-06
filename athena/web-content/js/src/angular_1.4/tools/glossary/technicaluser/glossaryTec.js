@@ -1,4 +1,4 @@
-var app = angular.module('AIDA_GLOSSARY_TECNICAL_USER', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination' ]);
+var app = angular.module('AIDA_GLOSSARY_TECNICAL_USER', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination','glossary_tree' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -1086,7 +1086,7 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 
 	navi.loadNavItem=function(type,item){
 		var d=(new Date).getTime();
-		navi.lastReq={type,item,time:d};
+		navi.lastReq={type:type,item:item,time:d};
 
 		$timeout(function() {
 			if((navi.lastReq.type==type && navi.lastReq.item==item && navi.lastReq.time==d )|| navi.lastReq==undefined){

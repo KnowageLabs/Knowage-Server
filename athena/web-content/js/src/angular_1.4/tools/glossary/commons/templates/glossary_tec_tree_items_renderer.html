@@ -57,33 +57,4 @@
 		ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'" class="figlioVisibile"></li>
 </ol>
 
-</script>
 
-
-<script type="text/ng-template" id="info_word.html">
-<md-dialog aria-label="Info word"  class="infoBox">
- <md-toolbar class="md-blue minihead">
-    <div class="md-toolbar-tools">
-      <h4 class="md-flex" >{{translate.load("sbi.generic.details");}}</h4>
-    </div>
-  </md-toolbar>
-<md-dialog-content class="noPadding">
-<div layout="column">
-<ul>
-<li><span>{{translate.load("sbi.glossary.word");}}:</span><p> {{infCtrl.info.WORD}} </p></li>
-<li><span>{{translate.load("sbi.glossary.status");}}:</span><p ng-if="infCtrl.info.STATE_NM==undefined"></p><p ng-if="infCtrl.info.STATE_NM!=undefined"> {{translate.load(infCtrl.info.STATE_NM);}}</p></p></li>
-<li><span>{{translate.load("sbi.glossary.category");}}:</span><p  ng-if="infCtrl.info.CATEGORY_NM==undefined"></p><p ng-if="infCtrl.info.CATEGORY_NM!=undefined"> {{translate.load(infCtrl.info.CATEGORY_NM);}}</p></p></li>
-<li><span>{{translate.load("sbi.glossary.description");}}:</span><p>  {{infCtrl.info.DESCR}}</p></li>
-<li><span>{{translate.load("sbi.glossary.formula");}}:</span><p> {{infCtrl.info.FORMULA}}</p></li>
-<li class="sub-list"><span>{{translate.load("sbi.glossary.link");}}:</span>
-		<ul><li ng-repeat="lnk in infCtrl.info.LINK ">{{lnk.WORD}} <a ng-if="!$last">- </span></li></ul>
-</li>
-<li><span>{{translate.load("sbi.glossary.attributes");}}:</span>
-		<ul><li style="  display: list-item;" ng-repeat="attr in infCtrl.info.SBI_GL_WORD_ATTR ">{{attr.ATTRIBUTE_NM}}:
-<ul><li> {{attr.VALUE}}</li></ul></li></ul>
-</li>
-
-</ul>
-</div>
-</md-dialog-content>
-</md-dialog>

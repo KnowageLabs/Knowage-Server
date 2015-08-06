@@ -113,44 +113,55 @@
 			</md-toolbar>
 
 
-			<div class="preloaderTree" ng-show="ctrl.preloaderTree"> <md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular> </div>
+<!-- 			<div class="preloaderTree" ng-show="ctrl.preloaderTree"> <md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular> </div> -->
 			<md-content layout-padding> 
 			
 			
   
-			 <div layout="row" style="margin-bottom: 7px;">
-			<p style="  margin: 0 10px 0 0;" >{{translate.load("sbi.glossary.glossary");}}:</p>
-			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;" 
-			 placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.selGlo">
-       		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
-       		 </md-select>
-       		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;"
-				md-no-float style="  margin-top: -12px; position: absolute; right: 0; padding: 2px;"> 
-				<md-icon	md-font-icon="fa fa-search " style="  padding :4px 0;  color: black;"></md-icon> 
-				<input	ng-model="ctrl.searchWD" Style="margin-left: 15px;"
-				ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchWD)" type="text"
-				placeholder="Search ">
-			</md-input-container>
-			</div>
+<!-- 			 <div layout="row" style="margin-bottom: 7px;"> -->
+<!-- 			<p style="  margin: 0 10px 0 0;" >{{translate.load("sbi.glossary.glossary");}}:</p> -->
+<!-- 			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;"  -->
+<!-- 			 placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.selGlo"> -->
+<!--        		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option> -->
+<!--        		 </md-select> -->
+       		 
+       		 
+<!--        		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;" -->
+<!-- 				md-no-float style="  margin-top: -12px; position: absolute; right: 0; padding: 2px;">  -->
+<!-- 				<md-icon	md-font-icon="fa fa-search " style="  padding :4px 0;  color: black;"></md-icon>  -->
+<!-- 				<input	ng-model="ctrl.searchWD" Style="margin-left: 15px;" -->
+<!-- 				ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchWD)" type="text" -->
+<!-- 				placeholder="Search "> -->
+<!-- 			</md-input-container> -->
+			
+<!-- 			</div> -->
 			
 			
-			<div id="GlossTree"  ui-tree="ctrl.TreeOptions" data-drag-enabled="true"
-							data-drag-delay="300" data-clone-enabled="true" >
+<!-- 			<div id="GlossTree2"  ui-tree="ctrl.TreeOptions" data-drag-enabled="true" -->
+<!-- 							data-drag-delay="300" data-clone-enabled="true" > -->
 							
 
-								<ol ui-tree-nodes="options"
-									ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS"
-									ng-class="{hideChildren: collapsed}">
+<!-- 								<ol ui-tree-nodes="options"	ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS" ng-class="{hideChildren: collapsed}"> -->
 									
-									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS"
-										ui-tree-node data-collapsed="true"
-										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'"></li>
-									
-
-								</ol>
+<!-- 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS" ui-tree-node data-collapsed="true" -->
+<!-- 										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'"></li> -->
+<!-- 								</ol> -->
 							
-						</div>
+<!-- 						</div> -->
 
+<!-- 			------------------------------------------------------------------------- -->
+			
+		 <glossary-tree tree-id="GlossTreeDOC" 
+						tree-options=ctrl.TreeOptions 
+						show-root=false
+						glossary={}
+						show-select-glossary="ctrl.selectedDocument==undefined"
+						show-search-bar=true
+        				drag-word-node=true
+        				clone-item=true 
+        				></glossary-tree>
+			
+			
 			
 								
 			</md-content>	

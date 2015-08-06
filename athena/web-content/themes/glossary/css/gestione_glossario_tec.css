@@ -50,7 +50,7 @@ md-list.deleteButton button.md-secondary-container{
     
     
 md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
-	height:24px!important;
+	height:23px!important;
 }
     
 md-tabs.mini-tabs md-tab-item{
@@ -76,11 +76,13 @@ li.selected_item{
 .navig-tab-content .boxItemGlo md-list md-list-item button.md-secondary-container{
   min-width: 0;
   min-height: 0!important;
-  height: 13px;
+  height: 100%;
   width: 13px;
   right: -6px;
   background-color: transparent !important;
-  border: none;}
+  border: none;
+  top: 12px;
+      }
 
 .delete_select {
 	position: absolute;

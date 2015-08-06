@@ -181,31 +181,6 @@ md-icon.sm-font-icon {
 }
 
 
-/* classe dropdown recuperata da bootstrap */
-.dropdown-menu {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	z-index: 1000;
-	display: none;
-	float: left;
-	min-width: 160px;
-	padding: 5px 0;
-	margin: 2px 0 0;
-	font-size: 14px;
-	text-align: left;
-	list-style: none;
-	background-color: #fff;
-	background-clip: padding-box;
-	border: 1px solid #ccc;
-	border: 1px solid rgba(0, 0, 0, .15);
-	border-radius: 4px;
-	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-}
-
-.open>.dropdown-menu {
-	display: block;
-}
 
 
 
@@ -328,7 +303,7 @@ padding:0;
   line-height: 25px;
   padding: 0px 16px 0 0;
   margin-left: 4px;
-  border-bottom: 2px solid rgb(176, 190, 197);
+  border-bottom: 1px solid rgb(176, 190, 197);
 }
 
 #wordTree .angular-ui-tree-handle ,#wordTree .angular-ui-tree-handle:hover{
@@ -386,12 +361,12 @@ md-tabs.hideTabs md-tabs-wrapper {
 }
 
 
-/* trick to risolve materia autocomplite bug */
-.md-scroll-mask{
-	 position:static;
-    position: initial;
+/* /* trick to risolve materia autocomplite bug */ */
+/* .md-scroll-mask{ */
+/* 	 position:static; */
+/*     position: initial; */
    
-}
+/* } */
 
 .rightBox_GLOSS{
 	position: absolute;
@@ -404,3 +379,6 @@ md-tabs.hideTabs md-tabs-wrapper {
 	height: 100% !important;
 }
 
+.default_tree .dropdown{
+	margin-left:calc(-25% - 20px);
+}
