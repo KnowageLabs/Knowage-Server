@@ -102,7 +102,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
     
     String param2="?"+SpagoBIConstants.SBI_CONTEXT+"="+contextName;
-	String host=GeneralUtilities.getSpagoBiHost();
+	String host=request.getServerName();
 	String param3="&"+SpagoBIConstants.SBI_HOST+"="+host;
     
     StringBuffer chartDesignerUrlTemp = new StringBuffer("/athenachartengine/api/1.0/pages/edit_cockpit");
