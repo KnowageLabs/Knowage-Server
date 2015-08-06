@@ -70,7 +70,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	}
 
 	, initStore: function() {
-	   Sbi.trace("[AssociationEditorDataset.initStore]: IN");
+	   Sbi.trace("[AssociationEditorList.initStore]: IN");
 	   var initialData = [];
 
 	   if (this.associations !== null ){
@@ -89,7 +89,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditorList', {
 	        data: initialData
 	    });
 
-		Sbi.trace("[AssociationEditorDataset.initStore]: OUT");
+		Sbi.trace("[AssociationEditorList.initStore]: OUT");
 	}
 
     , initGrid: function() {
