@@ -271,7 +271,9 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			}
 	   		}
 	   		
-	   		if(config.columnType == elementTypes.NUMBER || config.columnType == elementTypes.CURRENCY) {
+	   		if(config.columnType == elementTypes.NUMBER 
+	   				|| config.columnType == elementTypes.CURRENCY
+		   			|| config.columnType == elementTypes.PERCENTAGE) {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			if(config.decimals != undefined 
@@ -314,7 +316,10 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   			this.typeContainer.add(this.typeSecondaryField);
 	   		}
 	   		
-	   		if(selectedValue == elementTypes.NUMBER || selectedValue == elementTypes.CURRENCY) {
+	   		if(selectedValue == elementTypes.NUMBER 
+	   				|| selectedValue == elementTypes.CURRENCY
+	   				|| selectedValue == elementTypes.PERCENTAGE
+	   				) {
 	   			this.decimalsScaleContainer.setVisible(true);
 	   			
 	   			this.decimalsField.setValue('');

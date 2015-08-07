@@ -338,7 +338,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var t = field.type;
 
 			var customFormat = {};
-			if((visibleField.columnType == elementTypes.NUMBER || visibleField.columnType == elementTypes.CURRENCY) 
+			if((visibleField.columnType == elementTypes.NUMBER 
+					|| visibleField.columnType == elementTypes.CURRENCY 
+					|| visibleField.columnType == elementTypes.PERCENTAGE) 
 					&& (visibleField.decimals != undefined && visibleField.decimals != null)) {
 				
 					customFormat.decimalPrecision = visibleField.decimals;
