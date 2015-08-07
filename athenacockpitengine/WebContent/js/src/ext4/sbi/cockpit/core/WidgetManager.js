@@ -639,7 +639,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     	Sbi.trace("[WidgetManager.onDeselectionOnAssociation]: OUT");
     }
 
-    , applySelectionsOnAssociationGroup: function(associationGroup, docOnly) {
+    , applySelectionsOnAssociationGroup: function(associationGroup, withDoc) {
     	Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: IN");
 
     	if(Sbi.isNotValorized(associationGroup)) {
@@ -662,11 +662,11 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 
     	}
     	
-    	this.setChartWidgetsAssociationsSelections(associationGroup, selections, widget, docOnly);
+    	this.setChartWidgetsAssociationsSelections(associationGroup, selections, widget, withDoc);
 
     	//alert("[WidgetManager.applySelectionsOnAssociationGroup]: " + Sbi.toSource(selections));
     	
-    	if(!docOnly){
+    	if(!withDoc){
     		Sbi.storeManager.loadStoresByAssociations( associationGroup,  selections);
     	}
     	Sbi.trace("[WidgetManager.applySelectionsOnAssociationGroup]: OUT");
@@ -692,6 +692,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     			this.setChartWidgetsSelections(this, widget);
         		this.applySelectionsOnAggregation(widget.getStore());
     		}else{
+    			//TODO to handle associations between one or more docs and two or more datasets 
     			this.applySelectionsOnAssociationGroup(associationGroup);
     		}
     	} else {
@@ -735,7 +736,7 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 	/**
 	 * Set selections for chart widgets with associations
 	 */
-	, setChartWidgetsAssociationsSelections: function(associationGroup, selections, widget, docOnly){			
+	, setChartWidgetsAssociationsSelections: function(associationGroup, selections, widget, withDoc){			
 			
 		if(Sbi.isValorized(widget)){
 			var widgetContainer = widget.getParentContainer();
@@ -790,14 +791,13 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
 		var ret = true;
 		for(var i = 0; i < associations.length; i++){
 			var fields = associations[i].fields;
-			var docFound = false;
+			var nonDocs = 0;
 			for(var j = 0; j < fields.length; j++){
-				if(fields[j].store.indexOf(Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX)==0){
-					docFound = true;
-					break;
+				if(fields[j].store.indexOf(Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX)<0){
+					nonDocs++;
 				}
 			}
-			if(docFound==false){
+			if(nonDocs > 1){
 				ret = false;
 				break;
 			}
