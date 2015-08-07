@@ -141,6 +141,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 		this.documentNameText = new Ext.form.Text({
 			id: 'documentName',
 			fieldLabel: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.document'),
+			padding: '0 5 5 0',
 			value: this.documentName
 		});
 		this.documentLabelHidden = new Ext.form.field.Hidden({
@@ -162,28 +163,33 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 				Ext.create('Ext.window.Window', {
 					id: 'documentsWindow',
 				    title: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.selectDoc'),
-				    height: 200,
-				    width: 400,
-				    items: [{
-				    	xtype: 'textfield',
-				    	id: 'filterField',
-				    	value: Ext.getCmp('documentName').getValue()
-				    },{
-				    	xtype: 'button',
-				    	text: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.lookup'),
-						handler: function(obj) {
-							var filterField = Ext.getCmp('filterField').getValue();
-							var documentStore = Ext.data.StoreManager.lookup('documentStore');
-							documentStore.load({
-								params: {'name': filterField,
-										'label': filterField,
-										'description': filterField}
-							});
-						}
-				    	
-				    },{
+				    height: 400,
+				    width: 600,
+				    items: [
+				    {layout:'column',
+				     bodyStyle: 'border:0;padding:5',
+				     items:[
+						{	xtype: 'textfield',
+					    	id: 'filterField',
+					    	padding: '0 5 0 0',
+					    	value: Ext.getCmp('documentName').getValue()
+					    },{
+					    	xtype: 'button',
+					    	text: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.lookup'),
+							handler: function(obj) {
+								var filterField = Ext.getCmp('filterField').getValue();
+								var documentStore = Ext.data.StoreManager.lookup('documentStore');
+								documentStore.load({
+									params: {'name': filterField,
+											'label': filterField,
+											'description': filterField}
+								});
+							}
+					    }]
+					},{
 				        xtype: 'grid',
-				        border: false,
+				        height: '300',
+				        autoScroll: true,
 				        columns: [{header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.documentName'),dataIndex: 'name'},
 				                  {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.documentLabel'),dataIndex: 'label'},
 				                  {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.documentDescr'),dataIndex: 'descr',flex:1}],               
@@ -226,13 +232,13 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 		    width: 400
 		});
 		var items = new Array();
-		items.push(this.documentNameText);
-		items.push(this.lookup);
+		items.push({layout:'column',bodyStyle: 'border:0',items:[this.documentNameText,this.lookup]});
 		items.push(this.panel);
 		
 		
 		this.documentPanel = new Ext.Panel({
 			id: 'mainDocumentPanel',
+			bodyPadding: 5,
 			items: items
 		});
 	}

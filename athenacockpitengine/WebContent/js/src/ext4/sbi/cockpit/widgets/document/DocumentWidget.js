@@ -34,6 +34,10 @@ Ext.define('Sbi.cockpit.widgets.document.DocumentWidget',{
     	
     	this.createContent();
     	
+    	this.on("afterrender", function(){
+    		this.getParentComponent().setTitle(this.name);
+    	}, this);
+    	
     	Sbi.trace("[DocumentWidget.constructor]: OUT");
     },
 	// =================================================================================================================
@@ -76,8 +80,11 @@ Ext.define('Sbi.cockpit.widgets.document.DocumentWidget',{
     		parametersString = "&PARAMETERS="+encodeURIComponent(parametersString);
     	}
     	var url = Sbi.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&TOOLBAR_VISIBLE=FALSE&OBJECT_LABEL='+this.wconf.documentLabel+parametersString;
-    	this.name = Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX + this.statics().increment() + '_' + this.wconf.documentLabel;
-    	this.widgetContent = new Ext.Panel({title:this.name,items:[{xtype:'uxiframe',src: url,style: {height: '100%', width: '100%'}}]});
+    	if(Sbi.isNotValorized(this.name)){
+    		this.name = Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX + this.statics().increment() + '_' + this.wconf.documentLabel;
+    	}
+    	this.wgeneric.title = this.name;
+    	this.widgetContent = new Ext.ux.IFrame({xtype:'uxiframe',src: url,style: {height: '100%', width: '100%'}});
 
 		if(this.items){
 			this.items.each( function(item) {
