@@ -400,6 +400,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			rendererFunction = Sbi.locale.formatters['timestamp'];
 		}
 		
+		if(field.type && field.type == 'string' && visibleField.columnType && visibleField.columnType == elementTypes.TEXT) {
+			rendererFunction = Sbi.commons.Format.stringRenderer({ trim: false });
+		}
+		
 		/* Styling */
 		var columnClassName = field.name.trim() + 'CustomColumnClass';
 		var columnClassId = columnClassName + 'Id';
