@@ -423,7 +423,7 @@ function renderWordCloud(chartConf){
 		var maxfontsize=chartConf.chart.style.maxFontSize;
 		var fill = d3.scale.category20();
 
-		d3.layout.cloud().size([800, 700])
+		d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height])
 		.words(chartConf.data[0].map(function(d) {
 			 return {text: d.name, size: d.value/(maxic/maxfontsize)};
 		}))
@@ -487,7 +487,7 @@ function renderWordCloud(chartConf){
 			.attr("width", chartConf.chart.width)
 			.attr("height", chartConf.chart.height)
 			.append("g")
-			.attr("transform", "translate(400,350)")
+			.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
 			.selectAll("text")
 			.data(words)
 			.enter().append("text")
