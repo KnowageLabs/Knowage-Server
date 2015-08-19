@@ -83,11 +83,17 @@ Ext.define('Sbi.datamining.ResultPanel', {
 					if(type == Sbi.settings.datamining.execution.typeImage){
 						html+='<div style="'+this.resultTitleStyle+'">'+plotName+' : </div><br/><p style="'+this.plotStyle+'"><img width="480px" height="480px" style="image-resolution: 72dpi;" alt="Result for '+plotName+'" src="data:image/png;base64,'+result+'" /></p><br/><br/><br/>';
 						
+					}else if(type == Sbi.settings.datamining.execution.typeText){
+						if(varName == undefined || varName == null || varName == ''){
+							varName = output.ouputLabel;
+						}
+						html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/><p style="'+this.videoStyle+'">'+result+'</p><br/><br/><br/>';
 					}else{
 						if(varName == undefined || varName == null || varName == ''){
 							varName = output.ouputLabel;
 						}
 						html+='<div style="'+this.resultTitleStyle+'">'+varName+' : </div><br/><p style="'+this.videoStyle+'">'+result+'</p><br/><br/><br/>';
+						
 					}
 				}else {
 					html='no result';

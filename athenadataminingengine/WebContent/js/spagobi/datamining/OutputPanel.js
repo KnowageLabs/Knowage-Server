@@ -26,7 +26,6 @@ Ext.define('Sbi.datamining.OutputPanel', {
 	output: null,
 	mode: 'manual',
 	fillVarPanel: null,
-	executeScriptBtn: null,
 	itsParent: null,
 	
 	constructor : function(config) {
@@ -39,22 +38,6 @@ Ext.define('Sbi.datamining.OutputPanel', {
 		
 		this.resultPanel = Ext.create('Sbi.datamining.ResultPanel',{itsParent: this, command: this.command, output: this.output, mode: this.mode}); 
 
-		this.executeScriptBtn = Ext.create('Ext.Button', {
-		    text: LN('sbi.dm.execution.run.text'),
-		    scope: this,
-		    iconCls: 'run',
-		    scale: 'medium',	
-		    margin: 5,
-		    style: {
-	            background: '#fff0aa;'
-	        },
-		    handler: function() {
-		        this.resultPanel.getResult(true);
-		    }
-		});
-		
-		
-		
 		this.callParent(arguments);
 	},
 

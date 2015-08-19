@@ -70,24 +70,33 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 			        handler: function() {
 			            this.up('form').getForm().reset();
 			        }
-			    }, {
-			        text: LN('sbi.dm.execution.save.btn'),
-			        formBind: true, //only enabled once the form is valid
-			        disabled: true,	
-			        scale: 'medium',
-			        iconCls:'variables_ok',
-
+			    },{
+			        text: LN('sbi.dm.execution.run.text'),
+				    scope: this,
+				    iconCls: 'run',
+				    scale: 'medium',	
+				    margin: 5,
+				    style: {
+			            background: '#fff0aa;'
+			        },
 			        handler: function() {
 			        	this.setVariables(this.variablesForm.getForm())	;	        	
 			        },
 			        listeners:{
 			        	click:{
 			        		fn: function(){
-			        			this.refreshParentPanelActions();								        			
+			        			this.refreshParentPanelActions();
+			        			if(this.itsParent.resultPanel !== undefined && this.itsParent.resultPanel != null){
+			        				this.itsParent.resultPanel.getResult(true);	
+			        			}else{
+			        				this.itsParent.getActiveTab().getActiveTab().resultPanel.getResult(true);
+			        			}
+			        							        			
 			        		}
 			        	},scope: this
 			        },
 			        scope: this
+
 			    }]
 		    }],
             scope: this
@@ -211,12 +220,18 @@ Ext.define('Sbi.datamining.FillVariablesPanel', {
 		//service.callService(this);
 	}
 	,refreshParentPanelActions: function(){
-		if(this.caller == 'command'){
-			this.itsParent.getActiveTab().getActiveTab().executeScriptBtn.show();
+	/*
+		if(this.caller == 'command'){			
+			this.itsParent.getActiveTab().getActiveTab().resultPanel.getResult(true);
 			this.itsParent.varWin.hide();	
+			this.itsParent.getActiveTab().getActiveTab().executeScriptBtn.show();
 		}else{
+			this.itsParent.resultPanel.getResult(true);
 			this.itsParent.executeScriptBtn.show();
+		}*/
+		if(this.caller == 'command'){
+			//this.itsParent.getActiveTab().getActiveTab().executeScriptBtn.show();
+			this.itsParent.varWin.hide();	
 		}
-		
 	}
 });

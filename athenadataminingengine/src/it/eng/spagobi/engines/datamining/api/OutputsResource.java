@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.api;
 
@@ -95,6 +95,7 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 		logger.debug("OUT");
 		return getJsonSuccess();
 	}
+
 	@GET
 	@Path("/getVariables/{command}/{output}")
 	@Produces("text/html; charset=UTF-8")
@@ -106,10 +107,10 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 		List<DataMiningCommand> commands = null;
 		if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 			commands = dataMiningEngineInstance.getCommands();
-			if(commands != null){
+			if (commands != null) {
 				for (Iterator it = commands.iterator(); it.hasNext();) {
 					DataMiningCommand cmd = (DataMiningCommand) it.next();
-					if(cmd.getName().equals(commandName)){
+					if (cmd.getName().equals(commandName)) {
 						List<Output> outputs = cmd.getOutputs();
 						if (outputs != null && !outputs.isEmpty()) {
 							for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
@@ -134,41 +135,42 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 		logger.debug("OUT");
 		return variablesJson;
 	}
+
 	@POST
 	@Path("/setVariables/{command}/{output}")
 	@Produces("text/html; charset=UTF-8")
 	public String setVariables(@Context HttpServletRequest request, @PathParam("command") String commandName, @PathParam("output") String outputName) {
 		logger.debug("IN");
 		Map parameters = request.getParameterMap();
-		if(parameters != null && !parameters.isEmpty()){
-			
+		if (parameters != null && !parameters.isEmpty()) {
+
 			DataMiningEngineInstance dataMiningEngineInstance = getDataMiningEngineInstance();
-			
+
 			List<DataMiningCommand> commands = null;
 			if (dataMiningEngineInstance.getCommands() != null && !dataMiningEngineInstance.getCommands().isEmpty()) {
 				commands = dataMiningEngineInstance.getCommands();
-				if(commands != null){
+				if (commands != null) {
 					for (Iterator it = commands.iterator(); it.hasNext();) {
 						DataMiningCommand cmd = (DataMiningCommand) it.next();
-						if(cmd.getName().equals(commandName)){
+						if (cmd.getName().equals(commandName)) {
 							List<Output> outputs = cmd.getOutputs();
 							if (outputs != null && !outputs.isEmpty()) {
 								for (Iterator it2 = outputs.iterator(); it2.hasNext();) {
 									Output output = (Output) it2.next();
 									if (output.getOutputName().equals(outputName)) {
 										List variables = output.getVariables();
-										if(variables != null){
-											for(int i =0; i <variables.size(); i++){
-												Variable var = (Variable)variables.get(i);
-												//get the value from parameters
-												if(request.getParameterMap().containsKey(var.getName())){
-													String paramVal = (String)request.getParameter(var.getName());
-													if(paramVal != null){
+										if (variables != null) {
+											for (int i = 0; i < variables.size(); i++) {
+												Variable var = (Variable) variables.get(i);
+												// get the value from parameters
+												if (request.getParameterMap().containsKey(var.getName())) {
+													String paramVal = request.getParameter(var.getName());
+													if (paramVal != null) {
 														var.setValue(paramVal);
 													}
 												}
 											}
-				
+
 										}
 									}
 								}
@@ -176,7 +178,7 @@ public class OutputsResource extends AbstractDataMiningEngineService {
 						}
 					}
 				}
-	
+
 			}
 		}
 		logger.debug("OUT");

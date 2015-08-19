@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
@@ -49,7 +49,7 @@ public class DataMiningUtils {
 					File[] dsfiles = fileDSDir.listFiles();
 					if (dsfiles == null || dsfiles.length == 0) {
 						areProvided = false;
-						
+
 					}
 				} else {
 					areProvided = false;
@@ -76,13 +76,13 @@ public class DataMiningUtils {
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
 			filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName();
 			logger.debug("Got user resource path");
-			
+
 			File csvdir = new File(filePath);
-			if(!csvdir.exists()){
+			if (!csvdir.exists()) {
 				csvdir.mkdir();
 			}
-			
-			filePath +=  "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+
+			filePath += "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 			logger.debug("Created Csv file");
@@ -166,19 +166,20 @@ public class DataMiningUtils {
 		}
 		logger.debug("OUT");
 	}
-	protected static String replaceVariables(List<Variable> variables, String code) throws Exception{
+
+	protected static String replaceVariables(List<Variable> variables, String code) throws Exception {
 		logger.debug("IN");
 		HashMap parameters = new HashMap<String, Object>();
-		if(variables != null && !variables.isEmpty()){
+		if (variables != null && !variables.isEmpty()) {
 			for (Iterator it = variables.iterator(); it.hasNext();) {
-				Variable var = (Variable)it.next();
+				Variable var = (Variable) it.next();
 				Object val = var.getValue();
-				if(val == null){
+				if (val == null) {
 					val = var.getDefaultVal();
 				}
 				parameters.put(var.getName(), val);
 			}
-			if(code != null && !code.equals("")){
+			if (code != null && !code.equals("")) {
 				code = StringUtilities.substituteParametersInString(code, parameters, null, false);
 			}
 		}

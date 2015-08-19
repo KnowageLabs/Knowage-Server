@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.compute;
 
@@ -24,6 +24,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RFactor;
 import org.rosuda.JRI.Rengine;
 
 public class OutputExecutor {
@@ -56,30 +57,29 @@ public class OutputExecutor {
 		// output -->if script --> execute script then prepare output
 
 		DataMiningResult res = new DataMiningResult();
-		
-		List<Variable> variables = out.getVariables();		
+
+		List<Variable> variables = out.getVariables();
 		logger.debug("Got variables list");
-		//replace in function and in value attributes 
+		// replace in function and in value attributes
 		String function = out.getOutputFunction();
-		if(function != null && variables!= null && !variables.isEmpty()){
+		if (function != null && variables != null && !variables.isEmpty()) {
 			function = DataMiningUtils.replaceVariables(variables, function);
 			logger.debug("Replaced variables in output function");
 		}
 		String outVal = out.getOutputValue();
-		if(outVal != null && variables!= null && !variables.isEmpty()){
+		if (outVal != null && variables != null && !variables.isEmpty()) {
 			outVal = DataMiningUtils.replaceVariables(variables, outVal);
 			logger.debug("Replaced variables in output value");
 		}
-		
-		
+
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
 			logger.debug("Image output");
 			res.setVariablename(outVal);// could be multiple value
-														// comma separated
+										// comma separated
 			String plotName = out.getOutputName();
 			re.eval(getPlotFilePath(plotName));
-			
-			logger.debug("Plot file name "+plotName);
+
+			logger.debug("Plot file name " + plotName);
 			if (function.equals("hist")) {
 				// predefined Histogram function
 				re.eval(function + "(" + outVal + ", col=4)");
@@ -89,7 +89,7 @@ public class OutputExecutor {
 			} else {
 				// function recalling a function inside the main script (auto)
 				// to produce an image result
-				
+
 				if (outVal == null || outVal.equals("")) {
 					re.eval(function);
 				} else {
@@ -106,8 +106,8 @@ public class OutputExecutor {
 			if (resImg != null && !resImg.equals("")) {
 				res.setResult(resImg);
 
-				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile)
-						+ DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
+						+ plotName + "." + OUTPUT_PLOT_EXTENSION);
 				logger.debug("Deleted temp image");
 			}
 
@@ -125,9 +125,10 @@ public class OutputExecutor {
 				}
 
 			} else {
+
 				rexp = re.eval(outVal);
 			}
-			
+
 			res.setVariablename(outVal);// could be multiple value
 			// comma separated
 			if (rexp != null) {
@@ -137,6 +138,49 @@ public class OutputExecutor {
 				res.setOutputType(out.getOutputType());
 				res.setResult("No result");
 			}
+			logger.debug("Evaluated result");
+		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.HTML_OUTPUT)) {
+			logger.debug("Html output");
+
+			REXP rexp = null;
+			re.eval("library(R2HTML)");
+			re.eval("library(RCurl)");
+			re.eval("HTMLStart()");
+
+			if (function != null) {
+				if (outVal == null || outVal.equals("")) {
+					outVal = out.getOuputLabel();
+					rexp = re.eval("HTML(" + function + ", append = FALSE)");
+				} else {
+					rexp = re.eval("HTML(" + function + "(" + outVal + ")" + ", append = FALSE)");
+				}
+
+			} else {
+				rexp = re.eval("HTML(" + outVal + ", append = FALSE)");
+			}
+			REXP htmlFile = re.eval("HTMLGetFile()");
+			if (htmlFile != null) {
+				logger.debug("Html result being created");
+				re.eval("u<-HTMLGetFile()");
+				logger.debug("got html output file");
+				re.eval("HTMLStop()");
+				rexp = re.eval("u");
+				rexp = re.eval("s<-paste(\"file:///\",u, sep=\"\")");
+				rexp = re.eval("c<-getURL(s)");
+				rexp = re.eval("c");
+				logger.debug("got html");
+				// delete temp file:
+				boolean success = (new File(htmlFile.asString())).delete();
+				res.setResult(rexp.asString());
+				// comma separated
+
+			} else {
+				res.setResult("No result");
+			}
+
+			res.setOutputType(out.getOutputType());
+			res.setVariablename(outVal);// could be multiple value
+
 			logger.debug("Evaluated result");
 		}
 		logger.debug("OUT");
@@ -178,7 +222,6 @@ public class OutputExecutor {
 
 	}
 
-
 	private static String encodeToString(BufferedImage image, String type) {
 		logger.debug("IN");
 		String imageString = null;
@@ -202,7 +245,7 @@ public class OutputExecutor {
 	private String getResultAsString(REXP rexp) {
 		logger.debug("IN");
 		String result = "";
-
+		/* http://www.studytrails.com/RJava-Eclipse-Plugin/JRI-R-Java-Data-Communication.jsp */
 		int rexpType = rexp.getType();
 
 		if (rexpType == REXP.XT_ARRAY_INT) {
@@ -229,6 +272,9 @@ public class OutputExecutor {
 		} else if (rexpType == REXP.XT_ARRAY_BOOL_INT) {
 			int[] doubleArr = rexp.asIntArray();
 			result = Arrays.toString(doubleArr);
+		} else if (rexpType == REXP.XT_FACTOR) {
+			RFactor factor = rexp.asFactor();
+			result = factor.toString();
 		}
 		logger.debug("OUT");
 		return result;

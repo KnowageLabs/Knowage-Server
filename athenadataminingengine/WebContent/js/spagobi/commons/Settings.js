@@ -10,5 +10,6 @@ Sbi.settings.datamining = {
 			,auto: 'auto'
 			,typeImage:'image'
 			,typeText: 'text'
+			,typeHtml: 'html'
 		}
 }; 

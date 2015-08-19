@@ -1,15 +1,15 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.api;
 
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineService;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
 import it.eng.spagobi.engines.datamining.compute.DataMiningExecutor;
+import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
@@ -60,8 +60,8 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 		List<DataMiningDataset> datasets = null;
 		List<DataMiningDataset> datasetsToReturn = new ArrayList<DataMiningDataset>();
 		if (dataMiningEngineInstance.getDatasets() != null && !dataMiningEngineInstance.getDatasets().isEmpty()) {
-			datasets = dataMiningEngineInstance.getDatasets(); 
-			
+			datasets = dataMiningEngineInstance.getDatasets();
+
 			logger.debug("Finds existing files for datasets");
 			for (Iterator dsIt = dataMiningEngineInstance.getDatasets().iterator(); dsIt.hasNext();) {
 				DataMiningDataset ds = (DataMiningDataset) dsIt.next();
@@ -116,13 +116,14 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 
 					logger.debug("and update its content in R workspace!");
 					DataMiningExecutor executor = new DataMiningExecutor(dataMiningEngineInstance, getUserProfile());
-					try {
-						executor.updateDatasetInWorkspace(ds, getUserProfile());
-						setCommandExecutable(dataMiningEngineInstance);
 
-					} catch (IOException e) {
-						throw new SpagoBIEngineRuntimeException("Error updating file dataset", e);
-					}
+					setCommandExecutable(dataMiningEngineInstance);
+					/*
+					 * try { //executor.updateDatasetInWorkspace(ds, getUserProfile());
+					 * 
+					 * 
+					 * } catch (IOException e) { throw new SpagoBIEngineRuntimeException("Error updating file dataset", e); }
+					 */
 				}
 
 			}
@@ -174,19 +175,19 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				// convert the uploaded file to inputstream
 				InputStream inputStream = inputPart.getBody(InputStream.class, null);
 				logger.debug("Convert the uploaded file to inputstream");
-				
+
 				byte[] bytes = IOUtils.toByteArray(inputStream);
 
-				double megabytes = (bytes.length  / (1024*1024));
-				if(megabytes>=50){
+				double megabytes = (bytes.length / (1024 * 1024));
+				if (megabytes >= 50) {
 					throw new SpagoBIEngineRuntimeException("Dataset too big: exceeded 50MB");
 				}
 
 				File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);
-				
+
 				dirToSaveDS.mkdir();
 				logger.debug("created dir");
-				// 
+				//
 				File[] dsfiles = dirToSaveDS.listFiles();
 				if (dsfiles.length >= 1) {
 					for (int i = 0; i < dsfiles.length; i++) {
@@ -197,8 +198,8 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				logger.debug("Left just une file per dataset");
 				// // constructs upload file path
 				fileName = dirToSaveDS.getPath() + "/" + fileName;
-				
-				logger.debug("Constructs upload file path "+fileName);
+
+				logger.debug("Constructs upload file path " + fileName);
 				writeFile(bytes, fileName);
 
 			} catch (IOException e) {
@@ -233,20 +234,21 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 	private void writeFile(byte[] content, String filename) throws IOException {
 		logger.debug("IN");
 		FileOutputStream fop = null;
-		try{
+		try {
 			File file = new File(filename);
-	
+
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-	
+
 			fop = new FileOutputStream(file);
-	
+
 			fop.write(content);
 			fop.flush();
 			fop.close();
-		}finally{
-			if(fop != null) fop.close();
+		} finally {
+			if (fop != null)
+				fop.close();
 		}
 		logger.debug("OUT");
 	}
@@ -288,13 +290,13 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 					datasets += script.getDatasets() + ",";
 				}
 			}
-			logger.debug("datasets "+datasets);
+			logger.debug("datasets " + datasets);
 		}
 		String[] datasetNames = datasets.split(",");
 		for (int i = 0; i < datasetNames.length; i++) {
 			dsNames.add(datasetNames[i].trim());
 		}
-		
+
 		logger.debug("OUT");
 		return dsNames;
 	}

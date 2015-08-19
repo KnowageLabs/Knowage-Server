@@ -138,7 +138,7 @@ Ext.define('Sbi.datamining.OutputsTabPanel', {
 						if((outpanel.command == thisPanel.command) &&(outpanel.output == output)){
 							//found the one to activate
 							this.dmMask.show();
-							outpanel.resultPanel.getResult();
+							outpanel.resultPanel.getResult(true);
 							thisPanel.setActiveTab(i);
 
 						}
