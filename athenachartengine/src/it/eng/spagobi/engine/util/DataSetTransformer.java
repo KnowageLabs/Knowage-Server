@@ -21,14 +21,14 @@ import org.json.JSONObject;
 
 public class DataSetTransformer {
 
-	public JSONArray toWordcloud(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serie, Object sizeCriteria) throws JSONException{
+	public JSONArray toWordcloud(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serie, Object sizeCriteria, Object groupingFunction) throws JSONException{
 
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
 
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
 
-		Object serieRawColumn = mapper.get(serie.toString()+"_SUM");
-
+		Object serieRawColumn = mapper.get(serie.toString()+"_"+groupingFunction.toString());
+		
 		ArrayList<String> listColumns = new ArrayList<String>();
 
 		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
@@ -144,7 +144,7 @@ public class DataSetTransformer {
 
 	/* Merging codes - Sunburst */
 
-	public JSONArray toTree(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows) throws JSONException
+	public JSONArray toTree(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows, Object groupingFunction) throws JSONException
 	{
 		// Data columns mapper (as map)
 		Map<String,Object> mapper = (Map<String,Object>)dataColumnsMapper;
@@ -159,8 +159,8 @@ public class DataSetTransformer {
 		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
 
 		// Take value of the SERIE column (the one that contains numerical values)
-		Object serieRawColumn = mapper.get(serie.toString()+"_SUM").toString();
-
+		Object serieRawColumn = mapper.get(serie.toString()+"_"+groupingFunction.toString()).toString();
+		
 		// Take raw names of all of the columns that we need for creating a sequence
 		for (int i=0; i<columns.size(); i++)
 		{
@@ -245,14 +245,14 @@ public class DataSetTransformer {
 		return ja;
 	}
 
-	public JSONObject createTreeChart(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows) throws JSONException
+	public JSONObject createTreeChart(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows, Object groupingFunction) throws JSONException
 	{
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
 
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
 
-		Object serieRawColumn = mapper.get(serie.toString()+"_SUM");
-
+		Object serieRawColumn = mapper.get(serie.toString()+"_"+groupingFunction.toString());
+		
 		ArrayList<String> listColumns = new ArrayList<String>();
 
 		HashMap<Integer,HashMap> result = new HashMap<Integer, HashMap>();
@@ -359,11 +359,13 @@ public class DataSetTransformer {
 
 	}
 
-	public JSONArray getSeriesForParallelChart(Object serieNeeded) throws JSONException{
+	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction) throws JSONException{
 
 		JSONArray ja = new JSONArray();
 
 		Map<String,String> series= (Map<String,String>)serieNeeded;
+		
+		Map<String,String> groupings= (Map<String,String>)groupingFunction;
 
 		ArrayList<String> al = new ArrayList<String>();
 
@@ -373,7 +375,7 @@ public class DataSetTransformer {
 
 			if (!al.contains(series.get(i))){
 
-				al.add(series.get(i)+"_SUM");
+				al.add(series.get(i)+"_"+groupings.get(i));
 				JSONObject jo = new JSONObject();
 				jo.put((new Integer(j).toString()), series.get(i));
 				ja.put(jo);
@@ -381,7 +383,7 @@ public class DataSetTransformer {
 			}
 
 		}
-
+		
 		return ja;
 
 	}
@@ -408,12 +410,12 @@ public class DataSetTransformer {
 			}
 
 		}
-
+		
 		return ja;
 
 	}
 
-	public JSONArray toParallelChart(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serieNeeded) throws JSONException{
+	public JSONArray toParallelChart(Object columnsNeeded,Object dataColumnsMapper, List<Object> dataRows, Object serieNeeded, Object groupingFunction) throws JSONException{
 
 		JSONArray res = new JSONArray();
 
@@ -422,6 +424,8 @@ public class DataSetTransformer {
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
 
 		Map<String,String> series = (Map<String,String>)serieNeeded;
+		
+		Map<String,String> groupings = (Map<String,String>)groupingFunction;
 
 		Map<String,String> colMapper = new HashMap<String, String>();
 
@@ -429,14 +433,14 @@ public class DataSetTransformer {
 
 		for (int i = 0; i<series.size(); i++){
 
-			Object serie = series.get(i)+"_SUM";
-
+			Object serie = series.get(i)+"_"+groupings.get(i);
+			
 			listColumns.add(mapper.get(serie));
 
 			colMapper.put(mapper.get(serie), series.get(i));
 
 		}
-
+		
 		for (int i = 0; i<columns.size(); i++){
 
 			Object column = columns.get(i);
@@ -468,14 +472,14 @@ public class DataSetTransformer {
 
 	}
 
-	public Map getData(List<Object> dataRows,Object serie,Object columnsNeeded,Object dataColumnsMapper){
+	public Map getData(List<Object> dataRows,Object serie,Object columnsNeeded,Object dataColumnsMapper, Object groupingFunction){
 
 		Map<String,String> mapper = (Map<String,String>)dataColumnsMapper;
 
 		Map<String,String> columns = (Map<String,String>)columnsNeeded;
 
-		Object serieRawColumn = mapper.get(serie.toString()+"_SUM");
-
+		Object serieRawColumn = mapper.get(serie.toString()+"_"+groupingFunction.toString());
+		
 		ArrayList<String> listColumns = new ArrayList<String>();
 
 		HashMap<Integer,HashMap> firstresult = new HashMap<Integer, HashMap>();

@@ -30,9 +30,11 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
+#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+
 #set($sizeCriteria = $chart.sizeCriteria)
 
-#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serie, $sizeCriteria))
+#set($result = $datasettransformer.toWordcloud($columnsNeeded,$dataColumnsMapper,$dataRows,$serie, $sizeCriteria, $groupingFunction))
 
 {
  	chart: 

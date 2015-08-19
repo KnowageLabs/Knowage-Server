@@ -20,6 +20,8 @@
 
 #set($columnCounter = 0)
 
+#set($groupingFunction = {})
+
 #set($serieNeeded = {})
 
 #set($serieCounter = 0)
@@ -35,6 +37,7 @@
 
 #foreach($value in $serie) 
  #set($serieNeeded[$serieCounter] = $value.column)
+ #set($groupingFunction[$serieCounter] = $value.groupingFunction)
  #set($serieCounter = $serieCounter + 1)
 #end
 
@@ -45,11 +48,11 @@
 
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
 
-#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded))
+#set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction))
 
 #set($colorsPal = $datasettransformer.getColorPallete($colorsRequired))
 
-#set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded))
+#set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded, $groupingFunction))
 
 {
  	chart: 

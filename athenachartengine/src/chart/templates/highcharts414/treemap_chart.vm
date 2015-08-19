@@ -22,7 +22,11 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
-#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows))
+#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+
+#set($sizeCriteria = $chart.sizeCriteria)
+
+#set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction))
 
 {
  chart: 

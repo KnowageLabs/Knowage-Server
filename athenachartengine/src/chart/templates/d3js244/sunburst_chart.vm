@@ -27,6 +27,8 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
+#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+
 {
 	chart: 
 	{
@@ -121,6 +123,6 @@
 		
 	data:
 	[
-	 	$datasettransformer.toTree($columnsNeeded,$serie,$dataColumnsMapper,$dataRows)
+	 	$datasettransformer.toTree($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction)
 	]
 }

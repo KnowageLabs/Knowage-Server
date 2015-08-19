@@ -22,11 +22,13 @@
 
 #set($serie = $chart.VALUES.SERIE.name)
 
+#set($groupingFunction = $chart.VALUES.SERIE.groupingFunction)
+
 #set($serieName = $datasettransformer.getSerieName($serie))
 
 #set($columnNames = $datasettransformer.getColumnNames($columnsNeeded))
 
-#set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper))
+#set($firstresult = $datasettransformer.getData($dataRows,$serie,$columnsNeeded,$dataColumnsMapper, $groupingFunction))
 
 #set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
 
