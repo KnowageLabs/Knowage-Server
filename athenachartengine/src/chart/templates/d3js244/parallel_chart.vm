@@ -109,6 +109,24 @@
 			color: '$chart.EMPTYMESSAGE.style.color'
 		}
 	},
+	
+	legend:
+	{
+		title:
+		{
+			fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
+			fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',			
+			fontSize: '$chart.LEGEND.TITLE.style.fontSize',
+			fontStyle: '$chart.LEGEND.TITLE.style.fontStyle'
+		},
+		element:
+		{
+			fontFamily: '$chart.LEGEND.ELEMENT.style.fontFamily',
+			fontWeight: '$chart.LEGEND.ELEMENT.style.fontWeight',			
+			fontSize: '$chart.LEGEND.ELEMENT.style.fontSize',
+			fontStyle: '$chart.LEGEND.ELEMENT.style.fontStyle'
+		}
+	},
  
  	title:
 	{

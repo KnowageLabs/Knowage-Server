@@ -1228,6 +1228,8 @@ function renderWordCloud(chartConf){
 	
 	function renderParallelChart(data){
 		
+		console.log(data);
+		
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1383,14 +1385,11 @@ function renderWordCloud(chartConf){
 		
 		var legend=d3.select("#chart").append("div")
 		         .style("float","right")
-		        
 		         .style("width",300)
-		         .style("height",h + m[0] + m[2])
-		         .style("overflow","scroll")
-		         .style("padding-righ","40px")
+		         .style("height",h + m[0] + m[2]+150)
+		         .style("overflow","auto")
 		         .append("svg:svg")
-		         .style("font-size",18)
-		         .attr("width", 400)
+		         .style("font-size",10)
 		         .attr("height", svgHeight)
 		         .append("svg:g")
 		         .attr("transform", "translate("+0 + "," + m[0] + ")");
@@ -1399,12 +1398,14 @@ function renderWordCloud(chartConf){
 		legend.append("svg:g")
 		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
 		.style("height",30)
-		.append("svg:text").style("font-family",data.chart.font)
-		.style("font-size",18)
-		.style("font-weight",'bold')
-		.attr("x", 15)
+		.append("svg:text").style("font-family",data.legend.title.fontFamily)
+		.style("font-size",data.legend.title.fontSize)
+		.style("font-style",data.legend.title.fontStyle)
+		.style("font-weight",data.legend.title.fontWeight)
+		.attr("x", 20)
+		.attr("y",-10)
 		.attr("dy", ".31em")
-		.text( groupcolumn);
+		.text(groupcolumn);
 
        
 		 legend.selectAll("g.legend")
@@ -1424,10 +1425,11 @@ function renderWordCloud(chartConf){
 		.attr("height", 10);
 
 		legend.selectAll("g.legend").append("svg:text")
-		.style("font-family",data.chart.font)
-		.style("font-size",18)
-		.style("font-style",'normal')
-		.attr("x", 15)
+		.style("font-family",data.legend.element.fontFamily)
+		.style("font-size",data.legend.element.fontSize)
+		.style("font-style",data.legend.element.fontStyle)
+		.style("font-weight",data.legend.element.fontWeight)
+		.attr("x", 20)
 		.attr("dy", ".31em")
 		.text(function(d) {	
 			return d; });
