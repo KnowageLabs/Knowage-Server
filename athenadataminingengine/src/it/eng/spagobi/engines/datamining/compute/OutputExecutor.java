@@ -145,7 +145,9 @@ public class OutputExecutor {
 			REXP rexp = null;
 			re.eval("library(R2HTML)");
 			re.eval("library(RCurl)");
-			re.eval("HTMLStart()");
+
+			re.eval("HTMLStart(outdir = \"" + DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/") + "\", , filename = \""
+					+ profile.getUserUniqueIdentifier() + "\")");
 
 			if (function != null) {
 				if (outVal == null || outVal.equals("")) {
