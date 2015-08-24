@@ -760,7 +760,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  						 * (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
-  	  								chartType == "PARALLEL" || chartType == "TREEMAP" || chartType == "HEATMAP"))
+  	  								chartType == "PARALLEL" || chartType == "HEATMAP"))
   							{
   	  							return false;
   							}  	  						
@@ -790,7 +790,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			  	      						|| (this.store.data.length == 1 && 
 			  	      								(chartType == "RADAR" || chartType == "SCATTER")) 
 			  	      									|| (this.store.data.length == 2 && 
-			  	      											(chartType == "PARALLEL" || chartType == "TREEMAP" || 
+			  	      											(chartType == "PARALLEL"|| 
 			  	      													chartType == "HEATMAP"))) {
 			  	      					return false;
 			  	      				}
