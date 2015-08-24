@@ -35,10 +35,10 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 		        ftype: 'summary'
 		    }],		    
 		    viewConfig: {
-		    	forceFit:false,
+		    	forceFit: false,
 		        autoFill: true,
-		        enableRowBody:true,
-		        showPreview:true,
+		        enableRowBody: true,
+		        showPreview: true,
 		        loadMask: false,
 		        stripeRows : true
 		    },
@@ -450,8 +450,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		/* END Styling */
 		
-		if (visibleField.columnWidth && visibleField.columnWidth != null) {
-			field.width = visibleField.columnWidth;
+		if (visibleField.columnWidth && visibleField.columnWidth != null && visibleField.columnWidth != '') {
+			field.width = parseInt(visibleField.columnWidth);
 		} else {
 			field.flex = 1;
 		}
