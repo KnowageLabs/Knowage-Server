@@ -391,11 +391,13 @@
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					[
-						$serieCategoryName,
+						'$serieCategoryName',
 						$serieValue
 					],
 				#end
 	    	]
+	    	
+	    	
 	    },
 	#end
     ],
