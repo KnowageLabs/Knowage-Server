@@ -380,7 +380,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				numberFormatterFunction = Sbi.locale.formatters[t];
 			}
 
-			if(visibleField.columnType == elementTypes.NUMBER || visibleField.columnType == elementTypes.CURRENCY) {
+			if(visibleField.columnType == elementTypes.NUMBER 
+					|| visibleField.columnType == elementTypes.CURRENCY
+					|| visibleField.columnType == elementTypes.PERCENTAGE
+					) {
 				field.measureScaleFactor = visibleField.scale;
 			}
 			if (field.measureScaleFactor /*&& (t === 'float' || t ==='int')*/) { // format is applied only to numbers
@@ -478,9 +481,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		};
 		
 		var finalRendererFunction = Ext.Function.createSequence(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
+        
+		var summaryRowRenderFunction = this.customCreateSequenceFn(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
 		
+		var calculatedRendererFunction = null;
 		if(visibleField.calculatedFieldFlag != undefined && visibleField.calculatedFieldFlag) {
-			var calculatedRendererFunction = function(value, metaData, record, rowIndex, colIndex, store) {
+			calculatedRendererFunction = function(value, metaData, record, rowIndex, colIndex, store) {
 				
 				var calculatedFieldFormula = visibleField.calculatedFieldFormula;
 				//necessary for the next substitution
@@ -521,26 +527,37 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					calculatedFieldFormula = calculatedFieldFormula.replace(re, " (record.get('" + dataIndex + "')) ");
 					
 				}
-				console.log('calculatedFieldFormula', calculatedFieldFormula);
-				
-				value = eval(calculatedFieldFormula);
-				return value;
+
+				return eval(calculatedFieldFormula);
 			};
 			
-			var customCreateSequenceFn = function(originalFn, newFn, scope) {
-	            return function() {
-	                var result = originalFn.apply(this, arguments);
-	                arguments[0] = result;
-	                
-	                return newFn.apply(scope || this, arguments);
-	            };
-		    };
-			
-//		    finalRendererFunction = Ext.Function.createSequence(calculatedRendererFunction, finalRendererFunction, this);
-			finalRendererFunction = customCreateSequenceFn(calculatedRendererFunction, finalRendererFunction);
+			finalRendererFunction = this.customCreateSequenceFn(calculatedRendererFunction, finalRendererFunction);
 		}
 
 		field.renderer = finalRendererFunction;
+		
+		if(visibleField.columnType == elementTypes.NUMBER 
+				|| visibleField.columnType == elementTypes.CURRENCY
+				|| visibleField.columnType == elementTypes.PERCENTAGE ) {
+			
+			field.summaryRenderer = summaryRowRenderFunction;
+			field.summaryType = (visibleField.calculatedFieldFlag == undefined || !visibleField.calculatedFieldFlag) ?
+					'sum'
+					: function(data, columnName) {
+						var sum = 0;
+						
+						for(var i = 0; i < data.length; i++) {
+							var row = data[i];
+							var value = calculatedRendererFunction(null, null, row, null, null, row.store);
+							
+							sum += value;
+						}
+						
+						return sum;
+					}
+			;	 
+		}
+		
 		field.scope = this;
 
 		Sbi.trace("[TableWidget.applyRendererOnField]: OUT");
@@ -1138,7 +1155,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			}
 		    
 		    //font family
-	    	if (this.wconf.fontType === undefined || this.wconf.fontType === null){
+	    	if (this.wconf.fontType === undefined || this.wconf.fontType === null) {
 				headerFontStyle = headerFontStyle + 'tahoma,arial,verdana,sans-serif; ';
 				rowsFontStyle = rowsFontStyle + 'tahoma,arial,verdana,sans-serif; ';
 			} else {
@@ -1176,26 +1193,60 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				rowsFontStyle = rowsFontStyle + 'color: ' + this.wconf.rowsFontColor + '; } ';
 			}
 
-		    if(Ext.util.CSS.getRule(headerFontStyle) !== undefined || Ext.util.CSS.getRule(headerFontStyle) !== null){
+		    if(Ext.util.CSS.getRule(headerFontStyle) !== undefined || Ext.util.CSS.getRule(headerFontStyle) !== null) {
 		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_hstyle');
 		    	Ext.util.CSS.createStyleSheet(headerFontStyle, this.grid.id + '_hstyle');
-		    }
-		    else {
+		    } else {
 		    	Ext.util.CSS.createStyleSheet(headerFontStyle, this.grid.id + '_hstyle');
 		    }
 		    
 		    if(Ext.util.CSS.getRule(rowsFontStyle) !== undefined || Ext.util.CSS.getRule(rowsFontStyle) !== null){
 		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
 		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
-		    }
-		    else {
+		    } else {
 		    	Ext.util.CSS.createStyleSheet(rowsFontStyle, this.grid.id + '_rstyle');
-		    }  
+		    }
+		    
+		    // setting header background color
+		    if(this.wconf.headerBgColor && this.wconf.headerBgColor != null && this.wconf.headerBgColor != ''){
+		    	var headerBgStyle = '#' + this.grid.id + ' .x-column-header .x-column-header-inner { ';
+		    	headerBgStyle += ' background-color: #' + this.wconf.headerBgColor;	
+		    	headerBgStyle += ' }';	
+		    	
+		    	if(Ext.util.CSS.getRule(headerBgStyle) !== undefined || Ext.util.CSS.getRule(headerBgStyle) !== null){
+		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
+		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	} else {
+		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	}
+		    }
+		    
+		    // setting table background color
+		    if(this.wconf.tableBgColor && this.wconf.tableBgColor != null && this.wconf.tableBgColor != ''){
+		    	var headerBgStyle = '#' + this.grid.id + ' .x-grid-body { ';
+		    	headerBgStyle += ' background-color: #' + this.wconf.tableBgColor;	
+		    	headerBgStyle += ' }';	
+		    	
+		    	if(Ext.util.CSS.getRule(headerBgStyle) !== undefined || Ext.util.CSS.getRule(headerBgStyle) !== null){
+		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
+		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	} else {
+		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	}
+		    }
 		    
 	    }
 	    Sbi.trace("[TableWidget.initFontOptions]: OUT");
 	}
-
+	
+	, customCreateSequenceFn : function(originalFn, newFn, scope) {
+        return function() {
+            var result = originalFn.apply(this, arguments);
+            arguments[0] = result;
+            
+            return newFn.apply(scope || this, arguments);
+        };
+    }
 });
 
 
