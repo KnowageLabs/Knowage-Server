@@ -57,6 +57,7 @@ Sbi.cockpit.widgets.table.AggregationChooserWindow = function(defFormState) {
 		, scale: defFormState.scale
 		, backgroundColor: defFormState.backgroundColor
 		, columnWidth: defFormState.columnWidth
+		, fontType: defFormState.fontType
 		, fontSize: defFormState.fontSize
 		, fontWeight: defFormState.fontWeight
 		, fontColor: defFormState.fontColor
@@ -358,6 +359,29 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 			this.columnWidthField.setValue(config.columnWidth);
 		}
 	   	
+	   	var fontFamilyStore = Ext.create('Sbi.fonts.stores.FontFamilyStore', {});
+	   	this.fontTypeCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontFamilyStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'fontType',
+			labelWidth:		LABEL_WIDTH,
+			width:			FIELD_WIDTH
+		});
+
+	   	if(config.fontType != undefined 
+				&& config.fontType != null){
+			this.fontTypeCombo.select(config.fontType);
+		}
+	   	
 	   	var fontSizeStore =  Ext.create('Sbi.fonts.stores.FontSizeStore',{});
 	   	this.fontSizeCombo = Ext.create('Ext.form.ComboBox',{
 	   		name:			'fontSizeCombo',
@@ -457,6 +481,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 	   	items.push(this.decimalsScaleContainer);
 	   	items.push(this.backgroundColorField);
 	   	items.push(this.columnWidthField);
+	   	items.push(this.fontTypeCombo);
 	   	items.push(this.fontSizeCombo);
 	   	items.push(this.fontWeightCombo);
 	   	items.push(this.fontColorField);
@@ -564,6 +589,7 @@ Ext.extend(Sbi.cockpit.widgets.table.AggregationChooserWindow, Ext.Window, {
 		
 		formState.backgroundColor = this.backgroundColorField.getValue();
 		formState.columnWidth = this.columnWidthField.getValue();
+		formState.fontType = this.fontTypeCombo.getValue();
 		formState.fontSize = this.fontSizeCombo.getValue();
 		formState.fontWeight = this.fontWeightCombo.getValue();
 		formState.fontColor = this.fontColorField.getValue();

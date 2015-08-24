@@ -419,6 +419,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			columnClass += 'background-color:#' + visibleField.backgroundColor + ';'
 		}
 		
+		if (visibleField.fontType && visibleField.fontType != '') {
+			columnClass += 'font-family:"' + visibleField.fontType + '";'
+		}
+		
 		if (visibleField.fontSize && visibleField.fontSize != '' && visibleField.fontSize > 0) {
 			columnClass += 'font-size:' + visibleField.fontSize + 'px;'
 		}

@@ -138,6 +138,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'scale', type: 'string'}
 	      , {name: 'backgroundColor', type: 'string'}
 	      , {name: 'columnWidth', type: 'string'}
+	      , {name: 'fontType', type: 'string'}
 	      , {name: 'fontSize', type: 'int'}
 	      , {name: 'fontWeight', type: 'string'}
 	      , {name: 'fontColor', type: 'string'}
@@ -204,7 +205,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	        fields: ['id', 		'alias', 	'funct', 
 	                 'columnType', 	'typeSecondary', 'decimals',
 	                 'scale', 	'backgroundColor', 'columnWidth',
-	                 'fontSize', 'fontWeight', 		'fontColor', 
+	                 'fontType', 'fontSize', 'fontWeight', 'fontColor', 
 	                 'fontDecoration', 'calculatedFieldFlag', 'calculatedFieldFormula', 
 	                 'iconCls',  'nature', 'values', 
 	                 'valid',  'sortable', /*'width', */ 'columnName'
@@ -424,6 +425,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					scale: record.data.scale,
 					backgroundColor: record.data.backgroundColor,
 					columnWidth: record.data.columnWidth,
+					fontType: record.data.fontType,
 					fontSize: record.data.fontSize,
 					fontWeight: record.data.fontWeight,
 					fontColor: record.data.fontColor,
@@ -473,6 +475,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						decimals = formState.decimals,
 						backgroundColor = formState.backgroundColor,
 						columnWidth = formState.columnWidth,
+						fontType = formState.fontType,
 						fontSize = formState.fontSize,
 						fontWeight = formState.fontWeight,
 						fontColor = formState.fontColor,
@@ -502,6 +505,10 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					
 					if(columnWidth !== undefined) {
 						record.data.columnWidth = columnWidth;
+					}
+					
+					if(fontType !== undefined && fontType !== null && fontType !== "") {
+						record.data.fontType = fontType;
 					}
 					
 					if(fontSize !== undefined) {
