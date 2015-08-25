@@ -586,7 +586,9 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				}
 				
 				// set renderer based on field type
-
+				
+				var rendererFunction;
+				
 				if(meta.fields[i].type) {
 				   var columnFromTemplate = this.registryConfiguration.columns[i-1]; // because 0 is row numberer
 				   var formatToParse;
@@ -607,10 +609,15 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 					   var format = Sbi.qbe.commons.Format.getFormatFromJavaPattern(formatToParse);
 					   var f = Ext.apply( Sbi.locale.formats[t], format);
 					   meta.fields[i].renderer = Sbi.qbe.commons.Format.floatRenderer(f);
+
+					   rendererFunction = meta.fields[i].renderer;
+					   
 					   this.numberColumnIndex.push(i);
 					   
 				   }else if(t ==='int'){
 					   meta.fields[i].renderer = Sbi.locale.formatters['string']; 
+					   rendererFunction = meta.fields[i].renderer;
+					   
 					   this.numberColumnIndex.push(i);
 				   }else if(t ==='date'){
 					   if(columnFromTemplate.format){
@@ -620,6 +627,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 						   formatToParse = meta.fields[i].dateFormat;
 					   }		
 					   meta.fields[i].renderer = Ext.util.Format.dateRenderer(formatToParse);
+
+					   rendererFunction = meta.fields[i].renderer;
 				   }else{
 					   //meta.fields[i].renderer = Sbi.locale.formatters[t];
 					   meta.fields[i].renderer = this.renderTooltip.createDelegate(this);
@@ -680,9 +689,14 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				var MyColorRenderer = function(value, metaData, record)
 				{
 				   if (value === undefined || record === undefined || record.data === undefined){return null;}
-				   metaData.style += 'background-color:' + this.color; //this is for background
-				   retValue = value;
-				   	//retValue = "<font style=' color:red;'>" + value + "</font>"; //this is for inc
+				   	metaData.style += 'background-color:' + this.color; //this is for background
+				   	retValue = value;
+
+				   	// done to avoid that color renderer overwrite format renderer
+				   if(rendererFunction != undefined){
+					   retValue = rendererFunction(value);
+				   }
+				    //retValue = "<font style=' color:red;'>" + value + "</font>"; //this is for inc
 				   	return retValue ;
 				};
 			   
