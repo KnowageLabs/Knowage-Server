@@ -25,6 +25,7 @@ Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard = function(config) {
 		, minWidth: 400
 		, height: 450
 		, minHeight: 400
+		, modal : true
 		, hasBuddy: false	
 		, constrainHeader : true
 	});

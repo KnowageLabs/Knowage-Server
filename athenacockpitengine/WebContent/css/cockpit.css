@@ -236,6 +236,11 @@
 		margin-top: 10px;
 	}
 	
+	.icon_configure_tablerow_calculated_formula { 
+		background-image: url('../img/ico-edit.png') !important;
+		margin-top: 10px;
+	}
+	
 	.mainPanel {
 		-webkit-background-clip: border-box;
 		-webkit-background-origin: padding-box;

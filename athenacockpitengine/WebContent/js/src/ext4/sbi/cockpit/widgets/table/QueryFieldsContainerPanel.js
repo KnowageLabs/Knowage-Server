@@ -270,35 +270,51 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	    };
 	    
 	    var actionColumn = {
-            
-	    		menuDisabled: true,
-	    		sortable: false,
-	    		xtype: 'actioncolumn',
-	    		width: 50,
-	    		items: 
-	    		[
-					{
-						iconCls: 'icon_configure_tablerow',
-						tooltip: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure'),
-						handler: function(grid, rowIndex, colIndex) {
-							var rec = grid.getStore().getAt(rowIndex);
-							thePanel.rowDblClickHandler(grid, rec);
-							
-						}
-					},
-	    		 	{
-	    		 		iconCls: 'icon_delete_tablerow',
-	    		 		tooltip: LN('sbi.qbe.selectgridpanel.headers.delete.column'),
-	    		 		handler: function(grid, rowIndex, colIndex) {
-	    		 			var rec = grid.getStore().getAt(rowIndex);
-	    		 			grid.getStore().remove(rec);
-	    		 	        this.fireEvent('storeChanged', grid.getStore().getCount());
-	    		 		}
-	    		 	}
-                ]
+    		menuDisabled: true,
+    		sortable: false,
+    		xtype: 'actioncolumn',
+    		width: 70,
+    		align : 'right',
+    		scope: this,
+    		items: [{
+//    			iconCls: 'icon_configure_tablerow_calculated_formula',
+    			tooltip: LN('sbi.cockpit.widgets.table.inlineCalculatedFields.title'),
+    			handler: function(grid, rowIndex, colIndex) {
+					var rec = grid.getStore().getAt(rowIndex);
+						
+    				this.showInLineCalculatedFieldWizard(rec);
+    			},
+    			isDisabled : function(grid, rowIndex, colIndex) {
+    				var rec = grid.getStore().getAt(rowIndex);
+    				
+    				var calculatedFieldFlag = rec.get('calculatedFieldFlag');
+    				return !calculatedFieldFlag;
+    			},
+    			getClass : function(grid, metadata, model, rowIndex, colIndex, store) {
+    				var rec = store.getAt(rowIndex);
+    				
+    				var calculatedFieldFlag = rec.get('calculatedFieldFlag');
+    				return calculatedFieldFlag ? 'icon_configure_tablerow_calculated_formula' : 'hidden';
+    			}
+    		}, {
+				iconCls: 'icon_configure_tablerow',
+				tooltip: LN('sbi.cockpit.widgets.table.tabledesignerpanel.configure'),
+				handler: function(grid, rowIndex, colIndex) {
+					var rec = grid.getStore().getAt(rowIndex);
+					thePanel.rowDblClickHandler(grid, rec);
+					
+				}
+			}, {
+		 		iconCls: 'icon_delete_tablerow',
+		 		tooltip: LN('sbi.qbe.selectgridpanel.headers.delete.column'),
+		 		handler: function(grid, rowIndex, colIndex) {
+		 			var rec = grid.getStore().getAt(rowIndex);
+		 			grid.getStore().remove(rec);
+		 	        this.fireEvent('storeChanged', grid.getStore().getCount());
+		 		}
+		 	}]
 	    }
 	    
-	    //this.cm = new Ext.grid.ColumnModel([fieldColumn]);
 	    this.columns =[fieldColumn, actionColumn];
 	}
 
@@ -667,7 +683,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	}
 	
 	, showInLineCalculatedFieldWizard: function(targetRecord) { //copied by SelectGridPanel.js
-		
 		// get all records
 		var records = this.store.queryBy( function(record) {
 			return record;
@@ -676,14 +691,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		var fields = new Array();
 		//removes from the fields the calculated fields
 		records.each(function(r) {
-//			if(r.data.type != Sbi.commons.Constants.FIELD_TYPE_INLINE_CALCULATED){
 			if( ! r.data.calculatedFieldFlag ){
 				var field = Ext.apply(r.data, {
 						uniqueName: r.data.id,
 						alias: r.data.alias,
 						text: r.data.alias, 
 						qtip: r.data.entity + ' : ' + r.data.field, 
-//						type: 'field', 
 						value: 'fields[\'' + r.data.alias + '\']'
 				});
 				fields.push(field);

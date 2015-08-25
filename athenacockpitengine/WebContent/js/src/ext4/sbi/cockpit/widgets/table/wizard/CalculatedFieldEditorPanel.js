@@ -107,19 +107,12 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 	, setExpression: function(expression) {
 		
 		if(this.expressionEditor) {
-			if(this.expertMode === undefined || this.expertMode === null || this.expertMode === false){
-	  			expression = this.replaceFieldUniqueNamesWithFieldAliases(expression);
-	  		}
-			
 			expression = expression.replace(/ /g,"&nbsp;");
 	  		expression = expression.replace(/</g,"&lt;");
 	  		expression = expression.replace(/>/g,"&gt;");
 	  		
-	  		this.baseExpression = expression;
-	  		if(this.expressionEditor.initialized) {
-	  			this.expressionEditor.reset();
-  				this.expressionEditor.insertAtCursor( expression );
-	  		} 
+	  		this.expressionEditor.setValue(expression);
+	  		this.expressionEditor.insertAtCursor( expression );
 		}
 	}
 	
@@ -244,12 +237,11 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldEditorPanel, Ext.Pane
 		this.target = record;
 		if(this.target) {
 			this.inputFields.alias.setValue( record.data.alias );
-//			this.inputFields.type.setValue( record.data.id.type );
-			//this.setExpression(record.data.id.expression);
-			this.setExpression.defer(100,this,[record.data.id.expression]);
+			this.inputFields.alias.setDisabled(true);
+			this.setExpression(record.data.calculatedFieldFormula);
 		} else {
 			this.inputFields.alias.reset();
-//			this.inputFields.type.reset();
+			this.inputFields.alias.setDisabled(false);
 			this.expressionEditor.reset();
 		}
 	}
