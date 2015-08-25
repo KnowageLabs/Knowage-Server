@@ -1071,13 +1071,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var alternateRowsFirst = '.' + clsClass + ' .x-grid-row .x-grid-cell {' 
 					+ ( this.wconf.alternateRowsColors? 
 							'background-color: #'+ this.wconf.alternateRowsColorsFirst + ';' :
-							'background-color: #FFF')
+							'background-color: transparent')
 				+'}';
 			var alternateRowsSecondClassId = clsClass + 'Second';
 			var alternateRowsSecond = '.' + clsClass + ' .x-grid-row-alt .x-grid-cell {' 
 					+ ( this.wconf.alternateRowsColors? 
 							'background-color: #'+ this.wconf.alternateRowsColorsSecond + ';' :
-							'background-color: #FFF')
+							'background-color: transparent')
 				+'}';
 			
 			Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
