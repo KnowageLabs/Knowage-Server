@@ -1227,9 +1227,7 @@ function renderWordCloud(chartConf){
 	}	
 	
 	function renderParallelChart(data){
-		
-		console.log(data);
-		
+
 	var records = data.data[0];
 
 	if(records.length>0){
