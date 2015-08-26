@@ -34,6 +34,7 @@ import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
+import it.eng.spagobi.federateddataset.dao.ISbiFederatedDatasetDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.images.dao.IImagesDAO;
@@ -888,5 +889,10 @@ public class DAOFactory {
 	public static IImagesDAO getImagesDAO() throws EMFUserError {
 		return (IImagesDAO) createDAOInstance("ImagesDAO");
 	}
+	
+	public static ISbiFederatedDatasetDAO getFedetatedDatasetDAO() throws EMFUserError {
+		return (ISbiFederatedDatasetDAO) createDAOInstance("FederatedDatasetDAO");
+	}
+	
 
 }

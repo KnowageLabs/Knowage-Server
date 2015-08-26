@@ -60,8 +60,13 @@
 		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary"
 					functionality="MeasuresCatalogueManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/glossaryTechnical.jsp" />
+					
+			<ITEM	title="DATASETS"
+					functionality="MeasuresCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />		
 					
+			
 		</ITEM>
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"

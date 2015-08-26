@@ -159,6 +159,8 @@
 	<CONFIGURATOR path="/WEB-INF/conf/tools/dataset/dataset.xml" />
 	<CONFIGURATOR path="/WEB-INF/conf/tools/dataset/business_map.xml" />
 	
+	<!--  federateddataset -->
+	<CONFIGURATOR path="/WEB-INF/conf/tools/federateddataset/business_map.xml" />
 	<!-- tools.multitenant -->	
 	<CONFIGURATOR path="/WEB-INF/conf/tools/multitenant/business_map.xml" />
 	
@@ -187,6 +189,7 @@
     <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/presentation.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/publishers.xml" />
     <CONFIGURATOR path="/WEB-INF/conf/tools/catalogue/business_map.xml" />
+    
 		
 	<!-- workflow -->	
 	<CONFIGURATOR path="/WEB-INF/conf/workflow/modules.xml" />
