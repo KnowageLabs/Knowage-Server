@@ -764,7 +764,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     				id: calculatedId, 
     				alias: formState.alias, 
     				calculatedFieldFlag: true, 
-    				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim()});
+    				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim(),
+    				columnType: "TEXT",
+    				decimals: 0,
+    				columnWidth: null
+    			});
     		}
     	}, this);
 	}
