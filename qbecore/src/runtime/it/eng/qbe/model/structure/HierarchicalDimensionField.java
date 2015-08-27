@@ -8,12 +8,11 @@ package it.eng.qbe.model.structure;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HierarchicalDimensionField extends ModelField{
+public class HierarchicalDimensionField extends ModelField {
 
 	private String name;
 	private String entity;
 	private List<Hierarchy> hierarchies;
-
 
 	public HierarchicalDimensionField() {
 	}
@@ -33,7 +32,8 @@ public class HierarchicalDimensionField extends ModelField{
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	@Override
 	public void setName(String name) {
@@ -48,7 +48,8 @@ public class HierarchicalDimensionField extends ModelField{
 	}
 
 	/**
-	 * @param entity the entity to set
+	 * @param entity
+	 *            the entity to set
 	 */
 	public void setEntity(String entity) {
 		this.entity = entity;
@@ -60,6 +61,15 @@ public class HierarchicalDimensionField extends ModelField{
 
 	public void setHierarchies(List<Hierarchy> hierarchies) {
 		this.hierarchies = hierarchies;
+	}
+
+	public Hierarchy getDefaultHierarchy() {
+		for (Hierarchy hierarchy : hierarchies) {
+			if (hierarchy.getIsDefault()) {
+				return hierarchy;
+			}
+		}
+		return null;
 	}
 
 }
