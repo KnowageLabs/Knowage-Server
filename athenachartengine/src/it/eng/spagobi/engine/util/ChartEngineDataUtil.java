@@ -166,7 +166,8 @@ public class ChartEngineDataUtil {
 			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
 
 			if (!isDrilldown || serieName.equalsIgnoreCase(drilldownSerie)) {
-				q.addSelectFiled(serieColumn, serieFunction, serieColumn + "_" + serieFunction, true, true, false, null, null);
+				String fieldAlias = serieColumn + (!isDrilldown ? "_" + serieFunction : "");
+				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, null, null);
 			}
 		}
 
