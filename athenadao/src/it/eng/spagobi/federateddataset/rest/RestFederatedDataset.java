@@ -6,19 +6,19 @@ import it.eng.spagobi.federateddataset.dao.ISbiFederatedDatasetDAO;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
+//import javax.ws.rs.POST;
+//import javax.ws.rs.Path;
+//import javax.ws.rs.core.Context;
 
 import org.json.JSONObject;
 
 
-@Path("/federateddataset")
+//@Path("/federateddataset")
 public class RestFederatedDataset {
 	
-	@POST
-	@Path("/post")
-	public String createTrackInJSON(@Context HttpServletRequest req) {
+//	@POST
+//	@Path("/post")
+	public String createTrackInJSON(/*@Context*/ HttpServletRequest req) {
 		
 		
 		
