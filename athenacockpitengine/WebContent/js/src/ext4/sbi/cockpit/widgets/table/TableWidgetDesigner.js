@@ -137,6 +137,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	//field to pick widget background color
 	, tableBgColorPicker: null
 	
+	//field to select header font type
+	, headerFontTypeCombo: null
 	//field to select header font size
 	, headerFontSizeCombo: null
 	//field to select header font color
@@ -278,6 +280,24 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		
 		/* table font \ options */
+		// state.headerFontType
+		this.headerFontTypeCombo = Ext.create('Ext.form.ComboBox',{
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
+			queryMode:      'local',
+			triggerAction:  'all',
+			forceSelection: true,
+			editable:       false,
+			allowBlank: 	true,
+			typeAhead: 		true,
+			lazyRender:		true,
+			store: 			fontFamilyStore, 
+			valueField: 	'name',
+			displayField: 	'description',
+			name:			'headerFontType',
+			labelWidth:		LABEL_WIDTHS,
+			width:			WIDTHS
+		});
+		
 		// state.headerFontSize
 		this.headerFontSizeCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
@@ -369,7 +389,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	        , title: 			LN('sbi.cockpit.designer.fontConf.tableHeaderFontOptions')
 	    	, margin: 			10
 	    	, items: 			[
-	    	         			 this.headerFontSizeCombo
+	    	         			 this.headerFontTypeCombo
+	    	         			 , this.headerFontSizeCombo
 	    	         			 , this.headerFontColorText
 	    	         			 , this.headerFontWeightCombo
 	    	         			 , this.headerFontDecorationCombo
@@ -858,6 +879,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 
 			
 			//header font
+			if(thePanel.headerFontType === undefined || thePanel.headerFontType === null){
+				state.headerFontType = tableFonts.headerFontType;
+			}else{
+				state.headerFontType = thePanel.headerFontType;
+			}
+			
 			if(thePanel.headerFontSize === undefined || thePanel.headerFontSize === null){
 				state.headerFontSize = tableFonts.headerFontSize;
 			}else{
@@ -919,6 +946,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.fontSize = thePanel.fontSize;
 			state.tableBgColor = thePanel.tableBgColor;
 			
+			state.headerFontType = thePanel.headerFontType;
 			state.headerFontSize = thePanel.headerFontSize;
 			state.headerFontColor = thePanel.headerFontColor;
 			state.headerFontWeight = thePanel.headerFontWeight;
@@ -942,6 +970,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		if (state.fontSize) this.fontSizeCombo.setValue(state.fontSize);
 		if (state.tableBgColor) this.tableBgColorPicker.setValue(state.tableBgColor);
 		//header font
+		if (state.headerFontType) this.headerFontTypeCombo.setValue(state.headerFontType);
 		if (state.headerFontSize) this.headerFontSizeCombo.setValue(state.headerFontSize);
 		if (state.headerFontColor) this.headerFontColorText.setValue(state.headerFontColor);
 		if (state.headerFontWeight) this.headerFontWeightCombo.setValue(state.headerFontWeight);
@@ -983,6 +1012,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		}
 
 		//header font
+		if(this.headerFontTypeCombo !== null) {	
+			state.headerFontType = this.headerFontTypeCombo.getValue();
+		}
+		
 		if(this.headerFontSizeCombo !== null) {	
 			state.headerFontSize = this.headerFontSizeCombo.getValue();
 		}

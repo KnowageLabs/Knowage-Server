@@ -1123,79 +1123,83 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
     	
 		    //header font weight
 		    if(this.wconf.headerFontWeight === undefined || this.wconf.headerFontWeight  === null){
-				headerFontStyle = headerFontStyle + 'normal ';	
+				headerFontStyle += 'normal ';	
 			} else {
-				headerFontStyle = headerFontStyle + this.wconf.headerFontWeight + ' ';
+				headerFontStyle += this.wconf.headerFontWeight + ' ';
 			}
 		    
 		    //rows font weight
 		    if(this.wconf.rowsFontWeight === undefined || this.wconf.rowsFontWeight  === null){
-				rowsFontStyle = rowsFontStyle + 'normal ';	
+				rowsFontStyle += 'normal ';	
 			} else {
-				rowsFontStyle = rowsFontStyle + this.wconf.rowsFontWeight + ' ';
+				rowsFontStyle += this.wconf.rowsFontWeight + ' ';
 			}
 	    
 		 	//header font size
 		    if(this.wconf.headerFontSize === undefined || this.wconf.headerFontSize === null){
 	    		
 				if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
-					headerFontStyle = headerFontStyle + '11px/13px ';
+					headerFontStyle += '11px/13px ';
 				} else {
-					headerFontStyle = headerFontStyle + this.wconf.fontSize + 'px ';
+					headerFontStyle += this.wconf.fontSize + 'px ';
 				}			
 			} else {
-				headerFontStyle = headerFontStyle + this.wconf.headerFontSize + 'px ';
+				headerFontStyle += this.wconf.headerFontSize + 'px ';
 			}
 	    	
 	    	//rows font size
 	    	if(this.wconf.rowsFontSize === undefined || this.wconf.rowsFontSize === null){
 	    		
 				if (this.wconf.fontSize == undefined || this.wconf.fontSize == null){
-					rowsFontStyle = rowsFontStyle + '11px/13px ';
+					rowsFontStyle += '11px/13px ';
 				} else {
-					rowsFontStyle = rowsFontStyle + this.wconf.fontSize + 'px ';
+					rowsFontStyle += this.wconf.fontSize + 'px ';
 				}			
 			} else {
-				rowsFontStyle = rowsFontStyle + this.wconf.rowsFontSize + 'px ';
+				rowsFontStyle += this.wconf.rowsFontSize + 'px ';
 			}
 		    
 		    //font family
+	    	if (this.wconf.headerFontType === undefined || this.wconf.headerFontType === null) {
+	    		headerFontStyle += 'tahoma,arial,verdana,sans-serif; ';
+	    	} else {
+	    		headerFontStyle += '' + this.wconf.headerFontType + '; ';
+	    	}
+	    	
 	    	if (this.wconf.fontType === undefined || this.wconf.fontType === null) {
-				headerFontStyle = headerFontStyle + 'tahoma,arial,verdana,sans-serif; ';
-				rowsFontStyle = rowsFontStyle + 'tahoma,arial,verdana,sans-serif; ';
+				rowsFontStyle += 'tahoma,arial,verdana,sans-serif; ';
 			} else {
-				headerFontStyle = headerFontStyle + '' + this.wconf.fontType + '; ';
 				rowsFontStyle = rowsFontStyle  + '' + this.wconf.fontType + '; ';
 			}
 	    	
 	    	//font decoration
 	    	//header font decoration
 		    if(this.wconf.headerFontDecoration === undefined || this.wconf.headerFontDecoration  === null){
-				headerFontStyle = headerFontStyle + 'text-decoration: none; ';	
+				headerFontStyle += 'text-decoration: none; ';	
 			} else {
-				headerFontStyle = headerFontStyle + 'text-decoration: ' + this.wconf.headerFontDecoration + '; ';
+				headerFontStyle += 'text-decoration: ' + this.wconf.headerFontDecoration + '; ';
 			}
 		    
 			//rows font decoration
 		    if(this.wconf.rowsFontDecoration === undefined || this.wconf.rowsFontDecoration  === null){
-				rowsFontStyle = rowsFontStyle + 'text-decoration: none; ';	
+				rowsFontStyle += 'text-decoration: none; ';	
 			} else {
-				rowsFontStyle = rowsFontStyle + 'text-decoration: ' + this.wconf.rowsFontDecoration + '; ';
+				rowsFontStyle += 'text-decoration: ' + this.wconf.rowsFontDecoration + '; ';
 			}
 		    
 		    //font color
 		    //header font color
 		    if(this.wconf.headerFontColor === undefined || this.wconf.headerFontColor === null || this.wconf.headerFontColor === ''){
-				headerFontStyle = headerFontStyle + '} ';	
+				headerFontStyle += '} ';	
 			} else {
-				headerFontStyle = headerFontStyle + 'color: ' + this.wconf.headerFontColor + '; } ';
+				headerFontStyle += 'color: ' + this.wconf.headerFontColor + '; } ';
 			}
 		    
 			//rows font color
 		    if(this.wconf.rowsFontColor === undefined || this.wconf.rowsFontColor === null || this.wconf.rowsFontColor === ''){
-		    	rowsFontStyle = rowsFontStyle + '} ';	
+		    	rowsFontStyle += '} ';	
 			} else {
-				rowsFontStyle = rowsFontStyle + 'color: ' + this.wconf.rowsFontColor + '; } ';
+				rowsFontStyle += 'color: ' + this.wconf.rowsFontColor + '; } ';
 			}
 
 		    if(Ext.util.CSS.getRule(headerFontStyle) !== undefined || Ext.util.CSS.getRule(headerFontStyle) !== null) {
