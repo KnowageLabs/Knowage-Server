@@ -6,18 +6,15 @@ package it.eng.spagobi.commons.utilities;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.utilities.engines.rest.AbstractRestClient;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 import org.json.JSONArray;
 
 /**
@@ -25,38 +22,35 @@ import org.json.JSONArray;
  * @author Gavardi Giulio(giulio.gavardi@eng.it)
  */
 
-public class DataSetPersister {
+public class DataSetPersister extends AbstractRestClient{
 
+	private String serviceUrl = "/restful-services/1.0/datasets/list/persist";
+	
+	public DataSetPersister(){
+		
+	}
+	
 	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
 
-	public void persistDataSets(ArrayList<String> labels, String userId) throws ServletException, IOException, Exception {
+	public void cacheDataSets(List<String> datasetLabels, String userId) throws Exception {
 
 		logger.debug("IN");
 
-		String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
-		String serviceUrl = serverUrl + "/restful-services/1.0/datasets/list/persist";
-
-		logger.debug("Call service URL " + serverUrl);
-
-		ApacheHttpClientExecutor httpExecutor = new ApacheHttpClientExecutor(CKANClient.getHttpClient());
-		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
-
-		JSONArray array = new JSONArray();
-		for (int i = 0; i < labels.size(); i++) {
-			String lab = labels.get(i);
-			array.put(lab);
+		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
+		
+		JSONArray datasetLabelsArray = new JSONArray();
+		
+		for(int i=0; i<datasetLabels.size(); i++){
+			datasetLabelsArray.put(datasetLabels.get(i));
 		}
-
-		request.queryParameter("labels", array);
-		request.queryParameter("user_id", userId);
+		
+		
+		parameters.put("labels", datasetLabelsArray);
+		parameters.put("user_id", userId);
 
 		logger.debug("Call persist service in post");
-		ClientResponse response = request.get();
-
-		if (response.getStatus() >= 400) {
-			throw new RuntimeException("Request to persist datasetss failed with HTTP error code : " + response.getStatus());
-		}
-
+		executeService(parameters, serviceUrl);
+		
 		logger.debug("OUT");
 	}
 
