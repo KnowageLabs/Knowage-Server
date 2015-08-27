@@ -304,7 +304,7 @@ public interface IBIObjectDAO extends ISpagoBIDao{
 	
 	public List loadPagedObjectsList(Integer offset, Integer fetchSize)throws EMFUserError ;
 	
-	public Integer countBIObjects(String search)throws EMFUserError ;
+	public Integer countBIObjects(String search, String user)throws EMFUserError ;
 	
 	/**
 	 * Loads all the BIObjects that belong to sub functionalities of the given functionality path.

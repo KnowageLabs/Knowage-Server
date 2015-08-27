@@ -911,20 +911,30 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			@Override
 			public Boolean execute(Session session) {
 
-				Query q = session
-						.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
+				Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
 				q.setParameter("id", wordId);
 				q.executeUpdate();
 
-				Query q3 = session
-						.createQuery("delete from SbiGlDocWlist  where id.wordId=:id");
+				Query q1 = session.createQuery("delete from SbiGlDataSetWlist  where id.wordId=:id");
+				q1.setParameter("id", wordId);
+				q1.executeUpdate();
+				
+				Query q3 = session.createQuery("delete from SbiGlDocWlist  where id.wordId=:id");
 				q3.setParameter("id", wordId);
 				q3.executeUpdate();
 				
-				Query q2 = session
-						.createQuery("delete from SbiGlWlist  where word.wordId=:id");
+				Query q2 = session.createQuery("delete from SbiGlWlist  where word.wordId=:id");
 				q2.setParameter("id", wordId);
 				q2.executeUpdate();
+				
+				Query q4 = session.createQuery("delete from SbiGlBnessClsWlist  where id.wordId=:id");
+				q4.setParameter("id", wordId);
+				q4.executeUpdate();
+
+				
+				Query q5 = session.createQuery("delete from SbiGlTableWlist  where id.wordId=:id");
+				q5.setParameter("id", wordId);
+				q5.executeUpdate();
 
 				
 				
