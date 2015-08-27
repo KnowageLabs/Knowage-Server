@@ -1070,15 +1070,19 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			
 			var alternateRowsFirstClassId = clsClass + 'First';
 			var alternateRowsFirst = '.' + clsClass + ' .x-grid-row .x-grid-cell {' 
-					+ ( this.wconf.alternateRowsColors? 
+					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
 							'background-color: #'+ this.wconf.alternateRowsColorsFirst + ';' :
-							'background-color: transparent')
+								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
+										'background-color: #'+ this.wconf.rowsBgColor + ';' :
+										'background-color: transparent;')
 				+'}';
 			var alternateRowsSecondClassId = clsClass + 'Second';
 			var alternateRowsSecond = '.' + clsClass + ' .x-grid-row-alt .x-grid-cell {' 
-					+ ( this.wconf.alternateRowsColors? 
+					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
 							'background-color: #'+ this.wconf.alternateRowsColorsSecond + ';' :
-							'background-color: transparent')
+								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
+										'background-color: #'+ this.wconf.rowsBgColor + ';' :
+										'background-color: transparent;')
 				+'}';
 			
 			Ext.util.CSS.removeStyleSheet(alternateRowsFirstClassId);
@@ -1223,25 +1227,29 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		    	headerBgStyle += ' }';	
 		    	
 		    	if(Ext.util.CSS.getRule(headerBgStyle) !== undefined || Ext.util.CSS.getRule(headerBgStyle) !== null){
-		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
+		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_hBgStyle');
 		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
 		    	} else {
 		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
 		    	}
+		    } else {
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_hBgStyle');
 		    }
 		    
 		    // setting table background color
 		    if(this.wconf.tableBgColor && this.wconf.tableBgColor != null && this.wconf.tableBgColor != ''){
-		    	var headerBgStyle = '#' + this.grid.id + ' .x-grid-body { ';
-		    	headerBgStyle += ' background-color: #' + this.wconf.tableBgColor;	
-		    	headerBgStyle += ' }';	
+		    	var tableBgStyle = '#' + this.grid.id + ' .x-grid-body { ';
+		    	tableBgStyle += ' background-color: #' + this.wconf.tableBgColor;	
+		    	tableBgStyle += ' }';	
 		    	
-		    	if(Ext.util.CSS.getRule(headerBgStyle) !== undefined || Ext.util.CSS.getRule(headerBgStyle) !== null){
-		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_rstyle');
-		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    	if(Ext.util.CSS.getRule(tableBgStyle) !== undefined || Ext.util.CSS.getRule(tableBgStyle) !== null){
+		    		Ext.util.CSS.removeStyleSheet(this.grid.id + '_tBgStyle');
+		    		Ext.util.CSS.createStyleSheet(tableBgStyle, this.grid.id + '_tBgStyle');
 		    	} else {
-		    		Ext.util.CSS.createStyleSheet(headerBgStyle, this.grid.id + '_hBgStyle');
+		    		Ext.util.CSS.createStyleSheet(tableBgStyle, this.grid.id + '_tBgStyle');
 		    	}
+		    } else {
+		    	Ext.util.CSS.removeStyleSheet(this.grid.id + '_tBgStyle');
 		    }
 		    
 	    }

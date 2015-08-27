@@ -158,6 +158,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	, rowsFontWeightCombo: null
 	//field to select rows font decoration
 	, rowsFontDecorationCombo: null
+	//field to choose rows background color
+	, rowsBgColorPicker: null
 	//panel to show font size options
 	, fontConfigurationPanel: null
 	
@@ -470,6 +472,20 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			labelWidth:		LABEL_WIDTHS,
 			width:			WIDTHS
 		});
+
+		// state.rowsBgColor
+		this.rowsBgColorPicker = Ext.create('Ext.ux.FontColorField', { 
+			msgTarget: 		'qtip', 
+			fallback: 		true,
+			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.bgColor'),
+			afterLabelTextTpl : '<span class="help" data-qtip="'
+	            	+ LN('sbi.cockpit.designer.fontConf.fontColor.info')
+	            	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+			name: 			'rowsBgColorPicker',
+			allowBlank: 	true,
+			labelWidth:		LABEL_WIDTHS,
+			width:			WIDTHS,
+		});
 		 
 		var tableRowsFontOptions = {
 			xtype: 				'fieldset'
@@ -483,7 +499,9 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	    	         			 this.rowsFontSizeCombo
 	    	         			 , this.rowsFontColorText
 	    	         			 , this.rowsFontWeightCombo
-	    	         			 , this.rowsFontDecorationCombo]	
+	    	         			 , this.rowsFontDecorationCombo
+	    	         			 , this.rowsBgColorPicker
+	    	         			 ]	
 			, width:			SET_WIDTHS
 		};
 		 
@@ -940,6 +958,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 				state.rowsFontDecoration = thePanel.rowsFontDecoration;
 			}			
 			
+			if(thePanel.rowsBgColor === undefined || thePanel.rowsBgColor === null){
+				state.rowsBgColor = tableFonts.rowsBgColor;
+			}else{
+				state.rowsBgColor = thePanel.rowsBgColor;
+			}			
+			
 		}else{
 			
 			state.fontType = thePanel.fontType;
@@ -957,7 +981,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			state.rowsFontColor = thePanel.rowsFontColor;
 			state.rowsFontWeight = thePanel.rowsFontWeight;
 			state.rowsFontDecoration = thePanel.rowsFontDecoration;
-			
+			state.rowsBgColor = thePanel.rowsBgColor;
 		}
 		
 		Sbi.trace("[TableWidgetDesigner.setFontStateBeforeRender]: OUT");		
@@ -981,6 +1005,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		if (state.rowsFontColor) this.rowsFontColorText.setValue(state.rowsFontColor);
 		if (state.rowsFontWeight) this.rowsFontWeightCombo.setValue(state.rowsFontWeight);
 		if (state.rowsFontDecoration) this.rowsFontDecorationCombo.setValue(state.rowsFontDecoration);		
+		if (state.rowsBgColor) this.rowsBgColorPicker.setValue(state.rowsBgColor);
 		
 		Sbi.trace("[TableWidgetDesigner.setFontState]: OUT");		
 	}
@@ -1051,6 +1076,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		if(this.rowsFontDecorationCombo !== null) {	
 			state.rowsFontDecoration = this.rowsFontDecorationCombo.getValue();
+		}
+		
+		if(this.rowsBgColorPicker !== null) {	
+			state.rowsBgColor = this.rowsBgColorPicker.getValue();
 		}
 				
 		Sbi.trace("[TableWidgetDesigner.getFontState]: OUT");		
