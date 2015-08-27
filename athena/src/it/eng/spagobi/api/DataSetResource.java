@@ -18,8 +18,6 @@ import it.eng.spagobi.commons.monitor.Monitor;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -61,6 +59,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -69,7 +68,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -78,7 +79,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
@@ -109,6 +110,48 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
+	@Path("/list/persist")
+	public void persistDataSets(@QueryParam("labels") JSONArray labels) {
+		logger.debug("IN");
+
+		for (int i = 0; i < labels.length(); i++) {
+			String label = null;
+			try {
+				label = labels.getString(i);
+				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+				dataSetManagementAPI.persistDataset(label);
+			} catch (JSONException e) {
+				logger.error("error in persisting dataset with label: " + label, e);
+				throw new RuntimeException("error in persisting dataset with label " + label);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	@POST
+	@Path("/list/persist")
+	public void persistDataSetsPost(@FormParam("labels") JSONArray labels) {
+		logger.debug("IN");
+
+		for (int i = 0; i < labels.length(); i++) {
+			String label = null;
+			try {
+				label = labels.getString(i);
+				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+				dataSetManagementAPI.setUserProfile(getUserProfile());
+				dataSetManagementAPI.persistDataset(label);
+			} catch (JSONException e) {
+				logger.error("error in persisting dataset with label: " + label, e);
+				throw new RuntimeException("error in persisting dataset with label: " + label);
+			}
+		}
+
+		logger.debug("OUT");
+
+	}
+
+	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSet(@PathParam("label") String label) {
@@ -123,46 +166,53 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@POST
+	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response execute(@PathParam("label") String label, String body) {
-		SDKDataSetParameter[] parameters = null;
-		if (body != null && !body.equals("")) {
-			parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
+	public Response execute(@PathParam("label") String label, @Context UriInfo info) {
+		MultivaluedMap<String, String> queryParameters = info.getQueryParameters();
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		String callback = null;
+
+		if (queryParameters != null) {
+			for (String key : queryParameters.keySet()) {
+				if (!key.equals("callback"))
+					parameters.put(key, queryParameters.getFirst(key));
+				else
+					callback = queryParameters.getFirst(key);
+			}
 		}
 
-		return Response.ok(executeDataSet(label, parameters)).build();
+		if (callback == null || callback.isEmpty())
+			return Response.ok(executeDataSet(label, parameters)).build();
+		else {
+			String jsonString = executeDataSet(label, parameters);
+
+			return Response.ok(callback + "(" + jsonString + ")").build();
+		}
 	}
 
-	private String executeDataSet(String label, SDKDataSetParameter[] params) {
+	private String executeDataSet(String label, Map parameters) {
 		logger.debug("IN: label in input = " + label);
 
 		try {
 			if (label == null) {
-				logger.warn("DataSet identifier in input is null!");
-				return null;
+				logger.warn("Label is null");
+				throw new SpagoBIRuntimeException("Label is null!");
 			}
+
 			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 			if (dataSet == null) {
-				logger.warn("DataSet with label [" + label + "] not existing.");
-				return null;
+				logger.warn("DataSet with label [" + label + "] doesn't exist");
+				throw new SpagoBIRuntimeException("DataSet with label [" + label + "] doesn't exist");
 			}
-			if (params != null && params.length > 0) {
-				HashMap parametersFilled = new HashMap();
-				for (int i = 0; i < params.length; i++) {
-					SDKDataSetParameter par = params[i];
-					parametersFilled.put(par.getName(), par.getValues()[0]);
-					logger.debug("Add parameter: " + par.getName() + "/" + par.getValues()[0]);
-				}
-				dataSet.setParamsMap(parametersFilled);
-			}
+			dataSet.setParamsMap(parameters);
 
 			// add the jar retriver in case of a Qbe DataSet
 			if (dataSet instanceof QbeDataSet
 					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
-				Map parameters = dataSet.getParamsMap();
+
 				if (parameters == null) {
 					parameters = new HashMap();
 					dataSet.setParamsMap(parameters);
@@ -171,10 +221,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			dataSet.loadData();
-			// toReturn = dataSet.getDataStore().toXml();
 
 			JSONDataWriter writer = new JSONDataWriter();
 			return (writer.write(dataSet.getDataStore())).toString();
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			logger.error("Error while executing dataset", e);
 			throw new SpagoBIRuntimeException("Error while executing dataset", e);
@@ -300,7 +351,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
 			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
-			if (aggregations != null && !aggregations.equals("")) {
+			if (aggregations != null) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
 				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
@@ -310,7 +361,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
-			if (selections != null && !selections.equals("")) {
+			if (selections != null) {
 				JSONObject selectionsObject = new JSONObject(selections);
 				filterCriteria = getFilterCriteria(label, selectionsObject);
 			}
@@ -832,6 +883,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return getUserProfile().getUserUniqueIdentifier().toString();
 	}
 
+	// private UserProfile getUserProfile() {
+	// UserProfile profile = this.getIOManager().getUserProfile();
+	// return profile;
+	// }
+
 	// private IDataSetDAO getDataSetDAO() {
 	// IDataSetDAO dataSetDao = null;
 	// try {
@@ -1008,7 +1064,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
@@ -1016,7 +1072,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
 	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
 	 *            rifattorizzata al più presto.
-	 *
+	 * 
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -1081,11 +1137,16 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			boolean isGeoDataset = false;
+
 			try {
-				if(datasetJSON.has("meta")){
-				String meta = datasetJSON.getString("meta");
-				isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
-				}
+				// String meta = datasetJSON.getString("meta"); // [A]
+				// isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta); // [A]
+
+				String meta = datasetJSON.optString("meta");
+
+				if (meta != null && !meta.equals(""))
+					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
+
 			} catch (Exception e) {
 				logger.error("Error during check of Geo spatial column", e);
 			}
@@ -1138,7 +1199,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 *
+	 * 
 	 * @param association
 	 */
 

@@ -13,6 +13,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
@@ -65,9 +66,9 @@ import commonj.work.Work;
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
  * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
  * calling directly the DAO.
- *
+ * 
  * @author gavardi, gioia
- *
+ * 
  */
 
 public class DatasetManagementAPI {
@@ -103,7 +104,7 @@ public class DatasetManagementAPI {
 	}
 
 	public String getUserId() {
-		return getUserProfile().getUserUniqueIdentifier().toString();
+		return getUserProfile().getUserId().toString();
 	}
 
 	public void setUserProfile(UserProfile userProfile) {
@@ -281,18 +282,20 @@ public class DatasetManagementAPI {
 	// }
 
 	/**
-	 *
+	 * 
 	 * @param label
 	 * @param offset
 	 * @param fetchSize
 	 * @param maxResults
 	 * @param parametersValues
+	 * @param profile
 	 * @return
 	 */
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -329,9 +332,24 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	private void addProfileAttributes(IDataSet dataSet) {
+		UserProfile profile = this.getUserProfile();
+		if (profile == null) {
+			logger.warn("Missing user profile object! The dataset will fail loading datas in case it requires the user profile object");
+			return;
+		}
+		// update profile attributes into dataset
+		Map<String, Object> userAttributes = new HashMap<String, Object>();
+		userAttributes.putAll(profile.getUserAttributes());
+		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
+		LogMF.debug(logger, "Setting user profile attributes into dataset: {0}", userAttributes);
+		logger.debug(userAttributes);
+		dataSet.setUserProfileAttributes(userAttributes);
+	}
+
 	/**
 	 * insert into data store last cache date if present
-	 *
+	 * 
 	 * @param cache
 	 * @param dataStore
 	 * @param dataSet
@@ -363,6 +381,7 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -407,7 +426,7 @@ public class DatasetManagementAPI {
 	 * @param selections
 	 * @param parametersValues
 	 *            A map of map with the following structure: storeId->paramName->paramValue
-	 *
+	 * 
 	 * @return
 	 */
 	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues) {
@@ -419,9 +438,10 @@ public class DatasetManagementAPI {
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
-			// for (IDataSet dataSet : joinedDatasets) {
-			// checkQbeDataset(dataSet);
-			// }
+			for (IDataSet dataSet : joinedDatasets) {
+				// checkQbeDataset(dataSet);
+				addProfileAttributes(dataSet);
+			}
 
 			joinedDataSet.setParamsMaps(parametersValues);
 
@@ -452,18 +472,14 @@ public class DatasetManagementAPI {
 					datasetColumn = association.getFields().get(0).getFieldName();
 					datasetLabel = association.getFields().get(0).getDataSetLabel();
 				} else {
-					String[] tmpAssociationName = associationName.split("\\.");
-					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
-						datasetColumn = tmpAssociationName[1];
-						datasetLabel = tmpAssociationName[0];
-					}
+					datasetColumn = associationName.split("\\.")[1];
+					datasetLabel = associationName.split("\\.")[0];
 				}
-				if (datasetLabel != null && datasetColumn != null) {
-					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-					Operand rightOperand = new Operand(valuesList);
-					FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
-					filters.add(filterCriteria);
-				}
+
+				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+				Operand rightOperand = new Operand(valuesList);
+				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+				filters.add(filterCriteria);
 			}
 
 			joinedDataStore = cache.get(joinedDataSet, null, filters, null);
@@ -494,6 +510,11 @@ public class DatasetManagementAPI {
 
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
+			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
+			for (IDataSet dataSet : joinedDatasets) {
+				// checkQbeDataset(dataSet);
+				addProfileAttributes(dataSet);
+			}
 			joinedDataSet.setParamsMaps(parametersValues);
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
@@ -523,18 +544,14 @@ public class DatasetManagementAPI {
 					datasetColumn = association.getFields().get(0).getFieldName();
 					datasetLabel = association.getFields().get(0).getDataSetLabel();
 				} else {
-					String[] tmpAssociationName = associationName.split("\\.");
-					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
-						datasetColumn = tmpAssociationName[1];
-						datasetLabel = tmpAssociationName[0];
-					}
+					datasetColumn = associationName.split("\\.")[1];
+					datasetLabel = associationName.split("\\.")[0];
 				}
-				if (datasetLabel != null && datasetColumn != null) {
-					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-					Operand rightOperand = new Operand(valuesList);
-					FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
-					filters.add(filter);
-				}
+
+				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+				Operand rightOperand = new Operand(valuesList);
+				FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
+				filters.add(filter);
 			}
 
 			joinedDataStore = cache.get(joinedDataSet, groupCriteria, filters, projectionCriteria);
@@ -653,6 +670,7 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
+			addProfileAttributes(dataSet);
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			cache.setUserProfile(userProfile);
@@ -901,6 +919,18 @@ public class DatasetManagementAPI {
 
 	}
 
+	/*
+	 * Refresh cache for a specific dataset
+	 */
+	public void persistDataset(String label) {
+		logger.debug("IN dataset label " + label);
+		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+		cache.setUserProfile(userProfile);
+		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+		cache.refresh(dataSet, false);
+		logger.debug("OUT");
+	}
+
 	// ------------------------------------------------------------------------------
 	// Methods for extracting information from CrosstabDefinition and related
 	// ------------------------------------------------------------------------------
@@ -1058,7 +1088,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
-	 *
+	 * 
 	 * @param dsLabel1
 	 * @param dsLabel2
 	 * @param field1
@@ -1112,6 +1142,7 @@ public class DatasetManagementAPI {
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
 						// checkQbeDataset(dataset);
+						addProfileAttributes(dataset);
 
 						// check datasets are cached otherwise cache it
 						IDataStore cachedResultSet = cache.get(dataset);
