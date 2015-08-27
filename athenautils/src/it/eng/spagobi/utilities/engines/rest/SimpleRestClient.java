@@ -32,9 +32,9 @@ import org.json.JSONArray;
  */
 
 
-public abstract class AbstractRestClient {
+public class SimpleRestClient {
 	
-	static protected Logger logger = Logger.getLogger(AbstractRestClient.class);
+	static protected Logger logger = Logger.getLogger(SimpleRestClient.class);
 	
 	private boolean addServerUrl = true;
 

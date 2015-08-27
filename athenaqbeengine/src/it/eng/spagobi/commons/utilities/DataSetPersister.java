@@ -6,13 +6,10 @@ package it.eng.spagobi.commons.utilities;
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import it.eng.spagobi.utilities.engines.rest.AbstractRestClient;
+import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -22,7 +19,7 @@ import org.json.JSONArray;
  * @author Gavardi Giulio(giulio.gavardi@eng.it)
  */
 
-public class DataSetPersister extends AbstractRestClient{
+public class DataSetPersister extends SimpleRestClient{
 
 	private String serviceUrl = "/restful-services/1.0/datasets/list/persist";
 	
