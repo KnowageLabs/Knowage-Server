@@ -25,8 +25,8 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 		title: "Widget editor"
 	    , layout:'fit'
 	    , width: 1000
-//	    , height: 510
-	    , height: 600
+	    , height: 500
+//	    , height: 600
 	    , closeAction:'hide'
 	    , plain: true
 	    , modal: true

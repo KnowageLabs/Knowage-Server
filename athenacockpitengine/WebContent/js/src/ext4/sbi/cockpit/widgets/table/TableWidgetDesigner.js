@@ -210,8 +210,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		var MARGINS = '5 5 0 5';
 		var SET_WIDTHS = 600;
 		
-		/* table font general options */
-		
+		// state.fontType
 		this.fontTypeCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontType'),
 			queryMode:      'local',
@@ -229,6 +228,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			width:			WIDTHS
 		});
 		
+		// state.fontSize
 		this.fontSizeCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			queryMode:      'local',
@@ -246,6 +246,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			width:			WIDTHS
 		});
 		
+		// state.tableBgColor
 		this.tableBgColorPicker = Ext.create('Ext.ux.FontColorField', { 
 			msgTarget: 		'qtip', 
 			fallback: 		true,
@@ -276,8 +277,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		};
 		
 		
-		
 		/* table font \ options */
+		// state.headerFontSize
 		this.headerFontSizeCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			queryMode:      'local',
@@ -294,7 +295,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			labelWidth:		LABEL_WIDTHS,
 			width:			WIDTHS,
 		});
-		 
+		
+		// state.headerFontColor
 		this.headerFontColorText = Ext.create('Ext.ux.FontColorField', { 
 			msgTarget: 	'qtip', 
 			fallback: 		true,
@@ -307,7 +309,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			labelWidth:		LABEL_WIDTHS,
 			width:			WIDTHS,
 		});
-		 
+		
+		// state.headerFontWeight
 		this.headerFontWeightCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
 			queryMode:      'local',
@@ -325,6 +328,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			width:			WIDTHS
 		});
 		 
+		// state.headerFontDecoration
 		this.headerFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
 			queryMode:      'local',
@@ -342,6 +346,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			width:			WIDTHS
 		});
 		
+		// state.headerBgColor
 		this.headerBgColorPicker = Ext.create('Ext.ux.FontColorField', { 
 			msgTarget: 		'qtip', 
 			fallback: 		true,
@@ -375,7 +380,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		
 		 
 		 /* table font rows options */
-		 
+		
+		// state.rowsFontSize
 		this.rowsFontSizeCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.widgetFontSize'),
 			typeAhead: 		true,
@@ -392,7 +398,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			labelWidth:		LABEL_WIDTHS,
 			width:			WIDTHS
 		});
-		 
+		
+		// state.rowsFontColor
 		this.rowsFontColorText = Ext.create('Ext.ux.FontColorField', { 
 			msgTarget: 		'qtip', 
 			fallback: 		true,
@@ -406,7 +413,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			width:			WIDTHS,
 			 
 		});
-		 
+		
+		// state.rowsFontWeight
 		this.rowsFontWeightCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontWeight'),
 			queryMode:      'local',
@@ -423,7 +431,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			labelWidth:		LABEL_WIDTHS,
 			width:			WIDTHS
 		});
-		 
+		
+		// state.rowsFontDecoration
 		this.rowsFontDecorationCombo = Ext.create('Ext.form.ComboBox',{
 			fieldLabel: 	LN('sbi.cockpit.designer.fontConf.fontDecoration'),
 			queryMode:      'local',
@@ -489,6 +498,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			items : 		[]
 		});
 		
+		// state.maxRowsNumber
 		this.maxRowsNumberField = Ext.create('Ext.form.field.Number',{
 			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber'),
 			name: 				'maxRowsNumber',
@@ -509,6 +519,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			items : 		[]
 		});
 		
+		// state.hideGrid
 		this.hideGridCheckBox = Ext.create('Ext.form.field.Checkbox',{
 			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.hidegridlabel'),
 			name: 				'hideGridCheckBox',
@@ -519,6 +530,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		});
 		this.gridFieldSet.add(this.hideGridCheckBox);
 		
+		// state.lineSize
 		this.lineSizeField = Ext.create('Ext.form.field.Number',{
 			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.linesize'),
 			name: 				'lineSizeNumber',
@@ -531,6 +543,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		});
 		this.gridFieldSet.add(this.lineSizeField);
 		
+		// state.gridColor
 		this.gridColorField = Ext.create('Ext.ux.FontColorField', { 
 			name: 				'gridColor',
 			msgTarget: 			'qtip', 
@@ -551,12 +564,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			gridColorField.setDisabled(chBox.getValue());
 		});
 		
-		
+		// state.alternateRowsColors
 		this.alternateRowsColorsChBox = Ext.create('Ext.form.field.Checkbox', {
 			name: 				'alternateRowsColorsChBox',
             flex: 1
 		});
 		
+		// state.alternateRowsColorsFirst
 		this.alternateRowsColorsFirstColorField = Ext.create('Ext.ux.FontColorField', { 
 			name: 				'alternateRowsColorsFirstColorField',
 			msgTarget: 			'qtip', 
@@ -566,6 +580,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
             flex: 3
 		});
 		
+		// state.alternateRowsColorsSecond
 		this.alternateRowsColorsSecondColorField = Ext.create('Ext.ux.FontColorField', { 
 			name: 				'alternateRowsColorsSecondColorField',
 			msgTarget: 			'qtip', 
@@ -614,6 +629,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			items : 		[]
 		});
 		
+		// state.summaryRow
 		this.summaryRowChBox = Ext.create('Ext.form.field.Checkbox', {
 			name: 				'summaryRowChBox',
 			fieldLabel: 		LN('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.summaryrow'),
@@ -623,6 +639,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		});
 		this.summaryRowFieldSet.add(this.summaryRowChBox);
 		
+		// state.summaryRowBackgroundColor
 		this.summaryRowBackgroundColorField = Ext.create('Ext.ux.FontColorField', { 
 			name: 				'summaryRowBackgroundColorField',
 			fieldLabel: 		LN('sbi.qbe.selectgridpanel.backgroundcolor.label'),

@@ -178,7 +178,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			
 			var visibleSelectField = this.wconf.visibleselectfields[j];
 			
-			if(visibleSelectField.calculatedFieldFlag != undefined && visibleSelectField.calculatedFieldFlag) {
+			if(visibleSelectField.calculatedFieldFlag != undefined && visibleSelectField.calculatedFieldFlag == true) {
 				var newColumnName = "column_" + columnIndexer;
 				var calculatedField = {
 						dataIndex: newColumnName,
@@ -340,17 +340,17 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			var customFormat = {};
 			if((visibleField.columnType == elementTypes.NUMBER 
 					|| visibleField.columnType == elementTypes.CURRENCY 
-					|| visibleField.columnType == elementTypes.PERCENTAGE) 
-					&& (visibleField.decimals != undefined && visibleField.decimals != null)) {
+					|| visibleField.columnType == elementTypes.PERCENTAGE) ) {
 				
-					customFormat.decimalPrecision = visibleField.decimals;
+					customFormat.decimalPrecision = 
+						(visibleField.decimals != undefined && visibleField.decimals != null) ? 
+								visibleField.decimals : 0;
 			}
 			
 			if(visibleField.columnType == elementTypes.CURRENCY
 					&& (visibleField.typeSecondary 
 							&& visibleField.typeSecondary != null 
 							&& visibleField.typeSecondary.trim() != '')) {
-				
 				customFormat.currencySymbol = visibleField.typeSecondary;
 			}
 			
@@ -405,7 +405,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			rendererFunction = Sbi.locale.formatters['timestamp'];
 		}
 		
-		if(field.type && field.type == 'string' && visibleField.columnType && visibleField.columnType == elementTypes.TEXT) {
+		if(field.type && field.type == 'string' && visibleField.columnType 
+				&& (visibleField.columnType == elementTypes.TEXT || visibleField.columnType == '')) {
 			rendererFunction = Sbi.commons.Format.stringRenderer({ trim: false });
 		}
 		
