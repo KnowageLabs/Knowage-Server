@@ -8,43 +8,71 @@
 
 
 		<div layout="column" class="documentListBox">
-
-			<md-toolbar class="md-blue xs-head">
+		
+		<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
 				<div>{{translate.load("sbi.kpis.documents");}}</div>
 			</div>
-			</md-toolbar>
-
-			<md-content layout-padding style="padding-top: 0;"> 
+		</md-toolbar>
 			
-			<md-input-container	md-no-float  class="noPadding searchBar"> 
-				<md-icon md-font-icon="fa fa-search"></md-icon> 
-				<input	ng-model="ctrl.searchDoc" 
-				ng-keyup="ctrl.DocumentLike(ctrl.searchDoc,1)" type="text"
-				placeholder="Search ">
-			</md-input-container>
+		
+		<md-content layout-padding class="ToolbarBox miniToolbar noBorder ">
+						<angular-list layout-fill 
+						id='document' 
+                		ng-model=ctrl.listDoc
+                		item-name='DOCUMENT_NM '
+                		click-function="ctrl.loadDocumentInfo(item)"
+                		show-search-bar=true  
+                		search-function="ctrl.DocumentLike(searchValue,itemsPerPage)"
+                		show-search-preloader="ctrl.showSearchDocPreloader"
+                		page-canged-function="ctrl.ChangeDocPage(newPageNumber,itemsPerPage,searchValue)"
+                		total-item-count=ctrl.sizeDoc
+                		selected-item=ctrl.selectedDocument
+                		highlights-selected-item=true
+                		/>
+                		
+					</md-content>
+		
+		
+		
+		
+		
+		
+		
+		
+
+
+
+<!-- 			<md-content layout-padding style="padding-top: 0;">  -->
+			
+<!-- 			<md-input-container	md-no-float  class="noPadding searchBar">  -->
+<!-- 				<md-icon md-font-icon="fa fa-search"></md-icon>  -->
+<!-- 				<input	ng-model="ctrl.searchDoc"  -->
+<!-- 				ng-keyup="ctrl.DocumentLike(ctrl.searchDoc,1)" type="text" -->
+<!-- 				placeholder="Search "> -->
+<!-- 			</md-input-container> -->
 				
-			<md-progress-circular
-				md-diameter="20" ng-show="ctrl.showSearchDocPreloader" class="md-hue-2"
-				style="  left: 50%;  margin-left: -25px; position:absolute "
-				md-mode="indeterminate"> 
-			</md-progress-circular>
+<!-- 			<md-progress-circular -->
+<!-- 				md-diameter="20" ng-show="ctrl.showSearchDocPreloader" class="md-hue-2" -->
+<!-- 				style="  left: 50%;  margin-left: -25px; position:absolute " -->
+<!-- 				md-mode="indeterminate">  -->
+<!-- 			</md-progress-circular> -->
 
 
-			<p ng-if="ctrl.listDoc.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
+<!-- 			<p ng-if="ctrl.listDoc.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p> -->
 
-								<md-list   class="bottomBorder">
-								 <md-list-item ng-click="ctrl.loadDocumentInfo(doc.DOCUMENT_ID); ctrl.selectedDocument=doc.DOCUMENT_ID;" 	
-								 dir-paginate="doc in ctrl.listDoc | itemsPerPage: ctrl.DocItemPerPage" total-items="ctrl.sizeDoc" pagination-id="docPagination"  class="smallListItem ">
-								<p class="wrapText" ng-class="{'selectedRow': ctrl.selectedDocument==doc.DOCUMENT_ID}">{{ doc.DOCUMENT_NM | uppercase}}</p>
-								</md-list-item> 
-								</md-list>
+<!-- 								<md-list   class="bottomBorder"> -->
+<!-- 								 <md-list-item ng-click="ctrl.loadDocumentInfo(doc.DOCUMENT_ID); ctrl.selectedDocument=doc.DOCUMENT_ID;" 	 -->
+<!-- 								 dir-paginate="doc in ctrl.listDoc | itemsPerPage: ctrl.DocItemPerPage" total-items="ctrl.sizeDoc" pagination-id="docPagination"  class="smallListItem "> -->
+<!-- 								<p class="wrapText" ng-class="{'selectedRow': ctrl.selectedDocument==doc.DOCUMENT_ID}">{{ doc.DOCUMENT_NM | uppercase}}</p> -->
+<!-- 								</md-list-item>  -->
+<!-- 								</md-list> -->
 								
-			</md-content>
+<!-- 			</md-content> -->
 
-			<div class="box_pagination" layout="row" layout-align="center end">
-				<dir-pagination-controls pagination-id="docPagination" max-size="5" on-page-change="ctrl.ChangeDocPage(newPageNumber)"></dir-pagination-controls>
-			</div>
+<!-- 			<div class="box_pagination" layout="row" layout-align="center end"> -->
+<!-- 				<dir-pagination-controls pagination-id="docPagination" max-size="5" on-page-change="ctrl.ChangeDocPage(newPageNumber)"></dir-pagination-controls> -->
+<!-- 			</div> -->
 
 		</div>
 	</div>
@@ -73,7 +101,7 @@
 
 						<ol ui-tree-nodes ng-model="ctrl.words" >
 
-							<li dir-paginate="word in ctrl.words | itemsPerPage: ctrl.WordItemPerPage  " pagination-id="wordPagination">
+							<li dir-paginate="word in ctrl.words | itemsPerPage: ctrl.WordItemPerPage  " pagination-id="wordPagination" class="noBorder">
 
 								<div ui-tree-node data-nodrag style=" min-height: 15px !important;">
 									<div ui-tree-handle style="border: none; min-height: 15px !important;">
@@ -87,9 +115,6 @@
 							</li>
 						</ol>
 					</div>
-
-
-
 								
 			</md-content>
 

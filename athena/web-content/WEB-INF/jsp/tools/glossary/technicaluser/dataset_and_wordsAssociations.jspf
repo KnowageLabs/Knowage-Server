@@ -54,15 +54,52 @@
 	<div flex="25" class="boxItemGlo" >
 
 
-		<div layout="column" class="documentListBox">
+		<div layout="column"  class="documentListBox">
 
+<div style="height: 50%">
+			<md-toolbar class="md-blue xs-head">
+			<div class="md-toolbar-tools">
+				<div> {{translate.load("sbi.kpi.kpiguidescription.dataset");}} / {{translate.load("sbi.glossary.word");}}</div>
+			</div>
+			</md-toolbar>
+ 
+ 
+			<md-content layout-padding style="height:Calc(100% - 44px)" > 
+			<p ng-if="ctrl.SelfWords.length==0 || ctrl.selectedDataset==undefined">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
+			
+				<div id="wordDSTree" 		ui-tree="ctrl.TreeOptionsDataset_Word" data-drag-enabled="true"  data-clone-enabled="true">
+
+						<ol ui-tree-nodes ng-model="ctrl.SelfWords" >
+
+							<li dir-paginate="word in ctrl.SelfWords | itemsPerPage: ctrl.WordItemPerPage  " pagination-id="wordPagination" class="noBorder">
+
+								<div ui-tree-node data-nodrag style=" min-height: 15px !important;">
+									<div ui-tree-handle style="border: none; min-height: 15px !important;">
+										<md-list class="noPadding deleteButton"> <md-list-item class="smallListItem "  ng-click="1==1"
+											ng-repeat="n in [1]"  >
+										<p class="wrapText" style="border-bottom: 1px solid rgb(176, 190, 197);" >{{ word.WORD  | uppercase}}</p>
+										 <md-icon md-font-icon="fa fa-times" ng-click="ctrl.removeWord(null,word)" aria-label="delete word" class="md-secondary md-hue-3"></md-icon> 
+										</md-list-item> </md-list>
+									</div>
+								</div> 
+							</li>
+						</ol>
+					</div>
+			
+			
+
+			</md-content>
+			
+	</div>		
+			
+	<div style="height: 50%">
 			<md-toolbar class="md-blue xs-head">
 			<div class="md-toolbar-tools">
 				<div> {{translate.load("sbi.ds.metadata.column.column");}} / {{translate.load("sbi.glossary.word");}}</div>
 			</div>
 			</md-toolbar>
 
-			<md-content layout-padding> 
+			<md-content layout-padding style="height:Calc(100% - 32px); padding-bottom: 8px;"> 
 			
 			
 
@@ -71,19 +108,13 @@
 			
 	
 			<div  ng-if="ctrl.words.length!=0" id="Tree-Word-Dataset"  ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"  data-clone-enabled="true">
-
-					<ol ui-tree-nodes ng-model="ctrl.words"
-						ng-class="{hideChildren: collapsed}">
-
-						<li ng-repeat="item in ctrl.words" data-nodrag ui-tree-node data-collapsed="true" ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html'">
-						
+					<ol ui-tree-nodes ng-model="ctrl.words" 	ng-class="{hideChildren: collapsed}">
+						<li ng-repeat="item in ctrl.words" data-nodrag ui-tree-node data-collapsed="true" ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html'" class="noBorder">
 						</li>
-
-
 					</ol>
 			</div>
 			</md-content>
-
+</div>
 			
 
 		</div>
@@ -155,5 +186,6 @@
 	</div>
 
 </div>
+	
 </div>
 

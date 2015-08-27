@@ -1,13 +1,23 @@
 package it.eng.spagobi.tools.glossary.util;
 
+import java.util.Iterator;
+
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlBnessCls;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlReferences;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
+import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
+import it.eng.spagobi.tools.udp.bo.Udp;
+import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -80,6 +90,97 @@ public class Util {
 		JSONObject ret = new JSONObject();
 		ret.put("DOCUMENT_ID", sbiob.getBiobjId());
 		ret.put("DOCUMENT_NM", sbiob.getLabel());
+		return ret;
+	}
+	
+
+	public static JSONObject fromWordLight(SbiGlWord sbiGlWord)
+			throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("WORD_ID", sbiGlWord.getWordId());
+		jobj.put("WORD", sbiGlWord.getWord());
+		return jobj;
+	}
+	
+
+	
+	public static JSONObject fromUdpLight(Udp SbiUdp)
+			throws JSONException {
+		JSONObject jobj = new JSONObject();
+		jobj.put("ATTRIBUTE_ID", SbiUdp.getUdpId());
+		jobj.put("ATTRIBUTE_NM", SbiUdp.getLabel());
+		return jobj;
+	}
+	
+
+
+	public static JSONObject fromWord(SbiGlWord word) throws JSONException, EMFUserError {
+		JSONObject obj = new JSONObject();
+
+		obj.put("WORD_ID", word.getWordId());
+		obj.put("WORD", word.getWord());
+		obj.put("DESCR", word.getDescr());
+		obj.put("FORMULA", word.getFormula());
+		obj.put("STATE", word.getState_id());
+		if(word.getState()!=null){
+			obj.put("STATE_NM", word.getState().getValueNm());
+		}
+		obj.put("CATEGORY", word.getCategory_id());
+		if( word.getCategory()!=null){
+			obj.put("CATEGORY_NM", word.getCategory().getValueNm());
+		}
+		JSONArray links = new JSONArray();
+		if (word.getReferences() != null) {
+			for (Iterator<SbiGlReferences> iterator = word.getReferences()
+					.iterator(); iterator.hasNext();) {
+				SbiGlReferences refWord = iterator.next();
+				links.put(fromWordLight(refWord.getRefWord()));
+			}
+			obj.put("LINK", links);
+		}
+		JSONArray attrs = new JSONArray();
+		if (word.getAttributes() != null) {
+			for (Iterator<SbiUdpValue> iterator = word.getAttributes()
+					.iterator(); iterator.hasNext();) {
+				SbiUdpValue attr = iterator.next();
+				JSONObject jsonAttr = new JSONObject();
+				jsonAttr.put("ATTRIBUTE_ID", attr.getSbiUdp().getUdpId());
+				
+				jsonAttr.put("ATTRIBUTE_NM", DAOFactory.getUdpDAO().loadById(attr.getSbiUdp().getUdpId()).getLabel());
+				jsonAttr.put("VALUE", attr.getValue());
+				attrs.put(jsonAttr);
+			}
+			obj.put("SBI_GL_WORD_ATTR", attrs);
+		}
+		return obj;
+	}
+
+	public static JSONObject fromGlossaryLight(SbiGlGlossary sbiGlGlossary)
+
+	throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
+		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
+		return ret;
+	}
+
+	public static JSONObject fromGlossary(SbiGlGlossary sbiGlGlossary)
+			throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
+		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
+		ret.put("GLOSSARY_CD", sbiGlGlossary.getGlossaryCd());
+		ret.put("GLOSSARY_DS", sbiGlGlossary.getGlossaryDs());
+		return ret;
+	}
+
+	public static JSONObject fromContent(SbiGlContents sbiGlContents)
+			throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put("CONTENT_ID", sbiGlContents.getGlossaryId());
+		ret.put("CONTENT_NM", sbiGlContents.getContentNm());
+		ret.put("CONTENT_CD", sbiGlContents.getContentCd());
+		ret.put("CONTENT_DS", sbiGlContents.getContentDs());
 		return ret;
 	}
 }

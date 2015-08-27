@@ -1,4 +1,4 @@
-var app = angular.module('AIDA_GLOSSARY_TECNICAL_USER', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination','glossary_tree' ]);
+var app = angular.module('AIDA_GLOSSARY_TECNICAL_USER', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination','glossary_tree','angular_list']);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -11,7 +11,6 @@ app.service('translate', function() {
 		return messageResource.get(key, 'messages');
 	};
 });
-
 
 app.controller('ControllerDataSet', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
 app.controller('Controller', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
@@ -77,6 +76,12 @@ function funzione_tec($scope,translate,restServices,$mdToast,$timeout) {
 
 	}
 	global.getAllGloss();
+	
+	global.expandAllTree= function(tree){
+		console.log("expand")
+		if(angular.element(document.getElementById(tree)).scope()!=undefined)
+		angular.element(document.getElementById(tree)).scope().expandAll();
+	}
 
 
 }
@@ -97,10 +102,9 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 	docAss.prevDocSearch = "-1";
 	global.initializer.docAssoc={state:false,scope:docAss};
 	docAss.init=function(){
-		changeItemPP();
-		docAss.ChangeDocPage(1);
+//		changeItemPP();
+//		docAss.ChangeDocPage(1);
 	}
-
 
 	docAss.loadDocList=function(item){
 		restServices.get("2.0/documents", "listDocument", item).success(
@@ -122,34 +126,22 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 				})
 	}
 
-	docAss.ChangeDocPage=function(page){
-		var item="Page="+page+"&ItemPerPage="+docAss.DocItemPerPage+"&label=" + docAss.searchDoc;
+	docAss.ChangeDocPage=function(newPageNumber,itemsPerPage,searchValue){
+		if(searchValue==undefined || searchValue.trim().lenght==0 ){
+			searchValue='';
+		}
+		var item="Page="+newPageNumber+"&ItemPerPage="+itemsPerPage+"&label=" + searchValue;
 		docAss.loadDocList(item)
 	}
 
 
-	docAss.DocumentLike= function(ele,page){
+	docAss.DocumentLike= function(ele,itemsPerPage){
 		console.log("DocumentLike "+ele);
-		docAss.tmpDocSearch = ele;
-		$timeout(function() {
-
-			if (docAss.tmpDocSearch != ele || docAss.prevDocSearch == ele) {
-				return;
-			}
-
-			docAss.prevDocSearch = ele;
+		
 			docAss.showSearchDocPreloader = true;
-			page==undefined? page=1:page=page;
-			var item="Page=1&ItemPerPage="+docAss.DocItemPerPage;
-			if(docAss.tmpDocSearch!=undefined && docAss.tmpDocSearch.trim()!=""){
-				item+="&label=" + ele;
-			}
-
+			var item="Page=1&ItemPerPage="+itemsPerPage+"&label=" + ele;
 			docAss.loadDocList(item)
-
-
-		}, 1000);
-	}
+		}
 
 
 	docAss.prevSWSG = "";
@@ -183,7 +175,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 							if(ele!=""){
 								$timeout(function() {
-									docAss.expandAllTree("GlossTree");
+									global.expandAllTree("GlossTree");
 								},500);
 							}
 						}
@@ -252,14 +244,14 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 	}
 
-	docAss.loadDocumentInfo= function(DOCUMENT_ID){
+	docAss.loadDocumentInfo= function(item){
 		console.log("loadDocumentInfo");
 		docAss.words=[];
 		docAss.searchDoc="";
 		showPreloader("preloader");
 		restServices
 		.get(
-				"1.0/glossary","getDocumentInfo","DOCUMENT_ID=" + DOCUMENT_ID )
+				"1.0/glossary","getDocumentInfo","DOCUMENT_ID=" + item.DOCUMENT_ID )
 				.success(
 						function(data, status, headers, config) {
 							console.log("loadDocumentInfo ottnuti")
@@ -349,10 +341,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 						})
 	}
 
-	docAss.expandAllTree= function(tree){
-		console.log("expand")
-		angular.element(document.getElementById(tree)).scope().expandAll();
-	}
+	
 
 	docAss.toggle = function(scope, item, gloss) {
 
@@ -411,11 +400,16 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 		bpw == 0 ? bpw = 19 : bpw = bpw;
 
+		var x1=parseInt((boxItemGlo - tbw - bpw -5 ) / 28);
+		x1==0? 1 : x1;
 
-
-		docAss.WordItemPerPage=parseInt((boxItemGlo - tbw - bpw -5 ) / 28);
-		docAss.DocItemPerPage=parseInt((boxItemGlo - tbw - bpw -22 -5  ) / 16);
-
+		var x2=parseInt((boxItemGlo - tbw - bpw -22 -5  ) / 16);
+		x2==0? 1 : x2;
+				
+				
+		docAss.WordItemPerPage=x1;
+		docAss.DocItemPerPage=x2;
+		
 	}
 
 	$scope
@@ -663,7 +657,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 
 							if(ele!=""){
 								$timeout(function() {
-									datasetAss.expandAllTree("GlossTreeDS");
+									global.expandAllTree("GlossTreeDS");
 								},500);
 							}
 						}
@@ -691,10 +685,14 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 
 		$mdDialog.show(confirm).then(
 				function() {
-
+					var req="";
+					if(item==null){
+						req="WORD_ID=" +word.WORD_ID+"&DATASET_ID="+datasetAss.infoSelectedDataSet.id.dsId+"&ORGANIZATION="+datasetAss.infoSelectedDataSet.id.organization+"&COLUMN=.SELF";
+					}else{
+						req="WORD_ID=" +word.WORD_ID+"&DATASET_ID="+item.datasetId+"&ORGANIZATION="+item.organization+"&COLUMN="+item.alias;
+					}
 					showPreloader();
-					restServices.remove("1.0/glossary", "deleteDatasetWlist",
-							"WORD_ID=" +word.WORD_ID+"&DATASET_ID="+item.datasetId+"&ORGANIZATION="+item.organization+"&COLUMN="+item.alias)
+					restServices.remove("1.0/glossary", "deleteDatasetWlist",req)
 							.success(
 									function(data, status, headers,
 											config) {
@@ -705,13 +703,16 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 											global.showToast(translate.load("sbi.glossary.word.delete.error"),3000);
 
 										} else {
-											item.word.splice(item.word.indexOf(word), 1);
+											if(item==null){
+												datasetAss.SelfWords.splice(datasetAss.SelfWords.indexOf(word), 1);
+												req="WORD_ID=" +word.WORD_ID+"&DATASET_ID="+datasetAss.infoSelectedDataSet.id.dsId+"&ORGANIZATION="+datasetAss.infoSelectedDataSet.id.organization+"&COLUMN=.SELF";
+											}else{
+												item.word.splice(item.word.indexOf(word), 1);
+												}
+											
 											global.showToast(translate.load("sbi.glossary.word.delete.success"),3000);
-
-
 										}
 										hidePreloader();
-
 									})
 									.error(
 											function(data, status, headers,
@@ -721,15 +722,9 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 												global.showToast(translate.load("sbi.glossary.word.delete.error"),3000);
 												hidePreloader();
 											})
-
-
 				}, function() {
 					console.log('Annullo.');
 				});
-
-
-
-
 	}
 
 	datasetAss.loadDatasetInfo= function(id){
@@ -750,10 +745,12 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 								global.showToast(translate.load("sbi.glossary.load.error"), 3000);
 
 							} else {
-								
+									datasetAss.infoSelectedDataSet=data.DataSet;
 									datasetAss.words=data.SbiGlDataSetWlist;
+									datasetAss.SelfWords=data.Word;
+									console.log('datasetAss.SelfWords',datasetAss.SelfWords)
 									$timeout(function() {
-										docAss.expandAllTree("Tree-Word-Dataset");
+										global.expandAllTree("Tree-Word-Dataset");
 									},500);
 								
 						}
@@ -829,10 +826,7 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 					})
 }
 
-datasetAss.expandAllTree= function(tree){
-	console.log("expand")
-	angular.element(document.getElementById(tree)).scope().expandAll();
-}
+
 
 datasetAss.toggle = function(scope, item, gloss) {
 
@@ -938,6 +932,35 @@ return  true;
 		}
 };
 
+datasetAss.TreeOptionsDataset_Word = {
+
+		accept : function(sourceNodeScope, destNodesScope, destIndex) {
+	console.log(destNodesScope)
+
+	
+	
+			for(var i=0;i<destNodesScope.$modelValue.length;i++){
+				if(destNodesScope.$modelValue[i].WORD_ID==sourceNodeScope.$modelValue.WORD_ID){
+					console.log("word present")	;
+					return false;
+				}
+			}
+			
+
+return  true;
+
+		},
+		beforeDrop : function(event) {
+			console.log("dropped")
+		},
+		dragStart : function(event) {
+		},
+		dragStop : function(event) {
+		}
+};
+
+
+
 datasetAss.TreeOptions = {
 
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
@@ -948,7 +971,7 @@ datasetAss.TreeOptions = {
 			
 			console.log("beforeDrop TreeOptions")
 			console.log(event)
-			event.dest.nodesScope.$parent.expand();
+			
 			if(event.source.nodesScope.$id==event.dest.nodesScope.$id){
 				console.log("no drop ")
 				return false;
@@ -956,10 +979,18 @@ datasetAss.TreeOptions = {
 
 			var elem = {};
 
+			if(event.dest.nodesScope.$parent.$element.id!="wordDSTree"){
+				elem.COLUMN_NAME=".SELF";
+				}else{
+					event.dest.nodesScope.$parent.expand();
+					elem.COLUMN_NAME=event.dest.nodesScope.$parent.$modelValue.alias;
+				}
+			
+			
 			elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
 			elem.DATASET_ID=datasetAss.selectedDataset;
-			elem.COLUMN_NAME=event.dest.nodesScope.$parent.$modelValue.alias;
-			elem.ORGANIZATION=event.dest.nodesScope.$parent.$modelValue.organization;
+			
+			elem.ORGANIZATION=datasetAss.infoSelectedDataSet.id.organization;
 			console.log(elem)
 			
 			

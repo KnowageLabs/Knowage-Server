@@ -65,7 +65,7 @@ ol.angular-ui-tree-nodes li {
 }
 
 .angular-ui-tree-empty {
-	display: none;
+/* 	display: none; */
 	background-color: white !important;
 }
 

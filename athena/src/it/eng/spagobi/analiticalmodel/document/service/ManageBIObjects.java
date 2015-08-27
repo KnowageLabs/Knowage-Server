@@ -65,7 +65,7 @@ public class ManageBIObjects extends AbstractSpagoBIAction {
 					limit = LIMIT_DEFAULT;
 				}
 
-				Integer totalItemsNum = boDao.countBIObjects(null);
+				Integer totalItemsNum = boDao.countBIObjects(null,null);
 				List items = boDao.loadPagedObjectsList(start,limit);
 				logger.debug("Loaded items list");
 				JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);

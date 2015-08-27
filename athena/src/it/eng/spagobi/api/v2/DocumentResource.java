@@ -322,7 +322,15 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		if (descr != null) {
 			disjunctions.add(new CriteriaParameter("descr", descr, Match.ILIKE));
 		}
+		
+		String UserFilter=profile.getIsSuperadmin()? null: profile.getUserId().toString();
 		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
+		
+		//filter document if is USER profile
+		if (UserFilter!=null) {
+			restritions.add(new CriteriaParameter("creationUser", UserFilter, Match.EQ));
+		}
+		
 		if (excludeType != null) {
 			restritions.add(new CriteriaParameter("objectTypeCode", excludeType, Match.NOT_EQ));
 		}
@@ -339,7 +347,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			}
 			JSONObject jo = new JSONObject();
 			jo.put("item", jarr);
-			jo.put("itemCount", documentsDao.countBIObjects( label!=null? label:""));
+			jo.put("itemCount", documentsDao.countBIObjects( label!=null? label:"" ,UserFilter));
 
 			return jo.toString();
 		} catch (Exception e) {

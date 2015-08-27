@@ -11,6 +11,21 @@
 <li><span>{{translate.load("sbi.browser.document.name");}}:</span><p> {{infCtrl.info.DataSet.name}}</p></li>
 <li><span>{{translate.load("sbi.generic.type");}}:</span><p> {{infCtrl.info.DataSet.type}}</p></li>
 <li><span>{{translate.load("sbi.ds.dataSource");}}:</span><p>  {{infCtrl.info.DataSet.configuration.dataSource}} </p></li>
+
+
+
+<li>
+	<span>{{translate.load("sbi.glossary.word.associated");}}:</span>
+	<ul>
+		<li style="  display: list-item;" ng-repeat="colu in infCtrl.info.Word " ng-class="{selected_item: ctrl.isSelected(colu)}">
+			{{colu.WORD}}
+		</li>
+	</ul>
+</li>
+
+
+
+
 <li>
 	<span>{{translate.load("sbi.ds.metadata.column.column");}}:</span>
 	<ul>
@@ -26,6 +41,7 @@
 </li>
 
 </ul>
+
 </div>
 </md-dialog-content>
 </md-dialog>

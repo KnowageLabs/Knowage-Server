@@ -106,7 +106,10 @@
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 	
-	
+	<!-- angular list -->
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
+		
 	<!-- context menu -->
 	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
 	
@@ -135,6 +138,8 @@
   <md-content  class="glossaryTec">
     <md-tabs  md-border-bottom class="mini-tabs" style="  min-height: 40px;">
      
+     
+     
       <md-tab label='{{translate.load("sbi.glossary.glossary");}}' >
         <md-content class="abs100">
         	<glossary-tree
@@ -146,7 +151,7 @@
 						show-search-bar=true
 						show-info=true
 						>
-					</glossary-tree>
+			</glossary-tree>
         </md-content>
       </md-tab>
      

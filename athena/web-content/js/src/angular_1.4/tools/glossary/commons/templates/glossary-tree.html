@@ -1,9 +1,9 @@
-<div class="default_tree" style="    position: relative;">
+<div class="default_tree" style="    position: relative; height: 100%">
 
 <div class="preloaderTree" ng-show="preloaderTree"> <md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular> </div>
 		
 <!--  Search bar and select glossary -->
-<div layout="row" style="margin: 5px;">
+<div layout="row" style="padding: 5px;">
 			<p  ng-if=" isDefined('showSelectGlossary')"  style="  margin: 0 10px 0 0;" >{{translate.load("sbi.glossary.glossary");}}:</p>
 			 <md-select ng-if=" isDefined('showSelectGlossary')" ng-disabled=" showSelectGlossary " style="padding: 0; margin-top: -10px; margin-right: 15px;" 
 			 placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.selGlo">

@@ -45,8 +45,7 @@ md-list.deleteButton button.md-secondary-container{
   margin-top: -25px;
   margin-left: -25px;}
   
-  .selectedRow{
-    font-weight: bold;}
+
     
     
 md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
@@ -64,6 +63,8 @@ md-tabs.mini-tabs  md-tabs-content-wrapper{
  md-content.xs-head-max-content  {
    height: calc(100% - 16px);
    }
+   
+
      
 .selected_item button,.selected_item button:hover {
 /* 	  background-color: rgb(176, 190, 197); */

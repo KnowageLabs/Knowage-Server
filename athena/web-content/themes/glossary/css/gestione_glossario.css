@@ -186,9 +186,7 @@ md-icon.sm-font-icon {
 
 
 
- #wordTree md-list md-list-item button.md-button:not([disabled]):hover {
-  background-color: transparent;
-}
+
 
 .chipsTree  .angular-ui-tree-empty {
 	height: 60px;
@@ -289,25 +287,6 @@ table tr:nth-child(even) {
 	background: #f4f6f7;
 	border-color: #dce2e8;
 
-}
-
-#wordTree button{
-	  height: 25px;
-	  padding: 0px ;
-}
-#wordTree md-list{
-padding:0;
-}
-
-#wordTree  button p{
-  line-height: 25px;
-  padding: 0px 16px 0 0;
-  margin-left: 4px;
-  border-bottom: 1px solid rgb(176, 190, 197);
-}
-
-#wordTree .angular-ui-tree-handle ,#wordTree .angular-ui-tree-handle:hover{
-  cursor: pointer !important;
 }
 
 
