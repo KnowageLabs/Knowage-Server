@@ -17,6 +17,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -153,6 +154,29 @@ public class CacheResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	
+	@GET
+	@Path("/datasource")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getCacheDataSource() {
+
+		logger.debug("IN");
+		String label = "";
+		try {
+			ICache cache = SpagoBICacheManager.getCache();
+			if(cache instanceof SQLDBCache){
+				logger.debug("The cache is a SQL cache so we have the datasource");
+				label = ((SQLDBCache)cache).getDataSource().getLabel();
+				logger.debug("The datasource is "+label);
+			}
+			return label;
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
 	private String serializeCacheMetadata(ICacheMetadata cacheMetadata) {
 		try {
 			JSONArray resultJSON = new JSONArray();
