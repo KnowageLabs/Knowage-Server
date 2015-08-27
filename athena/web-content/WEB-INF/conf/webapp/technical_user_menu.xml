@@ -64,9 +64,7 @@
 					
 			<ITEM	title="DATASETS"
 					functionality="MeasuresCatalogueManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />		
-					
-			
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp" />		
 		</ITEM>
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"
