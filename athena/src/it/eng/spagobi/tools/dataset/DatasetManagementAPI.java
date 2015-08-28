@@ -922,13 +922,25 @@ public class DatasetManagementAPI {
 	/*
 	 * Refresh cache for a specific dataset
 	 */
-	public void persistDataset(String label) {
+	public String persistDataset(String label) {
 		logger.debug("IN dataset label " + label);
 		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 		cache.setUserProfile(userProfile);
 		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-		cache.refresh(dataSet, false);
+		cache.refresh(dataSet, true);
+
+		String signature = dataSet.getSignature();
+		logger.debug("Retrieve table name for signature " + signature);
+		CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+
+		String tableName = null;
+		if (cacheItem != null) {
+			tableName = cacheItem.getTable();
+		} else {
+			logger.error("Table name could not be found for signature " + signature);
+		}
 		logger.debug("OUT");
+		return tableName;
 	}
 
 	// ------------------------------------------------------------------------------

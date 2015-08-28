@@ -59,7 +59,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -111,8 +110,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/list/persist")
-	public void persistDataSets(@QueryParam("labels") JSONArray labels) {
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String persistDataSets(@QueryParam("labels") JSONArray labels) {
 		logger.debug("IN");
+
+		JSONObject labelsJSON = new JSONObject();
 
 		for (int i = 0; i < labels.length(); i++) {
 			String label = null;
@@ -120,6 +122,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				label = labels.getString(i);
 				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
 				dataSetManagementAPI.persistDataset(label);
+				String tableName = dataSetManagementAPI.persistDataset(label);
+				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
+				if (tableName != null) {
+					labelsJSON.put(label, tableName);
+				}
 			} catch (JSONException e) {
 				logger.error("error in persisting dataset with label: " + label, e);
 				throw new RuntimeException("error in persisting dataset with label " + label);
@@ -127,28 +134,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 
 		logger.debug("OUT");
-	}
-
-	@POST
-	@Path("/list/persist")
-	public void persistDataSetsPost(@FormParam("labels") JSONArray labels) {
-		logger.debug("IN");
-
-		for (int i = 0; i < labels.length(); i++) {
-			String label = null;
-			try {
-				label = labels.getString(i);
-				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
-				dataSetManagementAPI.setUserProfile(getUserProfile());
-				dataSetManagementAPI.persistDataset(label);
-			} catch (JSONException e) {
-				logger.error("error in persisting dataset with label: " + label, e);
-				throw new RuntimeException("error in persisting dataset with label: " + label);
-			}
-		}
-
-		logger.debug("OUT");
-
+		return labelsJSON.toString();
 	}
 
 	@GET
