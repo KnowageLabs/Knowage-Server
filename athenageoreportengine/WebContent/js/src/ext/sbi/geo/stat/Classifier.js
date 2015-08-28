@@ -6,7 +6,6 @@
  
  **/
 
-
 Ext.ns("Sbi.geo.stat");
 
 
@@ -230,17 +229,17 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         values.sort(function(a,b) {a = a || 0; b = b || 0; return a-b;});
         Sbi.debug("[Classifier.classifyByQuantils] : Sorted values array is equal to [" + this.arrayToString(values) + "];");
         
-        var distinctValues = [];
-        var lastAddedValue = null;
-        for(var i = 0; i < values.length; i++) {
-        	if(values[i] != lastAddedValue){
-        		distinctValues.push(values[i]);
-        		lastAddedValue = values[i];
-        	}
-        }
-        Sbi.debug("[Classifier.classifyByQuantils] : Sorted distinct values array is equal to [" + this.arrayToString(distinctValues) + "];");
-        
-        values = distinctValues;
+// 		 26/08/2015: quantils are calculated always on ALL values (NOT ONLY DISTINCT VALUES)
+//        var distinctValues = [];
+//        var lastAddedValue = null;
+//        for(var i = 0; i < values.length; i++) {
+//        	if(values[i] != lastAddedValue){
+//        		distinctValues.push(values[i]);
+//        		lastAddedValue = values[i];
+//        	}
+//        }
+//        Sbi.debug("[Classifier.classifyByQuantils] : Sorted distinct values array is equal to [" + this.arrayToString(distinctValues) + "];");
+//        values = distinctValues;
         
         var binSize = Math.round(values.length  / nbBins);
         Sbi.debug("[Classifier.classifyByQuantils] : Each one of the [" + nbBins + "] bins will contain [" + binSize + "] values");
@@ -271,7 +270,9 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         
         Sbi.trace("[Classifier.classifyByQuantils] : OUT");
         
-        return this.classifyWithBounds(bounds);
+//        return this.classifyWithBounds(bounds);
+        return this.classifyQuantilsWithBounds(bounds);
+        
     }
     
     , classifyWithBounds: function(bounds) {
@@ -297,7 +298,7 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
 
         for (var i = 0; i < nbBins; i) {
             if (sortedDataPoints[0].getValue() < bounds[i + 1]) {
-            	Sbi.debug("[Classifier.classifyByEqIntervals] : Added value [" + sortedDataPoints[0].getValue() + "] of type [" + (typeof sortedDataPoints[0].getValue()) + "] to bin [" + i + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
+            	Sbi.debug("[Classifier.classifyWithBounds] : Added value [" + sortedDataPoints[0].getValue() + "] of type [" + (typeof sortedDataPoints[0].getValue()) + "] to bin [" + i + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
                 binCount[i] = binCount[i] + 1;
                 binDataPoints[i].push(sortedDataPoints[0]);
                 sortedDataPoints.shift();
@@ -342,8 +343,187 @@ Ext.extend(Sbi.geo.stat.Classifier, Ext.util.Observable, {
         return new Sbi.geo.stat.Classification(bins);
     }
     
-   
     
+    , classifyQuantilsWithBounds: function(bounds) {
+    	Sbi.trace("[Classifier.classifyQuantilsWithBounds] : IN");
+    	
+        var bins = [];
+        var binCount = [];
+        var binDataPoints = [];
+        var binIstancesForCoord = [];
+        var sortedDataPoints = [];
+                
+        for (var i = 0; i < this.distribution.getSize(); i++) {
+            sortedDataPoints.push(this.distribution.getDataPointAt(i));
+        }
+        sortedDataPoints.sort(function(a,b) {return a.getValue() - b.getValue();});
+        Sbi.debug("[Classifier.classifyQuantilsWithBounds] : Sorted values array is equal to [" + this.arrayToString(sortedDataPoints, function(o){return o.getValue();}) + "];");
+        Sbi.debug("[Classifier.classifyQuantilsWithBounds] : Bounds array is equal to [" + this.arrayToString(bounds) + "];");
+        
+        
+        var nbBins = bounds.length - 1;
+        for (var i = 0; i < nbBins; i++) {
+            binCount[i] = 0;
+            binDataPoints[i] = [];
+            binIstancesForCoord[i] = [];
+        }
+
+        
+        for (var i = 0; i < nbBins; i) {
+            if (sortedDataPoints[0].getValue() < bounds[i + 1]) {
+            	Sbi.debug("[Classifier.classifyQuantilsWithBounds] : Added coordinate ["+sortedDataPoints[0].coordinates[0] +"] with value [" + sortedDataPoints[0].getValue() + "] of type [" + (typeof sortedDataPoints[0].getValue()) + "] to bin [" + i + "] becuase it is less than bin ub [" + bounds[i + 1]+ "]");
+                binCount[i] = binCount[i] + 1;
+                binDataPoints[i].push(sortedDataPoints[0]);
+                    
+                //defines total number of records for coordinates and bin (weight)
+                var added = false;         	
+            	var elem = binIstancesForCoord[i];
+            	if (elem.length > 0){  
+            		for (var e=0; e<elem.length; e++){
+            			// if bin contains already some elements, updates the counter for the coordinate if exists otherwise adds the new one (added=false) (*)
+            			if (elem[e].coord == sortedDataPoints[0].coordinates[0]){
+                		  elem[e].count = (elem[e].count+1);
+                		  added = true;
+            			}
+            		}
+            		if (!added){
+            			//adds the new coordinate counter into the bin (*)
+            			var newEl = {};
+                  		newEl.coord = sortedDataPoints[0].coordinates[0];
+                  		newEl.count = 1;
+                  		binIstancesForCoord[i].push(newEl);
+            		}
+            	 } else {
+            		  //first element for the bin
+            		var newEl = {};
+              		newEl.coord = sortedDataPoints[0].coordinates[0];
+              		newEl.count = 1;
+              		binIstancesForCoord[i].push(newEl);
+            	 }
+                
+               
+                sortedDataPoints.shift();
+                Sbi.trace("[Classifier.classifyQuantilsWithBounds] : bin [" + i + "] now contains [" + binDataPoints[i].length+ "] data points");
+                if(sortedDataPoints[0] === undefined) {
+                	 Sbi.trace("[Classifier.classifyQuantilsWithBounds] : no more data points to classify");
+                	 break;
+                }
+            } else {
+                i++;
+                Sbi.trace("[Classifier.classifyQuantilsWithBounds] : Increment to bin [" + i + "] because value [" + sortedDataPoints[0].getValue() + "] is greater then lb [" + bounds[i + 1] + "] of type [" + (typeof bounds[i + 1]) + "]");
+            }
+        }
+        
+        Sbi.trace("[Classifier.classifyQuantilsWithBounds]: datapoints not classified [" + sortedDataPoints.length + "]");
+        for(var i = 0; i < sortedDataPoints.length; i++) {
+        	Sbi.trace("[Classifier.classifyQuantilsWithBounds]: datapoint [" + sortedDataPoints[i].coordinates[0] + "] whose value is equal to [" + sortedDataPoints[0].getValue() + "] has been not classified. It will be added to the last bin");
+        	binCount[nbBins - 1] = binCount[nbBins - 1] + 1;
+        	binDataPoints[nbBins - 1].push(sortedDataPoints[i]);
+        	
+        	//updates counters for the last bin with last elements
+        	var added = false;
+        	var elem = binIstancesForCoord[binIstancesForCoord.length-1];
+        	if (elem.length > 0){  
+        		for (var e=0; e<elem.length; e++){
+        			// if bin contains already some elements, updates the counter for the coordinate if exists otherwise adds the new one (added=false) (*)
+        			if (elem[e].coord == sortedDataPoints[i].coordinates[0]){
+            		  elem[e].count = (elem[e].count+1);
+            		  added = true;
+        			}
+        		}
+        		if (!added){
+        			//adds the new coordinate counter into the bin (*)
+        			var newEl = {};
+              		newEl.coord = sortedDataPoints[0].coordinates[0];
+              		newEl.count = 1;
+              		binIstancesForCoord[binIstancesForCoord.length-1].push(newEl);
+        		}
+        	 }
+        }
+        
+        //creates summary array with bins and counters
+        var counterForQuantils = this.defineBinOnOccNumber(binIstancesForCoord);
+        
+        var classifiedDataPoint = 0;
+        for (var i = 0; i < nbBins; i++) {
+        	
+        	bins[i] = new Sbi.geo.stat.Bin({
+        		nbVal: binCount[i]
+        		, dataPoints: binDataPoints[i]
+        		, counterForQuantils: counterForQuantils || []
+        		, lowerBound: bounds[i]
+        		, upperBound: bounds[i + 1]
+        		, isLast: i == (nbBins - 1)
+        	});
+        	classifiedDataPoint += binDataPoints[i].length;
+        	Sbi.trace("[Classifier.classifyQuantilsWithBounds] : Bin [" + i + "] is equal to [" + bounds[i]+ " - " + bounds[i + 1] + "] and contains [" + binDataPoints[i].length + "] data points");
+            bins[i].label = this.labelGenerator(bins[i], i, nbBins);
+        }
+        Sbi.trace("[Classifier.classifyQuantilsWithBounds] : data points classified [" + classifiedDataPoint + "] over a total of [" + this.distribution.getSize() +"]");
+        
+        Sbi.trace("[Classifier.classifyQuantilsWithBounds] : OUT");
+        
+        return new Sbi.geo.stat.Classification(bins);
+    }
+    
+    /**
+	 * @method
+	 * returns the bin with max number of occourences for each coordiante
+	 */
+    , defineBinOnOccNumber: function(binIstancesForCoord){
+    	 Sbi.trace("[Classifier.defineBinOnOccNumber] : IN");
+    	 
+    	 var sortedBin = [];
+    	 var isFirst = true;
+    	 for (var i=0; i < binIstancesForCoord.length; i ++){
+    		 var elBin = binIstancesForCoord[i];
+    		 for (j=0; j<elBin.length; j ++){
+    			 
+    			 if (isFirst){
+    				 //inserts the first element
+    				 elBin[j].binIdx = i;
+    				 sortedBin.push(elBin[j]);
+    				 isFirst = false;
+    			 }else{
+    				 //checks if exist already an element with the specified coordinate
+    				 var exists = false;
+    				 var pos = 0;
+    				 for (k=0; k < sortedBin.length; k ++){	    
+    					 if (sortedBin[k].coord === elBin[j].coord){
+    						 exists = true;
+    						 pos = k;
+    						 break;
+    					 }
+    				 }
+    					 
+					 if (exists){
+						 // updates the counter 
+						 if (sortedBin[pos].count+0 <= elBin[j].count+0) {
+							 sortedBin[pos].count = elBin[j].count+0;  
+							 sortedBin[pos].binIdx = i;
+						 }
+					 }else{    
+						 //inserts the new counter for the bin
+						 elBin[j].binIdx = i;
+						 sortedBin.push(elBin[j]);
+					 }    				  				
+    			 }
+    		 }
+    	 }
+    	 // print array content for debug 
+    	 var s = '';
+         for (i = 0; i < sortedBin.length; i++) {
+        	 var bin = sortedBin[i];
+        	 s += '[';
+        	 for (b in bin) {
+        		 s +=  b + ": " + bin[b] + "; ";
+        	 }
+        	 s += ']';
+         }
+    	 Sbi.debug("[Classifier.defineBinOnOccNumber] : Bounds summary array is equal to [" + s + "];");
+    	 Sbi.trace("[Classifier.defineBinOnOccNumber] : OUT");
+    	 return sortedBin;
+    }
     
     /**
 	 * @method

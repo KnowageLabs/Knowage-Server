@@ -150,7 +150,7 @@ Ext.extend(Sbi.geo.stat.Distribution, Ext.util.Observable, {
 // Bin Class
 //======================================================================================
 Sbi.geo.stat.Bin = function(config) {
-	this.initialize(config.nbVal, config.dataPoints, config.lowerBound, config.upperBound, config.isLast);
+	this.initialize(config.nbVal, config.dataPoints, config.counterForQuantils, config.lowerBound, config.upperBound, config.isLast);
 	Sbi.geo.stat.Bin.superclass.constructor.call(this, config);
 };
 
@@ -166,13 +166,15 @@ Ext.extend(Sbi.geo.stat.Bin, Ext.util.Observable, {
     label: null
     , nbVal: null
     , dataPoints: null
+    , counterForQuantils: null
     , lowerBound: null
     , upperBound: null
     , isLast: false
 
-    , initialize: function(nbVal, dataPoints, lowerBound, upperBound, isLast) {
+    , initialize: function(nbVal, dataPoints, counterForQuantils, lowerBound, upperBound, isLast) {
         this.nbVal = nbVal;
         this.dataPoints = dataPoints;
+        this.counterForQuantils = counterForQuantils || [];
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.isLast = isLast;

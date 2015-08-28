@@ -210,7 +210,14 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
         		
         		this.invoked = true;
     	        for(var j = 0; j < this.dataPoints.length; j++) {
-    	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) {
+    	        	if(this.dataPoints[j].coordinatesAreEqualTo([attributes[this.layerId]])) {    	        		
+    	        		//checks if the element has the hightest weight into the bin, otherwise it's not considerated
+    	        		//(the counterForQuantils is an object valorized ONLY for the quantil method) 
+    	        		for (var e=0; e<this.counterForQuantils.length; e++){
+    	        			var counterEl = this.counterForQuantils[e];
+    	        			if (counterEl.coord == this.dataPoints[j].coordinates[0] && counterEl.binIdx != binIndex)
+    	        				return false;
+    	        		}
     	        		Sbi.debug("[ChoroplethThematizer.createClassFilter]: Feature [" + attributes[this.layerId]+ "] belong to class [" + binIndex + "]");
     	        		this.filteredFeatures++;
     	        		return true;
@@ -232,6 +239,7 @@ Ext.extend(Sbi.geo.stat.ChoroplethThematizer, Sbi.geo.stat.Thematizer, {
     	filter.layerId = this.layerId;
     	filter.binIndex = binIndex;
     	filter.dataPoints = bin.dataPoints;
+    	filter.counterForQuantils = bin.counterForQuantils || [];
     	filter.invoked = false;
     	
     	Sbi.trace("[ChoroplethThematizer.createClassFilter] : OUT");

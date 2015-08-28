@@ -8,7 +8,6 @@
 
 Ext.ns("Sbi.geo.stat");
 
-
 /**
  * Class: Sbi.geo.stat.Thematizer
  * Base class for geo-statistics. This class is not meant to be used directly, it serves
@@ -736,7 +735,7 @@ Ext.extend(Sbi.geo.stat.Thematizer, Ext.util.Observable, {
    	 		Sbi.error("[Thematizer.getDistribution] : Impossible to extract indicators from a container of type [" + indicatorContainer + "]");
    	 	}
    	 	
-   	 	Sbi.trace("[Thematizer.getDistribution] : Extracted [" + values.length + "] values for indicator [" + indicator + "]");
+   	 	Sbi.trace("[Thematizer.getDistribution] : Extracted [" + values.dataPoints.length + "] values for indicator [" + indicator + "]");
         
    	 	Sbi.trace("[Thematizer.getDistribution] : OUT");
    	 
