@@ -1,7 +1,7 @@
 var app = angular.module('MYAPPNIKOLA', ['ngMaterial']);
 
 app.controller('MyCRTL', function($http, $scope, $mdDialog){
-	console.log("verzija160");
+	console.log("verzija163");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -112,6 +112,45 @@ app.controller('MyCRTL', function($http, $scope, $mdDialog){
 		   }
 		 }
 		
+	/*restServices.get("2.0/datasets").success(
+			function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.log(data.errors[0].message);
+				} else {
+					$scope.list = data;
+					angular.forEach($scope.lista, function(dataset) {
+						angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
+							listField.selected = false;
+				});
+			});
+				}
+
+			}).error(function(data, status, headers, config) {
+				// called asynchronously if an error occurs
+			    // or server returns response with an error status.
+				console.log("Datasets not obtained " + status);
+
+
+			})*/
+			
+/*	restServices.post("federateddataset/post").success(
+			function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.log(data.errors[0].message);
+				} else {
+					//
+				});
+			});
+				}
+
+			}).error(function(data, status, headers, config) {
+				// called asynchronously if an error occurs
+			    // or server returns response with an error status.
+				console.log("Datasets not obtained " + status);
+
+
+			})*/
+	
 	$http.get('http://localhost:8080/athena/restful-services/2.0/datasets').
 	  success(function(data, status, headers, config) {
 	    // this callback will be called asynchronously
