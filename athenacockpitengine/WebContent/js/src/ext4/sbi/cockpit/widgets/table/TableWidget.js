@@ -333,6 +333,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		
 		var rendererFunction = null;
 		var numberFormatterFunction = null;
+		
+		//if new field of type 'measure' set default type number
+		if(visibleField.nature == "measure"  && 
+				(!visibleField.columnType || visibleField.columnType == null || visibleField.columnType == '')) {
+			visibleField.columnType = elementTypes.NUMBER;
+		}
 
 		if(field.type) {
 			var t = field.type;

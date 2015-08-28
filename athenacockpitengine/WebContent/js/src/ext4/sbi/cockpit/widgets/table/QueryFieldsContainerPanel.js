@@ -415,6 +415,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		var thisPanel = this;
 		var thisGrid = grid;
 		var thisRecord = record;
+		
+		var elementTypes = Sbi.cockpit.widgets.table.AggregationChooserWindow.elementTypes;
 
 		if(record != undefined){
 
@@ -435,7 +437,10 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					alias: record.data.alias,
 					funct: record.data.funct,
 					nature: record.data.nature,
-					columnType: record.data.columnType,
+					columnType: 
+						(record.data.columnType && record.data.columnType != '' ? record.data.columnType :
+							record.data.nature == 'measure' ? 
+									elementTypes.NUMBER : ''),
 					typeSecondary: record.data.typeSecondary,
 					decimals: record.data.decimals,
 					scale: record.data.scale,
