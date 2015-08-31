@@ -53,6 +53,9 @@ public class Role implements Serializable {
 
 	private boolean isAbleToEnableDatasetPersistence;
 
+	private boolean isAbleToManageGlossaryBusiness;
+	private boolean isAbleToManageGlossaryTechnical;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -601,6 +604,22 @@ public class Role implements Serializable {
 
 	public void setIsAbleToEnableDatasetPersistence(boolean isAbleToEnableDatasetPersistence) {
 		this.isAbleToEnableDatasetPersistence = isAbleToEnableDatasetPersistence;
+	}
+
+	public boolean isAbleToManageGlossaryBusiness() {
+		return isAbleToManageGlossaryBusiness;
+	}
+
+	public void setAbleToManageGlossaryBusiness(boolean isAbleToManageGlossaryBusiness) {
+		this.isAbleToManageGlossaryBusiness = isAbleToManageGlossaryBusiness;
+	}
+
+	public boolean isAbleToManageGlossaryTechnical() {
+		return isAbleToManageGlossaryTechnical;
+	}
+
+	public void setAbleToManageGlossaryTechnical(boolean isAbleToManageGlossaryTechnical) {
+		this.isAbleToManageGlossaryTechnical = isAbleToManageGlossaryTechnical;
 	}
 
 }

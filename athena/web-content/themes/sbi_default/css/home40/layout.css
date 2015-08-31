@@ -105,6 +105,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
         background-image: url('../../img/wapp/40/hierarchy.png');
     }
     
+    .glossary_management {
+        background-image: url('../../img/wapp/40/glossary.png');
+    }
+    
 	.users {
         background-image: url('../../img/wapp/40/group.png');
     }

@@ -54,13 +54,13 @@
 		
 		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary"
-					functionality="MeasuresCatalogueManagement"
+					functionality="Glossary"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp" />			
 
 		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary"
-					functionality="MeasuresCatalogueManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/glossaryTechnical.jsp" />
+					functionality="Glossary"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />
 					
 			<ITEM	title="Dataset federation"
 					functionality="MeasuresCatalogueManagement"

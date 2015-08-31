@@ -5,16 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-
 import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -56,6 +56,9 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private static final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 	private static final String ENABLE_DATASET_PERSISTENCE = "enableDatasetPersistence";
+
+	public static final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
+	public static final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
@@ -101,6 +104,8 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(CREATE_SOCIAL_ANALYSIS, role.isAbleToCreateSocialAnalysis());
 			result.put(VIEW_SOCIAL_ANALYSIS, role.isAbleToViewSocialAnalysis());
 			result.put(HIERARCHIES_MANAGEMENT, role.isAbleToHierarchiesManagement());
+			result.put(MANAGE_GLOSSARY_BUSINESS, role.isAbleToManageGlossaryBusiness());
+			result.put(MANAGE_GLOSSARY_TECHNICAL, role.isAbleToManageGlossaryTechnical());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
 
 			// create an array for Business Model Categories Ids

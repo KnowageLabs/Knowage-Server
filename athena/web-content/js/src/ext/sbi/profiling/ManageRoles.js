@@ -119,6 +119,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'buildQbe'
 	                        	          , 'doMassiveExport'
 	                        	          , 'manageUsers'
+	                        	          , 'manageGlossaryBusiness'
+	                        	          , 'manageGlossaryTechnical'
 	                        	          , 'editWorksheet'
 	                        	          , 'seeDocBrowser'
 	                        	          , 'seeFavourites'
@@ -156,6 +158,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											saveMeta:false,
 											buildQbe:false,
 											manageUsers:false,
+											manageGlossaryBusiness:false,
+											manageGlossaryTechnical:false,
 											editWorksheet: false,
 											seeDocBrowser:false,
 		                        	        seeFavourites:false,
@@ -486,7 +490,10 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		            fieldLabel: LN('sbi.roles.manage'),
 		            itemId: 'isAbleToManage',
 		            items: [
-		                {boxLabel: LN('sbi.roles.manageUsers'), name: 'manageUsers',id: 'manageUsers', checked:'manageUsers',inputValue: 1}
+		                {boxLabel: LN('sbi.roles.manageUsers'), name: 'manageUsers',id: 'manageUsers', checked:'manageUsers',inputValue: 1},
+
+		                {boxLabel: LN('sbi.roles.manageGlossaryBusiness'), name: 'manageGlossaryBusiness', id: 'manageGlossaryBusiness', id:'manageGlossaryBusiness', checked:'manageGlossaryBusiness',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.manageGlossaryTechnical'), name: 'manageGlossaryTechnical', id: 'manageGlossaryTechnical', id:'manageGlossaryTechnical', checked:'manageGlossaryTechnical',inputValue: 1}
 		            ]
 		        },
 		        {
@@ -561,8 +568,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                {boxLabel: LN('sbi.roles.createDocument'), name: 'createDocument',id: 'createDocument', checked:'createDocument',inputValue: 1},
 		                {boxLabel: LN('sbi.roles.createSocialAnalysis'), name: 'createSocialAnalysis',id: 'createSocialAnalysis', id:'createSocialAnalysis',checked:'createSocialAnalysis',inputValue: 1},
 		                {boxLabel: LN('sbi.roles.viewSocialAnalysis'), name: 'viewSocialAnalysis',id: 'viewSocialAnalysis', id:'viewSocialAnalysis', checked:'viewSocialAnalysis',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.hierarchiesManagement'), name: 'hierarchiesManagement', id: 'hierarchiesManagement', id:'hierarchiesManagement', checked:'hierarchiesManagement',inputValue: 1}
-		                
+		                {boxLabel: LN('sbi.roles.hierarchiesManagement'), name: 'hierarchiesManagement', id: 'hierarchiesManagement', id:'hierarchiesManagement', checked:'hierarchiesManagement',inputValue: 1},
 		            ]
 		        }
            ]
@@ -603,6 +609,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('doMassiveExport', rec.get('doMassiveExport'));
         		  }else if(item.getItemId() == 'isAbleToManage'){
             		  item.setValue('manageUsers', rec.get('manageUsers'));
+            		  item.setValue('manageGlossaryBusiness', rec.get('manageGlossaryBusiness'));
+            		  item.setValue('manageGlossaryTechnical', rec.get('manageGlossaryTechnical'));
         		  }else if(item.getItemId() == 'isAbleToEditWorksheet'){
             		  item.setValue('editWorksheet', rec.get('editWorksheet'));
         		  }else if(item.getItemId() == 'isAbleTokpiCommentDelete'){
@@ -684,6 +692,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								buildQbe:this.isVisible('buildQbe'),
 								doMassiveExport:this.isVisible('doMassiveExport'),
 								manageUsers:false,
+								manageGlossaryBusiness:false,
+								manageGlossaryTechnical:false,
 								editWorksheet: this.isVisible('editWorksheet'),
 								seeDocBrowser:this.isVisible('seeDocBrowser'),
                     	        seeFavourites:this.isVisible('seeFavourites'),
@@ -725,6 +735,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var builQ =values['buildQbe'];             
         var doMassiveExport =values['doMassiveExport'];
         var manageUsers =values['manageUsers'];  
+        var manageGlossaryBusiness =values['manageGlossaryBusiness'];  
+        var manageGlossaryTechnical =values['manageGlossaryTechnical'];  
         var editWorksheet =values['editWorksheet'];
         var seeDocBrowser =values['seeDocBrowser'];  
         var seeMyData =values['seeMyData'];  
@@ -804,6 +816,16 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         	record.set('manageUsers', true);
         }else{
         	record.set('manageUsers', false);
+        }
+        if(manageGlossaryBusiness == 1){
+        	record.set('manageGlossaryBusiness', true);
+        }else{
+        	record.set('manageGlossaryBusiness', false);
+        }
+        if(manageGlossaryTechnical == 1){
+        	record.set('manageGlossaryTechnical', true);
+        }else{
+        	record.set('manageGlossaryTechnical', false);
         }
         if(editWorksheet == 1){
         	record.set('editWorksheet', true);
@@ -948,6 +970,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			buildQbe:newRec.data.buildQbe,
 			doMassiveExport:newRec.data.doMassiveExport,
 			manageUsers:newRec.data.manageUsers,
+			manageGlossaryBusiness:newRec.data.manageGlossaryBusiness,
+			manageGlossaryTechnical:newRec.data.manageGlossaryTechnical,
 			editWorksheet: newRec.data.editWorksheet,
 			seeDocBrowser: newRec.data.seeDocBrowser,
 			seeMyData: newRec.data.seeMyData,

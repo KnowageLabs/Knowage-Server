@@ -11,6 +11,23 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
@@ -27,27 +44,9 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
 import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.events.metadata.SbiEventsLog;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a Role.
@@ -472,7 +471,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
 						|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.isAbleToViewSocialAnalysis())
 						|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.isAbleToHierarchiesManagement())
-						|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence())
+						|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence()
+						|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
+						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical()))
 
 				) {
 
@@ -616,8 +617,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 
 			/*
-			 * String hql = "from SbiParuseDet s " +" where s.id.sbiParuse.sbiParameters.parId = "+ sbiParuse.getSbiParameters().getParId()
-			 * +" and s.id.sbiParuse.label != '" + sbiParuse.getLabel()+ "'";
+			 * String hql = "from SbiParuseDet s " +" where s.id.sbiParuse.sbiParameters.parId = "+ sbiParuse.getSbiParameters().getParId() +
+			 * " and s.id.sbiParuse.label != '" + sbiParuse.getLabel()+ "'";
 			 */
 
 			String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = ? " + " and s.id.sbiParuse.label != ? ";
@@ -766,6 +767,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
 				role.setIsAbleToEnableDatasetPersistence(true);
 			}
+			if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
+				role.setAbleToManageGlossaryBusiness(true);
+			}
+			if (name.equals("MANAGE_GLOSSARY_TECHNICAL")) {
+				role.setAbleToManageGlossaryTechnical(true);
+			}
 		}
 
 		role.setRoleTypeCD(hibRole.getRoleTypeCode());
@@ -795,8 +802,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " +" where f.functId = fr.id.function.functId "
-			 * +" and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = " + roleID;
+			 * String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " +" where f.functId = fr.id.function.functId " +
+			 * " and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " + " where f.functId = fr.id.function.functId "
@@ -840,8 +847,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			/*
-			 * String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " +" where pu.useId = pud.id.sbiParuse.useId "
-			 * +" and r.extRoleId = pud.id.sbiExtRoles.extRoleId " +" and r.extRoleId = " + roleID;
+			 * String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " +" where pu.useId = pud.id.sbiParuse.useId " +
+			 * " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " +" and r.extRoleId = " + roleID;
 			 */
 
 			String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " + " where pu.useId = pud.id.sbiParuse.useId "
@@ -940,7 +947,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("CREATE_SOCIAL_ANALYSIS") && role.isAbleToCreateSocialAnalysis())
 						|| (functI.getName().equals("HIERARCHIES_MANAGEMENT") && role.isAbleToHierarchiesManagement())
 						|| (functI.getName().equals("VIEW_SOCIAL_ANALYSIS") && role.isAbleToViewSocialAnalysis())
-						|| (functI.getName().equals("ENABLE_DATASET_PERSISTENCE") && role.isAbleToEnableDatasetPersistence())) {
+						|| (functI.getName().equals("ENABLE_DATASET_PERSISTENCE") && role.isAbleToEnableDatasetPersistence())
+						|| (functI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && role.isAbleToManageGlossaryBusiness())
+						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());
