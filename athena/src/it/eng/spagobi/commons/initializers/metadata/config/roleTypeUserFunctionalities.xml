@@ -283,6 +283,10 @@
 		userFunctionality="CkanIntegrationFunctionality" roleType="MODEL_ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="MODEL_ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="USER" />
