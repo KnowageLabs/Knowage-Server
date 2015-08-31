@@ -235,6 +235,7 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 		var obj = '';
 		var objType = '';
 		var equal = '';
+		var isDocument = false;
 		var wrongTypes = false;
 
 		for (var i=0; i< r.length; i++){
@@ -243,9 +244,11 @@ Ext.define('Sbi.data.editor.association.AssociationEditor', {
 			if (i==0){
 				objType = el.colType;
 				equal = '=';
+				isDocument = el.ds.indexOf(Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX)>=0;
 			}else{
 				//check consistency between type fields
-				if (objType !== el.colType){
+				//only if association doesn't regard fields coming from a document 
+				if (objType !== el.colType && !isDocument && el.ds.indexOf(Sbi.commons.Constants.DOCUMENT_WIDGET_STORE_PREFIX)==-1){
 					wrongTypes = true;
 				}
 			}

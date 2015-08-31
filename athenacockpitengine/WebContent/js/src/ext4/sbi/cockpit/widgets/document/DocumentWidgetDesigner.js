@@ -93,12 +93,15 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 	, setDesignerState: function(state) {
 		Sbi.trace("[DocumentWidgetDesigner.setDesignerState]: IN");
 		Sbi.cockpit.widgets.document.DocumentWidgetDesigner.superclass.setDesignerState(this, state);
-		if(state.documentLabel)
+		if(state.documentLabel){
 			this.documentLabelHidden.setValue(state.documentLabel);
-		if(state.documentName)
+		}
+		if(state.documentName){
 			this.documentNameText.setValue(state.documentName);
-		if(state.parameters)
+		}
+		if(state.parameters){
 			this.parameters=state.parameters;
+		}
 		
 		Sbi.trace("[DocumentWidgetDesigner.setDesignerState]: OUT");
 	}
