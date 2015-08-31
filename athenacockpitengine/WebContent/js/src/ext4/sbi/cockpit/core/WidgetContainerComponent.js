@@ -205,7 +205,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			buildTitle += this.cacheDate;
 
 		}
-
+		if(config.wtype == 'document' && config.wconf.documentId){
+			buildTitle += ' (' + config.wconf.documentId + ')';
+		}
 		this.setTitle(buildTitle);
 		
 		this.doLayout();
