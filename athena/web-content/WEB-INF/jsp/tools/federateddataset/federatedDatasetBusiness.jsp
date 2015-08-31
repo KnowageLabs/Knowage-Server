@@ -16,8 +16,9 @@
 	<!-- angular-material-->
 	<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
 	<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
-
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/federateddataset/federatedDataset.js"></script>
+	
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
 	<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 
@@ -28,14 +29,14 @@
 		style="width: 100%; height: 100%; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; padding-top: 15px;"
 		class="contentdemoBasicUsage">
 		<md-toolbar class="minihead"
-			style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
+			style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey; ">
 		<div class="md-toolbar-tools">
 			<h2 class="md-flex">DATASET FEDERATION</h2>
 		</div>
 		</md-toolbar>
 
 		<md-content layout-padding=""
-			style="padding: 20px;border:2px solid grey;"">
+			style="height: 100%; padding: 20px;border:2px solid grey;"">
 		<div ng-show="state" layout="row" layout-wrap>
 			<div flex="49" style="margin-right: 20px; border: 2px solid grey;"">
 				<md-toolbar class="minihead" style="border-bottom: 2px solid grey;">
@@ -43,7 +44,7 @@
 					<h2 class="md-flex">Avaliable datasets</h2>
 				</div>
 				</md-toolbar>
-				<md-content style="height:700px;"> <md-list
+				<md-content style="height:755px;"> <md-list
 					ng-repeat="k in list" style="border: 1px solid #ddd;">
 				<md-list-item ng-click="moveToListNew(k)"> <i
 					class="dragged-icon fa fa-bars fa-2x" style="padding-right: 5px"></i>
@@ -56,7 +57,7 @@
 					<h2 class="md-flex">Selected datasets</h2>
 				</div>
 				</md-toolbar>
-				<md-content style="height:700px;"> <md-list
+				<md-content style="height:755px;"> <md-list
 					ng-repeat="k in listaNew" style="border: 1px solid #ddd;">
 				<md-list-item md-ink-ripple> <i
 					class="dragged-icon fa fa-bars fa-2x" style="padding-right: 5px"></i>
@@ -147,45 +148,3 @@
 
 </body>
 </html>
-
-<script type="text/ng-template" id="datasetsTemp.jsp">
-	<md-dialog aria-label="Fill in the dataset details and click on Save" style="width: 80%; overflow-y: visible;">
-  	<form>
-  		<div ng-controller="MyCRTL">
-		<md-header class="md-sticky-no-effect" style="padding-top:20px; padding-left:20px;">Fill in the dataset details and click on Save</md-header>
-  		<md-dialog-content class="sticky-container">
-    		<div>
-				<md-input-container> 
-        			<label>Label</label>
-        			<input ng-model='federateddataset.label'></input>
-      			</md-input-container>
-				
-				<md-input-container> 
-        			<label>Name</label>
-        			<input ng-model='federateddataset.name'></input>
-      			</md-input-container>
-    
-      			<md-input-container> 
-        			<label>Description</label>
-        			<input ng-model='federateddataset.description'></input>
-      			</md-input-container>
-      		</div>
-			<div>
-				
-			</div>
-		
-  		</md-dialog-content>
-
-  		<div class="md-actions" layout="row">
-    		<span flex></span>
-    		<md-button ng-click="answer('close')" class="md-primary">
-     			Close
-    		</md-button>
-    		<md-button class="md-raised" ng-click="saveFedDataSet()" class="md-primary">
-      			save
-    		</md-button>
-  		</div>
-		</div>
-  	</form>
-	</md-dialog>
-</script>
