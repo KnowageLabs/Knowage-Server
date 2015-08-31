@@ -209,13 +209,22 @@ public class ChartEngineUtil {
 			Iterator<String> it = selectionsJSON.keys();
 			while (it.hasNext()) {
 				String associationName = it.next();
-				JSONArray values = selectionsJSON.getJSONArray(associationName);
-				if (values.length() == 0) {
-					continue;
-				}
 				List<String> valuesList = new ArrayList<String>();
-				for (int i = 0; i < values.length(); i++) {
-					valuesList.add(values.get(i).toString());
+				//TODO to check why sometimes 'selectionsJSON.get(associationName)' is a json object
+				if (selectionsJSON.get(associationName) instanceof JSONObject) {
+					JSONObject obj = selectionsJSON.getJSONObject(associationName);
+					for (Iterator<String> iterator = obj.keys(); iterator.hasNext();) {
+						String key = iterator.next();
+						valuesList.add(obj.get(key).toString());
+					}
+				} else {
+					JSONArray values = selectionsJSON.getJSONArray(associationName);
+					for (int i = 0; i < values.length(); i++) {
+						valuesList.add(values.get(i).toString());
+					}
+				}
+				if (valuesList.isEmpty()) {
+					continue;
 				}
 
 				String datasetColumn = null;
