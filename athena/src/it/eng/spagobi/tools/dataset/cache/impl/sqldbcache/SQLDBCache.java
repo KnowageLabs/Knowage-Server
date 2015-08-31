@@ -781,24 +781,30 @@ public class SQLDBCache implements ICache {
 				String whereClause;
 				Association.Field previousField = null;
 				for (Association.Field field : association.getFields()) {
-					if (previousField != null) {
-						whereClause = "";
-						String dataset, column;
+					//Checking dataset consistency 
+					if (datasetAliases.get(field.getDataSetLabel()) != null) {
+						if (previousField != null) {
+							whereClause = "";
+							String prevDataset, dataset, prevColumn, column;
 
-						dataset = previousField.getDataSetLabel();
-						column = previousField.getFieldName();
-						column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-						whereClause += datasetAliases.get(dataset) + "." + column;
+							prevDataset = previousField.getDataSetLabel();
+							prevColumn = previousField.getFieldName();
+							prevColumn = AbstractJDBCDataset.encapsulateColumnName(prevColumn, dataSource);
 
-						dataset = field.getDataSetLabel();
-						column = field.getFieldName();
-						column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
-						whereClause += " = " + datasetAliases.get(dataset) + "." + column;
+							dataset = field.getDataSetLabel();
+							column = field.getFieldName();
+							column = AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
 
-						sqlBuilder.where(whereClause);
+							if (datasetAliases.get(prevDataset) != null && datasetAliases.get(dataset) != null) {
+								whereClause += datasetAliases.get(prevDataset) + "." + prevColumn;
+								whereClause += " = " + datasetAliases.get(dataset) + "." + column;
+							}
 
+							sqlBuilder.where(whereClause);
+
+						}
+						previousField = field;
 					}
-					previousField = field;
 
 				}
 

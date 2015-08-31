@@ -13,7 +13,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
@@ -104,7 +103,7 @@ public class DatasetManagementAPI {
 	}
 
 	public String getUserId() {
-		return getUserProfile().getUserId().toString();
+		return getUserProfile().getUserUniqueIdentifier().toString();
 	}
 
 	public void setUserProfile(UserProfile userProfile) {
@@ -288,14 +287,12 @@ public class DatasetManagementAPI {
 	 * @param fetchSize
 	 * @param maxResults
 	 * @param parametersValues
-	 * @param profile
 	 * @return
 	 */
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxResults, Map<String, String> parametersValues) {
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
-			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -332,21 +329,6 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void addProfileAttributes(IDataSet dataSet) {
-		UserProfile profile = this.getUserProfile();
-		if (profile == null) {
-			logger.warn("Missing user profile object! The dataset will fail loading datas in case it requires the user profile object");
-			return;
-		}
-		// update profile attributes into dataset
-		Map<String, Object> userAttributes = new HashMap<String, Object>();
-		userAttributes.putAll(profile.getUserAttributes());
-		userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
-		LogMF.debug(logger, "Setting user profile attributes into dataset: {0}", userAttributes);
-		logger.debug(userAttributes);
-		dataSet.setUserProfileAttributes(userAttributes);
-	}
-
 	/**
 	 * insert into data store last cache date if present
 	 * 
@@ -381,7 +363,6 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
-			addProfileAttributes(dataSet);
 
 			dataSet.setParamsMap(parametersValues);
 			List<JSONObject> parameters = getDataSetParameters(label);
@@ -438,10 +419,9 @@ public class DatasetManagementAPI {
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
 			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
-			for (IDataSet dataSet : joinedDatasets) {
-				// checkQbeDataset(dataSet);
-				addProfileAttributes(dataSet);
-			}
+			// for (IDataSet dataSet : joinedDatasets) {
+			// checkQbeDataset(dataSet);
+			// }
 
 			joinedDataSet.setParamsMaps(parametersValues);
 
@@ -472,14 +452,18 @@ public class DatasetManagementAPI {
 					datasetColumn = association.getFields().get(0).getFieldName();
 					datasetLabel = association.getFields().get(0).getDataSetLabel();
 				} else {
-					datasetColumn = associationName.split("\\.")[1];
-					datasetLabel = associationName.split("\\.")[0];
+					String[] tmpAssociationName = associationName.split("\\.");
+					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
+						datasetColumn = tmpAssociationName[1];
+						datasetLabel = tmpAssociationName[0];
+					}
 				}
-
-				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-				Operand rightOperand = new Operand(valuesList);
-				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
-				filters.add(filterCriteria);
+				if (datasetLabel != null && datasetColumn != null) {
+					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+					Operand rightOperand = new Operand(valuesList);
+					FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+					filters.add(filterCriteria);
+				}
 			}
 
 			joinedDataStore = cache.get(joinedDataSet, null, filters, null);
@@ -510,11 +494,6 @@ public class DatasetManagementAPI {
 
 		try {
 			JoinedDataSet joinedDataSet = new JoinedDataSet("theLabel", "theLabel", "theLabel", associationGroup);
-			List<IDataSet> joinedDatasets = joinedDataSet.getDataSets();
-			for (IDataSet dataSet : joinedDatasets) {
-				// checkQbeDataset(dataSet);
-				addProfileAttributes(dataSet);
-			}
 			joinedDataSet.setParamsMaps(parametersValues);
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
@@ -544,14 +523,18 @@ public class DatasetManagementAPI {
 					datasetColumn = association.getFields().get(0).getFieldName();
 					datasetLabel = association.getFields().get(0).getDataSetLabel();
 				} else {
-					datasetColumn = associationName.split("\\.")[1];
-					datasetLabel = associationName.split("\\.")[0];
+					String[] tmpAssociationName = associationName.split("\\.");
+					if (associationName.indexOf(".") >= 0 && tmpAssociationName.length > 0) {
+						datasetColumn = tmpAssociationName[1];
+						datasetLabel = tmpAssociationName[0];
+					}
 				}
-
-				Operand leftOperand = new Operand(datasetLabel, datasetColumn);
-				Operand rightOperand = new Operand(valuesList);
-				FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
-				filters.add(filter);
+				if (datasetLabel != null && datasetColumn != null) {
+					Operand leftOperand = new Operand(datasetLabel, datasetColumn);
+					Operand rightOperand = new Operand(valuesList);
+					FilterCriteria filter = new FilterCriteria(leftOperand, "IN", rightOperand);
+					filters.add(filter);
+				}
 			}
 
 			joinedDataStore = cache.get(joinedDataSet, groupCriteria, filters, projectionCriteria);
@@ -670,7 +653,6 @@ public class DatasetManagementAPI {
 
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
 			// checkQbeDataset(dataSet);
-			addProfileAttributes(dataSet);
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			cache.setUserProfile(userProfile);
@@ -919,30 +901,6 @@ public class DatasetManagementAPI {
 
 	}
 
-	/*
-	 * Refresh cache for a specific dataset
-	 */
-	public String persistDataset(String label) {
-		logger.debug("IN dataset label " + label);
-		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-		cache.setUserProfile(userProfile);
-		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-		cache.refresh(dataSet, true);
-
-		String signature = dataSet.getSignature();
-		logger.debug("Retrieve table name for signature " + signature);
-		CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-
-		String tableName = null;
-		if (cacheItem != null) {
-			tableName = cacheItem.getTable();
-		} else {
-			logger.error("Table name could not be found for signature " + signature);
-		}
-		logger.debug("OUT");
-		return tableName;
-	}
-
 	// ------------------------------------------------------------------------------
 	// Methods for extracting information from CrosstabDefinition and related
 	// ------------------------------------------------------------------------------
@@ -1153,8 +1111,13 @@ public class DatasetManagementAPI {
 
 						logger.debug("Dataset with label " + dsLabel);
 						IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
+						// Datasets related to documents are not on DB so 'dataset' can be null
+						if (dataset == null) {
+							// assFieldsJSONArray.get(assFieldsJSONArray.size()-1).remove(z);
+							fieldsAss.remove(z);
+							continue;
+						}
 						// checkQbeDataset(dataset);
-						addProfileAttributes(dataset);
 
 						// check datasets are cached otherwise cache it
 						IDataStore cachedResultSet = cache.get(dataset);
@@ -1221,7 +1184,7 @@ public class DatasetManagementAPI {
 					String table = datasetsLabelsMap.get(dsLabel);
 					String synonim = tableSynonimMap.get(table);
 
-					if (i > 0) {
+					if (i > 0 && table != null) {
 						if (!where.equals("")) {
 							where += " AND ";
 						}
@@ -1237,22 +1200,27 @@ public class DatasetManagementAPI {
 					}
 				}
 			}
-
-			logger.debug("Join where condition is " + where);
-			joinSqlBuilder.where(where);
-
-			String joinQueryText = joinSqlBuilder.toString();
-			logger.debug("Join query is equal to [" + joinQueryText + "]");
-			IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
-			Object joinCountO = ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
-			Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO : Long.valueOf(((Number) joinCountO).longValue());
-
-			if (joinCount > maxSingleCount) {
-				logger.warn("Chosen join among tables return too many rows");
-				toReturn = false;
-			} else {
-				logger.debug("Chosen join among tables is valid");
+			// checking if there is a where condition
+			if (where == null || "".equals(where)) {
+				// no one association to check
 				toReturn = true;
+			} else {
+				logger.debug("Join where condition is " + where);
+				joinSqlBuilder.where(where);
+
+				String joinQueryText = joinSqlBuilder.toString();
+				logger.debug("Join query is equal to [" + joinQueryText + "]");
+				IDataStore joinDataStore = dataSource.executeStatement(joinQueryText, 0, 0);
+				Object joinCountO = ((DataStore) joinDataStore).getRecordAt(0).getFieldAt(0).getValue();
+				Long joinCount = (joinCountO instanceof Long) ? (Long) joinCountO : Long.valueOf(((Number) joinCountO).longValue());
+
+				if (joinCount > maxSingleCount) {
+					logger.warn("Chosen join among tables return too many rows");
+					toReturn = false;
+				} else {
+					logger.debug("Chosen join among tables is valid");
+					toReturn = true;
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Error while checking the join among tables return too many rows", e);

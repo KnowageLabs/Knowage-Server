@@ -138,7 +138,10 @@ public class JoinedDataSet extends AbstractDataSet {
 		for (String dataSetLabel : dataSetLabels) {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(dataSetLabel);
 			// checkQbeDataset(dataSet);
-			datsets.add(dataSet);
+			// Datasets related to documents are not on DB
+			if (dataSet != null) {
+				datsets.add(dataSet);
+			}
 		}
 		setDataSets(datsets);
 	}
@@ -353,7 +356,10 @@ public class JoinedDataSet extends AbstractDataSet {
 		for (String datasetLabel : datasetLabels) {
 			Map paramsMap = paramsMaps.get(datasetLabel);
 			IDataSet dataSet = getDataSet(datasetLabel);
-			dataSet.setParamsMap(paramsMap);
+			// Datasets related to documents are not on DB
+			if (dataSet != null) {
+				dataSet.setParamsMap(paramsMap);
+			}
 		}
 	}
 
