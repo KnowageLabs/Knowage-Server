@@ -1,0 +1,35 @@
+<md-dialog aria-label="Fill in the dataset details and click on Save" style="width: 80%; overflow-y: visible;">
+  <form>
+  	<div ng-controller="MyCRTL">
+		<md-header class="md-sticky-no-effect" style="padding-top:20px; padding-left:20px;">Fill in the dataset details and click on Save</md-header>
+  			<md-dialog-content class="sticky-container">
+    			<div>
+					<md-input-container> 
+        				<label>Label</label>
+        				<input ng-model='federateddataset.label'></input>
+      				</md-input-container>
+				
+					<md-input-container> 
+        				<label>Name</label>
+        				<input ng-model='federateddataset.name'></input>
+      				</md-input-container>
+    
+      				<md-input-container> 
+        				<label>Description</label>
+        				<input ng-model='federateddataset.description'></input>
+      				</md-input-container>
+      			</div>
+  			</md-dialog-content>
+
+  			<div class="md-actions" layout="row">
+    			<span flex></span>
+    			<md-button ng-click="answer('close')" class="md-primary">
+     				close
+    			</md-button>
+    			<md-button class="md-raised" ng-click="saveFedDataSet()" class="md-primary">
+      				save
+    			</md-button>
+  			</div>
+	</div>
+  </form>
+</md-dialog>

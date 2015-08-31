@@ -30,11 +30,13 @@ public class RestFederatedDataset {
 			FederatedDataset fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
 						
 			federatedDatasetDao.saveSbiFederatedDataSet(fdsNew);
+			return "ok";
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
+			return "not ok";
 		}
-		return "ok";
+		
 		
 		
 	}
@@ -48,10 +50,10 @@ public class RestFederatedDataset {
 			id = new Integer(idStr);
 		}
 		
-		String label = (String) requestBodyJSON.opt("LABEL");
-		String name = (String) requestBodyJSON.opt("NAME");
-		String description = (String) requestBodyJSON.opt("DESCRIPTION");
-		String relationships = requestBodyJSON.optJSONArray("RELATIONSHIPS").toString();
+		String label = (String) requestBodyJSON.opt("label");
+		String name = (String) requestBodyJSON.opt("name");
+		String description = (String) requestBodyJSON.opt("description");
+		String relationships = requestBodyJSON.optJSONArray("relationships").toString();
 		
 		fds.setId_sbi_federated_data_set(id.intValue());
 		fds.setLabel(label);
