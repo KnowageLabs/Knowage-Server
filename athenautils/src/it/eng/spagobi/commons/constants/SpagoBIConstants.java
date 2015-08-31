@@ -377,7 +377,6 @@ public class SpagoBIConstants {
 	public static final String IMAGES_MANAGEMENT = "ImagesManagement";
 	public static final String GLOSSARY = "Glossary";
 
-
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
 	// for management of DOCUMENT COMPOSITION
@@ -441,4 +440,7 @@ public class SpagoBIConstants {
 	public static final String DS_SCOPE_USER = "USER";
 
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
+
+	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
+	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
 }
