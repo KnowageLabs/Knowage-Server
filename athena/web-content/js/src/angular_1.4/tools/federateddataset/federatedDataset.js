@@ -1,7 +1,7 @@
 var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest']);
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija206");
+	console.log("verzija207");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -13,7 +13,6 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.associationArray = [];
 	$scope.alert = '';
 	$scope.test = {};
-	$scope.RelationshipsArray = [];
 	$scope.checkBranch = false;
 	$scope.beforeRel = {};
 	$scope.finalJSON = "";
@@ -24,6 +23,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	angular.toJson($scope.update);
 	 
 	$scope.showAdvanced = function(ev) {
+	  $scope.RelationshipsArray = [];
 	  
 	  angular.forEach($scope.listaNew, function(dataset){
 		  
@@ -103,6 +103,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		
 		.success(
 				console.log("ok je")
+				
 		).
 		error(
 				console.log("nije ok")
