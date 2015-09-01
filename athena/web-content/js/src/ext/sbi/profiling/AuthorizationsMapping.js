@@ -21,6 +21,8 @@ Sbi.profiling.AuthorizationsMapping =  {
 			    			['doMassiveExport','DO_MASSIVE_EXPORT'],
 			    			['editWorksheet','EDIT_WORKSHEET'],
 			    			['manageUsers','MANAGE_USERS'],
+			    			['manageGlossaryBusiness','MANAGE_GLOSSARY_BUSINESS'],
+			    			['manageGlossaryTechnical','MANAGE_GLOSSARY_TECHNICAL'],
 			    			['seeDocBrowser','SEE_DOCUMENT_BROWSER'],
 			    			['seeFavourites','SEE_FAVOURITES'],
 			    			['seeSubscriptions','SEE_SUBSCRIPTIONS'],
