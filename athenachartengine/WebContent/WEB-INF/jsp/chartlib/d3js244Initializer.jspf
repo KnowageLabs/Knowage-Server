@@ -61,8 +61,6 @@
 		// Modified 21.7 (danilo.ristovski@mht.net)
 		else if (chartConf.chart.type.toLowerCase() == "chord")
 		{
-			//renderParallelChart(chartConf);
-			//console.log("UUUUUUUUUUU");
 			renderChordChart(chartConf);
 		}
 		

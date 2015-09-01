@@ -52,7 +52,8 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 				parallel: 	[],
 				radar: 		['bar','line','scatter'],
 				scatter:	['bar','line','radar'],
-				heatmap:	[]
+				heatmap:	[],
+				gauge:		[]
 			};			
 					
 			/**

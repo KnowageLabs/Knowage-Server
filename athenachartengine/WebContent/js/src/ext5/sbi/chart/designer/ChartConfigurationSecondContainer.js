@@ -86,8 +86,17 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			{
 				viewModel: this.viewModel
 			}
-		);	
+		);
 		
+		var parallelChartLegend = Ext.create
+		(
+				"Sbi.chart.designer.ChartConfigurationParallelLegend",
+				
+				{
+					viewModel: this.viewModel
+				}
+		);
+			
 		// (danilo.ristovski@mht.net)
 		var scatterConfiguration = Ext.create
 		(
@@ -112,6 +121,19 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			}	
 		);
 		
+		/**
+		 * This panel is needed for the SCATTER chart
+		 * (danilo.ristovski@mht.net)
+		 */
+		var gaugePaneParameters = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationGauge",
+			
+			{
+				viewModel: this.viewModel
+			}
+		); 
+		
 		this.add(legend);
 		this.add(palette);
 		this.add(heatmapChartLegendAndTooltip);
@@ -120,7 +142,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		this.add(parallelChartLimit);	
 		this.add(parallelChartAxesLines);
 		this.add(parallelChartTooltip);
+		this.add(parallelChartLegend);
 		this.add(scatterConfiguration);
+		this.add(gaugePaneParameters);
 		
 		if (ChartUtils.enableLegend())
 		{
@@ -163,12 +187,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartParallelLimit").show();
 			this.getComponent("chartParallelAxesLines").show();
 			this.getComponent("chartParallelTooltip").show();
+			this.getComponent("chartParallelLegend").show();			
 		}
 		else 
 		{
 			this.getComponent("chartParallelLimit").hide();
 			this.getComponent("chartParallelAxesLines").hide();
 			this.getComponent("chartParallelTooltip").hide();
+			this.getComponent("chartParallelLegend").hide();
 		}
 		
 		if (ChartUtils.enableHeatmapLegendAndTooltip())
@@ -187,6 +213,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		else
 		{
 			this.getComponent("chartScatterConfiguration").hide();
+		}
+		
+		if (ChartUtils.enableGaugePane())
+		{
+			this.getComponent("gaugePaneConfiguration").show();
+		}
+		else
+		{
+			this.getComponent("gaugePaneConfiguration").hide();
 		}
     }
     

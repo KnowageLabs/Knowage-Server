@@ -55,8 +55,9 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.callParent(config);		
 		
 		store = config.store,
+		
 		rowIndex = config.rowIndex;
-		var dataAtRow = store.getAt(rowIndex);				
+		var dataAtRow = store.getAt(rowIndex);	
 			
 		this.serieFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
@@ -79,6 +80,190 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			layout: 'anchor',
 			items : []
 		});
+		
+		
+		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		{
+			/**
+			 * DIAL field set for the GAUGE chart type
+			 */
+			this.dialFieldSet = Ext.create
+			(
+				'Ext.form.FieldSet', 
+				
+				{
+					collapsible: true,
+					// TODO: uncomment
+//					collapsed: true,
+					title: "Dial",	// TODO: LN()
+					
+					defaults: 
+					{
+						anchor: '100%',
+						labelAlign : 'left',
+						labelWidth : 115,
+					},
+					
+					layout: 'anchor',
+					items : []
+				}
+			);
+			
+			/**
+			 * DATA_LABELS field set for the GAUGE chart type
+			 */
+			this.dataLabelsFieldSet = Ext.create
+			(
+				'Ext.form.FieldSet', 
+				
+				{
+					collapsible: true,
+					// TODO: uncomment
+//					collapsed: true,
+					title: "Data labels",	// TODO: LN()
+					
+					defaults: 
+					{
+						anchor: '100%',
+						labelAlign : 'left',
+						labelWidth : 115,
+					},
+					
+					layout: 'anchor',
+					items : []
+				}
+			);
+		
+			/**
+			 * Variables (GUI elements) for the DIAL and DATA LABELS
+			 */
+			
+			/**
+			 * DIAL: 
+			 * 		backgroundColor
+			 * 			- color of the indicator
+			 */
+			var backgroundColorDial = dataAtRow.get('backgroundColorDial');
+			
+			this.backgroundColorDial = {
+				xtype : 'fieldcontainer',
+				layout : 'hbox',
+				items: [
+					Ext.create('Ext.form.field.Base', {
+						id : 'backgroundColorDial',
+						fieldStyle : (backgroundColorDial && backgroundColorDial.trim() != '') ? 
+							'background-image: none; background-color: ' + backgroundColorDial.trim() : '',
+						fieldLabel : LN('sbi.chartengine.designer.color'),
+						labelWidth : 115,
+						readOnly : true,
+						flex: 15,
+						
+						getStyle: function() {
+							return this.getFieldStyle( );
+						}
+					}), {
+						xtype : 'button',
+						layout : 'hbox',
+						menu : Ext.create('Ext.menu.ColorPicker',{
+							listeners : {
+								select : function(picker, selColor) {
+									var style = 'background-image: none;background-color: #' + selColor;
+									
+									Ext.getCmp('backgroundColorDial').setFieldStyle(style);
+								}
+							}
+						}),
+						flex: 1                
+					}
+				],
+				getColor: function(){
+					var styleColor = this.items[0].getStyle();
+					var indexOfSharp = styleColor.indexOf('#');
+					styleColor = styleColor.substring(indexOfSharp);
+					
+					return styleColor;
+				}
+			};
+		
+			this.dialFieldSet.add(this.backgroundColorDial);
+			
+			/**
+			 * DATA LABELS
+			 * 		y 
+			 * 			- Y position of the panel
+			 */	
+			
+			this.yPositionDataLabels = Ext.create
+	    	(
+				{
+			        xtype: 'numberfield',
+			        id: 'yPositionDataLabels',
+			        value: dataAtRow.get('yPositionDataLabels'),
+			        fieldLabel: "Y position" // TODO: LN()
+			    }	
+	    	);
+			
+			/**
+			 * DATA LABELS: 
+			 * 		color
+			 * 			- panel background color
+			 */
+			var colorDataLabels = dataAtRow.get('colorDataLabels');
+			
+			this.colorDataLabels = {
+				xtype : 'fieldcontainer',
+				layout : 'hbox',
+				items: [
+					Ext.create('Ext.form.field.Base', {
+						id : 'colorDataLabels',
+						fieldStyle : (colorDataLabels && colorDataLabels.trim() != '') ? 
+							'background-image: none; background-color: ' + colorDataLabels.trim() : '',
+						fieldLabel : LN('sbi.chartengine.designer.color'),
+						labelWidth : 115,
+						readOnly : true,
+						flex: 15,
+						
+						getStyle: function() {
+							return this.getFieldStyle( );
+						}
+					}), {
+						xtype : 'button',
+						layout : 'hbox',
+						menu : Ext.create('Ext.menu.ColorPicker',{
+							listeners : {
+								select : function(picker, selColor) {
+									var style = 'background-image: none;background-color: #' + selColor;
+									
+									Ext.getCmp('colorDataLabels').setFieldStyle(style);
+								}
+							}
+						}),
+						flex: 1                
+					}
+				],
+				getColor: function(){
+					var styleColor = this.items[0].getStyle();
+					var indexOfSharp = styleColor.indexOf('#');
+					styleColor = styleColor.substring(indexOfSharp);
+					
+					return styleColor;
+				}
+			};
+			
+			this.formatDataLabels = Ext.create
+	    	(
+				{
+			        xtype: 'textfield',
+			        id: 'formatDataLabels',
+			        value: dataAtRow.get('formatDataLabels'),
+			        fieldLabel: "Format" // TODO: LN()
+			    }	
+	    	);
+			
+			this.dataLabelsFieldSet.add(this.yPositionDataLabels);
+			this.dataLabelsFieldSet.add(this.colorDataLabels);
+			this.dataLabelsFieldSet.add(this.formatDataLabels);
+		}
 		
 		/* * * * * * * * * * SERIE FIELDS  * * * * * *  * * * * */
 		var serieName = dataAtRow.get('axisName');
@@ -343,6 +528,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		
 		this.add(this.serieFieldSet);
 		this.add(this.tooltipFieldSet);
+		
+		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		{
+			this.add(this.dialFieldSet);
+			this.add(this.dataLabelsFieldSet);
+		}
 	},
 	
     writeConfigsAndExit: function() {
@@ -392,6 +583,24 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var serieTooltipFontSize = '' + this.tooltipFontSizeComboBox.getValue(); //Save as string 
 		dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
 
+		/**
+		 * DIAL
+		 */
+		var backgroundColorDial = this.backgroundColorDial.getColor();
+		dataAtRow.set('backgroundColorDial', backgroundColorDial);
+		
+		/**
+		 * DATA LABELS
+		 */		
+		var yPositionDataLabels = this.yPositionDataLabels.getValue();
+		dataAtRow.set('yPositionDataLabels', yPositionDataLabels);
+		
+		var colorDataLabels = this.colorDataLabels.getColor();
+		dataAtRow.set('colorDataLabels', colorDataLabels);
+		
+		var formatDataLabels = this.formatDataLabels.getValue();
+		dataAtRow.set('formatDataLabels', formatDataLabels);
+		
 		this.destroy();
 	},
 	

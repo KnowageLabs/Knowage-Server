@@ -17,6 +17,9 @@ Ext.define(
 						
 						, convertJsonAxisObjToAxisData : function(axis) {
 							var result = {};
+							var chartType = Sbi.chart.designer.Designer.chartTypeSelector
+							.getChartType().toUpperCase();
+
 
 							result['id'] = axis.alias && axis.alias != '' ? axis.alias
 									: '';
@@ -26,6 +29,27 @@ Ext.define(
 									: '';
 							result['position'] = axis.position
 									&& axis.position != '' ? axis.position : '';
+							
+							if (chartType == "GAUGE")
+							{								
+								result['min'] = axis.min ? axis.min : '';
+								result['max'] = axis.max ? axis.max : '';
+								result['lineColor'] = axis.lineColor ? axis.lineColor : '';
+								result['tickPosition'] = axis.tickPosition ? axis.tickPosition : '';
+								result['tickColor'] = axis.tickColor ? axis.tickColor : '';
+								result['minorTickColor'] = axis.minorTickColor ? axis.minorTickColor : '';
+								result['minorTickLength'] = axis.minorTickLength ? axis.minorTickLength : '';
+								result['offset'] = axis.offset ? axis.offset : '';
+								result['lineWidth'] = axis.lineWidth ? axis.lineWidth : '';
+								result['endOnTick'] = axis.endOnTick ? axis.endOnTick : false;
+								result['minorTickInterval'] = axis.minorTickInterval ? axis.minorTickInterval : '';
+								result['minorTickPosition'] = axis.minorTickPosition ? axis.minorTickPosition : '';
+								result['minorTickWidth'] = axis.minorTickWidth ? axis.minorTickWidth : '';
+								result['minorTickColor'] = axis.minorTickColor ? axis.minorTickColor : '';
+								result['tickPixelInterval'] = axis.tickPixelInterval ? axis.tickPixelInterval : '';
+								result['tickWidth'] = axis.tickWidth  ? axis.tickWidth  : '';
+								result['tickLength'] = axis.tickLength ? axis.tickLength : '';
+							}
 
 							var axisStyleAsMap = ChartUtils
 									.jsonizeStyle(axis.style);
@@ -101,7 +125,47 @@ Ext.define(
 										&& titlegridStyleAsMap.fontSize != '' ? titlegridStyleAsMap.fontSize
 										: '';
 							}
-
+							
+							/**
+							 * Specific for the GAUGE chart type
+							 */
+							if (axis.LABELS)
+							{
+								result['distance'] = axis.LABELS.distance ? axis.LABELS.distance : "";
+								result['rotation'] = axis.LABELS.rotation ? axis.LABELS.rotation : "";
+							}
+							
+							/**
+							 * Specific for the GAUGE chart type
+							 */ 
+							if (axis.PLOTBANDS)
+							{					
+								var from = new Array();
+								var to = new Array();
+								var color = new Array();
+								
+								if (axis.PLOTBANDS.PLOT.length)
+								{
+									for (var i=0; i<axis.PLOTBANDS.PLOT.length; i++)
+									{
+										from.push(axis.PLOTBANDS.PLOT[i].from);
+										to.push(axis.PLOTBANDS.PLOT[i].to);
+										color.push(axis.PLOTBANDS.PLOT[i].color);
+									}
+								}
+								else
+								{
+//									console.log("YYY 1");
+									from.push(axis.PLOTBANDS.PLOT.from);
+									to.push(axis.PLOTBANDS.PLOT.to);
+									color.push(axis.PLOTBANDS.PLOT.color);
+								}
+								
+								result['from'] = from ? from : "";
+								result['to'] = to ? to : "";
+								result['color'] = color ? color : "";
+							}
+							
 							return result;
 						},
 						createEmptyAxisData : function(isCategory, isLeftSerie) {
@@ -220,11 +284,15 @@ Ext.define(
 
 							result['CHART'] = CHART;
 							
+//							console.log(result);
+							
 							return result;
 						},
 
 						getAxesDataAsOriginalJson : function() {
 							var result = [];
+							var chartType = Sbi.chart.designer.Designer.chartTypeSelector
+							.getChartType().toUpperCase();
 
 							/* START Chart left and right axes data */
 							var leftAndRightAxisesContainers = [
@@ -247,6 +315,27 @@ Ext.define(
 									axisAsJson['position'] = axisData.position ? axisData.position
 											: '';
 
+									if (chartType == "GAUGE")
+									{										
+										axisAsJson['min'] = axisData.min ? axisData.min : '';
+										axisAsJson['max'] = axisData.max ? axisData.max : '';
+										axisAsJson['lineColor'] = axisData.lineColor ? axisData.lineColor : '';
+										axisAsJson['tickPosition'] = axisData.tickPosition ? axisData.tickPosition : '';
+										axisAsJson['tickColor'] = axisData.tickColor ? axisData.tickColor : '';
+										axisAsJson['minorTickColor'] = axisData.minorTickColor ? axisData.minorTickColor : '';
+										axisAsJson['minorTickLength'] = axisData.minorTickLength ? axisData.minorTickLength : '';
+										axisAsJson['offset'] = axisData.offset ? axisData.offset : '';
+										axisAsJson['lineWidth'] = axisData.lineWidth ? axisData.lineWidth : '';
+										axisAsJson['endOnTickGauge'] = axisData.endOnTickGauge;
+										axisAsJson['minorTickInterval'] = axisData.minorTickInterval ? axisData.minorTickInterval : '';
+										axisAsJson['minorTickPosition'] = axisData.minorTickPosition ? axisData.minorTickPosition : '';
+										axisAsJson['minorTickWidth'] = axisData.minorTickWidth ? axisData.minorTickWidth : '';
+										axisAsJson['minorTickColor'] = axisData.minorTickColor ? axisData.minorTickColor : '';
+										axisAsJson['tickPixelInterval'] = axisData.tickPixelInterval ? axisData.tickPixelInterval : '';
+										axisAsJson['tickWidth'] = axisData.tickWidth  ? axisData.tickWidth  : '';
+										axisAsJson['tickLength'] = axisData.tickLength ? axisData.tickLength : '';
+									}									
+									
 									var style = '';
 									style += 'rotate:'
 											+ ((axisData.styleRotate != undefined) ? axisData.styleRotate
@@ -267,8 +356,9 @@ Ext.define(
 											+ ((axisData.styleFontSize != undefined) ? axisData.styleFontSize
 													: '') + ';';
 									
-									// TODO: Added 17.7
-									// (danilo.ristovski@mht.net)
+									/**
+									 * (added by: danilo.ristovski@mht.net)
+									 */ 
 									style += 'opposite:'
 										+ ((axisData.styleOpposite != undefined) ? axisData.styleOpposite
 												: 'false') + ';';
@@ -328,7 +418,60 @@ Ext.define(
 
 									TITLE['style'] = titleStyle;
 									axisAsJson['TITLE'] = TITLE;
+									
+									if (chartType == "GAUGE")
+									{										
+										/**
+										 * LABELS sub-tag inside the AXIS tag
+										 */
+										var LABELS = {};
+										
+										LABELS['distance'] = axisData.distance ? axisData.distance : '';
+										LABELS['rotation'] = axisData.rotation ? axisData.rotation : '';
 
+										axisAsJson['LABELS'] = LABELS;
+										
+										/**
+										 * PLOTBANDS sub-tag inside the AXIS tag
+										 */
+										var PLOTBANDS = {};
+										var PLOT = new Array();
+//										console.log(axisData);
+										var numberOfPlots = axisData.from.length;										
+										
+										if (axisData.from.length)
+										{
+											for (var i=0; i<numberOfPlots; i++)
+											{
+												var object = {};
+												
+												object['from'] = axisData.from[i];	// TODO: dodatna provera opsega i mogucih vrednosti
+												object['to'] = axisData.to[i];		// TODO: dodatna provera opsega i mogucih vrednosti
+												object['color'] = axisData.color[i] ? axisData.color[i] : '';	
+//												object['color'] = "#FF0000";
+												
+												PLOT.push(object);
+											}
+											
+//											console.log(axisData);
+										}
+										else
+										{
+											var object = {};
+											
+											object['from'] = axisData.from;	// TODO: dodatna provera opsega i mogucih vrednosti
+											object['to'] = axisData.to;		// TODO: dodatna provera opsega i mogucih vrednosti
+											object['color'] = axisData.color ? axisData.color : '';
+											
+											PLOT.push(object);
+										}
+										
+										
+										PLOTBANDS['PLOT'] = PLOT;
+										
+										axisAsJson['PLOTBANDS'] = PLOTBANDS;
+									}
+									
 									result.push(axisAsJson);
 								}
 							}
@@ -411,7 +554,7 @@ Ext.define(
 									serie['id'] = serieAsMap.get('id') != undefined ? serieAsMap
 											.get('id')
 											: '';
-									;
+									
 									serie['axis'] = axisAlias;
 									serie['color'] = serieAsMap
 											.get('serieColor') != undefined ? serieAsMap
@@ -492,7 +635,23 @@ Ext.define(
 
 										serie['TOOLTIP'] = TOOLTIP;
 									}
-
+									
+									/**
+									 * For GAUGE chart type add DIAL and DATA LABELS sub-tags
+									 */
+									if (chartType.toUpperCase() == "GAUGE")
+									{
+										var DIAL = {};										
+										DIAL['backgroundColorDial'] = serieAsMap.get("backgroundColorDial") ? serieAsMap.get("backgroundColorDial") : "";
+										serie['DIAL'] = DIAL;
+										
+										var DATA_LABELS = {};
+										DATA_LABELS['yPositionDataLabels'] = serieAsMap.get("yPositionDataLabels") ? serieAsMap.get("yPositionDataLabels") : "";
+										DATA_LABELS['colorDataLabels'] = serieAsMap.get("colorDataLabels") ? serieAsMap.get("colorDataLabels") : "";
+										DATA_LABELS['formatDataLabels'] = serieAsMap.get("formatDataLabels") ? serieAsMap.get("formatDataLabels") : "";
+										serie['DATA_LABELS'] = DATA_LABELS;
+									}
+									
 									result.push(serie);
 								}
 							}
@@ -654,7 +813,10 @@ Ext.define(
 									.get('width')
 									: '';									
 							
-							CHART['isCockpitEngine'] = Sbi.chart.designer.ChartUtils.isCockpitEngine;		
+							CHART['isCockpitEngine'] = Sbi.chart.designer.ChartUtils.isCockpitEngine;	
+							
+							CHART['styleName'] = Sbi.chart.designer.Designer.styleName;
+//							CHART['styleCustom'] = Sbi.chart.designer.Designer.styleCustom;
 									
 							if (chartType.toUpperCase() == "SCATTER") 
 							{
@@ -698,26 +860,33 @@ Ext.define(
 							}
 
 							if (chartType.toUpperCase() == "WORDCLOUD") {
-								chartStyle += 'maxWords:'
-										+ ((chartModel.get('maxWords')) ? chartModel
-												.get('maxWords')
-												: '') + ';';
-								chartStyle += 'maxAngle:'
-										+ ((chartModel.get('maxAngle')) ? chartModel
-												.get('maxAngle')
-												: '') + ';';
-								chartStyle += 'minAngle:'
-										+ ((chartModel.get('minAngle')) ? chartModel
-												.get('minAngle')
-												: '') + ';';
-								chartStyle += 'maxFontSize:'
-										+ ((chartModel.get('maxFontSize')) ? chartModel
-												.get('maxFontSize')
-												: '') + ';';
-								chartStyle += 'wordPadding:'
-										+ ((chartModel.get('wordPadding')) ? chartModel
-												.get('wordPadding')
-												: '') + ';';
+								
+								CHART['maxWords'] = (chartModel.get('maxWords')) ? chartModel.get('maxWords') : '';
+								CHART['maxAngle'] = (chartModel.get('maxAngle')) ? chartModel.get('maxAngle') : '';
+								CHART['minAngle'] = (chartModel.get('minAngle')) ? chartModel.get('minAngle') : '';
+								CHART['maxFontSize'] = (chartModel.get('maxFontSize')) ? chartModel.get('maxFontSize') : '';
+								CHART['wordPadding'] = (chartModel.get('wordPadding')) ? chartModel.get('wordPadding') : '';
+								
+//								chartStyle += 'maxWords:'
+//										+ ((chartModel.get('maxWords')) ? chartModel
+//												.get('maxWords')
+//												: '') + ';';
+//								chartStyle += 'maxAngle:'
+//										+ ((chartModel.get('maxAngle')) ? chartModel
+//												.get('maxAngle')
+//												: '') + ';';
+//								chartStyle += 'minAngle:'
+//										+ ((chartModel.get('minAngle')) ? chartModel
+//												.get('minAngle')
+//												: '') + ';';
+//								chartStyle += 'maxFontSize:'
+//										+ ((chartModel.get('maxFontSize')) ? chartModel
+//												.get('maxFontSize')
+//												: '') + ';';
+//								chartStyle += 'wordPadding:'
+//										+ ((chartModel.get('wordPadding')) ? chartModel
+//												.get('wordPadding')
+//												: '') + ';';
 							}
 
 							CHART['style'] = chartStyle;
@@ -850,70 +1019,130 @@ Ext.define(
 
 							CHART['SUBTITLE'] = SUBTITLE;
 
-							var LEGEND = {};
-							LEGEND['show'] = (chartModel.get('showLegend') != undefined) ? chartModel
-									.get('showLegend')
-									: false;
-							LEGEND['position'] = (chartModel
-									.get('legendPosition') != undefined) ? chartModel
-									.get('legendPosition')
-									: '';
-							LEGEND['layout'] = (chartModel.get('legendLayout') != undefined) ? chartModel
-									.get('legendLayout')
-									: '';
-							LEGEND['floating'] = (chartModel
-									.get('legendFloating') != undefined) ? chartModel
-									.get('legendFloating')
-									: '';
-							LEGEND['x'] = (chartModel.get('legendX') != undefined) ? chartModel
-									.get('legendX')
-									: '';
-							LEGEND['y'] = (chartModel.get('legendY') != undefined) ? chartModel
-									.get('legendY')
-									: '';
-
-							var legendStyle = '';
-							legendStyle += 'align:'
-									+ ((chartModel.get('legendAlign') != undefined) ? chartModel
-											.get('legendAlign')
-											: '') + ';';
-							legendStyle += 'fontFamily:'
-									+ ((chartModel.get('legendFont') != undefined) ? chartModel
-											.get('legendFont')
-											: '') + ';';
-							legendStyle += 'fontSize:'
-									+ ((chartModel.get('legendDimension') != undefined) ? chartModel
-											.get('legendDimension')
-											: '') + ';';
-							legendStyle += 'fontWeight:'
-									+ ((chartModel.get('legendStyle') != undefined) ? chartModel
-											.get('legendStyle')
-											: '') + ';';
-							legendStyle += 'borderWidth:'
-									+ ((chartModel.get('legendBorderWidth') != undefined) ? chartModel
-											.get('legendBorderWidth')
-											: '') + ';';
-							legendStyle += 'color:'
-									+ ((chartModel.get('legendColor') != undefined && chartModel
-											.get('legendColor') != '') ? '#'
-											+ chartModel.get('legendColor')
-											: '') + ';';
-							legendStyle += 'backgroundColor:'
-									+ ((chartModel.get('legendBackgroundColor') != undefined && chartModel
-											.get('legendBackgroundColor') != '') ? '#'
-											+ chartModel
-													.get('legendBackgroundColor')
-											: '') + ';';
-							
 							/**
-							 * (danilo.ristovski@mht.net) (modified: 20.7)
+							 * LEGEND of the CHART
 							 */
-							legendStyle += 'symbolWidth:'
-								+ ((chartModel.get('symbolWidth') != undefined) ? chartModel
-										.get('symbolWidth')
-										: '') + ';';
+							var LEGEND = {};
 							
-							LEGEND['style'] = legendStyle;
+							if (chartType.toUpperCase() == "PARALLEL")
+							{
+								
+								var TITLE = {};
+								var ELEMENT = {};
+//								console.log(chartModel);
+								
+								var legendTitleStyle = '';
+								var legendElementStyle = "";
+								
+								/**
+								 * TITLE
+								 */
+								legendTitleStyle += 'fontFamily:'
+										+ ((chartModel.get('parallelLegendTitleFontFamily') != undefined) ? chartModel
+												.get('parallelLegendTitleFontFamily')
+												: '') + ';';
+								
+								legendTitleStyle += 'fontSize:'
+									+ ((chartModel.get('parallelLegendTitleFontSize') != undefined) ? chartModel
+											.get('parallelLegendTitleFontSize')
+											: '') + ';';
+								
+								legendTitleStyle += 'fontWeight:'
+									+ ((chartModel.get('parallelLegendTitleFontWeight') != undefined) ? chartModel
+											.get('parallelLegendTitleFontWeight')
+											: '') + ';';
+							
+								/**
+								 * ELEMENT
+								 */
+								legendElementStyle += 'fontFamily:'
+									+ ((chartModel.get('parallelLegendElementFontFamily') != undefined) ? chartModel
+											.get('parallelLegendElementFontFamily')
+											: '') + ';';
+								
+								legendElementStyle += 'fontSize:'
+									+ ((chartModel.get('parallelLegendElementFontSize') != undefined) ? chartModel
+											.get('parallelLegendElementFontSize')
+											: '') + ';';
+								
+								legendElementStyle += 'fontWeight:'
+									+ ((chartModel.get('parallelLegendElementFontWeight') != undefined) ? chartModel
+											.get('parallelLegendElementFontWeight')
+											: '') + ';';
+								
+								TITLE['style'] = legendTitleStyle;
+								ELEMENT['style'] = legendElementStyle;
+								
+								LEGEND['TITLE'] = TITLE;
+								LEGEND['ELEMENT'] = ELEMENT;
+								
+							}
+							else
+							{
+								LEGEND['show'] = (chartModel.get('showLegend') != undefined) ? chartModel
+										.get('showLegend')
+										: false;
+								LEGEND['position'] = (chartModel
+										.get('legendPosition') != undefined) ? chartModel
+										.get('legendPosition')
+										: '';
+								LEGEND['layout'] = (chartModel.get('legendLayout') != undefined) ? chartModel
+										.get('legendLayout')
+										: '';
+								LEGEND['floating'] = (chartModel
+										.get('legendFloating') != undefined) ? chartModel
+										.get('legendFloating')
+										: '';
+								LEGEND['x'] = (chartModel.get('legendX') != undefined) ? chartModel
+										.get('legendX')
+										: '';
+								LEGEND['y'] = (chartModel.get('legendY') != undefined) ? chartModel
+										.get('legendY')
+										: '';
+
+								var legendStyle = '';
+								legendStyle += 'align:'
+										+ ((chartModel.get('legendAlign') != undefined) ? chartModel
+												.get('legendAlign')
+												: '') + ';';
+								legendStyle += 'fontFamily:'
+										+ ((chartModel.get('legendFont') != undefined) ? chartModel
+												.get('legendFont')
+												: '') + ';';
+								legendStyle += 'fontSize:'
+										+ ((chartModel.get('legendDimension') != undefined) ? chartModel
+												.get('legendDimension')
+												: '') + ';';
+								legendStyle += 'fontWeight:'
+										+ ((chartModel.get('legendStyle') != undefined) ? chartModel
+												.get('legendStyle')
+												: '') + ';';
+								legendStyle += 'borderWidth:'
+										+ ((chartModel.get('legendBorderWidth') != undefined) ? chartModel
+												.get('legendBorderWidth')
+												: '') + ';';
+								legendStyle += 'color:'
+										+ ((chartModel.get('legendColor') != undefined && chartModel
+												.get('legendColor') != '') ? '#'
+												+ chartModel.get('legendColor')
+												: '') + ';';
+								legendStyle += 'backgroundColor:'
+										+ ((chartModel.get('legendBackgroundColor') != undefined && chartModel
+												.get('legendBackgroundColor') != '') ? '#'
+												+ chartModel
+														.get('legendBackgroundColor')
+												: '') + ';';
+								
+								/**
+								 * (danilo.ristovski@mht.net) (modified: 20.7)
+								 */
+								legendStyle += 'symbolWidth:'
+									+ ((chartModel.get('symbolWidth') != undefined) ? chartModel
+											.get('symbolWidth')
+											: '') + ';';
+								
+								LEGEND['style'] = legendStyle;
+							}							
 
 							CHART['LEGEND'] = LEGEND;
 
@@ -1010,8 +1239,22 @@ Ext.define(
 								TIP['style'] = tipStyle;
 								CHART['TIP'] = TIP;
 								// *_* (END)
+								
+								
 							}
 
+							if (chartType.toUpperCase() == "GAUGE")
+							{
+								// *_* (START)
+								var PANE = {};
+								var pane = '';
+								
+								PANE['startAngle'] = (chartModel.get('startAnglePane')) ? chartModel.get('startAnglePane') : 0;
+								PANE['endAngle'] = (chartModel.get('endAnglePane')) ? chartModel.get('endAnglePane') : 0;
+								
+								CHART['PANE'] = PANE;
+							}
+							
 							if (chartType.toUpperCase() == "HEATMAP")
 							{
 								// *_* (START)
@@ -1117,8 +1360,10 @@ Ext.define(
 
 								PARALLEL_TOOLTIP['style'] = parallelTooltipStype;
 								CHART['PARALLEL_TOOLTIP'] = PARALLEL_TOOLTIP;
-							}
+							}													
 
+//							console.log(CHART);
+							
 							return CHART;
 						},
 
@@ -1154,13 +1399,15 @@ Ext.define(
 									&& Sbi.chart.designer.Designer.chartTypeSelector
 											.getChartType() != 'WORDCLOUD'
 												&& Sbi.chart.designer.Designer.chartTypeSelector
-												.getChartType() != 'SCATTER';
+												.getChartType() != 'SCATTER'
+													&& Sbi.chart.designer.Designer.chartTypeSelector
+													.getChartType() != 'GAUGE';
 						},
 
 						disableShowLegendCheck : function()
 						{
 							return Sbi.chart.designer.Designer.chartTypeSelector
-							.getChartType() == 'SUNBURST'
+									.getChartType() == 'SUNBURST'
 							|| Sbi.chart.designer.Designer.chartTypeSelector
 									.getChartType() == 'WORDCLOUD'
 							|| Sbi.chart.designer.Designer.chartTypeSelector
@@ -1168,7 +1415,9 @@ Ext.define(
 							|| Sbi.chart.designer.Designer.chartTypeSelector
 									.getChartType() == 'TREEMAP'
 										|| Sbi.chart.designer.Designer.chartTypeSelector
-										.getChartType() == 'HEATMAP';
+										.getChartType() == 'HEATMAP'
+											|| Sbi.chart.designer.Designer.chartTypeSelector
+												.getChartType() == 'GAUGE';
 						},
 						
 						enableLegend : function() {
@@ -1181,10 +1430,17 @@ Ext.define(
 									&& Sbi.chart.designer.Designer.chartTypeSelector
 											.getChartType() != 'TREEMAP'
 									&& Sbi.chart.designer.Designer.chartTypeSelector
-											.getChartType() != 'HEATMAP';
+											.getChartType() != 'HEATMAP'
+									&& Sbi.chart.designer.Designer.chartTypeSelector
+											.getChartType() != 'GAUGE';
+						},												
+						
+						disableXBottomContainer: function()
+						{
+							return Sbi.chart.designer.Designer.chartTypeSelector
+								.getChartType() == 'GAUGE';
 						},
-
-						// TODO: Modified 17.7
+						
 						/**
 						 * If Designer is still not defined (created), i.e. in the process of running (creating) it
 						 * we need to prevent 'disableChartWidth' and 'disableChartOrientation' functions from taking
@@ -1229,6 +1485,12 @@ Ext.define(
 						{
 							return Sbi.chart.designer.Designer.chartTypeSelector
 								.getChartType() == 'HEATMAP';
+						},
+						
+						enableGaugePane : function()
+						{
+							return Sbi.chart.designer.Designer.chartTypeSelector
+									.getChartType() == 'GAUGE';
 						},
 
 						createChartConfigurationModelFromJson : function(
@@ -1302,6 +1564,14 @@ Ext.define(
 							var jsonParallelTooltipStyle = jsonTemplate.CHART.PARALLEL_TOOLTIP ? Sbi.chart.designer.ChartUtils
 									.jsonizeStyle(jsonTemplate.CHART.PARALLEL_TOOLTIP.style)
 									: '';
+									
+							var jsonParallelLegendTitle = jsonTemplate.CHART.LEGEND.TITLE ? Sbi.chart.designer.ChartUtils
+									.jsonizeStyle(jsonTemplate.CHART.LEGEND.TITLE.style) : "";
+							
+							var jsonParallelLegendElement = jsonTemplate.CHART.LEGEND.ELEMENT ? Sbi.chart.designer.ChartUtils
+									.jsonizeStyle(jsonTemplate.CHART.LEGEND.ELEMENT.style) : "";
+							
+							
 							/* END */
 
 							// *_* Variable used for the SCATTER chart
@@ -1316,6 +1586,20 @@ Ext.define(
 							 * Variable used for HEATMAP chart (*_*)
 							 */
 							var jsonHeatmapChartSybmolWidth = jsonLegendStyle.symbolWidth ? jsonLegendStyle.symbolWidth : '';
+							
+							/**
+							 * Variable used for the GAUGE chart
+							 */
+							
+							var jsonGaugeMinAnglePane = null;
+							var jsonGaugeMaxAnglePane = null;
+							
+							if (Sbi.chart.designer.Designer.chartTypeSelector
+									.getChartType() == 'GAUGE')
+							{
+								jsonGaugeMinAnglePane = jsonTemplate.CHART.PANE.startAngle;
+								jsonGaugeMaxAnglePane = jsonTemplate.CHART.PANE.endAngle;
+							}							
 							
 							var colorPalette = [];
 							if (jsonTemplate.CHART.COLORPALETTE
@@ -1353,14 +1637,15 @@ Ext.define(
 												fontWeight : jsonChartStyle.fontWeight,
 
 												// *_* Added for the SUNBURST
-												opacMouseOver : jsonChartStyle.opacMouseOver,
+//												opacMouseOver : jsonTemplate.CHART.style.opacMouseOver,
+												opacMouseOver : jsonTemplate.CHART.opacMouseOver,	// TODO: uradi da opacMouseOver ne bude pod style atr. CHART taga (ovde i u VM-u, a izmeniti to i u JS-u)
 
 												// *_* Added for the WORDCLOUD
-												maxWords : jsonChartStyle.maxWords,
-												maxAngle : jsonChartStyle.maxAngle,
-												minAngle : jsonChartStyle.minAngle,
-												maxFontSize : jsonChartStyle.maxFontSize,
-												wordPadding : jsonChartStyle.wordPadding,
+												maxWords : jsonTemplate.CHART.maxWords,
+												maxAngle : jsonTemplate.CHART.maxAngle,
+												minAngle : jsonTemplate.CHART.minAngle,
+												maxFontSize : jsonTemplate.CHART.maxFontSize,
+												wordPadding : jsonTemplate.CHART.wordPadding,
 												sizeCriteria : jsonTemplate.CHART.sizeCriteria,
 
 												title : jsonTitleText,
@@ -1458,7 +1743,21 @@ Ext.define(
 												parallelTooltipPadding : jsonParallelTooltipStyle.padding,
 												parallelTooltipBorder : jsonParallelTooltipStyle.border,
 												parallelTooltipBorderRadius : jsonParallelTooltipStyle.borderRadius,
-
+												
+												/**
+												 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
+												 */
+												parallelLegendTitleFontFamily : jsonParallelLegendTitle.fontFamily,
+												parallelLegendTitleFontSize : jsonParallelLegendTitle.fontSize,
+												parallelLegendTitleFontWeight : jsonParallelLegendTitle.fontWeight,
+												
+												/**
+												 * Parameters for the LEGEND's TITLE subtag of the PARALLEL chart
+												 */
+												parallelLegendElementFontFamily : jsonParallelLegendElement.fontFamily,
+												parallelLegendElementFontSize : jsonParallelLegendElement.fontSize,
+												parallelLegendElementFontWeight : jsonParallelLegendElement.fontWeight,
+												
 												// *_* Added for the SCATTER chart 
 												scatterZoomType : jsonScatterZoomType,
 												scatterStartOnTick: jsonScatterStartOnTick,
@@ -1468,7 +1767,13 @@ Ext.define(
 												/**
 												 * Added for the HEATMAP chart
 												 */
-												symbolWidth: jsonHeatmapChartSybmolWidth 
+												symbolWidth: jsonHeatmapChartSybmolWidth,
+												
+												/**
+												 * Added for the GAUGE chart
+												 */
+												startAnglePane: jsonGaugeMinAnglePane,
+												endAnglePane: jsonGaugeMaxAnglePane
 											});
 
 							return cModel;

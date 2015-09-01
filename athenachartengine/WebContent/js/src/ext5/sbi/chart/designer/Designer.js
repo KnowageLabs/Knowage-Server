@@ -90,6 +90,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			name: LN('sbi.chartengine.designer.charttype.heatmap'), 
 			type: 'HEATMAP',
 			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
+		},
+		
+		{
+			name: LN('sbi.chartengine.designer.charttype.gauge'), 
+			type: 'GAUGE',
+			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
 		}
 		
 		],
@@ -138,12 +144,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		hostName : '', 
 		serverPort: '',
-		
-		
+				
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit) {
-						
-			
+
 			Sbi.chart.designer.ChartUtils.setCockpitEngine(isCockpit);			
+			
+//			console.log(jsonTemplate);
 			
 			var baseTemplate = {
 					CHART: {
@@ -174,7 +180,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							        ]
 						}
 					}
-			};
+			};	
 			
 			var newChart = false;
 			
@@ -191,9 +197,186 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (danilo.ristovski@mht.net)
 			 */
 			if (!jsonTemplate.CHART) {
+//				console.log("NO CHART");
 				newChart = true;
 				jsonTemplate = baseTemplate;
 			}			
+			
+			/**
+			 * Predefined style type is RED
+			 * (danilo.ristovski@mht.net)
+			 */		
+//			console.log(jsonTemplate.CHART.styleName);
+			this.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "red";
+//			this.styleCustom = (jsonTemplate.CHART.styleCustom) ? (jsonTemplate.CHART.styleCustom) : false;
+			
+			/**
+			 * Get the missing JSON configuration elements (properties) in order to define
+			 * their default values for any type of chart (including the BAR chart)
+			 * (danilo.ristovski@mht.net)
+			 */
+			var getConfigurationForStyle = function(style)
+			{
+				this.styleName = style;
+				
+				// CHART
+				var chartHeight = null;
+				var chartWidth = null;
+				var chartIsCockpitEngine = null;
+				var chartOrientation = null;
+				var chartStyle = null;
+				
+				// TITLE
+				var titleStyle = null;
+				var titleText = null;
+				
+				// SUBTITLE
+				var subtitleStyle = null;
+				var subtitleText = null; 
+				
+				// EMPTY MESSAGE
+				var emptyMessageStyle = null;
+				var emptyMessageText = null;
+				
+				// LEGEND
+				var legendFloating = null;
+				var legendLayout = null;
+				var legendPosition = null;
+				var legendShow = null;
+				var legendStyle = null;
+				var legendX = null;
+				var legendY = null;				
+				
+				switch(style)
+				{				
+					case "red":
+//						console.log("RED");
+						chartStyleName = "red";
+//						styleCustom = false;
+						chartHeight = 400;
+						chartWidth = 1000;
+						chartIsCockpitEngine = "false";
+						chartOrientation = "horizontal";
+						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;";						
+						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+						titleText = "Insert your title";						
+						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+						subtitleText = "Insert your subtitle";						
+						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+						emptyMessageText = "Insert your empty message (when no data for chart exists)";
+						legendFloating = false;
+						legendLayout = "";
+						legendPosition = "";
+						legendShow = false;
+						legendStyle = "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;";
+						legendX = 0;
+						legendY = 0;	
+						break;
+						
+					case "blue":
+//						console.log("BLUE");
+						chartStyleName = "blue";
+//						styleCustom = false;
+						chartHeight = 600;
+						chartWidth = 1200;
+						chartIsCockpitEngine = "false";
+						chartOrientation = "horizontal";
+						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;";						
+						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+						titleText = "Insert your title";						
+						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+						subtitleText = "Insert your subtitle";						
+						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+						emptyMessageText = "Insert your empty message (when no data for chart exists)";
+						legendFloating = false;
+						legendLayout = "horizontal";
+						legendPosition = "middle";
+						legendShow = false;
+						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
+						legendX = 0;
+						legendY = 0;
+						break;
+						
+					case "green":
+//						console.log("GREEN");
+						chartStyleName = "green";
+//						styleCustom = false;
+						chartHeight = 800;
+						chartWidth = 1400;
+						chartIsCockpitEngine = "false";
+						chartOrientation = "horizontal";
+						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;";						
+						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+						titleText = "Insert your title";						
+						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+						subtitleText = "Insert your subtitle";						
+						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+						emptyMessageText = "Insert your empty message (when no data for chart exists)";
+						legendFloating = false;
+						legendLayout = "horizontal";
+						legendPosition = "middle";
+						legendShow = false;
+						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
+						legendX = 0;
+						legendY = 0;
+						break;					
+				}
+				
+				/**
+				 * The missing generic style configuration elements in a form of
+				 * the JSON
+				 *(danilo.ristovski@mht.net)
+				 */
+				var configurationToReturn = 
+				
+				{
+					generic: 
+					{
+						CHART:
+						{
+							height: chartHeight,
+							width: chartWidth,	
+							isCockpitEngine: chartIsCockpitEngine,
+							orientation: chartOrientation,
+							style: chartStyle,
+							styleName: chartStyleName,
+//							styleCustom: styleCustom, 
+							
+							TITLE:
+							{
+								style: titleStyle,
+								text: titleText
+							},
+							
+							SUBTITLE:
+							{
+								style: subtitleStyle,
+								text: subtitleText
+							},
+							
+							EMPTYMESSAGE:
+							{
+								style: emptyMessageStyle,
+								text: emptyMessageText
+							},
+							
+							LEGEND:
+							{
+								floating: legendFloating,
+								layout: legendLayout,
+								position: legendPosition,
+								show: legendShow,
+								style: legendStyle,
+								x: legendX,
+								y: legendY
+							}
+						}						
+					}
+				};
+								
+				return configurationToReturn;
+			
+			};			
 			
 			/**
 			 * Merging JSON templates of specified chart types with the base JSON template
@@ -208,10 +391,24 @@ Ext.define('Sbi.chart.designer.Designer', {
 							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL'
 								|| jsonTemplate.CHART.type.toUpperCase() == 'RADAR'
 									|| jsonTemplate.CHART.type.toUpperCase() == 'SCATTER'
-										|| jsonTemplate.CHART.type.toUpperCase() == 'HEATMAP') {
-
-				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);
+										|| jsonTemplate.CHART.type.toUpperCase() == 'HEATMAP'
+											|| jsonTemplate.CHART.type.toUpperCase() == 'GAUGE') {
+//				console.log(baseTemplate);
+//				console.log(jsonTemplate);
+				
+				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);				
 			}				
+			
+			/**
+			 * 
+			 */			
+//			if (jsonTemplate.CHART.styleCustom)
+//				console.log("YYYY");
+//			else
+			if (newChart == true)
+				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate, getConfigurationForStyle(this.styleName).generic);
+			
+			Sbi.chart.designer.ChartColumnsContainerManager.setPlotbandsStore(jsonTemplate);
 			
 			this.docLabel = docLabel;
 			this.jsonTemplate = jsonTemplate;
@@ -221,7 +418,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			/**
 			 * List of names of the libraries that we use for rendering the charts. 
-			 * (danilo.ristovski@mht.net)
+			 * (comment by: danilo.ristovski@mht.net)
 			 */
 			this.chartLibNamesConfig = chartLibNamesConfig;	
 			
@@ -236,14 +433,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Chart types that we specified at the beginning of the Designer and
 			 * that are available through the Chart Type Selector (needed for creating
 			 * of the top left panel on the Designer page. 
-			 * (danilo.ristovski@mht.net)
+			 * (comment by: danilo.ristovski@mht.net)
 			 */
 			var chartTypes = this.chartTypes;
 			
 			/**
 			 * Populating store with those chart types ('fields' define the structure 
 			 * of every single chartType).
-			 * (danilo.ristovski@mht.net)
+			 * (comment by: danilo.ristovski@mht.net)
 			 */
 			var chartTypeStore = Ext.create('Ext.data.Store', {
 				fields: [
@@ -260,7 +457,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * One of the main roles of this JS class (file) is listening to the 
 			 * event of changing the chart types inside of it (the selector), i.e.
 			 * clicking on the row of the Selector.
-			 * (danilo.ristovski@mht.net)
+			 * (comment by: danilo.ristovski@mht.net)
 			 */
 			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
  				region: 'north',
@@ -298,6 +495,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var parallelLimitPanel = secondConfigurationPanel.getComponent("chartParallelLimit");
 					var parallelAxesLinesPanel = secondConfigurationPanel.getComponent("chartParallelAxesLines");					
 					var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
+					var parallelLegendPanel = secondConfigurationPanel.getComponent("chartParallelLegend");
 					
 					/* Second configuration panel elements for hiding/showing when the SCATTER is selected */
 					var scatterConfiguration = secondConfigurationPanel.getComponent("chartScatterConfiguration");
@@ -308,21 +506,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
 					
+					var gaugePanePanel = secondConfigurationPanel.getComponent("gaugePaneConfiguration");
+					
 					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
 					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';		
 					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
 					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';					
 					var isChartScatter = this.chartType.toUpperCase() == 'SCATTER';						
 					var isChartHeatmap = this.chartType.toUpperCase() == 'HEATMAP';	
+					var isChartGauge = this.chartType.toUpperCase() == 'GAUGE';	
 					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap || isChartParallel || isChartHeatmap) {						
+					if (isChartSunburst || isChartWordCloud  || isChartTreemap 
+							|| isChartParallel || isChartHeatmap || isChartGauge) {						
 						chartLegendCheckBox.hide();
 					} else {
 						chartLegendCheckBox.show();
 					}
 					
 					if (isChartSunburst || isChartWordCloud || isChartTreemap 
-							|| isChartParallel || isChartHeatmap) {
+							|| isChartParallel || isChartHeatmap || isChartGauge) {
+						chartLegend.hide();
+					} else {
+						chartLegend.show();
+					}
+					
+					if (isChartSunburst || isChartWordCloud || isChartTreemap 
+							|| isChartParallel || isChartHeatmap || isChartGauge) {
 						chartOrientation.hide();
 					} else {
 						chartOrientation.show();
@@ -340,16 +549,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 						opacityOnMouseOver.hide();
 					}
 					
-					if (isChartSunburst || isChartWordCloud || isChartScatter) {
+					if (isChartSunburst || isChartWordCloud || isChartScatter || isChartGauge) {
 						colorPallete.hide();
 					} else {
 						colorPallete.show();
-					}
-					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap || isChartParallel || isChartHeatmap) {
-						chartLegend.hide();
-					} else {
-						chartLegend.show();
 					}
 					
 					if (isChartSunburst) {
@@ -368,10 +571,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelLimitPanel.show();
 						parallelAxesLinesPanel.show();
 						parallelTooltipPanel.show();
+						parallelLegendPanel.show();
 					} else {
 						parallelLimitPanel.hide();
 						parallelAxesLinesPanel.hide();
 						parallelTooltipPanel.hide();
+						parallelLegendPanel.hide();
 					}
 					
 					if (isChartScatter) {
@@ -384,6 +589,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 						showLegendAndTooltip.show();
 					} else {
 						showLegendAndTooltip.hide();
+					}
+					
+					if (isChartGauge)
+					{
+						globalThis.bottomXAxisesPanel.hide();
+						gaugePanePanel.show();
+					}
+					else
+					{
+						globalThis.bottomXAxisesPanel.show();
+						gaugePanePanel.hide();
 					}
 				}
 			);
@@ -532,9 +748,101 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
+			/**
+			 * Static store for styles for the generic parameters of the document (chart)
+			 * with combo items that have predefined names (Red, Green, Blue, ...)
+			 * (danilo.ristovski@mht.net)
+			 */
+			var styleStore = Ext.create
+			(
+				"Ext.data.Store", 
+				
+				{
+					fields: ["style", "styleAbbr"],
+					
+					data: 
+					[
+					 	{"style":"Red", "styleAbbr":"red"},
+					 	{"style":"Blue", "styleAbbr":"blue"},
+					 	{"style":"Green", "styleAbbr":"green"}
+					 ]
+				}
+			);
+			
+			this.styleLabel = Ext.create
+			(
+				{
+					xtype: 'label',
+			        forId: 'stylePickerComboId',
+			        text: 'Style for parameters',	// TODO: LN()
+			        //margin: '5 3 3 0'
+				}
+			);
+			
+			/**
+			 * Combo box for defining the style for the generic customizable parameters (properties)
+			 * of the chart 
+			 * (danilo.ristovski@mht.net)
+			 */
+			this.stylePickerCombo = Ext.create
+			(
+				"Ext.form.ComboBox", 
+				
+				{
+//					fieldLabel: 'Choose style',
+				    store: styleStore,
+				    id: "stylePickerComboId",
+				    queryMode: 'local',
+				    displayField: 'style',
+				    valueField: 'styleAbbr',
+				    value: globalThis.styleName,
+				    editable: false,
+				    padding: "5 0 10 0",
+				    width: 170,
+				    
+				    listConfig:
+				    	{listeners: 
+				    	{
+					    	itemclick: function(combo,k)
+					    	{
+								/**
+								 * Depending on the style that we choose for the document's generic
+								 * customizable parameters (Red, Green, Blue, ... style), take the
+								 * predefined JSON structure that is defined for that newly chosen 
+								 * style. This part is needed for later merging of the templates 
+								 */
+//					    		jsonTemplate.CHART.styleCustom = false;
+//					    		globalThis.styleCustom = false;
+//					    		console.log(k);
+								var genericConfigurationForStyle = getConfigurationForStyle(k.data.styleAbbr).generic;
+//								console.log(genericConfigurationForStyle);
+								/**
+								 * Reset (refresh, modify) the 'styleName' field of the Designer, also
+								 */
+								globalThis.styleName = k.data.styleAbbr;
+								
+								/**
+								 * Reset the JSON template for the document (chart) after changing the 
+								 * previously selected style (changing the selected item of the combo)
+								 */
+//								console.log(jsonTemplate);
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,genericConfigurationForStyle);
+//					    		console.log(jsonTemplate);
+								/**
+								 * Update (refresh) the main configuration panel (the one on the top of 
+								 * the Step 2 tab) after selecting the particular style
+								 */
+					    		Sbi.chart.designer.Designer.update(jsonTemplate);
+					    	}
+				    	}}
+				}
+			);
+			
 			this.chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
   				chartTypeSelector: this.chartTypeSelector,
   				columnsPicker: this.columnsPicker,
+  				stylePickerCombo: this.stylePickerCombo,
+  				styleLabel: this.styleLabel,
   				categoriesPicker: this.categoriesPicker,
   				region: 'west'
   			});			
@@ -782,7 +1090,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			  	      				 * 
 			  	      				 * (2) 	SCATTER chart: 	also MUST have only one category
 			  	      				 * 
-			  	      				 * (3) 	PARALLEL, TREEMAP and HEATMAP chart: MUST have exactly 2 categories
+			  	      				 * (3) 	PARALLEL, TREEMAP (earlier) and HEATMAP chart: MUST have exactly 2 categories
 			  	      				 * 
 			  	      				 * (danilo.ristovski@mht.net)
 			  	      				 */			  	      				
@@ -790,7 +1098,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			  	      						|| (this.store.data.length == 1 && 
 			  	      								(chartType == "RADAR" || chartType == "SCATTER")) 
 			  	      									|| (this.store.data.length == 2 && 
-			  	      											(chartType == "PARALLEL"|| 
+			  	      											(chartType == "PARALLEL" || 
 			  	      													chartType == "HEATMAP"))) {
 			  	      					return false;
 			  	      				}
@@ -854,8 +1162,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    	var thisChartColumnsContainer = panelHeader.ownerCt;
 						    	
 						    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
-						    		axisData: thisChartColumnsContainer.getAxisData(),
+						    		axisData: thisChartColumnsContainer.getAxisData()
 								});
+						    	
+//						    	console.log(axisStylePopup);
 								
 						    	/**
 					    		 * (danilo.ristovski@mht.net)
@@ -867,6 +1177,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    	
 						    	axisStylePopup.show();						    	
 					    	}
+					    	
+					    		
 						}
 					}					
 				],
@@ -935,6 +1247,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   				
   			});
 			
+			
+			
 			/* START: Hiding the bottom (X) axis title textbox and gear tool
 			 *  if the already existing (saved) chart (document) is one of the 
 			 *  specified chart types.
@@ -965,6 +1279,15 @@ Ext.define('Sbi.chart.designer.Designer', {
   				bottomXAxisesPanel: this.bottomXAxisesPanel
   			});
 					
+			if (typeOfChart == "GAUGE")
+			{
+				this.bottomXAxisesPanel.hide();
+			}
+			else
+			{
+				this.bottomXAxisesPanel.show();
+			}
+			
 			// Creating step 2 panel
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
@@ -979,7 +1302,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				title: LN('sbi.chartengine.designer.step2'),
   				viewModel: this.cViewModel
   			});
-
+			
 			// Creating step 3 panel
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
   				id: 'advancedEditor',
@@ -1026,8 +1349,26 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					fn : function(buttonValue, inputText, showConfig){
   		            						if (buttonValue == 'ok') {  		            							
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
-  		            							  		            							
+  		            							  		 
+  		            							
+  		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+  		            							jsonTemplate = exportedAsOriginalJson;
+//  		            							console.log(exportedAsOriginalJson);
+  		            							
+//  		            							exportedAsOriginalJson.CHART.styleCustom = globalThis.styleCustom;
+  		            							
+//  		            							console.log(globalThis.styleCustom);
+  		            							
+//  		            							console.log(jsonTemplate.CHART.AXES_LIST);
+//  		            							console.log(exportedAsOriginalJson.CHART.AXES_LIST);
+//  		            							if (Object.is(jsonTemplate.CHART.AXES_LIST,exportedAsOriginalJson.CHART.AXES_LIST))
+//  		            								console.log("ISTO");
+//  		            							else
+//  		            								console.log("RAZLICITO");
+////  		            							globalThis.styleCustom
+  		            							
+  		            							
   		            							
   		            							if(isCockpit){
   		            								var chartEngineWidgetDesigner = window.parent.cockpitPanel.widgetContainer.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.customConfPanel.designer;
@@ -1197,7 +1538,20 @@ Ext.define('Sbi.chart.designer.Designer', {
   				items: [
   					this.chartTypeColumnSelector,
   					this.stepsTabPanel,
-  				]
+  				],
+  				
+//  				listeners:
+//				{
+//  					aaa: function(text)
+//  					{  					
+//  						//if (globalThis.styleCustom == true)
+//  						globalThis.chartTypeColumnSelector.fireEvent("ppp",text);
+////  						console.log(globalThis.styleCustom);
+//  						console.log("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
+////  						globalThis.styleCustom = true;
+//  						
+//  					}
+//				}
   			});
 			
 			//Handle resize event for making the designer responsive
@@ -1406,30 +1760,67 @@ Ext.define('Sbi.chart.designer.Designer', {
 							var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
 							var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
 							
-							var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
-								id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
-										axisName: serie.name && serie.name != '' ? serie.name : serie.column,
-										axisType: 'MEASURE',
-										
-										serieAxis: store.axisAlias,
-										serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
-										serieType: serie.type,
-										serieOrderType: serie.orderType,
-										serieColumn: serie.column,
-										serieColor: serie.color,
-										serieShowValue: serie.showValue,
-										seriePrecision: serie.precision + '',
-										seriePrefixChar: serie.prefixChar,
-										seriePostfixChar: serie.postfixChar,
-										
-										serieTooltipTemplateHtml: tooltip.templateHtml,
-										serieTooltipBackgroundColor: tooltip.backgroundColor,
-										serieTooltipAlign: jsonTooltipStyle.align,
-										serieTooltipColor: jsonTooltipStyle.color,
-										serieTooltipFont: jsonTooltipStyle.font,
-										serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
-										serieTooltipFontSize: jsonTooltipStyle.fontSize
-							});
+							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+							{								
+								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
+											axisName: serie.name && serie.name != '' ? serie.name : serie.column,
+											axisType: 'MEASURE',
+																
+											backgroundColorDial: serie.DIAL.backgroundColorDial,
+											
+											yPositionDataLabels: serie.DATA_LABELS.yPositionDataLabels,
+											colorDataLabels: serie.DATA_LABELS.colorDataLabels,
+											formatDataLabels: serie.DATA_LABELS.formatDataLabels,
+											
+											serieAxis: store.axisAlias,
+											serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
+											serieType: serie.type,
+											serieOrderType: serie.orderType,
+											serieColumn: serie.column,
+											serieColor: serie.color,
+											serieShowValue: serie.showValue,
+											seriePrecision: serie.precision + '',
+											seriePrefixChar: serie.prefixChar,
+											seriePostfixChar: serie.postfixChar,
+											
+											serieTooltipTemplateHtml: tooltip.templateHtml,
+											serieTooltipBackgroundColor: tooltip.backgroundColor,
+											serieTooltipAlign: jsonTooltipStyle.align,
+											serieTooltipColor: jsonTooltipStyle.color,
+											serieTooltipFont: jsonTooltipStyle.font,
+											serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
+											serieTooltipFontSize: jsonTooltipStyle.fontSize
+								});								
+							}
+							else
+							{
+								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
+									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
+											axisName: serie.name && serie.name != '' ? serie.name : serie.column,
+											axisType: 'MEASURE',
+																					
+											serieAxis: store.axisAlias,
+											serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
+											serieType: serie.type,
+											serieOrderType: serie.orderType,
+											serieColumn: serie.column,
+											serieColor: serie.color,
+											serieShowValue: serie.showValue,
+											seriePrecision: serie.precision + '',
+											seriePrefixChar: serie.prefixChar,
+											seriePostfixChar: serie.postfixChar,
+											
+											serieTooltipTemplateHtml: tooltip.templateHtml,
+											serieTooltipBackgroundColor: tooltip.backgroundColor,
+											serieTooltipAlign: jsonTooltipStyle.align,
+											serieTooltipColor: jsonTooltipStyle.color,
+											serieTooltipFont: jsonTooltipStyle.font,
+											serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
+											serieTooltipFontSize: jsonTooltipStyle.fontSize
+								});
+							}
+							
 							
 							// *_* 
 							globThis.seriesBeforeDropStore.add(newCol);
@@ -1564,19 +1955,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * Returns a list of validation errors as string format
 		 * */		
 		validateTemplate: function() {
-			var errorMsg = '';
+			var errorMsg = '';			
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			if (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
 			}
 			
-			if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson() == null) {
+			if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson() == null && chartType != "GAUGE") {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
 			}						
 			else // (danilo.ristovski@mht.net)
 			{
-				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();
-				var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();				
 				
 				if ((chartType == "PARALLEL" || chartType == "HEATMAP") &&
 						categoriesAsJson.length != 2)
@@ -1588,9 +1979,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
 				}
 			}
-			
-			
-			
+
 			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();
 			var serieStores = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
     		for(var storeIndex in serieStores) {
@@ -1644,7 +2033,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		},
 		
 		/**
-		 * TODO: Added 16.07 (ask if this is ok) - called inside the ChartTypeSelector. Removes everything from the
+		 * TODO: Added 16.07 - Called inside the ChartTypeSelector. Removes everything from the
 		 * X-axis panel if we move from BAR or LINE to SCATTER or RADAR, because for the last to we can have ONLY ONE
 		 * CATEGORY, while we can have more than one for the first pair (BAR/LINE).
 		 * (danilo.ristovski@mht.net)

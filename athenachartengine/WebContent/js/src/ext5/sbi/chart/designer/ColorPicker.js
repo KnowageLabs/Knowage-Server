@@ -2,7 +2,7 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 	extend : 'Ext.button.Button',
 	margin : '0 0 0 -15',
 	padding : '1 0',
-
+	
 	constructor : function(config) {
 		this.callParent(config);
 		
@@ -18,6 +18,8 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 					var bindValue = fb.replace(/\{\w+\.(\w+)\}/, '$1');
 					
 					vm.data.configModel.data[bindValue] = selColor;
+					
+					//Ext.getCmp("idchartss").fireEvent("ppp", "backgroundColor"); //danilo
 				}
 			},
 		});

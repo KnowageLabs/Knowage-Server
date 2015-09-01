@@ -47,7 +47,7 @@ function renderTreemap(chartConf) {
 
 
 	}
-
+// console.log(chartConf);
 	var chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'mainPanel',
@@ -56,7 +56,10 @@ function renderTreemap(chartConf) {
 			style: {
 				fontFamily: chartConf.chart.style.fontFamily,
 				fontSize: chartConf.chart.style.fontSize,
-				fontWeight: chartConf.chart.style.fontWeight
+				fontWeight: chartConf.chart.style.fontWeight,
+				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
+				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
+				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
 			}
 		},
 		series: [{
@@ -80,10 +83,12 @@ function renderTreemap(chartConf) {
 			text: chartConf.subtitle.text,
 			align: chartConf.subtitle.style.textAlign,
 			style: {
-				color: chartConf.subtitle.style.fontColor,
-				fontWeight: chartConf.subtitle.style.fontWeight,
+				color: chartConf.subtitle.style.fontColor,				
 				fontSize: chartConf.subtitle.style.fontSize,
-				fontFamily: chartConf.subtitle.style.fontFamily
+				fontFamily: chartConf.subtitle.style.fontFamily,
+				fontStyle: chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none",
+				textDecoration: chartConf.subtitle.style.textDecoration ? chartConf.subtitle.style.textDecoration : "none",
+				fontWeight: chartConf.subtitle.style.fontWeight ? chartConf.subtitle.style.fontWeight : "none"
 			}
 		},
 		title: {
@@ -93,7 +98,10 @@ function renderTreemap(chartConf) {
 				color: chartConf.title.style.fontColor,
 				fontWeight: chartConf.title.style.fontWeight,
 				fontSize: chartConf.title.style.fontSize,
-				fontFamily: chartConf.title.style.fontFamily
+				fontFamily: chartConf.title.style.fontFamily,
+				fontStyle: chartConf.title.style.fontStyle ? chartConf.title.style.fontStyle : "none",
+				textDecoration: chartConf.title.style.textDecoration ? chartConf.title.style.textDecoration : "none",
+				fontWeight: chartConf.title.style.fontWeight ? chartConf.title.style.fontWeight : "none"
 			}
 		},
 		noData: {
@@ -103,7 +111,10 @@ function renderTreemap(chartConf) {
 				color: chartConf.emptymessage.style.fontColor,
 				fontWeight: chartConf.emptymessage.style.fontWeight,
 				fontSize: chartConf.emptymessage.style.fontSize,
-				fontFamily: chartConf.emptymessage.style.fontFamily
+				fontFamily: chartConf.emptymessage.style.fontFamily,
+				fontStyle: chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none",
+				textDecoration: chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none",
+				fontWeight: chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none"
 			}
 		}
 
@@ -161,7 +172,9 @@ function renderHeatmap(chartConf){
 			style: {
 	            fontFamily: chartConf.chart.style.fontFamily,
 	            fontSize: chartConf.chart.style.fontSize,
-	            fontWeight: chartConf.chart.style.fontWeight
+				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
+				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
+				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
 	        }
         },
         title: {
@@ -169,9 +182,11 @@ function renderHeatmap(chartConf){
             align: chartConf.title.style.textAlign,
 			style: {
                 color: chartConf.title.style.fontColor,
-                fontWeight: chartConf.title.style.fontWeight,
                 fontSize: chartConf.title.style.fontSize,
-                fontFamily: chartConf.title.style.fontFamily
+                fontFamily: chartConf.title.style.fontFamily,
+                fontStyle: chartConf.title.style.fontStyle ? chartConf.title.style.fontStyle : "none",
+				textDecoration: chartConf.title.style.textDecoration ? chartConf.title.style.textDecoration : "none",
+				fontWeight: chartConf.title.fontWeight ? chartConf.title.fontWeight : "none"
             }
 		},
 		subtitle: {
@@ -179,9 +194,11 @@ function renderHeatmap(chartConf){
             align: chartConf.subtitle.style.textAlign,
 			style: {
                 color: chartConf.subtitle.style.fontColor,
-                textDecoration: chartConf.subtitle.style.fontWeight,
                 fontSize: chartConf.subtitle.style.fontSize,
-                fontFamily: chartConf.subtitle.style.fontFamily
+                fontFamily: chartConf.subtitle.style.fontFamily,
+                fontStyle: chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none",
+				textDecoration: chartConf.subtitle.style.textDecoration ? chartConf.subtitle.style.textDecoration : "none",
+				fontWeight: chartConf.subtitle.fontWeight ? chartConf.subtitle.fontWeight : "none"
             }
 		},
 		
@@ -190,9 +207,11 @@ function renderHeatmap(chartConf){
 			align: chartConf.emptymessage.style.textAlign,
 			style: {
                 color: chartConf.emptymessage.style.fontColor,
-                fontWeight: chartConf.emptymessage.style.fontWeight,
                 fontSize: chartConf.emptymessage.style.fontSize,
-                fontFamily: chartConf.emptymessage.style.fontFamily
+                fontFamily: chartConf.emptymessage.style.fontFamily,
+                fontStyle: chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none",
+				textDecoration: chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none",
+				fontWeight: chartConf.emptymessage.fontWeight ? chartConf.emptymessage.fontWeight : "none"
             }
 		},
 

@@ -20,7 +20,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
     	
 		storePool: [],
 		
-		yAxisPool: [],		
+		yAxisPool: [],
+		
+		allAxisData: {},
 		
 		resetContainers: function() {
 			var yAxisPool = this.yAxisPool;
@@ -34,6 +36,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			this.instanceCounter = 0;
 			this.storePool = [];
 			this.yAxisPool = [];
+		},
+		
+		/**
+		 * Added for PLOTBANDS tag of the GAUGE chart XML template
+		 */
+		setPlotbandsStore: function(jsonTemplate)
+		{
+			this.allAxisData = jsonTemplate;
 		},
 
 		promptChangeSerieStyle: function (store, rowIndex) {
@@ -218,9 +228,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		
 					    		var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
 					    			axisData: thisChartColumnsContainer.getAxisData(),
+					    			allAxisData: ChartColumnsContainerManager.allAxisData,
 					    			isYAxis: true
 					    		});
-					    				
+					    		
 					    		/**
 					    		 * (danilo.ristovski@mht.net)
 					    		 */
@@ -241,7 +252,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					{
 					    type:'plus',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
-					    id: "plusLeftAxis_"+idChartColumnsContainer, // (danilo.ristovski@mht.net)
+					    id: "plusLeftAxis_"+idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
 					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    

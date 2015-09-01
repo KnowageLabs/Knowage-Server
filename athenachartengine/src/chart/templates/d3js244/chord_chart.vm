@@ -1,0 +1,91 @@
+#set($results = $data.rows)
+#set($dataFields = $data.metaData.fields)
+
+#set($categories = $chart.VALUES.CATEGORY)
+#set($serie = $chart.VALUES.SERIE.name)
+
+#set($dataColumnsMapper = {})
+
+#foreach ($dataField in $dataFields) ## conversion column name to internal column name
+	#if($dataField.class.name == 'java.util.LinkedHashMap')		
+		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
+	#end
+#end
+
+#set($columnsNeeded = {})
+
+#set($columnCounter = 0)
+		
+#foreach($value in $categories)	
+
+	#set($columnsNeeded[$columnCounter] = $value.column)
+	#set($columnCounter = $columnCounter + 1)
+#end
+
+{
+	chart:
+	{		
+		type: '$chart.type',
+		height: '$chart.height',
+		width: '$chart.width',
+		
+		style:
+		{
+			backgroundColor: '$chart.style.backgroundColor',
+			fontWeight: '$chart.style.fontWeight',
+			fontSize: '$chart.style.fontSize'
+		}
+	},
+	
+	title:
+	{
+		text: '$chart.TITLE.text',
+		
+		style:
+		{
+			align: '$chart.TITLE.style.align',
+			color: '$chart.TITLE.style.color',
+			fontWeight: '$chart.TITLE.style.fontWeight',
+			fontSize: '$chart.TITLE.style.fontSize'
+		}
+	},
+	
+	subtitle:
+	{
+		text: '$chart.SUBTITLE.text',
+		
+		style:
+		{
+			align: '$chart.SUBTITLE.style.align',
+			color: '$chart.SUBTITLE.style.color',
+			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+			fontSize: '$chart.SUBTITLE.style.fontSize'
+		}
+	},
+		
+	emptymessage:
+	{
+		text: '$chart.EMPTYMESSAGE.text',
+		
+		style:
+		{
+			align: '$chart.EMPTYMESSAGE.style.align',
+			color: '$chart.EMPTYMESSAGE.style.color',
+			fontWeight: '$chart.EMPTYMESSAGE.style.fontWeight',
+			fontSize: '$chart.EMPTYMESSAGE.style.fontSize'
+		}
+	},
+	
+	colors: 
+	[
+		#foreach($color in $chart.COLORPALETTE.COLOR)
+			'$color.value', 
+		#end
+    ],	
+	
+	data:
+	[
+		$datasettransformer.toMatrix($results,$columnsNeeded,$serie,$dataColumnsMapper)
+	]
+
+}

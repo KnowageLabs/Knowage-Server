@@ -114,17 +114,35 @@
 	{
 		title:
 		{
-			fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',
-			fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',			
-			fontSize: '$chart.LEGEND.TITLE.style.fontSize',
-			fontStyle: '$chart.LEGEND.TITLE.style.fontStyle'
+			style:
+			{
+				fontFamily: '$chart.LEGEND.TITLE.style.fontFamily',			
+				fontSize: '$chart.LEGEND.TITLE.style.fontSize',
+						
+				#if($chart.LEGEND.TITLE.style.fontWeight == 'italic' || $chart.LEGEND.TITLE.style.fontWeight == 'normal')
+	    			fontStyle: '$chart.LEGEND.TITLE.style.fontWeight',
+				#elseif($chart.LEGEND.TITLE.style.fontWeight == 'underline')
+	    			textDecoration: '$chart.LEGEND.TITLE.style.fontWeight',
+				#elseif($chart.LEGEND.TITLE.style.fontWeight == 'bold')		        			
+	    			fontWeight: '$chart.LEGEND.TITLE.style.fontWeight',
+	    		#end
+			}			
 		},
 		element:
 		{
-			fontFamily: '$chart.LEGEND.ELEMENT.style.fontFamily',
-			fontWeight: '$chart.LEGEND.ELEMENT.style.fontWeight',			
-			fontSize: '$chart.LEGEND.ELEMENT.style.fontSize',
-			fontStyle: '$chart.LEGEND.ELEMENT.style.fontStyle'
+			style:
+			{
+				fontFamily: '$chart.LEGEND.ELEMENT.style.fontFamily',		
+				fontSize: '$chart.LEGEND.ELEMENT.style.fontSize',
+						
+				#if($chart.LEGEND.ELEMENT.style.fontWeight == 'italic' || $chart.LEGEND.ELEMENT.style.fontWeight == 'normal')
+	    			fontStyle: '$chart.LEGEND.ELEMENT.style.fontWeight',
+				#elseif($chart.LEGEND.ELEMENT.style.fontWeight == 'underline')
+	    			textDecoration: '$chart.LEGEND.ELEMENT.style.fontWeight',
+				#elseif($chart.LEGEND.ELEMENT.style.fontWeight == 'bold')		        			
+	    			fontWeight: '$chart.LEGEND.ELEMENT.style.fontWeight',
+	    		#end
+			}
 		}
 	},
  
@@ -136,9 +154,16 @@
 		{
 			fontFamily: '$chart.TITLE.style.fontFamily',
 			fontSize: '$chart.TITLE.style.fontSize',
-			fontWeight: '$chart.TITLE.style.fontWeight',
 			color: '$chart.TITLE.style.color',
-			align: '$chart.TITLE.style.align'
+			align: '$chart.TITLE.style.align',
+					
+			#if($chart.TITLE.style.fontWeight == 'italic' || $chart.TITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TITLE.style.fontWeight',
+			#elseif($chart.TITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TITLE.style.fontWeight',
+    		#end
 		}
 	},
 	
@@ -149,10 +174,17 @@
 		style:
 		{
 			fontFamily: '$chart.SUBTITLE.style.fontFamily',
-			fontWeight: '$chart.SUBTITLE.style.fontWeight',
 			fontSize: '$chart.SUBTITLE.style.fontSize',
 			color: '$chart.SUBTITLE.style.color',
-			align: '$chart.SUBTITLE.style.align'
+			align: '$chart.SUBTITLE.style.align',
+					
+			#if($chart.SUBTITLE.style.fontWeight == 'italic' || $chart.SUBTITLE.style.fontWeight == 'normal')
+    			fontStyle: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'underline')
+    			textDecoration: '$chart.SUBTITLE.style.fontWeight',
+			#elseif($chart.SUBTITLE.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.SUBTITLE.style.fontWeight',
+    		#end
 		}
 	},
 	

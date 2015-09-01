@@ -3,6 +3,10 @@ Ext.define('Sbi.chart.designer.AxisesContainerModel',{
     fields: [
 		'id', 'axisName', 'axisType', 
 		
+		'backgroundColorDial',
+		
+		'yPositionDataLabels', 'colorDataLabels', 'formatDataLabels',
+		
 		'categoryColumn', 'categoryGroupby', 'categoryStacked', 
 		'categoryStackedType', 'categoryOrderColumn', 'categoryOrderType', 
 		'categoryDataType',

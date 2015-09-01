@@ -4,7 +4,7 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     requires: [
         'Ext.layout.container.Border'
     ],
-
+    id: "idchartss", 
     config: {
     	region: 'west',
     	
@@ -15,12 +15,19 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         	html: '<p>Chart type selector</p>'
         },
         
+        stylePickerCombo: {
+            region: 'center',
+            margin: '0 0 5 0',
+            minHeight: 200,
+//            html: '<p>Columns picker</p>'
+        },
+        
     	columnsPicker: {
             region: 'center',
             margin: '0 0 5 0',
             minHeight: 200,
             html: '<p>Columns picker</p>'
-        },
+        },        
         
 		categoriesPicker: {
             region: 'south',
@@ -41,10 +48,23 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     defaults: {
         split: true,
     },
+    
+    // danilo
+    listeners:
+    {
+    	ppp: function(text)
+    	{
+//    		console.log("Smth is changed: " + text);
+//    		Sbi.chart.designer.Designer.styleCustom = true;
+    	}
+    },
+    
     constructor: function(config) {
         this.callParent(config);
-
-        this.add(config.chartTypeSelector ? config.chartTypeSelector : this.chartTypeSelector);
+        
+        this.add(config.styleLabel ? config.styleLabel : this.styleLabel);
+        this.add(config.stylePickerCombo ? config.stylePickerCombo : this.stylePickerCombo);
+        this.add(config.chartTypeSelector ? config.chartTypeSelector : this.chartTypeSelector);        
         this.add(config.columnsPicker ? config.columnsPicker : this.columnsPicker);
         this.add(config.categoriesPicker ? config.categoriesPicker : this.categoriesPicker);
     },

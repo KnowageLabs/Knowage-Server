@@ -195,9 +195,7 @@ Ext.define
 	        			customLabel: LN("sbi.chartengine.configuration.toolbar.percentageColor"), 
 	        			fieldBind: '{configModel.toolbarPercFontColor}',	
 	        		}
-	    		);
-		        
-//		        console.log(colorPicker);
+	    		);		        
 		        
 		        this.add(colorPicker);
         	}

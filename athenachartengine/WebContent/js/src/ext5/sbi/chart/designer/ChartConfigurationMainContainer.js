@@ -12,7 +12,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            ],
 	title : LN('sbi.chartengine.configuration'),
 	bodyPadding : 10,
-	
+
 	fieldDefaults: {
         anchor: '100%'
 	},
@@ -51,11 +51,24 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 		
         this.callParent(config);
         this.viewModel = config.viewModel;
+       
+        var globalThis = this;
+        
+        // danilo
+        var chartOrientationInitial = null;
         
         this.height = {
     		xtype : 'numberfield',
     		bind : '{configModel.height}',
-    		fieldLabel : LN('sbi.chartengine.configuration.height')
+    		fieldLabel : LN('sbi.chartengine.configuration.height'),
+//    		listeners:
+//			{
+//    			change: function(a, b, c)
+//    			{
+//    				if (c != null)
+//    					Ext.getCmp("idchartss").fireEvent("ppp", "height");
+//    			}
+//			}
     	};
         
         this.width = {
@@ -63,13 +76,32 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		id: "chartWidthNumberfield",
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
-    		hidden: ChartUtils.disableChartWidth()
+    		hidden: ChartUtils.disableChartWidth(),
+//    		listeners:
+//			{
+//    			change: function(a, b, c)
+//    			{
+//    				if (c != null)
+//    					Ext.getCmp("idchartss").fireEvent("ppp", "width");
+//    			}
+//			}
     	};
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
     		id: 'chartOrientationCombo',
     		bind : '{configModel.orientation}',
     		hidden: ChartUtils.disableChartOrientation(),
+//    		listeners:
+//			{
+//    			change: function(a, b)
+//    			{
+//    				if (chartOrientationInitial != null)
+//    					Ext.getCmp("idchartss").fireEvent("ppp", "chartOrientation");
+//    				
+//    				chartOrientationInitial = b;
+////    				globalThis.ownerCt.ownerCt.ownerCt.fireEvent("aaa", "");
+//    			}
+//			}
     	});
         
         var font = this.font;
@@ -79,7 +111,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
     		viewModel: this.viewModel,
     		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
-       		fieldBind: '{configModel.backgroundColor}',
+       		fieldBind: '{configModel.backgroundColor}'
        	});
         
         var colorPickerContainer = this.colorPickerContainer;       
@@ -153,6 +185,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            xtype : 'textfield',
 	            bind : '{configModel.title}',
 	            fieldLabel : LN('sbi.chartengine.configuration.title'),
+//	            listeners:
+//            	{
+//	            	change: function(a,b,c)
+//	            	{
+//	            		console.log(b);
+//	            		Ext.getCmp("idchartss").fireEvent("ppp", "titleText");
+//	            	}
+//            	}
 	        },{
 				xtype : 'button',
 	            text: 'St',
@@ -171,6 +211,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            bind : '{configModel.subtitle}',
 	            fieldLabel : LN('sbi.chartengine.configuration.subtitle'),
 	            maxWidth:'500',
+//	            listeners:
+//            	{
+//	            	change: function(a,b,c)
+//	            	{
+//	            		console.log(b);
+//	            		Ext.getCmp("idchartss").fireEvent("ppp", "subtitleText");
+//	            	}
+//            	}
 	        }, {
 	            xtype : 'button',
 	            text: 'St',
@@ -187,6 +235,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            bind : '{configModel.nodata}',
 	            fieldLabel : LN('sbi.chartengine.configuration.nodata') ,
 	            labelWidth : '100%',
+//	            listeners:
+//            	{
+//	            	change: function(a,b,c)
+//	            	{
+//	            		console.log(b);
+//	            		Ext.getCmp("idchartss").fireEvent("ppp", "nodataEmptyMsg");
+//	            	}
+//            	}
 	        },{
 	            xtype : 'button',
 	            text: 'St',

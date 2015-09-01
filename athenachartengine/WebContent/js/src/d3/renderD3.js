@@ -33,7 +33,7 @@ function renderWordCloud(chartConf){
 				cloud.start = function() {
 					var board = zeroArray((size[0] >> 5) * size[1]),
 					bounds = null,
-					n = Math.min(words.length, chartConf.chart.style.maxWords),
+					n = Math.min(words.length, chartConf.chart.maxWords),
 					i = -1,
 					tags = [],
 					data = words.map(function(d, i) {
@@ -420,17 +420,17 @@ function renderWordCloud(chartConf){
 			else (d3.layout || (d3.layout = {})).cloud = cloud;
 		})();
 
-		var maxfontsize=chartConf.chart.style.maxFontSize;
+		var maxfontsize=chartConf.chart.maxFontSize;
 		var fill = d3.scale.category20();
 
 		d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height])
 		.words(chartConf.data[0].map(function(d) {
 			 return {text: d.name, size: d.value/(maxic/maxfontsize)};
 		}))
-		.padding(chartConf.chart.style.wordPadding)
+		.padding(chartConf.chart.wordPadding)
 		.rotate(function() {
 			var angle = (Math.random() * 2) * 90;
-			while ((angle < chartConf.chart.minAngle || angle > chartConf.chart.style.maxAngle)){
+			while ((angle < chartConf.chart.minAngle || angle > chartConf.chart.maxAngle)){
 				angle = (Math.random() * 2) * 90;
 			}
 			return angle })
@@ -459,19 +459,23 @@ function renderWordCloud(chartConf){
 					.style("color",chartConf.emptymessage.style.fontColor)
 					.style("text-align",chartConf.emptymessage.style.textAlign)
 		    		.style("font-family",chartConf.emptymessage.style.fontType)
-		    		.style("font-style",chartConf.emptymessage.style.fontStyle)
+		    		.style("font-style",chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none")
+		    		.style("font-weight",chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none")
+		    		.style("text-decoration",chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none")
 		    		.style("font-size",emptyMsgFontSize)
 					.text(chartConf.emptymessage.text);	
 			}
 			else
-			{				
+			{						
 				// Set title
 				d3.select("#main").append("div")
 					.style("color",chartConf.title.style.color)
 					.style("text-align",chartConf.title.style.align)
 		    		.style("font-family",chartConf.title.style.fontFamily)
-		    		.style("font-style",chartConf.title.style.fontWeight)
 		    		.style("font-size",chartConf.title.style.fontSize)
+		    		.style("font-style",chartConf.title.style.fontStyle ? chartConf.title.style.fontStyle : "none")
+		    		.style("font-weight",chartConf.title.style.fontWeight ? chartConf.title.style.fontWeight : "none")
+		    		.style("text-decoration",chartConf.title.style.textDecoration ? chartConf.title.style.textDecoration : "none")
 					.text(chartConf.title.text);	
 								
 				// Set subtitle
@@ -479,7 +483,9 @@ function renderWordCloud(chartConf){
 					.style("color",chartConf.subtitle.style.color)
 					.style("text-align",chartConf.subtitle.style.align)
 		    		.style("font-family",chartConf.subtitle.style.fontFamily)
-		    		.style("font-style",chartConf.subtitle.style.fontWeight)
+		    		.style("font-style",chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none")
+		    		.style("font-weight",chartConf.subtitle.style.fontWeight ? chartConf.subtitle.style.fontWeight : "none")
+		    		.style("text-decoration",chartConf.subtitle.style.textDecoration ? chartConf.subtitle.style.textDecoration : "none")
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
 			      
@@ -511,16 +517,14 @@ function renderWordCloud(chartConf){
 				
 		/* Check if configurable (from the Designer point of view)
 		 * parameters are defined through the Designer. If not set
-		 * the predefined values, instead. */		
-		
+		 * the predefined values, instead. */			
 		
 		var chartHeight = (jsonObject.chart.height != '$chart.height') ? parseInt(jsonObject.chart.height) : 400 ;
 		var chartFontFamily = (jsonObject.chart.style.fontFamily != '$chart.style.fontFamily') ? jsonObject.chart.style.fontFamily : "Arial" ;
 		var chartFontSize = (jsonObject.chart.style.fontSize != '$chart.style.fontSize') ? jsonObject.chart.style.fontSize : "9px" ;
 		var chartFontWeight = (jsonObject.chart.style.fontWeight != '$chart.style.fontWeight') ? jsonObject.chart.style.fontWeight : "Normal" ;
 		var chartBackgroundColor = (jsonObject.chart.style.backgroundColor != '$chart.style.backgroundColor') ? jsonObject.chart.style.backgroundColor : "#000000" ;
-		var chartOpacityOnMouseOver = (jsonObject.chart.style.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.style.opacMouseOver) : 50 ;
-
+		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 50 ;
 		
 		/* Dimensions of the Sunburst chart. */
 	    /* Dimensions of the window in which chart is going to be placed.
@@ -566,14 +570,16 @@ function renderWordCloud(chartConf){
 					w: bcWidth, 	h: bcHeight, 
 					s: bcSpacing, 	t: bcTail 
 				};
-	    
+//	    console.log(jsonObject);
 		/* Create necessary part of the HTML DOM - the one that code need to
 		 * position chart on the page (D3 notation) */
 		d3.select("body")
 			.append("div").attr("id","main")
 			.style("font-family", chartFontFamily)
 			.style("font-size", chartFontSize)
-			.style("font-weight", chartFontWeight)
+			.style("font-style",jsonObject.chart.style.fontStyle ? jsonObject.chart.style.fontStyle : "none")
+    		.style("font-weight",jsonObject.chart.style.fontWeight ? jsonObject.chart.style.fontWeight : "none")
+    		.style("text-decoration",jsonObject.chart.style.textDecoration ? jsonObject.chart.style.textDecoration : "none")
 			.style("background-color",chartBackgroundColor);
 		
 		// If there is no data in the recieved JSON object - print empty message
@@ -587,7 +593,9 @@ function renderWordCloud(chartConf){
 				.style("color",jsonObject.emptymessage.style.color)
 				.style("text-align",jsonObject.emptymessage.style.align)
 	    		.style("font-family",jsonObject.emptymessage.style.fontFamily)
-	    		.style("font-style",jsonObject.emptymessage.style.fontWeight)
+	    		.style("font-style",jsonObject.emptymessage.style.fontStyle ? jsonObject.emptymessage.style.fontStyle : "none")
+	    		.style("font-weight",jsonObject.emptymessage.style.fontWeight ? jsonObject.emptymessage.style.fontWeight : "none")
+	    		.style("text-decoration",jsonObject.emptymessage.style.textDecoration ? jsonObject.emptymessage.style.textDecoration : "none")
 	    		.style("font-size",emptyMsgFontSize)
 				.text(jsonObject.emptymessage.text);	
 		}
@@ -599,7 +607,9 @@ function renderWordCloud(chartConf){
 				.style("color",jsonObject.title.style.color)
 				.style("text-align",jsonObject.title.style.align)
 	    		.style("font-family",jsonObject.title.style.fontFamily)
-	    		.style("font-style",jsonObject.title.style.fontWeight)
+	    		.style("font-style",jsonObject.title.style.fontStyle ? jsonObject.title.style.fontStyle : "none")
+	    		.style("font-weight",jsonObject.title.style.fontWeight ? jsonObject.title.style.fontWeight : "none")
+	    		.style("text-decoration",jsonObject.title.style.textDecoration ? jsonObject.title.style.textDecoration : "none")
 	    		.style("font-size",jsonObject.title.style.fontSize)
 				.text(jsonObject.title.text);	
 			
@@ -609,7 +619,9 @@ function renderWordCloud(chartConf){
 				.style("color",jsonObject.subtitle.style.color)
 				.style("text-align",jsonObject.subtitle.style.align)
 	    		.style("font-family",jsonObject.subtitle.style.fontFamily)
-	    		.style("font-style",jsonObject.subtitle.style.fontWeight)
+	    		.style("font-style",jsonObject.subtitle.style.fontStyle ? jsonObject.subtitle.style.fontStyle : "none")
+	    		.style("font-weight",jsonObject.subtitle.style.fontWeight ? jsonObject.subtitle.style.fontWeight : "none")
+	    		.style("text-decoration",jsonObject.subtitle.style.textDecoration ? jsonObject.subtitle.style.textDecoration : "none")
 	    		.style("font-size",jsonObject.subtitle.style.fontSize)
 				.text(jsonObject.subtitle.text);
 		    
@@ -703,6 +715,32 @@ function renderWordCloud(chartConf){
 		
 		createVisualization(json);
 		
+		  function getGradientColorsHSL(args) {
+		     var  baseColor = args[0];
+		     var  from =args[1];
+		     var  to =args[2];
+		     var  number =args[3];
+		        var hsl = baseColor,
+		            fromH = 'h' in from ? from.h : hsl[0],
+		            fromS = 's' in from ? from.s : hsl[1],
+		            fromL = 'l' in from ? from.l : hsl[2],
+		            toH = 'h' in to ? to.h : hsl[0],
+		            toS = 's' in to ? to.s : hsl[1],
+		            toL = 'l' in to ? to.l : hsl[2],
+		            i, colors = [],
+		            deltaH = (toH - fromH) / number,
+		            deltaS = (toS - fromS) / number,
+		            deltaL = (toL - fromL) / number;
+		        for (i = 0; i <= number; i++) {
+		            colors.push(Ext.draw.Color.fromHSL(
+		                fromH + deltaH * i,
+		                fromS + deltaS * i,
+		                fromL + deltaL * i
+		            ).toString());
+		        }
+		        return colors;
+		    }
+		
 		// Main function to draw and set up the visualization, once we have the data.
 		function createVisualization(json) 
 		{	
@@ -726,7 +764,7 @@ function renderWordCloud(chartConf){
 					return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
 				}
 			);
-
+			
 			// NEW
 			
 			/* Dark colors for the chart's first layer items */
@@ -752,12 +790,19 @@ function renderWordCloud(chartConf){
 				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"]
 			};
 			
-//			var rrr = 
-//			[
-//				["#CC0000", "#FF4747", "#FF7A7A", "#FF9595", "#FFAAAA", "#FFBBBB", "#FFC9C9", "#FFD4D4", "#FFDDDD", "#FFE4E4", "#FFECEC"],
-//				["#003D00", "#003100", "#194619", "#305830", "#456945", "#587858", "#698669", "#789278", "#869D86", "#92A792", "#9DB09D"],
-//				["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"]
-//			];
+			var rbgRedColor = d3.rgb("#CC0000");
+			var rgbRedWhiteColor = d3.rgb("#FFECEC");
+			
+			var hslRedColor = rbgRedColor.hsl();
+			var hslRedWhiteColor = rgbRedWhiteColor.hsl();
+			
+			var gradientColors = getGradientColorsHSL([hslRedColor,hslRedColor,hslRedWhiteColor,10]);
+//			console.log(gradientColors);
+			
+			var  baseColor = Ext.draw.Color.create(args[0]);
+		     var  from =args[1];
+		     var  to =args[2];
+		     var  number =args[3];
 			
 			var firstLayerPairs = {};
 			var aaaa = aaa(nodes);
@@ -776,7 +821,7 @@ function renderWordCloud(chartConf){
 						"fill", 
 						
 						function(d,i) 
-						{   	    	
+						{   	    								
 							  /* Go through the array of key-value pairs (elements of the chart and their color)
 							   * and check if there is unique element-color mapping. */
 //							  if (colors[d.name] == undefined && d.name != "root")
@@ -799,7 +844,7 @@ function renderWordCloud(chartConf){
 									  iii++;
 								  }		
 								  else
-							  {
+								  {
 //									  console.log(d);
 //									  console.log(d.layer);
 //									  console.log(varietiesOfMainColors);
@@ -814,8 +859,8 @@ function renderWordCloud(chartConf){
 								  }
 								  
 								  d['color'] = colors[d.name];
-							  }
-						
+							  }		
+							  
 //							  console.log(colors);
 //							  console.log(colors[d.name]);
 							  colorArrangement[i] = colors[d.name];
@@ -890,13 +935,17 @@ function renderWordCloud(chartConf){
 		  	.append("text").html("</br>" + jsonObject.tip.text)
 	    	.style("text-align","center")
 	    	.style("font-family",jsonObject.tip.style.fontFamily)
-	  		.style("font-style",jsonObject.tip.style.fontWeight)
+	  		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
+    		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
+    		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
 	  		.style("font-size",tipFontSize); 
 		
 		  d3.select("#percentage")
 		  	.text(percentageString)		  	
 		      .style("font-family",jsonObject.tip.style.fontFamily)
-	    		.style("font-style",jsonObject.tip.style.fontWeight)
+	    		.style("font-style",jsonObject.tip.style.fontStyle ? jsonObject.tip.style.fontStyle : "none")
+	    		.style("font-weight",jsonObject.tip.style.fontWeight ? jsonObject.tip.style.fontWeight : "none")
+	    		.style("text-decoration",jsonObject.tip.style.textDecoration ? jsonObject.tip.style.textDecoration : "none")
 	    		.style("font-size",tipFontSize)
 	    		.style("vertical-align","middle");		  
 	    			
@@ -1004,7 +1053,9 @@ function renderWordCloud(chartConf){
 				.attr("id", "endlabel")
 				.style("fill", jsonObject.toolbar.style.percFontColor)
 				.style("font-family", jsonObject.toolbar.style.fontFamily)
-				.style("font-style", jsonObject.toolbar.style.fontWeight)
+				.style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
+	    		.style("font-weight",jsonObject.toolbar.style.fontWeight ? jsonObject.toolbar.style.fontWeight : "none")
+	    		.style("text-decoration",jsonObject.toolbar.style.textDecoration ? jsonObject.toolbar.style.textDecoration : "none")
 				.style("font-size", jsonObject.toolbar.style.fontSize);
 		}
 		
@@ -1046,7 +1097,9 @@ function renderWordCloud(chartConf){
 		      .attr("text-anchor", "middle")
 		      .style("font-family",jsonObject.toolbar.style.fontFamily)
 		      .style("font-size",jsonObject.toolbar.style.fontSize)
-		      .style("font-style",jsonObject.toolbar.style.fontWeight)
+		      .style("font-style",jsonObject.toolbar.style.fontStyle ? jsonObject.toolbar.style.fontStyle : "none")
+		      .style("font-weight",jsonObject.toolbar.style.fontWeight ? jsonObject.toolbar.style.fontWeight : "none")
+		      .style("text-decoration",jsonObject.toolbar.style.textDecoration ? jsonObject.toolbar.style.textDecoration : "none")
 		      .style("text-shadow", "0px 0px 10px #FFFFFF")
 		      .text(function(d) { return d.name; });
 		
@@ -1169,7 +1222,7 @@ function renderWordCloud(chartConf){
 		     * data. */
 		    var parts = sequence.split("_SEP_");
 		    
-		    var currentNode = root;
+		    var currentNode = root;		    
 		    
 		    for (var j = 0; j < parts.length; j++) 
 		    {
@@ -1186,7 +1239,7 @@ function renderWordCloud(chartConf){
 		    		var foundChild = false;
 		    		
 		    		for (var k = 0; k < children.length; k++) 
-		    		{
+		    		{				    			
 		    			if (children[k]["name"] == nodeName) 
 		    			{
 		    				childNode = children[k];
@@ -1197,8 +1250,8 @@ function renderWordCloud(chartConf){
 		    		
 		    		// If we don't already have a child node for this branch, create it.
 		    		if (!foundChild) 
-		    		{
-		    			childNode = {"name": nodeName, "children": []};
+		    		{		    			
+		    			childNode = {"name": nodeName, "children": []};		    	
 		    			children.push(childNode);
 		    		}
 	    		
@@ -1215,7 +1268,7 @@ function renderWordCloud(chartConf){
 				 	childNode["layer"] = j;
 				 	childNode["firstLayerParent"] = parts[0];
 				 	children.push(childNode);
-		    	}
+		    	}	    		
 		    
 		    } 	// inner for loop
 		    
@@ -1227,7 +1280,7 @@ function renderWordCloud(chartConf){
 	}	
 	
 	function renderParallelChart(data){
-
+				
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1329,7 +1382,9 @@ function renderWordCloud(chartConf){
 		.style("color",data.title.style.color)
 		.style("text-align",data.title.style.align)
 		.style("font-family",data.title.style.fontFamily)
-		.style("font-style",data.title.style.fontWeight)
+		.style("font-style",data.title.style.fontStyle ? data.title.style.fontStyle : "none")
+		.style("font-weight",data.title.style.fontWeight ? data.title.style.fontWeight : "none")
+		.style("text-decoration",data.title.style.textDecoration ? data.title.style.textDecoration : "none")
 		.style("font-size",data.title.style.fontSize)
 		.text(data.title.text);
 
@@ -1342,10 +1397,12 @@ function renderWordCloud(chartConf){
 		.style("color",data.subtitle.style.color)
 		.style("text-align",data.subtitle.style.align)
 		.style("font-family",data.subtitle.style.fontFamily)
-		.style("font-style",data.subtitle.style.fontWeight)
+		.style("font-style",data.subtitle.style.fontStyle ? data.subtitle.style.fontStyle : "none")
+		.style("font-weight",data.subtitle.style.fontWeight ? data.subtitle.style.fontWeight : "none")
+		.style("text-decoration",data.subtitle.style.textDecoration ? data.subtitle.style.textDecoration : "none")
 		.style("font-size",data.subtitle.style.fontSize)
 		.text(data.subtitle.text);
-       
+
 		var groupsHeight=groups.length*20+60;
 		var svgHeight;
 		if(groupsHeight > (h + m[0] + m[2])){
@@ -1380,7 +1437,7 @@ function renderWordCloud(chartConf){
 			.on("brush", brush);
 
 		});
-		
+
 		var legend=d3.select("#chart").append("div")
 		         .style("float","right")
 		         .style("width",300)
@@ -1391,23 +1448,23 @@ function renderWordCloud(chartConf){
 		         .attr("height", svgHeight)
 		         .append("svg:g")
 		         .attr("transform", "translate("+0 + "," + m[0] + ")");
-
 		
 		legend.append("svg:g")
 		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
 		.style("height",30)
-		.append("svg:text").style("font-family",data.legend.title.fontFamily)
-		.style("font-size",data.legend.title.fontSize)
-		.style("font-style",data.legend.title.fontStyle)
-		.style("font-weight",data.legend.title.fontWeight)
+		.append("svg:text").style("font-family",data.legend.title.style.fontFamily)
+		.style("font-size",data.legend.title.style.fontSize)
+		.style("font-style",data.legend.title.style.fontStyle ? data.legend.title.style.fontStyle : "none")
+		.style("font-weight",data.legend.title.style.fontWeight ? data.legend.title.style.fontWeight : "none")
+		.style("text-decoration",data.legend.title.style.textDecoration ? data.legend.title.style.textDecoration : "none")
 		.attr("x", 20)
 		.attr("y",-10)
 		.attr("dy", ".31em")
 		.text(groupcolumn);
 
-       
+
 		 legend.selectAll("g.legend")
-        .data(groups)
+		.data(groups)
 		.enter().append("svg:g")
 		.attr("class", "legend")
 		.attr("transform", function(d, i) {
@@ -1423,10 +1480,11 @@ function renderWordCloud(chartConf){
 		.attr("height", 10);
 
 		legend.selectAll("g.legend").append("svg:text")
-		.style("font-family",data.legend.element.fontFamily)
-		.style("font-size",data.legend.element.fontSize)
-		.style("font-style",data.legend.element.fontStyle)
-		.style("font-weight",data.legend.element.fontWeight)
+		.style("font-family",data.legend.element.style.fontFamily)
+		.style("font-size",data.legend.element.style.fontSize)
+		.style("font-style",data.legend.element.style.fontStyle ? data.legend.element.style.fontStyle : "none")
+		.style("font-weight",data.legend.element.style.fontWeight ? data.legend.element.style.fontWeight : "none")
+		.style("text-decoration",data.legend.element.style.textDecoration ? data.legend.element.style.textDecoration : "none")
 		.attr("x", 20)
 		.attr("dy", ".31em")
 		.text(function(d) {	
@@ -1598,7 +1656,7 @@ function renderWordCloud(chartConf){
 	      .attr("border-collapse","collapse")
 	     .append("tr")
 	      .style("height","30px")
-	      .selectAll("th")
+	     .selectAll("th")
 	     .data(tableColumns).enter()
 	     .append("th")
 	     .text(function(d){return d;});
@@ -1938,4 +1996,598 @@ function renderWordCloud(chartConf){
 		updateTable();	
 
 	}
+}
+	
+/**
+ * Javascript function that serves for rendering the CHORD chart
+ * @param jsonData Input data in JSON format, needed for rendering the chart on the client side
+ */
+function renderChordChart(jsonData)
+{
+//	console.log(jsonData);
+	
+	/**
+	 *  'opacityMouseOver' - value for the opacity of the item (row) that is covered by the mouse pointer and all the items 
+	 *  that are linked (connected) to that row (item)
+	 *  
+	 *  'opacityMouseOutAndDefault' - value of the opacity of all graphical items (arcs and stripes) when non of the items 
+	 *  (rows) is selected by the mouse pointer or when the mouse pointer leaves an item
+	 */
+	 // TODO: Maybe customizable ???
+	var opacityMouseOutAndDefault = 0.6;
+	var opacityMouseOver = 0.1;
+	
+	/**
+	 * 'allFieldsObject' - object that contains information about the data that we got from the server. Particularly we get
+	 * data about the rows and columns that our matrix (will) contain
+	 * 
+	 * 'allFieldsArray' - array of all rows/columns items (fields) sorted in alphabetically ascending order that matrix (will)
+	 *  contain. This way can sort all rows and columns of the future matrix in the same, alphabetically ascending, order
+	 */
+	var allFieldsObject = jsonData.data[0].metaData.fields;
+	var allFieldsArray = new Array();
+	 
+	 /**
+  	  * 'columnsPairedWithRows' - contains data about which columns are linked to the particular row, that is, which column is in
+  	  * the intersection with the particular row and what is the value of their intersection (the value of the matrix field). We 
+  	  * will need this data to see outgoing items (columns to which particular row is connected). 
+  	  * 
+  	  * 'rowsPairedWithColumns' - containes data about which rows are connected to the particular column (we will need this data
+  	  * in pair woth the previous one - columnsPairedWithRows). We will need this to see incoming items (which rows (items) are
+  	  * connected to the particular item (in this case, column))
+  	  */
+  	 var columnsPairedWithRows = new Array();	
+  	 var rowsPairedWithColumns = new Array();
+	
+	/**
+	 * TODO: NOT USED: Useful when filtering is enabled (FILTER tags attribute 'value' is set to 'true')
+	 */
+	function contains(a, obj) {
+	    for (var i = 0; i < a.length; i++) {
+	        if (a[i].value === obj) {
+	            return true;
+	        }
+	    }
+	    return false;
+   }
+
+	/**
+	 * TODO: NOT USED: Useful when filtering is enabled (FILTER tags attribute 'value' is set to 'true')
+	 */
+   function getIndex(a, obj) {
+	    for (var i = 0; i < a.length; i++) {
+	        if (a[i].value === obj) {
+	            return a[i].index;
+	        }
+	    }
+	    return -1;
+   }
+
+   /**
+    * Returns an array of tick angles and labels, given a group.
+    */
+   // TODO: Customize text that goes next to the ticks (here it is 'k') ???
+   function groupTicks(d)     
+   {   	
+		var k = (d.endAngle - d.startAngle) / d.value;
+		
+		return d3.range(0, d.value, 1000).map(function(v, i) {			
+			return {
+				startAngle: d.startAngle,
+				endAngle: d.endAngle,
+				angle: v * k + d.startAngle,
+				label: i % 5 ? null : v / 1000 + "k"
+				};
+			});
+   }
+	
+   /**
+    * 'deselectClickedItem' - indicator if user clicked on some item on the chart - if false, prevent mouse over 
+    * and mouse out events. If true every item on the chart should be deselected - full colored
+    * 
+    * 'indexOfItemSelected' - index of the item of the chart that is selected. We need this parameter to take care
+    * if we should
+    */
+    var deselectClickedItem = undefined;
+    var indexOfItemSelected = -1;
+    var previouslySelected = false;
+    
+    var selectedSomeItem = false;
+    var indexOfSelectedItem = -1;
+    var enableMouseOver = true;
+    var enableMouseOut = true;
+    var enableOtherSelect = false;
+        
+    /**
+     * Returns an event handler for fading a given chord group.
+     */
+	function fadeMouseOver()
+	{	
+		return function(g, i) {
+			
+//				console.log(i);
+//				
+//				console.log(columnsPairedWithRows[i]);
+//				console.log("row: " + columnsPairedWithRows[i].row);
+//				console.log("columnsPaired: ");
+//				
+//				// To which columns is this row linked to (column name + value)
+//				for (var j=0; j<columnsPairedWithRows[i].pairedWith.length; j++)
+//				{
+//					console.log(columnsPairedWithRows[i].pairedWith[j].column);
+//					console.log(columnsPairedWithRows[i].pairedWith[j].value);
+//				}
+//				
+//				console.log("column: " + rowsPairedWithColumns[i].column);
+//				console.log("rowsPaired: ");
+//				
+//				// To which columns is this row linked to (name + value)
+//				for (var k=0; k<rowsPairedWithColumns[i].pairedWith.length; k++)
+//				{
+//					if (rowsPairedWithColumns[i].column != rowsPairedWithColumns[i].pairedWith[k].row)
+//					{
+//						console.log(rowsPairedWithColumns[i].pairedWith[k].row);
+//						console.log(rowsPairedWithColumns[i].pairedWith[k].value);	
+//					}				
+//				}	
+			
+			setParamsClickAndMouseOver(g,i,false);
+			
+//			if (deselectClickedItem==undefined || deselectClickedItem==true || (previouslySelected == true && deselectClickedItem==false))
+			/**
+			 * With filtering we are getting pairs of stripes: one member of the pair is the source item (the row) whose 
+			 * outgoing stripe(s) we need to leave as default color (darker); the second member of the pair is the target
+			 * item's stripe (both linking two items: source and target) that is coming into the source item (the row). 
+			 * We also need to leave this, target item's stripe as default color (darker).
+			 * 
+			 * The same logic, just in other direction is for this part inside the 'fadeMouseOut' function - those stripes
+			 * (that we mentioned in previous paragraph) need to be reset as default color (dark) except those that are the
+			 * subject of our discussion: the soure and target item's stripe (links between them).
+			 */
+			if (enableMouseOver)
+			{		
+				svg.selectAll(".chord path")
+				 	.filter(function(d) { return d.source.index != i && d.target.index != i; })
+				 	.transition()
+				 	.style("opacity", opacityMouseOver);				
+			}
+		}
+	}
+	
+	function fadeMouseOut()
+	{
+		return function(g, i) 
+		{		
+			setParamsClickAndMouseOver(g,i,false);
+			
+//			if ((deselectClickedItem==undefined || deselectClickedItem==true) && previouslySelected==false)
+			if (enableMouseOut)
+			{
+				svg.selectAll(".chord path")
+				 	.filter(function(d) { return d.source.index != i && d.target.index != i; })
+				 	.transition()
+				 	.style("opacity", opacityMouseOutAndDefault);
+			}			
+		};
+	}
+
+	function clickOnItem()
+	{
+		return function(g, i) 
+		{	
+			setParamsClickAndMouseOver(g,i,true);
+				
+			/**
+			 * Reset all stripes to the default (mouse out, darker) color.
+			 */
+			svg.selectAll(".chord path")
+			 	.filter(function(d) { return true; })
+			 	.transition()
+			 	.style("opacity", opacityMouseOutAndDefault);
+				
+			/**
+			 * Find the one (stripes that link target and source items) that we need to leave as default 
+			 * (darker, mouse out) color. Other stripes will be shadowed (lighter (mouse over) color).
+			 */
+			svg.selectAll(".chord path")
+				.filter(function(d) { return d.source.index != i && d.target.index != i; })
+			 	.transition()
+			 	.style("opacity", opacityMouseOver);		
+		};
+	}
+	
+	/**
+	 * Set parameters that are necessary for the events that we are listening to: the mouse over and click event.
+	 * According to these parameters we are going to control when should we enable or disable listening to the 
+	 * mouse over and/or mouse out events.
+	 */
+	function setParamsClickAndMouseOver(d,i,isClick)
+	{
+		/**
+		 * The function responsible for processing the 'click' event listener's call is calling this function.
+		 * This function is not called by the 'fadeMouseOver'/'fadeMouseOut' functions that are responsible
+		 * for processing the 'mouseover'/'mouseout' event listener's call.
+		 */
+		if (isClick)
+		{			 
+			enableMouseOver = false;
+			 
+			/**
+			 * No item is selected (clicked) on the chart - select it and freeze the chart.
+			 */
+			if (selectedSomeItem == false)
+			{
+				selectedSomeItem = true;		
+				enableMouseOut = false;		
+				indexOfSelectedItem = i;	
+				
+				/**
+				 * TODO:
+				 * 		Temporary function for printing out the items (source and target) that are the
+				 * 		result of the selection (clicking) operation on the chart's item.
+				 */
+				printTheResultWhenSelecting(i);
+			}
+			/**
+			 * Some item is already selected (the chart is still freeze).
+			 */
+			else 
+			{
+				/**
+				 * The item that is now clicked (selected) is already selected, hence we need to deselect it and
+				 * unfreeze the chart.
+				 */
+				if (indexOfSelectedItem == i)
+				{
+					selectedSomeItem = false;	
+					enableMouseOut = true;		
+					indexOfSelectedItem = -1;	
+				}
+				/**
+				 * The item that we have now clicked (selected) is different for the one that is alreday selected,
+				 * hence select the newly clicked (selected) item and keep the chart freeze.
+				 */
+				else
+				{
+					selectedSomeItem = true;	
+					enableMouseOut = false;	
+					indexOfSelectedItem = i;	
+					
+					printTheResultWhenSelecting(i);
+				}
+			}
+		}
+		/**
+		 * This function is called by the 'fadeMouseOver'/'fadeMouseOut' functions that are responsible
+		 * for processing the 'mouseover'/'mouseout' event listener's call.
+		 */
+		else 
+		{
+			/**
+			 * if-block: 
+			 * 		None of items (arcs) is selected (clicked) - the chart us 'unfreeze'
+			 * else-block:
+			 * 		Some item (arc) is selected (clicked) - the chart is 'freeze'
+			 */
+			if (selectedSomeItem == false)		
+			{
+				enableMouseOver = true;		
+				enableMouseOut = true; 		
+			}
+			else
+			{
+				enableMouseOver = false;	
+				enableMouseOut = false;		
+			}				 
+		}
+
+//			/**
+//			  * Select particular item on the chart (freeze the chart)
+//			  */
+//		 
+//			 if ((deselectClickedItem == undefined || indexOfItemSelected == -1) && previouslySelected==false)
+//			 {
+//				 console.log("++ 1 ++");
+//				 deselectClickedItem = false;
+//				 indexOfItemSelected = i; 
+//				 
+//				 previouslySelected = true;
+//	 			
+////	 			// With which columns is this (selected, clicked) row paired 
+////	 			console.log(columnsPairedWithRows[i]);
+////	 			// Which columns are paired with this (selected, clicked) row 
+////		 		console.log(rowsPairedWithColumns[i]);
+//			 }  		 			
+//			 /**
+//			  * Deselect particular (already selected) item on the chart (unfreeze the chart)
+//			  */
+////			else if (indexOfItemSelected == i || (deselectClickedItem == true && indexOfItemSelected != i))
+//			 else if ((indexOfItemSelected == i && deselectClickedItem==false) && previouslySelected == true)
+//			 { 		
+//				 console.log("++ 2 ++");
+//				 indexOfItemSelected = -1;				 				
+//				 deselectClickedItem = !deselectClickedItem;  	
+//				 
+//				 previouslySelected = false;
+//				 
+////					// With which columns is this (selected, clicked) row paired 
+////	 				console.log(columnsPairedWithRows[i]);
+////	 				// Which columns are paired with this (selected, clicked) row 
+////	 		 		console.log(rowsPairedWithColumns[i]);							
+//			 } 	 	
+//			 else if (previouslySelected == true && deselectClickedItem==false && indexOfItemSelected!=-1 && indexOfItemSelected != i)
+//			 {
+//				 console.log("++ 3 ++");
+////				 deselectClickedItem = false;
+//				 indexOfItemSelected = i;
+//				 
+//				 fadeMouseOver();
+//			 }
+//	 		
+//			 console.log("--- IZLAZ ---");
+//			 console.log(indexOfItemSelected);
+//			 console.log(deselectClickedItem);
+	}
+	
+	function printTheResultWhenSelecting(i)
+	{
+		// With which columns is this (selected, clicked) row paired 
+		console.log(columnsPairedWithRows[i]);
+		// Which columns are paired with this (selected, clicked) row 
+		console.log(rowsPairedWithColumns[i]);
+	}
+	
+	
+	/**
+	 * Width and height of the chart
+	 */
+	var width = jsonData.chart.width;
+	var height = jsonData.chart.height;
+	
+	var innerRadius = Math.min(width, height) * .3;
+    var outerRadius = innerRadius * 1.1;
+    
+    /**
+     * Number of row/column elements of the squared martix
+     */
+    var elemSize = jsonData.data[0].results;
+	
+	var fill = d3.scale.ordinal()
+    			.domain(d3.range(elemSize))
+				.range(jsonData.colors);
+		
+	// Set title
+	d3.select("body").append("div")
+		.style("color",jsonData.title.style.color)
+		.style("text-align",jsonData.title.style.align)
+		.style("font-family",jsonData.title.style.fontFamily)
+		.style("font-style",jsonData.title.style.fontWeight)
+		.style("font-size",jsonData.title.style.fontSize)
+		.text(jsonData.title.text);
+
+	// Set subtitle
+	d3.select("body").append("div")
+		.style("color",jsonData.subtitle.style.color)
+		.style("text-align",jsonData.subtitle.style.align)
+		.style("font-family",jsonData.subtitle.style.fontFamily)
+		.style("font-style",jsonData.subtitle.style.fontWeight)
+		.style("font-size",jsonData.subtitle.style.fontSize)
+		.text(jsonData.subtitle.text);
+	
+	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
+	 * the chart (values on ticks) ??? */
+	var emptySplitDivHeight = 60;
+	d3.select("body").append("div").style("height", emptySplitDivHeight);
+	
+	d3.select("body").append("div").attr("id","chartD3").attr("align","center");
+	
+	var svg = d3.select("#chartD3").append("div")
+	 			.attr("class", "chart")	 			
+	 			.style("width", width + "px")
+	 			.style("height", height-100)	 			
+				.append("svg:svg")
+				.attr("width", width)
+				.attr("height", height)				
+				.append("svg:g")
+				.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+	
+	/**
+	 * [START] Data processing part
+	 */
+	var rows = jsonData.data[0].rows;
+	//var source,target,value;
+	
+	var matrix = new Array(elemSize);
+	
+	for (var i = 0; i < matrix.length;i++)
+	{
+		matrix[i] = new Array(elemSize);
+	}	
+	 	
+	// use dataset as-is		
+	 for (i = 0; i < rows.length; i++) 
+	 {		 
+		 for (j = 0; j < elemSize; j++) 
+		 {
+			var column = 'column_'+(j+1);			
+			matrix[i][j] = parseFloat(rows[i][column]);
+		 };	
+  	 };  	 
+  	 
+  	 // Variable that will let us render this chart part, but preventing listening for the mouseover event
+  	 var arcs = null;
+
+//  	 console.log(rows);
+  	 
+  	/**
+  	  * Which column is paired with which row (row is the initial point of view)
+  	  * - 	array of objects that are composed of row attribute and its array of 
+  	  * 	columns that are intersected with it and have value != 0
+  	  */
+  	 
+  	 for (var i=0; i<allFieldsObject.length; i++)
+	 {
+  		 var tempObject = {};
+  		 var arrayOfColumnsAndValues = new Array();
+  		 
+  		 var rowName = allFieldsObject[i].header;  		 
+  		 allFieldsArray.push(rowName);
+  		 
+  		 tempObject.row = allFieldsObject[i].header;
+  		 
+  		 for (var j=0; j<allFieldsObject.length; j++)
+		 {
+  			 var tempSubArrayObjects = {};
+  			 
+  			 if (rows[i]["column_"+(j+1)] != 0)
+			 {
+  				tempSubArrayObjects.column = allFieldsObject[j].header;
+  				tempSubArrayObjects.value = rows[i]["column_"+(j+1)];
+  				
+  				arrayOfColumnsAndValues.push(tempSubArrayObjects);
+			 }  			
+		 }
+  		 
+  		 tempObject.pairedWith = arrayOfColumnsAndValues;
+  		 
+  		 columnsPairedWithRows.push(tempObject);
+	 }
+
+  	 // draw the graph before getting data for populating table in the legend (no loosing time)
+	 drawGraph(matrix); 
+  	 
+  	 for (var i=0; i<allFieldsObject.length; i++)
+	 {
+  		 var columnName = allFieldsObject[i].header;
+  		 
+  		 var tempObject = {};
+  		 
+  		 var tempArray = new Array();
+  		 
+  		 tempObject.column = columnName;
+  		 
+  		 // go through all rows for this (i-th) column
+  		 for (var j=0; j<allFieldsObject.length; j++)
+		 {
+  			 var rowName = allFieldsObject[j].header;
+  			 var tempArraysObject = {};
+  			 
+  			 /**
+  			  * "... && rowName!=columnName" => we do not need information about intersection of this columns with the row of the same name (i,i), 
+  			  * since we got this information when populating the 'columnsPairedWithRows' array. We do must not duplicate the data.
+  			  */
+  			 // TODO: Should I leave the rows that we already found as intersected with the actual column? Maybe for two separate tables?
+  			 if (rows[j]["column_"+(i+1)] != 0 && rowName!=columnName)
+			 {
+  				 tempArraysObject.row = rowName;
+  				 tempArraysObject.value = rows[j]["column_"+(i+1)];
+  				 
+  				 tempArray.push(tempArraysObject);
+			 }  				
+		 }
+  		 
+  		 tempObject.pairedWith = tempArray; 
+  		 
+  		 rowsPairedWithColumns.push(tempObject);
+	 }  	 
+  	 
+  	 // since we have all the data, enable fading of stripes and rendering the table in legend
+  	 arcs.on("mouseover", fadeMouseOver())	
+  	 	 .on("mouseout", fadeMouseOut());
+  	   	 
+  	 arcs.on
+  	 (
+		 "click", clickOnItem()
+  	 );
+	 
+	 function drawGraph(matrix)
+	 {
+		 /**
+		  * The chord layout is designed to work in conjunction with the chord shape and the arc shape. 
+		  * The layout is used to generate data objects which describe the chords, serving as input to 
+		  * the chord shape. The layout also generates descriptions for the groups, which can be used as 
+		  * input to the arc shape. 
+		  * 
+		  * Data is specified by setting the associated matrix. 
+		  * 
+		  * IMPORTANT: 	The input matrix must be a square matrix of numbers.
+		  * IMPORTANT: 	Each column i in the matrix corresponds to the same group as row i; the cell ij 
+		  * 			corresponds to the relationship from group i to group j.
+		  * 
+		  * (from: https://github.com/mbostock/d3/wiki/Chord-Layout)
+		  */
+		 var chord = d3.layout.chord()
+		  .padding(.05)	// TODO: Customize ???
+		  .sortSubgroups(d3.descending)
+		  .matrix(matrix);		
+		 
+		 // draws circles and defines the effect on the passage mouse
+		var arcs1 = svg.append("svg:g").selectAll("path")
+			.data(chord.groups)
+			.enter();
+			
+		arcs =	arcs1.append("svg:path")
+			.style("fill", function(d) { return fill(d.index); })
+			.style("stroke", function(d) { return fill(d.index); })
+			.attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));			
+
+		 // TODO: Customize color of number values on ticks ???
+		 var ticks1 = svg.append("svg:g").selectAll("g")
+			.data(chord.groups)
+			.enter();
+			
+		var	ticks = ticks1.append("svg:g").selectAll("g")
+			.data(groupTicks)
+			.enter().append("svg:g")
+			.attr("transform", function(d) {
+				return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+				   + "translate(" + outerRadius + ",0)";
+				});
+		
+		ticks1.append("svg:text")
+		.attr("id","aaa")
+		  .each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
+		   .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+		  .attr("transform", function(d) {
+				return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+				+ "translate(" + (innerRadius + 60) + ")"
+				+ (d.angle > Math.PI ? "rotate(180)" : "");
+		  })
+//		  .style("font-weight","bold")
+		  .text(function(d,i) { return allFieldsArray[i];})
+		  
+
+		 //aggiunge le lineette "graduate"		 
+		 ticks.append("svg:line")
+			.attr("x1", "1")
+			.attr("y1", "0")
+			.attr("x2", "5")
+			.attr("y2", "0")
+			.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
+
+		 //aggiunge le label unità di misura
+		 ticks.append("svg:text")
+			.attr("x", "8")
+			.attr("dy", ".35em")
+			.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
+			.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+			.text(function(d) { return d.label; });
+			
+		 //disegna le fasce da un'area ad un altra
+		 svg.append("svg:g")
+			.attr("class", "chord")
+			.selectAll("path")
+			.data(chord.chords)
+			.enter().append("svg:path")
+			.attr("d", d3.svg.chord().radius(innerRadius))
+			.style("fill", function(d) { return fill(d.target.index); })
+			.style("opacity", opacityMouseOutAndDefault) 
+			.style("stroke", "#000")	// TODO: Customize ??
+			.style("stroke-width", ".5px");	// TODO: Customize ??
+		 
+		}
+	 
+	 /**
+	 * [END] Data processing part
+	 */
 }
