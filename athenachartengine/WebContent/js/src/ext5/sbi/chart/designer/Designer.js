@@ -362,6 +362,76 @@ Ext.define('Sbi.chart.designer.Designer', {
 								        ]
 									}
 								}						
+							},
+							wordcloud:{
+								
+								CHART:
+								{
+									
+									maxAngle:'121',
+									maxFontSize:'51',
+									maxWords:'51',
+									minAngle:'61', 
+									sizeCriteria:'serie',
+									wordPadding:'5'
+									
+								}
+							},
+							treemap:{
+								
+							},
+							parallel:{
+								CHART:
+								{
+									AXES_LIST:{
+									
+										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+										
+									},
+									LIMIT:{
+									
+										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
+										
+									},
+									PARALLEL_TOOLTIP:{
+										
+										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
+										
+									},
+									LEGEND:{
+										
+										TITLE:{
+											
+											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+											
+										},
+										ELEMENT:{
+											
+											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+											
+										}
+										
+									}								
+								}
+								
+							},
+							heatmap:{
+								
+								CHART:{
+									
+									LEGEND:{
+										
+										style:"align:center;symbolWidth:50;"
+										
+									},
+									TOOLTIP:{
+										
+										style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
+										
+									}
+									
+								}
+								
 							}
 						};
 						
@@ -907,6 +977,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								 * predefined JSON structure that is defined for that newly chosen 
 								 * style. This part is needed for later merging of the templates 
 								 */
+					    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 //					    		jsonTemplate.CHART.styleCustom = false;
 //					    		globalThis.styleCustom = false;
 //					    		console.log(k);
@@ -924,6 +995,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 //								console.log(jsonTemplate);
 								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,genericConfigurationForStyle);
 //					    		console.log(jsonTemplate);
+								
+								if (chartType == "WORDCLOUD"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).wordcloud);
+									
+								}
+								else if (chartType == "TREEMAP"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).treemap);
+									
+								}
+								else if (chartType == "PARALLEL"){
+									
+									jsonTemplate.CHART.LEGEND=null;
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).parallel);
+								
+								}
+								else if (chartType == "HEATMAP"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).heatmap);
+									
+								}
+								
 								/**
 								 * Update (refresh) the main configuration panel (the one on the top of 
 								 * the Step 2 tab) after selecting the particular style
