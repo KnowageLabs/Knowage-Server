@@ -168,6 +168,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 				    title: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.selectDoc'),
 				    height: 400,
 				    width: 600,
+				    autoScroll: true,
 				    items: [
 				    {layout:'column',
 				     bodyStyle: 'border:0;padding:5',
@@ -191,8 +192,6 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 					    }]
 					},{
 				        xtype: 'grid',
-				        height: '300',
-				        autoScroll: true,
 				        columns: [{header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.documentName'),dataIndex: 'name'},
 				                  {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.documentLabel'),dataIndex: 'label'},
 				                  {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.documentDescr'),dataIndex: 'descr',flex:1}],               
