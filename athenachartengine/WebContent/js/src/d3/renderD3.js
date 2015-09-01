@@ -785,31 +785,31 @@ function renderWordCloud(chartConf){
 		
 		createVisualization(json);
 		
-		  function getGradientColorsHSL(args) {
-		     var  baseColor = args[0];
-		     var  from =args[1];
-		     var  to =args[2];
-		     var  number =args[3];
-		        var hsl = baseColor,
-		            fromH = 'h' in from ? from.h : hsl[0],
-		            fromS = 's' in from ? from.s : hsl[1],
-		            fromL = 'l' in from ? from.l : hsl[2],
-		            toH = 'h' in to ? to.h : hsl[0],
-		            toS = 's' in to ? to.s : hsl[1],
-		            toL = 'l' in to ? to.l : hsl[2],
-		            i, colors = [],
-		            deltaH = (toH - fromH) / number,
-		            deltaS = (toS - fromS) / number,
-		            deltaL = (toL - fromL) / number;
-		        for (i = 0; i <= number; i++) {
-		            colors.push(Ext.draw.Color.fromHSL(
-		                fromH + deltaH * i,
-		                fromS + deltaS * i,
-		                fromL + deltaL * i
-		            ).toString());
-		        }
-		        return colors;
-		    }
+//		  function getGradientColorsHSL(args) {
+//		     var  baseColor = args[0];
+//		     var  from =args[1];
+//		     var  to =args[2];
+//		     var  number =args[3];
+//		        var hsl = baseColor,
+//		            fromH = 'h' in from ? from.h : hsl[0],
+//		            fromS = 's' in from ? from.s : hsl[1],
+//		            fromL = 'l' in from ? from.l : hsl[2],
+//		            toH = 'h' in to ? to.h : hsl[0],
+//		            toS = 's' in to ? to.s : hsl[1],
+//		            toL = 'l' in to ? to.l : hsl[2],
+//		            i, colors = [],
+//		            deltaH = (toH - fromH) / number,
+//		            deltaS = (toS - fromS) / number,
+//		            deltaL = (toL - fromL) / number;
+//		        for (i = 0; i <= number; i++) {
+//		            colors.push(Ext.draw.Color.fromHSL(
+//		                fromH + deltaH * i,
+//		                fromS + deltaS * i,
+//		                fromL + deltaL * i
+//		            ).toString());
+//		        }
+//		        return colors;
+//		    }
 		
 		// Main function to draw and set up the visualization, once we have the data.
 		function createVisualization(json) 
@@ -860,19 +860,19 @@ function renderWordCloud(chartConf){
 				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"]
 			};
 			
-			var rbgRedColor = d3.rgb("#CC0000");
-			var rgbRedWhiteColor = d3.rgb("#FFECEC");
+//			var rbgRedColor = d3.rgb("#CC0000");
+//			var rgbRedWhiteColor = d3.rgb("#FFECEC");
+//			
+//			var hslRedColor = rbgRedColor.hsl();
+//			var hslRedWhiteColor = rgbRedWhiteColor.hsl();
 			
-			var hslRedColor = rbgRedColor.hsl();
-			var hslRedWhiteColor = rgbRedWhiteColor.hsl();
-			
-			var gradientColors = getGradientColorsHSL([hslRedColor,hslRedColor,hslRedWhiteColor,10]);
+//			var gradientColors = getGradientColorsHSL([hslRedColor,hslRedColor,hslRedWhiteColor,10]);
 //			console.log(gradientColors);
 			
-			var  baseColor = Ext.draw.Color.create(args[0]);
-		     var  from =args[1];
-		     var  to =args[2];
-		     var  number =args[3];
+//			var  baseColor = Ext.draw.Color.create(args[0]);
+//		     var  from =args[1];
+//		     var  to =args[2];
+//		     var  number =args[3];
 			
 			var firstLayerPairs = {};
 			var aaaa = aaa(nodes);
@@ -2635,7 +2635,7 @@ function renderChordChart(jsonData)
 			.attr("y2", "0")
 			.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
 
-		 //aggiunge le label unità di misura
+		 //aggiunge le label unitï¿½ di misura
 		 ticks.append("svg:text")
 			.attr("x", "8")
 			.attr("dy", ".35em")
