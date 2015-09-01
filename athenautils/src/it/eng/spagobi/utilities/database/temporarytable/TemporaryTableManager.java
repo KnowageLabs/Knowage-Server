@@ -348,9 +348,24 @@ public class TemporaryTableManager {
 	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {
 		logger.debug("IN");
 		String dialect = dataSource.getHibDialectClass().toUpperCase();
-		if (dialect.contains("HSQL") || dialect.contains("SQLSERVER")) {
+		if (dialect.contains("HSQL")) {
 			// command in SELECT .... INTO table_name FROM ....
 			String sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
+			executeStatement(sql, dataSource);
+		} else if (dialect.contains("SQLSERVER")) {
+			// command in SELECT .... INTO table_name FROM ....
+
+			// insert into tmpQuery TOP(100) PERCENT
+			// extract select
+
+			int selectIndex = baseQuery.toUpperCase().indexOf("SELECT");
+
+			String noSelect = baseQuery.substring(selectIndex + 6);
+			String prefix = "select TOP(100) PERCENT ";
+			baseQuery = prefix + noSelect;
+
+			String sql = "select * " + "into " + tableName + " " + "from " + "( " + baseQuery + " ) aaa";
+
 			executeStatement(sql, dataSource);
 		} else if (dialect.contains("TERADATA")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
