@@ -451,6 +451,26 @@ function renderWordCloud(chartConf){
 				var emptyMsgDivHeight = parseInt(chartConf.emptymessage.height);
 				var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
 				
+				var emptyMsgFontWeight = null;
+				var emptyMsgFontStyle = null;
+				var emptyMsgTextDecoration = null;
+				
+				/**
+				 * For EMPTYMESSAGE tag
+				 */
+				emptyMsgFontWeight = (chartConf.emptymessage.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
+				
+				if (chartConf.emptymessage.style.fontStyle == "italic" || chartConf.chart.style.fontStyle == "italic")
+				{
+					emptyMsgFontStyle = "italic";
+				}
+				else if (chartConf.emptymessage.style.fontStyle == "normal" || chartConf.chart.style.fontStyle == "normal")
+				{
+					emptyMsgFontStyle = "normal";
+				}
+				
+				emptyMsgTextDecoration = (chartConf.emptymessage.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
+				
 				// Set title
 				d3.select("#main").append("div")
 					.style("height",emptyMsgTotal)
@@ -458,24 +478,74 @@ function renderWordCloud(chartConf){
 					.style("left",chartConf.emptymessage.paddingLeft)
 					.style("color",chartConf.emptymessage.style.fontColor)
 					.style("text-align",chartConf.emptymessage.style.textAlign)
-		    		.style("font-family",chartConf.emptymessage.style.fontType)
-		    		.style("font-style",chartConf.emptymessage.style.fontStyle ? chartConf.emptymessage.style.fontStyle : "none")
-		    		.style("font-weight",chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none")
-		    		.style("text-decoration",chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none")
+		    		.style("font-family",chartConf.emptymessage.style.fontFamily)
+		    		.style("font-style", emptyMsgFontStyle)
+		    		.style("font-weight", emptyMsgFontWeight)
+		    		.style("text-decoration", emptyMsgTextDecoration)
 		    		.style("font-size",emptyMsgFontSize)
 					.text(chartConf.emptymessage.text);	
 			}
 			else
-			{						
+			{				
+				
+				console.log(chartConf.chart.style.fontWeight);
+				
+				var titleFontWeight = null;
+				var titleFontStyle = null;
+				var titleTextDecoration = null;
+				
+				var subtitleFontWeight = null;
+				var subtitleFontStyle = null;
+				var subtitleTextDecoration = null;
+				
+				/**
+				 * For TITLE tag
+				 */
+				titleFontWeight = (chartConf.title.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
+				
+				if (chartConf.title.style.fontStyle == "italic" || chartConf.chart.style.fontStyle == "italic")
+				{
+					titleFontStyle = "italic";
+				}
+				else if (chartConf.title.style.fontStyle == "normal" || chartConf.chart.style.fontStyle == "normal")
+				{
+					titleFontStyle = "normal";
+				}
+				
+				titleTextDecoration = (chartConf.title.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
+				
+				/**
+				 * For SUBTITLE TAG
+				 */
+				subtitleFontWeight = (chartConf.subtitle.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
+				
+				if (chartConf.subtitle.style.fontStyle == "italic" || chartConf.chart.style.fontStyle == "italic")
+				{
+					subtitleFontStyle = "italic";
+				}
+				else if (chartConf.subtitle.style.fontStyle == "normal" || chartConf.chart.style.fontStyle == "normal")
+				{
+					subtitleFontStyle = "normal";
+				}
+				
+				subtitleTextDecoration = (chartConf.subtitle.style.textDecoration == "underline" || chartConf.chart.style.textDecoration == "underline") ? "underline" : "none";
+				
+//				console.log(titleFontWeight);
+//				console.log(titleFontStyle);
+//				console.log(titleTextDecoration);
+//				console.log(subtitleFontWeight);
+//				console.log(subtitleFontStyle);
+//				console.log(subtitleTextDecoration);
+								
 				// Set title
 				d3.select("#main").append("div")
 					.style("color",chartConf.title.style.color)
 					.style("text-align",chartConf.title.style.align)
 		    		.style("font-family",chartConf.title.style.fontFamily)
 		    		.style("font-size",chartConf.title.style.fontSize)
-		    		.style("font-style",chartConf.title.style.fontStyle ? chartConf.title.style.fontStyle : "none")
-		    		.style("font-weight",chartConf.title.style.fontWeight ? chartConf.title.style.fontWeight : "none")
-		    		.style("text-decoration",chartConf.title.style.textDecoration ? chartConf.title.style.textDecoration : "none")
+		    		.style("font-style",titleFontStyle)
+		    		.style("font-weight",titleFontWeight)
+		    		.style("text-decoration", titleTextDecoration)
 					.text(chartConf.title.text);	
 								
 				// Set subtitle
@@ -483,9 +553,9 @@ function renderWordCloud(chartConf){
 					.style("color",chartConf.subtitle.style.color)
 					.style("text-align",chartConf.subtitle.style.align)
 		    		.style("font-family",chartConf.subtitle.style.fontFamily)
-		    		.style("font-style",chartConf.subtitle.style.fontStyle ? chartConf.subtitle.style.fontStyle : "none")
-		    		.style("font-weight",chartConf.subtitle.style.fontWeight ? chartConf.subtitle.style.fontWeight : "none")
-		    		.style("text-decoration",chartConf.subtitle.style.textDecoration ? chartConf.subtitle.style.textDecoration : "none")
+		    		.style("font-style", subtitleFontStyle)
+		    		.style("font-weight", subtitleFontWeight)
+		    		.style("text-decoration", subtitleTextDecoration)
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
 			      

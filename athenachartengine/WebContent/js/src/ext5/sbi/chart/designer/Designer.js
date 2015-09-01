@@ -245,32 +245,128 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var legendShow = null;
 				var legendStyle = null;
 				var legendX = null;
-				var legendY = null;				
+				var legendY = null;		
+				
+				var templateToReturn = null;
 				
 				switch(style)
 				{				
 					case "red":
 //						console.log("RED");
-						chartStyleName = "red";
+						//chartStyleName = "red";
 //						styleCustom = false;
-						chartHeight = 400;
-						chartWidth = 1000;
-						chartIsCockpitEngine = "false";
-						chartOrientation = "horizontal";
-						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;";						
-						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
-						titleText = "Insert your title";						
-						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
-						subtitleText = "Insert your subtitle";						
-						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
-						emptyMessageText = "Insert your empty message (when no data for chart exists)";
-						legendFloating = false;
-						legendLayout = "";
-						legendPosition = "";
-						legendShow = false;
-						legendStyle = "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;";
-						legendX = 0;
-						legendY = 0;	
+//						chartHeight = 400;
+//						chartWidth = 1000;
+//						chartIsCockpitEngine = "false";
+//						chartOrientation = "horizontal";
+//						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;";						
+//						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+//						titleText = "Insert your title";						
+//						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+//						subtitleText = "Insert your subtitle";						
+//						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+//						emptyMessageText = "Insert your empty message (when no data for chart exists)";
+//						legendFloating = false;
+//						legendLayout = "";
+//						legendPosition = "";
+//						legendShow = false;
+//						legendStyle = "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;";
+//						legendX = 0;
+//						legendY = 0;	
+						
+						templateToReturn = 
+						
+						{
+							generic: 
+							{
+								CHART:
+								{
+									height: 400,
+									width: 1000,	
+									isCockpitEngine: "false",
+									orientation: "horizontal",
+									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;",
+									styleName: "red",
+//									styleCustom: styleCustom, 
+									
+									TITLE:
+									{
+										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+										text: "Insert your title"
+									},
+									
+									SUBTITLE:
+									{
+										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+										text: "Insert your subtitle"
+									},
+									
+									EMPTYMESSAGE:
+									{
+										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+										text: "Insert your empty message (when no data for chart exists)"
+									},
+									
+									LEGEND:
+									{
+										floating: false,
+										layout: "",
+										position: "",
+										show: false,
+										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+										x: 0,
+										y: 0
+									},
+									
+									AXES_LIST: 
+									{
+										AXIS: 
+										[														 
+									       {
+									    	   alias:'Y', 
+									    	   type: 'Serie',
+									    	   position: "",
+									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+									    	   
+									    	   MAJORGRID:
+								    		   {
+									    		   interval: "",
+									    		   style: "typeline:;color:#D8D8D8;"
+								    		   },
+									       
+								    		   MINORGRID:
+							    			   {
+								    			   interval: "", 
+								    			   style: "typeline:;color:#E0E0E0;"
+							    			   },
+								    		   
+								    		   TITLE:
+							    			   {
+								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+								    			   text: "AAA" 
+							    			   }
+							    		   },									       
+							    		   
+							    		   {
+							    			   alias:'X', 
+							    			   type: 'Category',
+							    			   position: "", 
+							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   
+							    			   TITLE:
+						    				   {
+							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    				   text: ""
+						    				   }
+					    				   }
+								        ]
+									}
+								}						
+							}
+						};
+						
+						return templateToReturn;
+						
 						break;
 						
 					case "blue":
@@ -327,54 +423,54 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * the JSON
 				 *(danilo.ristovski@mht.net)
 				 */
-				var configurationToReturn = 
-				
-				{
-					generic: 
-					{
-						CHART:
-						{
-							height: chartHeight,
-							width: chartWidth,	
-							isCockpitEngine: chartIsCockpitEngine,
-							orientation: chartOrientation,
-							style: chartStyle,
-							styleName: chartStyleName,
-//							styleCustom: styleCustom, 
-							
-							TITLE:
-							{
-								style: titleStyle,
-								text: titleText
-							},
-							
-							SUBTITLE:
-							{
-								style: subtitleStyle,
-								text: subtitleText
-							},
-							
-							EMPTYMESSAGE:
-							{
-								style: emptyMessageStyle,
-								text: emptyMessageText
-							},
-							
-							LEGEND:
-							{
-								floating: legendFloating,
-								layout: legendLayout,
-								position: legendPosition,
-								show: legendShow,
-								style: legendStyle,
-								x: legendX,
-								y: legendY
-							}
-						}						
-					}
-				};
+//				var configurationToReturn = 
+//				
+//				{
+//					generic: 
+//					{
+//						CHART:
+//						{
+//							height: chartHeight,
+//							width: chartWidth,	
+//							isCockpitEngine: chartIsCockpitEngine,
+//							orientation: chartOrientation,
+//							style: chartStyle,
+//							styleName: chartStyleName,
+////							styleCustom: styleCustom, 
+//							
+//							TITLE:
+//							{
+//								style: titleStyle,
+//								text: titleText
+//							},
+//							
+//							SUBTITLE:
+//							{
+//								style: subtitleStyle,
+//								text: subtitleText
+//							},
+//							
+//							EMPTYMESSAGE:
+//							{
+//								style: emptyMessageStyle,
+//								text: emptyMessageText
+//							},
+//							
+//							LEGEND:
+//							{
+//								floating: legendFloating,
+//								layout: legendLayout,
+//								position: legendPosition,
+//								show: legendShow,
+//								style: legendStyle,
+//								x: legendX,
+//								y: legendY
+//							}
+//						}						
+//					}
+//				};
 								
-				return configurationToReturn;
+//				return configurationToReturn;
 			
 			};			
 			
