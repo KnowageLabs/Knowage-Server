@@ -122,7 +122,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		   }
 		 }
 		
-	restServices.get("2.0/datasets").success(
+	restServices.get("2.0/datasets", "").success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log(data.errors[0].message);
