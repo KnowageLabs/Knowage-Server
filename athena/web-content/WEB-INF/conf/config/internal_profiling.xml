@@ -158,6 +158,10 @@
 			productType="AthenaSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
 			productType="AthenaSocial" organization="SPAGOBI" />
+			
+		<AUTHORIZATION productType="AthenaSocial" authorizationName="GLOSSARY" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaSocial" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaSocial" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
 		
 		<!-- Authorizations for AthenaFake -->
 		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
@@ -183,7 +187,11 @@
 		<AUTHORIZATION productType="AthenaFake" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
 		<AUTHORIZATION productType="AthenaFake" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
 		<AUTHORIZATION productType="AthenaFake" authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
-		<AUTHORIZATION productType="AthenaFake" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="SPAGOBI"/>	
+		
+		<AUTHORIZATION productType="AthenaFake" authorizationName="GLOSSARY" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="AthenaFake" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
+		
 	</DEFAULT_AUTHORIZATIONS>
 
 
