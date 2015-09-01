@@ -168,7 +168,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 				    title: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.selectDoc'),
 				    height: 400,
 				    width: 600,
-				    autoScroll: true,
+				    overflowY: 'auto',
 				    items: [
 				    {layout:'column',
 				     bodyStyle: 'border:0;padding:5',
