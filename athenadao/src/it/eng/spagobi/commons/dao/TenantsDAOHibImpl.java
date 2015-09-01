@@ -431,7 +431,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("ROLE_TYPE", "ADMIN");
 			aRole.setRoleTypeCD("ADMIN");
 			aRole.setRoleTypeID(domain.getValueId());
-			roleDAO.insertRole(aRole);
+			setDefaultAuthorizationsForAdmin(aRole);
+			// roleDAO.insertRole(aRole);
+			roleDAO.insertRoleComplete(aRole);
 			Role toReturn = roleDAO.loadByName(roleName);
 			return toReturn;
 		} catch (Exception e) {
@@ -440,6 +442,36 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private void setDefaultAuthorizationsForAdmin(Role aRole) {
+		aRole.setAbleToDeleteKpiComm(true);
+		aRole.setAbleToEditAllKpiComm(true);
+		aRole.setAbleToEditMyKpiComm(true);
+		aRole.setIsAbleToBuildQbeQuery(true);
+		aRole.setIsAbleToCreateDocuments(true);
+		aRole.setIsAbleToCreateSocialAnalysis(true);
+		aRole.setIsAbleToDoMassiveExport(true);
+		aRole.setIsAbleToEditWorksheet(true);
+		aRole.setIsAbleToEnableDatasetPersistence(true);
+		aRole.setIsAbleToHierarchiesManagement(true);
+		aRole.setIsAbleToManageUsers(true);
+		aRole.setIsAbleToSaveIntoPersonalFolder(true);
+		aRole.setIsAbleToSaveMetadata(true);
+		aRole.setIsAbleToSaveRememberMe(true);
+		aRole.setIsAbleToSaveSubobjects(true);
+		aRole.setIsAbleToSeeDocumentBrowser(true);
+		aRole.setIsAbleToSeeFavourites(true);
+		aRole.setIsAbleToSeeMetadata(true);
+		aRole.setIsAbleToSeeMyData(true);
+		aRole.setIsAbleToSeeNotes(true);
+		aRole.setIsAbleToSeeSnapshots(true);
+		aRole.setIsAbleToSeeSubobjects(true);
+		aRole.setIsAbleToSeeSubscriptions(true);
+		aRole.setIsAbleToSeeToDoList(true);
+		aRole.setIsAbleToSeeViewpoints(true);
+		aRole.setIsAbleToSendMail(true);
+		aRole.setIsAbleToViewSocialAnalysis(true);
 	}
 
 	private void setRole(Role role, int userIdInt) {
@@ -453,8 +485,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			id.setId(userIdInt); // user Id
 			sbiExtUserRole.setId(id);
 			userDAO.updateSbiUserRoles(sbiExtUserRole);
-			RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
-			userDAO.updateSbiUserRoles(sbiExtUserRole);
+			// RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
+			// userDAO.updateSbiUserRoles(sbiExtUserRole);
 		} catch (Exception e) {
 			logger.error("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
 			throw new SpagoBIRuntimeException("An unexpected error occurred while associating role [" + role.getName() + "] to user with id " + userIdInt, e);
