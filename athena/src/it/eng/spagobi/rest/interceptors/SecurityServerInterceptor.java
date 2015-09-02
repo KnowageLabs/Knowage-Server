@@ -3,21 +3,12 @@ package it.eng.spagobi.rest.interceptors;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.security.ExternalServiceController;
-import it.eng.spagobi.services.common.SsoServiceFactory;
-import it.eng.spagobi.services.common.SsoServiceInterface;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.rest.AbstractSecurityServerInterceptor;
-import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
-import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.filters.FilterIOManager;
 
@@ -25,8 +16,6 @@ import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
@@ -35,10 +24,7 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.interception.Precedence;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.Headers;
-import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.Failure;
-import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
@@ -59,14 +45,18 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	@Context
 	private HttpServletRequest servletRequest;
 
-	protected ServerResponse notAuthenticated(){
-		/* This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the
-		 * header. The browser will show a popup that requires the user credential.*/
+	@Override
+	protected ServerResponse notAuthenticated() {
+		/*
+		 * This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the header. The
+		 * browser will show a popup that requires the user credential.
+		 */
 		Headers<Object> header = new Headers<Object>();
 		header.add("WWW-Authenticate", "Basic realm='spagobi'");
 		return new ServerResponse("", 401, header);
 	}
 
+	@Override
 	protected UserProfile authenticateUser() {
 		UserProfile profile = null;
 
@@ -97,6 +87,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		return profile;
 	}
 
+	@Override
 	protected boolean isUserAuthenticatedInSpagoBI() {
 
 		boolean authenticated = true;
@@ -131,10 +122,11 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 		return authenticated;
 	}
-	
-	protected IEngUserProfile createProfile(String userId){
+
+	@Override
+	protected IEngUserProfile createProfile(String userId) {
 		SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
-		
+
 		try {
 			return GeneralUtilities.createNewUserProfile(userId);
 		} catch (Exception e) {
@@ -143,29 +135,30 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		}
 	}
 
+	@Override
 	protected IEngUserProfile getUserProfileFromSession() {
 		IEngUserProfile engProfile = null;
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();
 
 		engProfile = (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (engProfile == null) {
+			FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+			ioManager.initConetxtManager();
 			engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-		} else {
-			setUserProfileInSession(engProfile);
+			servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 		}
 
 		return engProfile;
 	}
 
+	@Override
 	protected void setUserProfileInSession(IEngUserProfile engProfile) {
 		super.setUserProfileInSession(engProfile);
-		
+
 		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 
 	public boolean accept(Class declaring, Method method) {
-		return !method.isAnnotationPresent(POST.class);
-		// return true;
+		// return !method.isAnnotationPresent(POST.class);
+		return true;
 	}
 }
