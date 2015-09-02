@@ -432,6 +432,53 @@ Ext.define('Sbi.chart.designer.Designer', {
 									
 								}
 								
+							},
+							radar:{
+								
+							},
+							scatter:{
+								
+								CHART:{
+								
+									zoomType:"xy"
+									
+								}								
+							},
+							gauge:{
+								
+								CHART:{
+									
+									PANE:{
+										endAngle:"121",
+										startAngle:"-121"
+									}
+									
+								}
+								
+							},
+							sunburst:{
+								
+								CHART:{
+									
+									opacMouseOver:"10",
+									
+									TOOLBAR:{
+										
+										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
+										
+									},
+									TIP:{
+										
+										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+										text: "insert text here"
+										
+									}
+									
+								}
+								
+							},
+							chord:{
+								
 							}
 						};
 						
@@ -1015,6 +1062,26 @@ Ext.define('Sbi.chart.designer.Designer', {
 								else if (chartType == "HEATMAP"){
 									
 									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).heatmap);
+									
+								}
+								else if (chartType == "RADAR"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).radar);
+									
+								}
+								else if (chartType == "SCATTER"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).scatter);
+									
+								}
+								else if (chartType == "GAUGE"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).gauge);
+									
+								}
+								else if (chartType == "SUNBURST"){
+									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).sunburst);
 									
 								}
 								

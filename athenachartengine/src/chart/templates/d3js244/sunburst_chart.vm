@@ -32,14 +32,15 @@
 	chart: 
 	{
 		type: '$chart.type',
-		height: '$chart.height',				
+		height: '$chart.height',
+		opacMouseOver: '$chart.opacMouseOver',				
 		
 		style:
 		{			
 			fontFamily: '$chart.style.fontFamily',
 			fontSize: '$chart.style.fontSize',				
 			backgroundColor: '$chart.style.backgroundColor',			
-			opacMouseOver: '$chart.style.opacMouseOver',
+			
 					
 			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
     			fontStyle: '$chart.style.fontWeight',

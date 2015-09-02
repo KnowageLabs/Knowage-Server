@@ -284,8 +284,6 @@ Ext.define(
 
 							result['CHART'] = CHART;
 							
-//							console.log(result);
-							
 							return result;
 						},
 
@@ -853,10 +851,8 @@ Ext.define(
 											: '') + ';';
 
 							if (chartType.toUpperCase() == "SUNBURST") {
-								chartStyle += 'opacMouseOver:'
-										+ ((chartModel.get('opacMouseOver')) ? chartModel
-												.get('opacMouseOver')
-												: '') + ';';
+								
+								CHART['opacMouseOver'] = (chartModel.get('opacMouseOver')) ? chartModel.get('opacMouseOver') : 50;
 							}
 
 							if (chartType.toUpperCase() == "WORDCLOUD") {
@@ -866,6 +862,7 @@ Ext.define(
 								CHART['minAngle'] = (chartModel.get('minAngle')) ? chartModel.get('minAngle') : '';
 								CHART['maxFontSize'] = (chartModel.get('maxFontSize')) ? chartModel.get('maxFontSize') : '';
 								CHART['wordPadding'] = (chartModel.get('wordPadding')) ? chartModel.get('wordPadding') : '';
+								
 								
 //								chartStyle += 'maxWords:'
 //										+ ((chartModel.get('maxWords')) ? chartModel
