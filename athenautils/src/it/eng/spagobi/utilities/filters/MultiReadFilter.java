@@ -22,7 +22,10 @@ public class MultiReadFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		if (httpRequest.getMethod().equals(HttpMethod.POST)) {
-			chain.doFilter(new MultiReadHttpServletRequest(httpRequest), response);
+			MultiReadHttpServletRequest multiReadHttpRequest = new MultiReadHttpServletRequest(httpRequest);
+			// this initialize the internal cache
+			multiReadHttpRequest.getInputStream().close();
+			chain.doFilter(multiReadHttpRequest, response);
 		} else {
 			chain.doFilter(request, response);
 		}

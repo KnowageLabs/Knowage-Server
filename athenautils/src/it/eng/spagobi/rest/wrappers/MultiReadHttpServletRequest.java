@@ -17,7 +17,6 @@ public class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
 
 	public MultiReadHttpServletRequest(HttpServletRequest request) throws IOException {
 		super(request);
-		cacheInputStream();
 	}
 
 	@Override
