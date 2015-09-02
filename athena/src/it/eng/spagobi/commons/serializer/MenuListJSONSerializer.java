@@ -74,6 +74,7 @@ public class MenuListJSONSerializer implements Serializer {
 	private static final String HREF_SOCIAL_ANALYSIS = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL");
 	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierarchiesEditor.jsp";
 	private static final String HREF_MANAGE_GLOSSARY_TECHNICAL = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp";
+	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp";
 
 	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
@@ -298,6 +299,17 @@ public class MenuListJSONSerializer implements Serializer {
 			glossaryManagementTechnical.put(SCALE, "large");
 			glossaryManagementTechnical.put(TARGET, "_self");
 			glossaryManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_TECHNICAL + "');");
+			tempMenuList.put(glossaryManagementTechnical);
+		}
+
+		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, funcs)) {
+			JSONObject glossaryManagementTechnical = new JSONObject();
+			glossaryManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary", locale));
+			glossaryManagementTechnical.put(ICON_ALIGN, "top");
+			glossaryManagementTechnical.put(SCALE, "large");
+			glossaryManagementTechnical.put(TARGET, "_self");
+			glossaryManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_BUSINESS + "');");
 			tempMenuList.put(glossaryManagementTechnical);
 		}
 
