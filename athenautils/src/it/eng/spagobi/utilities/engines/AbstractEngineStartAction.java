@@ -594,7 +594,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 	protected IDataSetTableDescriptor persistDataset(IDataSet dataset, Map env) {
 		IDataSetTableDescriptor descriptor = null;
-		if (!dataset.isPersisted() && !dataset.isFlatDataset()) {
+		if (!dataset.isPersisted() && (dataset.getPersistTableName()==null || dataset.getPersistTableName().equals(""))  && !dataset.isFlatDataset()) {
 			logger.debug("Dataset is neither persisted nor flat. Persisting dataset into a temporary table...");
 			IDataSource dataSource = (IDataSource) env.get(EngineConstants.DATASOURCE_FOR_WRITING);
 			if (dataSource == null) {

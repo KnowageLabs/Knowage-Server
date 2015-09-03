@@ -45,10 +45,8 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	 */
 	public String getSourceEntityUniqueName() {
 		try {
-			JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
-			String tableName = sourceTable.optString("className");
-			String tableType = sourceTable.optString("package");
-			return tableType + "." + tableName + "::" + tableName;
+			JSONObject destinationTable = relationshipJSON.getJSONObject("sourceTable");
+			return getEntityUniqueName(destinationTable);
 		} catch (JSONException t) {
 			throw new RuntimeException("Impossible to read source table's name from relationship json object", t);
 		}
@@ -60,9 +58,7 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	public String getDestinationEntityUniqueName() {
 		try {
 			JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
-			String tableName = destinationTable.optString("className");
-			String tableType = destinationTable.optString("package");
-			return tableType + "." + tableName + "::" + tableName;
+			return getEntityUniqueName(destinationTable);
 		} catch (JSONException t) {
 			throw new RuntimeException("Impossible to read destination table's name from relationship json object", t);
 		}
@@ -74,14 +70,12 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	public List<String> getSourceFieldUniqueNames() {
 		try {
 			List<String> sourceColumnNames = new ArrayList<String>();
-			
+
 			JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
-			String tableName = sourceTable.optString("className");
-			String tableType = sourceTable.optString("package");
-			
 			JSONArray sourceColumn = relationshipJSON.getJSONArray("sourceColumns");
-			for(int i = 0; i < sourceColumn.length(); i++) {
-				sourceColumnNames.add( tableType + "." +  tableName + ":" + sourceColumn.getString(i) );
+
+			for (int i = 0; i < sourceColumn.length(); i++) {
+				sourceColumnNames.add(getFieldUniqueName(sourceTable, sourceColumn.getString(i)));
 			}
 			return sourceColumnNames;
 		} catch (JSONException t) {
@@ -95,14 +89,12 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	public List<String> getDestinationFieldUniqueNames() {
 		try {
 			List<String> destinationColumnNames = new ArrayList<String>();
-			
+
 			JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
-			String tableName = destinationTable.optString("className");
-			String tableType = destinationTable.optString("package");
-			
 			JSONArray destinationColumn = relationshipJSON.getJSONArray("destinationColumns");
-			for(int i = 0; i < destinationColumn.length(); i++) {
-				destinationColumnNames.add( tableType + "." +  tableName + ":" + destinationColumn.getString(i) );
+
+			for (int i = 0; i < destinationColumn.length(); i++) {
+				destinationColumnNames.add(getFieldUniqueName(destinationTable, destinationColumn.getString(i)));
 			}
 			return destinationColumnNames;
 		} catch (JSONException t) {
@@ -126,5 +118,49 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	 */
 	public String getLabel() {
 		return relationshipJSON.optString("label");
+	}
+	
+
+	/**
+	 * retrieves the name of the entity
+	 * 
+	 * @param table
+	 * @return
+	 */
+	private String getEntityUniqueName(JSONObject table) {
+		StringBuffer name = new StringBuffer("");
+		String tableName = table.optString("className");
+		String tableType = table.optString("package");
+		// the qbe works starting from models or datasets. in the case of the datasets there isn't the tabletype but just the name of the dataset
+		if (tableType != null && tableType.length() > 0) {
+			name.append(tableType);
+			name.append(".");
+		}
+		name.append(tableName);
+		name.append("::");
+		name.append(tableName);
+		return name.toString();
+	}
+
+	/**
+	 * retrieves the name of the field
+	 * 
+	 * @param table
+	 * @param column
+	 * @return
+	 */
+	private String getFieldUniqueName(JSONObject table, String column) {
+		StringBuffer name = new StringBuffer("");
+		String tableName = table.optString("className");
+		String tableType = table.optString("package");
+		// the qbe works starting from models or datasets. in the case of the datasets there isn't the tabletype but just the name of the dataset
+		if (tableType != null && tableType.length() > 0) {
+			name.append(tableType);
+			name.append(".");
+		}
+		name.append(tableName);
+		name.append(":");
+		name.append(column);
+		return name.toString();
 	}
 }

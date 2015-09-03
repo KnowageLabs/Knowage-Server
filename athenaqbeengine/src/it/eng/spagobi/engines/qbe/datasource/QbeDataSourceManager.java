@@ -102,7 +102,7 @@ public class QbeDataSourceManager {
 		List<IDataSet> dataSets = (List<IDataSet>)dataSourceProperties.get(EngineConstants.ENV_DATASETS);
 		dataSourceProperties.remove(EngineConstants.ENV_DATASETS);
 		
-		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME, dataSourceProperties);
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
 		while(it.hasNext()) {
 			String propertyName = it.next();

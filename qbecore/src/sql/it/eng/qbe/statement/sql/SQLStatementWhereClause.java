@@ -31,7 +31,7 @@ public class SQLStatementWhereClause  extends AbstractStatementWhereClause {
 		return clause.buildClause(query, entityAliasesMaps);
 	}
 	
-	protected SQLStatementWhereClause(SQLStatement statement) {
+	public SQLStatementWhereClause(SQLStatement statement) {
 		parentStatement = statement;
 	}
 	

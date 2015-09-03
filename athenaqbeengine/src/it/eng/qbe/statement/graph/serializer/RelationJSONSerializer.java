@@ -8,10 +8,12 @@ package it.eng.qbe.statement.graph.serializer;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.properties.IModelProperties;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelObject;
 import it.eng.qbe.statement.graph.bean.Relationship;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -50,9 +52,27 @@ public class RelationJSONSerializer extends JsonSerializer<Relationship> {
 		jgen.writeStringField(TARGET_ID, value.getTargetEntity().getUniqueName());
 		jgen.writeStringField(RELATIONSHIP_NAME, value.getName());
 		jgen.writeStringField(RELATIONSHIP_ID, value.getId());
-		jgen.writeStringField(SOURCE_FIELDS, value.getSourceFieldsString());
-		jgen.writeStringField(TARGET_FIELDS, value.getTargetFieldsString());
+		jgen.writeStringField(SOURCE_FIELDS, getFieldsString(value.getSourceFields()));
+		jgen.writeStringField(TARGET_FIELDS, getFieldsString(value.getTargetFields()));
 		jgen.writeEndObject();
+	}
+	
+	protected String getFieldsString(List<IModelField> fieldsList) {
+		String name = "";
+		if (fieldsList != null) {
+			for (int i = 0; i < fieldsList.size(); i++) {
+				String tempName = (String) (fieldsList.get(i)).getProperty("label");
+				if (tempName == null) {
+					tempName = (fieldsList.get(i)).getName();
+				}
+				name = name + tempName;
+				name = name + ",";
+			}
+		}
+		if (name.length() > 1) {
+			name = name.substring(0, name.length() - 1);
+		}
+		return name;
 	}
 	
 	protected String getLabel(IModelObject item){

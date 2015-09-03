@@ -6,7 +6,6 @@
 
 package it.eng.qbe.model.structure.builder.dataset;
 
-import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
 import it.eng.qbe.model.properties.initializer.SimpleModelStructurePropertiesInitializer;
@@ -15,7 +14,7 @@ import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.ModelCalculatedField;
 import it.eng.qbe.model.structure.ModelStructure;
-import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
+import it.eng.qbe.model.structure.builder.AbstractModelStructureBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -29,11 +28,11 @@ import org.apache.log4j.Logger;
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-public class DataSetModelStructureBuilder implements IModelStructureBuilder {
+public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder {
 	private static final String FIELD_TYPE_PROPERTY = "type";
 	private static transient Logger logger = Logger.getLogger(DataSetModelStructureBuilder.class);
 
-	private IDataSource dataSource;	
+
 	IModelStructurePropertiesInitializer propertiesInitializer;
 
 	public DataSetModelStructureBuilder(DataSetDataSource dataSource) {
@@ -73,6 +72,8 @@ public class DataSetModelStructureBuilder implements IModelStructureBuilder {
 				logger.info("Entity type [" +entity.getName() + "] succesfully added to model structure");
 			}		
 			
+			
+			addRelationshipsBetweenRootEntities(modelStructure);
 			
 			logger.info("Model structure for model [" + modelName + "] succesfully built");
 			

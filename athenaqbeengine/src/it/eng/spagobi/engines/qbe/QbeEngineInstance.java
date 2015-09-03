@@ -80,6 +80,9 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 
 		dataSourceProperties.put("metadataServiceProxy", env.get(EngineConstants.ENV_METAMODEL_PROXY));
 		dataSourceProperties.put(EngineConstants.ENV_DATASETS, env.get(EngineConstants.ENV_DATASETS));
+		
+		// relation for federated datasets
+		dataSourceProperties.put(EngineConstants.ENV_RELATIONS, env.get(EngineConstants.ENV_RELATIONS));
 
 		dataSourceProperties.put("datasource", dataSrc);
 

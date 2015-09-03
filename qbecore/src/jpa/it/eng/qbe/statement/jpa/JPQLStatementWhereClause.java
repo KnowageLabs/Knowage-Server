@@ -36,37 +36,8 @@ public static transient Logger logger = Logger.getLogger(JPQLStatementWhereClaus
 	
 	static boolean injectWhereClausesEnabled = true;
 	
-	public static String injectAutoJoins(JPQLStatement parentStatement, String whereClause, Query query, Map<String, Map<String, String>> entityAliasesMaps){
-		
-		String modifiedWhereClause;
-		
-		logger.debug("IN");
-		
-		modifiedWhereClause = null;
-		try {
-			if(injectWhereClausesEnabled == true) {
-				logger.debug("Auto join functionality is enabled");
-				logger.debug("Original where clause is equal to [" + whereClause + "]");
-				JPQLStatementWhereClause clause = new JPQLStatementWhereClause(parentStatement);
-				modifiedWhereClause = clause.injectAutoJoins(whereClause, query, entityAliasesMaps);
-				logger.debug("Modified where clause is equal to [" + modifiedWhereClause + "]");
-			} else {
-				logger.warn("Auto join functionality is not enabled");
-				modifiedWhereClause = whereClause;
-				logger.debug("Where clause not modified");
-			}
-		
-			return modifiedWhereClause;
-		} catch(Throwable t) {
-			throw new RuntimeException("An unexpected error occured while injecting auto joins in where conditions", t);
-		} finally {
-			logger.debug("OUT");
-		}
-		
-		
-	}
 	
-	protected JPQLStatementWhereClause(JPQLStatement statement) {
+	public JPQLStatementWhereClause(JPQLStatement statement) {
 		parentStatement = statement;
 	}
 	

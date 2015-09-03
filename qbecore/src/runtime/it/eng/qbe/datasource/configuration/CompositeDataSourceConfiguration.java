@@ -13,6 +13,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileImpl.InLineFunction;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
@@ -22,6 +25,8 @@ import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelCalculatedField;
+import it.eng.qbe.model.structure.ModelRelationshipDescriptor;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -181,13 +186,7 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		return toReturn;
 	}
 
-	public List<IModelRelationshipDescriptor> loadRelationships() {
-		List<IModelRelationshipDescriptor> relationships = new ArrayList<IModelRelationshipDescriptor>();
-		for (IDataSourceConfiguration subConfiguration : subConfigurations) {
-			relationships.addAll(subConfiguration.loadRelationships());
-		}
-		return relationships;
-	}
+
 
 	public List<IModelViewEntityDescriptor> loadViews() {
 		List<IModelViewEntityDescriptor> views = new ArrayList<IModelViewEntityDescriptor>();
@@ -208,4 +207,58 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public List<IModelRelationshipDescriptor> loadRelationships() {
+		// check if the relations are configured for this configurations
+		if (dataSourceProperties != null) {
+			Object relations = dataSourceProperties.get(EngineConstants.ENV_RELATIONS);
+			if (relations != null) {
+				// if the relations are configured return the object
+				return loadMyRelationships((JSONObject) relations);
+			}
+		}
+		// otherwise return the relations of children
+		return loadSubRelationships();
+	}
+
+	/**
+	 * Loads relations of children nodes
+	 * 
+	 * @return
+	 */
+	private List<IModelRelationshipDescriptor> loadSubRelationships() {
+		List<IModelRelationshipDescriptor> relationships = new ArrayList<IModelRelationshipDescriptor>();
+		for (IDataSourceConfiguration subConfiguration : subConfigurations) {
+			relationships.addAll(subConfiguration.loadRelationships());
+		}
+		return relationships;
+	}
+
+	/**
+	 * Load relations from a jsonobject. The structure of the json object is the same of the relation file
+	 * 
+	 * @param relationshipsConfJSON
+	 * @return
+	 */
+	private List<IModelRelationshipDescriptor> loadMyRelationships(JSONObject relationshipsConfJSON) {
+		List<IModelRelationshipDescriptor> relationship;
+
+		relationship = new ArrayList<IModelRelationshipDescriptor>();
+
+		try {
+			JSONArray relationshipsJSON = relationshipsConfJSON.optJSONArray("relationships");
+			if (relationshipsJSON != null) {
+				for (int i = 0; i < relationshipsJSON.length(); i++) {
+					JSONObject relationshipJSON = relationshipsJSON.getJSONObject(i);
+					relationship.add(new ModelRelationshipDescriptor(relationshipJSON));
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return relationship;
+	}
+
 }

@@ -15,8 +15,13 @@ import it.eng.qbe.query.WhereField;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.jpa.JPQLStatement;
 import it.eng.qbe.statement.jpa.JPQLStatementConditionalOperators;
+import it.eng.qbe.statement.jpa.JPQLStatementWhereClause;
+import it.eng.qbe.statement.sql.SQLStatement;
+import it.eng.qbe.statement.sql.SQLStatementWhereClause;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,6 +51,7 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 	public static final String WHERE = "WHERE";
 
 	public static transient Logger logger = Logger.getLogger(AbstractStatementWhereClause.class);
+	static boolean injectWhereClausesEnabled = true;
 
 	/**
 	 * Builds the where clause part of the statement. If something goes wrong during the build process a StatementCompositionException will be thrown
@@ -467,6 +473,46 @@ public abstract class AbstractStatementWhereClause extends AbstractStatementFilt
 				}
 			}
 		}
+	}
+
+	public static String injectAutoJoins(IStatement parentStatement, String whereClause, Query query, Map<String, Map<String, String>> entityAliasesMaps) {
+
+		String modifiedWhereClause;
+
+		logger.debug("IN");
+
+		modifiedWhereClause = null;
+		try {
+			if (injectWhereClausesEnabled == true) {
+				logger.debug("Auto join functionality is enabled");
+				logger.debug("Original where clause is equal to [" + whereClause + "]");
+				AbstractStatementWhereClause clause = createNewClause(parentStatement);
+				modifiedWhereClause = clause.injectAutoJoins(whereClause, query, entityAliasesMaps);
+				logger.debug("Modified where clause is equal to [" + modifiedWhereClause + "]");
+			} else {
+				logger.warn("Auto join functionality is not enabled");
+				modifiedWhereClause = whereClause;
+				logger.debug("Where clause not modified");
+			}
+
+			return modifiedWhereClause;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while injecting auto joins in where conditions", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+	}
+
+	public static AbstractStatementWhereClause createNewClause(IStatement parentStatement) {
+		if (parentStatement instanceof JPQLStatement) {
+			return new JPQLStatementWhereClause((JPQLStatement) parentStatement);
+		}
+		if (parentStatement instanceof SQLStatement) {
+			return new SQLStatementWhereClause((SQLStatement) parentStatement);
+		}
+
+		throw new SpagoBIEngineRuntimeException("The isntance of the Statement can't be managed by SpagoBI");
 	}
 
 	public abstract IConditionalOperator getOperator(String operator);

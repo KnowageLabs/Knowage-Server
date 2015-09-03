@@ -84,6 +84,7 @@ public class DataSetConstants {
 	public static final String DS_QUERY = "SbiQueryDataSet";
 	public static final String DS_SCRIPT = "SbiScriptDataSet";
 	public static final String DS_QBE = "SbiQbeDataSet";
+	public static final String DS_FEDERATED = "SbiFederatedDataSet";
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
 	
@@ -100,6 +101,7 @@ public class DataSetConstants {
 	public static final String DATA_SOURCE_FLAT = "dataSourceFlat";
 	public static final String IS_PUBLIC = "isPublic";
 	public static final String PERSIST_TABLE_NAME = "persistTableName";
+	public static final String FEDERATED_DATASET_NAMES = "federatedDatasets";
 	
 	public static final String START = "start";
 	public static final String LIMIT = "limit";
