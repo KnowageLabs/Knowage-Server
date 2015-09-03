@@ -1,13 +1,21 @@
 package it.eng.spagobi.federateddataset.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.federateddataset.bo.FederatedDataset;
 import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -72,6 +80,58 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 	public void getSbiFederatedDataSet(Integer id) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public List<FederatedDataset> loadAllFederatedDataSets() throws EMFUserError {
+
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List<FederatedDataset> realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiFederatedDataset");
+
+			List hibList = hibQuery.list();
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toFederatedDataset((SbiFederatedDataset) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error in loading all federated datasets", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return realResult;
+	}
+
+	public FederatedDataset toFederatedDataset(SbiFederatedDataset hibFd) {
+		logger.debug("IN");
+		if (hibFd != null)
+			logger.debug("Label is " + hibFd.getLabel());
+		FederatedDataset fd = new FederatedDataset();
+		fd.setLabel(hibFd.getLabel());
+		fd.setName(hibFd.getName());
+		fd.setDescription(hibFd.getDescription());
+		fd.setRelationships(hibFd.getRelationships());
+		fd.setId_sbi_federated_data_set(hibFd.getId_sbi_federated_data_set());
+		logger.debug("OUT");
+		return fd;
 	}
 
 }
