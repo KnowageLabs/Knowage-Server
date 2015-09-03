@@ -139,7 +139,12 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 								'<dd class="box">',
 									'<div class="box-container">',
 										'<div class="box-figure">',
-											'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
+										' 			<tpl if="type == \'MODEL\'">',										
+													'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
+													'</tpl>',
+													'<tpl if="type == \'FEDERATED_DATASET\'">',										
+													'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/federatedDataset.png" alt=" " />',
+													'</tpl>',													
 											'<span class="shadow"></span>',
 											'<div class="hover">',
 												'<div class="box-actions-container">',
@@ -166,7 +171,14 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		}
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
-			this.fireEvent('executeDocument','QBE','MODEL',record);
+			if(record.data.type != undefined &&  record.data.type == "FEDERATED_DATASET"){
+				this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
+			}
+			else{
+				this.fireEvent('executeDocument','QBE','MODEL',record);
+			}
+			
+			
 	    }
 
 

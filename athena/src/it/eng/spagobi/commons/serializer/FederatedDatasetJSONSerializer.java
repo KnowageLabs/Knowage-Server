@@ -6,42 +6,42 @@
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.api.CacheResource;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.federateddataset.bo.FederatedDataset;
 
 import java.util.Locale;
 
 import org.json.JSONObject;
 
-public class MetaModelJSONSerializer implements Serializer {
+public class FederatedDatasetJSONSerializer implements Serializer {
 
 	public static final String ID = "id";
+	public static final String LABEL = "label";
 	public static final String NAME = "name";
 	public static final String DATA_SOURCE_LABEL = "data_source_label";
 	public static final String DESCRIPTION = "description";
 	public static final String CATEGORY = "category";
 	public static final String LOCKED = "locked";
 	public static final String LOCKER = "locker";
+	public static final String RELATIONSHIPS = "relationships";
 	public static final String TYPE = "type";
 	public static final String CACHE_DATA_SOURCE = "cache_data_source";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		if (!(o instanceof MetaModel)) {
-			throw new SerializationException("MetaModelJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+		if (!(o instanceof FederatedDataset)) {
+			throw new SerializationException("FederatedDatasetJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			MetaModel model = (MetaModel) o;
+			FederatedDataset fd = (FederatedDataset) o;
 			result = new JSONObject();
-			result.put(ID, model.getId());
-			result.put(NAME, model.getName());
-			result.put(DESCRIPTION, model.getDescription());
-			result.put(CATEGORY, model.getCategory());
-			result.put(DATA_SOURCE_LABEL, model.getDataSourceLabel());
-			result.put(LOCKED, model.getModelLocked());
-			result.put(LOCKER, model.getModelLocker());
-			result.put(TYPE, "MODEL");
+			result.put(ID, fd.getId_sbi_federated_data_set());
+			result.put(LABEL, fd.getLabel());
+			result.put(NAME, fd.getName());
+			result.put(DESCRIPTION, fd.getDescription());
+			result.put(RELATIONSHIPS, fd.getRelationships());
+			result.put(TYPE, "FEDERATED_DATASET");
 
 			String cacheDataSource = new CacheResource().getCacheDataSource();
 			if (cacheDataSource != null) {

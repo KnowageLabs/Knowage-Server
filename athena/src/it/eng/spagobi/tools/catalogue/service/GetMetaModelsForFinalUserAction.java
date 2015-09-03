@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.catalogue.service;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -14,6 +15,8 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.federateddataset.bo.FederatedDataset;
+import it.eng.spagobi.federateddataset.dao.ISbiFederatedDatasetDAO;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -41,6 +44,8 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 			dao.setUserProfile(this.getUserProfile());
 			List<MetaModel> allModels = null;
+			List<FederatedDataset> allFederatedDatasets = null;
+
 			List<Integer> categories = getCategories();
 
 			// the administrator can see ALL models
@@ -74,18 +79,40 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 
 			logger.debug("Read " + allModels.size() + " existing models");
 
+			logger.debug("Read federated dataset");
+			ISbiFederatedDatasetDAO federDsDao = DAOFactory.getFedetatedDatasetDAO();
+			dao.setUserProfile(this.getUserProfile());
+
+			allFederatedDatasets = federDsDao.loadAllFederatedDataSets();
+			if (allFederatedDatasets == null) {
+				allFederatedDatasets = new ArrayList<FederatedDataset>();
+			}
+			logger.debug("Read " + allFederatedDatasets.size() + " existing federated datasets");
+
+			// join models and federated datasets
+			List<Object> toReturn = new ArrayList<Object>();
+			for (Iterator iterator = allModels.iterator(); iterator.hasNext();) {
+				MetaModel mm = (MetaModel) iterator.next();
+				toReturn.add(mm);
+			}
+			for (Iterator iterator = allFederatedDatasets.iterator(); iterator.hasNext();) {
+				FederatedDataset fd = (FederatedDataset) iterator.next();
+				toReturn.add(fd);
+			}
+
 			Integer start = this.getStart();
 			logger.debug("Start : " + start);
 			Integer limit = this.getLimit();
 			logger.debug("Limit : " + limit);
 
-			int startIndex = Math.min(start, allModels.size());
-			int stopIndex = (limit > 0) ? Math.min(start + limit, allModels.size()) : allModels.size();
-			List<MetaModel> models = allModels.subList(startIndex, stopIndex);
+			int startIndex = Math.min(start, toReturn.size());
+			int stopIndex = (limit > 0) ? Math.min(start + limit, toReturn.size()) : toReturn.size();
+
+			List<Object> toReturnSublist = toReturn.subList(startIndex, stopIndex);
 
 			try {
-				JSONArray modelsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(models, null);
-				JSONObject rolesResponseJSON = createJSONResponse(modelsJSON, allModels.size());
+				JSONArray modelsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(toReturnSublist, null);
+				JSONObject rolesResponseJSON = createJSONResponse(modelsJSON, toReturn.size());
 				writeBackToClient(new JSONSuccess(rolesResponseJSON));
 			} catch (IOException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
@@ -95,7 +122,11 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects into a JSON object", e);
 			}
 
+		} catch (EMFUserError eue) {
+			logger.error("Error in getting federated datasets", eue);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error in getting federated datasets", eue);
 		} catch (JSONException e) {
+			logger.error("Cannot serialize objects into a JSON object", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects into a JSON object", e);
 		} finally {
 			logger.debug("OUT");

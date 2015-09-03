@@ -126,6 +126,17 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.modelName = modelName;
 			this.documentexecution.load(url);
 		}
+		else if(inputType == "FEDERATED_DATASET"){
+			var modelName = record.data.name;
+			var dataSourceLabel = record.data.data_source_label;
+			var url = this.qbeFromBMBaseUrl;
+			if(dataSourceLabel || dataSourceLabel!=""){
+				url = url+ 
+				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
+			}
+			this.documentexecution.modelName = modelName;
+			this.documentexecution.load(url);
+		}
 		if(inputType == "DATASET"){
 			var datasetLabel = record.data.label;
 			var dataSourceLabel = record.data.dataSource;

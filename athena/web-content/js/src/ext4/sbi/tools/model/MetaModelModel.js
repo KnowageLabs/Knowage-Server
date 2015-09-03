@@ -8,7 +8,7 @@
 
 Ext.define('Sbi.tools.model.MetaModelModel', {
     extend: 'Ext.data.Model',
-    fields: ['id', 'name', 'description','data_source_label'],
+    fields: ['id', 'name', 'description','data_source_label', "label", "relationships", "type", "cache_data_source"],
     proxy: {
         type: 'ajax',
         url : Sbi.config.serviceRegistry.getServiceUrl({

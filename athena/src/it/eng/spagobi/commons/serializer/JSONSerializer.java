@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.federateddataset.bo.FederatedDataset;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
@@ -152,7 +153,8 @@ public class JSONSerializer implements Serializer {
 		mappings.put(Parameter.class, new ParametersJSONSerialize());
 		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
 		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
-		
+		mappings.put(FederatedDataset.class, new FederatedDatasetJSONSerializer());
+
 	}
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
