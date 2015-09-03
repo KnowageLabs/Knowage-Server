@@ -20,7 +20,7 @@
         <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
     </filter-mapping>
     
-    <filter>
+<!--     <filter>
         <filter-name>MultiReadFilter</filter-name>
         <filter-class>it.eng.spagobi.utilities.filters.MultiReadFilter</filter-class>
     </filter>
@@ -33,7 +33,7 @@
     <filter-mapping>
         <filter-name>MultiReadFilter</filter-name>
         <url-pattern>/restful-services/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping> -->
 
 	<filter>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
