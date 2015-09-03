@@ -292,7 +292,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									TITLE:
 									{
 										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
-										text: "Insert your title"
+										text: "This is red chart"
 									},
 									
 									SUBTITLE:
@@ -487,7 +487,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						break;
 						
 					case "blue":
-//						console.log("BLUE");
+/*//						console.log("BLUE");
 						chartStyleName = "blue";
 //						styleCustom = false;
 						chartHeight = 600;
@@ -507,11 +507,222 @@ Ext.define('Sbi.chart.designer.Designer', {
 						legendShow = false;
 						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
 						legendX = 0;
-						legendY = 0;
+						legendY = 0;*/
+						
+						templateToReturn = 
+							
+						{
+							generic: 
+							{
+								CHART:
+								{
+									height: 500,
+									width: 1100,	
+									isCockpitEngine: "false",
+									orientation: "horizontal",
+									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;",
+									styleName: "blue",
+//									styleCustom: styleCustom, 
+									
+									TITLE:
+									{
+										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+										text: "This is blue chart"
+									},
+									
+									SUBTITLE:
+									{
+										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+										text: "Insert your subtitle"
+									},
+									
+									EMPTYMESSAGE:
+									{
+										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+										text: "Insert your empty message (when no data for chart exists)"
+									},
+									
+									LEGEND:
+									{
+										floating: false,
+										layout: "",
+										position: "",
+										show: false,
+										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+										x: 0,
+										y: 0
+									},
+									
+									AXES_LIST: 
+									{
+										AXIS: 
+										[														 
+									       {
+									    	   alias:'Y', 
+									    	   type: 'Serie',
+									    	   position: "",
+									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+									    	   
+									    	   MAJORGRID:
+								    		   {
+									    		   interval: "",
+									    		   style: "typeline:;color:#D8D8D8;"
+								    		   },
+									       
+								    		   MINORGRID:
+							    			   {
+								    			   interval: "", 
+								    			   style: "typeline:;color:#E0E0E0;"
+							    			   },
+								    		   
+								    		   TITLE:
+							    			   {
+								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+								    			   text: "AAA" 
+							    			   }
+							    		   },									       
+							    		   
+							    		   {
+							    			   alias:'X', 
+							    			   type: 'Category',
+							    			   position: "", 
+							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   
+							    			   TITLE:
+						    				   {
+							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    				   text: ""
+						    				   }
+					    				   }
+								        ]
+									}
+								}						
+							},
+							wordcloud:{
+								
+								CHART:
+								{
+									
+									maxAngle:'122',
+									maxFontSize:'52',
+									maxWords:'52',
+									minAngle:'62', 
+									sizeCriteria:'serie',
+									wordPadding:'3'
+									
+								}
+							},
+							treemap:{
+								
+							},
+							parallel:{
+								CHART:
+								{
+									AXES_LIST:{
+									
+										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+										
+									},
+									LIMIT:{
+									
+										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
+										
+									},
+									PARALLEL_TOOLTIP:{
+										
+										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
+										
+									},
+									LEGEND:{
+										
+										TITLE:{
+											
+											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+											
+										},
+										ELEMENT:{
+											
+											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+											
+										}
+										
+									}								
+								}
+								
+							},
+							heatmap:{
+								
+								CHART:{
+									
+									LEGEND:{
+										
+										style:"align:center;symbolWidth:60;"
+										
+									},
+									TOOLTIP:{
+										
+										style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
+										
+									}
+									
+								}
+								
+							},
+							radar:{
+								
+							},
+							scatter:{
+								
+								CHART:{
+								
+									zoomType:"xy"
+									
+								}								
+							},
+							gauge:{
+								
+								CHART:{
+									
+									PANE:{
+										endAngle:"122",
+										startAngle:"-122"
+									}
+									
+								}
+								
+							},
+							sunburst:{
+								
+								CHART:{
+									
+									opacMouseOver:"12",
+									
+									TOOLBAR:{
+										
+										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:15px;"
+										
+									},
+									TIP:{
+										
+										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+										text: "insert text here"
+										
+									}
+									
+								}
+								
+							},
+							chord:{
+								
+							}
+						};
+						
+						return templateToReturn;
+						
 						break;
 						
 					case "green":
-//						console.log("GREEN");
+/*//						console.log("GREEN");
 						chartStyleName = "green";
 //						styleCustom = false;
 						chartHeight = 800;
@@ -531,7 +742,218 @@ Ext.define('Sbi.chart.designer.Designer', {
 						legendShow = false;
 						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
 						legendX = 0;
-						legendY = 0;
+						legendY = 0;*/
+						
+						templateToReturn = 
+							
+						{
+							generic: 
+							{
+								CHART:
+								{
+									height: 400,
+									width: 1000,	
+									isCockpitEngine: "false",
+									orientation: "horizontal",
+									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;",
+									styleName: "blue",
+//									styleCustom: styleCustom, 
+									
+									TITLE:
+									{
+										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+										text: "This is green chart"
+									},
+									
+									SUBTITLE:
+									{
+										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+										text: "Insert your subtitle"
+									},
+									
+									EMPTYMESSAGE:
+									{
+										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+										text: "Insert your empty message (when no data for chart exists)"
+									},
+									
+									LEGEND:
+									{
+										floating: false,
+										layout: "",
+										position: "",
+										show: false,
+										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+										x: 0,
+										y: 0
+									},
+									
+									AXES_LIST: 
+									{
+										AXIS: 
+										[														 
+									       {
+									    	   alias:'Y', 
+									    	   type: 'Serie',
+									    	   position: "",
+									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+									    	   
+									    	   MAJORGRID:
+								    		   {
+									    		   interval: "",
+									    		   style: "typeline:;color:#D8D8D8;"
+								    		   },
+									       
+								    		   MINORGRID:
+							    			   {
+								    			   interval: "", 
+								    			   style: "typeline:;color:#E0E0E0;"
+							    			   },
+								    		   
+								    		   TITLE:
+							    			   {
+								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+								    			   text: "AAA" 
+							    			   }
+							    		   },									       
+							    		   
+							    		   {
+							    			   alias:'X', 
+							    			   type: 'Category',
+							    			   position: "", 
+							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   
+							    			   TITLE:
+						    				   {
+							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    				   text: ""
+						    				   }
+					    				   }
+								        ]
+									}
+								}						
+							},
+							wordcloud:{
+								
+								CHART:
+								{
+									
+									maxAngle:'123',
+									maxFontSize:'53',
+									maxWords:'53',
+									minAngle:'63', 
+									sizeCriteria:'serie',
+									wordPadding:'5'
+									
+								}
+							},
+							treemap:{
+								
+							},
+							parallel:{
+								CHART:
+								{
+									AXES_LIST:{
+									
+										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+										
+									},
+									LIMIT:{
+									
+										style:"maxNumberOfLines:21;orderTopMinBottomMax:bottom;"
+										
+									},
+									PARALLEL_TOOLTIP:{
+										
+										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:6;maxHeight:50;padding:1;border:1;borderRadius:1;"
+										
+									},
+									LEGEND:{
+										
+										TITLE:{
+											
+											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+											
+										},
+										ELEMENT:{
+											
+											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+											
+										}
+										
+									}								
+								}
+								
+							},
+							heatmap:{
+								
+								CHART:{
+									
+									LEGEND:{
+										
+										style:"align:center;symbolWidth:55;"
+										
+									},
+									TOOLTIP:{
+										
+										style:"fontFamily:Gungsuh;fontSize:26px;color:#003366;"
+										
+									}
+									
+								}
+								
+							},
+							radar:{
+								
+							},
+							scatter:{
+								
+								CHART:{
+								
+									zoomType:"xy"
+									
+								}								
+							},
+							gauge:{
+								
+								CHART:{
+									
+									PANE:{
+										endAngle:"123",
+										startAngle:"-123"
+									}
+									
+								}
+								
+							},
+							sunburst:{
+								
+								CHART:{
+									
+									opacMouseOver:"13",
+									
+									TOOLBAR:{
+										
+										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
+										
+									},
+									TIP:{
+										
+										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+										text: "insert text here"
+										
+									}
+									
+								}
+								
+							},
+							chord:{
+								
+							}
+						};
+						
+						return templateToReturn;
+						
 						break;					
 				}
 				
