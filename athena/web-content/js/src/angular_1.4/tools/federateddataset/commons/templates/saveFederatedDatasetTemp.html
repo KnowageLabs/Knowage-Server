@@ -26,7 +26,7 @@
     			<md-button ng-click="answer('close')" class="md-primary">
      				close
     			</md-button>
-    			<md-button class="md-raised" ng-click="saveFedDataSet()" class="md-primary">
+    			<md-button class="md-raised" ng-click="saveFedDataSet(); hide(); showAlert($event)" class="md-primary">
       				save
     			</md-button>
   			</div>

@@ -31,7 +31,8 @@
 		<md-toolbar class="minihead"
 			style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey; ">
 		<div class="md-toolbar-tools">
-			<h2 class="md-flex">DATASET FEDERATION</h2>
+			<i class="fa fa-bar-chart fa-2x"></i>
+			<h2 class="md-flex" style="padding-left: 14px">DATASET FEDERATION</h2>
 		</div>
 		</md-toolbar>
 
@@ -41,26 +42,28 @@
 			<div flex="49" style="margin-right: 20px; border: 2px solid grey;"">
 				<md-toolbar class="minihead" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
-					<h2 class="md-flex">Avaliable datasets</h2>
+					<i class="fa fa-list-alt fa-2x"></i>
+					<h2 class="md-flex" style="padding-left: 14px">AVALIABLE DATASETS</h2>
 				</div>
 				</md-toolbar>
-				<md-content style="height:755px;"> <md-list
+				<md-content style="height:700px;"> <md-list
 					ng-repeat="k in list" style="border: 1px solid #ddd;">
 				<md-list-item ng-click="moveToListNew(k)"> <i
-					class="dragged-icon fa fa-bars fa-2x" style="padding-right: 5px"></i>
+					class="fa fa-angle-double-right fa-2x" style="padding-right: 5px"></i>
 				{{k.label | uppercase}} </md-list-item> </md-list> </md-content>
 			</div>
 
 			<div flex="49" style="border: 2px solid grey;">
 				<md-toolbar class="minihead" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
-					<h2 class="md-flex">Selected datasets</h2>
+					<i class="fa fa-list-alt fa-2x"></i>
+					<h2 class="md-flex" style="padding-left: 14px">SELECTED DATASETS</h2>
 				</div>
 				</md-toolbar>
-				<md-content style="height:755px;"> <md-list
+				<md-content style="height:700px;"> <md-list
 					ng-repeat="k in listaNew" style="border: 1px solid #ddd;">
 				<md-list-item md-ink-ripple> <i
-					class="dragged-icon fa fa-bars fa-2x" style="padding-right: 5px"></i>
+					class="fa fa-angle-double-right fa-2x" style="padding-right: 5px"></i>
 				{{k.label | uppercase}} <span flex=""></span> <i class="fa fa-times"
 					ng-click="kickOutFromListNew(k)"></i> </md-list-item> </md-list> </md-content>
 			</div>
@@ -70,7 +73,7 @@
 			<md-toolbar class="minihead"
 				style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
 			<div class="md-toolbar-tools">
-				<h2 class="md-flex">Associations editor</h2>
+				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS EDITOR</h2>
 			</div>
 			</md-toolbar>
 			<md-content
@@ -88,7 +91,7 @@
 						<md-list ng-repeat="field in dataset.metadata.fieldsMeta"
 							ng-click="selektuj(field,dataset)"> <md-list-item
 							md-ink-ripple ng-class="{prova : field.selected }">
-						{{field.name}} </md-list-item> </md-list>
+							{{field.name}} </md-list-item> </md-list>
 					</div>
 					</md-content>
 				</div>
@@ -100,7 +103,7 @@
 			<md-toolbar class="minihead"
 				style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
 			<div class="md-toolbar-tools">
-				<h2 class="md-flex">Associations List</h2>
+				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
 				<span flex=""></span> <i class="fa fa-plus-circle fa-2x"
 					ng-click="createAssociations()"></i>
 

@@ -1,7 +1,7 @@
 var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest']);
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija207");
+	console.log("verzija208");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -205,6 +205,16 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	    $mdDialog.hide(answer);
 	  };
 	  
+	$scope.showAlert = function(ev) {
+		    $mdDialog.show(
+		      $mdDialog.alert()
+		        .parent(angular.element(document.querySelector('#popupContainer')))
+		        .clickOutsideToClose(true)
+		        .title('Operation succeeded')
+		        .ok('OK')
+		        .targetEvent(ev)
+		    );
+		  };
 	
 	
 });
