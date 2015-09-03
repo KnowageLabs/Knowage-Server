@@ -210,8 +210,6 @@
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement"
 		description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="Glossary" description="Glossary" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ManageGlossaryBusiness" description="ManageGlossaryBusiness" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ManageGlossaryTechnical" description="ManageGlossaryTechnical" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
 		
 	<!-- Authorizations for AthenaFake -->
@@ -272,8 +270,6 @@
 	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
 	<USER_FUNCTIONALITY productType="AthenaFake" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="Glossary" description="Glossary" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ManageGlossaryBusiness" description="ManageGlossaryBusiness" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ManageGlossaryTechnical" description="ManageGlossaryTechnical" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
 </USER_FUNCTIONALITIES>

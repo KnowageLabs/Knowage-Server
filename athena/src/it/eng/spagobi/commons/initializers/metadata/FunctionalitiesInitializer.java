@@ -96,38 +96,37 @@ public class FunctionalitiesInitializer extends SpagoBIInitializer {
 			Object roleTypesObject = roleTypeUserFunctionalitiesSB.getFilteredSourceBeanAttribute("ROLE_TYPE_USER_FUNCTIONALITY", "userFunctionality",
 					userFunctionalityName);
 			if (roleTypesObject == null) {
-				// throw new Exception("No role type found for user functionality [" + userFunctionalityName + "] in product type ["+productType+"]!!!");
-			} else {
-				StringBuffer roleTypesStrBuffer = new StringBuffer();
-				Set roleTypes = new HashSet();
-				if (aUserFunctionality.getRoleType() != null) {
-					roleTypes.addAll(aUserFunctionality.getRoleType());
-				}
-				if (roleTypesObject instanceof SourceBean) {
-					SourceBean roleTypeSB = (SourceBean) roleTypesObject;
+				throw new Exception("No role type found for user functionality [" + userFunctionalityName + "] in product type [" + productType + "]!!!");
+			}
+			StringBuffer roleTypesStrBuffer = new StringBuffer();
+			Set roleTypes = new HashSet();
+			if (aUserFunctionality.getRoleType() != null) {
+				roleTypes.addAll(aUserFunctionality.getRoleType());
+			}
+			if (roleTypesObject instanceof SourceBean) {
+				SourceBean roleTypeSB = (SourceBean) roleTypesObject;
+				String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
+				roleTypesStrBuffer.append(roleTypeCd);
+				SbiDomains domainRoleType = findDomain(aSession, roleTypeCd, "ROLE_TYPE");
+				roleTypes.add(domainRoleType);
+			} else if (roleTypesObject instanceof List) {
+				List roleTypesSB = (List) roleTypesObject;
+				Iterator roleTypesIt = roleTypesSB.iterator();
+				while (roleTypesIt.hasNext()) {
+					SourceBean roleTypeSB = (SourceBean) roleTypesIt.next();
 					String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
 					roleTypesStrBuffer.append(roleTypeCd);
+					if (roleTypesIt.hasNext()) {
+						roleTypesStrBuffer.append(";");
+					}
 					SbiDomains domainRoleType = findDomain(aSession, roleTypeCd, "ROLE_TYPE");
 					roleTypes.add(domainRoleType);
-				} else if (roleTypesObject instanceof List) {
-					List roleTypesSB = (List) roleTypesObject;
-					Iterator roleTypesIt = roleTypesSB.iterator();
-					while (roleTypesIt.hasNext()) {
-						SourceBean roleTypeSB = (SourceBean) roleTypesIt.next();
-						String roleTypeCd = (String) roleTypeSB.getAttribute("roleType");
-						roleTypesStrBuffer.append(roleTypeCd);
-						if (roleTypesIt.hasNext()) {
-							roleTypesStrBuffer.append(";");
-						}
-						SbiDomains domainRoleType = findDomain(aSession, roleTypeCd, "ROLE_TYPE");
-						roleTypes.add(domainRoleType);
-					}
 				}
-				aUserFunctionality.setRoleType(roleTypes);
-
-				logger.debug("Inserting UserFunctionality with name = [" + aUSerFunctionalitySB.getAttribute("name") + "] associated to role types ["
-						+ roleTypesStrBuffer.toString() + "]...");
 			}
+			aUserFunctionality.setRoleType(roleTypes);
+
+			logger.debug("Inserting UserFunctionality with name = [" + aUSerFunctionalitySB.getAttribute("name") + "] associated to role types ["
+					+ roleTypesStrBuffer.toString() + "]...");
 
 			aSession.save(aUserFunctionality);
 		}
