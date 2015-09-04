@@ -170,8 +170,43 @@ author:
  					);
 
  		  });
-		
-	</script>
+ 		
+ 		</script>
+ 		
+ 		<script language="javascript" type="text/javascript">
+			function saveFromCockpit(){
+				
+				Sbi.trace("[Chart.saveFromCockpit]: IN");
+				var result = false;
+				var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
+				
+				var chartEngineWidgetDesigner = window.parent.cockpitPanel.widgetContainer.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.customConfPanel.designer;
+				
+				if (errorMessages == false) {
+					var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
+					
+					chartEngineWidgetDesigner.chartTemplate = exportedAsOriginalJson;
+					chartEngineWidgetDesigner.setAggregationsOnChartEngine();
+					chartEngineWidgetDesigner.setErrorMessage(null);
+					
+					result = true;					
+					
+				}else{
+					chartEngineWidgetDesigner.setErrorMessage(errorMessages);
+// 	  				Ext.Msg.show({
+// 	  					title : LN('sbi.chartengine.validation.errormessage'),
+// 	  					message : errorMessages,
+// 	  					icon : Ext.Msg.WARNING,
+// 	  					closable : false,
+// 	  					buttons : Ext.Msg.OK
+// 	  				});
+	  				result = false;
+				}
+				
+				Sbi.trace("[Chart.saveFromCockpit]: OUT");
+				return result;
+			}
+    </script>
 	
 	</body>
 </html>
