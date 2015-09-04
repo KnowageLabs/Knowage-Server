@@ -508,23 +508,49 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 			Sbi.trace("You have to define the widget before confirming");
 			Ext.Msg.show({
 				title: 'Warning',
-				msg: LN('sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'),
+				msg: LN('Sbi.cockpit.core.WidgetContainer.applyWidgetEditorWizardState'),
 				buttons: Ext.Msg.OK,
 				icon: Ext.MessageBox.WARNING
 			});
 			return;
 		}
 		
-		if(wizardState.wtype === Sbi.constants.cockpit.chart && !Sbi.isValorized(wizardState.wconf.chartTemplate)){
-			Ext.Msg.show({
-				title: 'Warning',
-				msg: LN('Sbi.cockpit.core.WidgetContainer.applyWidgetEditorChartTemplate'),
-				buttons: Ext.Msg.OK,
-				icon: Ext.MessageBox.WARNING
-			});
-			return;
+        //chart engine iframe check and save template
+		if(wizardState.wtype === Sbi.constants.cockpit.chart){			
+			
+			var chartDesigner = this.widgetEditorWizard.getWidgetEditorPage().widgetEditorPanel.mainPanel.customConfPanel.designer;
+			var el = chartDesigner.getEl();
+			if(Sbi.isNotValorized(el)){
+				Ext.Msg.show({
+					title: LN('sbi.data.editor.association.AssociationEditor.warning'),
+					msg: LN('sbi.cockpit.widgets.chartengine.chartEngine.noChartCreatedError'),
+					buttons: Ext.Msg.OK,
+					icon: Ext.MessageBox.WARNING
+				});
+				return;
+			}
+			var iFrameHTML = Ext.DomQuery.selectNode("iframe", el.dom);
+			
+			var isValidChartTemplate = iFrameHTML.contentWindow.saveFromCockpit();
+			
+			if(!isValidChartTemplate){
+				
+				var errorMessage = Sbi.isNotValorized(chartDesigner.getErrorMessage()) ? LN('sbi.cockpit.widgets.chartengine.chartEngine.genericChartError') 
+						: 	chartDesigner.getErrorMessage()				
+				
+				Ext.Msg.show({
+					title: LN('sbi.data.editor.association.AssociationEditor.warning'),
+					msg: errorMessage,
+					buttons: Ext.Msg.OK,
+					icon: Ext.MessageBox.WARNING
+				});
+				return;
+			}
+			
+			wizardState = this.widgetEditorWizard.getWizardState(true);
 			
 		}
+		
 		
 		if(wizardState.wtype !== Sbi.constants.cockpit.chart){
 			
