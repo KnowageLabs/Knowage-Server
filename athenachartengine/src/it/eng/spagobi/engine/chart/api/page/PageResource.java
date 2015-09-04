@@ -179,6 +179,19 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance = ChartEngine.createInstance(chartTemplate, getIOManager().getEnv());
 				engineInstance.getEnv().put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
+				if (!jsonWidgetDataIn.isNull("jsonData") && jsonWidgetDataIn.get("jsonData") != null) {
+
+					String jsonData = null;
+
+					if (jsonWidgetDataIn.get("jsonData") instanceof String) {
+						jsonData = jsonWidgetDataIn.getString("jsonData");
+					} else if (jsonWidgetDataIn.get("jsonData") instanceof JSONObject) {
+						jsonData = jsonWidgetDataIn.getJSONObject("jsonData").toString();
+					}
+
+					engineInstance.getEnv().put("METADATA", jsonData);
+				}
+
 				if (!jsonWidgetDataIn.isNull("aggregations") && jsonWidgetDataIn.get("aggregations") != null) {
 
 					String aggregations = null;
