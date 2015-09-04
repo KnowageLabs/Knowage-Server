@@ -10,7 +10,6 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
@@ -79,7 +78,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				profile = (UserProfile) UserUtilities.getUserProfile(user);
 			}
 		} catch (Throwable t) {
-			// Do nothing: it will return null
+			logger.trace("Problem during authentication, returning null", t);
 		} finally {
 			logger.trace("OUT");
 		}
@@ -94,30 +93,9 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
-		if (engProfile != null) {
-			// verify if the profile stored in session is still valid
-			String userId = null;
-			try {
-				userId = getUserIdentifier();
-			} catch (Exception e) {
-				logger.debug("User identifier not found");
-				throw new SpagoBIRuntimeException("User identifier not found", e);
-			}
-			if (userId != null && userId.equals(engProfile.getUserUniqueIdentifier().toString()) == false) {
-				logger.debug("User is authenticated but the profile store in session need to be updated");
-				engProfile = this.getUserProfileFromUserId();
-			} else {
-				logger.debug("User is authenticated and his profile is already stored in session");
-			}
-
-		} else {
-			engProfile = this.getUserProfileFromUserId();
-			if (engProfile != null) {
-				logger.debug("User is authenticated but his profile is not already stored in session");
-			} else {
-				logger.debug("User is not authenticated");
-				authenticated = false;
-			}
+		if (engProfile == null) {
+			authenticated = false;
+			logger.debug("User profile not in session.");
 		}
 
 		return authenticated;
@@ -140,12 +118,12 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		IEngUserProfile engProfile = null;
 
 		engProfile = (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		if (engProfile == null) {
-			FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-			ioManager.initConetxtManager();
-			engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-			servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-		}
+		// if (engProfile == null) {
+		// FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+		// ioManager.initConetxtManager();
+		// engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
+		// servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		// }
 
 		return engProfile;
 	}
