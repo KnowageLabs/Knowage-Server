@@ -2001,6 +2001,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            xtype: 'image',
   		            src: '/athenachartengine/img/save.png',
   		            cls: 'tool-icon',
+  		            hidden: isCockpit,
   		            listeners: {
   		            	click: {
   		            		element: 'el',
