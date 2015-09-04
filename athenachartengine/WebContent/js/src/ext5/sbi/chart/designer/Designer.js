@@ -2047,23 +2047,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 //  		            								console.log("RAZLICITO");
 ////  		            							globalThis.styleCustom
   		            							
-  		            							
-  		            							
-  		            							if(isCockpit){
-  		            								var chartEngineWidgetDesigner = window.parent.cockpitPanel.widgetContainer.widgetEditorWizard.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.customConfPanel.designer;
-  		            								
-  		            								chartEngineWidgetDesigner.chartTemplate = exportedAsOriginalJson;
-  		            								chartEngineWidgetDesigner.setAggregationsOnChartEngine();
-  		            								Ext.getBody().unmask();
-  		            							}else{
-  		            								var parameters = {
-  	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
-  	  		            									docLabel: docLabel
-  	  		            							};
-  	  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
-  	  		            							Ext.getBody().unmask();
-  		            							}
-  		            								
+  		            							var parameters = {
+  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
+  		            									docLabel: docLabel
+  		            							};
+  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
+  		            							Ext.getBody().unmask();  		            								
   		            						}
   		            					}
   		            				});
