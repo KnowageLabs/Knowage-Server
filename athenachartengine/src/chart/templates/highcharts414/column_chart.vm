@@ -565,7 +565,7 @@
                 lineWidth: 2
             }
         },
-        #if($chart.isCockpitEngine == 'true')
+        #if($chart.isCockpitEngine == 'true' && $chart.outcomingEventsEnabled == 'true')
         series: {
             cursor: 'pointer',
             point: {
