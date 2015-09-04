@@ -19,25 +19,29 @@ Sbi.cockpit.editor.widget.WidgetEditorMainPanel = function(config) {
 
 	this.init();
 
-	if(this.widgetType === Sbi.constants.cockpit.chart){
-		c = {
-			    activeTab: 0,
-			    items: [this.customConfPanel]
-			};
-		
-	} else {
-		c = {
-			    activeTab: 0,
-			    items: [this.genericConfPanel,this.customConfPanel]
-			};
-	}
+//	if(this.widgetType === Sbi.constants.cockpit.chart){
+//		c = {
+//			    activeTab: 0,
+//			    items: [this.customConfPanel],
+//			    //We don't want to show Custom Conf. tab when it's the only tab for the Chart Engine Widget
+//				tabBar: {
+//					hidden: true
+//				}
+//			};
+//		
+//	} else {
+//		c = {
+//			    activeTab: 0,
+//			    items: [this.genericConfPanel,this.customConfPanel]
+//			};
+//	}
+	
+	c = {
+	    activeTab: 0,
+	    items: [this.genericConfPanel,this.customConfPanel]
+	};
 
 	Sbi.cockpit.editor.widget.WidgetEditorMainPanel.superclass.constructor.call(this, c);
-
-	//We don't want to show Custom Conf. tab when it's the only tab for the Chart Engine Widget
-	if(this.widgetType === Sbi.constants.cockpit.chart){
-		this.child(this.customConfPanel).tab.hide();
-	}
 
 };
 
@@ -71,12 +75,14 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorMainPanel, Ext.tab.Panel, {
 	 * Initialize the GUI
 	 */
 	, init: function(){
-		if(this.widgetType === Sbi.constants.cockpit.chart){
-			this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel({wcId: this.wcId, widgetType: this.widgetType});
-		} else{
-			this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel({wcId: this.wcId, widgetType: this.widgetType});
-			this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel({wcId: this.wcId});
-		}
+//		if(this.widgetType === Sbi.constants.cockpit.chart){
+//			this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel({wcId: this.wcId, widgetType: this.widgetType});
+//		} else{
+//			this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel({wcId: this.wcId, widgetType: this.widgetType});
+//			this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel({wcId: this.wcId});
+//		}
+		this.customConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel({wcId: this.wcId, widgetType: this.widgetType});
+		this.genericConfPanel = new Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel({wcId: this.wcId, widgetType: this.widgetType});
 	}
 
 	// -----------------------------------------------------------------------------------------------------------------

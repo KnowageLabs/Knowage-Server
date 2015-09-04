@@ -12,7 +12,7 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner = function(config) {
 	
 	var defaultSettings = {
 		name: 'chartEngineWidgetDesigner',
-		title: LN('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title'),
+//		title: LN('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title'),
 	};
 
 	
@@ -30,7 +30,10 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner = function(config) {
 	c = {
 		layout: 'fit',
 		height: 500,
-		items: [this.iFrameContent]
+		header: false,
+		border: false,
+		items: [this.iFrameContent],
+		tools: []
 	};
 
 	Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner.superclass.constructor.call(this, c);
@@ -60,7 +63,9 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 	
 	iFrameId: null,
 	
-	aggregations: null
+	aggregations: null,
+	
+	errorMsg: null
 
 	, getDesignerState: function(running) {
 		Sbi.trace("[ChartEngineWidgetDesigner.getDesignerState]: IN");
@@ -111,8 +116,9 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 	    	var randomId = Ext.id();
 	    	
 			this.iFrameContent = Ext.create('Ext.panel.Panel',{
+				header:		false,
 			    autoScroll: true,
-			    html: '<iframe name="' + this.iFrameId + '" src="" width="100%" height="600"></iframe>',
+			    html: 		'<iframe name="' + this.iFrameId + '" src="" width="100%" height="600"></iframe>',
 			    listeners: {
 	                render: function () {
 	                	
@@ -215,6 +221,14 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 				this.aggregations['categories'] = categories;
 			}
 		}
+	}
+	
+	, setErrorMessage: function (msg){
+		this.errorMsg = msg;
+	}
+	
+	, getErrorMessage: function(){
+		return this.errorMsg;
 	}
 	
 });

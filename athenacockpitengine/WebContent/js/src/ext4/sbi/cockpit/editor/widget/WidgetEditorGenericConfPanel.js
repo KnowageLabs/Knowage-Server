@@ -8,12 +8,12 @@ Ext.ns("Sbi.cockpit.editor.widget");
 
 Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel = function(config) {
 
-	this.initFields();
+	this.initFields(config);
 
 	var defaultSettings = {
 		xtype: 'form',
 		name:'WidgetEditorGenericConfPanel',
-		title:'Generic Configuration',
+		title: LN('sbi.cockpit.core.WidgetContainer.genericConfiguration'),
 		layout: 'form',
 		bodyPadding: '5 5 0',
 		items: this.fields
@@ -62,7 +62,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		});
 	}
 
-	, initFields: function() {
+	, initFields: function(config) {
 
 		this.re = new RegExp("^([A-Z0-9 ]*)$","i");
 
@@ -77,6 +77,7 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		    enableLinks: false,
 		    enableSourceEdit: false,
 		    enableLists: false,
+		    hidden: config.widgetType === Sbi.constants.cockpit.chart
 		});
 		
 		var titlePerc = Ext.create('Ext.form.field.Number', {
@@ -87,7 +88,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		    name: 'titlePerc',
 	        value: 10,
 	        maxValue: 30,
-	        minValue: 1
+	        minValue: 1,
+	        hidden: config.widgetType === Sbi.constants.cockpit.chart
 		});
 		
 //		var title = new Ext.form.field.Text({
@@ -111,7 +113,8 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
 		var description = new Ext.form.field.TextArea({
 			fieldLabel: 'Description',
 			name: 'description',
-            allowBlank: true
+            allowBlank: true,
+            hidden: config.widgetType === Sbi.constants.cockpit.chart
 		});
 
 		var incomingeventsenabled = new Ext.form.field.Checkbox({
@@ -124,12 +127,15 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorGenericConfPanel, Ext.Panel, {
             checked: true
 		});
 
+		var outcomingeventsenabledDescription = config.widgetType !== Sbi.constants.cockpit.chart ? LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description') 
+				: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.chartdescription');
+		
 		var outcomingeventsenabled = new Ext.form.field.Checkbox({
             name: 'outcomingeventsenabled',
             fieldLabel: LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.label'),
             boxLabel: '&nbsp;',
             afterBoxLabelTpl : '<span class="help" data-qtip="'
-            	+ LN('sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description')
+            	+ outcomingeventsenabledDescription
             	+ '">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
             checked: true
 		});

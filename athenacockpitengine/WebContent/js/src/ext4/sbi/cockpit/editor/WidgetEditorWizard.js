@@ -25,8 +25,7 @@ Sbi.cockpit.editor.WidgetEditorWizard = function(config) {
 		title: "Widget editor"
 	    , layout:'fit'
 	    , width: 1000
-	    , height: 500
-//	    , height: 600
+	    , height: 600
 	    , closeAction:'hide'
 	    , plain: true
 	    , modal: true
@@ -93,19 +92,15 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 						dataset: widgetConf.storeId
 					});
 				}
-
+	
 				this.getWidgetEditorPage().setPageState(widgetConf);
 				Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: move to page [" + 1 + "]");
 				this.editorMainPanel.moveToPage (1);
 				// if opening in editing mode open second tab page
 				if(widget.wtype != 'selection'){
-					if(widget.wtype === Sbi.constants.cockpit.chart){
-						this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(0);
-					}else{
-						this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);
-					}					
+					this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);				
 				}
-				}else if((widget.wtype == 'text') || (widget.wtype == 'image') || (widget.wtype == 'document')) {
+			}else if((widget.wtype == 'text') || (widget.wtype == 'image') || (widget.wtype == 'document')) {
 					this.getWidgetEditorPage().setPageState(widgetConf);
 					this.editorMainPanel.moveToPage (0);
 					this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);					
@@ -118,6 +113,9 @@ Ext.extend(Sbi.cockpit.editor.WidgetEditorWizard, Ext.Window, {
 		} else {
 			Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: target component does not contains any widget");
 			this.resetWizardState();
+			if(this.editorMainPanel.widgetType === Sbi.constants.cockpit.chart){
+				this.editorMainPanel.widgetEditorPage.widgetEditorPanel.mainPanel.setActiveTabPar(1);
+			}
 			this.editorMainPanel.moveToPage(0);
 		}
 		Sbi.trace("[WidgetEditorWizard.setWizardTargetComponent]: OUT");

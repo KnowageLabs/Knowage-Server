@@ -112,6 +112,12 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		iFrameHTML.contentWindow.document.write(responseText);
 		iFrameHTML.contentWindow.document.close();
 		
+		if (!this.areIncomingEventsEnabled()) {
+			var previousStore = this.getStore();
+	     	var clone = Sbi.storeManager.cloneStore(previousStore);
+	     	this.unboundStore();
+		}
+		
 		this.doLayout();
 		
 		this.up().body.unmask();
@@ -189,8 +195,37 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		WIDGET['datasetLabel'] = this.storeId;
 		WIDGET['selections'] = this.selections;
 		WIDGET['associations'] = this.associations;
-		WIDGET['chartTemplate'] = this.wconf.chartTemplate;
+		
+		var outcomingEventsEnabled = this.wgeneric.outcomingeventsenabled;
+		var chartTemplate = this.wconf.chartTemplate;
+		
+		chartTemplate.CHART.outcomingEventsEnabled = outcomingEventsEnabled;
+		
+		WIDGET['chartTemplate'] = chartTemplate;
 		WIDGET['aggregations'] = this.aggregations;
+		
+		var chartStore = this.getStore();
+		
+		if(Sbi.isValorized(chartStore)){
+			var metaData = {};
+			metaData['metaData'] = chartStore.meta;
+			
+			var inMemoryData = chartStore.inMemoryData;
+			
+			metaData['results'] = inMemoryData.length;
+			
+			var rows = [];
+			
+			for(var i = 0; i < inMemoryData.length; i++){
+				if(Sbi.isValorized(inMemoryData[i].data)){
+					rows.push(inMemoryData[i].data)
+				}
+			}
+			
+			metaData['rows'] = rows;
+			
+			WIDGET['jsonData'] = metaData;
+		}
 		
 		result['widgetData'] = WIDGET;
 		
