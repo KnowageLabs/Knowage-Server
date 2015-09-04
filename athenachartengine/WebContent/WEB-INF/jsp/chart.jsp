@@ -69,6 +69,7 @@ author:
 	String selections = "";
 	String associations = "";
 	String widgetId = "";
+	String metaData = "";
 
 	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -89,6 +90,7 @@ author:
 		aggregations = env.get("AGGREGATIONS")!=null?(String)env.get("AGGREGATIONS"):"";
 		selections = env.get("SELECTIONS")!=null?(String)env.get("SELECTIONS"):"";
 		associations = env.get("ASSOCIATIONS")!=null?(String)env.get("ASSOCIATIONS"):"";
+		metaData = env.get("METADATA")!=null?(String)env.get("METADATA"):"";
 		widgetId = env.get("WIDGETID")!=null?(String)env.get("WIDGETID"):"";
 	}else{
 		datasetLabel = engineInstance.getDataSet().getLabel();
@@ -193,38 +195,18 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.aggregations = '<%=aggregations %>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.selections = '<%= selections %>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.associations = '<%=associations %>';
- 	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
- 				
- 				var templateContainer = Ext.create('Ext.mixin.Observable', {
- 					listeners: {
- 						dataReady: function(jsonData) {
- 							var parameters = {
- 									jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
- 									driverParams: '<%=driverParams%>',
- 									jsonData: jsonData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
- 							};
- 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 								var chartConf = Ext.JSON.decode(response.responseText, true);
- 								renderChart(chartConf);
- 							});
- 						}
- 					}
- 				});
- 				
- 			 	var coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
- 				
- 				var dataParameters = {
- 					aggregations: Sbi.chart.viewer.ChartTemplateContainer.aggregations,
- 					selections: Sbi.chart.viewer.ChartTemplateContainer.selections,
- 				};
- 				
- 				var pathParameters = [
- 						Sbi.chart.viewer.ChartTemplateContainer.datasetLabel
- 				];
-
-	 			coreServiceManager.run('loadData', dataParameters, pathParameters, function (response) {
-	 				templateContainer.fireEvent('dataReady', response.responseText);
-	 			});	
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>'; 	 			
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
+ 	 			
+				var parameters = {
+							jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+							driverParams: '<%=driverParams%>',
+							jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
+					};
+					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+						var chartConf = Ext.JSON.decode(response.responseText, true);
+						renderChart(chartConf);
+					});
  				
  			}else { 				
  				
