@@ -410,26 +410,14 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	// utility methods
 	// -----------------------------------------------------------------------------------------------------------------
 	
-	, onAddChart: function() {
-		
-		var addedComponent = this.widgetContainer.addWidgetContainerComponent();
-		//TODO check if this call needs to fire an event
-		this.widgetContainer.showAdvancedWidgetEditorWizard(addedComponent, Sbi.constants.cockpit.chart);
-		
-	}
-	
-	, onAddTables: function() {
+	, onAddWidget: function(widgetType) {
+		Sbi.trace("[MainPanel.onAddWidget]: IN");
 		// add an empty widget in the default region of the container
 		var addedComponent = this.widgetContainer.addWidgetContainerComponent();
 		//TODO check if this call needs to fire an event
-		this.widgetContainer.showAdvancedWidgetEditorWizard(addedComponent, Sbi.constants.cockpit.tables);
-	}
-	
-	, onAddStaticWidgets: function() {
-		// add an empty widget in the default region of the container
-		var addedComponent = this.widgetContainer.addWidgetContainerComponent();
-		//TODO check if this call needs to fire an event
-		this.widgetContainer.showAdvancedWidgetEditorWizard(addedComponent, Sbi.constants.cockpit.staticWidgets);
+		Sbi.trace("[MainPanel.onAddWidget]: Widget type is [" + Sbi.toSource(widgetType) + "]");
+		this.widgetContainer.showAdvancedWidgetEditorWizard(addedComponent, widgetType);
+		Sbi.trace("[MainPanel.onAddWidget]: OUT");
 	}
 
 	, onClearSelections: function() {
@@ -845,7 +833,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
      		, iconCls: 'icon_add_charts'
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.addChart')
 			, scope: this
-			, handler:  this.onAddChart
+			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.chart])
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
@@ -855,7 +843,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
      		, iconCls: 'icon_add_tables'
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.addTables')
 			, scope: this
-			, handler:  this.onAddTables
+			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.tables])
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
@@ -865,7 +853,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
      		, iconCls: 'icon_add_widget'
 			, tooltip: LN('sbi.cockpit.mainpanel.btn.addStaticWidgets')
 			, scope: this
-			, handler:  this.onAddStaticWidgets
+			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.staticWidgets])
 			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
 			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
