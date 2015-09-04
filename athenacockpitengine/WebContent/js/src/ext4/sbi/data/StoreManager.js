@@ -1932,6 +1932,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	Sbi.trace("[StoreManager.onStoreMetaChange]: IN");
 
 		try {
+			store.meta = meta;
+			
 			var fieldsMeta = {};
 
 			for(var i = 0; i < meta.fields.length; i++) {
