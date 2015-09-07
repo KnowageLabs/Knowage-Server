@@ -3,3 +3,27 @@
   background-color: #999 !important;
   color: white !important;
 }
+
+.trashcan-background{
+	background-color: #F44336 !important;
+}
+.editbtn-background{
+	background-color: #2196F3 !important;
+	
+}
+.miniheadfederation  {
+/*  position: absolute !important; */
+  background-color: #009688 !important;
+  color: white !important;
+}
+
+.miniheadfedsmall{
+	background-color: #009688 !important;
+	height: 35px;
+}
+md-toolbar.miniheadfedsmall {
+	background-color: rgb(176, 190, 197);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
+}

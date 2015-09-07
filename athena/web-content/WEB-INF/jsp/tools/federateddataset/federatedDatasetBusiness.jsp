@@ -26,10 +26,9 @@
 <body class="bodyStyle" ng-app="MYAPPNIKOLA">
 
 	<div ng-controller="MyCRTL" layout="column"
-		style="width: 100%; height: 100%; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; padding-top: 15px;"
+		style="width: 100%; height: 100%;"
 		class="contentdemoBasicUsage">
-		<md-toolbar class="minihead"
-			style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey; ">
+		<md-toolbar class="miniheadfederation">
 		<div class="md-toolbar-tools">
 			<i class="fa fa-bar-chart fa-2x"></i>
 			<h2 class="md-flex" style="padding-left: 14px">DATASET FEDERATION</h2>
@@ -37,10 +36,10 @@
 		</md-toolbar>
 
 		<md-content layout-padding=""
-			style="height: 100%; padding: 20px;border:2px solid grey;"">
+			style="height: 100%; padding: 20px;"">
 		<div ng-show="state" layout="row" layout-wrap>
-			<div flex="49" style="margin-right: 20px; border: 2px solid grey;"">
-				<md-toolbar class="minihead" style="border-bottom: 2px solid grey;">
+			<div flex="49" style="margin-right: 20px; "">
+				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
 					<i class="fa fa-list-alt fa-2x"></i>
 					<h2 class="md-flex" style="padding-left: 14px">AVALIABLE DATASETS</h2>
@@ -53,8 +52,8 @@
 				{{k.label | uppercase}} </md-list-item> </md-list> </md-content>
 			</div>
 
-			<div flex="49" style="border: 2px solid grey;">
-				<md-toolbar class="minihead" style="border-bottom: 2px solid grey;">
+			<div flex="49" >
+				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
 					<i class="fa fa-list-alt fa-2x"></i>
 					<h2 class="md-flex" style="padding-left: 14px">SELECTED DATASETS</h2>
@@ -70,23 +69,23 @@
 		</div>
 
 		<div ng-hide="state">
-			<md-toolbar class="minihead"
-				style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
+			<md-toolbar class="miniheadfedsmall"
+				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS EDITOR</h2>
 			</div>
 			</md-toolbar>
 			<md-content
-				style=" padding: 5px; border: 2px solid grey; height:340px">
+				style=" padding: 5px;  height:340px">
 			<div ng-repeat="dataset in listaNew">
 				<div style="width: 250px; float: left; padding: 5px;">
-					<md-toolbar class="minihead"
-						style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
+					<md-toolbar class="miniheadfedsmall"
+						style="">
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{dataset.label | uppercase}}</h2>
 					</div>
 					</md-toolbar>
-					<md-content style="border: 2px solid grey; height:300px;">
+					<md-content style=" height:300px;">
 					<div ng-show="true">
 						<md-list ng-repeat="field in dataset.metadata.fieldsMeta"
 							ng-click="selektuj(field,dataset)"> <md-list-item
@@ -100,8 +99,8 @@
 		</div>
 
 		<div ng-hide="state" style="padding-top: 5px">
-			<md-toolbar class="minihead"
-				style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
+			<md-toolbar class="miniheadfedsmall"
+				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
 				<span flex=""></span> <i class="fa fa-plus-circle fa-2x"
@@ -111,23 +110,35 @@
 
 
 			</md-toolbar>
-			<md-content style="border: 2px solid grey; height:300px">
+			<md-content style=" height:300px">
 
 			<div style="padding: 10px">
-				<md-toolbar class="minihead"
-					style="border-left: 2px solid grey; border-top: 2px solid grey; border-right: 2px solid grey;">
-				<div class="md-toolbar-tools">
-					<h2 class="md-flex">Relations</h2>
-				</div>
-				</md-toolbar>
-				<md-content style=" border: 2px solid grey; height:235px">
+				
+				<md-content style="height:235px">
 				<div>
 					<md-list> <md-list-item style="list-style: none;"
-						ng-repeat="k in associationArray"> {{k}} <span
-						flex=""></span> <i class="fa fa-trash-o"
-						ng-click="kickOutFromAssociatonArray(k)"></i> </md-list-item> </md-list>
+						ng-repeat="k in associationArray">
+							{{k}}
+							<span flex=""></span> 
+							<md-fab-speed-dial md-open="demoBI.isOpen" md-direction="{{demoBI.selectedDirection}}" ng-class="demo.selectedMode">
+							<md-fab-trigger>
+									<md-button aria-label="menu" class="md-fab md-raised md-mini">
+									<i class="fa fa-angle-left fa-2x md-raised"></i>
+								</md-button> 
+							</md-fab-trigger> 
+							<md-fab-actions>
+							
+								<md-button aria-label="trash" class="md-fab md-raised md-mini trashcan-background">
+									 <i class="fa fa-trash-o" ng-click="kickOutFromAssociatonArray(k)"></i>
+								</md-button>
+								<md-button aria-label="" class="md-fab md-raised md-mini editbtn-background">
+									 <i class="fa fa-pencil-square-o"></i>
+								</md-button>
+								<i class="icon-edit"></i>								
+							</md-fab-actions> 
+						</md-fab-speed-dial>
+						<!-- <span flex=""></span> <i class="fa fa-trash-o" ng-click="kickOutFromAssociatonArray(k)"></i> </md-list-item> </md-list> -->
 				</div>
-
 				</md-content>
 			</md-content>
 		</div>
