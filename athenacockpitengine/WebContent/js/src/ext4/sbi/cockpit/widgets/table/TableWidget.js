@@ -119,7 +119,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			Sbi.trace("[TableWidget.boundStore]: reconfiguring the grid...");
 			var columns = this.initColumns();
 			this.grid.reconfigure(this.getStore(), columns);
-			Sbi.trace("[TableWidget.boundStore]: the grid has been reconfigured succesfully");
+			Sbi.trace("[TableWidget.boundStore]: the grid has been reconfigured successfully");
 		} else {
 			Sbi.trace("[TableWidget.boundStore]: the grid is not yet initialized.");
 		}
@@ -173,10 +173,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 
 		var columns = [];
 		var columnIndexer = meta.fields.length + 1;
-
-		for(var j = 0; j < this.wconf.visibleselectfields.length; j++) {
 			
-			var visibleSelectField = this.wconf.visibleselectfields[j];
+		var visibleselectfields = this.wconf.visibleselectfields;
+		for(var j = 0; j < visibleselectfields.length; j++) {
+			
+			var visibleSelectField = visibleselectfields[j];
 			
 			if(visibleSelectField.calculatedFieldFlag != undefined && visibleSelectField.calculatedFieldFlag == true) {
 				var newColumnName = "column_" + columnIndexer;
@@ -236,6 +237,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				}
 			}
 		}
+		
 		Sbi.trace("[TableWidget.onStoreMetaChange]: visible fields are [" + columns.join(",") + "]");
 		
 		this.grid.reconfigure(this.getStore(), fields);
@@ -458,7 +460,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		/* END Styling */
 		
 		if (visibleField.columnWidth && visibleField.columnWidth != null && visibleField.columnWidth != '') {
-			field.width = parseInt(visibleField.columnWidth);
+			var width = parseInt(visibleField.columnWidth);
+			field.width = width;
+		} else if (visibleField.columnWidth === 0){
+			field.hidden = true;
 		} else {
 			field.flex = 1;
 		}
@@ -536,7 +541,6 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 					
 					var re = new RegExp('\\s+' + columnId + '\\s+', 'g');
 					calculatedFieldFormula = calculatedFieldFormula.replace(re, " (record.get('" + dataIndex + "')) ");
-					
 				}
 
 				return eval(calculatedFieldFormula);

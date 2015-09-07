@@ -52,7 +52,10 @@ Sbi.cockpit.widgets.table.QueryFieldsContainerPanel = function(config) {
 	            ddGroup : this.ddGroup || 'crosstabDesignerDDGroup',
 	            wcId: this.wcId
 	        },
-	    	forceFit: true
+	    	forceFit: true,
+//	    	getRowClass: function(record, rowIndex, rowParams, store){
+//	            return record.get("hiddenForCalculatedFieldFlag") == true ? "hidden" : "x-grid-row";
+//	        }
 	    }
 		, tools: [
 //			        {
@@ -145,6 +148,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	      , {name: 'fontDecoration', type: 'string'}
 	      , {name: 'calculatedFieldFlag', type: 'boolean'}
 	      , {name: 'calculatedFieldFormula', type: 'string'}
+	      , {name: 'hiddenForCalculatedFieldFlag', type: 'boolean'}
 	])
 	
 	, calculatedFieldWizard : null
@@ -207,7 +211,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	                 'scale', 	'backgroundColor', 'columnWidth',
 	                 'fontType', 'fontSize', 'fontWeight', 'fontColor', 
 	                 'fontDecoration', 'calculatedFieldFlag', 'calculatedFieldFormula', 
-	                 'iconCls',  'nature', 'values', 
+	                 'hiddenForCalculatedFieldFlag', 'iconCls',  'nature', 'values', 
 	                 'valid',  'sortable', /*'width', */ 'columnName'
 	                 ]
 		});
@@ -247,24 +251,24 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	   	    , renderer : function(value, metaData, record, rowIndex, colIndex, store){
 	   	    	Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
 
-	   	    	var functVar = '';
-	   	    	if(record.get("funct") != null && record.get("funct") != '' && record.get("funct") != 'NaN' && record.get("funct") != 'null')
-	   	    	{
-	   	    		functVar = record.get("funct");
-	   	    		functVar = '('+functVar+')';
-	   	    		}
-
-	   	    	var templateData = Ext.apply({}, {
-            		id: Ext.id()
-            		, text:  record.get("alias")
-            		, funct: functVar
-            		, iconCls: (record.data.valid != undefined && !record.data.valid)? 'x-btn-invalid': record.get("iconCls")
-            	}, this.templateArgs);
-        		var htmlFragment = this.template.apply(templateData);
-
-        		//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
-        		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
-        		return htmlFragment;
+   	    		var functVar = '';
+   	    		if(record.get("funct") != null && record.get("funct") != '' && record.get("funct") != 'NaN' && record.get("funct") != 'null')
+   	    		{
+   	    			functVar = record.get("funct");
+   	    			functVar = '('+functVar+')';
+   	    		}
+   	    		
+   	    		var templateData = Ext.apply({}, {
+   	    			id: Ext.id()
+   	    			, text:  record.get("alias")
+   	    			, funct: functVar
+   	    			, iconCls: (record.data.valid != undefined && !record.data.valid)? 'x-btn-invalid': record.get("iconCls")
+   	    		}, this.templateArgs);
+   	    		var htmlFragment = this.template.apply(templateData);
+   	    		
+   	    		//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
+   	    		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
+   	    		return htmlFragment;
 	    	}
 	        , scope: this
 	    };
@@ -335,8 +339,21 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 //				});
 //				return;
 //			}
+			
+			// Checks if there is a runtime hidden field created by a calculated field
+			// and if present removes it
+			var recordIndexInsideStore = this.store.findExact('id', aRow.data.id);
+			if (recordIndexInsideStore !== -1) {
+				var record = this.store.getAt(recordIndexInsideStore);
+				var recordHiddenForCalculatedFieldFlag = record.get('hiddenForCalculatedFieldFlag');
+				
+				if(recordHiddenForCalculatedFieldFlag) {
+					this.store.remove(record);
+				}
+			}
+			
 			if(aRow.data.nature === 'attribute'){
-				if (this.store.findExact('id', aRow.data.id) !== -1) {
+				if (recordIndexInsideStore !== -1) {
 					Ext.Msg.show({
 						   title: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.title'),
 						   msg: LN('sbi.crosstab.attributescontainerpanel.cannotdrophere.attributealreadypresent'),
@@ -368,8 +385,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromQueryFieldsPanel]: OUT");
 	}
 
-	,
-	notifyDropFromItSelf: function(ddSource) {
+	, notifyDropFromItSelf: function(ddSource) {
 		Sbi.trace("[QueryFieldsContainerPanel.notifyDropFromItSelf]: IN");
 
         var sm = this.getSelectionModel();
@@ -453,6 +469,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					fontDecoration: record.data.fontDecoration,
 					calculatedFieldFlag: record.data.calculatedFieldFlag,
 					calculatedFieldFormula: record.data.calculatedFieldFormula,
+					hiddenForCalculatedFieldFlag: record.data.hiddenForCalculatedFieldFlag,
 				};
 			
 				this.chooserWindow = new Sbi.cockpit.widgets.table.AggregationChooserWindow(defFormState);
@@ -503,6 +520,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						fontDecoration = formState.fontDecoration;
 						calculatedFieldFlag = formState.calculatedFieldFlag;
 						calculatedFieldFormula = formState.calculatedFieldFormula;
+						hiddenForCalculatedFieldFlag = formState.hiddenForCalculatedFieldFlag;
 					
 					if(columnType !== undefined && columnType !== null && columnType !== "") {
 						record.data.columnType = columnType;
@@ -554,6 +572,10 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 						if(calculatedFieldFormula !== undefined && calculatedFieldFormula != null) {
 							record.data.calculatedFieldFormula = calculatedFieldFormula;
 						}
+					}
+					
+					if(hiddenForCalculatedFieldFlag !== undefined && hiddenForCalculatedFieldFlag != null && hiddenForCalculatedFieldFlag != "") {
+						record.data.hiddenForCalculatedFieldFlag = hiddenForCalculatedFieldFlag;
 					}
 					
 					thisPanel.getView().refresh();
@@ -689,7 +711,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 	
 	, showInLineCalculatedFieldWizard: function(targetRecord) { //copied by SelectGridPanel.js
 		// get all records
-		var records = this.store.queryBy( function(record) {
+		var datasetStore = Sbi.storeManager.getStoresById('datasetStore_' + this.wcId)[0];
+		var records = datasetStore.queryBy( function(record) {
 			return record;
 		});
 		
@@ -753,12 +776,78 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     	});
 		
     	this.inLineCalculatedFieldWizard.on('apply', function(win, formState, targetRecord){
+    		var datasetMetafields = this.getDatasetMetafields();
+    		var calculatedFieldFormula = this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim();
+    		
+    		var fieldsToAddMap = {}; //object containing the fields to add to the table for calculated fields computes
+    		
+    		
+    		var calculatedFieldFormulaToMatch = ' ' + calculatedFieldFormula + ' ';
+    		for(var metafieldIndex = 0; metafieldIndex < datasetMetafields.length; metafieldIndex++) {
+    			var metafield = datasetMetafields[metafieldIndex];
+    			
+    			var metafieldId = metafield.id;
+    			
+    			metafieldId = metafieldId //regex substitution
+					.replace(/\\/g, '\\\\') //NB. this must be the first replace!!
+					.replace(/\(/g, '\\(')
+					.replace(/\)/g, '\\)')
+					.replace(/\^/g, '\\^')
+					.replace(/\$/g, '\\$')
+					.replace(/\{/g, '\\{')
+					.replace(/\}/g, '\\{')
+					.replace(/\[/g, '\\[')
+					.replace(/\]/g, '\\]')
+					.replace(/\./g, '\\.')
+					.replace(/\*/g, '\\*')
+					.replace(/\+/g, '\\+')
+					.replace(/\?/g, '\\?')
+					.replace(/\|/g, '\\|')
+					.replace(/\</g, '\\<')
+					.replace(/\>/g, '\\>')
+					.replace(/\-/g, '\\-')
+					.replace(/\&/g, '\\&')
+				;
+				
+				var re = new RegExp('\\s+' + metafieldId + '\\s+', 'g');
+				
+				if(calculatedFieldFormulaToMatch.match(re) && !fieldsToAddMap[metafieldId]) {
+					fieldsToAddMap[metafieldId] = metafield;
+				}
+    		}
+    		
+    		var fieldsMetaKeys = Object.keys(fieldsToAddMap);
+    		var storeDataColumnKeys = this.store.data.keys;
+    		for(var i = 0; i < fieldsMetaKeys.length; i++){
+    			var key = fieldsMetaKeys[i];
+    			
+    			if(storeDataColumnKeys.indexOf( fieldsToAddMap[key].id ) < 0) { //if the column is not yet present in the store
+    				this.addField({
+        				id: fieldsToAddMap[key].id, 
+        				alias: fieldsToAddMap[key].alias, 
+        				calculatedFieldFlag: false, 
+        				columnType: "TEXT",
+        				columnWidth: 0,
+        				decimals: 0,
+        				funct: 'NONE',
+        				iconCls: fieldsToAddMap[key].nature,
+        				hiddenForCalculatedFieldFlag: true,
+        				nature: fieldsToAddMap[key].nature,
+        				text: fieldsToAddMap[key].alias,
+        				uniqueName: fieldsToAddMap[key].alias,
+        				value: 'fields["' + fieldsToAddMap[key].id + '"]"',
+        				values: "[]"
+        			});
+    			}
+    		}
+    		
     		var calculatedId = 'calculated_' + formState.alias.replace(/\s+/g, '_');
+    		
     		var field = {
 				id: calculatedId, 
 				alias: formState.alias, 
 				calculatedFieldFlag: true,
-				calculatedFieldFormula: this.inLineCalculatedFieldWizard.getCalculatedFieldFormula().trim()
+				calculatedFieldFormula: calculatedFieldFormula
 			};
     		
     		if(targetRecord) {
@@ -776,5 +865,21 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     			});
     		}
     	}, this);
+	}
+	
+	, getDatasetMetafields : function() {
+		var metafields = [];
+		
+		var datasetStore = Sbi.storeManager.getStoresById('datasetStore_' + this.wcId)[0];
+		var data = datasetStore.data;
+		
+		for(i = 0; i < data.length; i++) {
+			var record = data.items[i];
+			var metafield = Ext.apply({}, record.data );
+			
+			metafields.push(metafield);
+		}
+		
+		return metafields;
 	}
 });

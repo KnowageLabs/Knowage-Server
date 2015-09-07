@@ -113,7 +113,6 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
     , displayRefreshButton: null  // if true, display the refresh button
 
 
-
     // =================================================================================================================
 	// METHODS
 	// =================================================================================================================
@@ -137,7 +136,6 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 
 		Sbi.trace("[WidgetEditorFieldPalette.refreshFieldsList]: OUT");
 	}
-
 
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -166,6 +164,53 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 	 */
 	, init: function() {
 		this.initGrid();
+	}
+	
+	, initGrid: function() {
+		var c = this.gridConfig;
+		
+		this.initStore();
+		
+		this.template = new Ext.XTemplate(this.renderTpl1);
+		this.template.compile();
+		
+		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
+			id: this.wcId + '__' + 'field-grid',
+			store: this.store,
+			hideHeaders: true,
+			autoScroll: false,
+			viewConfig: {
+				plugins: {
+					ptype: 'gridviewdragdrop',
+					dragText: 'Drag and drop to reorganize',
+					ddGroup: this.wcId + '__' + 'cockpitDesignerDDGroup',
+					enableDrop: false
+				}
+			},
+			columns: [{
+				id:'alias'
+					, header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
+					, flex: 1
+					, sortable: true
+					, dataIndex: 'alias'
+						, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
+							Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
+							
+							var templateData = Ext.apply({}, {
+								id: Ext.id()
+								, text:  record.get("alias")
+								, iconCls: record.get("iconCls")
+							}, this.templateArgs);
+							var htmlFragment = this.template.apply(templateData);
+							
+							//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
+							Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
+							return htmlFragment;
+						}
+			, scope: this
+			}],
+			stripeRows: false
+		}));
 	}
 
 	, initStore: function() {
@@ -209,66 +254,18 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 		this.store.on('load', function(){
 			Sbi.trace("[WidgetEditorFieldPalette.onLoad]: store loaded");
 			this.fireEvent("validateInvalidFieldsAfterLoad", this);
+			
+			//Prova memorizzazione store
+			if(this.store.data.length > 0){
+				this.store.storeId = 'datasetStore_' + this.wcId;
+				Sbi.storeManager.addStore(this.store);
+			}
 		}, this);
 
 		Sbi.trace("[WidgetEditorFieldPalette.initStore]: OUT");
 	}
 
-
-
-
-    , initGrid: function() {
-    	var c = this.gridConfig;
-
-    	this.initStore();
-
-    	this.template = new Ext.XTemplate(this.renderTpl1);
-        this.template.compile();
-
-		this.grid = new Ext.grid.GridPanel(Ext.apply(c || {}, {
-			id: this.wcId + '__' + 'field-grid',
-	        store: this.store,
-	        hideHeaders: true,
-	        autoScroll: false,
-            viewConfig: {
-				plugins: {
-					ptype: 'gridviewdragdrop',
-		            dragText: 'Drag and drop to reorganize',
-		            ddGroup: this.wcId + '__' + 'cockpitDesignerDDGroup',
-		            enableDrop: false
-		        }
-			},
-	        columns: [{
-	        	id:'alias'
-            	, header: LN('sbi.formbuilder.queryfieldspanel.fieldname')
-            	, flex: 1
-            	, sortable: true
-            	, dataIndex: 'alias'
-            	, renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: IN");
-
-            		var templateData = Ext.apply({}, {
-	            		id: Ext.id()
-	            		, text:  record.get("alias")
-	            		, iconCls: record.get("iconCls")
-	            	}, this.templateArgs);
-            		var htmlFragment = this.template.apply(templateData);
-
-            		//Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: htmlFragment ["  + htmlFragment + "]");
-            		Sbi.trace("[WidgetEditorFieldPalette.renderGridRow]: OUT");
-            		return htmlFragment;
-		    	}
-	            , scope: this
-            }],
-	        stripeRows: false
-	    }));
-    }
-
-
     // public methods
-
-
-
     , getFields : function () {
     	var fields = [];
     	var count = this.store.getCount();

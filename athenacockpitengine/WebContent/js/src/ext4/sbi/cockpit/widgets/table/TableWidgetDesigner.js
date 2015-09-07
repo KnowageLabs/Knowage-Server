@@ -53,8 +53,7 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 	this.tableDesigner = new Sbi.cockpit.widgets.table.QueryFieldsCardPanel({
 		ddGroup: this.ddGroup,
 		title: 'Table Designer',
-		wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__"))
-			
+		wcId: this.wcId || this.ddGroup.substring(0, this.ddGroup.indexOf("__")),
 	});
 	
 	this.initTableOptionsTab();
@@ -129,6 +128,7 @@ Sbi.cockpit.widgets.table.TableWidgetDesigner = function(config) {
 
 Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.WidgetDesigner, {
 	tableDesigner: null
+	
 	
 	//field to select widget font type
 	, fontTypeCombo: null
@@ -749,9 +749,12 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 //		state.summaryRowFormula = this.summaryRowFormulaField.getValue();
 		/* END Table options */
 		
+		// Setting dataset metafields for table masking
+		state.datasetMetafields = this.getDatasetMetafields();
+		
 		this.getFontState(state);		
 
-		// if all measures are aggregate set category and series: category are attributes, seriesare measure with aggregation function
+		// if all measures are aggregate set category and series: category are attributes, series are measure with aggregation function
 		var atLeastOneAggregate = false;
 		var areAllMeasureAggregate = true;
 		var measureNumber = 0;
@@ -760,7 +763,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			var  field = state.visibleselectfields[i];
 			if(field.nature == 'measure'){
 				measureNumber++;
-				if(field.funct != null && field.funct != 'NaN' && field.funct != '' ){
+				if(field.funct != null && field.funct != 'NaN' && field.funct != ''){
 					atLeastOneAggregate = true;
 				}
 				if(field.funct == null || field.funct == 'NaN' || field.funct == ''){
@@ -1083,5 +1086,23 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		}
 				
 		Sbi.trace("[TableWidgetDesigner.getFontState]: OUT");		
+	}
+	
+	, getDatasetMetafields : function() {
+		
+		var metafields = [];
+		
+		var datasetStore = Sbi.storeManager.getStoresById('datasetStore_' + this.wcId)[0];
+		var data = datasetStore.data;
+		
+		
+		for(i = 0; i < data.length; i++) {
+			var record = data.items[i];
+			var metafield = Ext.apply({}, record.data );
+			
+			metafields.push(metafield);
+		}
+		
+		return metafields;
 	}
 });
