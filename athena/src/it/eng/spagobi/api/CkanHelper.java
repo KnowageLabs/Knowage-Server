@@ -57,15 +57,18 @@ public class CkanHelper {
 		try {
 			IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			UserProfile userProfile = (UserProfile) profile;
-			String ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
+			String ckanApiKey = null;
+			if (userProfile != null) {
+				ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
+			}
 
 			String fileURL = request.getParameter("url");
 			String fileName = request.getParameter("id");
 			String fileType = request.getParameter("format");
 			fileExtension = fileType;
 
-			logger.info("User [id : " + userProfile.getUserId() + ", name : " + userProfile.getUserName() + "] " + "is uploading file [" + fileName + "."
-					+ fileType + "]");
+			// logger.info("User [id : " + userProfile.getUserId() + ", name : " + userProfile.getUserName() + "] " + "is uploading file [" + fileName + "."
+			// + fileType + "]");
 
 			File file = checkAndCreateDir(fileName + "." + fileType.toLowerCase());
 

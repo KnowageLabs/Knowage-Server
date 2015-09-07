@@ -272,4 +272,5 @@
 	<USER_FUNCTIONALITY productType="AthenaFake" name="Glossary" description="Glossary" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
+	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 </USER_FUNCTIONALITIES>

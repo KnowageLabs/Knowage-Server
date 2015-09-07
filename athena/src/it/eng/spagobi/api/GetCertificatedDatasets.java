@@ -67,7 +67,8 @@ public class GetCertificatedDatasets {
 
 		FilterIOManager ioManager = new FilterIOManager(request, null);
 		ioManager.initConetxtManager();
-		IEngUserProfile profile = (IEngUserProfile) ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);
+		// IEngUserProfile profile = (IEngUserProfile) ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		JSONObject JSONReturn = new JSONObject();
 		JSONArray datasetsJSONArray = new JSONArray();

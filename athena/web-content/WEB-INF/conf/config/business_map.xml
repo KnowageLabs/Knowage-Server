@@ -102,6 +102,8 @@
         <MAP_REST_SERVICE serviceUrl="/modellocker/unlock" businessProcess="publicFunctionality" />			 						 						
 				 						 						
 		<MAP_REST_SERVICE serviceUrl="/authorizations" businessProcess="ProfileManagement" />	
+		
+		<MAP_REST_SERVICE serviceUrl="/ckan-management/download" businessProcess="CkanIntegrationFunctionality" />
 
 	</MAP_REST_SERVICES>
 	

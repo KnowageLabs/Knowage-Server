@@ -55,11 +55,12 @@ public class CkanDataProxy extends AbstractDataProxy {
 			Assert.assertNotNull(profileAttributes, "User profile attributes not found!!");
 			// the ckan api key is the user unique identifier: see it.eng.spagobi.security.OAuth2SecurityServiceSupplier
 			String ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
-			Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
+			// Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
 
 			// recover the file from resources!
 			String filePath = this.resPath;
 			inputStream = getInputStreamFromURL(filePath, ckanApiKey);
+			Assert.assertNotNull(inputStream, "Impossible to get http stream for web resource");
 			dataReader.setMaxResults(this.getMaxResultsReader());
 			dataStore = dataReader.read(inputStream);
 		} catch (Throwable t) {
