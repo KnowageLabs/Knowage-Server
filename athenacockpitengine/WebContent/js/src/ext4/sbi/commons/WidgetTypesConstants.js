@@ -14,5 +14,6 @@ Sbi.constants.cockpit = {
 		image:		'image',
 		text:		'text',
 		document:	'document',
-		staticWidgets: 'staticWidgets'
+		staticWidgets: 'staticWidgets',
+		analyticalResources: 'analyticalResources'
 };

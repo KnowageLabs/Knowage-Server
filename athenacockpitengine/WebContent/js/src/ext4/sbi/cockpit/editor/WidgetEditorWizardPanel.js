@@ -95,7 +95,7 @@ wizardPanel.getDatasetBrowserPage().getUsedDatasets();
 		this.pages = new Array();
 
 		//static widgets don't have a dataset browser page
-		if(this.widgetType !== Sbi.constants.cockpit.staticWidgets){
+		if(this.widgetType !== Sbi.constants.cockpit.staticWidgets && this.widgetType !== Sbi.constants.cockpit.analyticalResources){
 			this.initDatasetBrowserPage();
 			this.pages.push(this.datasetsBrowserPage);
 			Sbi.trace("[WidgetEditorWizardPanel.initPages]: dataset browser page succesfully adedd");

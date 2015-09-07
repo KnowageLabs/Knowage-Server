@@ -182,6 +182,10 @@
 		background-image: url('../img/ico_add_charts.png') !important;
 	}
 	
+	.icon_add_analyticalresources {
+		background-image: url('../img/icon_add_analyticalresources.png') !important;
+	}
+	
 	.icon_add_tables {
 		background-image: url('../img/ico_add_tables.png') !important;
 	}

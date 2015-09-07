@@ -858,7 +858,16 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
 		 }));
 
-
+		tbItems.push(  new Ext.Button({
+			id: 'addAnalyticalResources'
+     		, iconCls: 'icon_add_analyticalresources'
+			, tooltip: LN('sbi.cockpit.mainpanel.btn.addAnalyticalResources')
+			, scope: this
+			, handler:  Ext.Function.pass(this.onAddWidget, [Sbi.constants.cockpit.analyticalResources])
+			//, hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+			, hidden: Sbi.config.environment === 'DOCBROWSER' && this.isViewDocumentMode()
+		 }));
+		
 		tbItems.push(  new Ext.Button({
 			id: 'cleanCache'
      		, iconCls: 'icon_clean_cache_widget'

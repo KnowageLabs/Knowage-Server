@@ -997,16 +997,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     		
     		if(component.widget.wtype === Sbi.constants.cockpit.chart  ){
     			editorWizardType = Sbi.constants.cockpit.chart;
-    		}
-    		
-    		if(component.widget.wtype === Sbi.constants.cockpit.table || component.widget.wtype === Sbi.constants.cockpit.crosstab  ){
+    		}else if(component.widget.wtype === Sbi.constants.cockpit.table || component.widget.wtype === Sbi.constants.cockpit.crosstab  ){
     			editorWizardType = Sbi.constants.cockpit.tables;
-    		}
-    		
-    		if(component.widget.wtype === Sbi.constants.cockpit.image 
-    				|| component.widget.wtype === Sbi.constants.cockpit.text 
-    				|| component.widget.wtype === Sbi.constants.cockpit.document ){
+    		}else if(component.widget.wtype === Sbi.constants.cockpit.image 
+    				|| component.widget.wtype === Sbi.constants.cockpit.text ){
     			editorWizardType = Sbi.constants.cockpit.staticWidgets;
+    		}else if(component.widget.wtype === Sbi.constants.cockpit.document){
+    			editorWizardType = Sbi.constants.cockpit.analyticalResources;
     		}
     		
     		this.showAdvancedWidgetEditorWizard(component, editorWizardType);
