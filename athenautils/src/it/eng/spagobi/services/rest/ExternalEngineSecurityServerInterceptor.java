@@ -10,7 +10,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import java.lang.reflect.Method;
 
@@ -72,12 +71,16 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 
 	@Override
 	protected IEngUserProfile getUserProfileFromSession() {
-		IEngUserProfile engProfile = null;
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();
-		engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-		return engProfile;
+		return (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
+
+	// @Override
+	// protected void setUserProfileInSession(IEngUserProfile engProfile) {
+	// super.setUserProfileInSession(engProfile);
+	// FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
+	// ioManager.initConetxtManager();
+	// ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+	// }
 
 	@Override
 	protected IEngUserProfile createProfile(String userId) {

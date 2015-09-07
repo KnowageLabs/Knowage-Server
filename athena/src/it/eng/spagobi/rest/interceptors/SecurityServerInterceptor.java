@@ -88,16 +88,13 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 	@Override
 	protected boolean isUserAuthenticatedInSpagoBI() {
-
 		boolean authenticated = true;
-
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
 		if (engProfile == null) {
 			authenticated = false;
 			logger.debug("User profile not in session.");
 		}
-
 		return authenticated;
 	}
 
@@ -115,24 +112,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 	@Override
 	protected IEngUserProfile getUserProfileFromSession() {
-		IEngUserProfile engProfile = null;
-
-		engProfile = (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		// if (engProfile == null) {
-		// FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		// ioManager.initConetxtManager();
-		// engProfile = (IEngUserProfile) ioManager.getContextManager().get(IEngUserProfile.ENG_USER_PROFILE);
-		// servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
-		// }
-
-		return engProfile;
-	}
-
-	@Override
-	protected void setUserProfileInSession(IEngUserProfile engProfile) {
-		super.setUserProfileInSession(engProfile);
-
-		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		return (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
 
 	public boolean accept(Class declaring, Method method) {

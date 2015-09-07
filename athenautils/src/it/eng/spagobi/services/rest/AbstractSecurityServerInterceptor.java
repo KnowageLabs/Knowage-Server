@@ -11,7 +11,6 @@ import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.FilterIOManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -198,8 +197,6 @@ public abstract class AbstractSecurityServerInterceptor {
 	protected abstract IEngUserProfile getUserProfileFromSession();
 
 	protected void setUserProfileInSession(IEngUserProfile engProfile) {
-		FilterIOManager ioManager = new FilterIOManager(servletRequest, null);
-		ioManager.initConetxtManager();
-		ioManager.getContextManager().set(IEngUserProfile.ENG_USER_PROFILE, engProfile);
+		servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, engProfile);
 	}
 }
