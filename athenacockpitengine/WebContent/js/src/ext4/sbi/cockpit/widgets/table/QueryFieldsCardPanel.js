@@ -133,6 +133,12 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsCardPanel, Ext.Panel, {
 		this.un('afterLayout', this.setActiveItem, this);
     	if (this.tableDesigner.getContainedValues().length > 0) {
     		Sbi.trace("[QueryFieldsCardPanel.setActiveItem]: the designer contains [" + this.tableDesigner.getContainedValues().length + "] fields");
+    		
+    		// apply filter for hide fields
+    		this.tableDesigner.store.filterBy(function(record){
+    			return !record.get('hiddenForCalculatedFieldFlag');
+    		});
+    		
     		this.getLayout().setActiveItem( 1 );
     	} else {
     		Sbi.trace("[QueryFieldsCardPanel.setActiveItem]: The designer contains no field");

@@ -309,11 +309,7 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 			}, {
 		 		iconCls: 'icon_delete_tablerow',
 		 		tooltip: LN('sbi.qbe.selectgridpanel.headers.delete.column'),
-		 		handler: function(grid, rowIndex, colIndex) {
-		 			var rec = grid.getStore().getAt(rowIndex);
-		 			grid.getStore().remove(rec);
-		 	        this.fireEvent('storeChanged', grid.getStore().getCount());
-		 		}
+		 		handler: this.removeFieldFromStore
 		 	}]
 	    }
 	    
@@ -770,13 +766,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     		
     		var fieldsToAddMap = {}; //object containing the fields to add to the table for calculated fields computes
     		
-    		
     		var calculatedFieldFormulaToMatch = ' ' + calculatedFieldFormula + ' ';
     		for(var metafieldIndex = 0; metafieldIndex < datasetMetafields.length; metafieldIndex++) {
     			var metafield = datasetMetafields[metafieldIndex];
     			
     			var metafieldId = metafield.id;
-    			
     			metafieldId = metafieldId //regex substitution
 					.replace(/\\/g, '\\\\') //NB. this must be the first replace!!
 					.replace(/\(/g, '\\(')
@@ -799,7 +793,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 				;
 				
 				var re = new RegExp('\\s+' + metafieldId + '\\s+', 'g');
-				
 				if(calculatedFieldFormulaToMatch.match(re) && !fieldsToAddMap[metafieldId]) {
 					fieldsToAddMap[metafieldId] = metafield;
 				}
@@ -872,5 +865,100 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		}
 		
 		return metafields;
+	}
+	
+	, removeFieldFromStore: function(grid, rowIndex, colIndex) {
+		var rec = grid.getStore().getAt(rowIndex);
+		
+		grid.getStore().clearFilter();
+		
+		var isCalculatedField = rec.get('calculatedFieldFlag');
+		
+		var storeItems = grid.getStore().data.items;
+		if(isCalculatedField) {
+			var calculatedFieldFormula = rec.get('calculatedFieldFormula');
+			var calculatedFieldFormulaToMatch = ' ' + calculatedFieldFormula + ' ';
+			
+			var hiddenFieldsToRemove = {}; // key - counter
+			// check for store the id of hidden fields involved
+			for(var i = 0; i < storeItems.length; i++) {
+				var item = storeItems[i];
+				
+				//skip the chosen record and visible fields
+				if(item.get('id') === rec.get('id') || !item.get('hiddenForCalculatedFieldFlag')) { 
+					continue;
+				} else {
+					var itemId = item.get('id');
+					var itemIdRegex = new RegExp('\\s+' + itemId + '\\s+', 'g');
+					if(item.get('hiddenForCalculatedFieldFlag') && calculatedFieldFormulaToMatch.match(itemIdRegex)) {
+						hiddenFieldsToRemove[itemId] = 0;
+					}
+				}
+			}
+
+			// check if hidden fields to remove are used in other calculated formula fields
+			for(var i = 0; i < storeItems.length; i++) {
+				var item = storeItems[i];
+				
+				if(item.get('calculatedFieldFlag')) { 
+					continue;
+				} else {
+					
+					var hiddenFieldsToRemoveKeys = Object.keys(hiddenFieldsToRemove);
+					for( var k = 0; k < hiddenFieldsToRemoveKeys.length; k++) {
+						var key = hiddenFieldsToRemoveKeys[k];
+						
+						if(key === item.get('id')) {
+							hiddenFieldsToRemove[key]++
+						}
+					}
+				}
+			}
+			
+			// remove hidden fields counted just once
+			var hiddenFieldsToRemoveKeys = Object.keys(hiddenFieldsToRemove);
+			for(var k = 0; k < hiddenFieldsToRemoveKeys.length; k++) {
+				var key = hiddenFieldsToRemoveKeys[k];
+				
+				if(hiddenFieldsToRemove[key] == 1) {
+					var recordToRemove = grid.getStore().getById(key);
+					grid.getStore().remove(recordToRemove);
+				}
+			}
+			
+			// finally remove the calculated field
+			grid.getStore().remove(rec);
+			
+			grid.getStore().filterBy(function(record){
+    			return !record.get('hiddenForCalculatedFieldFlag');
+    		});
+			
+		} else { // remove normal visible field
+			var canRemoveField = true;
+			
+			for(var i = 0; i < storeItems.length && canRemoveField; i++) {
+				var item = storeItems[i];
+				
+				if(!item.get('calculatedFieldFlag')) { 
+					continue;
+				} else {
+					var itemCalculatedFormulaToMatch = ' ' + item.get('calculatedFieldFormula') + ' ';
+					
+					var recIdRegex = new RegExp('\\s+' + rec.get('id') + '\\s+', 'g');
+					if(itemCalculatedFormulaToMatch.match(recIdRegex)) {
+						canRemoveField = false;
+						rec.set('hiddenForCalculatedFieldFlag', true);
+						rec.set('columnWidth', 0);
+					}
+				}
+			}
+			
+			if(canRemoveField) {
+				grid.getStore().remove(rec);
+			}
+		}
+		
+//		grid.getStore().remove(rec);
+        this.fireEvent('storeChanged', grid.getStore().getCount());
 	}
 });

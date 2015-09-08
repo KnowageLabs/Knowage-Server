@@ -731,6 +731,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		var state = Sbi.cockpit.widgets.table.TableWidgetDesigner.superclass.getDesignerState(this);
 		state.wtype = 'table';
 		if(this.tableDesigner.rendered === true) {
+			this.tableDesigner.tableDesigner.store.clearFilter();
+			
 			state.visibleselectfields = this.tableDesigner.tableDesigner.getContainedValues();
 		} else {
 			state.visibleselectfields =  this.visibleselectfields;
