@@ -81,8 +81,18 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			items : []
 		});
 		
+		/**
+		 * Name of the current chart type.
+		 * (danilo.ristovski@mht.net)
+		 */		
+		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		/**
+		 * Additional elements and functionalities inside the Serie style popup window
+		 * for the GAUGE chart type.
+		 * (danilo.ristovski@mht.net)
+		 */
+		if (chartType == "GAUGE")
 		{
 			/**
 			 * DIAL field set for the GAUGE chart type
@@ -135,7 +145,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			);
 		
 			/**
-			 * Variables (GUI elements) for the DIAL and DATA LABELS
+			 * Variables (GUI elements) for the DIAL and DATA LABELS of the GAUGE chart
 			 */
 			
 			/**
@@ -276,8 +286,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		});
 		this.serieFieldSet.add(this.serieNameTextField);
 	
-		
-		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 		var serieType = null;
 		var serieTypes = null;
 		
@@ -297,10 +305,6 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
             ];
 		}
 		
-		/* *_* */
-		/* ************ EDITED (CHANGED): start *************** */
-		/* "disable chart type on series popup when one of the 
-		 * new chart types is selected" */
 		this.serieTypesComboBox = Ext.create('Ext.form.ComboBox', {
 			store: {
 				store: 'array',
@@ -311,11 +315,23 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			valueField: 'value',
 			displayField: 'name',
 			fieldLabel : LN('sbi.chartengine.designer.seriestype'),
-		});
+		});				
 		
-		if (chartType.toUpperCase() == 'SUNBURST')
+		/**
+		 * Disable combo box for the series type of the serie item (that we picked
+		 * and put inside the Y-axis (serie) panel) for these chart types (since we
+		 * do not need them). Even there are numerous chart types that do not need this
+		 * option (this combo box), but we will just specify those following chart types 
+		 * since for those we have the option of changing the serie configuration for 
+		 * separate serie items inside.
+		 * Y-axis panel(s)
+		 * (danilo.ristovski@mht.net)
+		 */
+		if (chartType == "CHORD" || chartType == "GAUGE" || chartType == "PIE" 
+				|| chartType == "RADAR" || chartType == "SCATTER")
+		{
 			this.serieTypesComboBox.disable();
-		/* ************ EDITED (CHANGED): end *************** */
+		}	
 		
 		this.serieFieldSet.add(this.serieTypesComboBox);		
 		
@@ -529,7 +545,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.add(this.serieFieldSet);
 		this.add(this.tooltipFieldSet);
 		
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		if (chartType == "GAUGE")
 		{
 			this.add(this.dialFieldSet);
 			this.add(this.dataLabelsFieldSet);
@@ -584,22 +600,30 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		dataAtRow.set('serieTooltipFontSize', serieTooltipFontSize);
 
 		/**
-		 * DIAL
+		 * When close the popup take care also of elements that it had when appeared
+		 * that are related to charts of type GAUGE.
+		 * (danilo.ristovski@mht.net)
 		 */
-		var backgroundColorDial = this.backgroundColorDial.getColor();
-		dataAtRow.set('backgroundColorDial', backgroundColorDial);
-		
-		/**
-		 * DATA LABELS
-		 */		
-		var yPositionDataLabels = this.yPositionDataLabels.getValue();
-		dataAtRow.set('yPositionDataLabels', yPositionDataLabels);
-		
-		var colorDataLabels = this.colorDataLabels.getColor();
-		dataAtRow.set('colorDataLabels', colorDataLabels);
-		
-		var formatDataLabels = this.formatDataLabels.getValue();
-		dataAtRow.set('formatDataLabels', formatDataLabels);
+		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		{
+			/**
+			 * DIAL
+			 */
+			var backgroundColorDial = this.backgroundColorDial.getColor();
+			dataAtRow.set('backgroundColorDial', backgroundColorDial);
+			
+			/**
+			 * DATA LABELS
+			 */		
+			var yPositionDataLabels = this.yPositionDataLabels.getValue();
+			dataAtRow.set('yPositionDataLabels', yPositionDataLabels);
+			
+			var colorDataLabels = this.colorDataLabels.getColor();
+			dataAtRow.set('colorDataLabels', colorDataLabels);
+			
+			var formatDataLabels = this.formatDataLabels.getValue();
+			dataAtRow.set('formatDataLabels', formatDataLabels);
+		}		
 		
 		this.destroy();
 	},
