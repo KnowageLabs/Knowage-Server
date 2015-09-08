@@ -206,13 +206,11 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, initStore: function(c) {
 		this.store =  new Ext.data.ArrayStore({
-	        fields: ['id', 		'alias', 	'funct', 
-	                 'columnType', 	'typeSecondary', 'decimals',
-	                 'scale', 	'backgroundColor', 'columnWidth',
-	                 'fontType', 'fontSize', 'fontWeight', 'fontColor', 
-	                 'fontDecoration', 'calculatedFieldFlag', 'calculatedFieldFormula', 
-	                 'hiddenForCalculatedFieldFlag', 'iconCls',  'nature', 'values', 
-	                 'valid',  'sortable', /*'width', */ 'columnName'
+	        fields: ['id', 		'alias', 	'funct', 'columnType', 	'typeSecondary', 'decimals',
+	                 'scale', 	'backgroundColor', 'columnWidth', 'fontType', 'fontSize', 
+	                 'fontWeight', 'fontColor', 'fontDecoration', 'calculatedFieldFlag', 
+	                 'calculatedFieldFormula', 'hiddenForCalculatedFieldFlag', 'iconCls',  'nature', 
+	                 'values', 'valid',  'sortable', /*'width', */ 'columnName'
 	                 ]
 		});
 		// if there are initialData, load them into the store
@@ -611,11 +609,6 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 
 	, addField : function (field) {
 		//Default values
-		
-//		if(field.idCounter === undefined || field.idCounter === null || field.idCounter === ''){
-//			field.idCounter = 1;
-//		}
-//		
 		if(field.columnName == undefined || field.columnName === null || field.columnName == ''){
 			field.columnName = field.alias;
 		}	
@@ -755,13 +748,9 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     		expItemGroups: [
     		    {name:'fields', text: LN('sbi.cockpit.widgets.table.calculatedFields.fields')}, 
     		    {name:'arithmeticFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.functions.arithmentic')},
-//    		    {name:'aggregationFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.aggrfunctions')},
-//    		    {name:'dateFunctions', text:  LN('sbi.cockpit.widgets.table.calculatedFields.datefunctions')}
     		],
     		fields: fields,
     		arithmeticFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
-//    		aggregationFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS, // aggregationFunctions,
-//    		dateFunctions: Sbi.commons.Constants.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
     		expertMode: false,
         	scopeComboBoxData :[
         	     ['STRING','String', LN('sbi.cockpit.widgets.table.calculatedFields.string.type')],
@@ -864,6 +853,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
     				columnWidth: null
     			});
     		}
+    		
+    		this.fireEvent('storeChanged', this.store.getCount());
     	}, this);
 	}
 	
