@@ -1,7 +1,7 @@
 var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest']);
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija208");
+	console.log("verzija220");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -216,6 +216,8 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		    );
 		  };
 	
+	
+	      
 	
 });
 

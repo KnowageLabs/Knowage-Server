@@ -43,7 +43,16 @@
 				<div class="md-toolbar-tools">
 					<i class="fa fa-list-alt fa-2x"></i>
 					<h2 class="md-flex" style="padding-left: 14px">AVALIABLE DATASETS</h2>
+					<span flex=""></span>
+					<md-input-container md-no-float="">
+						<label md-no-float="">Search</label>
+						<input type="text" ng-model="">
+					</md-input-container>
+					<i class="fa fa-search"></i>
+					
 				</div>
+				
+				
 				</md-toolbar>
 				<md-content style="height:700px;"> <md-list
 					ng-repeat="k in list" style="border: 1px solid #ddd;">
@@ -103,7 +112,7 @@
 				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
-				<span flex=""></span> <i class="fa fa-plus-circle fa-2x"
+				<span flex=""></span> <i class="fa fa-plus-circle fa-3x"
 					ng-click="createAssociations()"></i>
 
 			</div>
@@ -120,7 +129,7 @@
 						ng-repeat="k in associationArray">
 							{{k}}
 							<span flex=""></span> 
-							<md-fab-speed-dial md-open="demoBI.isOpen" md-direction="{{demoBI.selectedDirection}}" ng-class="demo.selectedMode">
+							<md-fab-speed-dial  md-direction="left" class="md-fling">
 							<md-fab-trigger>
 									<md-button aria-label="menu" class="md-fab md-raised md-mini">
 									<i class="fa fa-angle-left fa-2x md-raised"></i>

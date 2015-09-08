@@ -13,12 +13,12 @@
 }
 .miniheadfederation  {
 /*  position: absolute !important; */
-  background-color: #009688 !important;
+  background-color: #2196F3 !important;
   color: white !important;
 }
 
 .miniheadfedsmall{
-	background-color: #009688 !important;
+	background-color: #2196F3 !important;
 	height: 35px;
 }
 md-toolbar.miniheadfedsmall {
