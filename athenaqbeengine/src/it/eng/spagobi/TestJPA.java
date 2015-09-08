@@ -27,6 +27,7 @@ public class TestJPA {
 			return emf;
 
 		} catch (RuntimeException e) {
+			
 			e.printStackTrace();
 			return null;
 		}
