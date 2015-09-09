@@ -238,13 +238,14 @@ Ext
 							this.categoryStore = new Ext.data.JsonStore(
 									{
 										url : this.configurationObject.getCategoriesService,
-										autoLoad : true,
+//										autoLoad : true,
+										autoLoad : false,
 										root : 'domains',
-										fields : [ 'VALUE_NM', 'VALUE_ID' ],
+										fields : [ 'VALUE_ID', 'VALUE_NM' ],
 										restful : true
 									});
 
-							//this.categoryStore.load();
+							this.categoryStore.load();
 
 							this.categoryCombo = new Ext.form.ComboBox({
 								name : 'categoryCombo',
@@ -252,8 +253,8 @@ Ext
 								store : this.categoryStore,
 								width : 150,
 								fieldLabel : LN('Category'),
-								displayField : 'VALUE_NM',
 								valueField : 'VALUE_ID',
+								displayField : 'VALUE_NM',								
 								typeAhead : true,
 								forceSelection : true,
 								mode : 'local',
@@ -264,6 +265,8 @@ Ext
 								validationEvent : true,
 								submitValue : false
 							});
+							
+							
 
 							this.categoryHidden = {
 								xtype : 'hidden',
