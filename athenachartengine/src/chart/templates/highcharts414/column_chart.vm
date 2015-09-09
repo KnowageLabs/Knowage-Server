@@ -325,9 +325,9 @@
         		style:{
 	        	#foreach($styleName in $yAxis.style.keySet())
 	        		#set ($axisStyle = $yAxis.style[$styleName])
-	        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
-	        			fontStyle: '$axisTitleStyle',
-					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
 	        			textDecoration: 'underline',
 					#else		        			
 	        			$styleName: '$axisStyle',
