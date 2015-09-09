@@ -52,10 +52,6 @@
 	<USER_FUNCTIONALITY productType="AthenaBD" name="ViewMyFolderAdmin"
 		description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="AthenaBD"
-		name="DistributionListUser" description="DistributionListUser" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
-		name="DistributionListManagement" description="DistributionListManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
 	<USER_FUNCTIONALITY productType="AthenaBD" name="LovsView"
 		description="LovsView" />
@@ -153,10 +149,6 @@
 		name="DocumentDetailManagement" description="DocumentDetailManagement" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="ViewMyFolderAdmin"
 		description="ViewMyFolderAdmin" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
-		name="DistributionListUser" description="DistributionListUser" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
-		name="DistributionListManagement" description="DistributionListManagement" />
 	<USER_FUNCTIONALITY productType="AthenaSocial"
 		name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsView"
