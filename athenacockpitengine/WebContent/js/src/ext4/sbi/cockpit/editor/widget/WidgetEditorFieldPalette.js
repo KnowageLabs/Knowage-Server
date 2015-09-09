@@ -255,9 +255,10 @@ Ext.extend(Sbi.cockpit.editor.widget.WidgetEditorFieldPalette, Ext.Panel, {
 			Sbi.trace("[WidgetEditorFieldPalette.onLoad]: store loaded");
 			this.fireEvent("validateInvalidFieldsAfterLoad", this);
 			
-			//Prova memorizzazione store
+			// Saving dataset metafields as store
 			if(this.store.data.length > 0){
 				this.store.storeId = 'datasetStore_' + this.wcId;
+				this.store.datasetLabel = this.dataset;
 				Sbi.storeManager.addStore(this.store);
 			}
 		}, this);
