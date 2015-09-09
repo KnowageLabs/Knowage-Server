@@ -29,7 +29,6 @@ import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.filters.FilterIOManager;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.Iterator;
@@ -65,8 +64,8 @@ public class GetCertificatedDatasets {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets;
 
-		FilterIOManager ioManager = new FilterIOManager(request, null);
-		ioManager.initConetxtManager();
+		// FilterIOManager ioManager = new FilterIOManager(request, null);
+		// ioManager.initConetxtManager();
 		// IEngUserProfile profile = (IEngUserProfile) ioManager.getFromSession(IEngUserProfile.ENG_USER_PROFILE);
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 

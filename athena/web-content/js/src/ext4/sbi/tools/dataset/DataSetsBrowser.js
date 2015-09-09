@@ -552,7 +552,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			success : function(response, options) {				
 				if(response !== undefined  && response.responseText !== undefined && response.statusText=="OK") {
 					if(response.responseText!=null && response.responseText!=undefined){
-						if(response.responseText.indexOf("error.mesage.description")>=0){
+						if(response.responseText.indexOf("error")>=0){
 							Sbi.exception.ExceptionHandler.handleFailure(response);
 						}else{						
 							this.store.load({reset:true});

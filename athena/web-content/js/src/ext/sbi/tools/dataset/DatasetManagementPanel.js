@@ -575,7 +575,16 @@ Ext
 							versId : values['versId'],
 							meta : values['meta'],
 							fileUploaded : thisPanel.fileUploaded,
-							scopeCd : values['scopeCd']
+							scopeCd : values['scopeCd'],
+							ckanFileType : values['ckanFileType'],
+							ckanCsvDelimiter : values['ckanCsvDelimiter'],
+							ckanCsvQuote : values['ckanCsvQuote'],
+							ckanCsvEncoding : values['ckanCsvEncoding'],
+							ckanSkipRows : values['ckanSkipRows'],
+							ckanLimitRows : values['ckanLimitRows'],  
+							ckanXslSheetNumber : values['ckanXslSheetNumber'],
+							ckanId : values['ckanId'],
+							ckanUrl : values['ckanUrl']
 						};
 						arrayPars = this.parsGrid.getParametersValues();
 						if (arrayPars) {

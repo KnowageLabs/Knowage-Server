@@ -380,6 +380,8 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .hover .box-actions .worksheet a:hover{background-position:9px -25px;background-repeat: no-repeat;}
 .box .hover .box-actions .qbe a{background-image:url('../../../images/ico-qbe.png');background-repeat: no-repeat;background-position: 9px 11px;}
 .box .hover .box-actions .qbe a:hover{background-position:9px -26px;background-repeat: no-repeat;}
+.box .hover .box-actions .info a{background-image:url('../../../images/ico-info.png');background-repeat: no-repeat;background-position: 7px 7px;}
+.box .hover .box-actions .info a:hover{background-position:8px -38px;background-repeat: no-repeat;}
 
 .box .hover .detail{position:absolute;left:55px;bottom:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../images/ico-view-green.png) 2px 4px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}
 .box .hover .detail:hover{/*background-position:9px -25px;*/background-color:#E4E4E4}

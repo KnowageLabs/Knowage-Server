@@ -1,15 +1,13 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.metadata;
 
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.services.validation.Alphanumeric;
-import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
@@ -19,10 +17,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,76 +29,71 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
- * This is the class used by the DAO to map the table 
- * <code>sbi_meta_data</code>. Given the current implementation
- * of the DAO this is the class used by Hibernate to map the table
- * <code>sbi_meta_data</code>. The following snippet of code, for example, shows
- * how the <code>DataSetDAOImpl</code> load a dataset whose id is equal to datasetId...
- * 
+ * This is the class used by the DAO to map the table <code>sbi_meta_data</code>. Given the current implementation of the DAO this is the class used by
+ * Hibernate to map the table <code>sbi_meta_data</code>. The following snippet of code, for example, shows how the <code>DataSetDAOImpl</code> load a dataset
+ * whose id is equal to datasetId...
+ *
  * <code>hibernateSession.load(SbiDataSet.class, datasetId);</code>
- * 
- * @authors
- * 		Angelo Bernabei (angelo.bernabei@eng.it)
- * 		Andrea Gioia (andrea.gioia@eng.it)
- * 		Antonella Giachino (antonella.giachino@eng.it)
+ *
+ * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it) Antonella Giachino (antonella.giachino@eng.it)
  */
 public class SbiDataSet extends SbiHibernateModel {
-	
+
 	/**
 	 * default version UID
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	private SbiDataSetId id;
 
-	@ExtendedAlphanumeric
-	@Size(max = 50)
+	// @ExtendedAlphanumeric
+	// @Size(max = 50)
 	private String name = null;
 
-	@ExtendedAlphanumeric
-	@Size(max = 160)
+	// @ExtendedAlphanumeric
+	// @Size(max = 160)
 	private String description = null;
 
-	@NotEmpty
-	@Alphanumeric
-	@Size(max = 50)
+	// @NotEmpty
+	// @Alphanumeric
+	// @Size(max = 50)
 	private String label = null;
 
 	private boolean active = true;
 
-	private SbiDomains category  = null;
-	private String parameters=null;
-	private String dsMetadata=null;
+	private SbiDomains category = null;
+	private String parameters = null;
+	private String dsMetadata = null;
 	private String type = null;
 	@JsonRawValue
 	private String configuration = null;
-	
+
 	private SbiDomains transformer = null;
-	private String pivotColumnName=null;
-	private String pivotRowName=null;
-	private String pivotColumnValue=null;
+	private String pivotColumnName = null;
+	private String pivotRowName = null;
+	private String pivotColumnValue = null;
 	private boolean numRows = false;
 
 	private boolean persisted = false;
 	private String persistTableName = null;
-	
-	private String owner=null;
+
+	private String owner = null;
 	private boolean publicDS = false;
-	
-	private String userIn=null;
-	private String userUp=null;
-	private String userDe=null;
-	private String sbiVersionIn=null;
-	private String sbiVersionUp=null;
-	private String sbiVersionDe=null;
-	private String metaVersion=null;
+
+	private String userIn = null;
+	private String userUp = null;
+	private String userDe = null;
+	private String sbiVersionIn = null;
+	private String sbiVersionUp = null;
+	private String sbiVersionDe = null;
+	private String metaVersion = null;
 
 	private Date timeIn = null;
 	private Date timeUp = null;
 	private Date timeDe = null;
-	
+
 	private SbiDomains scope = null;
-    	
+
 	/**
 	 * default constructor.
 	 */
@@ -113,15 +102,14 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
-	 * @param id the id
+	 *
+	 * @param id
+	 *            the id
 	 */
 	@JsonIgnore
 	public SbiDataSet(SbiDataSetId id) {
 		this.id = id;
 	}
-    
-
 
 	public SbiDomains getScope() {
 		return scope;
@@ -144,65 +132,68 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Gets the name.
-	 * 
+	 *
 	 * @return the name
 	 */
 	public String getName() {
-	    return name;
+		return name;
 	}
-	
+
 	/**
 	 * Sets the name.
-	 * 
-	 * @param name the new name
+	 *
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
-	    this.name = name;
+		this.name = name;
 	}
-	
+
 	/**
 	 * Gets the description.
-	 * 
+	 *
 	 * @return the description
 	 */
 	public String getDescription() {
-	    return description;
+		return description;
 	}
-	
+
 	/**
 	 * Sets the description.
-	 * 
-	 * @param description the new description
+	 *
+	 * @param description
+	 *            the new description
 	 */
 	public void setDescription(String description) {
-	    this.description = description;
+		this.description = description;
 	}
-	
+
 	/**
 	 * Gets the label.
-	 * 
+	 *
 	 * @return the label
 	 */
 	public String getLabel() {
-	    return label;
+		return label;
 	}
-	
+
 	/**
 	 * Sets the label.
-	 * 
-	 * @param label the new label
+	 *
+	 * @param label
+	 *            the new label
 	 */
 	public void setLabel(String label) {
-	    this.label = label;
+		this.label = label;
 	}
-	
+
 	public boolean isActive() {
 		return active;
 	}
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}	
+	}
 
 	public String getUserIn() {
 		return userIn;
@@ -244,7 +235,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param numRows the numRows to set
+	 * @param numRows
+	 *            the numRows to set
 	 */
 	public void setNumRows(boolean numRows) {
 		this.numRows = numRows;
@@ -252,18 +244,19 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Gets the parameters.
-	 * 
+	 *
 	 * @return the parameters
 	 */
 	@JsonIgnore
 	public String getParameters() {
-	    return parameters;
+		return parameters;
 	}
-	
+
 	/**
 	 * Sets the parameters.
-	 * 
-	 * @param parameters the new parameters
+	 *
+	 * @param parameters
+	 *            the new parameters
 	 */
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
@@ -289,20 +282,21 @@ public class SbiDataSet extends SbiHibernateModel {
 			this.parameters = list.toXML();
 		}
 	}
-	
+
 	/**
 	 * Gets the pivot column name.
-	 * 
+	 *
 	 * @return the pivot column name
 	 */
 	public String getPivotColumnName() {
 		return pivotColumnName;
 	}
-	
+
 	/**
 	 * Sets the pivot column name
-	 * 
-	 * @param pivotColumnName the new pivot column name
+	 *
+	 * @param pivotColumnName
+	 *            the new pivot column name
 	 */
 	public void setPivotColumnName(String pivotColumnName) {
 		this.pivotColumnName = pivotColumnName;
@@ -310,7 +304,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Gets the pivot column value.
-	 * 
+	 *
 	 * @return the pivot column value
 	 */
 	public String getPivotColumnValue() {
@@ -319,8 +313,9 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Sets the pivot column value
-	 * 
-	 * @param pivotColumnValue the new pivot column value
+	 *
+	 * @param pivotColumnValue
+	 *            the new pivot column value
 	 */
 	public void setPivotColumnValue(String pivotColumnValue) {
 		this.pivotColumnValue = pivotColumnValue;
@@ -356,7 +351,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Gets the transformer.
-	 * 
+	 *
 	 * @return the transformer
 	 */
 	@JsonIgnore
@@ -395,15 +390,15 @@ public class SbiDataSet extends SbiHibernateModel {
 		return dsMetadata;
 	}
 
-    /**
-     *  the metadata.
-     * 
-     * @param transformer the new metadata
-     */
+	/**
+	 * the metadata.
+	 * 
+	 * @param transformer
+	 *            the new metadata
+	 */
 	public void setDsMetadata(String dsMetadata) {
 		this.dsMetadata = dsMetadata;
 	}
-    	
 
 	public MetaData getMetadata() {
 		if (dsMetadata != null) {
@@ -433,14 +428,16 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param isPersisted the isPersisted to set
+	 * @param isPersisted
+	 *            the isPersisted to set
 	 */
 	public void setPersisted(boolean isPersisted) {
 		this.persisted = isPersisted;
 	}
-	
+
 	/**
-	 * @param persistTableName the persistTableName to set
+	 * @param persistTableName
+	 *            the persistTableName to set
 	 */
 	public void setPersistTableName(String persistTableName) {
 		this.persistTableName = persistTableName;
@@ -461,7 +458,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param configuration the configuration to set
+	 * @param configuration
+	 *            the configuration to set
 	 */
 	@JsonDeserialize(using = JsonRawDeserializer.class)
 	public void setConfiguration(String configuration) {
@@ -489,7 +487,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -503,7 +502,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param userUp the userUp to set
+	 * @param userUp
+	 *            the userUp to set
 	 */
 	public void setUserUp(String userUp) {
 		this.userUp = userUp;
@@ -517,7 +517,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param userDe the userDe to set
+	 * @param userDe
+	 *            the userDe to set
 	 */
 	public void setUserDe(String userDe) {
 		this.userDe = userDe;
@@ -531,7 +532,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiVersionUp the sbiVersionUp to set
+	 * @param sbiVersionUp
+	 *            the sbiVersionUp to set
 	 */
 	public void setSbiVersionUp(String sbiVersionUp) {
 		this.sbiVersionUp = sbiVersionUp;
@@ -545,7 +547,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param sbiVersionDe the sbiVersionDe to set
+	 * @param sbiVersionDe
+	 *            the sbiVersionDe to set
 	 */
 	public void setSbiVersionDe(String sbiVersionDe) {
 		this.sbiVersionDe = sbiVersionDe;
@@ -559,7 +562,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param timeUp the timeUp to set
+	 * @param timeUp
+	 *            the timeUp to set
 	 */
 	public void setTimeUp(Date timeUp) {
 		this.timeUp = timeUp;
@@ -573,18 +577,16 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param timeDe the timeDe to set
+	 * @param timeDe
+	 *            the timeDe to set
 	 */
 	public void setTimeDe(Date timeDe) {
 		this.timeDe = timeDe;
 	}
 
-	
-	
-
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return the id
 	 */
 	public SbiDataSetId getId() {
@@ -593,8 +595,9 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	/**
 	 * Sets the id.
-	 * 
-	 * @param SbiDataSetId the new id
+	 *
+	 * @param SbiDataSetId
+	 *            the new id
 	 */
 	public void setId(SbiDataSetId id) {
 		this.id = id;
@@ -608,16 +611,13 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param owner the owner to set
+	 * @param owner
+	 *            the owner to set
 	 */
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
 
-	
-	
-	
-	
 	/**
 	 * @return the isPublic
 	 */
@@ -626,7 +626,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param isPublic the isPublic to set
+	 * @param isPublic
+	 *            the isPublic to set
 	 */
 	public void setPublicDS(boolean publicDS) {
 		this.publicDS = publicDS;

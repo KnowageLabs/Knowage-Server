@@ -1,14 +1,13 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.DataSetPersister;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -18,9 +17,7 @@ import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +31,7 @@ import org.json.JSONObject;
 
 /**
  * The Class QbeEngineFromDatasetStartAction. Called when opening QBE engine by passing a datase, not a document.
- * 
+ *
  * @author Giulio Gavardi
  */
 public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
@@ -116,19 +113,18 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		return getDataSetServiceProxy().getDataSetByLabel(datasetLabel);
 	}
 
-
-	
-	public Map addDatasetsToEnv(){
+	@Override
+	public Map addDatasetsToEnv() {
 		String federatedDatasetLabel = this.getAttributeAsString(FEDERATED_DATASET);
-		federatedDatasetLabel="xx";
-		if(federatedDatasetLabel== null || federatedDatasetLabel.length()==0){
+		// federatedDatasetLabel="xx";
+		if (federatedDatasetLabel == null || federatedDatasetLabel.length() == 0) {
 			logger.debug("Not Found a federated dataset on the request");
 			return addSimpleDataSetToEnv();
 		}
 		logger.debug("Found a federated dataset on the request");
 		return addFederatedDatasetsToEnv();
 	}
-	
+
 	public Map addSimpleDataSetToEnv() {
 		Map env = super.getEnv();
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
@@ -147,7 +143,7 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 
 		IDataSetTableDescriptor descriptor = this.persistDataset(dataset, env);
 		if (dataset instanceof QbeDataSet) {
-			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
+			adjustMetadataForQbeDataset(dataset, descriptor);
 		}
 
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
@@ -155,8 +151,6 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		return env;
 	}
-
-
 
 	public Map addFederatedDatasetsToEnv() {
 
@@ -166,16 +160,16 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 		String datasetLabel = this.getAttributeAsString(DATASET_LABEL);
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
 
-		String datasetFederated = "aa";//this.getAttributeAsString(FEDERATED_DATASET);
+		String datasetFederated = "aa";// this.getAttributeAsString(FEDERATED_DATASET);
 
-		if(datasetFederated!=null){
+		if (datasetFederated != null) {
 			// update parameters into the dataset
 			logger.debug("The dataset is federated");
 			logger.debug("Getting the configuration");
 
 			String configurationJson = "";
 
-			logger.debug("The configuration is "+configurationJson);
+			logger.debug("The configuration is " + configurationJson);
 
 			List<IDataSet> dataSets = new ArrayList<IDataSet>();
 
@@ -184,11 +178,9 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 			dsLabels.add("test1");
 			dsLabels.add("test2");
 
-
-
 			// update profile attributes into dataset
 			Map<String, Object> userAttributes = new HashMap<String, Object>();
-			Map<String, String> mapNameTable = new HashMap<String,String>();
+			Map<String, String> mapNameTable = new HashMap<String, String>();
 
 			UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			userAttributes.putAll(profile.getUserAttributes());
@@ -196,28 +188,27 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 			logger.debug("Setting user profile attributes into dataset...");
 			logger.debug(userAttributes);
 
-
 			IDataSource cachedDataSource = getCacheDataSource();
 
 			// substitute default engine's datasource with dataset one
 			env.put(EngineConstants.ENV_DATASOURCE, cachedDataSource);
 
-			//			DataSetPersister dsp = new DataSetPersister();
-			//			try {
-			//				dsp.cacheDataSets(dsLabels, getUserId());
-			//			} catch (Exception e1) {
-			//				logger.error("Error executing the service that persist the datasets on the cache",e1);
-			//				throw new SpagoBIEngineRuntimeException("Error executing the service that persist the datasets on the cache",e1);
-			//			}
-			//			
+			// DataSetPersister dsp = new DataSetPersister();
+			// try {
+			// dsp.cacheDataSets(dsLabels, getUserId());
+			// } catch (Exception e1) {
+			// logger.error("Error executing the service that persist the datasets on the cache",e1);
+			// throw new SpagoBIEngineRuntimeException("Error executing the service that persist the datasets on the cache",e1);
+			// }
+			//
 			for (int i = 0; i < dsLabels.size(); i++) {
 
 				String dsLabel = dsLabels.get(i);
 
-				mapNameTable.put(dsLabel, dsLabel+"cached");
+				mapNameTable.put(dsLabel, dsLabel + "cached");
 
 				IDataSet originalDataset = this.getDataSet(dsLabel);
-				IDataSet cachedDataSet = createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset,cachedDataSource);
+				IDataSet cachedDataSet = createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset, cachedDataSource);
 				cachedDataSet.setUserProfileAttributes(userAttributes);
 				cachedDataSet.setPersistTableName(mapNameTable.get(dsLabel));
 				cachedDataSet.setParamsMap(env);
@@ -235,32 +226,26 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 				e.printStackTrace();
 			}
 
-
 			adjustRelationName(relations, mapNameTable);
 
-
-			env.put(EngineConstants.ENV_RELATIONS,		relations				);
-
-
+			env.put(EngineConstants.ENV_RELATIONS, relations);
 
 			env.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
 
-
 		return env;
 	}
 
-
-
 	/**
-	 * Here we get the relationships configuration and we replace the name of the dataset with the name of the cached dataset. This because the qbe is working wit the cached
+	 * Here we get the relationships configuration and we replace the name of the dataset with the name of the cached dataset. This because the qbe is working
+	 * wit the cached
 	 */
-	private void adjustRelationName(JSONObject relations, Map<String, String> mapNameTable){
+	private void adjustRelationName(JSONObject relations, Map<String, String> mapNameTable) {
 		logger.debug("Starting adjusting the relationsip definition");
 		try {
 			JSONArray relationshipArray = relations.getJSONArray("relationships");
-			if(relationshipArray!=null){
-				for(int y=0; y<relationshipArray.length(); y++){
+			if (relationshipArray != null) {
+				for (int y = 0; y < relationshipArray.length(); y++) {
 					JSONObject jo = relationshipArray.getJSONObject(y);
 					jo.getJSONObject("sourceTable").put("name", mapNameTable.get(jo.getJSONObject("sourceTable").get("name")));
 					jo.getJSONObject("sourceTable").put("className", mapNameTable.get(jo.getJSONObject("sourceTable").get("className")));
@@ -269,28 +254,29 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error adjusting the relationship definition for the federated dataset",e);
-			throw new SpagoBIRuntimeException("Error adjusting the relationship definition for the federated dataset",e);
+			logger.error("Error adjusting the relationship definition for the federated dataset", e);
+			throw new SpagoBIRuntimeException("Error adjusting the relationship definition for the federated dataset", e);
 		}
 
 	}
 
 	/**
 	 * Creates a jdbc dataset on the cached table
+	 * 
 	 * @param cachedTable
 	 * @param dataSet
 	 * @param cachedDataSource
 	 * @return
 	 */
-	private IDataSet createDatasetOnCache(String cachedTable, IDataSet dataSet, IDataSource cachedDataSource){
-		logger.debug("Creating the cached dataset for the dataSet "+dataSet.getLabel());
+	private IDataSet createDatasetOnCache(String cachedTable, IDataSet dataSet, IDataSource cachedDataSource) {
+		logger.debug("Creating the cached dataset for the dataSet " + dataSet.getLabel());
 		JDBCDataSet dataset = new JDBCDataSet();
 		dataset.setDataSource(cachedDataSource);
 
 		String query = "select * from " + cachedTable;
-		logger.debug("The query for the dataset "+dataSet.getLabel()+" is "+query);
+		logger.debug("The query for the dataset " + dataSet.getLabel() + " is " + query);
 
-		dataset.setLabel(cachedTable);		
+		dataset.setLabel(cachedTable);
 		dataset.setName(dataSet.getName());
 		dataset.setDescription(dataSet.getDescription());
 		dataset.setQuery(query);
@@ -301,11 +287,12 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 
 	/**
 	 * Gets the datasource of the cache
+	 * 
 	 * @return
 	 */
-	private IDataSource getCacheDataSource(){
-		String datasourceLabel= "cacheDataSource";// TO-DO chiamare servizio di SpagoBi /1.0/cache/datasource
-		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel( datasourceLabel );  
+	private IDataSource getCacheDataSource() {
+		String datasourceLabel = "cacheDataSource";// TO-DO chiamare servizio di SpagoBi /1.0/cache/datasource
+		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
 		return dataSource;
 	}
 
@@ -313,7 +300,7 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	 * This method solves the following issue: SQLDataSet defines the SQL statement directly considering the names' of the wrapped dataset fields, but, in case
 	 * of QbeDataSet, the fields' names are "it.eng.spagobi......Entity.fieldName" and not the name of the persistence table!!! We modify the dataset's metadata
 	 * in order to fix this.
-	 * 
+	 *
 	 * @param dataset
 	 *            The persisted Qbe dataset
 	 * @param descriptor
