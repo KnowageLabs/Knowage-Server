@@ -272,6 +272,25 @@
 	        	#end
 		     },
 		 },
+		 
+		 labels:{
+		 #if( $xAxis.style != '' ) 
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        	#end
+		 
+		 },
+		 
 
 		 #if($xAxis.position == 'top')
 		 opposite: true,
