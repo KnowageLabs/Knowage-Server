@@ -795,7 +795,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
 		autoDestroy = autoDestroy || this.autoDestroy;
 		if(autoDestroy) {
-			store.destroy();
+			store.destroyStore();
+			//store.destroy();
 			store = null;
 		}
 
