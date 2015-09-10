@@ -464,8 +464,8 @@
 				valueDecimals: $relatedSerie.precision ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.backgroundColor != '')
-                ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+			#if ($relatedSerie.TOOLTIP.backgroundColor)
+                ttBackColor: '#FCFFC5',
 			#end
 				
 			#if ($relatedSerie.TOOLTIP.style.color != '')
