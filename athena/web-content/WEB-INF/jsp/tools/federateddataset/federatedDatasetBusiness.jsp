@@ -46,7 +46,7 @@
 					<span flex=""></span>
 					<md-input-container md-no-float="">
 						<label md-no-float="">Search</label>
-						<input type="text" ng-model="">
+						<input type="text">
 					</md-input-container>
 					<i class="fa fa-search"></i>
 					
@@ -113,8 +113,7 @@
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
 				<span flex=""></span> <i class="fa fa-plus-circle fa-3x"
-					ng-click="createAssociations()"></i>
-
+					ng-click="napuniNiz(); createAssociationsString()"></i>
 			</div>
 
 
@@ -146,8 +145,10 @@
 								<i class="icon-edit"></i>								
 							</md-fab-actions> 
 						</md-fab-speed-dial>
-						<!-- <span flex=""></span> <i class="fa fa-trash-o" ng-click="kickOutFromAssociatonArray(k)"></i> </md-list-item> </md-list> -->
+						</md-list-item>
+					</md-list>
 				</div>
+				
 				</md-content>
 			</md-content>
 		</div>

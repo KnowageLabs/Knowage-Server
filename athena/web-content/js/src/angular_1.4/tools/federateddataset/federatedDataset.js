@@ -1,7 +1,7 @@
 var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest']);
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija220");
+	console.log("verzija221");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -13,70 +13,99 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.associationArray = [];
 	$scope.alert = '';
 	$scope.test = {};
-	$scope.checkBranch = false;
 	$scope.beforeRel = {};
 	$scope.finalJSON = "";
 	$scope.updatedHeader = "";
 	$scope.item = {};
-
+	$scope.multiArray = [];
+	
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
-	 
-	$scope.showAdvanced = function(ev) {
-	  $scope.RelationshipsArray = [];
-	  
-	  angular.forEach($scope.listaNew, function(dataset){
+	
+	$scope.napuniNiz = function() {
+		$scope.multiArray.push($scope.createAssociations());
+		//console.log("f_napuniNiz "+angular.toJson($scope.multiArray));
+	}
+	
+	$scope.createAssociationsString = function(){
+		angular.forEach($scope.listaNew, function(dataset) {
+			  angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
+				  if(listField.selected===true){
+					  $scope.relation += "="+dataset.name.toUpperCase()+"."+listField.name;
+					  $scope.relNew = $scope.relation.substring(1);  
+				  }
+				});
+			});
+		$scope.associationArray.push($scope.relNew);
+		$scope.relation = "";
+		$scope.relNew = "";
+	}
+	
+		
+	$scope.createAssociations = function(){
 		  
-		  if($scope.checkBranch==false){
+		  var RelationshipsArray = [];
+		  var checkBranch = false;
+		  angular.forEach($scope.listaNew, function(dataset){
 			  
-			  console.log('false branch ['+$scope.checkBranch+' kontrolna]');
-			  angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+			  if(checkBranch==false){
 				  
-				  if(listField.selected){
-					  console.log('selected field');
-					  $scope.beforeRel = dataset;
-					  $scope.beforeRel.firstSelectedListField = listField.name;
-					  $scope.beforeRel.ime = dataset.name;
-					  $scope.checkBranch = true;
-				  }
-			  })
-		  } else {
-			  console.log('true branch  ['+$scope.checkBranch+' kontrolna]');
-			  angular.forEach(dataset.metadata.fieldsMeta, function(polje){
-				  if(polje.selected){
-					 
-						var t = {
-						        bidirectional: true,
-						        cardinality: 'many-to-one',
-						        sourceTable: {
-						            name: '',
-						            className: ''
-						        },
-						        sourceColumns: [],
-						        destinationTable: {
-						            name: '',
-						            className: ''
-						        }, 
-						        destinationColumns: []
-						    }  
-				
-					  t.sourceTable.name = $scope.beforeRel.ime; 
-					  t.sourceTable.className = $scope.beforeRel.ime;
-					  t.sourceColumns.push($scope.beforeRel.firstSelectedListField);
+				  console.log('false branch ['+checkBranch+' kontrolna]');
+				  angular.forEach(dataset.metadata.fieldsMeta, function(listField){
 					  
-					  t.destinationTable.name = dataset.name;
-					  t.destinationTable.className = dataset.name; 
-					  t.destinationColumns.push(polje.name);
-					  
-					  $scope.beforeRel = polje;
-					  $scope.beforeRel.ime = dataset.name;
-					  $scope.beforeRel.firstSelectedListField = polje.name;
-					  $scope.RelationshipsArray.push(t);
-				  }
-			  })
-		  }
-	  })
-	  console.log(JSON.stringify($scope.RelationshipsArray));
+					  if(listField.selected){
+						  console.log('selected field');
+						  $scope.beforeRel = dataset;
+						  $scope.beforeRel.firstSelectedListField = listField.name;
+						  $scope.beforeRel.ime = dataset.name;
+						  checkBranch = true;
+					  }
+				  })
+			  } else {
+				  console.log('true branch  ['+checkBranch+' kontrolna]');
+				  angular.forEach(dataset.metadata.fieldsMeta, function(polje){
+					  if(polje.selected){
+						 
+							var t = {
+							        bidirectional: true,
+							        cardinality: 'many-to-one',
+							        sourceTable: {
+							            name: '',
+							            className: ''
+							        },
+							        sourceColumns: [],
+							        destinationTable: {
+							            name: '',
+							            className: ''
+							        }, 
+							        destinationColumns: []
+							    }  
+					
+						  t.sourceTable.name = $scope.beforeRel.ime; 
+						  t.sourceTable.className = $scope.beforeRel.ime;
+						  t.sourceColumns.push($scope.beforeRel.firstSelectedListField);
+						  
+						  t.destinationTable.name = dataset.name;
+						  t.destinationTable.className = dataset.name; 
+						  t.destinationColumns.push(polje.name);
+						  
+						  $scope.beforeRel = polje;
+						  $scope.beforeRel.ime = dataset.name;
+						  $scope.beforeRel.firstSelectedListField = polje.name;
+						  RelationshipsArray.push(t);
+						  
+					  }
+				  })
+			  }
+			  
+		  })
+		  //console.log("f_napuniMaliNiz "+JSON.stringify(RelationshipsArray));
+		  return  RelationshipsArray;
+	}
+	
+	//$scope.multiArray.push($scope.nesto);
+	
+	$scope.showAdvanced = function(ev) {
 	  $mdDialog.show({
 		  templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
 		  parent: angular.element(document.body),	      
@@ -85,18 +114,21 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	    })
 	};
 	
+	
+	
 	$scope.saveFedDataSet = function() {
 		
+		console.log($scope.multiArray)
 		var item = {};
 		item.name = $scope.update.name;
 		item.label = $scope.update.label;
 		item.description = $scope.update.description;
 		item.relationships = "";
-		item.relationships = $scope.RelationshipsArray;
+		item.relationships = $scope.multiArray;
 		//item.relationships = [];
 		//item.relationships.push($scope.RelationshipsArray);
 		//item = JSON.stringify($scope.update).slice(0,-1)+",\"relationships\":"+JSON.stringify($scope.RelationshipsArray)+"}";
-		console.log(JSON.stringify($scope.update).slice(0,-1)+",\"relationships\":"+JSON.stringify($scope.RelationshipsArray)+"}");
+		console.log(JSON.stringify($scope.update).slice(0,-1)+",\"relationships\":"+JSON.stringify($scope.multiArray)+"}");
 		//angular.toJson(item);
 		//console.log("dsadsad"+item);
 		restServices.post("federateddataset","post", item)
@@ -172,19 +204,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		$scope.state=!$scope.state;
 	}
 	
-	$scope.createAssociations = function(){
-		angular.forEach($scope.listaNew, function(dataset) {
-			  angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
-				  if(listField.selected===true){
-					  $scope.relation += "="+dataset.name.toUpperCase()+"."+listField.name;
-					  $scope.relNew = $scope.relation.substring(1);  
-				  }
-				});
-			});
-		$scope.associationArray.push($scope.relNew);
-		$scope.relation = "";
-		$scope.relNew = "";
-	}
+	
 	
 	$scope.kickOutFromAssociatonArray = function(param) {
 		var index = $scope.associationArray.indexOf(param);
@@ -215,9 +235,8 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		        .targetEvent(ev)
 		    );
 		  };
-	
-	
-	      
+
+  
 	
 });
 
