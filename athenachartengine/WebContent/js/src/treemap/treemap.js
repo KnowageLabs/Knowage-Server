@@ -45,14 +45,36 @@ function renderTreemap(chartConf) {
 			counter++;
 		}
 
-
 	}
-// console.log(chartConf);
-	var chart = new Highcharts.Chart({
-		chart: {
+	
+	var chartObject = null;
+    
+    if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
+    		|| (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+	{
+    	chartObject = 
+    	{
+    			renderTo: 'mainPanel',
+//    			height: (chartConf.chart.height!=undefined || chartConf.chart.height!="") ? chartConf.chart.height : "",
+//    			width: (chartConf.chart.width!=undefined || chartConf.chart.width!="") ? chartConf.chart.width : "",
+    			style: {
+    				fontFamily: chartConf.chart.style.fontFamily,
+    				fontSize: chartConf.chart.style.fontSize,
+    				fontWeight: chartConf.chart.style.fontWeight,
+    				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
+    				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
+    				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
+    			}
+    		};
+	}
+    else if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
+    		&& (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+	{
+    	chartObject =     	
+    	{
 			renderTo: 'mainPanel',
-			height: chartConf.chart.height,
-			width: chartConf.chart.width,
+			height:  Number(chartConf.chart.height),
+			width:  Number(chartConf.chart.width),
 			style: {
 				fontFamily: chartConf.chart.style.fontFamily,
 				fontSize: chartConf.chart.style.fontSize,
@@ -61,7 +83,11 @@ function renderTreemap(chartConf) {
 				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
 				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
 			}
-		},
+		};
+	}
+
+	var chart = new Highcharts.Chart({
+		chart: chartObject,
 		series: [{
 			type: "treemap",
 			layoutAlgorithm: 'squarified',
@@ -123,8 +149,6 @@ function renderTreemap(chartConf) {
 }
 
 function renderHeatmap(chartConf){
-	
-	
     var start;
     
     var startDate= new Date(chartConf.additionalData.dateresult[0]);
@@ -160,12 +184,16 @@ function renderHeatmap(chartConf){
     	colorStops.push(stop);
     }
     
-    var chart = new Highcharts.Chart({
-       
-        chart: {
+    var chartObject = null;
+    
+    if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
+    		|| (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+	{
+    	chartObject = 
+    	{
         	renderTo: 'mainPanel',
-        	height: Number(chartConf.chart.height),
-			width: Number(chartConf.chart.width),
+//        	height:  ? Number(chartConf.chart.height) : "",
+//			width:  ? Number(chartConf.chart.width) : "",
             type: 'heatmap',
             backgroundColor:chartConf.chart.style.backgroundColor,
             margin: [80, 80, 80, 80],
@@ -175,8 +203,35 @@ function renderHeatmap(chartConf){
 				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
 				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
 				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
-	        }
-        },
+	        
+			}
+    	};
+	}
+    else if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
+    		&& (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+	{
+    	chartObject = 
+    	{
+        	renderTo: 'mainPanel',
+        	height:  Number(chartConf.chart.height),
+			width:  Number(chartConf.chart.width),
+            type: 'heatmap',
+            backgroundColor:chartConf.chart.style.backgroundColor,
+            margin: [80, 80, 80, 80],
+			style: {
+	            fontFamily: chartConf.chart.style.fontFamily,
+	            fontSize: chartConf.chart.style.fontSize,
+				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
+				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
+				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
+	        
+			}
+    	};
+	}
+    
+    var chart = new Highcharts.Chart({
+       
+    	chart: chartObject,
         title: {
 			text: chartConf.title.text,
             align: chartConf.title.style.textAlign,
@@ -264,7 +319,7 @@ function renderHeatmap(chartConf){
         legend: {
             layout: 'horizontal',
             align: chartConf.legend.style.align, 
-            symbolWidth: Number(chartConf.legend.style.symbolWidth)
+            symbolWidth: Number(chartConf.legend.symbolWidth)	// modified by: (danilo.ristovski@mht.net)
         },
         
         tooltip: {

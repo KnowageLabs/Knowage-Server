@@ -1,3 +1,18 @@
+/**
+ * Function needed for cleaning the already rendered chart (if the one exists
+ * on the page). This operation is mandatory since we want to rerender the 
+ * chart when resizing the window (panel). 
+ * (danilo.ristovski@mht.net)
+ */
+function cleanChart()
+{
+	/**
+	 * Select everything that body of the page contains (every child node)
+	 * and remove it from the page.
+	 */
+	d3.select("body").selectAll("*").remove();
+}
+
 function renderWordCloud(chartConf){
 
 	var maxic = 0;
@@ -422,7 +437,7 @@ function renderWordCloud(chartConf){
 
 		var maxfontsize=chartConf.chart.maxFontSize;
 		var fill = d3.scale.category20();
-
+console.log(chartConf.chart.width);
 		d3.layout.cloud().size([chartConf.chart.width, chartConf.chart.height])
 		.words(chartConf.data[0].map(function(d) {
 			 return {text: d.name, size: d.value/(maxic/maxfontsize)};
@@ -561,7 +576,7 @@ function renderWordCloud(chartConf){
 			      
 			d3.select("body").append("svg")
 			.attr("width", chartConf.chart.width)
-			.attr("height", chartConf.chart.height)
+			.attr("height", chartConf.chart.height+(16+8)*2)
 			.append("g")
 			.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
 			.selectAll("text")
@@ -579,7 +594,7 @@ function renderWordCloud(chartConf){
 		}
 		
 	}
-	
+
 	function renderSunburst(jsonObject)
 	{
 		/*The part that we need to place into HTML (JSP) in order to attach 
@@ -588,8 +603,13 @@ function renderWordCloud(chartConf){
 		/* Check if configurable (from the Designer point of view)
 		 * parameters are defined through the Designer. If not set
 		 * the predefined values, instead. */			
+		console.log("SUNBURST");
+		console.log(jsonObject);
+//		console.log(d3.select("body").selectAll("*").remove());
+//		d3.selectAll("*").remove();
 		
-		var chartHeight = (jsonObject.chart.height != '$chart.height') ? parseInt(jsonObject.chart.height) : 400 ;
+//		var chartHeight = (jsonObject.chart.height != '$chart.height') ? parseInt(jsonObject.chart.height) : 400 ;
+//		var chartHeight = null;
 		var chartFontFamily = (jsonObject.chart.style.fontFamily != '$chart.style.fontFamily') ? jsonObject.chart.style.fontFamily : "Arial" ;
 		var chartFontSize = (jsonObject.chart.style.fontSize != '$chart.style.fontSize') ? jsonObject.chart.style.fontSize : "9px" ;
 		var chartFontWeight = (jsonObject.chart.style.fontWeight != '$chart.style.fontWeight') ? jsonObject.chart.style.fontWeight : "Normal" ;
@@ -601,16 +621,16 @@ function renderWordCloud(chartConf){
 	     * Hence, radius of the circular Sunburst chart is going to be half of
 	     * the lesser dimension of that window. */				
 	    //var width = parseInt(jsonObject.chart.width);
-	    var width = window.innerWidth;
-		var height = chartHeight;
+	    var width = jsonObject.chart.width;
+		var height = jsonObject.chart.height;
 		
-		/* Manage chart position on the screen (in the window) depending on
-		 * the resizing of it, so the chart could be in the middle of it. */
-		window.onresize = function() 
-		{
-		    width = document.getElementById("chart").getBoundingClientRect().width;
-		    d3.select("#container").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-		};	
+//		/* Manage chart position on the screen (in the window) depending on
+//		 * the resizing of it, so the chart could be in the middle of it. */
+//		window.onresize = function() 
+//		{
+//		    width = document.getElementById("chart").getBoundingClientRect().width;
+//		    d3.select("#container").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+//		};	
 		
 		var radius = Math.min(width,height)/2;	
 		
@@ -1432,7 +1452,7 @@ function renderWordCloud(chartConf){
 
 		var brushx = -Number(brushWidth)/2;
 
-       var m = [40, 40, 40, 100],
+		var m = [40, 40, 40, 100],
 		w = data.chart.width - m[1] - m[3],
 		h = data.chart.height - m[0] - m[2];
 
@@ -1481,7 +1501,7 @@ function renderWordCloud(chartConf){
 			svgHeight=h + m[0] + m[2];
 		}
 		
-		d3.select("body").append("div").attr("id","chart").style("width",w + m[1] + m[3]+300)
+		d3.select("body").append("div").attr("id","chart").style("width",w + m[1] + m[3] + 300);
 		
 		var svg = d3.select("#chart")
 		.append("div")
@@ -2414,7 +2434,7 @@ function renderChordChart(jsonData)
 	var width = jsonData.chart.width;
 	var height = jsonData.chart.height;
 	
-	var innerRadius = Math.min(width, height) * .3;
+	var innerRadius = Math.min(width, height) * .35;
     var outerRadius = innerRadius * 1.1;
     
     /**
@@ -2425,6 +2445,9 @@ function renderChordChart(jsonData)
 	var fill = d3.scale.ordinal()
     			.domain(d3.range(elemSize))
 				.range(jsonData.colors);
+	
+//	console.log(jsonData);
+//	console.log(jsonData.colors);
 		
 	// Set title
 	d3.select("body").append("div")
@@ -2446,20 +2469,30 @@ function renderChordChart(jsonData)
 	
 	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
 	 * the chart (values on ticks) ??? */
-	var emptySplitDivHeight = 60;
+	var emptySplitDivHeight = 10;
+	
+	
+	
 	d3.select("body").append("div").style("height", emptySplitDivHeight);
 	
 	d3.select("body").append("div").attr("id","chartD3").attr("align","center");
 	
+	/**
+	 * We will specify this value in order to leave enough space for labels that
+	 * are going to surround the chart in order to 
+	 * (danilo.ristovski@mht.net)
+	 */
+	var spaceForLabels = 20;
+	
 	var svg = d3.select("#chartD3").append("div")
 	 			.attr("class", "chart")	 			
 	 			.style("width", width + "px")
-	 			.style("height", height-100)	 			
+	 			.style("height", Number(height))	 			
 				.append("svg:svg")
 				.attr("width", width)
-				.attr("height", height)				
+				.attr("height", Number(height)+spaceForLabels)				
 				.append("svg:g")
-				.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+				.attr("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
 	
 	/**
 	 * [START] Data processing part
@@ -2624,8 +2657,7 @@ function renderChordChart(jsonData)
 				+ (d.angle > Math.PI ? "rotate(180)" : "");
 		  })
 //		  .style("font-weight","bold")
-		  .text(function(d,i) { return allFieldsArray[i];})
-		  
+		  .text(function(d,i) { return allFieldsArray[i];})		  
 
 		 //aggiunge le lineette "graduate"		 
 		 ticks.append("svg:line")

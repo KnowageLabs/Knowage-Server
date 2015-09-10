@@ -37,11 +37,41 @@
 		}); 
 		*/
 	}
+	
+	/* 	
+		Inspect if chart type that we want to render on the window of the page (panel)
+		is of D3 type (belongs to D3 library). We need this information for deciding 
+		whether we will re-render the chart invoking the same rendering functions for
+		the D3 chart.
+		(danilo.ristovski@mht.net)
+	*/
+	function isChartD3(chartConf)
+	{
+		var chartType = chartConf.chart.type.toLowerCase();
+		
+		if(chartType == "wordcloud" || chartType == "sunburst" || chartType== "parallel" || chartType == "chord")
+		{			
+			return true;			
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	function renderChart(chartConf){
 
 		//new Highcharts.Chart(chartConf);
 		// console.log(chartConf);
+		
+		/* 
+			If rerendering the chart, we will need cleaning of the
+			page before it. This method will destroy (remove) every
+			page element that already existed on the page (potentially).
+			(danilo.ristovski@mht.net)
+		*/
+		cleanChart();
+		
 		if(chartConf.chart.type.toLowerCase() == "wordcloud"){
 			
 			renderWordCloud(chartConf);
@@ -57,8 +87,6 @@
 			renderParallelChart(chartConf);
 			
 		}
-		
-		// Modified 21.7 (danilo.ristovski@mht.net)
 		else if (chartConf.chart.type.toLowerCase() == "chord")
 		{
 			renderChordChart(chartConf);

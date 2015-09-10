@@ -158,10 +158,11 @@
 	
 	legend:
 	{
+		symbolWidth: '$chart.LEGEND.symbolWidth',
+		
 		style:
 		{
-			align: '$chart.LEGEND.style.align',
-			symbolWidth: '$chart.LEGEND.style.symbolWidth'
+			align: '$chart.LEGEND.style.align'
 		}
 	},
 	

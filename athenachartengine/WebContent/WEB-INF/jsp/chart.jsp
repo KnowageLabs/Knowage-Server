@@ -168,6 +168,8 @@ author:
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
 	
+		var chartConfiguration = null;
+	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
 
@@ -179,6 +181,46 @@ author:
  			    height: '100%',
  			    renderTo: Ext.getBody()
  			});
+ 			
+ 			/* 
+ 				Listen for the resizing of the window (panel) in order to re-render
+ 				the chart.
+ 				danilo.ristovski@mht.net 
+			*/
+ 			Ext.on
+ 			(
+ 				"resize",
+ 				
+ 				function(newWidth, newHeight)
+ 				{ 				
+ 					var chartType = chartConfiguration.chart.type.toUpperCase();
+ 					
+ 					/* 
+ 						Check if the chart (document) that we want to render (run) on the page 
+ 						usese D3 as a library for rendering.
+					*/
+					console.log("AAA");
+ 					//if (isChartD3(chartConfiguration))
+ 					var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
+ 						
+					if (isD3Chart)
+					{
+ 						/* 
+ 							Set new values for the height and the width of the chart (the DIV
+ 							that contains the chart), as a consequence of a resizing the window
+ 							(panel). This will eventually affect on those chart elements that 
+ 							depend on these two parameters.
+						*/
+						chartConfiguration.chart.width = newWidth;
+						chartConfiguration.chart.height = newHeight;
+						console.log("BBB");
+						
+ 						/* Re-render the chart after resizing the window (panel). */
+ 						renderChart(chartConfiguration);
+					}
+ 				}
+ 			);
+ 			
  			initChartLibrary(
  					mainPanel.id, 
  					LN('sbi.chartengine.viewer.drilluptext'), 
@@ -195,18 +237,18 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.aggregations = '<%=aggregations %>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.selections = '<%= selections %>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.associations = '<%=associations %>';
- 	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>'; 	 			
+ 	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
- 	 			
-				var parameters = {
-							jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
-							driverParams: '<%=driverParams%>',
+ 				
+ 							var parameters = {
+ 									jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 									driverParams: '<%=driverParams%>',
 							jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
-					};
-					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
-						var chartConf = Ext.JSON.decode(response.responseText, true);
-						renderChart(chartConf);
-					});
+ 							};
+ 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+ 								var chartConf = Ext.JSON.decode(response.responseText, true);
+ 								renderChart(chartConf);
+ 							});
  				
  			}else { 				
  				
@@ -215,7 +257,44 @@ author:
  						driverParams: '<%=driverParams%>'
  					};
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						var chartConf = Ext.JSON.decode(response.responseText, true);
+ 						console.log(response.responseText); 
+ 						
+ 						var chartConf = Ext.JSON.decode(response.responseText, true);						
+ 						
+ 						/* 
+ 							Set the initial size of the chart if the height and width are not 
+ 							defined by the user (through the Designer). This is mandatory for
+ 							rendering the chart. If not specified at all - error will appear.
+ 							(danilo.ristovski@mht.net)
+ 						*/
+ 						var heightChart = chartConf.chart.height;
+ 						var widthChart = chartConf.chart.width;
+ 						var typeChart = chartConf.chart.type.toUpperCase();
+ 						
+ 						/* 
+							If the chart is of the Highcharts library, do not apply current dimensions of the
+							window that contains the chart. D3 does not handle this appropriately, so we need
+							the starting dimensions for the chart - current dimensions of the window within 
+							which the chart (of D3 library) is placed.
+							(danilo.ristovski@mht.net)
+						*/
+						var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
+	 					
+						if (isD3Chart)
+						{							
+ 							if (heightChart==undefined || heightChart == "")	
+ 	 						{
+ 	 							chartConf.chart.height = window.innerHeight;
+ 	 						}
+ 	 						
+ 	 						if (widthChart==undefined || widthChart == "")	
+ 	 						{
+ 	 							chartConf.chart.width = window.innerWidth;
+ 	 						}
+						}
+ 						
+ 						chartConfiguration = chartConf;
+ 						
  						renderChart(chartConf);
  					});
  				
