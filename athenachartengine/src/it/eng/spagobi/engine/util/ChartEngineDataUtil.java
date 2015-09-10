@@ -167,7 +167,10 @@ public class ChartEngineDataUtil {
 
 			if (!isDrilldown || serieName.equalsIgnoreCase(drilldownSerie)) {
 				String fieldAlias = serieColumn + (!isDrilldown ? "_" + serieFunction : "");
-				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, null, null);
+
+				String orderTypeFinal = (serie.opt("orderType") != null) ? orderTypeFinal = serie.opt("orderType").toString().toUpperCase() : null;
+
+				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, orderTypeFinal, null);
 			}
 		}
 
@@ -186,10 +189,14 @@ public class ChartEngineDataUtil {
 
 			for (int i = 0; i < categories.length(); i++) {
 				JSONObject cat = (JSONObject) categories.get(i);
-				q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, "DESC", null);
+
+				/*
+				 * Modified default and static ordering type for the categories from "DESC" (descending) to "ASC" (ascending). (danilo.ristovski@mht.net)
+				 */
+				q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, "ASC", null);
 			}
 		} else {
-			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "DESC", null);
+			q.addSelectFiled(drilldownCategory, null, drilldownCategory, true, true, true, "ASC", null);
 		}
 
 		// Where clause
@@ -200,6 +207,8 @@ public class ChartEngineDataUtil {
 						new String[] { (String) drilldownParams.get(colName) }, null, null, null, null, null, "AND");
 			}
 		}
+
+		System.out.println(q.toSql("SCHEMA", "TABLE"));
 
 		return q;
 	}

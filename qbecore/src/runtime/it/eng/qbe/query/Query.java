@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class Query implements IQuery {
 	Map<IModelEntity, Map<String, List<String>>> mapEntityRoleField;
 
 	public Query() {
-		selectFields = new ArrayList();
+		selectFields = new LinkedList(); /* modified by: (danilo.ristovski@mht.net) */
 		whereClause = new ArrayList();
 		havingClause = new ArrayList();
 		whereFieldMap = new HashMap();
@@ -747,6 +748,13 @@ public class Query implements IQuery {
 		String groupByClause = "GROUP BY ";
 		String groupByClauseEmpty = groupByClause;
 
+		/**
+		 * String 'orderByClause' will keep the part of the query that is required when ordering of series/categories is specified for the chart.
+		 * (danilo.ristovski@mht.net)
+		 */
+		String orderByClause = "ORDER BY ";
+		String orderByClauseEmpty = orderByClause;
+
 		List<ISelectField> selectFields = getSelectFields(false);
 		List<WhereField> whereFields = getWhereFields();
 		List<ISelectField> groupByFields = getGroupByFields();
@@ -805,7 +813,28 @@ public class Query implements IQuery {
 			}
 		}
 
-		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause) + (groupByClause.equals(groupByClauseEmpty) ? " " : groupByClause);
+		/**
+		 * This part is added since we need to take care of ordering of the serie and/or categories of the one is provided (specified) for them.
+		 * (danilo.ristovski@mht.net)
+		 */
+		for (ISelectField orderBy : this.getSelectFields(true)) {
+			SimpleSelectField simpleField = (SimpleSelectField) orderBy;
+			String columnName = extractColumnNameFromFieldName(simpleField.getName());
+
+			if (orderBy.getOrderType() != "" && orderBy.getOrderType() != null) {
+				orderByClause += simpleField.getFunction().apply(columnName) + " " + orderBy.getOrderType();
+
+				if (this.getSelectFields(true).indexOf(orderBy) != this.getSelectFields(true).size() - 1) {
+					orderByClause += ", ";
+				}
+			}
+		}
+
+		/**
+		 * Added the 'orderByClause' string if the one exists due to order specification for the serie/category. (danilo.ristovski@mht.net)
+		 */
+		return selectClause + fromClause + (whereClause.equals(whereEmpty) ? " " : whereClause)
+				+ (groupByClause.equals(groupByClauseEmpty) ? " " : groupByClause) + (orderByClause.equals(orderByClauseEmpty) ? " " : orderByClause);
 	}
 
 	private String extractColumnNameFromFieldName(String fieldName) {
