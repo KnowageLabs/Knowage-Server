@@ -160,12 +160,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 							       {alias:'X', type: 'Category'}
 							       ]
 						},
-						VALUES:
-						{
+						VALUES: {
 							SERIE: []
 						},
-						COLORPALETTE:
-						{
+						COLORPALETTE: {
 							COLOR: [
 							        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
 							        {id:2 , order: 2, name: '434348', value: '434348' }, 
@@ -215,8 +213,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * their default values for any type of chart (including the BAR chart)
 			 * (danilo.ristovski@mht.net)
 			 */
-			var getConfigurationForStyle = function(style)
-			{
+			var getConfigurationForStyle = function(style) {
 				this.styleName = style;
 				
 				// CHART
@@ -249,8 +246,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				var templateToReturn = null;
 				
-				switch(style)
-				{				
+				switch(style) {				
 					case "red":
 //						console.log("RED");
 						//chartStyleName = "red";
@@ -274,13 +270,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 //						legendX = 0;
 //						legendY = 0;	
 						
-						templateToReturn = 
-						
-						{
-							generic: 
-							{
-								CHART:
-								{
+						templateToReturn =  {
+							generic: {
+								CHART: {
 									height: 400,
 									width: 1000,	
 									isCockpitEngine: "false",
@@ -289,197 +281,136 @@ Ext.define('Sbi.chart.designer.Designer', {
 									styleName: "red",
 //									styleCustom: styleCustom, 
 									
-									TITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+									TITLE: {
+										style: "align:center;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
 										text: "This is red chart"
 									},
 									
-									SUBTITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+									SUBTITLE: {
+										style: "align:center;color:#FF0000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
 										text: "Insert your subtitle"
 									},
 									
-									EMPTYMESSAGE:
-									{
+									EMPTYMESSAGE: {
 										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
 										text: "Insert your empty message (when no data for chart exists)"
 									},
 									
-									LEGEND:
-									{
+									LEGEND: {
 										floating: false,
 										layout: "",
 										position: "",
 										show: false,
-										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:#FF0000;backgroundColor:;symbolWidth:;",
 										x: 0,
 										y: 0
 									},
 									
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   alias:'Y', 
-									    	   type: 'Serie',
-									    	   position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "AAA" 
-							    			   }
-							    		   },									       
+									AXES_LIST: {
+										AXIS: [{
+//								    	   alias:'Y', 
+								    	   type: 'Serie',
+//								    	   position: "",
+								    	   style: "rotate:;align:;color:#FF0000;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID: {
+								    		   interval: "",
+								    		   style: "typeline:;color:#FF0000;"
+							    		   },
+								       
+							    		   MINORGRID: {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#FF0000;"
+						    			   },
 							    		   
-							    		   {
-							    			   alias:'X', 
-							    			   type: 'Category',
-							    			   position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
+							    		   TITLE: {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "red measure axis title" 
+						    			   }
+										}, {
+//						    			   alias:'X', 
+						    			   type: 'Category',
+//						    			   position: "", 
+						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE: {
+						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: "red category axis title"
 					    				   }
-								        ]
+				    				   }]
 									}
 								}						
 							},
-							wordcloud:{
-								
-								CHART:
-								{
-									
+							wordcloud: {
+								CHART: {
 									maxAngle:'121',
 									maxFontSize:'51',
 									maxWords:'51',
 									minAngle:'61', 
 									sizeCriteria:'serie',
 									wordPadding:'5'
-									
 								}
 							},
-							treemap:{
-								
-							},
-							parallel:{
-								CHART:
-								{
-									AXES_LIST:{
-									
+							treemap: {},
+							parallel: {
+								CHART: {
+									AXES_LIST: {
 										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
-										
 									},
-									LIMIT:{
-									
+									LIMIT: {
 										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
-										
 									},
-									PARALLEL_TOOLTIP:{
-										
+									PARALLEL_TOOLTIP: {
 										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
-										
 									},
-									LEGEND:{
-										
-										TITLE:{
-											
+									LEGEND: {
+										TITLE: {
 											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
-											
 										},
-										ELEMENT:{
-											
+										ELEMENT: {
 											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
-											
 										}
-										
 									}								
 								}
-								
 							},
-							heatmap:{
-								
-								CHART:{
-									
-									LEGEND:{
-										
+							heatmap: {
+								CHART: {
+									LEGEND: {
 										style:"align:center;symbolWidth:50;"
-										
 									},
-									TOOLTIP:{
-										
+									TOOLTIP: {
 										style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
-										
 									}
-									
 								}
-								
 							},
-							radar:{
-								
-							},
-							scatter:{
-								
-								CHART:{
-								
+							radar: {},
+							scatter: {
+								CHART: {
 									zoomType:"xy"
-									
 								}								
 							},
-							gauge:{
-								
-								CHART:{
-									
-									PANE:{
+							gauge: {
+								CHART: {
+									PANE: {
 										endAngle:"121",
 										startAngle:"-121"
 									}
-									
 								}
-								
 							},
-							sunburst:{
-								
-								CHART:{
-									
+							sunburst: {
+								CHART: {
 									opacMouseOver:"10",
 									
-									TOOLBAR:{
-										
+									TOOLBAR: {
 										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
-										
 									},
-									TIP:{
-										
+									TIP: {
 										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
 										text: "insert text here"
-										
 									}
-									
 								}
-								
 							},
-							chord:{
-								
-							}
+							chord: {}
 						};
 						
 						return templateToReturn;
@@ -509,41 +440,33 @@ Ext.define('Sbi.chart.designer.Designer', {
 						legendX = 0;
 						legendY = 0;*/
 						
-						templateToReturn = 
-							
-						{
-							generic: 
-							{
-								CHART:
-								{
+						templateToReturn = {
+							generic: {
+								CHART: {
 									height: 500,
 									width: 1100,	
 									isCockpitEngine: "false",
 									orientation: "horizontal",
 									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;",
 									styleName: "blue",
-//									styleCustom: styleCustom, 
+									styleCustom: "styleCustom", 
 									
-									TITLE:
-									{
+									TITLE: {
 										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
 										text: "This is blue chart"
 									},
 									
-									SUBTITLE:
-									{
+									SUBTITLE: {
 										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
 										text: "Insert your subtitle"
 									},
 									
-									EMPTYMESSAGE:
-									{
+									EMPTYMESSAGE: {
 										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
 										text: "Insert your empty message (when no data for chart exists)"
 									},
 									
-									LEGEND:
-									{
+									LEGEND: {
 										floating: false,
 										layout: "",
 										position: "",
@@ -553,168 +476,111 @@ Ext.define('Sbi.chart.designer.Designer', {
 										y: 0
 									},
 									
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   alias:'Y', 
-									    	   type: 'Serie',
-									    	   position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "AAA" 
-							    			   }
-							    		   },									       
+									AXES_LIST: {
+										AXIS: [{
+//								    	   alias:'Y', 
+								    	   type: 'Serie',
+//								    	   position: "",
+								    	   style: "rotate:;align:;color:#0000FF;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID: {
+								    		   interval: "",
+								    		   style: "typeline:;color:#0000FF;"
+							    		   },
+								       
+							    		   MINORGRID: {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#0000FF;"
+						    			   },
 							    		   
-							    		   {
-							    			   alias:'X', 
-							    			   type: 'Category',
-							    			   position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
+							    		   TITLE: {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "blue measure axis" 
+						    			   }
+										}, {
+//						    			   alias:'X', 
+						    			   type: 'Category',
+//						    			   position: "", 
+						    			   style: "rotate:;align:;color:#0000FF;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE: {
+						    				   style: "align:;color:#0000FF;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: "blue category axis"
 					    				   }
-								        ]
+				    				   }]
 									}
 								}						
 							},
-							wordcloud:{
-								
-								CHART:
-								{
-									
+							
+							wordcloud: {
+								CHART: {
 									maxAngle:'122',
 									maxFontSize:'52',
 									maxWords:'52',
 									minAngle:'62', 
 									sizeCriteria:'serie',
 									wordPadding:'3'
-									
 								}
 							},
-							treemap:{
-								
-							},
-							parallel:{
-								CHART:
-								{
-									AXES_LIST:{
-									
+							treemap: {},
+							parallel: {
+								CHART: {
+									AXES_LIST: {
 										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
-										
 									},
-									LIMIT:{
-									
+									LIMIT: {
 										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
-										
 									},
-									PARALLEL_TOOLTIP:{
-										
+									PARALLEL_TOOLTIP: {
 										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
-										
 									},
-									LEGEND:{
-										
-										TITLE:{
-											
+									LEGEND: {
+										TITLE: {
 											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
-											
 										},
-										ELEMENT:{
-											
+										ELEMENT: {
 											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
-											
 										}
-										
 									}								
 								}
-								
 							},
-							heatmap:{
-								
-								CHART:{
-									
-									LEGEND:{
-										
+							heatmap: {
+								CHART: {
+									LEGEND: {
 										style:"align:center;symbolWidth:60;"
-										
 									},
-									TOOLTIP:{
-										
+									TOOLTIP: {
 										style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
-										
 									}
-									
 								}
-								
 							},
-							radar:{
-								
-							},
-							scatter:{
-								
-								CHART:{
-								
+							radar: {},
+							scatter: {
+								CHART: {
 									zoomType:"xy"
-									
 								}								
 							},
-							gauge:{
-								
-								CHART:{
-									
-									PANE:{
+							gauge: {
+								CHART: {
+									PANE: {
 										endAngle:"122",
 										startAngle:"-122"
 									}
-									
 								}
-								
 							},
-							sunburst:{
-								
-								CHART:{
-									
+							sunburst: {
+								CHART: {
 									opacMouseOver:"12",
-									
-									TOOLBAR:{
-										
+									TOOLBAR: {
 										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:15px;"
-										
 									},
-									TIP:{
-										
+									TIP: {
 										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
 										text: "insert text here"
-										
 									}
-									
 								}
-								
 							},
-							chord:{
-								
-							}
+							chord: {}
 						};
 						
 						return templateToReturn;
@@ -744,13 +610,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						legendX = 0;
 						legendY = 0;*/
 						
-						templateToReturn = 
-							
-						{
-							generic: 
-							{
-								CHART:
-								{
+						templateToReturn = {
+							generic: {
+								CHART: {
 									height: 400,
 									width: 1000,	
 									isCockpitEngine: "false",
@@ -759,197 +621,135 @@ Ext.define('Sbi.chart.designer.Designer', {
 									styleName: "blue",
 //									styleCustom: styleCustom, 
 									
-									TITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+									TITLE: {
+										style: "align:center;color:#00FF00;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
 										text: "This is green chart"
 									},
 									
-									SUBTITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+									SUBTITLE: {
+										style: "align:center;color:#00FF00;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
 										text: "Insert your subtitle"
 									},
 									
-									EMPTYMESSAGE:
-									{
-										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+									EMPTYMESSAGE: {
+										style: "align:left;color:#00FF00;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
 										text: "Insert your empty message (when no data for chart exists)"
 									},
 									
-									LEGEND:
-									{
+									LEGEND: {
 										floating: false,
 										layout: "",
 										position: "",
 										show: false,
-										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:#00FF00;backgroundColor:;symbolWidth:;",
 										x: 0,
 										y: 0
 									},
 									
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   alias:'Y', 
-									    	   type: 'Serie',
-									    	   position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "AAA" 
-							    			   }
-							    		   },									       
+									AXES_LIST: {
+										AXIS: [{
+//								    	   alias:'Y', 
+								    	   type: 'Serie',
+//								    	   position: "",
+								    	   style: "rotate:;align:;color:#00FF00;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID: {
+								    		   interval: "",
+								    		   style: "typeline:;color:#00FF00;"
+							    		   },
+								       
+							    		   MINORGRID: {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#00FF00;"
+						    			   },
 							    		   
-							    		   {
-							    			   alias:'X', 
-							    			   type: 'Category',
-							    			   position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
+							    		   TITLE: {
+							    			   style: "align:;color:#00FF00;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "green measure axis" 
+						    			   }
+										}, {
+//						    			   alias:'X', 
+						    			   type: 'Category',
+//						    			   position: "", 
+						    			   style: "rotate:;align:;color:#00FF00;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE: {
+						    				   style: "align:;color:#00FF00;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: "green category axis"
 					    				   }
-								        ]
+				    				   }]
 									}
 								}						
 							},
-							wordcloud:{
-								
-								CHART:
-								{
-									
+							wordcloud: {
+								CHART: {
 									maxAngle:'123',
 									maxFontSize:'53',
 									maxWords:'53',
 									minAngle:'63', 
 									sizeCriteria:'serie',
 									wordPadding:'5'
-									
 								}
 							},
-							treemap:{
-								
-							},
-							parallel:{
-								CHART:
-								{
-									AXES_LIST:{
-									
+							treemap: {},
+							parallel: {
+								CHART: {
+									AXES_LIST: {
 										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
-										
 									},
-									LIMIT:{
-									
+									LIMIT: {
 										style:"maxNumberOfLines:21;orderTopMinBottomMax:bottom;"
-										
 									},
-									PARALLEL_TOOLTIP:{
-										
+									PARALLEL_TOOLTIP: {
 										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:6;maxHeight:50;padding:1;border:1;borderRadius:1;"
-										
 									},
-									LEGEND:{
-										
-										TITLE:{
-											
+									LEGEND: {
+										TITLE: {
 											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
-											
 										},
-										ELEMENT:{
-											
+										ELEMENT: {
 											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
-											
 										}
-										
 									}								
 								}
-								
 							},
-							heatmap:{
-								
-								CHART:{
-									
-									LEGEND:{
-										
+							heatmap: {
+								CHART: {
+									LEGEND: {
 										style:"align:center;symbolWidth:55;"
-										
 									},
-									TOOLTIP:{
-										
+									TOOLTIP: {
 										style:"fontFamily:Gungsuh;fontSize:26px;color:#003366;"
-										
 									}
-									
 								}
-								
 							},
-							radar:{
-								
-							},
-							scatter:{
-								
-								CHART:{
-								
+							radar: {},
+							scatter: {
+								CHART: {
 									zoomType:"xy"
-									
 								}								
 							},
-							gauge:{
-								
-								CHART:{
-									
-									PANE:{
+							gauge: {
+								CHART: {
+									PANE: {
 										endAngle:"123",
 										startAngle:"-123"
 									}
-									
 								}
-								
 							},
-							sunburst:{
-								
-								CHART:{
-									
+							sunburst: {
+								CHART: {
 									opacMouseOver:"13",
-									
-									TOOLBAR:{
-										
+									TOOLBAR: {
 										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
-										
 									},
-									TIP:{
-										
+									TIP: {
 										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
 										text: "insert text here"
-										
 									}
-									
 								}
-								
 							},
-							chord:{
-								
-							}
+							chord: {}
 						};
 						
 						return templateToReturn;
@@ -962,13 +762,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * the JSON
 				 *(danilo.ristovski@mht.net)
 				 */
-//				var configurationToReturn = 
-//				
-//				{
-//					generic: 
-//					{
-//						CHART:
-//						{
+//				var configurationToReturn = {
+//					generic: {
+//						CHART: {
 //							height: chartHeight,
 //							width: chartWidth,	
 //							isCockpitEngine: chartIsCockpitEngine,
@@ -977,26 +773,21 @@ Ext.define('Sbi.chart.designer.Designer', {
 //							styleName: chartStyleName,
 ////							styleCustom: styleCustom, 
 //							
-//							TITLE:
-//							{
+//							TITLE: {
 //								style: titleStyle,
 //								text: titleText
 //							},
 //							
-//							SUBTITLE:
-//							{
+//							SUBTITLE: {
 //								style: subtitleStyle,
 //								text: subtitleText
 //							},
 //							
-//							EMPTYMESSAGE:
-//							{
+//							EMPTYMESSAGE: {
 //								style: emptyMessageStyle,
 //								text: emptyMessageText
 //							},
-//							
-//							LEGEND:
-//							{
+//							LEGEND: {
 //								floating: legendFloating,
 //								layout: legendLayout,
 //								position: legendPosition,
@@ -1019,18 +810,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * these two types - the base one and the current one. 			 
 			 * (danilo.ristovski@mht.net)
 			 */
-			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' 
-				|| jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST'
-					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD'
-						|| jsonTemplate.CHART.type.toUpperCase() == 'TREEMAP'
-							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL'
-								|| jsonTemplate.CHART.type.toUpperCase() == 'RADAR'
-									|| jsonTemplate.CHART.type.toUpperCase() == 'SCATTER'
-										|| jsonTemplate.CHART.type.toUpperCase() == 'HEATMAP'
-											|| jsonTemplate.CHART.type.toUpperCase() == 'GAUGE') {
+			var jsonTemplateChartType = jsonTemplate.CHART.type.toUpperCase();
+			if (jsonTemplateChartType == 'PIE' 
+				|| jsonTemplateChartType == 'SUNBURST'
+					|| jsonTemplateChartType == 'WORDCLOUD'
+						|| jsonTemplateChartType == 'TREEMAP'
+							|| jsonTemplateChartType == 'PARALLEL'
+								|| jsonTemplateChartType == 'RADAR'
+									|| jsonTemplateChartType == 'SCATTER'
+										|| jsonTemplateChartType == 'HEATMAP'
+											|| jsonTemplateChartType == 'GAUGE') {
 //				console.log(baseTemplate);
 //				console.log(jsonTemplate);
 				
+				// cambiare?
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);				
 			}				
 			
@@ -1040,8 +833,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 //			if (jsonTemplate.CHART.styleCustom)
 //				console.log("YYYY");
 //			else
-			if (newChart == true)
-				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate, getConfigurationForStyle(this.styleName).generic);
+			var applyAxes = true;
+			var configApplyAxes = {applyAxes: applyAxes};
+			
+			if (newChart == true) {
+				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+						jsonTemplate, 
+						getConfigurationForStyle(this.styleName).generic,
+						configApplyAxes);
+			}
 			
 			Sbi.chart.designer.ChartColumnsContainerManager.setPlotbandsStore(jsonTemplate);
 			
@@ -1103,141 +903,132 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var onSelectJsonTemplate = "";
 			
 			// *_* Listens when chart type is changed
-			this.chartTypeSelector.on
-			(
-				"newrowclick",
+			this.chartTypeSelector.on("newrowclick", function() {				
+				var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
+				var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);
 				
-				function()
-				{				
-					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
-					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);
-					
-					/* Main configuration panel elements for hiding/showing when the SUNBURST is selected */
-					var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
-					var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
-					var chartWidth = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");
-					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");
-					
-					/* Second configuration panel elements for hiding/showing when the SUNBURST is selected */
-					var colorPallete = secondConfigurationPanel.getComponent("chartColorPallete");
-					var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
-					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
-					
-					/* Second configuration panel elements for hiding/showing when the WORDCLOUD is selected */
-					var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
-					
-					/* Second configuration panel elements for hiding/showing when the PARALLEL is selected */
-					var parallelLimitPanel = secondConfigurationPanel.getComponent("chartParallelLimit");
-					var parallelAxesLinesPanel = secondConfigurationPanel.getComponent("chartParallelAxesLines");					
-					var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
-					var parallelLegendPanel = secondConfigurationPanel.getComponent("chartParallelLegend");
-					
-					/* Second configuration panel elements for hiding/showing when the SCATTER is selected */
-					var scatterConfiguration = secondConfigurationPanel.getComponent("chartScatterConfiguration");
-					
-					/**
-					 * Second configuration panel elements for hiding/showing when the HEATMAP is selected
-					 * (danilo.ristovski@mht.net)
-					 */
-					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
-					
-					var gaugePanePanel = secondConfigurationPanel.getComponent("gaugePaneConfiguration");
-					
-					var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
-					var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';		
-					var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
-					var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';					
-					var isChartScatter = this.chartType.toUpperCase() == 'SCATTER';						
-					var isChartHeatmap = this.chartType.toUpperCase() == 'HEATMAP';	
-					var isChartGauge = this.chartType.toUpperCase() == 'GAUGE';	
-					
-					if (isChartSunburst || isChartWordCloud  || isChartTreemap 
-							|| isChartParallel || isChartHeatmap || isChartGauge) {						
-						chartLegendCheckBox.hide();
-					} else {
-						chartLegendCheckBox.show();
-					}
-					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap 
-							|| isChartParallel || isChartHeatmap || isChartGauge) {
-						chartLegend.hide();
-					} else {
-						chartLegend.show();
-					}
-					
-					if (isChartSunburst || isChartWordCloud || isChartTreemap 
-							|| isChartParallel || isChartHeatmap || isChartGauge) {
-						chartOrientation.hide();
-					} else {
-						chartOrientation.show();
-					}
-					
-					if (isChartSunburst) {
-						chartWidth.hide();
-					} else {
-						chartWidth.show();
-					}
-					
-					if (isChartSunburst) {
-						opacityOnMouseOver.show();
-					} else {
-						opacityOnMouseOver.hide();
-					}
-					
-					if (isChartSunburst || isChartWordCloud || isChartScatter || isChartGauge) {
-						colorPallete.hide();
-					} else {
-						colorPallete.show();
-					}
-					
-					if (isChartSunburst) {
-						toolbarAndTip.show();
-					} else  {
-						toolbarAndTip.hide();
-					}
-					
-					if (isChartWordCloud) {
-						wordCloudPanel.show();
-					} else {
-						wordCloudPanel.hide();
-					}
-					
-					if (isChartParallel) {
-						parallelLimitPanel.show();
-						parallelAxesLinesPanel.show();
-						parallelTooltipPanel.show();
-						parallelLegendPanel.show();
-					} else {
-						parallelLimitPanel.hide();
-						parallelAxesLinesPanel.hide();
-						parallelTooltipPanel.hide();
-						parallelLegendPanel.hide();
-					}
-					
-					if (isChartScatter) {
-						scatterConfiguration.show();
-					} else {
-						scatterConfiguration.hide();
-					}
-					
-					if (isChartHeatmap) {
-						showLegendAndTooltip.show();
-					} else {
-						showLegendAndTooltip.hide();
-					}
-					
-					if (isChartGauge)
-					{
-						globalThis.bottomXAxisesPanel.hide();
-						gaugePanePanel.show();
-					}
-					else
-					{
-						globalThis.bottomXAxisesPanel.show();
-						gaugePanePanel.hide();
-					}
+				/* Main configuration panel elements for hiding/showing when the SUNBURST is selected */
+				var chartLegendCheckBox = mainConfigurationPanel.getComponent("showLegend");
+				var chartOrientation = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartOrientationCombo");
+				var chartWidth = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");
+				var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");
+				
+				/* Second configuration panel elements for hiding/showing when the SUNBURST is selected */
+				var colorPallete = secondConfigurationPanel.getComponent("chartColorPallete");
+				var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
+				var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
+				
+				/* Second configuration panel elements for hiding/showing when the WORDCLOUD is selected */
+				var wordCloudPanel = secondConfigurationPanel.getComponent("wordcloudConfiguration");
+				
+				/* Second configuration panel elements for hiding/showing when the PARALLEL is selected */
+				var parallelLimitPanel = secondConfigurationPanel.getComponent("chartParallelLimit");
+				var parallelAxesLinesPanel = secondConfigurationPanel.getComponent("chartParallelAxesLines");					
+				var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
+				var parallelLegendPanel = secondConfigurationPanel.getComponent("chartParallelLegend");
+				
+				/* Second configuration panel elements for hiding/showing when the SCATTER is selected */
+				var scatterConfiguration = secondConfigurationPanel.getComponent("chartScatterConfiguration");
+				
+				/**
+				 * Second configuration panel elements for hiding/showing when the HEATMAP is selected
+				 * (danilo.ristovski@mht.net)
+				 */
+				var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
+				
+				var gaugePanePanel = secondConfigurationPanel.getComponent("gaugePaneConfiguration");
+				
+				var isChartSunburst = this.chartType.toUpperCase() == 'SUNBURST';
+				var isChartWordCloud = this.chartType.toUpperCase() == 'WORDCLOUD';		
+				var isChartTreemap = this.chartType.toUpperCase() == 'TREEMAP';
+				var isChartParallel = this.chartType.toUpperCase() == 'PARALLEL';					
+				var isChartScatter = this.chartType.toUpperCase() == 'SCATTER';						
+				var isChartHeatmap = this.chartType.toUpperCase() == 'HEATMAP';	
+				var isChartGauge = this.chartType.toUpperCase() == 'GAUGE';	
+				
+				if (isChartSunburst || isChartWordCloud  || isChartTreemap 
+						|| isChartParallel || isChartHeatmap || isChartGauge) {						
+					chartLegendCheckBox.hide();
+				} else {
+					chartLegendCheckBox.show();
 				}
-			);
+				
+				if (isChartSunburst || isChartWordCloud || isChartTreemap 
+						|| isChartParallel || isChartHeatmap || isChartGauge) {
+					chartLegend.hide();
+				} else {
+					chartLegend.show();
+				}
+				
+				if (isChartSunburst || isChartWordCloud || isChartTreemap 
+						|| isChartParallel || isChartHeatmap || isChartGauge) {
+					chartOrientation.hide();
+				} else {
+					chartOrientation.show();
+				}
+				
+				if (isChartSunburst) {
+					chartWidth.hide();
+				} else {
+					chartWidth.show();
+				}
+				
+				if (isChartSunburst) {
+					opacityOnMouseOver.show();
+				} else {
+					opacityOnMouseOver.hide();
+				}
+				
+				if (isChartSunburst || isChartWordCloud || isChartScatter || isChartGauge) {
+					colorPallete.hide();
+				} else {
+					colorPallete.show();
+				}
+				
+				if (isChartSunburst) {
+					toolbarAndTip.show();
+				} else  {
+					toolbarAndTip.hide();
+				}
+				
+				if (isChartWordCloud) {
+					wordCloudPanel.show();
+				} else {
+					wordCloudPanel.hide();
+				}
+				
+				if (isChartParallel) {
+					parallelLimitPanel.show();
+					parallelAxesLinesPanel.show();
+					parallelTooltipPanel.show();
+					parallelLegendPanel.show();
+				} else {
+					parallelLimitPanel.hide();
+					parallelAxesLinesPanel.hide();
+					parallelTooltipPanel.hide();
+					parallelLegendPanel.hide();
+				}
+				
+				if (isChartScatter) {
+					scatterConfiguration.show();
+				} else {
+					scatterConfiguration.hide();
+				}
+				
+				if (isChartHeatmap) {
+					showLegendAndTooltip.show();
+				} else {
+					showLegendAndTooltip.hide();
+				}
+				
+				if (isChartGauge) {
+					globalThis.bottomXAxisesPanel.hide();
+					gaugePanePanel.show();
+				} else {
+					globalThis.bottomXAxisesPanel.show();
+					gaugePanePanel.hide();
+				}
+			});
 			
 			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
 			
@@ -1252,8 +1043,7 @@ Ext.define('Sbi.chart.designer.Designer', {
  					direction: 'ASC'
  				}],
  				
- 				listeners: 
- 				{
+ 				listeners: {
  					// *_* When we get the necessary data populate this store
  					dataReady: function(jsonData) {
  						
@@ -1290,8 +1080,7 @@ Ext.define('Sbi.chart.designer.Designer', {
  					direction: 'ASC'
  				}],
  				
- 				listeners: 
- 				{
+ 				listeners: {
  					dataReady: function(jsonData) 
  					{
  		  				var jsonDataObj = Ext.JSON.decode(jsonData);
@@ -1388,134 +1177,126 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * with combo items that have predefined names (Red, Green, Blue, ...)
 			 * (danilo.ristovski@mht.net)
 			 */
-			var styleStore = Ext.create
-			(
-				"Ext.data.Store", 
+			var styleStore = Ext.create ( "Ext.data.Store", {
+				fields: ["style", "styleAbbr"],
 				
-				{
-					fields: ["style", "styleAbbr"],
-					
-					data: 
-					[
-					 	{"style":"Red", "styleAbbr":"red"},
-					 	{"style":"Blue", "styleAbbr":"blue"},
-					 	{"style":"Green", "styleAbbr":"green"}
-					 ]
-				}
-			);
+				data:  [
+				 	{style: LN('sbi.chartengine.designer.stylecolor.red'), styleAbbr: "red"},
+				 	{style: LN('sbi.chartengine.designer.stylecolor.blue'), styleAbbr: "blue"},
+				 	{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"}
+				 ]
+			});
 			
-			this.styleLabel = Ext.create
-			(
-				{
-					xtype: 'label',
-			        forId: 'stylePickerComboId',
-			        text: 'Style for parameters',	// TODO: LN()
-			        //margin: '5 3 3 0'
-				}
-			);
+			this.styleLabel = Ext.create ('Ext.form.Label', {
+		        forId: 'stylePickerComboId',
+		        text: LN('sbi.chartengine.designer.styleforparameters'),
+		        //margin: '5 3 3 0'
+			});
 			
 			/**
 			 * Combo box for defining the style for the generic customizable parameters (properties)
 			 * of the chart 
 			 * (danilo.ristovski@mht.net)
 			 */
-			this.stylePickerCombo = Ext.create
-			(
-				"Ext.form.ComboBox", 
-				
-				{
+			this.stylePickerCombo = Ext.create("Ext.form.ComboBox", {
 //					fieldLabel: 'Choose style',
-				    store: styleStore,
-				    id: "stylePickerComboId",
-				    queryMode: 'local',
-				    displayField: 'style',
-				    valueField: 'styleAbbr',
-				    value: globalThis.styleName,
-				    editable: false,
-				    padding: "5 0 10 0",
-				    width: 170,
-				    
-				    listConfig:
-				    	{listeners: 
-				    	{
-					    	itemclick: function(combo,k)
-					    	{
-								/**
-								 * Depending on the style that we choose for the document's generic
-								 * customizable parameters (Red, Green, Blue, ... style), take the
-								 * predefined JSON structure that is defined for that newly chosen 
-								 * style. This part is needed for later merging of the templates 
-								 */
-					    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			    store: styleStore,
+			    id: "stylePickerComboId",
+			    queryMode: 'local',
+			    displayField: 'style',
+			    valueField: 'styleAbbr',
+			    value: globalThis.styleName,
+			    editable: false,
+			    padding: "5 0 10 0",
+			    width: 170,
+			    
+			    listConfig: {
+			    	listeners: {
+				    	itemclick: function(combo,k) {
+							/**
+							 * Depending on the style that we choose for the document's generic
+							 * customizable parameters (Red, Green, Blue, ... style), take the
+							 * predefined JSON structure that is defined for that newly chosen 
+							 * style. This part is needed for later merging of the templates 
+							 */
+				    		var applyAxes = true;
+							var configApplyAxes = {applyAxes: applyAxes};
+							
+				    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 //					    		jsonTemplate.CHART.styleCustom = false;
 //					    		globalThis.styleCustom = false;
 //					    		console.log(k);
-								var genericConfigurationForStyle = getConfigurationForStyle(k.data.styleAbbr).generic;
+							var genericConfigurationForStyle = getConfigurationForStyle(k.data.styleAbbr).generic;
 //								console.log(genericConfigurationForStyle);
-								/**
-								 * Reset (refresh, modify) the 'styleName' field of the Designer, also
-								 */
-								globalThis.styleName = k.data.styleAbbr;
-								
-								/**
-								 * Reset the JSON template for the document (chart) after changing the 
-								 * previously selected style (changing the selected item of the combo)
-								 */
+							/**
+							 * Reset (refresh, modify) the 'styleName' field of the Designer, also
+							 */
+							globalThis.styleName = k.data.styleAbbr;
+							
+							/**
+							 * Reset the JSON template for the document (chart) after changing the 
+							 * previously selected style (changing the selected item of the combo)
+							 */
 //								console.log(jsonTemplate);
-								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,genericConfigurationForStyle);
+							jsonTemplate = globalThis.exportAsJson();
+							jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+									jsonTemplate,
+									genericConfigurationForStyle,
+									configApplyAxes);
 //					    		console.log(jsonTemplate);
-								
-								if (chartType == "WORDCLOUD"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).wordcloud);
-									
-								}
-								else if (chartType == "TREEMAP"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).treemap);
-									
-								}
-								else if (chartType == "PARALLEL"){
-									
-									jsonTemplate.CHART.LEGEND=null;
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).parallel);
-								
-								}
-								else if (chartType == "HEATMAP"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).heatmap);
-									
-								}
-								else if (chartType == "RADAR"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).radar);
-									
-								}
-								else if (chartType == "SCATTER"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).scatter);
-									
-								}
-								else if (chartType == "GAUGE"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).gauge);
-									
-								}
-								else if (chartType == "SUNBURST"){
-									
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).sunburst);
-									
-								}
-								
-								/**
-								 * Update (refresh) the main configuration panel (the one on the top of 
-								 * the Step 2 tab) after selecting the particular style
-								 */
-					    		Sbi.chart.designer.Designer.update(jsonTemplate);
-					    	}
-				    	}}
-				}
-			);
+							
+							if (chartType == "WORDCLOUD"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).wordcloud,
+										configApplyAxes);
+							} else if (chartType == "TREEMAP"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).treemap,
+										configApplyAxes);
+							} else if (chartType == "PARALLEL"){
+								jsonTemplate.CHART.LEGEND=null;
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).parallel,
+										configApplyAxes);
+							} else if (chartType == "HEATMAP"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).heatmap,
+										configApplyAxes);
+							} else if (chartType == "RADAR"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).radar,
+										configApplyAxes);
+							} else if (chartType == "SCATTER"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).scatter,
+										configApplyAxes);
+							} else if (chartType == "GAUGE"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).gauge,
+										configApplyAxes);
+							} else if (chartType == "SUNBURST"){
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+										jsonTemplate, 
+										getConfigurationForStyle(k.data.styleAbbr).sunburst,
+										configApplyAxes);
+							}
+							
+							/**
+							 * Update (refresh) the main configuration panel (the one on the top of 
+							 * the Step 2 tab) after selecting the particular style
+							 */
+				    		Sbi.chart.designer.Designer.update(jsonTemplate);
+				    	}
+			    	}
+			    }
+			});
 			
 			this.chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
   				chartTypeSelector: this.chartTypeSelector,
@@ -1677,8 +1458,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		  		            					buttons : Ext.Msg.OK,
 		  		            					minWidth: 200,
 		  		            					
-		  		            					buttonText : 
-		  		            					{
+		  		            					buttonText : {
 		  		            						ok : LN('sbi.chartengine.generic.ok')
 		  		            					}
 	  	  									}
@@ -1901,8 +1681,7 @@ Ext.define('Sbi.chart.designer.Designer', {
             					icon : Ext.Msg.QUESTION,
             					closable : false,
             					buttons : Ext.Msg.OKCANCEL,
-            					buttonText : 
-            					{
+            					buttonText : {
             						ok : LN('sbi.chartengine.generic.ok'),
             						cancel : LN('sbi.generic.cancel')
             					},
@@ -2021,8 +1800,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					icon : Ext.Msg.QUESTION,
   		            					closable : false,
   		            					buttons : Ext.Msg.OKCANCEL,
-  		            					buttonText : 
-  		            					{
+  		            					buttonText : {
   		            						ok : LN('sbi.generic.save'),
   		            						cancel : LN('sbi.generic.cancel')
   		            					},
@@ -2099,8 +1877,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					icon : Ext.Msg.QUESTION,
   		            					closable : false,
   		            					buttons : Ext.Msg.OKCANCEL,
-  		            					buttonText : 
-  		            					{
+  		            					buttonText : {
   		            						ok : LN('sbi.generic.save'),
   		            						cancel : LN('sbi.generic.cancel')
   		            					},
@@ -2165,8 +1942,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 											icon : Ext.Msg.WARNING,
 											closable : false,
 											buttons : Ext.Msg.OK,
-											buttonText : 
-											{
+											buttonText : {
 												ok : LN('sbi.chartengine.generic.ok'),
 											}
 										});
@@ -2570,12 +2346,28 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var appliedPropertiesOnOldJson = Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, lastJsonTemplate);
 			
 			// comparison and merge generated json template with the old one
-			var overwrittenJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(appliedPropertiesOnOldJson, exported1st2ndSteps, true);
+			var removeNotFoundItemsFlag = true;
+			var overwrittenJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+					appliedPropertiesOnOldJson, 
+					exported1st2ndSteps, 
+					{
+						removeNotFoundItemsFlag: removeNotFoundItemsFlag
+					});
 			
 			// add default catalogue properties in case there are new elements generated by designer
 			var newJsonTemplate = (library === oldLibrary)?
-				Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, overwrittenJsonTemplate, true)
-				: Sbi.chart.designer.ChartUtils.mergeObjects(catalogue, exported1st2ndSteps, true);
+				Sbi.chart.designer.ChartUtils.mergeObjects(
+						catalogue, 
+						overwrittenJsonTemplate, 
+						{
+							removeNotFoundItemsFlag: removeNotFoundItemsFlag
+						})
+				: Sbi.chart.designer.ChartUtils.mergeObjects(
+						catalogue, 
+						exported1st2ndSteps, 
+						{
+							removeNotFoundItemsFlag: removeNotFoundItemsFlag
+						});
 				
 			if(finalJson == true) {
 				return Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate);
