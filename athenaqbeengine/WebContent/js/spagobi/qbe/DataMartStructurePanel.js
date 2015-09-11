@@ -141,53 +141,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		this.tree.collapseAll();
 	}
 	
-	, removeCalculatedField:  function(fieldNode) {
-		var nodeType;
-		nodeType = fieldNode.attributes.type || fieldNode.attributes.attributes.type;
-		if(nodeType === Sbi.constants.qbe.NODE_TYPE_CALCULATED_FIELD 
-		|| nodeType === Sbi.constants.qbe.NODE_TYPE_INLINE_CALCULATED_FIELD) {
-			
-			var entityId = fieldNode.parentNode.id;
-			var formState;
-			if( fieldNode.attributes.attributes!=null){
-				formState = fieldNode.attributes.attributes.formState;
-			}else{
-				formState = fieldNode.attributes.formState;
-			}
-    		var f = {
-    			alias: formState.alias
-    			, type: formState.type
-    			, calculationDescriptor: formState
-    		};
-    		
-    		var params = {
-    			entityId: entityId,
-    			nodeId: fieldNode.id,
-    			field: Ext.util.JSON.encode(f)
-    		}
-    		
-			Ext.Ajax.request({
-				url:  this.services['deleteCalculatedField'],
-				success: function(response, options, a) {
-					var node = this.tree.getNodeById(options.params.nodeId);
-					node.unselect();
-		            Ext.fly(node.ui.elNode).ghost('l', {
-		                callback: node.remove, scope: node, duration: .4
-		            });
-       			},
-       			scope: this,
-				failure: Sbi.exception.ExceptionHandler.handleFailure,	
-				params: params
-        	}); 
-		} else {
-			Ext.Msg.show({
-				   title:LN('sbi.qbe.bands.wizard.invalid.operation'),
-				   msg: LN('sbi.qbe.bands.wizard.invalid.operation.delete.msg'),
-				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.ERROR
-			});
-		}
-	}
+	, removeCalculatedField:  function(fieldNode) {}
 	
 	, editCalculatedField: function(fieldNode) {
 		var nodeType;
@@ -457,6 +411,15 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}	
 
 	}
+	
+	, setHierarchyDefault: function(hierarchyNode) {
+		
+		hierarchyNode.attributes.cls = 'default_hierarchy';
+	
+		
+		
+	}
+	
 	// --------------------------------------------------------------------------------
 	// private methods
 	// --------------------------------------------------------------------------------
@@ -511,10 +474,22 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		this.tree.on('click', function(node) {
 			var nodeType = node.attributes.type || node.attributes.attributes.type;
-			if(nodeType !== 'entity') {
+			if(nodeType !== 'entity' && nodeType !== 'hierarchyField') {
 				this.fireEvent('nodeclick', this, node);
 			}
 		}, this);
+		
+		
+		//TODO gestione gerarchia default
+		this.tree.on('dblclick',function(node){
+			var nodeType = node.attributes.type || node.attributes.attributes.type;
+			if(nodeType == 'hierarchyField') {
+				this.fireEvent('nodedblclick', this, node);
+//				node.attributes.cls = 'default_hierarchy';
+			}
+		},this);
+		
+		
 		if(this.enableTreeContextMenu) {
 			this.tree.on('contextmenu', this.onContextMenu, this);
 			

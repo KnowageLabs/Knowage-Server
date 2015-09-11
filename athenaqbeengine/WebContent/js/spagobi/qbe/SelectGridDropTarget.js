@@ -118,6 +118,8 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 	    	this.addInLineCalculatedNodeToSelect(node, rowIndex, recordBaseConfig);
 	    } else if(nodeType == Sbi.constants.qbe.NODE_TYPE_ENTITY){
 			this.addEntityNodeToSelect(node, rowIndex, recordBaseConfig);	
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD){
+			this.addHierarchyNodeToSelect(node, rowIndex, recordBaseConfig);	
 		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_RELATION){
 			//no action requeired for relation
 		}   else {
@@ -205,6 +207,37 @@ Ext.extend(Sbi.qbe.SelectGridDropTarget, Ext.dd.DropTarget, {
 			childNode.attributes.attributes = childNode.attributes;
 			this.addNodeToSelect(childNode, rowIndex, recordBaseConfig);
 		}
+	}
+	
+	, addHierarchyNodeToSelect: function(node, rowIndex, recordBaseConfig) {
+			
+		var i = 0;
+		while (node.parentNode.childNodes[i]!=node) { 
+			var n = node.parentNode.childNodes[i];
+			var field = {
+	    			id: n.attributes.alias,
+//	    			type: Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD,
+	    			entity: n.parentNode.text, 
+			    	field: n.text,
+			        alias: n.text,
+			        longDescription: n.parentNode.text + " : " + n.text
+			    };
+			recordBaseConfig = recordBaseConfig || {};
+			Ext.apply(field, recordBaseConfig);
+			this.targetPanel.addField(field, rowIndex);
+			i++;
+		}
+		var field = {
+ 	    			id: node.attributes.alias,
+// 	    			type: Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD,
+ 	    			entity: node.parentNode.text, 
+			    	field: node.text,
+ 			        alias: node.text,
+ 			        longDescription: node.parentNode.text + " : " + node.text
+ 			    };
+		recordBaseConfig = recordBaseConfig || {};
+		Ext.apply(field, recordBaseConfig);
+		this.targetPanel.addField(field, rowIndex);
 	}
 	
 	

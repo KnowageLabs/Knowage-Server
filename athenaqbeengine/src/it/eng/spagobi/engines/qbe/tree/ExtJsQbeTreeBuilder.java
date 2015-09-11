@@ -59,6 +59,8 @@ public class ExtJsQbeTreeBuilder  {
 	public static final String NODE_TYPE_ENTITY = "entity";
 	public static final String NODE_TYPE_SIMPLE_FIELD = "field";
 	public static final String NODE_TYPE_CALCULATED_FIELD = "calculatedField";
+	public static final String NODE_TYPE_HIERARCHY_FIELD = "hierarchyField";
+	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
 
@@ -148,13 +150,12 @@ public class ExtJsQbeTreeBuilder  {
 	 * @param datamartName the datamart name
 	 */
 	public void addEntityNodes(JSONArray nodes, String datamartName) {
-		int nodeCounter = 0;
 		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(dataSource.getModelStructure(), getDataSource(), getQbeTreeFilter());
-		List entities = filteredModelStructure.getRootEntities(datamartName);
+		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
 
-		Iterator it = entities.iterator();
+		Iterator<IModelEntity> it = entities.iterator();
 		while(it.hasNext()) {
-			IModelEntity entity = (IModelEntity)it.next();
+			IModelEntity entity = it.next();
 			addEntityNode(nodes, entity, 1);
 		}
 	}
@@ -211,7 +212,7 @@ public class ExtJsQbeTreeBuilder  {
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("iconCls", iconCls);
-			nodeAttributes.put("type", this.NODE_TYPE_ENTITY);
+			nodeAttributes.put("type", NODE_TYPE_ENTITY);
 			nodeAttributes.put("londDescription", londDescription);
 			entityNode.put("attributes", nodeAttributes);
 			entityNode.put("children", childrenNodes);
@@ -251,11 +252,11 @@ public class ExtJsQbeTreeBuilder  {
 		}
 
 		// add key fields
-		List keyFields = entity.getKeyFields();
+		List<IModelField> keyFields = entity.getKeyFields();
 
-		Iterator keyFieldIterator = keyFields.iterator();
+		Iterator<IModelField> keyFieldIterator = keyFields.iterator();
 		while (keyFieldIterator.hasNext() ) {
-			IModelField field = (IModelField)keyFieldIterator.next();
+			IModelField field = keyFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
@@ -264,11 +265,11 @@ public class ExtJsQbeTreeBuilder  {
 		}
 
 		// add normal fields
-		List normalFields = entity.getNormalFields();
+		List<IModelField> normalFields = entity.getNormalFields();
 
-		Iterator normalFieldIterator = normalFields.iterator();
+		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext() ) {
-			IModelField field = (IModelField)normalFieldIterator.next();
+			IModelField field = normalFieldIterator.next();
 			JSONObject jsObject = getFieldNode(entity, field);
 			if(jsObject != null) {
 				children.put( jsObject );
@@ -277,11 +278,11 @@ public class ExtJsQbeTreeBuilder  {
 
 
 		// add calculated fields
-		List calculatedFields = entity.getCalculatedFields();
+		List<ModelCalculatedField> calculatedFields = entity.getCalculatedFields();
 
-		Iterator calculatedFieldIterator = calculatedFields.iterator();
+		Iterator<ModelCalculatedField> calculatedFieldIterator = calculatedFields.iterator();
 		while (calculatedFieldIterator.hasNext() ) {
-			ModelCalculatedField field = (ModelCalculatedField)calculatedFieldIterator.next();
+			ModelCalculatedField field = calculatedFieldIterator.next();
 
 			JSONObject jsObject = getCalculatedFieldNode(entity, field);
 			if(jsObject != null) {
@@ -305,7 +306,7 @@ public class ExtJsQbeTreeBuilder  {
 		}
 
 		// add subentities
-		JSONArray subentities = getSubEntitiesNodes(entity, children, recursionLevel);
+		getSubEntitiesNodes(entity, children, recursionLevel);
 
 		return children;
 	}
@@ -356,13 +357,20 @@ public class ExtJsQbeTreeBuilder  {
 
 	public JSONObject getHierarchyNode(IModelEntity parentEntity, Hierarchy hierarchy) {
 		JSONObject fieldNode = new JSONObject();
+		String entityLabel = getEntityLabel( parentEntity );
+
 		try{
 			fieldNode.put("text", hierarchy.getName());
 			fieldNode.put("leaf", false);
 
-			if(hierarchy.getIsDefault()){
+			JSONObject nodeAttributes = new JSONObject();
+			nodeAttributes.put("type", NODE_TYPE_HIERARCHY_FIELD);
+			nodeAttributes.put("entity", entityLabel);
+			if(!hierarchy.getIsDefault()){
 				fieldNode.put("cls", "default_hierarchy");
 			}
+			fieldNode.put("attributes", nodeAttributes);
+
 			JSONArray jsonlevels = new JSONArray();
 
 			List<HierarchyLevel> levels = hierarchy.getLevels();
@@ -371,14 +379,23 @@ public class ExtJsQbeTreeBuilder  {
 				HierarchyLevel level = levelsIterator.next();
 				JSONObject jsObject = new JSONObject();
 				jsObject.put("text", level.getName());
+				jsObject.put("alias", parentEntity.getType()+":"+level.getColumn());
 				jsObject.put("leaf", true);
+
+				JSONObject levelAttributes = new JSONObject();
+				levelAttributes.put("type", NODE_TYPE_HIERARCHY_LEVEL_FIELD);
+				levelAttributes.put("entity", entityLabel);
+				if(!hierarchy.getIsDefault()){
+					fieldNode.put("cls", "default_hierarchy");
+				}
+				jsObject.put("attributes", levelAttributes);
+
 				if(jsObject != null) {
 					jsonlevels.put( jsObject );
 				}
 			}
 
 			fieldNode.put("children", jsonlevels);
-
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -388,7 +405,6 @@ public class ExtJsQbeTreeBuilder  {
 
 	public  JSONObject getCalculatedFieldNode(IModelEntity parentEntity, ModelCalculatedField field) {
 
-		String iconCls = "calculation";
 		String fieldLabel = getFieldLabel( field );
 		String fieldTooltip = getFieldTooltip( field );
 		String entityLabel = getEntityLabel( parentEntity );
@@ -570,11 +586,11 @@ public class ExtJsQbeTreeBuilder  {
 									JSONArray nodes,
 								   int recursionLevel ) {
 
-		List subEntities = entity.getSubEntities();
+		List<IModelEntity> subEntities = entity.getSubEntities();
 
-		Iterator subEntitiesIterator = subEntities.iterator();
+		Iterator<IModelEntity> subEntitiesIterator = subEntities.iterator();
 		while (subEntitiesIterator.hasNext()){
-			IModelEntity subentity = (IModelEntity)subEntitiesIterator.next();
+			IModelEntity subentity = subEntitiesIterator.next();
 			if (subentity.getType().equalsIgnoreCase( entity.getType() ) || recursionLevel > 10) {
 				// stop recursion
 			} else {

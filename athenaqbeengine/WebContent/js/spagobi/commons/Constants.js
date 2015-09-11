@@ -30,7 +30,9 @@ Sbi.constants.qbe = {
 	, NODE_TYPE_SIMPLE_FIELD: 'field'
 	, NODE_TYPE_RELATION: 'relation'
 	, NODE_TYPE_CALCULATED_FIELD: 'calculatedField'
-	, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'	
+	, NODE_TYPE_INLINE_CALCULATED_FIELD: 'inLineCalculatedField'
+	, NODE_TYPE_HIERARCHY_FIELD: 'hierarchyField'
+	, NODE_TYPE_HIERARCHY_LEVEL_FIELD : 'hierarchyLevelField'
 		
 	, WHERE_CLAUSE_COMPARISON_FUNCTIONS: [
 	    ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN('sbi.qbe.filtergridpanel.foperators.desc.none')],

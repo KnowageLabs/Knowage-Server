@@ -315,8 +315,37 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 				
 				this.targetPanel.insertFilter(filter, rowIndex);
 
-		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_RELATION){
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_RELATION) {
 			//no action requeired for relation
+			
+		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD) {
+			
+			var i = 0;
+			while (node.parentNode.childNodes[i]!=node) { 
+				var n = node.parentNode.childNodes[i];
+				
+				filter = {
+						leftOperandValue: n.attributes.alias
+						, leftOperandDescription: n.parentNode.text + ':' + n.text 
+						, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+						, leftOperandLongDescription: n.parentNode.text + ':' + n.text
+						, operator: 'EQUALS TO'
+					};
+							
+				this.targetPanel.insertFilter(filter, rowIndex);
+				i++;
+			}
+
+			filter = {
+					leftOperandValue: node.attributes.alias
+					, leftOperandDescription: node.parentNode.text + ':' + node.text 
+					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+					, leftOperandLongDescription: node.parentNode.text + ':' + node.text
+					, operator: 'EQUALS TO'
+				};
+						
+			this.targetPanel.insertFilter(filter, rowIndex);
+			
 		} else {
 			Ext.Msg.show({
 				   title:'Drop target not allowed',
