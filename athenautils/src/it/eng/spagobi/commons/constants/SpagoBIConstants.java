@@ -39,6 +39,7 @@ public class SpagoBIConstants {
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
 
+	public static final String ADMIN_ROLE_TYPE="ADMIN";	
 	public static final String ROLE_TYPE_ADMIN = "ACTOR";
 	public static final String ROLE_TYPE_DEV = "DEV_ROLE";
 	public static final String ROLE_TYPE_TEST = "TEST_ROLE";
