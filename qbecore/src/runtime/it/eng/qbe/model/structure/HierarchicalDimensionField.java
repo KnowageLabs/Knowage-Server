@@ -69,7 +69,7 @@ public class HierarchicalDimensionField extends ModelField {
 				return hierarchy;
 			}
 		}
-		return null;
+		return hierarchies.size() > 0 ? hierarchies.get(0) : null;
 	}
 
 }

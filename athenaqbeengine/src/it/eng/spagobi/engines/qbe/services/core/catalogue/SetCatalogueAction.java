@@ -5,16 +5,51 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
+import it.eng.qbe.model.structure.HierarchicalDimensionField;
+import it.eng.qbe.model.structure.Hierarchy;
+import it.eng.qbe.model.structure.HierarchyLevel;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.QueryMeta;
 import it.eng.qbe.query.QueryValidator;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.graph.GraphManager;
 import it.eng.qbe.statement.graph.GraphUtilities;
 import it.eng.qbe.statement.graph.ModelFieldPaths;
@@ -35,37 +70,14 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * Commit all the modifications made to the catalogue on the client side
@@ -143,10 +155,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
 			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
 
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
-					+ " service before having properly created an instance of EngineInstance class");
-			Assert.assertNotNull(jsonEncodedCatalogue, "Input parameter [" + CATALOGUE + "] cannot be null in oder to execute " + this.getActionName()
-					+ " service");
+			Assert.assertNotNull(getEngineInstance(),
+					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(jsonEncodedCatalogue,
+					"Input parameter [" + CATALOGUE + "] cannot be null in oder to execute " + this.getActionName() + " service");
 
 			try {
 				queries = new JSONArray(jsonEncodedCatalogue);
@@ -173,6 +185,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			// we create a new query adding filters defined by profile attributes
 			IModelAccessModality accessModality = this.getEngineInstance().getDataSource().getModelAccessModality();
+
+			handleTimeFilters(query);
+
 			Query filteredQuery = accessModality.getFilteredStatement(query, this.getDataSource(), userProfile.getUserAttributes());
 
 			// loading the ambiguous fields
@@ -217,8 +232,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			if (queryGraph != null) {
-				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl())
-						.isValid(queryGraph, modelEntities);
+				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(queryGraph,
+						modelEntities);
 				logger.debug("QueryGraph valid = " + valid);
 				if (!valid) {
 					throw new SpagoBIEngineServiceException(getActionName(), "error.mesage.description.relationship.not.enough");
@@ -291,6 +306,194 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				totalTimeMonitor.stop();
 			logger.debug("OUT");
 		}
+	}
+
+	private void handleTimeFilters(Query query) {
+		// DD: RECUPERO LA DIMENSIONE TEMPORALE
+		IModelEntity temporalDimension = getTemporalDimension();
+		HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
+		Hierarchy defaultHierarchy = hierarchicalDimensionByEntity.getDefaultHierarchy();
+
+		List<Integer> whereFieldsIndexesToRemove = new LinkedList<Integer>();
+		List<WhereField> whereFieldsToAdd = new LinkedList<WhereField>();
+		List<WhereField> whereFields = query.getWhereFields();
+		List<String> nodesToAdd = new LinkedList<String>();
+
+		int timeFilterIndex = 0;
+		int whereFieldIndex = 0;
+		for (WhereField whereField : whereFields) {
+			String[] lValues = whereField.getLeftOperand().values;
+			String[] rValues = whereField.getRightOperand().values;
+
+			if (lValues != null && lValues.length > 0 && rValues != null && rValues.length > 0) {
+				if ("TIME".equals(lValues[0])) {
+					String temporalLevelColumn = null;
+					List<HierarchyLevel> levels = defaultHierarchy.getLevels();
+					String temporalLevel = whereField.getLeftOperand().description;
+					for (HierarchyLevel level : levels) {
+						if (level.getType().equals(temporalLevel)) {
+							temporalLevelColumn = level.getColumn();
+						}
+					}
+
+					String temporalDimensionId = "time_id";
+
+					// DD: RECUPERO IL PERIODO CORRENTE
+					// TemporalRecord currentPeriodRecord = getCurrentPeriod(temporalDimension, "time_id", "quarter", "the_year");
+					TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn,
+							defaultHierarchy.getAncestors(temporalLevelColumn));
+							// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
+
+					// CURRENT
+					if ("Current".equals(rValues[0])) {
+						lValues[0] = temporalDimension.getType() + ":" + temporalLevelColumn;
+						rValues[0] = currentPeriod.getPeriod().toString();
+					} else if (whereField.getOperator().equals("LAST")) {
+
+						// DD: RECUPERO TUTTI I RECORD NIZIALI DEGLI INTERVALLI DI INTERESSE
+						LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
+								temporalLevelColumn, defaultHierarchy.getAncestors(temporalLevelColumn));
+
+						int currentPeriodIndex = allPeriodsStartingDate.indexOf(currentPeriod);
+
+						whereFieldsIndexesToRemove.add(whereFieldIndex);
+
+						timeFilterIndex++;
+
+						Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
+								temporalDimension.getName() + ":" + temporalDimensionId, "Field Content", new String[] {}, null);
+						Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() }, currentPeriod.getId().toString(), "Static Content",
+								new String[] {}, null);
+
+						String maxFilterId = "TimeFilterMax" + timeFilterIndex;
+						WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left, "EQUALS OR LESS THAN", maxRight, "AND");
+						nodesToAdd.add(maxFilterId);
+
+						int offset = Integer.parseInt(rValues[0]);
+						int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
+						TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
+						Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() }, oldestPeriod.getId().toString(), "Static Content",
+								new String[] {}, null);
+
+						String minFilterId = "TimeFilterMax" + timeFilterIndex;
+						WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left, "EQUALS OR GREATER THAN", minRight, "AND");
+						nodesToAdd.add(minFilterId);
+
+						whereFieldsToAdd.add(maxWhereField);
+						whereFieldsToAdd.add(minWhereField);
+					}
+
+				}
+			}
+			whereFieldIndex++;
+		}
+
+		for (Integer index : whereFieldsIndexesToRemove) {
+			WhereField whereField = query.getWhereFields().get(index);
+			query.removeWhereField(index);
+		}
+
+		for (int index = 0; index < whereFieldsToAdd.size(); index++) {
+			WhereField whereFieldToAdd = whereFieldsToAdd.get(index);
+			query.addWhereField(whereFieldToAdd.getName(), whereFieldToAdd.getDescription(), whereFieldToAdd.isPromptable(), whereFieldToAdd.getLeftOperand(),
+					whereFieldToAdd.getOperator(), whereFieldToAdd.getRightOperand(), whereFieldToAdd.getBooleanConnector());
+
+		}
+
+		query.updateWhereClauseStructure();
+
+	}
+
+	private IModelEntity getTemporalDimension() {
+		IModelEntity temporalDimension = null;
+		Iterator<String> it = getDataSource().getModelStructure().getModelNames().iterator();
+		while (it.hasNext()) {
+			String modelName = it.next();
+			List<IModelEntity> rootEntities = getDataSource().getModelStructure().getRootEntities(modelName);
+			for (IModelEntity bc : rootEntities) {
+				if ("temporal_dimension".equals(bc.getProperty("type"))) {
+					temporalDimension = bc;
+					break;
+				}
+			}
+		}
+		return temporalDimension;
+	}
+
+	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, String idField, String periodField, String... parentPeriodFields) {
+
+		// nullsafe
+		parentPeriodFields = parentPeriodFields != null ? parentPeriodFields : new String[0];
+
+		Date today = new Date();
+
+		Query currentPeriodQuery = new Query();
+		currentPeriodQuery.addSelectFiled(temporalDimension.getType() + ":" + idField, null, "ID", true, true, false, "ASC", null);
+		currentPeriodQuery.addSelectFiled(temporalDimension.getType() + ":" + periodField, null, "LEVEL", true, true, false, null, null);
+		for (String parentPeriodField : parentPeriodFields) {
+			currentPeriodQuery.addSelectFiled(temporalDimension.getType() + ":" + parentPeriodField, null, parentPeriodField, true, true, false, null, null);
+		}
+
+		String temporalDimensionDateField = "the_date";
+
+		Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField },
+				temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content", new String[] {}, null);
+		Operand right = new Operand(new String[] { new SimpleDateFormat("dd/MM/yyyy").format(today) }, new SimpleDateFormat("dd/MM/yyyy").format(today),
+				"Static Content", new String[] {}, null);
+		currentPeriodQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
+		ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter1" + "}");
+		currentPeriodQuery.setWhereClauseStructure(newFilterNode);
+
+		IDataStore currentPeriodDataStore = executeDatamartQuery(currentPeriodQuery);
+		@SuppressWarnings("unchecked")
+		Iterator<IRecord> currentPeriodIterator = currentPeriodDataStore.iterator();
+
+		TemporalRecord currentPeriodRecord = null;
+		while (currentPeriodIterator.hasNext()) {
+			IRecord r = currentPeriodIterator.next();
+			currentPeriodRecord = new TemporalRecord(r, parentPeriodFields.length);
+			break;
+		}
+		return currentPeriodRecord;
+	}
+
+	private LinkedList<TemporalRecord> loadAllPeriodsStartingDate(IModelEntity temporalDimension, String idField, String periodField,
+			String... parentPeriodFields) {
+
+		// nullsafe
+		parentPeriodFields = parentPeriodFields != null ? parentPeriodFields : new String[] {};
+
+		Query periodsStartingDates = new Query();
+		periodsStartingDates.addSelectFiled(temporalDimension.getType() + ":" + idField, "MIN", "ID", true, true, false, "ASC", null);
+		periodsStartingDates.addSelectFiled(temporalDimension.getType() + ":" + periodField, null, "LEVEL", true, true, true, null, null);
+		for (String parentPeriodField : parentPeriodFields) {
+			periodsStartingDates.addSelectFiled(temporalDimension.getType() + ":" + parentPeriodField, null, parentPeriodField, true, true, true, null, null);
+		}
+		IDataStore periodsStartingDatesDataStore = executeDatamartQuery(periodsStartingDates);
+		@SuppressWarnings("unchecked")
+		Iterator<IRecord> periodsStartingDatesIterator = periodsStartingDatesDataStore.iterator();
+
+		LinkedList<TemporalRecord> periodStartingDates = new LinkedList<TemporalRecord>();
+		while (periodsStartingDatesIterator.hasNext()) {
+			IRecord r = periodsStartingDatesIterator.next();
+			TemporalRecord tr = new TemporalRecord(r, parentPeriodFields.length);
+			periodStartingDates.add(tr);
+		}
+		return periodStartingDates;
+	}
+
+	private IDataStore executeDatamartQuery(Query myquery) {
+		this.getEngineInstance().getQueryCatalogue().addQuery(myquery);
+		this.getEngineInstance().setActiveQuery(myquery);
+		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) this.getEngineInstance().getActiveQueryAsDataSet();
+
+		String queryString = qbeDataSet.getStatement().getQueryString();
+		System.out.println("QUERY STRING: " + queryString);
+
+		qbeDataSet.loadData();
+		IDataStore dataStore = qbeDataSet.getDataStore();
+
+		return dataStore;
 	}
 
 	/**
@@ -525,6 +728,68 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		} catch (Exception e) {
 			throw new SerializationException("Error deserializing the list of ModelFieldPaths", e);
 		}
+	}
+
+	protected class TemporalRecord {
+
+		Object id;
+		Object period;
+		Object[] parentPeriods;
+
+		public TemporalRecord(IRecord r, int numerOfParentPeriods) {
+			super();
+			Object id = r.getFieldAt(0).getValue();
+			Object period = r.getFieldAt(1).getValue();
+
+			this.id = id;
+			this.period = period;
+
+			if (numerOfParentPeriods > 0) {
+				this.parentPeriods = new Object[numerOfParentPeriods];
+				for (int i = 0; i < this.parentPeriods.length; i++) {
+					this.parentPeriods[i] = r.getFieldAt(i + 2).getValue();
+				}
+			} else {
+				this.parentPeriods = new Object[] {};
+			}
+
+		}
+
+		public Object getId() {
+			return id;
+		}
+
+		public Object getPeriod() {
+			return period;
+		}
+
+		public Object[] getParentPeriods() {
+			return parentPeriods;
+		}
+
+		@Override
+		public String toString() {
+			return "|" + id + "|" + parentPeriods + "|" + period + "|";
+		}
+
+		public String getPeriodIdentifier() {
+			return getParentPeriods() + "" + getPeriod();
+		}
+
+		@Override
+		public int hashCode() {
+			return getPeriodIdentifier().hashCode() * 23;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof TemporalRecord)) {
+				return false;
+			}
+			TemporalRecord other = (TemporalRecord) obj;
+			return this.getPeriodIdentifier().equals(other.getPeriodIdentifier());
+		}
+
 	}
 
 }

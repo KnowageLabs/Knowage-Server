@@ -63,34 +63,50 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 
   var 
   yearFilter = {
-		  leftOperandValue:  'it.eng.spagobi.meta.Time_by_day:the_year',
-		  leftOperandDescription: 'Time by day : The year',
+		  leftOperandValue:  'TIME',
+		  leftOperandDescription: 'YEAR',
 		  leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 		  operator : 'EQUALS TO',
-		  rightOperandValue : ['CURRENT_YEAR'],
-		  rightOperandDescription: ['Current year']
+		  rightOperandValue : ['Current'],
+		  rightOperandDescription: ['Current'],
+		  temporalOperand: 
+			{
+				type: 	'CURRENT',
+				period: 'YEAR'
+			}
   },
   monthFilter = {
-		  leftOperandValue:  'it.eng.spagobi.meta.Time_by_day:the_month',
-		  leftOperandDescription: 'Time by day : The month',
+		  leftOperandValue:  'TIME',
+		  leftOperandDescription: 'MONTH',
 		  leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 		  operator : 'EQUALS TO',
-		  rightOperandValue : ['CURRENT_MONTH'],
-		  rightOperandDescription: ['Current month']
+		  rightOperandValue : ['Current'],
+		  rightOperandDescription: ['Current']
   },
   dayFilter = {
-		  leftOperandValue:  'it.eng.spagobi.meta.Time_by_day:the_day',
-		  leftOperandDescription: 'Time by day : The day',
+		  leftOperandValue:  'TIME',
+		  leftOperandDescription: 'DAY',
 		  leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 		  operator : 'EQUALS TO',
-		  rightOperandValue : ['Current day'],
-		  rightOperandDescription: ['CURRENT_DAY']
+		  rightOperandValue : ['Current'],
+		  rightOperandDescription: ['Current']
+  },
+  
+  previousYear = {
+
+		  leftOperandValue:  'TIME',
+		  leftOperandDescription: 'YEAR',
+		  leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
+		  operator : 'LAST',
+		  rightOperandValue : ['22'],
+		  rightOperandDescription: ['22']
   };
   
   var myData = [
    ['cy',	'CURRENT YEAR', 	[yearFilter] ],
    ['cm',	'CURRENT MONTH', 	[yearFilter,monthFilter] ],
-   ['td',	'TODAY', 			[yearFilter,monthFilter,dayFilter] ]
+   ['td',	'TODAY', 			[yearFilter,monthFilter,dayFilter] ],
+   ['py',	'PREVIOUS_22YEARS', [previousYear] ]
   ];
   myStore.loadData(myData);
   

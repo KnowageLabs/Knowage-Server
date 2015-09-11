@@ -412,5 +412,38 @@
 	
 	<DOMAIN valueCd="GLS_CATEGORY_ATTR" valueNm="sbi.glossary.attributes"
 	domainCd="GLS_CATEGORY" domainNm="GLOSSARY CATEGORY " valueDs="" />
+	
+	<DOMAIN valueCd="MILLENNIUM" valueNm="Millennium" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="CENTURY" valueNm="Century" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="YEAR" valueNm="Year" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="MONTH" valueNm="Month" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="DAY" valueNm="Day" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="SEMESTER" valueNm="Semester" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="QUARTER" valueNm="Quarter" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="BIMESTER" valueNm="Bimester" domainCd="TEMPORAL_LEVEL"
+		domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="WEEK_OF_YEAR" valueNm="Week of the year"
+		domainCd="TEMPORAL_LEVEL" domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="DAY_OF_YEAR" valueNm="Day of the year"
+		domainCd="TEMPORAL_LEVEL" domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+		
+	<DOMAIN valueCd="DAY_OF_WEEK" valueNm="Day of the week"
+		domainCd="TEMPORAL_LEVEL" domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
 
 </DOMAINS>
