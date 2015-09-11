@@ -51,7 +51,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//System.out.println(jsonMenuList);
 %>
 
-<% Boolean enableGlossary=userProfile.isAbleToExecuteAction(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS) ;%>
+<% Boolean enableGlossary=userProfile.isAbleToExecuteAction(SpagoBIConstants.GLOSSARY) ;%>
 <%if(enableGlossary){ %>
 <style>
 /* apply this style for the helps online link if the glossary is enabled */
