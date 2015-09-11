@@ -7,9 +7,16 @@ Restapp.service('restServices', function($http, ENDPOINT_URI) {
 	var service = this;
 	var path = "1.0/glossary";
 
+	var alteredContextPath=null;
+
+	service.alterContextPath=function(cpat){
+		alteredContextPath= 'http://' + window.parent.url.host + ':' + window.parent.url.port+"/"+cpat+ '/restful-services/';
+	}
+
 	function getBaseUrl(endP_path) {
 		endP_path == undefined ? endP_path = path : true;
-		return ENDPOINT_URI + endP_path + "/";
+		return alteredContextPath==null? ENDPOINT_URI + endP_path + "/" : alteredContextPath + endP_path + "/"
+		
 	}
 	;
 

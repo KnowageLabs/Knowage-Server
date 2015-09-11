@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -59,12 +60,23 @@ public class DocumentsJSONDecorator {
 			addCloneAction(document, profile, folder, locale);
 			addDetailAction(document, profile, locale);
 			addShowMetadataAction(document, profile, locale);
+			
+			if(profile.isAbleToExecuteAction(SpagoBIConstants.GLOSSARY)){
+				addShowHelpOnLine(document, profile, locale);
+			}
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while decorating document", e);
 		}
 		return document; 
 	}
 	
+	private static void addShowHelpOnLine(JSONObject document, IEngUserProfile profile, Locale locale) throws JSONException{
+		JSONObject helpOnLineAction = new JSONObject();
+		MessageBuilder msgBuild=new MessageBuilder();
+		helpOnLineAction.put("name", "helpOnLine");
+		helpOnLineAction.put("description", msgBuild.getMessage( "sbiobjects.actions.detail.helpOnLine", locale));
+		document.getJSONArray(DocumentsJSONSerializer.ACTIONS).put(helpOnLineAction);
+	}
 	private static void addShowMetadataAction(JSONObject document,
 			IEngUserProfile profile, Locale locale) throws JSONException, EMFInternalError {
 		Collection userFunctionalities = profile.getFunctionalities();

@@ -429,6 +429,7 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         var actionSchedule = e.getTarget('a[class=schedule]', 10, true);
         var actionViewMore = e.getTarget('a[class=viewMore]', 10, true);
         var actionViewLess = e.getTarget('a[class=viewLess]', 10, true);
+        var actionHelpOnLine = e.getTarget('a[class=helpOnLine]', 10, true);
       
     	var action = null;
 
@@ -438,7 +439,10 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 		 }else if (actionDelete != null){
 	     	Sbi.debug('delete');        	
 	     	action = actionDelete.dom.className;
-		 }else if (actionClone != null){
+		 }else if (actionHelpOnLine != null){
+		     	Sbi.debug('actionHelpOnLine');        	
+		     	action = actionHelpOnLine.dom.className;
+		}else if (actionClone != null){
 	     	Sbi.debug('clone');        	
 	     	action = actionClone.dom.className;
 		 }else if (actionMetaData != null){
@@ -580,9 +584,37 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         this.win_metadata = new Sbi.execution.toolbar.MetadataWindow({'OBJECT_ID': docId});
 		this.win_metadata.show();
     }
+     ,showHelpOnLine: function(doc){
+    	 console.log('showHelpOnLine',doc);
+	  var panel=new Ext.ux.ManagedIframePanel({
+              border: false,
+              bodyBorder: false,
+              defaultSrc: {url: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DOCUMENT='+doc.id+'&LABEL='+doc.label+''+(doc.dataset!=undefined? "&DATASET="+doc.dataset : ''), discardUrl: true }
+	    });
+    	  
+    	  
+    	 
+    	var dialogBox = new Ext.Window({
+              title: 'Help Online',
+              modal:true,
+//              layout:'fit',
+              width:'90%',
+              height:Ext.getBody().getViewSize().height*0.9 ,
+              closable:true,
+//              closeAction: 'hide',
+//              resizable:false,
+//              plain:false,
+              items:[panel],
+
+          });
+    	  
+    	  dialogBox.show();
+    	  
+     }
     
     
     , performActionOnDocument: function(docRecord, action, node) {
+    	console.log('performActionOnDocument',action)
     	if(this.fireEvent('beforeperformactionondocument', this, docRecord, action) !== false){
     		if(action === 'delete') {
     			Ext.MessageBox.confirm(
@@ -634,6 +666,9 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
 					innerHTML	 = innerHTML.replace('box-container-browser-detail','box-container-browser-synthesis');
 					node.innerHTML = innerHTML;
 				}
+		}else if(action==='helpOnLine'){
+			this.showHelpOnLine(docRecord)
+			
 		}
 
     	}

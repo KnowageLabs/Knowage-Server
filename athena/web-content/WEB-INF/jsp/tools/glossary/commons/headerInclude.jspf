@@ -1,0 +1,73 @@
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS															--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<!-- this imports are used for language controls  -->
+<%@page import="it.eng.spago.base.*"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
+<%@page import="java.util.Locale"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
+<%@ page import="it.eng.spago.security.IEngUserProfile" %>
+
+<%
+	RequestContainer aRequestContainer = null;
+	ResponseContainer aResponseContainer = null;
+	SessionContainer aSessionContainer = null;
+	IUrlBuilder urlBuilder = null;
+	IMessageBuilder msgBuilder = null;
+	String sbiMode = null;
+		
+	// case of portlet mode
+	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
+	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
+	if (aRequestContainer == null) {
+		// case of web mode
+		aRequestContainer = RequestContainer.getRequestContainer();
+		if(aRequestContainer == null){
+			//case of REST 
+			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+		}
+		aResponseContainer = ResponseContainer.getResponseContainer();
+		if(aResponseContainer == null){
+			//case of REST
+			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
+		}
+	}
+	
+	String channelType = aRequestContainer.getChannelType();
+	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
+	else sbiMode = "WEB";
+	
+	// create url builder 
+	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
+	
+	// create message builder
+	msgBuilder = MessageBuilderFactory.getMessageBuilder();
+	
+	// get other spago object
+	SourceBean aServiceRequest = aRequestContainer.getServiceRequest();
+	SourceBean aServiceResponse = aResponseContainer.getServiceResponse();
+	aSessionContainer = aRequestContainer.getSessionContainer();
+	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
+	
+	// If Language is alredy defined keep it
+	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+	Locale locale = null;
+	
+	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
+		locale = new Locale(curr_language, curr_country, "");
+	} else {
+		if (sbiMode.equals("PORTLET")) {
+			locale = PortletUtilities.getLocaleForMessage();
+		} else {
+			locale = MessageBuilder.getBrowserLocaleFromSpago();
+		}
+	}
+	
+%>

@@ -10,41 +10,26 @@
 		<div layout="column" class="documentListBox">
 
 			<md-toolbar class="md-blue xs-head">
-			<div class="md-toolbar-tools">
-				<div>{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
-			</div>
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
+				</div>
 			</md-toolbar>
 
-			<md-content layout-padding style="padding-top: 0;"> 
-			
-			<md-input-container	md-no-float  class="noPadding searchBar"> 
-				<md-icon md-font-icon="fa fa-search"></md-icon> 
-				<input	ng-model="ctrl.searchDataset" 
-				ng-keyup="ctrl.DatasetLike(ctrl.searchDataset,1)" type="text"
-				placeholder="Search ">
-			</md-input-container>
-				
-			<md-progress-circular
-				md-diameter="20" ng-show="ctrl.showSearchDatasetPreloader" class="md-hue-2"
-				style="  left: 50%;  margin-left: -25px; position:absolute "
-				md-mode="indeterminate"> 
-			</md-progress-circular>
-
-
-			<p ng-if="ctrl.listDataset.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
-
-								<md-list   class="bottomBorder">
-								 <md-list-item ng-click="ctrl.loadDatasetInfo(dataset.id); ctrl.selectedDataset=dataset.id.dsId;" 	
-								 dir-paginate="dataset in ctrl.listDataset | itemsPerPage: ctrl.DatasetItemPerPage" total-items="ctrl.sizeDataset" pagination-id="datasetPagination"  class="smallListItem ">
-								<p class="wrapText" ng-class="{'selectedRow': ctrl.selectedDataset==dataset.id.dsId}">{{ dataset.label | uppercase}}</p>
-								</md-list-item> 
-								</md-list>
-								
-			</md-content>
-
-			<div class="box_pagination" layout="row" layout-align="center end">
-				<dir-pagination-controls pagination-id="datasetPagination" max-size="5" on-page-change="ctrl.ChangeDatasetPage(newPageNumber)"></dir-pagination-controls>
-			</div>
+			<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+				<angular-list layout-fill 
+						id='dataset' 
+                		ng-model=ctrl.listDataset
+                		item-name='label '
+                		click-function="ctrl.loadDatasetInfo(item)"
+                		show-search-bar=true  
+                		search-function="ctrl.DatasetLike(searchValue,itemsPerPage)"
+                		show-search-preloader="ctrl.showSearchDatasetPreloader"
+                		page-canged-function="ctrl.ChangeDatasetPage(newPageNumber,itemsPerPage,searchValue)"
+                		total-item-count=ctrl.sizeDataset
+                		selected-item=ctrl.selectedDataset
+                		highlights-selected-item=true
+                ></angular-list>                		
+			</md-content>	
 
 		</div>
 	</div>
@@ -58,38 +43,25 @@
 
 <div style="height: 50%">
 			<md-toolbar class="md-blue xs-head">
-			<div class="md-toolbar-tools">
-				<div> {{translate.load("sbi.kpi.kpiguidescription.dataset");}} / {{translate.load("sbi.glossary.word");}}</div>
-			</div>
+				<div class="md-toolbar-tools">
+					<div> {{translate.load("sbi.kpi.kpiguidescription.dataset");}} / {{translate.load("sbi.glossary.word");}}</div>
+				</div>
 			</md-toolbar>
  
  
-			<md-content layout-padding style="height:Calc(100% - 44px)" > 
-			<p ng-if="ctrl.SelfWords.length==0 || ctrl.selectedDataset==undefined">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
-			
-				<div id="wordDSTree" 		ui-tree="ctrl.TreeOptionsDataset_Word" data-drag-enabled="true"  data-clone-enabled="true">
+ 			<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+				<angular-list layout-fill 
+						id='wordDS' 
+                		ng-model=ctrl.SelfWords 
+                		item-name='WORD'
+                		enable-drag=false
+						enable-clone=true
+						drag-drop-options=ctrl.TreeOptionsDataset_Word
+						show-empty-placeholder=true
+						speed-menu-option=ctrl.datasetWordSpeedMenuOpt
+               ></angular-list>
+	        </md-content>
 
-						<ol ui-tree-nodes ng-model="ctrl.SelfWords" >
-
-							<li dir-paginate="word in ctrl.SelfWords | itemsPerPage: ctrl.WordItemPerPage  " pagination-id="wordPagination" class="noBorder">
-
-								<div ui-tree-node data-nodrag style=" min-height: 15px !important;">
-									<div ui-tree-handle style="border: none; min-height: 15px !important;">
-										<md-list class="noPadding deleteButton"> <md-list-item class="smallListItem "  ng-click="1==1"
-											ng-repeat="n in [1]"  >
-										<p class="wrapText" style="border-bottom: 1px solid rgb(176, 190, 197);" >{{ word.WORD  | uppercase}}</p>
-										 <md-icon md-font-icon="fa fa-times" ng-click="ctrl.removeWord(null,word)" aria-label="delete word" class="md-secondary md-hue-3"></md-icon> 
-										</md-list-item> </md-list>
-									</div>
-								</div> 
-							</li>
-						</ol>
-					</div>
-			
-			
-
-			</md-content>
-			
 	</div>		
 			
 	<div style="height: 50%">

@@ -4,75 +4,29 @@
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
-<%@page import="java.util.Locale"%>
-<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
-<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
+
+
+<%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
+
+
+<%@ page import="it.eng.spago.security.IEngUserProfile" %>
+<%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+
+
 
 <%
-	RequestContainer aRequestContainer = null;
-	ResponseContainer aResponseContainer = null;
-	SessionContainer aSessionContainer = null;
-	IUrlBuilder urlBuilder = null;
-	IMessageBuilder msgBuilder = null;
-	String sbiMode = null;
-		
-	// case of portlet mode
-	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
-	if (aRequestContainer == null) {
-		// case of web mode
-		aRequestContainer = RequestContainer.getRequestContainer();
-		if(aRequestContainer == null){
-			//case of REST 
-			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
+// check for user profile autorization
+		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		boolean canSee=false,canSeeAdmin=false;
+		if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
+			canSee=true;
+		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL});
 		}
-		aResponseContainer = ResponseContainer.getResponseContainer();
-		if(aResponseContainer == null){
-			//case of REST
-			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
-		}
-	}
-	
-	String channelType = aRequestContainer.getChannelType();
-	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
-	else sbiMode = "WEB";
-	
-	// create url builder 
-	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-	
-	// create message builder
-	msgBuilder = MessageBuilderFactory.getMessageBuilder();
-	
-	// get other spago object
-	SourceBean aServiceRequest = aRequestContainer.getServiceRequest();
-	SourceBean aServiceResponse = aResponseContainer.getServiceResponse();
-	aSessionContainer = aRequestContainer.getSessionContainer();
-	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-	
-	// If Language is alredy defined keep it
-	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-	Locale locale = null;
-	
-	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
-		locale = new Locale(curr_language, curr_country, "");
-	} else {
-		if (sbiMode.equals("PORTLET")) {
-			locale = PortletUtilities.getLocaleForMessage();
-		} else {
-			locale = MessageBuilder.getBrowserLocaleFromSpago();
-		}
-	}
-	
+// 		System.out.println("User canSee? -------> "+canSee);
+// 		System.out.println("User canSeeAdmin? -------> "+canSeeAdmin);
 %>
 
-
+<% if(canSee ){ %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="AIDA_GLOSSARY_TECNICAL_USER">
 
@@ -130,18 +84,17 @@
 </head>
 
 
-<body class="bodyStyle" style="overflow: hidden !important;"">
-<%-- <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/prova.jspf"%> --%>
+<body class="bodyStyle" style="overflow: hidden !important;">
 	
 	
 <div ng-controller="Controller_tec as global" class="h100">
   <md-content  class="glossaryTec">
     <md-tabs  md-border-bottom class="mini-tabs" style="  min-height: 40px;">
      
-     
-     
-      <md-tab label='{{translate.load("sbi.glossary.glossary");}}' >
+      
+      <md-tab label='{{translate.load("sbi.glossary.glossary");}}' md-on-select="global.init('glossTreePage')" >
         <md-content class="abs100">
+        
         	<glossary-tree
 						tree-id="GlossTree" 
 						tree-options=ctrl.TreeOptions 
@@ -154,25 +107,34 @@
 			</glossary-tree>
         </md-content>
       </md-tab>
-     
-       <md-tab label='{{translate.load("sbi.generic.navigation");}}' md-on-select="global.init('navigation')">
+ 		
+    
+   <% if( canSeeAdmin){ %>
+  	  <md-tab label='{{translate.load("sbi.generic.navigation");}}' md-on-select="global.init('navigation')">
         <md-content class="abs100">
          <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/glossary_navigation.jspf"%>
         </md-content>
       </md-tab>
+   <%} %>
       
+     
       <md-tab label='{{translate.load("sbi.generic.document.management");}}' md-on-select="global.init('docAssoc')">
         <md-content class="abs100">
          <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/documents_and_wordsAssociations.jspf"%>
         </md-content>
       </md-tab>
+     
       
+   <% if(canSeeAdmin){ %>
       <md-tab label='{{translate.load("sbi.generic.dataset.management");}}' md-on-select="global.init('datasetAssoc')">
         <md-content class="abs100">
          <%@include file="/WEB-INF/jsp/tools/glossary/technicaluser/dataset_and_wordsAssociations.jspf"%>
         </md-content>
       </md-tab>
-      
+   <%} %>  
+  
+  
+  
     </md-tabs>
   </md-content>
 </div>
@@ -183,7 +145,11 @@
 
 
 
+<%}else{ %>
 
+UNAUTHORIZED
+
+<%} %>
 
 
 

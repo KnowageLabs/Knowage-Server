@@ -171,7 +171,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@GET
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req,@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,@QueryParam("search") String search) throws EMFUserError {
+	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req,@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,@QueryParam("label") String search) throws EMFUserError {
 		
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession()

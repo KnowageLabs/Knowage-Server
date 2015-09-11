@@ -33,20 +33,26 @@ function funzione_tec($scope,translate,restServices,$mdToast,$timeout) {
 	global.initializer={};
 //	global.initializer.navigation={state:false,scope:navi};
 //	global.initializer.docAssoc={state:false,scope:docAss};
-	global.initializer.datasetAssoc={state:false,scope:dsAss};
+//	global.initializer.datasetAssoc={state:false,scope:dsAss};
 
 	global.init=function(component){
 		global.selectedTab=component;
-		if(global.initializer[component].state==false){
+		if(component=='glossTreePage')return;
+		
+		if(component=="navigation"){
+			console.log("refresh navi")
+			global.initializer[component].scope.loadNavItem();
+		}else if(global.initializer[component].state==false){
 			console.log("Initialize "+component)
 			global.initializer[component].state=true;
 			global.initializer[component].scope.init();
-		}else{
-			if(component=="navigation"){
-				console.log("refresh navi")
-				global.initializer[component].scope.loadNavItem();
-			}
 		}
+//		else{
+//			if(component=="navigation"){
+//				console.log("refresh navi")
+//				global.initializer[component].scope.loadNavItem();
+//			}
+//		}
 		
 	}
 
@@ -107,7 +113,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 	}
 
 	docAss.loadDocList=function(item){
-		restServices.get("2.0/documents", "listDocument", item).success(
+		restServices.get("2.0/documents", "listDocument", item+"&scope=GLOSSARY").success(
 				function(data, status, headers, config) {
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
@@ -191,7 +197,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 		}, 1000);
 	}
 
-	docAss.removeWord= function(word){
+	docAss.removeWord= function(event,word){
 		console.log("remove word");
 		console.log(word);
 
@@ -199,14 +205,14 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 				translate.load("sbi.glossary.word.delete")).content(
 						translate.load("sbi.glossary.word.delete.message")).ariaLabel(
 						'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
-								translate.load("sbi.myanalysis.delete.cancel")).targetEvent(word);
+								translate.load("sbi.myanalysis.delete.cancel")).targetEvent(event);
 
 		$mdDialog.show(confirm).then(
 				function() {
 
 					showPreloader();
 					restServices.remove("1.0/glossary", "deleteDocWlist",
-							"WORD_ID=" + word.WORD_ID+"&DOCUMENT_ID="+docAss.selectedDocument)
+							"WORD_ID=" + word.WORD_ID+"&DOCUMENT_ID="+docAss.selectedDocument.DOCUMENT_ID)
 							.success(
 									function(data, status, headers,
 											config) {
@@ -341,8 +347,6 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 						})
 	}
 
-	
-
 	docAss.toggle = function(scope, item, gloss) {
 
 		console.log("toggle")
@@ -390,39 +394,22 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 	}
 
 
-	docAss.WordItemPerPage=10;
-	docAss.DocItemPerPage=10;
-
-	function changeItemPP() {
-		var boxItemGlo = angular.element(document.querySelector('.boxItemGlo'))[0].offsetHeight;
-		var tbw = angular.element(document.querySelector('.xs-head'))[0].offsetHeight;
-		var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
-
-		bpw == 0 ? bpw = 19 : bpw = bpw;
-
-		var x1=parseInt((boxItemGlo - tbw - bpw -5 ) / 28);
-		x1==0? 1 : x1;
-
-		var x2=parseInt((boxItemGlo - tbw - bpw -22 -5  ) / 16);
-		x2==0? 1 : x2;
-				
-				
-		docAss.WordItemPerPage=x1;
-		docAss.DocItemPerPage=x2;
-		
-	}
-
-	$scope
-	.$watch(
-			function() {
-				return angular.element(document.querySelector('.glossaryTec'))[0].offsetHeight;
-			}, function(newValue, oldValue) {
-				if (newValue != oldValue) {
-					changeItemPP();
-				}
-			}, true);
 
 
+
+	docAss.docWordSpeedMenuOpt = [ 
+			               	{
+			               		label : translate.load('sbi.generic.delete'),
+			               		icon	:'fa fa-times'	,
+			               		backgroundColor:'transparent',
+			               		color:'black',
+			               		action : function(item,event) {
+			               			docAss.removeWord(event,item);
+			               			}
+			               	}
+			             
+			             ];
+	
 	docAss.TreeOptionsWord = {
 
 			accept : function(sourceNodeScope, destNodesScope, destIndex) {
@@ -434,7 +421,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 						break;
 					}
 				}
-				if(present){ return false;}
+				if(present){console.log("present"); return false;}
 				else{console.log("accepted");
 				return true;}
 
@@ -468,7 +455,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 				var elem = {};
 
 				elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
-				elem.DOCUMENT_ID=docAss.selectedDocument;
+				elem.DOCUMENT_ID=docAss.selectedDocument.DOCUMENT_ID;
 				console.log(elem)
 
 				showPreloader();
@@ -562,7 +549,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 	datasetAss=this;
 	datasetAss.listDataset;
 	datasetAss.sizeDataset=0;
-	datasetAss.searchDataset="";
+	datasetAss.searchDataset=""; 
 	datasetAss.showPreloader = false;
 	datasetAss.preloaderTreeDS= false;
 	datasetAss.selectedGloss;
@@ -572,8 +559,8 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 	datasetAss.prevDatasetSearch = "-1";
 	global.initializer.datasetAssoc={state:false,scope:datasetAss};
 	datasetAss.init=function(){
-		changeItemPP();
-		datasetAss.ChangeDatasetPage(1);
+//		changeItemPP();
+//		datasetAss.ChangeDatasetPage(1);
 	}
 
 
@@ -597,34 +584,26 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 				})
 	}
 
-	datasetAss.ChangeDatasetPage=function(page){
-		var item="Page="+page+"&ItemPerPage="+datasetAss.DatasetItemPerPage+"&search=" + datasetAss.searchDataset;
-		datasetAss.loadDatasetList(item)
+
+	datasetAss.ChangeDatasetPage=function(newPageNumber,itemsPerPage,searchValue){
+		if(searchValue==undefined || searchValue.trim().lenght==0 ){
+			searchValue='';
+		}
+		var item="Page="+newPageNumber+"&ItemPerPage="+itemsPerPage+"&label=" + searchValue;
+		datasetAss.loadDatasetList(item);
 	}
 
+	
 
-	datasetAss.DatasetLike= function(ele,page){
+	datasetAss.DatasetLike= function(ele,itemsPerPage){
 		console.log("DatasetLike "+ele);
-		datasetAss.tmpDatasetSearch = ele;
-		$timeout(function() {
-
-			if (datasetAss.tmpDatasetSearch != ele || datasetAss.prevDatasetSearch == ele) {
-				return;
-			}
-
-			datasetAss.prevDatasetSearch = ele;
-			datasetAss.showSearchDatasetPreloader = true;
-			page==undefined? page=1:page=page;
-			var item="Page=1&ItemPerPage="+datasetAss.DatasetItemPerPage;
-			if(datasetAss.tmpDatasetSearch!=undefined && datasetAss.tmpDatasetSearch.trim()!=""){
-				item+="&search=" + ele;
-			}
-
-			datasetAss.loadDatasetList(item)
-
-
-		}, 1000);
-	}
+		
+		datasetAss.showSearchDatasetPreloader = true;
+			var item="Page=1&ItemPerPage="+itemsPerPage+"&label=" + ele;
+			datasetAss.loadDatasetList(item);
+		}
+	
+	
 
 	datasetAss.prevSWSG = "";
 	datasetAss.tmpSWSG = "";
@@ -727,14 +706,14 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 				});
 	}
 
-	datasetAss.loadDatasetInfo= function(id){
+	datasetAss.loadDatasetInfo= function(item){
 		console.log("loadDatasetInfo");
 		datasetAss.words=[];
 		datasetAss.searchDataset="";
 
 		showPreloader("preloader");
 		restServices
-		.get("1.0/glossary","getDataSetInfo?DATASET_ID="+id.dsId+"&ORGANIZATION="+id.organization)
+		.get("1.0/glossary","getDataSetInfo?DATASET_ID="+item.id.dsId+"&ORGANIZATION="+item.id.organization)
 				.success(
 						function(data, status, headers, config) {
 							console.log("loadDatasetInfo ottnuti")
@@ -875,33 +854,20 @@ function getAllDataset() {
 }
 
 
-datasetAss.WordItemPerPage=10;
-datasetAss.DatasetItemPerPage=10;
-
-function changeItemPP() {
-	var boxItemGlo = angular.element(document.querySelector('.boxItemGlo'))[0].offsetHeight;
-	var tbw = angular.element(document.querySelector('.xs-head'))[0].offsetHeight;
-	var bpw = angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
-
-	bpw == 0 ? bpw = 19 : bpw = bpw;
 
 
-
-	datasetAss.WordItemPerPage=parseInt((boxItemGlo - tbw - bpw -5 ) / 28);
-	datasetAss.DatasetItemPerPage=parseInt((boxItemGlo - tbw - bpw -22 -5  ) / 16);
-
-}
-
-$scope
-.$watch(
-		function() {
-			return angular.element(document.querySelector('.glossaryTec'))[0].offsetHeight;
-		}, function(newValue, oldValue) {
-			if (newValue != oldValue) {
-				changeItemPP();
-			}
-		}, true);
-
+datasetAss.datasetWordSpeedMenuOpt = [ 
+  			               	{
+  			               		label : translate.load('sbi.generic.delete'),
+  			               		icon	:'fa fa-times'	,
+  			               		backgroundColor:'transparent',
+  			               		color:'black',
+  			               		action : function(item,event) {
+  			               		datasetAss.removeWord(null,item);
+  			               			}
+  			               	}
+  			             
+  			             ];
 
 datasetAss.TreeOptionsWord = {
 
@@ -931,6 +897,8 @@ return  true;
 		dragStop : function(event) {
 		}
 };
+
+
 
 datasetAss.TreeOptionsDataset_Word = {
 
@@ -988,7 +956,7 @@ datasetAss.TreeOptions = {
 			
 			
 			elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
-			elem.DATASET_ID=datasetAss.selectedDataset;
+			elem.DATASET_ID=datasetAss.selectedDataset.id.dsId;
 			
 			elem.ORGANIZATION=datasetAss.infoSelectedDataSet.id.organization;
 			console.log(elem)
@@ -1532,16 +1500,17 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 	}
 
 	navi.init=function(){
+		console.log("init Navi")
 		navi.pagination.word = {item_type:"word",item:[],selected:[],selGlo:"---",current: 1,total:10,item_number:3,id:"word_pagination",search:"",prev_search:"",prev_glo:"---",tmp_search:"",preloader:false};
 		navi.pagination.document = {item_type:"document",item:[],selected:[],current: 1,total:10,item_number:7,id:"document_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
 		navi.pagination.dataset = {item_type:"dataset",item:[],selected:[],current: 1,total:10,item_number:7,id:"dataset_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
 		navi.pagination.bness_cls = {item_type:"bness_cls",item:[],selected:[],current: 1,total:10,item_number:7,id:"bness_cls_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
 		navi.pagination.table = {item_type:"table",item:[],selected:[],current: 1,total:10,item_number:7,id:"table_pagination",search:"",prev_search:"",tmp_search:"",preloader:false};
 		changeItemPP();
-		navi.loadNavItem();     
+//		navi.loadNavItem();     
 	}
 
-	global.init("navigation")
+	navi.init();
 
 
 }

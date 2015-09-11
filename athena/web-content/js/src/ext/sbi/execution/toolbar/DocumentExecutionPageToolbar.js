@@ -419,8 +419,48 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				}			
 			}));
 			
-			this.addSeparator();
 			
+			if(Sbi.user.functionalities.indexOf("Glossary")!=-1){
+			
+					this.addButton(new Ext.Toolbar.Button({
+						iconCls: 'icon-help-on-line' 
+						, tooltip: LN('sbi.generic.helpOnLine')
+					    , scope: this
+					    , handler : function() {
+					    	var docId=this.executionInstance.document.id;
+					    	var docLabel=this.executionInstance.document.label;
+					    	var datasetId=this.executionInstance.document.dataset;
+					   	  var panel=new Ext.ux.ManagedIframePanel({
+					                 border: false,
+					                 bodyBorder: false,
+					                 defaultSrc: {url: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DOCUMENT='+docId+'&LABEL='+docLabel+''+(datasetId!=undefined? "&DATASET="+datasetId : ''), discardUrl: true }
+					   	    });
+					       	  
+					       	  
+					       	 
+					       	var dialogBox = new Ext.Window({
+					                 title: 'Help Online',
+					                 modal:true,
+		//			                 layout:'fit',
+					                 width:'90%',
+					                 height:Ext.getBody().getViewSize().height*0.9 ,
+					                 closable:true,
+		//			                 closeAction: 'hide',
+		//			                 resizable:false,
+		//			                 plain:false,
+					                 items:[panel],
+		
+					             });
+					       	  
+					       	  dialogBox.show();
+					       	  
+					       	  
+						}			
+					}));
+			
+			}
+	
+			this.addSeparator();
 			this.addFileMenu();
 			this.addInfoMenu();
 			this.addShortcutsMenu();

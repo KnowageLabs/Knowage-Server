@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlContents;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlGlossary;
@@ -34,12 +37,14 @@ import org.json.JSONObject;
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  */
 @Path("/1.0/glossary/business")
+@ManageAuthorization
 public class GlossaryBusinessService {
 
 
 	@POST
 	@Path("/modifyContentsGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String modifyContentsGlossary(@Context HttpServletRequest req) {
 		try {
 			
@@ -100,6 +105,7 @@ public class GlossaryBusinessService {
 	@POST 
 	@Path("/addGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String addGlossary(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
@@ -188,6 +194,7 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/addContents")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String addContents(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 
@@ -325,6 +332,7 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/addWord")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String addWord(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
@@ -444,6 +452,7 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/deleteWord")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String deleteWord(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteWord");
@@ -470,6 +479,7 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/deleteGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String deleteGlossary(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteGlossary");
@@ -496,6 +506,7 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/deleteContents")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String deleteContents(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteContents");
@@ -529,6 +540,7 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/cloneGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
 	public String cloneGlossary(@Context HttpServletRequest req) {
 		try {
 			System.out.println("cloneGlossary");

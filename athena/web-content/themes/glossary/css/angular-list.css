@@ -221,8 +221,9 @@ ol.angular-ui-tree-nodes li {
 }
 
 .angular-ui-tree-empty {
-/* 	display: none; */
 	background-color: white !important;
+	min-height: 30px;
+	
 }
 
 .angular-ui-tree-handle {

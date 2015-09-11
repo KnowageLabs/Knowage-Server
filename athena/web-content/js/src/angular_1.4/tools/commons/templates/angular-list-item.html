@@ -1,4 +1,4 @@
-<div ui-tree-node context-menu data-target="{{id}}ContextMenu-{{ $index }}">
+<div ui-tree-node context-menu data-target="{{id}}ContextMenu-{{ $index }}" data-nodrag={{enableDrag!=true}}>
 
 									<div ui-tree-handle>
 									<i ng-if="enableDrag==true" class=" dragged-item-icon  fa fa-bars fa-2x"></i>
@@ -8,10 +8,8 @@
 											ng-repeat="n in [1]" context-menu
 											data-target="{{id}}ContextMenu-{{ $parent.$index }}" 
 											ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-										<p class="wrapText p_small_button" ng-class="{'selectedRow': (selectedItem==item && highlightsSelectedItem==true)}">{{ item[itemName] | uppercase}}</p>
-										</md-list-item> 
-										
-										
+										<p class="wrapText p_small_button" ng-class="{'selectedRow': (isSelected(item) && highlightsSelectedItem==true)}">{{ item[itemName] | uppercase}}</p>
+									</md-list-item> 
 										<md-fab-speed-dial ng-if="speedMenuOption.length>1 && speedMenuOption!=undefined" md-direction="left" ng-class="'md-fling'" >
 										        <md-fab-trigger >
 										          <md-button aria-label="menu" class="md-fab  ">
@@ -23,7 +21,7 @@
 										          <div class="md-fab-action-item" ng-repeat=" menuItem in speedMenuOption" >
 												        <md-button ng-click='menuItem.action(item,$event)' aria-label="{{menuItem.label}}" class="md-fab md-raised " style="background-color:{{menuItem.backgroundColor}}">
 															 <md-tooltip md-direction="top">{{menuItem.label}}</md-tooltip>										           
-															 <md-icon md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
+															 <md-icon style="color:{{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
 												         </md-button>
 											        </div>
 										       	</md-fab-actions>
@@ -33,7 +31,7 @@
 										<md-button ng-if="speedMenuOption.length==1"  ng-click='speedMenuOption[0].action(item,$event)'
 										 aria-label="{{speedMenuOption[0].label}}" class="md-fab md-raised singleActionButton " style="background-color:{{speedMenuOption[0].backgroundColor}}" >
 												 <md-tooltip md-direction="top">{{speedMenuOption[0].label}}</md-tooltip>										           
-												 <md-icon md-font-icon="{{speedMenuOption[0].icon}}" aria-label="{{speedMenuOption[0].label}}" ></md-icon>
+												 <md-icon style="color:{{speedMenuOption[0].color}}" md-font-icon="{{speedMenuOption[0].icon}}" aria-label="{{speedMenuOption[0].label}}" ></md-icon>
 								    </md-button>
 											         
 										</md-list>
@@ -41,11 +39,10 @@
 								</div> 				
 
 
-								<div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}ContextMenu-{{ $index }}" ng-if="menuOption.length!=0 && menuOption!=undefined")>
-								
-										<md-list class="dropdown-menu bottomBorder" role="menu"> 
-										<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(item,$event)' tabindex='{{$index}}' >
-										<p >{{menuItem.label}}</p>
-										</md-list-item>
-									</md-list>
-								</div>
+<div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}ContextMenu-{{ $index }}" )>
+	<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined"> 
+		<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(item,$event)' tabindex='{{$index}}' >
+			<p >{{menuItem.label}}</p>
+		</md-list-item>
+	</md-list>
+</div>

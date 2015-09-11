@@ -90,6 +90,8 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 
 			var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 			var title = LN('sbi.ds.listTitle');
+			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
+			
 			/*
 			this.tpl = new Ext.XTemplate(
 					'<div id="sample-ct">', 	            
@@ -149,7 +151,8 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 											'<div class="hover">',
 												'<div class="box-actions-container">',
 									            '    <ul class="box-actions">',	    
-									            		'<li class="qbe"><a href="#" title="Show Qbe"></a></li>',
+									    		'<li class="qbe"><a href="#" title="Show Qbe"></a></li>',
+									    		buttonHelpOnLine,
 									            '    </ul>',
 												'</div>',
 											'</div>',										
@@ -171,11 +174,34 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		}
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
-			if(record.data.type != undefined &&  record.data.type == "FEDERATED_DATASET"){
-				this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
-			}
-			else{
-				this.fireEvent('executeDocument','QBE','MODEL',record);
+			
+			if(e.target.id=='MHOL'){
+//				show help on line
+				 console.log('showHelpOnLine');
+				  var panel=new Ext.ux.IFrame({
+			              border: false,
+			              bodyBorder: false,
+			              src: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET='+record.data.id+'&LABEL='+(record.data.label==""?record.data.name:record.data.label),
+				    });
+			    	  
+			    	var dialogBox = new Ext.Window({
+			              title: 'Help Online',
+			              modal:true,
+			              width:'90%',
+			              height:Ext.getBody().getViewSize().height*0.9 ,
+			              closable:true,
+			              items:[panel],
+			          });
+			    	  
+			    	  dialogBox.show();
+			    	  
+			}else{
+				if(record.data.type != undefined &&  record.data.type == "FEDERATED_DATASET"){
+					this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
+				}
+				else{
+					this.fireEvent('executeDocument','QBE','MODEL',record);
+				}
 			}
 			
 			

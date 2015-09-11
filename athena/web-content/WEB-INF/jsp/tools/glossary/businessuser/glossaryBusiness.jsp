@@ -4,84 +4,23 @@
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<%@page import="it.eng.spago.base.*"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
-<%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
-<%@page import="java.util.Locale"%>
-<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
-<%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
+
+<%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
+
 <%@ page import="it.eng.spago.security.IEngUserProfile" %>
+<%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 
 
-<%
-	RequestContainer aRequestContainer = null;
-	ResponseContainer aResponseContainer = null;
-	SessionContainer aSessionContainer = null;
-	IUrlBuilder urlBuilder = null;
-	IMessageBuilder msgBuilder = null;
-	String sbiMode = null;
-		
-	// case of portlet mode
-	aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-	aResponseContainer = ResponseContainerPortletAccess.getResponseContainer(request);
-	if (aRequestContainer == null) {
-		// case of web mode
-		aRequestContainer = RequestContainer.getRequestContainer();
-		if(aRequestContainer == null){
-			//case of REST 
-			aRequestContainer = RequestContainerAccess.getRequestContainer(request);
-		}
-		aResponseContainer = ResponseContainer.getResponseContainer();
-		if(aResponseContainer == null){
-			//case of REST
-			aResponseContainer = ResponseContainerAccess.getResponseContainer(request);
-		}
-	}
-	
-	String channelType = aRequestContainer.getChannelType();
-	if ("PORTLET".equalsIgnoreCase(channelType)) sbiMode = "PORTLET";
-	else sbiMode = "WEB";
-	
-	// create url builder 
-	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
-	
-	// create message builder
-	msgBuilder = MessageBuilderFactory.getMessageBuilder();
-	
-	// get other spago object
-	SourceBean aServiceRequest = aRequestContainer.getServiceRequest();
-	SourceBean aServiceResponse = aResponseContainer.getServiceResponse();
-	aSessionContainer = aRequestContainer.getSessionContainer();
-	SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
-	
-	// If Language is alredy defined keep it
-	String curr_language=(String)permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
-	String curr_country=(String)permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
-	Locale locale = null;
-	
-	if (curr_language != null && curr_country != null	&& !curr_language.equals("") && !curr_country.equals("")) {
-		locale = new Locale(curr_language, curr_country, "");
-	} else {
-		if (sbiMode.equals("PORTLET")) {
-			locale = PortletUtilities.getLocaleForMessage();
-		} else {
-			locale = MessageBuilder.getBrowserLocaleFromSpago();
-		}
-	}
-	
-%>
+
 
 <%
 // check for user profile autorization
-		IEngUserProfile profile = (IEngUserProfile) aSessionContainer.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			
-		System.out.println("------------------------------------------------------");
+		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		boolean canSee=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ROLE_TYPE_USER, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS});
+		
 %>
 
-
+ <% if(canSee ){ %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="AIDA_GESTIONE-VOCABOLI">
@@ -195,77 +134,6 @@
 					</md-content>
 					
 					
-<!-- 					<md-content layout-padding  style="padding: 0 8px;">  -->
-					
-<!-- 					<md-input-container class="searchBar" md-no-float > -->
-<!-- 					<md-icon md-font-icon="fa fa-search "></md-icon>  -->
-<!-- 					<input -->
-<!-- 						ng-model="searchValue"  -->
-<!-- 						ng-keyup="ctrl.WordLike(searchValue)" type="text" -->
-<!-- 						placeholder="Search ">  -->
-<!-- 					</md-input-container>  -->
-						
-<!-- 						<md-progress-circular -->
-<!-- 						md-diameter="20" ng-show="ctrl.showSearchPreloader" -->
-<!-- 						class="md-hue-2" -->
-<!-- 						style="  left: 50%;  margin-left: -25px; position:absolute " -->
-<!-- 						md-mode="indeterminate"></md-progress-circular> -->
-
-
-<!-- 					<p ng-if="ctrl.words.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p> -->
-
-
-<!-- 					<div id="wordTree" ng-if="ctrl.words.length>0" -->
-<!-- 						ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true" -->
-<!-- 						data-drag-delay="500" data-clone-enabled="true"> -->
-
-<!-- 						<ol ui-tree-nodes ng-model="ctrl.words" data-nodrop-enabled="true"> -->
-
-<!-- 							<li style="border: none;" dir-paginate="word in ctrl.words |  itemsPerPage:	ctrl.WordItemPerPage " total-items="ctrl.totalWord" current-page="ctrl.pagination.current"> -->
-
-<!-- 								<div ui-tree-node context-menu -->
-<!-- 									data-target="WordMenu-{{word.WORD}}"> -->
-
-<!-- 									<div ui-tree-handle> -->
-<!-- 									<i class=" dragged-icon fa fa-bars fa-2x"></i> -->
-									
-<!-- 										<md-list > <md-list-item   ng-click="1==1" -->
-<!-- 											ng-repeat="n in [1]" context-menu -->
-<!-- 											data-target="WordMenu-{{word.WORD}}" class="smallListItem " -->
-<!-- 											ng-class="{ 'highlight': highlight, 'expanded' : expanded }"> -->
-<!-- 										<p class="wrapText">{{ word.WORD | uppercase}}</p> -->
-<!-- 										</md-list-item> </md-list> -->
-<!-- 									</div> -->
-<!-- 								</div> 				 -->
-
-
-<!-- 								<div class="dropdown position-fixed blockedMenu" -->
-<!-- 									style="z-index: 999; left: 10px !important" -->
-<!-- 									id="WordMenu-{{ word.WORD }}"> -->
-<!-- 									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item  -->
-<!-- 										ng-click='ctrl.modifyWord(word)' role="menuitem" tabindex="1"> -->
-<!-- 									<p>{{translate.load("sbi.generic.modify");}}</p> -->
-<!-- 									</md-list-item> <md-list-item ng-click='ctrl.deleteWord(word)' role="menuitem"  -->
-<!-- 										tabindex="2"> -->
-<!-- 									<p>{{translate.load("sbi.generic.delete");}}</p> -->
-<!-- 									</md-list-item>  -->
-<!-- 									<md-list-item ng-click="ctrl.showInfoWORD($event,word.WORD_ID)" role="menuitem"  -->
-<!-- 										tabindex="3"> -->
-<!-- 									<p>{{translate.load("sbi.generic.details");}}</p> -->
-<!-- 									</md-list-item>  -->
-<!-- 									</md-list> -->
-<!-- 								</div> -->
-
-<!-- 							</li> -->
-<!-- 						</ol> -->
-<!-- 					</div> -->
-
-<!-- 					</md-content> -->
- 
-<!-- 					<div class="box_pagination" layout="row" layout-align="center end"> -->
-<!-- 						<dir-pagination-controls max-size="5"  on-page-change="ctrl.pageChanged(newPageNumber)"></dir-pagination-controls> -->
-<!-- 					</div> -->
-
 				</div>
 
 
@@ -278,7 +146,8 @@
 							class="md-fab   md-ExtraMini addButton" aria-label="add word"
 							style="position:absolute; right:11px; top:0px;"> <md-icon
 							md-font-icon="fa fa-plus "
-							style="  margin-top: 6px ; color: white;"></md-icon> </md-button>
+							style="  margin-top: 6px ; color: white;"></md-icon> 
+						</md-button>
 					</div>
 					</md-toolbar>
 
@@ -590,3 +459,10 @@
 
 </body>
 </html>
+
+<%}else{ %>
+
+UNAUTHORIZED
+<%-- <%@include file="/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp"%> --%>
+
+<%} %>

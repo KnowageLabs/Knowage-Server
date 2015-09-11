@@ -16,6 +16,11 @@
 	background-image: url('../../../img/analiticalmodel/execution/ico_refresh.png') !important;
 }
 
+.icon-help-on-line {
+	background-image: url('../../../img/wapp/40/glossary.png') !important;
+	background-size: 20px 20px !important;
+}
+
 /* Menu file */
 .icon-print {
 	background-image: url('../../../img/analiticalmodel/execution/ico_print.png') !important;

@@ -50,7 +50,7 @@ Ext.define('Sbi.tools.model.MetaModelsBrowser', {
 		this.filteredProperties = [ "name" ];
 		
 		Sbi.debug('DataViewPanel bulding the store...');
-
+		
 		this.storeConfig = Ext.apply({
 			model : this.getModelName(),
 			filteredProperties : [ "name" ]

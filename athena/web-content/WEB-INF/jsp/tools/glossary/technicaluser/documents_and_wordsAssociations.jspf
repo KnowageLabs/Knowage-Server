@@ -5,19 +5,17 @@
 <div layout="row" layout-wrap class="h100">
 	<!-- 			LEFT BOX document -->
 	<div flex="20"  class="boxItemGlo"  >
-
-
 		<div layout="column" class="documentListBox">
 		
-		<md-toolbar class="md-blue xs-head">
-			<div class="md-toolbar-tools">
-				<div>{{translate.load("sbi.kpis.documents");}}</div>
-			</div>
-		</md-toolbar>
+			<md-toolbar class="md-blue xs-head">
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.kpis.documents");}}</div>
+				</div>
+			</md-toolbar>
 			
 		
-		<md-content layout-padding class="ToolbarBox miniToolbar noBorder ">
-						<angular-list layout-fill 
+			<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+				<angular-list layout-fill 
 						id='document' 
                 		ng-model=ctrl.listDoc
                 		item-name='DOCUMENT_NM '
@@ -29,59 +27,14 @@
                 		total-item-count=ctrl.sizeDoc
                 		selected-item=ctrl.selectedDocument
                 		highlights-selected-item=true
-                		/>
-                		
-					</md-content>
-		
-		
-		
-		
-		
-		
-		
-		
-
-
-
-<!-- 			<md-content layout-padding style="padding-top: 0;">  -->
-			
-<!-- 			<md-input-container	md-no-float  class="noPadding searchBar">  -->
-<!-- 				<md-icon md-font-icon="fa fa-search"></md-icon>  -->
-<!-- 				<input	ng-model="ctrl.searchDoc"  -->
-<!-- 				ng-keyup="ctrl.DocumentLike(ctrl.searchDoc,1)" type="text" -->
-<!-- 				placeholder="Search "> -->
-<!-- 			</md-input-container> -->
-				
-<!-- 			<md-progress-circular -->
-<!-- 				md-diameter="20" ng-show="ctrl.showSearchDocPreloader" class="md-hue-2" -->
-<!-- 				style="  left: 50%;  margin-left: -25px; position:absolute " -->
-<!-- 				md-mode="indeterminate">  -->
-<!-- 			</md-progress-circular> -->
-
-
-<!-- 			<p ng-if="ctrl.listDoc.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p> -->
-
-<!-- 								<md-list   class="bottomBorder"> -->
-<!-- 								 <md-list-item ng-click="ctrl.loadDocumentInfo(doc.DOCUMENT_ID); ctrl.selectedDocument=doc.DOCUMENT_ID;" 	 -->
-<!-- 								 dir-paginate="doc in ctrl.listDoc | itemsPerPage: ctrl.DocItemPerPage" total-items="ctrl.sizeDoc" pagination-id="docPagination"  class="smallListItem "> -->
-<!-- 								<p class="wrapText" ng-class="{'selectedRow': ctrl.selectedDocument==doc.DOCUMENT_ID}">{{ doc.DOCUMENT_NM | uppercase}}</p> -->
-<!-- 								</md-list-item>  -->
-<!-- 								</md-list> -->
-								
-<!-- 			</md-content> -->
-
-<!-- 			<div class="box_pagination" layout="row" layout-align="center end"> -->
-<!-- 				<dir-pagination-controls pagination-id="docPagination" max-size="5" on-page-change="ctrl.ChangeDocPage(newPageNumber)"></dir-pagination-controls> -->
-<!-- 			</div> -->
-
+                ></angular-list>                		
+			</md-content>		
 		</div>
 	</div>
 
 
 	<!-- 			center BOX WORD -->
 	<div flex="20" class="boxItemGlo" >
-
-
 		<div layout="column" class="documentListBox">
 
 			<md-toolbar class="md-blue xs-head">
@@ -90,38 +43,20 @@
 			</div>
 			</md-toolbar>
 
-			<md-content layout-padding> 
-			
-			
 
-			<p ng-if="ctrl.words.length==0">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
-
-	
-			<div id="wordTree" 		ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"  data-clone-enabled="true">
-
-						<ol ui-tree-nodes ng-model="ctrl.words" >
-
-							<li dir-paginate="word in ctrl.words | itemsPerPage: ctrl.WordItemPerPage  " pagination-id="wordPagination" class="noBorder">
-
-								<div ui-tree-node data-nodrag style=" min-height: 15px !important;">
-									<div ui-tree-handle style="border: none; min-height: 15px !important;">
-										<md-list class="noPadding deleteButton"> <md-list-item class="smallListItem "  ng-click="1==1"
-											ng-repeat="n in [1]"  >
-										<p class="wrapText" style="border-bottom: 1px solid rgb(176, 190, 197);" >{{ word.WORD  | uppercase}}</p>
-										 <md-icon md-font-icon="fa fa-times" ng-click="ctrl.removeWord(word)" aria-label="delete word" class="md-secondary md-hue-3"></md-icon> 
-										</md-list-item> </md-list>
-									</div>
-								</div> 
-							</li>
-						</ol>
-					</div>
-								
-			</md-content>
-
-			<div class="box_pagination" layout="row" layout-align="center end">
-				<dir-pagination-controls pagination-id="wordPagination" max-size="5"></dir-pagination-controls>
-			</div>
-
+			<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+				<angular-list layout-fill 
+						id='documentWord' 
+                		ng-model=ctrl.words
+                		item-name='WORD'
+                		enable-drag=false
+						enable-clone=true
+						drag-drop-options=ctrl.TreeOptionsWord
+						show-empty-placeholder=true
+						speed-menu-option=ctrl.docWordSpeedMenuOpt
+               ></angular-list>
+	        </md-content>
+		
 		</div>
 	</div>
 
@@ -129,67 +64,26 @@
 	
 	<div flex  class="boxItemGlo" >
 	
-	<div layout="column" class="documentListBox">
-
+		<div layout="column" class="documentListBox">
+	
 			<md-toolbar class="md-blue xs-head">
-			<div class="md-toolbar-tools">
-				<div >{{translate.load("sbi.glossary.glossary");}}</div>
-			</div>
+				<div class="md-toolbar-tools">
+					<div >{{translate.load("sbi.glossary.glossary");}}</div>
+				</div>
 			</md-toolbar>
-
-
-<!-- 			<div class="preloaderTree" ng-show="ctrl.preloaderTree"> <md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular> </div> -->
+	
 			<md-content layout-padding> 
-			
-			
-  
-<!-- 			 <div layout="row" style="margin-bottom: 7px;"> -->
-<!-- 			<p style="  margin: 0 10px 0 0;" >{{translate.load("sbi.glossary.glossary");}}:</p> -->
-<!-- 			 <md-select ng-disabled="ctrl.selectedDocument==undefined" style="padding: 0; margin-top: -10px;"  -->
-<!-- 			 placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.selGlo"> -->
-<!--        		 <md-option ng-repeat="gloss in global.glossary" value="{{gloss.GLOSSARY_ID}}" ng-click="ctrl.showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option> -->
-<!--        		 </md-select> -->
-       		 
-       		 
-<!--        		 	<md-input-container ng-hide="ctrl.selectedGloss==undefined;" -->
-<!-- 				md-no-float style="  margin-top: -12px; position: absolute; right: 0; padding: 2px;">  -->
-<!-- 				<md-icon	md-font-icon="fa fa-search " style="  padding :4px 0;  color: black;"></md-icon>  -->
-<!-- 				<input	ng-model="ctrl.searchWD" Style="margin-left: 15px;" -->
-<!-- 				ng-keyup="ctrl.SearchWordInSelectedGloss(ctrl.searchWD)" type="text" -->
-<!-- 				placeholder="Search "> -->
-<!-- 			</md-input-container> -->
-			
-<!-- 			</div> -->
-			
-			
-<!-- 			<div id="GlossTree2"  ui-tree="ctrl.TreeOptions" data-drag-enabled="true" -->
-<!-- 							data-drag-delay="300" data-clone-enabled="true" > -->
-							
-
-<!-- 								<ol ui-tree-nodes="options"	ng-model="ctrl.selectedGloss.SBI_GL_CONTENTS" ng-class="{hideChildren: collapsed}"> -->
-									
-<!-- 									<li ng-repeat="item in ctrl.selectedGloss.SBI_GL_CONTENTS" ui-tree-node data-collapsed="true" -->
-<!-- 										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'"></li> -->
-<!-- 								</ol> -->
-							
-<!-- 						</div> -->
-
-<!-- 			------------------------------------------------------------------------- -->
-			
-		 <glossary-tree tree-id="GlossTreeDOC" 
-						tree-options=ctrl.TreeOptions 
-						show-root=false
-						glossary={}
-						show-select-glossary="ctrl.selectedDocument==undefined"
-						show-search-bar=true
-        				drag-word-node=true
-        				clone-item=true 
-        				></glossary-tree>
-			
-			
-			
-								
-			</md-content>	
+				<glossary-tree tree-id="GlossTreeDOC" 
+								tree-options=ctrl.TreeOptions 
+								show-root=false
+								glossary={}
+								show-select-glossary="ctrl.selectedDocument==undefined"
+								show-search-bar=true
+		        				drag-word-node=true
+		        				clone-item=true 
+		        				>
+		       </glossary-tree>
+		     </md-content>	
 		</div>
 	</div>
 

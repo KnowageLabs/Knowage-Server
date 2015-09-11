@@ -4,8 +4,14 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
@@ -41,6 +47,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.hibernate.Filter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -50,12 +57,15 @@ import com.mongodb.util.JSON;
  *
  */ 
 @Path("/1.0/glossary")
+@ManageAuthorization
 public class GlossaryService {
 final String DirectDSWordChild=".SELF";
-	
+
+
 	@POST
 	@Path("/addDocWlist")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String addDocWlist(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
@@ -96,6 +106,7 @@ final String DirectDSWordChild=".SELF";
 	@POST
 	@Path("/addDataSetWlist")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String addDataSetWlist(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
@@ -137,6 +148,7 @@ final String DirectDSWordChild=".SELF";
 	@POST
 	@Path("/deleteDocWlist")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String deleteDocWlist(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteDocWlist");
@@ -166,6 +178,7 @@ final String DirectDSWordChild=".SELF";
 	@POST
 	@Path("/deleteDatasetWlist")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String deleteDatasetWlist(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteDatasetWlist");
@@ -197,14 +210,19 @@ final String DirectDSWordChild=".SELF";
 	@POST
 	@Path("/loadNavigationItem")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String loadNavigationItem(@Context HttpServletRequest req) {
+		IGlossaryDAO dao=null;
 		try {
 			System.out.println("loadNavigationItem");
-			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+			 dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession()
 					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
+			
+		
+			
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 			JSONObject jo = new JSONObject();
 			Map<String, Object> fin=dao.NavigationItem(requestVal);
@@ -213,6 +231,7 @@ final String DirectDSWordChild=".SELF";
 				List<SbiObjects> doc = (List<SbiObjects>) fin.get("document");
 				JSONArray ja = new JSONArray();
 				for (SbiObjects tmp : doc) {
+//					BIObject i= DAOFactory.getBIObjectDAO().toBIObject(tmp);
 					ja.put(fromDocumentLight(tmp));
 				}
 				jo.put("document", ja);
@@ -271,6 +290,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/GlossaryUdpLikeLabel")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String loadUDPGlossaryLikeLabel(@Context HttpServletRequest req) {
 		try {
 			IUdpDAO dao = DAOFactory.getUdpDAO();
@@ -308,6 +328,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/listContents")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String listContents(@Context HttpServletRequest req) {
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
@@ -353,13 +374,15 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/listGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String listGlossary(@Context HttpServletRequest req) {
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// TODO check if profile is null
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		// TODO check if profile is null
 			dao.setUserProfile(profile);
+			
+			
 			List<SbiGlGlossary> lst = dao.listGlossary();
 			JSONArray jarr = new JSONArray();
 			if (lst != null) {
@@ -376,103 +399,11 @@ final String DirectDSWordChild=".SELF";
 		}
 	}
 
-	@GET
-	@Path("/listDocument")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String listDocument(@Context HttpServletRequest req) {
-		try {
-			IBIObjectDAO sbiObjectsDAO = DAOFactory.getBIObjectDAO();
-			
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// TODO check if profile is null
-			sbiObjectsDAO.setUserProfile(profile);
-			String word = req.getParameter("WORD");
-			Integer page = getNumberOrNull(req.getParameter("Page"));
-			Integer itempp = getNumberOrNull(req.getParameter("ItemPerPage"));
-			
-			
-			List<BIObject> lst=null;
-			if ((word != null && !word.trim().isEmpty())) {
-				lst= sbiObjectsDAO.searchBIObjects(word, "CONTAINS", "label", null, null, profile);
-				
-			}else{
-				lst= sbiObjectsDAO.loadAllBIObjects();
-			}
-			JSONArray jarr = new JSONArray();
-			if (lst != null) {
-				for (Iterator<BIObject> iterator = lst.iterator(); iterator
-						.hasNext();) {
-					BIObject sbiob = iterator.next();
-					jarr.put(fromDocumentLight(sbiob));
-				}
-			}
-			if(page!=null && itempp!=null ){
-				JSONObject fin=new JSONObject();
-				fin.put("item", jarr);
-//				fin.put("itemCount", dao.wordCount(word,gloss_id));
-				fin.put("itemCount", 5);
-				
-				return fin.toString();
-			}
-			
-			return jarr.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
-		}
-	}
-
-	@GET
-	@Path("/listDataSet")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String listDataSet(@Context HttpServletRequest req) {
-		try {
-			IDataSetDAO DAO = DAOFactory.getDataSetDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// TODO check if profile is null
-			DAO.setUserProfile(profile);
-			
-			String word = req.getParameter("WORD");
-			Integer page = getNumberOrNull(req.getParameter("Page"));
-			Integer itempp = getNumberOrNull(req.getParameter("ItemPerPage"));
-			List<IDataSet> lst=null;
-			if ((word != null && !word.trim().isEmpty())) {
-//				lst = DAO.loadFilteredDatasetList(" from SbiDataSet h where h.label like '%"+word+"%'", page, itempp);
-				lst = DAO.loadDataSets();
-				} else {
-				lst = DAO.loadDataSets();
-			}
-
-			JSONArray jarr = new JSONArray();
-			if (lst != null) {
-				for (Iterator<IDataSet> iterator = lst.iterator(); iterator
-						.hasNext();) {
-					IDataSet ds = iterator.next();
-					jarr.put(fromDataSetLight(ds));
-				}
-			}
-			
-			if(page!=null && itempp!=null ){
-				JSONObject fin=new JSONObject();
-				fin.put("item", jarr);
-//				fin.put("itemCount", dao.wordCount(word,gloss_id));
-				fin.put("itemCount", 1);
-				
-				return fin.toString();
-			}
-			
-			return jarr.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
-		}
-	}
 		
 	@GET
 	@Path("/listWords")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String listWords(@Context HttpServletRequest req) {
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
@@ -515,6 +446,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getDocumentInfo")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getDocumentInfo(@Context HttpServletRequest req) {
 		
 		try {
@@ -524,21 +456,27 @@ final String DirectDSWordChild=".SELF";
 			dao.setUserProfile(profile);
 			
 			Integer documentId = getNumberOrNull(req.getParameter("DOCUMENT_ID"));
+//			String  dtsws=req.getParameter("DATASETWORD");
+//			Boolean datasWord=false;
+//			if(dtsws!=null){
+//				datasWord= dtsws.toString().compareTo("true")==0;
+//			}
 			if (documentId==null) {
 				throw new SpagoBIServiceException(req.getPathInfo(),
 						"Input param Id [" + documentId + "] not valid or null");
 			}
 			
+			JSONObject jobj =new JSONObject();
+			
 			List<SbiGlDocWlist> listDocWlist=dao.listDocWlist(documentId);
 			
-			JSONObject jobj =new JSONObject();
 			JSONArray ja=new JSONArray();
 			for(SbiGlDocWlist sb:listDocWlist){
 				ja.put(fromWordLight(sb.getWord()));
 			}
 			jobj.put("word", ja);
 			
-			
+
 			return jobj.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(),
@@ -549,6 +487,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getDataSetInfo")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getDataSetInfo(@Context HttpServletRequest req) {
 		
 		try {
@@ -559,11 +498,24 @@ final String DirectDSWordChild=".SELF";
 			
 			Integer datasetId = getNumberOrNull(req.getParameter("DATASET_ID"));
 			if (datasetId==null) {
+				//checkif ther is a label of dataset 
+				boolean recovered=false;
+				String dsl=req.getParameter("DATASET_LABEL");
+				if(dsl!=null){
+					SbiDataSet obj=DAOFactory.getSbiDataSetDAO().loadSbiDataSetByLabel(dsl);
+					if(obj!=null){
+					datasetId=obj.getId().getDsId();
+					recovered=true;
+					}
+				}
+				
+				if(!recovered){
 				throw new SpagoBIServiceException(req.getPathInfo(),
 						"Input param Id [" + datasetId + "] not valid or null");
+				}
 			}
 			
-			String organiz = req.getParameter("ORGANIZATION").toString();
+			String organiz = req.getParameter("ORGANIZATION")==null? null: req.getParameter("ORGANIZATION").toString();
 			
 			List<SbiGlDataSetWlist> listDatasetWlist=dao.listDataSetWlist(datasetId,organiz);
 			JSONObject jo=new JSONObject();
@@ -615,18 +567,37 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getWord")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getWord(@Context HttpServletRequest req) {
-		String id = req.getParameter("WORD_ID");
-		if (!id.matches("\\d+")) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"Input param Id [" + id + "] not valid");
-		}
 		try {
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
+		String id = req.getParameter("WORD_ID");
+		String name = req.getParameter("WORD_NAME");
+		if ( id==null || !id.matches("\\d+") ) {
+			boolean resolved=false;
+			//check if label is present
+			if(name!=null){
+				 List<SbiGlWord> lw=dao.loadWordByName(name);
+				 if(lw.size()!=0){
+						id=""+lw.get(0).getWordId();
+						resolved=true;
+					}
+			}
+
+			if(!resolved){
+				JSONObject jo=new JSONObject();
+				jo.put("Status", "NON OK");
+				jo.put("Message", "sbi.generic.not.found");
+				return jo.toString();
+			}
+		}
+		
 			IEngUserProfile profile = (IEngUserProfile) req.getSession()
 					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			dao.setUserProfile(profile);
 			SbiGlWord word = dao.loadWord(Integer.valueOf(id));
+		
+			
 			JSONObject jobj = fromWord(word);
 			return jobj.toString();
 		} catch (Throwable t) {
@@ -638,6 +609,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getBnessCls")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getBnessCls(@Context HttpServletRequest req) {
 		String id = req.getParameter("BC_ID");
 		if (!id.matches("\\d+")) {
@@ -661,6 +633,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getTable")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getTable(@Context HttpServletRequest req) {
 		String id = req.getParameter("TABLE_ID");
 		if (!id.matches("\\d+")) {
@@ -684,6 +657,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getGlossary(@Context HttpServletRequest req) {
 		String glossaryId = req.getParameter("GLOSSARY_ID");
 		if (!glossaryId.matches("\\d+")) {
@@ -713,6 +687,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/getContent")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String getContents(@Context HttpServletRequest req) {
 		String contentId = req.getParameter("CONTENT_ID");
 		if (!contentId.matches("\\d+")) {
@@ -737,6 +712,7 @@ final String DirectDSWordChild=".SELF";
 	@GET
 	@Path("/glosstreeLike")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS,SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})
 	public String glosstreeLike(@Context HttpServletRequest req) {
 
 		try {

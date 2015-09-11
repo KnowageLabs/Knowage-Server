@@ -19,8 +19,10 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
 import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,6 +46,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -306,7 +310,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@Path("/listDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
-			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr, @QueryParam("excludeType") String excludeType) {
+			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr, @QueryParam("excludeType") String excludeType,@QueryParam("scope") String scope) throws EMFInternalError {
 		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> filterObj = null;
@@ -323,7 +327,20 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			disjunctions.add(new CriteriaParameter("descr", descr, Match.ILIKE));
 		}
 		
+		
+		
 		String UserFilter=profile.getIsSuperadmin()? null: profile.getUserId().toString();
+		
+		//in glossary, the user with admin role and specific authorization can see all document of the organization
+		if(scope!=null && scope.compareTo("GLOSSARY")==0){
+			if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
+				UserFilter=null;
+			}
+		}
+			
+			
+		
+		
 		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
 		
 		//filter document if is USER profile

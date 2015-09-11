@@ -21,7 +21,9 @@
   margin-top: -17px;
   margin-right: -11px;
 }
-
+ md-content.xs-head-max-content  {
+   height: calc(100% - 16px);
+   }
 
 .md-button.md-ExtraMini {
 	line-height: 25px;
@@ -184,10 +186,13 @@ p.wrapText {
 }
 
 .SecondaryOnLeft .expandericon {
-	position: absolute;
-	left: 0px;
-	top: 4px;
-	margin-left: 19px;
+
+/* 	top: 4px; */
+/* 	margin-left: 19px; */
+    position: absolute;
+    left: 0px;
+    top: 3px;
+    margin-left: 24px;
 }
 
 
@@ -321,8 +326,9 @@ md-content.ToolbarBox.miniToolbar  {
 height: calc(100% - 31px) !important;
 }
 
+
 md-content.ToolbarBox.xsToolbar  {
-height: calc(100% - 20px) !important;
+height: calc(100% - 16px) !important;
 }
 
 .dragged-icon i, i.dragged-icon {
@@ -367,3 +373,19 @@ height: calc(100% - 20px) !important;
 	display: block;
 }
 
+md-tabs.mini-tabs{
+	height: 100%;
+}
+
+
+md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
+	height:23px!important;
+}
+    
+md-tabs.mini-tabs md-tab-item{
+	  padding: 0 24px;
+}
+
+md-tabs.mini-tabs  md-tabs-content-wrapper{
+	 top:24px !important;
+}

@@ -51,6 +51,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	//System.out.println(jsonMenuList);
 %>
 
+<% Boolean enableGlossary=userProfile.isAbleToExecuteAction(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS) ;%>
+<%if(enableGlossary){ %>
+<style>
+/* apply this style for the helps online link if the glossary is enabled */
+.glossHelpOnline{
+    text-decoration: underline;
+    cursor: help;
+}
+</style>
+
+<%} %>
+
   <script>
     	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
 			var iframeDocElement = document.getElementById('iframeDoc');
@@ -77,7 +89,43 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			//alert("[homeBase.execCrossNavigation]: execCrossNavigation is equal to [" + iframeDocElementWindow.execCrossNavigation + "]");
 			iframeDocElementWindow.execCrossNavigation(frameid, doclabel, params, subobjid, title, target);
 		}
+    	
+    	
+    	
+    	function execShowHelpOnLine(word){
+    		
+   		  <%  if(enableGlossary){ %>
+    			
+    		
+			if (word == undefined || word == null) {
+					return;
+				}
+
+			var panel = new Ext.ux.IFrame(
+					{
+						border : false,
+						bodyBorder : false,
+						height : '100%',
+						src : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?WORD='+ word,
+					});
+
+			var dialogBox = new Ext.Window({
+				title : 'Help Online',
+				modal : true,
+				width : '90%',
+				height : Ext.getBody().getViewSize().height * 0.9,
+				closable : true,
+				items : [ panel ],
+			});
+
+			dialogBox.show();
+			
+		<% } %>
+	    	  
+    	}
+    	
   </script>
+	
 
 
 <%-- Javascript object useful for session expired management (see also sessionExpired.jsp) --%>
