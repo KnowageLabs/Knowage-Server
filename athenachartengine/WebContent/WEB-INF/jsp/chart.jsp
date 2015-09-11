@@ -169,6 +169,9 @@ author:
 	<script language="javascript" type="text/javascript">
 	
 		var chartConfiguration = null;
+		
+		var isChartHeightEmpty = null;
+		var isChartWidthEmpty= null;
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
@@ -192,31 +195,51 @@ author:
  				"resize",
  				
  				function(newWidth, newHeight)
- 				{ 				
- 					var chartType = chartConfiguration.chart.type.toUpperCase();
- 					
- 					/* 
- 						Check if the chart (document) that we want to render (run) on the page 
- 						usese D3 as a library for rendering.
-					*/
-					console.log("AAA");
- 					//if (isChartD3(chartConfiguration))
- 					var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
- 						
-					if (isD3Chart)
+ 				{ 	 				
+ 					/*
+ 						If there are chart dimension values (height and width) specified 
+ 						for this chart (chart that relies on the D3 library), variable
+ 						'chartConfiguration' will stay 'null', since we did not enter
+ 						the part of code that specify this value (actual JSON file) that
+ 						we receive from the server. This way, resize will not be applied 
+ 						this chart and it will despite of resizing stay with the same 
+ 						size as on the beginning (on the initial render of the chart).
+ 						(danilo.ristovski@mht.net)
+ 					*/ 	 					
+ 					if (chartConfiguration!=null)
 					{
- 						/* 
- 							Set new values for the height and the width of the chart (the DIV
- 							that contains the chart), as a consequence of a resizing the window
- 							(panel). This will eventually affect on those chart elements that 
- 							depend on these two parameters.
+ 						var chartType = chartConfiguration.chart.type.toUpperCase();
+		 					
+	 					/* 
+	 						Check if the chart (document) that we want to render (run) on the page 
+	 						usese D3 as a library for rendering.
 						*/
-						chartConfiguration.chart.width = newWidth;
-						chartConfiguration.chart.height = newHeight;
-						console.log("BBB");
-						
- 						/* Re-render the chart after resizing the window (panel). */
- 						renderChart(chartConfiguration);
+	 					var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
+ 						
+ 						if (isD3Chart)
+ 						{
+ 	 						/* 
+ 	 							Set new values for the height and the width of the chart (the DIV
+ 	 							that contains the chart), as a consequence of a resizing the window
+ 	 							(panel). This will eventually affect on those chart elements that 
+ 	 							depend on these two parameters.
+ 							*/
+ 							if (isChartHeightEmpty==true)
+							{
+ 								console.log(newHeight);
+ 								chartConfiguration.chart.height = newHeight;
+							}
+ 	 						
+ 	 						if (isChartWidthEmpty==true)
+ 							{
+ 	 							console.log(newWidth);
+ 	 							chartConfiguration.chart.width = newWidth; 
+ 							}
+ 														
+ 							
+ 	 						/* Re-render the chart after resizing the window (panel). */
+ 	 						renderChart(chartConfiguration);
+ 						}
 					}
  				}
  			);
@@ -280,20 +303,44 @@ author:
 						*/
 						var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 	 					
+						/*
+							If type of the chart is one of those that rely on the D3 library
+							and dimensions of the chart that we are going to render for the
+							first time are not specified (empty), adapt size of the chart to
+							the size of the window (panel) in which it will be rendered. The
+							indicator for empty dimensions for the previous code (on.resize)
+							will be chartConfiguration=null, since we will not enter this 
+							if-statement.
+							(danilo.ristovski@mht.net)
+						*/
+						//if (isD3Chart && ((chartConf.chart.width=="" || chartConf.chart.height=="") || typeChart == "SUNBURST"))
 						if (isD3Chart)
-						{							
- 							if (heightChart==undefined || heightChart == "")	
- 	 						{
- 	 							chartConf.chart.height = window.innerHeight;
- 	 						}
- 	 						
- 	 						if (widthChart==undefined || widthChart == "")	
- 	 						{
- 	 							chartConf.chart.width = window.innerWidth;
- 	 						}
-						}
- 						
- 						chartConfiguration = chartConf;
+						{	
+							if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST")
+							{
+		 						if (heightChart == "")	
+		 						{
+		 							isChartHeightEmpty = true;
+		 							chartConf.chart.height = window.innerHeight;
+		 						}
+		 						else
+	 							{
+		 							isChartHeightEmpty = false;
+	 							}
+		 						
+		 						if (widthChart == "" || typeChart == "SUNBURST")	
+		 						{
+		 							isChartWidthEmpty = true;
+		 							chartConf.chart.width = window.innerWidth;
+		 						}
+		 						else
+	 							{
+		 							isChartWidthEmpty = false;
+	 							}
+		 						
+		 						chartConfiguration = chartConf;
+							} 							
+						} 						
  						
  						renderChart(chartConf);
  					});

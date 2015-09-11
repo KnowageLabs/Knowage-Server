@@ -49,8 +49,8 @@ function renderTreemap(chartConf) {
 	
 	var chartObject = null;
     
-    if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
-    		|| (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+    if (chartConf.chart.height==""
+    		|| chartConf.chart.width=="")
 	{
     	chartObject = 
     	{
@@ -67,8 +67,8 @@ function renderTreemap(chartConf) {
     			}
     		};
 	}
-    else if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
-    		&& (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+    else if (chartConf.chart.height!=""
+    		&& chartConf.chart.width!="")
 	{
     	chartObject =     	
     	{
@@ -186,8 +186,8 @@ function renderHeatmap(chartConf){
     
     var chartObject = null;
     
-    if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
-    		|| (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+    if (chartConf.chart.height==""
+    		|| chartConf.chart.width=="")
 	{
     	chartObject = 
     	{
@@ -207,8 +207,8 @@ function renderHeatmap(chartConf){
 			}
     	};
 	}
-    else if ((chartConf.chart.height!=undefined || chartConf.chart.height!="") 
-    		&& (chartConf.chart.width!=undefined || chartConf.chart.width!=""))
+    else if (chartConf.chart.height!=""
+    		&& chartConf.chart.width!="")
 	{
     	chartObject = 
     	{

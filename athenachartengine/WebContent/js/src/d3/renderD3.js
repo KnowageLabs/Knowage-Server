@@ -13,13 +13,22 @@ function cleanChart()
 	d3.select("body").selectAll("*").remove();
 }
 
+/**
+ * Function for extracting the font size from the string value that contains
+ * also the 'px' substring. Function is called whenever we need pure numeric
+ * value of the size (especially for purposes of dynamic resizing of the chart).
+ * 
+ * @param fontSize String value of the size of the font
+ * @returns Pure numeric value for size of the font
+ * 
+ * (danilo.ristovski@mht.net)
+ */
 function removePixelsFromFontSize(fontSize)
 {
 	var indexOfPx = fontSize.indexOf('px');
 	
 	if (indexOfPx > 0)
 	{
-		console.log(fontSize.substring(0,indexOfPx));
 		return fontSize.substring(0,indexOfPx);
 	}
 	else
@@ -592,7 +601,7 @@ console.log(chartConf.chart.width);
 			d3.select("body").append("svg")
 			.attr("width", chartConf.chart.width)
 			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
-					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.2)
+					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.8)
 			.append("g")
 			.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
 			.selectAll("text")
@@ -619,8 +628,7 @@ console.log(chartConf.chart.width);
 		/* Check if configurable (from the Designer point of view)
 		 * parameters are defined through the Designer. If not set
 		 * the predefined values, instead. */			
-		console.log("SUNBURST");
-		console.log(jsonObject);
+
 //		console.log(d3.select("body").selectAll("*").remove());
 //		d3.selectAll("*").remove();
 		
@@ -1531,12 +1539,12 @@ console.log(chartConf.chart.width);
 		.style("float","left")
 		.style("width",w + m[1] + m[3])
 //		.style("height", heightTotal)
-		.style("height", heightTotal - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2)
+		.style("height", heightTotal - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2+2*10)
 		.append("svg:svg")
 		.style("font-size",18)
 		.attr("width", w + m[1] + m[3])
 //		.style("height", heightTotal)
-		.attr("height", heightTotal - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2+10)
+		.attr("height", heightTotal - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2+2*10)
 		.append("svg:g")
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 

@@ -33,7 +33,11 @@
 	{
 		type: '$chart.type',
 		height: '$chart.height',
-		opacMouseOver: '$chart.opacMouseOver',				
+		opacMouseOver: '$chart.opacMouseOver',	
+		
+		#if($chart.width)
+			width: '$chart.width',
+		#end			
 		
 		style:
 		{			
