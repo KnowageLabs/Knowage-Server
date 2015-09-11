@@ -13,6 +13,21 @@ function cleanChart()
 	d3.select("body").selectAll("*").remove();
 }
 
+function removePixelsFromFontSize(fontSize)
+{
+	var indexOfPx = fontSize.indexOf('px');
+	
+	if (indexOfPx > 0)
+	{
+		console.log(fontSize.substring(0,indexOfPx));
+		return fontSize.substring(0,indexOfPx);
+	}
+	else
+	{
+		return fontSize;
+	}
+}
+
 function renderWordCloud(chartConf){
 
 	var maxic = 0;
@@ -576,7 +591,8 @@ console.log(chartConf.chart.width);
 			      
 			d3.select("body").append("svg")
 			.attr("width", chartConf.chart.width)
-			.attr("height", chartConf.chart.height+(16+8)*2)
+			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.2)
 			.append("g")
 			.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
 			.selectAll("text")
@@ -616,14 +632,33 @@ console.log(chartConf.chart.width);
 		var chartBackgroundColor = (jsonObject.chart.style.backgroundColor != '$chart.style.backgroundColor') ? jsonObject.chart.style.backgroundColor : "#000000" ;
 		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 50 ;
 		
+		/* 'topPadding':	padding (empty space) between the breadcrumb 
+		 * 					(toolbar) and the top of the chart when the
+		 * 					toolbar is possitioned on the top of the chart. 
+		 * 'bottomPadding':	padding (empty space) between the bottom of the 
+		 * 					chart and the top of the breadcrumb (toolbar) 
+		 * 					when the toolbar is possitioned on the top 
+		 * 					of the chart. */
+		var topPadding = 30;
+		var bottomPadding = 30;
+		
+		// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+		var bcWidth = parseInt(jsonObject.toolbar.style.width);
+		var bcHeight = parseInt(jsonObject.toolbar.style.height);
+		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
+		var bcTail = parseInt(jsonObject.toolbar.style.tail);
+		
 		/* Dimensions of the Sunburst chart. */
 	    /* Dimensions of the window in which chart is going to be placed.
 	     * Hence, radius of the circular Sunburst chart is going to be half of
 	     * the lesser dimension of that window. */				
 	    //var width = parseInt(jsonObject.chart.width);
 	    var width = jsonObject.chart.width;
-		var height = jsonObject.chart.height;
-		
+		var height = jsonObject.chart.height 
+						- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
+								+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize))
+								+topPadding+bottomPadding+bcHeight)*1.2;
+//	    var height = jsonObject.chart.height;
 //		/* Manage chart position on the screen (in the window) depending on
 //		 * the resizing of it, so the chart could be in the middle of it. */
 //		window.onresize = function() 
@@ -634,23 +669,7 @@ console.log(chartConf.chart.width);
 		
 		var radius = Math.min(width,height)/2;	
 		
-		var chartOrientation = (width > height) ? "horizontal" : "vertical";
-		
-		// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-		var bcWidth = parseInt(jsonObject.toolbar.style.width);
-		var bcHeight = parseInt(jsonObject.toolbar.style.height);
-		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
-		var bcTail = parseInt(jsonObject.toolbar.style.tail);
-		
-		/* 'topPadding':	padding (empty space) between the breadcrumb 
-		 * 					(toolbar) and the top of the chart when the
-		 * 					toolbar is possitioned on the top of the chart. 
-		 * 'bottomPadding':	padding (empty space) between the bottom of the 
-		 * 					chart and the top of the breadcrumb (toolbar) 
-		 * 					when the toolbar is possitioned on the top 
-		 * 					of the chart. */
-		var topPadding = 30;
-		var bottomPadding = 30;
+		var chartOrientation = (width > height) ? "horizontal" : "vertical";		
 		
 	    var tipFontSize = parseInt(jsonObject.tip.style.fontSize);
 	    var tipWidth = parseInt(jsonObject.tip.style.width);
@@ -1503,15 +1522,21 @@ console.log(chartConf.chart.width);
 		
 		d3.select("body").append("div").attr("id","chart").style("width",w + m[1] + m[3] + 300);
 		
+		var heightTotal = h + m[0] + m[2];
+		console.log(heightTotal);
+		console.log(data.chart.height);
+		console.log(heightTotal- (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2);
 		var svg = d3.select("#chart")
 		.append("div")
 		.style("float","left")
 		.style("width",w + m[1] + m[3])
-		.style("height", h + m[0] + m[2])
+//		.style("height", heightTotal)
+		.style("height", heightTotal - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2)
 		.append("svg:svg")
 		.style("font-size",18)
 		.attr("width", w + m[1] + m[3])
-		.attr("height", h + m[0] + m[2])
+//		.style("height", heightTotal)
+		.attr("height", heightTotal - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2+10)
 		.append("svg:g")
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
@@ -2427,12 +2452,26 @@ function renderChordChart(jsonData)
 		console.log(rowsPairedWithColumns[i]);
 	}
 	
+
+	/**
+	 * We will specify this value in order to leave enough space for labels that
+	 * are going to surround the chart in order to 
+	 * (danilo.ristovski@mht.net)
+	 */
+	var spaceForLabels = 20;
+	
+
+	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
+	 * the chart (values on ticks) ??? */
+	var emptySplitDivHeight = 10;
 	
 	/**
 	 * Width and height of the chart
 	 */
 	var width = jsonData.chart.width;
-	var height = jsonData.chart.height;
+	var height = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
+										+Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
+										+spaceForLabels+emptySplitDivHeight)*1.2;
 	
 	var innerRadius = Math.min(width, height) * .35;
     var outerRadius = innerRadius * 1.1;
@@ -2466,23 +2505,10 @@ function renderChordChart(jsonData)
 		.style("font-style",jsonData.subtitle.style.fontWeight)
 		.style("font-size",jsonData.subtitle.style.fontSize)
 		.text(jsonData.subtitle.text);
-	
-	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
-	 * the chart (values on ticks) ??? */
-	var emptySplitDivHeight = 10;
-	
-	
-	
+		
 	d3.select("body").append("div").style("height", emptySplitDivHeight);
 	
 	d3.select("body").append("div").attr("id","chartD3").attr("align","center");
-	
-	/**
-	 * We will specify this value in order to leave enough space for labels that
-	 * are going to surround the chart in order to 
-	 * (danilo.ristovski@mht.net)
-	 */
-	var spaceForLabels = 20;
 	
 	var svg = d3.select("#chartD3").append("div")
 	 			.attr("class", "chart")	 			

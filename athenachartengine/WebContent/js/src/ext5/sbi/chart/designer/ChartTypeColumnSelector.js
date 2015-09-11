@@ -49,7 +49,7 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         split: true,
     },
     
-    // danilo
+    // (danilo.ristovski@mht.net)
     listeners:
     {
     	ppp: function(text)
