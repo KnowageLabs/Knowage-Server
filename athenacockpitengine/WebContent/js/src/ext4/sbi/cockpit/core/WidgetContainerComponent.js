@@ -343,6 +343,38 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     , onWidgetClone: function() {
     	this.fireEvent('performaction', this, 'cloneWidget');
     }
+    , onHelpOnLine:function(){
+    	
+    	
+    	 if(this.getWidget()==null || this.getWidget().storeId==null){
+    			Ext.Msg.alert('Message', 'Help onLine not enabled for this component.');
+    		 return;
+    	 }
+    	 
+		  var panel=new Ext.ux.IFrame({
+	              border: false,
+	              bodyBorder: false,
+	              height:'100%',
+	              src: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET_LABEL='+this.getWidget().storeId,
+		    });
+	    	  
+	    	var dialogBox = new Ext.Window({
+	              title: 'Help Online',
+	              modal:true,
+	              width:'90%',
+	              height:Ext.getBody().getViewSize().height*0.9 ,
+	              closable:true,
+	              items:[panel],
+	          });
+	    	  
+	    	  dialogBox.show();
+    	
+    	
+    	
+    	
+    	
+    	
+    }
     
     ,adjustLayoutVisualizationMode: function()
     {     	
@@ -443,6 +475,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
         	handler: this.onWidgetClone,
         	scope:this,
         	hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
+        },{
+        	type:'help',
+        	tooltip: LN('sbi.generic.helpOnLine'),
+        	handler: this.onHelpOnLine,
+        	scope:this,
+        	hidden: Sbi.user.functionalities.indexOf("Glossary")==-1
         }];
 	}
 	
