@@ -58,6 +58,14 @@
 	</component>         
         
         
-   
-    </class>
+<!--    <filter name="prova" condition="USER_IN=:user"/>   -->
+     <filter name="tenantFilter" condition="organization=:tenant"/>  
+ </class>
+ <filter-def name="tenantFilter">
+  <filter-param name="tenant" type="string"/>
+ </filter-def>
+ 
+<!--  <filter-def name="prova"> -->
+<!--   <filter-param name="user" type="string"/> -->
+<!--  </filter-def> -->
 </hibernate-mapping>

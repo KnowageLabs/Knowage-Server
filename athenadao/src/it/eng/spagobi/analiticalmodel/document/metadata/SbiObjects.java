@@ -56,10 +56,12 @@ public class SbiObjects  extends SbiHibernateModel {
 	private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
 	private String parametersRegion = null;
-	
+	private String organization;
 
 	// Constructors
 
+	
+	
 	/**
 	 * Gets the creation date.
 	 * 
@@ -71,6 +73,22 @@ public class SbiObjects  extends SbiHibernateModel {
 
 		
 	 /**
+	 * @return the organization
+	 */
+	public String getOrganization() {
+		return organization;
+	}
+
+
+	/**
+	 * @param organization the organization to set
+	 */
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+
+
+	/**
 	  * Sets the creation date.
 	  * 
 	  * @param creationDate the new creation date

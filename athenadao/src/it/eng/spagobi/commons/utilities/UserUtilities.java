@@ -222,6 +222,55 @@ public class UserUtilities {
 			throw new SpagoBIRuntimeException("Error while getting user's information", e);
 		}
 	}
+		
+	
+	
+	
+	public static boolean haveRoleAndAuthorization(IEngUserProfile profile,String Role, String[] authorization) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		ArrayList<String> auth=new ArrayList<String>(Arrays.asList(authorization));
+		try {
+			if(((UserProfile)profile).getIsSuperadmin()){
+				return true;
+			}
+			boolean result=false;
+		for(int i=0;i<profile.getRoles().size();i++){
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+//			roleDAO.setTenant(profile);
+			Role rol = roleDAO.loadByName(((ArrayList<?>)profile.getRoles()).get(i).toString());	
+			if(Role==null || rol.getRoleTypeCD().compareTo(Role)==0){
+				
+				//check for authorization
+				if(auth==null || auth.isEmpty()){
+					result=true;
+					break;
+				}else{
+					Boolean ok=true;
+					for(String au:auth){
+						if(!profile.isAbleToExecuteAction(au)){
+							ok=false;
+							break;
+						}
+					}
+					
+					if(ok){
+						result=ok;
+						break;
+					}
+				}	
+			}
+		}
+		
+		return result;
+		
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+	}
+	
+	
+	
 
 	/**
 	 * User functionality root exists.

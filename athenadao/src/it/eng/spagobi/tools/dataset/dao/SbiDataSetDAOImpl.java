@@ -84,7 +84,9 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			Criteria c = session.createCriteria(SbiDataSet.class);
 			c.addOrder(Order.asc("label"));
 			c.add(Restrictions.eq("id.dsId", id));
-			c.add(Restrictions.eq("id.organization", organiz));
+			if(organiz!=null){
+				c.add(Restrictions.eq("id.organization", organiz));
+			}
 			c.add(Restrictions.eq("active",true));
 
 			sbiDataSet = (SbiDataSet) c.uniqueResult();

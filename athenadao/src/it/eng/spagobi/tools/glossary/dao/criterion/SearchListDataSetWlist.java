@@ -23,7 +23,9 @@ public class SearchListDataSetWlist implements ICriterion<SbiGlDataSetWlist> {
 		if (iddoc != null) {
 			c.createAlias("dwlist.word", "wordWl");
 			c.add(Restrictions.eq("dwlist.id.datasetId", iddoc));
+			if(organiz!=null){
 			c.add(Restrictions.eq("dwlist.id.organization", organiz));
+			}
 		}
 		// c.addOrder(Order.asc("word"));
 		return c;

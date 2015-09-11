@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.dao;
 
+import org.hibernate.Session;
+
 import it.eng.spago.security.IEngUserProfile;
 
 public interface ISpagoBIDao {

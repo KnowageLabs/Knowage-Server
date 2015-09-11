@@ -137,6 +137,24 @@ public class AbstractHibernateDAO {
 			session.disableFilter(TENANT_FILTER_NAME);
 		}
 	}
+	
+	
+//	//enable specific filter
+//	
+//	public void enableFilter(String filterName, String parameterName,String parameterValue) {
+//		Filter filter = this.getSession().enableFilter(filterName);
+//		filter.setParameter(parameterName, parameterValue);
+//	}
+//
+//	public void disableFilter(String filterName) {
+//		Session sess=this.getSession();
+//		Filter filter = sess.getEnabledFilter(filterName);
+//		if (filter != null) {
+//			sess.disableFilter(filterName);
+//		}
+//	}
+	
+	
 
 	/**
 	 * usefull to update some property

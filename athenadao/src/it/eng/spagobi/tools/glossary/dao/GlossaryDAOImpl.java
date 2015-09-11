@@ -52,6 +52,7 @@ import java.util.Set;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Filter;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -992,6 +993,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 					// if already exist
 					return null;
 				}
+				updateSbiCommonInfo4Insert(wlist);
 				return (SbiGlWlistId) session.save(wlist);
 			}
 		});
@@ -1215,6 +1217,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, Object> execute(Session session) throws JSONException {
+				
+//				Filter filter =session.enableFilter("prova");
+//				filter.setParameter("user", "userTec");
+				
+				
 				Map<String, Object> map = new HashMap<String, Object>();
 				String tmpSearch="";
 				Integer tmpPage=null;
@@ -1272,7 +1279,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements
 					 v=session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 					}else{
 						hql = "select distinct dw.document.biobjId as biobjId  ,dw.document.label as label "
-								+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName";
+								+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName ";
 					 countHql= "select count(distinct dw.document.biobjId) "
 								+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName";
 					 v=((Long)session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
