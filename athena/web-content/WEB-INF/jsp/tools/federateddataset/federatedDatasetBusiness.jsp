@@ -21,6 +21,11 @@
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
 	<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
+	
+	<!-- angular list -->
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
+	
 
 </head>
 <body class="bodyStyle" ng-app="MYAPPNIKOLA">
@@ -38,7 +43,21 @@
 		<md-content layout-padding=""
 			style="height: 100%; padding: 20px;"">
 		<div ng-show="state" layout="row" layout-wrap>
-			<div flex="49" style="margin-right: 20px; "">
+		<!-- <div flex="30">
+		<md-toolbar>
+			<h2>angular list</h2>
+		</md-toolbar>
+		<md-content>
+			<angular-list layout-fill 
+						id='availableDatasets'
+						ng-model=list
+                		item-name='list.label'
+                		>
+                		
+                		</angular-list>
+		</md-content>
+		</div> -->
+			<div flex="33" style="margin-right: 20px; "">
 				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
 					<i class="fa fa-list-alt fa-2x"></i>
@@ -61,7 +80,7 @@
 				{{k.label | uppercase}} </md-list-item> </md-list> </md-content>
 			</div>
 
-			<div flex="49" >
+			<div flex="33" >
 				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
 					<i class="fa fa-list-alt fa-2x"></i>
@@ -112,7 +131,7 @@
 				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
-				<span flex=""></span> <i class="fa fa-plus-circle fa-3x"
+				<span flex=""></span> 	<i class="fa fa-plus-circle fa-3x"
 					ng-click="napuniNiz(); createAssociationsString()"></i>
 			</div>
 
@@ -124,28 +143,35 @@
 				
 				<md-content style="height:235px">
 				<div>
-					<md-list> <md-list-item style="list-style: none;"
-						ng-repeat="k in associationArray">
-							{{k}}
-							<span flex=""></span> 
-							<md-fab-speed-dial  md-direction="left" class="md-fling">
-							<md-fab-trigger>
-									<md-button aria-label="menu" class="md-fab md-raised md-mini">
-									<i class="fa fa-angle-left fa-2x md-raised"></i>
-								</md-button> 
-							</md-fab-trigger> 
-							<md-fab-actions>
+					<md-list>
+						<div ng-repeat="k in multiArray">
 							
-								<md-button aria-label="trash" class="md-fab md-raised md-mini trashcan-background">
-									 <i class="fa fa-trash-o" ng-click="kickOutFromAssociatonArray(k)"></i>
-								</md-button>
-								<md-button aria-label="" class="md-fab md-raised md-mini editbtn-background">
-									 <i class="fa fa-pencil-square-o"></i>
-								</md-button>
-								<i class="icon-edit"></i>								
-							</md-fab-actions> 
-						</md-fab-speed-dial>
+							<md-list-item style="list-style: none;">
+							
+							<div ng-repeat="bla in k track by $index">
+								={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+							</div>
+							<span flex=""></span> 
+								<md-fab-speed-dial  md-direction="left" class="md-fling">
+									<md-fab-trigger>
+										<md-button aria-label="menu" class="md-fab md-raised md-mini">
+										<i class="fa fa-angle-left fa-2x md-raised"></i>
+										</md-button> 
+									</md-fab-trigger> 
+									<md-fab-actions>
+										<md-button aria-label="trash" class="md-fab md-raised md-mini trashcan-background">
+										 	<i class="fa fa-trash-o" ng-click="deleteFromMultiArray(k)"></i>
+										</md-button>
+										<md-button aria-label="" class="md-fab md-raised md-mini editbtn-background">
+										 	<i class="fa fa-pencil-square-o"></i>
+										</md-button>
+										<i class="icon-edit"></i>								
+									</md-fab-actions> 
+								</md-fab-speed-dial>
 						</md-list-item>
+						
+						</div>
+						
 					</md-list>
 				</div>
 				
@@ -156,7 +182,7 @@
 
 	<div ng-show="state">
 		<md-button class="md-raised" aria-label="Aggiungi_Attributo"
-			style=" margin-top: 20px; float:right;" ng-click="toggle()">NEXT
+			style=" margin-top: 20px; float:right;" ng-click="toggle(); ispisi()">NEXT
 		STEP</md-button>
 	</div>
 	<div ng-hide="state">

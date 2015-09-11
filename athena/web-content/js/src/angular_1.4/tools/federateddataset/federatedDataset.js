@@ -1,7 +1,7 @@
 var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest']);
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija221");
+	console.log("verzija222");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -22,12 +22,17 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
+	$scope.ispisi = function(){
+		console.log($scope.list);
+	}
+	
+	
 	$scope.napuniNiz = function() {
 		$scope.multiArray.push($scope.createAssociations());
 		//console.log("f_napuniNiz "+angular.toJson($scope.multiArray));
 	}
 	
-	$scope.createAssociationsString = function(){
+	/*$scope.createAssociationsString = function(){
 		angular.forEach($scope.listaNew, function(dataset) {
 			  angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
 				  if(listField.selected===true){
@@ -39,7 +44,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		$scope.associationArray.push($scope.relNew);
 		$scope.relation = "";
 		$scope.relNew = "";
-	}
+	}*/
 	
 		
 	$scope.createAssociations = function(){
@@ -212,6 +217,12 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
           $scope.associationArray.splice(index, 1);
         }
 	}
+	$scope.deleteFromMultiArray = function(param){
+		var index = $scope.multiArray.indexOf(param);
+		if(index !=-1){
+			$scope.multiArray.splice(index, 1);
+		}
+	}
 	
 	$scope.hide = function() {
 	    $mdDialog.hide();
@@ -236,7 +247,6 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		    );
 		  };
 
-  
 	
 });
 
