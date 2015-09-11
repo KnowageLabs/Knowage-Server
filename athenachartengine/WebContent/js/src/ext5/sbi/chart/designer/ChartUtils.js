@@ -526,6 +526,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						tooltipStyle += 'fontSize:'
 						 + ((serieAsMap.get('serieTooltipFontSize') != undefined) ? serieAsMap.get('serieTooltipFontSize')
 							 : '') + ';';
+						tooltipStyle += 'align:'
+							 + ((serieAsMap.get('serieTooltipAlign') != undefined) ? serieAsMap.get('serieTooltipAlign')
+								 : '') + ';';
 						TOOLTIP['style'] = tooltipStyle;
 
 						serie['TOOLTIP'] = TOOLTIP;
