@@ -349,7 +349,6 @@
     		#if( $yAxis.style != '' ) 
         		style:{
 	        	#foreach($styleName in $yAxis.style.keySet())
-	        		$datasettransformer.printData($styleName)
 	        		#set ($axisStyle = $yAxis.style[$styleName])
 	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
 	        			fontStyle: '$axisStyle',
