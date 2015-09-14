@@ -187,6 +187,7 @@
 <file name='./spagobi/commons/Log.js' />
 
 <file name='./spagobi/qbe/filterwizard/filterWizard.js' />
+<file name='./spagobi/qbe/temporalfilterwizard/temporalFilterWizard.js' />
 		
 <file name='./spagobi/qbe/DataStorePanel.js' />
 <file name='./spagobi/qbe/DataMartStructurePanel.js' />
