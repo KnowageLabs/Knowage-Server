@@ -149,7 +149,9 @@
 							<md-list-item style="list-style: none;">
 							
 							<div ng-repeat="bla in k track by $index">
-								={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+							
+							<span ng-if="$index==0">
+								{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
 							</div>
 							<span flex=""></span> 
 								<md-fab-speed-dial  md-direction="left" class="md-fling">
