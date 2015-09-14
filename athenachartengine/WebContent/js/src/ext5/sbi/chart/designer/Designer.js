@@ -3369,5 +3369,9 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			return result == ''? false : result;
 		}
 		
+		
+		/*ADDING SOME TEXT FOR SVN MERGING DEMO*/
+		
+		
     }
 });
