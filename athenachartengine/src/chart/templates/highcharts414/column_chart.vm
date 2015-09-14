@@ -282,11 +282,17 @@
 	        			fontStyle: '$axisStyle',
 					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
 	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
         		},
+        		#if($labelAlign)
+        			align:"$labelAlign" 
+        		#end
+        		
         	#end
 		 
 		 },
@@ -343,16 +349,22 @@
     		#if( $yAxis.style != '' ) 
         		style:{
 	        	#foreach($styleName in $yAxis.style.keySet())
+	        		$datasettransformer.printData($styleName)
 	        		#set ($axisStyle = $yAxis.style[$styleName])
 	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
 	        			fontStyle: '$axisStyle',
 					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
 	        			textDecoration: 'underline',
+	        		#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
         		},
+        		#if($labelAlign)
+        			align:"$labelAlign" 
+        		#end
         	#end
         		
     		#if( $yAxis.style != '' && $yAxis.style.rotate && $yAxis.style.rotate != '' ) 

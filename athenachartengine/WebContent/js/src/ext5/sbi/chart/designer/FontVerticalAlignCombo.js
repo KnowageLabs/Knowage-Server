@@ -4,14 +4,14 @@ Ext.define('Sbi.chart.designer.FontVerticalAlignCombo', {
     store: {
         fields: [ 'name','value' ],
         data: [ {
-			name : LN('sbi.chartengine.configuration.alignment.h'),
-			value : 'high'
+			name : LN('sbi.chartengine.configuration.alignment.l'),
+			value : 'left'
 		}, {
-			name : LN('sbi.chartengine.configuration.alignment.m'),
+			name : LN('sbi.chartengine.configuration.alignment.c'),
 			value : 'center'
 		}, {
-			name : LN('sbi.chartengine.configuration.alignment.low'),
-			value : 'low'
+			name : LN('sbi.chartengine.configuration.alignment.r'),
+			value : 'right'
 		} ]
     },
     editable : false,
