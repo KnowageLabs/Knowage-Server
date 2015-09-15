@@ -1181,4 +1181,52 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return toReturn.toString();
 	}
 
+	/**
+	 * Persist a dataset list
+	 * 
+	 * @param labels
+	 */
+
+	@GET
+	@Path("/list/persist")
+	public void persistDataSets(@QueryParam("labels") JSONArray labels) {
+		logger.debug("IN");
+
+		for (int i = 0; i < labels.length(); i++) {
+			String label = null;
+			try {
+				label = labels.getString(i);
+				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+				dataSetManagementAPI.persistDataset(label);
+			} catch (JSONException e) {
+				logger.error("error in persisting dataset with label " + label, e);
+				throw new RuntimeException("error in persisting dataset with label " + label);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	// @POST
+	// @Path("/list/persist")
+	// public void persistDataSetsPost(@FormParam("labels") JSONArray labels) {
+	// logger.debug("IN");
+	//
+	// for (int i = 0; i < labels.length(); i++) {
+	// String label = null;
+	// try {
+	// label = labels.getString(i);
+	// DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+	// dataSetManagementAPI.setUserProfile(getUserProfile());
+	// dataSetManagementAPI.persistDataset(label);
+	// } catch (JSONException e) {
+	// logger.error("error in persisting dataset with label: " + label, e);
+	// throw new RuntimeException("error in persisting dataset with label: " + label);
+	// }
+	// }
+	//
+	// logger.debug("OUT");
+	//
+	// }
+
 }

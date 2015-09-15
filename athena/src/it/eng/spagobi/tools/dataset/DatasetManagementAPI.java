@@ -259,6 +259,18 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	/*
+	 * Refresh cache for a specific dataset
+	 */
+	public void persistDataset(String label) {
+		logger.debug("IN dataset label " + label);
+		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+		cache.setUserProfile(userProfile);
+		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
+		cache.refresh(dataSet, false);
+		logger.debug("OUT");
+	}
+
 	// private void checkQbeDataset(IDataSet dataSet) {
 	//
 	// IDataSet ds = null;
