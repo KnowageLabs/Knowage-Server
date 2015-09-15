@@ -1549,6 +1549,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		} else if (type.equalsIgnoreCase(RAW_TYPE)) {
 			if ((value.startsWith("'") && value.endsWith("'"))) {
 				toReturn = value.substring(1, value.length() - 1);
+			} else {
+				toReturn = value;
 			}
 		}
 
