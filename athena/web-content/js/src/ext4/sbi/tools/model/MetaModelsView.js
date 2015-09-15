@@ -92,6 +92,8 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			var title = LN('sbi.ds.listTitle');
 			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
 			
+			var buttonEditFederated = '<li class="editFederated"><a id="editFederated" href="#" title="Edit federated"></a></li>';
+			
 			/*
 			this.tpl = new Ext.XTemplate(
 					'<div id="sample-ct">', 	            
@@ -152,8 +154,11 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 												'<div class="box-actions-container">',
 									            '    <ul class="box-actions">',	    
 									    		'<li class="qbe"><a href="#" title="Show Qbe"></a></li>',
+									    		'<tpl if="type == \'FEDERATED_DATASET\'">',
+									    		buttonEditFederated,
+									    		'</tpl>',
 									    		buttonHelpOnLine,
-									            '    </ul>',
+									    		'    </ul>',
 												'</div>',
 											'</div>',										
 										'</div>',
@@ -196,16 +201,21 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			    	  dialogBox.show();
 			    	  
 			}else{
-				if(record.data.type != undefined &&  record.data.type == "FEDERATED_DATASET"){
-					this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
-				}
-				else{
-					this.fireEvent('executeDocument','QBE','MODEL',record);
-				}
-			}
-			
-			
+				
+				if(e.target.id = 'editFederated')
+					{
+					var id = record.data.id;
+					var label = record.data.label;
+					var urlToCall = Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
+					window.location.href = urlToCall;
+					}
+				else
+					if(record.data.type != undefined &&  record.data.type == "FEDERATED_DATASET"){
+						this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
+					}
+					else{
+						this.fireEvent('executeDocument','QBE','MODEL',record);
+					}
+			}			
 	    }
-
-
 	});
