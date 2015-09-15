@@ -205,7 +205,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <head>
 <title>SpagoBI</title>
 <% if (forceIE8Compatibility == true){ %>
-<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 
 <%} %>

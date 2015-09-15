@@ -184,7 +184,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <html
 	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 <title>SpagoBI</title>
 <link rel="shortcut icon"

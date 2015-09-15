@@ -184,7 +184,7 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <%@page import="it.eng.spagobi.commons.SingletonConfig"%><html
 	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>SpagoBI</title>
 <link rel="shortcut icon"
 	href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico", currTheme)%>" />
