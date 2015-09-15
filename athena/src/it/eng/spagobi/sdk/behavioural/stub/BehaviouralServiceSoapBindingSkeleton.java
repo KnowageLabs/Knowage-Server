@@ -48,6 +48,41 @@ public class BehaviouralServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
         _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
         _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
         _oper.addFault(_fault);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+        };
+        _oper = new org.apache.axis.description.OperationDesc("getRoles", _params, new javax.xml.namespace.QName("", "getRolesReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "ArrayOf_tns2_SDKRole"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "getRoles"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("getRoles") == null) {
+            _myOperations.put("getRoles", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("getRoles")).add(_oper);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("NotAllowedOperationException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
+        _oper.addFault(_fault);
+        _params = new org.apache.axis.description.ParameterDesc [] {
+            new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"), java.lang.String.class, false, false), 
+        };
+        _oper = new org.apache.axis.description.OperationDesc("getRolesByUserId", _params, new javax.xml.namespace.QName("", "getRolesByUserIdReturn"));
+        _oper.setReturnType(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "ArrayOf_tns2_SDKRole"));
+        _oper.setElementQName(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "getRolesByUserId"));
+        _oper.setSoapAction("");
+        _myOperationsList.add(_oper);
+        if (_myOperations.get("getRolesByUserId") == null) {
+            _myOperations.put("getRolesByUserId", new java.util.ArrayList());
+        }
+        ((java.util.List)_myOperations.get("getRolesByUserId")).add(_oper);
+        _fault = new org.apache.axis.description.FaultDesc();
+        _fault.setName("NotAllowedOperationException");
+        _fault.setQName(new javax.xml.namespace.QName("urn:spagobisdkbehavioural", "fault"));
+        _fault.setClassName("it.eng.spagobi.sdk.exceptions.NotAllowedOperationException");
+        _fault.setXmlType(new javax.xml.namespace.QName("http://exceptions.sdk.spagobi.eng.it", "NotAllowedOperationException"));
+        _oper.addFault(_fault);
     }
 
     public BehaviouralServiceSoapBindingSkeleton() {
@@ -60,6 +95,18 @@ public class BehaviouralServiceSoapBindingSkeleton implements it.eng.spagobi.sdk
     public it.eng.spagobi.sdk.behavioural.bo.SDKAttribute[] getAllAttributes(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
     {
         it.eng.spagobi.sdk.behavioural.bo.SDKAttribute[] ret = impl.getAllAttributes(in0);
+        return ret;
+    }
+
+    public it.eng.spagobi.sdk.behavioural.bo.SDKRole[] getRoles() throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    {
+        it.eng.spagobi.sdk.behavioural.bo.SDKRole[] ret = impl.getRoles();
+        return ret;
+    }
+
+    public it.eng.spagobi.sdk.behavioural.bo.SDKRole[] getRolesByUserId(java.lang.String in0) throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException
+    {
+        it.eng.spagobi.sdk.behavioural.bo.SDKRole[] ret = impl.getRolesByUserId(in0);
         return ret;
     }
 

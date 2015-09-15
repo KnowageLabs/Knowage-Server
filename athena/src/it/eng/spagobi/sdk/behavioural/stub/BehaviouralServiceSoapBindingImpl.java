@@ -12,9 +12,21 @@ import it.eng.spagobi.sdk.behavioural.impl.BehaviouralServiceImpl;
 public class BehaviouralServiceSoapBindingImpl implements it.eng.spagobi.sdk.behavioural.stub.BehaviouralService {
 	public it.eng.spagobi.sdk.behavioural.bo.SDKAttribute[] getAllAttributes(java.lang.String in0) throws java.rmi.RemoteException,
 			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+		BehaviouralServiceImpl impl = new BehaviouralServiceImpl();
+		return impl.getAllAttributes(in0);
+	}
 
-		BehaviouralServiceImpl supplier = new BehaviouralServiceImpl();
-		return supplier.getAllAttributes(in0);
+	public it.eng.spagobi.sdk.behavioural.bo.SDKRole[] getRoles() throws java.rmi.RemoteException, it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+		BehaviouralServiceImpl impl = new BehaviouralServiceImpl();
+		return impl.getRoles();
+
+	}
+
+	public it.eng.spagobi.sdk.behavioural.bo.SDKRole[] getRolesByUserId(java.lang.String in0) throws java.rmi.RemoteException,
+			it.eng.spagobi.sdk.exceptions.NotAllowedOperationException {
+		BehaviouralServiceImpl impl = new BehaviouralServiceImpl();
+		return impl.getRolesByUserId(in0);
+
 	}
 
 }

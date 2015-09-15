@@ -14,6 +14,17 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="name" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
+   <complexType name="SDKRole">
+    <sequence>
+     <element name="code" nillable="true" type="soapenc:string"/>
+     <element name="descr" nillable="true" type="soapenc:string"/>
+     <element name="extRoleId" nillable="true" type="soapenc:int"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="organization" nillable="true" type="soapenc:string"/>
+     <element name="roleTypeCd" nillable="true" type="soapenc:string"/>
+     <element name="roleTypeId" nillable="true" type="soapenc:int"/>
+    </sequence>
+   </complexType>
   </schema>
   <schema targetNamespace="urn:spagobisdkbehavioural" xmlns="http://www.w3.org/2001/XMLSchema">
    <import namespace="http://bo.behavioural.sdk.spagobi.eng.it"/>
@@ -23,6 +34,13 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
     <complexContent>
      <restriction base="soapenc:Array">
       <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKAttribute[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_tns2_SDKRole">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKRole[]"/>
      </restriction>
     </complexContent>
    </complexType>
@@ -37,9 +55,19 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
   </schema>
  </wsdl:types>
 
+   <wsdl:message name="getRolesByUserIdRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+   </wsdl:message>
+
    <wsdl:message name="NotAllowedOperationException">
 
       <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getRolesRequest">
 
    </wsdl:message>
 
@@ -55,6 +83,18 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
    </wsdl:message>
 
+   <wsdl:message name="getRolesByUserIdResponse">
+
+      <wsdl:part name="getRolesByUserIdReturn" type="impl:ArrayOf_tns2_SDKRole"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getRolesResponse">
+
+      <wsdl:part name="getRolesReturn" type="impl:ArrayOf_tns2_SDKRole"/>
+
+   </wsdl:message>
+
    <wsdl:portType name="BehaviouralService">
 
       <wsdl:operation name="getAllAttributes" parameterOrder="in0">
@@ -62,6 +102,26 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          <wsdl:input message="impl:getAllAttributesRequest" name="getAllAttributesRequest"/>
 
          <wsdl:output message="impl:getAllAttributesResponse" name="getAllAttributesResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getRoles">
+
+         <wsdl:input message="impl:getRolesRequest" name="getRolesRequest"/>
+
+         <wsdl:output message="impl:getRolesResponse" name="getRolesResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getRolesByUserId" parameterOrder="in0">
+
+         <wsdl:input message="impl:getRolesByUserIdRequest" name="getRolesByUserIdRequest"/>
+
+         <wsdl:output message="impl:getRolesByUserIdResponse" name="getRolesByUserIdResponse"/>
 
          <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
 
@@ -84,6 +144,54 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
          </wsdl:input>
 
          <wsdl:output name="getAllAttributesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkbehavioural" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkbehavioural" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getRoles">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getRolesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkbehavioural" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getRolesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkbehavioural" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkbehavioural" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getRolesByUserId">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getRolesByUserIdRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkbehavioural" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getRolesByUserIdResponse">
 
             <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkbehavioural" use="encoded"/>
 

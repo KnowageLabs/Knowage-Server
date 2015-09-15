@@ -11,6 +11,7 @@ import it.eng.spagobi.profiling.bean.SbiAttribute;
 import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.behavioural.BehaviouralService;
 import it.eng.spagobi.sdk.behavioural.bo.SDKAttribute;
+import it.eng.spagobi.sdk.behavioural.bo.SDKRole;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 
 import java.util.ArrayList;
@@ -59,5 +60,15 @@ public class BehaviouralServiceImpl extends AbstractSDKService implements Behavi
 			logger.debug("OUT");
 		}
 		return toReturn;
+	}
+
+	public SDKRole[] getRoles() throws NotAllowedOperationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public SDKRole[] getRolesByUserId(String userId) throws NotAllowedOperationException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
