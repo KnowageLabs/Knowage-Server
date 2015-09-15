@@ -6,10 +6,15 @@
 package it.eng.spagobi.sdk.behavioural;
 
 import it.eng.spagobi.sdk.behavioural.bo.SDKAttribute;
+import it.eng.spagobi.sdk.behavioural.bo.SDKRole;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 
 public interface BehaviouralService {
 
 	SDKAttribute[] getAllAttributes(String roleName) throws NotAllowedOperationException;
+
+	SDKRole[] getRoles() throws NotAllowedOperationException;
+
+	SDKRole[] getRolesByUserId(String userId) throws NotAllowedOperationException;
 
 }
