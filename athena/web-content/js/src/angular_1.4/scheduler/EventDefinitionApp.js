@@ -43,6 +43,12 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	loadJobDataCtrl.events = [];
 	loadJobDataCtrl.selectedEvent = -1;
 	loadJobDataCtrl.datasets=[];
+	loadJobDataCtrl.typeEvents=[];
+	loadJobDataCtrl.typeEvents.push({value:'rest',label:translate.load("sbi.scheduler.activity.events.event.type.rest")});
+	loadJobDataCtrl.typeEvents.push({value:'jms',label:translate.load("sbi.scheduler.activity.events.event.type.jms")});
+	loadJobDataCtrl.typeEvents.push({value:'contextbroker',label:translate.load("sbi.scheduler.activity.events.event.type.contextbroker")});
+	loadJobDataCtrl.typeEvents.push({value:'dataset',label:translate.load("sbi.scheduler.activity.events.event.type.dataset")});
+	
 	
 	$scope.translate = translate;
 	
