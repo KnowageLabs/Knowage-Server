@@ -90,11 +90,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 	<div ng-controller="LoadJobDataController as jobData"
 		ng-init="jobData.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=jobDescription%>')">
-		<!-- 
-	<h2 class="md-title">Job Name: {{loadJobData.jobName}}</h2>
-	<h2 class="md-title">Job Group: {{loadJobData.jobGroup}}</h2>
-	<h2 class="md-title">Job Description: {{loadJobData.jobDescription}}</h2>
-	-->
 
 		<div layout-padding layout="row" flex
 			ng-controller="ActivityEventController as activityEvent">
@@ -120,53 +115,47 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					<md-tab id="eventTabDetail" layout-padding>
 						<md-tab-label>{{translate.load("sbi.generic.details")}}</md-tab-label>
 						<md-tab-body class="md-padding">
-						--{{activityEvent.dataset}}--
-						--{{activityEvent.frequency}}--
 							<form name="contactForm" data-ng-submit="" layout="column">
-								<md-input-container >
+								<md-input-container>
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
 			                        <input ng-model="activityEvent.name" required>
 	                        	</md-input-container>
-								
-								<md-input-container >
+	                        	
+								<md-input-container>
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
 			                        <input ng-model="activityEvent.description">
 	                        	</md-input-container>
-								
-						
-			                        <label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
-			                        <%-- 
-			                        <p>
-			                        	{{translate.load("sbi.scheduler.activity.events.event.type")}}:
-			                        </p> 
-			                        --%>
-			                        
-			                        <md-select ng-model="activityEvent.type" required>
-								    	<md-option value="rest">
-								    		{{translate.load("sbi.scheduler.activity.events.event.type.rest")}}</md-option>
-								    	<md-option value="jms">
-								    		{{translate.load("sbi.scheduler.activity.events.event.type.jms")}}</md-option>
-								    	<md-option value="contextbroker">
-								    		{{translate.load("sbi.scheduler.activity.events.event.type.contextbroker")}}</md-option>
-								    	<md-option value="dataset">
-								    		{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</md-option>
-								  	</md-select>
 	                        	
-								
-								<md-input-container >
+		                        <label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
+		                        <md-select ng-model="activityEvent.type" required>
+							    	<md-option value="rest">
+							    		{{translate.load("sbi.scheduler.activity.events.event.type.rest")}}</md-option>
+							    	<md-option value="jms">
+							    		{{translate.load("sbi.scheduler.activity.events.event.type.jms")}}</md-option>
+							    	<md-option value="contextbroker">
+							    		{{translate.load("sbi.scheduler.activity.events.event.type.contextbroker")}}</md-option>
+							    	<md-option value="dataset">
+							    		{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</md-option>
+							  	</md-select>
+								  	
+								<md-input-container>
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
-			                        <md-checkbox  ng-model="activityEvent.isSuspended"></md-checkbox>
+			                        <md-checkbox ng-model="activityEvent.isSuspended">
 	                        	</md-input-container>
 	                        	
 	                        	
 	                        	<div ng-if="activityEvent.type=='dataset'">
 	                        		<md-input-container>
-    								    <label>Dataset</label>
-	                        			<md-select ng-model="activityEvent.dataset"   required>
-								 		  <md-option ng-repeat="item in jobData.dataset " value="{{item.id}}">{{item.label}}</md-option>
+    								    <label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+	                        			<md-select ng-model="activityEvent.dataset" required>
+								 		  <md-option ng-repeat="item in jobData.datasets " value="{{item.id}}">{{item.label}}</md-option>
 										</md-select>
 								  	</md-input-container>
-	                        	
+								  	
+									<md-input-container>
+				                        <label>{{translate.load("sbi.scheduler.activity.events.event.frequency")}}:</label>
+				                        <input type="number" ng-model="activityEvent.frequency">
+		                        	</md-input-container>
 	                        	</div>
 	                        	
 	                        	

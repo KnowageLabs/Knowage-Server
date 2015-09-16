@@ -1,3 +1,4 @@
+/** Mock data load function */
 var loadEventsByActivity = function(jobDataObj) {
 	var eventTypes = ['rest', 'jms', 'contextbroker', 'dataset'];
 	
@@ -11,7 +12,7 @@ var loadEventsByActivity = function(jobDataObj) {
 			type: eventTypes[i%4],
 			isSuspended: (i % 2)? true : false,
 			dataset: 'dataset_' + i,
-			frequency: 'frequency_' + i
+			frequency: ((i + 1) * 5)
 		}
 		
 		events.push(event);
@@ -21,7 +22,6 @@ var loadEventsByActivity = function(jobDataObj) {
 }
 
 var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest']);
-
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey')
 		.accentPalette('blue-grey');
@@ -42,7 +42,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	
 	loadJobDataCtrl.events = [];
 	loadJobDataCtrl.selectedEvent = -1;
-	loadJobDataCtrl.dataset=[];
+	loadJobDataCtrl.datasets=[];
 	
 	$scope.translate = translate;
 	
@@ -61,25 +61,19 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		
 	}
 	
-	this.selectEvent = function(id) {
-		
-	}
-	
-	loadJobDataCtrl.loadDataset=function(){
+	loadJobDataCtrl.loadDataset = function(){
 		restServices.get("2.0/datasets", "listDataset")
-		.success(function(data, status, headers, config) {
-					console.log(data)
-					if (data.hasOwnProperty("errors")) {
-						console.error(translate.load("sbi.glossary.load.error"))
-					} else {
-						console.log("list Dataset ottenute")
-						loadJobDataCtrl.dataset=data.item;
-					}
-
-				})
-		.error(function(data, status, headers, config) {
+			.success(function(data, status, headers, config) {
+				console.log('success data: ', data);
+				if (data.hasOwnProperty("errors")) {
 					console.error(translate.load("sbi.glossary.load.error"))
-				})
+				} else {
+					loadJobDataCtrl.datasets=data.item;
+				}
+			})
+			.error(function(data, status, headers, config) {
+				console.error(translate.load("sbi.glossary.load.error"))
+			});
 	}
 	
 }]);
