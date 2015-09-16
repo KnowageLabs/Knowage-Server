@@ -20,22 +20,19 @@ public class MongoDataProxy extends AbstractDataProxy {
 
 	IDataSource dataSource;
 	String statement;
-	CommandResult result;
 
 	private static final String SINGLE_RESULT = "SINGLE_DOCUMENT_QUERY";
 	private static final String LIST_RESULT = "LIST_DOCUMENTS_QUERY";
 
 	private static transient Logger logger = Logger.getLogger(MongoDataProxy.class);
 	/**
-	 * Override the tojsonObject to serialize the MongoObject like ObjectID as
-	 * String. For example {_id: ObjectID("313213")} will be serialized in {_id:
+	 * Override the tojsonObject to serialize the MongoObject like ObjectID as String. For example {_id: ObjectID("313213")} will be serialized in {_id:
 	 * "313213"}
 	 */
 	private StringBuffer overridenToJSONObject;
 
 	/**
-	 * Decorate the js adding a function that navigates the cursor resulting
-	 * from the query
+	 * Decorate the js adding a function that navigates the cursor resulting from the query
 	 */
 	private StringBuffer decorateFunction;
 
@@ -85,9 +82,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 
 		IDataStore dataStore = null;
 
-		if (result == null) {
-			result = loadData();
-		}
+		CommandResult result = loadData();
 
 		try {
 			// read data
@@ -108,6 +103,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 	private CommandResult loadData() {
 		logger.debug("IN");
 		MongoClient mongoClient;
+		CommandResult result = null;
 
 		String clientUrl = dataSource.getUrlConnection();
 
@@ -158,10 +154,9 @@ public class MongoDataProxy extends AbstractDataProxy {
 	}
 
 	/**
-	 * Decorates the user defined statement.. The result of a non single
-	 * document query (single document queries are aggregations and findOne) is
-	 * a cursor so we need to navigate it to get all the documents.
-	 * 
+	 * Decorates the user defined statement.. The result of a non single document query (single document queries are aggregations and findOne) is a cursor so we
+	 * need to navigate it to get all the documents.
+	 *
 	 * @return
 	 */
 	private String getDecoredStatement() {
@@ -169,9 +164,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 		String decored = "";
 
 		/**
-		 * The result is a fixed value (for example return 55). In this case we
-		 * envelop the result in a object. If the result is already an object
-		 * return it
+		 * The result is a fixed value (for example return 55). In this case we envelop the result in a object. If the result is already an object return it
 		 */
 
 		if (isSingleValue()) {// the result is a fixed value
@@ -190,11 +183,7 @@ public class MongoDataProxy extends AbstractDataProxy {
 		 * The result is a cursor so navigate it using decorateFunction
 		 */
 		else {
-			decored = " function(){"
-					+ overridenToJSONObject.toString()
-					+ " "
-					+ this.statement
-					+ decorateFunction.toString();
+			decored = " function(){" + overridenToJSONObject.toString() + " " + this.statement + decorateFunction.toString();
 			// "var serializeResult = function(cursor){	result='['; cursor.forEach(function(c){result=result+(tojson(c))+',';});	var length = result.length;	print(result[length-1]);	if(result[length-1]==','){	result= result.substring(0,length-1);	} result=result+']'; return result;}; return serializeResult(query); }";
 		}
 
@@ -204,9 +193,8 @@ public class MongoDataProxy extends AbstractDataProxy {
 	}
 
 	/**
-	 * findOne and aggregation queries returns a single document. The normal
-	 * find returns a cursor
-	 * 
+	 * findOne and aggregation queries returns a single document. The normal find returns a cursor
+	 *
 	 * @return
 	 */
 	private boolean isSingleDocumentQuery() {
@@ -219,9 +207,8 @@ public class MongoDataProxy extends AbstractDataProxy {
 	}
 
 	/**
-	 * findOne and aggregation queries returns a single document. The normal
-	 * find returns a cursor
-	 * 
+	 * findOne and aggregation queries returns a single document. The normal find returns a cursor
+	 *
 	 * @return
 	 */
 	private boolean isSingleValue() {
@@ -257,7 +244,6 @@ public class MongoDataProxy extends AbstractDataProxy {
 	public void setStatement(String statement) {
 		if (!statement.equals(this.statement)) {
 			this.statement = statement;
-			this.result = null;
 		}
 	}
 
