@@ -108,6 +108,11 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
     		 }    		 
     	  }
     	  
+    	  if(attrs.dragDropOptions){
+    		  scope.dragAndDropEnabled=true;
+    	  }else{
+    		  scope.dragAndDropEnabled=false;
+    	  }
     	 
     	  
 //    	  if(attrs.enableDragDrop){
@@ -171,7 +176,7 @@ function ListControllerFunction($scope,translate,$mdDialog,$mdToast,$timeout,$co
 	
 	$scope.clickItem=function(item){
 		$scope.selectedItem=item;
-		$scope.clickFunction({item:item});
+		$scope.clickFunction({item:item,listId:$scope.id});
 	}
 	
 		// pagination word
