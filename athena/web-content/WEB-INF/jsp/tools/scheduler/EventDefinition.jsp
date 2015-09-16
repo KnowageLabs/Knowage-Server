@@ -67,6 +67,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <script type="text/javascript"
 	src="/athena/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
+	
+		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 
 <%
 	String jobName = "default jobName value", jobGroup = "default jobGroup value", jobDescription = "default jobDescription value";
@@ -87,7 +89,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <body ng-app="EventDefinitionApp">
 
 	<div ng-controller="LoadJobDataController as jobData"
-		ng-init="jobData.setJobValues('<%=jobName%>', '<%=jobGroup%>', '<%=jobDescription%>')">
+		ng-init="jobData.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=jobDescription%>')">
 		<!-- 
 	<h2 class="md-title">Job Name: {{loadJobData.jobName}}</h2>
 	<h2 class="md-title">Job Group: {{loadJobData.jobGroup}}</h2>
@@ -102,23 +104,13 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				class="md-whiteframe-z1">
 				<md-button class="md-raised" layout-align="center center">
 					{{translate.load("sbi.scheduler.activity.events.newevent")}}</md-button>
-				<md-content> <md-list> <md-list-item
-					ng-repeat="event in jobData.events">
-					
-					<md-button ng-click="activityEvent.setEvent(event)">{{event.name}}</md-button>
-					<!--
-					<md-tooltip>
-					<md-list
-						<md-list-item class="md-3-line" flex>
-							<strong>Name: </strong>{{event.name}}</md-list-item>
-						<md-list-item class="md-3-line" flex>
-							<strong>Description: </strong>{{event.description}}</md-list-item>
-						<md-list-item class="md-3-line" flex>
-							<strong>Suspended: </strong>{{event.isSuspended}}</md-list-item>
-					</md-list>
-			        </md-tooltip>
-					--> 
-					</md-list-item> </md-list> </md-content>
+				<md-content> 
+				<md-list> 
+					<md-list-item ng-repeat="event in jobData.events" ng-click="activityEvent.setEvent(event)">
+						{{event.name}}
+					</md-list-item> 
+				</md-list> 
+				</md-content>
 			</div>
 
 			<%-- Event detail panel --%>
@@ -131,15 +123,17 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						--{{activityEvent.dataset}}--
 						--{{activityEvent.frequency}}--
 							<form name="contactForm" data-ng-submit="" layout="column">
-								<md-input-container layout="row">
+								<md-input-container >
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
 			                        <input ng-model="activityEvent.name" required>
 	                        	</md-input-container>
-								<md-input-container layout="row">
+								
+								<md-input-container >
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
 			                        <input ng-model="activityEvent.description">
 	                        	</md-input-container>
-								<md-input-container layout="row">
+								
+						
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
 			                        <%-- 
 			                        <p>
@@ -157,11 +151,25 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								    	<md-option value="dataset">
 								    		{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</md-option>
 								  	</md-select>
-	                        	</md-input-container>
-								<md-input-container layout="row">
+	                        	
+								
+								<md-input-container >
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
-			                        <input type="checkbox" ng-model="activityEvent.isSuspended">
+			                        <md-checkbox  ng-model="activityEvent.isSuspended"></md-checkbox>
 	                        	</md-input-container>
+	                        	
+	                        	
+	                        	<div ng-if="activityEvent.type=='dataset'">
+	                        		<md-input-container>
+    								    <label>Dataset</label>
+	                        			<md-select ng-model="activityEvent.dataset"   required>
+								 		  <md-option ng-repeat="item in jobData.dataset " value="{{item.id}}">{{item.label}}</md-option>
+										</md-select>
+								  	</md-input-container>
+	                        	
+	                        	</div>
+	                        	
+	                        	
 								
 	                       	</form>
 						</md-tab-body>
