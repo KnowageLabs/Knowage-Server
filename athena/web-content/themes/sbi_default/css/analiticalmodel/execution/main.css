@@ -291,6 +291,12 @@
 	height: 16px !important;
 }
 
+.button-open-events {
+	background-image: url('../../../img/open-events.png') !important;
+	width: 16px !important;
+	height: 16px !important;
+}
+
 .button-execute {
 	background-image: url('../../../img/execObject.png') !important;
 	width: 16px !important;
