@@ -20,7 +20,7 @@ var loadEventsByActivity = function(jobDataObj) {
 	return events;
 }
 
-var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial']);
+var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest']);
 
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey')
@@ -33,7 +33,7 @@ eventDefinitionApp.service('translate', function() {
 	};
 });
 
-eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', function(translate, $scope) {
+eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','restServices' ,function(translate, $scope,restServices) {
 	var loadJobDataCtrl = this;
 	
 	loadJobDataCtrl.jobName = '';
@@ -42,10 +42,11 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', f
 	
 	loadJobDataCtrl.events = [];
 	loadJobDataCtrl.selectedEvent = -1;
+	loadJobDataCtrl.dataset=[];
 	
 	$scope.translate = translate;
 	
-	loadJobDataCtrl.setJobValues = function(jobName, jobGroup, jobDescription) {
+	loadJobDataCtrl.initJobsValues= function(jobName, jobGroup, jobDescription) {
 		loadJobDataCtrl.jobName = jobName;
 		loadJobDataCtrl.jobGroup = jobGroup;
 		loadJobDataCtrl.jobDescription = jobDescription;
@@ -55,11 +56,32 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', f
 			jobGroup: loadJobDataCtrl.jobGroup,
 			jobDescription: loadJobDataCtrl.jobDescription
 		});
+
+		loadJobDataCtrl.loadDataset();
+		
 	}
 	
 	this.selectEvent = function(id) {
 		
 	}
+	
+	loadJobDataCtrl.loadDataset=function(){
+		restServices.get("2.0/datasets", "listDataset")
+		.success(function(data, status, headers, config) {
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						console.error(translate.load("sbi.glossary.load.error"))
+					} else {
+						console.log("list Dataset ottenute")
+						loadJobDataCtrl.dataset=data.item;
+					}
+
+				})
+		.error(function(data, status, headers, config) {
+					console.error(translate.load("sbi.glossary.load.error"))
+				})
+	}
+	
 }]);
 
 eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope', function(translate, $scope) {
