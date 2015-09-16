@@ -202,7 +202,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 			    	  
 			}else{
 				
-				if(e.target.id = 'editFederated')
+				if(e.target.id == 'editFederated')
 					{
 					var id = record.data.id;
 					var label = record.data.label;
