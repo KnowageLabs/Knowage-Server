@@ -11,9 +11,14 @@
 				<param name="initial_value">1</param>	
 		   </generator>
         </id>
+        
+       
+		<property name="datamart" type="string">
+            <column name="DATAMART_NAME" length="100"  not-null="true"/>
+        </property> 
 
-  		<property name="label" type="string">
-            <column name="LABEL" length="100" />
+  		<property name="unique_identifier" type="string">
+            <column name="UNIQUE_IDENTIFIER" length="100"  not-null="true"/>
         </property> 
         
 
