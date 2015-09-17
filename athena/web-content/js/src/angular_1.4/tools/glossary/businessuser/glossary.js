@@ -1,4 +1,4 @@
-var app = angular.module('AIDA_GESTIONE-VOCABOLI', [ 'ngMaterial', 'ui.tree',
+var app = angular.module('glossaryWordManager', [ 'ngMaterial', 'ui.tree',
 		'angularUtils.directives.dirPagination', 'ng-context-menu','angular_rest','glossary_tree','angular_list']);
 
 app.config(function($mdThemingProvider) {
@@ -72,7 +72,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	ctr.selectedGloss = {};
 	ctr.state=[];
 	ctr.category=[];
-	
+	ctr.safeMode=true;
 	ctr.pr=function(){
 		console.log(",lsdfkdslfkdslòfdsfdsfdsfdsfdsfdsf")
 	}
@@ -985,77 +985,85 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					translate.load("sbi.glossary.message.save.database"))
 					.ariaLabel('Muovi')
 					.ok(translate.load("sbi.attributes.add")).cancel(
-							translate.load("sbi.ds.wizard.cancel"))
+							translate.load("sbi.ds.wizard.cancel"));
 
+			
+			var addContentFunc=function(){
+
+				var elem = {};
+				elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
+						: event.dest.nodesScope.$nodeScope.$modelValue.CONTENT_ID
+
+				elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
+				elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+
+				showPreloader();
+				restServices
+						.post("1.0/glossary/business", "addContents", elem)
+						.success(
+								function(data, status, headers,
+										config) {
+
+									if (data
+											.hasOwnProperty("errors")) {
+										showErrorToast(data.errors[0].message)
+										showToast(
+												translate
+														.load("sbi.glossary.error.save"),
+												3000);
+									} else if (data.Status == "NON OK") {
+										showToast(
+												translate
+														.load(data.Message),
+												3000);
+									} else {
+//										showToast(translate.load("sbi.glossary.success.save"),3000);
+
+										elem.WORD = event.source.nodeScope.$modelValue.WORD;
+										if (elem.PARENT_ID != null) {
+											event.dest.nodesScope.$nodeScope.$modelValue.HAVE_WORD_CHILD = true;
+										}
+										event.dest.nodesScope.insertNode(event.dest.index,elem);
+									}
+									
+									
+									if (elem.PARENT_ID != null) {
+										
+										
+										event.dest.nodesScope.expand();
+										
+										ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue);
+										
+									}
+									hidePreloader();
+								})
+						.error(
+								function(data, status, headers,
+										config) {
+									hidePreloader();
+									showToast(
+											translate
+													.load("sbi.glossary.error.save"),
+											3000);
+								});
+
+			
+			}
+			
+			if(!ctr.safeMode){
+				addContentFunc();
+			}else{
 			$mdDialog
 					.show(confirm)
 					.then(
 							function() {
-								var elem = {};
-								elem.PARENT_ID = event.dest.nodesScope.$nodeScope == null ? null
-										: event.dest.nodesScope.$nodeScope.$modelValue.CONTENT_ID
-
-								elem.WORD_ID = event.source.nodeScope.$modelValue.WORD_ID;
-								elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
-
-								showPreloader();
-								restServices
-										.post("1.0/glossary/business", "addContents", elem)
-										.success(
-												function(data, status, headers,
-														config) {
-
-													if (data
-															.hasOwnProperty("errors")) {
-														showErrorToast(data.errors[0].message)
-														showToast(
-																translate
-																		.load("sbi.glossary.error.save"),
-																3000);
-													} else if (data.Status == "NON OK") {
-														showToast(
-																translate
-																		.load(data.Message),
-																3000);
-													} else {
-														showToast(
-																translate
-																		.load("sbi.glossary.success.save"),
-																3000);
-
-														elem.WORD = event.source.nodeScope.$modelValue.WORD;
-														if (elem.PARENT_ID != null) {
-															event.dest.nodesScope.$nodeScope.$modelValue.HAVE_WORD_CHILD = true;
-														}
-														event.dest.nodesScope.insertNode(event.dest.index,elem);
-													}
-													
-													
-													if (elem.PARENT_ID != null) {
-														
-														
-														event.dest.nodesScope.expand();
-														
-														ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue);
-														
-													}
-													hidePreloader();
-												})
-										.error(
-												function(data, status, headers,
-														config) {
-													hidePreloader();
-													showToast(
-															translate
-																	.load("sbi.glossary.error.save"),
-															3000);
-												});
-
+								addContentFunc();
 							}, function() {
 								console.log("rifiutato");
 								hidePreloader();
 							});
-
+			}
+			
 			// non faccio spostare l'elemento automaticamente
 			event.source.nodeScope.$$apply = false;
 
@@ -1198,114 +1206,123 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				return;
 			}
 
+			
+			
 			var confirm = $mdDialog.confirm().parent(
 					angular.element(document.body)).title(
 					translate.load("sbi.glossary.modify.answare")).content(
 					translate.load("sbi.glossary.message.save.database"))
 					.ariaLabel('Muovi').ok(translate.load("sbi.glossary.move"))
-					.cancel(translate.load("sbi.general.cancel"))
+					.cancel(translate.load("sbi.general.cancel"));
 
+			var moveItem= function() {
+				var isRootS=false;
+				var isRootD=false;
+				if(event.source.nodesScope.$parent.$type=="uiTree"){
+					isRootS=true;
+				}
+				
+				if(event.dest.nodesScope.$parent.$type=="uiTree"){
+					isRootD=true;
+				}
+				
+				var elem = event.source.nodeScope.item;
+
+				elem.PARENT_ID = isRootD ? null: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
+				elem.OLD_PARENT_ID = isRootS ? null: event.source.nodesScope.$parent.$modelValue.CONTENT_ID;
+				elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
+				
+				showPreloader();
+				restServices
+						.post("1.0/glossary/business","modifyContentsGlossary", elem)
+						.success(function(data, status, headers,config) {
+									if (data.hasOwnProperty("errors")) {
+										showErrorToast(data.errors[0].message);
+										showToast(
+												translate
+														.load("sbi.glossary.error.save"),
+												3000);
+										event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
+										event.dest.nodesScope.$modelValue.splice(event.dest.index,1);
+									} else if (data.Status == "NON OK") {
+										showToast(translate.load(data.Message),	3000);
+										event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
+										event.dest.nodesScope.$modelValue.splice(event.dest.index,1);
+									} else {
+
+//										showToast(translate.load("sbi.glossary.success.save"),3000);
+
+										if (elem.hasOwnProperty("WORD_ID")) {
+											// confirm that there is a word and check if destination have other word
+											if(!isRootD){
+											event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = true;
+											}
+											// equal to one because the element actual is no dragged
+
+											
+											if(!isRootS){
+												if (!event.source.nodesScope.$parent.$modelValue
+													.hasOwnProperty("CHILD")) {
+													event.source.nodesScope.$parent.$modelValue.CHILD = {};
+												}
+												if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
+												event.source.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = false;
+												}
+											}
+										} else {
+											// confirm that there is a cont entand check if destination have other contents
+											if(!isRootD){
+											event.dest.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = true;
+											}
+											if(!isRootS){
+												if (!event.source.nodesScope.$parent.$modelValue
+													.hasOwnProperty("CHILD")) {
+													event.source.nodesScope.$parent.$modelValue.CHILD = {};
+												}
+												if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
+													event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = false;
+												}
+											}
+										}
+										
+//										event.dest.nodesScope.insertNode(event.dest.index,elem);
+//										event.source.nodesScope.$modelValue.splice(event.source.index,1);
+
+										if (!isRootD) {
+											event.dest.nodesScope.expand();
+											ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue,event.dest.nodesScope.$parent);
+										}else{
+											ctr.selectedGloss.SBI_GL_CONTENTS.sort(function(a,b) {return (a.CONTENT_NM > b.CONTENT_NM) ? 1 : ((b.CONTENT_NM > a.CONTENT_NM) ? -1 : 0);} ); 
+											
+										}
+
+									}
+
+									hidePreloader();
+								})
+						.error(
+								function(data, status, headers,
+										config) {
+									showToast(
+											translate
+													.load("sbi.glossary.error.save"),
+											3000);
+									event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
+									event.dest.nodesScope.$modelValue.splice(event.dest.index,1);
+									hidePreloader();
+								});
+
+						};		
+						if(!ctr.safeMode){
+							moveItem();
+						}else{
 			$mdDialog
 					.show(confirm)
 					.then(
-							function() {
-								var isRootS=false;
-								var isRootD=false;
-								if(event.source.nodesScope.$parent.$type=="uiTree"){
-									isRootS=true;
-								}
-								
-								if(event.dest.nodesScope.$parent.$type=="uiTree"){
-									isRootD=true;
-								}
-								
-								var elem = event.source.nodeScope.item;
-
-								elem.PARENT_ID = isRootD ? null: event.dest.nodesScope.$nodeScope.item.CONTENT_ID
-								elem.OLD_PARENT_ID = isRootS ? null: event.source.nodesScope.$parent.$modelValue.CONTENT_ID;
-								elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
-								
-								showPreloader();
-								restServices
-										.post("1.0/glossary/business","modifyContentsGlossary", elem)
-										.success(function(data, status, headers,config) {
-													if (data.hasOwnProperty("errors")) {
-														showErrorToast(data.errors[0].message);
-														showToast(
-																translate
-																		.load("sbi.glossary.error.save"),
-																3000);
-														event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
-														event.dest.nodesScope.$modelValue.splice(event.dest.index,1);
-													} else if (data.Status == "NON OK") {
-														showToast(translate.load(data.Message),	3000);
-														event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
-														event.dest.nodesScope.$modelValue.splice(event.dest.index,1);
-													} else {
-
-//														showToast(translate.load("sbi.glossary.success.save"),3000);
-
-														if (elem.hasOwnProperty("WORD_ID")) {
-															// confirm that there is a word and check if destination have other word
-															if(!isRootD){
-															event.dest.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = true;
-															}
-															// equal to one because the element actual is no dragged
-
-															
-															if(!isRootS){
-																if (!event.source.nodesScope.$parent.$modelValue
-																	.hasOwnProperty("CHILD")) {
-																	event.source.nodesScope.$parent.$modelValue.CHILD = {};
-																}
-																if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
-																event.source.nodesScope.$parent.$modelValue.HAVE_WORD_CHILD = false;
-																}
-															}
-														} else {
-															// confirm that there is a cont entand check if destination have other contents
-															if(!isRootD){
-															event.dest.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = true;
-															}
-															if(!isRootS){
-																if (!event.source.nodesScope.$parent.$modelValue
-																	.hasOwnProperty("CHILD")) {
-																	event.source.nodesScope.$parent.$modelValue.CHILD = {};
-																}
-																if (event.source.nodesScope.$parent.$modelValue.CHILD.length == 1) {
-																	event.source.nodesScope.$parent.$modelValue.HAVE_CONTENTS_CHILD = false;
-																}
-															}
-														}
-														
-//														event.dest.nodesScope.insertNode(event.dest.index,elem);
-//														event.source.nodesScope.$modelValue.splice(event.source.index,1);
-
-														if (!isRootD) {
-															event.dest.nodesScope.expand();
-															ctr.getGlossaryNode(ctr.selectedGloss,event.dest.nodesScope.$parent.$modelValue,event.dest.nodesScope.$parent);
-														}else{
-															ctr.selectedGloss.SBI_GL_CONTENTS.sort(function(a,b) {return (a.CONTENT_NM > b.CONTENT_NM) ? 1 : ((b.CONTENT_NM > a.CONTENT_NM) ? -1 : 0);} ); 
-															
-														}
-
-													}
-
-													hidePreloader();
-												})
-										.error(
-												function(data, status, headers,
-														config) {
-													showToast(
-															translate
-																	.load("sbi.glossary.error.save"),
-															3000);
-													event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
-													event.dest.nodesScope.$modelValue.splice(event.dest.index,1);
-													hidePreloader();
-												});
-
-							}, function() {
+					function(){ 
+						moveItem();
+						}
+					, function() {
 								console.log("rifiutato");
 								
 								event.source.nodesScope.insertNode(event.dest.index,event.source.nodeScope.item);
@@ -1313,6 +1330,8 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								
 								hidePreloader();
 							});
+			
+		}
 
 			// non faccio spostare l'elemento automaticamente
 //			event.source.nodeScope.$$apply = false;
@@ -1396,63 +1415,66 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					+ "&WORD_ID=" + ev.$modelValue.WORD_ID;
 		}
 
-		$mdDialog
-				.show(confirm)
-				.then(
-						function() {
+		
+		var deleteAction=function(){
+			restServices
+					.remove("1.0/glossary/business", "deleteContents", req)
+					.success(
+							function(data, status, headers,
+									config) {
+								
+								if (data
+										.hasOwnProperty("errors")) {
+									showErrorToast(data.errors[0].message)
+									showToast(
+											translate
+													.load("sbi.glossary.content.delete.error"),
+											3000);
+								} else {
+									if (ev.$parentNodeScope.$modelValue.CHILD.length == 1) {
+										console
+												.log("ci sono figli")
+										if (ev.$modelValue
+												.hasOwnProperty("WORD_ID")) {
+											ev.$parentNodeScope.$modelValue.HAVE_WORD_CHILD = false;
+										} else {
+											ev.$parentNodeScope.$modelValue.HAVE_CONTENTS_CHILD = false;
+										}
+									}
+									console
+											.log(ev.$parentNodeScope.$modelValue)
+									ev.remove();
+									showToast(
+											translate
+													.load("sbi.glossary.content.delete.success"),
+											3000);
+								}
+								hidePreloader();
 
-							restServices
-									.remove("1.0/glossary/business", "deleteContents", req)
-									.success(
-											function(data, status, headers,
-													config) {
-												
-												if (data
-														.hasOwnProperty("errors")) {
-													showErrorToast(data.errors[0].message)
-													showToast(
-															translate
-																	.load("sbi.glossary.content.delete.error"),
-															3000);
-												} else {
-													if (ev.$parentNodeScope.$modelValue.CHILD.length == 1) {
-														console
-																.log("ci sono figli")
-														if (ev.$modelValue
-																.hasOwnProperty("WORD_ID")) {
-															ev.$parentNodeScope.$modelValue.HAVE_WORD_CHILD = false;
-														} else {
-															ev.$parentNodeScope.$modelValue.HAVE_CONTENTS_CHILD = false;
-														}
-													}
-													console
-															.log(ev.$parentNodeScope.$modelValue)
-													ev.remove();
-													showToast(
-															translate
-																	.load("sbi.glossary.content.delete.success"),
-															3000);
-												}
-												hidePreloader();
+							})
+					.error(
+							function(data, status, headers,
+									config) {
 
-											})
-									.error(
-											function(data, status, headers,
-													config) {
+								showErrorToast("nodo non eliminato "
+										+ status);
+								showToast( translate .load("sbi.glossary.content.delete.error"), 3000);
+								hidePreloader();
+							})
+				}
 
-												showErrorToast("nodo non eliminato "
-														+ status);
-												showToast(
-														translate
-																.load("sbi.glossary.content.delete.error"),
-														3000);
-												hidePreloader();
-											})
-
-						}, function() {
-							console.log('annulla');
-						});
-
+		
+		if (!ctr.safeMode) {
+			deleteAction();
+		} else {
+			$mdDialog.show(confirm).then(function() {
+				deleteAction();
+			}, function() {
+				console.log('annulla');
+			});
+		}
+		
+		
 	};
 
 	ctr.toggle = function(scope, item, gloss) {
@@ -1684,27 +1706,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 	
 	
-//	// pagination word
-//	function changeWordItemPP() {
-//		var lbw = angular.element(document.querySelector('.wordListBox'))[0].offsetHeight;
-//		var tbw = angular.element(document.querySelector('.md-toolbar-tools'))[0].offsetHeight;
-//		var bpw = angular.element(document.querySelector('.box_pagination'))[0]==undefined? 10 : angular.element(document.querySelector('.box_pagination'))[0].offsetHeight;
-//
-////		 bpw == 0 ? bpw = 10 : bpw = bpw;
-//		var nit = parseInt((lbw - tbw - bpw - 30 ) / 27);
-//		ctr.WordItemPerPage = nit==0? 1 : nit;
-//	}
-//
-//	$scope.$watch(
-//					function() {
-//						return angular.element(document.querySelector('.leftBox_word'))[0].offsetHeight;
-//					}, function(newValue, oldValue) {
-//						if (newValue != oldValue) {
-//							changeWordItemPP();
-//						}
-//					}, true);
-
-	
 
 	// rest call function
 
@@ -1782,50 +1783,6 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 	
 	
-//	ctr.tmpWordSearch = "";
-//	ctr.prevSearch = "";
-//
-//	ctr.WordLike = function(ele,itemsPerPage) {
-//		console.log("wordlike",ele)
-//		console.log("itemsPerPage",itemsPerPage)
-//		ctr.tmpWordSearch = ele;
-//		$timeout(function() {
-//
-//			if (ctr.tmpWordSearch != ele || ctr.prevSearch == ele) {
-//				return;
-//			}
-//
-//			ctr.prevSearch = ele;
-//			ctr.showSearchPreloader = true;
-//			var item="Page=1&ItemPerPage="+itemsPerPage;
-//	    	if(ctr.tmpWordSearch!=undefined && ctr.tmpWordSearch.trim()!=""){
-//	    		 item+="&WORD=" + ele;
-//	    	 }
-//			restServices.get("1.0/glossary", "listWords", item).success(
-//					function(data, status, headers, config) {
-//
-//						if (data.hasOwnProperty("errors")) {
-//							showErrorToast(data.errors[0].message);
-//							showToast(
-//									translate.load("sbi.glossary.load.error"),
-//									3000);
-//
-//						} else {
-//							ctr.words = data.item;
-//							ctr.totalWord=data.itemCount;
-//							ctr.showSearchPreloader = false;
-//						}
-//
-//					}).error(function(data, status, headers, config) {
-//				showToast(translate.load("sbi.glossary.load.error"), 3000);
-//
-//				ctr.showSearchPreloader = false;
-//			})
-//
-//		}, 1000);
-//
-//	}
-
 	function getWord(ele) {
 		showPreloader();
 		restServices
@@ -1973,7 +1930,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	               	{
 	               		label : translate.load('sbi.generic.delete'),
 	               		action : function(item,event) {
-	               			ctr.modifyWord(item);
+	               			ctr.deleteWord(item);
 	               			}
 	               	} ,
 	               	

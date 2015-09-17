@@ -9,8 +9,6 @@
 <%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
 
 
-<%@ page import="it.eng.spago.security.IEngUserProfile" %>
-<%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 
 
 
@@ -28,7 +26,7 @@
 
 <% if(canSee ){ %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="AIDA_GLOSSARY_TECNICAL_USER">
+<html ng-app="glossaryTecnicalFunctionality">
 
 <head>
 	
@@ -69,10 +67,7 @@
 	
 	<!--pagination-->
 	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
-	
 		
-	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-	
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario_tec.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 	

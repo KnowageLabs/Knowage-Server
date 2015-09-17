@@ -14,9 +14,10 @@
 			md-mode="indeterminate">
 		</md-progress-circular>
 		<p ng-if="ngModel.length==0 || ngModel==undefined">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p> 
+		
 		<div id="{{id}}Tree" 
-						ui-tree="dragDropOptions" 
-						data-drag-delay="500" data-clone-enabled={{enableClone==true}}  data-empty-placeholder-enabled={{showEmptyPlaceholder==true}}>
+						ui-tree="dragDropOptions" data-drag-enabled="dragAndDropEnabled"
+						data-drag-delay="200" data-clone-enabled={{enableClone==true}}  data-empty-placeholder-enabled={{showEmptyPlaceholder==true}}>
 
 						<ol ui-tree-nodes ng-model="ngModel" >
 

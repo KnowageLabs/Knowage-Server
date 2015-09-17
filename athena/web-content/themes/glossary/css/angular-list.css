@@ -47,7 +47,7 @@
 #angularListTemplate .searchBarList input {
 	margin: 0px;
 	margin-left: 15px;
-	height: 18px;
+	height: 22px;
 }
 
 #angularListTemplate md-progress-circular {
@@ -66,7 +66,8 @@ i.dragged-item-icon {
 
 #angularListTemplate md-list-item, #angularListTemplate md-list-item button,
 	#angularListTemplate md-list-item .md-list-item-inner {
-	min-height: 15px !important;
+/* 	min-height: 15px !important; */
+min-height: 22px !important;
 }
 
 #angularListTemplate md-list-item p ,.p_small_button{
@@ -138,6 +139,8 @@ i.dragged-item-icon {
 
 #angularListTemplate .pagination>li>a {
 	text-decoration: none !important;
+	width: 100%;
+    display: block;
 }
 
 #angularListTemplate .pagination>.active, #angularListTemplate .pagination>.active>a,

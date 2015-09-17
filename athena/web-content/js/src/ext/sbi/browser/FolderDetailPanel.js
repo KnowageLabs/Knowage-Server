@@ -586,30 +586,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
     }
      ,showHelpOnLine: function(doc){
     	 console.log('showHelpOnLine',doc);
-	  var panel=new Ext.ux.ManagedIframePanel({
-              border: false,
-              bodyBorder: false,
-              defaultSrc: {url: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DOCUMENT='+doc.id+'&LABEL='+doc.label+''+(doc.dataset!=undefined? "&DATASET="+doc.dataset : ''), discardUrl: true }
-	    });
-    	  
-    	  
-    	 
-    	var dialogBox = new Ext.Window({
-              title: 'Help Online',
-              modal:true,
-//              layout:'fit',
-              width:'90%',
-              height:Ext.getBody().getViewSize().height*0.9 ,
-              closable:true,
-//              closeAction: 'hide',
-//              resizable:false,
-//              plain:false,
-              items:[panel],
-
-          });
-    	  
-    	  dialogBox.show();
-    	  
+    	 parent.execShowHelpOnLine('DOCUMENT='+doc.id+'&LABEL='+doc.label+''+(doc.dataset!=undefined? "&DATASET="+doc.dataset : ''));
+    	    	  
      }
     
     

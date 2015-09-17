@@ -354,10 +354,17 @@ md-tabs.hideTabs md-tabs-wrapper {
 	 padding: 15px;
 }
 
-.rightBox_GLOSS md-content,.rightBox_GLOSS div.ng-scope.ng-isolate-scope ,.rightBox_GLOSS md-tab-content,.rightBox_GLOSS md-tabs-content-wrapper,.rightBox_GLOSS md-tabs{
-	height: 100% !important;
-}
+/* .rightBox_GLOSS md-content,.rightBox_GLOSS div.ng-scope.ng-isolate-scope ,.rightBox_GLOSS md-tab-content,.rightBox_GLOSS md-tabs-content-wrapper,.rightBox_GLOSS md-tabs{ */
+/* 	height: 100% !important; */
+/* } */
 
 .default_tree .dropdown{
 	margin-left:calc(-25% - 20px);
+}
+
+.safeModeCheckBox{
+	  left: calc( 100% - 20%); 
+	     position: absolute;    
+	     width: 200px;   
+	      z-index: 1;
 }

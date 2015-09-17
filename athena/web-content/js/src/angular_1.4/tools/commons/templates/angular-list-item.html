@@ -1,5 +1,7 @@
 <div ui-tree-node context-menu data-target="{{id}}ContextMenu-{{ $index }}" data-nodrag={{enableDrag!=true}}>
-
+	<md-tooltip md-direction="right" md-delay="1500" >
+   	{{item[itemName] | uppercase}}
+	</md-tooltip>
 									<div ui-tree-handle>
 									<i ng-if="enableDrag==true" class=" dragged-item-icon  fa fa-bars fa-2x"></i>
 									

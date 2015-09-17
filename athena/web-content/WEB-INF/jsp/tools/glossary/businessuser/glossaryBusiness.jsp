@@ -7,8 +7,6 @@
 
 <%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
 
-<%@ page import="it.eng.spago.security.IEngUserProfile" %>
-<%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 
 
 
@@ -23,7 +21,7 @@
  <% if(canSee ){ %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="AIDA_GESTIONE-VOCABOLI">
+<html ng-app="glossaryWordManager">
 
 <head>
 	
@@ -64,7 +62,6 @@
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 	
-	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 
 	<!-- glossary tree -->
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
@@ -165,38 +162,6 @@
 					</md-content>
 
 
-<!-- 					<md-content style= "  height: calc(100% - 30px); "> -->
-<!-- 					<md-list style="  width: 100%;" class="bottomBorder" > <md-list-item  -->
-<!-- 						ng-click="ctrl.showClickedGlossary(gloss);" class="smallListItem " -->
-<!-- 						ng-repeat="gloss in ctrl.glossary "> -->
-
-<!-- 					<div context-menu data-target="Gloss-{{ gloss.GLOSSARY_NM}}" -->
-<!-- 						ng-class="{ 'highlight': highlight, 'expanded' : expanded }" -->
-<!-- 						style="width: 100%;" -->
-<!-- 						> -->
-<!-- 						<p>{{ gloss.GLOSSARY_NM | uppercase }}</p> -->
-<!-- 					</div> -->
-
-<!-- 										menu contestuale glossario -->
-<!-- 					<div class="dropdown position-fixed blockedMenu" -->
-<!-- 						style="z-index: 999; left: 10px !important" -->
-<!-- 						id="Gloss-{{  gloss.GLOSSARY_NM }}"> -->
-<!-- 						<md-list class="dropdown-menu" role="menu"> <md-list-item -->
-<!-- 							ng-click='ctrl.createNewGlossary($event,gloss)' role="menuitem" -->
-<!-- 							tabindex="1"> -->
-<!-- 						<p>{{translate.load("sbi.generic.modify");}}</p> -->
-<!-- 						</md-list-item> <md-list-item  -->
-<!-- 							ng-click='ctrl.CloneGloss($event,gloss)' role="menuitem" -->
-<!-- 							tabindex="2"> -->
-<!-- 						<p>{{translate.load("sbi.generic.clone");}}</p> -->
-<!-- 						</md-list-item> <md-list-item ng-click='ctrl.deleteGlossary(gloss)' -->
-<!-- 							role="menuitem" tabindex="3"> -->
-<!-- 						<p>{{translate.load("sbi.generic.delete");}}</p> -->
-<!-- 						</md-list-item> </md-list> -->
-<!-- 					</div> -->
-
-<!-- 											fine menu contestuale albero </md-list-item> </md-list> -->
-<!-- 					</md-content> -->
 				</div>
 
 
@@ -211,7 +176,11 @@
 								<div layout="row" layout-wrap>
 									<div flex="100">
 										<p ng-if="ctrl.selectedGloss.GLOSSARY_NM==undefined">{{translate.load("sbi.glossary.select.messages");}}</p>
-					
+										<md-checkbox ng-model="ctrl.safeMode" aria-label='{{translate.load("sbi.generic.safeMode");}}' class="safeModeCheckBox" 
+										ng-if="ctrl.selectedGloss.GLOSSARY_NM!=undefined ">
+        			 					{{translate.load("sbi.generic.safeMode");}}
+       									 </md-checkbox>
+        
 											<glossary-tree
 											tree-id="GlossTree" 
 											tree-options=ctrl.TreeOptions 
@@ -279,13 +248,13 @@
 								
 								<div layout="row"  layout-wrap>
 									<div flex="50">
-										<md-input-container class="md-icon-float " > 
+								<md-input-container class="md-icon-float " > 
 									<label class="selectLabel" ng-hide="ctrl.newWord.STATE==-1 || ctrl.newWord.STATE.length==0 || ctrl.newWord.STATE==undefined" >State</label>
-										<md-icon md-font-icon="fa fa-spinner " class="stato"></md-icon> 
-										<md-select 	placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}' ng-model="ctrl.newWord.STATE">
-											 <md-option value="-1">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}</md-option>
-											 <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">{{translate.load(st.VALUE_NM)}}</md-option>
-										</md-select> </md-input-container>
+											<md-icon md-font-icon="fa fa-spinner " class="stato"></md-icon> 
+											<md-select 	placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}' ng-model="ctrl.newWord.STATE">
+												 <md-option value="-1">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}</md-option>
+												 <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">{{translate.load(st.VALUE_NM)}}</md-option>
+											</md-select> </md-input-container>
 									</div>
 			
 									<div flex="50">

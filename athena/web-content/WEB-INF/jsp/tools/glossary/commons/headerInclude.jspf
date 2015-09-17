@@ -13,6 +13,7 @@
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@ page import="it.eng.spago.security.IEngUserProfile" %>
+<%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
 
 <%
 	RequestContainer aRequestContainer = null;
@@ -71,3 +72,6 @@
 	}
 	
 %>
+
+
+<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>

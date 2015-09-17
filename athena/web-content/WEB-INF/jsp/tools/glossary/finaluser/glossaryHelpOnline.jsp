@@ -5,7 +5,7 @@
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="AIDA_GLOSSARY_HELP_ON_LINE">
+<html ng-app="glossaryHelpOnLine">
 
 <head>
 	
@@ -52,17 +52,15 @@
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/bread-crumb.css">
 	
 	
-	<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-
 <% 
 
-	String type="",value="",label="",datasetId="";
+	String type="",value="",label="",parameter1="",parameter2="";
 
 	if(request.getParameter("DOCUMENT")!=null){
 		type="DOCUMENT";
 		value=request.getParameter("DOCUMENT");
 		label=request.getParameter("LABEL");
-		datasetId=request.getParameter("DATASET");
+		parameter1=request.getParameter("DATASET");
 		
 	}else if(request.getParameter("DATASET")!=null){
 		type="DATASET";
@@ -75,6 +73,10 @@
 	}else if(request.getParameter("WORD")!=null){
 		type="WORD";
 		label=request.getParameter("WORD");
+	}else if(request.getParameter("BUSINESS_CLASS")!=null){
+		type="BUSINESS_CLASS";
+		label=request.getParameter("BUSINESS_CLASS");
+		parameter1=request.getParameter("DATAMART");
 	}
 	
 %>
@@ -82,7 +84,8 @@
 var type='<%= type%>';
 var value='<%= value%>';
 var label='<%= label%>';
-var datasetId='<%= datasetId %>';
+var parameter1='<%= parameter1 %>';
+var parameter2='<%= parameter2 %>';
 </script>
 	
 	
@@ -126,12 +129,12 @@ var datasetId='<%= datasetId %>';
 	<div  layout="row" layout-fill style="position: absolute;  height: 100%; padding: 10px;" >
 	
 		<div flex="30" flex-lg="30" flex-md="40" style="height: 100% " ng-if="type!='WORD'">
-		<md-tabs  class="mini-tabs" ng-class="{'singleItem' : data.length==1}">
-		 <md-tab ng-repeat="tab in data" label="{{tab.type}}" layout-fill style="height: 100%;">
+			<md-tabs  class="mini-tabs" ng-class="{'singleItem' : data.length==1}">
+				<md-tab  ng-repeat="tab in data" label="{{tab.type}}" layout-fill style="height: 100%;">
 		 		
-		 	<p style=" margin: 0;   text-align: center; height: 16px;     background-color: #E8E8E8">{{tab.title}}</p>
+		 		<p style=" margin: 0;   text-align: center; height: 16px;     background-color: #E8E8E8">{{tab.title}}</p>
 		 		
-			<angular-list layout-fill class="fullperc2"   ng-class="{ 'halfperc' : (tab.datasetColumn!=undefined && tab.datasetColumn.length!=0)  }" style="min-height: 0px !important;    position: absolute;"
+				<angular-list layout-fill class="fullperc2"   ng-class="{ 'halfperc' : (tab.subItemList!=undefined && tab.subItemList.length!=0)  }" style="min-height: 0px !important;    position: absolute;"
 						id='wordList{{$index}}' 
                 		ng-model=tab.itemList
                 		item-name='WORD'
@@ -140,71 +143,76 @@ var datasetId='<%= datasetId %>';
                 		show-search-bar=true
                 		selected-item=selectedWord
                 		>
-			</angular-list>
+				</angular-list>
 			
-			<div class="halfperc2 datasetcol" ng-if="tab.datasetColumn!=undefined && tab.datasetColumn.length!=0">
-			<md-toolbar class="md-blue xs-head">
-			<div class="md-toolbar-tools">
-				<div> {{translate.load("sbi.ds.metadata.dataset.title");}}</div>
-			</div>
-			</md-toolbar>
+				<div class="halfperc2 datasetcol" ng-if="tab.subItemList!=undefined && tab.subItemList.length!=0">
+					<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div ng-if="type!='BUSINESS_CLASS'"> {{translate.load("sbi.ds.metadata.dataset.title");}}</div>
+						<div ng-if="type=='BUSINESS_CLASS'"> {{translate.load("sbi.glossary.businessclass.column");}}</div>
+					</div>
+					</md-toolbar>
 
-			<md-content layout-padding style="height:Calc(100% - 32px); padding-bottom: 8px;"> 
+					<md-content layout-padding style="height:Calc(100% - 32px); padding-bottom: 8px;"> 
 			
-			<div   id="Tree-Word-Dataset"  ui-tree="" data-drag-enabled="true"  data-clone-enabled="true">
-				<ol ui-tree-nodes ng-model="tab.datasetColumn" 	ng-class="{hideChildren: collapsed}">
-					<li ng-repeat="item in tab.datasetColumn" data-nodrag ui-tree-node data-collapsed="false" class="noBorder">
-						<div class="nodo_logico expander-icon" data-nodrag>
-							<div ui-tree-handle class="smallTree" style=" cursor: pointer;">
-								<md-list>
-									<md-list-item  class=" SecondaryOnLeft  " ng-click="this.toggle()"> 
-										<div class="indicator-child"></div>
-										
-										<p style="font-weight: bold;">{{item.alias | uppercase}}</p>
-			
-										<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
-											aria-label="Chat" md-font-icon="fa fa-angle-down "
-											style=" left: 0px;  margin: 5px 0px 0 17px!important; "
-											ng-show="!collapsed">
-										</md-icon>
-							
-										<md-icon ng-disabled="true"
-											class=" sm-font-icon expandericon" aria-label="Chat2"
-											md-font-icon="fa fa-angle-right " ng-show="collapsed">
-										</md-icon> 
+						<div   id="Tree-Word-Dataset"  ui-tree="" data-drag-enabled="true"  data-clone-enabled="true">
+							<ol ui-tree-nodes ng-model="tab.subItemList" 	ng-class="{hideChildren: collapsed}">
+								<li ng-repeat="item in tab.subItemList" data-nodrag ui-tree-node data-collapsed="false" class="noBorder">
+									<div class="nodo_logico expander-icon" data-nodrag>
+										<div ui-tree-handle class="smallTree" style=" cursor: pointer;">
+											<md-list>
+												<md-list-item  class=" SecondaryOnLeft  " ng-click="this.toggle()"> 
+													<div class="indicator-child"></div>
+													
+													<p style="font-weight: bold;">{{item.alias | uppercase}}</p>
 						
-									</md-list-item>
-					
-								</md-list>
-							</div>
-						</div>
-
-						<ol	ui-tree-nodes="options" ng-model="item.word" ng-class="{hideChildren: collapsed}">
-							<li ng-repeat="itemW in item.word" ui-tree-node data-collapsed="true" class="figlioVisibile">
-								<div  class="figlio_vocabolo smallTree">
-									<md-list class="noPadding"> 
-										<md-list-item ng-click="showInfoWORD(itemW)" class="noPaddingList">
-											<div class="indicator-child"></div>
-											
-											<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
-												aria-label="Chat" md-font-icon="fa fa-angle-right "
-												style=" left: 0px;  margin: 5px 0px 0 17px!important; " >
-											</md-icon>
+													<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+														aria-label="Chat" md-font-icon="fa fa-angle-down "
+														style=" left: 0px;  margin: 5px 0px 0 17px!important; "
+														ng-show="!collapsed">
+													</md-icon>
 										
-											<p style="margin-left: 10px;" >{{itemW.WORD | uppercase}}</p>
-								 		</md-list-item> 
-									</md-list>
-								</div>
-							</li>
-						</ol>
-
-					</li>
-				</ol>
-			</div>
-	</md-content>
-</div>
+													<md-icon ng-disabled="true"
+														class=" sm-font-icon expandericon" aria-label="Chat2"
+														md-font-icon="fa fa-angle-right " ng-show="collapsed">
+													</md-icon> 
+									
+												</md-list-item>
+								
+											</md-list>
+										</div>
+									</div>
+			
+									<ol	ui-tree-nodes="options" ng-model="item.word" ng-class="{hideChildren: collapsed}">
+										<li ng-repeat="itemW in item.word" ui-tree-node data-collapsed="true" class="figlioVisibile">
+											<div  class="figlio_vocabolo smallTree">
+												<md-list class="noPadding"> 
+													<md-list-item ng-click="showInfoWORD(itemW)" class="noPaddingList">
+														<div class="indicator-child"></div>
+														
+														<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+															aria-label="Chat" md-font-icon="fa fa-angle-right "
+															style=" left: 0px;  margin: 5px 0px 0 17px!important; " >
+														</md-icon>
+													
+														<p style="margin-left: 10px;" >{{itemW.WORD | uppercase}}</p>
+											 		</md-list-item> 
+												</md-list>
+											</div>
+										</li>
+									</ol>
+			
+								</li>
+							</ol>
+						</div>
+					</md-content>
+				</div>
+			
 		
-		</md-tab>
+		
+		
+			</md-tab>
+			
 		</md-tabs>
 
 

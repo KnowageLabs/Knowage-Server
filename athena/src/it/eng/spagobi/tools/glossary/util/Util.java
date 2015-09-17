@@ -1,7 +1,5 @@
 package it.eng.spagobi.tools.glossary.util;
 
-import java.util.Iterator;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
@@ -16,6 +14,8 @@ import it.eng.spagobi.tools.glossary.metadata.SbiGlTable;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWord;
 import it.eng.spagobi.tools.udp.bo.Udp;
 import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
+
+import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,40 +51,37 @@ public class Util {
 		ret.put("DOCUMENT_DESCR", sbiob.getDescription());
 		return ret;
 	}
-	
-	public static JSONObject fromDataSetLight(IDataSet datas)throws JSONException {
+
+	public static JSONObject fromDataSetLight(IDataSet datas) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("DATASET_ID", datas.getId());
 		ret.put("DATASET_NM", datas.getLabel());
 		ret.put("DATASET_ORG", datas.getOrganization());
 		return ret;
 	}
-	
-	public static JSONObject fromDataSetLight(SbiDataSet sbidataset)
-			throws JSONException {
+
+	public static JSONObject fromDataSetLight(SbiDataSet sbidataset) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("DATASET_ID", sbidataset.getId().getDsId());
 		jobj.put("DATASET_NM", sbidataset.getLabel());
 		jobj.put("DATASET_ORG", sbidataset.getId().getOrganization());
 		return jobj;
 	}
-	
-	public static JSONObject fromBnessClsLight(SbiGlBnessCls sbibnesscls)
-			throws JSONException {
+
+	public static JSONObject fromBnessClsLight(SbiGlBnessCls sbibnesscls) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("BC_ID", sbibnesscls.getBcId());
-		jobj.put("BC_NM", sbibnesscls.getLabel());
+		jobj.put("BC_DATAMART_NM", sbibnesscls.getDatamart());
+		jobj.put("BC_UNIQUE_IDENT", sbibnesscls.getUnique_identifier());
 		return jobj;
 	}
-	
-	public static JSONObject fromTableLight(SbiGlTable sbitable)
-			throws JSONException {
+
+	public static JSONObject fromTableLight(SbiGlTable sbitable) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("TABLE_ID", sbitable.getTableId());
 		jobj.put("TABLE_NM", sbitable.getLabel());
 		return jobj;
 	}
-	
 
 	public static JSONObject fromDocumentLight(SbiObjects sbiob) throws JSONException {
 		JSONObject ret = new JSONObject();
@@ -92,27 +89,20 @@ public class Util {
 		ret.put("DOCUMENT_NM", sbiob.getLabel());
 		return ret;
 	}
-	
 
-	public static JSONObject fromWordLight(SbiGlWord sbiGlWord)
-			throws JSONException {
+	public static JSONObject fromWordLight(SbiGlWord sbiGlWord) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("WORD_ID", sbiGlWord.getWordId());
 		jobj.put("WORD", sbiGlWord.getWord());
 		return jobj;
 	}
-	
 
-	
-	public static JSONObject fromUdpLight(Udp SbiUdp)
-			throws JSONException {
+	public static JSONObject fromUdpLight(Udp SbiUdp) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("ATTRIBUTE_ID", SbiUdp.getUdpId());
 		jobj.put("ATTRIBUTE_NM", SbiUdp.getLabel());
 		return jobj;
 	}
-	
-
 
 	public static JSONObject fromWord(SbiGlWord word) throws JSONException, EMFUserError {
 		JSONObject obj = new JSONObject();
@@ -122,17 +112,16 @@ public class Util {
 		obj.put("DESCR", word.getDescr());
 		obj.put("FORMULA", word.getFormula());
 		obj.put("STATE", word.getState_id());
-		if(word.getState()!=null){
+		if (word.getState() != null) {
 			obj.put("STATE_NM", word.getState().getValueNm());
 		}
 		obj.put("CATEGORY", word.getCategory_id());
-		if( word.getCategory()!=null){
+		if (word.getCategory() != null) {
 			obj.put("CATEGORY_NM", word.getCategory().getValueNm());
 		}
 		JSONArray links = new JSONArray();
 		if (word.getReferences() != null) {
-			for (Iterator<SbiGlReferences> iterator = word.getReferences()
-					.iterator(); iterator.hasNext();) {
+			for (Iterator<SbiGlReferences> iterator = word.getReferences().iterator(); iterator.hasNext();) {
 				SbiGlReferences refWord = iterator.next();
 				links.put(fromWordLight(refWord.getRefWord()));
 			}
@@ -140,12 +129,11 @@ public class Util {
 		}
 		JSONArray attrs = new JSONArray();
 		if (word.getAttributes() != null) {
-			for (Iterator<SbiUdpValue> iterator = word.getAttributes()
-					.iterator(); iterator.hasNext();) {
+			for (Iterator<SbiUdpValue> iterator = word.getAttributes().iterator(); iterator.hasNext();) {
 				SbiUdpValue attr = iterator.next();
 				JSONObject jsonAttr = new JSONObject();
 				jsonAttr.put("ATTRIBUTE_ID", attr.getSbiUdp().getUdpId());
-				
+
 				jsonAttr.put("ATTRIBUTE_NM", DAOFactory.getUdpDAO().loadById(attr.getSbiUdp().getUdpId()).getLabel());
 				jsonAttr.put("VALUE", attr.getValue());
 				attrs.put(jsonAttr);
@@ -164,8 +152,7 @@ public class Util {
 		return ret;
 	}
 
-	public static JSONObject fromGlossary(SbiGlGlossary sbiGlGlossary)
-			throws JSONException {
+	public static JSONObject fromGlossary(SbiGlGlossary sbiGlGlossary) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("GLOSSARY_ID", sbiGlGlossary.getGlossaryId());
 		ret.put("GLOSSARY_NM", sbiGlGlossary.getGlossaryNm());
@@ -174,8 +161,7 @@ public class Util {
 		return ret;
 	}
 
-	public static JSONObject fromContent(SbiGlContents sbiGlContents)
-			throws JSONException {
+	public static JSONObject fromContent(SbiGlContents sbiGlContents) throws JSONException {
 		JSONObject ret = new JSONObject();
 		ret.put("CONTENT_ID", sbiGlContents.getGlossaryId());
 		ret.put("CONTENT_NM", sbiGlContents.getContentNm());

@@ -92,22 +92,22 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     	
     	
     	
-    	function execShowHelpOnLine(word){
+    	function execShowHelpOnLine(getItem){
     		
    		  <%  if(enableGlossary){ %>
     			
-    		
-			if (word == undefined || word == null) {
+    		console.log("execShowHelpOnLine");
+			if (getItem == undefined || getItem == null) {
 					return;
 				}
 
 			var panel = new Ext.ux.IFrame(
-					{
-						border : false,
-						bodyBorder : false,
-						height : '100%',
-						src : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?WORD='+ word,
-					});
+				{
+					border : false,
+					bodyBorder : false,
+					height : '100%',
+					src : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+ getItem,
+				});
 
 			var dialogBox = new Ext.Window({
 				title : 'Help Online',

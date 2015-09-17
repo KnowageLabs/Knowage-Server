@@ -430,31 +430,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 					    	var docId=this.executionInstance.document.id;
 					    	var docLabel=this.executionInstance.document.label;
 					    	var datasetId=this.executionInstance.document.dataset;
-					   	  var panel=new Ext.ux.ManagedIframePanel({
-					                 border: false,
-					                 bodyBorder: false,
-					                 defaultSrc: {url: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DOCUMENT='+docId+'&LABEL='+docLabel+''+(datasetId!=undefined? "&DATASET="+datasetId : ''), discardUrl: true }
-					   	    });
-					       	  
-					       	  
-					       	 
-					       	var dialogBox = new Ext.Window({
-					                 title: 'Help Online',
-					                 modal:true,
-		//			                 layout:'fit',
-					                 width:'90%',
-					                 height:Ext.getBody().getViewSize().height*0.9 ,
-					                 closable:true,
-		//			                 closeAction: 'hide',
-		//			                 resizable:false,
-		//			                 plain:false,
-					                 items:[panel],
-		
-					             });
-					       	  
-					       	  dialogBox.show();
-					       	  
-					       	  
+					    	parent.execShowHelpOnLine('DOCUMENT='+docId+'&LABEL='+docLabel+''+(datasetId!=undefined? "&DATASET="+datasetId : ''));
+					    	 
 						}			
 					}));
 			

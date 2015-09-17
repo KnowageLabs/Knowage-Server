@@ -1,4 +1,4 @@
-var app = angular.module('AIDA_GLOSSARY_HELP_ON_LINE',
+var app = angular.module('glossaryHelpOnLine',
 		[ 'ngMaterial',  'angular_rest', 'angular_list','bread_crumb' ]);
 
 app.config(function($mdThemingProvider) {
@@ -43,7 +43,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 						s.breadControl.insertBread(data);
 					}
 				}).error(function(data, status, headers, config) {
-					console.error(translate.load("sbi.glossary.load.error"));
+					console.error("dati n on ottenuti "+data);
 				})
 	}
 
@@ -60,15 +60,15 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 							} else {
 								
 								s.data=[{type:'DOCUMENT',title:label,itemList:data.word}];
-								if(datasetId!=null && datasetId!="null"){
-									s.loadDataset("DATASET_ID="+datasetId,true)
+								if(parameter1!=null && parameter1!="null"){
+									s.loadDataset("DATASET_ID="+parameter1,true)
 								}
 //								if(data.hasOwnProperty("dataset_word")){
 //									s.data.push({type:'DATASET',title:data.dataset_label,itemList:data.dataset_word});
 //								}
 							}
 						}).error(function(data, status, headers, config) {
-							console.error("dati n on ottenuti "+data.errors);
+							console.error("dati n on ottenuti "+data);
 						})
 
 	}
@@ -87,13 +87,13 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 								if(isPush!=true){
 									s.data=[];
 								}
-								var tmp={type:'DATASET',title:data.DataSet.label,itemList:data.Word,datasetColumn:[]};
+								var tmp={type:'DATASET',title:data.DataSet.label,itemList:data.Word,subItemList:[]};
 								
 								
 								if(data.SbiGlDataSetWlist!=undefined){
 									for(var i=0;i<data.SbiGlDataSetWlist.length;i++){
 										if(data.SbiGlDataSetWlist[i].word.length!=0){
-											tmp.datasetColumn.push({type:'DATASET_COL',alias:data.SbiGlDataSetWlist[i].alias,word:data.SbiGlDataSetWlist[i].word});
+											tmp.subItemList.push({type:'DATASET_COL',alias:data.SbiGlDataSetWlist[i].alias,word:data.SbiGlDataSetWlist[i].word});
 											}
 									}
 								}
@@ -101,17 +101,44 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 								
 							}
 						}).error(function(data, status, headers, config) {
-							console.error("dati non ottenuti "+data.errors);
+							console.error("dati non ottenuti "+data);
+						})
+
+	}
+	
+	s.loadDatamart=function(param){
+		restServices.get(
+				"1.0/glossary","getDatamartInfo",param )
+				.success(
+						function(data, status, headers, config) {
+							console.log("DatamartInfo ottnuti")
+							console.log(data)
+							if (data.hasOwnProperty("errors")) {
+								console.error("dati non ottenuti "+data.errors);
+							} else {
+								console.log("datamart",data)
+								s.data=[{type:'BUSINESS_CLASS',title:label,itemList:data.selfItem,subItemList:[]}];
+								
+								if(data.columnItem!=undefined){
+									for(var i=0;i<data.columnItem.length;i++){
+										if(data.columnItem[i].word.length!=0){
+											s.data[0].subItemList.push({type:'BUSINESS_CLASS_COL',alias:data.columnItem[i].name,word:data.columnItem[i].word});
+											}
+									}
+								}
+								
+							}
+						}).error(function(data, status, headers, config) {
+							console.error("dati non ottenuti "+data);
 						})
 
 	}
 	
 	
-	
 	if(type=="DOCUMENT"){
 			console.log("loadDocumentInfo");
 			s.loadDocument(value);
-			console.log("datasetId",datasetId)
+			console.log("datasetId",parameter1)
 	}else if(type=="DATASET"){
 		console.log("loadDatasetInfo");
 		if(value=="null"){
@@ -121,6 +148,10 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 		}else{
 		s.loadDataset("DATASET_ID="+value);
 		}
+	}else if(type=='BUSINESS_CLASS'){
+		var ite="BUSINESS_CLASS="+label;
+		ite+="&DATAMART="+parameter1 ;
+		s.loadDatamart(ite);
 	}else if(type=='WORD'){
 		restServices.alterContextPath('athena');
 		s.loadWord("WORD_NAME="+label);

@@ -1,4 +1,4 @@
-var app = angular.module('AIDA_GLOSSARY_TECNICAL_USER', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination','glossary_tree','angular_list']);
+var app = angular.module('glossaryTecnicalFunctionality', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination','glossary_tree','angular_list']);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -947,7 +947,7 @@ datasetAss.TreeOptions = {
 
 			var elem = {};
 
-			if(event.dest.nodesScope.$parent.$element.id!="wordDSTree"){
+			if(event.dest.nodesScope.$parent.$element[0].id=="wordDSTree"){
 				elem.COLUMN_NAME=".SELF";
 				}else{
 					event.dest.nodesScope.$parent.expand();
