@@ -75,8 +75,7 @@
 					<angular-list layout-fill="" 
 					id="selectedDatasets" 
 					ng-model="list" 
-					item-name="label" 
-					show-search-bar="true"	
+					item-name="label"
 					click-function="moveToListNew(item)"
 					>					
 					</angular-list>
@@ -98,7 +97,7 @@
 					id="availableDatasets" 
 					ng-model="listaNew" 
 					item-name="label" 
-					show-search-bar="true"	
+					show-search-bar=false	
 					click-function="kickOutFromListNew(item)"
 					>					
 					</angular-list>
