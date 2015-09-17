@@ -68,7 +68,30 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <script type="text/javascript"
 	src="/athena/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
 	
-		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
+	
+<!-- 	queste sono per la angular list -->
+<!-- angular tree -->
+	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
+	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
+	
+	<!-- context menu -->
+	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
+	
+	<!--pagination-->
+	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
+	
+	<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
+
+	<!-- angular list -->
+	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
+
+<!-- fine -->
+		
+	<link rel="stylesheet" type="text/css" href="/athena/themes/scheduler/css/scheduler_style.css">
+	
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 
 <%
 	String jobName = "default jobName value", jobGroup = "default jobGroup value", jobDescription = "default jobDescription value";
@@ -100,11 +123,24 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<md-button class="md-raised" layout-align="center center">
 					{{translate.load("sbi.scheduler.activity.events.newevent")}}</md-button>
 				<md-content> 
-				<md-list> 
-					<md-list-item ng-repeat="event in jobData.events" ng-click="activityEvent.setEvent(event)">
-						{{event.name}}
-					</md-list-item> 
-				</md-list> 
+<!-- 				<md-list>  -->
+<!-- 					<md-list-item ng-repeat="event in jobData.events" ng-click="activityEvent.setEvent(event)"> -->
+<!-- 						{{event.name}} -->
+<!-- 					</md-list-item>  -->
+<!-- 				</md-list>  -->
+				
+				<angular-list layout-fill 
+						id='eventList' 
+                		ng-model=jobData.events
+                		item-name='name'
+                		click-function="activityEvent.setEvent(item)"
+                		highlights-selected-item=true
+                		show-search-bar=true
+                		selected-item=selectedWord
+                		>
+				</angular-list>
+				
+				
 				</md-content>
 			</div>
 
@@ -114,8 +150,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					
 					<md-tab id="eventTabDetail" layout-padding>
 						<md-tab-label>{{translate.load("sbi.generic.details")}}</md-tab-label>
-						<md-tab-body class="md-padding">
-							<form name="contactForm" data-ng-submit="" layout="column">
+						<md-tab-body class="md-padding ">
+							<form name="contactForm" data-ng-submit="" layout="column" class="detailBody">
 								<md-input-container>
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
 			                        <input ng-model="activityEvent.name" required>

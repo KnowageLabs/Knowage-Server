@@ -4,7 +4,7 @@ var loadEventsByActivity = function(jobDataObj) {
 	
 	var events = [];
 	
-	for (var i = 0; i < 4; i++) {
+	for (var i = 0; i < 40; i++) {
 		var event = {
 			id: i,
 			name: 'name_' + i,
@@ -21,7 +21,7 @@ var loadEventsByActivity = function(jobDataObj) {
 	return events;
 }
 
-var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest']);
+var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest','angular_list']);
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey')
 		.accentPalette('blue-grey');
