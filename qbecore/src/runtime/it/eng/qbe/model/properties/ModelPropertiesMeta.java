@@ -17,7 +17,8 @@ public class ModelPropertiesMeta {
 	public final static ModelPropertyMeta[] globalProperties = new ModelPropertyMeta[] { new ModelPropertyMeta("recursiveFiltering", false, true, "enabled") };
 
 	public final static ModelPropertyMeta[] entityProperties = new ModelPropertyMeta[] { new ModelPropertyMeta("visible", false, true, "true"),
-			new ModelPropertyMeta("type", false, true, "dimension"), new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE) };
+			new ModelPropertyMeta("type", false, true, "dimension"), new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
+			new ModelPropertyMeta("linkedToWords", false, true, "false") };
 
 	public final static ModelPropertyMeta[] fieldProperties = new ModelPropertyMeta[] { new ModelPropertyMeta("visible", false, true, "true"),
 			new ModelPropertyMeta("type", false, true, "attribute"), new ModelPropertyMeta("position", false, true, "" + Integer.MAX_VALUE),
