@@ -271,7 +271,7 @@ ol.angular-ui-tree-nodes li {
   height: 20px;
   width: 20px;
   min-height: 0;
-  top: -2px;
+  top: 2px;
   background-color: #0094FF;
 }
 

@@ -3,8 +3,8 @@
 	<md-content  layout-fill layout="column" > 
 		<md-input-container ng-show="showSearchBar==true" md-no-float class="searchBarList"  >
 					<md-icon md-font-icon="fa fa-search"></md-icon> 
-					<input  ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
-					
+					<input ng-if="!localSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
+					<input ng-if="localSearch" ng-model="searchVal[itemName]" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
 					<md-icon md-font-icon="fa fa-filter" ng-click="searchVal='';searchItem(searchVal);" class="filter-icon" 
 						ng-class="{ 'not_empty' : (searchVal.length !== 0 && searchVal!=undefined)  }"></md-icon> 
 				</md-input-container>
@@ -26,11 +26,11 @@
 							  ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'">
 							</li>
 							
-							<li ng-if='!SyncPagination && paginate'   id="listItemTemplate" dir-paginate="item in ngModel | filter:searchFastVal |  itemsPerPage:	itemsPerPage " pagination-id='id+"Pagination"' 
+							<li ng-if='!SyncPagination && paginate'   id="listItemTemplate" dir-paginate="item in ngModel | filter:searchFastVal|  itemsPerPage:	itemsPerPage " pagination-id='id+"Pagination"' 
 							  current-page=currentPageNumber  style="border: none;" ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'">
 							</li>
 							
-							<li ng-if='!paginate' ng-repeat="item in ngModel | filter:searchFastVal "  style="border: none;" ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'">
+							<li ng-if='!paginate' ng-repeat="item in ngModel | filter:searchFastVal"  style="border: none;" ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/angular-list-item.html'">
 							
 							</li>
 							

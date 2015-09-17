@@ -115,6 +115,7 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
     	  }
     	 
     	  
+    	  
 //    	  if(attrs.enableDragDrop){
 //     		 if(!attrs.dragDropOptions){
 //     			 console.error("DragDropOptions not defined for enableDragDrop")
@@ -218,6 +219,7 @@ function ListControllerFunction($scope,translate,$mdDialog,$mdToast,$timeout,$co
 
 	
 	
+	 
 	}
 
 	

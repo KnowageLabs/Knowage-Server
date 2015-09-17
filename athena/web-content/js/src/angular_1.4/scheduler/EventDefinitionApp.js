@@ -21,6 +21,20 @@ var loadEventsByActivity = function(jobDataObj) {
 	return events;
 }
 
+var getEmptyEvent=function(i){
+	
+	var emptyEvent = {
+			id: -1,
+			name: '',
+			description: '',
+			type: '',
+			isSuspended:  false,
+			dataset: '',
+			frequency: 0
+		}
+	return emptyEvent;
+}
+
 var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest','angular_list']);
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey')
@@ -33,9 +47,13 @@ eventDefinitionApp.service('translate', function() {
 	};
 });
 
+//this variable are global because i need to access at variable of one controller from another controller
+var activityEventCtrl;
+var loadJobDataCtrl ;
+
 eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','restServices' ,function(translate, $scope,restServices) {
-	var loadJobDataCtrl = this;
-	
+	 loadJobDataCtrl = this;
+
 	loadJobDataCtrl.jobName = '';
 	loadJobDataCtrl.jobGroup = '';
 	loadJobDataCtrl.jobDescription = '';
@@ -43,6 +61,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	loadJobDataCtrl.events = [];
 	loadJobDataCtrl.selectedEvent = -1;
 	loadJobDataCtrl.datasets=[];
+	loadJobDataCtrl.documents=[];
 	loadJobDataCtrl.typeEvents=[];
 	loadJobDataCtrl.typeEvents.push({value:'rest',label:translate.load("sbi.scheduler.activity.events.event.type.rest")});
 	loadJobDataCtrl.typeEvents.push({value:'jms',label:translate.load("sbi.scheduler.activity.events.event.type.jms")});
@@ -51,6 +70,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	
 	
 	$scope.translate = translate;
+	
 	
 	loadJobDataCtrl.initJobsValues= function(jobName, jobGroup, jobDescription) {
 		loadJobDataCtrl.jobName = jobName;
@@ -64,7 +84,14 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		});
 
 		loadJobDataCtrl.loadDataset();
-		
+		loadJobDataCtrl.loadDdocument();
+	}
+	
+	loadJobDataCtrl.loadDdocument = function(){
+		for(var i=0;i<10;i++){
+			var ite={id:i,label:'document_'+i};
+			loadJobDataCtrl.documents.push(ite);
+		}
 	}
 	
 	loadJobDataCtrl.loadDataset = function(){
@@ -83,26 +110,57 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	
 }]);
 
-eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope', function(translate, $scope) {
-	var activityEventCtrl = this;
 	
-	activityEventCtrl.id = '';
-	activityEventCtrl.name = '';
-	activityEventCtrl.description = '';
-	activityEventCtrl.type = '';
-	activityEventCtrl.isSuspended = false;
-	activityEventCtrl.dataset = '';
-	activityEventCtrl.frequency = '';
+
+eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope','$mdDialog','$mdToast', function(translate, $scope,$mdDialog,$mdToast) {
+	activityEventCtrl = this;
 	
+	activityEventCtrl.editedEvent=getEmptyEvent();
 	
+	activityEventCtrl.selectedEvent;
+	
+	activityEventCtrl.createNewEvent=function(noConfirm){
+		//check if  there is a change in progress
+		if(!activityEventCtrl.isEmptyNewEvent()  && noConfirm!=true){
+			var confirm = $mdDialog
+			.confirm()
+			.title(translate.load("sbi.glossary.word.modify.progress"))
+			.content(translate.load("sbi.glossary.word.modify.progress.message.showGloss"))
+			.ariaLabel('Lucky day').ok(translate.load("sbi.general.continue")).cancel(translate.load("sbi.general.cancel"));
+			$mdDialog.show(confirm).then(
+				function() {
+					activityEventCtrl.selectedEvent="";
+					activityEventCtrl.editedEvent=getEmptyEvent();
+					activityEventCtrl.editedEvent.newEvent=true;
+				},
+				function() {
+					console.log('Annulla');
+				});
+		}else{
+			activityEventCtrl.selectedEvent="";
+			activityEventCtrl.editedEvent=getEmptyEvent();
+			activityEventCtrl.editedEvent.newEvent=true;
+		}
+		
+	}
+
 	activityEventCtrl.setEvent = function(eventObj) {
-		activityEventCtrl.id = eventObj.id;
-		activityEventCtrl.name = eventObj.name;
-		activityEventCtrl.description = eventObj.description;
-		activityEventCtrl.type = eventObj.type;
-		activityEventCtrl.isSuspended = eventObj.isSuspended;
-		activityEventCtrl.dataset = eventObj.dataset;
-		activityEventCtrl.frequency = eventObj.frequency;
+		//check if  there is a change in progress
+		if(!activityEventCtrl.isEmptyNewEvent()){
+			var confirm = $mdDialog.confirm().title(translate.load("sbi.glossary.word.modify.progress"))
+			.content(translate.load("sbi.glossary.word.modify.progress.message.showGloss"))
+			.ariaLabel('Lucky day').ok(	translate.load("sbi.general.continue")).cancel(translate.load("sbi.general.cancel"));
+			$mdDialog.show(confirm).then(
+				function() {
+					activityEventCtrl.editedEvent=eventObj;
+				},
+				function() {
+				console.log('Annulla');
+				});
+		}else{
+			activityEventCtrl.editedEvent=eventObj;
+		}
+		
 	}
 	
 	activityEventCtrl.selectFirstEvent = function(eventsArray) {
@@ -110,4 +168,83 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 			activityEventCtrl.setEvent(eventsArray[0]);
 		}
 	}
+	
+	activityEventCtrl.isEmptyNewEvent = function() {
+		//compare the edited event with empty event template
+		var nw= JSON.parse(JSON.stringify(activityEventCtrl.editedEvent ));
+		if(nw.hasOwnProperty("newEvent")){
+			delete nw.newEvent;
+		}
+		return (JSON.stringify(getEmptyEvent()) == JSON.stringify(nw));
+	}
+	
+	activityEventCtrl.resetForm=function(){
+		//check if  there is a change in progress
+		if(!activityEventCtrl.isEmptyNewEvent()){
+			var confirm = $mdDialog.confirm().title(translate.load("sbi.glossary.word.modify.progress"))
+			.content(translate.load("sbi.glossary.word.modify.progress.message.showGloss"))
+			.ariaLabel('Lucky day').ok(translate.load("sbi.general.continue")).cancel(translate.load("sbi.general.cancel"));
+			$mdDialog.show(confirm).then(
+				function() {
+					activityEventCtrl.createNewEvent();
+				},
+				function() {
+				console.log('Annulla');
+				});
+		}else{
+			activityEventCtrl.createNewEvent();
+		}
+	}
+	
+	activityEventCtrl.saveEvent=function(isValid){
+		 if (isValid) {
+		   var SaveOrUpdate=activityEventCtrl.editedEvent.newEvent==true?'Saved':'Updated';
+			 //TO-DO rest services
+			 $mdToast.show($mdToast.simple().content(SaveOrUpdate).position('top').action(
+				'OK').highlightAction(false).hideDelay(3000));
+			 //if is new event, add it to list
+			 if(activityEventCtrl.editedEvent.newEvent==true){
+				 loadJobDataCtrl.events.push(activityEventCtrl.editedEvent);
+			 }
+			 activityEventCtrl.createNewEvent(true);
+			
+		    }else{
+		    	return false;
+		    }
+	}
+	
+
+	
+	activityEventCtrl.deleteEvent=function(item,ev){
+		var confirm = $mdDialog.confirm().title(
+				translate.load("sbi.glossary.word.delete")).content(
+				translate.load("sbi.glossary.word.delete.message")).ariaLabel(
+				'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
+				translate.load("sbi.myanalysis.delete.cancel")).targetEvent(ev);
+
+		$mdDialog
+				.show(confirm)
+				.then(
+						function() {
+							console.log("canciello");
+							var index = loadJobDataCtrl.events.indexOf(item);
+							loadJobDataCtrl.events.splice(index, 1);
+						}, function() {
+							console.log('annulla');
+						});
+		}
+	
+		activityEventCtrl.eventItemOpt = [ 
+	 		               	{
+	 		               		label : translate.load('sbi.generic.delete'),
+	 		               		icon:"fa fa-times",
+	 		               		backgroundColor:'transparent',
+	 		               		color:"black",
+	 		               		action : function(item,event) {
+	 		               		activityEventCtrl.deleteEvent(item,event)
+	 		               			}
+	 		               	} 
+	 		             
+	 		             ];
+	
 }]);

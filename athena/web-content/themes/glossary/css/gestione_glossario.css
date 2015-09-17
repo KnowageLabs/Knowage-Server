@@ -126,7 +126,7 @@ md-input-container.md-input-focused label:not (.md-no-float ),md-input-container
 
 md-input-container.md-icon-float.md-input-focused, md-input-container.md-icon-float.md-input-has-value-copy
 	{
-	margin-top: -8px;
+	margin-top: 0px;
 }
 
 md-input-container.md-icon-float.md-input-focused label,

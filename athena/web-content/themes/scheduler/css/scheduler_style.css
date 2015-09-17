@@ -1,3 +1,51 @@
 .detailBody md-input-container {
 	padding: 2px 2px 3px !important;
 }
+
+.detailBody md-input-container .md-char-counter {
+    bottom: -16px;
+    right: 2px;
+}
+
+.h100{
+	height: 100% !important;
+}
+.checkboxRow label{
+	    line-height: 53px;
+}
+.checkboxRow {
+	   height: 53px;
+}
+
+md-toolbar.minihead {
+	background-color: rgb(176, 190, 197);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
+}
+.minihead  {
+/*  position: absolute !important; */
+  height: 29px !important;
+  color: black !important;
+}
+
+.borderBox{
+	    border: 1px solid #B0BEC5;
+}
+
+.bottomButtonsBox{
+	height: 40px;
+	 bottom: 0;
+    position: absolute;
+    width: 100%;
+/*         border-top: 1px solid #B0BEC5; */
+}
+
+.bottomButtonsBox button{
+margin-top: 0;
+    margin-bottom: 0;}
+
+md-content.bottomButtonsBox{
+	    height: calc( 100% - 40px);
+	        top: 0;
+}

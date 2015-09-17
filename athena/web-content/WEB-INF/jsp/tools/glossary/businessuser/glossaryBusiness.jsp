@@ -169,7 +169,8 @@
 			</div>
 			
 			<div flex="80" offset="20"  class="rightBox_GLOSS  h100">
-				<md-content  class="h100">
+				<md-content  layout="column" flex>
+<!-- 					<md-content  class="h100"> -->
 				 	<md-tabs  md-dynamic-height  class="hideTabs h100" md-border-bottom > 
 						<md-tab  label="Glossari"	md-on-select="ctrl.activeTab='Glossari'"	md-active="ctrl.activeTab=='Glossari'">
 							<md-content  style="padding-left: 20px;"> 
@@ -204,7 +205,7 @@
 						</md-tab> 
 
 						<md-tab  label="Vocabolo" selected="true" md-on-select="ctrl.activeTab='Vocabolo'"	md-active="ctrl.activeTab=='Vocabolo'" style="margin:10px;"> 
-						<div style="    padding: 10px;     height: calc(100% - 20px); ">
+						<div layout="column" style="    padding: 10px;     height: calc(100% - 20px); ">
 							<md-toolbar class="md-blue minihead" >
 								<div class="md-toolbar-tools h100" >
 									<div style="   text-align: center;    font-size: 30px;">{{translate.load("sbi.glossary.word");}}</div>
@@ -219,7 +220,7 @@
 						 	  	</div>
 							</md-toolbar>
 			
-						<md-content class="ToolbarBox miniToolbar">
+						<md-content flex  style="    border: 1px solid #B0BEC5;    padding: 0px 4px;">
 
 							<form name="wordForm" class="wordForm " novalidate style="    padding-top: 4px;">
 					
