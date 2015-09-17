@@ -122,25 +122,25 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				class="md-whiteframe-z1">
 				<md-button class="md-raised" layout-align="center center">
 					{{translate.load("sbi.scheduler.activity.events.newevent")}}</md-button>
-				<md-content> 
-<!-- 				<md-list>  -->
-<!-- 					<md-list-item ng-repeat="event in jobData.events" ng-click="activityEvent.setEvent(event)"> -->
-<!-- 						{{event.name}} -->
-<!-- 					</md-list-item>  -->
-<!-- 				</md-list>  -->
 				
-				<angular-list layout-fill 
-						id='eventList' 
-                		ng-model=jobData.events
-                		item-name='name'
-                		click-function="activityEvent.setEvent(item)"
-                		highlights-selected-item=true
-                		show-search-bar=true
-                		selected-item=selectedWord
-                		>
-				</angular-list>
-				
-				
+				<md-content flex="85"> 
+					<%--
+					<md-list>
+	 					<md-list-item ng-repeat="event in jobData.events" ng-click="activityEvent.setEvent(event)">
+	 						{{event.name}}
+	 					</md-list-item> 
+	 				</md-list> 
+					--%>
+					<angular-list layout-fill 
+							id='eventList' 
+	                		ng-model=jobData.events
+	                		item-name='name'
+	                		click-function="activityEvent.setEvent(item)"
+	                		highlights-selected-item=true
+	                		show-search-bar=true
+	                		selected-item=selectedWord
+	                		>
+					</angular-list>
 				</md-content>
 			</div>
 
@@ -164,21 +164,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	                        	
 		                        <label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
 		                        <md-select ng-model="activityEvent.type" required>
-							    	<md-option value="rest">
-							    		{{translate.load("sbi.scheduler.activity.events.event.type.rest")}}</md-option>
-							    	<md-option value="jms">
-							    		{{translate.load("sbi.scheduler.activity.events.event.type.jms")}}</md-option>
-							    	<md-option value="contextbroker">
-							    		{{translate.load("sbi.scheduler.activity.events.event.type.contextbroker")}}</md-option>
-							    	<md-option value="dataset">
-							    		{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</md-option>
+							    	<md-option ng-repeat="eventType in jobData.typeEvents" value="{{eventType.value}}">
+							    		{{eventType.label}}
+							    	</md-option>
 							  	</md-select>
 								  	
 								<md-input-container>
 			                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
 			                        <md-checkbox ng-model="activityEvent.isSuspended">
 	                        	</md-input-container>
-	                        	
 	                        	
 	                        	<div ng-if="activityEvent.type=='dataset'">
 	                        		<md-input-container>
@@ -194,8 +188,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		                        	</md-input-container>
 	                        	</div>
 	                        	
-	                        	
-								
 	                       	</form>
 						</md-tab-body>
 					</md-tab> 

@@ -7,7 +7,7 @@ var loadEventsByActivity = function(jobDataObj) {
 	for (var i = 0; i < 40; i++) {
 		var event = {
 			id: i,
-			name: 'name_' + i,
+			name: 'event_' + i,
 			description: 'description_' + i,
 			type: eventTypes[i%4],
 			isSuspended: (i % 2)? true : false,
@@ -70,7 +70,6 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	loadJobDataCtrl.loadDataset = function(){
 		restServices.get("2.0/datasets", "listDataset")
 			.success(function(data, status, headers, config) {
-				console.log('success data: ', data);
 				if (data.hasOwnProperty("errors")) {
 					console.error(translate.load("sbi.glossary.load.error"))
 				} else {

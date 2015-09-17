@@ -225,7 +225,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		
 		Ext.create('Ext.window.Window', {
 		    title: LN('sbi.scheduler.activity.events.eventdefinition') + ' - ' + jobName,
-		    height: 600,
+		    height: 630,
 		    width: 900,
 		    resizable: false,
 		    closeAction : 'destroy',
