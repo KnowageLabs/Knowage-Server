@@ -1,7 +1,13 @@
-var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest']);
+var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest','angular_list']);
+
+app.service('translate', function() {
+	this.load = function(key) {
+		return messageResource.get(key, 'messages');
+	};
+});
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija222");
+	console.log("verzija229");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -18,34 +24,20 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.updatedHeader = "";
 	$scope.item = {};
 	$scope.multiArray = [];
+	$scope.bla = {};
 	
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
-	$scope.ispisi = function(){
+	/*$scope.ispisi = function(){
 		console.log($scope.list);
-	}
+	}*/
 	
-	
+
 	$scope.napuniNiz = function() {
 		$scope.multiArray.push($scope.createAssociations());
 		//console.log("f_napuniNiz "+angular.toJson($scope.multiArray));
 	}
-	
-	/*$scope.createAssociationsString = function(){
-		angular.forEach($scope.listaNew, function(dataset) {
-			  angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
-				  if(listField.selected===true){
-					  $scope.relation += "="+dataset.name.toUpperCase()+"."+listField.name;
-					  $scope.relNew = $scope.relation.substring(1);  
-				  }
-				});
-			});
-		$scope.associationArray.push($scope.relNew);
-		$scope.relation = "";
-		$scope.relNew = "";
-	}*/
-	
 		
 	$scope.createAssociations = function(){
 		  
@@ -146,19 +138,31 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 				console.log("nije ok")
 		);
 	}
+	
 
-	$scope.selektuj = function(listField,dataset){
-		  
-		  if(dataset==undefined)return 
-		  if(listField.selected===true){
-		   listField.selected = false;
-		  } else {
-		   angular.forEach(dataset.metadata.fieldsMeta, function(att) {
-		      att.selected = false;
-		       });
-		   listField.selected = true;
-		   }
+	$scope.selektuj = function(item,listId){
+		 angular.forEach($scope.listaNew, function(dataset){
+			 if(dataset.label==listId){
+				 angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+				 if(listField.name==item.name){
+					 if(listField.selected===true) {
+						 listField.selected = false;
+					 } else {
+						 angular.forEach(dataset.metadata.fieldsMeta, function(att){
+							 att.selected = false;
+						 });
+						 listField.selected = true;
+					 }
+				 } else {
+					 //listField.name==listField.name
+				 } 
+			 }); 
+		 } else {
+			 //dataset.label==listId
 		 }
+		  
+		 });
+	}
 		
 	restServices.get("2.0/datasets", "").success(
 			function(data, status, headers, config) {
@@ -166,6 +170,9 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 					console.log(data.errors[0].message);
 				} else {
 					$scope.list = data;
+					console.log($scope.list);
+					angular.toJson($scope.list);
+					console.log("sdada"+$scope.list);
 					angular.forEach($scope.lista, function(dataset) {
 						angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
 							listField.selected = false;
@@ -193,8 +200,15 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		}
 	}
 	
+	$scope.testFunkcija = function(param) {
+		console.log(param);
+		
+	}
+	
 	$scope.moveToListNew = function(param){
+		console.log(param);
 		var index = $scope.list.indexOf(param);
+		console.log("dd"+index);
         if (index != -1) {
           $scope.list.splice(index, 1);
         }	
@@ -247,6 +261,14 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		    );
 		  };
 
-	
+	$scope.showDatasetDetails = function(ev) {
+			$mdDialog.show({
+				templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+				parent: angular.element(document.body),	      
+			      scope: $scope,
+			      targetEvent: ev
+			    })
+			};
+
 });
 
