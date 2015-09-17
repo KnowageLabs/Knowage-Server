@@ -29,7 +29,7 @@ Sbi.cockpit.widgets.document.DocumentWidget = function(config) {
     	}
 		var docParametersStore = Ext.create('Ext.data.Store', {
 			storeId: this.documentId,
-		    fields: [{name: 'alias', mapping: 'label'},
+		    fields: [{name: 'alias', mapping: 'parameterUrlName'},
 		             {name: 'colType', mapping: 'fieldType'},
 		             {name: 'values', mapping: 'value'}],
 		    data : this.parameters,
@@ -88,8 +88,8 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
     		parametersString = "";
     		Ext.Array.forEach(this.parameters, function(param){
     			// external parameters will override configured parameters
-    			var value = this.externalParameterMap.containsKey(param.label) ? this.externalParameterMap.get(param.label) : param.value;
-    			parametersString += param.label + "=" + value + "&";
+    			var value = this.externalParameterMap.containsKey(param.parameterUrlName) ? this.externalParameterMap.get(param.parameterUrlName) : param.value;
+    			parametersString += param.parameterUrlName + "=" + value + "&";
     		},this);
     		parametersString = "&PARAMETERS="+encodeURIComponent(parametersString);
     	}

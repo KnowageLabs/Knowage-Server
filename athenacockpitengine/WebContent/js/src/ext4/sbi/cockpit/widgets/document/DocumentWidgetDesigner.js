@@ -52,7 +52,7 @@ Sbi.cockpit.widgets.document.DocumentWidgetDesigner = function(config) {
 	        	myParamStore.load(function(records, operation, success) {
 	        	    if(parameters){
 	        	    	Ext.Array.forEach( parameters, function(param){
-	        	    		myParamStore.getById(param.label).set('value',param.value);
+	        	    		myParamStore.getById(param.parameterUrlName).set('value',param.value);
 	            		});
 	        	    }
 	        	});
@@ -82,7 +82,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 		if(myParamStore){
 			state.parameters=[];
 			myParamStore.each(function(rec){
-				Ext.Array.push(state.parameters,{label: rec.data.label, value: rec.data.value, fieldType: rec.data.fieldType});
+				Ext.Array.push(state.parameters,{parameterUrlName: rec.data.parameterUrlName, label: rec.data.label, value: rec.data.value, fieldType: rec.data.fieldType});
 			});
 		}
 		
@@ -220,6 +220,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidgetDesigner, Sbi.cockpit.core
 			store: 'myParamStore',
 		    columns: [
 		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.paramName'),dataIndex: 'label'},
+		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.paramUrlName'),dataIndex: 'parameterUrlName'},
 		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.paramType'),dataIndex: 'fieldType'},
 		        {header: LN('sbi.cockpit.widgets.document.documentWidgetDesigner.default'),dataIndex: 'value',
 		        	flex: 1, editor: 'textfield'}
@@ -258,11 +259,12 @@ Ext.define('DocumentModel', {
 });
 Ext.define('DocumentParamModel', {
     extend: 'Ext.data.Model',
-    idProperty: 'label',
+    idProperty: 'parameterUrlName',
     fields: [
        {name: 'label', type: 'string'},
        {name: 'parameterUrlName', type: 'string'},
-       {name: 'fieldType', type: 'string', mapping: 'parameter.type'}
+       {name: 'fieldType', type: 'string', mapping: 'parameter.type'},
+       {name: 'value', defaultValue: ''} //Here "defaultValue" is needed to fix a bug on firefox SBI-530/ATHENA-136 
     ]
 });
 
