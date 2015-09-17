@@ -1031,9 +1031,10 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			//do not change the CSS, do nothing
 		} else {
 			var clsClass = this.tableConfigCSSClass;
+			var clsClassCSS = '#' + this.id  + ' .' + this.tableConfigCSSClass;
 			
-			var clsClassDefaultId = clsClass + 'Default';
-			var clsClassDefault = '.' + clsClass + ' .x-grid-cell {' 
+			var clsClassDefaultId = this.id + clsClass + 'Default';
+			var clsClassDefault = clsClassCSS + ' .x-grid-cell {' 
 				+ (!this.wconf.hideGrid ?
 						( 'border-style: solid; border-width: 0px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px 0px; '
 								+ 'border-color: #'+ this.wconf.gridColor + ';' ) :	
@@ -1041,24 +1042,24 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 				)
 			+'}';
 			
-			var clsClassFirstTdId = clsClass + 'FirstTd';
-			var clsClassFirstTd = '.' + clsClass + ' .x-grid-cell.x-grid-cell-first {' 
+			var clsClassFirstTdId = this.id + clsClass + 'FirstTd';
+			var clsClassFirstTd = clsClassCSS + ' .x-grid-cell.x-grid-cell-first {' 
 				+ (!this.wconf.hideGrid ? 
 						('border-width: 0px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px; ') :
 							( 'border-style: none; border-width: 0px ;' )
 				)
 			+'}';
 			
-			var clsClassFirstTrId = clsClass + 'FirstTr';
-			var clsClassFirstTr = '.' + clsClass + ' tr:first-child .x-grid-cell {' 
+			var clsClassFirstTrId = this.id + clsClass + 'FirstTr';
+			var clsClassFirstTr = clsClassCSS + ' tr:first-child .x-grid-cell {' 
 				+ (!this.wconf.hideGrid ? 
 						('border-width: ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px ' + this.wconf.lineSize + 'px 0px; ') :
 							( 'border-style: none; border-width: 0px ;' )
 				)
 			+'}';
 			
-			var clsClassFirstTrFirstTdId = clsClass + 'FirstTrFirstTd';
-			var clsClassFirstTrFirstTd = '.' + clsClass + ' tr:first-child .x-grid-cell.x-grid-cell-first {' 
+			var clsClassFirstTrFirstTdId = this.id + clsClass + 'FirstTrFirstTd';
+			var clsClassFirstTrFirstTd = clsClassCSS + ' tr:first-child .x-grid-cell.x-grid-cell-first {' 
 				+ (!this.wconf.hideGrid ? 
 						('border-width: ' + this.wconf.lineSize + 'px; ') :
 							( 'border-style: none; border-width: 0px ;' )
@@ -1078,16 +1079,16 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			Ext.util.CSS.createStyleSheet(clsClassFirstTrFirstTd, clsClassFirstTrFirstTdId);
 			
 			
-			var alternateRowsFirstClassId = clsClass + 'First';
-			var alternateRowsFirst = '.' + clsClass + ' .x-grid-row .x-grid-cell {' 
+			var alternateRowsFirstClassId = this.id + clsClass + 'First';
+			var alternateRowsFirst = clsClassCSS + ' .x-grid-row .x-grid-cell {' 
 					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
 							'background-color: #'+ this.wconf.alternateRowsColorsFirst + ';' :
 								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
 										'background-color: #'+ this.wconf.rowsBgColor + ';' :
 										'background-color: transparent;')
 				+'}';
-			var alternateRowsSecondClassId = clsClass + 'Second';
-			var alternateRowsSecond = '.' + clsClass + ' .x-grid-row-alt .x-grid-cell {' 
+			var alternateRowsSecondClassId = this.id + clsClass + 'Second';
+			var alternateRowsSecond = clsClassCSS + ' .x-grid-row-alt .x-grid-cell {' 
 					+ ( this.wconf.alternateRowsColors && this.wconf.alternateRowsColors == true? 
 							'background-color: #'+ this.wconf.alternateRowsColorsSecond + ';' :
 								this.wconf.rowsBgColor && this.wconf.rowsBgColor != null && this.wconf.rowsBgColor != '' ?
@@ -1101,8 +1102,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 			Ext.util.CSS.removeStyleSheet(alternateRowsSecondClassId);
 			Ext.util.CSS.createStyleSheet(alternateRowsSecond, alternateRowsSecondClassId);
 			
-			var summaryRowClassId = clsClass + 'SummaryRow';
-			var summaryRowClass = '.' + clsClass + ' .x-grid-row-summary .x-grid-cell {'
+			var summaryRowClassId = this.id + clsClass + 'SummaryRow';
+			var summaryRowClass = clsClassCSS + ' .x-grid-row-summary .x-grid-cell {'
 				+ ( this.wconf.summaryRow != undefined && this.wconf.summaryRow == true ? 
 						'background-color: #'+ this.wconf.summaryRowBackgroundColor + ' !important;' :
 						'display: none;')
