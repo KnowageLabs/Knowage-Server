@@ -76,7 +76,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		isFromCross = "false";
 	}
 	isPowerUser = profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
-	
 	qbeEngineConfig = QbeEngineConfig.getInstance();
     
 	
@@ -213,8 +212,25 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	    	
 	        // javascript-side user profile object
 	        Ext.ns("Sbi.user");
-	        Sbi.user.isPowerUser = <%= isPowerUser %>;
-	
+	        Sbi.user.isPowerUser = <%=  isPowerUser %>;
+	       
+		
+	        Sbi.user.functionalities=[];
+	        
+	        <% 
+	        for(Object s : profile.getFunctionalities()){
+	        	String ss=s.toString();
+	        %>
+	        Sbi.user.functionalities.push("<%= ss %>");
+	         <%   }    %>
+	        
+	         Sbi.user.isAbleTo=function(functio){
+	        	 return (Sbi.user.functionalities.indexOf(functio)!=-1);
+	         }
+	        
+	        
+	        
+	        
 	        var qbe = null;
 	        
 	        Ext.onReady(function(){

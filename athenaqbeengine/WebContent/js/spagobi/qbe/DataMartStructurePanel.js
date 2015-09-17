@@ -1031,6 +1031,15 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
              items: [
              // ACID operations on nodes
              '-',{
+            	 text:LN('sbi.generic.helpOnLine'),
+                 iconCls:'helpOnLine',
+                 handler:  function() {
+	            	var itemHOL="DATAMART="+this.title+"&BUSINESS_CLASS="+this.ctxNode.attributes.text;
+	            	parent.parent.execShowHelpOnLine(itemHOL);
+                 	},
+                 scope: this,
+                 hidden: (this.ctxNode.attributes.attributes.linkedToWords!=true || !Sbi.user.isAbleTo("Glossary"))
+             },{
             	 text:LN('sbi.qbe.calculatedFields.add'),
                  iconCls:'add',
                  handler:function(){
@@ -1101,7 +1110,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 			this.menu.destroy();
 		}
 
-		this.initMenu();// create context menu on first right click
+		
         
         if(this.ctxNode){
             this.ctxNode.ui.removeClass('x-node-ctx');
@@ -1110,6 +1119,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
         
         this.ctxNode = node;
         this.ctxNode.ui.addClass('x-node-ctx');
+        this.initMenu();// create context menu on first right click
         this.menu.showAt(e.getXY());
     }
 	
