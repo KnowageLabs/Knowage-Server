@@ -90,8 +90,6 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 
 			var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 			var title = LN('sbi.ds.listTitle');
-			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
-			
 			var buttonEditFederated = '<li class="editFederated"><a id="editFederated" href="#" title="Edit federated"></a></li>';
 			
 			/*
@@ -157,7 +155,6 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 									    		'<tpl if="type == \'FEDERATED_DATASET\'">',
 									    		buttonEditFederated,
 									    		'</tpl>',
-									    		buttonHelpOnLine,
 									    		'    </ul>',
 												'</div>',
 											'</div>',										
@@ -180,27 +177,7 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
 			
-			if(e.target.id=='MHOL'){
-//				show help on line
-				 console.log('showHelpOnLine');
-				  var panel=new Ext.ux.IFrame({
-			              border: false,
-			              bodyBorder: false,
-			              src: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET='+record.data.id+'&LABEL='+(record.data.label==""?record.data.name:record.data.label),
-				    });
-			    	  
-			    	var dialogBox = new Ext.Window({
-			              title: 'Help Online',
-			              modal:true,
-			              width:'90%',
-			              height:Ext.getBody().getViewSize().height*0.9 ,
-			              closable:true,
-			              items:[panel],
-			          });
-			    	  
-			    	  dialogBox.show();
-			    	  
-			}else{
+
 				
 				if(e.target.id == 'editFederated')
 					{
@@ -216,6 +193,6 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 					else{
 						this.fireEvent('executeDocument','QBE','MODEL',record);
 					}
-			}			
+						
 	    }
 	});

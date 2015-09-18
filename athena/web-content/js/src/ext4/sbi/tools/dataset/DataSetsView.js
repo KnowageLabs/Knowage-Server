@@ -132,7 +132,9 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 		
 		var author = LN('sbi.generic.author');
 		var currentUser = this.config.user;
-
+		var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
+		
+		
 		this.tpl = new Ext.XTemplate(
 				'<div id="list-container" class="main-datasets-list">', 	            
 //	 	           '<div class="dataset-group-view">',
@@ -161,6 +163,7 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
 									        '					</tpl>													  '+									        
 									        '			</tpl>'+
 									        '		</tpl>'+
+									        buttonHelpOnLine +
 								            '    </ul>'+
 								            '</div>'+
 								            '<tpl for="actions">'+   //TO OPTIMIZE WITHOUT CICLE ON ACTIONS!!!!
@@ -259,7 +262,10 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
     	var actionQbe = e.getTarget('li[class=qbe]', 10, true);
     	var actionGeoreport = e.getTarget('li[class=georeport]', 10, true);
         var actionInfo = e.getTarget('li[class=info]',10,true);				// for CKAN
+        var actionHelpOnLine = e.getTarget('li[class=MyDataHelpOnLine]', 10, true);
+        
         var actionDelete = e.getTarget('a[class=delete]', 10, true);
+        
        // var actionFavourite = e.getTarget('span.icon', 10, true); //TBD
         
         var actionShareDataset = e.getTarget('div[class=share]',10,true);
@@ -304,7 +310,10 @@ Ext.define('Sbi.tools.dataset.DataSetsView', {
         	Sbi.debug('DataSetView actionInfo raise event...'); 
         	scope.fireEvent('info', record.data);
         	
-        } /*else {
+        } else if(actionHelpOnLine!=null){
+        	Sbi.debug('DataSetView actionHelpOnLine raise event...'); 
+        	parent.execShowHelpOnLine('DATASET='+record.data.id+'&LABEL='+record.data.label);
+        }/*else {
         	Sbi.debug('DataSetView default click event...'); 
         	if (record.data.pars != undefined && record.data.pars != ''){
         		Sbi.exception.ExceptionHandler.showInfoMessage(LN('sbi.ds.noWorksheetDesigner'));
