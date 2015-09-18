@@ -76,7 +76,10 @@ position: relative;
 }
 
 .wordForm .attr_Value{
-	margin-top: -10px !important;
+	margin-top: -6px !important;
+}
+.wordForm .attr_Value.md-input-has-value{
+	margin-top: -2px !important;
 }
 
 .wordForm textarea, .wordForm .linkChips {

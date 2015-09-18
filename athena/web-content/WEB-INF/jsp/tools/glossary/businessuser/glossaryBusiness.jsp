@@ -315,7 +315,7 @@
 			
 										<div class="linkChips">
 											<md-contact-chips ng-model="ctrl.newWord.LINK"
-											md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
+												md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
 												md-require-match="" filter-selected="true">
 			<!-- 								<md-chip-template > <strong>{{$chip.WORD | uppercase}}</strong> </md-chip-template>  -->
 											
@@ -327,33 +327,22 @@
 								</div>
 
 								<div layout="row" layout-wrap>
-									<div flex="5">
-										<md-icon md-font-icon="fa fa-folder-o " class="stato"
-											style="  margin-top: 25px;"></md-icon>
-			
-									</div>
-									<div flex="40">
-										<md-autocomplete style="  min-width: 0;" flex=""
-											md-input-name="autocompleteField" md-no-cache="true"
-											md-search-text="ctrl.tmpAttr.Prop"
-											md-autoselect=true
-											md-selected-item="ctrl.selectedItem"
-											md-items="item in ctrl.querySearchProp(ctrl.tmpAttr.Prop)"
-											md-item-text="item.ATTRIBUTE_NM" 
-											md-require-match=""
-											md-delay=500
-											md-floating-label='{{translate.load("sbi.glossary.attributes");}}'> <md-item-template>
-										<span md-highlight-text="ctrl.tmpAttr.Prop.toUpperCase()">{{item.ATTRIBUTE_NM | uppercase}}</span>
-										</md-item-template> </md-autocomplete>
-									</div>
-			
-			
-			<!-- 						<div flex="40"> -->
-			<!-- 							<md-input-container class="attr_Value">  -->
-			<!-- 							<label>Valore</label> <input ng-model="ctrl.tmpAttr.Val" maxlength="500" -->
-			<!-- 								type="text"> </md-input-container> -->
 									
-			<!-- 						</div> -->
+									
+									<div flex="40" style="height: 40px;" layout="row">
+									<md-icon md-font-icon="fa fa-folder-o " class="stato"
+											style="  margin-top: 25px;"></md-icon>
+											
+											
+									 	<md-select placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.attributes");}}' ng-model="ctrl.tmpAttr.Prop" md-on-open="ctrl.loadProperty()" style="    width: 100%;    margin-left: 24px;">
+  									   		 <md-option ng-value="attr" ng-repeat="attr in ctrl.propertyList">
+  									   		 	{{attr.ATTRIBUTE_NM}}
+  									   		 </md-option>
+    								 	</md-select>
+	
+									</div>
+			
+
 										<div flex="40">
 										<md-input-container class=" attr_Value md-icon-float textareaInputBox" ng-class="{ 'md-input-hasnt-value' : ( ctrl.tmpAttr.Val.length === 0 ||ctrl.tmpAttr.Val == null)  }"> 
 										<label>{{translate.load("sbi.generic.value");}}</label> <textarea ng-model="ctrl.tmpAttr.Val" maxlength="500"
@@ -361,10 +350,10 @@
 									
 										</div>
 			
-										<div flex="15">
+										<div flex="20" layout="row" layout-align="center center"	>
 										<md-button
-											ng-click="ctrl.tmpAttr.Prop=ctrl.selectedItem ;ctrl.addProp(ctrl.tmpAttr)"
-											ng-disabled=" ctrl.tmpAttr.Prop.length==0 || ctrl.tmpAttr.Prop==null || ctrl.selectedItem==undefined || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
+											ng-click="ctrl.addProp(ctrl.tmpAttr)"
+											ng-disabled=" ctrl.tmpAttr.Prop.length==0 || ctrl.tmpAttr.Prop==null  || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
 											class="md-fab   md-mini" aria-label="Aggiungi_Attributo">
 										<md-tooltip> {{translate.load("sbi.generic.add");}} {{translate.load("sbi.glossary.attributes");}} </md-tooltip> <md-icon
 											md-font-icon="fa fa-plus fa-2x" style="   margin-left: 2px;"></md-icon>

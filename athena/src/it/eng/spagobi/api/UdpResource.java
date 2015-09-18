@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  *
@@ -37,49 +38,44 @@ public class UdpResource {
 	public String loadUDPGlossaryLikeLabel(@Context HttpServletRequest req) {
 		try {
 			IUdpDAO dao = DAOFactory.getUdpDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 			String lab = req.getParameter("LABEL");
 			String fam = req.getParameter("FAMILY");
-			if(lab.trim().isEmpty()){
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"An unexpected error occured while executing service. Empty search label");
+			// if(lab.trim().isEmpty()){
+			// throw new SpagoBIServiceException(req.getPathInfo(),
+			// "An unexpected error occured while executing service. Empty search label");
+			// }
+			if (fam.trim().isEmpty()) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service. Empty family");
 			}
-			if(fam.trim().isEmpty()){
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"An unexpected error occured while executing service. Empty family");
-			}
-			List<Udp> lst=null;
+			List<Udp> lst = null;
 			if (lab != null && !lab.trim().isEmpty()) {
 				lst = dao.loadByFamilyAndLikeLabel(fam, lab);
 			} else {
 				lst = dao.loadAllByFamily(fam);
 			}
-			if(lst==null){
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"An unexpected error occured while executing service. Null list");
+			if (lst == null) {
+				throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service. Null list");
 			}
-			
+
 			JSONArray jarr = new JSONArray();
-			for (Udp o : lst){
-				if(fam.compareTo("Glossary")==0){
+			for (Udp o : lst) {
+				if (fam.compareTo("Glossary") == 0) {
 					jarr.put(fromUdpLight(o));
-				}else{
+				} else {
 					jarr.put(JsonConverter.objectToJson(o, Udp.class));
 				}
-				
+
 			}
 			return jarr.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
-	
-	private static JSONObject fromUdpLight(Udp SbiUdp)
-			throws JSONException {
+
+	private static JSONObject fromUdpLight(Udp SbiUdp) throws JSONException {
 		JSONObject jobj = new JSONObject();
 		jobj.put("ATTRIBUTE_ID", SbiUdp.getUdpId());
 		jobj.put("ATTRIBUTE_NM", SbiUdp.getLabel());
