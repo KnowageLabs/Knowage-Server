@@ -9,6 +9,7 @@
 }
 .editbtn-background{
 	background-color: #2196F3 !important;
+	color: white !important;
 	
 }
 .miniheadfederation  {
@@ -32,4 +33,8 @@ md-toolbar.miniheadfedsmall {
 .createRelationButton {
 	background-color: 0094FF!important;
 	position
+}
+md-list-item.md-list-item-inner.relation {
+	height: 35px;
+	min-meight: 0px;
 }

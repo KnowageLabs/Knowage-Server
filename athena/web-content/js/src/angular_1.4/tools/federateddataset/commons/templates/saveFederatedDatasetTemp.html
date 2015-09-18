@@ -1,16 +1,49 @@
-<md-dialog aria-label="Fill in the dataset details and click on Save" style="width: 80%; overflow-y: visible;">
-  <form>
-  	<div>
-  	<md-toolbar class="miniheadfedsmall"
-				style="">
-			<div class="md-toolbar-tools">
-				<h2 class="md-flex" style="padding-left: 14px">Fill in the dataset details and click on Save</h2>
-			</div>
-			</md-toolbar>
-		<!-- <md-header class="md-sticky-no-effect" style="padding-top:20px; padding-left:20px;">Fill in the dataset details and click on Save</md-header> -->
-  			<md-dialog-content class="sticky-container">
-    			<div>
-					<md-input-container> 
+<md-dialog aria-label="saveFederatedDatasetTemp" style="width: 80%; overflow-y: visible;">
+ <div>
+	<md-toolbar class="miniheadfederation">
+	
+		<p class="md-flex"  align="center">Fill in the dataset details and click on Save</p>
+	
+	</md-toolbar>
+  			<md-content class="sticky-container">
+    			<div style="padding:5px">
+					<form name="saveFDSForm">
+					
+						<md-input-container flex> 
+						<label>Name</label> 
+						<input ng-model="federateddataset.name" name="name" required>
+						<div ng-messages="saveFDSForm.name.$error" ng-if="saveFDSForm.name.$dirty && !federateddataset.name.length">
+							<div ng-message="required">Required!</div>
+						</div>
+						</md-input-container>
+						
+						<md-input-container flex> 
+						<label>Label</label> 
+						<input ng-model="federateddataset.label" name="label" required>
+						<div ng-messages="saveFDSForm.label.$error" ng-if="saveFDSForm.label.$dirty && !federateddataset.label.length">
+							<div ng-message="required">Required!</div>
+						</div>
+						</md-input-container>
+						
+						<md-input-container> 
+	        				<label>Description</label>
+	        				<input ng-model='federateddataset.description'></input>
+      					</md-input-container>
+      					
+      					<div class="md-actions" layout="row">
+    			<span flex></span>
+    			<md-button style="color:grey" ng-click="answer('close')" class="md-primary">
+     				close
+    			</md-button>
+    			<md-button style="color:grey" 
+    			ng-click="saveFedDataSet(); hide(); showAlert($event)" class="md-primary" 
+    			ng-disabled="saveFDSForm.$invalid">
+      				save
+    			</md-button>
+  			</div>
+						
+					</form>
+			<!-- <md-input-container> 
         				<label>Label</label>
         				<input ng-model='federateddataset.label'></input>
       				</md-input-container>
@@ -23,19 +56,11 @@
       				<md-input-container> 
         				<label>Description</label>
         				<input ng-model='federateddataset.description'></input>
-      				</md-input-container>
+      				</md-input-container> -->
       			</div>
-  			</md-dialog-content>
+  			</md-content>
 
-  			<div class="md-actions" layout="row">
-    			<span flex></span>
-    			<md-button ng-click="answer('close')" class="md-primary">
-     				close
-    			</md-button>
-    			<md-button class="md-raised" ng-click="saveFedDataSet(); hide(); showAlert($event)" class="md-primary">
-      				save
-    			</md-button>
-  			</div>
+  			
 	</div>
-  </form>
+ 
 </md-dialog>

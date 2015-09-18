@@ -76,7 +76,10 @@
 					id="selectedDatasets" 
 					ng-model="list" 
 					item-name="label"
+					show-search-bar=true
+					speed-menu-option=glossSpeedMenuOptAD
 					click-function="moveToListNew(item)"
+					
 					>					
 					</angular-list>
 				</md-content>
@@ -97,13 +100,17 @@
 					id="availableDatasets" 
 					ng-model="listaNew" 
 					item-name="label" 
-					show-search-bar=false	
-					click-function="kickOutFromListNew(item)"
+						
+					speed-menu-option=glossSpeedMenuOpt
+					
 					>					
 					</angular-list>
+					
 				</md-content>
 				
 			</div>
+			
+			
 			<!-- <div flex="49" style="margin-right: 20px; "">
 				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
 				<div class="md-toolbar-tools">
@@ -170,6 +177,7 @@
 							item-name="name"
 							highlights-selected-item=true
 							click-function="selektuj(item, listId)"
+							
 						>
 						</angular-list>
 						
@@ -186,21 +194,21 @@
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
 				<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton"><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
-					ng-click="napuniNiz(); createAssociationsString()"></md-icon></md-button> 	
+					ng-click="napuniNiz();"></md-icon></md-button> 	
 			</div>
 
 
 			</md-toolbar>
 			<md-content style=" height:300px">
 
-			<div style="padding: 10px">
+			<div>
 				
 				<md-content style="height:265px">
 				<div>
 					<md-list>
 						<div ng-repeat="k in multiArray">
 							
-							<md-list-item>
+							<md-list-item style="min-height:35px">
 							
 							<div ng-repeat="bla in k track by $index">
 							

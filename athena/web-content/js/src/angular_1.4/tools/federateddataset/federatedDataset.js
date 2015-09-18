@@ -7,7 +7,7 @@ app.service('translate', function() {
 });
 
 app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija229");
+	console.log("verzija230");
 	
 	$scope.federateddataset = {};
 	$scope.update = {};
@@ -25,6 +25,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.item = {};
 	$scope.multiArray = [];
 	$scope.bla = {};
+	$scope.selectedVariable = {};
 	
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
@@ -147,6 +148,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 				 if(listField.name==item.name){
 					 if(listField.selected===true) {
 						 listField.selected = false;
+						 $scope.selectedVariable = null;
 					 } else {
 						 angular.forEach(dataset.metadata.fieldsMeta, function(att){
 							 att.selected = false;
@@ -200,15 +202,11 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		}
 	}
 	
-	$scope.testFunkcija = function(param) {
-		console.log(param);
-		
-	}
-	
+
 	$scope.moveToListNew = function(param){
-		console.log(param);
+		console.log("objekat"+param);
 		var index = $scope.list.indexOf(param);
-		console.log("dd"+index);
+		console.log(""+index);
         if (index != -1) {
           $scope.list.splice(index, 1);
         }	
@@ -222,8 +220,6 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.toggle = function(){
 		$scope.state=!$scope.state;
 	}
-	
-	
 	
 	$scope.kickOutFromAssociatonArray = function(param) {
 		var index = $scope.associationArray.indexOf(param);
@@ -239,7 +235,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	}
 	
 	$scope.hide = function() {
-	    $mdDialog.hide();
+	    $mdDialog.cancel();
 	  };
 
 	$scope.cancel = function() {
@@ -262,13 +258,56 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		  };
 
 	$scope.showDatasetDetails = function(ev) {
-			$mdDialog.show({
+		$mdDialog.show(
+				  				  	  
+			      $mdDialog.alert()
+			        .parent(angular.element(document.querySelector('#popupContainer')))
+			        .clickOutsideToClose(true)
+			        .title('Dataset information')
+			        .content()
+			        .ok('OK')
+			        .targetEvent(ev)
+			        
+			    );
+			/*$mdDialog.show({
 				templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
 				parent: angular.element(document.body),	      
 			      scope: $scope,
 			      targetEvent: ev
-			    })
+			    })*/
 			};
-
+			
+			
+	$scope.glossSpeedMenuOpt = [ 			 		               	
+			 		               	{
+			 		               		label: 'Delete',
+			 		               		icon:"fa fa-trash-o",
+			 		               		backgroundColor:'red',
+			 		               		action : function(param) {
+			 		               			$scope.kickOutFromListNew(param);
+			 		               			}
+			 		               	}
+			 		             ];
+	
+	$scope.glossSpeedMenuOptAD = [ 			 		               	
+		 		               	{
+		 		               		
+		 		               		icon:"fa fa-info-circle",
+		 		               		backgroundColor:'green',
+		 		               		/*action : function(param) {
+		 		               				$scope.showDSDetails(param);
+		 		               			}*/
+		 		               		
+		 		               		
+		 		               	}
+		 		             ];
+	$scope.showDSDetails = function(ev) {
+		  $mdDialog.show({
+			  templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+			  parent: angular.element(document.body),	      
+		      scope: $scope,
+		      targetEvent: ev
+		    })
+		};
 });
 
