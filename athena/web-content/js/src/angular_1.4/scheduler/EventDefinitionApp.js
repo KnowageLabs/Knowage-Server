@@ -22,7 +22,6 @@ var loadEventsByActivity = function(jobDataObj) {
 }
 
 var getEmptyEvent=function(i){
-	
 	var emptyEvent = {
 			id: -1,
 			name: '',
@@ -51,8 +50,8 @@ eventDefinitionApp.service('translate', function() {
 var activityEventCtrl;
 var loadJobDataCtrl ;
 
-eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','restServices' ,function(translate, $scope,restServices) {
-	 loadJobDataCtrl = this;
+eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','restServices' ,function(translate, $scope, restServices) {
+	loadJobDataCtrl = this;
 
 	loadJobDataCtrl.jobName = '';
 	loadJobDataCtrl.jobGroup = '';
@@ -76,6 +75,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		loadJobDataCtrl.jobName = jobName;
 		loadJobDataCtrl.jobGroup = jobGroup;
 		loadJobDataCtrl.jobDescription = jobDescription;
+		loadJobDataCtrl.jobData = null;
 		
 		loadJobDataCtrl.events = loadEventsByActivity({
 			jobName: loadJobDataCtrl.jobName,
@@ -84,13 +84,19 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		});
 
 		loadJobDataCtrl.loadDataset();
-		loadJobDataCtrl.loadDdocument();
+		loadJobDataCtrl.loadJobData();
 	}
 	
-	loadJobDataCtrl.loadDdocument = function(){
-		for(var i=0;i<10;i++){
-			var ite={id:i,label:'document_'+i};
-			loadJobDataCtrl.documents.push(ite);
+	loadJobDataCtrl.loadDocuments = function(){
+		var docs = loadJobDataCtrl.jobData.documents;
+		for(var i = 0; i < docs.length; i++){
+			var doc = {
+//				id: docs[i].,
+				label: docs[i].name,
+				parameters: docs[i].condensedParameters
+			};
+			
+			loadJobDataCtrl.documents.push(doc);
 		}
 	}
 	
@@ -100,7 +106,23 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 				if (data.hasOwnProperty("errors")) {
 					console.error(translate.load("sbi.glossary.load.error"))
 				} else {
-					loadJobDataCtrl.datasets=data.item;
+					loadJobDataCtrl.datasets = data.item;
+				}
+			})
+			.error(function(data, status, headers, config) {
+				console.error(translate.load("sbi.glossary.load.error"))
+			});
+	}
+	
+	loadJobDataCtrl.loadJobData = function(){
+		var parameters = 'jobName=' + loadJobDataCtrl.jobName + '&jobGroup=' + loadJobDataCtrl.jobGroup;
+		restServices.get("scheduler", "getJob", parameters)
+			.success(function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.error(translate.load("sbi.glossary.load.error"))
+				} else {
+					loadJobDataCtrl.jobData = data;
+					loadJobDataCtrl.loadDocuments();
 				}
 			})
 			.error(function(data, status, headers, config) {

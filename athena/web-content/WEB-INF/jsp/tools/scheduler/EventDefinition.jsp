@@ -108,12 +108,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 %>
 </head>
 
-<!-- <body ng-app="EventDefinitionApp" ng-controller="LoadJobData as load"> -->
 <body ng-app="EventDefinitionApp">
-
-	<div ng-controller="LoadJobDataController as jobData" layout-fill 
-		ng-init="jobData.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=jobDescription%>')">
-
+	<div ng-controller="LoadJobDataController as jobDataCtrl" layout-fill 
+		ng-init="jobDataCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=jobDescription%>')">
+		
 		<div layout-padding layout="row" flex layout-fill class="h100"  ng-controller="ActivityEventController as activityEvent">
 
 			<%-- List of activity events --%>
@@ -122,16 +120,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				{{translate.load("sbi.scheduler.activity.events.newevent")}}</md-button>
 				
 				<md-content class="h100"> 
-					<%--
-					<md-list>
-	 					<md-list-item ng-repeat="event in jobData.events" ng-click="activityEvent.setEvent(event)">
-	 						{{event.name}}
-	 					</md-list-item> 
-	 				</md-list> 
-					--%>
 					<angular-list layout-fill style="position: absolute; height: 100%;"
 							id='eventList' 
-	                		ng-model=jobData.events
+	                		ng-model=jobDataCtrl.events
 	                		item-name='name'
 	                		click-function="activityEvent.setEvent(item)"
 	                		highlights-selected-item=true
@@ -145,94 +136,86 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 			<%-- Event detail panel --%>
 			<div  layout="column" flex class="md-whiteframe-z1">
-				<md-tabs  ng-init="activityEvent.selectFirstEvent(jobData.events)" flex>
+				<md-tabs  ng-init="activityEvent.selectFirstEvent(jobDataCtrl.events)" flex>
 					
 					<md-tab id="eventTabDetail" layout-padding flex>
 						<md-tab-label>{{translate.load("sbi.generic.details")}}</md-tab-label>
 						<md-tab-body class="md-padding " flex>
 							<form name="contactForm" ng-submit="contactForm.$valid && activityEvent.saveEvent(contactForm.$valid)" layout="column" class="detailBody" novalidate>
-							
-							
-							<md-content class="bottomButtonsBox">
-								<md-input-container>
-			                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
-			                        <input ng-model="activityEvent.editedEvent.name" required maxlength="100" ng-maxlength="100" md-maxlength="100">
-	                        	</md-input-container>
-	                        	
-								<md-input-container>
-			                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
-			                       
-			                        <textarea ng-model="activityEvent.editedEvent.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
-	                        	</md-input-container>
-	                        	
-	                        	<md-input-container>
-		                        	<label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
-			                        <md-select ng-model="activityEvent.editedEvent.type" required>
-								    	<md-option ng-repeat="eventType in jobData.typeEvents" value="{{eventType.value}}">
-								    		{{eventType.label}}
-								    	</md-option>
-								  	</md-select>
-							  	</md-input-container>
-								  	
-								<div layout="row" class="checkboxRow">
-			                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
-			                        <md-checkbox ng-model="activityEvent.editedEvent.isSuspended">
-	                        	</div>
-	                        	
-	                        	
-	 
-	                        	<div ng-if="activityEvent.editedEvent.type=='dataset'">
-	                        	 <md-toolbar class="minihead">
-							    	<div class="md-toolbar-tools">
-							    	  <h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
-							    	</div>
-							 	 </md-toolbar>
-							  	<md-content layout-padding class="borderBox">
-							 		 <md-input-container>
-    								    <label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
-	                        			<md-select ng-model="activityEvent.editedEvent.dataset" required>
-								 		  <md-option ng-repeat="item in jobData.datasets " value="{{item.id}}">{{item.label}}</md-option>
-										</md-select>
-								  		</md-input-container>
-								 	 	
-										<md-input-container>
-					                        <label>{{translate.load("sbi.scheduler.activity.events.event.frequency")}}:</label>
-					                        <input type="number" ng-model="activityEvent.editedEvent.frequency">
-		                        		</md-input-container>
- 								 </md-content>
-  
-	                        		
-	                        	</div>
+								<md-content class="bottomButtonsBox">
+									<md-input-container>
+				                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
+				                        <input ng-model="activityEvent.editedEvent.name" required maxlength="100" ng-maxlength="100" md-maxlength="100">
+		                        	</md-input-container>
+		                        	
+									<md-input-container>
+				                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
+				                       
+				                        <textarea ng-model="activityEvent.editedEvent.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
+		                        	</md-input-container>
+		                        	
+		                        	<md-input-container>
+			                        	<label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
+				                        <md-select ng-model="activityEvent.editedEvent.type" required>
+									    	<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" value="{{eventType.value}}">
+									    		{{eventType.label}}
+									    	</md-option>
+									  	</md-select>
+								  	</md-input-container>
+									  	
+									<div layout="row" class="checkboxRow">
+				                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
+				                        <md-checkbox ng-model="activityEvent.editedEvent.isSuspended">
+		                        	</div>
+		                        	
+		                        	<div ng-if="activityEvent.editedEvent.type=='dataset'">
+										<md-toolbar class="minihead">
+											<div class="md-toolbar-tools">
+												<h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
+											</div>
+										</md-toolbar>
+										
+										<md-content layout-padding class="borderBox"> 
+											<md-input-container>
+												<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+												<md-select ng-model="activityEvent.editedEvent.dataset" required>
+													<md-option ng-repeat="item in jobDataCtrl.datasets "
+														value="{{item.id}}">{{item.label}}</md-option> 
+												</md-select> 
+											</md-input-container> 
+											<md-input-container>
+												<label>{{translate.load("sbi.scheduler.activity.events.event.frequency")}}:</label>
+												<input type="number"
+													ng-model="activityEvent.editedEvent.frequency"> 
+											</md-input-container> 
+										</md-content>
+									</div>
+	
 	                        	</md-content>
-	                        	
-      								<div layout="row" layout-align="end center"
-      								 class=" bottomButtonsBox" >
-      								  <md-button type="button" class="md-raised" ng-click="activityEvent.resetForm()">Cancella</md-button>
-      								  <div style="    z-index: 1;">
-      								  <md-button type="submit" class="md-raised md-primary" ng-disabled="!contactForm.$valid">
-      								 	 Salva
-									   </md-button>
-									    <md-tooltip md-direction="top" ng-if="!contactForm.$valid">
-									          completare i campi correttamente
-									      </md-tooltip>
-									     </div>
-      								</div>
-   						
-	                       	</form>
+	
+								<div layout="row" layout-align="end center" class=" bottomButtonsBox">
+									<md-button type="button" class="md-raised"
+										ng-click="activityEvent.resetForm()">Cancella</md-button>
+									<div style="z-index: 1;">
+										<md-button type="submit" class="md-raised md-primary"
+											ng-disabled="!contactForm.$valid"> Salva </md-button>
+										<md-tooltip md-direction="top" ng-if="!contactForm.$valid">
+										completare i campi correttamente </md-tooltip>
+									</div>
+								</div>
+
+							</form>
 						</md-tab-body>
 					</md-tab> 
 					
 					<md-tab id="eventTabDocuments"> 
 						<md-tab-label>{{translate.load("sbi.scheduler.activity.events.documentsmanagement")}}</md-tab-label>
 						<md-tab-body>
-							
 							<angular-list layout-fill style="position: absolute; height: 100%;"
-							id='documentList' 
-	                		ng-model=jobData.documents
-	                		item-name='label'
-	                		show-search-bar=true
-	                		>
-					</angular-list>
+								id='documentList' 
+		                		ng-model='jobDataCtrl.documents'
+		                		item-name='label'
+		                		show-search-bar=true />
 							
 						</md-tab-body> 
 					</md-tab>

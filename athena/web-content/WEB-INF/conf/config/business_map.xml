@@ -78,6 +78,7 @@
 		<MAP_REST_SERVICE serviceUrl="/multitenant/producttypes" businessProcess="TenantManagement" />				
 				
 
+		<MAP_REST_SERVICE serviceUrl="/scheduler/getJob" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/listAllJobs" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/deleteJob" businessProcess="SchedulerManagement" /> 							
 		<MAP_REST_SERVICE serviceUrl="/scheduler/deleteTrigger" businessProcess="SchedulerManagement" /> 							

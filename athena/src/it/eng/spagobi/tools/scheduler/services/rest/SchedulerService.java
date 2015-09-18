@@ -73,13 +73,42 @@ import org.json.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
- * 
+ *
  */
 
 @Path("/scheduler")
 public class SchedulerService {
 	static private Logger logger = Logger.getLogger(SchedulerService.class);
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+
+	@GET
+	@Path("/getJob")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getJob(@Context HttpServletRequest req) {
+		String jobGroupName = req.getParameter("jobGroup");
+		String jobName = req.getParameter("jobName");
+
+		JSONObject JSONReturn = new JSONObject();
+
+		ISchedulerDAO schedulerDAO;
+		try {
+			schedulerDAO = DAOFactory.getSchedulerDAO();
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
+		}
+
+		Job job = schedulerDAO.loadJob(jobGroupName, jobName);
+
+		JSONSerializer jsonSerializer = (JSONSerializer) SerializerFactory.getSerializer("application/json");
+
+		try {
+			JSONReturn = (JSONObject) jsonSerializer.serialize(job, null);
+		} catch (SerializationException e) {
+			e.printStackTrace();
+		}
+
+		return JSONReturn.toString();
+	}
 
 	@GET
 	@Path("/listAllJobs")

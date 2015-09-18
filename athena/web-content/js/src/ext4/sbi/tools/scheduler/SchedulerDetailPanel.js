@@ -505,7 +505,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 		}
 		
 		, setFormState: function(values){
-			this.activityLabel.setText( LN('sbi.scheduler.overview')+values.jobName );
+			this.activityLabel.setText( LN('sbi.scheduler.overview') + ' - ' + values.jobName );
 			this.documentsGridStore.loadData(values.documents,false);
 			
 			if ((values != undefined) && (values.triggers != undefined)){
