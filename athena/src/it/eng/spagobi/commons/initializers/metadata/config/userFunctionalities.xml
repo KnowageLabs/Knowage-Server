@@ -6,6 +6,8 @@
 	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="ReadEnginesManagement" description="ReadEnginesManagement" />
 	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
