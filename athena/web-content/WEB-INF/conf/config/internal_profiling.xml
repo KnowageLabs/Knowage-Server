@@ -96,15 +96,11 @@
 			productType="AthenaBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="BUILD_QBE_QUERY"
 			productType="AthenaBD" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="EDIT_WORKSHEET"
-			productType="AthenaBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="MANAGE_USERS"
 			productType="AthenaBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER"
 			productType="AthenaBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_FAVOURITES"
-			productType="AthenaBD" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_SUBSCRIPTIONS"
 			productType="AthenaBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_TODO_LIST"
 			productType="AthenaBD" organization="SPAGOBI" />
@@ -112,6 +108,7 @@
 			productType="AthenaBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
 			productType="AthenaBD" organization="SPAGOBI" />
+		<AUTHORIZATION productType="AthenaBD" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
 			
 		<!-- Authorizations for AthenaSocial -->
 		<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS"
