@@ -16,7 +16,7 @@
 .xs-head .md-title, .md-toolbar-tools md-progress-circular{
 	font-size: 12px!important;
 	position: absolute;
-  top: 0;
+  top: -26px;
   right: 0;
   margin-top: -17px;
   margin-right: -11px;
