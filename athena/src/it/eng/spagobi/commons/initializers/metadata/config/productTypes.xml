@@ -7,7 +7,6 @@
 		<ENGINE label="athenachartengine" />
 		<ENGINE label="athenacockpitengine" />
 		<ENGINE label="athenaqbeengine" />
-		<ENGINE label="athenaworksheeteng" />
 		<ENGINE label="athenagisengine" />
 		<ENGINE label="athenadataminingengine" />
 		<ENGINE label="athenanetworkengine" />
