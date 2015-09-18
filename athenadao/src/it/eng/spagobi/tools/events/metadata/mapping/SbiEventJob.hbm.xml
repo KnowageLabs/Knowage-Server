@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.events.metadata.SbiEventJob" table="SBI_EVENT_JOB" >
+        <id name="event_id" type="integer">
+           <column name="EVENT_ID" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_EVENT_JOB</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
+        </id>
+
+	<component name="commonInfo" insert="true" update="true"
+		class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+		<property name="userIn" type="string">
+			<column name="USER_IN" length="100" not-null="true" />
+		</property>
+		<property name="userUp" type="string">
+			<column name="USER_UP" length="100" not-null="false" />
+		</property>
+		<property name="userDe" type="string">
+			<column name="USER_DE" length="100" not-null="false" />
+		</property>
+		<property name="timeIn" type="timestamp">
+			<column name="TIME_IN" not-null="true" />
+		</property>
+		<property name="timeUp" type="timestamp">
+			<column name="TIME_UP" not-null="false" />
+		</property>
+		<property name="timeDe" type="timestamp">
+			<column name="TIME_DE" not-null="false" />
+		</property>
+		<property name="sbiVersionIn" type="string">
+			<column name="SBI_VERSION_IN" length="10" not-null="false" />
+		</property>
+		<property name="sbiVersionUp" type="string">
+			<column name="SBI_VERSION_UP" length="10" not-null="false" />
+		</property>
+		<property name="sbiVersionDe" type="string">
+			<column name="SBI_VERSION_DE" length="10" not-null="false" />
+		</property>
+		<property name="organization" type="string">
+			<column name="ORGANIZATION" length="20" not-null="false" />
+		</property>
+	</component>         
+        
+        
+        <property name="name" type="string">
+            <column name="EVENT_NAME" length="100" />
+        </property> 
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="500" />
+        </property> 
+        <property name="event_type" type="string">
+            <column name="EVENT_TYPE" length="40" />
+        </property> 
+        <property name="is_suspended" type="integer">
+            <column name="IS_SUSPENDED"  />
+        </property> 
+        <property name="frequency" type="integer">
+            <column name="FREQUENCY"  />
+        </property>
+        <property name="dataset" type="integer">
+            <column name="DATASET"  />
+        </property> 
+        
+<!--         <many-to-one name="dataset" class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet" lazy="false" update="false" insert="false" fetch="select"> -->
+<!--             <column name="DATASET" not-null="false" /> -->
+<!--         </many-to-one> -->
+        
+        
+     <filter name="tenantFilter" condition="organization=:tenant"/>  
+ </class>
+ <filter-def name="tenantFilter">
+  <filter-param name="tenant" type="string"/>
+ </filter-def>
+</hibernate-mapping>
