@@ -39,6 +39,10 @@
 	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
 	<RESOURCE_PATH_JNDI_NAME>java://comp/env/spagobi_resource_path</RESOURCE_PATH_JNDI_NAME>
 	
+	<RESOURCE_PATH_CHART>chart</RESOURCE_PATH_CHART>
+	
+	<RESOURCE_PATH_STYLE>style</RESOURCE_PATH_STYLE>
+	
 	<!--  THE JNDI NAME FOR SPAGOBI DOMAIN -->
 	<!--SPAGOBI_DOMAIN_JNDI_NAME>java://comp/env/spagobi_domain</SPAGOBI_DOMAIN_JNDI_NAME-->	
 	<SecurityServiceProxy_URL>/services/SecurityService</SecurityServiceProxy_URL>
