@@ -44,7 +44,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		this.add(dim);
         
 		/**
-		 * Added for the Heatmap (danilo.ristovski@mht.net)
+		 * Added for the Heatmap (danristo :: danilo.ristovski@mht.net) 
 		 */
 		if(this.config.bindFontAlign) {
 		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{

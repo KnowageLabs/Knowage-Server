@@ -83,7 +83,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		this.titleFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
-			id: 'titleFieldSetForAxis',	// (danilo.ristovski@mht.net)
+			id: 'titleFieldSetForAxis',	// (danristo :: danilo.ristovski@mht.net) 
 			title: 'Title',
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
@@ -210,7 +210,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.majorgridFieldSet = Ext.create('Ext.form.FieldSet', {
 				collapsible: true,
 				collapsed : true,
-				id: "majorGridFieldSetYAxis",	// (danilo.ristovski@mht.net)
+				id: "majorGridFieldSetYAxis",	// (danristo :: danilo.ristovski@mht.net) 
 				title: LN('sbi.chartengine.axisstylepopup.majorgrid'),
 				defaults: {anchor: '100%',
 					labelAlign : 'left',
@@ -223,7 +223,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.minorgridFieldSet = Ext.create('Ext.form.FieldSet', {
 				collapsible: true,
 				collapsed : true,
-				id: "minorGridFieldSetYAxis", // (danilo.ristovski@mht.net)
+				id: "minorGridFieldSetYAxis", // (danristo :: danilo.ristovski@mht.net) 
 				title: LN('sbi.chartengine.axisstylepopup.minorgrid'),
 				defaults: {anchor: '100%',
 					labelAlign : 'left',
@@ -322,7 +322,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		/**
 		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type
-		 * (danilo.ristovski@mht.net)
+		 * (danristo :: danilo.ristovski@mht.net) 
 		 */		
 		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER")
 		{
@@ -590,7 +590,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * OFFSET
 			 * 
 			 * 		Description: 	
-			 * 			Distance (in pixels) between the speedometer border and the axes (or ‘speed’ line). 
+			 * 			Distance (in pixels) between the speedometer border and the axes (or ï¿½speedï¿½ line). 
 			 * 			If positive, the line will be outside the speedometer. If negative the axes will be 
 			 * 			closer to the center
 			 */

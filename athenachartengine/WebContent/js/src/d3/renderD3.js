@@ -1473,7 +1473,7 @@ console.log(chartConf.chart.width);
 		
 		}
 
-	var myColors=d3.scale.ordinal().domain(groups).range(colors);
+     var myColors=d3.scale.ordinal().domain(groups).range(colors);
 
 	    var brushWidth = data.axis.brushWidth;
 
@@ -1641,9 +1641,30 @@ console.log(chartConf.chart.width);
 		.enter().append("svg:path")
 		.attr("visible","true")
 		.attr("d", path)
-		.style("stroke", function(d) {return myColors(d[groupcolumn])});
-
-		if (records.length<=20){
+		.style("stroke", function(d) {return myColors(d[groupcolumn])});		
+		
+		/**
+		 * This part is responsible for determining if the TOOLTIP should 
+		 * be displayed on the chart. Current criteria for this issue is:
+		 * if the number of all records that can be displayed at once (the 
+		 * maximum number of them) is bigger than 'maxNumOfRecsForDispTooltip'
+		 * do not display TOOLTIP for the lines (records) when mouse over.
+		 * Otherwise, display TOOLTIP whenever mouse is over particular line
+		 * its value. 		 
+		 * @authors Lazar Kostic (koslazar), Ana Tomic (atomic)
+		 * @commentedBy Danilo Ristovski (danristo)
+		 */
+		
+		/**
+		 * 'maxNumOfRecsForDispTooltip'	-	the maximum number of records that chart
+		 * 									displays within which we can have (display)
+		 * 									the TOOLTIP (if number of records of the 
+		 * 									chart is bigger than this value, TOOLTIP
+		 * 									will not be rendered).
+		 */
+		var maxNumOfRecsForDispTooltip = 20;
+		
+		if (records.length <= maxNumOfRecsForDispTooltip){
 
 			foreground.on("mouseover",function(d){
 				
@@ -2682,7 +2703,7 @@ function renderChordChart(jsonData)
 				});
 		
 		ticks1.append("svg:text")
-		.attr("id","aaa")
+//		.attr("id","aaa")
 		  .each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
 		   .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		  .attr("transform", function(d) {

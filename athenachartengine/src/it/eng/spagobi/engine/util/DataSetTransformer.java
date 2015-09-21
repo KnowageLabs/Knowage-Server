@@ -228,9 +228,6 @@ public class DataSetTransformer {
 
 		}
 
-		System.out.println(availableDataMapOfMaps);
-		System.out.println(allColumns);
-
 		/**
 		 * The final JSON object (it will be sent towards client - rendering part)
 		 */
@@ -469,8 +466,8 @@ public class DataSetTransformer {
 			ja.put(jo);
 		}
 
-//		System.out.println("AAA");
-//		System.out.println(ja);
+		// System.out.println("AAA");
+		// System.out.println(ja);
 
 		return ja;
 	}

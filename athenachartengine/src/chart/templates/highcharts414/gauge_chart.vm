@@ -153,7 +153,7 @@
         ## Serie add
        
         #foreach ($yAxis in $axisList)   
-                 	
+                 
         	#if ($yAxis.position != "bottom")
         	{    
         		min: $yAxis.min,
@@ -318,7 +318,7 @@
 		    			#if ($valueKey == "color")
 		    				color: $yAxis.PLOTBANDS.PLOT.color
 		    			#end
-	        			$datasettransformer.printOut($valueKey))
+	        			
         			},
 	        		#end
 		        	
@@ -326,11 +326,11 @@
 		        	
 			        	#foreach($band in $yAxis.PLOTBANDS.PLOT)
 			        	{
-			        	$datasettransformer.printOut("AAAAAA")
+			        	
 			        		from: $band.from,
 			        		to: $band.to,
 			        		color: '$band.color'
-			        		$datasettransformer.printOut($yAxis.PLOTBANDS)
+			        		
 			        	},
 			        	#end 
 		        	#else
@@ -386,7 +386,14 @@
 	    	
 	    	dataLabels: {
 	    	
-	    	#if($relatedSerie.DATA_LABELS.yPositionDataLabels)
+	    	#* 
+	    		Added second part of the if-statement ($relatedSerie.DATA_LABELS.yPositionDataLabels!="") since 
+	    		we can skip specification of the y-position data label for some serie items. If not specified
+	    		like this (skipping data definition for property that are not mandatory), error on browser
+	    		appears since it is not possible to decode JSON out of the JSON string from the response (chart.jsp).
+	    		(edited by: danristo :: danilo.ristovski@mht.net)
+	    	*#
+	    	#if($relatedSerie.DATA_LABELS.yPositionDataLabels && $relatedSerie.DATA_LABELS.yPositionDataLabels!="")
 	    		y: $relatedSerie.DATA_LABELS.yPositionDataLabels,
 	    	#end
 	    	
