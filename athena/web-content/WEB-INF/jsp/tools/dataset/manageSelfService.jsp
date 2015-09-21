@@ -44,6 +44,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String userCanPersist = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.USER_CAN_PERSIST);
 	String tablePrefix = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TABLE_NAME_PREFIX);
 	String isCkanEnabled = userProfile.getFunctionalities().contains(SpagoBIConstants.CKAN_FUNCTIONALITY) ? "true" : "false";
+	String isWorksheetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_WORKSHEET_ENABLED);
 %>
 
 <script type="text/javascript">
@@ -52,6 +53,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 
     Ext.onReady(function(){
     	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>;
+    	Sbi.settings.mydata.isWorksheetEnabled = <%= isWorksheetEnabled %>; 
     	Sbi.settings.mydata.showDataSetTab = <%=isMyData%>;
     	Sbi.settings.mydata.showModelsTab = <%=(typeDoc != null && "GEO".equalsIgnoreCase(typeDoc))?false:true%>;
     	Sbi.settings.mydata.showSmartFilterTab = <%=isMyData%>;

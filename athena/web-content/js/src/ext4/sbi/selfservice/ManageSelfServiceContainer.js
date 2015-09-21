@@ -79,6 +79,7 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			selfServiceContainer : this
 			, datasetsServicePath : config.datasetsServicePath
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
+			, isWorksheetEnabled : config.isWorksheetEnabled
 			, typeDoc : config.typeDoc
 			, userCanPersist: config.userCanPersist
 			, tablePrefix: config.tablePrefix			
@@ -118,7 +119,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 		if(inputType == "MODEL"){
 			var modelName = record.data.name;
 			var dataSourceLabel = record.data.data_source_label;
-			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName;
+			var url = this.qbeFromBMBaseUrl+"&MODEL_NAME="+modelName+
+				"&isWorksheetEnabled="+Sbi.settings.mydata.isWorksheetEnabled;
 			if(dataSourceLabel || dataSourceLabel!=""){
 				url = url+ 
 				'&DATA_SOURCE_LABEL=' + dataSourceLabel;

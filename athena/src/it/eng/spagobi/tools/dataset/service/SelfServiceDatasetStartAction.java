@@ -9,15 +9,19 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -62,6 +66,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String TABLE_NAME_PREFIX = "TABLE_NAME_PREFIX";
 
 	public static final String PERSIST_TABLE_PREFIX_CONFIG = "SPAGOBI.DATASET.PERSIST.TABLE_PREFIX";
+	public static final String IS_WORKSHEET_ENABLED = "IS_WORKKSHEET_ENABLED";
 
 	// public static final String GEOREPORT_EDIT_ACTION =
 	// "GEOREPORT_ENGINE_START_EDIT_ACTION";
@@ -89,6 +94,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String typeDoc = getAttributeAsString("TYPE_DOC");
 			String userCanPersist = userCanPersist();
 			String tableNamePrefix = getTableNamePrefix();
+			String isWorksheetEnabled = isWorksheetEnabled();
+
 			logger.trace("Copying output parameters to response...");
 			try {
 				Locale locale = getLocale();
@@ -107,6 +114,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(IS_FROM_DOCBROWSER, isFromDocBrowser);
 				setAttribute(USER_CAN_PERSIST, userCanPersist);
 				setAttribute(TABLE_NAME_PREFIX, tableNamePrefix);
+				setAttribute(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);
 			}
@@ -398,6 +406,31 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			logger.error("Error while loading table name prefix used for dataset persistence");
 			throw new SpagoBIRuntimeException("Error while loading table name prefix used for dataset persistence", e);
 		}
+
+	}
+
+	// Get Table name prefix used for dataset persistence
+	protected String isWorksheetEnabled() {
+		String toReturn = "false";
+
+		try {
+			IEngineDAO engineDao = DAOFactory.getEngineDAO();
+			List<Engine> nonPagedEngines = engineDao.loadAllEnginesByTenant();
+			for (int i = 0, l = nonPagedEngines.size(); i < l; i++) {
+				Engine elem = nonPagedEngines.get(i);
+				IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+				Domain domainType = domainDAO.loadDomainById(elem.getBiobjTypeId());
+				if (domainType.getValueCd().equalsIgnoreCase("WORKSHEET")) {
+					toReturn = "true";
+					break;
+				}
+			}
+		} catch (Throwable t) {
+			logger.error("Impossible to load engines from database ", t);
+			throw new SpagoBIEngineRuntimeException("Impossible get worksheet availability");
+		}
+
+		return toReturn;
 
 	}
 

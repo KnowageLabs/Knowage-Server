@@ -55,6 +55,7 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 			, datasetsServicePath : config.datasetsServicePath
 			, id: 'this'
 			, qbeEditDatasetUrl : config.qbeEditDatasetUrl
+			, isWorksheetEnabled: config.isWorksheetEnabled
 			, typeDoc : config.typeDoc
 			, fromMyAnalysis: config.fromMyAnalysis
 			, userCanPersist: config.userCanPersist
