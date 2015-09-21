@@ -43,7 +43,7 @@ Sbi.qbe.QbePanel = function(config) {
 		// set default values here
 		displayQueryBuilderPanel: true
 		, displayFormBuilderPanel: false
-		, displayWorksheetPanel: true
+		, displayWorksheetPanel: false 
 	}, config || {});
 
 	

@@ -62,6 +62,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
+	String isWorksheetEnabled;
 	
 	qbeEngineInstance = (QbeEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute("ENGINE_INSTANCE");
 	worksheetEngineInstance = (WorksheetEngineInstance)ResponseContainer.getResponseContainer().getServiceResponse().getAttribute(WorksheetEngineInstance.class.getName());
@@ -76,6 +77,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		isFromCross = "false";
 	}
 	isPowerUser = profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
+	isWorksheetEnabled = (String)qbeEngineInstance.getEnv().get("isWorksheetEnabled");
+	
 	qbeEngineConfig = QbeEngineConfig.getInstance();
     
 	
@@ -184,8 +187,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.initialQueriesCatalogue.version = Sbi.config.queryVersion;
 	      	
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
+	      	qbeConfig.displayWorksheetPanel = <%= isWorksheetEnabled %>;
 	      	<%
-	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
+	      	StringBuffer datamartNamesBuffer = new StringBuffer("["); 
 	      	IModelStructure ms = qbeEngineInstance.getDataSource().getModelStructure();
 	      	Iterator<String> it = ms.getModelNames().iterator();
 	      	while (it.hasNext()) {
