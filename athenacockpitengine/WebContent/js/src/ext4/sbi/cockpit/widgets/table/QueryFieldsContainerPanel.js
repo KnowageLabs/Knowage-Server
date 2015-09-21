@@ -733,6 +733,8 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 		this.inLineCalculatedFieldWizard.setExpItems('fields', fields);
 		this.inLineCalculatedFieldWizard.setTargetRecord(targetRecord);
 		this.inLineCalculatedFieldWizard.show();
+		
+		this.inLineCalculatedFieldWizard.forceFocus();
 	}
 
 	, initInLineCalculatedFieldWizard: function(fields) {
@@ -792,7 +794,9 @@ Ext.extend(Sbi.cockpit.widgets.table.QueryFieldsContainerPanel, Ext.grid.GridPan
 					.replace(/\&/g, '\\&')
 				;
 				
-				var re = new RegExp('\\s+' + metafieldId + '\\s+', 'g');
+				var boundariesChars = '\\+\\-\\*/\\(\\)';  //  + - * / || ( )
+				var re = new RegExp('([' + boundariesChars + ']|\\|\\||\\s*)(' + metafieldId + ')([' + boundariesChars + ']|\\|\\||\\s+)', 'g');
+//				var re = new RegExp('\\s+' + metafieldId + '\\s+', 'g');
 				if(calculatedFieldFormulaToMatch.match(re) && !fieldsToAddMap[metafieldId]) {
 					fieldsToAddMap[metafieldId] = metafield;
 				}

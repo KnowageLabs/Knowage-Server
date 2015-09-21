@@ -501,6 +501,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		var summaryRowRenderFunction = this.customCreateSequenceFn(rendererFunction, Ext.bind(applyCellStyleRenderer, this, [field.header], true));
 		
 		var calculatedRendererFunction = null;
+
+		// If is a calculated field the string 'calculatedFieldFormula' will be parsed and converted as js expression
 		if(visibleField.calculatedFieldFlag != undefined && visibleField.calculatedFieldFlag) {
 			calculatedRendererFunction = function(value, metaData, record, rowIndex, colIndex, store) {
 				
@@ -539,8 +541,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 						.replace(/\&/g, '\\&')
 					;
 					
-					var re = new RegExp('\\s+' + columnId + '\\s+', 'g');
-					calculatedFieldFormula = calculatedFieldFormula.replace(re, " (record.get('" + dataIndex + "')) ");
+					
+					var boundariesChars = '\\+\\-\\*/\\(\\)';  //  + - * / || ( )
+//					var re = new RegExp('\\s+' + columnId + '\\s+', 'g');
+					var re = new RegExp('([' + boundariesChars + ']|\\|\\||\\s*)(' + columnId + ')([' + boundariesChars + ']|\\|\\||\\s+)', 'g');
+					calculatedFieldFormula = calculatedFieldFormula.replace(re, "$1(record.get('" + dataIndex + "'))$3");
 				}
 
 				return eval(calculatedFieldFormula);

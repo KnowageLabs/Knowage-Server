@@ -752,7 +752,7 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 		/* END Table options */
 		
 		// Setting dataset metafields for table masking
-		state.datasetMetafields = this.getDatasetMetafields();
+		state.datasetMetafields = (this.datasetMetafields)? this.datasetMetafields : this.getDatasetMetafields();
 		
 		this.getFontState(state);		
 
