@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,7 +45,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -57,7 +55,7 @@ import org.json.JSONObject;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/documents")
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
@@ -310,44 +308,41 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	@Path("/listDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
-			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr, @QueryParam("excludeType") String excludeType,@QueryParam("scope") String scope) throws EMFInternalError {
+			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
+			@QueryParam("excludeType") String excludeType, @QueryParam("scope") String scope) throws EMFInternalError {
 		UserProfile profile = getUserProfile();
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> filterObj = null;
 		Integer page = getNumberOrNull(pageStr);
 		Integer item_per_page = getNumberOrNull(itemPerPageStr);
 		List<CriteriaParameter> disjunctions = new ArrayList<CriteriaParameter>();
-		if (label != null) {
+		if (label != null && !label.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("label", label, Match.ILIKE));
 		}
-		if (name != null) {
+		if (name != null && !name.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("name", name, Match.ILIKE));
 		}
-		if (descr != null) {
+		if (descr != null && !descr.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("descr", descr, Match.ILIKE));
 		}
-		
-		
-		
-		String UserFilter=profile.getIsSuperadmin()? null: profile.getUserId().toString();
-		
-		//in glossary, the user with admin role and specific authorization can see all document of the organization
-		if(scope!=null && scope.compareTo("GLOSSARY")==0){
-			if(UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
-				UserFilter=null;
+
+		String UserFilter = profile.getIsSuperadmin() ? null : profile.getUserId().toString();
+
+		// in glossary, the user with admin role and specific authorization can see all document of the organization
+		if (scope != null && scope.compareTo("GLOSSARY") == 0) {
+			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
+				UserFilter = null;
 			}
 		}
-			
-			
-		
-		
+
 		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
-		
-		//filter document if is USER profile
-		if (UserFilter!=null) {
-			restritions.add(new CriteriaParameter("creationUser", UserFilter, Match.EQ));
-		}
-		
+
+		// filter document if is USER profile
+		// Commented out: this kind of logic has to be handled by the "ObjectsAccessVerifier.canSee" utility method (ATHENA-138/SBI-532/SBI-533)
+		/*
+		 * if (UserFilter != null) { restritions.add(new CriteriaParameter("creationUser", UserFilter, Match.EQ)); }
+		 */
+
 		if (excludeType != null) {
 			restritions.add(new CriteriaParameter("objectTypeCode", excludeType, Match.NOT_EQ));
 		}
@@ -364,7 +359,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			}
 			JSONObject jo = new JSONObject();
 			jo.put("item", jarr);
-			jo.put("itemCount", documentsDao.countBIObjects( label!=null? label:"" ,UserFilter));
+			jo.put("itemCount", documentsDao.countBIObjects(label != null ? label : "", UserFilter));
 
 			return jo.toString();
 		} catch (Exception e) {
