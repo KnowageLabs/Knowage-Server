@@ -30,18 +30,74 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
-	/*$scope.ispisi = function(){
-		console.log($scope.list);
-	}*/
-	
-
 	$scope.napuniNiz = function() {
-		$scope.multiArray.push($scope.createAssociations());
-		//console.log("f_napuniNiz "+angular.toJson($scope.multiArray));
+		var check = false;
+		var obj1 = $scope.createAssociations();
+		var counter = 0;
+		
+		
+			angular.forEach($scope.listaNew, function(dataset){
+				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+					
+					if(listField.selected==true){
+						 counter += 1;
+						 console.log("kaunter"+counter)
+					 }
+				})
+				 
+			})
+		
+		
+		
+		if(counter<2) {
+			$mdDialog.show(
+	       		      $mdDialog.alert()
+	       		        .parent(angular.element(document.querySelector('#popupContainer')))
+	       		        .clickOutsideToClose(true)
+	       		        .content('You have to select at least two fields to create a relation!')
+	       		        .ok('OK')
+	       		    );
+		} else {
+			
+			if($scope.multiArray.length==0){
+				
+				$scope.multiArray.push($scope.createAssociations());
+				
+				
+			} else {
+
+				angular.forEach($scope.multiArray, function(obj2){
+
+
+					if (JSON.stringify(obj1) === JSON.stringify(obj2)) {
+						check = true;
+			        	console.log("The relation is already created!")
+			        	 $mdDialog.show(
+			       		      $mdDialog.alert()
+			       		        .parent(angular.element(document.querySelector('#popupContainer')))
+			       		        .clickOutsideToClose(true)
+			       		        .content('The relation is already created!')
+			       		        .ok('OK')
+			       		    );
+			        }
+					
+				})
+				if(!check){
+					console.log("dodaj novi u niz")
+					$scope.multiArray.push($scope.createAssociations());
+				}
+			} 
+			
+		}
+		
+		//console.log(obj1.length)
+		
+
 	}
 		
 	$scope.createAssociations = function(){
 		  
+		
 		  var RelationshipsArray = [];
 		  var checkBranch = false;
 		  angular.forEach($scope.listaNew, function(dataset){
@@ -218,7 +274,18 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	}
 	
 	$scope.toggle = function(){
-		$scope.state=!$scope.state;
+		if($scope.listaNew.length==0){
+			$mdDialog.show(
+	       		      $mdDialog.alert()
+	       		        .parent(angular.element(document.querySelector('#popupContainer')))
+	       		        .clickOutsideToClose(true)
+	       		        .content('You didn\'t select any datasets!')
+	       		        .ok('OK')
+	       		    );
+		} else {
+			$scope.state=!$scope.state;
+		}
+		
 	}
 	
 	$scope.kickOutFromAssociatonArray = function(param) {
@@ -291,7 +358,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	
 	$scope.glossSpeedMenuOptAD = [ 			 		               	
 		 		               	{
-		 		               		
+		 		               		label: 'Details',
 		 		               		icon:"fa fa-info-circle",
 		 		               		backgroundColor:'green',
 		 		               		/*action : function(param) {
@@ -309,5 +376,9 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		      targetEvent: ev
 		    })
 		};
+		
+	$scope.relaodFirstPage = function(){
+		$route.reload();
+	}
 });
 

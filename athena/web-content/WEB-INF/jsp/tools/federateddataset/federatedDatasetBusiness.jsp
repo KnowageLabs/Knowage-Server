@@ -59,7 +59,7 @@
 		</md-toolbar>
 
 		<md-content layout-padding=""
-			style="height: 100%; padding: 20px;"">
+			style="height: 90%; padding: 20px;"">
 		<div ng-show="state" layout="row" layout-wrap>
 			
 			<div flex="49" margin-right: 20px">
@@ -71,7 +71,7 @@
 					</div>
 				</md-toolbar>
 			
-				<md-content style="height:700px;">
+				<md-content style="height:80%">
 					<angular-list layout-fill="" 
 					id="selectedDatasets" 
 					ng-model="list" 
@@ -95,7 +95,7 @@
 					</div>
 				</md-toolbar>
 			
-				<md-content style="height:700px;">
+				<md-content style="height:80%">
 					<angular-list layout-fill="" 
 					id="availableDatasets" 
 					ng-model="listaNew" 
@@ -158,7 +158,7 @@
 			</div>
 			</md-toolbar>
 			<md-content
-				style=" padding: 5px;  height:370px">
+				style=" padding: 5px;  height:41%">
 			<div ng-repeat="dataset in listaNew">
 				<div style="width: 250px; float: left; padding: 5px;">
 					<md-toolbar class="miniheadfedsmall"
@@ -199,11 +199,11 @@
 
 
 			</md-toolbar>
-			<md-content style=" height:300px">
+			<md-content style=" height:40%">
 
 			<div>
 				
-				<md-content style="height:265px">
+				<md-content >
 				<div>
 					<md-list>
 						<div ng-repeat="k in multiArray">
@@ -232,15 +232,15 @@
 	</div>
 
 	<div ng-show="state">
-		<md-button class="md-raised" aria-label="Aggiungi_Attributo"
-			style=" margin-top: 20px; float:right;" ng-click="toggle(); ispisi()">NEXT
+		<md-button class="md-raised buttonR" aria-label="btn_next_step"
+			style=" margin-top: 20px; float:right;" ng-click="toggle();">NEXT
 		STEP</md-button>
 	</div>
 	<div ng-hide="state">
-		<md-button class="md-raised" aria-label="Aggiungi_Attributo"
-			style=" margin-top: 20px;" ng-click="toggle()">BACK</md-button>
-		<md-button class="md-raised" aria-label="Aggiungi_Attributo"
-			style=" margin-top: 20px; float:right;"
+		<md-button class="md-raised buttonL" aria-label="btn_back_to_first_page"
+			 ng-click="toggle()">BACK</md-button>
+		<md-button class="md-raised buttonR" aria-label="btn_save_federation"
+			
 			ng-click="showAdvanced($event)">SAVE federation</md-button>
 
 	</div>
