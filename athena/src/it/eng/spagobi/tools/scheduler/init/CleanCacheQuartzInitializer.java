@@ -31,7 +31,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
 	 */
 	public void init(SourceBean config) {
@@ -47,9 +47,11 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 	}
 
 	public void initCleanForTenant(SbiTenant tenant) {
+
+		ISchedulerDAO schedulerDAO = null;
 		try {
 			logger.debug("IN");
-			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.setTenant(tenant.getName());
 			Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_NAME, DEFAULT_JOB_NAME);
 			if (jobDetail == null) {
@@ -66,7 +68,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 				schedulerDAO.insertJob(jobDetail);
 				logger.debug("Added job with name " + DEFAULT_JOB_NAME);
 			}
-			String valueCheck = (String) SpagoBICacheConfiguration.getInstance().getCacheSchedulingFullClean();
+			String valueCheck = SpagoBICacheConfiguration.getInstance().getCacheSchedulingFullClean();
 			String cronExpression = getCronExpression(valueCheck);
 			schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, Scheduler.DEFAULT_GROUP);
 			if (cronExpression != null) {
@@ -88,12 +90,16 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 			logger.debug("OUT");
 		} catch (Exception e) {
 			logger.error("Error while initializing scheduler ", e);
+		} finally {
+			if (schedulerDAO != null) {
+				schedulerDAO.setTenant(null);
+			}
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spago.init.InitializerIFace#getConfig()
 	 */
 	public SourceBean getConfig() {
