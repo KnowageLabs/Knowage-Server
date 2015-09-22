@@ -43,7 +43,9 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
     String userCanPersist = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.USER_CAN_PERSIST);
 	String tablePrefix = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TABLE_NAME_PREFIX);
-	String isCkanEnabled = userProfile.getFunctionalities().contains(SpagoBIConstants.CKAN_FUNCTIONALITY) ? "true" : "false";
+	String isCkanEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_SMARTFILTER_ENABLED);
+	String isSmartFilterEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_SMARTFILTER_ENABLED);
+	String createDatasetsAsFinalUser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_CREATE_DATASET_AS_FINAL_USER);
 	String isWorksheetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_WORKSHEET_ENABLED);
 %>
 
@@ -56,8 +58,9 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     	Sbi.settings.mydata.isWorksheetEnabled = <%= isWorksheetEnabled %>; 
     	Sbi.settings.mydata.showDataSetTab = <%=isMyData%>;
     	Sbi.settings.mydata.showModelsTab = <%=(typeDoc != null && "GEO".equalsIgnoreCase(typeDoc))?false:true%>;
-    	Sbi.settings.mydata.showSmartFilterTab = <%=isMyData%>;
-		var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
+    	Sbi.settings.mydata.showSmartFilterTab = <%=(isMyData.equalsIgnoreCase("true") && isSmartFilterEnabled.equalsIgnoreCase("true"))?true:false%>;
+    	Sbi.settings.mydata.showCreateButton = <%=createDatasetsAsFinalUser%>;
+    	var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
             , qbeFromDataSetBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromDataSetActionUrl) %>'

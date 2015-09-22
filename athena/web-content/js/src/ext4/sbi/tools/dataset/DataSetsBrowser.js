@@ -829,19 +829,24 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		}
 		if (datasetType == 'MyDataSet'){
 			this.changeToolbar(false);
-			this.createButtonVisibility(true);
+			var visible = true && Sbi.settings.mydata.showCreateButton;
+			this.createButtonVisibility(visible);
 		} else if (datasetType == 'EnterpriseDataSet'){
 			this.changeToolbar(false);
-			this.createButtonVisibility(false);
+			var visible = false && Sbi.settings.mydata.showCreateButton;
+			this.createButtonVisibility(visible);
 		} else if (datasetType == 'SharedDataSet'){
 			this.changeToolbar(false);
-			this.createButtonVisibility(false);
+			var visible = false && Sbi.settings.mydata.showCreateButton;
+			this.createButtonVisibility(visible);
 		} else if (datasetType == 'CkanDataSet'){
 			this.changeToolbar(true);
-			this.createButtonVisibility(false);
+			var visible = false && Sbi.settings.mydata.showCreateButton;
+			this.createButtonVisibility(visible);
 		} else if (datasetType == 'AllDataSet'){
 			this.changeToolbar(false);
-			this.createButtonVisibility(true);
+			var visible = true && Sbi.settings.mydata.showCreateButton;
+			this.createButtonVisibility(visible);
 		}	
 		
 		this.storeConfig = Ext.apply({
@@ -948,7 +953,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 //        }
 
         var createButton = '';
-        if ( (Sbi.settings.mydata.defaultFilter == 'MyDataSet') || (Sbi.settings.mydata.defaultFilter == 'AllDataSet') ){
+        if ( ((Sbi.settings.mydata.defaultFilter == 'MyDataSet') || (Sbi.settings.mydata.defaultFilter == 'AllDataSet')) &&  Sbi.settings.mydata.showCreateButton ){
             if (this.user !== '' && this.user !== this.PUBLIC_USER && this.typeDoc == 'null'){
             	createButton += ' <a id="newDataset" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDataset(\'\')" class="btn-add"><span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.browser.document.dataset')+'<span class="plus">+</span></a> ';
             }

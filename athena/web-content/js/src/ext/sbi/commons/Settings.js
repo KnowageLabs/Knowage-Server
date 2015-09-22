@@ -66,6 +66,10 @@ Sbi.settings.mydata = {
 	 * Visibility of MyData TabToolbar (this hide the whole tab toolbar)
 	 */
 	, showTabToolbar: true
+	/**
+	 * Visibility of MyData create button
+	 */
+	, showCreateButton : true
 };
 
 /**

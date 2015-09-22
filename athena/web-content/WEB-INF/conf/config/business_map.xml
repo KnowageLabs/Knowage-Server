@@ -28,7 +28,7 @@
 		<MAP_REST_SERVICE serviceUrl="/geoexport/jpg" businessProcess="publicFunctionality" />	
 
 		<MAP_REST_SERVICE serviceUrl="/certificateddatasets/getflatdataset" businessProcess="DocumentDevManagement" />
-        <MAP_REST_SERVICE serviceUrl="/certificateddatasets" businessProcess="CreateWorksheetFromDatasetUserFunctionality" />  
+        <MAP_REST_SERVICE serviceUrl="/certificateddatasets" businessProcess="SelfServiceDatasetManagement" />  
                 
         <MAP_REST_SERVICE serviceUrl="/community/user" businessProcess="UserSaveDocumentFunctionality" />        
 		<MAP_REST_SERVICE serviceUrl="/community/accept" businessProcess="publicFunctionality" />		

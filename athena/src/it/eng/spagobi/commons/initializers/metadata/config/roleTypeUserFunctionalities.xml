@@ -294,5 +294,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="MODEL_ADMIN" />
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CreateDatasetsAsFinalUser" roleType="USER" />
 
 </ROLE_TYPE_USER_FUNCTIONALITIES>

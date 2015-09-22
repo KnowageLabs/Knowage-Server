@@ -66,7 +66,10 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String TABLE_NAME_PREFIX = "TABLE_NAME_PREFIX";
 
 	public static final String PERSIST_TABLE_PREFIX_CONFIG = "SPAGOBI.DATASET.PERSIST.TABLE_PREFIX";
-	public static final String IS_WORKSHEET_ENABLED = "IS_WORKKSHEET_ENABLED";
+	public static final String IS_WORKSHEET_ENABLED = "IS_WORKSHEET_ENABLED";
+	public static final String IS_SMARTFILTER_ENABLED = "IS_SMARTFILTER_ENABLED";
+	public static final String IS_CKAN_ENABLED = "IS_CKAN_ENABLED";
+	public static final String CAN_CREATE_DATASET_AS_FINAL_USER = "IS_SMARTFILTER_ENABLED";
 
 	// public static final String GEOREPORT_EDIT_ACTION =
 	// "GEOREPORT_ENGINE_START_EDIT_ACTION";
@@ -95,6 +98,9 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String userCanPersist = userCanPersist();
 			String tableNamePrefix = getTableNamePrefix();
 			String isWorksheetEnabled = isWorksheetEnabled();
+			String isSmartFilterEnabled = isSmartFilterEnabled();
+			String isCkanEnabled = isCkanEnabled();
+			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser();
 
 			logger.trace("Copying output parameters to response...");
 			try {
@@ -115,6 +121,9 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(USER_CAN_PERSIST, userCanPersist);
 				setAttribute(TABLE_NAME_PREFIX, tableNamePrefix);
 				setAttribute(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
+				setAttribute(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
+				setAttribute(IS_CKAN_ENABLED, isCkanEnabled);
+				setAttribute(CAN_CREATE_DATASET_AS_FINAL_USER, canCreateDatasetAsFinalUser);
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);
 			}
@@ -388,6 +397,40 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 	}
 
+	// Check if user can user CKAN
+	protected String isCkanEnabled() {
+		List funcs;
+		try {
+			profile = getUserProfile();
+			funcs = (List) profile.getFunctionalities();
+			if (isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
+				return "true";
+			} else {
+				return "false";
+			}
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("Error while loading role functionalities of user", e);
+		}
+
+	}
+
+	// Check if user can user CKAN
+	protected String canCreateDatasetAsFinalUser() {
+		List funcs;
+		try {
+			profile = getUserProfile();
+			funcs = (List) profile.getFunctionalities();
+			if (isAbleTo(SpagoBIConstants.CREATE_DATASETS_AS_FINAL_USER, funcs)) {
+				return "true";
+			} else {
+				return "false";
+			}
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("Error while loading role functionalities of user", e);
+		}
+
+	}
+
 	// Get Table name prefix used for dataset persistence
 	protected String getTableNamePrefix() {
 		try {
@@ -409,7 +452,6 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 	}
 
-	// Get Table name prefix used for dataset persistence
 	protected String isWorksheetEnabled() {
 		String toReturn = "false";
 
@@ -432,6 +474,28 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 		return toReturn;
 
+	}
+
+	protected String isSmartFilterEnabled() {
+		String toReturn = "false";
+
+		try {
+			IEngineDAO engineDao = DAOFactory.getEngineDAO();
+			List<Engine> nonPagedEngines = engineDao.loadAllEnginesByTenant();
+			for (int i = 0, l = nonPagedEngines.size(); i < l; i++) {
+				Engine elem = nonPagedEngines.get(i);
+				IDomainDAO domainDAO = DAOFactory.getDomainDAO();
+				Domain domainType = domainDAO.loadDomainById(elem.getBiobjTypeId());
+				if (domainType.getValueCd().equalsIgnoreCase("SMART_FILTER")) {
+					toReturn = "true";
+					break;
+				}
+			}
+		} catch (Throwable t) {
+			logger.error("Impossible to load engines from database ", t);
+			throw new SpagoBIEngineRuntimeException("Impossible get worksheet availability");
+		}
+		return toReturn;
 	}
 
 	private boolean isAbleTo(String func, List funcs) {
