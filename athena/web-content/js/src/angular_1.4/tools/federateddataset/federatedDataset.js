@@ -26,7 +26,7 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	$scope.multiArray = [];
 	$scope.bla = {};
 	$scope.selectedVariable = {};
-	
+	$scope.myselectedvariable = {};
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
@@ -160,12 +160,24 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	//$scope.multiArray.push($scope.nesto);
 	
 	$scope.showAdvanced = function(ev) {
-	  $mdDialog.show({
-		  templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
-		  parent: angular.element(document.body),	      
-	      scope: $scope,
-	      targetEvent: ev
-	    })
+		if($scope.multiArray.length==0){
+			$mdDialog.show(
+	       		      $mdDialog.alert()
+	       		        .parent(angular.element(document.querySelector('#popupContainer')))
+	       		        .clickOutsideToClose(true)
+	       		        .content('You didn\'t create any relationships!')
+	       		        .ok('OK')
+	       		    );
+		}
+		else{
+			$mdDialog.show({
+				  templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
+				  parent: angular.element(document.body),	      
+			      scope: $scope,
+			      targetEvent: ev
+			    })
+		}
+	  
 	};
 	
 	
@@ -197,7 +209,18 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	}
 	
 
+	
 	$scope.selektuj = function(item,listId){
+		
+		if($scope.myselectedvariable[listId]!=undefined || $scope.myselectedvariable[listId]!=null){
+			if(item.name==$scope.myselectedvariable[listId].name){
+				console.log("they are the same");
+				$scope.myselectedvariable[listId] = null;	
+			}
+		}
+		
+		
+		
 		 angular.forEach($scope.listaNew, function(dataset){
 			 if(dataset.label==listId){
 				 angular.forEach(dataset.metadata.fieldsMeta, function(listField){
@@ -220,6 +243,8 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 		 }
 		  
 		 });
+		 
+		 
 	}
 		
 	restServices.get("2.0/datasets", "").success(
@@ -282,7 +307,17 @@ app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
 	       		        .content('You didn\'t select any datasets!')
 	       		        .ok('OK')
 	       		    );
-		} else {
+		} 
+		else if($scope.listaNew.length==1){
+			$mdDialog.show(
+	       		      $mdDialog.alert()
+	       		        .parent(angular.element(document.querySelector('#popupContainer')))
+	       		        .clickOutsideToClose(true)
+	       		        .content('Select at least two datasets!')
+	       		        .ok('OK')
+	       		    );
+		}
+		else {
 			$scope.state=!$scope.state;
 		}
 		

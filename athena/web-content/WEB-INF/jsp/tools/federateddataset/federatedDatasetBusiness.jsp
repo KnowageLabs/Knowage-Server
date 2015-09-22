@@ -71,7 +71,7 @@
 					</div>
 				</md-toolbar>
 			
-				<md-content style="height:80%">
+				<div style="height:80%">
 					<angular-list layout-fill="" 
 					id="selectedDatasets" 
 					ng-model="list" 
@@ -82,7 +82,7 @@
 					
 					>					
 					</angular-list>
-				</md-content>
+				</div>
 				
 			</div>
 			
@@ -110,43 +110,6 @@
 				
 			</div>
 			
-			
-			<!-- <div flex="49" style="margin-right: 20px; "">
-				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
-				<div class="md-toolbar-tools">
-					<i class="fa fa-list-alt fa-2x"></i>
-					<h2 class="md-flex" style="padding-left: 14px">AVALIABLE DATASETS</h2>					
-				</div>
-				
-				
-				</md-toolbar>
-				<md-content style="height:700px;"> <md-list
-					ng-repeat="k in list" style="border: 1px solid #ddd;">
-				<md-list-item ng-click="moveToListNew(k)"> <i
-					class="fa fa-angle-double-right fa-2x" style="padding-right: 5px"></i>
-				{{k.label | uppercase}}
-				<span flex=""></span>
-					<md-button aria-label="datasetDetails" ng-click="showAlert($svent)" class="md-fab md-raised md-mini">
-										 	<i class="fa fa-pencil-square-o"></i>
-										</md-button>
-				 </md-list-item> </md-list> </md-content>
-			</div>
-
-			<div flex="49" >
-				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;">
-				<div class="md-toolbar-tools">
-					<i class="fa fa-list-alt fa-2x"></i>
-					<h2 class="md-flex" style="padding-left: 14px">SELECTED DATASETS</h2>
-				</div>
-				</md-toolbar>
-				<md-content style="height:700px;"> <md-list
-					ng-repeat="k in listaNew" style="border: 1px solid #ddd;">
-				<md-list-item md-ink-ripple> <i
-					class="fa fa-angle-double-right fa-2x" style="padding-right: 5px"></i>
-				{{k.label | uppercase}} <span flex=""></span> <i class="fa fa-times"
-					ng-click="kickOutFromListNew(k)"></i> </md-list-item> </md-list> </md-content>
-			</div> -->
-			
 		</div>
 
 		<div ng-hide="state">
@@ -168,7 +131,7 @@
 						
 					</div>
 					</md-toolbar>
-					<md-content style=" height:300px;">
+					<div style=" height:85%;">
 					<div ng-show="true">
 						<angular-list
 							layout-fill="" 
@@ -176,13 +139,14 @@
 							ng-model="dataset.metadata.fieldsMeta" 
 							item-name="name"
 							highlights-selected-item=true
+							selected-item="myselectedvariable[dataset.label]"
 							click-function="selektuj(item, listId)"
 							
 						>
 						</angular-list>
 						
 					</div>
-					</md-content>
+					</div>
 				</div>
 			</div>
 			</md-content>
