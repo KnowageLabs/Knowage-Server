@@ -17,6 +17,26 @@
 	   height: 53px;
 }
 
+.subCheckboxRowElement{
+	    padding-left: 30px;
+}
+
+
+md-toolbar.unselectedItem{
+	background-color: white !important;
+	margin-top: 5px;
+}
+
+md-toolbar.selectedItem{
+	background-color: rgb(176, 190, 197);
+	margin-top: 5px;
+}
+
+md-toolbar.selectedItem label,md-toolbar.unselectedItem label{
+	    font-size: initial !important;
+}
+
+
 md-toolbar.minihead {
 	background-color: rgb(176, 190, 197);
 	color: rgb(255, 255, 255);

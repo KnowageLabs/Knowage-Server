@@ -150,13 +150,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		                        	
 									<md-input-container>
 				                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
-				                       
-				                        <textarea ng-model="activityEvent.editedEvent.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
+				                       <textarea ng-model="activityEvent.editedEvent.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
 		                        	</md-input-container>
 		                        	
 		                        	<md-input-container>
 			                        	<label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
-				                        <md-select ng-model="activityEvent.editedEvent.type" required>
+				                        <md-select ng-model="activityEvent.editedEvent.event_type" required>
 									    	<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" value="{{eventType.value}}">
 									    		{{eventType.label}}
 									    	</md-option>
@@ -165,10 +164,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									  	
 									<div layout="row" class="checkboxRow">
 				                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
-				                        <md-checkbox ng-model="activityEvent.editedEvent.isSuspended">
+				                        <md-checkbox ng-model="activityEvent.editedEvent.is_suspended">
 		                        	</div>
 		                        	
-		                        	<div ng-if="activityEvent.editedEvent.type=='dataset'">
+		                        	<div ng-if="activityEvent.editedEvent.event_type=='dataset'">
 										<md-toolbar class="minihead">
 											<div class="md-toolbar-tools">
 												<h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
@@ -180,7 +179,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 												<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
 												<md-select ng-model="activityEvent.editedEvent.dataset" required>
 													<md-option ng-repeat="item in jobDataCtrl.datasets "
-														value="{{item.id}}">{{item.label}}</md-option> 
+														value="{{item.id.dsId}}">{{item.label}}</md-option> 
 												</md-select> 
 											</md-input-container> 
 											<md-input-container>
@@ -210,12 +209,246 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					
 					<md-tab id="eventTabDocuments"> 
 						<md-tab-label>{{translate.load("sbi.scheduler.activity.events.documentsmanagement")}}</md-tab-label>
-						<md-tab-body>
-							<angular-list layout-fill style="position: absolute; height: 100%;"
-								id='documentList' 
-		                		ng-model='jobDataCtrl.documents'
-		                		item-name='label'
-		                		show-search-bar=true />
+						<md-tab-body layout="column">
+<!-- 							<angular-list layout-fill style="position: absolute; height: 100%;" -->
+<!-- 								id='documentList'  -->
+<!-- 		                		ng-model='jobDataCtrl.documents' -->
+<!-- 		                		item-name='label' -->
+<!-- 		                		show-search-bar=true /> --> 
+
+
+							
+							<md-chips ng-model="jobDataCtrl.documents" readonly="true">
+						      <md-chip-template>
+						        <strong>{{$chip.label}}</strong>
+						      </md-chip-template>
+						    </md-chips>
+						    
+						   
+							<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.SaveAsSnapshot? 'selectedItem' : 'unselectedItem'">
+								<div class="md-toolbar-tools" layout="row" >
+								    <label>{{translate.load("SaveAsSnapshot")}}:</label>
+				                    <md-checkbox ng-model="activityEvent.SaveAsSnapshot">
+		                        </div>
+							</md-toolbar>
+							<div ng-if="activityEvent.SaveAsSnapshot">
+								<md-content layout-padding class="borderBox"> 
+										<md-input-container>
+					                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
+					                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+		                        		</md-input-container>
+		                        		
+		                        		<md-input-container>
+					                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
+					                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+		                        		</md-input-container>
+		                        		
+		                        		<md-input-container>
+					                        <label>History Length:</label>
+					                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+		                        		</md-input-container>
+								</md-content>
+							</div>
+							
+							<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.SaveAsFile? 'selectedItem' : 'unselectedItem'">
+								<div class="md-toolbar-tools" layout="row" >
+								    <label>{{translate.load("SaveAsFile")}}:</label>
+				                    <md-checkbox ng-model="activityEvent.SaveAsFile">
+		                        </div>
+							</md-toolbar>
+							<div ng-if="activityEvent.SaveAsFile">
+								<md-content layout-padding class="borderBox"> 
+									<md-input-container>
+				                        <label>{{translate.load("File Name")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>
+	                        		
+	                        		<md-input-container>
+				                        <label>{{translate.load("Folder Name")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>	
+	                        		
+	                        		 <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("Saved zipped file")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.Savedzippedfile">
+		                       		 </div>	
+		                       		
+		                       		<md-input-container ng-if="activityEvent.Savedzippedfile==true">
+				                        <label>{{translate.load("Folder Name")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>								
+			
+
+								</md-content>
+							</div>
+							
+							<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.SaveAsDocument? 'selectedItem' : 'unselectedItem'">
+								<div class="md-toolbar-tools" layout="row" >
+								    <label>{{translate.load("SaveAsDocument")}}:</label>
+				                    <md-checkbox ng-model="activityEvent.SaveAsDocument">
+		                        </div>
+							</md-toolbar>
+							<div ng-if="activityEvent.SaveAsDocument">
+								<md-content layout-padding class="borderBox"> 
+									<md-input-container>
+				                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>
+	                        		
+	                        		<md-input-container>
+				                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>
+	                        		
+	                        		 <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("fixed folder")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.fixedFolder">
+		                       		 </div>	
+		                       		 
+		                       		 alberello
+		                       		 
+		                       		<div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("folder from dataset")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.datasetFolder">
+		                       		 </div>	
+		                       		
+		                       		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.datasetFolder==true">
+										<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+										<md-select ng-model="" >
+											<md-option ng-repeat="item in jobDataCtrl.datasets "
+												value="{{item.id.dsId}}">{{item.label}}</md-option> 
+										</md-select> 
+									</md-input-container> 
+									
+									<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.datasetFolder==true">
+										<label>{{translate.load("Driver")}}</label>
+										<md-select ng-model="" >
+											<md-option value="driver1">Driver1</md-option> 
+											<md-option value="driver2">Driver2</md-option> 
+										</md-select> 
+									</md-input-container> 
+		                       		 
+								</md-content>
+							</div>
+							
+							<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.SendToJavaClass? 'selectedItem' : 'unselectedItem'">
+								<div class="md-toolbar-tools" layout="row" >
+								    <label>{{translate.load("SendToJavaClass")}}:</label>
+				                    <md-checkbox ng-model="activityEvent.SendToJavaClass">
+		                        </div>
+							</md-toolbar>
+							<div ng-if="activityEvent.SendToJavaClass">
+								<md-content layout-padding class="borderBox"> 
+									<md-input-container>
+					                        <label>{{translate.load("class path")}}:</label>
+					                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+		                        		</md-input-container>
+								</md-content>
+							</div>
+							
+							<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.SendEmail? 'selectedItem' : 'unselectedItem'">
+								<div class="md-toolbar-tools" layout="row" >
+								    <label>{{translate.load("SendEmail")}}:</label>
+				                    <md-checkbox ng-model="activityEvent.SendEmail">
+		                        </div>
+							</md-toolbar>
+							<div ng-if="activityEvent.SendEmail">
+								<md-content layout-padding class="borderBox"> 
+								
+									
+									 <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("send unique mailfor all scheduler")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.uniqueMail">
+		                       		 </div>	
+		                       		 
+		                       		  <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("send zipped file")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.Sendzippedfile">
+		                       		 </div>	
+		                       		
+		                       		<md-input-container   class="subCheckboxRowElement"  ng-if="activityEvent.Sendzippedfile==true">
+				                        <label>{{translate.load("zipped file name")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>		
+		                       		
+		                       		 <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("fixed list of recipients")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.fixedListOfRecipients">
+		                       		 </div>	
+		                       		
+		                       		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.fixedListOfRecipients==true">
+				                        <label>{{translate.load("Mail to")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>		
+		                       			
+		                       		 <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("Use a Datasetas recipient's list")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.datasetRecipients">
+		                       		 </div>	
+		                       		
+		                       		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.datasetRecipients==true">
+										<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+										<md-select ng-model="" >
+											<md-option ng-repeat="item in jobDataCtrl.datasets "
+												value="{{item.id.dsId}}">{{item.label}}</md-option> 
+										</md-select> 
+									</md-input-container> 
+									
+									<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.datasetRecipients==true">
+										<label>{{translate.load("Parameter")}}</label>
+										<md-select ng-model="" >
+											<md-option value="param1">param1</md-option> 
+											<md-option value="param2">param2</md-option> 
+										</md-select> 
+									</md-input-container> 
+											
+									 <div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("Use an expression ")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.useExpression">
+		                       		 </div>	
+		                       		
+		                       		<md-input-container class="subCheckboxRowElement" ng-if="activityEvent.useExpression==true">
+				                        <label>{{translate.load("Expression")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>			
+								
+									<div  layout="row" class="checkboxRow" >
+									    <label>{{translate.load("Include report name ")}}:</label>
+					                    <md-checkbox ng-model="activityEvent.includeReportName">
+		                       		 </div>	
+								
+									<md-input-container >
+				                        <label>{{translate.load("Mail subject")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>	
+	                        		
+	                        		<md-input-container >
+				                        <label>{{translate.load("File name")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>	
+	                        		
+	                        		<md-input-container >
+				                        <label>{{translate.load("Mail text")}}:</label>
+				                        <input ng-model=""  maxlength="100" ng-maxlength="100" md-maxlength="100">
+	                        		</md-input-container>	
+								
+								
+								</md-content>
+							</div>
+							
+							<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.SendToDistributionList? 'selectedItem' : 'unselectedItem'">
+								<div class="md-toolbar-tools" layout="row" >
+								    <label>{{translate.load("SendToDistributionList")}}:</label>
+				                    <md-checkbox ng-model="activityEvent.SendToDistributionList">
+		                        </div>
+							</md-toolbar>
+
+							
+    
+    
+    
+    						
+							
 							
 						</md-tab-body> 
 					</md-tab>

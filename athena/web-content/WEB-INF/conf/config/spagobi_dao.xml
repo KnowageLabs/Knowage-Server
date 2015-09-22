@@ -108,6 +108,8 @@
 
 		<DAO name="GlossaryDAO" implementation="it.eng.spagobi.tools.glossary.dao.GlossaryDAOImpl" />
 
+		<DAO name="EventJobDAO" implementation="it.eng.spagobi.tools.events.dao.EventJobDAOImpl" />
+
 		<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl"/>
 		
 		<DAO name="FederatedDatasetDAO" implementation="it.eng.spagobi.federateddataset.dao.SbiFederatedDatasetDAOHibImpl" />

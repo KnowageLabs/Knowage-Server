@@ -1,11 +1,6 @@
 package it.eng.spagobi.tools.glossary;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -21,6 +16,10 @@ import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.tools.udp.metadata.SbiUdp;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -40,18 +39,16 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class GlossaryBusinessService {
 
-
 	@POST
 	@Path("/modifyContentsGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String modifyContentsGlossary(@Context HttpServletRequest req) {
 		try {
-			
+
 			System.out.println("ModifyContentsGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 			System.out.println(req.toString());
@@ -60,13 +57,10 @@ public class GlossaryBusinessService {
 
 			if (requestVal.has("CONTENT_ID")) {
 				// modify content (logical node)
-				Integer contentId = getNumberOrNull(requestVal
-						.opt("CONTENT_ID"));
+				Integer contentId = getNumberOrNull(requestVal.opt("CONTENT_ID"));
 				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
-				Integer glossaryId = getNumberOrNull(requestVal
-						.opt("GLOSSARY_ID"));
-				boolean status = dao.modifyContentPosition(contentId, parentId,
-						glossaryId);
+				Integer glossaryId = getNumberOrNull(requestVal.opt("GLOSSARY_ID"));
+				boolean status = dao.modifyContentPosition(contentId, parentId, glossaryId);
 				if (!status) {
 					jo.put("Status", "NON OK");
 					jo.put("Message", "sbi.glossary.content.duplicate.content");
@@ -76,8 +70,7 @@ public class GlossaryBusinessService {
 				// modify word
 				Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
 				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
-				Integer oldparentId = getNumberOrNull(requestVal
-						.opt("OLD_PARENT_ID"));
+				Integer oldparentId = getNumberOrNull(requestVal.opt("OLD_PARENT_ID"));
 
 				SbiGlWlist contw = new SbiGlWlist();
 				contw.setId(new SbiGlWlistId(wordId, parentId));
@@ -97,22 +90,20 @@ public class GlossaryBusinessService {
 			jo.put("Status", "OK");
 			return jo.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
 
-	@POST 
+	@POST
 	@Path("/addGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String addGlossary(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
 			System.out.println("addGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
- 			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
@@ -136,8 +127,7 @@ public class GlossaryBusinessService {
 			}
 
 			SbiGlGlossary gloss;
-			List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal
-					.opt("GLOSSARY_NM"));
+			List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal.opt("GLOSSARY_NM"));
 
 			if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Save") == 0) {
 				// check if there is another glossary with the same name
@@ -158,8 +148,7 @@ public class GlossaryBusinessService {
 					jo.put("Message", "sbi.glossary.new.name.duplicate");
 					return jo.toString();
 				}
-				gloss = dao.loadGlossary((Integer) requestVal
-						.opt("GLOSSARY_ID"));
+				gloss = dao.loadGlossary((Integer) requestVal.opt("GLOSSARY_ID"));
 			}
 
 			gloss.setGlossaryNm((String) requestVal.opt("GLOSSARY_NM"));
@@ -190,41 +179,36 @@ public class GlossaryBusinessService {
 			return jo.toString();
 		}
 	}
-	
+
 	@POST
 	@Path("/addContents")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String addContents(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 
 		try {
 			System.out.println("addContents");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			Integer id;
-			List<SbiGlContents> lg = dao.loadContentsByName((String) requestVal
-					.opt("CONTENT_NM"));
+			List<SbiGlContents> lg = dao.loadContentsByName((String) requestVal.opt("CONTENT_NM"));
 
 			if (requestVal.has("SaveOrUpdate")) {
-				if (((String) requestVal.opt("SaveOrUpdate"))
-						.compareTo("Update") == 0) {
+				if (((String) requestVal.opt("SaveOrUpdate")).compareTo("Update") == 0) {
 					// update contents (logical node)
 					if (lg.size() > 1) {
 						// throw new SpagoBIServiceException(req.getPathInfo(),
 						// "content Name already defined");
 						jo.put("Status", "NON OK");
-						jo.put("Message",
-								"sbi.glossary.content.duplicate.content");
+						jo.put("Message", "sbi.glossary.content.duplicate.content");
 						return jo.toString();
 					}
-					Integer contentId = getNumberOrNull(requestVal
-							.opt("CONTENT_ID"));
+					Integer contentId = getNumberOrNull(requestVal.opt("CONTENT_ID"));
 					SbiGlContents cont = dao.loadContents(contentId);
 					cont.setContentNm((String) requestVal.opt("CONTENT_NM"));
 					cont.setContentCd((String) requestVal.opt("CONTENT_CD"));
@@ -237,8 +221,7 @@ public class GlossaryBusinessService {
 						// throw new SpagoBIServiceException(req.getPathInfo(),
 						// "content Name already defined");
 						jo.put("Status", "NON OK");
-						jo.put("Message",
-								"sbi.glossary.content.duplicate.content");
+						jo.put("Message", "sbi.glossary.content.duplicate.content");
 						return jo.toString();
 					}
 				}
@@ -253,8 +236,7 @@ public class GlossaryBusinessService {
 					return jo.toString();
 				}
 				Integer parentId = getNumberOrNull(requestVal.opt("PARENT_ID"));
-				Integer glossaryId = getNumberOrNull(requestVal
-						.opt("GLOSSARY_ID"));
+				Integer glossaryId = getNumberOrNull(requestVal.opt("GLOSSARY_ID"));
 
 				SbiGlContents cont = new SbiGlContents();
 				cont.setContentNm((String) requestVal.opt("CONTENT_NM"));
@@ -271,8 +253,7 @@ public class GlossaryBusinessService {
 				Integer wordId = getNumberOrNull(requestVal.opt("WORD_ID"));
 				Integer glossaryId = getNumberOrNull(requestVal.opt("GLOSSARY_ID"));
 
-				List<SbiGlWlist> presWordInGloss = dao
-						.listWlistByGlossaryIdAndWordId(glossaryId, wordId);
+				List<SbiGlWlist> presWordInGloss = dao.listWlistByGlossaryIdAndWordId(glossaryId, wordId);
 				if (!presWordInGloss.isEmpty()) {
 					jo.put("Status", "NON OK");
 					jo.put("Message", "sbi.glossary.content.duplicate.node");
@@ -301,25 +282,22 @@ public class GlossaryBusinessService {
 			try {
 				jo.put("Status", "NON OK");
 				jo.put("Message", "sbi.glossary.content.load.error");
-				
+
 				if (t.getMessage() == null) {
 					jo.put("Error_text", "ERRORE SCONOSCIUTO");
-				}else{
+				} else {
 					if (t.getCause().getMessage() != null) {
 						if (t.getCause().getCause().getMessage() != null) {
 							jo.put("Error_text", t.getCause().getCause().getMessage());
-						} else{
-						jo.put("Error_text", t.getCause().getMessage());
+						} else {
+							jo.put("Error_text", t.getCause().getMessage());
 						}
 					} else {
 						jo.put("Error_text", t.getMessage());
 					}
-					
+
 				}
-				
-				
-				
-				
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -332,18 +310,16 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/addWord")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String addWord(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
 			System.out.println("newWord");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IUdpDAO daoUdp = DAOFactory.getUdpDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
-			System.out.println(req.toString());
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
 			SbiGlWord word;
@@ -382,8 +358,8 @@ public class GlossaryBusinessService {
 			}
 
 			word.setWord((String) requestVal.opt("WORD"));
-			word.setState_id(getNumberOrNull( requestVal.opt("STATE")));
-			word.setCategory_id(getNumberOrNull( requestVal.opt("CATEGORY")));
+			word.setState_id(getNumberOrNull(requestVal.opt("STATE")));
+			word.setCategory_id(getNumberOrNull(requestVal.opt("CATEGORY")));
 			word.setDescr((String) requestVal.opt("DESCR"));
 			word.setFormula((String) requestVal.opt("FORMULA"));
 			JSONArray refe = (JSONArray) requestVal.opt("LINK");
@@ -395,38 +371,34 @@ public class GlossaryBusinessService {
 				Object[] link = new Object[refe.length()];
 				for (int i = 0; i < refe.length(); i++) {
 					link[i] = refe.getJSONObject(i).getInt("WORD_ID");
-					MapLink.put(refe.getJSONObject(i).getInt("WORD_ID"),
-							refe.getJSONObject(i));
+					MapLink.put(refe.getJSONObject(i).getInt("WORD_ID"), refe.getJSONObject(i));
 				}
 				objLink = dao.listWordFromArray(link);
 			}
 
 			Map<Integer, JSONObject> MapAttr = new HashMap<Integer, JSONObject>();
-			List<SbiUdp> objUdp=null;
+			List<SbiUdp> objUdp = null;
 			if (attr.length() != 0) {
 				Object[] att = new Object[attr.length()];
 				for (int i = 0; i < attr.length(); i++) {
 
-					if (attr.getJSONObject(i).getString("VALUE").trim()
-							.isEmpty()) {
+					if (attr.getJSONObject(i).getString("VALUE").trim().isEmpty()) {
 						jo.put("Status", "NON OK");
 						jo.put("Message", "sbi.glossary.empty.attribute.name");
 						return jo.toString();
 					}
 
 					att[i] = attr.getJSONObject(i).getInt("ATTRIBUTE_ID");
-					MapAttr.put(attr.getJSONObject(i).getInt("ATTRIBUTE_ID"),
-							attr.getJSONObject(i));
+					MapAttr.put(attr.getJSONObject(i).getInt("ATTRIBUTE_ID"), attr.getJSONObject(i));
 				}
-//				objAttr = dao.listAttrFromArray(att);
-				objUdp=daoUdp.listUdpFromArray(att);
+				// objAttr = dao.listAttrFromArray(att);
+				objUdp = daoUdp.listUdpFromArray(att);
 			}
 
-//			Integer id = dao.insertWord(word, objLink, objAttr, MapAttr,
-//					MapLink, update);
-			
-			Integer id = dao.insertWord(word, objLink, objUdp, MapAttr,
-					MapLink, update);
+			// Integer id = dao.insertWord(word, objLink, objAttr, MapAttr,
+			// MapLink, update);
+
+			Integer id = dao.insertWord(word, objLink, objUdp, MapAttr, MapLink, update);
 
 			jo.put("Status", "OK");
 			jo.put("id", id);
@@ -452,13 +424,12 @@ public class GlossaryBusinessService {
 	@POST
 	@Path("/deleteWord")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String deleteWord(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteWord");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 			Integer wordId = getNumberOrNull(req.getParameter("WORD_ID"));
@@ -471,25 +442,22 @@ public class GlossaryBusinessService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
-	
+
 	@POST
 	@Path("/deleteGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String deleteGlossary(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
-			Integer glossaryId = getNumberOrNull(req
-					.getParameter("GLOSSARY_ID"));
+			Integer glossaryId = getNumberOrNull(req.getParameter("GLOSSARY_ID"));
 
 			dao.deleteGlossary(glossaryId);
 
@@ -498,21 +466,19 @@ public class GlossaryBusinessService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
 
 	@POST
 	@Path("/deleteContents")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String deleteContents(@Context HttpServletRequest req) {
 		try {
 			System.out.println("deleteContents");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 
@@ -520,8 +486,7 @@ public class GlossaryBusinessService {
 			if (contentId != null) {
 				dao.deleteContents(contentId);
 			} else {
-				Integer parentId = getNumberOrNull(req
-						.getParameter("PARENT_ID"));
+				Integer parentId = getNumberOrNull(req.getParameter("PARENT_ID"));
 				Integer wordId = getNumberOrNull(req.getParameter("WORD_ID"));
 				dao.deleteWlist(new SbiGlWlistId(wordId, parentId));
 
@@ -532,21 +497,19 @@ public class GlossaryBusinessService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
-	
+
 	@POST
 	@Path("/cloneGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities={ SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS})
+	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String cloneGlossary(@Context HttpServletRequest req) {
 		try {
 			System.out.println("cloneGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession()
-					.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
 
@@ -555,29 +518,24 @@ public class GlossaryBusinessService {
 			Integer glossaryId = (Integer) requestVal.opt("GLOSSARY_ID");
 
 			if (glossaryId == null) {
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"ID non puo essere null");
+				throw new SpagoBIServiceException(req.getPathInfo(), "ID non puo essere null");
 			}
 
 			// check if name is present
 			String gn = (String) requestVal.opt("GLOSSARY_NM");
 			if (gn.trim().isEmpty()) {
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"Glossary name is request");
+				throw new SpagoBIServiceException(req.getPathInfo(), "Glossary name is request");
 			}
 			// get glossary
 			SbiGlGlossary glo = dao.loadGlossary(glossaryId);
 			if (glo == null) {
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"Glossary not present");
+				throw new SpagoBIServiceException(req.getPathInfo(), "Glossary not present");
 			}
 
 			// check if there is another glossary with the same name
-			List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal
-					.opt("GLOSSARY_NM"));
+			List<SbiGlGlossary> lg = dao.loadGlossaryByName((String) requestVal.opt("GLOSSARY_NM"));
 			if (!lg.isEmpty()) {
-				throw new SpagoBIServiceException(req.getPathInfo(),
-						"Glossary Name already defined");
+				throw new SpagoBIServiceException(req.getPathInfo(), "Glossary Name already defined");
 			}
 
 			glo.setGlossaryNm((String) requestVal.opt("GLOSSARY_NM"));
@@ -593,8 +551,7 @@ public class GlossaryBusinessService {
 			return jo.toString();
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(req.getPathInfo(),
-					"An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}
 	}
 

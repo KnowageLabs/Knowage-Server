@@ -6,11 +6,11 @@ var loadEventsByActivity = function(jobDataObj) {
 	
 	for (var i = 0; i < 40; i++) {
 		var event = {
-			id: i,
+			event_id: i,
 			name: 'event_' + i,
 			description: 'description_' + i,
-			type: eventTypes[i%4],
-			isSuspended: (i % 2)? true : false,
+			event_type: eventTypes[i%4],
+			is_suspended: (i % 2)? true : false,
 			dataset: 'dataset_' + i,
 			frequency: ((i + 1) * 5)
 		}
@@ -76,12 +76,12 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		loadJobDataCtrl.jobGroup = jobGroup;
 		loadJobDataCtrl.jobDescription = jobDescription;
 		loadJobDataCtrl.jobData = null;
-		
-		loadJobDataCtrl.events = loadEventsByActivity({
-			jobName: loadJobDataCtrl.jobName,
-			jobGroup: loadJobDataCtrl.jobGroup,
-			jobDescription: loadJobDataCtrl.jobDescription
-		});
+		loadJobDataCtrl.loadEvent();
+//		loadJobDataCtrl.events = loadEventsByActivity({
+//			jobName: loadJobDataCtrl.jobName,
+//			jobGroup: loadJobDataCtrl.jobGroup,
+//			jobDescription: loadJobDataCtrl.jobDescription
+//		});
 
 		loadJobDataCtrl.loadDataset();
 		loadJobDataCtrl.loadJobData();
@@ -114,6 +114,20 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 			});
 	}
 	
+	loadJobDataCtrl.loadEvent = function(){
+		restServices.get("1.0/eventJob", "listEvent")
+			.success(function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.error(translate.load("sbi.glossary.load.error"))
+				} else {
+					loadJobDataCtrl.events = data.item;
+				}
+			})
+			.error(function(data, status, headers, config) {
+				console.error(translate.load("sbi.glossary.load.error"))
+			});
+	}
+	
 	loadJobDataCtrl.loadJobData = function(){
 		var parameters = 'jobName=' + loadJobDataCtrl.jobName + '&jobGroup=' + loadJobDataCtrl.jobGroup;
 		restServices.get("scheduler", "getJob", parameters)
@@ -134,8 +148,15 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 
 	
 
-eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope','$mdDialog','$mdToast', function(translate, $scope,$mdDialog,$mdToast) {
+eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope','$mdDialog','$mdToast','restServices', function(translate, $scope,$mdDialog,$mdToast,restServices) {
 	activityEventCtrl = this;
+	activityEventCtrl.SaveAsSnapshot=false;
+	activityEventCtrl.SaveAsFile=false;
+	activityEventCtrl.SaveAsDocument=false;
+	activityEventCtrl.SendToJavaClass=false;
+	activityEventCtrl.SendEmail=false;
+	activityEventCtrl.SendToDistributionList=false;
+	
 	
 	activityEventCtrl.editedEvent=getEmptyEvent();
 	
@@ -219,20 +240,32 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	}
 	
 	activityEventCtrl.saveEvent=function(isValid){
-		 if (isValid) {
-		   var SaveOrUpdate=activityEventCtrl.editedEvent.newEvent==true?'Saved':'Updated';
+		if (!isValid) {return false;}
+		
+			var SaveOrUpdate=activityEventCtrl.editedEvent.newEvent==true?'Saved':'Updated';
 			 //TO-DO rest services
-			 $mdToast.show($mdToast.simple().content(SaveOrUpdate).position('top').action(
-				'OK').highlightAction(false).hideDelay(3000));
-			 //if is new event, add it to list
-			 if(activityEventCtrl.editedEvent.newEvent==true){
-				 loadJobDataCtrl.events.push(activityEventCtrl.editedEvent);
-			 }
-			 activityEventCtrl.createNewEvent(true);
-			
-		    }else{
-		    	return false;
-		    }
+			restServices.post("1.0/eventJob","addEvent", activityEventCtrl.editedEvent)
+				.success(function(data) {
+					if (data.hasOwnProperty("errors")) {
+						console.error(data.errors[0].message);
+						console.error(translate.load("sbi.glossary.error.save"));
+					} else if (data.Status == "NON OK") {
+						console.error(translate.load(data.Message));
+					} else {
+						$mdToast.show($mdToast.simple().content(SaveOrUpdate).position('top').action(
+							'OK').highlightAction(false).hideDelay(3000));
+						 //if is new event, add it to list
+						if(activityEventCtrl.editedEvent.newEvent==true){
+							activityEventCtrl.editedEvent.id=data.ID;
+							 loadJobDataCtrl.events.push(activityEventCtrl.editedEvent);
+						 }
+						activityEventCtrl.createNewEvent(true);
+						}
+					})
+			.error(function(data, status,headers, config) {
+						console.error(translate.load("sbi.glossary.error.save"));
+					});
+		  
 	}
 	
 
@@ -249,8 +282,25 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 				.then(
 						function() {
 							console.log("canciello");
-							var index = loadJobDataCtrl.events.indexOf(item);
-							loadJobDataCtrl.events.splice(index, 1);
+							
+							
+							restServices.post("1.0/eventJob","deleteEvent", {"event_id":item.event_id})
+							.success(function(data) {
+								if (data.hasOwnProperty("errors")) {
+									console.error(data.errors[0].message);
+									console.error(translate.load("sbi.glossary.error.save"));
+								} else if (data.Status == "NON OK") {
+									console.error(translate.load(data.Message));
+								} else {
+									var index = loadJobDataCtrl.events.indexOf(item);
+									loadJobDataCtrl.events.splice(index, 1);
+								}
+								})
+						.error(function(data, status,headers, config) {
+									console.error(translate.load("sbi.glossary.error.save"));
+								});
+							
+							
 						}, function() {
 							console.log('annulla');
 						});

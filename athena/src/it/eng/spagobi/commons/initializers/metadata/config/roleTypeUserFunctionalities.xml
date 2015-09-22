@@ -288,6 +288,12 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="Glossary" roleType="MODEL_ADMIN" />
 	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventJob" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventJob" roleType="USER" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventJob" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventJob" roleType="TEST_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="EventJob" roleType="MODEL_ADMIN" />
+	
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ImagesManagement" roleType="USER" />
