@@ -69,7 +69,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String IS_WORKSHEET_ENABLED = "IS_WORKSHEET_ENABLED";
 	public static final String IS_SMARTFILTER_ENABLED = "IS_SMARTFILTER_ENABLED";
 	public static final String IS_CKAN_ENABLED = "IS_CKAN_ENABLED";
-	public static final String CAN_CREATE_DATASET_AS_FINAL_USER = "IS_SMARTFILTER_ENABLED";
+	public static final String CAN_CREATE_DATASET_AS_FINAL_USER = "CAN_CREATE_DATASET_AS_FINAL_USER";
 
 	// public static final String GEOREPORT_EDIT_ACTION =
 	// "GEOREPORT_ENGINE_START_EDIT_ACTION";

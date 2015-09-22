@@ -13,6 +13,7 @@ public class SpagoBIConstants {
 	public static final String TENANT_ID = "TENANT_ID";
 	public static final String SBI_ENTITY = "SBI_ENTITY";
 	public static final String PAGE = "PAGE";
+	public static final String ACTION_NAME = "ACTION_NAME";
 	public static final String URL = "URL";
 	public static final String OBJECT = "OBJECT";
 	public static final String OBJECT_ID = "OBJECT_ID";
@@ -39,7 +40,7 @@ public class SpagoBIConstants {
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
 
-	public static final String ADMIN_ROLE_TYPE="ADMIN";	
+	public static final String ADMIN_ROLE_TYPE = "ADMIN";
 	public static final String ROLE_TYPE_ADMIN = "ACTOR";
 	public static final String ROLE_TYPE_DEV = "DEV_ROLE";
 	public static final String ROLE_TYPE_TEST = "TEST_ROLE";
@@ -377,6 +378,7 @@ public class SpagoBIConstants {
 	public static final String CKAN_FUNCTIONALITY = "CkanIntegrationFunctionality";
 	public static final String IMAGES_MANAGEMENT = "ImagesManagement";
 	public static final String GLOSSARY = "Glossary";
+	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
