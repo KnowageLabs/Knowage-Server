@@ -27,6 +27,11 @@ public class SbiEventJob extends SbiHibernateModel {
 	 * @param dataset
 	 * @param frequency
 	 */
+
+	public SbiEventJob() {
+		super();
+	}
+
 	public SbiEventJob(Integer event_id, String name, String description, String event_type, boolean is_suspended, Integer dataset, Integer frequency) {
 		super();
 		this.event_id = event_id;

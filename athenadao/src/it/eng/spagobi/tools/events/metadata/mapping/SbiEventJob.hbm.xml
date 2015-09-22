@@ -56,8 +56,8 @@
         <property name="event_type" type="string">
             <column name="EVENT_TYPE" length="40" />
         </property> 
-        <property name="is_suspended" type="integer">
-            <column name="IS_SUSPENDED"  />
+        <property name="is_suspended" type="boolean">
+            <column name="IS_SUSPENDED"  />	
         </property> 
         <property name="frequency" type="integer">
             <column name="FREQUENCY"  />
