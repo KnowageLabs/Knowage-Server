@@ -361,7 +361,7 @@ Ext.define('Sbi.execution.SaveDocumentWindowExt4', {
 						                }
 		                            	
 		                                Ext.MessageBox.hide(); 
-		                                if (this.destroy) this.destroy();
+		                                if (thisWindow.closeAction == 'destroy') thisWindow.destroy();
 					      		    }
 				                });
 
