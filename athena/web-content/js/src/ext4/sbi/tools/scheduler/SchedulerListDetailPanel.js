@@ -30,6 +30,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			});
 		
 		this.detailPanel.on("addSchedulation",this.addSchedulation,this);
+		this.detailPanel.on("addSchedulationAngular",this.addSchedulationAngular,this);
 
 		this.columns = [
 		                {dataIndex:"jobName", header:LN('sbi.generic.label')}, 
@@ -89,9 +90,9 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		
 		Ext.tip.QuickTipManager.init();
 		
-		//custom button for scheduler events
-		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
-				this.columns, 'button-open-events', LN('sbi.scheduler.activity.events.openevents'), this.openEvents);
+//		//custom button for scheduler events
+//		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
+//				this.columns, 'button-open-events', LN('sbi.scheduler.activity.events.openevents'), this.openEvents);
 		
 		//custom buttons for scheduler operations
 		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
@@ -193,12 +194,45 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 	
 	, addSchedulation: function(){
 		if (this.grid.getSelectionModel().hasSelection()) {
-			   var row = this.grid.getSelectionModel().getSelection()[0];
-			   var jobGroup = row.get('jobGroup');
-			   var jobName = row.get('jobName');
-			   window.location.assign(this.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_SCHEDULE&JOBNAME='+jobName);
+		   var row = this.grid.getSelectionModel().getSelection()[0];
+		   var jobGroup = row.get('jobGroup');
+		   var jobName = row.get('jobName');
+		   window.location.assign(this.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_SCHEDULE&JOBNAME='+jobName);
 
-			}
+		}
+	}
+	
+	, addSchedulationAngular: function(){
+		if (this.grid.getSelectionModel().hasSelection()) {
+			var row = this.grid.getSelectionModel().getSelection()[0];
+			var jobGroup = row.get('jobGroup');
+			var jobName = row.get('jobName');
+			
+			var addSchedulationSrc = '/athena/restful-services/publish?PUBLISHER=' 
+				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName 
+				+ '&JOB_GROUP=' + jobGroup;
+			
+			Ext.create('Ext.window.Window', {
+			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,
+			    height : '100%',
+			    width : '100%',
+			    resizable: false,
+			    draggable: false,
+			    closeAction : 'destroy',
+			    modal: true,
+			    layout: 'fit',
+			    
+			    items: [
+					new Ext.ux.IFrame({
+						border : false,
+						bodyBorder : false,
+						height : '100%',
+						src : addSchedulationSrc
+					})
+			    ]
+			}).show();
+			
+		}
 	}
 	
 	//overwrite parent method
@@ -230,6 +264,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		    resizable: false,
 		    closeAction : 'destroy',
 		    modal: true,
+		    draggable: false,
 		    layout: 'fit',
 		    
 		    items: [

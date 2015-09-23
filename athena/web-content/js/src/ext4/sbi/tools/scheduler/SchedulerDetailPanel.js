@@ -226,6 +226,13 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			        iconCls: 'icon-add',
 			    	scope: this,
 			    	tooltip: LN('sbi.scheduler.addschedulation'),
+			    	handler: this.onAddClickAngular
+			    },
+			    {
+			    	text: 'Vecchio Add scheduler',
+			        iconCls: 'icon-add',
+			    	scope: this,
+			    	tooltip: LN('sbi.scheduler.addschedulation'),
 			    	handler: this.onAddClick
 			    }]
 			});
@@ -498,6 +505,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 					},
 					this
 				);
+		}
+		
+		, onAddClickAngular: function(){
+			this.fireEvent('addSchedulationAngular');
 		}
 		
 		, onAddClick: function(){
