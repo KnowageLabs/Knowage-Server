@@ -311,96 +311,100 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	private void handleTimeFilters(Query query) {
 		// DD: RECUPERO LA DIMENSIONE TEMPORALE
 		IModelEntity temporalDimension = getTemporalDimension();
-		HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
-		Hierarchy defaultHierarchy = hierarchicalDimensionByEntity.getDefaultHierarchy();
 
-		List<Integer> whereFieldsIndexesToRemove = new LinkedList<Integer>();
-		List<WhereField> whereFieldsToAdd = new LinkedList<WhereField>();
-		List<WhereField> whereFields = query.getWhereFields();
-		List<String> nodesToAdd = new LinkedList<String>();
+		if (temporalDimension != null) {
+			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
+			Hierarchy defaultHierarchy = hierarchicalDimensionByEntity.getDefaultHierarchy();
 
-		int timeFilterIndex = 0;
-		int whereFieldIndex = 0;
-		for (WhereField whereField : whereFields) {
-			String[] lValues = whereField.getLeftOperand().values;
-			String[] rValues = whereField.getRightOperand().values;
+			List<Integer> whereFieldsIndexesToRemove = new LinkedList<Integer>();
+			List<WhereField> whereFieldsToAdd = new LinkedList<WhereField>();
+			List<WhereField> whereFields = query.getWhereFields();
+			List<String> nodesToAdd = new LinkedList<String>();
 
-			if (lValues != null && lValues.length > 0 && rValues != null && rValues.length > 0) {
-				if ("TIME".equals(lValues[0])) {
-					String temporalLevelColumn = null;
-					List<HierarchyLevel> levels = defaultHierarchy.getLevels();
-					String temporalLevel = whereField.getLeftOperand().description;
-					for (HierarchyLevel level : levels) {
-						if (level.getType().equals(temporalLevel)) {
-							temporalLevelColumn = level.getColumn();
+			int timeFilterIndex = 0;
+			int whereFieldIndex = 0;
+			for (WhereField whereField : whereFields) {
+				String[] lValues = whereField.getLeftOperand().values;
+				String[] rValues = whereField.getRightOperand().values;
+
+				if (lValues != null && lValues.length > 0 && rValues != null && rValues.length > 0) {
+					if ("TIME".equals(lValues[0])) {
+						String temporalLevelColumn = null;
+						List<HierarchyLevel> levels = defaultHierarchy.getLevels();
+						String temporalLevel = whereField.getLeftOperand().description;
+						for (HierarchyLevel level : levels) {
+							if (level.getType().equals(temporalLevel)) {
+								temporalLevelColumn = level.getColumn();
+							}
 						}
+
+						String temporalDimensionId = "time_id";
+
+						// DD: RECUPERO IL PERIODO CORRENTE
+						// TemporalRecord currentPeriodRecord = getCurrentPeriod(temporalDimension, "time_id", "quarter", "the_year");
+						TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn,
+								defaultHierarchy.getAncestors(temporalLevelColumn));
+								// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
+
+						// CURRENT
+						if ("Current".equals(rValues[0])) {
+							lValues[0] = temporalDimension.getType() + ":" + temporalLevelColumn;
+							rValues[0] = currentPeriod.getPeriod().toString();
+						} else if (whereField.getOperator().equals("LAST")) {
+
+							// DD: RECUPERO TUTTI I RECORD NIZIALI DEGLI INTERVALLI DI INTERESSE
+							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
+									temporalLevelColumn, defaultHierarchy.getAncestors(temporalLevelColumn));
+
+							int currentPeriodIndex = allPeriodsStartingDate.indexOf(currentPeriod);
+
+							whereFieldsIndexesToRemove.add(whereFieldIndex);
+
+							timeFilterIndex++;
+
+							Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
+									temporalDimension.getName() + ":" + temporalDimensionId, "Field Content", new String[] {}, null);
+							Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() }, currentPeriod.getId().toString(),
+									"Static Content", new String[] {}, null);
+
+							String maxFilterId = "TimeFilterMax" + timeFilterIndex;
+							WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left, "EQUALS OR LESS THAN", maxRight, "AND");
+							nodesToAdd.add(maxFilterId);
+
+							int offset = Integer.parseInt(rValues[0]);
+							int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
+							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
+							Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() }, oldestPeriod.getId().toString(), "Static Content",
+									new String[] {}, null);
+
+							String minFilterId = "TimeFilterMax" + timeFilterIndex;
+							WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left, "EQUALS OR GREATER THAN", minRight, "AND");
+							nodesToAdd.add(minFilterId);
+
+							whereFieldsToAdd.add(maxWhereField);
+							whereFieldsToAdd.add(minWhereField);
+						}
+
 					}
-
-					String temporalDimensionId = "time_id";
-
-					// DD: RECUPERO IL PERIODO CORRENTE
-					// TemporalRecord currentPeriodRecord = getCurrentPeriod(temporalDimension, "time_id", "quarter", "the_year");
-					TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn,
-							defaultHierarchy.getAncestors(temporalLevelColumn));
-							// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
-
-					// CURRENT
-					if ("Current".equals(rValues[0])) {
-						lValues[0] = temporalDimension.getType() + ":" + temporalLevelColumn;
-						rValues[0] = currentPeriod.getPeriod().toString();
-					} else if (whereField.getOperator().equals("LAST")) {
-
-						// DD: RECUPERO TUTTI I RECORD NIZIALI DEGLI INTERVALLI DI INTERESSE
-						LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
-								temporalLevelColumn, defaultHierarchy.getAncestors(temporalLevelColumn));
-
-						int currentPeriodIndex = allPeriodsStartingDate.indexOf(currentPeriod);
-
-						whereFieldsIndexesToRemove.add(whereFieldIndex);
-
-						timeFilterIndex++;
-
-						Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
-								temporalDimension.getName() + ":" + temporalDimensionId, "Field Content", new String[] {}, null);
-						Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() }, currentPeriod.getId().toString(), "Static Content",
-								new String[] {}, null);
-
-						String maxFilterId = "TimeFilterMax" + timeFilterIndex;
-						WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left, "EQUALS OR LESS THAN", maxRight, "AND");
-						nodesToAdd.add(maxFilterId);
-
-						int offset = Integer.parseInt(rValues[0]);
-						int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
-						TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
-						Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() }, oldestPeriod.getId().toString(), "Static Content",
-								new String[] {}, null);
-
-						String minFilterId = "TimeFilterMax" + timeFilterIndex;
-						WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left, "EQUALS OR GREATER THAN", minRight, "AND");
-						nodesToAdd.add(minFilterId);
-
-						whereFieldsToAdd.add(maxWhereField);
-						whereFieldsToAdd.add(minWhereField);
-					}
-
 				}
+				whereFieldIndex++;
 			}
-			whereFieldIndex++;
+
+			for (Integer index : whereFieldsIndexesToRemove) {
+				WhereField whereField = query.getWhereFields().get(index);
+				query.removeWhereField(index);
+			}
+
+			for (int index = 0; index < whereFieldsToAdd.size(); index++) {
+				WhereField whereFieldToAdd = whereFieldsToAdd.get(index);
+				query.addWhereField(whereFieldToAdd.getName(), whereFieldToAdd.getDescription(), whereFieldToAdd.isPromptable(),
+						whereFieldToAdd.getLeftOperand(), whereFieldToAdd.getOperator(), whereFieldToAdd.getRightOperand(),
+						whereFieldToAdd.getBooleanConnector());
+
+			}
+
+			query.updateWhereClauseStructure();
 		}
-
-		for (Integer index : whereFieldsIndexesToRemove) {
-			WhereField whereField = query.getWhereFields().get(index);
-			query.removeWhereField(index);
-		}
-
-		for (int index = 0; index < whereFieldsToAdd.size(); index++) {
-			WhereField whereFieldToAdd = whereFieldsToAdd.get(index);
-			query.addWhereField(whereFieldToAdd.getName(), whereFieldToAdd.getDescription(), whereFieldToAdd.isPromptable(), whereFieldToAdd.getLeftOperand(),
-					whereFieldToAdd.getOperator(), whereFieldToAdd.getRightOperand(), whereFieldToAdd.getBooleanConnector());
-
-		}
-
-		query.updateWhereClauseStructure();
 
 	}
 
