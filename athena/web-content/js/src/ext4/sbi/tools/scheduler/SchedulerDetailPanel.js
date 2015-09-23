@@ -132,13 +132,29 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 					},	
 					{
 						//DETAIL BUTTON
-			        	menuDisabled: true,
+						menuDisabled: true,
 						sortable: false,
 						xtype: 'actioncolumn',
 						width: 20,
 						columnType: "decorated",
 						items: [{
 							tooltip: LN('sbi.scheduler.schedulation.detail'),
+							iconCls   : 'button-open-events',  
+							handler: function(grid, rowIndex, colIndex) {
+								var selectedRecord =  grid.store.getAt(rowIndex);
+								thisPanel.onDetailSchedulationAngular(selectedRecord);
+							}
+						}]
+					},		
+					{
+						//DETAIL BUTTON (OLD) TODO REMOVE!!!
+			        	menuDisabled: true,
+						sortable: false,
+						xtype: 'actioncolumn',
+						width: 20,
+						columnType: "decorated",
+						items: [{
+							tooltip: LN('sbi.scheduler.schedulation.detail') + ' old',
 							iconCls   : 'button-detail',  
 							handler: function(grid, rowIndex, colIndex) {
 								var selectedRecord =  grid.store.getAt(rowIndex);
@@ -432,7 +448,41 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			
 		}
 		
-		, onDetailSchedulation: function(record){
+		, onDetailSchedulationAngular: function(record){
+			var jobName = record.get('jobName');
+			var jobGroup = record.get('jobGroup');
+			var triggerName = record.get('triggerName');
+			var triggerGroup = record.get('triggerGroup');
+			
+			var addSchedulationSrc = '/athena/restful-services/publish?PUBLISHER=' 
+				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?'
+				+ 'JOB_NAME=' + jobName 
+				+ '&JOB_GROUP=' + jobGroup;
+				+ '&TRIGGER_NAME=' + triggerName;
+				+ '&TRIGGER_GROUP=' + triggerGroup;
+			
+			Ext.create('Ext.window.Window', {
+			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,
+			    height : '100%',
+			    width : '100%',
+			    resizable: false,
+			    draggable: false,
+			    closeAction : 'destroy',
+			    modal: true,
+			    layout: 'fit',
+			    
+			    items: [
+					new Ext.ux.IFrame({
+						border : false,
+						bodyBorder : false,
+						height : '100%',
+						src : addSchedulationSrc
+					})
+			    ]
+			}).show();
+		}
+		
+		, onDetailSchedulation: function(record){ //TODO REMOVE!!!
 			var jobName = record.get('jobName');
 			var jobGroup = record.get('jobGroup');
 			var triggerName = record.get('triggerName');

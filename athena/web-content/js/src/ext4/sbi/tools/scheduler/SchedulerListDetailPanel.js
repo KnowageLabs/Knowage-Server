@@ -24,10 +24,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		this.services =[];
 		this.initServices();
 		this.detailPanel = Ext.create('Sbi.tools.scheduler.SchedulerDetailPanel', {
-				services: this.services, 
-				isSuperadmin: isSuperadmin, 
-				contextName: this.contextName
-			});
+			services: this.services, 
+			isSuperadmin: isSuperadmin, 
+			contextName: this.contextName
+		});
 		
 		this.detailPanel.on("addSchedulation",this.addSchedulation,this);
 		this.detailPanel.on("addSchedulationAngular",this.addSchedulationAngular,this);
@@ -51,12 +51,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		this.filteredProperties = ["jobName"];
 		
 		//for filtering inside objects of fields (in this case triggers object)
-		this.filteredObjects = [
-		              {
-		            	 objectName : "triggers",
-		            	 filteredProperties: ["triggerStartTime","triggerEndTime","triggerChronString"]
-		              }          
-		];
+		this.filteredObjects = [{
+        	 objectName : "triggers",
+        	 filteredProperties: ["triggerStartTime","triggerEndTime","triggerChronString"]
+		}];
 		
 		this.buttonToolbarConfig = {
 				newButton: true
@@ -75,8 +73,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 					}, {
 						"name": LN('sbi.scheduler.schedulationtype'),
 						"value": "triggerChronString",	
-					},
-					{
+					}, {
 						"name": LN('sbi.generic.label'),
 						"value": "jobName",	
 					}
