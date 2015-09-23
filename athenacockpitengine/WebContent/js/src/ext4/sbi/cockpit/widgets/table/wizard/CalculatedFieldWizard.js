@@ -23,11 +23,12 @@ Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard = function(config) {
 		title: 'Expression wizard ...'
 		, width: 700
 		, minWidth: 400
-		, height: 450
+		, height: 500
 		, minHeight: 400
 		, modal : true
 		, hasBuddy: false	
 		, constrainHeader : true
+		, closeAction: 'destroy'
 	});
 
 	Ext.apply(this, c);
@@ -122,8 +123,8 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard, Ext.Window, {
 		var koButtonConfig = {
 		    text: LN('sbi.cockpit.widgets.table.calculatedFields.buttons.text.cancel'),
 		    handler: function(){
-//		    	this.hide();
-	           	this.close();
+		    	this.hide();
+//	           	this.close();
 	      	}
 	       	, scope: this
 		}
@@ -135,6 +136,9 @@ Ext.extend(Sbi.cockpit.widgets.table.wizard.CalculatedFieldWizard, Ext.Window, {
 		return this.mainPanel.getExpression();
 	}
 	
+	, forceFocus: function(){
+		this.setActive(true, this.mainPanel.expressionEditor );
+	}
 });
 
 //--------------------------------------------------------------------------------------------
