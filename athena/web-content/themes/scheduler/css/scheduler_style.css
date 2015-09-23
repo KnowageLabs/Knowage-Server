@@ -69,3 +69,7 @@ md-content.bottomButtonsBox{
 	    height: calc( 100% - 40px);
 	        top: 0;
 }
+
+.selectedDoc{
+	text-decoration: underline;
+}
