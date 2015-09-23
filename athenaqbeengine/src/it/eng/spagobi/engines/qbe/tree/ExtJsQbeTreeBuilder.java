@@ -359,13 +359,14 @@ public class ExtJsQbeTreeBuilder {
 		String entityLabel = getEntityLabel( parentEntity );
 
 		try {
+			fieldNode.put("id", hierarchy.getName());
 			fieldNode.put("text", hierarchy.getName());
 			fieldNode.put("leaf", false);
 
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("type", NODE_TYPE_HIERARCHY_FIELD);
 			nodeAttributes.put("entity", entityLabel);
-			if(!hierarchy.getIsDefault()){
+			if(hierarchy.getIsDefault()){
 				fieldNode.put("cls", "default_hierarchy");
 			}
 			fieldNode.put("attributes", nodeAttributes);
@@ -384,9 +385,9 @@ public class ExtJsQbeTreeBuilder {
 				JSONObject levelAttributes = new JSONObject();
 				levelAttributes.put("type", NODE_TYPE_HIERARCHY_LEVEL_FIELD);
 				levelAttributes.put("entity", entityLabel);
-				if(!hierarchy.getIsDefault()){
-					fieldNode.put("cls", "default_hierarchy");
-				}
+//				if(hierarchy.getIsDefault()){
+//					fieldNode.put("cls", "default_hierarchy");
+//				}
 				jsObject.put("attributes", levelAttributes);
 
 				if (jsObject != null) {

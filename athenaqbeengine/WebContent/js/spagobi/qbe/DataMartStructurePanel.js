@@ -92,6 +92,10 @@ Sbi.qbe.DataMartStructurePanel = function(config) {
 		, baseParams: params
 	});
 	
+	this.services['setDefaultHierarchy'] = this.services['setDefaultHierarchy'] || Sbi.config.serviceRegistry.getServiceUrl({
+		serviceName: 'SET_DEFAULT_HIERARCHY_ACTION'
+		, baseParams: params
+	});
 	
 	this.addEvents('load', 'nodeclick');
 	
@@ -412,14 +416,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 
 	}
 	
-	, setHierarchyDefault: function(hierarchyNode) {
-		
-		hierarchyNode.attributes.cls = 'default_hierarchy';
-	
-		
-		
-	}
-	
 	// --------------------------------------------------------------------------------
 	// private methods
 	// --------------------------------------------------------------------------------
@@ -481,13 +477,13 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		
 		
 		//TODO gestione gerarchia default
-		this.tree.on('dblclick',function(node){
-			var nodeType = node.attributes.type || node.attributes.attributes.type;
-			if(nodeType == 'hierarchyField') {
-				this.fireEvent('nodedblclick', this, node);
-//				node.attributes.cls = 'default_hierarchy';
-			}
-		},this);
+//		this.tree.on('dblclick',function(node){
+//			var nodeType = node.attributes.type || node.attributes.attributes.type;
+//			if(nodeType == 'hierarchyField') {
+//				this.fireEvent('nodedblclick', this, node);
+////				node.attributes.cls = 'default_hierarchy';
+//			}
+//		},this);
 		
 		
 		if(this.enableTreeContextMenu) {
@@ -648,8 +644,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 				   msg: LN('sbi.qbe.calculatedFields.add.error'),
 				   buttons: Ext.Msg.OK,
 				   icon: Ext.MessageBox.ERROR
-			});		
-		}	
+			});
+		}
 	}
 	
 	, showInLineCalculatedFieldWizard: function(entityNode) {
@@ -705,14 +701,56 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	, setHierarchyDefault: function(hierarchyNode) {
+		
+		if(hierarchyNode.attributes.attributes.type 
+				!= Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD){
+			
+			Ext.Msg.show({
+				title:LN('sbi.qbe.bands.wizard.invalid.operation'),
+				   msg: LN('sbi.qbe.hierarchies.setdefault.error'),
+				   buttons: Ext.Msg.OK,
+				   icon: Ext.MessageBox.ERROR
+			});
+			return;
+		}
+		
+		var entityId = hierarchyNode.parentNode.id;
+		var fieldId = hierarchyNode.attributes.id;
+		var params = {
+				entityId: entityId,
+				fieldId: fieldId
+		}
+		
+		for (var iNode in hierarchyNode.parentNode.childNodes){
+			var child = hierarchyNode.parentNode.childNodes[iNode];
+			if (child.attributes && child.attributes.attributes.type && child.attributes.attributes.type == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD){
+				child.ui.elNode.style.fontWeight='normal';
+			}
+		}
+		
+		hierarchyNode.ui.elNode.style.fontWeight='bold';
+		
+		Ext.Ajax.request({
+			url:  this.services['setDefaultHierarchy'],
+			success: function(response, options) {
+				Ext.Msg.show({
+					   title: 'Set Default',
+					   msg: 'Hierarchy successfully set as default',
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.INFO
+				});
+				
+				theTree.doLayout();
+				//theTree.update();
+				
+   			},
+   			scope: this,
+			failure: Sbi.exception.ExceptionHandler.handleFailure,	
+			params: params
+    	}); 
+		
+	}
 	
 	
 	
@@ -932,8 +970,8 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 //			});
    			},
    			scope: this,
-			failure: Sbi.exception.ExceptionHandler.handleFailure,	
-			params: params
+//			failure: Sbi.exception.ExceptionHandler.handleFailure,	
+//			params: params
     	}); 
 		
 		
@@ -1075,6 +1113,13 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 	            	 this.removeCalculatedField(this.ctxNode);
 	            	 this.ctxNode = null;
                  },
+                 scope: this
+             },{
+            	 text:LN('sbi.qbe.hierarchies.setdefault'),
+                 iconCls:'add',
+                 handler:function(){
+            	   	this.setHierarchyDefault(this.ctxNode);	         	 	
+	             },
                  scope: this
              }]
          });

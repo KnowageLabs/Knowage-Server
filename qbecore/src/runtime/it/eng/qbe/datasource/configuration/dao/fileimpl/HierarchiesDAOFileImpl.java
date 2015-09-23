@@ -5,6 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.configuration.dao.fileimpl;
 
+import it.eng.qbe.datasource.configuration.dao.DAOException;
+import it.eng.qbe.datasource.configuration.dao.IHierarchiesDAO;
+import it.eng.qbe.model.structure.HierarchicalDimensionField;
+import it.eng.qbe.model.structure.Hierarchy;
+import it.eng.qbe.model.structure.HierarchyLevel;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,14 +32,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-
-import it.eng.qbe.datasource.configuration.dao.DAOException;
-import it.eng.qbe.datasource.configuration.dao.IHierarchiesDAO;
-import it.eng.qbe.model.structure.HierarchicalDimensionField;
-import it.eng.qbe.model.structure.Hierarchy;
-import it.eng.qbe.model.structure.HierarchyLevel;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 
@@ -161,7 +161,7 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 
 	private Hierarchy loadHierarchy(Node hierarchyNode) {
 		String name = hierarchyNode.valueOf("@name");
-		Boolean isDefault = Boolean.getBoolean(hierarchyNode.valueOf("@default"));
+		Boolean isDefault = Boolean.valueOf(hierarchyNode.valueOf("@default"));
 		Hierarchy hierarchy = new Hierarchy(name, isDefault);
 		List<?> levelNodes = hierarchyNode.selectNodes(LEVEL_TAG);
 

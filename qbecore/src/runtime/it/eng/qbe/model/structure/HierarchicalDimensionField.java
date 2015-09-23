@@ -72,4 +72,15 @@ public class HierarchicalDimensionField extends ModelField {
 		return hierarchies.size() > 0 ? hierarchies.get(0) : null;
 	}
 
+
+	public void setDefaultHierarchy(String hierarchyName){
+		for (Hierarchy h:getHierarchies()){
+			h.setIsDefault(false);
+			if(h.getName().equals(hierarchyName)){
+				h.setIsDefault(true);
+			}
+		}
+	}
+
+
 }

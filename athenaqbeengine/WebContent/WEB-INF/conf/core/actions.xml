@@ -81,6 +81,12 @@
 		<CONFIG></CONFIG>
 	</ACTION>
 	
+	<ACTION name="SET_DEFAULT_HIERARCHY_ACTION" 
+			class="it.eng.spagobi.engines.qbe.services.core.SetDefaultHierarchyAction"  
+			scope="REQUEST">		
+		<CONFIG></CONFIG>
+	</ACTION>
+	
 	<!-- 
 	<ACTION name="GET_AMBIGUOUS_FIELDS_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.core.GetAmbiguousFieldsAction"  

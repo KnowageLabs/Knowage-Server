@@ -17,6 +17,7 @@ public class Hierarchy {
 		setIsDefault(isDefault);
 	}
 
+
 	/**
 	 * @return the name
 	 */
@@ -77,4 +78,14 @@ public class Hierarchy {
 		return ancestors;
 	}
 
+	@Override
+	public boolean equals(Object obj){
+		if (obj instanceof Hierarchy){
+			Hierarchy h = (Hierarchy) obj;
+			if (h.getName().equals(getName())){
+				return true;
+			}
+		}
+		return false;
+	}
 }
