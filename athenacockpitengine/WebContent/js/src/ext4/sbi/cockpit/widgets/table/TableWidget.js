@@ -459,11 +459,13 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		/* END Styling */
 		
-		if (visibleField.columnWidth && visibleField.columnWidth != null && visibleField.columnWidth != '') {
+		if (visibleField.columnWidth && visibleField.columnWidth != null && visibleField.columnWidth != '' 
+				&& visibleField.columnWidth !== 0 && visibleField.columnWidth !== '0') {
 			var width = parseInt(visibleField.columnWidth);
 			field.width = width;
-		} else if (visibleField.columnWidth === 0){
+		} else if (visibleField.columnWidth === 0 || visibleField.columnWidth === '0'){
 			field.hidden = true;
+			field.resizable = false;
 		} else {
 			field.flex = 1;
 		}
