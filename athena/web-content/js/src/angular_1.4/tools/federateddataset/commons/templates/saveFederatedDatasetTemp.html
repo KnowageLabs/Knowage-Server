@@ -32,31 +32,17 @@
       					
       					<div class="md-actions" layout="row">
     			<span flex></span>
-    			<md-button style="color:grey" ng-click="answer('close')" class="md-primary">
+    			<md-button style="color:grey" ng-click="ctrl.hide();" class="md-primary">
      				close
     			</md-button>
     			<md-button style="color:grey" 
-    			ng-click="saveFedDataSet(); hide(); showAlert($event); " class="md-primary" 
+    			ng-click="feddsCtrl.saveFedDataSet(); ctrl.hide(); ctrl.showAlert($event); " class="md-primary" 
     			ng-disabled="saveFDSForm.$invalid">
       				save
     			</md-button>
   			</div>
 						
 					</form>
-			<!-- <md-input-container> 
-        				<label>Label</label>
-        				<input ng-model='federateddataset.label'></input>
-      				</md-input-container>
-				
-					<md-input-container> 
-        				<label>Name</label>
-        				<input ng-model='federateddataset.name'></input>
-      				</md-input-container>
-    
-      				<md-input-container> 
-        				<label>Description</label>
-        				<input ng-model='federateddataset.description'></input>
-      				</md-input-container> -->
       			</div>
   			</md-content>
 

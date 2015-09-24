@@ -46,9 +46,9 @@
 	
 
 </head>
-<body class="bodyStyle" ng-app="MYAPPNIKOLA">
+<body class="bodyStyle" ng-app="DATASETFEDERATION">
 
-	<div ng-controller="MyCRTL" layout="column"
+	<div ng-controller="DatasetFederationCTRL as ctrl" layout="column"
 		style="width: 100%; height: 100%;"
 		class="contentdemoBasicUsage">
 		<md-toolbar class="miniheadfederation">
@@ -60,7 +60,7 @@
 
 		<md-content layout-padding=""
 			style="height: 90%; padding: 20px;"">
-		<div ng-show="state" layout="row" layout-wrap>
+		<div ng-show="ctrl.state" layout="row" layout-wrap>
 			
 			<div flex="49" margin-right: 20px">
 				<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
@@ -74,11 +74,11 @@
 				<div style="height:80%">
 					<angular-list layout-fill="" 
 					id="selectedDatasets" 
-					ng-model="list" 
+					ng-model="ctrl.list" 
 					item-name="label"
 					show-search-bar=true
-					speed-menu-option=glossSpeedMenuOptAD
-					click-function="moveToListNew(item)"
+					speed-menu-option=ctrl.glossSpeedMenuOptAD
+					click-function="ctrl.moveToListNew(item)"
 					
 					>					
 					</angular-list>
@@ -98,10 +98,10 @@
 				<md-content style="height:80%">
 					<angular-list layout-fill="" 
 					id="availableDatasets" 
-					ng-model="listaNew" 
+					ng-model="ctrl.listaNew" 
 					item-name="label" 
 						
-					speed-menu-option=glossSpeedMenuOpt
+					speed-menu-option=ctrl.glossSpeedMenuOpt
 					
 					>					
 					</angular-list>
@@ -112,7 +112,7 @@
 			
 		</div>
 
-		<div ng-hide="state">
+		<div ng-hide="ctrl.state">
 			
 			<md-toolbar class="miniheadfedsmall"
 				style="">
@@ -122,7 +122,7 @@
 			</md-toolbar>
 			<md-content
 				style=" padding: 5px;  height:41%">
-			<div ng-repeat="dataset in listaNew">
+			<div ng-repeat="dataset in ctrl.listaNew">
 				<div style="width: 250px; float: left; padding: 5px;">
 					<md-toolbar class="miniheadfedsmall"
 						style="">
@@ -139,8 +139,8 @@
 							ng-model="dataset.metadata.fieldsMeta" 
 							item-name="name"
 							highlights-selected-item=true
-							selected-item="myselectedvariable[dataset.label]"
-							click-function="selektuj(item, listId)"
+							selected-item="ctrl.myselectedvariable[dataset.label]"
+							click-function="ctrl.selektuj(item, listId)"
 							
 						>
 						</angular-list>
@@ -152,13 +152,13 @@
 			</md-content>
 		</div>
 
-		<div ng-hide="state" style="padding-top: 5px">
+		<div ng-hide="ctrl.state" style="padding-top: 5px">
 			<md-toolbar class="miniheadfedsmall"
 				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
 				<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton"><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
-					ng-click="napuniNiz();"></md-icon></md-button> 	
+					ng-click="ctrl.fillTheArray()"></md-icon></md-button> 	
 			</div>
 
 
@@ -170,7 +170,7 @@
 				<md-content >
 				<div>
 					<md-list>
-						<div ng-repeat="k in multiArray">
+						<div ng-repeat="k in ctrl.multiArray">
 							
 							<md-list-item style="min-height:35px">
 							
@@ -181,7 +181,7 @@
 							</div>
 							<span flex=""></span> 
 							<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
-										 	<i class="fa fa-trash" ng-click="deleteFromMultiArray(k)"></i>
+										 	<i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
 										</md-button>
 						</md-list-item>
 						
@@ -195,17 +195,17 @@
 		</div>
 	</div>
 
-	<div ng-show="state">
+	<div ng-show="ctrl.state">
 		<md-button class="md-raised buttonR" aria-label="btn_next_step"
-			style=" margin-top: 20px; float:right;" ng-click="toggle();">NEXT
+			style=" margin-top: 20px; float:right;" ng-click="ctrl.toggle();">NEXT
 		STEP</md-button>
 	</div>
-	<div ng-hide="state">
+	<div ng-hide="ctrl.state">
 		<md-button class="md-raised buttonL" aria-label="btn_back_to_first_page"
-			 ng-click="toggle()">BACK</md-button>
+			 ng-click="ctrl.toggle()">BACK</md-button>
 		<md-button class="md-raised buttonR" aria-label="btn_save_federation"
 			
-			ng-click="showAdvanced($event)">SAVE federation</md-button>
+			ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
 
 	</div>
 	</md-content>

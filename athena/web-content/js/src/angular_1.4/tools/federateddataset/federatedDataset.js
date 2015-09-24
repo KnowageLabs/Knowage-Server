@@ -1,4 +1,4 @@
-var app = angular.module('MYAPPNIKOLA', ['ngMaterial','angular_rest','angular_list']);
+var app = angular.module('DATASETFEDERATION', ['ngMaterial','angular_rest','angular_list']);
 
 app.service('translate', function() {
 	this.load = function(key) {
@@ -6,414 +6,357 @@ app.service('translate', function() {
 	};
 });
 
-app.controller('MyCRTL', function(restServices, $scope, $mdDialog){
-	console.log("verzija230");
+app.controller('DatasetFederationCTRL', [ "translate", "restServices", "$scope",
+                   		"$mdDialog", funkcija]);
+
+function funkcija(translate, restServices, $scope, $mdDialog) {
+	ctr = this;
+	$scope.translate =  translate;
 	
+	//data from the fields of saveFederateddataset.html
 	$scope.federateddataset = {};
 	$scope.update = {};
-	$scope.list = [];
-	$scope.listaNew = [];
-	$scope.state = true;
-	$scope.relation = "";
-	$scope.relNew = null;
-	$scope.associationArray = [];
-	$scope.alert = '';
-	$scope.test = {};
-	$scope.beforeRel = {};
-	$scope.finalJSON = "";
-	$scope.updatedHeader = "";
-	$scope.item = {};
-	$scope.multiArray = [];
-	$scope.bla = {};
-	$scope.selectedVariable = {};
-	$scope.myselectedvariable = {};
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
-	$scope.napuniNiz = function() {
+	ctr.list = {};
+	ctr.listaNew = [];
+	
+	//state is used to show or hide components on the page
+	ctr.state = true;
+	
+	ctr.relation = "";
+	ctr.relNew = null;
+	ctr.associationArray = [];
+	ctr.beforeRel = {};
+	ctr.multiArray = [];
+	ctr.bla = {}
+	
+	ctr.item = {};
+	ctr.selectedVariable = {};
+	ctr.myselectedvariable = {};
+	
+	ctr.fillTheArray = function() {
 		var check = false;
-		var obj1 = $scope.createAssociations();
+		var obj1 = ctr.createAssociations();
 		var counter = 0;
 		
-		
-			angular.forEach($scope.listaNew, function(dataset){
-				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-					
-					if(listField.selected==true){
-						 counter += 1;
-						 console.log("kaunter"+counter)
-					 }
-				})
-				 
-			})
-		
-		
-		
-		if(counter<2) {
-			$mdDialog.show(
-	       		      $mdDialog.alert()
-	       		        .parent(angular.element(document.querySelector('#popupContainer')))
-	       		        .clickOutsideToClose(true)
-	       		        .content('You have to select at least two fields to create a relation!')
-	       		        .ok('OK')
-	       		    );
-		} else {
-			
-			if($scope.multiArray.length==0){
-				
-				$scope.multiArray.push($scope.createAssociations());
-				
-				
-			} else {
-
-				angular.forEach($scope.multiArray, function(obj2){
-
-
-					if (JSON.stringify(obj1) === JSON.stringify(obj2)) {
-						check = true;
-			        	console.log("The relation is already created!")
-			        	 $mdDialog.show(
-			       		      $mdDialog.alert()
-			       		        .parent(angular.element(document.querySelector('#popupContainer')))
-			       		        .clickOutsideToClose(true)
-			       		        .content('The relation is already created!')
-			       		        .ok('OK')
-			       		    );
-			        }
-					
-				})
-				if(!check){
-					console.log("dodaj novi u niz")
-					$scope.multiArray.push($scope.createAssociations());
+		angular.forEach(ctr.listaNew, function(dataset){
+			angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+				if(listField.selected==true){
+					counter +=1;
 				}
-			} 
-			
-		}
+			});
+		});
 		
-		//console.log(obj1.length)
-		
-
-	}
-		
-	$scope.createAssociations = function(){
-		  
-		
-		  var RelationshipsArray = [];
-		  var checkBranch = false;
-		  angular.forEach($scope.listaNew, function(dataset){
-			  
-			  if(checkBranch==false){
-				  
-				  console.log('false branch ['+checkBranch+' kontrolna]');
-				  angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-					  
-					  if(listField.selected){
-						  console.log('selected field');
-						  $scope.beforeRel = dataset;
-						  $scope.beforeRel.firstSelectedListField = listField.name;
-						  $scope.beforeRel.ime = dataset.name;
-						  checkBranch = true;
-					  }
-				  })
-			  } else {
-				  console.log('true branch  ['+checkBranch+' kontrolna]');
-				  angular.forEach(dataset.metadata.fieldsMeta, function(polje){
-					  if(polje.selected){
-						 
-							var t = {
-							        bidirectional: true,
-							        cardinality: 'many-to-one',
-							        sourceTable: {
-							            name: '',
-							            className: ''
-							        },
-							        sourceColumns: [],
-							        destinationTable: {
-							            name: '',
-							            className: ''
-							        }, 
-							        destinationColumns: []
-							    }  
-					
-						  t.sourceTable.name = $scope.beforeRel.ime; 
-						  t.sourceTable.className = $scope.beforeRel.ime;
-						  t.sourceColumns.push($scope.beforeRel.firstSelectedListField);
-						  
-						  t.destinationTable.name = dataset.name;
-						  t.destinationTable.className = dataset.name; 
-						  t.destinationColumns.push(polje.name);
-						  
-						  $scope.beforeRel = polje;
-						  $scope.beforeRel.ime = dataset.name;
-						  $scope.beforeRel.firstSelectedListField = polje.name;
-						  RelationshipsArray.push(t);
-						  
-					  }
-				  })
-			  }
-			  
-		  })
-		  //console.log("f_napuniMaliNiz "+JSON.stringify(RelationshipsArray));
-		  return  RelationshipsArray;
-	}
-	
-	//$scope.multiArray.push($scope.nesto);
-	
-	$scope.showAdvanced = function(ev) {
-		if($scope.multiArray.length==0){
+		if(counter==0){
 			$mdDialog.show(
-	       		      $mdDialog.alert()
-	       		        .parent(angular.element(document.querySelector('#popupContainer')))
-	       		        .clickOutsideToClose(true)
-	       		        .content('You didn\'t create any relationships!')
-	       		        .ok('OK')
-	       		    );
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('You didn\'t select any field!')
+						.ok('Got it!')
+			);
+		} else if(counter==1){
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('You selected only 1 field! You have to select at least two fields to create a relation.')
+						.ok('OK')
+			);
+		} else{
+			if(ctr.multiArray.length==0){
+				ctr.multiArray.push(ctr.createAssociations());
+			} else {
+				angular.forEach(ctr.multiArray, function(obj2){
+					if(JSON.stringify(obj1) === JSON.stringify(obj2)){
+						check = true;
+						console.log("The relation is already created!")
+						$mdDialog.show(
+								$mdDialog.alert()
+									.clickOutsideToClose(true)
+									.content('The relation is already created!')
+									.ok('Got it!')
+						);
+					}
+				});
+				if(!check){
+					console.log("Add new to array.")
+					ctr.multiArray.push(ctr.createAssociations());
+				}
+			}
 		}
-		else{
-			$mdDialog.show({
-				  templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
-				  parent: angular.element(document.body),	      
-			      scope: $scope,
-			      targetEvent: ev
-			    })
+	}
+	
+	ctr.createAssociations = function(){
+		var RelationshipsArray = [];
+		var checkBranch = false;
+		angular.forEach(ctr.listaNew, function(dataset){
+			if(checkBranch==false){
+				console.log(checkBranch+"branch");
+				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+					if(listField.selected){
+						console.log('selected field');
+						ctr.beforeRel = dataset;
+						ctr.beforeRel.firstSelectedListField = listField.name;
+						ctr.beforeRel.ime = dataset.name;
+						checkBranch = true;
+					}
+				});
+			} else {
+				console.log(checkBranch+"branch");
+				angular.forEach(dataset.metadata.fieldsMeta, function(polje){
+					if(polje.selected){
+						var t = {
+								bidirectional: true,
+						        cardinality: 'many-to-one',
+						        sourceTable: {
+						            name: '',
+						            className: ''
+						        },
+						        sourceColumns: [],
+						        destinationTable: {
+						            name: '',
+						            className: ''
+						        }, 
+						        destinationColumns: []
+						}
+						
+						t.sourceTable.name = ctr.beforeRel.ime;
+						t.sourceTable.className = ctr.beforeRel.ime;
+						t.sourceColumns.push(ctr.beforeRel.firstSelectedListField);
+						
+						t.destinationTable.name = dataset.name;
+						t.destinationTable.className = dataset.name;
+						t.destinationColumns.push(polje.name);
+						
+						ctr.beforeRel = polje;
+						ctr.beforeRel.ime = dataset.name;
+						ctr.beforeRel.firstSelectedListField = polje.name;
+						
+						RelationshipsArray.push(t);
+					}
+				});
+			}
+		});
+		return RelationshipsArray;
+	}
+	
+	ctr.showAdvanced = function(ev){
+		if(ctr.multiArray.length==0){
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('You didn\'t create any relationships!')
+						.ok('OK')
+			);
+		} else{
+			$mdDialog
+				.show({
+					scope: $scope,
+					preserveScope: true,
+					controllerAs: 'feddsCtrl',
+					controller: function($mdDialog) {
+						var fdsctrl = this;
+						fdsctrl.saveFedDataSet = function() {
+							console.log(ctr.multiArray);
+							var item = {};
+							item.name = $scope.update.name;
+							item.label = $scope.update.label;
+							item.description = $scope.update.description;
+							item.relationships = "";
+							item.relationships = ctr.multiArray;
+							
+							restServices.post("federateddataset","post",item)
+								.success(console.log("success"))
+								.error(console.log("error"))
+						}
+					},
+					templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
+					targetEvent: ev
+				});
 		}
-	  
-	};
+	}
 	
-	
-	
-	$scope.saveFedDataSet = function() {
+	ctr.showDSDetails = function(param) {
 		
-		console.log($scope.multiArray)
-		var item = {};
-		item.name = $scope.update.name;
-		item.label = $scope.update.label;
-		item.description = $scope.update.description;
-		item.relationships = "";
-		item.relationships = $scope.multiArray;
-		//item.relationships = [];
-		//item.relationships.push($scope.RelationshipsArray);
-		//item = JSON.stringify($scope.update).slice(0,-1)+",\"relationships\":"+JSON.stringify($scope.RelationshipsArray)+"}";
-		console.log(JSON.stringify($scope.update).slice(0,-1)+",\"relationships\":"+JSON.stringify($scope.multiArray)+"}");
-		//angular.toJson(item);
-		//console.log("dsadsad"+item);
-		restServices.post("federateddataset","post", item)
+		angular.forEach(ctr.list, function(dataset){
+			if(dataset.name==param.name && dataset.label==param.label && dataset.description==param.description){
+				$scope.dsname = dataset.name;
+				$scope.dslabel = dataset.label;
+				$scope.dsdescription = dataset.description;
+			}
+		});
 		
+		$mdDialog
+			.show({
+				scope: $scope,
+				preserveScope: true,				
+				templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
+				targetEvent: param
+			});
+	}
+
+	ctr.selektuj = function(item, listId){
+		if(ctr.myselectedvariable[listId]!=undefined || ctr.myselectedvariable[listId]!=null){
+			if(item.name==ctr.myselectedvariable[listId].name){
+				ctr.myselectedvariable[listId] = null;
+				console.log("Field is unhighlighted.")
+			}
+		}
+		angular.forEach(ctr.listaNew, function(dataset){
+			if(dataset.label==listId){
+				angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+					if(listField.name==item.name){
+						if(listField.selected==true){
+							listField.selected = false;
+							ctr.selectedVariable = null; //chechk this
+						} else {
+							angular.forEach(dataset.metadata.fieldsMeta, function(att){
+								att.selected = false;
+							});
+							listField.selected = true;
+						}
+					} else {
+						//listField.name==item.name
+					}
+				});
+			} else {
+				//dataset.label==listId
+			}
+		});
+	}
+	
+	restServices.get("2.0/datasets","")
 		.success(
-				console.log("ok je")
-				
-		).
-		error(
-				console.log("nije ok")
+				function(data, status, headers, config){
+					if(data.hasOwnProperty("errors")) {
+						console.log(data.errors[0].message);
+					} else {
+						ctr.list = data;
+						console.log("List:"+ctr.list)
+						angular.toJson(ctr.list)
+						console.log("List JSON:"+ctr.list)
+						angular.forEach(ctr.lista, function(dataset){
+							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+								listField.selected =  false;
+							});
+						});
+					}
+				}
+		)
+		.error(
+				function(data, status, headers, config) {
+					// called asynchronously if an error occurs
+				    // or server returns response with an error status.
+					console.log("Datasets not obtained " + status);
+				}
+		)
+		
+	ctr.kickOutFromListNew = function(param) {
+		var index = ctr.listaNew.indexOf(param);
+		if(index != -1){
+			ctr.listaNew.splice(index, 1);
+		}
+		if(ctr.list.indexOf(param)===-1){
+			ctr.list.push(param);
+		} else {
+			console.log("Parameter is already in the list.");
+		}
+	}
+	
+	ctr.moveToListNew = function(param) {
+		var index = ctr.list.indexOf(param);
+		console.log("Index"+index);
+		if(index != -1) {
+			ctr.list.splice(index,1);
+		}
+		if(ctr.listaNew.indexOf(param)===-1){
+			ctr.listaNew.push(param);
+		} else {
+			console.log("Parametar is already in the list.")
+		}
+	}
+	
+	ctr.toggle = function() {
+		if(ctr.listaNew.length==0){
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('You didn\'t select any datasets!')
+						.ok('OK')
+			);
+		} else if (ctr.listaNew.length==1){
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('Select at least two datasets!')
+						.ok('Ok')
+			);
+		} else {
+			ctr.state=!ctr.state;
+		}
+	}
+	
+	ctr.kickOutFromAssociationArray = function(param) {//ispitati
+		var index = ctr.associationArr.indexOf(param);
+		if(index != -1){
+			ctr.associationArray.splice(index, 1);
+		}
+	}
+	
+	ctr.deleteFromMultiArray = function(param) {
+		var confirm = $mdDialog.confirm()
+		.title('Confirm delete')
+		.content('Are you sure you want to delete the relationship?')
+		.targetEvent(param)
+		.ok('Yes')
+		.cancel('No')
+		
+		$mdDialog.show(confirm).then(function(){
+			var index = ctr.multiArray.indexOf(param);
+			if(index !=-1){
+				ctr.multiArray.splice(index, 1);
+			}
+		})
+		
+	}
+	
+	ctr.hide = function(){
+		$mdDialog.cancel();
+	}
+	
+	ctr.showAlert = function(ev){ //premesti u saveFedDataSet
+		$mdDialog.show(
+				$mdDialog.alert()
+					.clickOutsideToClose(true)
+					.title('Operation succeded')
+					.ok('OK')
+					.targetEvent(ev)
 		);
 	}
 	
-
-	
-	$scope.selektuj = function(item,listId){
-		
-		if($scope.myselectedvariable[listId]!=undefined || $scope.myselectedvariable[listId]!=null){
-			if(item.name==$scope.myselectedvariable[listId].name){
-				console.log("they are the same");
-				$scope.myselectedvariable[listId] = null;	
-			}
-		}
-		
-		
-		
-		 angular.forEach($scope.listaNew, function(dataset){
-			 if(dataset.label==listId){
-				 angular.forEach(dataset.metadata.fieldsMeta, function(listField){
-				 if(listField.name==item.name){
-					 if(listField.selected===true) {
-						 listField.selected = false;
-						 $scope.selectedVariable = null;
-					 } else {
-						 angular.forEach(dataset.metadata.fieldsMeta, function(att){
-							 att.selected = false;
-						 });
-						 listField.selected = true;
-					 }
-				 } else {
-					 //listField.name==listField.name
-				 } 
-			 }); 
-		 } else {
-			 //dataset.label==listId
-		 }
-		  
-		 });
-		 
-		 
-	}
-		
-	restServices.get("2.0/datasets", "").success(
-			function(data, status, headers, config) {
-				if (data.hasOwnProperty("errors")) {
-					console.log(data.errors[0].message);
-				} else {
-					$scope.list = data;
-					console.log($scope.list);
-					angular.toJson($scope.list);
-					console.log("sdada"+$scope.list);
-					angular.forEach($scope.lista, function(dataset) {
-						angular.forEach(dataset.metadata.fieldsMeta, function(listField) {
-							listField.selected = false;
-				});
-			});
-				}
-
-			}).error(function(data, status, headers, config) {
-				// called asynchronously if an error occurs
-			    // or server returns response with an error status.
-				console.log("Datasets not obtained " + status);
-
-
-			});
-		
-	$scope.kickOutFromListNew = function(param){
-		var index = $scope.listaNew.indexOf(param);
-        if (index != -1) {
-          $scope.listaNew.splice(index, 1);
-        }
-        if($scope.list.indexOf(param)===-1){
-			$scope.list.push(param);
-		} else {
-			console.log("Parameter is already in the list.");
-		}
-	}
-	
-
-	$scope.moveToListNew = function(param){
-		console.log("objekat"+param);
-		var index = $scope.list.indexOf(param);
-		console.log(""+index);
-        if (index != -1) {
-          $scope.list.splice(index, 1);
-        }	
-		if($scope.listaNew.indexOf(param)===-1){
-			$scope.listaNew.push(param);
-		} else {
-			console.log("Parameter is already in the list.");
-		}	
-	}
-	
-	$scope.toggle = function(){
-		if($scope.listaNew.length==0){
-			$mdDialog.show(
-	       		      $mdDialog.alert()
-	       		        .parent(angular.element(document.querySelector('#popupContainer')))
-	       		        .clickOutsideToClose(true)
-	       		        .content('You didn\'t select any datasets!')
-	       		        .ok('OK')
-	       		    );
-		} 
-		else if($scope.listaNew.length==1){
-			$mdDialog.show(
-	       		      $mdDialog.alert()
-	       		        .parent(angular.element(document.querySelector('#popupContainer')))
-	       		        .clickOutsideToClose(true)
-	       		        .content('Select at least two datasets!')
-	       		        .ok('OK')
-	       		    );
-		}
-		else {
-			$scope.state=!$scope.state;
-		}
-		
-	}
-	
-	$scope.kickOutFromAssociatonArray = function(param) {
-		var index = $scope.associationArray.indexOf(param);
-        if (index != -1) {
-          $scope.associationArray.splice(index, 1);
-        }
-	}
-	$scope.deleteFromMultiArray = function(param){
-		var index = $scope.multiArray.indexOf(param);
-		if(index !=-1){
-			$scope.multiArray.splice(index, 1);
-		}
-	}
-	
-	$scope.hide = function() {
-	    $mdDialog.cancel();
-	  };
-
-	$scope.cancel = function() {
-	    $mdDialog.cancel();
-	  };
-
-	$scope.answer = function(answer) {
-	    $mdDialog.hide(answer);
-	  };
-	  
-	$scope.showAlert = function(ev) {
-		    $mdDialog.show(
-		      $mdDialog.alert()
-		        .parent(angular.element(document.querySelector('#popupContainer')))
-		        .clickOutsideToClose(true)
-		        .title('Operation succeeded')
-		        .ok('OK')
-		        .targetEvent(ev)
-		    );
-		  };
-
-	$scope.showDatasetDetails = function(ev) {
-		$mdDialog.show(
-				  				  	  
-			      $mdDialog.alert()
-			        .parent(angular.element(document.querySelector('#popupContainer')))
-			        .clickOutsideToClose(true)
-			        .title('Dataset information')
-			        .content()
-			        .ok('OK')
-			        .targetEvent(ev)
-			        
-			    );
-			/*$mdDialog.show({
-				templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
-				parent: angular.element(document.body),	      
-			      scope: $scope,
-			      targetEvent: ev
-			    })*/
-			};
-			
-			
-	$scope.glossSpeedMenuOpt = [ 			 		               	
-			 		               	{
-			 		               		label: 'Delete',
-			 		               		icon:"fa fa-trash-o",
-			 		               		backgroundColor:'red',
-			 		               		action : function(param) {
-			 		               			$scope.kickOutFromListNew(param);
-			 		               			}
-			 		               	}
-			 		             ];
-	
-	$scope.glossSpeedMenuOptAD = [ 			 		               	
+	ctr.glossSpeedMenuOpt = [ 			 		               	
 		 		               	{
-		 		               		label: 'Details',
-		 		               		icon:"fa fa-info-circle",
-		 		               		backgroundColor:'green',
-		 		               		/*action : function(param) {
-		 		               				$scope.showDSDetails(param);
-		 		               			}*/
-		 		               		
-		 		               		
+		 		               		label: 'Delete',
+		 		               		icon:"fa fa-trash-o",
+		 		               		backgroundColor:'red',
+		 		               		action : function(param) {
+		 		               			ctr.kickOutFromListNew(param);
+		 		               			}
 		 		               	}
 		 		             ];
-	$scope.showDSDetails = function(ev) {
-		  $mdDialog.show({
-			  templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/datasetDetails.html',
-			  parent: angular.element(document.body),	      
-		      scope: $scope,
-		      targetEvent: ev
-		    })
-		};
-		
-	$scope.relaodFirstPage = function(){
-		$route.reload();
-	}
-});
+
+	ctr.glossSpeedMenuOptAD = [ 			 		               	
+		 		               	{
+		 		               		label: 'Info',
+		 		               		icon:"fa fa-info-circle",
+		 		               		backgroundColor:'green',
+		 		               		action : function(ev) {
+		 		               				ctr.showDSDetails(ev);
+		 		               			}
+		 		               	}
+		 		             ];
+}
+
+
 
