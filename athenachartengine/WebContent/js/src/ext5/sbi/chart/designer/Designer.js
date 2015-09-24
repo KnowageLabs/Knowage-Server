@@ -226,6 +226,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			console.log("-- JSON template 2 (no changes if not new chart): --- ");
 			console.log(jsonTemplate);
 			
+			
 			/**
 			 * Get the missing JSON configuration elements (properties) in order to define
 			 * their default values for any type of chart (including the BAR chart).
@@ -251,8 +252,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				switch(style)
 				{				
 					case "red":	
-						console.log(jsonTemplate.CHART.AXES_LIST.AXIS[0].alias);
-						console.log(jsonTemplate.CHART.AXES_LIST.AXIS[1].alias);
+
 						templateToReturn = 
 						
 						{
@@ -262,10 +262,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 */
 							generic: 
 							{
-								CHART:
-								{
-//									height: 400,
-//									width: 1000,	
+								CHART: {
+									height: "",
+									width: "",	
 									isCockpitEngine: "false",
 									orientation: "horizontal",
 									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;",
@@ -275,7 +274,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									TITLE:
 									{
 										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
-										text: "This is red chart"
+		 								text: "This is red chart"
 									},
 									
 									SUBTITLE:
@@ -323,13 +322,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 										AXIS: 
 										[														 
 									       {
-									    	   //alias:'Y',
-//									    	   alias: jsonTemplate.CHART.AXES_LIST.AXIS[0].alias,
-//									    	   id: jsonTemplate.CHART.AXES_LIST.AXIS[0].alias,
 									    	   type: 'Serie',
 									    	  // position: "",
 									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   //id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
 									    	   
 									    	   MAJORGRID:
 								    		   {
@@ -351,9 +346,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 							    		   },									       
 							    		   
 							    		   {
-							    			  // alias:'X', 
-//							    			   alias: jsonTemplate.CHART.AXES_LIST.AXIS[1].alias,
-//									    	  // id: jsonTemplate.CHART.AXES_LIST.AXIS[1].alias,
 							    			   type: 'Category',
 							    			  // position: "", 
 							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
@@ -596,65 +588,86 @@ Ext.define('Sbi.chart.designer.Designer', {
 								{		
 									type: "GAUGE",
 									
-									AXES_LIST:
+									// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
+									AXES_LIST: 
 									{
 										AXIS: 
 										[														 
-									       	{
-									       		//alias:'Y', 
-									       		type: 'Serie',
-									       		//position: "",
-									       		style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									       		//id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
-									       		
-									       		lineColor: "#FF0000", 
-									       		lineWidth:1,
-									       		max: 60,
-								                min: 1,
-								                minorTickColor: "#008000",
-								                minorTickInterval: "",
-								                minorTickLength: 10,
-								                minorTickPosition: "inside",
-								                minorTickWidth:"1",
-							                	offset:"1" ,
-								                tickColor:"#FF00FF" ,
-							                	tickLength:"10", 
-						                		tickPixelInterval:"30",
-								                tickPosition:"inside" ,
-							                	tickWidth:"2",
-							                	
-							                	LABELS:
-						                		{
-							                		distance: "5",
-							                		rotation:"1"
-						                		},									       	
+									       {
+									    	   lineColor: "#FF0000", 
+									    	   lineWidth: "1",
 									    	   
-									       		MAJORGRID:
-									       		{
-									       			interval: "",
-									       			style: "typeline:;color:#D8D8D8;"
-									       		},
+									    	   max: "60",
+									    	   min: "1", 
+									    	   
+									    	   minorTickColor: "#008000",
+									    	   minorTickInterval: "",									    	   
+									    	   minorTickLength: "10",
+									    	   minorTickPosition: "inside",
+									    	   minorTickWidth: "1",
+									    	   
+									    	   offset:"1",
+									    	   
+								               tickColor: "#FF00FF",
+								               tickLength: "10",
+								               tickPixelInterval: "30",
+								               tickPosition: "inside",
+								               tickWidth: "2", 
+									    	   
+									    	   
+									    	   type: 'Serie',
+									    	  // position: "",
+									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+									    	   
+									    	   MAJORGRID:
+								    		   {
+									    		   interval: "",
+									    		   style: "typeline:;color:#D8D8D8;"
+								    		   },
 									       
-									       		MINORGRID:
-									       		{
-									       			interval: "", 
-									       			style: "typeline:;color:#E0E0E0;"
-									       		},
+								    		   MINORGRID:
+							    			   {
+								    			   interval: "", 
+								    			   style: "typeline:;color:#E0E0E0;"
+							    			   },
 								    		   
-									       		TITLE:
-									       		{
-									       			style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-									       			text: "" 
-									       		}
-									       	}
-									    ]
+								    		   TITLE:
+							    			   {
+								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+								    			   text: "red measure axis title" 
+							    			   }
+							    		   },									       
+							    		   
+							    		   {
+							    			   type: 'Category',
+							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   
+							    			   TITLE:
+						    				   {
+							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    				   text: ""
+						    				   }
+					    				   }
+								        ]
 									},
 									
 									PANE:
 									{											
 										endAngle:"121",
 										startAngle:"-121"
-									}									
+									},
+									
+									// 14.9 (start)
+									PLOTBANDS:
+									{
+										
+									},
+									
+									LABELS:
+									{
+										distance: "5",
+										rotation: "1"
+									}
 								}								
 							},
 							
@@ -1230,11 +1243,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}			
 			};			
 			
+			//this.on("TTT", function(){console.log("III");});
+			
 			/**
 			 * Merging JSON templates of specified chart types with the base JSON template
 			 * (of type BAR) in order to make the union of all of the JSON elements within
 			 * these two types - the base one and the current one. 			 
-			 * (danilo.ristovski@mht.net)
+			 * (danristo :: danilo.ristovski@mht.net) 
 			 */
 			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' 
 				|| jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST'
@@ -1244,22 +1259,40 @@ Ext.define('Sbi.chart.designer.Designer', {
 								|| jsonTemplate.CHART.type.toUpperCase() == 'RADAR'
 									|| jsonTemplate.CHART.type.toUpperCase() == 'SCATTER'
 										|| jsonTemplate.CHART.type.toUpperCase() == 'HEATMAP'
-											|| jsonTemplate.CHART.type.toUpperCase() == 'GAUGE') {
+											|| jsonTemplate.CHART.type.toUpperCase() == 'CHORD'
+												|| jsonTemplate.CHART.type.toUpperCase() == 'GAUGE') {
+								
+				/**
+				 * If there is just one axis (Y-axis and no X-axis), like in the GAUGE chart and 
+				 * if the AXIS property (tag) is not in the form of an array (it is just one object
+				 * with some properties, put this object inside an array anyhow, so code could
+				 * process it.
+				 * (danristo :: danilo.ristovski@mht.net) 
+				 */
+				if (jsonTemplate.CHART.AXES_LIST.AXIS.length == undefined)
+				{
+					var axisTemp = jsonTemplate.CHART.AXES_LIST.AXIS;
+					var axisArray = new Array();
+					
+					jsonTemplate.CHART.AXES_LIST.AXIS = axisArray;
+					jsonTemplate.CHART.AXES_LIST.AXIS.push(axisTemp);
+				}				
+				
+				console.log("-- JSON template 4-1 (long IF before merge): --- ");
+				console.log(baseTemplate);
+				console.log(jsonTemplate);
 				
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);	
 				
-				console.log("-- JSON template 4 (long IF): --- ");
+				console.log("-- JSON template 4-2 (long IF after merge): --- ");
 				console.log(jsonTemplate);
 				
 			}				
 			
 			/**
 			 * Set the predefined values for the generic parameters of the newly created chart 
-			 * (danilo.ristovski@mht.net)
+			 * (danristo :: danilo.ristovski@mht.net) 
 			 */			
-//			if (jsonTemplate.CHART.styleCustom)
-//				console.log("YYYY");
-//			else
 			var applyAxes = true;
 			var configApplyAxes = {applyAxes: applyAxes};
 			
@@ -1277,7 +1310,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * that are linked to the particular chart of this type. Afterwards, when
 			 * we open the Axis style configuration for this chart type we will have
 			 * the grid panel for the plotbands populated with existing plots (intervals).
-			 * (danilo.ristovski@mht.net)
+			 * (danristo :: danilo.ristovski@mht.net) 
 			 */
 			if (jsonTemplate.CHART.type.toUpperCase() == "GAUGE")
 			{
@@ -1292,7 +1325,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			/**
 			 * List of names of the libraries that we use for rendering the charts. 
-			 * (comment by: danilo.ristovski@mht.net)
+			 * (comment by: danristo :: danilo.ristovski@mht.net) 
 			 */
 			this.chartLibNamesConfig = chartLibNamesConfig;	
 			
@@ -1307,14 +1340,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Chart types that we specified at the beginning of the Designer and
 			 * that are available through the Chart Type Selector (needed for creating
 			 * of the top left panel on the Designer page. 
-			 * (comment by: danilo.ristovski@mht.net)
+			 * (comment by: danristo :: danilo.ristovski@mht.net) 
 			 */
 			var chartTypes = this.chartTypes;
 			
 			/**
 			 * Populating store with those chart types ('fields' define the structure 
 			 * of every single chartType).
-			 * (comment by: danilo.ristovski@mht.net)
+			 * (comment by: danristo :: danilo.ristovski@mht.net) 
 			 */
 			var chartTypeStore = Ext.create('Ext.data.Store', {
 				fields: [
@@ -1331,7 +1364,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * One of the main roles of this JS class (file) is listening to the 
 			 * event of changing the chart types inside of it (the selector), i.e.
 			 * clicking on the row of the Selector.
-			 * (comment by: danilo.ristovski@mht.net)
+			 * (comment by: danristo :: danilo.ristovski@mht.net) 
 			 */
 			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
  				region: 'north',
@@ -1344,7 +1377,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/**
 			 * Listener for the 'rowclick' event that happens when we change the chart type
 			 * on the left part of the Designer page (from the chart type picker). 
-			 * (danilo.ristovski@mht.net)
+			 * (danristo :: danilo.ristovski@mht.net) 
 			 */
 			this.chartTypeSelector.on
 			(
@@ -1661,84 +1694,84 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * the data in both Y and X axis panels will be removed (panels will be clear).
 			 * (danilo.ristovski@mht.net)
 			 */
-			this.chartTypeSelector.on
-			(
-				"cleanJson",
-				
-				function(selectedType)
-				{
-					jsonTemplate.CHART.VALUES = {};
-					
-					var styleName = "";
-					
-					if (jsonTemplate.CHART.styleName)
-					{
-						styleName = jsonTemplate.CHART.styleName;
-					}
-					else
-					{
-						styleName = "red";
-					}
-//					var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
-					
-					console.log(styleName);
-//					console.log(chartType);
-					console.log(selectedType);
-					console.log(jsonTemplate);
-					
-					jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).generic);
-
-					if (selectedType == "WORDCLOUD"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).wordcloud);
-						
-					}
-					else if (selectedType == "TREEMAP"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).treemap);
-						
-					}
-					else if (selectedType == "PARALLEL"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).parallel);
-					
-					}
-					else if (selectedType == "HEATMAP"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).heatmap);
-					
-					}
-					else if (selectedType == "RADAR"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).radar);
-						
-					}
-					else if (selectedType == "SCATTER"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).scatter);
-						
-					}
-					else if (selectedType == "GAUGE"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).gauge);
-						
-					}
-					else if (selectedType == "SUNBURST"){
-						
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).sunburst);
-						
-					}
-					else if (selectedType == "CHORD"){
-
-						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).chord);
-						
-					}
-					
-					console.log(jsonTemplate);
-					
-					Sbi.chart.designer.Designer.update(jsonTemplate);
-				}
-			);
+//			this.chartTypeSelector.on
+//			(
+//				"cleanJson",
+//				
+//				function(selectedType)
+//				{
+//					jsonTemplate.CHART.VALUES = {};
+//					
+//					var styleName = "";
+//					
+//					if (jsonTemplate.CHART.styleName)
+//					{
+//						styleName = jsonTemplate.CHART.styleName;
+//					}
+//					else
+//					{
+//						styleName = "red";
+//					}
+////					var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+//					
+//					console.log(styleName);
+////					console.log(chartType);
+//					console.log(selectedType);
+//					console.log(jsonTemplate);
+//					
+//					jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).generic);
+//
+//					if (selectedType == "WORDCLOUD"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).wordcloud);
+//						
+//					}
+//					else if (selectedType == "TREEMAP"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).treemap);
+//						
+//					}
+//					else if (selectedType == "PARALLEL"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).parallel);
+//					
+//					}
+//					else if (selectedType == "HEATMAP"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).heatmap);
+//					
+//					}
+//					else if (selectedType == "RADAR"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).radar);
+//						
+//					}
+//					else if (selectedType == "SCATTER"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).scatter);
+//						
+//					}
+//					else if (selectedType == "GAUGE"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).gauge);
+//						
+//					}
+//					else if (selectedType == "SUNBURST"){
+//						
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).sunburst);
+//						
+//					}
+//					else if (selectedType == "CHORD"){
+//
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).chord);
+//						
+//					}
+//					
+//					console.log(jsonTemplate);
+//					
+//					Sbi.chart.designer.Designer.update(jsonTemplate);
+//				}
+//			);
 			
 			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
 			
@@ -1856,7 +1889,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   						enableDrop: false
   					},
   					listeners: {
-  						drop: function(node, data, dropRec, dropPosition) {  							
+  						drop: function(node, data, dropRec, dropPosition) {  
   							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('serieColumn') : ' on empty view';
   						}
   					}
@@ -1958,35 +1991,64 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    	{
 					    	itemclick: function(combo,k)
 					    	{
-								/**
+								
+//					    		console.log(jsonTemplate);
+					    		
+					    		/**
 								 * Depending on the style that we choose for the document's generic
 								 * customizable parameters (Red, Green, Blue, ... style), take the
 								 * predefined JSON structure that is defined for that newly chosen 
 								 * style. This part is needed for later merging of the templates 
 								 */
-					    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+					    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();						    		
 					    		
 					    		/* 4.9. Keep the VALUES tag (keep them when only changing the   */
-					    		var variablesToKeep = jsonTemplate.CHART.VALUES;
-					    		var colorpalleteToKeep = jsonTemplate.CHART.COLORPALLETE;
-					    		var yAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[0].alias;
-					    		var xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[1].alias;
+					    		
+//					    		var colorpalleteToKeep = jsonTemplate.CHART.COLORPALLETE;
+//					    		var yAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[0].alias;
+//					    		var xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[1].alias;
+					    		
+					    		var valuesToKeep = jsonTemplate.CHART.VALUES;
+					    		
+					    		var yAxesAliasToKeep = new Array();
+					    		var xAxisAliasToKeep = {};
+					    		
+					    		for (var i=0; i < jsonTemplate.CHART.AXES_LIST.AXIS.length; i++)
+				    			{
+					    			if (i < jsonTemplate.CHART.AXES_LIST.AXIS.length-1)
+				    				{
+					    				yAxesAliasToKeep.push(jsonTemplate.CHART.AXES_LIST.AXIS[i]);
+				    				}
+					    			else
+				    				{
+					    				xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[i];
+				    				}
+				    			}
+					    		
+					    		console.log("=======================");
+//					    		console.log(xAxisAliasToKeep); 	// category axis
+//					    		console.log(yAxesAliasToKeep);	// series axes
+//					    		console.log(valuesToKeep);		// values
 					    		
 					    		/* 4.9. Clear the JSON template */
-					    		jsonTemplate.CHART = {};
-					    		jsonTemplate.CHART.AXES_LIST = { AXIS: [{}, {}]};
+					    		jsonTemplate.CHART = {};		// clean the JSON object (template)
+					    		jsonTemplate.CHART.AXES_LIST = {};
+					    		jsonTemplate.CHART.AXES_LIST.AXIS = new Array(yAxesAliasToKeep.length+1);
 					    		
-					    		/* 4.9. Take the VALUES in new JSON template */
-					    		jsonTemplate.CHART.VALUES = variablesToKeep;
-					    		jsonTemplate.CHART.AXES_LIST.AXIS[0].alias = yAxisAliasToKeep;
-					    		jsonTemplate.CHART.AXES_LIST.AXIS[0].id = yAxisAliasToKeep;
-					    		jsonTemplate.CHART.AXES_LIST.AXIS[1].alias = xAxisAliasToKeep;
-					    		jsonTemplate.CHART.AXES_LIST.AXIS[1].id = xAxisAliasToKeep;
+					    		// keep the series axes
+					    		for (var i=0; i < yAxesAliasToKeep.length; i++)
+				    			{
+					    			jsonTemplate.CHART.AXES_LIST.AXIS[i] = yAxesAliasToKeep[i];
+				    			}
 					    		
-								var genericConfigurationForStyle = getConfigurationForStyle(k.data.styleAbbr).generic;
-								
-								console.log("-- Generic conf for style: --");
-								console.log(genericConfigurationForStyle);
+					    		// keep the category axis
+					    		jsonTemplate.CHART.AXES_LIST.AXIS[yAxesAliasToKeep.length] = xAxisAliasToKeep;
+					    		
+					    		// keep the values (items) on these axes (X and Y)
+					    		jsonTemplate.CHART.VALUES = valuesToKeep;
+					    		
+					    		// Previously I have defined generic configuration first and then the second (specific) configuration
+//								var genericConfigurationForStyle = getConfigurationForStyle(k.data.styleAbbr).generic;
 								
 								console.log("-- JSON template 6 (before combo): --- ");
 								console.log(jsonTemplate);
@@ -2001,8 +2063,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								 * since we have the old chart type in the old JSON template that was linked to the previous
 								 * (initial) chart (document) and we want to change that value  */
 //								jsonTemplate.CHART.type = "";
-console.log(chartType);
-//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[]);
+
 								/**
 								 * Reset (refresh, modify) the 'styleName' field of the Designer, also
 								 */
@@ -2012,30 +2073,25 @@ console.log(chartType);
 								 * Reset the JSON template for the document (chart) after changing the 
 								 * previously selected style (changing the selected item of the combo)
 								 */
-								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,genericConfigurationForStyle);
-								
-								console.log("-- JSON template 7 (after combo): --- ");
-								console.log(jsonTemplate);
+//								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,genericConfigurationForStyle);
 								
 								/**
 								 * Set the predefined values for specific parameters of different chart types.
-								 */
-								console.log(chartType);
-								
+								 */								
 								// TODO: See the differences with the new code (Benedetto)
 								if (chartType == "BAR")
 								{
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).bar);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).bar, configApplyAxes);
 									console.log(getConfigurationForStyle(k.data.styleAbbr).bar);
 									console.log(jsonTemplate);
 								}
 								else if (chartType == "LINE")
 								{
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).line);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).line, configApplyAxes);
 								}
 								else if (chartType == "PIE")
 								{
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).pie);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).pie, configApplyAxes);
 								}
 								else if (chartType == "WORDCLOUD"){
 								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
@@ -2054,7 +2110,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 								else if (chartType == "PARALLEL"){
 									
 									jsonTemplate.CHART.LEGEND = {};
-									jsonTemplate.CHART.COLORPALLETE = colorpalleteToKeep;
+									//jsonTemplate.CHART.COLORPALLETE = colorpalleteToKeep;
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
 										getConfigurationForStyle(k.data.styleAbbr).parallel,
@@ -2063,7 +2119,8 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 								else if (chartType == "HEATMAP"){
 									
 									jsonTemplate.CHART.LEGEND = {};
-									jsonTemplate.CHART.COLORPALLETE = colorpalleteToKeep;
+									//jsonTemplate.CHART.COLORPALLETE = colorpalleteToKeep;
+									console.log(colorpalleteToKeep);
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
 										getConfigurationForStyle(k.data.styleAbbr).heatmap,
@@ -2084,18 +2141,24 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										configApplyAxes);									
 								}
 								else if (chartType == "GAUGE"){
+										console.log("== COMBO 1 ==");	
+										console.log(jsonTemplate);
 									
-jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).gauge,
-										configApplyAxes);									
+										console.log(getConfigurationForStyle(k.data.styleAbbr).gauge);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+																		jsonTemplate, 
+																		getConfigurationForStyle(k.data.styleAbbr).gauge,
+																		configApplyAxes);		
+//									console.log("-- JSON template 6-1 (GAUGE specific): --- ");
+									console.log("== COMBO 2 ==");	
+									console.log(jsonTemplate);
 								}
 								else if (chartType == "SUNBURST"){
 									
-jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).sunburst,
-										configApplyAxes);									
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+																		jsonTemplate, 
+																		getConfigurationForStyle(k.data.styleAbbr).sunburst,
+																		configApplyAxes);									
 								}
 								else if (chartType == "CHORD"){
 	
@@ -2104,8 +2167,12 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 									
 								}
 								
-								console.log("-- JSON template 8 (after applying combo): --- ");
-								console.log(jsonTemplate);
+								console.log("-- JSON template 7 (after applying specific): --- ");
+								console.log(jsonTemplate);								
+								
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(getConfigurationForStyle(k.data.styleAbbr).generic,jsonTemplate);
+								console.log("-- JSON template 8 (after applying generic - after combo): --- ");
+								console.log(jsonTemplate);								
 								
 								/**
 								 * Update (refresh) the main configuration panel (the one on the top of 
@@ -2230,7 +2297,91 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
   				id: 'chartLeftAxisesContainer',
   				alias: 'Asse Y',
   				otherPanel: this.rightYAxisesPanel
-  			});		
+  			});	
+			
+			this.leftYAxisesPanel.on
+			(
+				"newSerieItem", 
+				
+				function(newSerieItem)
+				{
+					// OVO NE RADI!!!! Dodavanje item-a i lepljenje podrazumevanih vrednosti za iste
+					//console.log("!!! newSerieItem !!!");
+					
+					console.log("-- Data that we get from fireEvent (newSerieItem): --");
+					console.log(newSerieItem);
+					//console.log("-- Current jsonTemplate: --");
+					//console.log(jsonTemplate);
+					
+					// TODO: This is only for the GAUGE (specific VALUES tag)
+					var valueForSerieToAddInJson = 
+						
+					{
+							CHART:
+							{
+								VALUES:
+								{
+									SERIE:
+									{
+										DATA_LABELS:
+										{
+											colorDataLabels: "#00FF00",
+											formatDataLabels: "{y}",
+											yPositionDataLabels: "-40"
+										},
+										
+										DIAL:
+										{
+											backgroundColorDial: ""
+										},
+										
+										TOOLTIP:
+										{
+											backgroundColor: "",
+											style: "color:;fontFamily:;fontWeight:;fontSize:;align:;",
+											templateHtml: ""
+										},
+										
+										//axis: "Y",
+										color: "",
+										column: newSerieItem.data.serieColumn,
+										name: newSerieItem.data.axisName,
+										groupingFunction: newSerieItem.data.serieGroupingFunction,
+										orderType: "",
+										postfixChar: "", 
+										precision: "",
+										prefixChar: "",
+										showValue: true,
+										type: ""
+									}
+								}
+							}
+							
+							
+					}
+					
+					console.log("-- Value to add in JSON template (valueForSerieToAddInJson): --");
+					console.log(valueForSerieToAddInJson);
+					
+					//var ttt = jsonTemplate;
+					
+				//	ttt.CHART.VALUES.SERIE.push(valueForSerieToAddInJson);
+					
+					//console.log(ttt);
+					console.log(jsonTemplate);
+					jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+							jsonTemplate, 
+							valueForSerieToAddInJson,
+							configApplyAxes);	
+					
+					console.log("-- JSON template after merging (VALUES): --");
+					console.log(jsonTemplate);
+					
+					Sbi.chart.designer.Designer.update(jsonTemplate);
+					
+					return true;
+				}
+			);
 			
 			this.categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
   				storeId: 'categoriesStore'
@@ -2344,10 +2495,11 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
   	  						/**
   	  						 * Prevent taking more than one category from the container when we have
   	  						 * one of these chart types.
+  	  						 * TODO: check if this works
   	  						 * (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
-  	  								chartType == "PARALLEL" || chartType == "HEATMAP"))
+  	  								chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD"))
   							{
   	  							return false;
   							}  	  						
@@ -2369,7 +2521,14 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			  	      				 * 
 			  	      				 * (2) 	SCATTER chart: 	also MUST have only one category
 			  	      				 * 
-			  	      				 * (3) 	PARALLEL, TREEMAP (earlier) and HEATMAP chart: MUST have exactly 2 categories
+			  	      				 * (3) 	PARALLEL and  chart: MUST have exactly 2 categories. For the HEATMAP
+			  	      				 * 		chart we MUST HAVE exactly two categories among which we must have a
+			  	      				 * 		time data type (timestamp) as the first one, while the other one can
+			  	      				 * 		be of any data type.
+			  	      				 * 
+			  	      				 * (4) 	CHORD chart:	We must have exactly two categories. Those categories
+			  	      				 * 						MUST HAVE the same set of values that are later going
+			  	      				 * 						to be arranged into the regular matrix form.
 			  	      				 * 
 			  	      				 * (danilo.ristovski@mht.net)
 			  	      				 */			  	      				
@@ -2378,7 +2537,8 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			  	      								(chartType == "RADAR" || chartType == "SCATTER")) 
 			  	      									|| (this.store.data.length == 2 && 
 			  	      											(chartType == "PARALLEL" || 
-			  	      													chartType == "HEATMAP"))) {
+			  	      													chartType == "HEATMAP" || 
+			  	      														chartType == "CHORD"))) {
 			  	      					return false;
 			  	      				}
 			  	      			}
@@ -2836,6 +2996,8 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
   			/* END LOADING Y AXES, X AXIS AND SERIES <<<<<<<<<<<<<<<<<<<< */
   			
 			/* START LOADING CATEGORIES >>>>>>>>>>>>>>>>>>>> */
+  			console.log("*** --- ***");
+  			console.log(jsonTemplate);
 			this.loadCategories(jsonTemplate);
 			
 			/* END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<< */
@@ -2848,7 +3010,10 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			// Reset categoriesStore
 			categoriesStore.loadData({});
 			var chartType = jsonTemplate.CHART.type;
-			console.log("*** G ***");
+			
+			console.log("*** G - Designer:loadCategories() - jsonTemplate: ***");			
+			console.log(jsonTemplate);
+			
 			if(!(jsonTemplate.CHART.VALUES && jsonTemplate.CHART.VALUES.CATEGORY)) {
 				return;
 			}
@@ -2938,19 +3103,29 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			var leftYAxisesPanel = this.leftYAxisesPanel;
 			var rightYAxisesPanel = this.rightYAxisesPanel;
 			var bottomXAxisesPanel = this.bottomXAxisesPanel;
+			
+			console.log("*** A - Designer:loadAxesAndSeries() ***");
+			
+			console.log("-- leftYAxisesPanel --");
 			console.log(leftYAxisesPanel);
+			console.log("-- rightYAxisesPanel --");
 			console.log(rightYAxisesPanel);
+			console.log("-- bottomXAxisesPanel --");
 			console.log(bottomXAxisesPanel);
+			
 			var globThis = this;
 			Sbi.chart.designer.ChartColumnsContainerManager.resetContainers();
-			console.log("*** A ***");
+			
 			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+			
+			console.log("*** A1 - theStorePool ***");
 			console.log(theStorePool);
+			
 			var yCount = 1;
 			
 			Ext.Array.each(jsonTemplate.CHART.AXES_LIST.AXIS, function(axis, index){
-				
-				if(axis.type.toUpperCase() == "SERIE"){
+			
+				if(axis && axis.type.toUpperCase() == "SERIE"){
 
 					var isDestructible = (yCount > 1);
 					var panelWhereAddSeries = (yCount == 1) ? rightYAxisesPanel : null;
@@ -3045,6 +3220,9 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 							var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
 							var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
 							
+							console.log("*** A2 - Deisgner.loadAxesAndSeries() - serie ***");
+							console.log(serie);
+							
 							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
 							{								
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
@@ -3119,7 +3297,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 		
 		update: function(jsonTemplate) {
 			this.jsonTemplate = jsonTemplate;
-			console.log("*** H ***");
+			console.log("*** H - Designer:update() - jsonTemplate: ***");
 			console.log(jsonTemplate);
 			var selectedChartType = jsonTemplate.CHART.type.toUpperCase();
 			this.chartTypeSelector.setChartType(selectedChartType);
@@ -3136,17 +3314,18 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			// Updating step 1 data
 			this.loadCategories(jsonTemplate);
 			this.loadAxesAndSeries(jsonTemplate);
-			console.log("*** I ***");
+			console.log("*** I - Designer:updateStep1Data() - jsonTemplate: ***");
+			console.log(jsonTemplate);
 		}, 
 		
 		updateStep2Data: function(jsonTemplate) {
 			// Updating step 2 data
 			this.cModel.drop();
 			this.cModel.erase();
-			console.log("*** J ***");
+			console.log("*** J - Designer:updateStep2Data() - jsonTemplate: ***");
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
-
+			
 			this.cViewModel.setData({
 				configModel: this.cModel
 			});
@@ -3161,6 +3340,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 			paletteStore.loadData({});
 			// Load json colors
 			paletteStore.setData(this.cModel.get('colorPalette'));
+			
 		}, 
 		
 		exportAsJson: function(finalJson) {
@@ -3257,12 +3437,26 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 		
 		/**
 		 * Returns a list of validation errors as string format
-		 * (extended by: danilo.ristovski@mht.net)
+		 * @extendedBy: danristo (danilo.ristovski@mht.net)
 		 * */		
 		validateTemplate: function() {
 			var errorMsg = '';			
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
+			/**
+			 * We will use chart model (data from the ChartUtils.js 'cModel')
+			 * that holds all the parameters that user specified on the 
+			 * Designer page for particular chart type. Through the cModel
+			 * (viewModel) we are going to have up-to-date data (parameters)
+			 * about the chart that we are creating.
+			 * danristo (danilo.ristovski@mht.net)
+			 */
+			var chartViewModelData = this.cViewModel.data.configModel.data;
+			
+			/**
+			 * Validation for Step 1 if the mandatory items are not specified
+			 * @commentBy danristo (danilo.ristovski@mht.net)
+			 */
 			if (Sbi.chart.designer.ChartUtils.getSeriesDataAsOriginalJson().length == 0) {
 				errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
 			}
@@ -3271,7 +3465,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
 			}	
 			/**
-			 * (danilo.ristovski@mht.net)
+			 * danristo (danilo.ristovski@mht.net)
 			 */
 			else 
 			{
@@ -3286,6 +3480,234 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 				{
 					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
 				}
+			}
+			
+			/**
+			 * Validation for Step 2 if the mandatory fields are not defined for particular chart type
+			 * @author: danristo (danilo.ristovski@mht.net)
+			 */
+			if (chartType == "GAUGE")
+			{								
+				/**
+				 * STEP 1 -> Axis style configuration popup
+				 * 
+				 * *** NOTE: In order to collect the data defined in the Axis style configuration
+				 * popup window (all data about the axis) we need to call the getAxesDataAsOriginalJson
+				 * function from the ChartUtils.js. This call will be done just for those charts that 
+				 * need these data (e.g. GAUGE chart).
+				 */
+				var gaugeStep1YAxisPopupData = Sbi.chart.designer.ChartUtils.getAxesDataAsOriginalJson();
+				
+				/**
+				 * Optional parameters: endOnTickGauge, lineColor, tickPosition, tickColor, minorTickPosition, minorTickColor
+				 * Mandatory parameters: 
+				 * 		(1) Axis additional parameters:
+				 * 			-	min, max, offset, lineWidth, 
+				 * 		(2) Main tick parameters:
+				 * 			-	tickPixelInterval, tickWidth, tickLength,  
+				 * 		(3) Minor tick parameters:
+				 * 			-	minorTickPixelInterval, minorTickWidth, minorTickLength, 
+				 * 		(4) Label parameters:
+				 * 			-	distance, rotation
+				 */
+				
+				/**
+				 *  Axis additional parameters
+				 */								
+				(gaugeStep1YAxisPopupData[0].min=="" || gaugeStep1YAxisPopupData[0].min==null || gaugeStep1YAxisPopupData[0].min==undefined) ? 
+						errorMsg += "- " + "<b>Min value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].max=="" || gaugeStep1YAxisPopupData[0].max==null || gaugeStep1YAxisPopupData[0].max==undefined) ? 
+						errorMsg += "- " + "<b>Max value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].offset=="" || gaugeStep1YAxisPopupData[0].offset==null || gaugeStep1YAxisPopupData[0].offset==undefined) ? 
+						errorMsg += "- " + "<b>Offset</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].lineWidth=="" || gaugeStep1YAxisPopupData[0].lineWidth==null || gaugeStep1YAxisPopupData[0].lineWidth==undefined) ? 
+						errorMsg += "- " + "<b>Line width</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				
+				/**
+				 *  Main tick parameters
+				 */							
+				(gaugeStep1YAxisPopupData[0].tickPixelInterval=="" || gaugeStep1YAxisPopupData[0].tickPixelInterval==null || gaugeStep1YAxisPopupData[0].tickPixelInterval==undefined) ? 
+						errorMsg += "- " + "<b>Tick pixel interval</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].tickWidth=="" || gaugeStep1YAxisPopupData[0].tickWidth==null || gaugeStep1YAxisPopupData[0].tickWidth==undefined) ? 
+						errorMsg += "- " + "<b>Tick width</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].tickLength=="" || gaugeStep1YAxisPopupData[0].tickLength==null || gaugeStep1YAxisPopupData[0].tickLength==undefined) ? 
+						errorMsg += "- " + "<b>Tick length</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				
+				/**
+				 *  Minor tick parameters
+				 */				
+				(gaugeStep1YAxisPopupData[0].minorTickInterval=="" || gaugeStep1YAxisPopupData[0].minorTickInterval==null || gaugeStep1YAxisPopupData[0].minorTickInterval==undefined) ? 
+						errorMsg += "- " + "<b>Minor tick interval</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].minorTickWidth=="" || gaugeStep1YAxisPopupData[0].minorTickWidth==null || gaugeStep1YAxisPopupData[0].minorTickWidth==undefined) ? 
+						errorMsg += "- " + "<b>Minor tick width</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].minorTickLength=="" || gaugeStep1YAxisPopupData[0].minorTickLength==null || gaugeStep1YAxisPopupData[0].minorTickLength==undefined) ? 
+						errorMsg += "- " + "<b>Minor tick length</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+				
+				/**
+				 * Labels parameters
+				 */
+				(gaugeStep1YAxisPopupData[0].distance=="" || gaugeStep1YAxisPopupData[0].distance==null || gaugeStep1YAxisPopupData[0].distance==undefined) ? 
+						errorMsg += "- " + "<b>Distance</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
+				(gaugeStep1YAxisPopupData[0].rotation=="" || gaugeStep1YAxisPopupData[0].rotation==null || gaugeStep1YAxisPopupData[0].rotation==undefined) ? 
+						errorMsg += "- " + "<b>Rotation</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
+				
+				/**
+				 * STEP 2 -> Pane panel
+				 */				
+				(chartViewModelData.startAnglePane=="" || chartViewModelData.startAnglePane==null || chartViewModelData.startAnglePane==undefined) ? 
+						errorMsg += "- " + "<b>Start angle</b> not specified [Step 2 -> Pane panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				(chartViewModelData.endAnglePane=="" || chartViewModelData.endAnglePane==null || chartViewModelData.endAnglePane==undefined) ?
+					errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+			}
+			
+			else if(chartType == "PARALLEL")
+			{
+				/**
+				 * STEP 2 -> Limit panel
+				 */
+				(chartViewModelData.serieFilterColumn=="" || chartViewModelData.serieFilterColumn==null || chartViewModelData.serieFilterColumn==undefined) ?
+						errorMsg += "- " + "<b>Serie as filter column</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.maxNumberOfLines=="" || chartViewModelData.maxNumberOfLines==null || chartViewModelData.maxNumberOfLines==undefined) ?
+						errorMsg += "- " + "<b>Maximum number of records</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.orderTopMinBottomMax=="" || chartViewModelData.orderTopMinBottomMax==null || chartViewModelData.orderTopMinBottomMax==undefined) ?
+						errorMsg += "- " + "<b>Order</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				/**
+				 * STEP 2 -> Axes lines panel
+				 */
+				(chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined) ?
+						errorMsg += "- " + "<b>Axis color</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.axisColNamePadd=="" || chartViewModelData.axisColNamePadd==null || chartViewModelData.axisColNamePadd==undefined) ?
+						errorMsg += "- " + "<b>Axis column name padding</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined) ?
+						errorMsg += "- " + "<b>Brush color</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.brushWidth=="" || chartViewModelData.brushWidth==null || chartViewModelData.brushWidth==undefined) ?
+						errorMsg += "- " + "<b>Brush width</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				/**
+				 * STEP 2 -> Tooltip panel
+				 */
+				(chartViewModelData.parallelTooltipFontFamily=="" || chartViewModelData.parallelTooltipFontFamily==null || chartViewModelData.parallelTooltipFontFamily==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipFontSize=="" || chartViewModelData.parallelTooltipFontSize==null || chartViewModelData.parallelTooltipFontSize==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipMinWidth=="" || chartViewModelData.parallelTooltipMinWidth==null || chartViewModelData.parallelTooltipMinWidth==undefined) ?
+						errorMsg += "- " + "<b>Minimum width</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipMaxWidth=="" || chartViewModelData.parallelTooltipMaxWidth==null || chartViewModelData.parallelTooltipMaxWidth==undefined) ?
+						errorMsg += "- " + "<b>Maximim width</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipMinHeight=="" || chartViewModelData.parallelTooltipMinHeight==null || chartViewModelData.parallelTooltipMinHeight==undefined) ?
+						errorMsg += "- " + "<b>Minimum height</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipMaxHeight=="" || chartViewModelData.parallelTooltipMaxHeight==null || chartViewModelData.parallelTooltipMaxHeight==undefined) ?
+						errorMsg += "- " + "<b>Maximim height</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipPadding=="" || chartViewModelData.parallelTooltipPadding==null || chartViewModelData.parallelTooltipPadding==undefined) ?
+						errorMsg += "- " + "<b>Text padding</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipBorder=="" || chartViewModelData.parallelTooltipBorder==null || chartViewModelData.parallelTooltipBorder==undefined) ?
+						errorMsg += "- " + "<b>Border</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelTooltipBorderRadius=="" || chartViewModelData.parallelTooltipBorderRadius==null || chartViewModelData.parallelTooltipBorderRadius==undefined) ?
+						errorMsg += "- " + "<b>Border radius</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				/**
+				 * STEP 2 -> Legend panel (Title and Element button)
+				 */
+				(chartViewModelData.parallelLegendTitleFontFamily=="" || chartViewModelData.parallelLegendTitleFontFamily==null || chartViewModelData.parallelLegendTitleFontFamily==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelLegendTitleFontSize=="" || chartViewModelData.parallelLegendTitleFontSize==null || chartViewModelData.parallelLegendTitleFontSize==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelLegendTitleFontWeight=="" || chartViewModelData.parallelLegendTitleFontWeight==null || chartViewModelData.parallelLegendTitleFontWeight==undefined) ?
+						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelLegendElementFontFamily=="" || chartViewModelData.parallelLegendElementFontFamily==null || chartViewModelData.parallelLegendElementFontFamily==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelLegendElementFontSize=="" || chartViewModelData.parallelLegendElementFontSize==null || chartViewModelData.parallelLegendElementFontSize==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.parallelLegendElementFontWeight=="" || chartViewModelData.parallelLegendElementFontWeight==null || chartViewModelData.parallelLegendElementFontWeight==undefined) ?
+						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				/**
+				 * STEP 2 -> Palette panel
+				 */
+				var itemsIncolorPalette = Ext.getCmp("chartColorPallete").paletteGrid.getStore().data.length;
+				
+				(itemsIncolorPalette < 2) ? 
+						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+			}
+			
+			else if (chartType == "SUNBURST")
+			{
+				/**
+				 * STEP 2 -> Toolbar and tip configuration (Toolbar style button)
+				 */
+				(chartViewModelData.toolbarPosition=="" || chartViewModelData.toolbarPosition==null || chartViewModelData.toolbarPosition==undefined) ?
+						errorMsg += "- " + "<b>Position</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarSpacing=="" || chartViewModelData.toolbarSpacing==null || chartViewModelData.toolbarSpacing==undefined) ?
+						errorMsg += "- " + "<b>Spacing</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarTail=="" || chartViewModelData.toolbarTail==null || chartViewModelData.toolbarTail==undefined) ?
+						errorMsg += "- " + "<b>Tail</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarHeight=="" || chartViewModelData.toolbarHeight==null || chartViewModelData.toolbarHeight==undefined) ?
+						errorMsg += "- " + "<b>Height</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarWidth=="" || chartViewModelData.toolbarWidth==null || chartViewModelData.toolbarWidth==undefined) ?
+						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarPercFontColor=="" || chartViewModelData.toolbarPercFontColor==null || chartViewModelData.toolbarPercFontColor==undefined) ?
+						errorMsg += "- " + "<b>Percentage color</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarFontFamily=="" || chartViewModelData.toolbarFontFamily==null || chartViewModelData.toolbarFontFamily==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarFontWeight=="" || chartViewModelData.toolbarFontWeight==null || chartViewModelData.toolbarFontWeight==undefined) ?
+						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.toolbarFontSize=="" || chartViewModelData.toolbarFontSize==null || chartViewModelData.toolbarFontSize==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				/**
+				 * STEP 2 -> Toolbar and tip configuration (Tip style button)
+				 */
+				(chartViewModelData.tipFontWeight=="" || chartViewModelData.tipFontWeight==null || chartViewModelData.tipFontWeight==undefined) ?
+						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipColor=="" || chartViewModelData.tipColor==null || chartViewModelData.tipColor==undefined) ?
+						errorMsg += "- " + "<b>Font color</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipFontSize=="" || chartViewModelData.tipFontSize==null || chartViewModelData.tipFontSize==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipFontFamily=="" || chartViewModelData.tipFontFamily==null || chartViewModelData.tipFontFamily==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipWidth=="" || chartViewModelData.tipWidth==null || chartViewModelData.tipWidth==undefined) ?
+						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipText=="" || chartViewModelData.tipText==null || chartViewModelData.tipText==undefined) ?
+						errorMsg += "- " + "<b>Text</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()				
+			}
+			
+			else if (chartType == "WORDCLOUD")
+			{
+				(chartViewModelData.sizeCriteria=="" || chartViewModelData.sizeCriteria==null || chartViewModelData.sizeCriteria==undefined) ?
+						errorMsg += "- " + "<b>Size criteria</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()				
+				(chartViewModelData.maxWords=="" || chartViewModelData.maxWords==null || chartViewModelData.maxWords==undefined) ?
+						errorMsg += "- " + "<b>Maximum number of words</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.maxAngle=="" || chartViewModelData.maxAngle==null || chartViewModelData.maxAngle==undefined) ?
+						errorMsg += "- " + "<b>Maximum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.minAngle=="" || chartViewModelData.minAngle==null || chartViewModelData.minAngle==undefined) ?
+						errorMsg += "- " + "<b>Minimum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.maxFontSize=="" || chartViewModelData.maxFontSize==null || chartViewModelData.maxFontSize==undefined) ?
+						errorMsg += "- " + "<b>Maximum font size</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.wordPadding=="" || chartViewModelData.wordPadding==null || chartViewModelData.wordPadding==undefined) ?
+						errorMsg += "- " + "<b>Word padding</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+			}
+			
+			else if (chartType == "HEATMAP")
+			{
+				console.log(chartViewModelData);	
+				
+				/**
+				 * STEP 2 -> Palette panel
+				 */
+				var itemsIncolorPalette = Ext.getCmp("chartColorPallete").paletteGrid.getStore().data.length;
+				
+				(itemsIncolorPalette < 1) ? 
+						errorMsg += "- " + "Color palette needs at least 1 color [Step 2 -> Palette panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				(chartViewModelData.legendAlign=="" || chartViewModelData.legendAlign==null || chartViewModelData.legendAlign==undefined) ?
+						errorMsg += "- " + "<b>Alignment</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.symbolWidth=="" || chartViewModelData.symbolWidth==null || chartViewModelData.symbolWidth==undefined) ?
+						errorMsg += "- " + "<b>Symbol width</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				(chartViewModelData.tipFontFamily=="" || chartViewModelData.tipFontFamily==null || chartViewModelData.tipFontFamily==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipFontSize=="" || chartViewModelData.tipFontSize==null || chartViewModelData.tipFontSize==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.tipColor=="" || chartViewModelData.tipColor==null || chartViewModelData.tipColor==undefined) ?
+						errorMsg += "- " + "<b>Color</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
 			}
 
 			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();

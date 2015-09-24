@@ -179,10 +179,32 @@ function renderHeatmap(chartConf){
     
     var colors=chartConf.colors;
     var colorStops=[];
-    for(i=0;i<colors.length;i++){
-    	var stop=[i*(1/(colors.length-1)),colors[i]];
-    	colorStops.push(stop);
-    }
+    
+    /**
+     * Check if user specified only 1 color from the color palette. 
+     * @modifiedBy: danristo (danilo.ristovski@mht.net)
+     */    
+    if (colors.length > 1)
+	{
+    	for(i=0;i<colors.length;i++){
+        	var stop=[i*(1/(colors.length-1)),colors[i]];
+        	colorStops.push(stop);
+        }	
+	}
+    else
+	{
+    	/**
+    	 * If user specified only one color from the color palette in order to specify the
+    	 * color interval for this chart type, then the interval of colors goes from the 
+    	 * white color ("#FFFFFF") (the most left color on the legend of the chart) to the 
+    	 * one specified by the user (that single one, 'colors[0]').
+    	 * @author: danristo (danilo.ristovski@mht.net)
+    	 */
+    	var startIntervalColor = "#FFFFFF";	// White color
+    	
+    	colorStops.push([0,startIntervalColor]);
+    	colorStops.push([1,colors[0]]);
+	}    
     
     var chartObject = null;
     
@@ -192,8 +214,6 @@ function renderHeatmap(chartConf){
     	chartObject = 
     	{
         	renderTo: 'mainPanel',
-//        	height:  ? Number(chartConf.chart.height) : "",
-//			width:  ? Number(chartConf.chart.width) : "",
             type: 'heatmap',
             backgroundColor:chartConf.chart.style.backgroundColor,
             margin: [80, 80, 80, 80],

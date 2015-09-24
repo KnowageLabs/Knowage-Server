@@ -87,10 +87,26 @@
  	},
  
  	colors: 
- 	[
-		#foreach($color in $chart.COLORPALETTE.COLOR)
-			'$color.value', 
-		#end
+ 	[ 	 
+ 		#*
+ 			If user specified more than one color from the color palette
+ 			on the Designer when creating the chart, then we have an array
+ 			list of elements. Otherwise, we are dealing with a hashmap.
+ 			
+ 			In the first case, create an array of colors. In the second 
+ 			case take the only color user specified and put it as the only
+ 			element of the array that we are now creating.
+ 			
+ 			@modifiedBy: danristo (danilo.ristovski@mht.net)
+ 		*#	
+ 			
+		#if ($chart.COLORPALETTE.COLOR.class.name == 'java.util.ArrayList')
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.get('value')',			
+			#end			
+		#else
+			'$chart.COLORPALETTE.COLOR.value'
+		#end			
     ],
  
  	emptymessage:

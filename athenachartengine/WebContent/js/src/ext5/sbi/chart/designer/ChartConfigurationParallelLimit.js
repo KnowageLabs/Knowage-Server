@@ -27,9 +27,13 @@ Ext.define
 			this.viewModel = config.viewModel;
 			
 			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
+			//console.log(this.storeForSeriesBeforeDrop);
 			
 			/* We are communicating with the ChartColumnsContainerManager.js for additional
 			 * serie columns or for the removed ones (after loading of the Designer). */
+			//console.log(this.storeForSeriesBeforeDrop.getAt(0));
+			//console.log(config.viewModel.data.configModel.data.serieFilterColumn);
+			
 			this.seriesColumnsOnYAxisCombo = Ext.create
 			(
 				'Ext.form.ComboBox', 
@@ -41,7 +45,8 @@ Ext.define
 				    queryMode: 'local',
 				    displayField: 'serieColumn',
 				    valueField: 'serieColumn',
-				    value: this.storeForSeriesBeforeDrop.getAt(0)
+				    //value: this.storeForSeriesBeforeDrop.getAt(0)
+				    value: config.viewModel.data.configModel.data.serieFilterColumn
 				}
 			);
 			

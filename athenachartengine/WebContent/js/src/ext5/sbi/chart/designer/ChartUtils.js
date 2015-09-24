@@ -34,7 +34,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							 * (danilo.ristovski@mht.net)
 							 */
 							if (chartType == "GAUGE")
-							{								
+							{	
 								result['min'] = axis.min ? axis.min : '';
 								result['max'] = axis.max ? axis.max : '';
 								result['lineColor'] = axis.lineColor ? axis.lineColor : '';
@@ -42,9 +42,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 								result['tickColor'] = axis.tickColor ? axis.tickColor : '';
 								result['minorTickColor'] = axis.minorTickColor ? axis.minorTickColor : '';
 								result['minorTickLength'] = axis.minorTickLength ? axis.minorTickLength : '';
-								result['offset'] = axis.offset ? axis.offset : '';
+								result['offset'] = (axis.offset!=undefined && axis.offset!=null) ? axis.offset : 0;
 								result['lineWidth'] = axis.lineWidth ? axis.lineWidth : '';
-								result['endOnTick'] = axis.endOnTick ? axis.endOnTick : false;
+								result['endOnTickGauge'] = axis.endOnTickGauge;
 								result['minorTickInterval'] = axis.minorTickInterval ? axis.minorTickInterval : '';
 								result['minorTickPosition'] = axis.minorTickPosition ? axis.minorTickPosition : '';
 								result['minorTickWidth'] = axis.minorTickWidth ? axis.minorTickWidth : '';
@@ -117,11 +117,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							/**
 							 * Specific for the GAUGE chart type
 							 * (danilo.ristovski@mht.net)
-							 */
+							 */									
 							if (axis.LABELS)
-							{
-								result['distance'] = axis.LABELS.distance ? axis.LABELS.distance : "";
-								result['rotation'] = axis.LABELS.rotation ? axis.LABELS.rotation : "";
+							{								
+								result['distance'] = (axis.LABELS.distance!=undefined && axis.LABELS.distance!=null || axis.LABELS.distance===0) ? axis.LABELS.distance : "";
+								result['rotation'] = (axis.LABELS.rotation!=undefined && axis.LABELS.rotation!=null || axis.LABELS.rotation===0) ? axis.LABELS.rotation : "";
 							}
 							
 							/**
@@ -258,7 +258,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							 */
 							if (Sbi.chart.designer.Designer.chartTypeSelector
 									.getChartType() == "SCATTER")
-							{								
+							{							
 								AXIS[1]['startOnTick'] = chartModel.get('scatterStartOnTick');
 								AXIS[1]['endOnTick'] = chartModel.get('scatterEndOnTick');
 								AXIS[1]['showLastLabel'] = chartModel.get('scatterShowLastLabel');									
@@ -323,12 +323,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 									 * (danilo.ristovski@mht.net)
 									 */
 									if (chartType == "GAUGE")
-									{										
+									{		
 										axisAsJson['min'] = axisData.min ? axisData.min : '';
 										axisAsJson['max'] = axisData.max ? axisData.max : '';
 										axisAsJson['lineColor'] = axisData.lineColor ? axisData.lineColor : '';
 										axisAsJson['tickPosition'] = axisData.tickPosition ? axisData.tickPosition : '';
 										axisAsJson['tickColor'] = axisData.tickColor ? axisData.tickColor : '';
+										axisAsJson['rotation'] = axisData.rotation ? axisData.rotation : '';
+										axisAsJson['distance'] = axisData.distance ? axisData.distance : '';
 										axisAsJson['minorTickColor'] = axisData.minorTickColor ? axisData.minorTickColor : '';
 										axisAsJson['minorTickLength'] = axisData.minorTickLength ? axisData.minorTickLength : '';
 										axisAsJson['offset'] = axisData.offset ? axisData.offset : '';
@@ -437,9 +439,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 										 */
 										var LABELS = {};
 										
-										LABELS['distance'] = axisData.distance ? axisData.distance : '';
-										LABELS['rotation'] = axisData.rotation ? axisData.rotation : '';
-
+										LABELS['distance'] = (axisData.distance!=undefined && axisData.distance!=null || (axisData.distance===0 && axisData.distance!=null)) ? axisData.distance : "";
+										LABELS['rotation'] = (axisData.rotation!=undefined && axisData.rotation!=null || (axisData.rotation===0 && axisData.rotation!=null)) ? axisData.rotation : "";
+										
 										axisAsJson['LABELS'] = LABELS;
 										
 										/**
@@ -881,7 +883,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							 */
 							if (chartType.toUpperCase() == "SUNBURST") {
 								
-								CHART['opacMouseOver'] = (chartModel.get('opacMouseOver')) ? chartModel.get('opacMouseOver') : 50;
+								CHART['opacMouseOver'] = (chartModel.get('opacMouseOver')) ? chartModel.get('opacMouseOver') : 100;
 							}
 
 														
@@ -1647,6 +1649,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							if (Sbi.chart.designer.Designer.chartTypeSelector
 									.getChartType() == 'SCATTER')
 							{
+								console.log(jsonTemplate.CHART.AXES_LIST.AXIS[1]);
 								jsonScatterZoomType = jsonTemplate.CHART.zoomType ? jsonTemplate.CHART.zoomType : '';	
 								jsonScatterStartOnTick = jsonTemplate.CHART.AXES_LIST.AXIS[1].startOnTick;	
 								jsonScatterEndOnTick = jsonTemplate.CHART.AXES_LIST.AXIS[1].endOnTick;	
@@ -1671,12 +1674,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							 */							
 							var jsonGaugeMinAnglePane = null;
 							var jsonGaugeMaxAnglePane = null;
+							var jsonGaugeAxesListData = null;
 							
 							if (Sbi.chart.designer.Designer.chartTypeSelector
 									.getChartType() == 'GAUGE')
 							{
 								jsonGaugeMinAnglePane = jsonTemplate.CHART.PANE.startAngle;
-								jsonGaugeMaxAnglePane = jsonTemplate.CHART.PANE.endAngle;
+								jsonGaugeMaxAnglePane = jsonTemplate.CHART.PANE.endAngle;								
+								jsonGaugeAxesListData = jsonTemplate.CHART.AXES_LIST.AXIS[0];
 							}							
 							
 							var colorPalette = [];
@@ -1704,6 +1709,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 									.create(
 											'Sbi.chart.designer.ChartConfigurationModel',
 											{
+												/**
+												 * Generic parameters for charts. They are common for all chart types.
+												 * @commentBy: danristo (danilo.ristovski@mht.net)
+												 */
 												height : jsonTemplate.CHART.height,
 												width : jsonTemplate.CHART.width,
 												orientation : jsonTemplate.CHART.orientation ? jsonTemplate.CHART.orientation
@@ -1712,25 +1721,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 														.removeStartingHash(jsonChartStyle.backgroundColor),
 												font : jsonChartStyle.fontFamily,
 												fontDimension : jsonChartStyle.fontSize,
-												fontWeight : jsonChartStyle.fontWeight,
-
-												/**
-												 * Added for the SUNBURST chart
-												 * (danilo.ristovski@mht.net)
-												 */
-//												opacMouseOver : jsonTemplate.CHART.style.opacMouseOver,
-												opacMouseOver : jsonTemplate.CHART.opacMouseOver,	
- 
-												/**
-												 * Added for the WORDCLOUD chart
-												 * (danilo.ristovski@mht.net)
-												 */
-												maxWords : jsonTemplate.CHART.maxWords,
-												maxAngle : jsonTemplate.CHART.maxAngle,
-												minAngle : jsonTemplate.CHART.minAngle,
-												maxFontSize : jsonTemplate.CHART.maxFontSize,
-												wordPadding : jsonTemplate.CHART.wordPadding,
-												sizeCriteria : jsonTemplate.CHART.sizeCriteria,
+												fontWeight : jsonChartStyle.fontWeight,																
 
 												title : jsonTitleText,
 												titleAlign : jsonTitleStyle.align,
@@ -1775,9 +1766,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 												colorPalette : colorPalette,
 
 												/**
+												 * Added for the WORDCLOUD chart
+												 * (danilo.ristovski@mht.net)
+												 */
+												maxWords : jsonTemplate.CHART.maxWords,
+												maxAngle : jsonTemplate.CHART.maxAngle,
+												minAngle : jsonTemplate.CHART.minAngle,
+												maxFontSize : jsonTemplate.CHART.maxFontSize,
+												wordPadding : jsonTemplate.CHART.wordPadding,
+												sizeCriteria : jsonTemplate.CHART.sizeCriteria,
+												
+												/**
 												 * Added for the SUNBURST chart
 												 * (danilo.ristovski@mht.net)
 												 */
+												opacMouseOver : jsonTemplate.CHART.opacMouseOver,	
+												
 												toolbarPosition : jsonToolbarStyle.position,
 												toolbarHeight : jsonToolbarStyle.height,
 												toolbarWidth : jsonToolbarStyle.width,
@@ -1789,11 +1793,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 												toolbarFontFamily : jsonToolbarStyle.fontFamily,
 												toolbarFontWeight : jsonToolbarStyle.fontWeight,
 												toolbarFontSize : jsonToolbarStyle.fontSize,
-
-												/**
-												 * Added for the SUNBURST chart
-												 * (danilo.ristovski@mht.net)
-												 */
+												
 												tipText : jsonTipText,
 												tipFontFamily : jsonTipStyle.fontFamily,
 												tipFontWeight : jsonTipStyle.fontWeight,
@@ -1855,10 +1855,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 												 * Added for the SCATTER chart
 												 * (danilo.ristovski@mht.net)
 												 */
-												scatterZoomType : (jsonScatterZoomType != null) ? jsonScatterZoomType : null,
-												scatterStartOnTick: (jsonScatterStartOnTick != null) ? jsonScatterStartOnTick : null,
-												scatterEndOnTick: (jsonScatterEndOnTick != null) ? jsonScatterEndOnTick : null,
-												scatterShowLastLabel: (jsonScatterShowLastLabel != null) ? jsonScatterShowLastLabel : null,
+												scatterZoomType : (jsonScatterZoomType != null) ? jsonScatterZoomType : "",
+												scatterStartOnTick: (jsonScatterStartOnTick != null) ? jsonScatterStartOnTick : false,
+												scatterEndOnTick: (jsonScatterEndOnTick != null) ? jsonScatterEndOnTick : false,
+												scatterShowLastLabel: (jsonScatterShowLastLabel != null) ? jsonScatterShowLastLabel : false,
 												
 												/**
 												 * Added for the HEATMAP chart
@@ -1868,11 +1868,35 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 												symbolWidth: (jsonHeatmapChartSybmolWidth != null) ? jsonHeatmapChartSybmolWidth : null,
 												
 												/**
-												 * Added for the GAUGE chart
+												 * Added for the GAUGE chart. Mandatory parameters for the chart - 
+												 * the document cannot be saved if these are not specified for this 
+												 * chart type).
 												 * (danilo.ristovski@mht.net)
 												 */
 												startAnglePane: (jsonGaugeMinAnglePane != null) ? jsonGaugeMinAnglePane : null,
-												endAnglePane: (jsonGaugeMaxAnglePane != null) ? jsonGaugeMaxAnglePane : null
+												endAnglePane: (jsonGaugeMaxAnglePane != null) ? jsonGaugeMaxAnglePane : null,
+														
+												gaugeMin: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.min : null, 
+												gaugeMax: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.max : null,
+												gaugeLineColor: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineColor : null,
+												gaugeOffset: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.offset : null,
+												gaugeLineWidth: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineWidth : null,
+												gaugeEndOnTick: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.endOnTickGauge : null,
+												
+												gaugeTickPosition: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPosition : null,
+												gaugeTickColor: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickColor : null,
+												gaugeTickPixelInterval: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickPixelInterval : null,
+												gaugeTickWidth: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickWidth : null,
+												gaugeTickLength: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.tickLength : null,
+												
+												gaugeMinorTickColor: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickColor : null,
+												gaugeMinorTickInterval: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickInterval : null,
+												gaugeMinorTickLength: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickLength : null,
+												gaugeMinorTickPosition: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickPosition : null,
+												gaugeMinorTickWidth: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickWidth : null,
+												
+												gaugeDistance: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.LABELS.distance : null,
+												gaugeRotation: (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.LABELS.rotation : null
 											});
 
 							return cModel;
@@ -2090,72 +2114,88 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				idx;
 
 			// If either argument is undefined, return the other.
-							// If both are undefined, return undefined.
-							if (typeof source == 'undefined') {
-								return source;
-							} else if (typeof target == 'undefined') {
-								return target;
-							}
+			// If both are undefined, return undefined.
+			if (typeof source == 'undefined') {
+				return source;
+			} else if (typeof target == 'undefined') {
+				return target;
+			}
 
-							var newTarget = ChartUtils.clone(target);
-							// Assume both are objects and don't care about
-							// inherited properties
-							for ( var prop in source) {
+			var newTarget = ChartUtils.clone(target);
+			// Assume both are objects and don't care about
+			// inherited properties
+			for ( var prop in source) {
 
 				if(applyAxes && prop == 'AXIS') {
+					
+//					console.log("-- AXIS --");
+//					console.log(target[prop]);
+//					console.log(source[prop]);
+					
 					newTarget[prop] = ChartUtils.applyAxes(target[prop], source[prop]);
+					
+					console.log(newTarget[prop]);
+					
+					continue;
+				}
+				else if(applyAxes && prop == 'SERIE') {
+					console.log("-- SERIE in mergeObjects --");
+					console.log(source[prop]);
+					console.log(target[prop]);
+					//newTarget[prop] = ChartUtils.applySeries(target[prop], source[prop]);
+					//console.log(newTarget[prop]);
 					continue;
 				}
 
-								item = source[prop];
-								if (typeof item == 'object' && item !== null) {
+				item = source[prop];
+				if (typeof item == 'object' && item !== null) {
 
-									if (isArray(item)) {
+					if (isArray(item)) {
 
-										// deal with arrays, will be either
-										// array of primitives or array of
-										// objects
-										// If primitives
+						// deal with arrays, will be either
+						// array of primitives or array of
+						// objects
+						// If primitives
 						if (item.length > 0 && typeof item[0] != 'object') {
 
-											// if target doesn't have a similar
-											// property, just reference it
-											tItem = newTarget[prop];
-											if (!tItem) {
-												newTarget[prop] = item;
+							// if target doesn't have a similar
+							// property, just reference it
+							tItem = newTarget[prop];
+							if (!tItem) {
+								newTarget[prop] = item;
 
-											} else {
-								// Otherwise, copy only those members that don't exist on target
+							} else {
+							// Otherwise, copy only those members that don't exist on target
 
-								// Create an index of items on target
-												o = {};
-												for (var i = 0; i < tItem.length; i++) {
-													o[tItem[i]] = true;
-												}
+							// Create an index of items on target
+										o = {};
+										for (var i = 0; i < tItem.length; i++) {
+											o[tItem[i]] = true;
+										}
 
-												// Do check, push missing
-												for (var j = 0; j < item.length; j++) {
+										// Do check, push missing
+										for (var j = 0; j < item.length; j++) {
 
-													if (!(item[j] in o)) {
-														tItem.push(item[j]);
-													}
-												}
+											if (!(item[j] in o)) {
+												tItem.push(item[j]);
 											}
-										} else {
-											// Deal with array of objects
+										}
+									}
+						} else {
+							// Deal with array of objects
 							// Create index of objects in target object using ID property
 							// Assume if target has same named property then it will be similar array
-											idx = {};
-											tItem = newTarget[prop];
+									idx = {};
+									tItem = newTarget[prop];
 
-											if (!tItem) {
-												newTarget[prop] = item;
-											} else {
-												var forcedTItemArray = [];
-												if (!isArray(tItem)) {
-													// same length of source
-													// array
-													for ( var itemIndex in item) {
+									if (!tItem) {
+										newTarget[prop] = item;
+									} else {
+										var forcedTItemArray = [];
+										if (!isArray(tItem)) {
+											// same length of source
+											// array
+											for ( var itemIndex in item) {
 										var mixedMergedObj = 
 											ChartUtils.mergeObjects( tItem, item[itemIndex], config);
 										forcedTItemArray.push(mixedMergedObj);
@@ -2214,19 +2254,79 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 							if (removeNotFoundItemsFlag) {
 				newTarget = ChartUtils.removeNotFoundItems(newTarget, source);
-							}
-
+							}						
+							
 							return newTarget;
 						},
 
 		/** Patch for axes merging */
+		applySeries: function(target, source) {
+			var styleSerieAxis;
+
+			console.log("-- target in applySeries: --");
+			console.log(target);
+			console.log("-- source in applySeries: --");
+			console.log(source);
+			
+			// 'source' is an array containing the styles
+//			for (var i = 0; i < source.length; i++) {
+//				var axis = source[i];
+//				
+//				styleSerieAxis = axis;
+//				
+//				console.log(styleSerieAxis);
+//			}
+//			
+//			var finalAxisArray = [];
+//			
+//			for (var i = 0; i < target.length; i++) {
+//				var appliedStyledAxis = {};
+//				var targetAxis = target[i];
+//				
+//				console.log(targetAxis);
+//				
+//				appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
+//				
+//				finalAxisArray.push(appliedStyledAxis);
+//			}
+			
+			appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, source[0]);
+			
+			console.log("result in applySeries:");
+			console.log(finalAxisArray);
+			
+			return finalAxisArray;
+		},
+						
+		/** Patch for axes merging */
 		applyAxes: function(target, source) {
 			var styleSerieAxis, styleCategoryAxis;
-
+			
+			console.log("-- applyAxes --");
+			
+			/**
+			 * 'target' - 	content (properties) of the AXIS tag of the XML structure 
+			 * 				inside the 'jsonTemplate' that represent the target when 
+			 * 				merging.
+			 * 'source' - 	content (properties) of the AXIS tag of the XML structure 
+			 * 				inside the 'jsonTemplate' that represent the source when 
+			 * 				merging.
+			 * (comment by: danristo :: danilo.ristovski@mht.net) 
+			 */
+			
 			// 'source' is an array containing the styles
 			for (var i = 0; i < source.length; i++) {
 				var axis = source[i];
+				console.log("<< SOURCE >>");
+				console.log(axis);
 				
+				/**
+				 * 'styleSerieAxis' - 		properties that are common for the AXIS tag of the
+				 * 							axis for the SERIE items.
+				 * 'styleCategoryAxis' - 	properties that are common for the AXIS tag of the
+				 * 							axis for the CATEGORY items.
+				 * (comment by: danristo :: danilo.ristovski@mht.net) 
+				 */
 				if(axis.type.toLowerCase() == 'serie') {
 					styleSerieAxis = axis;
 				} else if(axis.type.toLowerCase() == 'category') {
@@ -2234,11 +2334,17 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				}
 			}
 			
+			//console.log(styleSerieAxis);
+			//console.log(styleCategoryAxis);
+			
 			var finalAxisArray = [];
 			
 			for (var i = 0; i < target.length; i++) {
 				var appliedStyledAxis = {};
 				var targetAxis = target[i];
+				
+				console.log("<< TARGET >>");
+				console.log(targetAxis);
 				
 				if(targetAxis.type.toLowerCase() == 'serie') {
 					appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
@@ -2248,6 +2354,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				
 				finalAxisArray.push(appliedStyledAxis);
 			}
+			
+			console.log("<< RESULT >>");
 			
 			return finalAxisArray;
 		},

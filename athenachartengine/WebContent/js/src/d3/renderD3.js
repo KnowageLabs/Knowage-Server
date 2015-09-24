@@ -638,7 +638,7 @@ console.log(chartConf.chart.width);
 		var chartFontSize = (jsonObject.chart.style.fontSize != '$chart.style.fontSize') ? jsonObject.chart.style.fontSize : "9px" ;
 		var chartFontWeight = (jsonObject.chart.style.fontWeight != '$chart.style.fontWeight') ? jsonObject.chart.style.fontWeight : "Normal" ;
 		var chartBackgroundColor = (jsonObject.chart.style.backgroundColor != '$chart.style.backgroundColor') ? jsonObject.chart.style.backgroundColor : "#000000" ;
-		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 50 ;
+		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 100 ;
 		
 		/* 'topPadding':	padding (empty space) between the breadcrumb 
 		 * 					(toolbar) and the top of the chart when the

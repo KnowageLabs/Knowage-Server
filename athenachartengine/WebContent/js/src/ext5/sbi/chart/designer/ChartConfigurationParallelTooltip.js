@@ -33,7 +33,8 @@ Ext.define
 				'Sbi.chart.designer.FontCombo',
 				
 				{
-					bind: '{configModel.parallelTooltipFontFamily}'
+					bind: '{configModel.parallelTooltipFontFamily}',
+					viewModel: this.viewModel
 				}	
 			);
 	        

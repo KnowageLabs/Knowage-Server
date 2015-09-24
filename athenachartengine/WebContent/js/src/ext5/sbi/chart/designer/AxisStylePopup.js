@@ -1027,13 +1027,13 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 
 			 * 		Description: 	
 			 * 			Distance of the label from the axis. Default: 15
-			 */
+			 */			
 			this.distanceLabelFromYAxis = Ext.create
 			(
 				{
 			        xtype: 'numberfield',
 			        id: 'distanceLabelFromYAxis',
-			        minValue: 1,
+			        minValue: 0,
 			        value: this.axisData.distance,
 			        labelSeparator: '',			        
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis") 
@@ -1051,7 +1051,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				{
 			        xtype: 'numberfield',
 			        id: 'rotationOfLabelYAxis',
-			        minValue: 1,
+			        minValue: 0,
 			        maxValue: 359,
 			        value: this.axisData.rotation,
 			        labelSeparator: '',			        
