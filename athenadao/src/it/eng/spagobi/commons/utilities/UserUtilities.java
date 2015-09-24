@@ -5,19 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
@@ -40,6 +27,20 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 
 public class UserUtilities {
 
@@ -145,7 +146,14 @@ public class UserUtilities {
 				return null;
 			checkTenant(user);
 			user.setFunctions(readFunctionality(user));
-			return new UserProfile(user);
+			UserProfile profile = new UserProfile(user);
+			// putting locale language and country on user attributes:
+			if (profile != null) {
+				Locale defaultLocale = GeneralUtilities.getDefaultLocale();
+				profile.addAttributes(SpagoBIConstants.LANGUAGE, defaultLocale.getLanguage());
+				profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
+			}
+			return profile;
 
 		} catch (Exception e) {
 			logger.error("Exception while creating user profile", e);
@@ -222,55 +230,49 @@ public class UserUtilities {
 			throw new SpagoBIRuntimeException("Error while getting user's information", e);
 		}
 	}
-		
-	
-	
-	
-	public static boolean haveRoleAndAuthorization(IEngUserProfile profile,String Role, String[] authorization) {
+
+	public static boolean haveRoleAndAuthorization(IEngUserProfile profile, String Role, String[] authorization) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
-		ArrayList<String> auth=new ArrayList<String>(Arrays.asList(authorization));
+		ArrayList<String> auth = new ArrayList<String>(Arrays.asList(authorization));
 		try {
-			if(((UserProfile)profile).getIsSuperadmin()){
+			if (((UserProfile) profile).getIsSuperadmin()) {
 				return true;
 			}
-			boolean result=false;
-		for(int i=0;i<profile.getRoles().size();i++){
-			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-//			roleDAO.setTenant(profile);
-			Role rol = roleDAO.loadByName(((ArrayList<?>)profile.getRoles()).get(i).toString());	
-			if(Role==null || rol.getRoleTypeCD().compareTo(Role)==0){
-				
-				//check for authorization
-				if(auth==null || auth.isEmpty()){
-					result=true;
-					break;
-				}else{
-					Boolean ok=true;
-					for(String au:auth){
-						if(!profile.isAbleToExecuteAction(au)){
-							ok=false;
+			boolean result = false;
+			for (int i = 0; i < profile.getRoles().size(); i++) {
+				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+				// roleDAO.setTenant(profile);
+				Role rol = roleDAO.loadByName(((ArrayList<?>) profile.getRoles()).get(i).toString());
+				if (Role == null || rol.getRoleTypeCD().compareTo(Role) == 0) {
+
+					// check for authorization
+					if (auth == null || auth.isEmpty()) {
+						result = true;
+						break;
+					} else {
+						Boolean ok = true;
+						for (String au : auth) {
+							if (!profile.isAbleToExecuteAction(au)) {
+								ok = false;
+								break;
+							}
+						}
+
+						if (ok) {
+							result = ok;
 							break;
 						}
 					}
-					
-					if(ok){
-						result=ok;
-						break;
-					}
-				}	
+				}
 			}
-		}
-		
-		return result;
-		
+
+			return result;
+
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while getting user's information", e);
 		}
 	}
-	
-	
-	
 
 	/**
 	 * User functionality root exists.
@@ -755,8 +757,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException(
-						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile [" + profile.getUserId()
+						+ "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
@@ -766,7 +768,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
