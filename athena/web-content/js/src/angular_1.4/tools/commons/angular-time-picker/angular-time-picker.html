@@ -1,0 +1,79 @@
+ <style>
+ angular-time-picker input[type="number"]::-webkit-outer-spin-button,
+angular-time-picker input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+angular-time-picker input[type="number"] {
+    -moz-appearance: textfield;
+    width: 25px;
+        border: none;
+    text-align: center;
+}
+
+angular-time-picker .md-button.spinButton{
+    height: 14px;
+    min-width: 2px;
+    min-height: 2px;
+    background-color: transparent;
+    box-shadow: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    }
+    
+    angular-time-picker .md-button.spinButton md-icon{
+    color:black;
+         width: 100%;
+    }
+    
+angular-time-picker span.dividerTime {
+     line-height: 44px;
+ margin: 0 5px;}
+ 
+ angular-time-picker md-select{
+ margin: 0px;}
+ 
+ angular-time-picker md-select .md-select-value{
+     border: none;
+ margin-bottom: 5px;
+ margin-left: 6px;}
+ 
+     angular-time-picker md-select .md-select-value .md-select-icon {
+         display: none;
+        }
+ </style>
+ 
+<div layout="row">
+	<div layout="column">
+		<md-button aria-label="menu" class="md-fab spinButton " >
+			<md-icon ng-click="alterHours(true)" md-font-icon="fa fa-caret-up" ></md-icon>
+		</md-button>
+		
+		<input ng-keyup="checkValue(true)"   type="number"  ng-model="hours" >
+		
+		<md-button aria-label="menu" class="md-fab spinButton " >
+			<md-icon ng-click="alterHours(false)"  md-font-icon="fa fa-caret-down" ></md-icon>
+		</md-button>
+	</div>
+ <span class="dividerTime">:</span>
+  
+<div layout="column">
+		<md-button aria-label="menu" class="md-fab spinButton " >
+			<md-icon ng-click="alterMinutes(true)"  md-font-icon="fa fa-caret-up" ></md-icon>
+		</md-button>
+		
+		<input ng-keyup="checkValue(false)"  type="number"  ng-model="minutes" >
+		
+		<md-button aria-label="menu" class="md-fab spinButton ">
+			<md-icon ng-click="alterMinutes(false)"  md-font-icon="fa fa-caret-down" ></md-icon>
+		</md-button>
+	</div>
+	
+	<md-select ng-model="ampm" ng-change="alterNgModel()">
+		<md-option value="AM" >AM</md-option> 
+		<md-option value="PM">PM</md-option> 
+	</md-select> 
+
+  
+ </div>

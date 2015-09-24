@@ -87,7 +87,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
 
-<!-- fine -->
+
+	<!-- 	angular time picker -->
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+	
+	
+	<!-- fine -->
 		
 	<link rel="stylesheet" type="text/css" href="/athena/themes/scheduler/css/scheduler_style.css">
 	
@@ -126,30 +131,25 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							<form name="contactForm" ng-submit="contactForm.$valid && activityEvent.saveEvent(contactForm.$valid)" layout="column" class="detailBody" novalidate>
 								<md-content class="bottomButtonsBox">
 									<md-input-container>
-				                        <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
+				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
 				                        <input ng-model="activityEvent.event.name" required maxlength="100" ng-maxlength="100" md-maxlength="100">
 		                        	</md-input-container>
 		                        	
 									<md-input-container>
-				                        <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
+				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
 				                       <textarea ng-model="activityEvent.event.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
 		                        	</md-input-container>
 		                        	
 		                        	<md-input-container>
-			                        	<label>{{translate.load("sbi.scheduler.activity.events.event.type")}}:</label> 
+			                        	<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label> 
 				                        <md-select ng-model="activityEvent.event.event_type" required>
 									    	<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" value="{{eventType.value}}">
 									    		{{eventType.label}}
 									    	</md-option>
 									  	</md-select>
 								  	</md-input-container>
-									  	
-									<div layout="row" class="checkboxRow">
-				                        <label>{{translate.load("sbi.scheduler.activity.events.event.suspended")}}:</label>
-				                        <md-checkbox ng-model="activityEvent.event.is_suspended">
-		                        	</div>
-		                        	
-		                        	<div ng-if="activityEvent.event.event_type=='dataset'">
+								  	
+							  		<div ng-if="activityEvent.event.event_type=='dataset'">
 										<md-toolbar class="minihead">
 											<div class="md-toolbar-tools">
 												<h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
@@ -158,19 +158,104 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										
 										<md-content layout-padding class="borderBox"> 
 											<md-input-container>
-												<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+												<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 												<md-select ng-model="activityEvent.event.dataset" required>
 													<md-option ng-repeat="item in jobDataCtrl.datasets "
 														value="{{item.id.dsId}}">{{item.label}}</md-option> 
 												</md-select> 
 											</md-input-container> 
 											<md-input-container>
-												<label>{{translate.load("sbi.scheduler.activity.events.event.frequency")}}:</label>
+												<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}}:</label>
 												<input type="number"
 													ng-model="activityEvent.event.frequency"> 
 											</md-input-container> 
 										</md-content>
 									</div>
+									  	
+									<div layout="row" class="checkboxRow">
+				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.suspended")}}:</label>
+				                        <md-checkbox ng-model="activityEvent.event.is_suspended">
+		                        	</div>
+		                        	
+		                        	
+		                        	<div layout="row" class="checkboxRow">
+				                        <label>{{translate.load("Start date")}}:</label>
+				                      	<md-datepicker ng-model="activityEvent.event.startdate" md-placeholder="StartDate"></md-datepicker>
+				                      	  <label style="margin: 0 20px;">{{translate.load("Start time")}}:</label>
+		                        		<angular-time-picker id="myTimePicker" ng-model="activityEvent.event.starttime"></angular-time-picker>
+		                        	</div>
+		                        	
+		                        	<div layout="row" class="checkboxRow">
+				                        <label style="    margin-right: 5px;">{{translate.load("End date")}}:</label>
+				                      	<md-datepicker ng-model="activityEvent.event.enddate" md-placeholder="StartDate"></md-datepicker>
+				                      	  <label style="margin: 0 20px;     margin-right: 26px;">{{translate.load("End time")}}:  </label>
+		                        		<angular-time-picker id="myTimePicker" ng-model="activityEvent.event.endtime"></angular-time-picker>
+		                        	</div>
+		                        	
+		                        	
+									<md-toolbar class=" unselectedItem " ng-class="activityEvent.event.repetitionKind != 'single'? 'selectedItem' : 'unselectedItem'"
+									style="height: 50px;  min-height: 30px;">
+										<div  layout="row" >
+											<md-input-container style="width:100%;">
+												<label>{{translate.load("Tipo ripetizione evento")}}</label>
+												<md-select ng-model="activityEvent.event.repetitionKind" >
+													<md-option ng-repeat="item in jobDataCtrl.intervalsEvent "  value="{{item.value}}" >{{item.label}}</md-option> 
+												</md-select> 
+											</md-input-container> 
+					        			</div>
+									</md-toolbar>
+									<div ng-if="activityEvent.event.repetitionKind != 'single'">
+									<md-content layout-padding class="borderBox "> 
+									
+									<div ng-if="activityEvent.event.repetitionKind=='minute'" layout="row" 
+										ng-init="activityEvent.event.minute_repetition_n =activityEvent.event.minute_repetition_n || 1;">
+										 <span class="textspan">Every</span> 
+											<md-select ng-model="activityEvent.event.minute_repetition_n" class="numberSelect"  >
+													<md-option ng-repeat="item in activityEvent.getNitem(60) "  value="{{item}}" >{{item}}</md-option> 
+											</md-select> 
+										 <span class="textspan">minutes</span>
+									</div>
+									
+									<div ng-if="activityEvent.event.repetitionKind=='hour'"  layout="row" 
+										ng-init="activityEvent.event.hour_repetition_n =activityEvent.event.hour_repetition_n || 1;">
+										 	<span class="textspan">Every</span> 
+											<md-select ng-model="activityEvent.event.hour_repetition_n" class="numberSelect"  >
+													<md-option ng-repeat="item in activityEvent.getNitem(24) "  value="{{item}}" >{{item}}</md-option> 
+											</md-select> 
+										 	<span class="textspan">hours</span>
+										</div>
+									
+									
+									<div ng-if="activityEvent.event.repetitionKind=='day'" layout="row" 
+										ng-init="activityEvent.event.day_repetition_n =activityEvent.event.day_repetition_n || 1;">
+										 	<span class="textspan">Every</span> 
+											<md-select ng-model="activityEvent.event.day_repetition_n" class="numberSelect"  >
+													<md-option ng-repeat="item in activityEvent.getNitem(31) "  value="{{item}}" >{{item}}</md-option> 
+											</md-select> 
+										 	<span class="textspan">days</span>
+										</div>
+									
+									<div ng-if="activityEvent.event.repetitionKind=='week'">
+									
+									<div layout="row" class="alignedCheckbox" >
+									    <label>Sun:</label>
+							            <md-checkbox  ng-model="activityEvent.event.day" >
+							        </div>
+									
+									</div>
+									
+									<div ng-if="activityEvent.event.repetitionKind=='month'">
+									month
+									</div>
+									
+									
+									</md-content>
+									
+									</div>
+	
+	
+		                        	
+		                        
 	
 	                        	</md-content>
 	
@@ -189,8 +274,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						</md-tab-body>
 					</md-tab> 
 					
+					
+					
+	
+					
 					<md-tab id="eventTabDocuments"> 
-						<md-tab-label>{{translate.load("sbi.scheduler.activity.events.documentsmanagement")}}</md-tab-label>
+						<md-tab-label>{{translate.load("sbi.scheduler.schedulation.events.documentsmanagement")}}</md-tab-label>
 						<md-tab-body layout="column" >
 							<div ng-include="'/athena/js/src/angular_1.4/scheduler/template/documentMenagementDetail.jsp'"></div>
 						</md-tab-body> 

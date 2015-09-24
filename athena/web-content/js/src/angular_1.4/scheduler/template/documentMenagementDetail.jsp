@@ -14,12 +14,12 @@
 	<div ng-if="activityEvent.selectedDocument.saveassnapshot">
 		<md-content layout-padding class="borderBox"> 
 				<md-input-container>
-                       <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
+                       <label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
                        <input ng-model="activityEvent.selectedDocument.snapshotname"  maxlength="100" ng-maxlength="100" md-maxlength="100">
                     		</md-input-container>
                     		
                     		<md-input-container>
-                       <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
+                       <label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
                        <input ng-model="activityEvent.selectedDocument.snapshotdescription"  maxlength="100" ng-maxlength="100" md-maxlength="100">
                     		</md-input-container>
                     		
@@ -71,12 +71,12 @@
 	<div ng-if="activityEvent.selectedDocument.saveasdocument">
 		<md-content layout-padding class="borderBox"> 
 			<md-input-container>
-                      <label>{{translate.load("sbi.scheduler.activity.events.event.name")}}:</label>
+                      <label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
                       <input ng-model="activityEvent.selectedDocument.documentname"  maxlength="100" ng-maxlength="100" md-maxlength="100">
                    		</md-input-container>
                    		
                    		<md-input-container>
-                      <label>{{translate.load("sbi.scheduler.activity.events.event.description")}}:</label>
+                      <label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
                       <input ng-model="activityEvent.selectedDocument.documentdescription"  maxlength="100" ng-maxlength="100" md-maxlength="100">
                    		</md-input-container>
                    		
@@ -93,7 +93,7 @@
                    		 </div>	
                    		
                    		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useFolderDataset==true">
-				<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+				<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 				<md-select ng-model="activityEvent.selectedDocument.datasetFolderLabel" >
 					<md-option ng-repeat="item in jobDataCtrl.datasets "
 						value="{{item.label}}">{{item.label}}</md-option> 
@@ -167,7 +167,7 @@
                    		 </div>	
                    		
                    		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useDataset==true">
-				<label>{{translate.load("sbi.scheduler.activity.events.event.type.dataset")}}</label>
+				<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 				<md-select ng-model="activityEvent.selectedDocument.datasetLabel" >
 					<md-option ng-repeat="item in jobDataCtrl.datasets "
 						value="{{item.label}}">{{item.label}}</md-option> 

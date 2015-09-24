@@ -1,4 +1,4 @@
-var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest','angular_list']);
+var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','angular_rest','angular_list','angular_time_picker']);
 
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey')
@@ -27,10 +27,19 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	loadJobDataCtrl.datasets=[];
 	loadJobDataCtrl.documents=[];
 	loadJobDataCtrl.typeEvents=[];
-	loadJobDataCtrl.typeEvents.push({value:'rest',label:translate.load("sbi.scheduler.activity.events.event.type.rest")});
-	loadJobDataCtrl.typeEvents.push({value:'jms',label:translate.load("sbi.scheduler.activity.events.event.type.jms")});
-	loadJobDataCtrl.typeEvents.push({value:'contextbroker',label:translate.load("sbi.scheduler.activity.events.event.type.contextbroker")});
-	loadJobDataCtrl.typeEvents.push({value:'dataset',label:translate.load("sbi.scheduler.activity.events.event.type.dataset")});
+	loadJobDataCtrl.typeEvents.push({value:'rest',label:translate.load("sbi.scheduler.schedulation.events.event.type.rest")});
+	loadJobDataCtrl.typeEvents.push({value:'jms',label:translate.load("sbi.scheduler.schedulation.events.event.type.jms")});
+	loadJobDataCtrl.typeEvents.push({value:'contextbroker',label:translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")});
+	loadJobDataCtrl.typeEvents.push({value:'dataset',label:translate.load("sbi.scheduler.schedulation.events.event.type.dataset")});
+	
+	loadJobDataCtrl.intervalsEvent=[{value:'single',label:"Single Execution"},
+	                                {value:'minute',label:"Per minute Execution"},
+	                                {value:'hour',label:"Per hour Execution"},
+	                                {value:'day',label:"Daily Execution"},
+	                                {value:'week',label:"Weekly Execution"},
+	                                {value:'month',label:"Monthly Execution"}
+	                                ];
+	
 	
 	
 	$scope.translate = translate;
@@ -70,7 +79,8 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 				isSuspended:  false,
 				dataset: '',
 				frequency: 0,
-				document:[]
+				document:[],
+				repetitionKind:loadJobDataCtrl.intervalsEvent[0].value
 			}
 		
 		//load document;
@@ -324,6 +334,15 @@ activityEventCtrl.event={};
 //	 		             
 //	 		             ];
 		
+	activityEventCtrl.getNitem=function(n){
+		var r =[];
+		for(var i=1;i<=n;i++){
+			r.push(i);
+		}
+		return r;
+	}
+	
+	
 	
 	
 }]);

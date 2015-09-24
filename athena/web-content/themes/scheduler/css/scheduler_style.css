@@ -32,7 +32,9 @@ md-toolbar.selectedItem{
 	margin-top: 5px;
 }
 
-md-toolbar.selectedItem label,md-toolbar.unselectedItem label{
+
+
+md-toolbar.selectedItem label,md-toolbar.unselectedItem label,md-toolbar.selectedItem md-select,md-toolbar.unselectedItem md-select{
 	    font-size: initial !important;
 }
 
@@ -53,6 +55,8 @@ md-toolbar.minihead {
 	    border: 1px solid #B0BEC5;
 }
 
+
+
 .bottomButtonsBox{
 	height: 40px;
 	 bottom: 0;
@@ -72,4 +76,24 @@ md-content.bottomButtonsBox{
 
 .selectedDoc{
 	text-decoration: underline;
+}
+
+.timePickerStyle{
+    margin-left: 20px;
+    border: none;
+    font-size: 23px;
+}
+
+md-select.numberSelect{
+	width: 68px;
+	margin:0px;
+}
+
+span.textspan{
+	    line-height: 30px;
+    margin: 0 10px;
+}
+
+.alignedCheckbox label{
+	line-height: 34px;
 }
