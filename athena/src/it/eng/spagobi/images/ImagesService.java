@@ -1,16 +1,6 @@
 package it.eng.spagobi.images;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.images.dao.IImagesDAO;
-import it.eng.spagobi.images.dao.IImagesDAO.Direction;
-import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
-import it.eng.spagobi.images.metadata.SbiImages;
-import it.eng.spagobi.tools.glossary.util.Util;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -38,6 +28,17 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.images.dao.IImagesDAO;
+import it.eng.spagobi.images.dao.IImagesDAO.Direction;
+import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
+import it.eng.spagobi.images.metadata.SbiImages;
+import it.eng.spagobi.tools.glossary.util.Util;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/images")
 public class ImagesService {
@@ -110,7 +111,7 @@ public class ImagesService {
 	@POST
 	@Path("/addImage")
 	@Consumes("multipart/form-data")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public String addImage(MultipartFormDataInput input, @Context HttpServletRequest req) {
 		boolean success = true;
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadOK";
@@ -225,7 +226,16 @@ public class ImagesService {
 
 				String[] name = filename.split("=");
 
-				String finalFileName = name[1].trim().replaceAll("\"", "");
+				String fn = name[1];
+
+				if (fn.contains(File.separator)) {
+					int beginIndex = fn.lastIndexOf(File.separator) + 1;
+					if (beginIndex < fn.length()) {
+						fn = fn.substring(beginIndex);
+					}
+				}
+
+				String finalFileName = fn.trim().replaceAll("\"", "");
 				return finalFileName;
 			}
 		}
