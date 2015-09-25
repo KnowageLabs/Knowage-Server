@@ -1058,34 +1058,40 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
     			}
     		
     		} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD) {
-    			var i = 0;
-    			while (node.parentNode.childNodes[i]!=node) { 
-    				var n = node.parentNode.childNodes[i];
-    				var field = {
- 	 	    			id: n.attributes.alias,
-// 	 	    			type: Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD,
- 	 	    			entity: n.parentNode.text, 
- 				    	field: n.text,
- 	 			        alias: n.text,
- 	 			        longDescription: n.parentNode.text + " : " + node.text
- 	 			    };
-    				this.selectGridPanel.addField(field);
-    				i++;
-    			}
-    			var field = {
- 	 	    			id: node.attributes.alias,
-// 	 	    			type: Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD,
- 	 	    			entity: node.parentNode.text, 
- 				    	field: node.text,
- 	 			        alias: node.text,
- 	 			        longDescription: node.parentNode.text + " : " + node.text
- 	 			    };
-    			
-    			this.selectGridPanel.addField(field);
-    			
+	    		if(node.parentNode.attributes.attributes.isdefault)	{
+    				var i = 0;
+	    			while (node.parentNode.childNodes[i]!=node) { 
+	    				var n = node.parentNode.childNodes[i];
+	    				var field = {
+	 	 	    			id: n.attributes.alias,
+	 	 	    			entity: n.parentNode.parentNode.text,
+	 				    	field: n.text,
+	 	 			        alias: n.text,
+	 	 			        longDescription: n.parentNode.text + ' : ' + node.text
+	 	 			    };
+	    				this.selectGridPanel.addField(field);
+	    				i++;
+	    			}
+	    			var field = {
+	 	 	    			id: node.attributes.alias,
+	 	 	    			entity: node.parentNode.parentNode.text, 
+	 				    	field: node.text,
+	 	 			        alias: node.text,
+	 	 			        longDescription: node.parentNode.text + ' : ' + node.text
+	 	 			    };
+	    			
+	    			this.selectGridPanel.addField(field);
+	    		} else {
+	    			Ext.Msg.show({
+						   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
+						   msg: LN('sbi.qbe.hierarchies.add.error'),
+						   buttons: Ext.Msg.OK,
+						   icon: Ext.MessageBox.ERROR
+					});
+	    		}
     		} else {
     			Ext.Msg.show({
-					   title:'Invalid operation',
+					   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
 					   msg: 'Node of type [' + nodeType + '] cannot be added to select table',
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR
@@ -1161,35 +1167,42 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 				}
 				
 			} else if(nodeType == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_LEVEL_FIELD) {
-				
-				var i = 0;
-				while (node.parentNode.childNodes[i]!=node) { 
-					var n = node.parentNode.childNodes[i];
+				if(node.parentNode.attributes.attributes.isdefault)	{
+					var i = 0;
+					while (node.parentNode.childNodes[i]!=node) { 
+						var n = node.parentNode.childNodes[i];
+						filter = {
+								leftOperandValue: n.attributes.alias
+								, leftOperandDescription: n.parentNode.text + ' : ' + n.text 
+								, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
+								, leftOperandLongDescription: n.parentNode.text + ' : ' + n.text
+								, operator: 'EQUALS TO'
+							};
+									
+						this.filterGridPanel.addFilter(filter);
+						i++;
+					}
+					
 					filter = {
-							leftOperandValue: n.attributes.alias
-							, leftOperandDescription: n.parentNode.text + ' : ' + n.text 
+							leftOperandValue: node.attributes.alias
+							, leftOperandDescription: node.parentNode.text + ' : ' + node.text 
 							, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
-							, leftOperandLongDescription: n.parentNode.text + ' : ' + n.text
+							, leftOperandLongDescription: node.parentNode.text + ' : ' + node.text
 							, operator: 'EQUALS TO'
 						};
-								
-					this.filterGridPanel.addFilter(filter);
-					i++;
-				}
-				
-				filter = {
-						leftOperandValue: node.attributes.alias
-						, leftOperandDescription: node.parentNode.text + ' : ' + node.text 
-						, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
-						, leftOperandLongDescription: node.parentNode.text + ' : ' + node.text
-						, operator: 'EQUALS TO'
-					};
 							
 					this.filterGridPanel.addFilter(filter);
-    			
+				} else {
+	    			Ext.Msg.show({
+						   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
+						   msg: LN('sbi.qbe.hierarchies.add.error'),
+						   buttons: Ext.Msg.OK,
+						   icon: Ext.MessageBox.ERROR
+					});
+	    		} 			
     		} else {
 				Ext.Msg.show({
-					   title:'Invalid operation',
+					   title: LN('sbi.qbe.bands.wizard.invalid.operation'),
 					   msg: 'Node of type [' + nodeType + '] cannot be added to filters table',
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.ERROR

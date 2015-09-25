@@ -366,8 +366,10 @@ public class ExtJsQbeTreeBuilder {
 			JSONObject nodeAttributes = new JSONObject();
 			nodeAttributes.put("type", NODE_TYPE_HIERARCHY_FIELD);
 			nodeAttributes.put("entity", entityLabel);
+			nodeAttributes.put("isdefault", false);
 			if(hierarchy.getIsDefault()){
 				fieldNode.put("cls", "default_hierarchy");
+				nodeAttributes.put("isdefault", true);
 			}
 			fieldNode.put("attributes", nodeAttributes);
 

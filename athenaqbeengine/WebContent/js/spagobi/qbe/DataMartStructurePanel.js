@@ -476,16 +476,6 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		}, this);
 		
 		
-		//TODO gestione gerarchia default
-//		this.tree.on('dblclick',function(node){
-//			var nodeType = node.attributes.type || node.attributes.attributes.type;
-//			if(nodeType == 'hierarchyField') {
-//				this.fireEvent('nodedblclick', this, node);
-////				node.attributes.cls = 'default_hierarchy';
-//			}
-//		},this);
-		
-		
 		if(this.enableTreeContextMenu) {
 			this.tree.on('contextmenu', this.onContextMenu, this);
 			
@@ -725,11 +715,13 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		for (var iNode in hierarchyNode.parentNode.childNodes){
 			var child = hierarchyNode.parentNode.childNodes[iNode];
 			if (child.attributes && child.attributes.attributes.type && child.attributes.attributes.type == Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD){
-				child.ui.elNode.style.fontWeight='normal';
+				child.ui.elNode.style.fontWeight = 'normal';
+				child.attributes.attributes.isdefault = false;
 			}
 		}
 		
 		hierarchyNode.ui.elNode.style.fontWeight='bold';
+		hierarchyNode.attributes.attributes.isdefault = true;
 		
 		Ext.Ajax.request({
 			url:  this.services['setDefaultHierarchy'],
@@ -740,19 +732,12 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 					   buttons: Ext.Msg.OK,
 					   icon: Ext.MessageBox.INFO
 				});
-				
-				theTree.doLayout();
-				//theTree.update();
-				
    			},
    			scope: this,
 			failure: Sbi.exception.ExceptionHandler.handleFailure,	
 			params: params
     	}); 
-		
 	}
-	
-	
 	
 	
 	, onApplyInlineCalculatedField : function(win, formState, targetNode, fieldType){
@@ -1116,11 +1101,14 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
                  scope: this
              },{
             	 text:LN('sbi.qbe.hierarchies.setdefault'),
-                 iconCls:'add',
+                 iconCls:'hierarchy',
                  handler:function(){
             	   	this.setHierarchyDefault(this.ctxNode);	         	 	
 	             },
-                 scope: this
+                 scope: this,
+                 hidden: (this.ctxNode.attributes.attributes.type 
+         				!= Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD
+         				|| this.ctxNode.attributes.attributes.isdefault)
              }]
          });
 

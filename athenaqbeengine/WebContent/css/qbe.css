@@ -85,6 +85,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	background-image:url(../img/actions/qbe-tb-btn-sprite.png)  no-repeat 0 -11px;
 }
 
+.hierarchy {
+    background-image:url(../img/actions/hierarchy.gif) !important;
+}
 
 /*******************************************************************************************************
  * Datamart Structure
@@ -109,9 +112,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 .time_dimension {
 	background-image:url(../img/timeIcon.gif) !important;
 }
+
 .temporal_dimension {
 	background-image:url(../img/calendar.gif) !important;
 }
+
 .default_hierarchy {
 	font-weight: bold;
 }
