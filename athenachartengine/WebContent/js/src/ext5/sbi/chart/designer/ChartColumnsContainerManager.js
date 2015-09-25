@@ -143,8 +143,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
 														
 							//console.log("!!! NEW SERIE ITEM !!!");
-							console.log(Sbi.chart.designer.Designer.styleName);
-							console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(Sbi.chart.designer.Designer.styleName));
+//							console.log(Sbi.chart.designer.Designer.styleName);
+//							console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(Sbi.chart.designer.Designer.styleName));
 							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
@@ -154,7 +154,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
 													chartType != 'TREEMAP' && chartType != 'HEATMAP';
-								
+							
+							var chosenTheme = Sbi.chart.designer.Designer.styleName;
+							var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
+							
+							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
+							
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
   	  						 * one of these chart types.
@@ -184,6 +189,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 											Ext.getCmp("chartParallelLimit").addItem(data.records[0]);
 										}										
 									}
+									
+									if( !data.records[0].get('serieGroupingFunction')) {
+										data.records[0].set('serieGroupingFunction', 'SUM');
+									}
 								}	
 								
 								
@@ -192,8 +201,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								return false;
 							}
 							
-							if (chartType == 'GAUGE')
-								this.ownerCt.ownerCt.fireEvent("newSerieItem",data.records[0]);
+							if (chartType == 'GAUGE') {
+//								this.ownerCt.ownerCt.fireEvent("newSerieItem", data.records[0]);
+							
+								var chartLeftAxisesContainer = Ext.getCmp('chartLeftAxisesContainer');
+								chartLeftAxisesContainer.fireEvent("newSerieItem", data.records[0]);
+							}
 						}
 					}
 				},
