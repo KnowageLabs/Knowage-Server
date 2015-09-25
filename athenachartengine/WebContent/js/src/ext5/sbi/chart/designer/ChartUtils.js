@@ -2311,7 +2311,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * 'source' - 	content (properties) of the AXIS tag of the XML structure 
 			 * 				inside the 'jsonTemplate' that represent the source when 
 			 * 				merging.
-			 * (comment by: danristo :: danilo.ristovski@mht.net) 
+			 * @comment by: danristo (danilo.ristovski@mht.net) 
 			 */
 			
 			// 'source' is an array containing the styles
@@ -2325,7 +2325,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 * 							axis for the SERIE items.
 				 * 'styleCategoryAxis' - 	properties that are common for the AXIS tag of the
 				 * 							axis for the CATEGORY items.
-				 * (comment by: danristo :: danilo.ristovski@mht.net) 
+				 * @comment by: danristo (danilo.ristovski@mht.net) 
 				 */
 				if(axis.type.toLowerCase() == 'serie') {
 					styleSerieAxis = axis;

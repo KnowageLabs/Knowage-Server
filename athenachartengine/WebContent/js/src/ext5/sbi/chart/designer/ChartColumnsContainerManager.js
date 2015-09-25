@@ -141,10 +141,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					},
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
-							
+														
 							//console.log("!!! NEW SERIE ITEM !!!");
-//							console.log(data);
-//							this.ownerCt.ownerCt.fireEvent("newSerieItem",data.records[0].data);
 							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 

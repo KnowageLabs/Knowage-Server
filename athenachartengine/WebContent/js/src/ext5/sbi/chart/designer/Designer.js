@@ -155,6 +155,1016 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		hostName : '', 
 		serverPort: '',
+		
+		getConfigurationForStyle : function(style)
+		{
+			this.styleName = style;
+			
+			/**
+			 * JSON template that keeps the predefined values for the different styles parameters. 
+			 * We will return this JSON object when needed (e.g. before merging old JSON template 
+			 * with the new one (that keeps the predefined style parameters), after changing the style).
+			 */
+			var templateToReturn = null;
+			
+			/**
+			 * This method is called when changing (choosing) the style of the chart's default parameters 
+			 * and it will return the JSON template depending on the chosen style (red, blue, ...). This
+			 * switch statement servers for that purpose.
+			 */
+			switch(style)
+			{				
+				case "red":	
+
+					templateToReturn = 
+					
+					{
+						/**
+						 * Generic parameters are common for any type of chart and their default values 
+						 * are going to be set through this 'generic' property of the JSON template.
+						 */
+						generic: 
+						{
+							CHART: {
+								height: "",
+								width: "",	
+								isCockpitEngine: "false",
+								orientation: "horizontal",
+								style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;",
+								styleName: "red",
+//								styleCustom: styleCustom, 
+								
+								TITLE:
+								{
+									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+	 								text: "This is red chart"
+								},
+								
+								SUBTITLE:
+								{
+									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+									text: "Insert your subtitle"
+								},
+								
+								EMPTYMESSAGE:
+								{
+									style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+									text: "Insert your empty message (when data for chart does not exist)"
+								},
+								
+								LEGEND:
+								{
+									floating: false,
+									layout: "",
+									position: "",
+									show: false,
+									style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;",
+									x: 0,
+									y: 0
+								},
+								
+								COLORPALETTE:
+								{
+									COLOR: [
+									        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
+									        {id:2 , order: 2, name: '434348', value: '434348' }, 
+									        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
+									        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
+									        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
+									        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
+									        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
+									        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
+									        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
+									        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
+									        ]
+								},
+								
+								// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
+								AXES_LIST: 
+								{
+									AXIS: 
+									[														 
+								       {
+								    	   type: 'Serie',
+								    	  // position: "",
+								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID:
+							    		   {
+								    		   interval: "",
+								    		   style: "typeline:;color:#D8D8D8;"
+							    		   },
+								       
+							    		   MINORGRID:
+						    			   {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#E0E0E0;"
+						    			   },
+							    		   
+							    		   TITLE:
+						    			   {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   text: "red measure axis title" 
+						    			   }
+						    		   },									       
+						    		   
+						    		   {
+						    			   type: 'Category',
+						    			  // position: "", 
+						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE:
+					    				   {
+						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: ""
+					    				   }
+				    				   }
+							        ]
+								},
+								VALUES: {
+									SERIE: {
+										borderColor:"#FFFFFF"
+									}
+								}
+							}						
+						},
+						
+						/**
+						 * Specific parameters are specific for certain (particular) type of chart and 
+						 * their default values are going to be set through separate properties of the 
+						 * JSON template that are going to be named by the name of the chart that is
+						 * considered (that we choosed for our chart (document). For example, specific 
+						 * default parameters for the WORDCLOUD chart type are going to be put inside 
+						 * the 'wordcloud' property of the JSON template and so on.
+						 */
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the WORDCLOUD chart
+						 */
+						wordcloud:
+						{								
+							CHART:
+							{		
+								type: "WORDCLOUD",
+								
+								maxAngle: 121,
+								maxFontSize: 51,
+								maxWords: 51,
+								minAngle: 61, 
+								sizeCriteria: 'serie',
+								wordPadding: 5									
+							}
+						},
+						
+						bar: 
+						{
+							CHART:
+							{
+								type: "BAR"
+							}
+						},
+						
+						line: 
+						{
+							CHART:
+							{
+								type: "LINE"
+							}
+						},
+						
+						pie: 
+						{
+							CHART:
+							{
+								type: "PIE"
+							}
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the TREEMAP chart
+						 */
+						treemap: 
+						{
+							
+							CHART:
+							{		
+								type: "TREEMAP"								
+							}
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the PARALLEL chart
+						 */
+						parallel:
+						{								
+							CHART:
+							{
+								type: "PARALLEL",
+								
+								AXES_LIST:
+								{									
+									style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"										
+								},
+								
+								LIMIT:
+								{					
+									/**
+									 * 'serieFilterColumn' attribute depends on available (picked) SERIE items (values)
+									 * for the chart, since it is always empty as a default value
+									 * (danilo.ristovski@mht.net)
+									 */
+									style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"										
+								},
+								
+								PARALLEL_TOOLTIP:
+								{										
+									style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"										
+								},
+								
+								LEGEND:
+								{										
+									TITLE:
+									{											
+										style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"											
+									},
+									
+									ELEMENT:
+									{											
+										style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"											
+									}
+									
+								},
+								
+								AXES_LIST:
+								{
+									style: "axisColNamePadd:15;brushWidth:12;axisColor:#FF6600;brushColor:#339966;"
+								}
+							}
+							
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the HEATMAP chart
+						 */
+						heatmap:
+						{								
+							CHART:
+							{		
+								type: "HEATMAP",
+								
+								LEGEND:
+								{		
+									symbolWidth: 50,
+									style: "align:center;"									
+								},
+								
+								TOOLTIP:
+								{										
+									style: "fontFamily:Gungsuh;fontSize:24px;color:#003366;"										
+								}									
+							}								
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the RADAR chart
+						 */
+						radar: 
+						{
+							CHART:
+							{		
+								type: "RADAR"								
+							}
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the SCATTER chart
+						 */
+						scatter:
+						{	
+							CHART:
+							{	
+								type: "SCATTER",	
+								
+								zoomType:"xy",
+								
+								AXES_LIST:
+								{
+									AXIS: 
+									[														 
+								       {
+								    	   //alias:'Y', 
+								    	   type: 'Serie',
+								    	  // position: "",
+								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   //id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
+								    	   
+								    	   MAJORGRID:
+							    		   {
+								    		   interval: "",
+								    		   style: "typeline:;color:#D8D8D8;"
+							    		   },
+								       
+							    		   MINORGRID:
+						    			   {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#E0E0E0;"
+						    			   },
+							    		   
+							    		   TITLE:
+						    			   {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "" 
+						    			   }
+						    		   },									       
+						    		   
+						    		   {
+						    			   //alias:'X', 
+						    			   type: 'Category',
+						    			   //position: "", 
+						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   /**
+						    			    * Specific for this chart type
+						    			    */
+						    			   startOnTick: "false", 
+						    			   showLastLabel: "true",
+						    			   endOnTick: "false",
+						    			   
+						    			   TITLE:
+					    				   {
+						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: ""
+					    				   }
+				    				   }
+							        ]
+								}
+							}								
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the GAUGE chart
+						 */
+						// TODO: Waiting for the AXES_LIST and VALUES decisions (multiple Y-axis and dynamic SERIE items and their number)
+						gauge:
+						{								
+							CHART:
+							{		
+								type: "GAUGE",
+								
+								// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
+								AXES_LIST: 
+								{
+									AXIS: 
+									[														 
+								       {
+								    	   lineColor: "#FF0000", 
+								    	   lineWidth: "1",
+								    	   
+								    	   max: "60",
+								    	   min: "1", 
+								    	   
+								    	   minorTickColor: "#008000",
+								    	   minorTickInterval: "",									    	   
+								    	   minorTickLength: "10",
+								    	   minorTickPosition: "inside",
+								    	   minorTickWidth: "1",
+								    	   
+								    	   offset:"1",
+								    	   
+							               tickColor: "#FF00FF",
+							               tickLength: "10",
+							               tickPixelInterval: "30",
+							               tickPosition: "inside",
+							               tickWidth: "2", 
+								    	   
+								    	   
+								    	   type: 'Serie',
+								    	  // position: "",
+								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID:
+							    		   {
+								    		   interval: "",
+								    		   style: "typeline:;color:#D8D8D8;"
+							    		   },
+								       
+							    		   MINORGRID:
+						    			   {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#E0E0E0;"
+						    			   },
+							    		   
+							    		   TITLE:
+						    			   {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "red measure axis title" 
+						    			   }
+						    		   },									       
+						    		   
+						    		   {
+						    			   type: 'Category',
+						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE:
+					    				   {
+						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: ""
+					    				   }
+				    				   }
+							        ]
+								},
+								
+								PANE:
+								{											
+									endAngle:"121",
+									startAngle:"-121"
+								},
+								
+								// 14.9 (start)
+								PLOTBANDS:
+								{
+									
+								},
+								
+								LABELS:
+								{
+									distance: "5",
+									rotation: "1"
+								}
+							}								
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the SUNBURST chart
+						 */
+						sunburst:
+						{								
+							CHART:
+							{
+								type: "SUNBURST",
+								
+								opacMouseOver:"10",
+								
+								TOOLBAR:
+								{										
+									style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
+								},
+								
+								TIP:
+								{										
+									style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+									text: "Insert text here"										
+								}									
+							}								
+						},
+						
+						/**
+						 * Default (predefined) values for the specific parameters of the CHORD chart
+						 */
+						chord: 
+						{
+							CHART:
+							{	
+								type: "CHORD"						
+							}	
+						}
+					};
+					
+					return templateToReturn;
+					
+					break;
+					
+				case "blue":
+/*//						console.log("BLUE");
+					chartStyleName = "blue";
+//					styleCustom = false;
+					chartHeight = 600;
+					chartWidth = 1200;
+					chartIsCockpitEngine = "false";
+					chartOrientation = "horizontal";
+					chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;";						
+					titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+					titleText = "Insert your title";						
+					subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+					subtitleText = "Insert your subtitle";						
+					emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+					emptyMessageText = "Insert your empty message (when no data for chart exists)";
+					legendFloating = false;
+					legendLayout = "horizontal";
+					legendPosition = "middle";
+					legendShow = false;
+					legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
+					legendX = 0;
+					legendY = 0;*/
+					
+					templateToReturn = 
+						
+					{
+						generic: 
+						{
+							CHART:
+							{
+								height: 500,
+								width: 1100,	
+								isCockpitEngine: "false",
+								orientation: "horizontal",
+								style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;",
+								styleName: "blue",
+//								styleCustom: styleCustom, 
+								
+								TITLE:
+								{
+									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+									text: "This is blue chart"
+								},
+								
+								SUBTITLE:
+								{
+									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+									text: "Insert your subtitle"
+								},
+								
+								EMPTYMESSAGE:
+								{
+									style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+									text: "Insert your empty message (when data for chart does not exist)"
+								},
+								
+								LEGEND:
+								{
+									floating: false,
+									layout: "",
+									position: "",
+									show: false,
+									style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+									x: 0,
+									y: 0
+								},
+								
+								AXES_LIST: 
+								{
+									AXIS: 
+									[														 
+								       {
+								    	   //alias:'Y', 
+								    	   type: 'Serie',
+								    	   //position: "",
+								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID:
+							    		   {
+								    		   interval: "",
+								    		   style: "typeline:;color:#D8D8D8;"
+							    		   },
+								       
+							    		   MINORGRID:
+						    			   {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#E0E0E0;"
+						    			   },
+							    		   
+							    		   TITLE:
+						    			   {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "AAA" 
+						    			   }
+						    		   },									       
+						    		   
+						    		   {
+						    			  // alias:'X', 
+						    			   type: 'Category',
+						    			   //position: "", 
+						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE:
+					    				   {
+						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: ""
+					    				   }
+				    				   }
+							        ]
+								},
+								VALUES: {
+									SERIE: {
+										borderColor:"#FFFFFF"
+									}
+								}
+							}						
+						},
+						
+						bar: 
+						{
+							CHART:
+							{
+								type: "BAR"
+							}
+						},
+						
+						line: 
+						{
+							CHART:
+							{
+								type: "LINE"
+							}
+						},
+						
+						pie: 
+						{
+							CHART:
+							{
+								type: "PIE"
+							}
+						},
+						
+						wordcloud:{
+							
+							CHART:
+							{
+								
+								maxAngle:'122',
+								maxFontSize:'52',
+								maxWords:'52',
+								minAngle:'62', 
+								sizeCriteria:'serie',
+								wordPadding:'3'
+								
+							}
+						},
+						treemap:{
+							
+						},
+						parallel:{
+							CHART:
+							{
+								AXES_LIST:{
+								
+									style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+									
+								},
+								LIMIT:{
+								
+									style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
+									
+								},
+								PARALLEL_TOOLTIP:{
+									
+									style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
+									
+								},
+								LEGEND:{
+									
+									TITLE:{
+										
+										style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+										
+									},
+									ELEMENT:{
+										
+										style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+										
+									}
+									
+								}								
+							}
+							
+						},
+						heatmap:{
+							
+							CHART:{
+								
+								LEGEND:{
+									
+									style:"align:center;symbolWidth:60;"
+									
+								},
+								TOOLTIP:{
+									
+									style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
+									
+								}
+								
+							}
+							
+						},
+						radar:{
+							
+						},
+						scatter:{
+							
+							CHART:{
+							
+								zoomType:"xy"
+								
+							}								
+						},
+						gauge:{
+							
+							CHART:{
+								
+								PANE:{
+									endAngle:"122",
+									startAngle:"-122"
+								}
+								
+							}
+							
+						},
+						sunburst:{
+							
+							CHART:{
+								
+								opacMouseOver:"12",
+								
+								TOOLBAR:{
+									
+									style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:15px;"
+									
+								},
+								TIP:{
+									
+									style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+									text: "insert text here"
+									
+								}
+								
+							}
+							
+						},
+						chord:{
+							
+						}
+					};
+					
+					return templateToReturn;
+					
+					break;
+					
+				case "green":
+/*//						console.log("GREEN");
+					chartStyleName = "green";
+//					styleCustom = false;
+					chartHeight = 800;
+					chartWidth = 1400;
+					chartIsCockpitEngine = "false";
+					chartOrientation = "horizontal";
+					chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;";						
+					titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+					titleText = "Insert your title";						
+					subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+					subtitleText = "Insert your subtitle";						
+					emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+					emptyMessageText = "Insert your empty message (when no data for chart exists)";
+					legendFloating = false;
+					legendLayout = "horizontal";
+					legendPosition = "middle";
+					legendShow = false;
+					legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
+					legendX = 0;
+					legendY = 0;*/
+					
+					templateToReturn = 
+						
+					{
+						generic: 
+						{
+							CHART:
+							{
+								height: 400,
+								width: 1000,	
+								isCockpitEngine: "false",
+								orientation: "horizontal",
+								style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;",
+								styleName: "blue",
+//								styleCustom: styleCustom, 
+								
+								TITLE:
+								{
+									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+									text: "This is green chart"
+								},
+								
+								SUBTITLE:
+								{
+									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+									text: "Insert your subtitle"
+								},
+								
+								EMPTYMESSAGE:
+								{
+									style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+									text: "Insert your empty message (when data for chart does not exist)"
+								},
+								
+								LEGEND:
+								{
+									floating: false,
+									layout: "",
+									position: "",
+									show: false,
+									style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+									x: 0,
+									y: 0
+								},
+								
+								AXES_LIST: 
+								{
+									AXIS: 
+									[														 
+								       {
+								    	   //alias:'Y', 
+								    	   type: 'Serie',
+								    	   //position: "",
+								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+								    	   
+								    	   MAJORGRID:
+							    		   {
+								    		   interval: "",
+								    		   style: "typeline:;color:#D8D8D8;"
+							    		   },
+								       
+							    		   MINORGRID:
+						    			   {
+							    			   interval: "", 
+							    			   style: "typeline:;color:#E0E0E0;"
+						    			   },
+							    		   
+							    		   TITLE:
+						    			   {
+							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+							    			   text: "AAA" 
+						    			   }
+						    		   },									       
+						    		   
+						    		   {
+						    			   //alias:'X', 
+						    			   type: 'Category',
+						    			   //position: "", 
+						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    			   
+						    			   TITLE:
+					    				   {
+						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+						    				   text: ""
+					    				   }
+				    				   }
+							        ]
+								}
+							}						
+						},
+						
+
+						
+						bar: 
+						{
+							CHART:
+							{
+								type: "BAR"
+							}
+						},
+						
+						line: 
+						{
+							CHART:
+							{
+								type: "LINE"
+							}
+						},
+						
+						pie: 
+						{
+							CHART:
+							{
+								type: "PIE"
+							}
+						},
+						
+						wordcloud:{
+							
+							CHART:
+							{
+								
+								maxAngle:'123',
+								maxFontSize:'53',
+								maxWords:'53',
+								minAngle:'63', 
+								sizeCriteria:'serie',
+								wordPadding:'5'
+								
+							}
+						},
+						treemap:{
+							
+						},
+						parallel:{
+							CHART:
+							{
+								AXES_LIST:{
+								
+									style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+									
+								},
+								LIMIT:{
+								
+									style:"maxNumberOfLines:21;orderTopMinBottomMax:bottom;"
+									
+								},
+								PARALLEL_TOOLTIP:{
+									
+									style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:6;maxHeight:50;padding:1;border:1;borderRadius:1;"
+									
+								},
+								LEGEND:{
+									
+									TITLE:{
+										
+										style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+										
+									},
+									ELEMENT:{
+										
+										style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+										
+									}
+									
+								}								
+							}
+							
+						},
+						heatmap:{
+							
+							CHART:{
+								
+								LEGEND:{
+									
+									style:"align:center;symbolWidth:55;"
+									
+								},
+								TOOLTIP:{
+									
+									style:"fontFamily:Gungsuh;fontSize:26px;color:#003366;"
+									
+								}
+								
+							}
+							
+						},
+						radar:{
+							
+						},
+						scatter:{
+							
+							CHART:{
+							
+								zoomType:"xy"
+								
+							}								
+						},
+						gauge:{
+							
+							CHART:{
+								
+								PANE:{
+									endAngle:"123",
+									startAngle:"-123"
+								}
+								
+							}
+							
+						},
+						sunburst:{
+							
+							CHART:{
+								
+								opacMouseOver:"13",
+								
+								TOOLBAR:{
+									
+									style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
+									
+								},
+								TIP:{
+									
+									style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+									text: "insert text here"
+									
+								}
+								
+							}
+							
+						},
+						chord:{
+							
+						}
+					};
+					
+					console.log("-- JSON template 3 (to return after style): --- ");
+					console.log(jsonTemplate);
+					
+					return templateToReturn;
+					
+					break;					
+			}			
+		},
 				
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit) {
 
@@ -233,1015 +1243,1015 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (danilo.ristovski@mht.net)
 			 * (lazar.kostic@mht.net)
 			 */
-			var getConfigurationForStyle = function(style)
-			{
-				this.styleName = style;
-				
-				/**
-				 * JSON template that keeps the predefined values for the different styles parameters. 
-				 * We will return this JSON object when needed (e.g. before merging old JSON template 
-				 * with the new one (that keeps the predefined style parameters), after changing the style).
-				 */
-				var templateToReturn = null;
-				
-				/**
-				 * This method is called when changing (choosing) the style of the chart's default parameters 
-				 * and it will return the JSON template depending on the chosen style (red, blue, ...). This
-				 * switch statement servers for that purpose.
-				 */
-				switch(style)
-				{				
-					case "red":	
-
-						templateToReturn = 
-						
-						{
-							/**
-							 * Generic parameters are common for any type of chart and their default values 
-							 * are going to be set through this 'generic' property of the JSON template.
-							 */
-							generic: 
-							{
-								CHART: {
-									height: "",
-									width: "",	
-									isCockpitEngine: "false",
-									orientation: "horizontal",
-									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;",
-									styleName: "red",
-//									styleCustom: styleCustom, 
-									
-									TITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
-		 								text: "This is red chart"
-									},
-									
-									SUBTITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
-										text: "Insert your subtitle"
-									},
-									
-									EMPTYMESSAGE:
-									{
-										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
-										text: "Insert your empty message (when data for chart does not exist)"
-									},
-									
-									LEGEND:
-									{
-										floating: false,
-										layout: "",
-										position: "",
-										show: false,
-										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;",
-										x: 0,
-										y: 0
-									},
-									
-									COLORPALETTE:
-									{
-										COLOR: [
-										        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
-										        {id:2 , order: 2, name: '434348', value: '434348' }, 
-										        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
-										        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
-										        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
-										        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
-										        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
-										        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
-										        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
-										        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
-										        ]
-									},
-									
-									// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   type: 'Serie',
-									    	  // position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   text: "red measure axis title" 
-							    			   }
-							    		   },									       
-							    		   
-							    		   {
-							    			   type: 'Category',
-							    			  // position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
-					    				   }
-								        ]
-									},
-									VALUES: {
-										SERIE: {
-											borderColor:"#FFFFFF"
-										}
-									}
-								}						
-							},
-							
-							/**
-							 * Specific parameters are specific for certain (particular) type of chart and 
-							 * their default values are going to be set through separate properties of the 
-							 * JSON template that are going to be named by the name of the chart that is
-							 * considered (that we choosed for our chart (document). For example, specific 
-							 * default parameters for the WORDCLOUD chart type are going to be put inside 
-							 * the 'wordcloud' property of the JSON template and so on.
-							 */
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the WORDCLOUD chart
-							 */
-							wordcloud:
-							{								
-								CHART:
-								{		
-									type: "WORDCLOUD",
-									
-									maxAngle: 121,
-									maxFontSize: 51,
-									maxWords: 51,
-									minAngle: 61, 
-									sizeCriteria: 'serie',
-									wordPadding: 5									
-								}
-							},
-							
-							bar: 
-							{
-								CHART:
-								{
-									type: "BAR"
-								}
-							},
-							
-							line: 
-							{
-								CHART:
-								{
-									type: "LINE"
-								}
-							},
-							
-							pie: 
-							{
-								CHART:
-								{
-									type: "PIE"
-								}
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the TREEMAP chart
-							 */
-							treemap: 
-							{
-								
-								CHART:
-								{		
-									type: "TREEMAP"								
-								}
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the PARALLEL chart
-							 */
-							parallel:
-							{								
-								CHART:
-								{
-									type: "PARALLEL",
-									
-									AXES_LIST:
-									{									
-										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"										
-									},
-									
-									LIMIT:
-									{					
-										/**
-										 * 'serieFilterColumn' attribute depends on available (picked) SERIE items (values)
-										 * for the chart, since it is always empty as a default value
-										 * (danilo.ristovski@mht.net)
-										 */
-										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"										
-									},
-									
-									PARALLEL_TOOLTIP:
-									{										
-										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"										
-									},
-									
-									LEGEND:
-									{										
-										TITLE:
-										{											
-											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"											
-										},
-										
-										ELEMENT:
-										{											
-											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"											
-										}
-										
-									},
-									
-									AXES_LIST:
-									{
-										style: "axisColNamePadd:15;brushWidth:12;axisColor:#FF6600;brushColor:#339966;"
-									}
-								}
-								
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the HEATMAP chart
-							 */
-							heatmap:
-							{								
-								CHART:
-								{		
-									type: "HEATMAP",
-									
-									LEGEND:
-									{		
-										symbolWidth: 50,
-										style: "align:center;"									
-									},
-									
-									TOOLTIP:
-									{										
-										style: "fontFamily:Gungsuh;fontSize:24px;color:#003366;"										
-									}									
-								}								
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the RADAR chart
-							 */
-							radar: 
-							{
-								CHART:
-								{		
-									type: "RADAR"								
-								}
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the SCATTER chart
-							 */
-							scatter:
-							{	
-								CHART:
-								{	
-									type: "SCATTER",	
-									
-									zoomType:"xy",
-									
-									AXES_LIST:
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   //alias:'Y', 
-									    	   type: 'Serie',
-									    	  // position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   //id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "" 
-							    			   }
-							    		   },									       
-							    		   
-							    		   {
-							    			   //alias:'X', 
-							    			   type: 'Category',
-							    			   //position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   /**
-							    			    * Specific for this chart type
-							    			    */
-							    			   startOnTick: "false", 
-							    			   showLastLabel: "true",
-							    			   endOnTick: "false",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
-					    				   }
-								        ]
-									}
-								}								
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the GAUGE chart
-							 */
-							// TODO: Waiting for the AXES_LIST and VALUES decisions (multiple Y-axis and dynamic SERIE items and their number)
-							gauge:
-							{								
-								CHART:
-								{		
-									type: "GAUGE",
-									
-									// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   lineColor: "#FF0000", 
-									    	   lineWidth: "1",
-									    	   
-									    	   max: "60",
-									    	   min: "1", 
-									    	   
-									    	   minorTickColor: "#008000",
-									    	   minorTickInterval: "",									    	   
-									    	   minorTickLength: "10",
-									    	   minorTickPosition: "inside",
-									    	   minorTickWidth: "1",
-									    	   
-									    	   offset:"1",
-									    	   
-								               tickColor: "#FF00FF",
-								               tickLength: "10",
-								               tickPixelInterval: "30",
-								               tickPosition: "inside",
-								               tickWidth: "2", 
-									    	   
-									    	   
-									    	   type: 'Serie',
-									    	  // position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "red measure axis title" 
-							    			   }
-							    		   },									       
-							    		   
-							    		   {
-							    			   type: 'Category',
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
-					    				   }
-								        ]
-									},
-									
-									PANE:
-									{											
-										endAngle:"121",
-										startAngle:"-121"
-									},
-									
-									// 14.9 (start)
-									PLOTBANDS:
-									{
-										
-									},
-									
-									LABELS:
-									{
-										distance: "5",
-										rotation: "1"
-									}
-								}								
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the SUNBURST chart
-							 */
-							sunburst:
-							{								
-								CHART:
-								{
-									type: "SUNBURST",
-									
-									opacMouseOver:"10",
-									
-									TOOLBAR:
-									{										
-										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
-									},
-									
-									TIP:
-									{										
-										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
-										text: "Insert text here"										
-									}									
-								}								
-							},
-							
-							/**
-							 * Default (predefined) values for the specific parameters of the CHORD chart
-							 */
-							chord: 
-							{
-								CHART:
-								{	
-									type: "CHORD"						
-								}	
-							}
-						};
-						
-						return templateToReturn;
-						
-						break;
-						
-					case "blue":
-/*//						console.log("BLUE");
-						chartStyleName = "blue";
-//						styleCustom = false;
-						chartHeight = 600;
-						chartWidth = 1200;
-						chartIsCockpitEngine = "false";
-						chartOrientation = "horizontal";
-						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;";						
-						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
-						titleText = "Insert your title";						
-						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
-						subtitleText = "Insert your subtitle";						
-						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
-						emptyMessageText = "Insert your empty message (when no data for chart exists)";
-						legendFloating = false;
-						legendLayout = "horizontal";
-						legendPosition = "middle";
-						legendShow = false;
-						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
-						legendX = 0;
-						legendY = 0;*/
-						
-						templateToReturn = 
-							
-						{
-							generic: 
-							{
-								CHART:
-								{
-									height: 500,
-									width: 1100,	
-									isCockpitEngine: "false",
-									orientation: "horizontal",
-									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;",
-									styleName: "blue",
-//									styleCustom: styleCustom, 
-									
-									TITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
-										text: "This is blue chart"
-									},
-									
-									SUBTITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
-										text: "Insert your subtitle"
-									},
-									
-									EMPTYMESSAGE:
-									{
-										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
-										text: "Insert your empty message (when data for chart does not exist)"
-									},
-									
-									LEGEND:
-									{
-										floating: false,
-										layout: "",
-										position: "",
-										show: false,
-										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
-										x: 0,
-										y: 0
-									},
-									
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   //alias:'Y', 
-									    	   type: 'Serie',
-									    	   //position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "AAA" 
-							    			   }
-							    		   },									       
-							    		   
-							    		   {
-							    			  // alias:'X', 
-							    			   type: 'Category',
-							    			   //position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
-					    				   }
-								        ]
-									},
-									VALUES: {
-										SERIE: {
-											borderColor:"#FFFFFF"
-										}
-									}
-								}						
-							},
-							
-							bar: 
-							{
-								CHART:
-								{
-									type: "BAR"
-								}
-							},
-							
-							line: 
-							{
-								CHART:
-								{
-									type: "LINE"
-								}
-							},
-							
-							pie: 
-							{
-								CHART:
-								{
-									type: "PIE"
-								}
-							},
-							
-							wordcloud:{
-								
-								CHART:
-								{
-									
-									maxAngle:'122',
-									maxFontSize:'52',
-									maxWords:'52',
-									minAngle:'62', 
-									sizeCriteria:'serie',
-									wordPadding:'3'
-									
-								}
-							},
-							treemap:{
-								
-							},
-							parallel:{
-								CHART:
-								{
-									AXES_LIST:{
-									
-										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
-										
-									},
-									LIMIT:{
-									
-										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
-										
-									},
-									PARALLEL_TOOLTIP:{
-										
-										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
-										
-									},
-									LEGEND:{
-										
-										TITLE:{
-											
-											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
-											
-										},
-										ELEMENT:{
-											
-											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
-											
-										}
-										
-									}								
-								}
-								
-							},
-							heatmap:{
-								
-								CHART:{
-									
-									LEGEND:{
-										
-										style:"align:center;symbolWidth:60;"
-										
-									},
-									TOOLTIP:{
-										
-										style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
-										
-									}
-									
-								}
-								
-							},
-							radar:{
-								
-							},
-							scatter:{
-								
-								CHART:{
-								
-									zoomType:"xy"
-									
-								}								
-							},
-							gauge:{
-								
-								CHART:{
-									
-									PANE:{
-										endAngle:"122",
-										startAngle:"-122"
-									}
-									
-								}
-								
-							},
-							sunburst:{
-								
-								CHART:{
-									
-									opacMouseOver:"12",
-									
-									TOOLBAR:{
-										
-										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:15px;"
-										
-									},
-									TIP:{
-										
-										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
-										text: "insert text here"
-										
-									}
-									
-								}
-								
-							},
-							chord:{
-								
-							}
-						};
-						
-						return templateToReturn;
-						
-						break;
-						
-					case "green":
-/*//						console.log("GREEN");
-						chartStyleName = "green";
-//						styleCustom = false;
-						chartHeight = 800;
-						chartWidth = 1400;
-						chartIsCockpitEngine = "false";
-						chartOrientation = "horizontal";
-						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;";						
-						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
-						titleText = "Insert your title";						
-						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
-						subtitleText = "Insert your subtitle";						
-						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
-						emptyMessageText = "Insert your empty message (when no data for chart exists)";
-						legendFloating = false;
-						legendLayout = "horizontal";
-						legendPosition = "middle";
-						legendShow = false;
-						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
-						legendX = 0;
-						legendY = 0;*/
-						
-						templateToReturn = 
-							
-						{
-							generic: 
-							{
-								CHART:
-								{
-									height: 400,
-									width: 1000,	
-									isCockpitEngine: "false",
-									orientation: "horizontal",
-									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;",
-									styleName: "blue",
-//									styleCustom: styleCustom, 
-									
-									TITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
-										text: "This is green chart"
-									},
-									
-									SUBTITLE:
-									{
-										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
-										text: "Insert your subtitle"
-									},
-									
-									EMPTYMESSAGE:
-									{
-										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
-										text: "Insert your empty message (when data for chart does not exist)"
-									},
-									
-									LEGEND:
-									{
-										floating: false,
-										layout: "",
-										position: "",
-										show: false,
-										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
-										x: 0,
-										y: 0
-									},
-									
-									AXES_LIST: 
-									{
-										AXIS: 
-										[														 
-									       {
-									    	   //alias:'Y', 
-									    	   type: 'Serie',
-									    	   //position: "",
-									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-									    	   
-									    	   MAJORGRID:
-								    		   {
-									    		   interval: "",
-									    		   style: "typeline:;color:#D8D8D8;"
-								    		   },
-									       
-								    		   MINORGRID:
-							    			   {
-								    			   interval: "", 
-								    			   style: "typeline:;color:#E0E0E0;"
-							    			   },
-								    		   
-								    		   TITLE:
-							    			   {
-								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-								    			   text: "AAA" 
-							    			   }
-							    		   },									       
-							    		   
-							    		   {
-							    			   //alias:'X', 
-							    			   type: 'Category',
-							    			   //position: "", 
-							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   
-							    			   TITLE:
-						    				   {
-							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    				   text: ""
-						    				   }
-					    				   }
-								        ]
-									}
-								}						
-							},
-							
-
-							
-							bar: 
-							{
-								CHART:
-								{
-									type: "BAR"
-								}
-							},
-							
-							line: 
-							{
-								CHART:
-								{
-									type: "LINE"
-								}
-							},
-							
-							pie: 
-							{
-								CHART:
-								{
-									type: "PIE"
-								}
-							},
-							
-							wordcloud:{
-								
-								CHART:
-								{
-									
-									maxAngle:'123',
-									maxFontSize:'53',
-									maxWords:'53',
-									minAngle:'63', 
-									sizeCriteria:'serie',
-									wordPadding:'5'
-									
-								}
-							},
-							treemap:{
-								
-							},
-							parallel:{
-								CHART:
-								{
-									AXES_LIST:{
-									
-										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
-										
-									},
-									LIMIT:{
-									
-										style:"maxNumberOfLines:21;orderTopMinBottomMax:bottom;"
-										
-									},
-									PARALLEL_TOOLTIP:{
-										
-										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:6;maxHeight:50;padding:1;border:1;borderRadius:1;"
-										
-									},
-									LEGEND:{
-										
-										TITLE:{
-											
-											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
-											
-										},
-										ELEMENT:{
-											
-											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
-											
-										}
-										
-									}								
-								}
-								
-							},
-							heatmap:{
-								
-								CHART:{
-									
-									LEGEND:{
-										
-										style:"align:center;symbolWidth:55;"
-										
-									},
-									TOOLTIP:{
-										
-										style:"fontFamily:Gungsuh;fontSize:26px;color:#003366;"
-										
-									}
-									
-								}
-								
-							},
-							radar:{
-								
-							},
-							scatter:{
-								
-								CHART:{
-								
-									zoomType:"xy"
-									
-								}								
-							},
-							gauge:{
-								
-								CHART:{
-									
-									PANE:{
-										endAngle:"123",
-										startAngle:"-123"
-									}
-									
-								}
-								
-							},
-							sunburst:{
-								
-								CHART:{
-									
-									opacMouseOver:"13",
-									
-									TOOLBAR:{
-										
-										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
-										
-									},
-									TIP:{
-										
-										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
-										text: "insert text here"
-										
-									}
-									
-								}
-								
-							},
-							chord:{
-								
-							}
-						};
-						
-						console.log("-- JSON template 3 (to return after style): --- ");
-						console.log(jsonTemplate);
-						
-						return templateToReturn;
-						
-						break;					
-				}			
-			};			
+//			Sbi.chart.designer.Designer.Sbi.chart.designer.Designer.getConfigurationForStyle = function(style)
+//			{
+//				this.styleName = style;
+//				
+//				/**
+//				 * JSON template that keeps the predefined values for the different styles parameters. 
+//				 * We will return this JSON object when needed (e.g. before merging old JSON template 
+//				 * with the new one (that keeps the predefined style parameters), after changing the style).
+//				 */
+//				var templateToReturn = null;
+//				
+//				/**
+//				 * This method is called when changing (choosing) the style of the chart's default parameters 
+//				 * and it will return the JSON template depending on the chosen style (red, blue, ...). This
+//				 * switch statement servers for that purpose.
+//				 */
+//				switch(style)
+//				{				
+//					case "red":	
+//
+//						templateToReturn = 
+//						
+//						{
+//							/**
+//							 * Generic parameters are common for any type of chart and their default values 
+//							 * are going to be set through this 'generic' property of the JSON template.
+//							 */
+//							generic: 
+//							{
+//								CHART: {
+//									height: "",
+//									width: "",	
+//									isCockpitEngine: "false",
+//									orientation: "horizontal",
+//									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;",
+//									styleName: "red",
+////									styleCustom: styleCustom, 
+//									
+//									TITLE:
+//									{
+//										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+//		 								text: "This is red chart"
+//									},
+//									
+//									SUBTITLE:
+//									{
+//										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+//										text: "Insert your subtitle"
+//									},
+//									
+//									EMPTYMESSAGE:
+//									{
+//										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+//										text: "Insert your empty message (when data for chart does not exist)"
+//									},
+//									
+//									LEGEND:
+//									{
+//										floating: false,
+//										layout: "",
+//										position: "",
+//										show: false,
+//										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;",
+//										x: 0,
+//										y: 0
+//									},
+//									
+//									COLORPALETTE:
+//									{
+//										COLOR: [
+//										        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
+//										        {id:2 , order: 2, name: '434348', value: '434348' }, 
+//										        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
+//										        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
+//										        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
+//										        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
+//										        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
+//										        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
+//										        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
+//										        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
+//										        ]
+//									},
+//									
+//									// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
+//									AXES_LIST: 
+//									{
+//										AXIS: 
+//										[														 
+//									       {
+//									    	   type: 'Serie',
+//									    	  // position: "",
+//									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+//									    	   
+//									    	   MAJORGRID:
+//								    		   {
+//									    		   interval: "",
+//									    		   style: "typeline:;color:#D8D8D8;"
+//								    		   },
+//									       
+//								    		   MINORGRID:
+//							    			   {
+//								    			   interval: "", 
+//								    			   style: "typeline:;color:#E0E0E0;"
+//							    			   },
+//								    		   
+//								    		   TITLE:
+//							    			   {
+//								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    			   text: "red measure axis title" 
+//							    			   }
+//							    		   },									       
+//							    		   
+//							    		   {
+//							    			   type: 'Category',
+//							    			  // position: "", 
+//							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    			   
+//							    			   TITLE:
+//						    				   {
+//							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    				   text: ""
+//						    				   }
+//					    				   }
+//								        ]
+//									},
+//									VALUES: {
+//										SERIE: {
+//											borderColor:"#FFFFFF"
+//										}
+//									}
+//								}						
+//							},
+//							
+//							/**
+//							 * Specific parameters are specific for certain (particular) type of chart and 
+//							 * their default values are going to be set through separate properties of the 
+//							 * JSON template that are going to be named by the name of the chart that is
+//							 * considered (that we choosed for our chart (document). For example, specific 
+//							 * default parameters for the WORDCLOUD chart type are going to be put inside 
+//							 * the 'wordcloud' property of the JSON template and so on.
+//							 */
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the WORDCLOUD chart
+//							 */
+//							wordcloud:
+//							{								
+//								CHART:
+//								{		
+//									type: "WORDCLOUD",
+//									
+//									maxAngle: 121,
+//									maxFontSize: 51,
+//									maxWords: 51,
+//									minAngle: 61, 
+//									sizeCriteria: 'serie',
+//									wordPadding: 5									
+//								}
+//							},
+//							
+//							bar: 
+//							{
+//								CHART:
+//								{
+//									type: "BAR"
+//								}
+//							},
+//							
+//							line: 
+//							{
+//								CHART:
+//								{
+//									type: "LINE"
+//								}
+//							},
+//							
+//							pie: 
+//							{
+//								CHART:
+//								{
+//									type: "PIE"
+//								}
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the TREEMAP chart
+//							 */
+//							treemap: 
+//							{
+//								
+//								CHART:
+//								{		
+//									type: "TREEMAP"								
+//								}
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the PARALLEL chart
+//							 */
+//							parallel:
+//							{								
+//								CHART:
+//								{
+//									type: "PARALLEL",
+//									
+//									AXES_LIST:
+//									{									
+//										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"										
+//									},
+//									
+//									LIMIT:
+//									{					
+//										/**
+//										 * 'serieFilterColumn' attribute depends on available (picked) SERIE items (values)
+//										 * for the chart, since it is always empty as a default value
+//										 * (danilo.ristovski@mht.net)
+//										 */
+//										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"										
+//									},
+//									
+//									PARALLEL_TOOLTIP:
+//									{										
+//										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"										
+//									},
+//									
+//									LEGEND:
+//									{										
+//										TITLE:
+//										{											
+//											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"											
+//										},
+//										
+//										ELEMENT:
+//										{											
+//											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"											
+//										}
+//										
+//									},
+//									
+//									AXES_LIST:
+//									{
+//										style: "axisColNamePadd:15;brushWidth:12;axisColor:#FF6600;brushColor:#339966;"
+//									}
+//								}
+//								
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the HEATMAP chart
+//							 */
+//							heatmap:
+//							{								
+//								CHART:
+//								{		
+//									type: "HEATMAP",
+//									
+//									LEGEND:
+//									{		
+//										symbolWidth: 50,
+//										style: "align:center;"									
+//									},
+//									
+//									TOOLTIP:
+//									{										
+//										style: "fontFamily:Gungsuh;fontSize:24px;color:#003366;"										
+//									}									
+//								}								
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the RADAR chart
+//							 */
+//							radar: 
+//							{
+//								CHART:
+//								{		
+//									type: "RADAR"								
+//								}
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the SCATTER chart
+//							 */
+//							scatter:
+//							{	
+//								CHART:
+//								{	
+//									type: "SCATTER",	
+//									
+//									zoomType:"xy",
+//									
+//									AXES_LIST:
+//									{
+//										AXIS: 
+//										[														 
+//									       {
+//									    	   //alias:'Y', 
+//									    	   type: 'Serie',
+//									    	  // position: "",
+//									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+//									    	   //id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
+//									    	   
+//									    	   MAJORGRID:
+//								    		   {
+//									    		   interval: "",
+//									    		   style: "typeline:;color:#D8D8D8;"
+//								    		   },
+//									       
+//								    		   MINORGRID:
+//							    			   {
+//								    			   interval: "", 
+//								    			   style: "typeline:;color:#E0E0E0;"
+//							    			   },
+//								    		   
+//								    		   TITLE:
+//							    			   {
+//								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//								    			   text: "" 
+//							    			   }
+//							    		   },									       
+//							    		   
+//							    		   {
+//							    			   //alias:'X', 
+//							    			   type: 'Category',
+//							    			   //position: "", 
+//							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    			   
+//							    			   /**
+//							    			    * Specific for this chart type
+//							    			    */
+//							    			   startOnTick: "false", 
+//							    			   showLastLabel: "true",
+//							    			   endOnTick: "false",
+//							    			   
+//							    			   TITLE:
+//						    				   {
+//							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    				   text: ""
+//						    				   }
+//					    				   }
+//								        ]
+//									}
+//								}								
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the GAUGE chart
+//							 */
+//							// TODO: Waiting for the AXES_LIST and VALUES decisions (multiple Y-axis and dynamic SERIE items and their number)
+//							gauge:
+//							{								
+//								CHART:
+//								{		
+//									type: "GAUGE",
+//									
+//									// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
+//									AXES_LIST: 
+//									{
+//										AXIS: 
+//										[														 
+//									       {
+//									    	   lineColor: "#FF0000", 
+//									    	   lineWidth: "1",
+//									    	   
+//									    	   max: "60",
+//									    	   min: "1", 
+//									    	   
+//									    	   minorTickColor: "#008000",
+//									    	   minorTickInterval: "",									    	   
+//									    	   minorTickLength: "10",
+//									    	   minorTickPosition: "inside",
+//									    	   minorTickWidth: "1",
+//									    	   
+//									    	   offset:"1",
+//									    	   
+//								               tickColor: "#FF00FF",
+//								               tickLength: "10",
+//								               tickPixelInterval: "30",
+//								               tickPosition: "inside",
+//								               tickWidth: "2", 
+//									    	   
+//									    	   
+//									    	   type: 'Serie',
+//									    	  // position: "",
+//									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+//									    	   
+//									    	   MAJORGRID:
+//								    		   {
+//									    		   interval: "",
+//									    		   style: "typeline:;color:#D8D8D8;"
+//								    		   },
+//									       
+//								    		   MINORGRID:
+//							    			   {
+//								    			   interval: "", 
+//								    			   style: "typeline:;color:#E0E0E0;"
+//							    			   },
+//								    		   
+//								    		   TITLE:
+//							    			   {
+//								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//								    			   text: "red measure axis title" 
+//							    			   }
+//							    		   },									       
+//							    		   
+//							    		   {
+//							    			   type: 'Category',
+//							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    			   
+//							    			   TITLE:
+//						    				   {
+//							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    				   text: ""
+//						    				   }
+//					    				   }
+//								        ]
+//									},
+//									
+//									PANE:
+//									{											
+//										endAngle:"121",
+//										startAngle:"-121"
+//									},
+//									
+//									// 14.9 (start)
+//									PLOTBANDS:
+//									{
+//										
+//									},
+//									
+//									LABELS:
+//									{
+//										distance: "5",
+//										rotation: "1"
+//									}
+//								}								
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the SUNBURST chart
+//							 */
+//							sunburst:
+//							{								
+//								CHART:
+//								{
+//									type: "SUNBURST",
+//									
+//									opacMouseOver:"10",
+//									
+//									TOOLBAR:
+//									{										
+//										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
+//									},
+//									
+//									TIP:
+//									{										
+//										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+//										text: "Insert text here"										
+//									}									
+//								}								
+//							},
+//							
+//							/**
+//							 * Default (predefined) values for the specific parameters of the CHORD chart
+//							 */
+//							chord: 
+//							{
+//								CHART:
+//								{	
+//									type: "CHORD"						
+//								}	
+//							}
+//						};
+//						
+//						return templateToReturn;
+//						
+//						break;
+//						
+//					case "blue":
+///*//						console.log("BLUE");
+//						chartStyleName = "blue";
+////						styleCustom = false;
+//						chartHeight = 600;
+//						chartWidth = 1200;
+//						chartIsCockpitEngine = "false";
+//						chartOrientation = "horizontal";
+//						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;";						
+//						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+//						titleText = "Insert your title";						
+//						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+//						subtitleText = "Insert your subtitle";						
+//						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+//						emptyMessageText = "Insert your empty message (when no data for chart exists)";
+//						legendFloating = false;
+//						legendLayout = "horizontal";
+//						legendPosition = "middle";
+//						legendShow = false;
+//						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
+//						legendX = 0;
+//						legendY = 0;*/
+//						
+//						templateToReturn = 
+//							
+//						{
+//							generic: 
+//							{
+//								CHART:
+//								{
+//									height: 500,
+//									width: 1100,	
+//									isCockpitEngine: "false",
+//									orientation: "horizontal",
+//									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#0000FF;",
+//									styleName: "blue",
+////									styleCustom: styleCustom, 
+//									
+//									TITLE:
+//									{
+//										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+//										text: "This is blue chart"
+//									},
+//									
+//									SUBTITLE:
+//									{
+//										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+//										text: "Insert your subtitle"
+//									},
+//									
+//									EMPTYMESSAGE:
+//									{
+//										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+//										text: "Insert your empty message (when data for chart does not exist)"
+//									},
+//									
+//									LEGEND:
+//									{
+//										floating: false,
+//										layout: "",
+//										position: "",
+//										show: false,
+//										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+//										x: 0,
+//										y: 0
+//									},
+//									
+//									AXES_LIST: 
+//									{
+//										AXIS: 
+//										[														 
+//									       {
+//									    	   //alias:'Y', 
+//									    	   type: 'Serie',
+//									    	   //position: "",
+//									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+//									    	   
+//									    	   MAJORGRID:
+//								    		   {
+//									    		   interval: "",
+//									    		   style: "typeline:;color:#D8D8D8;"
+//								    		   },
+//									       
+//								    		   MINORGRID:
+//							    			   {
+//								    			   interval: "", 
+//								    			   style: "typeline:;color:#E0E0E0;"
+//							    			   },
+//								    		   
+//								    		   TITLE:
+//							    			   {
+//								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//								    			   text: "AAA" 
+//							    			   }
+//							    		   },									       
+//							    		   
+//							    		   {
+//							    			  // alias:'X', 
+//							    			   type: 'Category',
+//							    			   //position: "", 
+//							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    			   
+//							    			   TITLE:
+//						    				   {
+//							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    				   text: ""
+//						    				   }
+//					    				   }
+//								        ]
+//									},
+//									VALUES: {
+//										SERIE: {
+//											borderColor:"#FFFFFF"
+//										}
+//									}
+//								}						
+//							},
+//							
+//							bar: 
+//							{
+//								CHART:
+//								{
+//									type: "BAR"
+//								}
+//							},
+//							
+//							line: 
+//							{
+//								CHART:
+//								{
+//									type: "LINE"
+//								}
+//							},
+//							
+//							pie: 
+//							{
+//								CHART:
+//								{
+//									type: "PIE"
+//								}
+//							},
+//							
+//							wordcloud:{
+//								
+//								CHART:
+//								{
+//									
+//									maxAngle:'122',
+//									maxFontSize:'52',
+//									maxWords:'52',
+//									minAngle:'62', 
+//									sizeCriteria:'serie',
+//									wordPadding:'3'
+//									
+//								}
+//							},
+//							treemap:{
+//								
+//							},
+//							parallel:{
+//								CHART:
+//								{
+//									AXES_LIST:{
+//									
+//										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+//										
+//									},
+//									LIMIT:{
+//									
+//										style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;"
+//										
+//									},
+//									PARALLEL_TOOLTIP:{
+//										
+//										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"
+//										
+//									},
+//									LEGEND:{
+//										
+//										TITLE:{
+//											
+//											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+//											
+//										},
+//										ELEMENT:{
+//											
+//											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+//											
+//										}
+//										
+//									}								
+//								}
+//								
+//							},
+//							heatmap:{
+//								
+//								CHART:{
+//									
+//									LEGEND:{
+//										
+//										style:"align:center;symbolWidth:60;"
+//										
+//									},
+//									TOOLTIP:{
+//										
+//										style:"fontFamily:Gungsuh;fontSize:24px;color:#003366;"
+//										
+//									}
+//									
+//								}
+//								
+//							},
+//							radar:{
+//								
+//							},
+//							scatter:{
+//								
+//								CHART:{
+//								
+//									zoomType:"xy"
+//									
+//								}								
+//							},
+//							gauge:{
+//								
+//								CHART:{
+//									
+//									PANE:{
+//										endAngle:"122",
+//										startAngle:"-122"
+//									}
+//									
+//								}
+//								
+//							},
+//							sunburst:{
+//								
+//								CHART:{
+//									
+//									opacMouseOver:"12",
+//									
+//									TOOLBAR:{
+//										
+//										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:15px;"
+//										
+//									},
+//									TIP:{
+//										
+//										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+//										text: "insert text here"
+//										
+//									}
+//									
+//								}
+//								
+//							},
+//							chord:{
+//								
+//							}
+//						};
+//						
+//						return templateToReturn;
+//						
+//						break;
+//						
+//					case "green":
+///*//						console.log("GREEN");
+//						chartStyleName = "green";
+////						styleCustom = false;
+//						chartHeight = 800;
+//						chartWidth = 1400;
+//						chartIsCockpitEngine = "false";
+//						chartOrientation = "horizontal";
+//						chartStyle = "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;";						
+//						titleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;";
+//						titleText = "Insert your title";						
+//						subtitleStyle = "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;";
+//						subtitleText = "Insert your subtitle";						
+//						emptyMessageStyle = "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;";
+//						emptyMessageText = "Insert your empty message (when no data for chart exists)";
+//						legendFloating = false;
+//						legendLayout = "horizontal";
+//						legendPosition = "middle";
+//						legendShow = false;
+//						legendStyle = "align:center;fontFamily:Verdana;fontSize:10px;fontWeight:normal;borderWidth:0;color:#000000;backgroundColor:#FFFFFF;symbolWidth:0;";
+//						legendX = 0;
+//						legendY = 0;*/
+//						
+//						templateToReturn = 
+//							
+//						{
+//							generic: 
+//							{
+//								CHART:
+//								{
+//									height: 400,
+//									width: 1000,	
+//									isCockpitEngine: "false",
+//									orientation: "horizontal",
+//									style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#00FF00;",
+//									styleName: "blue",
+////									styleCustom: styleCustom, 
+//									
+//									TITLE:
+//									{
+//										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
+//										text: "This is green chart"
+//									},
+//									
+//									SUBTITLE:
+//									{
+//										style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
+//										text: "Insert your subtitle"
+//									},
+//									
+//									EMPTYMESSAGE:
+//									{
+//										style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
+//										text: "Insert your empty message (when data for chart does not exist)"
+//									},
+//									
+//									LEGEND:
+//									{
+//										floating: false,
+//										layout: "",
+//										position: "",
+//										show: false,
+//										style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;symbolWidth:;",
+//										x: 0,
+//										y: 0
+//									},
+//									
+//									AXES_LIST: 
+//									{
+//										AXIS: 
+//										[														 
+//									       {
+//									    	   //alias:'Y', 
+//									    	   type: 'Serie',
+//									    	   //position: "",
+//									    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
+//									    	   
+//									    	   MAJORGRID:
+//								    		   {
+//									    		   interval: "",
+//									    		   style: "typeline:;color:#D8D8D8;"
+//								    		   },
+//									       
+//								    		   MINORGRID:
+//							    			   {
+//								    			   interval: "", 
+//								    			   style: "typeline:;color:#E0E0E0;"
+//							    			   },
+//								    		   
+//								    		   TITLE:
+//							    			   {
+//								    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//								    			   text: "AAA" 
+//							    			   }
+//							    		   },									       
+//							    		   
+//							    		   {
+//							    			   //alias:'X', 
+//							    			   type: 'Category',
+//							    			   //position: "", 
+//							    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    			   
+//							    			   TITLE:
+//						    				   {
+//							    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
+//							    				   text: ""
+//						    				   }
+//					    				   }
+//								        ]
+//									}
+//								}						
+//							},
+//							
+//
+//							
+//							bar: 
+//							{
+//								CHART:
+//								{
+//									type: "BAR"
+//								}
+//							},
+//							
+//							line: 
+//							{
+//								CHART:
+//								{
+//									type: "LINE"
+//								}
+//							},
+//							
+//							pie: 
+//							{
+//								CHART:
+//								{
+//									type: "PIE"
+//								}
+//							},
+//							
+//							wordcloud:{
+//								
+//								CHART:
+//								{
+//									
+//									maxAngle:'123',
+//									maxFontSize:'53',
+//									maxWords:'53',
+//									minAngle:'63', 
+//									sizeCriteria:'serie',
+//									wordPadding:'5'
+//									
+//								}
+//							},
+//							treemap:{
+//								
+//							},
+//							parallel:{
+//								CHART:
+//								{
+//									AXES_LIST:{
+//									
+//										style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"
+//										
+//									},
+//									LIMIT:{
+//									
+//										style:"maxNumberOfLines:21;orderTopMinBottomMax:bottom;"
+//										
+//									},
+//									PARALLEL_TOOLTIP:{
+//										
+//										style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:6;maxHeight:50;padding:1;border:1;borderRadius:1;"
+//										
+//									},
+//									LEGEND:{
+//										
+//										TITLE:{
+//											
+//											style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"
+//											
+//										},
+//										ELEMENT:{
+//											
+//											style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"
+//											
+//										}
+//										
+//									}								
+//								}
+//								
+//							},
+//							heatmap:{
+//								
+//								CHART:{
+//									
+//									LEGEND:{
+//										
+//										style:"align:center;symbolWidth:55;"
+//										
+//									},
+//									TOOLTIP:{
+//										
+//										style:"fontFamily:Gungsuh;fontSize:26px;color:#003366;"
+//										
+//									}
+//									
+//								}
+//								
+//							},
+//							radar:{
+//								
+//							},
+//							scatter:{
+//								
+//								CHART:{
+//								
+//									zoomType:"xy"
+//									
+//								}								
+//							},
+//							gauge:{
+//								
+//								CHART:{
+//									
+//									PANE:{
+//										endAngle:"123",
+//										startAngle:"-123"
+//									}
+//									
+//								}
+//								
+//							},
+//							sunburst:{
+//								
+//								CHART:{
+//									
+//									opacMouseOver:"13",
+//									
+//									TOOLBAR:{
+//										
+//										style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
+//										
+//									},
+//									TIP:{
+//										
+//										style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
+//										text: "insert text here"
+//										
+//									}
+//									
+//								}
+//								
+//							},
+//							chord:{
+//								
+//							}
+//						};
+//						
+//						console.log("-- JSON template 3 (to return after style): --- ");
+//						console.log(jsonTemplate);
+//						
+//						return templateToReturn;
+//						
+//						break;					
+//				}			
+//			};			
 			
 			//this.on("TTT", function(){console.log("III");});
 			
@@ -1296,11 +2306,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var applyAxes = true;
 			var configApplyAxes = {applyAxes: applyAxes};
 			
+			console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(this.styleName));
+			
 			if (newChart == true)
 			{
+				
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 						jsonTemplate, 
-						getConfigurationForStyle(this.styleName).generic,
+						Sbi.chart.designer.Designer.getConfigurationForStyle(this.styleName).generic,
 						configApplyAxes);
 			}
 			
@@ -1624,7 +2637,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 //    					}
 //		    		};
 //		    		
-//					var genericConfigurationForStyle = getConfigurationForStyle("red").generic;
+//					var genericConfigurationForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle("red").generic;
 //
 //					/**
 //					 * Reset (refresh, modify) the 'styleName' field of the Designer, also
@@ -1639,43 +2652,43 @@ Ext.define('Sbi.chart.designer.Designer', {
 ////					console.log(jsonTemplate);
 //					if (isChartWordCloud){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").wordcloud);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").wordcloud);
 //						
 //					}
 //					else if (isChartTreemap){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").treemap);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").treemap);
 //						
 //					}
 //					else if (isChartParallel){
 //						
 //						jsonTemplate.CHART.LEGEND=null;
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").parallel);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").parallel);
 //					
 //					}
 //					else if (isChartHeatmap){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").heatmap);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").heatmap);
 //					
 //					}
 //					else if (isChartRadar){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").radar);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").radar);
 //						
 //					}
 //					else if (isChartScatter){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").scatter);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").scatter);
 //						
 //					}
 //					else if (isChartGauge){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").gauge);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").gauge);
 //						
 //					}
 //					else if (isChartSunburst){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle("red").sunburst);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle("red").sunburst);
 //						
 //					}
 //					
@@ -1719,51 +2732,51 @@ Ext.define('Sbi.chart.designer.Designer', {
 //					console.log(selectedType);
 //					console.log(jsonTemplate);
 //					
-//					jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).generic);
+//					jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).generic);
 //
 //					if (selectedType == "WORDCLOUD"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).wordcloud);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).wordcloud);
 //						
 //					}
 //					else if (selectedType == "TREEMAP"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).treemap);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).treemap);
 //						
 //					}
 //					else if (selectedType == "PARALLEL"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).parallel);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).parallel);
 //					
 //					}
 //					else if (selectedType == "HEATMAP"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).heatmap);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).heatmap);
 //					
 //					}
 //					else if (selectedType == "RADAR"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).radar);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).radar);
 //						
 //					}
 //					else if (selectedType == "SCATTER"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).scatter);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).scatter);
 //						
 //					}
 //					else if (selectedType == "GAUGE"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).gauge);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).gauge);
 //						
 //					}
 //					else if (selectedType == "SUNBURST"){
 //						
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).sunburst);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).sunburst);
 //						
 //					}
 //					else if (selectedType == "CHORD"){
 //
-//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(styleName).chord);
+//						jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(styleName).chord);
 //						
 //					}
 //					
@@ -2048,7 +3061,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    		jsonTemplate.CHART.VALUES = valuesToKeep;
 					    		
 					    		// Previously I have defined generic configuration first and then the second (specific) configuration
-//								var genericConfigurationForStyle = getConfigurationForStyle(k.data.styleAbbr).generic;
+//								var genericConfigurationForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).generic;
 								
 								console.log("-- JSON template 6 (before combo): --- ");
 								console.log(jsonTemplate);
@@ -2081,22 +3094,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 								// TODO: See the differences with the new code (Benedetto)
 								if (chartType == "BAR")
 								{
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).bar, configApplyAxes);
-									console.log(getConfigurationForStyle(k.data.styleAbbr).bar);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).bar, configApplyAxes);
+									console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).bar);
 									console.log(jsonTemplate);
+									
 								}
 								else if (chartType == "LINE")
 								{
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).line, configApplyAxes);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).line, configApplyAxes);
 								}
 								else if (chartType == "PIE")
 								{
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).pie, configApplyAxes);
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).pie, configApplyAxes);
 								}
 								else if (chartType == "WORDCLOUD"){
 								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).wordcloud,
+										Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).wordcloud,
 										configApplyAxes);
 								}
 								else if (chartType == "TREEMAP"){
@@ -2104,7 +3118,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									jsonTemplate.CHART.COLORPALLETE = colorpalleteToKeep;
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).treemap,
+										Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).treemap,
 										configApplyAxes);									
 								}
 								else if (chartType == "PARALLEL"){
@@ -2113,7 +3127,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 									//jsonTemplate.CHART.COLORPALLETE = colorpalleteToKeep;
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).parallel,
+										Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).parallel,
 										configApplyAxes);								
 								}
 								else if (chartType == "HEATMAP"){
@@ -2123,31 +3137,31 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 									console.log(colorpalleteToKeep);
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).heatmap,
+										Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).heatmap,
 										configApplyAxes);								
 								}
 								else if (chartType == "RADAR"){
 									
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).radar,
+										Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).radar,
 										configApplyAxes);									
 								}
 								else if (chartType == "SCATTER"){
 									
 jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 										jsonTemplate, 
-										getConfigurationForStyle(k.data.styleAbbr).scatter,
+										Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).scatter,
 										configApplyAxes);									
 								}
 								else if (chartType == "GAUGE"){
 										console.log("== COMBO 1 ==");	
 										console.log(jsonTemplate);
 									
-										console.log(getConfigurationForStyle(k.data.styleAbbr).gauge);
+										console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).gauge);
 									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 																		jsonTemplate, 
-																		getConfigurationForStyle(k.data.styleAbbr).gauge,
+																		Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).gauge,
 																		configApplyAxes);		
 //									console.log("-- JSON template 6-1 (GAUGE specific): --- ");
 									console.log("== COMBO 2 ==");	
@@ -2157,12 +3171,12 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 									
 									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 																		jsonTemplate, 
-																		getConfigurationForStyle(k.data.styleAbbr).sunburst,
+																		Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).sunburst,
 																		configApplyAxes);									
 								}
 								else if (chartType == "CHORD"){
 	
-									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,getConfigurationForStyle(k.data.styleAbbr).chord,
+									jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).chord,
 										configApplyAxes);
 									
 								}
@@ -2170,7 +3184,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 								console.log("-- JSON template 7 (after applying specific): --- ");
 								console.log(jsonTemplate);								
 								
-								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(getConfigurationForStyle(k.data.styleAbbr).generic,jsonTemplate);
+								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(Sbi.chart.designer.Designer.getConfigurationForStyle(k.data.styleAbbr).generic,jsonTemplate);
 								console.log("-- JSON template 8 (after applying generic - after combo): --- ");
 								console.log(jsonTemplate);								
 								
