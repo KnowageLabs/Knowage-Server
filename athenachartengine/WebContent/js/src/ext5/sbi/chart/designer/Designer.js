@@ -447,7 +447,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							    	   max: "60",
 							    	   min: "1", 
 							    	   
-							    	   minorTickColor: "#008000",
+							    	   minorTickColor: "#FF0000",
 							    	   minorTickInterval: "",									    	   
 							    	   minorTickLength: "10",
 							    	   minorTickPosition: "inside",
@@ -455,7 +455,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							    	   
 							    	   offset:"1",
 							    	   
-						               tickColor: "#FF00FF",
+						               tickColor: "#FF0000",
 						               tickLength: "10",
 						               tickPixelInterval: "30",
 						               tickPosition: "inside",
@@ -468,12 +468,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 							    	   
 							    	   MAJORGRID: {
 							    		   interval: "",
-							    		   style: "typeline:;color:#D8D8D8;"
+							    		   style: "typeline:;color:#FF0000;"
 						    		   },
 							       
 						    		   MINORGRID: {
 						    			   interval: "", 
-						    			   style: "typeline:;color:#E0E0E0;"
+						    			   style: "typeline:;color:#FF0000;"
 					    			   },
 						    		   
 						    		   TITLE: {
@@ -516,7 +516,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									SERIE: {
 																		       
 								        animation: "true",
-								        borderColor: "#FFFFFF",
+								        borderColor: "#FF0000",
 								        color:"",
 								        groupingFunction:"SUM",							        
 							        	orderType:"",
@@ -535,11 +535,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 						            	},
 						            	
 						            	DIAL: {
-						            		backgroundColorDial:"#3366FF"
+						            		backgroundColorDial:"#FF0000"
 						            	},
 						            	
 						            	DATA_LABELS: {
-						            		colorDataLabels:"#339966",
+						            		colorDataLabels:"#FF0000",
 						            		formatDataLabels:"",
 						            		yPositionDataLabels:"-40"
 						            	}

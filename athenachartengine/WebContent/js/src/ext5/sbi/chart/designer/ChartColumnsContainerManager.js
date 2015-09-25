@@ -155,10 +155,22 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
 													chartType != 'TREEMAP' && chartType != 'HEATMAP';
 							
-							var chosenTheme = Sbi.chart.designer.Designer.styleName;
-							var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
-							
-							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
+//							var chosenTheme = Sbi.chart.designer.Designer.styleName;
+//							var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
+//							
+//							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
+//							
+//							var applySeries = true;
+//							
+//							var thisTemplate = Sbi.chart.designer.Designer.exportAsJson();
+//							var tempNewMergedTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+//									thisTemplate, 
+//									styledThemeBaseTemplate,
+//									{
+//										applySeries: applySeries
+//									});
+//							
+//							console.log('tempNewMergedTemplate -> ', tempNewMergedTemplate);
 							
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
@@ -201,12 +213,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								return false;
 							}
 							
-							if (chartType == 'GAUGE') {
-//								this.ownerCt.ownerCt.fireEvent("newSerieItem", data.records[0]);
-							
-								var chartLeftAxisesContainer = Ext.getCmp('chartLeftAxisesContainer');
-								chartLeftAxisesContainer.fireEvent("newSerieItem", data.records[0]);
-							}
+//							if (chartType == 'GAUGE') {
+////								this.ownerCt.ownerCt.fireEvent("newSerieItem", data.records[0]);
+//							
+//								var chartLeftAxisesContainer = Ext.getCmp('chartLeftAxisesContainer');
+//								chartLeftAxisesContainer.fireEvent("newSerieItem", data.records[0]);
+//							}
 						}
 					}
 				},

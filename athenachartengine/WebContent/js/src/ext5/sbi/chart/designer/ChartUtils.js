@@ -243,7 +243,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var AXIS = ChartUtils.getAxesDataAsOriginalJson();
 
-			console.log(AXIS);
+//			console.log(AXIS);
 
 			/**
 			 * Only for the SCATTER chart type we will need these three parameters
@@ -279,8 +279,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			result['CHART'] = CHART;
 
-			console.log("-- After saving the chart: --");
-			console.log(result);
+//			console.log("-- After saving the chart: --");
+//			console.log(result);
 
 			return result;
 		},
@@ -721,12 +721,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						.get('categoryStacked') != undefined ? mainCategory
 						.get('categoryStacked')
 						 : '';
-					//									category['categoryDataType'] = mainCategory
-					//											.get('colType') != undefined ? mainCategory
-					//											.get('colType')
-					//											: '';
-					//									console.log(mainCategory);
-					//									console.log(mainCategory.get('categoryDataType'));
+//					category['categoryDataType'] = mainCategory
+//							.get('colType') != undefined ? mainCategory
+//							.get('colType')
+//							: '';
+//					console.log(mainCategory);
+//					console.log(mainCategory.get('categoryDataType'));
 					var categoriesStoreDataLength = categoriesStore.data.items.length;
 
 					var groupby = '';
@@ -1879,13 +1879,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					var array = data[key];
 
 					for (var i = 0; i < array.length; i++) {
-						treeData
-						.push({
+						treeData.push({
 							key : key,
 							expanded : (nivel < 1),
 							isArray : 1,
-							children : ChartUtils
-							.convertJsonToTreeFormat(
+							children : ChartUtils.convertJsonToTreeFormat(
 								array[i],
 								nivel + 1),
 						});
@@ -2095,18 +2093,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 					newTarget[prop] = ChartUtils.applyAxes(target[prop], source[prop]);
 
-					console.log(newTarget[prop]);
+//					console.log(newTarget[prop]);
 
 					continue;
 				}
-//				else if(applyAxes && prop == 'SERIE') {
-//					console.log("-- SERIE in mergeObjects --");
-//					console.log(source[prop]);
-//					console.log(target[prop]);
-//					//newTarget[prop] = ChartUtils.applySeries(target[prop], source[prop]);
-//					//console.log(newTarget[prop]);
-//					continue;
-//				}
+				
+				if (applySeries && prop == 'SERIE') {
+					newTarget[prop] = ChartUtils.applySeries(target[prop], source[prop]);
+					
+					continue;
+				}
 
 				item = source[prop];
 				
@@ -2220,50 +2216,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		/** Patch for axes merging */
-		applySeries : function (target, source) {
-			var styleSerieAxis;
-
-			console.log("-- target in applySeries: --");
-			console.log(target);
-			console.log("-- source in applySeries: --");
-			console.log(source);
-
-			// 'source' is an array containing the styles
-			//			for (var i = 0; i < source.length; i++) {
-			//				var axis = source[i];
-			//
-			//				styleSerieAxis = axis;
-			//
-			//				console.log(styleSerieAxis);
-			//			}
-			//
-			//			var finalAxisArray = [];
-			//
-			//			for (var i = 0; i < target.length; i++) {
-			//				var appliedStyledAxis = {};
-			//				var targetAxis = target[i];
-			//
-			//				console.log(targetAxis);
-			//
-			//				appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
-			//
-			//				finalAxisArray.push(appliedStyledAxis);
-			//			}
-
-			appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, source[0]);
-
-			console.log("result in applySeries:");
-			console.log(finalAxisArray);
-
-			return finalAxisArray;
-		},
-
-		/** Patch for axes merging */
 		applyAxes : function (target, source) {
 			var styleSerieAxis,
 			styleCategoryAxis;
 
-			console.log("-- applyAxes --");
+//			console.log("-- applyAxes --");
 
 			/**
 			 * 'target' - 	content (properties) of the AXIS tag of the XML structure
@@ -2278,8 +2235,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			// 'source' is an array containing the styles
 			for (var i = 0; i < source.length; i++) {
 				var axis = source[i];
-				console.log("<< SOURCE >>");
-				console.log(axis);
+//				console.log("<< SOURCE >>");
+//				console.log(axis);
 
 				/**
 				 * 'styleSerieAxis' - 		properties that are common for the AXIS tag of the
@@ -2304,8 +2261,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var appliedStyledAxis = {};
 				var targetAxis = target[i];
 
-				console.log("<< TARGET >>");
-				console.log(targetAxis);
+//				console.log("<< TARGET >>");
+//				console.log(targetAxis);
 
 				if (targetAxis.type.toLowerCase() == 'serie') {
 					appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
@@ -2316,9 +2273,33 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				finalAxisArray.push(appliedStyledAxis);
 			}
 
-			console.log("<< RESULT >>");
+//			console.log("<< RESULT >>");
 
 			return finalAxisArray;
+		},
+		
+		applySeries: function(target, source) {
+			var finalSerieArray = [];
+			
+			var newTarget = [];
+			
+			if(target === undefined) {
+				target = {};
+			}
+			
+			if(!Array.isArray(target)) {
+				target = [target];
+			}
+			
+			for(var i = 0; i < target.length; i++) {
+				var targetItem = target[i];
+				
+				var newTargetItem = ChartUtils.mergeObjects(targetItem, source);
+				newTarget.push(newTargetItem);
+			}
+			
+			return newTarget;
+			
 		},
 
 		removeNotFoundItems : function (target, source) {
