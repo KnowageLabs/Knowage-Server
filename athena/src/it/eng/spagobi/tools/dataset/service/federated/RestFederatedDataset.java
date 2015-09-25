@@ -64,7 +64,7 @@ public class RestFederatedDataset {
 
 		DatasetFederation fds = new DatasetFederation();
 		Integer id = -1;
-		String idStr = (String) requestBodyJSON.opt("ID_SBI_FEDERATED_DATA_SET");
+		String idStr = (String) requestBodyJSON.opt("FEDERATION_ID");
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
@@ -74,7 +74,7 @@ public class RestFederatedDataset {
 		String description = (String) requestBodyJSON.opt("description");
 		String relationships = requestBodyJSON.optJSONArray("relationships").toString();
 
-		fds.setId_sbi_federated_data_set(id.intValue());
+		fds.setFederation_id(id.intValue());
 		fds.setLabel(label);
 		fds.setName(name);
 		fds.setDescription(description);

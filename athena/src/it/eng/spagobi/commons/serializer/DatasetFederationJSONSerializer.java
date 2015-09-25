@@ -33,7 +33,7 @@ public class DatasetFederationJSONSerializer implements Serializer {
 		try {
 			DatasetFederation fd = (DatasetFederation) o;
 			result = new JSONObject();
-			result.put(ID, fd.getId_sbi_federated_data_set());
+			result.put(ID, fd.getFederation_id());
 			result.put(LABEL, fd.getLabel());
 			result.put(NAME, fd.getName());
 			result.put(DESCRIPTION, fd.getDescription());

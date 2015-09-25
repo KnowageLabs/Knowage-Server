@@ -53,7 +53,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 
 			SbiFederatedDataset hibFederatedDataset = new SbiFederatedDataset();
 
-			hibFederatedDataset.setId_sbi_federated_data_set(dataset.getId_sbi_federated_data_set());
+			hibFederatedDataset.setFederation_id(dataset.getFederation_id());
 			hibFederatedDataset.setLabel(dataset.getLabel());
 			hibFederatedDataset.setName(dataset.getName());
 			hibFederatedDataset.setDescription(dataset.getDescription());
@@ -66,7 +66,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 
 			transaction.commit();
 
-			dataset.setId_sbi_federated_data_set(hibFederatedDataset.getId_sbi_federated_data_set());
+			dataset.setFederation_id(hibFederatedDataset.getFederation_id());
 
 		} catch (Throwable t) {
 			logException(t);

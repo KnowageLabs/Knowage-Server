@@ -5,8 +5,8 @@ import javax.persistence.*;
 @Table(name= "SBI_Federated_Data_Set")
 public class SBI_Federated_Data_Set {
 	@Id @GeneratedValue
-	@Column(name = "id_sbi_federated_data_set")
-	private int id_sbi_federated_data_set;
+	@Column(name = "federation_id")
+	private int federation_id;
 	
 	@Column(name= "label")
 	private String label;
@@ -19,12 +19,12 @@ public class SBI_Federated_Data_Set {
 	
 	public SBI_Federated_Data_Set(){}
 
-	public int getId_sbi_federated_data_set() {
-		return id_sbi_federated_data_set;
+	public int getFederation_id() {
+		return federation_id;
 	}
 
-	public void setId_sbi_federated_data_set(int id_sbi_federated_data_set) {
-		this.id_sbi_federated_data_set = id_sbi_federated_data_set;
+	public void setFederation_id(int federation_id) {
+		this.federation_id = federation_id;
 	}
 
 	public String getLabel() {

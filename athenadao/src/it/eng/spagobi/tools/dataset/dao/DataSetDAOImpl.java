@@ -409,8 +409,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			
 			SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
 
-			Query hibQuery = session.createQuery("from SbiFederatedDataset h where h.id_sbi_federated_data_set = ? ");
-			hibQuery.setInteger(0, dataSet.getDatasetFederation().getId_sbi_federated_data_set());
+			Query hibQuery = session.createQuery("from SbiFederatedDataset h where h.federation_id = ? ");
+			hibQuery.setInteger(0, dataSet.getDatasetFederation().getFederation_id());
 			List<SbiFederatedDataset> federationDefinitionsFromDB = hibQuery.list();
 
 			hibQuery = session.createQuery("from SbiFederatedDataset h where h.label = ? ");

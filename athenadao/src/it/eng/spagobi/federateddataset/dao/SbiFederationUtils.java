@@ -35,7 +35,7 @@ public class SbiFederationUtils {
 			fd.setName(hibFd.getName());
 			fd.setDescription(hibFd.getDescription());
 			fd.setRelationships(hibFd.getRelationships());
-			fd.setId_sbi_federated_data_set(hibFd.getId_sbi_federated_data_set());
+			fd.setFederation_id(hibFd.getFederation_id());
 			fd.setSourceDatasets(DataSetFactory.toDataSet(hibFd.getSourceDatasets(), userProfile));
 		}else{
 			logger.debug("The federation is null");
@@ -52,7 +52,7 @@ public class SbiFederationUtils {
 		if(hibFd!=null){
 
 			logger.debug("Th federation is not null. Label is " + hibFd.getLabel());
-			fd.setId_sbi_federated_data_set(hibFd.getId_sbi_federated_data_set());
+			fd.setFederation_id(hibFd.getFederation_id());
 			
 			fd.setLabel(hibFd.getLabel());
 			fd.setName(hibFd.getName());

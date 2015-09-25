@@ -179,10 +179,23 @@
 							<span ng-if="$index==0">
 								{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
 							</div>
-							<span flex=""></span> 
-							<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
-										 	<i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
-										</md-button>
+							<span flex=""></span>
+							 <md-fab-speed-dial  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
+							 	<md-fab-trigger>
+							 		<md-button class="md-fab md-ExtraMini">
+							 			<i class="fa fa-chevron-left"></i>
+							 		</md-button>
+							 	</md-fab-trigger>
+							 	<md-fab-actions>
+							 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
+										 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
+									</md-button>
+									<md-button style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
+										 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(relationshipArr)"></i>
+									</md-button>
+							 	</md-fab-actions>
+							 </md-fab-speed-dial>
+							
 						</md-list-item>
 						
 						</div>

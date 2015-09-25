@@ -13,7 +13,7 @@ import java.util.Set;
 public class DatasetFederation {
 
 	
-	private int id_sbi_federated_data_set;
+	private int federation_id;
 	
 	private String name;
 	
@@ -25,12 +25,12 @@ public class DatasetFederation {
 	
 	private Set<IDataSet> sourceDatasets;
 
-	public int getId_sbi_federated_data_set() {
-		return id_sbi_federated_data_set;
+	public int getFederation_id() {
+		return federation_id;
 	}
 
-	public void setId_sbi_federated_data_set(int id_sbi_federated_data_set) {
-		this.id_sbi_federated_data_set = id_sbi_federated_data_set;
+	public void setFederation_id(int federation_id) {
+		this.federation_id = federation_id;
 	}
 
 	public String getName() {

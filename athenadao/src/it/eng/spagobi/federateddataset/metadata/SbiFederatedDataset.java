@@ -14,7 +14,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 public class SbiFederatedDataset extends SbiHibernateModel {
 	
 	//fields
-	private int id_sbi_federated_data_set;
+	private int federation_id;
 	private String label;
 	private String name;
 	private String description;
@@ -22,10 +22,10 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 	private Set<SbiDataSet> sourceDatasets;
 	
 	//constructors
-	public SbiFederatedDataset(int id_sbi_federated_data_set, String label,
+	public SbiFederatedDataset(int federation_id, String label,
 			String name, String description, String relationships) {
 		
-		this.id_sbi_federated_data_set = id_sbi_federated_data_set;
+		this.federation_id = federation_id;
 		this.label = label;
 		this.name = name;
 		this.description = description;
@@ -40,21 +40,25 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 		this.relationships = relationships;
 	}
 
-	public SbiFederatedDataset(int id_sbi_federated_data_set) {
+	public SbiFederatedDataset(int federation_id) {
 		
-		this.id_sbi_federated_data_set = id_sbi_federated_data_set;
+		this.federation_id = federation_id;
+	}
+
+	public int getFederation_id() {
+		return federation_id;
 	}
 
 	public SbiFederatedDataset() {
 		
 	}
 
-	public int getId_sbi_federated_data_set() {
-		return id_sbi_federated_data_set;
+	public int federation_id() {
+		return federation_id;
 	}
 
-	public void setId_sbi_federated_data_set(int id_sbi_federated_data_set) {
-		this.id_sbi_federated_data_set = id_sbi_federated_data_set;
+	public void setFederation_id(int federation_id) {
+		this.federation_id = federation_id;
 	}
 
 	public String getLabel() {

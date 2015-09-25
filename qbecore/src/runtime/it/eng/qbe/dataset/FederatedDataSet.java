@@ -55,7 +55,7 @@ public class FederatedDataSet extends QbeDataSet {
 		setDependentDataSets((SpagoBiDataSet[])dataSetConfig.getDependentDataSets());
 
 		federation.setLabel(dataSetConfig.getFederationlabel());
-		federation.setId_sbi_federated_data_set(dataSetConfig.getFederationId());
+		federation.setFederation_id(dataSetConfig.getFederationId());
 		federation.setRelationships(dataSetConfig.getFederationRelations());
 
 		//load the map dataset->cached table name
@@ -91,7 +91,7 @@ public class FederatedDataSet extends QbeDataSet {
 		sbd.setDependentDataSets(dependantDatasets);
 		sbd.setFederationlabel(federation.getLabel());
 		sbd.setFederationRelations(federation.getRelationships());
-		sbd.setFederationId(federation.getId_sbi_federated_data_set());
+		sbd.setFederationId(federation.getFederation_id());
 
 		sbd.setType(DataSetConstants.DS_FEDERATED);	
 

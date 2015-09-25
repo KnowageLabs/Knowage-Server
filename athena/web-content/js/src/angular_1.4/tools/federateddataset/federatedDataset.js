@@ -356,6 +356,22 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 		 		               			}
 		 		               	}
 		 		             ];
+	
+	//FAB Speed Dial customization for deleting and editing a relationship
+	ctr.availableDirections = ['up','down','left','right'];
+	ctr.selectedDirection = 'left';
+	ctr.availableModes = ['md-fling', 'md-scale'];
+    ctr.selectedMode = 'md-scale';
+    
+    ctr.prepRelForEdit = function() {
+    	console.log(ctr.multiArray)
+    	//ctr.listaNew=[];
+    	angular.forEach(ctr.multiArray, function(relation){    		
+    		angular.forEach(relation, function(objekat){
+    			console.log(objekat.sourceTable.name)   			    			
+    		});
+    	});
+    }
 }
 
 
