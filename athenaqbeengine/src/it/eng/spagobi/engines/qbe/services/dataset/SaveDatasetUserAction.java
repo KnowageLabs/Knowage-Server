@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.dataset;
 
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.hibernate.HQLDataSet;
@@ -26,6 +27,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -42,6 +44,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -99,13 +103,13 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 
 			IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
 			int datasetId = -1;
-			if (dataset instanceof HQLDataSet || dataset instanceof JPQLDataSet) {
+//			if (dataset instanceof HQLDataSet || dataset instanceof JPQLDataSet) {
 				// dataset defined on a model --> save it as a Qbe dataset
 				datasetId = this.saveQbeDataset(dataset);
-			} else {
-				// dataset defined on another dataset --> save it as a flat dataset
-				datasetId = this.saveFlatDataset(dataset);
-			}
+//			} else {
+//				// dataset defined on another dataset --> save it as a flat dataset
+//				datasetId = this.saveFlatDataset(dataset);
+//			}
 
 			try {
 				JSONObject obj = new JSONObject();
@@ -142,7 +146,24 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 	private QbeDataSet createNewQbeDataset(IDataSet dataset) {
 		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
 
-		QbeDataSet newDataset = new QbeDataSet();
+		QbeDataSet newDataset;
+		
+		//if its a federated dataset we've to add the dependent datasets
+		if(getEnv().get(EngineConstants.ENV_FEDERATED_ID)!=null){
+			
+			DatasetFederation federation = new DatasetFederation();
+			federation.setRelationships((getEnv().get(EngineConstants.ENV_RELATIONS).toString()));
+			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
+			federation.setId_sbi_federated_data_set((Integer)(getEnv().get(EngineConstants.ENV_FEDERATED_ID)));
+			
+			
+			newDataset = new FederatedDataSet(federation);
+			((FederatedDataSet)newDataset).setDependentDataSets((List<IDataSet>)getEnv().get(EngineConstants.ENV_DATASETS));
+			newDataset.setDataSourceForWriting((IDataSource)getEnv().get(EngineConstants.ENV_DATASOURCE));
+		}else{
+			newDataset = new QbeDataSet();
+		}
+		
 		newDataset.setLabel(getAttributeAsString(LABEL));
 		newDataset.setName(getAttributeAsString(NAME));
 		newDataset.setDescription(getAttributeAsString(DESCRIPTION));
@@ -163,6 +184,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		logger.debug("Dataset's metadata: [" + metadata + "]");
 		newDataset.setDsMetadata(metadata);
 
+		
 		newDataset.setDataSource(qbeDataset.getDataSource());
 
 		String datamart = qbeDataset.getStatement().getDataSource().getConfiguration().getModelName();
@@ -179,6 +201,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 			jsonConfig.put(QbeDataSet.QBE_DATA_SOURCE, datasource);
 			jsonConfig.put(QbeDataSet.QBE_DATAMARTS, datamart);
 			jsonConfig.put(QbeDataSet.QBE_JSON_QUERY, jsonQuery);
+			jsonConfig.put(FederatedDataSet.QBE_DATASET_CACHE_MAP, getEnv().get(EngineConstants.ENV_DATASET_CACHE_MAP));
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Error while creating dataset's JSON config", e);
 		}

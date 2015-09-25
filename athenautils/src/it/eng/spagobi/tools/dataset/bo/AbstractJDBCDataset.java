@@ -165,10 +165,6 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		return metadata;
 	}
 
-	public void setMetadata(IMetaData metadata) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public IDataStore test() {

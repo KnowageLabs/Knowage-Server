@@ -6,6 +6,7 @@
 
 package it.eng.qbe.datasource.dataset;
 
+import it.eng.qbe.dataset.FederationUtils;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
@@ -48,6 +49,7 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 		this.configuration = configuration;
 		datasets= new ArrayList<IDataSet>();
 		
+		
 		Assert.assertNotNull(configuration.loadDataSourceProperties(), "The properties of the datasource can not be empty");
 		
 //		// validate and set configuration
@@ -55,10 +57,12 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 			datasets.add(((DataSetDataSourceConfiguration) configuration).getDataset());
 		} else if(configuration instanceof CompositeDataSourceConfiguration){
 			List<IDataSourceConfiguration> subConfigurations = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations();
+			
 			for(int i=0; i<subConfigurations.size(); i++){
 				IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration)configuration).getSubConfigurations().get(i);
 				if(subConf instanceof DataSetDataSourceConfiguration){
-					datasets.add(((DataSetDataSourceConfiguration)subConf).getDataset());
+						datasets.add(((DataSetDataSourceConfiguration)subConf).getDataset());
+					
 				} else {
 					Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
 				}
@@ -70,6 +74,8 @@ public class DataSetDataSource  extends AbstractDataSource implements ISQLDataSo
 		logger.debug("Created a new JPADataSource");
 		initStatementType();
 	}
+	
+	 
 	
 	public DataSetDataSourceConfiguration getDataSetDataSourceConfiguration() {
 		return (DataSetDataSourceConfiguration) configuration;

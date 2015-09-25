@@ -1,11 +1,17 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.federateddataset.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.federateddataset.bo.FederatedDataset;
 import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
+import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -24,7 +30,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 	static private Logger logger = Logger.getLogger(SbiFederatedDatasetDAOHibImpl.class);
 
 	@Override
-	public void saveSbiFederatedDataSet(FederatedDataset dataset) {
+	public void saveSbiFederatedDataSet(DatasetFederation dataset) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
 
 		Session session = null;
@@ -52,9 +58,11 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 			hibFederatedDataset.setName(dataset.getName());
 			hibFederatedDataset.setDescription(dataset.getDescription());
 			hibFederatedDataset.setRelationships(dataset.getRelationships());
+			hibFederatedDataset.setSourceDatasets(SbiFederationUtils.toSbiDataSet(dataset.getSourceDatasets()));
 
 			updateSbiCommonInfo4Insert(hibFederatedDataset);
 			session.save(hibFederatedDataset);
+
 
 			transaction.commit();
 
@@ -83,12 +91,12 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 	}
 
 	@Override
-	public List<FederatedDataset> loadAllFederatedDataSets() throws EMFUserError {
+	public List<DatasetFederation> loadAllFederatedDataSets() throws EMFUserError {
 
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List<FederatedDataset> realResult = new ArrayList();
+		List<DatasetFederation> realResult = new ArrayList<DatasetFederation>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -99,7 +107,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toFederatedDataset((SbiFederatedDataset) it.next()));
+				realResult.add(SbiFederationUtils.toDatasetFederation((SbiFederatedDataset) it.next(), getUserProfile()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -120,18 +128,10 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 		return realResult;
 	}
 
-	public FederatedDataset toFederatedDataset(SbiFederatedDataset hibFd) {
-		logger.debug("IN");
-		if (hibFd != null)
-			logger.debug("Label is " + hibFd.getLabel());
-		FederatedDataset fd = new FederatedDataset();
-		fd.setLabel(hibFd.getLabel());
-		fd.setName(hibFd.getName());
-		fd.setDescription(hibFd.getDescription());
-		fd.setRelationships(hibFd.getRelationships());
-		fd.setId_sbi_federated_data_set(hibFd.getId_sbi_federated_data_set());
-		logger.debug("OUT");
-		return fd;
-	}
+
+	
+
+	
+
 
 }

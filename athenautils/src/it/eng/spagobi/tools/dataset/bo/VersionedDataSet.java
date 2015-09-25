@@ -11,6 +11,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
+import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -464,7 +465,20 @@ public class VersionedDataSet implements IDataSet {
 		wrappedDataset.setScopeCd(scopeCd);
 		
 	}
+	
+	public void getFe(String scopeCd) {
+		wrappedDataset.setScopeCd(scopeCd);
+		
+	}
 
+	public DatasetFederation getDatasetFederation() {
+		return wrappedDataset.getDatasetFederation();
+	}
+
+	public void setDatasetFederation(DatasetFederation datasetFederation) {
+		wrappedDataset.setDatasetFederation(datasetFederation);
+		
+	}
 
 	
 	

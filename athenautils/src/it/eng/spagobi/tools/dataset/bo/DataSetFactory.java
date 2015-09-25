@@ -35,6 +35,11 @@ public class DataSetFactory {
 
 	private static transient Logger logger = Logger.getLogger(DataSetFactory.class);
 
+	
+	public static IDataSet getDataSet(SpagoBiDataSet dataSetConfig, String userId) {
+		return getDataSet(dataSetConfig, userId, null);
+	}
+	
 	/**
 	 * This method returns a dataset according to his configuration
 	 *

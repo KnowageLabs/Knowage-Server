@@ -26,6 +26,16 @@
 		<property name="relationships" type="string">
 			<column name="RELATIONSHIPS"/>
 		</property>
+		<set name="sourceDatasets" table="SBI_DATA_SET_FEDERATION">
+			<key>
+				<column name="FEDERATION_ID"/>
+			</key>
+			<many-to-many class="it.eng.spagobi.tools.dataset.metadata.SbiDataSet">
+				<column name="DS_ID"/>
+				<column name="VERSION_NUM"/>
+				<column name="ORGANIZATION"/>
+			</many-to-many>
+		</set> 
 		
 		<component name="commonInfo" insert="true" update="true"
 			class="it.eng.spagobi.commons.metadata.SbiCommonInfo">

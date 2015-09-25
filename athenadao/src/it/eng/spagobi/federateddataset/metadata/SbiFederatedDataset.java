@@ -1,6 +1,15 @@
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package it.eng.spagobi.federateddataset.metadata;
 
+import java.util.Set;
+
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 public class SbiFederatedDataset extends SbiHibernateModel {
 	
@@ -10,6 +19,7 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 	private String name;
 	private String description;
 	private String relationships;
+	private Set<SbiDataSet> sourceDatasets;
 	
 	//constructors
 	public SbiFederatedDataset(int id_sbi_federated_data_set, String label,
@@ -69,6 +79,14 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Set<SbiDataSet> getSourceDatasets() {
+		return sourceDatasets;
+	}
+
+	public void setSourceDatasets(Set<SbiDataSet> sourceDatasets) {
+		this.sourceDatasets = sourceDatasets;
 	}
 	
 	

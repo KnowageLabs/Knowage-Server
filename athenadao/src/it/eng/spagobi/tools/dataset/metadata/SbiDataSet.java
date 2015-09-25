@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.dataset.metadata;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
@@ -93,6 +94,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	private Date timeDe = null;
 
 	private SbiDomains scope = null;
+	
+	private SbiFederatedDataset federation = null;
 
 	/**
 	 * default constructor.
@@ -646,4 +649,14 @@ public class SbiDataSet extends SbiHibernateModel {
 		} else
 			return null;
 	}
+
+	public SbiFederatedDataset getFederation() {
+		return federation;
+	}
+
+	public void setFederation(SbiFederatedDataset federation) {
+		this.federation = federation;
+	}
+	
+	
 }

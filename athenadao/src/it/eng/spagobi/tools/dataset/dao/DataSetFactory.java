@@ -5,12 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
+import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -39,6 +42,7 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -57,7 +61,9 @@ public class DataSetFactory {
 	public static final String WS_DS_TYPE = "Web Service";
 	public static final String QBE_DS_TYPE = "Qbe";
 	public static final String CUSTOM_DS_TYPE = "Custom";
+	public static final String FEDERATED_DS_TYPE = "Federated";
 	public static final String FLAT_DS_TYPE = "Flat";
+	
 
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
 
@@ -152,9 +158,19 @@ public class DataSetFactory {
 
 		return toReturn;
 	}
+	
+	
 
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet) {
 		return toDataSet(sbiDataSet, null);
+	}
+	
+	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSets, IEngUserProfile userProfile) {
+		Set<IDataSet> ds = new java.util.HashSet<IDataSet>();
+		for (SbiDataSet dataset : sbiDataSets) {
+			ds.add(toDataSet(dataset));
+		}
+		return ds;
 	}
 
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
@@ -296,6 +312,37 @@ public class DataSetFactory {
 				((CustomDataSet) ds).setCustomData(jsonConf.getString(DataSetConstants.CUSTOM_DATA));
 				((CustomDataSet) ds).setJavaClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
 				ds.setDsType(CUSTOM_DS_TYPE);
+			}
+			
+			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
+
+				SbiFederatedDataset sbiFederation = sbiDataSet.getFederation();
+				
+				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederation(sbiFederation, userProfile));
+				ds.setConfiguration(sbiDataSet.getConfiguration());
+				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
+
+				// START -> This code should work instead of CheckQbeDataSets around the projects
+				
+				Map parameters = ds.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					ds.setParamsMap(parameters);
+				}
+				// END
+
+				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				if (userProfile != null)
+					dataSourceDao.setUserProfile(userProfile);
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+				if (dataSource != null) {
+					((QbeDataSet) ds).setDataSource(dataSource);
+					if (!dataSource.checkIsReadOnly()) {
+						ds.setDataSourceForWriting(dataSource);
+					}
+				}
+				ds.setDsType(FEDERATED_DS_TYPE);
+
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)) {

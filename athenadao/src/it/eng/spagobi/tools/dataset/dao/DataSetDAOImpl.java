@@ -9,6 +9,8 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
+import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -403,7 +405,28 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setCategory(category);
 			hibDataSet.setParameters(dataSet.getParameters());
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
+			
+			
+			SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
 
+			Query hibQuery = session.createQuery("from SbiFederatedDataset h where h.id_sbi_federated_data_set = ? ");
+			hibQuery.setInteger(0, dataSet.getDatasetFederation().getId_sbi_federated_data_set());
+			List<SbiFederatedDataset> federationDefinitionsFromDB = hibQuery.list();
+
+			hibQuery = session.createQuery("from SbiFederatedDataset h where h.label = ? ");
+			hibQuery.setString(0, dataSet.getDatasetFederation().getLabel());
+			federationDefinitionsFromDB = hibQuery.list();
+			
+			//save teh federations
+			//session.save(federationDefinition);
+			if(federationDefinitionsFromDB != null && federationDefinitionsFromDB.size()>0){
+				hibDataSet.setFederation(federationDefinitionsFromDB.get(0));
+			}
+			
+			
+			
+			
+			
 			if (dataSet.getOwner() == null) {
 				hibDataSet.setOwner(userIn);
 			} else {
@@ -1229,6 +1252,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 
+				hibDataSet.setFederation(SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()));
+				
+				
 				Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);
@@ -1813,5 +1839,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return results;
 	}
+
 
 }

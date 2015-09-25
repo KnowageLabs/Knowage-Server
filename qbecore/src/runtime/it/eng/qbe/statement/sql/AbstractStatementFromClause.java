@@ -6,6 +6,7 @@
 
 package it.eng.qbe.statement.sql;
 
+import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractStatementClause;
@@ -44,7 +45,7 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 
 			List<IModelEntity> cubes = new ArrayList<IModelEntity>();
 			List<IModelEntity> normalEntities = new ArrayList<IModelEntity>();
-			Map<String, String> clauses = new HashMap<String, String>();
+			
 
 			Iterator it = entityAliases.keySet().iterator();
 			while (it.hasNext()) {
@@ -67,7 +68,7 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 			}
 
 			addEntityAliases(cubes, buffer, entityAliases);
-
+			
 
 			if (normalEntities.size() > 0 && cubes.size() > 0)
 				buffer.append(",");
@@ -109,9 +110,10 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 							buffer.append(",");
 						}
 					}
-
+					
 					
 				}else{
+					//for Cassandra dont add the entityAlias
 					String fromClauseElement = me.getName() + " "+ entityAlias;
 					buffer.append(fromClauseElement);
 				}

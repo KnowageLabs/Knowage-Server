@@ -729,4 +729,10 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 
 		return null;
 	}
+
+	public void setDataSource(IDataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	
 }

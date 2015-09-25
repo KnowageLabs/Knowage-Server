@@ -7,6 +7,7 @@
 
 package it.eng.spagobi.services.dataset.bo;
 
+
 public class SpagoBiDataSet  implements java.io.Serializable {
     private boolean _public;
 
@@ -20,11 +21,19 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceForReading;
 
+    private java.lang.Object[] dependentDataSets;
+
     private java.lang.String description;
 
     private int dsId;
 
     private java.lang.String dsMetadata;
+
+    private int federationId;
+
+    private java.lang.String federationRelations;
+
+    private java.lang.String federationlabel;
 
     private java.lang.String flatTableName;
 
@@ -36,13 +45,13 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private java.lang.String organization;
 
+    private java.lang.String owner;
+
     private java.lang.String parameters;
 
     private java.lang.String persistTableName;
 
     private boolean persisted;
-    
-    private boolean scheduled;
 
     private java.lang.String pivotColumnName;
 
@@ -50,20 +59,19 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
     private java.lang.String pivotRowName;
 
-    private java.lang.Integer scopeId;
-    
+    private boolean scheduled;
 
-	private java.lang.String scopeCd;
-    
-    private java.lang.String owner;
+    private java.lang.String scopeCd;
+
+    private java.lang.Integer scopeId;
 
     private java.lang.Integer transformerId;
 
     private java.lang.String type;
 
     private int versionNum;
-    
-	public SpagoBiDataSet() {
+
+    public SpagoBiDataSet() {
     }
 
     public SpagoBiDataSet(
@@ -73,24 +81,28 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            java.lang.String configuration,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSource,
            it.eng.spagobi.services.datasource.bo.SpagoBiDataSource dataSourceForReading,
+           java.lang.Object[] dependentDataSets,
            java.lang.String description,
            int dsId,
            java.lang.String dsMetadata,
+           int federationId,
+           java.lang.String federationRelations,
+           java.lang.String federationlabel,
            java.lang.String flatTableName,
            java.lang.String label,
            java.lang.String name,
            boolean numRows,
            java.lang.String organization,
+           java.lang.String owner,
            java.lang.String parameters,
            java.lang.String persistTableName,
            boolean persisted,
-           boolean scheduled,
            java.lang.String pivotColumnName,
            java.lang.String pivotColumnValue,
            java.lang.String pivotRowName,
-           java.lang.Integer scopeId,
+           boolean scheduled,
            java.lang.String scopeCd,
-           java.lang.String owner,
+           java.lang.Integer scopeId,
            java.lang.Integer transformerId,
            java.lang.String type,
            int versionNum) {
@@ -100,44 +112,33 @@ public class SpagoBiDataSet  implements java.io.Serializable {
            this.configuration = configuration;
            this.dataSource = dataSource;
            this.dataSourceForReading = dataSourceForReading;
+           this.dependentDataSets = dependentDataSets;
            this.description = description;
            this.dsId = dsId;
            this.dsMetadata = dsMetadata;
+           this.federationId = federationId;
+           this.federationRelations = federationRelations;
+           this.federationlabel = federationlabel;
            this.flatTableName = flatTableName;
            this.label = label;
            this.name = name;
            this.numRows = numRows;
            this.organization = organization;
+           this.owner = owner;
            this.parameters = parameters;
            this.persistTableName = persistTableName;
            this.persisted = persisted;
-           this.scheduled = scheduled;
            this.pivotColumnName = pivotColumnName;
            this.pivotColumnValue = pivotColumnValue;
            this.pivotRowName = pivotRowName;
+           this.scheduled = scheduled;
+           this.scopeCd = scopeCd;
            this.scopeId = scopeId;
            this.transformerId = transformerId;
            this.type = type;
            this.versionNum = versionNum;
-           this.scopeCd= scopeCd;
-           this.owner= owner;
     }
 
-    public java.lang.String getScopeCd() {
-		return scopeCd;
-	}
-
-	public void setScopeCd(java.lang.String scopeCd) {
-		this.scopeCd = scopeCd;
-	}
-
-	public java.lang.String getOwner() {
-		return owner;
-	}
-
-	public void setOwner(java.lang.String owner) {
-		this.owner = owner;
-	}
 
     /**
      * Gets the _public value for this SpagoBiDataSet.
@@ -260,6 +261,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the dependentDataSets value for this SpagoBiDataSet.
+     * 
+     * @return dependentDataSets
+     */
+    public java.lang.Object[] getDependentDataSets() {
+        return dependentDataSets;
+    }
+
+
+    /**
+     * Sets the dependentDataSets value for this SpagoBiDataSet.
+     * 
+     * @param dependentDataSets
+     */
+    public void setDependentDataSets(java.lang.Object[] dependentDataSets) {
+        this.dependentDataSets = dependentDataSets;
+    }
+
+
+    /**
      * Gets the description value for this SpagoBiDataSet.
      * 
      * @return description
@@ -316,6 +337,66 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setDsMetadata(java.lang.String dsMetadata) {
         this.dsMetadata = dsMetadata;
+    }
+
+
+    /**
+     * Gets the federationId value for this SpagoBiDataSet.
+     * 
+     * @return federationId
+     */
+    public int getFederationId() {
+        return federationId;
+    }
+
+
+    /**
+     * Sets the federationId value for this SpagoBiDataSet.
+     * 
+     * @param federationId
+     */
+    public void setFederationId(int federationId) {
+        this.federationId = federationId;
+    }
+
+
+    /**
+     * Gets the federationRelations value for this SpagoBiDataSet.
+     * 
+     * @return federationRelations
+     */
+    public java.lang.String getFederationRelations() {
+        return federationRelations;
+    }
+
+
+    /**
+     * Sets the federationRelations value for this SpagoBiDataSet.
+     * 
+     * @param federationRelations
+     */
+    public void setFederationRelations(java.lang.String federationRelations) {
+        this.federationRelations = federationRelations;
+    }
+
+
+    /**
+     * Gets the federationlabel value for this SpagoBiDataSet.
+     * 
+     * @return federationlabel
+     */
+    public java.lang.String getFederationlabel() {
+        return federationlabel;
+    }
+
+
+    /**
+     * Sets the federationlabel value for this SpagoBiDataSet.
+     * 
+     * @param federationlabel
+     */
+    public void setFederationlabel(java.lang.String federationlabel) {
+        this.federationlabel = federationlabel;
     }
 
 
@@ -420,6 +501,26 @@ public class SpagoBiDataSet  implements java.io.Serializable {
 
 
     /**
+     * Gets the owner value for this SpagoBiDataSet.
+     * 
+     * @return owner
+     */
+    public java.lang.String getOwner() {
+        return owner;
+    }
+
+
+    /**
+     * Sets the owner value for this SpagoBiDataSet.
+     * 
+     * @param owner
+     */
+    public void setOwner(java.lang.String owner) {
+        this.owner = owner;
+    }
+
+
+    /**
      * Gets the parameters value for this SpagoBiDataSet.
      * 
      * @return parameters
@@ -477,21 +578,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     public void setPersisted(boolean persisted) {
         this.persisted = persisted;
     }
-    
-    /**
-	 * @return the scheduled
-	 */
-	public boolean isScheduled() {
-		return scheduled;
-	}
-
-	/**
-	 * @param scheduled
-	 *            the scheduled to set
-	 */
-	public void setScheduled(boolean scheduled) {
-		this.scheduled = scheduled;
-	}
 
 
     /**
@@ -551,6 +637,46 @@ public class SpagoBiDataSet  implements java.io.Serializable {
      */
     public void setPivotRowName(java.lang.String pivotRowName) {
         this.pivotRowName = pivotRowName;
+    }
+
+
+    /**
+     * Gets the scheduled value for this SpagoBiDataSet.
+     * 
+     * @return scheduled
+     */
+    public boolean isScheduled() {
+        return scheduled;
+    }
+
+
+    /**
+     * Sets the scheduled value for this SpagoBiDataSet.
+     * 
+     * @param scheduled
+     */
+    public void setScheduled(boolean scheduled) {
+        this.scheduled = scheduled;
+    }
+
+
+    /**
+     * Gets the scopeCd value for this SpagoBiDataSet.
+     * 
+     * @return scopeCd
+     */
+    public java.lang.String getScopeCd() {
+        return scopeCd;
+    }
+
+
+    /**
+     * Sets the scopeCd value for this SpagoBiDataSet.
+     * 
+     * @param scopeCd
+     */
+    public void setScopeCd(java.lang.String scopeCd) {
+        this.scopeCd = scopeCd;
     }
 
 
@@ -632,7 +758,7 @@ public class SpagoBiDataSet  implements java.io.Serializable {
     public void setVersionNum(int versionNum) {
         this.versionNum = versionNum;
     }
-	
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof SpagoBiDataSet)) return false;
@@ -659,6 +785,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.dataSourceForReading==null && other.getDataSourceForReading()==null) || 
              (this.dataSourceForReading!=null &&
               this.dataSourceForReading.equals(other.getDataSourceForReading()))) &&
+            ((this.dependentDataSets==null && other.getDependentDataSets()==null) || 
+             (this.dependentDataSets!=null &&
+              java.util.Arrays.equals(this.dependentDataSets, other.getDependentDataSets()))) &&
             ((this.description==null && other.getDescription()==null) || 
              (this.description!=null &&
               this.description.equals(other.getDescription()))) &&
@@ -666,6 +795,13 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.dsMetadata==null && other.getDsMetadata()==null) || 
              (this.dsMetadata!=null &&
               this.dsMetadata.equals(other.getDsMetadata()))) &&
+            this.federationId == other.getFederationId() &&
+            ((this.federationRelations==null && other.getFederationRelations()==null) || 
+             (this.federationRelations!=null &&
+              this.federationRelations.equals(other.getFederationRelations()))) &&
+            ((this.federationlabel==null && other.getFederationlabel()==null) || 
+             (this.federationlabel!=null &&
+              this.federationlabel.equals(other.getFederationlabel()))) &&
             ((this.flatTableName==null && other.getFlatTableName()==null) || 
              (this.flatTableName!=null &&
               this.flatTableName.equals(other.getFlatTableName()))) &&
@@ -679,13 +815,16 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.organization==null && other.getOrganization()==null) || 
              (this.organization!=null &&
               this.organization.equals(other.getOrganization()))) &&
+            ((this.owner==null && other.getOwner()==null) || 
+             (this.owner!=null &&
+              this.owner.equals(other.getOwner()))) &&
             ((this.parameters==null && other.getParameters()==null) || 
              (this.parameters!=null &&
               this.parameters.equals(other.getParameters()))) &&
             ((this.persistTableName==null && other.getPersistTableName()==null) || 
              (this.persistTableName!=null &&
               this.persistTableName.equals(other.getPersistTableName()))) &&
-            this.persisted == other.isPersisted() && this.scheduled == other.isScheduled() &&
+            this.persisted == other.isPersisted() &&
             ((this.pivotColumnName==null && other.getPivotColumnName()==null) || 
              (this.pivotColumnName!=null &&
               this.pivotColumnName.equals(other.getPivotColumnName()))) &&
@@ -695,6 +834,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             ((this.pivotRowName==null && other.getPivotRowName()==null) || 
              (this.pivotRowName!=null &&
               this.pivotRowName.equals(other.getPivotRowName()))) &&
+            this.scheduled == other.isScheduled() &&
+            ((this.scopeCd==null && other.getScopeCd()==null) || 
+             (this.scopeCd!=null &&
+              this.scopeCd.equals(other.getScopeCd()))) &&
             ((this.scopeId==null && other.getScopeId()==null) || 
              (this.scopeId!=null &&
               this.scopeId.equals(other.getScopeId()))) &&
@@ -730,12 +873,30 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getDataSourceForReading() != null) {
             _hashCode += getDataSourceForReading().hashCode();
         }
+        if (getDependentDataSets() != null) {
+            for (int i=0;
+                 i<java.lang.reflect.Array.getLength(getDependentDataSets());
+                 i++) {
+                java.lang.Object obj = java.lang.reflect.Array.get(getDependentDataSets(), i);
+                if (obj != null &&
+                    !obj.getClass().isArray()) {
+                    _hashCode += obj.hashCode();
+                }
+            }
+        }
         if (getDescription() != null) {
             _hashCode += getDescription().hashCode();
         }
         _hashCode += getDsId();
         if (getDsMetadata() != null) {
             _hashCode += getDsMetadata().hashCode();
+        }
+        _hashCode += getFederationId();
+        if (getFederationRelations() != null) {
+            _hashCode += getFederationRelations().hashCode();
+        }
+        if (getFederationlabel() != null) {
+            _hashCode += getFederationlabel().hashCode();
         }
         if (getFlatTableName() != null) {
             _hashCode += getFlatTableName().hashCode();
@@ -750,6 +911,9 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         if (getOrganization() != null) {
             _hashCode += getOrganization().hashCode();
         }
+        if (getOwner() != null) {
+            _hashCode += getOwner().hashCode();
+        }
         if (getParameters() != null) {
             _hashCode += getParameters().hashCode();
         }
@@ -757,7 +921,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
             _hashCode += getPersistTableName().hashCode();
         }
         _hashCode += (isPersisted() ? Boolean.TRUE : Boolean.FALSE).hashCode();
-        _hashCode += (isScheduled() ? Boolean.TRUE : Boolean.FALSE).hashCode();
         if (getPivotColumnName() != null) {
             _hashCode += getPivotColumnName().hashCode();
         }
@@ -766,6 +929,10 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         }
         if (getPivotRowName() != null) {
             _hashCode += getPivotRowName().hashCode();
+        }
+        _hashCode += (isScheduled() ? Boolean.TRUE : Boolean.FALSE).hashCode();
+        if (getScopeCd() != null) {
+            _hashCode += getScopeCd().hashCode();
         }
         if (getScopeId() != null) {
             _hashCode += getScopeId().hashCode();
@@ -824,6 +991,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("dependentDataSets");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "dependentDataSets"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "anyType"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("description");
         elemField.setXmlName(new javax.xml.namespace.QName("", "description"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
@@ -838,6 +1011,24 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("dsMetadata");
         elemField.setXmlName(new javax.xml.namespace.QName("", "dsMetadata"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("federationId");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "federationId"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("federationRelations");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "federationRelations"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("federationlabel");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "federationlabel"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
@@ -872,6 +1063,12 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("owner");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "owner"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("parameters");
         elemField.setXmlName(new javax.xml.namespace.QName("", "parameters"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
@@ -886,11 +1083,6 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("persisted");
         elemField.setXmlName(new javax.xml.namespace.QName("", "persisted"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField.setFieldName("scheduled");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "scheduled"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
@@ -909,6 +1101,18 @@ public class SpagoBiDataSet  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("pivotRowName");
         elemField.setXmlName(new javax.xml.namespace.QName("", "pivotRowName"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+        elemField.setNillable(true);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("scheduled");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "scheduled"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("scopeCd");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "scopeCd"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);

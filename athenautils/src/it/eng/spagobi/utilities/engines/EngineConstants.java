@@ -28,6 +28,7 @@ public class EngineConstants {
 	public static final Object ENV_DATASOURCE_LABEL = "datasourceLabel";
 	
 	public static final String ENV_RELATIONS = "RELATIONS";
+	public static final String ENV_DATASET_CACHE_MAP = "DATASET_CACHE_MAP";
 	public static final String ENV_DATASETS = "DATASETS";
 	public static final String ENV_DATASET_PROXY = "ENV_DATASET_PROXY";
 	public static final String ENV_DATASOURCE_PROXY = "ENV_DATASOURCE_PROXY";
@@ -55,6 +56,7 @@ public class EngineConstants {
 	public static final Object ENV_DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";	
 	public static final Object ENV_DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";	
 	public static final Object ENV_IS_TECHNICAL_USER = "IS_TECHNICAL_USER";
+	public static final String ENV_FEDERATED_ID = "FEDERATED_ID";
 	
 	public static final String SMART_FILTER_TAG = "SMART_FILTER";
 

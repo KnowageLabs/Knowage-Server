@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjNote;
@@ -22,7 +23,6 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.federateddataset.bo.FederatedDataset;
 import it.eng.spagobi.hotlink.rememberme.bo.RememberMe;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
@@ -58,6 +58,7 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
@@ -117,7 +118,8 @@ public class JSONSerializer implements Serializer {
 		mappings.put(WebServiceDataSet.class, new DataSetJSONSerializer());
 		mappings.put(FileDataSet.class, new DataSetJSONSerializer());
 		mappings.put(CkanDataSet.class, new DataSetJSONSerializer());
-
+		mappings.put(FederatedDataSet.class, new DataSetJSONSerializer());
+		
 		mappings.put(RoleMetaModelCategory.class, new RoleMetaModelCategoryJSONSerializer());
 
 		mappings.put(Resource.class, new ResourceJSONSerializer());
@@ -153,7 +155,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put(Parameter.class, new ParametersJSONSerialize());
 		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
 		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
-		mappings.put(FederatedDataset.class, new FederatedDatasetJSONSerializer());
+		mappings.put(DatasetFederation.class, new DatasetFederationJSONSerializer());
 
 	}
 

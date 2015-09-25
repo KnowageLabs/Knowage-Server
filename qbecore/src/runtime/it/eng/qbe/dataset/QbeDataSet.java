@@ -57,6 +57,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 	private static transient Logger logger = Logger.getLogger(QbeDataSet.class);
 	
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
+	
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
 	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
 	public static final String QBE_SQL_QUERY = "qbeSQLQuery";
@@ -66,6 +67,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 	protected String datamarts = null;
 	protected Map attributes = null;
 	protected Map params = null;
+	protected JSONObject dataset2CacheTableName = null;
 	
 	protected boolean useCache = false;
 	
@@ -80,23 +82,25 @@ public class QbeDataSet extends ConfigurableDataSet {
     	super(dataSetConfig);
     	try{
     		JSONObject jsonConf  = ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
-    		this.setDatamarts((jsonConf.get(QBE_DATAMARTS) != null)?jsonConf.get(QBE_DATAMARTS).toString():"");
-        	this.setJsonQuery((jsonConf.get(QBE_JSON_QUERY)!=null)?jsonConf.get(QBE_JSON_QUERY).toString():"");
+    		this.setDatamarts((jsonConf.opt(QBE_DATAMARTS) != null)?jsonConf.get(QBE_DATAMARTS).toString():"");
+        	this.setJsonQuery((jsonConf.opt(QBE_JSON_QUERY)!=null)?jsonConf.get(QBE_JSON_QUERY).toString():"");
+        	
 		}catch (Exception e){
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
-    	//this.setDatamarts(dataSetConfig.getDatamarts());
-    	//this.setJsonQuery(dataSetConfig.getJsonQuery());
+//    	this.setDatamarts(dataSetConfig.getDatamarts());
+//    	this.setJsonQuery(dataSetConfig.getJsonQuery());
     	
 		IDataSource dataSource = DataSourceFactory.getDataSource( dataSetConfig.getDataSource() ) ;
 		this.setDataSource(dataSource);
 		
-//		if (dataSetConfig.getDataSourcePersist() != null) {
+//		 (dataSetConfig.getDataSourcePersist() != null) {
 //			IDataSource dataSourcePersist = DataSourceFactory.getDataSource( dataSetConfig.getDataSourcePersist() ) ;
 //			this.setDataSourcePersist(dataSourcePersist);
 //		}
 
 	}
+    
     
     public QbeDataSet(AbstractQbeDataSet ds) {
     	this.ds = ds;
@@ -188,6 +192,7 @@ public class QbeDataSet extends ConfigurableDataSet {
     public void setDatamarts(String datamarts) {
     	this.datamarts = datamarts;
     }
+
     
 	public void setDataSource(IDataSource dataSource) {
 		this.dataSource = dataSource;

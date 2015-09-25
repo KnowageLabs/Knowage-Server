@@ -84,6 +84,10 @@
             <column name="IS_PUBLIC" />
         </property>
 
+		<many-to-one name="federation" class="it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset" lazy="false">
+            <column name="FEDERATION_ID" not-null="false" />
+        </many-to-one>
+
 	   <component name="commonInfo" insert="true" update="true"  class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
 	        <property name="userIn" type="string">
 	            <column name="USER_IN" length="100" not-null="true" />

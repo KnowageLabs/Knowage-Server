@@ -14,6 +14,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
+import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
@@ -98,6 +99,8 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	protected Integer scopeId;
 	protected String scopeCd;
+	
+	private DatasetFederation datasetFederation;
 
 	private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -819,6 +822,17 @@ public abstract class AbstractDataSet implements IDataSet {
 	public void setDataSourceForReading(IDataSource datasourceForReading) {
 		this.datasourceForReading = datasourceForReading;
 	}
+
+	public DatasetFederation getDatasetFederation() {
+		return datasetFederation;
+	}
+
+	public void setDatasetFederation(DatasetFederation datasetFederation) {
+		this.datasetFederation = datasetFederation;
+	}
+
+
+	
 	
 //	/**
 //	 *  Returns the datasource on whgich dataset can write

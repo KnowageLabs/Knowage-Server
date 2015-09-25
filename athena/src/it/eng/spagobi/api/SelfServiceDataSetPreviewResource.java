@@ -86,13 +86,13 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 		logger.debug("Added filters, sorting, parameters");
 
 		// Load the dataset
-		logger.error("Loading the dataset");
+		logger.debug("Loading the dataset");
 		if (label == null || label.length() == 0) {
 			logger.error("No dataset found with label ");
 			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(), "No dataset found with label "
 					+ label);
 		}
-		logger.error("Dataset loaded");
+		logger.debug("Dataset loaded");
 
 		logger.debug("The parameters for the execution of the dataset are " + parametersMap);
 
