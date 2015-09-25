@@ -27,7 +27,7 @@ Ext.define
 			this.viewModel = config.viewModel;
 			
 			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
-			
+					
 			/* Color picker drop-down matrix (table) */
 	        var colorPickerAxisColor = Ext.create
 	        (
@@ -36,7 +36,7 @@ Ext.define
         		{
         			viewModel: this.viewModel,
         			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"), 
-        			fieldBind: '{configModel.axisColor}',	
+        			fieldBind: '{configModel.axisColor}'
         		}
     		);
 	        

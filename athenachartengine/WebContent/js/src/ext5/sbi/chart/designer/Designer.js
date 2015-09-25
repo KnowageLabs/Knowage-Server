@@ -2305,7 +2305,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 				
 				function(newSerieItem)
 				{
-					// OVO NE RADI!!!! Dodavanje item-a i lepljenje podrazumevanih vrednosti za iste
+					// This is not working!!! Appending the current style parameters values to the newly dropped serie item
 					//console.log("!!! newSerieItem !!!");
 					
 					console.log("-- Data that we get from fireEvent (newSerieItem): --");
@@ -2377,7 +2377,7 @@ jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 					console.log("-- JSON template after merging (VALUES): --");
 					console.log(jsonTemplate);
 					
-					Sbi.chart.designer.Designer.update(jsonTemplate);
+					//Sbi.chart.designer.Designer.update(jsonTemplate);
 					
 					return true;
 				}

@@ -27,7 +27,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		resetContainers: function() {
 			var yAxisPool = this.yAxisPool;
 			var storePool = this.storePool;
-			
+			console.log("*** B - ChartColumnsContainerManager:resetContainers() ***");
 			while(yAxisPool.length > 0) {
 				var yAxis = yAxisPool[0];
 				yAxis.destroy();
@@ -40,6 +40,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		
 		/**
 		 * Added for PLOTBANDS tag of the GAUGE chart XML template
+		 * (danristo :: danilo.ristovski@mht.net) 
 		 */
 		setPlotbandsStore: function(jsonTemplate)
 		{
@@ -48,7 +49,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 
 		promptChangeSerieStyle: function (store, rowIndex) {
 			var previousInstance = Ext.getCmp('serieStylePopup');
-			
+			console.log("*** C - ChartColumnsContainerManager:promptChangeSerieStyle() ***");
 			if(previousInstance != undefined) {
 				return;
 				// previousInstance.destroy();
@@ -63,7 +64,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		},
 
 		createChartColumnsContainer: function(config) {
-
+			console.log("*** D - ChartColumnsContainerManager:createChartColumnsContainer() ***");
 			// (danilo.ristovski@mht.net)
 			var idAxisesContainer = config.idAxisesContainer;
 			var id = config.id;
@@ -100,7 +101,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
-				
+					console.log("!!! :: ");
+					console.log(idChartColumnsContainer);
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -140,10 +142,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
 							
+							//console.log("!!! NEW SERIE ITEM !!!");
+//							console.log(data);
+//							this.ownerCt.ownerCt.fireEvent("newSerieItem",data.records[0].data);
+							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
 							 * not provided, error appears
-							 * (danilo.ristovski@mht.net)
+							 * (danristo :: danilo.ristovski@mht.net) 
 							 */
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
@@ -152,7 +158,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
   	  						 * one of these chart types.
-  	  						 * (danilo.ristovski@mht.net)
+  	  						 * (danristo :: danilo.ristovski@mht.net) 
   	  						 */
   	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
 									chartType == 'TREEMAP' || chartType == 'HEATMAP')) {
@@ -178,10 +184,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 											Ext.getCmp("chartParallelLimit").addItem(data.records[0]);
 										}										
 									}
-								}								
+								}	
+								
+								
+								
 							} else  {
 								return false;
-							}								
+							}
+							
+							if (chartType == 'GAUGE')
+								this.ownerCt.ownerCt.fireEvent("newSerieItem",data.records[0]);
 						}
 					}
 				},
@@ -198,7 +210,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				    	
 				    	/**
 				    	 * True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
-				    	 * (danilo.ristovski@mht.net)
+				    	 * (danristo :: danilo.ristovski@mht.net) 
 				    	 */ 
 				    	hidden: axisTitleTextboxHidden,	
 				    	
@@ -355,7 +367,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	            					fn : function(buttonValue, inputText, showConfig){
 	            						if (buttonValue == 'ok') {
 	            							
-	            							// *_* 
+	            							// (danristo :: danilo.ristovski@mht.net) 
 	            							if(Ext.getCmp("chartParallelLimit").hidden == false && 
 	    											Ext.getCmp("chartParallelLimit") != undefined && 
 	    												Ext.getCmp("chartParallelLimit") != null)
@@ -381,12 +393,12 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			});
 			
 			/** 
-			 * START: If the chart is one of the specified types hide the "createTemplate" 
+			 * If the chart is one of the specified types hide the "createTemplate" 
 			 * icon that is attached to every record (item) inside the left (Y) axis
 			 * panel (between the aggregation type and 'remove' button) and it is dedicated
 			 * for specifying Series and Tooltip details. 
-			 * (danilo.ristovski@mht.net)
-			 * */
+			 * (danristo :: danilo.ristovski@mht.net) 
+			 */
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
 			if (chartType == "SUNBURST" || chartType == "WORDCLOUD" ||
@@ -395,7 +407,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			{
 				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";				
 			}	
+			console.log("*** W - chartColumnsContainer ***");
+			console.log(chartColumnsContainer);
 			
+//			console.log(ChartColumnsContainerManager.yAxisPool);
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);
 			
 			return chartColumnsContainer;

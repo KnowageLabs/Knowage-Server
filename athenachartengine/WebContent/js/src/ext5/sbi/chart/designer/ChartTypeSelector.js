@@ -29,17 +29,17 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			console.log(Sbi.chart.designer.ChartColumnsContainerManager.instanceCounter);
 			console.log(Sbi.chart.designer.ChartColumnsContainerManager.instanceIdFeed);
 			console.log(Sbi.chart.designer.ChartColumnsContainerManager.allAxisData);
-			console.log("*** E ***");
+			console.log("*** E - ChartTypeSelector:rowclick listener ***");
 			/**
 			 * The chart type that is actually picked (clicked).
-			 * (comment by: danilo.ristovski@mht.net)
+			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			var selectedType = record.get('type');			
 			
 			/**
 			 * The store that contains all chart types that are provided (offered) by the Designer
 			 * and that we can pick (select) from the chart type selector container on the left.
-			 * (comment by: danilo.ristovski@mht.net)
+			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			var store = this.store;
 			
@@ -47,14 +47,14 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			
 			/**
 			 * Scope of the chart type selector.
-			 * (comment by: danilo.ristovski@mht.net)
+			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			var chartTypeSelectorScope = this;
 			
 			/**
 			 * The chart type that has been already chosen (defined) - the one we had just before
 			 * we picked a new one from the chart type selector.
-			 * (comment by: danilo.ristovski@mht.net)
+			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			var thisChartType = this.chartType.toLowerCase();
 			
@@ -62,7 +62,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			 * Lookup for checking the compatibility of the chart types when we are determining
 			 * should all the data that exists in the current chart within the X and Y panels
 			 * be removed (cleared). 
-			 * (danilo.ristovski@mht.net)
+			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			var compatibilityAddDataLookup = 
 			{
@@ -85,7 +85,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 			 * of the same type as the chart that we have in Designer (the one that has already
 			 * been chosen or defined by the loading of the already existing chart document, 
 			 * 'thisChartType'), do not take any action. 
-			 * (danilo.ristovski@mht.net)
+			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			if (selectedType.toLowerCase() != thisChartType)
 			{						
@@ -94,7 +94,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 				 * are compatible (in a manner of their quantity and quality criteria for the
 				 * serie and category items). If not compatible, 'compatibleTypes' variable is
 				 * going to be 'false'.
-				 * (danilo.ristovski@mht.net)
+				 * @author: danristo (danilo.ristovski@mht.net)
 				 */
 				var compatibleTypes = false;
 				
@@ -126,11 +126,11 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 						{
 							if (buttonValue == 'ok') 
 							{
-								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();
-							
+								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();							
 
 								
 								/////////////////////////////////////
+								
 								var chartColumnsContainer = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 								var numberOfYAxis = chartColumnsContainer.length;
 								
@@ -186,7 +186,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 								 * axis panel and bottom (X) axis panel and plus tool of the left
 								 * (Y) panel when new row is clicked. Hide also serie&tooltip icon 
 								 * for SERIE records inside the left (Y) panel.
-								 * (danilo.ristovski@mht.net)
+								 * @author: danristo (danilo.ristovski@mht.net)
 								 */
 								if (selectedType.toLowerCase()=="sunburst" || selectedType.toLowerCase()=="wordcloud" || 
 										selectedType.toLowerCase()=="treemap" || selectedType.toLowerCase()=="parallel" ||
@@ -246,6 +246,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 									 * If we change chart type from one that is not compatible with the RADAR or SCATTER
 									 * to the one of those two, hide plus buttons because we cannot have more than one
 									 * Y-axis panel for these types.
+									 * @author: danristo (danilo.ristovski@mht.net)
 									 */
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									plusLeftAxis.hide();
@@ -277,6 +278,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 					 * were potentially defined earlier for those compatible chart types and hide
 					 * the plus tool placed on the left Y-axis panels header. For RADAR chart we
 					 * can have only one Y-axis.
+					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
 					if (selectedType.toLowerCase() == "radar" || selectedType.toLowerCase() == "scatter") {
 						/**
@@ -302,6 +304,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 						 * Removing those items inside the X-axis panel is necessary because we can have
 						 * multiple categories for BAR/LINE chart type, whilst we can have ONLY ONE CATEGORY
 						 * for RADAR/SCATTER chart type.
+						 * @author: danristo (danilo.ristovski@mht.net)
 						 */					
 						if ((thisChartType == "bar" || thisChartType == "line") && 
 								Ext.getCmp("chartBottomCategoriesContainer").store.data.length > 1) {
@@ -362,7 +365,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 				 * When we change the chart type, reset the 'Series type' parameter on the all Y-axises
 				 * that exist on the page.
 				 * (added: 23th July 2015)
-				 * (danilo.ristovski@mht.net)
+				 * @author: danristo (danilo.ristovski@mht.net)
 				 */
 //				var yAxisPool = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 //				console.log("PPP");
@@ -384,7 +387,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	setChartType: function(type) {
 		
 		this.chartType = type;
-		console.log("*** F ***");
+		console.log("*** E - ChartTypeSelector:setChartType() ***");
 		// selection on the table
 		for(var i = 0; i < this.store.data.length; i++) {
 			
