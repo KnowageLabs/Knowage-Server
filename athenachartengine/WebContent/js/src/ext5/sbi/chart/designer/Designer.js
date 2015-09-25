@@ -133,10 +133,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 		
 		styleType: '',
 		
-		getStyleName: function() {
-			return styleType;			
-		},
-		
 		/**
 		 * Get the missing JSON configuration elements (properties) in order to define
 		 * their default values for any type of chart (including the BAR chart).
@@ -508,6 +504,46 @@ Ext.define('Sbi.chart.designer.Designer', {
 								LABELS: {
 									distance: "5",
 									rotation: "1"
+								},
+								
+								/**
+								 * Added VALUE tag with SERIE subtag so every new serie item
+								 * can have parameters with these values (according to the 
+								 * current style - in this case, the RED style).
+								 * @author: danristo (danilo.ristovski@mht.net)
+								 */
+								VALUES: {
+									SERIE: {
+																		       
+								        animation: "true",
+								        borderColor: "#FFFFFF",
+								        color:"",
+								        groupingFunction:"SUM",							        
+							        	orderType:"",
+							        	pointInterval:"1",
+							        	postfixChar:"",
+							        	precision:"",
+							            prefixChar:"",
+							            showInLegend: "true",
+							            showValue: "true",
+							            type:"",
+							            
+							            TOOLTIP: {
+							            	backgroundColor:"",
+							                style:"color:;fontFamily:;fontWeight:;fontSize:;",
+							                templateHtml:""
+						            	},
+						            	
+						            	DIAL: {
+						            		backgroundColorDial:"#3366FF"
+						            	},
+						            	
+						            	DATA_LABELS: {
+						            		colorDataLabels:"#339966",
+						            		formatDataLabels:"",
+						            		yPositionDataLabels:"-40"
+						            	}
+									}
 								}
 							}								
 						},
