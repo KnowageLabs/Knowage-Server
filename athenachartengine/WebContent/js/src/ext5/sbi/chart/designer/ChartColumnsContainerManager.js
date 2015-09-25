@@ -143,11 +143,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
 														
 							//console.log("!!! NEW SERIE ITEM !!!");
+							console.log(Sbi.chart.designer.Designer.styleName);
+							console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(Sbi.chart.designer.Designer.styleName));
 							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
 							 * not provided, error appears
-							 * (danristo :: danilo.ristovski@mht.net) 
+							 * @author: danristo (danilo.ristovski@mht.net)
 							 */
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
@@ -156,7 +158,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
   	  						 * one of these chart types.
-  	  						 * (danristo :: danilo.ristovski@mht.net) 
+  	  						 * @author: danristo (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
 									chartType == 'TREEMAP' || chartType == 'HEATMAP')) {
@@ -208,7 +210,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				    	
 				    	/**
 				    	 * True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
-				    	 * (danristo :: danilo.ristovski@mht.net) 
+				    	 * @author: danristo (danilo.ristovski@mht.net)
 				    	 */ 
 				    	hidden: axisTitleTextboxHidden,	
 				    	
@@ -243,7 +245,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		});
 					    		
 					    		/**
-					    		 * (danilo.ristovski@mht.net)
+					    		 * For the HEATMAP chart type hide these three fieldsets inside the
+					    		 * Axis style configuration popup window since we don't need them.
+					    		 * @author: danristo (danilo.ristovski@mht.net)
 					    		 */
 						    	if (chartType.toUpperCase() == 'HEATMAP')
 					    		{
@@ -395,7 +399,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			 * icon that is attached to every record (item) inside the left (Y) axis
 			 * panel (between the aggregation type and 'remove' button) and it is dedicated
 			 * for specifying Series and Tooltip details. 
-			 * (danristo :: danilo.ristovski@mht.net) 
+			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 			
