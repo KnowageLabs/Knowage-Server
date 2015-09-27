@@ -405,27 +405,14 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setCategory(category);
 			hibDataSet.setParameters(dataSet.getParameters());
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
-			
+
 			
 			SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
-
-			Query hibQuery = session.createQuery("from SbiFederatedDataset h where h.federation_id = ? ");
-			hibQuery.setInteger(0, dataSet.getDatasetFederation().getFederation_id());
-			List<SbiFederatedDataset> federationDefinitionsFromDB = hibQuery.list();
-
-			hibQuery = session.createQuery("from SbiFederatedDataset h where h.label = ? ");
-			hibQuery.setString(0, dataSet.getDatasetFederation().getLabel());
-			federationDefinitionsFromDB = hibQuery.list();
-			
 			//save teh federations
-			//session.save(federationDefinition);
-			if(federationDefinitionsFromDB != null && federationDefinitionsFromDB.size()>0){
-				hibDataSet.setFederation(federationDefinitionsFromDB.get(0));
+			if(federationDefinition != null ){
+				hibDataSet.setFederation(federationDefinition);
 			}
-			
-			
-			
-			
+
 			
 			if (dataSet.getOwner() == null) {
 				hibDataSet.setOwner(userIn);
@@ -1252,7 +1239,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 
-				hibDataSet.setFederation(SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()));
+				SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
+				//save teh federations
+				if(federationDefinition != null ){
+					hibDataSet.setFederation(federationDefinition);
+				}
+
 				
 				
 				Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
@@ -1839,6 +1831,5 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return results;
 	}
-
 
 }

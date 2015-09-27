@@ -19,6 +19,9 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -51,8 +54,10 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL = "qbeFromBMServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL = "qbeFromDataSetServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL = "qbeEditDatasetServiceUrl";
+	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL = "qbeEditFederationServiceUrl";
 
 	public static final String QBE_EDIT_FROM_BM_ACTION = "QBE_ENGINE_START_ACTION_FROM_BM";
+	public static final String QBE_EDIT_FROM_FEDERATION_ACTION = "QBE_ENGINE_FROM_FEDERATION_START_ACTION";
 	public static final String QBE_EDIT_FROM_DATA_SET_ACTION = "QBE_ENGINE_FROM_DATASET_START_ACTION";
 	public static final String QBE_EDIT_DATA_SET_ACTION = "QBE_ENGINE_EDIT_DATASET_START_ACTION";
 
@@ -85,6 +90,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String executionId = ExecuteAdHocUtility.createNewExecutionId();
 
 			String qbeEditFromBMActionUrl = buildQbeEditFromBMServiceUrl(executionId);
+			String qbeEditFromFederationActionUrl = buildQbeEditFromFederationServiceUrl(executionId);
 			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId);
 			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId);
 			String worksheetEditActionUrl = buildWorksheetEditServiceUrl(executionId);
@@ -108,6 +114,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(LANGUAGE, locale.getLanguage());
 				setAttribute(COUNTRY, locale.getCountry());
 				setAttribute(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
+				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL, qbeEditFromFederationActionUrl);
 				setAttribute(OUTPUT_PARAMETER_WORKSHEET_EDIT_SERVICE_URL, worksheetEditActionUrl);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL, qbeEditFromBMActionUrl);
 				setAttribute(OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL, qbeEditFromDataSetActionUrl);
@@ -239,6 +246,46 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		return qbeEditActionUrl;
 	}
 
+	
+	
+	// QBE from dataset
+	protected String buildQbeEditFromFederationServiceUrl(String executionId) {
+		Engine qbeEngine = null;
+		String qbeEditActionUrl = null;
+		String label=null;
+		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap();
+		parametersMap.put("SBI_EXECUTION_ID", executionId);
+
+		ICache cache = SpagoBICacheManager.getCache();
+		if(cache instanceof SQLDBCache){
+			logger.debug("The cache is a SQL cache so we have the datasource");
+			label = ((SQLDBCache)cache).getDataSource().getLabel();
+			logger.debug("The datasource is "+label);
+		}
+		
+		if (label != null) {
+			parametersMap.put(EngineConstants.ENV_DATASOURCE_FOR_CACHE, label);
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+
+		try {
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		} catch (SpagoBIRuntimeException r) {
+			// the qbe engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+
+		if (qbeEngine != null) {
+			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+
+			// create the qbe Edit Service's URL
+			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		}
+		return qbeEditActionUrl;
+	}
+	
 	// QBE from dataset
 	protected String buildQbeEditFromDataSetServiceUrl(String executionId) {
 		Engine qbeEngine = null;
@@ -316,6 +363,12 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	protected Map<String, String> buildQbeEditFromBMServiceBaseParametersMap() {
 		Map<String, String> parametersMap = buildServiceBaseParametersMap();
 		parametersMap.put("ACTION_NAME", QBE_EDIT_FROM_BM_ACTION);
+		return parametersMap;
+	}
+	
+	protected Map<String, String> buildQbeEditFromFederationServiceBaseParametersMap() {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap();
+		parametersMap.put("ACTION_NAME", QBE_EDIT_FROM_FEDERATION_ACTION);
 		return parametersMap;
 	}
 

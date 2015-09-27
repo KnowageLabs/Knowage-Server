@@ -10,6 +10,7 @@ import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
 
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class DatasetFederationJSONSerializer implements Serializer {
@@ -21,6 +22,7 @@ public class DatasetFederationJSONSerializer implements Serializer {
 	public static final String DESCRIPTION = "description";
 	public static final String RELATIONSHIPS = "relationships";
 	public static final String TYPE = "type";
+	public static final String SOURCE_DATASETS = "sourceDataset";
 	public static final String CACHE_DATA_SOURCE = "cache_data_source";
 
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -39,7 +41,12 @@ public class DatasetFederationJSONSerializer implements Serializer {
 			result.put(DESCRIPTION, fd.getDescription());
 			result.put(RELATIONSHIPS, fd.getRelationships());
 			result.put(TYPE, "FEDERATED_DATASET");
+			if(fd.getSourceDatasets()!=null){
+				result.put(SOURCE_DATASETS, (JSONArray) SerializerFactory.getSerializer("application/json").serialize(fd.getSourceDatasets(), Locale.ENGLISH));
+			} 
 
+			
+			
 			String cacheDataSource = new CacheResource().getCacheDataSource();
 			if (cacheDataSource != null) {
 				result.put(CACHE_DATA_SOURCE, cacheDataSource);

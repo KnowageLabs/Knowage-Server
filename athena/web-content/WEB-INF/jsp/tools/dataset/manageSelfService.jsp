@@ -36,6 +36,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String qbeEditFromBMActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL);
     String qbeEditFromDataSetActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL);
     String qbeEditDatasetActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL);
+    String qbeEditFromFederationActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL);
     String georeportEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL);
     String typeDoc = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TYPE_DOC);
     String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
@@ -63,6 +64,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     	var selfService = Ext.create('Sbi.selfservice.ManageSelfServiceContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'
+            , qbeFromFederationBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromFederationActionUrl) %>'
             , qbeFromDataSetBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromDataSetActionUrl) %>'
             , qbeEditDatasetUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditDatasetActionUrl) %>'
             , georeportEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(georeportEditActionUrl) %>'

@@ -154,7 +154,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 			DatasetFederation federation = new DatasetFederation();
 			federation.setRelationships((getEnv().get(EngineConstants.ENV_RELATIONS).toString()));
 			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
-			federation.setFederation_id((Integer)(getEnv().get(EngineConstants.ENV_FEDERATED_ID)));
+			federation.setFederation_id(new Integer((String)(getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
 			
 			
 			newDataset = new FederatedDataSet(federation);

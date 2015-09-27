@@ -93,7 +93,7 @@ public class FederatedDataSet extends QbeDataSet {
 		sbd.setFederationRelations(federation.getRelationships());
 		sbd.setFederationId(federation.getFederation_id());
 
-		sbd.setType(DataSetConstants.DS_FEDERATED);	
+		sbd.setType(DS_TYPE);	
 
 		return sbd;
 	}

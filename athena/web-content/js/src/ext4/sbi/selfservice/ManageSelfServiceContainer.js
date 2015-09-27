@@ -129,14 +129,14 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			this.documentexecution.load(url);
 		}
 		else if(inputType == "FEDERATED_DATASET"){
-			var modelName = record.data.name;
+			var federationId = record.data.id;
 			var dataSourceLabel = record.data.data_source_label;
-			var url = this.qbeFromBMBaseUrl;
-			if(dataSourceLabel || dataSourceLabel!=""){
+			var url = this.qbeFromFederationBaseUrl;
+		
+			if(federationId || federationId!=""){
 				url = url+ 
-				'&DATA_SOURCE_LABEL=' + dataSourceLabel;
+				'&FEDERATION_ID=' + federationId;
 			}
-			this.documentexecution.modelName = modelName;
 			this.documentexecution.load(url);
 		}
 		if(inputType == "DATASET"){

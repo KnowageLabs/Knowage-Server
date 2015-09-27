@@ -25,6 +25,14 @@ public class SbiFederationUtils {
 	static private Logger logger = Logger.getLogger(SbiFederationUtils.class);
 
 	public static DatasetFederation toDatasetFederation(SbiFederatedDataset hibFd, IEngUserProfile userProfile) {
+		return toDatasetFederation(hibFd, userProfile, true);
+	}
+	
+	public static DatasetFederation toDatasetFederationNoDatasets(SbiFederatedDataset hibFd, IEngUserProfile userProfile) {
+		return toDatasetFederation(hibFd, userProfile, false);
+	}
+
+	public static DatasetFederation toDatasetFederation(SbiFederatedDataset hibFd, IEngUserProfile userProfile, boolean datasets) {
 		logger.debug("IN");
 		DatasetFederation fd = new DatasetFederation();
 
@@ -36,7 +44,10 @@ public class SbiFederationUtils {
 			fd.setDescription(hibFd.getDescription());
 			fd.setRelationships(hibFd.getRelationships());
 			fd.setFederation_id(hibFd.getFederation_id());
-			fd.setSourceDatasets(DataSetFactory.toDataSet(hibFd.getSourceDatasets(), userProfile));
+			if(datasets){
+				fd.setSourceDatasets(DataSetFactory.toDataSet(hibFd.getSourceDatasets(), userProfile));
+			}
+			
 		}else{
 			logger.debug("The federation is null");
 		}
@@ -44,7 +55,7 @@ public class SbiFederationUtils {
 		logger.debug("OUT");
 		return fd;
 	}
-
+	
 	public static SbiFederatedDataset toSbiFederatedDataset( DatasetFederation hibFd) {
 		logger.debug("IN");
 		SbiFederatedDataset fd = new SbiFederatedDataset();

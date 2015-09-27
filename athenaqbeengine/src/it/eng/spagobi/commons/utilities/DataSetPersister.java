@@ -46,7 +46,7 @@ public class DataSetPersister extends SimpleRestClient{
 		parameters.put("user_id", userId);
 
 		logger.debug("Call persist service in post");
-		executeService(parameters, serviceUrl);
+		executeGetService(parameters, serviceUrl);
 		
 		logger.debug("OUT");
 	}

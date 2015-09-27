@@ -41,6 +41,8 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -165,13 +167,26 @@ public class DataSetFactory {
 		return toDataSet(sbiDataSet, null);
 	}
 	
-	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSets, IEngUserProfile userProfile) {
-		Set<IDataSet> ds = new java.util.HashSet<IDataSet>();
-		for (SbiDataSet dataset : sbiDataSets) {
-			ds.add(toDataSet(dataset));
+//	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSets, IEngUserProfile userProfile) {
+//		Set<IDataSet> ds = new java.util.HashSet<IDataSet>();
+//		for (SbiDataSet dataset : sbiDataSets) {
+//			ds.add(toDataSet(dataset));
+//		}
+//		return ds;
+//	}
+
+	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
+		
+		Set<IDataSet> toReturn = new HashSet<IDataSet>();
+		
+		for (Iterator iterator = sbiDataSet.iterator(); iterator.hasNext();) {
+			SbiDataSet sbiDataSet3 = (SbiDataSet) iterator.next();
+			toReturn.add(toDataSet(sbiDataSet3, userProfile));
 		}
-		return ds;
+		
+		return toReturn;
 	}
+
 
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;

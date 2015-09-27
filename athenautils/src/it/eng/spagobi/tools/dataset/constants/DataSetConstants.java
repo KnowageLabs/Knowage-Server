@@ -163,7 +163,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_QBE, "Qbe");
 		code2name.put(DataSetConstants.DS_CUSTOM, "Custom");
 		code2name.put(DataSetConstants.DS_FLAT, "Flat");
-		name2Code.put( DataSetConstants.DS_FEDERATED,"Federated");
+		code2name.put( DataSetConstants.DS_FEDERATED,"Federated");
 	}
 	
 }

@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.federateddataset.dao;
 
+import it.eng.qbe.dataset.FederationUtils;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -85,8 +86,40 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 	}
 
 	@Override
-	public void getSbiFederatedDataSet(Integer id) {
-		// TODO Auto-generated method stub
+	public DatasetFederation loadFederationDefinition(Integer id) throws EMFUserError {
+
+		logger.debug("IN: loading federation");
+		Session aSession = null;
+		Transaction tx = null;
+		DatasetFederation toReturn = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiFederatedDataset fd where fd.federation_id = ? ");
+			hibQuery.setInteger(0, id);
+			SbiFederatedDataset sbiResult  = (SbiFederatedDataset)hibQuery.uniqueResult();
+			
+			toReturn = SbiFederationUtils.toDatasetFederation(sbiResult, getUserProfile());
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Loading dataset federation", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		logger.debug("OUT");
+		return toReturn;
 
 	}
 

@@ -6,7 +6,7 @@
 	<class name="it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset" table="sbi_federation_definition">
 	
 		<id name="federation_id" type="int">
-			<column name="federation_id"/>
+			<column name="id_sbi_federated_data_set"/>
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
 				<param name="segment_value">sbi_federated_data_set</param>
@@ -26,7 +26,7 @@
 		<property name="relationships" type="string">
 			<column name="RELATIONSHIPS"/>
 		</property>
-		<set name="sourceDatasets" table="SBI_DATA_SET_FEDERATION">
+		<set name="sourceDatasets" table="SBI_DATA_SET_FEDERATION" lazy="false">
 			<key>
 				<column name="FEDERATION_ID"/>
 			</key>

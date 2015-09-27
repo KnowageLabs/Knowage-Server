@@ -5,6 +5,10 @@
 	<MAPPING business_type="ACTION" 
 			 business_name="QBE_ENGINE_START_ACTION" 
 			 publisher_name="START_QBE_PUBLISHER"/>
+			 
+    <MAPPING business_type="ACTION" 
+             business_name="QBE_ENGINE_FROM_FEDERATION_START_ACTION" 
+             publisher_name="START_QBE_PUBLISHER"/>
 
     <MAPPING business_type="ACTION" 
              business_name="QBE_ENGINE_FROM_DATASET_START_ACTION" 

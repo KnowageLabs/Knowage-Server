@@ -16,7 +16,7 @@ public interface ISbiFederatedDatasetDAO extends ISpagoBIDao {
 
 	public void saveSbiFederatedDataSet(DatasetFederation dataset);
 
-	public void getSbiFederatedDataSet(Integer id);
+	public DatasetFederation loadFederationDefinition(Integer id) throws EMFUserError;
  
 	public List<DatasetFederation> loadAllFederatedDataSets() throws EMFUserError;
 

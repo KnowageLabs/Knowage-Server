@@ -28,7 +28,7 @@ import org.json.JSONArray;
 
 /**
  * 
- * @author ALberto Ghedin (alberto.ghedin@eng.it)
+ * @author Alberto Ghedin (alberto.ghedin@eng.it), Giulio Gavardi(giulio.gavardi@eng.it)
  */
 
 
@@ -48,7 +48,7 @@ public class SimpleRestClient {
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	protected ClientResponse executeService(Map<String,Object> parameters,  String serviceUrl) throws Exception {
+	protected ClientResponse executeGetService(Map<String,Object> parameters,  String serviceUrl) throws Exception {
 
 		logger.debug("IN");
 
