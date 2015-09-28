@@ -13,7 +13,7 @@ import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
-import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -331,7 +331,7 @@ public class DataSetFactory {
 			
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 
-				SbiFederatedDataset sbiFederation = sbiDataSet.getFederation();
+				SbiFederationDefinition sbiFederation = sbiDataSet.getFederation();
 				
 				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederation(sbiFederation, userProfile));
 				ds.setConfiguration(sbiDataSet.getConfiguration());

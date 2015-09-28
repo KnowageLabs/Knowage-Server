@@ -191,7 +191,7 @@
 										 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
 									</md-button>
 									<md-button style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
-										 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(relationshipArr)"></i>
+										 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit()"></i>
 									</md-button>
 							 	</md-fab-actions>
 							 </md-fab-speed-dial>
@@ -215,7 +215,7 @@
 	</div>
 	<div ng-hide="ctrl.state">
 		<md-button class="md-raised buttonL" aria-label="btn_back_to_first_page"
-			 ng-click="ctrl.toggle()">BACK</md-button>
+			 ng-click="ctrl.toggleBack()">BACK</md-button>
 		<md-button class="md-raised buttonR" aria-label="btn_save_federation"
 			
 			ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>

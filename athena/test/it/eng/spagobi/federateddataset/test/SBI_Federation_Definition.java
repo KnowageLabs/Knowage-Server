@@ -2,8 +2,8 @@ package it.eng.spagobi.federateddataset.test;
 import javax.persistence.*;
 
 @Entity
-@Table(name= "SBI_Federated_Data_Set")
-public class SBI_Federated_Data_Set {
+@Table(name= "SBI_FEDERATION_DEFINITION")
+public class SBI_Federation_Definition {
 	@Id @GeneratedValue
 	@Column(name = "federation_id")
 	private int federation_id;
@@ -17,7 +17,7 @@ public class SBI_Federated_Data_Set {
 	@Column(name = "description")
 	private String description;
 	
-	public SBI_Federated_Data_Set(){}
+	public SBI_Federation_Definition(){}
 
 	public int getFederation_id() {
 		return federation_id;

@@ -9,7 +9,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -154,7 +154,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	 * Loading the federation definition from the service
 	 * @param federationId
 	 */
-	public DatasetFederation loadFederationDefinition(String federationId){
+	public FederationDefinition loadFederationDefinition(String federationId){
 		FederationClient fc = new FederationClient();
 		try {
 			return fc.getFederation(federationId, getDataSetServiceProxy());
@@ -177,7 +177,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		if(federatedDatasetId!=null){
 			
 			
-			DatasetFederation dsf = loadFederationDefinition(federatedDatasetId);
+			FederationDefinition dsf = loadFederationDefinition(federatedDatasetId);
 			
 			// update parameters into the dataset
 			logger.debug("The dataset is federated");

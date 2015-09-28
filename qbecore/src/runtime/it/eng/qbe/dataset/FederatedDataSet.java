@@ -16,7 +16,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -47,11 +47,11 @@ public class FederatedDataSet extends QbeDataSet {
 
 	private static transient Logger logger = Logger.getLogger(FederatedDataSet.class);
 
-	DatasetFederation federation;
+	FederationDefinition federation;
 
 	public FederatedDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
-		federation = new DatasetFederation();
+		federation = new FederationDefinition();
 		setDependentDataSets((SpagoBiDataSet[])dataSetConfig.getDependentDataSets());
 
 		federation.setLabel(dataSetConfig.getFederationlabel());
@@ -68,7 +68,7 @@ public class FederatedDataSet extends QbeDataSet {
 		}
 	}
 
-	public FederatedDataSet(DatasetFederation federation){
+	public FederatedDataSet(FederationDefinition federation){
 		this.federation = federation;
 	}
 
@@ -186,7 +186,7 @@ public class FederatedDataSet extends QbeDataSet {
 		return dataSource;
 	}
 
-	public DatasetFederation getDatasetFederation() {
+	public FederationDefinition getDatasetFederation() {
 		return federation;
 	}
 	public void setDataset2CacheTableName(JSONObject dataset2CacheTableName) {

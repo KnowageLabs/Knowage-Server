@@ -10,7 +10,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 import java.util.Set;
 
-public class DatasetFederation {
+public class FederationDefinition {
 
 	
 	private int federation_id;

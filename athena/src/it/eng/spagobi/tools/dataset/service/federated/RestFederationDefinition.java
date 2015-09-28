@@ -8,10 +8,10 @@ package it.eng.spagobi.tools.dataset.service.federated;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.federateddataset.dao.ISbiFederatedDatasetDAO;
+import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -31,9 +31,9 @@ import org.json.JSONObject;
 
 
 @Path("/federateddataset")
-public class RestFederatedDataset {
+public class RestFederationDefinition {
 
-	static private Logger logger = Logger.getLogger(RestFederatedDataset.class);
+	static private Logger logger = Logger.getLogger(RestFederationDefinition.class);
 
 	@POST
 	@Path("/post")
@@ -44,11 +44,11 @@ public class RestFederatedDataset {
 		try {
 
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			ISbiFederatedDatasetDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
+			ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
 
-			DatasetFederation fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
+			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
 
-			federatedDatasetDao.saveSbiFederatedDataSet(fdsNew);
+			federatedDatasetDao.saveSbiFederationDefinition(fdsNew);
 			return "ok";
 		} catch (Exception e) {
 
@@ -60,9 +60,9 @@ public class RestFederatedDataset {
 
 	}
 
-	private DatasetFederation recoverFederatedDatasetDetails (JSONObject requestBodyJSON) {
+	private FederationDefinition recoverFederatedDatasetDetails (JSONObject requestBodyJSON) {
 
-		DatasetFederation fds = new DatasetFederation();
+		FederationDefinition fds = new FederationDefinition();
 		Integer id = -1;
 		String idStr = (String) requestBodyJSON.opt("FEDERATION_ID");
 		if (idStr != null && !idStr.equals("")) {

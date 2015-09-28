@@ -9,7 +9,7 @@ package it.eng.spagobi.engines.qbe.federation;
 import it.eng.spagobi.commons.utilities.DataSetPersister;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
@@ -32,11 +32,11 @@ public class FederationClient extends SimpleRestClient{
 	
 	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
 
-	public DatasetFederation getFederation(String federationID, DataSetServiceProxy proxy) throws Exception {
+	public FederationDefinition getFederation(String federationID, DataSetServiceProxy proxy) throws Exception {
 
 		logger.debug("IN");
 
-		DatasetFederation toReturn = new DatasetFederation();
+		FederationDefinition toReturn = new FederationDefinition();
 		
 		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
 

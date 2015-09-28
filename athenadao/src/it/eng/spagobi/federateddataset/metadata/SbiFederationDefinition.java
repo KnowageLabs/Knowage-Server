@@ -11,7 +11,7 @@ import java.util.Set;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
-public class SbiFederatedDataset extends SbiHibernateModel {
+public class SbiFederationDefinition extends SbiHibernateModel {
 	
 	//fields
 	private int federation_id;
@@ -22,7 +22,7 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 	private Set<SbiDataSet> sourceDatasets;
 	
 	//constructors
-	public SbiFederatedDataset(int federation_id, String label,
+	public SbiFederationDefinition(int federation_id, String label,
 			String name, String description, String relationships) {
 		
 		this.federation_id = federation_id;
@@ -40,7 +40,7 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 		this.relationships = relationships;
 	}
 
-	public SbiFederatedDataset(int federation_id) {
+	public SbiFederationDefinition(int federation_id) {
 		
 		this.federation_id = federation_id;
 	}
@@ -49,7 +49,7 @@ public class SbiFederatedDataset extends SbiHibernateModel {
 		return federation_id;
 	}
 
-	public SbiFederatedDataset() {
+	public SbiFederationDefinition() {
 		
 	}
 

@@ -8,16 +8,16 @@ package it.eng.spagobi.federateddataset.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 
 import java.util.List;
 
-public interface ISbiFederatedDatasetDAO extends ISpagoBIDao {
+public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 
-	public void saveSbiFederatedDataSet(DatasetFederation dataset);
+	public void saveSbiFederationDefinition(FederationDefinition dataset);
 
-	public DatasetFederation loadFederationDefinition(Integer id) throws EMFUserError;
+	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError;
  
-	public List<DatasetFederation> loadAllFederatedDataSets() throws EMFUserError;
+	public List<FederationDefinition> loadAllFederatedDataSets() throws EMFUserError;
 
 }

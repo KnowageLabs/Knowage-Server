@@ -10,7 +10,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
-import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -407,11 +407,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
 
 			
-			SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
+			/*SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
 			//save teh federations
 			if(federationDefinition != null ){
 				hibDataSet.setFederation(federationDefinition);
-			}
+			}*/
 
 			
 			if (dataSet.getOwner() == null) {
@@ -1239,11 +1239,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 
-				SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
+				/*SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
 				//save teh federations
 				if(federationDefinition != null ){
 					hibDataSet.setFederation(federationDefinition);
-				}
+				}*/
 
 				
 				

@@ -236,7 +236,7 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 						console.log("List:"+ctr.list)
 						angular.toJson(ctr.list)
 						console.log("List JSON:"+ctr.list)
-						angular.forEach(ctr.lista, function(dataset){
+						angular.forEach(ctr.list, function(dataset){
 							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
 								listField.selected =  false;
 							});
@@ -295,6 +295,10 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 		} else {
 			ctr.state=!ctr.state;
 		}
+	}
+	
+	ctr.toggleBack = function() {
+		ctr.state=!ctr.state;
 	}
 	
 	ctr.kickOutFromAssociationArray = function(param) {//ispitati
@@ -358,19 +362,42 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 		 		             ];
 	
 	//FAB Speed Dial customization for deleting and editing a relationship
-	ctr.availableDirections = ['up','down','left','right'];
 	ctr.selectedDirection = 'left';
-	ctr.availableModes = ['md-fling', 'md-scale'];
     ctr.selectedMode = 'md-scale';
     
     ctr.prepRelForEdit = function() {
     	console.log(ctr.multiArray)
+    	
+    	ctr.prepListaNew = ctr.listaNew;
+    	console.log(ctr.prepListaNew);
+    	ctr.listaNew = [];
+    	ctr.glupalista = [];
+    	
+    	angular.forEach(ctr.multiArray, function(relation){
+    		angular.forEach(relation, function(objekat){
+    			ctr.glupalista.push(objekat.sourceTable.name)
+    		});
+    	});
+    	
+    	console.log(ctr.glupalista)
+    	for (var int = 0; int < ctr.glupalista.length; int++) {
+    		console.log(ctr.glupalista[int]);
+    		angular.forEach(ctr.list, function(dataset){
+        		console.log(dataset)
+        		
+        		if(dataset.name==ctr.glupalista[int]){
+        			ctr.listaNew.push(dataset);
+        		}
+        	});
+		}
+    	
+    		
     	//ctr.listaNew=[];
-    	angular.forEach(ctr.multiArray, function(relation){    		
+    	/*angular.forEach(ctr.multiArray, function(relation){    		
     		angular.forEach(relation, function(objekat){
     			console.log(objekat.sourceTable.name)   			    			
     		});
-    	});
+    	});*/
     }
 }
 

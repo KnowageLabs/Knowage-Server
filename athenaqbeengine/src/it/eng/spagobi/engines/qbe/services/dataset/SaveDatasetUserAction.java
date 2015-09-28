@@ -27,7 +27,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -151,7 +151,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		//if its a federated dataset we've to add the dependent datasets
 		if(getEnv().get(EngineConstants.ENV_FEDERATED_ID)!=null){
 			
-			DatasetFederation federation = new DatasetFederation();
+			FederationDefinition federation = new FederationDefinition();
 			federation.setRelationships((getEnv().get(EngineConstants.ENV_RELATIONS).toString()));
 			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
 			federation.setFederation_id(new Integer((String)(getEnv().get(EngineConstants.ENV_FEDERATED_ID))));

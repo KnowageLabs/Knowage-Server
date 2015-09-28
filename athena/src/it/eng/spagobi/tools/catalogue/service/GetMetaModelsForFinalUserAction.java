@@ -15,10 +15,10 @@ import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.federateddataset.dao.ISbiFederatedDatasetDAO;
+import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -44,7 +44,7 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 			dao.setUserProfile(this.getUserProfile());
 			List<MetaModel> allModels = null;
-			List<DatasetFederation> allFederatedDatasets = null;
+			List<FederationDefinition> allFederatedDatasets = null;
 
 			List<Integer> categories = getCategories();
 
@@ -80,12 +80,12 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 			logger.debug("Read " + allModels.size() + " existing models");
 
 			logger.debug("Read federated dataset");
-			ISbiFederatedDatasetDAO federDsDao = DAOFactory.getFedetatedDatasetDAO();
+			ISbiFederationDefinitionDAO federDsDao = DAOFactory.getFedetatedDatasetDAO();
 			dao.setUserProfile(this.getUserProfile());
 
 			allFederatedDatasets = federDsDao.loadAllFederatedDataSets();
 			if (allFederatedDatasets == null) {
-				allFederatedDatasets = new ArrayList<DatasetFederation>();
+				allFederatedDatasets = new ArrayList<FederationDefinition>();
 			}
 			logger.debug("Read " + allFederatedDatasets.size() + " existing federated datasets");
 
@@ -96,7 +96,7 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 				toReturn.add(mm);
 			}
 			for (Iterator iterator = allFederatedDatasets.iterator(); iterator.hasNext();) {
-				DatasetFederation fd = (DatasetFederation) iterator.next();
+				FederationDefinition fd = (FederationDefinition) iterator.next();
 				toReturn.add(fd);
 			}
 

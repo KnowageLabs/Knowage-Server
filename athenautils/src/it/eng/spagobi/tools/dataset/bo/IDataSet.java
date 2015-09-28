@@ -11,7 +11,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
@@ -198,8 +198,8 @@ public interface IDataSet {
 	public IDataSource getDataSourceForWriting();
 	public void setDataSourceForWriting(IDataSource dataSource);
 	
-	public DatasetFederation getDatasetFederation();
-	public void setDatasetFederation(DatasetFederation datasetFederation);
+	public FederationDefinition getDatasetFederation();
+	public void setDatasetFederation(FederationDefinition datasetFederation);
 
 	
 }

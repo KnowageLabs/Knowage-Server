@@ -6,7 +6,7 @@
 package it.eng.spagobi.commons.serializer;
 
 import it.eng.spagobi.api.CacheResource;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 
 import java.util.Locale;
 
@@ -28,12 +28,12 @@ public class DatasetFederationJSONSerializer implements Serializer {
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
-		if (!(o instanceof DatasetFederation)) {
+		if (!(o instanceof FederationDefinition)) {
 			throw new SerializationException("FederatedDatasetJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
-			DatasetFederation fd = (DatasetFederation) o;
+			FederationDefinition fd = (FederationDefinition) o;
 			result = new JSONObject();
 			result.put(ID, fd.getFederation_id());
 			result.put(LABEL, fd.getLabel());

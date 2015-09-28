@@ -11,8 +11,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
-import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -26,12 +26,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implements ISbiFederatedDatasetDAO {
+public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO implements ISbiFederationDefinitionDAO {
 
-	static private Logger logger = Logger.getLogger(SbiFederatedDatasetDAOHibImpl.class);
+	static private Logger logger = Logger.getLogger(SbiFederationDefinitionDAOHibImpl.class);
 
 	@Override
-	public void saveSbiFederatedDataSet(DatasetFederation dataset) {
+	public void saveSbiFederationDefinition(FederationDefinition dataset) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
 
 		Session session = null;
@@ -52,7 +52,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
 
-			SbiFederatedDataset hibFederatedDataset = new SbiFederatedDataset();
+			SbiFederationDefinition hibFederatedDataset = new SbiFederationDefinition();
 
 			hibFederatedDataset.setFederation_id(dataset.getFederation_id());
 			hibFederatedDataset.setLabel(dataset.getLabel());
@@ -86,12 +86,12 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 	}
 
 	@Override
-	public DatasetFederation loadFederationDefinition(Integer id) throws EMFUserError {
+	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError {
 
 		logger.debug("IN: loading federation");
 		Session aSession = null;
 		Transaction tx = null;
-		DatasetFederation toReturn = null;
+		FederationDefinition toReturn = null;
 
 		try {
 			aSession = getSession();
@@ -99,7 +99,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 
 			Query hibQuery = aSession.createQuery(" from SbiFederatedDataset fd where fd.federation_id = ? ");
 			hibQuery.setInteger(0, id);
-			SbiFederatedDataset sbiResult  = (SbiFederatedDataset)hibQuery.uniqueResult();
+			SbiFederationDefinition sbiResult  = (SbiFederationDefinition)hibQuery.uniqueResult();
 			
 			toReturn = SbiFederationUtils.toDatasetFederation(sbiResult, getUserProfile());
 
@@ -124,12 +124,12 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 	}
 
 	@Override
-	public List<DatasetFederation> loadAllFederatedDataSets() throws EMFUserError {
+	public List<FederationDefinition> loadAllFederatedDataSets() throws EMFUserError {
 
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List<DatasetFederation> realResult = new ArrayList<DatasetFederation>();
+		List<FederationDefinition> realResult = new ArrayList<FederationDefinition>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -140,7 +140,7 @@ public class SbiFederatedDatasetDAOHibImpl extends AbstractHibernateDAO implemen
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(SbiFederationUtils.toDatasetFederation((SbiFederatedDataset) it.next(), getUserProfile()));
+				realResult.add(SbiFederationUtils.toDatasetFederation((SbiFederationDefinition) it.next(), getUserProfile()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {

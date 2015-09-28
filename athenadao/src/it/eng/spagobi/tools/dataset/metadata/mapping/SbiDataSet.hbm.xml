@@ -84,7 +84,7 @@
             <column name="IS_PUBLIC" />
         </property>
 
-		<many-to-one name="federation" class="it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset" lazy="false">
+		<many-to-one name="federation" class="it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition" lazy="false">
             <column name="FEDERATION_ID" not-null="false" />
         </many-to-one>
 

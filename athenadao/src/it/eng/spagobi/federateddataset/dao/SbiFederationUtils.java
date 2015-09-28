@@ -9,12 +9,12 @@ package it.eng.spagobi.federateddataset.dao;
 import java.util.Set;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 
@@ -24,17 +24,17 @@ public class SbiFederationUtils {
 
 	static private Logger logger = Logger.getLogger(SbiFederationUtils.class);
 
-	public static DatasetFederation toDatasetFederation(SbiFederatedDataset hibFd, IEngUserProfile userProfile) {
+	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
 		return toDatasetFederation(hibFd, userProfile, true);
 	}
 	
-	public static DatasetFederation toDatasetFederationNoDatasets(SbiFederatedDataset hibFd, IEngUserProfile userProfile) {
+	public static FederationDefinition toDatasetFederationNoDatasets(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
 		return toDatasetFederation(hibFd, userProfile, false);
 	}
 
-	public static DatasetFederation toDatasetFederation(SbiFederatedDataset hibFd, IEngUserProfile userProfile, boolean datasets) {
+	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd, IEngUserProfile userProfile, boolean datasets) {
 		logger.debug("IN");
-		DatasetFederation fd = new DatasetFederation();
+		FederationDefinition fd = new FederationDefinition();
 
 		if(hibFd!=null){
 
@@ -56,9 +56,9 @@ public class SbiFederationUtils {
 		return fd;
 	}
 	
-	public static SbiFederatedDataset toSbiFederatedDataset( DatasetFederation hibFd) {
+	public static SbiFederationDefinition toSbiFederatedDataset( FederationDefinition hibFd) {
 		logger.debug("IN");
-		SbiFederatedDataset fd = new SbiFederatedDataset();
+		SbiFederationDefinition fd = new SbiFederationDefinition();
 
 		if(hibFd!=null){
 

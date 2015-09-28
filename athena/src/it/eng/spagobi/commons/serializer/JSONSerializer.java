@@ -58,7 +58,7 @@ import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.federation.DatasetFederation;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
@@ -155,7 +155,7 @@ public class JSONSerializer implements Serializer {
 		mappings.put(Parameter.class, new ParametersJSONSerialize());
 		mappings.put(ParameterUse.class, new ParametersUseJSONSerialize());
 		mappings.put(ModalitiesValue.class, new ModalitiesValuesJSONSerializer());
-		mappings.put(DatasetFederation.class, new DatasetFederationJSONSerializer());
+		mappings.put(FederationDefinition.class, new DatasetFederationJSONSerializer());
 
 	}
 
