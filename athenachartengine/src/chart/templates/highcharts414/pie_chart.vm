@@ -270,8 +270,17 @@
 				valueDecimals: $relatedSerie.precision ,
 			#end
 				
-			#if ($relatedSerie.TOOLTIP.backgroundColor != '')
+			#*
+				If background color for the serie tooltip is not defined (empty)
+				take the default value (#FCFFC5) so the tooltip can be readable 
+				over the chart that stays behind it. Otherwise, take the value 
+				of the background color specified by the user.				
+				@author: danristo (danilo.ristovski@mht.net)
+			*#
+			#if ($relatedSerie.TOOLTIP.backgroundColor!="")
                 ttBackColor: '$relatedSerie.TOOLTIP.backgroundColor',
+            #else
+            	ttBackColor: '#FCFFC5',	## default background color for the serie tooltip
 			#end
 				
 			#if ($relatedSerie.TOOLTIP.style.color != '')
@@ -314,7 +323,30 @@
         	var ttFontSize = this.series.tooltipOptions.ttFontSize ? ' ' + this.series.tooltipOptions.ttFontSize : '';
         	var ttFontWeight = this.series.tooltipOptions.ttFontWeight ? ' ' + this.series.tooltipOptions.ttFontWeight : '';
         	
-        	var tooltipFont = ttFontWeight + ttFontSize + ttFont;
+        	#*
+        		Depending on font style chosen by the user for the serie tooltip
+        		we will specify respective CSS attribute so it can be taken by the
+        		tooltip.
+        		@author: danristo (danilo.ristovski@mht.net)
+        	*#
+        	var tooltipFontStyle = "";
+        	
+        	if (ttFontWeight == " underline")
+        	{
+        		tooltipFontStyle = " text-decoration: underline;";
+        	}
+        	else if (ttFontWeight == " italic")
+        	{
+        		tooltipFontStyle = "font-style: italic;";
+        	}
+        	else if (ttFontWeight == " bold")
+        	{
+        		tooltipFontStyle = "font-weight: bold;";
+        	}
+        	else
+        	{
+        		tooltipFontStyle = "font-weight: normal;";
+        	}
         	
         	var valueDecimals = this.series.tooltipOptions.valueDecimals ? this.series.tooltipOptions.valueDecimals : -1;
         	var valuePrefix = this.series.tooltipOptions.valuePrefix ? this.series.tooltipOptions.valuePrefix + ' ' : '';
@@ -330,10 +362,22 @@
         	}
         	thisValue = valuePrefix + thisValue + valueSuffix;
         	
+            #*
+        		Separate font elements (family, size and weight (style)) so the tooltip
+        		font characteristics can be separately (independently) specified by the user.
+        		@modifiedBy: danristo (danilo.ristovski@mht.net)
+        	*# 
             var result = 
-            	'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';font:' + tooltipFont + ';text-align:' + ttAlign + ';">'; 
-            	
-            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': <strong>' + thisValue + '</strong></div>';
+            	'<div style="padding:10px;color:' + ttColor + '; opacity: 0.9; background:' + ttBackColor + ';' + " font-family: " + ttFont + "; "
+            					+ tooltipFontStyle + " font-size: " + ttFontSize + ';text-align:' + ttAlign + ';">'; 
+            
+            #*
+        		Removed bold font style (weight) as default one for the serie value, since
+        		style of the fonts on the tooltip will be the same for every single font
+        		element on it. HTML tag <strong> is removed.
+        		@modifiedBy: danristo (danilo.ristovski@mht.net)
+        	*# 	
+            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
             
             return result;
         }
