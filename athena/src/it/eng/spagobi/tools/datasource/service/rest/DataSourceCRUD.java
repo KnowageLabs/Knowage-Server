@@ -19,6 +19,8 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -113,6 +115,13 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 			}
 
 			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
+
+			// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
+			// not in cache anymore since the caching db is changed
+			if (ds.checkIsWriteDefault()) {
+				ICache cache = SpagoBICacheManager.getCache();
+				cache.deleteAll();
+			}
 			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
 			logParam.put("TYPE", ds.getJndi());
 			logParam.put("NAME", ds.getLabel());
@@ -163,10 +172,22 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				}
 				Integer id = dao.insertDataSource(dsNew, profile.getOrganization());
 				dsNew.setDsId(id);
+				// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
+				// not in cache yet since the caching db is changed
+				if (dsNew.checkIsWriteDefault()) {
+					ICache cache = SpagoBICacheManager.getCache();
+					cache.deleteAll();
+				}
 				updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {
 				// update ds
 				dao.modifyDataSource(dsNew);
+				// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
+				// not in cache yet since the caching db is changed
+				if (dsNew.checkIsWriteDefault()) {
+					ICache cache = SpagoBICacheManager.getCache();
+					cache.deleteAll();
+				}
 				updateAudit(req, profile, "DATA_SOURCE.MODIFY", logParam, "OK");
 			}
 

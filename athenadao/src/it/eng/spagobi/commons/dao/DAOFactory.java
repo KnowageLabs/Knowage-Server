@@ -904,7 +904,7 @@ public class DAOFactory {
 	}
 
 	public static ISbiFederationDefinitionDAO getFedetatedDatasetDAO() throws EMFUserError {
-		return (ISbiFederationDefinitionDAO) createDAOInstance("FederatedDatasetDAO");
+		return (ISbiFederationDefinitionDAO) createDAOInstance("FederationDefinitionDAO");
 	}
 
 }

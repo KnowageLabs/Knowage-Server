@@ -112,7 +112,7 @@
 
 		<DAO name="CacheDAO" implementation="it.eng.spagobi.cache.dao.CacheDAOHibImpl"/>
 		
-		<DAO name="FederatedDatasetDAO" implementation="it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl" />
+		<DAO name="FederationDefinitionDAO" implementation="it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl" />
 
 	</DAO-CONF>
 

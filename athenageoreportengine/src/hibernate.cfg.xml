@@ -189,6 +189,9 @@
         <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModel.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiMetaModelContent.hbm.xml" />
         
+        <!-- Federation definition -->
+		<mapping resource="it/eng/spagobi/federateddataset/metadata/mapping/SbiFederationDefinition.hbm.xml"/>
+        
         <!-- tools: Artifacts' catalogue -->
         <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifact.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/catalogue/metadata/mapping/SbiArtifactContent.hbm.xml" />

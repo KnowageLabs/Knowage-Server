@@ -48,7 +48,7 @@
 					functionality="MeasuresCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/measure/measuresCatalogue.jsp" />
 			<ITEM	title="#menu.LayersCatalogue"
-					functionality="MeasuresCatalogueManagement"
+					functionality="GeoLayersManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
 		
 		
