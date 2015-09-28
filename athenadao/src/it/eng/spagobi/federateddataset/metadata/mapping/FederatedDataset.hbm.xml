@@ -6,7 +6,7 @@
 	<class name="it.eng.spagobi.federateddataset.metadata.SbiFederatedDataset" table="sbi_federation_definition">
 	
 		<id name="federation_id" type="int">
-			<column name="id_sbi_federated_data_set"/>
+			<column name="federation_id"/>
 			<generator class="org.hibernate.id.enhanced.TableGenerator">
 				<param name="optimizer">none</param>
 				<param name="segment_value">sbi_federated_data_set</param>
