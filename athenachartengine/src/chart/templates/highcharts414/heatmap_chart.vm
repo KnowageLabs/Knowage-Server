@@ -244,6 +244,16 @@
   		columns: $columnNames
 	},
 	
+	#*
+		Remove credits from the TREEMAP chart (the "Highcharts.com" link at the 
+		bottom right side of the chart).
+		@author: danristo (danilo.ristovski@mht.net)
+	 *# 
+	credits: 
+	{ 
+    	enabled: false
+    },
+	
 	data:
  	[
  		$result

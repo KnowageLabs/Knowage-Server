@@ -142,6 +142,17 @@ function renderTreemap(chartConf) {
 				textDecoration: chartConf.emptymessage.style.textDecoration ? chartConf.emptymessage.style.textDecoration : "none",
 				fontWeight: chartConf.emptymessage.style.fontWeight ? chartConf.emptymessage.style.fontWeight : "none"
 			}
+		},
+		
+		/**
+		 * Credits option disabled/enabled for the TREEMAP chart. This option (boolean value)
+		 * is defined inside of the VM for the TREEMAP chart. If enabled credits link appears
+		 * in the right bottom part of the chart.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		credits: 
+        {
+    		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
 		}
 
 	});
@@ -357,8 +368,18 @@ function renderHeatmap(chartConf){
             colsize: 24 * 36e5, // one day    
             data:points,
             turboThreshold: Number.MAX_VALUE// #3404, remove after 4.0.5 release
-        }]
+        }],
 
+        /**
+		 * Credits option disabled/enabled for the HEATMAP chart. This option (boolean value)
+		 * is defined inside of the VM for the HEATMAP chart. If enabled credits link appears
+		 * in the right bottom part of the chart.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		credits: 
+        {
+    		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
+		}
     });
 	
 }
