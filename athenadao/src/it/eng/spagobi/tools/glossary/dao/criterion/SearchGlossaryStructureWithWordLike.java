@@ -19,20 +19,22 @@ public class SearchGlossaryStructureWithWordLike implements ICriterion<SbiGlWlis
 
 	@Override
 	public Criteria evaluate(Session session) {
-		
-		if(glossaryId ==null || word==null ){
-			System.out.println("SearchGlossaryStructureWithWordLike, glossaryId or word =null");
-		return null;
+
+		if (glossaryId == null) {
+			System.out.println("SearchGlossaryStructureWithWordLike, glossaryId =null");
+			return null;
 		}
-		
-		Criteria c = session.createCriteria(SbiGlWlist.class,"wlist");
-		c.createAlias("wlist.content", "contentWl"); 
-		c.createAlias("contentWl.glossary", "glossaryWl"); 
+
+		Criteria c = session.createCriteria(SbiGlWlist.class, "wlist");
+		c.createAlias("wlist.content", "contentWl");
+		c.createAlias("contentWl.glossary", "glossaryWl");
 		c.createAlias("word", "wordWl");
-//		c.createAlias("contentWl.parent", "parent"); // get parent info
+		// c.createAlias("contentWl.parent", "parent"); // get parent info
 		c.add(Restrictions.eq("glossaryWl.glossaryId", Integer.parseInt(glossaryId)));
-		c.add(Restrictions.like("wordWl.word",  word, MatchMode.ANYWHERE).ignoreCase());
-		
+		if (word != null) {
+			c.add(Restrictions.like("wordWl.word", word, MatchMode.ANYWHERE).ignoreCase());
+		}
+
 		return c;
 	}
 

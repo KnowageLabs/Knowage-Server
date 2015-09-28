@@ -97,3 +97,12 @@ span.textspan{
 .alignedCheckbox label{
 	line-height: 34px;
 }
+
+.alignedCheckbox md-checkbox{
+    margin: 0 10 0 0;
+    }
+    
+ md-select-menu[multiple] md-option[selected]{
+    background-color: #317CA3;
+    color: white !important;
+}

@@ -38,6 +38,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.bo.Job;
@@ -70,6 +71,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -513,6 +516,51 @@ public class SchedulerService {
 			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "OK");
 
 			return triggerDocumentsSaveOptions.toString();
+
+		} catch (Exception e) {
+			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");
+			logger.error("Error while create immediate trigger ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+			}
+		}
+	}
+
+	@GET
+	@Path("/getTriggerInfo")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getTriggerInfo(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap();
+		try {
+			String jobGroupName = req.getParameter("jobGroup");
+			String jobName = req.getParameter("jobName");
+			String triggerGroup = req.getParameter("triggerGroup");
+			String triggerName = req.getParameter("triggerName");
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP", jobGroupName);
+			logParam.put("TRIGGER NAME", triggerName);
+			logParam.put("TRIGGER GROUP", triggerGroup);
+
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+
+			TriggerInfo triggerInfo = this.getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+
+			JSONObject jo = new JSONObject();
+			if (triggerInfo == null) {
+				jo.put("errors", "NO DATA");
+			} else {
+				jo.put("item", JSON.parse(JsonConverter.objectToJson(triggerInfo, TriggerInfo.class)));
+				JSONArray serializedSaveOptions = serializeSaveOptions(triggerInfo);
+				jo.put("documents", serializedSaveOptions);
+
+			}
+
+			return jo.toString();
 
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");

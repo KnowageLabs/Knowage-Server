@@ -99,7 +99,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 
 <%
-	String jobName = "default jobName value", jobGroup = "default jobGroup value", jobDescription = "default jobDescription value";
+	String jobName = "default jobName value", jobGroup = "default jobGroup value",triggerName="",triggerGroup="";
 
 	if (request.getParameter("JOB_NAME") != null && !request.getParameter("JOB_NAME").equals("")) {
 		jobName = request.getParameter("JOB_NAME");
@@ -107,15 +107,19 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	if (request.getParameter("JOB_GROUP") != null && !request.getParameter("JOB_GROUP").equals("")) {
 		jobGroup = request.getParameter("JOB_GROUP");
 	}
-	if (request.getParameter("JOB_DESCRIPTION") != null && !request.getParameter("JOB_DESCRIPTION").equals("")) {
-		jobDescription = request.getParameter("JOB_DESCRIPTION");
+	if (request.getParameter("TRIGGER_NAME") != null && !request.getParameter("TRIGGER_NAME").equals("")) {
+		triggerName = request.getParameter("TRIGGER_NAME");
 	}
+	if (request.getParameter("TRIGGER_GROUP") != null && !request.getParameter("TRIGGER_GROUP").equals("")) {
+		triggerGroup = request.getParameter("TRIGGER_GROUP");
+	}
+	
 %>
 </head>
 
 <body ng-app="EventDefinitionApp">
 	<div ng-controller="LoadJobDataController as jobDataCtrl" layout-fill 
-		ng-init="jobDataCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=jobDescription%>');	">
+		ng-init="jobDataCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=triggerName%>', '<%=triggerGroup%>');	">
 		
 		<div layout-padding layout="row" flex layout-fill class="h100"  ng-controller="ActivityEventController as activityEvent" >
 
@@ -139,42 +143,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
 				                       <textarea ng-model="activityEvent.event.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
 		                        	</md-input-container>
-		                        	
-		                        	<md-input-container>
-			                        	<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label> 
-				                        <md-select ng-model="activityEvent.event.event_type" required>
-									    	<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" value="{{eventType.value}}">
-									    		{{eventType.label}}
-									    	</md-option>
-									  	</md-select>
-								  	</md-input-container>
-								  	
-							  		<div ng-if="activityEvent.event.event_type=='dataset'">
-										<md-toolbar class="minihead">
-											<div class="md-toolbar-tools">
-												<h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
-											</div>
-										</md-toolbar>
-										
-										<md-content layout-padding class="borderBox"> 
-											<md-input-container>
-												<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-												<md-select ng-model="activityEvent.event.dataset" required>
-													<md-option ng-repeat="item in jobDataCtrl.datasets "
-														value="{{item.id.dsId}}">{{item.label}}</md-option> 
-												</md-select> 
-											</md-input-container> 
-											<md-input-container>
-												<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}}:</label>
-												<input type="number"
-													ng-model="activityEvent.event.frequency"> 
-											</md-input-container> 
-										</md-content>
-									</div>
-									  	
+		                   
 									<div layout="row" class="checkboxRow">
 				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.suspended")}}:</label>
-				                        <md-checkbox ng-model="activityEvent.event.is_suspended">
+				                        <md-checkbox  aria-label="aria-label" ng-model="activityEvent.event.isSuspended">
 		                        	</div>
 		                        	
 		                        	
@@ -193,24 +165,68 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		                        	</div>
 		                        	
 		                        	
-									<md-toolbar class=" unselectedItem " ng-class="activityEvent.event.repetitionKind != 'single'? 'selectedItem' : 'unselectedItem'"
-									style="height: 50px;  min-height: 30px;">
-										<div  layout="row" >
-											<md-input-container style="width:100%;">
-												<label>{{translate.load("Tipo ripetizione evento")}}</label>
-												<md-select ng-model="activityEvent.event.repetitionKind" >
-													<md-option ng-repeat="item in jobDataCtrl.intervalsEvent "  value="{{item.value}}" >{{item.label}}</md-option> 
-												</md-select> 
-											</md-input-container> 
-					        			</div>
+		                        	
+		                        	
+		                        	<md-toolbar class=" unselectedItem " ng-class="activityEvent.typeOperation != 'single'? 'selectedItem' : 'unselectedItem'"
+											style="height: 50px;  min-height: 30px;">
+											<div class="md-toolbar-tools" layout="row" style="padding-left:0px;" >
+											    <md-input-container  >
+													<label>{{translate.load("Tipo evento")}}</label>
+													<md-select aria-label="aria-label" ng-model="activityEvent.typeOperation" ng-change="activityEvent.changeTypeOperation();" >
+														<md-option ng-repeat="item in jobDataCtrl.eventTipology "  value="{{item.value}}" >{{item.label}}</md-option> 
+													</md-select> 
+												</md-input-container> 
+										    </div>
 									</md-toolbar>
-									<div ng-if="activityEvent.event.repetitionKind != 'single'">
-									<md-content layout-padding class="borderBox "> 
+									<div ng-if="activityEvent.event.repetitionKind == 'event'" layout-padding class="borderBox">
+										<md-input-container>
+				                        	<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label> 
+					                        <md-select aria-label="aria-label" ng-model="activityEvent.event.event_type" required>
+										    	<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" value="{{eventType.value}}">
+										    		{{eventType.label}}
+										    	</md-option>
+										  	</md-select>
+									  	</md-input-container>
+								  	
+								  		<div ng-if="activityEvent.event.event_type=='dataset'">
+											<md-toolbar class="minihead">
+												<div class="md-toolbar-tools">
+													<h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
+												</div>
+											</md-toolbar>
+											
+											<md-content layout-padding class="borderBox"> 
+												<md-input-container>
+													<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
+													<md-select aria-label="aria-label" ng-model="activityEvent.event.dataset" required>
+														<md-option ng-repeat="item in jobDataCtrl.datasets "
+															value="{{item.id.dsId}}">{{item.label}}</md-option> 
+													</md-select> 
+												</md-input-container> 
+												<md-input-container>
+													<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}}:</label>
+													<input type="number"
+														ng-model="activityEvent.event.frequency"> 
+												</md-input-container> 
+											</md-content>
+										</div>
+									</div>
 									
-									<div ng-if="activityEvent.event.repetitionKind=='minute'" layout="row" 
+									<div ng-if="activityEvent.shedulerType" layout-padding class="borderBox">
+									
+									
+										<div layout="row"  style="    margin-bottom: 15px;">
+											<span class="textspan">Frequenza</span> 
+											<md-select aria-label="aria-label" ng-model="activityEvent.event.repetitionKind"  style="margin:0px" 
+											ng-init="activityEvent.getActivityRepetitionKindForScheduler()" ng-change="activityEvent.changeTypeFrequency();">
+													<md-option ng-repeat="item in jobDataCtrl.intervalsEvent "  value="{{item.value}}" >{{item.label}}</md-option> 
+											</md-select> 		
+										</div>
+										
+										<div ng-if="activityEvent.event.repetitionKind=='minute'" layout="row" 
 										ng-init="activityEvent.event.minute_repetition_n =activityEvent.event.minute_repetition_n || 1;">
 										 <span class="textspan">Every</span> 
-											<md-select ng-model="activityEvent.event.minute_repetition_n" class="numberSelect"  >
+											<md-select aria-label="aria-label" ng-model="activityEvent.event.minute_repetition_n" class="numberSelect"  >
 													<md-option ng-repeat="item in activityEvent.getNitem(60) "  value="{{item}}" >{{item}}</md-option> 
 											</md-select> 
 										 <span class="textspan">minutes</span>
@@ -219,7 +235,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<div ng-if="activityEvent.event.repetitionKind=='hour'"  layout="row" 
 										ng-init="activityEvent.event.hour_repetition_n =activityEvent.event.hour_repetition_n || 1;">
 										 	<span class="textspan">Every</span> 
-											<md-select ng-model="activityEvent.event.hour_repetition_n" class="numberSelect"  >
+											<md-select aria-label="aria-label" ng-model="activityEvent.event.hour_repetition_n" class="numberSelect"  >
 													<md-option ng-repeat="item in activityEvent.getNitem(24) "  value="{{item}}" >{{item}}</md-option> 
 											</md-select> 
 										 	<span class="textspan">hours</span>
@@ -229,29 +245,115 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<div ng-if="activityEvent.event.repetitionKind=='day'" layout="row" 
 										ng-init="activityEvent.event.day_repetition_n =activityEvent.event.day_repetition_n || 1;">
 										 	<span class="textspan">Every</span> 
-											<md-select ng-model="activityEvent.event.day_repetition_n" class="numberSelect"  >
+											<md-select aria-label="aria-label" ng-model="activityEvent.event.day_repetition_n" class="numberSelect"  >
 													<md-option ng-repeat="item in activityEvent.getNitem(31) "  value="{{item}}" >{{item}}</md-option> 
 											</md-select> 
 										 	<span class="textspan">days</span>
 										</div>
 									
-									<div ng-if="activityEvent.event.repetitionKind=='week'">
+									<div ng-if="activityEvent.event.repetitionKind=='week'" layout="row" class="alignedCheckbox">
 									
-									<div layout="row" class="alignedCheckbox" >
-									    <label>Sun:</label>
-							            <md-checkbox  ng-model="activityEvent.event.day" >
-							        </div>
+										<div layout="row" ng-repeat="week in activityEvent.week">
+										    <label>{{week.label}}:</label>
+								            <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedWeekObj[week.label]"  ng-click="activityEvent.toggleWeek(week)" ></md-checkbox>
+								         </div>
+									    	
+							       		 
+									
 									
 									</div>
 									
-									<div ng-if="activityEvent.event.repetitionKind=='month'">
-									month
+									<div ng-if="activityEvent.event.repetitionKind=='month'" layout="row" >
+										<div layout="column" layout-align="center center">
+											<md-switch ng-change="activityEvent.toggleMonthScheduler()" class="md-primary" aria-label="Switch " ng-model="activityEvent.typeMonth"
+											 ng-init="activityEvent.typeMonth=activityEvent.typeMonth || true ">
+											simple={{activityEvent.typeMonth}}
+											</md-switch>											
+											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonth==true"
+											ng-init="activityEvent.monthrep_n =activityEvent.monthrep_n || 1;">
+												<span class="textspan">Every</span> 
+												<md-select aria-label="aria-label" ng-model="activityEvent.monthrep_n" class="numberSelect" ng-change="activityEvent.toggleMonthScheduler()">
+														<md-option ng-repeat="item in activityEvent.getNitem(12) "  value="{{item}}" >{{item}}</md-option> 
+												</md-select> 
+											 	<span class="textspan">month</span>
+											</div>
+											
+											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonth!=true">
+												<span class="textspan">In Month</span> 
+												<md-select aria-label="aria-label" ng-model="activityEvent.month_repetition" style="margin:0px;" multiple='true'   ng-change="activityEvent.toggleMonthScheduler()" >
+														<md-option ng-repeat="item in activityEvent.month "  value="{{item.value}}" >{{item.label}}</md-option> 
+												</md-select> 
+										
+											</div>
+										</div>
+									
+
+										<div layout="column" layout-align="center center">
+											<md-switch ng-change="activityEvent.toggleMonthScheduler()" class="md-primary" aria-label="Switch " ng-model="activityEvent.typeMonthWeek" 
+											 ng-init="activityEvent.typeMonthWeek=activityEvent.typeMonthWeek || true">
+											simple={{activityEvent.typeMonthWeek}}
+											</md-switch>		
+											
+											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek==true"
+											ng-init="activityEvent.dayinmonthrep_week =activityEvent.dayinmonthrep_week || 1;">
+												<span class="textspan">The day</span> 
+												<md-select aria-label="aria-label" ng-model="activityEvent.dayinmonthrep_week" class="numberSelect" ng-change="activityEvent.toggleMonthScheduler()"  >
+														<md-option ng-repeat="item in activityEvent.getNitem(31) "  value="{{item}}" >{{item}}</md-option> 
+												</md-select> 
+											 </div>
+											 
+											 <div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek!=true"
+											 ng-init="activityEvent.month_week_number_repetition=activityEvent.month_week_number_repetition|| 'first';">
+											 	<span class="textspan">The week</span> 
+												<md-select aria-label="aria-label" ng-model="activityEvent.month_week_number_repetition" style="margin:0px;" ng-change="activityEvent.toggleMonthScheduler()"  >
+														<md-option value="first" >First</md-option> 
+														<md-option value="second" >Second</md-option> 
+														<md-option value="third" >Third</md-option> 
+														<md-option value="fourth" >Fourth</md-option> 
+														<md-option value="last" >Last</md-option> 
+												</md-select> 
+												<span class="textspan">In day</span>
+												<md-select aria-label="aria-label" ng-model="activityEvent.month_week_repetition" style="margin:0px;" multiple='true'  ng-change="activityEvent.toggleMonthScheduler()" >
+														<md-option ng-repeat="item in activityEvent.week "  value="{{item.value}}" >{{item.label}}</md-option> 
+												</md-select> 
+											 </div>
+											 
+											
+										</div>
+
+
 									</div>
 									
 									
-									</md-content>
-									
 									</div>
+		                        	
+		                        	
+		                        	
+		                        	
+		                        	
+		                        	
+		                        	
+									
+		                        	
+<!-- 									<md-toolbar class=" unselectedItem " ng-class="activityEvent.event.repetitionKind != 'single'? 'selectedItem' : 'unselectedItem'" -->
+<!-- 									style="height: 50px;  min-height: 30px;"> -->
+<!-- 										<div  layout="row" > -->
+<!-- 											<md-input-container style="width:100%;"> -->
+<!-- 												<label>{{translate.load("Tipo ripetizione evento")}}</label> -->
+<!-- 												<md-select aria-label="aria-label" ng-model="activityEvent.event.repetitionKind" > -->
+<!-- 													<md-option ng-repeat="item in jobDataCtrl.intervalsEvent "  value="{{item.value}}" >{{item.label}}</md-option>  -->
+<!-- 												</md-select>  -->
+<!-- 											</md-input-container>  -->
+<!-- 					        			</div> -->
+<!-- 									</md-toolbar> -->
+<!-- 									<div ng-if="activityEvent.event.repetitionKind != 'single'"> -->
+<!-- 									<md-content layout-padding class="borderBox ">  -->
+									
+									
+									
+<!-- 									</md-content> -->
+									
+<!-- 									</div> -->
 	
 	
 		                        	

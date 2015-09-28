@@ -71,7 +71,6 @@ public class GlossaryService {
 	public String addDocWlist(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
-			System.out.println("addDocWlist");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -725,7 +724,7 @@ public class GlossaryService {
 			String glossaryId = req.getParameter("GLOSSARY_ID");
 			JSONObject fin = new JSONObject();
 
-			if (word.trim().isEmpty()) {
+			if (word != null && word.trim().isEmpty()) {
 				SbiGlGlossary gl = dao.loadGlossary(Integer.parseInt(glossaryId));
 				fin = fromGlossaryLight(gl);
 				fin.put("SBI_GL_CONTENTS", JSON.parse(this.listContents(req)));

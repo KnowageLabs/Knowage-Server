@@ -8,7 +8,7 @@
   <md-toolbar class="minihead unselectedItem " ng-class="activityEvent.selectedDocument.saveassnapshot? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row" >
 		    <label>{{translate.load("SaveAsSnapshot")}}:</label>
-            <md-checkbox  ng-model="activityEvent.selectedDocument.saveassnapshot" >
+            <md-checkbox  aria-label="aria-label"  ng-model="activityEvent.selectedDocument.saveassnapshot" >
         </div>
 	</md-toolbar>
 	<div ng-if="activityEvent.selectedDocument.saveassnapshot">
@@ -33,7 +33,7 @@
 	<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.selectedDocument.saveasfile? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row" >
 		    <label>{{translate.load("SaveAsFile")}}:</label>
-                  <md-checkbox ng-model="activityEvent.selectedDocument.saveasfile">
+                  <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.saveasfile">
                     </div>
 	</md-toolbar>
 	<div ng-if="activityEvent.selectedDocument.saveasfile">
@@ -50,7 +50,7 @@
                    		
                    		 <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("Saved zipped file")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.zipFileDocument">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.zipFileDocument">
                    		 </div>	
                    		
                    		<md-input-container class="subCheckboxRowElement" ng-if="activityEvent.selectedDocument.zipFileDocument==true">
@@ -65,7 +65,7 @@
 	<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.selectedDocument.saveasdocument? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row" >
 		    <label>{{translate.load("SaveAsDocument")}}:</label>
-                  <md-checkbox ng-model="activityEvent.selectedDocument.saveasdocument">
+                  <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.saveasdocument">
                     </div>
 	</md-toolbar>
 	<div ng-if="activityEvent.selectedDocument.saveasdocument">
@@ -82,19 +82,19 @@
                    		
                    		 <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("fixed folder")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.useFixedFolder">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.useFixedFolder">
                    		 </div>	
                    		 
                    		 alberello
                    		 
                    		<div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("folder from dataset")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.useFolderDataset">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.useFolderDataset">
                    		 </div>	
                    		
                    		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useFolderDataset==true">
 				<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-				<md-select ng-model="activityEvent.selectedDocument.datasetFolderLabel" >
+				<md-select aria-label="aria-label" ng-model="activityEvent.selectedDocument.datasetFolderLabel" >
 					<md-option ng-repeat="item in jobDataCtrl.datasets "
 						value="{{item.label}}">{{item.label}}</md-option> 
 				</md-select> 
@@ -102,7 +102,7 @@
 			
 			<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useFolderDataset==true">
 				<label>{{translate.load("Driver")}}</label>
-				<md-select ng-model="activityEvent.selectedDocument.datasetFolderParameter" >
+				<md-select aria-label="aria-label" ng-model="activityEvent.selectedDocument.datasetFolderParameter" >
 					<md-option value="driver1">Driver1</md-option> 
 					<md-option value="driver2">Driver2</md-option> 
 				</md-select> 
@@ -114,7 +114,7 @@
 	<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.selectedDocument.sendtojavaclass? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row" >
 		    <label>{{translate.load("SendToJavaClass")}}:</label>
-                  <md-checkbox ng-model="activityEvent.selectedDocument.sendtojavaclass">
+                  <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.sendtojavaclass">
                     </div>
 	</md-toolbar>
 	<div ng-if="activityEvent.selectedDocument.sendtojavaclass">
@@ -129,7 +129,7 @@
 	<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.selectedDocument.sendmail? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row" >
 		    <label>{{translate.load("SendEmail")}}:</label>
-                  <md-checkbox ng-model="activityEvent.selectedDocument.sendmail">
+                  <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.sendmail">
                     </div>
 	</md-toolbar>
 	<div ng-if="activityEvent.selectedDocument.sendmail">
@@ -138,12 +138,12 @@
 			
 			 <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("send unique mailfor all scheduler")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.uniqueMail">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.uniqueMail">
                    		 </div>	
                    		 
                    		  <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("send zipped file")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.zipMailDocument">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.zipMailDocument">
                    		 </div>	
                    		
                    		<md-input-container   class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.zipMailDocument==true">
@@ -153,7 +153,7 @@
                    		
                    		 <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("fixed list of recipients")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.useFixedRecipients">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.useFixedRecipients">
                    		 </div>	
                    		
                    		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useFixedRecipients==true">
@@ -163,12 +163,12 @@
                    			
                    		 <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("Use a Datasetas recipient's list")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.useDataset">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.useDataset">
                    		 </div>	
                    		
                    		<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useDataset==true">
 				<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-				<md-select ng-model="activityEvent.selectedDocument.datasetLabel" >
+				<md-select aria-label="aria-label" ng-model="activityEvent.selectedDocument.datasetLabel" >
 					<md-option ng-repeat="item in jobDataCtrl.datasets "
 						value="{{item.label}}">{{item.label}}</md-option> 
 				</md-select> 
@@ -176,7 +176,7 @@
 			
 			<md-input-container  class="subCheckboxRowElement"  ng-if="activityEvent.selectedDocument.useDataset==true">
 				<label>{{translate.load("Parameter")}}</label>
-				<md-select ng-model="activityEvent.selectedDocument.datasetParameter" >
+				<md-select aria-label="aria-label" ng-model="activityEvent.selectedDocument.datasetParameter" >
 					<md-option value="param1">param1</md-option> 
 					<md-option value="param2">param2</md-option> 
 				</md-select> 
@@ -184,7 +184,7 @@
 					
 			 <div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("Use an expression ")}}:</label>
-                   <md-checkbox ng-model="activityEvent.selectedDocument.useExpression">
+                   <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.useExpression">
                    		 </div>	
                    		
                    		<md-input-container class="subCheckboxRowElement" ng-if="activityEvent.selectedDocument.useExpression==true">
@@ -194,7 +194,7 @@
 		
 			<div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("Include report name ")}}:</label>
-                 <md-checkbox ng-model="activityEvent.selectedDocument.reportNameInSubject">
+                 <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.reportNameInSubject">
             </div>	
 		
 			<md-input-container >
@@ -219,6 +219,6 @@
 	<md-toolbar class="minihead unselectedItem" ng-class="activityEvent.selectedDocument.saveasdl? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row" >
 		    <label>{{translate.load("SendToDistributionList")}}:</label>
-                  <md-checkbox ng-model="activityEvent.selectedDocument.saveasdl">
+                  <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.saveasdl">
                     </div>
 	</md-toolbar>
