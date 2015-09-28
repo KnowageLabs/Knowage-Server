@@ -136,12 +136,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								<md-content class="bottomButtonsBox">
 									<md-input-container>
 				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
-				                        <input ng-model="activityEvent.event.name" required maxlength="100" ng-maxlength="100" md-maxlength="100">
+				                        <input ng-model="activityEvent.event.triggerName" required maxlength="100" ng-maxlength="100" md-maxlength="100">
 		                        	</md-input-container>
 		                        	
 									<md-input-container>
 				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
-				                       <textarea ng-model="activityEvent.event.description" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
+				                       <textarea ng-model="activityEvent.event.triggerDescription" columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
 		                        	</md-input-container>
 		                   
 									<div layout="row" class="checkboxRow">
@@ -152,16 +152,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		                        	
 		                        	<div layout="row" class="checkboxRow">
 				                        <label>{{translate.load("Start date")}}:</label>
-				                      	<md-datepicker ng-model="activityEvent.event.startdate" md-placeholder="StartDate"></md-datepicker>
+				                      	<md-datepicker ng-model="activityEvent.event.startDate" md-placeholder="StartDate"></md-datepicker>
 				                      	  <label style="margin: 0 20px;">{{translate.load("Start time")}}:</label>
-		                        		<angular-time-picker id="myTimePicker" ng-model="activityEvent.event.starttime"></angular-time-picker>
+		                        		<angular-time-picker id="myTimePicker" ng-model="activityEvent.event.startTime"></angular-time-picker>
 		                        	</div>
 		                        	
 		                        	<div layout="row" class="checkboxRow">
 				                        <label style="    margin-right: 5px;">{{translate.load("End date")}}:</label>
-				                      	<md-datepicker ng-model="activityEvent.event.enddate" md-placeholder="StartDate"></md-datepicker>
+				                      	<md-datepicker ng-model="activityEvent.event.endDate" md-placeholder="EndDate"></md-datepicker>
 				                      	  <label style="margin: 0 20px;     margin-right: 26px;">{{translate.load("End time")}}:  </label>
-		                        		<angular-time-picker id="myTimePicker" ng-model="activityEvent.event.endtime"></angular-time-picker>
+		                        		<angular-time-picker id="myTimePicker" ng-model="activityEvent.event.endTime"></angular-time-picker>
 		                        	</div>
 		                        	
 		                        	

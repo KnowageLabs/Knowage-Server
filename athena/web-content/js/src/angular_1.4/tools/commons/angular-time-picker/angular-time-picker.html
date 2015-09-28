@@ -50,7 +50,8 @@ angular-time-picker span.dividerTime {
 			<md-icon ng-click="alterHours(true)" md-font-icon="fa fa-caret-up" ></md-icon>
 		</md-button>
 		
-		<input ng-keyup="checkValue(true)"   type="number"  ng-model="hours" >
+<!-- 		<input ng-keyup="checkValue(true)"   type="number"  ng-model="hours" > -->
+<input ng-keyup="checkValue(true)"  ng-init="hours = getHours();"  type="number"  ng-model="hours" >
 		
 		<md-button aria-label="menu" class="md-fab spinButton " >
 			<md-icon ng-click="alterHours(false)"  md-font-icon="fa fa-caret-down" ></md-icon>
@@ -63,17 +64,17 @@ angular-time-picker span.dividerTime {
 			<md-icon ng-click="alterMinutes(true)"  md-font-icon="fa fa-caret-up" ></md-icon>
 		</md-button>
 		
-		<input ng-keyup="checkValue(false)"  type="number"  ng-model="minutes" >
+		<input ng-keyup="checkValue(false)" ng-init="minutes = getMinutes();"  type="number"  ng-model="minutes" >
 		
 		<md-button aria-label="menu" class="md-fab spinButton ">
 			<md-icon ng-click="alterMinutes(false)"  md-font-icon="fa fa-caret-down" ></md-icon>
 		</md-button>
 	</div>
 	
-	<md-select aria-label="aria-label" ng-model="ampm" ng-change="alterNgModel()">
-		<md-option value="AM" >AM</md-option> 
-		<md-option value="PM">PM</md-option> 
-	</md-select> 
+<!-- 	<md-select aria-label="aria-label" ng-model="ampm" ng-change="alterNgModel()"> -->
+<!-- 		<md-option value="AM" >AM</md-option>  -->
+<!-- 		<md-option value="PM">PM</md-option>  -->
+<!-- 	</md-select>  -->
 
   
  </div>

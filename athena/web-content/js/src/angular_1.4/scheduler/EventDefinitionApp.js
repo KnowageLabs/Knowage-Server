@@ -56,7 +56,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		loadJobDataCtrl.triggerName = triggerName;
 		loadJobDataCtrl.jobData = null;
 		var loadtri=false;
-		if(triggerName!=undefined && triggerGroup!=undefined){
+		if(triggerName!=undefined && triggerName!="" && triggerGroup!=undefined && triggerGroup!=""){
 			loadtri=true;
 		}
 		loadJobDataCtrl.loadDataset();
@@ -79,9 +79,6 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	
 	loadJobDataCtrl.getEmptyEvent=function(){
 		var emptyEvent = {
-				id: -1,
-				name: '',
-				description: '',
 				isSuspended:  false,
 				document:[],
 				chronstring:"single{}"
@@ -158,6 +155,36 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 //					loadJobDataCtrl.events = data.item;
 					
 					console.log("evento caricato",data)
+					var d=data.item;
+					activityEventCtrl.event.triggerName=d.triggerName;
+					activityEventCtrl.event.triggerDescription=d.triggerDescription;
+					activityEventCtrl.event.startDate=new Date(d.startDate);
+					activityEventCtrl.event.startTime=d.startTime;
+					if(d.endTime!=undefined && d.endTime!=""){
+						activityEventCtrl.event.endTime=endTime;
+					}else{
+						activityEventCtrl.event.endTime=" "
+					}
+					if(d.endDate!=undefined && d.endDate!=""){
+						activityEventCtrl.event.endDate=new Date(d.endDate);
+					}
+					
+					var op=d.chronString.split("{")[0];
+					
+					switch(op){
+						case 'single':activityEventCtrl.typeOperation=op; activityEventCtrl.shedulerType=false;break;
+						case 'event':activityEventCtrl.typeOperation=op; activityEventCtrl.shedulerType=false;break;
+						default :activityEventCtrl.typeOperation="scheduler"; activityEventCtrl.shedulerType=true; break;
+						}
+					
+//					activityEventCtrl.event.=d.;
+//					activityEventCtrl.event.=d.;
+//					activityEventCtrl.event.=d.;
+//					activityEventCtrl.event.=d.;
+//					activityEventCtrl.event.=d.;
+//					activityEventCtrl.event.=d.;
+//					
+					
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -225,10 +252,7 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	
 	activityEventCtrl.saveEvent=function(isValid){
 		if (!isValid) {return false;}
-		return;
-			var SaveOrUpdate=activityEventCtrl.editedEvent.newEvent==true?'Saved':'Updated';
-			 //TO-DO rest services
-			restServices.post("1.0/eventJob","addEvent", activityEventCtrl.editedEvent)
+		restServices.post("scheduler", "saveTrigger", activityEventCtrl.event)
 				.success(function(data) {
 					if (data.hasOwnProperty("errors")) {
 						console.error(data.errors[0].message);
@@ -236,14 +260,9 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 					} else if (data.Status == "NON OK") {
 						console.error(translate.load(data.Message));
 					} else {
-						$mdToast.show($mdToast.simple().content(SaveOrUpdate).position('top').action(
+						$mdToast.show($mdToast.simple().content("SALVATO").position('top').action(
 							'OK').highlightAction(false).hideDelay(3000));
-						 //if is new event, add it to list
-						if(activityEventCtrl.editedEvent.newEvent==true){
-							activityEventCtrl.editedEvent.id=data.ID;
-							 loadJobDataCtrl.events.push(activityEventCtrl.editedEvent);
-						 }
-						activityEventCtrl.createNewEvent();
+						
 						}
 					})
 			.error(function(data, status,headers, config) {
