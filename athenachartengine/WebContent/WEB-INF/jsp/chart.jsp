@@ -179,7 +179,7 @@ author:
 		
 		var isChartHeightEmpty = null;
 		var isChartWidthEmpty= null;
-		
+	
 		function exportChart(exportType) {		
 			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
 			
@@ -271,20 +271,26 @@ author:
  				id: 'mainPanel',
  				width: '100%',
  			    height: '100%',
+ 			   	//autoScroll: true,
+			  	//overflowX: 'scroll',
+			  	//overflowY: 'scroll',
  			    renderTo: Ext.getBody()
  			});
+ 			
+ 			var globalThis = this;
+ 			
  			
  			/* 
  				Listen for the resizing of the window (panel) in order to re-render
  				the chart.
- 				danilo.ristovski@mht.net 
+ 				@author: danristo (danilo.ristovski@mht.net)
 			*/
  			Ext.on
  			(
  				"resize",
  				
  				function(newWidth, newHeight)
- 				{ 	 				
+ 				{ 	 					
  					/*
  						If there are chart dimension values (height and width) specified 
  						for this chart (chart that relies on the D3 library), variable
@@ -293,7 +299,6 @@ author:
  						we receive from the server. This way, resize will not be applied 
  						this chart and it will despite of resizing stay with the same 
  						size as on the beginning (on the initial render of the chart).
- 						(danilo.ristovski@mht.net)
  					*/ 	 					
  					if (chartConfiguration!=null)
 					{
@@ -315,16 +320,13 @@ author:
  							*/
  							if (isChartHeightEmpty==true)
 							{
- 								console.log(newHeight);
  								chartConfiguration.chart.height = newHeight;
 							}
  	 						
  	 						if (isChartWidthEmpty==true)
  							{
- 	 							console.log(newWidth);
  	 							chartConfiguration.chart.width = newWidth; 
- 							}
- 														
+ 							}				
  							
  	 						/* Re-render the chart after resizing the window (panel). */
  	 						renderChart(chartConfiguration);
@@ -369,26 +371,30 @@ author:
  						driverParams: '<%=driverParams%>'
  					};
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						console.log(response.responseText); 
+ 						 						
+ 						//console.log(response.responseText);
  						
- 						var chartConf = Ext.JSON.decode(response.responseText, true);						
+ 						var chartConf = Ext.JSON.decode(response.responseText, true);			
  						
  						/* 
  							Set the initial size of the chart if the height and width are not 
  							defined by the user (through the Designer). This is mandatory for
  							rendering the chart. If not specified at all - error will appear.
- 							(danilo.ristovski@mht.net)
+ 							@author: danristo (danilo.ristovski@mht.net)
  						*/
  						var heightChart = chartConf.chart.height;
  						var widthChart = chartConf.chart.width;
  						var typeChart = chartConf.chart.type.toUpperCase();
+ 							
+ 						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
+ 						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
  						
  						/* 
 							If the chart is of the Highcharts library, do not apply current dimensions of the
 							window that contains the chart. D3 does not handle this appropriately, so we need
 							the starting dimensions for the chart - current dimensions of the window within 
 							which the chart (of D3 library) is placed.
-							(danilo.ristovski@mht.net)
+							@author: danristo (danilo.ristovski@mht.net)
 						*/
 						var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 	 					
@@ -400,7 +406,7 @@ author:
 							indicator for empty dimensions for the previous code (on.resize)
 							will be chartConfiguration=null, since we will not enter this 
 							if-statement.
-							(danilo.ristovski@mht.net)
+							@author: danristo (danilo.ristovski@mht.net)
 						*/
 						//if (isD3Chart && ((chartConf.chart.width=="" || chartConf.chart.height=="") || typeChart == "SUNBURST"))
 						if (isD3Chart)
@@ -431,6 +437,9 @@ author:
 							} 							
 						} 						
  						
+						//console.log("CHART.JSP: chartConf");
+						//console.log(chartConf);
+						
  						renderChart(chartConf);
  					});
  				
@@ -439,8 +448,8 @@ author:
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });
- 		
+
 	</script>
-	
+
 </body>
 </html>

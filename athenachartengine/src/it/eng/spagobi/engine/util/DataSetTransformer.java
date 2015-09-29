@@ -160,8 +160,6 @@ public class DataSetTransformer {
 	 */
 	public JSONObject toMatrix(List<Object> dataRows, Object columnsNeeded, Object serie, Object dataColumnsMapper) throws JSONException {
 
-		System.out.println("++++++++++++++");
-
 		Map<String, Object> categories = (Map<String, Object>) columnsNeeded;
 		Map<String, Object> columnsMapper = (Map<String, Object>) dataColumnsMapper;
 
@@ -194,7 +192,6 @@ public class DataSetTransformer {
 		 * name (as said here: https://github.com/mbostock/d3/wiki/Chord-Layout, under "# chord.matrix([matrix])" header of the text).
 		 */
 		Collections.sort(allColumns);
-		System.out.println("sorted: " + allColumns);
 
 		/**
 		 * Create an unordered map of maps that will only contain data about pairs of row and columns available in existing data obtained when executing the not
@@ -349,10 +346,6 @@ public class DataSetTransformer {
 		 */
 		finalJsonResult.put("rows", jsonArrayResultsRows);
 
-		System.out.println(finalJsonResult);
-
-		System.out.println("++++++++++++++");
-
 		return finalJsonResult;
 	}
 
@@ -461,13 +454,8 @@ public class DataSetTransformer {
 				jo.put("value", value + oldValue);
 			}
 
-			System.out.println(jo);
-
 			ja.put(jo);
 		}
-
-		// System.out.println("AAA");
-		// System.out.println(ja);
 
 		return ja;
 	}
