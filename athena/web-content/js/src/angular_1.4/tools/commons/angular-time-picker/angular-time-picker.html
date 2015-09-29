@@ -46,27 +46,27 @@ angular-time-picker span.dividerTime {
  
 <div layout="row">
 	<div layout="column">
-		<md-button aria-label="menu" class="md-fab spinButton " >
+		<md-button type="button" aria-label="menu" class="md-fab spinButton " >
 			<md-icon ng-click="alterHours(true)" md-font-icon="fa fa-caret-up" ></md-icon>
 		</md-button>
 		
 <!-- 		<input ng-keyup="checkValue(true)"   type="number"  ng-model="hours" > -->
 <input ng-keyup="checkValue(true)"  ng-init="hours = getHours();"  type="number"  ng-model="hours" >
 		
-		<md-button aria-label="menu" class="md-fab spinButton " >
+		<md-button type="button" aria-label="menu" class="md-fab spinButton " >
 			<md-icon ng-click="alterHours(false)"  md-font-icon="fa fa-caret-down" ></md-icon>
 		</md-button>
 	</div>
  <span class="dividerTime">:</span>
   
 <div layout="column">
-		<md-button aria-label="menu" class="md-fab spinButton " >
+		<md-button type="button" aria-label="menu" class="md-fab spinButton " >
 			<md-icon ng-click="alterMinutes(true)"  md-font-icon="fa fa-caret-up" ></md-icon>
 		</md-button>
 		
 		<input ng-keyup="checkValue(false)" ng-init="minutes = getMinutes();"  type="number"  ng-model="minutes" >
 		
-		<md-button aria-label="menu" class="md-fab spinButton ">
+		<md-button type="button" aria-label="menu" class="md-fab spinButton ">
 			<md-icon ng-click="alterMinutes(false)"  md-font-icon="fa fa-caret-down" ></md-icon>
 		</md-button>
 	</div>

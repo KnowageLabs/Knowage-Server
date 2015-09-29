@@ -77,9 +77,11 @@ function angularTimePickerFunction($scope){
 //	}
 	
 	s.getHours=function(){
+		if(s.ngModel==undefined){return 0};
 		return parseInt(s.ngModel.split(":")[0]);
 	}
 	s.getMinutes=function(){
+		if(s.ngModel==undefined){return 0};
 		return parseInt(s.ngModel.split(":")[1]);
 	}
 	

@@ -71,7 +71,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#checkUserRootExists(java.lang.String)
 	 */
 	@Override
@@ -108,7 +108,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#insertUserFunctionality(it.eng.spagobi.analiticalmodel.functionalitytree.bo
 	 * .UserFunctionality)
@@ -179,7 +179,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			 * SbiDomains relStateDomain = (SbiDomains)criteria.uniqueResult(); Criterion nameEqrolenameCri = null; Role[] roles = userfunct.getExecRoles();
 			 * if(roles!=null){ for(int i=0; i<roles.length; i++) { Role role = roles[i]; if (role!=null) { logger.debug("Role Name="+role.getName());
 			 * nameEqrolenameCri = Expression.eq("name", role.getName()); } else logger.debug("Role IS NULL");
-			 * 
+			 *
 			 * criteria = aSession.createCriteria(SbiExtRoles.class); criteria.add(nameEqrolenameCri); SbiExtRoles hibRole =
 			 * (SbiExtRoles)criteria.uniqueResult(); SbiFuncRoleId sbifuncroleid = new SbiFuncRoleId(); sbifuncroleid.setFunction(hibFunct);
 			 * sbifuncroleid.setState(relStateDomain); sbifuncroleid.setRole(hibRole); SbiFuncRole sbifuncrole = new SbiFuncRole();
@@ -1027,11 +1027,22 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					profile = (IEngUserProfile) permCont.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 					username = (String) ((UserProfile) profile).getUserId();
 				}
+
 			} catch (Exception e) {
 				logger.error("Error while recovering user profile", e);
 			}
 			// user has admin functionality "ViewMyFolderAdmin" he can view all Low_func and all user func
 			// else he can view only his personal userFunc
+
+			// giovanniluca.ulivo@eng.it change
+			if (profile == null) {
+				// try to get the profile store in dao
+				profile = this.getUserProfile();
+				if (profile != null) {
+					username = (String) ((UserProfile) profile).getUserId();
+				}
+			}
+			// end change
 
 			Query hibQuery = null;
 			try {
@@ -1286,7 +1297,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadChildFunctionalities(java.lang.Integer, boolean)
 	 */
 	@Override
@@ -1330,7 +1341,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#moveDownLowFunctionality(java.lang.Integer)
 	 */
 	@Override
@@ -1387,7 +1398,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#moveUpLowFunctionality(java.lang.Integer)
 	 */
 	@Override

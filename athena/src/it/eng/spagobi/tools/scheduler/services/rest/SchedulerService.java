@@ -27,6 +27,8 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONSerializer;
@@ -87,11 +89,17 @@ public class SchedulerService {
 	@GET
 	@Path("/getJob")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getJob(@Context HttpServletRequest req) {
+	public String getJob(@Context HttpServletRequest req) throws EMFUserError, JSONException, SerializationException {
+		ILowFunctionalityDAO lowfuncdao = DAOFactory.getLowFunctionalityDAO();
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		lowfuncdao.setUserProfile(profile);
+
 		String jobGroupName = req.getParameter("jobGroup");
 		String jobName = req.getParameter("jobName");
 
-		JSONObject JSONReturn = new JSONObject();
+		JSONObject resp = new JSONObject();
+		JSONObject jobj = new JSONObject();
+		JSONArray funct = new JSONArray();
 
 		ISchedulerDAO schedulerDAO;
 		try {
@@ -101,16 +109,18 @@ public class SchedulerService {
 		}
 
 		Job job = schedulerDAO.loadJob(jobGroupName, jobName);
-
 		JSONSerializer jsonSerializer = (JSONSerializer) SerializerFactory.getSerializer("application/json");
+		jobj = (JSONObject) jsonSerializer.serialize(job, null);
+		resp.put("job", jobj);
 
-		try {
-			JSONReturn = (JSONObject) jsonSerializer.serialize(job, null);
-		} catch (SerializationException e) {
-			e.printStackTrace();
+		@SuppressWarnings("unchecked")
+		List<LowFunctionality> functionalities = lowfuncdao.loadAllLowFunctionalities(false);
+		for (LowFunctionality lf : functionalities) {
+			funct.put(JSON.parse(JsonConverter.objectToJson(lf, LowFunctionality.class)));
 		}
+		resp.put("functionality", funct);
 
-		return JSONReturn.toString();
+		return resp.toString();
 	}
 
 	@GET
@@ -490,6 +500,7 @@ public class SchedulerService {
 		}
 	}
 
+	// TO-DO controllare se viene usata ed in caso eliminarlo
 	@POST
 	@Path("/getTriggerSaveOptions")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -560,6 +571,8 @@ public class SchedulerService {
 
 			}
 
+			jo = new JSONObject(
+					"{'isSuspended':true,'document':[{'label':'file11','parameters':''},{'label':'nnn','parameters':''}],'chrono':{'type':'week','parameter': { 'days': ['SUN','TUE','WED']}},'startTime':'20:55','endTime':'16:59','triggerName':'MyJob_Scheduler_1','triggerDescription':'descrizione','startDate':'2015-02-09T23:00:00.000Z','endDate':'2015-09-29T22:00:00.000Z'}");
 			return jo.toString();
 
 		} catch (Exception e) {

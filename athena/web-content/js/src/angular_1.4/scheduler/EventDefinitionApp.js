@@ -81,7 +81,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		var emptyEvent = {
 				isSuspended:  false,
 				document:[],
-				chronstring:{"type":"single"}
+				chrono:{"type":"single"}
 				
 				
 			}
@@ -155,27 +155,51 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 //					loadJobDataCtrl.events = data.item;
 					
 					console.log("evento caricato",data)
-					var d=data.item;
+					var d=data;
 					activityEventCtrl.event.triggerName=d.triggerName;
 					activityEventCtrl.event.triggerDescription=d.triggerDescription;
+					activityEventCtrl.event.isSuspended=d.isSuspended;
 					activityEventCtrl.event.startDate=new Date(d.startDate);
 					activityEventCtrl.event.startTime=d.startTime;
 					if(d.endTime!=undefined && d.endTime!=""){
-						activityEventCtrl.event.endTime=endTime;
+						activityEventCtrl.event.endTime=d.endTime;
 					}else{
-						activityEventCtrl.event.endTime=" "
+						activityEventCtrl.event.endTime=""
 					}
 					if(d.endDate!=undefined && d.endDate!=""){
 						activityEventCtrl.event.endDate=new Date(d.endDate);
 					}
 					
-					var op=d.chronString.split("{")[0];
-					
-					switch(op){
-						case 'single':activityEventCtrl.typeOperation=op; activityEventCtrl.shedulerType=false;break;
-						case 'event':activityEventCtrl.typeOperation=op; activityEventCtrl.shedulerType=false;break;
-						default :activityEventCtrl.typeOperation="scheduler"; activityEventCtrl.shedulerType=true; break;
+					activityEventCtrl.event.chrono=d.chrono;
+					var op=d.chrono;
+					activityEventCtrl.eventSched.repetitionKind=op.type;
+					if(op.type=='single'){
+						activityEventCtrl.typeOperation=op.type;
+						activityEventCtrl.shedulerType=false;
+					}else if(op.type=='event'){
+						activityEventCtrl.typeOperation=op.type;
+						activityEventCtrl.shedulerType=false;
+						activityEventCtrl.eventSched.event_type=op.parameter.type;
+						if(op.parameter.type=="dataset"){
+							activityEventCtrl.eventSched.dataset=op.parameter.dataset;
+							activityEventCtrl.eventSched.frequency=op.parameter.frequency;
 						}
+					}else{
+						activityEventCtrl.typeOperation="scheduler";
+						activityEventCtrl.shedulerType=true;
+						if(op.type=='week'){	
+							
+							activityEventCtrl.selectedWeekObj={};
+							for(var key in op.parameter.days){
+								activityEventCtrl.selectedWeekObj[op.parameter.days[key]]=true;
+								activityEventCtrl.selectedWeek.push(op.parameter.days[key]);
+							}
+						}
+						
+					}
+					
+					
+			
 					
 //					activityEventCtrl.event.=d.;
 //					activityEventCtrl.event.=d.;
@@ -192,6 +216,26 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 			});
 	}
 	
+	function insertDocChild(node,child){
+		if(node.id==child.parentId){
+			if(!node.hasOwnProperty("childs")){
+				node.childs=[];
+			}
+			node.childs.push(child)
+			return true;
+		}else{
+			if(node.hasOwnProperty("childs")){
+				for(var i=0;i<node.childs.length;i++){
+					if(insertDocChild(node.childs[i],child)){
+						return true;
+					}
+				}
+			}else{
+				return false;
+			}
+		}
+	}
+	
 	loadJobDataCtrl.loadJobData = function(loadTri){
 		var parameters = 'jobName=' + loadJobDataCtrl.jobName + '&jobGroup=' + loadJobDataCtrl.jobGroup;
 		restServices.get("scheduler", "getJob", parameters)
@@ -199,7 +243,25 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 				if (data.hasOwnProperty("errors")) {
 					console.error(translate.load("sbi.glossary.load.error"))
 				} else {
-					loadJobDataCtrl.jobData = data;
+					console.log("data",data)
+					loadJobDataCtrl.jobData = data.job;
+					loadJobDataCtrl.lowFunc=[];
+					for(var i=0;i<data.functionality.length;i++){
+						var tmp=data.functionality[i];
+						if(!tmp.hasOwnProperty("parentId")){
+							loadJobDataCtrl.lowFunc.push(tmp);
+						}else{
+							console.log("figlio ")
+							for(var j=0;j<loadJobDataCtrl.lowFunc.length;j++){
+								if(insertDocChild(loadJobDataCtrl.lowFunc[j],tmp)){
+									break;
+								}
+							}
+							
+						}
+					}
+					
+					
 					loadJobDataCtrl.loadDocuments(loadTri);
 				}
 			})
@@ -296,26 +358,25 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	}
 	
 	activityEventCtrl.toggleMonthScheduler=function(){
-		 activityEventCtrl.event.chronstring={"type":"month","parameter":{}};
+		 activityEventCtrl.event.chrono={"type":"month","parameter":{}};
 		 if(activityEventCtrl.typeMonth==true){
-				activityEventCtrl.event.chronstring.parameter.numRepetition=activityEventCtrl.monthrep_n;
-				}else{
-				activityEventCtrl.event.chronstring.parameter.months=[];
+				activityEventCtrl.event.chrono.parameter.numRepetition=activityEventCtrl.monthrep_n;
+			}else{
+				activityEventCtrl.event.chrono.parameter.months=[];
 				for(var k in activityEventCtrl.month_repetition){
-					activityEventCtrl.event.chronstring.parameter.months.push(activityEventCtrl.month_repetition[k]);
+					activityEventCtrl.event.chrono.parameter.months.push(activityEventCtrl.month_repetition[k]);
 				}
 			}
 			
 			if(activityEventCtrl.typeMonthWeek==true){
-				activityEventCtrl.event.chronstring.parameter.dayRepetition=activityEventCtrl.dayinmonthrep_week;
+				activityEventCtrl.event.chrono.parameter.dayRepetition=activityEventCtrl.dayinmonthrep_week;
 			}else{
 				var mwnr=activityEventCtrl.month_week_number_repetition
 				if(mwnr==undefined)mwnr='first';
-				activityEventCtrl.event.chronstring.parameter.dayRepetition=0;
-				activityEventCtrl.event.chronstring.parameter.weeks=mwnr;
-				activityEventCtrl.event.chronstring.parameter.days=[];
+				activityEventCtrl.event.chrono.parameter.weeks=mwnr;
+				activityEventCtrl.event.chrono.parameter.days=[];
 				for(var k in activityEventCtrl.month_week_repetition){
-					activityEventCtrl.event.chronstring.parameter.days.push(activityEventCtrl.month_week_repetition[k]);
+					activityEventCtrl.event.chrono.parameter.days.push(activityEventCtrl.month_week_repetition[k]);
 				}
 				
 			}
@@ -323,18 +384,18 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	
 	activityEventCtrl.toggleWeek=function(week){
 		if(week!=undefined){
-			var idx = activityEventCtrl.selectedWeek.indexOf(week);
+			var idx = activityEventCtrl.selectedWeek.indexOf(week.value);
 	        if (idx > -1){
 	        	activityEventCtrl.selectedWeek.splice(idx, 1);
 	        }else{
-	        	activityEventCtrl.selectedWeek.push(week);
+	        	activityEventCtrl.selectedWeek.push(week.value);
 	        }
 		}
 	
-        activityEventCtrl.event.chronstring={"type":"week","parameter":{"numRepetition":1,"days":[]}};
+        activityEventCtrl.event.chrono={"type":"week","parameter":{"numRepetition":1,"days":[]}};
         
         for(var k in activityEventCtrl.selectedWeek ){
-        	activityEventCtrl.event.chronstring.parameter.days.push(activityEventCtrl.selectedWeek[k].value);
+        	activityEventCtrl.event.chrono.parameter.days.push(activityEventCtrl.selectedWeek[k]);
         }
     
 	}
@@ -343,24 +404,43 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 		$timeout(function() {
 			var tip=activityEventCtrl.eventSched.repetitionKind;
 			switch(tip){
-			case 'event': activityEventCtrl.event.chronstring={"type":"event","parameter":{"type":activityEventCtrl.eventSched.event_type}};
+			case 'event': activityEventCtrl.event.chrono={"type":"event","parameter":{"type":activityEventCtrl.eventSched.event_type}};
 							if(activityEventCtrl.eventSched.event_type=='dataset'){
-								 activityEventCtrl.event.chronstring.parameter.dataset=activityEventCtrl.eventSched.dataset;
-								 activityEventCtrl.event.chronstring.parameter.frequency=activityEventCtrl.eventSched.frequency;
+								 activityEventCtrl.event.chrono.parameter.dataset=activityEventCtrl.eventSched.dataset;
+								 activityEventCtrl.event.chrono.parameter.frequency=activityEventCtrl.eventSched.frequency;
 							}
 							break;
-			case 'single':activityEventCtrl.event.chronstring={"type":"single"};break;
-			case'minute': activityEventCtrl.event.chronstring={"type":"minute","parameter":{"numRepetition":activityEventCtrl.eventSched.minute_repetition_n}};break;
-			case'hour': activityEventCtrl.event.chronstring={"type":"hour","parameter":{"numRepetition":activityEventCtrl.eventSched.hour_repetition_n}};break;
-			case'day': activityEventCtrl.event.chronstring={"type":"day","parameter":{"numRepetition":activityEventCtrl.eventSched.day_repetition_n}};break;
+			case 'single':activityEventCtrl.event.chrono={"type":"single"};break;
+			case'minute': activityEventCtrl.event.chrono={"type":"minute","parameter":{"numRepetition":activityEventCtrl.eventSched.minute_repetition_n}};break;
+			case'hour': activityEventCtrl.event.chrono={"type":"hour","parameter":{"numRepetition":activityEventCtrl.eventSched.hour_repetition_n}};break;
+			case'day': activityEventCtrl.event.chrono={"type":"day","parameter":{"numRepetition":activityEventCtrl.eventSched.day_repetition_n}};break;
 			case'week': activityEventCtrl.toggleWeek();break;
 			case'month': activityEventCtrl.toggleMonthScheduler();break;
 			}
-			console.log('chronstring',activityEventCtrl.event.chronstring);
+			console.log('chrono',activityEventCtrl.event.chrono);
 		}, 500);
 		
 		
 	}
+	
+	activityEventCtrl.toggleDocFunct=function(doc,funct){
+		
+		if(funct!=undefined){
+			if(doc.funct==undefined){
+				doc.funct=[];
+			}
+			var idx = doc.funct.indexOf(funct);
+	        if (idx > -1){
+	        	doc.funct.splice(idx, 1);
+	        }else{
+	        	doc.funct.push(funct);
+	        }
+		}
+	
+        
+    
+	}
+	
 	
 	activityEventCtrl.prova=function(){
 		console.log("prova")

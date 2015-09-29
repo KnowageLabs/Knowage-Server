@@ -85,7 +85,41 @@
                    <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedDocument.useFixedFolder">
                    		 </div>	
                    		 
-                   		 alberello
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+				<div  id="docTree" ui-tree="" data-drag-enabled="false" data-drag-delay="false"	data-empty-placeholder-enabled="false" >
+					<ol id="olchiproot" ui-tree-nodes ng-model="jobDataCtrl.lowFunc"	>
+						<li ng-repeat="item in jobDataCtrl.lowFunc" ui-tree-node >
+							<div ui-tree-handle layout="row">
+							<div class="indicator-child"></div>
+							<span class="fa fa-folder-open-o" style="color: turquoise;"></span>
+					       		<md-checkbox md-no-ink style="margin: -3px 0 0 5px;" ng-click="activityEvent.toggleDocFunct(activityEvent.selectedDocument,item.id);" aria-label="Checkbox 1">
+								 	{{item.name}}
+								</md-checkbox>
+					      	</div>
+							<ol ui-tree-nodes="" ng-model="item.childs">
+								<li ng-repeat="subItem in item.childs" ui-tree-node ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/lowFunctionalityTreeNode.html'">
+					          	</li>
+					      	</ol>
+					   </li>
+					
+					</ol>
+				</div>
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
+                   		 
                    		 
                    		<div  layout="row" class="checkboxRow" >
 			    <label>{{translate.load("folder from dataset")}}:</label>

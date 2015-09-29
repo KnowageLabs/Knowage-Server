@@ -128,12 +128,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 			<%-- Event detail panel --%>
 			<div  layout="column" flex class="md-whiteframe-z1">
 				<md-tabs  ng-init="activityEvent.selectFirstEvent(jobDataCtrl.events)" flex>
-					
 					<md-tab id="eventTabDetail" layout-padding flex>
 						<md-tab-label>{{translate.load("sbi.generic.details")}}</md-tab-label>
 						<md-tab-body class="md-padding " flex>
 							<form name="contactForm" ng-submit="contactForm.$valid && activityEvent.saveEvent(contactForm.$valid)" layout="column" class="detailBody" novalidate>
 								<md-content class="bottomButtonsBox">
+								
 									<md-input-container>
 				                        <label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
 				                        <input ng-model="activityEvent.event.triggerName" required maxlength="100" ng-maxlength="100" md-maxlength="100">
@@ -255,7 +255,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									
 										<div layout="row" ng-repeat="week in activityEvent.week">
 										    <label>{{week.label}}:</label>
-								            <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedWeekObj[week.label]"  ng-click="activityEvent.toggleWeek(week)" ></md-checkbox>
+								            <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedWeekObj[week.value]"  ng-click="activityEvent.toggleWeek(week)" ></md-checkbox>
 								         </div>
 									    	
 							       		 
