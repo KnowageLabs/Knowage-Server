@@ -244,9 +244,6 @@
 	 {
 		 title: {
 			 text: '$xAxis.TITLE.text',
-			 #if( $xAxis.style.rotate && $xAxis.style.rotate != '' )
-			 rotation: $xAxis.style.rotate,
-			 #end
 			 
 			 #set ($xTitleAlign = $xAxis.TITLE.style.align)
 			 #if( $xTitleAlign != '' )
@@ -284,22 +281,26 @@
 	        			textDecoration: 'underline',
 					#elseif($styleName == 'align')
 	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
         		},
+        		
         		#if($labelAlign)
-        			align:"$labelAlign" 
+        			align:"$labelAlign",
         		#end
         		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
         	#end
-		 
 		 },
-		 
 
 		 #if($xAxis.position == 'top')
-		 opposite: true,
+		 	opposite: true,
 		 #end
 		 
 		 type: 'category',
@@ -319,7 +320,7 @@
         		
         		#*
         		#if( $yAxis.style.rotate != '' ) 
-        		rotation: $yAxis.style.rotate,
+        			rotation: $yAxis.style.rotate,
         		#end
         		*#
         		
@@ -356,19 +357,24 @@
 	        			textDecoration: 'underline',
 	        		#elseif($styleName == 'align')
 	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
         		},
+        		
         		#if($labelAlign)
-        			align:"$labelAlign" 
+        			align:"$labelAlign" ,
         		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
         	#end
         		
-    		#if( $yAxis.style != '' && $yAxis.style.rotate && $yAxis.style.rotate != '' ) 
-        		rotation: $yAxis.style.rotate,
-    		#end
+    		
             },
         	
 	        #if($yAxis.MAJORGRID.interval != '')

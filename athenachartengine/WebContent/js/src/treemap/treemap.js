@@ -310,11 +310,14 @@ function renderHeatmap(chartConf){
                 x: 5,
                 y: 15,
                 format: '{value:%B %Y}',// long month
+                rotation: (chartConf.xaxis.labels.rotation!=undefined && chartConf.xaxis.labels.rotation!="") ? chartConf.xaxis.labels.rotation : '',	
+                align: (chartConf.xaxis.labels.align!=undefined && chartConf.xaxis.labels.align!="") ? chartConf.xaxis.labels.align : '',	
                 style:{
-           		 color: chartConf.xaxis.style.fontColor,
-                    fontWeight: chartConf.xaxis.style.fontWeight,
-                    fontSize: chartConf.xaxis.style.fontSize,
-                    fontFamily: chartConf.xaxis.style.fontFamily
+           		 	color: chartConf.xaxis.labels.style.fontColor,
+           		 	fontStyle:(chartConf.xaxis.labels.style.fontStyle!=undefined && chartConf.xaxis.labels.style.fontStyle!="") ? chartConf.xaxis.labels.style.fontStyle : '',
+                    textDecoration: (chartConf.xaxis.labels.style.textDecoration!=undefined && chartConf.xaxis.labels.style.textDecoration!="") ? chartConf.xaxis.labels.style.textDecoration : '',
+                    fontSize: chartConf.xaxis.labels.style.fontSize,
+                    fontFamily: chartConf.xaxis.labels.style.fontFamily
            	}	
             },
             tickInterval:30*24*3600*1000,
@@ -327,11 +330,15 @@ function renderHeatmap(chartConf){
                 text: null
             },
             labels:{
+            	rotation: (chartConf.yaxis.labels.rotation!=undefined && chartConf.yaxis.labels.rotation!="") ? chartConf.yaxis.labels.rotation : '',	
+                align: (chartConf.yaxis.labels.align!=undefined && chartConf.yaxis.labels.align!="") ? chartConf.yaxis.labels.align : '',	
+            	
             	style:{
-            		 color: chartConf.yaxis.style.fontColor,
-                     fontWeight: chartConf.yaxis.style.fontWeight,
-                     fontSize: chartConf.yaxis.style.fontSize,
-                     fontFamily: chartConf.yaxis.style.fontFamily
+            		 color: chartConf.yaxis.labels.style.fontColor,
+                     fontStyle:(chartConf.yaxis.labels.style.fontStyle!=undefined && chartConf.yaxis.labels.style.fontStyle!="") ? chartConf.yaxis.labels.style.fontStyle : '',
+                     textDecoration: (chartConf.yaxis.labels.style.textDecoration!=undefined && chartConf.yaxis.labels.style.textDecoration!="") ? chartConf.yaxis.labels.style.textDecoration : '',
+                     fontSize: chartConf.yaxis.labels.style.fontSize,
+                     fontFamily: chartConf.yaxis.labels.style.fontFamily
             	}
             },
             categories:chartConf.additionalData.storeresult,

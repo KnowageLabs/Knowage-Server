@@ -209,7 +209,39 @@
 				fontWeight: '$xAxis.style.fontWeight',
 				fontSize: '$xAxis.style.fontSize',
 				fontColor: '$xAxis.style.color'
-			}
+			},
+			
+			labels:{
+				 
+				 #if( $xAxis.style != '' ) 
+        		
+        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+		 },
 		
 		#end
 	},
@@ -223,13 +255,36 @@
 			
 			#set($yAxis = $yAxisList.get($yAxisKey))
 			
-			style:
-			{
-				fontFamily: '$yAxis.style.fontFamily',
-				fontWeight: '$yAxis.style.fontWeight',
-				fontSize: '$yAxis.style.fontSize',
-				fontColor: '$yAxis.style.color'
-			}
+			labels:{
+				 
+				 #if( $yAxis.style != '' ) 
+				 
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+		 },
 					
 		#end
 	},

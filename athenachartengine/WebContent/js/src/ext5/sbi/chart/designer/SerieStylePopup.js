@@ -54,6 +54,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 	constructor: function(config) {
 		this.callParent(config);		
 		
+		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		store = config.store,
 		
 		rowIndex = config.rowIndex;
@@ -330,7 +331,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		if (chartType == "CHORD" || chartType == "GAUGE" || chartType == "PIE" 
 				|| chartType == "RADAR" || chartType == "SCATTER")
 		{
-			this.serieTypesComboBox.disable();
+			this.serieTypesComboBox.hide();
 		}	
 		
 		this.serieFieldSet.add(this.serieTypesComboBox);		
@@ -381,7 +382,19 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				return styleColor;
 			}
 		};
-		this.serieFieldSet.add(this.serieColorPicker);
+		
+		/**
+		 * This parameters does not play any role when chart is of type PIE
+		 * because series (pie segments) are going to take colors that are 
+		 * specified inside the color palette of the Designer. This is 
+		 * parameter useful for e.g. BAR and LINE chart types.
+		 * @author: danristo (danilo.ristovski@mht.net)  
+		 */
+		// TODO: I think there are more chart types whose serie popup should be refined !!!
+		if (chartType != "PIE")
+		{
+			this.serieFieldSet.add(this.serieColorPicker);
+		}		
 		
 		var showValue = dataAtRow.get('serieShowValue');
 		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
@@ -389,7 +402,11 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
 		});
-		this.serieFieldSet.add(this.serieShowValue);
+		
+		if (chartType != "RADAR")
+		{
+			this.serieFieldSet.add(this.serieShowValue);
+		}		
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {

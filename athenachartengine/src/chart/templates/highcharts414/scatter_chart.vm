@@ -243,6 +243,38 @@
 		     },
 		 },
 
+		labels:{
+				 
+				 #if( $xAxis.style != '' ) 
+        		
+        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
+        	#end
+		 },
+
 		 #if( $xAxis.position == 'top' )
 		 	opposite: true,
 		 #end
@@ -299,22 +331,36 @@
         		},
         	},
         	
-        	labels: {
-    		#if($yAxis.style) 
+        	labels:{
+				 
+				 #if( $yAxis.style != '' ) 
+				 
         		style:{
 	        	#foreach($styleName in $yAxis.style.keySet())
 	        		#set ($axisStyle = $yAxis.style[$styleName])
-	        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
-	        			fontStyle: '$axisTitleStyle',
-					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
 	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
 					#else		        			
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
         		},
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
+        		#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
         	#end
-            },
+		 },
         	
         	#if($yAxis.MAJORGRID)
 		        #if($yAxis.MAJORGRID.interval != '')

@@ -43,8 +43,7 @@
 		{			
 			fontFamily: '$chart.style.fontFamily',
 			fontSize: '$chart.style.fontSize',				
-			backgroundColor: '$chart.style.backgroundColor',			
-			
+			backgroundColor: '$chart.style.backgroundColor',	
 					
 			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
     			fontStyle: '$chart.style.fontWeight',
@@ -133,15 +132,17 @@
 			color: '$chart.TIP.style.color',
 			width: '$chart.TIP.style.width',
 			
-			#if($chart.tip.style.fontWeight == 'italic' || $chart.tip.style.fontWeight == 'normal')
-    			fontStyle: '$chart.tip.style.fontWeight',
-			#elseif($chart.tip.style.fontWeight == 'underline')
-    			textDecoration: '$chart.tip.style.fontWeight',
-			#elseif($chart.tip.style.fontWeight == 'bold')		        			
-    			fontWeight: '$chart.tip.style.fontWeight',
+			#if($chart.TIP.style.fontWeight == 'italic' || $chart.TIP.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TIP.style.fontWeight',
+			#elseif($chart.TIP.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TIP.style.fontWeight',
+			#elseif($chart.TIP.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TIP.style.fontWeight',
     		#end
 		}
 	},
+		
+	
 		
 	#* 	Something completely new that define through XML template
 		that we would like to have for the SUNBURST chart.  *# 	
@@ -158,12 +159,12 @@
 			fontFamily: '$chart.TOOLBAR.style.fontFamily',		
 			fontSize: '$chart.TOOLBAR.style.fontSize',
 			
-			#if($chart.toolbar.style.fontWeight == 'italic' || $chart.toolbar.style.fontWeight == 'normal')
-    			fontStyle: '$chart.toolbar.style.fontWeight',
-			#elseif($chart.toolbar.style.fontWeight == 'underline')
-    			textDecoration: '$chart.toolbar.style.fontWeight',
-			#elseif($chart.toolbar.style.fontWeight == 'bold')		        			
-    			fontWeight: '$chart.toolbar.style.fontWeight',
+			#if($chart.TOOLBAR.style.fontWeight == 'italic' || $chart.TOOLBAR.style.fontWeight == 'normal')
+    			fontStyle: '$chart.TOOLBAR.style.fontWeight',
+			#elseif($chart.TOOLBAR.style.fontWeight == 'underline')
+    			textDecoration: '$chart.TOOLBAR.style.fontWeight',
+			#elseif($chart.TOOLBAR.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.TOOLBAR.style.fontWeight',
     		#end
 		}
 	},

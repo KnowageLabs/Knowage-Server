@@ -25,11 +25,11 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	listeners : {
 		rowclick: function(table, record, tr, rowIndex, e, eOpts ) {
 			
-			console.log(Sbi.chart.designer.ChartColumnsContainerManager.storePool);
-			console.log(Sbi.chart.designer.ChartColumnsContainerManager.instanceCounter);
-			console.log(Sbi.chart.designer.ChartColumnsContainerManager.instanceIdFeed);
-			console.log(Sbi.chart.designer.ChartColumnsContainerManager.allAxisData);
-			console.log("*** E - ChartTypeSelector:rowclick listener ***");
+			//console.log(Sbi.chart.designer.ChartColumnsContainerManager.storePool);
+			//console.log(Sbi.chart.designer.ChartColumnsContainerManager.instanceCounter);
+			//console.log(Sbi.chart.designer.ChartColumnsContainerManager.instanceIdFeed);
+			//console.log(Sbi.chart.designer.ChartColumnsContainerManager.allAxisData);
+			//console.log("*** E - ChartTypeSelector:rowclick listener ***");
 			/**
 			 * The chart type that is actually picked (clicked).
 			 * @commentBy: danristo (danilo.ristovski@mht.net)
@@ -104,9 +104,39 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 					compatibleTypes = compatibleTypes || compatibleChart == thisChartType;
 				}
 				
+				var chartColumnsContainer = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
+				var numberOfYAxis = chartColumnsContainer.length;
+				
 				var plusLeftAxis = Ext.getCmp("plusLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
 					
-					
+				/* ---------- BOTTOM (X) AXIS PANEL ---------- */
+				// Show the gear tool on the toolbar of the bottom (X) axis panel
+				var stylePopupBottomPanel = Ext.getCmp("stylePopupBottomPanel");
+				stylePopupBottomPanel.show();
+				
+				
+				// Show the textfield dedicated for the title of the bottom (X) axis
+				var textfieldAxisTitle = Ext.getCmp("textfieldAxisTitle");
+				textfieldAxisTitle.show();
+//				//console.log(chartColumnsContainer);
+				/* ---------- LEFT (Y) AXIS PANEL ---------- */
+				// Show the gear tool on the toolbar of the left (Y) axis panel
+				var stylePopupLeftAxis = Ext.getCmp("stylePopupLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
+				//console.log( Ext.getCmp("stylePopupLeftAxis_Axis_3"));
+				stylePopupLeftAxis.show();
+				
+				// Show the plus tool on the toolbar of the left (Y) axis panel			
+				plusLeftAxis.show();
+//				//console.log(Ext.getCmp("plusLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id));
+				
+				// Show the textfield dedicated for the title of the left (Y) axis
+				var titleTextfield = Ext.getCmp(chartColumnsContainer[0].id + "_TitleTextfield");
+				titleTextfield.show();
+				
+				// Show the serie&tooltip icon for SERIE records inside the left (Y) panel
+				var actionColumnLeftAxis = Ext.getCmp("actionColumnLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
+				actionColumnLeftAxis.items[0].iconCls = "";
+				
 				if(!compatibleTypes) 
 				{	
 					
@@ -131,46 +161,19 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 								
 								/////////////////////////////////////
 								
-								var chartColumnsContainer = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
-								var numberOfYAxis = chartColumnsContainer.length;
 								
-								console.log(numberOfYAxis);
-								console.log(chartColumnsContainer);
-								console.log(Ext.getCmp("chartLeftAxisesContainer").items.length);
-								console.log(Ext.getCmp("chartLeftAxisesContainer").items.items[0]);
+								
+								//console.log(numberOfYAxis);
+								//console.log(chartColumnsContainer);
+								//console.log(Ext.getCmp("chartLeftAxisesContainer").items.length);
+								//console.log(Ext.getCmp("chartLeftAxisesContainer").items.items[0]);
 								
 //								console.log("-- Y axis pool: --");
-//								console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool);
-								console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
-								console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1]);
+//								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool);
+								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
+								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1]);
 								
-								/* ---------- BOTTOM (X) AXIS PANEL ---------- */
-								// Show the gear tool on the toolbar of the bottom (X) axis panel
-								var stylePopupBottomPanel = Ext.getCmp("stylePopupBottomPanel");
-								stylePopupBottomPanel.show();
-								
-								
-								// Show the textfield dedicated for the title of the bottom (X) axis
-								var textfieldAxisTitle = Ext.getCmp("textfieldAxisTitle");
-								textfieldAxisTitle.show();
-//								console.log(chartColumnsContainer);
-								/* ---------- LEFT (Y) AXIS PANEL ---------- */
-								// Show the gear tool on the toolbar of the left (Y) axis panel
-								var stylePopupLeftAxis = Ext.getCmp("stylePopupLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
-								console.log( Ext.getCmp("stylePopupLeftAxis_Axis_3"));
-								stylePopupLeftAxis.show();
-								
-								// Show the plus tool on the toolbar of the left (Y) axis panel			
-								plusLeftAxis.show();
-//								console.log(Ext.getCmp("plusLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id));
-								
-								// Show the textfield dedicated for the title of the left (Y) axis
-								var titleTextfield = Ext.getCmp(chartColumnsContainer[0].id + "_TitleTextfield");
-								titleTextfield.show();
-								
-								// Show the serie&tooltip icon for SERIE records inside the left (Y) panel
-								var actionColumnLeftAxis = Ext.getCmp("actionColumnLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
-								actionColumnLeftAxis.items[0].iconCls = "";	
+								;	
 								
 								
 								//////////////////////////////////
@@ -185,18 +188,21 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 								 * Hide axis title textbox and gear tool for both left (Y)
 								 * axis panel and bottom (X) axis panel and plus tool of the left
 								 * (Y) panel when new row is clicked. Hide also serie&tooltip icon 
-								 * for SERIE records inside the left (Y) panel.
+								 * for SERIE records inside the left (Y) panel. Hidding of the serie 
+								 * style configuration popup icon (serie&tooltip) will be excluded in
+								 * the case of PIE chart.
 								 * @author: danristo (danilo.ristovski@mht.net)
 								 */
 								if (selectedType.toLowerCase()=="sunburst" || selectedType.toLowerCase()=="wordcloud" || 
 										selectedType.toLowerCase()=="treemap" || selectedType.toLowerCase()=="parallel" ||
-											selectedType.toLowerCase()=="heatmap" || selectedType.toLowerCase()=="chord") {
+											selectedType.toLowerCase()=="heatmap" || selectedType.toLowerCase()=="chord" || 
+												selectedType.toLowerCase()=="pie" || selectedType.toLowerCase()=="radar") {
 									
 									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 									var numberOfYAxis = chartColumnsContainerNew.length;
 									
-									console.log(numberOfYAxis);
-									console.log(chartColumnsContainerNew);
+									//console.log(numberOfYAxis);
+									//console.log(chartColumnsContainerNew);
 									
 //									if (numberOfYAxis > 1) {
 //										for (var i=0; i<numberOfYAxis; i++) {
@@ -207,7 +213,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 //										Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].hide();
 //									}
 									
-									console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool);
+									//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool);
 									
 									/* ---------- BOTTOM (X) AXIS PANEL ---------- */
 									// Hide the gear tool on the toolbar of the bottom (X) axis panel							
@@ -238,21 +244,22 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 									
 									// Hide the serie&tooltip icon for SERIE records inside the left (Y) panel
 //									Ext.getCmp("actionColumnLeftAxis_" + Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id).items[0].iconCls = "x-hidden";
-									actionColumnLeftAxis.items[0].iconCls = "x-hidden";
 									
-									
-								} else if (selectedType.toLowerCase()=="radar" || selectedType.toLowerCase()=="scatter") {
 									/**
-									 * If we change chart type from one that is not compatible with the RADAR or SCATTER
-									 * to the one of those two, hide plus buttons because we cannot have more than one
-									 * Y-axis panel for these types.
+									 * For PIE chart we will need serie style configuration popup
+									 * in order to define how the serie items should be displayed.
+									 * Foe example: with what color are serie (bars, lines, ...)
+									 * items going to be presented, what is the tooltip going to 
+									 * look like, etc. This is not common for other chart types in
+									 * this if-statement.
 									 * @author: danristo (danilo.ristovski@mht.net)
 									 */
-									// Hide the plus tool on the toolbar of the left (Y) axis panel
-									plusLeftAxis.hide();
-//									Ext.getCmp("plusLeftAxis_" + Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id).hide();
+									if (selectedType.toLowerCase()!="pie" && selectedType.toLowerCase()!="radar")
+									{
+										actionColumnLeftAxis.items[0].iconCls = "x-hidden";
+									}								
 									
-								}
+								} 
 								/* END */
 								
 								chartTypeSelectorScope.fireEvent("newrowclick");
@@ -280,6 +287,15 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 					 * can have only one Y-axis.
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
+					if (selectedType.toLowerCase() == "radar")
+					{
+						stylePopupBottomPanel.hide();
+						textfieldAxisTitle.hide();
+						stylePopupLeftAxis.hide();
+						plusLeftAxis.hide();
+						titleTextfield.hide();
+					}
+					
 					if (selectedType.toLowerCase() == "radar" || selectedType.toLowerCase() == "scatter") {
 						/**
 						 * If there are some Y-axis panels created before on the Designer (other 
@@ -387,7 +403,7 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 	setChartType: function(type) {
 		
 		this.chartType = type;
-		console.log("*** E - ChartTypeSelector:setChartType() ***");
+		//console.log("*** E - ChartTypeSelector:setChartType() ***");
 		// selection on the table
 		for(var i = 0; i < this.store.data.length; i++) {
 			

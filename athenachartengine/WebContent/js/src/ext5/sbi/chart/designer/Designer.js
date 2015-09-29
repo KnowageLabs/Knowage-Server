@@ -2454,7 +2454,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
-						typeOfChart == "HEATMAP" || typeOfChart == "CHORD") {
+						typeOfChart == "HEATMAP" || typeOfChart == "CHORD" || 
+							typeOfChart == "PIE" || typeOfChart == "RADAR") {
 				/**
 				 * Hide the bottom (X) axis title textbox	
 				 */
@@ -2894,13 +2895,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 						
 						if (chartType == "SUNBURST" || chartType == "PARALLEL" ||
 								chartType == "WORDCLOUD" || chartType == "TREEMAP"
-									|| chartType == "CHORD") {
+									|| chartType == "CHORD" || chartType == "PIE" || 
+										chartType == "RADAR") {
 							hideAxisTitleTextbox = true;
 							hideGearTool = true;
 							hidePlusGear = true;
 						}
 						// (danilo.ristovski@mht.net)
-						else if (chartType == "RADAR" || chartType == "SCATTER" || chartType == "HEATMAP") {
+						else if (chartType == "SCATTER" || chartType == "HEATMAP") {
 							hidePlusGear = true;
 							
 							if (chartType == "HEATMAP") {
@@ -2967,7 +2969,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 							console.log("*** A2 - Deisgner.loadAxesAndSeries() - serie ***");
 							console.log(serie);
 							
-							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE") {								
+							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE") {	
+								
+								console.log("EEE");
+								console.log(serie.DATA_LABELS);
+								
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
 									axisName: serie.name && serie.name != '' ? serie.name : serie.column,
