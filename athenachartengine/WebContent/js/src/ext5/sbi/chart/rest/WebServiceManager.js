@@ -61,7 +61,7 @@ Ext.define('Sbi.chart.rest.WebServiceManager', {
                 disableCaching: ws.getDisableCaching(),
                 params: parameters,
                 headers: {
-                    'Content-Type': ws.getContentType(),
+                    'Content-Type': ws.getContentType()
                 },
                 success: function(response) {
                 	Ext.log({level:'info'}, 'Completed service execution: ' + serviceName);

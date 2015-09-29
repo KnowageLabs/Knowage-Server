@@ -130,6 +130,7 @@ author:
 		}
 	}
 	String driverParams = new JSONObject(driverParamsMap).toString(0);
+	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -147,9 +148,11 @@ author:
 
 <script>
 	var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+	//var sbiExecutionId = '<%=uuidO%>';
 	var userId = '<%=userId%>';
 	var hostName = '<%=request.getServerName()%>';
 	var serverPort = '<%=request.getServerPort()%>';
+	var protocol = '<%=request.getScheme()%>';
 </script>
 
 <jsp:include
@@ -164,6 +167,10 @@ author:
 <%-- == BODY ========================================================== --%>
 
 <body>
+   <%-- div with wait while loading message --%>
+   <div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
+   		<img src='/athenachartengine/img/icon-info15.png' />  Downloading...
+   </div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
@@ -172,6 +179,88 @@ author:
 		
 		var isChartHeightEmpty = null;
 		var isChartWidthEmpty= null;
+		
+		function exportChart(exportType) {		
+			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
+			
+			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, sbiExecutionId, userId);
+			var chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager(protocol, hostName, serverPort, sbiExecutionId, userId); 			
+			
+			/* gets the template content */
+			var parameters = {
+ 						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+ 						driverParams: '<%=driverParams%>'
+ 			};
+			chartServiceManager.run('jsonChartTemplate', parameters, [], 
+					function (response) {
+						var chartConf = response.responseText;
+						Ext.DomHelper.useDom = true; 
+						// need to use dom because otherwise an html string is composed as a string concatenation,
+				        // but, if a value contains a " character, then the html produced is not correct!!!
+				        // See source of DomHelper.append and DomHelper.overwrite methods
+				        // Must use DomHelper.append method, since DomHelper.overwrite use HTML fragments in any case.
+				         var dh = Ext.DomHelper;
+						 var form = document.getElementById('export-chart-form');
+				          if (form === undefined || form === null) {
+					          var form = dh.append(Ext.getBody(), { 
+					        	// creating the hidden input in form
+					            id: 'export-chart-form'
+					          , tag: 'form'
+					          , method: 'post'
+					          , cls: 'export-form'					       
+					          });
+					       // creating the hidden inputs in form:
+					          dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'options'
+									, value: ''
+								});
+					          dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'content'
+									, value: '' 
+								});
+					          dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'type'
+									, value: '' 
+								});
+					          dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'width'
+									, value: ''
+								});
+					          dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'constr'
+									, value: '' 
+								});
+					          dh.append(form, {					
+									tag: 'input'
+									, type: 'hidden'
+									, name: 'async'
+									, value: ''
+								});
+				          }              				       	
+				         form.elements[0].value = chartConf;
+				         form.elements[1].value = 'options';
+				         form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
+				         form.elements[3].value = '600';
+				         form.elements[4].value = 'Chart';
+				         form.elements[5].value = 'false';
+				         form.action = protocol + '://'+ hostName + ':' + serverPort + '/highcharts-export-web/';
+				         form.target = '_blank'; // result into a new browser tab
+				         form.submit();
+				         document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'none';
+					}					
+			);
+		}
+				
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
@@ -253,7 +342,7 @@ author:
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
  			Sbi.chart.viewer.ChartTemplateContainer.datasetLabel = '<%=datasetLabel%>';
  			
- 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, sbiExecutionId, userId);
+ 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, sbiExecutionId, userId);
  			
  			if(<%=isCockpit%>) {
  				
@@ -350,8 +439,8 @@ author:
 	    	Ext.log({level: 'info'}, 'CHART: OUT');
 
  		  });
-
+ 		
 	</script>
-
+	
 </body>
 </html>
