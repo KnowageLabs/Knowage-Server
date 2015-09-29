@@ -178,17 +178,17 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 												</md-input-container> 
 										    </div>
 									</md-toolbar>
-									<div ng-if="activityEvent.event.repetitionKind == 'event'" layout-padding class="borderBox">
+									<div ng-if="activityEvent.eventSched.repetitionKind == 'event'" layout-padding class="borderBox">
 										<md-input-container>
 				                        	<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label> 
-					                        <md-select aria-label="aria-label" ng-model="activityEvent.event.event_type" required>
+					                        <md-select aria-label="aria-label" ng-model="activityEvent.eventSched.event_type" ng-change="activityEvent.changeTypeFrequency()" required>
 										    	<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" value="{{eventType.value}}">
 										    		{{eventType.label}}
 										    	</md-option>
 										  	</md-select>
 									  	</md-input-container>
 								  	
-								  		<div ng-if="activityEvent.event.event_type=='dataset'">
+								  		<div ng-if="activityEvent.eventSched.event_type=='dataset'">
 											<md-toolbar class="minihead">
 												<div class="md-toolbar-tools">
 													<h2 class="md-flex">{{translate.load("sbi.kpis.dataset")}}</h2>
@@ -198,15 +198,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											<md-content layout-padding class="borderBox"> 
 												<md-input-container>
 													<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-													<md-select aria-label="aria-label" ng-model="activityEvent.event.dataset" required>
+													<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.dataset" ng-change="activityEvent.changeTypeFrequency()" required>
 														<md-option ng-repeat="item in jobDataCtrl.datasets "
 															value="{{item.id.dsId}}">{{item.label}}</md-option> 
 													</md-select> 
 												</md-input-container> 
 												<md-input-container>
 													<label>{{translate.load("sbi.scheduler.schedulation.events.event.frequency")}}:</label>
-													<input type="number"
-														ng-model="activityEvent.event.frequency"> 
+													<input type="number" ng-change="activityEvent.changeTypeFrequency()"
+														ng-model="activityEvent.eventSched.frequency"> 
 												</md-input-container> 
 											</md-content>
 										</div>
@@ -217,41 +217,41 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									
 										<div layout="row"  style="    margin-bottom: 15px;">
 											<span class="textspan">Frequenza</span> 
-											<md-select aria-label="aria-label" ng-model="activityEvent.event.repetitionKind"  style="margin:0px" 
+											<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.repetitionKind"  style="margin:0px" 
 											ng-init="activityEvent.getActivityRepetitionKindForScheduler()" ng-change="activityEvent.changeTypeFrequency();">
 													<md-option ng-repeat="item in jobDataCtrl.intervalsEvent "  value="{{item.value}}" >{{item.label}}</md-option> 
 											</md-select> 		
 										</div>
 										
-										<div ng-if="activityEvent.event.repetitionKind=='minute'" layout="row" 
-										ng-init="activityEvent.event.minute_repetition_n =activityEvent.event.minute_repetition_n || 1;">
+										<div ng-if="activityEvent.eventSched.repetitionKind=='minute'" layout="row" 
+										ng-init="activityEvent.eventSched.minute_repetition_n =activityEvent.eventSched.minute_repetition_n || 1;">
 										 <span class="textspan">Every</span> 
-											<md-select aria-label="aria-label" ng-model="activityEvent.event.minute_repetition_n" class="numberSelect"  >
+											<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.minute_repetition_n" ng-change="activityEvent.changeTypeFrequency();" class="numberSelect"  >
 													<md-option ng-repeat="item in activityEvent.getNitem(60) "  value="{{item}}" >{{item}}</md-option> 
 											</md-select> 
 										 <span class="textspan">minutes</span>
 									</div>
 									
-									<div ng-if="activityEvent.event.repetitionKind=='hour'"  layout="row" 
-										ng-init="activityEvent.event.hour_repetition_n =activityEvent.event.hour_repetition_n || 1;">
+									<div ng-if="activityEvent.eventSched.repetitionKind=='hour'"  layout="row" 
+										ng-init="activityEvent.eventSched.hour_repetition_n =activityEvent.eventSched.hour_repetition_n || 1;">
 										 	<span class="textspan">Every</span> 
-											<md-select aria-label="aria-label" ng-model="activityEvent.event.hour_repetition_n" class="numberSelect"  >
+											<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.hour_repetition_n" ng-change="activityEvent.changeTypeFrequency();"class="numberSelect"  >
 													<md-option ng-repeat="item in activityEvent.getNitem(24) "  value="{{item}}" >{{item}}</md-option> 
 											</md-select> 
 										 	<span class="textspan">hours</span>
 										</div>
 									
 									
-									<div ng-if="activityEvent.event.repetitionKind=='day'" layout="row" 
-										ng-init="activityEvent.event.day_repetition_n =activityEvent.event.day_repetition_n || 1;">
+									<div ng-if="activityEvent.eventSched.repetitionKind=='day'" layout="row" 
+										ng-init="activityEvent.eventSched.day_repetition_n =activityEvent.eventSched.day_repetition_n || 1;">
 										 	<span class="textspan">Every</span> 
-											<md-select aria-label="aria-label" ng-model="activityEvent.event.day_repetition_n" class="numberSelect"  >
+											<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.day_repetition_n" ng-change="activityEvent.changeTypeFrequency();" class="numberSelect"  >
 													<md-option ng-repeat="item in activityEvent.getNitem(31) "  value="{{item}}" >{{item}}</md-option> 
 											</md-select> 
 										 	<span class="textspan">days</span>
 										</div>
 									
-									<div ng-if="activityEvent.event.repetitionKind=='week'" layout="row" class="alignedCheckbox">
+									<div ng-if="activityEvent.eventSched.repetitionKind=='week'" layout="row" class="alignedCheckbox">
 									
 										<div layout="row" ng-repeat="week in activityEvent.week">
 										    <label>{{week.label}}:</label>
@@ -263,7 +263,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									
 									</div>
 									
-									<div ng-if="activityEvent.event.repetitionKind=='month'" layout="row" >
+									<div ng-if="activityEvent.eventSched.repetitionKind=='month'" layout="row" >
 										<div layout="column" layout-align="center center">
 											<md-switch ng-change="activityEvent.toggleMonthScheduler()" class="md-primary" aria-label="Switch " ng-model="activityEvent.typeMonth"
 											 ng-init="activityEvent.typeMonth=activityEvent.typeMonth || true ">
@@ -335,18 +335,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		                        	
 									
 		                        	
-<!-- 									<md-toolbar class=" unselectedItem " ng-class="activityEvent.event.repetitionKind != 'single'? 'selectedItem' : 'unselectedItem'" -->
+<!-- 									<md-toolbar class=" unselectedItem " ng-class="activityEvent.eventSched.repetitionKind != 'single'? 'selectedItem' : 'unselectedItem'" -->
 <!-- 									style="height: 50px;  min-height: 30px;"> -->
 <!-- 										<div  layout="row" > -->
 <!-- 											<md-input-container style="width:100%;"> -->
 <!-- 												<label>{{translate.load("Tipo ripetizione evento")}}</label> -->
-<!-- 												<md-select aria-label="aria-label" ng-model="activityEvent.event.repetitionKind" > -->
+<!-- 												<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.repetitionKind" > -->
 <!-- 													<md-option ng-repeat="item in jobDataCtrl.intervalsEvent "  value="{{item.value}}" >{{item.label}}</md-option>  -->
 <!-- 												</md-select>  -->
 <!-- 											</md-input-container>  -->
 <!-- 					        			</div> -->
 <!-- 									</md-toolbar> -->
-<!-- 									<div ng-if="activityEvent.event.repetitionKind != 'single'"> -->
+<!-- 									<div ng-if="activityEvent.eventSched.repetitionKind != 'single'"> -->
 <!-- 									<md-content layout-padding class="borderBox ">  -->
 									
 									
