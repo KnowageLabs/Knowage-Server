@@ -95,7 +95,7 @@ public class FederationUtils {
 		dataset.setPersistTableName(cachedTable);
 		dataset.setDataSourceForReading(cachedDataSource);
 		dataset.setDataSourceForWriting(cachedDataSource);
-
+		dataset.setDsMetadata(dataSet.getDsMetadata());
 		return dataset;
 	}
 	
