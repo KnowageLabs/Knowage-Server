@@ -1,12 +1,11 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.federateddataset.dao;
 
-import it.eng.qbe.dataset.FederationUtils;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -64,7 +63,6 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			updateSbiCommonInfo4Insert(hibFederatedDataset);
 			session.save(hibFederatedDataset);
 
-
 			transaction.commit();
 
 			dataset.setFederation_id(hibFederatedDataset.getFederation_id());
@@ -97,10 +95,10 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiFederatedDataset fd where fd.federation_id = ? ");
+			Query hibQuery = aSession.createQuery(" from SbiFederationDefinition fd where fd.federation_id = ? ");
 			hibQuery.setInteger(0, id);
-			SbiFederationDefinition sbiResult  = (SbiFederationDefinition)hibQuery.uniqueResult();
-			
+			SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
+
 			toReturn = SbiFederationUtils.toDatasetFederation(sbiResult, getUserProfile());
 
 			tx.commit();
@@ -134,7 +132,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(" from SbiFederatedDataset");
+			Query hibQuery = aSession.createQuery(" from SbiFederationDefinition");
 
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
@@ -160,11 +158,4 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		logger.debug("OUT");
 		return realResult;
 	}
-
-
-	
-
-	
-
-
 }
