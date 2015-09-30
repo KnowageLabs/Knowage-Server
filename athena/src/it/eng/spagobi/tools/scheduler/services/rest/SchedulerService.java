@@ -574,7 +574,17 @@ public class SchedulerService {
 			}
 
 			jo = new JSONObject(
-					"{'isSuspended':true,'document':[{'label':'file11','parameters':''},{'label':'nnn','parameters':''}],'chrono':{'type':'week','parameter': { 'days': ['SUN','TUE','WED']}},'startTime':'20:55','endTime':'16:59','triggerName':'MyJob_Scheduler_1','triggerDescription':'descrizione','startDate':'2015-02-09T23:00:00.000Z','endDate':'2015-09-29T22:00:00.000Z'}");
+					"{'isSuspended':true,"
+							+ "'document':["
+							+ "{'label':'file11','parameters':'',"
+							+ "'sendmail':true,'uniqueMail':true,'zipMailDocument':true,'zipMailName':'ase',"
+							+ "'useFixedRecipients':true,'mailtos':'asdsad@dsad.as','useDataset':true,'datasetLabel':'dataset 11',"
+							+ "'datasetParameter':'param2','useExpression':true,'expression':'cu mancia pat n mm','mailsubj':'asasas','containedFileName':'asdas','mailTxt':'asa','reportNameInSubject':true},"
+							+ "{'label':'nnn','parameters':'','saveasdocument':true,'documentname':'das','documentdescription':'descr','useFixedFolder':true,"
+							+ "'funct':[1,2],'useFolderDataset':true,'datasetFolderLabel':'dataset 10','datasetFolderParameter':'driver2'}" + "],"
+							+ "'chrono':{'type':'week','parameter': { 'days':['MON','TUE']}}," + "'startTime':'20:55'," + "'endTime':'16:59',"
+							+ "'triggerName':'MyJob_Scheduler_1'," + "'triggerDescription':'descrizione'," + "'startDate':'2015-02-09T23:00:00.000Z',"
+							+ "'endDate':'2015-09-29T22:00:00.000Z'}");
 			return jo.toString();
 
 		} catch (Exception e) {

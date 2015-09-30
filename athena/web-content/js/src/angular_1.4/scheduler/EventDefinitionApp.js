@@ -93,39 +93,6 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 			var doc=loadJobDataCtrl.documents[i];
 			tmp.label=doc.label;
 			tmp.parameters=doc.parameters;
-//			tmp.saveassnapshot=false;
-//			tmp.snapshotname="";
-//			tmp.snapshotdescription="";
-//			tmp.snapshothistorylength="";
-//			tmp.saveasfile=false;
-//			tmp.destinationfolder="";
-//			tmp.zipFileDocument=false;
-//			tmp.zipFileName="";
-//			tmp.fileName="";
-//			tmp.documentname="";
-//			tmp.documentdescription="";
-//			tmp.useFixedFolder=false;
-//			tmp.useFolderDataset=false;
-//			tmp.datasetFolderLabel="";
-//			tmp.datasetFolderParameter="";
-//			tmp.sendtojavaclass=false;
-//			tmp.javaclasspath="";
-//			tmp.sendmail=false;
-//			tmp.uniqueMail=false;
-//			tmp.zipMailDocument=false;
-//			tmp.zipMailName="";
-//			tmp.useFixedRecipients=false;
-//			tmp.mailtos="";
-//			tmp.useDataset=false;
-//			tmp.datasetLabel="";
-//			tmp.datasetParameter="";
-//			tmp.useExpression=false;
-//			tmp.expression="";
-//			tmp.reportNameInSubject=false;
-//			tmp.mailsubj="";
-//			tmp.containedFileName="";
-//			tmp.mailtxt="";
-//			tmp.saveasdl=false;
 			emptyEvent.document.push(tmp);
 		}
 		
@@ -152,9 +119,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 				if (data.hasOwnProperty("errors")) {
 					console.error(translate.load("sbi.glossary.load.error"))
 				} else {
-//					loadJobDataCtrl.events = data.item;
-					
-					console.log("evento caricato",data)
+					console.log("evento scaricato",data)
 					var d=data;
 					activityEventCtrl.event.triggerName=d.triggerName;
 					activityEventCtrl.event.triggerDescription=d.triggerDescription;
@@ -188,27 +153,34 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 						activityEventCtrl.typeOperation="scheduler";
 						activityEventCtrl.shedulerType=true;
 						if(op.type=='week'){	
+								activityEventCtrl.selectedWeek=op.parameter.days;
+						}else if(op.type=='month'){
+							if(op.parameter.hasOwnProperty("months")){
+								activityEventCtrl.typeMonth=false;
+								activityEventCtrl.month_repetition=op.parameter.months;
+							}else{
+								activityEventCtrl.typeMonth=true;
+								activityEventCtrl.monthrep_n=op.parameter.numRepetition;
+								activityEventCtrl.month_week_number_repetition=op.parameter.weeks;
+								activityEventCtrl.month_week_repetition=op.parameter.days;
+							}
 							
-							activityEventCtrl.selectedWeekObj={};
-							for(var key in op.parameter.days){
-								activityEventCtrl.selectedWeekObj[op.parameter.days[key]]=true;
-								activityEventCtrl.selectedWeek.push(op.parameter.days[key]);
+							if(op.parameter.hasOwnProperty("days")){
+								activityEventCtrl.typeMonthWeek=false;
+								activityEventCtrl.month_week_number_repetition=op.parameter.weeks;
+								activityEventCtrl.month_week_repetition=op.parameter.days;
+							}else{
+								activityEventCtrl.typeMonthWeek=true;
+								activityEventCtrl.dayinmonthrep_week=op.parameter.dayRepetition;
 							}
 						}
 						
 					}
 					
 					
-			
-					
-//					activityEventCtrl.event.=d.;
-//					activityEventCtrl.event.=d.;
-//					activityEventCtrl.event.=d.;
-//					activityEventCtrl.event.=d.;
-//					activityEventCtrl.event.=d.;
-//					activityEventCtrl.event.=d.;
-//					
-					
+					//carico le informazioni dei documenti
+					activityEventCtrl.event.document=d.document;
+					activityEventCtrl.selectedDocument=d.document[0];
 				}
 			})
 			.error(function(data, status, headers, config) {
@@ -279,10 +251,10 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	activityEventCtrl.event={};
 	activityEventCtrl.eventSched={};
 	activityEventCtrl.selectedDocument=[];
+	activityEventCtrl.selectedWeek=[];
 	activityEventCtrl.month=[{label:'JAN',value:'JAN'},{label:'FEB',value:'FEB'},{label:'MAR',value:'MAR'},{label:'APR',value:'APR'},{label:'MAY',value:'MAY'},{label:'JUN',value:'JUN'},{label:'JUL',value:'JUL'},{label:'AUG',value:'AUG'},{label:'SEP',value:'SEP'},{label:'OCT',value:'OCT'},{label:'NOV',value:'NOV'},{label:'DIC',value:'DIC'}];
 	activityEventCtrl.week=[{label:'sun',value:'SUN'},{label:'mon',value:'MON'},{label:'tue',value:'TUE'},{label:'wed',value:'WED'},{label:'thu',value:'THU'},{label:'fri',value:'FRI'},{label:'sat',value:'SAT'}];
-	activityEventCtrl.selectedWeek=[];
-	activityEventCtrl.selectedWeekObj={};
+
 	
 	activityEventCtrl.createNewEvent=function(loadTrigger){
 		activityEventCtrl.event=loadJobDataCtrl.getEmptyEvent();
@@ -384,11 +356,11 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	
 	activityEventCtrl.toggleWeek=function(week){
 		if(week!=undefined){
-			var idx = activityEventCtrl.selectedWeek.indexOf(week.value);
+			var idx = activityEventCtrl.selectedWeek.indexOf(week);
 	        if (idx > -1){
 	        	activityEventCtrl.selectedWeek.splice(idx, 1);
 	        }else{
-	        	activityEventCtrl.selectedWeek.push(week.value);
+	        	activityEventCtrl.selectedWeek.push(week);
 	        }
 		}
 	
@@ -423,6 +395,13 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 		
 	}
 	
+	
+	activityEventCtrl.isChecked = function (item, list,condition) {
+			if(condition){
+				return list==undefined? false: list.indexOf(item) > -1;
+			}else{return false;}
+	      }
+	
 	activityEventCtrl.toggleDocFunct=function(doc,funct){
 		
 		if(funct!=undefined){
@@ -443,7 +422,8 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	
 	
 	activityEventCtrl.prova=function(){
-		console.log("prova")
+		console.log("prova",activityEventCtrl.typeMonth);
+	
 	}
 	
 	

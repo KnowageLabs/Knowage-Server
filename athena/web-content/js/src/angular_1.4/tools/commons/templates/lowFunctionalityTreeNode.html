@@ -1,11 +1,13 @@
 	<div ui-tree-handle layout="row">
 		<div class="indicator-child "></div>
 		<span class="fa fa-folder-open-o" style="color: turquoise;"></span>
-		 <md-checkbox md-no-ink style="margin: -3px 0 0 5px;" ng-model="data.cb1" aria-label="Checkbox 1" ng-click="activityEvent.toggleDocFunct(activityEvent.selectedDocument,subItem.id);">
+		 <md-checkbox md-no-ink style="margin: -3px 0 0 5px;" aria-label="Checkbox 1" 
+		 ng-click="activityEvent.toggleDocFunct(activityEvent.selectedDocument,subItem.id);"
+		  ng-checked="activityEvent.isChecked(subItem.id,activityEvent.selectedDocument.funct,true)">
 		 	{{subItem.name}}
 		 </md-checkbox>
 		 
-				</div>
+	</div>
 	<ol  ui-tree-nodes ng-model="subItem.childs">
 		<li ng-repeat="subItem in subItem.childs" ui-tree-node  class="figlioVisibile" ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/lowFunctionalityTreeNode.html'">
 		

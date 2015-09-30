@@ -106,3 +106,11 @@ span.textspan{
     background-color: #317CA3;
     color: white !important;
 }
+
+md-switch.md-checked.greenSwitch .md-thumb {
+	background-color: #A9F92E;
+}
+
+md-switch.greenSwitch .md-thumb {
+	background-color: blue;
+}

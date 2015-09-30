@@ -255,7 +255,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									
 										<div layout="row" ng-repeat="week in activityEvent.week">
 										    <label>{{week.label}}:</label>
-								            <md-checkbox  aria-label="aria-label" ng-model="activityEvent.selectedWeekObj[week.value]"  ng-click="activityEvent.toggleWeek(week)" ></md-checkbox>
+								         <md-checkbox  aria-label="aria-label" ng-checked="activityEvent.isChecked(week.value,activityEvent.event.chrono.parameter.days,(activityEvent.event.chrono.type=='week'))"  ng-click="activityEvent.toggleWeek(week.value)" ></md-checkbox>
 								         </div>
 									    	
 							       		 
@@ -263,12 +263,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									
 									</div>
 									
-									<div ng-if="activityEvent.eventSched.repetitionKind=='month'" layout="row" >
-										<div layout="column" layout-align="center center">
-											<md-switch ng-change="activityEvent.toggleMonthScheduler()" class="md-primary" aria-label="Switch " ng-model="activityEvent.typeMonth"
-											 ng-init="activityEvent.typeMonth=activityEvent.typeMonth || true ">
-											simple={{activityEvent.typeMonth}}
-											</md-switch>											
+									<div ng-if="activityEvent.eventSched.repetitionKind=='month'" layout="row" flex>
+										<div layout="column" layout-align="center center" >
+											
+											<div layout="row" flex style="margin: 0 15px;">
+												<span>complex</span>
+												<md-switch style=" margin: 0px 10px 17px 10px; "ng-change="activityEvent.toggleMonthScheduler()" class="greenSwitch" aria-label="Switch " ng-model="activityEvent.typeMonth"
+												 ng-init="activityEvent.typeMonth=activityEvent.typeMonth!=undefined? activityEvent.typeMonth : true ;">
+												</md-switch>	
+												<span>simple</span>
+											</div>										
 											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonth==true"
 											ng-init="activityEvent.monthrep_n =activityEvent.monthrep_n || 1;">
 												<span class="textspan">Every</span> 
@@ -288,11 +292,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										</div>
 									
 
-										<div layout="column" layout-align="center center">
-											<md-switch ng-change="activityEvent.toggleMonthScheduler()" class="md-primary" aria-label="Switch " ng-model="activityEvent.typeMonthWeek" 
-											 ng-init="activityEvent.typeMonthWeek=activityEvent.typeMonthWeek || true">
-											simple={{activityEvent.typeMonthWeek}}
-											</md-switch>		
+										<div layout="column" layout-align="center center" >
+										
+											<div layout="row" flex style="margin: 0 15px;">
+												<span>complex</span>
+												<md-switch style=" margin: 0px 10px 17px 10px; ng-change="activityEvent.toggleMonthScheduler()" class="greenSwitch" aria-label="Switch " ng-model="activityEvent.typeMonthWeek" 
+											 	ng-init="activityEvent.typeMonthWeek=activityEvent.typeMonthWeek!=undefined? activityEvent.typeMonthWeek : true">
+												</md-switch>	
+												<span>simple</span>
+											</div>		
+												
 											
 											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek==true"
 											ng-init="activityEvent.dayinmonthrep_week =activityEvent.dayinmonthrep_week || 1;">
