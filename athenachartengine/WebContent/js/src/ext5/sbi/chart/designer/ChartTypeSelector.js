@@ -156,13 +156,10 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 						{
 							if (buttonValue == 'ok') 
 							{
-								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();							
-
+								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();		
 								
 								/////////////////////////////////////
-								
-								
-								
+																
 								//console.log(numberOfYAxis);
 								//console.log(chartColumnsContainer);
 								//console.log(Ext.getCmp("chartLeftAxisesContainer").items.length);
@@ -171,13 +168,9 @@ Ext.define('Sbi.chart.designer.ChartTypeSelector', {
 //								console.log("-- Y axis pool: --");
 //								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool);
 								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
-								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1]);
+								//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[1]);								
 								
-								;	
-								
-								
-								//////////////////////////////////
-								
+								//////////////////////////////////								
 								
 								//chartTypeSelectorScope.fireEvent("cleanJson", selectedType);
 								

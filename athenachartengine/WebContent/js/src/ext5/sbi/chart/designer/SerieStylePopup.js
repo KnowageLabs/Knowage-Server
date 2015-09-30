@@ -401,12 +401,10 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			checked: (showValue != undefined) ? showValue: true,
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.designer.showvalue'),
-		});
+		});		
+
+		this.serieFieldSet.add(this.serieShowValue);
 		
-		if (chartType != "RADAR")
-		{
-			this.serieFieldSet.add(this.serieShowValue);
-		}		
 		
 		var seriePrecision = dataAtRow.get('seriePrecision');
 		this.seriePrecisionNumberField = Ext.create('Ext.form.field.Number', {

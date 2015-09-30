@@ -436,10 +436,30 @@
 				#foreach($row in $rows)
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
-					[
-						'$serieCategoryName',
-						$serieValue
-					],
+					{
+						#*
+							The code was improved so it can handle "showValue" parameter if it is checked
+							for certain serie item (checkbox inside the Serie style configuration popup).
+							The same functionality as in the "pie_chart.vm".
+							@author: danristo (danilo.ristovski@mht.net) 
+						*#
+						name: '$serieCategoryName',
+						y: $serieValue,
+						
+						#set($relatedSerieShowValue = $relatedSerie.showValue)
+						#if ($relatedSerieShowValue != '')
+						dataLabels: {
+		                    enabled: $relatedSerieShowValue,
+		                    
+		                    #set ($precisionValueAsString = '')
+		                    #if ($relatedSerie.precision != '')
+			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
+							#end
+		                    
+		                    format: '{y$precisionValueAsString}'
+		                }
+						#end
+					},
 				#end
 	    	],
 	    	
