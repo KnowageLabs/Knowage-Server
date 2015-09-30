@@ -49,10 +49,12 @@ import it.eng.spagobi.tools.scheduler.bo.TriggerPaused;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
+import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -500,7 +502,7 @@ public class SchedulerService {
 		}
 	}
 
-	// TO-DO controllare se viene usata ed in caso eliminarlo
+	// TODO controllare se viene usata ed in caso eliminarlo
 	@POST
 	@Path("/getTriggerSaveOptions")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -519,7 +521,7 @@ public class SchedulerService {
 
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 
-			TriggerInfo triggerInfo = this.getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+			TriggerInfo triggerInfo = getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
 
 			JSONArray serializedSaveOptions = serializeSaveOptions(triggerInfo);
 			JSONObject triggerDocumentsSaveOptions = new JSONObject();
@@ -586,6 +588,50 @@ public class SchedulerService {
 				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
 			}
 		}
+	}
+
+	@POST
+	@Path("/saveTrigger")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String saveTrigger(@Context HttpServletRequest req) {
+		try {
+			ISchedulerDAO dao = DAOFactory.getSchedulerDAO();
+
+			JSONObject triggerJson = RestUtilities.readBodyAsJSONObject(req);
+
+			JobTrigger jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
+
+			String message = jobTrigger.getSchedulingMessage();
+
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+
+			String servoutStr = schedulerService.scheduleJob(message.toString());
+
+			return servoutStr;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ("{resp:'ERROR'}");
+	}
+
+	private JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject) {
+
+		JobTrigger jobTrigger = new JobTrigger();
+
+		jobTrigger.setTriggerName((String) jsonObject.opt(JobTrigger.TRIGGER_NAME));
+		jobTrigger.setTriggerDescription((String) jsonObject.opt(JobTrigger.TRIGGER_DESCRIPTION));
+		jobTrigger.setIsSuspended((Boolean) jsonObject.opt(JobTrigger.IS_SUSPENDED));
+		jobTrigger.setStartDate((String) jsonObject.opt(JobTrigger.START_DATE));
+		jobTrigger.setStartTime((String) jsonObject.opt(JobTrigger.START_TIME));
+		jobTrigger.setEndDate((String) jsonObject.opt(JobTrigger.END_DATE));
+		jobTrigger.setEndTime((String) jsonObject.opt(JobTrigger.END_TIME));
+
+		JSONObject chronoObj = (JSONObject) jsonObject.opt(JobTrigger.CHRONO);
+
+		jobTrigger.setChronoType((String) chronoObj.opt(JobTrigger.CHRONO_TYPE));
+
+		return jobTrigger;
 	}
 
 	private JSONArray serializeSaveOptions(TriggerInfo triggerInfo) {
