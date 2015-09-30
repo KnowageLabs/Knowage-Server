@@ -70,8 +70,12 @@ Sbi.cockpit.widgets.table.TableWidget = function(config) {
 
 	Sbi.cockpit.widgets.table.TableWidget.superclass.constructor.call(this, c);
 
+	// in case there is another widget with the same store-aggregation combination
+	// force the rendering of the table data
 	this.on("afterRender", function(){
-		this.reload();
+		if(this.wconf.isDuplicatedDatasetTable === true) {
+			this.reload();
+		}
 		Sbi.trace("[TableWidget.afterRender]: store loaded");
 	}, this);
 

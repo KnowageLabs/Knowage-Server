@@ -616,6 +616,13 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
 				}
 			}
 			
+			// checks if there is already a table widget with the same store aggregation
+			if(wizardState.wtype === Sbi.constants.cockpit.table) {
+				if(Sbi.storeManager.containsStore(storeConf.storeId, storeConf.aggregations)) {
+					wizardState.wconf.isDuplicatedDatasetTable = true;
+				}
+			}
+			
 			// the method addStore add the store only if it is not contained yet in the manager
 			Sbi.storeManager.addStore(storeConf);
 			Sbi.trace("[WidgetContainer.applyWidgetEditorWizardState]: selected store [" + wizardState.storeId + "] succesfully added to store manager");
