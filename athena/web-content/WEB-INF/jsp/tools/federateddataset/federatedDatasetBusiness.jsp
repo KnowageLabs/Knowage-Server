@@ -46,9 +46,9 @@
 	
 
 </head>
-<body class="bodyStyle" ng-app="DATASETFEDERATION">
+<body class="bodyStyle" ng-app="FEDERATIONDEFINITION">
 
-	<div ng-controller="DatasetFederationCTRL as ctrl" layout="column"
+	<div ng-controller="FederationDefinitionCTRL as ctrl" layout="column"
 		style="width: 100%; height: 100%;"
 		class="contentdemoBasicUsage">
 		<md-toolbar class="miniheadfederation">
@@ -97,7 +97,7 @@
 			
 				<md-content style="height:80%">
 					<angular-list layout-fill="" 
-					id="availableDatasets" 
+					id="selectedDatasets" 
 					ng-model="ctrl.listaNew" 
 					item-name="label" 
 						
@@ -117,12 +117,19 @@
 			<md-toolbar class="miniheadfedsmall"
 				style="">
 			<div class="md-toolbar-tools">
-				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS EDITOR</h2>
+				<h2 class="md-flex" style="position:fixed; padding-left: 14px; padding-top:10px;">ASSOCIATIONS EDITOR</h2>
+				<span flex=""></span>
+				<div ng-if="ctrl.isEditState"
+					style="height: 100px;">
+					<md-select placeholder="Add dataset" ng-model="kkk"> 
+						<md-option ng-value="dataset"  ng-repeat="dataset in ctrl.list" ng-click="ctrl.moveToListNew(dataset)">{{dataset.label}}</md-option> 
+					</md-select>
+				</div>
 			</div>
 			</md-toolbar>
 			<md-content
 				style=" padding: 5px;  height:41%">
-			<div ng-repeat="dataset in ctrl.listaNew">
+			<div ng-repeat="dataset in ctrl.listaNew track by $index">
 				<div style="width: 250px; float: left; padding: 5px;">
 					<md-toolbar class="miniheadfedsmall"
 						style="">
@@ -157,8 +164,8 @@
 				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
-				<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton"><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
-					ng-click="ctrl.fillTheArray()"></md-icon></md-button> 	
+				<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton"><md-tooltip md-direction="left">Add relationship</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
+					ng-click="ctrl.fillTheArray()"></md-icon></md-button> 
 			</div>
 
 
@@ -170,17 +177,17 @@
 				<md-content >
 				<div>
 					<md-list>
-						<div ng-repeat="k in ctrl.multiArray">
+						<div ng-repeat="k in ctrl.multiArray track by $index">
 							
 							<md-list-item style="min-height:35px">
 							
-							<div ng-repeat="bla in k track by $index">
+							<div  ng-repeat="bla in k track by $index">
 							
 							<span ng-if="$index==0">
 								{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
 							</div>
 							<span flex=""></span>
-							 <md-fab-speed-dial  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
+							 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
 							 	<md-fab-trigger>
 							 		<md-button class="md-fab md-ExtraMini">
 							 			<i class="fa fa-chevron-left"></i>
@@ -190,8 +197,8 @@
 							 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
 										 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
 									</md-button>
-									<md-button style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
-										 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit()"></i>
+									<md-button  style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
+										 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(k);" ></i>
 									</md-button>
 							 	</md-fab-actions>
 							 </md-fab-speed-dial>
@@ -214,11 +221,11 @@
 		STEP</md-button>
 	</div>
 	<div ng-hide="ctrl.state">
-		<md-button class="md-raised buttonL" aria-label="btn_back_to_first_page"
-			 ng-click="ctrl.toggleBack()">BACK</md-button>
-		<md-button class="md-raised buttonR" aria-label="btn_save_federation"
-			
-			ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
+		<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack()">BACK</md-button>
+		<md-button ng-hide="ctrl.isEditState" class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
+		<md-button ng-show="ctrl.isEditState" class="buttonL" ng-click="ctrl.cancelEdit();">Cancel</md-button>
+		<md-button ng-show="ctrl.isEditState" class="editRelationButton buttonR" style="color:white" ng-click="ctrl.saveEditedRelation()">save edit</md-button>
+		
 
 	</div>
 	</md-content>

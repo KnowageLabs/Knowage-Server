@@ -1,4 +1,4 @@
-var app = angular.module('DATASETFEDERATION', ['ngMaterial','angular_rest','angular_list']);
+var app = angular.module('FEDERATIONDEFINITION', ['ngMaterial','angular_rest','angular_list']);
 
 app.service('translate', function() {
 	this.load = function(key) {
@@ -6,7 +6,7 @@ app.service('translate', function() {
 	};
 });
 
-app.controller('DatasetFederationCTRL', [ "translate", "restServices", "$scope",
+app.controller('FederationDefinitionCTRL', [ "translate", "restServices", "$scope",
                    		"$mdDialog", funkcija]);
 
 function funkcija(translate, restServices, $scope, $mdDialog) {
@@ -21,9 +21,12 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 	
 	ctr.list = {};
 	ctr.listaNew = [];
+	ctr.listAllO = {};
+	ctr.listAll = [];
 	
 	//state is used to show or hide components on the page
 	ctr.state = true;
+	ctr.isEditState = false;
 	
 	ctr.relation = "";
 	ctr.relNew = null;
@@ -252,15 +255,52 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 				}
 		)
 		
+		restServices.get("2.0/datasets","")
+		.success(
+				function(data, status, headers, config){
+					if(data.hasOwnProperty("errors")) {
+						console.log(data.errors[0].message);
+					} else {
+						ctr.listAllO = data;
+						console.log("List:"+ctr.list)
+						angular.toJson(ctr.list)
+						console.log("List JSON:"+ctr.list)
+						angular.forEach(ctr.list, function(dataset){
+							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+								listField.selected =  false;
+							});
+						});
+					}
+				}
+		)
+		.error(
+				function(data, status, headers, config) {
+					// called asynchronously if an error occurs
+				    // or server returns response with an error status.
+					console.log("Datasets not obtained " + status);
+				}
+		)
+		
 	ctr.kickOutFromListNew = function(param) {
-		var index = ctr.listaNew.indexOf(param);
-		if(index != -1){
-			ctr.listaNew.splice(index, 1);
-		}
-		if(ctr.list.indexOf(param)===-1){
-			ctr.list.push(param);
+		//if dataset is used in a relationship
+		if(false){
+			//can't delete alert
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('You can\'t delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.')
+						.ok('OK')
+			);
 		} else {
-			console.log("Parameter is already in the list.");
+			var index = ctr.listaNew.indexOf(param);
+			if(index != -1){
+				ctr.listaNew.splice(index, 1);
+			}
+			if(ctr.list.indexOf(param)===-1){
+				ctr.list.push(param);
+			} else {
+				console.log("Parameter is already in the list.");
+			}
 		}
 	}
 	
@@ -272,6 +312,7 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 		}
 		if(ctr.listaNew.indexOf(param)===-1){
 			ctr.listaNew.push(param);
+			console.log("dodao u novu listu")
 		} else {
 			console.log("Parametar is already in the list.")
 		}
@@ -365,40 +406,53 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 	ctr.selectedDirection = 'left';
     ctr.selectedMode = 'md-scale';
     
-    ctr.prepRelForEdit = function() {
-    	console.log(ctr.multiArray)
-    	
-    	ctr.prepListaNew = ctr.listaNew;
-    	console.log(ctr.prepListaNew);
-    	ctr.listaNew = [];
-    	ctr.glupalista = [];
-    	
-    	angular.forEach(ctr.multiArray, function(relation){
-    		angular.forEach(relation, function(objekat){
-    			ctr.glupalista.push(objekat.sourceTable.name)
-    		});
-    	});
-    	
-    	console.log(ctr.glupalista)
-    	for (var int = 0; int < ctr.glupalista.length; int++) {
-    		console.log(ctr.glupalista[int]);
-    		angular.forEach(ctr.list, function(dataset){
-        		console.log(dataset)
-        		
-        		if(dataset.name==ctr.glupalista[int]){
-        			ctr.listaNew.push(dataset);
-        		}
-        	});
-		}
-    	
-    		
-    	//ctr.listaNew=[];
-    	/*angular.forEach(ctr.multiArray, function(relation){    		
-    		angular.forEach(relation, function(objekat){
-    			console.log(objekat.sourceTable.name)   			    			
-    		});
-    	});*/
+    ctr.prepRelForEdit = function(param) {
+    	var confirm = $mdDialog.confirm()
+		.title('Confirm dialog')
+		.content('Are you sure you want to edit the relation? The former relation will be lost.')
+		.targetEvent(param)
+		.ok('Yes')
+		.cancel('No')
+		
+		$mdDialog.show(confirm).then(function(){
+			ctr.isEditState = true;
+	    	ctr.listaNew = [];
+	    	ctr.glupalista = [];
+	    	
+	    	for (var int = 0; int < param.length; int++) {
+				if(int==0){
+					ctr.glupalista.push(param[int].sourceTable.name);
+					ctr.glupalista.push(param[int].destinationTable.name);
+				} else{
+					ctr.glupalista.push(param[int].destinationTable.name);
+				}
+			}
+	    	
+	    	for (var int = 0; int < ctr.glupalista.length; int++) {
+	    		angular.forEach(ctr.listAllO, function(dataset){
+	        		if(dataset.name==ctr.glupalista[int]){
+	        			console.log(dataset)
+	        			ctr.listaNew.push(dataset);
+	        		}
+	        	});
+			}
+	    	
+	    	var index = ctr.multiArray.indexOf(param);
+			if(index !=-1){
+				ctr.multiArray.splice(index, 1);
+			}
+		})
     }
+    
+    ctr.saveEditedRelation = function() {
+    	ctr.isEditState = false;
+    	ctr.multiArray.push(ctr.createAssociations());
+    }
+    
+    ctr.cancelEdit = function() {
+    	ctr.isEditState = false;
+    }    
+    
 }
 
 
