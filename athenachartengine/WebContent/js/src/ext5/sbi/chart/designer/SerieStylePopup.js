@@ -346,6 +346,18 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		this.serieColorPicker = {
 			xtype : 'fieldcontainer',
 			layout : 'hbox',
+			
+			/**
+			 * ID of the field set that contains color picker is added. It is
+			 * useful when the popup is showed for a PIE chart, since this one
+			 * does not need the specification for the serie items color on the
+			 * chart (color of its segment on the chart) because the chart is
+			 * using colors from the color pallete on the Step 2 of the Designer
+			 * when creating the XML template and rendering atfrewards.
+			 *  @author: danristo (danilo.ristovski@mht.net)
+			 */
+			id: "serieColorFieldSet",
+			
 			items: [
 				Ext.create('Ext.form.field.Base', {
 					id : 'serieColorField',
@@ -383,6 +395,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			}
 		};
 		
+		this.serieFieldSet.add(this.serieColorPicker);
+		
 		/**
 		 * This parameters does not play any role when chart is of type PIE
 		 * because series (pie segments) are going to take colors that are 
@@ -390,12 +404,12 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		 * parameter useful for e.g. BAR and LINE chart types.
 		 * @author: danristo (danilo.ristovski@mht.net)  
 		 */
-		// TODO: I think there are more chart types whose serie popup should be refined !!!
-		if (chartType != "PIE")
-		{
-			this.serieFieldSet.add(this.serieColorPicker);
+		// TODO: I think there are more chart types whose serie popup should be refined !!!		
+		if (chartType == "PIE")
+		{			
+			this.serieFieldSet.getComponent("serieColorFieldSet").hide();
 		}		
-		
+
 		var showValue = dataAtRow.get('serieShowValue');
 		this.serieShowValue = Ext.create('Ext.form.field.Checkbox',{
 			checked: (showValue != undefined) ? showValue: true,

@@ -3308,6 +3308,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 					errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>' : errorMsg;	// TODO: Make LN()
 			}
 			
+			else if (chartType == "PIE") 
+			{
+				/**
+				 * STEP 2 -> Palette panel
+				 */
+				var itemsIncolorPalette = Ext.getCmp("chartColorPallete").paletteGrid.getStore().data.length;
+				
+				(itemsIncolorPalette < 2) ? 
+						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+			}
+			
 			else if(chartType == "PARALLEL") {
 				/**
 				 * STEP 2 -> Limit panel
