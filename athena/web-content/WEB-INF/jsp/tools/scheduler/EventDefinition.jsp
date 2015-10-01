@@ -312,14 +312,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											 </div>
 											 
 											 <div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek!=true"
-											 ng-init="activityEvent.month_week_number_repetition=activityEvent.month_week_number_repetition|| 'first';">
+											 ng-init="activityEvent.month_week_number_repetition=activityEvent.month_week_number_repetition|| '1';">
 											 	<span class="textspan">The week</span> 
 												<md-select aria-label="aria-label" ng-model="activityEvent.month_week_number_repetition" style="margin:0px;" ng-change="activityEvent.toggleMonthScheduler()"  >
-														<md-option value="first" >First</md-option> 
-														<md-option value="second" >Second</md-option> 
-														<md-option value="third" >Third</md-option> 
-														<md-option value="fourth" >Fourth</md-option> 
-														<md-option value="last" >Last</md-option> 
+														<md-option value="1" >First</md-option> 
+														<md-option value="2" >Second</md-option> 
+														<md-option value="3" >Third</md-option> 
+														<md-option value="4" >Fourth</md-option> 
+														<md-option value="L" >Last</md-option> 
 												</md-select> 
 												<span class="textspan">In day</span>
 												<md-select aria-label="aria-label" ng-model="activityEvent.month_week_repetition" style="margin:0px;" multiple='true'  ng-change="activityEvent.toggleMonthScheduler()" >

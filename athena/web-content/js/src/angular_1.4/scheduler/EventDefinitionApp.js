@@ -258,7 +258,7 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
 	activityEventCtrl.selectedDocument=[];
 	activityEventCtrl.selectedWeek=[];
 	activityEventCtrl.month=[{label:'JAN',value:'JAN'},{label:'FEB',value:'FEB'},{label:'MAR',value:'MAR'},{label:'APR',value:'APR'},{label:'MAY',value:'MAY'},{label:'JUN',value:'JUN'},{label:'JUL',value:'JUL'},{label:'AUG',value:'AUG'},{label:'SEP',value:'SEP'},{label:'OCT',value:'OCT'},{label:'NOV',value:'NOV'},{label:'DIC',value:'DIC'}];
-	activityEventCtrl.week=[{label:'sun',value:'SUN'},{label:'mon',value:'MON'},{label:'tue',value:'TUE'},{label:'wed',value:'WED'},{label:'thu',value:'THU'},{label:'fri',value:'FRI'},{label:'sat',value:'SAT'}];
+	activityEventCtrl.week=[{label:'sun',value:'1'},{label:'mon',value:'2'},{label:'tue',value:'3'},{label:'wed',value:'4'},{label:'thu',value:'5'},{label:'fri',value:'6'},{label:'sat',value:'7'}];
 
 	
 	activityEventCtrl.createNewEvent=function(loadTrigger){
