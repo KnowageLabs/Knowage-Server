@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.scheduler.services.rest;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSaveOptionsFromRequest;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -91,7 +92,7 @@ public class SchedulerService {
 	@GET
 	@Path("/getJob")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getJob(@Context HttpServletRequest req) throws EMFUserError, JSONException, SerializationException {
+	public String getJob(@Context HttpServletRequest req) throws Exception {
 		ILowFunctionalityDAO lowfuncdao = DAOFactory.getLowFunctionalityDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		lowfuncdao.setUserProfile(profile);
@@ -103,24 +104,21 @@ public class SchedulerService {
 		JSONObject jobj = new JSONObject();
 		JSONArray funct = new JSONArray();
 
-		ISchedulerDAO schedulerDAO;
-		try {
-			schedulerDAO = DAOFactory.getSchedulerDAO();
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
-		}
-
-		Job job = schedulerDAO.loadJob(jobGroupName, jobName);
-		JSONSerializer jsonSerializer = (JSONSerializer) SerializerFactory.getSerializer("application/json");
-		jobj = (JSONObject) jsonSerializer.serialize(job, null);
-		resp.put("job", jobj);
-
 		@SuppressWarnings("unchecked")
 		List<LowFunctionality> functionalities = lowfuncdao.loadAllLowFunctionalities(false);
 		for (LowFunctionality lf : functionalities) {
 			funct.put(JSON.parse(JsonConverter.objectToJson(lf, LowFunctionality.class)));
 		}
 		resp.put("functionality", funct);
+
+		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+		String jobDetail = schedulerService.getJobDefinition(jobName, jobGroupName);
+		SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
+		if (jobDetailSB == null) {
+			throw new Exception("Cannot recover job " + jobName);
+		}
+		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
+		resp.put("job", JSON.parse(JsonConverter.objectToJson(jobInfo, JobInfo.class)));
 
 		return resp.toString();
 	}
@@ -574,7 +572,7 @@ public class SchedulerService {
 			}
 
 			jo = new JSONObject(
-					"{'isSuspended':true,"
+					"{'jobName':'MyJob','jobGroup':'BIObjectExecutions','isSuspended':true,"
 							+ "'document':["
 							+ "{'label':'file11','parameters':'',"
 							+ "'sendmail':true,'uniqueMail':true,'zipMailDocument':true,'zipMailName':'ase',"
@@ -604,6 +602,7 @@ public class SchedulerService {
 	@Path("/saveTrigger")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveTrigger(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			ISchedulerDAO dao = DAOFactory.getSchedulerDAO();
 
@@ -611,13 +610,14 @@ public class SchedulerService {
 
 			JobTrigger jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
 
-			String message = jobTrigger.getSchedulingMessage();
+			StringBuffer message = jobTrigger.getSchedulingMessage(false, profile);
 
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 
 			String servoutStr = schedulerService.scheduleJob(message.toString());
 
 			return servoutStr;
+			// return "";
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -625,21 +625,43 @@ public class SchedulerService {
 		return ("{resp:'ERROR'}");
 	}
 
-	private JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject) {
+	private JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject) throws Exception {
 
 		JobTrigger jobTrigger = new JobTrigger();
+
+		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+		String jobDetail = schedulerService.getJobDefinition((String) jsonObject.opt(JobTrigger.JOB_NAME), (String) jsonObject.opt(JobTrigger.JOB_GROUP));
+		SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
+		if (jobDetailSB == null) {
+			throw new Exception("Cannot recover job " + (String) jsonObject.opt(JobTrigger.JOB_NAME));
+		}
+		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
+		jobTrigger.setJobInfo(jobInfo);
 
 		jobTrigger.setTriggerName((String) jsonObject.opt(JobTrigger.TRIGGER_NAME));
 		jobTrigger.setTriggerDescription((String) jsonObject.opt(JobTrigger.TRIGGER_DESCRIPTION));
 		jobTrigger.setIsSuspended((Boolean) jsonObject.opt(JobTrigger.IS_SUSPENDED));
-		jobTrigger.setStartDate((String) jsonObject.opt(JobTrigger.START_DATE));
-		jobTrigger.setStartTime((String) jsonObject.opt(JobTrigger.START_TIME));
-		jobTrigger.setEndDate((String) jsonObject.opt(JobTrigger.END_DATE));
-		jobTrigger.setEndTime((String) jsonObject.opt(JobTrigger.END_TIME));
+		jobTrigger.setStartDate(jsonObject.optString(JobTrigger.START_DATE));
+		jobTrigger.setStartTime(jsonObject.optString(JobTrigger.START_TIME));
+		jobTrigger.setEndDate(jsonObject.optString(JobTrigger.END_DATE));
+		jobTrigger.setEndTime(jsonObject.optString(JobTrigger.END_TIME));
 
-		JSONObject chronoObj = (JSONObject) jsonObject.opt(JobTrigger.CHRONO);
+		// JSONObject chronoObj = (JSONObject) jsonObject.opt(JobTrigger.CHRONO);
+		// jobTrigger.setChronoType((String) chronoObj.opt(JobTrigger.CHRONO_TYPE));
+		jobTrigger.setChrono(((JSONObject) jsonObject.opt(JobTrigger.CHRONO)).toString().replaceAll("\"", "'"));
 
-		jobTrigger.setChronoType((String) chronoObj.opt(JobTrigger.CHRONO_TYPE));
+		// Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
+		JSONArray ja = (JSONArray) jsonObject.opt(JobTrigger.DOCUMENTS);
+		//
+		// // init the map of DispatchContext
+		// for (int j = 0; j < ja.length(); j++) {
+		// saveOptions.put(ja.getJSONObject(j).getString("labelId"), new DispatchContext());
+		// }
+		// jobTrigger.setSaveOptions(saveOptions);
+
+		// insert all value in the map of DispatchContext
+		Map<String, DispatchContext> saveOptions = getSaveOptionsFromRequest(ja);
+		jobTrigger.setSaveOptions(saveOptions);
 
 		return jobTrigger;
 	}

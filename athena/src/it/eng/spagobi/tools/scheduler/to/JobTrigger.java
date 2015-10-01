@@ -5,7 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.to;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.serializeSaveParameterOptions;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class JobTrigger implements Serializable {
 
@@ -18,15 +26,17 @@ public class JobTrigger implements Serializable {
 	public static final String START_TIME = "startTime";
 	public static final String END_DATE = "endDate";
 	public static final String END_TIME = "endTime";
-
-	public static final String CHRONO = "chronstring";
+	public static final String JOB_NAME = "jobName";
+	public static final String JOB_GROUP = "jobGroup";
+	public static final String CHRONO = "chrono";
 	public static final String CHRONO_TYPE = "type";
 	public static final String CHRONO_PARAMETER = "parameter";
+	public static final String DOCUMENTS = "document";
 
 	// obj.get(CHRONO_TYPE) == ( "minute" || "hour" || "day" || "week" || "month" )
 	// obj.get(CHRONO_TYPE) == "month" and day choice type IS simple
 	public static final String CHRONO_PARAMETER_NUMREPETITION = "numRepetition";
-	
+
 	// obj.get(CHRONO_TYPE) == "month" and day choice type IS simple
 	public static final String CHRONO_PARAMETER_DAYREPETITION = "dayRepetition";
 
@@ -47,6 +57,7 @@ public class JobTrigger implements Serializable {
 	private String startTime = "";
 	private String endDate = "";
 	private String endTime = "";
+	private JobInfo jobInfo;
 	private Integer chronoParameterNumRepetition = null;
 	private Integer chronoParameterDayRepetition = null;
 	private String[] chronoParameterDayS = null;
@@ -55,6 +66,9 @@ public class JobTrigger implements Serializable {
 
 	// "single", "minute", "hour", "day", "week", "month", "event"
 	private String chronoType = "";
+	private String chrono = "";
+	private String repeatInterval = "";
+	private Map<String, DispatchContext> saveOptions = null;
 
 	public String getChronoType() {
 		return chronoType;
@@ -63,9 +77,6 @@ public class JobTrigger implements Serializable {
 	public void setChronoType(String chronoType) {
 		this.chronoType = chronoType;
 	}
-
-	private String chrono = "";
-	private String repeatInterval = "";
 
 	/**
 	 * Gets the end date.
@@ -83,7 +94,17 @@ public class JobTrigger implements Serializable {
 	 *            the new end date
 	 */
 	public void setEndDate(String endDate) {
-		this.endDate = endDate;
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		SimpleDateFormat formatterF = new SimpleDateFormat("yyyy/MM/dd");
+		try {
+			if (endDate != null && endDate.trim().compareTo("") != 0) {
+				Date date = formatter.parse(endDate);
+				this.endDate = formatterF.format(date);
+			}
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -140,7 +161,16 @@ public class JobTrigger implements Serializable {
 	 *            the new start date
 	 */
 	public void setStartDate(String startDate) {
-		this.startDate = startDate;
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		SimpleDateFormat formatterF = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			Date date = formatter.parse(startDate);
+			this.startDate = formatterF.format(date);
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -237,6 +267,40 @@ public class JobTrigger implements Serializable {
 	}
 
 	/**
+	 * @return the jobInfo
+	 */
+	public JobInfo getJobInfo() {
+		return jobInfo;
+	}
+
+	/**
+	 * @param jobInfo
+	 *            the jobInfo to set
+	 */
+	public void setJobInfo(JobInfo jobInfo) {
+		this.jobInfo = jobInfo;
+	}
+
+	/**
+	 * Gets the save options.
+	 *
+	 * @return the save options
+	 */
+	public Map<String, DispatchContext> getSaveOptions() {
+		return saveOptions;
+	}
+
+	/**
+	 * Sets the save options.
+	 *
+	 * @param saveOptions
+	 *            the new save options
+	 */
+	public void setSaveOptions(Map<String, DispatchContext> saveOptions) {
+		this.saveOptions = saveOptions;
+	}
+
+	/**
 	 * Gets the start date rf c3339.
 	 *
 	 * @return the start date rf c3339
@@ -270,9 +334,51 @@ public class JobTrigger implements Serializable {
 		return endDRFC;
 	}
 
-	public String getSchedulingMessage() {
-		// TODO Auto-generated method stub
-		return null;
+	public StringBuffer getSchedulingMessage(boolean runImmediately, IEngUserProfile profile) throws EMFUserError {
+		StringBuffer message = new StringBuffer();
+		JobInfo jobInfo = getJobInfo();
+
+		message.append("<SERVICE_REQUEST ");
+
+		message.append(" jobName=\"" + jobInfo.getJobName() + "\" ");
+
+		message.append(" jobGroup=\"" + jobInfo.getJobGroupName() + "\" ");
+		if (runImmediately) {
+			message.append(" runImmediately=\"true\" ");
+		} else {
+			message.append(" triggerName=\"" + getTriggerName() + "\" ");
+
+			message.append(" triggerDescription=\"" + getTriggerDescription() + "\" ");
+			message.append(" startDate=\"" + getStartDate() + "\" ");
+
+			message.append(" startTime=\"" + getStartTime() + "\" ");
+
+			message.append(" chronString=\"" + getChrono() + "\" ");
+
+			String enddate = getEndDate();
+			String endtime = getEndTime();
+			if (enddate != null && !enddate.trim().equals("")) {
+				message.append(" endDate=\"" + enddate + "\" ");
+
+				if (endtime != null && !endtime.trim().equals("")) {
+					message.append(" endTime=\"" + endtime + "\" ");
+
+				}
+			}
+		}
+		String repeatinterval = getRepeatInterval();
+		if (!repeatinterval.trim().equals("")) {
+			message.append(" repeatInterval=\"" + repeatinterval + "\" ");
+
+		}
+		message.append(">");
+
+		serializeSaveParameterOptions(message, this, runImmediately, profile);
+
+		message.append("</SERVICE_REQUEST>");
+
+		return message;
+
 	}
 
 }

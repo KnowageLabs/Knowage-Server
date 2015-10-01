@@ -67,9 +67,10 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 		var docs = loadJobDataCtrl.jobData.documents;
 		for(var i = 0; i < docs.length; i++){
 			var doc = {
-//				id: docs[i].,
+				labelId: docs[i].id+"__"+i,
+				id:docs[i].id,
 				label: docs[i].name,
-				parameters: docs[i].condensedParameters
+//				parameters: docs[i].condensedParameters
 			};
 			
 			loadJobDataCtrl.documents.push(doc);
@@ -79,6 +80,8 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	
 	loadJobDataCtrl.getEmptyEvent=function(){
 		var emptyEvent = {
+				jobName:loadJobDataCtrl.jobName,
+				jobGroup:loadJobDataCtrl.jobGroup,
 				isSuspended:  false,
 				document:[],
 				chrono:{"type":"single"}
@@ -92,7 +95,9 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 			var tmp={};
 			var doc=loadJobDataCtrl.documents[i];
 			tmp.label=doc.label;
-			tmp.parameters=doc.parameters;
+//			tmp.parameters=doc.parameters;
+			tmp.labelId=doc.labelId;
+			tmp.id=doc.id;
 			emptyEvent.document.push(tmp);
 		}
 		
