@@ -52,8 +52,8 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	loadJobDataCtrl.initJobsValues= function(jobName, jobGroup,triggerName, triggerGroup) {
 		loadJobDataCtrl.jobName = jobName;
 		loadJobDataCtrl.jobGroup = jobGroup;
-		loadJobDataCtrl.triggerGroup = triggerGroup;
 		loadJobDataCtrl.triggerName = triggerName;
+		loadJobDataCtrl.triggerGroup = triggerGroup;
 		loadJobDataCtrl.jobData = null;
 		var loadtri=false;
 		if(triggerName!=undefined && triggerName!="" && triggerGroup!=undefined && triggerGroup!=""){
@@ -119,7 +119,13 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope','r
 	}
 	
 	loadJobDataCtrl.loadScheduler = function(){
-		restServices.get("scheduler", "getTriggerInfo?jobName="+loadJobDataCtrl.jobName+"&jobGroup="+loadJobDataCtrl.jobGroup+"&triggerGroup="+loadJobDataCtrl.triggerGroup+"&triggerName="+loadJobDataCtrl.triggerName)
+		var requestString = 
+			"getTriggerInfo?jobName="+loadJobDataCtrl.jobName
+			+"&jobGroup="+loadJobDataCtrl.jobGroup
+			+"&triggerGroup="+loadJobDataCtrl.triggerGroup
+			+"&triggerName="+loadJobDataCtrl.triggerName;
+		
+		restServices.get("scheduler", requestString	)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.error(translate.load("sbi.glossary.load.error"))
