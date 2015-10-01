@@ -54,7 +54,8 @@ Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel = function(config) {
 	this.initEmptyMsgPanel();
 
 	c = {
-		height: 400,
+//		height: 400,
+		layout: 'fit',
 		items: [this.emptyMsgPanel]
 	};
 	Sbi.cockpit.editor.widget.WidgetEditorCustomConfPanel.superclass.constructor.call(this, c);

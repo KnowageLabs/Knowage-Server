@@ -29,7 +29,7 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner = function(config) {
 	
 	c = {
 		layout: 'fit',
-		height: 500,
+//		height: 500,
 		header: false,
 		border: false,
 		items: [this.iFrameContent],
