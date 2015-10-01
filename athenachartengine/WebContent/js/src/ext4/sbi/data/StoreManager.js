@@ -1680,61 +1680,58 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 
     , onStoreLoad: function(store, records, successful, eOpts) {
 
-   	Sbi.trace("[StoreManager.onStoreLoad]: IN");
-
-	if(store && store.crossTabStore && store.proxy.reader && store.proxy.reader.jsonData && store.proxy.reader.jsonData.metaData){
-		store.myStoreMetaData = Ext.apply(store.proxy.reader.jsonData.metaData,{});
-	}
-
-	// {"service":"/1.0/datasets/AAA_SALES_1998/data",
-	// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}
-
-	var recordsNumber = store.getTotalCount();
-
-	store.status = "ready";
-
-	if (recordsNumber == 1){
-		var rawData = store.getAt(0).raw;
-		if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
-			store.status = "error";
-
-			var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
-			for(var i = 0; i < rawData.errors.length; i++) {
-				msg += "<li>" + rawData.errors[i].message + ";";
+	   	Sbi.trace("[StoreManager.onStoreLoad]: IN");
+	
+		if(store && store.crossTabStore && store.proxy.reader && store.proxy.reader.jsonData && store.proxy.reader.jsonData.metaData){
+			store.myStoreMetaData = Ext.apply(store.proxy.reader.jsonData.metaData,{});
+		}
+	
+		// {"service":"/1.0/datasets/AAA_SALES_1998/data",
+		// "errors":[{"message":"An unexpected [java.lang.NullPointerException] exception has been trown during service execution"}]}
+	
+		var recordsNumber = store.getTotalCount();
+	
+		store.status = "ready";
+	
+		if (recordsNumber == 1){
+			var rawData = store.getAt(0).raw;
+			if (Sbi.isValorized(rawData) && Sbi.isValorized(rawData.errors)) {
+				store.status = "error";
+	
+				var msg = "Impossible to load dataset [" + this.getStoreId(store) + "] due to the following service errors: <p><ul>";
+				for(var i = 0; i < rawData.errors.length; i++) {
+					msg += "<li>" + rawData.errors[i].message + ";";
+				}
+				msg += "</ul>";
+	
+				Ext.Msg.show({
+					   title: "Service error",
+					   msg: msg,
+					   buttons: Ext.Msg.OK,
+					   icon: Ext.MessageBox.ERROR,
+					   modal: false
+				});
+			
 			}
-			msg += "</ul>";
-
+		} else if(recordsNumber == 0) {
 			Ext.Msg.show({
-				   title: "Service error",
-				   msg: msg,
+				   title: LN('sbi.qbe.messagewin.info.title'),
+				   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
 				   buttons: Ext.Msg.OK,
-				   icon: Ext.MessageBox.ERROR,
+				   icon: Ext.MessageBox.INFO,
 				   modal: false
 			});
-		
+		}
+	
+		Sbi.trace("[StoreManager.onStoreLoad]: store [" + this.getStoreId(store) + "] reloaded succesfully: " + successful);
+		if(successful) {
+			Sbi.trace("[StoreManager.onStoreLoad]: record loaded for store [" + this.getStoreId(store) + "] are [" + records.length + "]");
+		}
+		Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");
+	
+		Sbi.trace("[StoreManager.onStoreLoad]: OUT");
 
-	}
-
-	if(recordsNumber == 0) {
-		Ext.Msg.show({
-			   title: LN('sbi.qbe.messagewin.info.title'),
-			   msg: LN('sbi.qbe.datastorepanel.grid.emptywarningmsg'),
-			   buttons: Ext.Msg.OK,
-			   icon: Ext.MessageBox.INFO,
-			   modal: false
-		});
-	}
-
-	Sbi.trace("[StoreManager.onStoreLoad]: store [" + this.getStoreId(store) + "] reloaded succesfully: " + successful);
-	if(successful) {
-		Sbi.trace("[StoreManager.onStoreLoad]: record loaded for store [" + this.getStoreId(store) + "] are [" + records.length + "]");
-	}
-	Sbi.trace("[StoreManager.onStoreLoad]: eOpts for store [" + this.getStoreId(store) + "] is equal to [" + Sbi.toSource(eOpts, true) + "]");
-
-	Sbi.trace("[StoreManager.onStoreLoad]: OUT");
-
-}
-     }
+    }
 
 
 	/**
