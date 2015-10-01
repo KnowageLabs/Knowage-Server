@@ -115,7 +115,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
 	public boolean contains(IDataSet dataSet) {
@@ -135,7 +135,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
 	public boolean contains(String resultsetSignature) {
@@ -144,7 +144,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
 	public boolean contains(List<IDataSet> dataSets) {
@@ -153,7 +153,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
@@ -172,7 +172,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
 	public IDataStore get(IDataSet dataSet) {
@@ -207,7 +207,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 	public IDataStore get(String resultsetSignature) {
@@ -252,7 +252,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
@@ -604,7 +604,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	public IDataStore load(IDataSet dataSet, boolean wait) {
@@ -616,7 +616,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
 	public List<IDataStore> load(List<IDataSet> dataSets, boolean wait) {
@@ -695,7 +695,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
@@ -781,7 +781,7 @@ public class SQLDBCache implements ICache {
 				String whereClause;
 				Association.Field previousField = null;
 				for (Association.Field field : association.getFields()) {
-					//Checking dataset consistency 
+					// Checking dataset consistency
 					if (datasetAliases.get(field.getDataSetLabel()) != null) {
 						if (previousField != null) {
 							whereClause = "";
@@ -863,7 +863,7 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
 	public synchronized void put(IDataSet dataSet, IDataStore dataStore) {
@@ -959,7 +959,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
 	public boolean delete(IDataSet dataSet) {
@@ -995,16 +995,25 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	public boolean delete(String signature) {
+		return delete(signature, false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
+	 */
+	private boolean delete(String signature, boolean isHash) {
 		boolean result = false;
 
 		logger.debug("IN");
 		try {
 			if (signature != null) {
-				List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(signature);
+				List<String> joinedSignatures = getMetadata().getJoinedsReferringDataset(signature, isHash);
 				if (!joinedSignatures.isEmpty()) {
 					// delete also Joined dataset related to current dataset
 					for (String joinedSignature : joinedSignatures) {
@@ -1012,7 +1021,7 @@ public class SQLDBCache implements ICache {
 						deleteJoined(joinedSignature);
 					}
 				}
-				result = dropTableAndRemoveCacheItem(signature, false);
+				result = dropTableAndRemoveCacheItem(signature, isHash);
 			} else {
 				logger.warn("Input parameter [" + signature + "] is null");
 			}
@@ -1070,7 +1079,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
 	public void deleteToQuota() {
@@ -1109,7 +1118,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 	public void deleteAll() {
@@ -1117,7 +1126,7 @@ public class SQLDBCache implements ICache {
 
 		List<String> signatures = getMetadata().getSignatures();
 		for (String signature : signatures) {
-			delete(signature);
+			delete(signature, true);
 		}
 		// Delete any other cache tables, even if not recorded as cache item
 		// eraseExistingTables(getMetadata().getTableNamePrefix().toUpperCase());
@@ -1126,7 +1135,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
 	 */
 	public void deleteOnlyStale() {
@@ -1235,7 +1244,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
 	public SQLDBCacheMetadata getMetadata() {
@@ -1244,7 +1253,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
@@ -1255,7 +1264,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -1266,7 +1275,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 	public void enable(boolean enable) {
@@ -1276,7 +1285,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
 	public boolean isEnabled() {
@@ -1301,7 +1310,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
 	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {

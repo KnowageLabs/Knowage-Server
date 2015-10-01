@@ -262,7 +262,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
 	public List<String> getSignatures() {
@@ -279,8 +279,17 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	public List<String> getJoinedsReferringDataset(String datasetSignature) {
+		return getJoinedsReferringDataset(datasetSignature, false);
+	}
+
+	public List<String> getJoinedsReferringDataset(String datasetSignature, boolean isHash) {
 		logger.debug("IN");
-		String signature = getHashedSignature(datasetSignature);
+		String signature;
+		if (isHash) {
+			signature = datasetSignature;
+		} else {
+			signature = getHashedSignature(datasetSignature);
+		}
 		logger.debug("Search if dataset with signature " + signature + " has joined dataset referring to it");
 		List<String> toReturn = new ArrayList<String>();
 		List<CacheItem> joinedCacheItems = cacheDao.loadCacheJoinedItemsReferringTo(signature);
