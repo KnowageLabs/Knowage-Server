@@ -805,43 +805,49 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			this.fireEvent('showmask','Exporting..');
 			
 			if(!records) {
-				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Loading records...');
+				if(Sbi.user.functionalities.contains('SeeMetadataFunctionality')){
+					Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Loading records...');
+					
+					var urlForMetadata = this.services['getMetadataService'];
+					urlForMetadata += "&OBJECT_ID=" + this.executionInstance.OBJECT_ID;
+					if (this.executionInstance.SBI_SUBOBJECT_ID) {
+						urlForMetadata += "&SUBOBJECT_ID=" + this.executionInstance.SBI_SUBOBJECT_ID;
+					}
 				
-				var urlForMetadata = this.services['getMetadataService'];
-				urlForMetadata += "&OBJECT_ID=" + this.executionInstance.OBJECT_ID;
-				if (this.executionInstance.SBI_SUBOBJECT_ID) {
-					urlForMetadata += "&SUBOBJECT_ID=" + this.executionInstance.SBI_SUBOBJECT_ID;
+					var metadataStore = new Ext.data.JsonStore({
+				        autoLoad: false,
+				        fields: [
+				           'meta_id'
+				           , 'biobject_id'
+				           , 'subobject_id'
+				           , 'meta_name'
+				           , 'meta_type'
+				           , 'meta_content'
+				           , 'meta_creation_date'
+				           , 'meta_change_date'
+				        ]
+				        , url: urlForMetadata
+				    });
+				    metadataStore.on('load', function(store, records, options ) {
+				    	Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Record succefully loaded');
+				    	this.exportWorksheetsTo(mimeType, records);
+			    	}, this);
+				    
+				    metadataStore.load();
+				}else{
+					Sbi.debug('[ExportersMenu.exportWorksheetsTo] : User is not able to see metadata informations.');
+					this.exportWorksheetsTo(mimeType, []);
 				}
-			
-				var metadataStore = new Ext.data.JsonStore({
-			        autoLoad: false,
-			        fields: [
-			           'meta_id'
-			           , 'biobject_id'
-			           , 'subobject_id'
-			           , 'meta_name'
-			           , 'meta_type'
-			           , 'meta_content'
-			           , 'meta_creation_date'
-			           , 'meta_change_date'
-			        ]
-			        , url: urlForMetadata
-			    });
-			    metadataStore.on('load', function(store, records, options ) {
-			    	Sbi.debug('[ExportersMenu.exportWorksheetsTo] : Record succefully loaded');
-			    	this.exportWorksheetsTo(mimeType, records);
-		    	}, this);
-			    
-			    metadataStore.load();
 			} else {
 				
 				Sbi.debug('[ExportersMenu.exportWorksheetsTo] : exporting records...');
 				var metadata = [];
-				for(var i = 0; i < records.length; i++) {
-					var record = records[i];
-					metadata.push(record.data);
+				if(Sbi.user.functionalities.contains('SeeMetadataFunctionality')){
+					for(var i = 0; i < records.length; i++) {
+						var record = records[i];
+						metadata.push(record.data);
+					}
 				}
-
 				var documentWindow = this.getDocumentWindow();
 				var documentPanel = documentWindow.qbe;
 				if(documentPanel==null){

@@ -474,7 +474,8 @@ Ext.extend(Sbi.execution.toolbar.DocumentExecutionPageToolbar, Ext.Toolbar, {
 				   , handler : function(){this.isInsert=true;this.saveDocumentAs()}
 		   }));
 
-		   if(this.executionInstance.document.exporters.length > 0){
+		   if(this.executionInstance.document.exporters.length > 0 &&
+				   this.executionInstance.document.typeCode !== 'WORKSHEET'){
 			   var menu = new Sbi.execution.toolbar.ExportersMenu({
 				    toolbar: this
 					, executionInstance: this.executionInstance
