@@ -12,40 +12,97 @@ eventDefinitionApp.service('translate', function() {
 
 //this variable are global because i need to access at variable of one controller from another controller
 var activityEventCtrl;
-var loadJobDataCtrl ;
 
-eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', 'restServices', function(translate, $scope, restServices) {
-	loadJobDataCtrl = this;
-
-	loadJobDataCtrl.jobName = '';
-	loadJobDataCtrl.jobGroup = '';
-	loadJobDataCtrl.triggerName = '';
-	loadJobDataCtrl.triggerGroup = '';
-
-	
-	loadJobDataCtrl.events = [];
-	loadJobDataCtrl.selectedEvent = -1;
-	loadJobDataCtrl.datasets = [];
-	loadJobDataCtrl.documents = [];
+eventDefinitionApp.controller('ActivityEventController', 
+		['translate', '$scope', '$mdDialog', '$mdToast', 'restServices', '$timeout', 
+		 	function(translate, $scope, $mdDialog, $mdToast, restServices, $timeout) {
+			
+	activityEventCtrl = this;
 	
 	$scope.translate = translate;
 	
-	loadJobDataCtrl.initJobsValues = function(jobName, jobGroup, triggerName, triggerGroup) {
-		loadJobDataCtrl.jobName = jobName;
-		loadJobDataCtrl.jobGroup = jobGroup;
-		loadJobDataCtrl.triggerName = triggerName;
-		loadJobDataCtrl.triggerGroup = triggerGroup;
-		loadJobDataCtrl.jobData = null;
+	activityEventCtrl.jobName = '';
+	activityEventCtrl.jobGroup = '';
+	activityEventCtrl.triggerName = '';
+	activityEventCtrl.triggerGroup = '';
+
+	activityEventCtrl.datasets = [];
+	activityEventCtrl.documents = [];
+
+	activityEventCtrl.event = {};
+	
+	activityEventCtrl.eventSched = {};
+	activityEventCtrl.selectedDocument = [];
+	activityEventCtrl.selectedWeek = [];
+	
+	activityEventCtrl.initJobsValues = function(jobName, jobGroup, triggerName, triggerGroup) {
+		activityEventCtrl.jobName = jobName;
+		activityEventCtrl.jobGroup = jobGroup;
+		activityEventCtrl.triggerName = triggerName;
+		activityEventCtrl.triggerGroup = triggerGroup;
+		activityEventCtrl.jobData = null;
+		
 		var loadtri = false;
 		if(triggerName != undefined && triggerName != "" && triggerGroup != undefined && triggerGroup != "") {
 			loadtri = true;
 		}
-		loadJobDataCtrl.loadDataset();
-		loadJobDataCtrl.loadJobData(loadtri);
-	}
+		
+		activityEventCtrl.loadDataset();
+		activityEventCtrl.loadJobData(loadtri);
+	};
+
+	activityEventCtrl.loadDataset = function() {
+		restServices.get("2.0/datasets", "listDataset")
+			.success(function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.error(translate.load("sbi.glossary.load.error"))
+				} else {
+					activityEventCtrl.datasets = data.item;
+				}
+			})
+			.error(function(data, status, headers, config) {
+				console.error(translate.load("sbi.glossary.load.error"))
+			});
+	};
 	
-	loadJobDataCtrl.loadDocuments = function(loadTri) {
-		var docs = loadJobDataCtrl.jobData.documents;
+	activityEventCtrl.loadJobData = function(loadTri) {
+		var parameters = 'jobName=' + activityEventCtrl.jobName 
+			+ '&jobGroup=' + activityEventCtrl.jobGroup;
+		
+		restServices.get("scheduler", "getJob", parameters)
+			.success(function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.error(translate.load("sbi.glossary.load.error"))
+				} else {
+					console.log("data", data);
+					
+					activityEventCtrl.jobData = data.job;
+					activityEventCtrl.lowFunc = [];
+					
+					for(var i = 0; i < data.functionality.length; i++) {
+						var tmp = data.functionality[i];
+						if(!tmp.hasOwnProperty("parentId")) {
+							activityEventCtrl.lowFunc.push(tmp);
+						} else {
+							console.log("figlio ");
+							for(var j = 0; j < activityEventCtrl.lowFunc.length; j++) {
+								if(insertDocChild(activityEventCtrl.lowFunc[j], tmp)) {
+									break;
+								}
+							}
+						}
+					}
+					
+					activityEventCtrl.loadDocuments(loadTri);
+				}
+			})
+			.error(function(data, status, headers, config) {
+				console.error(translate.load("sbi.glossary.load.error"));
+			});
+	};
+	
+	activityEventCtrl.loadDocuments = function(loadTri) {
+		var docs = activityEventCtrl.jobData.documents;
 		for(var i = 0; i < docs.length; i++) {
 			var doc = {
 				labelId: docs[i].id + "__" + i,
@@ -54,15 +111,15 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', '
 //				parameters: docs[i].condensedParameters
 			};
 			
-			loadJobDataCtrl.documents.push(doc);
+			activityEventCtrl.documents.push(doc);
 		}
 		activityEventCtrl.createNewEvent(loadTri);
-	}
+	};
 	
-	loadJobDataCtrl.getEmptyEvent = function() {
+	activityEventCtrl.getEmptyEvent = function() {
 		var emptyEvent = {
-			jobName: loadJobDataCtrl.jobName,
-			jobGroup: loadJobDataCtrl.jobGroup,
+			jobName: activityEventCtrl.jobName,
+			jobGroup: activityEventCtrl.jobGroup,
 			isSuspended: false,
 			document: [],
 			chrono: {"type": "single"}
@@ -71,9 +128,9 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', '
 		activityEventCtrl.typeOperation = 'single';
 		
 		//load document;
-		for (var i = 0; i<loadJobDataCtrl.documents.length; i++) {
+		for (var i = 0; i < activityEventCtrl.documents.length; i++) {
 			var tmp = {};
-			var doc = loadJobDataCtrl.documents[i];
+			var doc = activityEventCtrl.documents[i];
 			tmp.label = doc.label;
 //			tmp.parameters = doc.parameters;
 			tmp.labelId = doc.labelId;
@@ -84,21 +141,53 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', '
 		return emptyEvent;
 	};
 	
-	loadJobDataCtrl.loadDataset = function() {
-		restServices.get("2.0/datasets", "listDataset")
-			.success(function(data, status, headers, config) {
-				if (data.hasOwnProperty("errors")) {
-					console.error(translate.load("sbi.glossary.load.error"))
-				} else {
-					loadJobDataCtrl.datasets = data.item;
-				}
-			})
-			.error(function(data, status, headers, config) {
-				console.error(translate.load("sbi.glossary.load.error"))
-			});
-	};
+	activityEventCtrl.schedulerTypes = [
+        {value: 'single', label: "Single Execution"},
+        {value: 'scheduler', label: "Scheduler Execution"},
+        {value: 'event', label: "Event Execution"}
+    ];
 	
-	loadJobDataCtrl.loadScheduler = function() {
+	activityEventCtrl.eventTypes = [
+        {value: 'rest', label: translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
+        {value: 'jms', label: translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
+	    {value: 'contextbroker', label: translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
+	    {value: 'dataset', label: translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
+    ];
+	
+	activityEventCtrl.eventIntervals = [
+		{value: 'minute', label: "Minute"},
+		{value: 'hour', label: "Hour"},
+		{value: 'day', label: "Daily"},
+		{value: 'week', label: "Weekly"},
+		{value: 'month', label: "Monthly"}
+	];
+	
+	activityEventCtrl.month = [
+	    {label: 'JAN', value: 'JAN'},
+	    {label: 'FEB', value: 'FEB'}, 
+	    {label: 'MAR', value: 'MAR'}, 
+	    {label: 'APR', value: 'APR'}, 
+	    {label: 'MAY', value: 'MAY'}, 
+	    {label: 'JUN', value: 'JUN'}, 
+	    {label: 'JUL', value: 'JUL'}, 
+	    {label: 'AUG', value: 'AUG'}, 
+	    {label: 'SEP', value: 'SEP'}, 
+	    {label: 'OCT', value: 'OCT'}, 
+	    {label: 'NOV', value: 'NOV'}, 
+	    {label: 'DIC', value: 'DIC'}
+    ];
+	
+	activityEventCtrl.week = [
+        {label: 'sun', value: '1'}, 
+        {label: 'mon', value: '2'}, 
+        {label: 'tue', value: '3'}, 
+        {label: 'wed', value: '4'}, 
+        {label: 'thu', value: '5'}, 
+        {label: 'fri', value: '6'}, 
+        {label: 'sat', value: '7'}
+    ];
+	
+	activityEventCtrl.loadScheduler = function() {
 		var requestString = 
 			"getTriggerInfo?jobName = "+loadJobDataCtrl.jobName
 			+"&jobGroup = "+loadJobDataCtrl.jobGroup
@@ -179,7 +268,7 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', '
 				console.error(translate.load("sbi.glossary.load.error"))
 			});
 	};
-	
+
 	function insertDocChild(node, child) {
 		if(node.id == child.parentId) {
 			if(!node.hasOwnProperty("childs")) {
@@ -200,101 +289,12 @@ eventDefinitionApp.controller('LoadJobDataController', ['translate', '$scope', '
 		}
 	};
 	
-	loadJobDataCtrl.loadJobData = function(loadTri) {
-		var parameters = 'jobName=' + loadJobDataCtrl.jobName + '&jobGroup=' + loadJobDataCtrl.jobGroup;
-		restServices.get("scheduler", "getJob", parameters)
-			.success(function(data, status, headers, config) {
-				if (data.hasOwnProperty("errors")) {
-					console.error(translate.load("sbi.glossary.load.error"))
-				} else {
-					console.log("data", data);
-					loadJobDataCtrl.jobData = data.job;
-					loadJobDataCtrl.lowFunc = [];
-					for(var i = 0; i < data.functionality.length; i++) {
-						var tmp = data.functionality[i];
-						if(!tmp.hasOwnProperty("parentId")) {
-							loadJobDataCtrl.lowFunc.push(tmp);
-						} else {
-							console.log("figlio ");
-							for(var j = 0; j < loadJobDataCtrl.lowFunc.length; j++) {
-								if(insertDocChild(loadJobDataCtrl.lowFunc[j], tmp)) {
-									break;
-								}
-							}
-							
-						}
-					}
-					
-					loadJobDataCtrl.loadDocuments(loadTri);
-				}
-			})
-			.error(function(data, status, headers, config) {
-				console.error(translate.load("sbi.glossary.load.error"));
-			});
-	};
-	
-}]);
-
-
-eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope', '$mdDialog', '$mdToast', 'restServices', '$timeout', function(translate, $scope, $mdDialog, $mdToast, restServices, $timeout) {
-	activityEventCtrl = this;
-	activityEventCtrl.event = {};
-	
-	activityEventCtrl.schedulerTypes = [{value: 'single', label: "Single Execution"},
-	                                   {value: 'scheduler', label: "Scheduler Execution"},
-	                                   {value: 'event', label: "Event Execution"}
-	                                   ];
-	
-	activityEventCtrl.eventTypes = [
-	                              {value: 'rest', label: translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
-	                              {value: 'jms', label: translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
-	                              {value: 'contextbroker', label: translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
-	                              {value: 'dataset', label: translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
-	                              ];
-	
-
-	activityEventCtrl.eventIntervals = [{value: 'minute', label: "Minute"},
-	                                {value: 'hour', label: "Hour"},
-	                                {value: 'day', label: "Daily"},
-	                                {value: 'week', label: "Weekly"},
-	                                {value: 'month', label: "Monthly"}
-	                                ];
-	
-	activityEventCtrl.eventSched = {};
-	activityEventCtrl.selectedDocument = [];
-	activityEventCtrl.selectedWeek = [];
-	activityEventCtrl.month = [
-	                           {label: 'JAN', value: 'JAN'}, 
-	                           {label: 'FEB', value: 'FEB'}, 
-	                           {label: 'MAR', value: 'MAR'}, 
-	                           {label: 'APR', value: 'APR'}, 
-	                           {label: 'MAY', value: 'MAY'}, 
-	                           {label: 'JUN', value: 'JUN'}, 
-	                           {label: 'JUL', value: 'JUL'}, 
-	                           {label: 'AUG', value: 'AUG'}, 
-	                           {label: 'SEP', value: 'SEP'}, 
-	                           {label: 'OCT', value: 'OCT'}, 
-	                           {label: 'NOV', value: 'NOV'}, 
-	                           {label: 'DIC', value: 'DIC'}
-	                           ];
-	
-	activityEventCtrl.week = [
-	                          {label: 'sun', value: '1'}, 
-	                          {label: 'mon', value: '2'}, 
-	                          {label: 'tue', value: '3'}, 
-	                          {label: 'wed', value: '4'}, 
-	                          {label: 'thu', value: '5'}, 
-	                          {label: 'fri', value: '6'}, 
-	                          {label: 'sat', value: '7'}
-	                          ];
-
-	
 	activityEventCtrl.createNewEvent = function(loadTrigger) {
-		activityEventCtrl.event = loadJobDataCtrl.getEmptyEvent();
+		activityEventCtrl.event = activityEventCtrl.getEmptyEvent();
 		activityEventCtrl.setSelectedDocument();
 		
 		if(loadTrigger) {
-			loadJobDataCtrl.loadScheduler();
+			activityEventCtrl.loadScheduler();
 		}
 	};
 	
@@ -424,7 +424,8 @@ eventDefinitionApp.controller('ActivityEventController', ['translate', '$scope',
         activityEventCtrl.event.chrono = {
     		"type": "week", 
     		"parameter": {
-    			"numRepetition": 1, "days": []
+//    			"numRepetition": 1, 
+    			"days": []
     		}
         };
         
