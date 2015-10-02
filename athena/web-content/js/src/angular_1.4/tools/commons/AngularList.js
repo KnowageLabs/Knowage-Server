@@ -76,7 +76,8 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
         menuOption:"=?",	//menu to open with right click
         speedMenuOption:"=?", //speed menu to open with button at the end of item
         selectedItem:"=?",	//optional to get the selected item value
-        highlightsSelectedItem:"=?" 
+        highlightsSelectedItem:"=?",
+        showItemTooltip:"=?"
     	},
 //      compile: function(element, attrs){
 //    	  if(!attrs.totalItemCount){

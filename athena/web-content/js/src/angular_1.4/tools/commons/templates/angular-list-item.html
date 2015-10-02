@@ -1,5 +1,5 @@
 <div ui-tree-node context-menu data-target="{{id}}ContextMenu-{{ $index }}" data-nodrag={{enableDrag!=true}}>
-	<md-tooltip md-direction="right" md-delay="1500" >
+	<md-tooltip md-direction="right" md-delay="1500" ng-if="showItemTooltip==true">
    	{{item[itemName] | uppercase}}
 	</md-tooltip>
 									<div ui-tree-handle>

@@ -108,8 +108,8 @@
 		
 		<div id="docTree" ui-tree="" data-drag-enabled="false"
 				data-drag-delay="false" data-empty-placeholder-enabled="false">
-			<ol id="olchiproot" ui-tree-nodes ng-model="jobDataCtrl.lowFunc">
-				<li ng-repeat="subItem in jobDataCtrl.lowFunc" ui-tree-node
+			<ol id="olchiproot" ui-tree-nodes ng-model="activityEventCtrl.lowFunc">
+				<li ng-repeat="subItem in activityEventCtrl.lowFunc" ui-tree-node
 					ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/lowFunctionalityTreeNode.html'"></li>
 			</ol>
 		</div>
@@ -125,7 +125,7 @@
 			<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 			<md-select aria-label="aria-label"
 					ng-model="activityEventCtrl.selectedDocument.datasetFolderLabel">
-				<md-option ng-repeat="item in jobDataCtrl.datasets " value="{{item.label}}">{{item.label}}</md-option> 
+				<md-option ng-repeat="item in activityEventCtrl.datasets " value="{{item.label}}">{{item.label}}</md-option> 
 			</md-select> 
 		</md-input-container> 
 			
@@ -211,7 +211,7 @@
 				ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 			<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetLabel">
-				<md-option ng-repeat="item in jobDataCtrl.datasets " 
+				<md-option ng-repeat="item in activityEventCtrl.datasets " 
 						value="{{item.label}}">{{item.label}}</md-option>
 			</md-select> 
 		</md-input-container> 

@@ -87,7 +87,7 @@ function funzione(translate,$filter, restServices, $q, $scope, $timeout) {
 								if(isPush!=true){
 									s.data=[];
 								}
-								var tmp={type:'DATASET',title:data.DataSet.label,itemList:data.Word,subItemList:[]};
+								var tmp={type:'DATASET',title:data.DataSet.name,itemList:data.Word,subItemList:[]};
 								
 								
 								if(data.SbiGlDataSetWlist!=undefined){

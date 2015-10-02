@@ -85,7 +85,7 @@ eventDefinitionApp.controller('ActivityEventController',
 	activityEventCtrl.event.documents = [];
 
 	activityEventCtrl.datasets = [];
-	activityEventCtrl.documents = [];
+	activityEventCtrl.JobDocuments = [];
 	
 	activityEventCtrl.eventSched = {};
 	activityEventCtrl.selectedDocument = [];
@@ -167,7 +167,7 @@ eventDefinitionApp.controller('ActivityEventController',
 //				parameters: docs[i].condensedParameters
 			};
 			
-			activityEventCtrl.documents.push(doc);
+			activityEventCtrl.JobDocuments.push(doc);
 		}
 		activityEventCtrl.createNewEvent(loadTri);
 	};
@@ -186,9 +186,9 @@ eventDefinitionApp.controller('ActivityEventController',
 		activityEventCtrl.typeOperation = 'single';
 		
 		//load document;
-		for (var i = 0; i < activityEventCtrl.event.documents.length; i++) {
+		for (var i = 0; i < activityEventCtrl.JobDocuments.length; i++) {
 			var tmp = {};
-			var doc = activityEventCtrl.event.documents[i];
+			var doc = activityEventCtrl.JobDocuments[i];
 			tmp.label = doc.label;
 //			tmp.parameters = doc.parameters;
 			tmp.labelId = doc.labelId;
@@ -275,8 +275,8 @@ eventDefinitionApp.controller('ActivityEventController',
 					}
 					
 					//carico le informazioni dei documenti
-					activityEventCtrl.event.documents = d.document;
-					activityEventCtrl.selectedDocument = d.document[0];
+					activityEventCtrl.event.documents = d.documents;
+					activityEventCtrl.selectedDocument = d.documents[0];
 				}
 			})
 			.error(function(data, status, headers, config) {

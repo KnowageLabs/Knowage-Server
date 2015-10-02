@@ -126,7 +126,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<div class="md-toolbar-tools" layout="row" style="padding-left: 0px;">
 										<md-input-container> 
 											<label>{{translate.load("Tipo evento")}}</label>
-											<md-select aria-label="aria-label" ng-model="activityEventCtrl.event.typeOperation"
+											<md-select aria-label="aria-label" ng-model="activityEventCtrl.typeOperation"
 													ng-change="activityEventCtrl.changeTypeOperation();"> 
 												<md-option ng-repeat="type in activityEventCtrl.SCHEDULER_TYPES" 
 														value="{{type.value}}">{{type.label}}</md-option> 
