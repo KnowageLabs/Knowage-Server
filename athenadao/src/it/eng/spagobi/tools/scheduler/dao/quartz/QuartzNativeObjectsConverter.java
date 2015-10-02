@@ -230,7 +230,7 @@ class QuartzNativeObjectsConverter {
 			int minute = calendar.get(Calendar.MINUTE);
 
 			String type = chrono.getString("type");
-			JSONObject params = chrono.getJSONObject("parameter");
+			JSONObject params = chrono.optJSONObject("parameter");
 
 			if (type.equals("single")) {
 				return chronExpression; // this will be a normal trigger

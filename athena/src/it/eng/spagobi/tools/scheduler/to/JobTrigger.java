@@ -10,10 +10,10 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class JobTrigger implements Serializable {
 
@@ -95,16 +95,25 @@ public class JobTrigger implements Serializable {
 	 */
 	public void setEndDate(String endDate) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		SimpleDateFormat formatterF = new SimpleDateFormat("yyyy/MM/dd");
-		try {
-			if (endDate != null && endDate.trim().compareTo("") != 0) {
-				Date date = formatter.parse(endDate);
-				this.endDate = formatterF.format(date);
+		SimpleDateFormat formatterF = new SimpleDateFormat("dd/MM/yyyy");
+		if (endDate != null && endDate.trim().compareTo("") != 0) {
+			try {
+				// if formatter is correct
+				formatterF.parse(endDate);
+				this.endDate = endDate;
+			} catch (java.text.ParseException e) {
+				try {
+					Date date = formatter.parse(endDate);
+					this.endDate = formatterF.format(date);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
 			}
-		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
 		}
+
 	}
 
 	/**
@@ -162,14 +171,23 @@ public class JobTrigger implements Serializable {
 	 */
 	public void setStartDate(String startDate) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 		SimpleDateFormat formatterF = new SimpleDateFormat("dd/MM/yyyy");
-		try {
-			Date date = formatter.parse(startDate);
-			this.startDate = formatterF.format(date);
-		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (startDate != null && startDate.trim().compareTo("") != 0) {
+			try {
+				// if formatter is correct
+				formatterF.parse(startDate);
+				this.startDate = startDate;
+			} catch (java.text.ParseException e) {
+				try {
+					Date date = formatter.parse(startDate);
+					this.startDate = formatterF.format(date);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
 		}
 	}
 
