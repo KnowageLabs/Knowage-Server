@@ -128,8 +128,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 												<label>{{translate.load("Tipo evento")}}</label>
 												<md-select aria-label="aria-label" ng-model="activityEvent.typeOperation"
 														ng-change="activityEvent.changeTypeOperation();"> 
-													<md-option ng-repeat="item in jobDataCtrl.eventTipology" 
-															value="{{item.value}}">{{item.label}}</md-option> 
+													<md-option ng-repeat="type in activityEvent.schedulerTypes" 
+															value="{{type.value}}">{{type.label}}</md-option> 
 												</md-select> 
 											</md-input-container>
 										</div>
@@ -140,7 +140,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label>
 											<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.event_type"
 													ng-change="activityEvent.changeTypeFrequency()" required>
-												<md-option ng-repeat="eventType in jobDataCtrl.typeEvents" 
+												<md-option ng-repeat="eventType in activityEvent.eventTypes" 
 														value="{{eventType.value}}"> {{eventType.label}} </md-option> 
 											</md-select> 
 										</md-input-container>
@@ -176,7 +176,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.repetitionKind"
 													style="margin:0px" ng-init="activityEvent.getActivityRepetitionKindForScheduler()"
 													ng-change="activityEvent.changeTypeFrequency();"> 
-												<md-option ng-repeat="item in jobDataCtrl.intervalsEvent " value="{{item.value}}">{{item.label}}</md-option> 
+												<md-option ng-repeat="interval in activityEvent.eventIntervals " value="{{interval.value}}">{{interval.label}}</md-option> 
 											</md-select>
 										</div>
 
