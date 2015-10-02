@@ -18,8 +18,61 @@ eventDefinitionApp.controller('ActivityEventController',
 		 	function(translate, $scope, $mdDialog, $mdToast, restServices, $timeout) {
 			
 	activityEventCtrl = this;
-	
 	$scope.translate = translate;
+
+	activityEventCtrl.SCHEDULER_TYPES = [
+        {value: 'single', label: "Single Execution"},
+        {value: 'scheduler', label: "Scheduler Execution"},
+        {value: 'event', label: "Event Execution"}
+    ];
+	
+	activityEventCtrl.EVENT_TYPES = [
+        {value: 'rest', label: translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
+        {value: 'jms', label: translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
+	    {value: 'contextbroker', label: translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
+	    {value: 'dataset', label: translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
+    ];
+	
+	activityEventCtrl.EVENT_INTERVALS = [
+		{value: 'minute', label: "Minute"},
+		{value: 'hour', label: "Hour"},
+		{value: 'day', label: "Daily"},
+		{value: 'week', label: "Weekly"},
+		{value: 'month', label: "Monthly"}
+	];
+	
+	activityEventCtrl.MONTHS = [
+	    {label: 'JAN', value: 'JAN'},
+	    {label: 'FEB', value: 'FEB'}, 
+	    {label: 'MAR', value: 'MAR'}, 
+	    {label: 'APR', value: 'APR'}, 
+	    {label: 'MAY', value: 'MAY'}, 
+	    {label: 'JUN', value: 'JUN'}, 
+	    {label: 'JUL', value: 'JUL'}, 
+	    {label: 'AUG', value: 'AUG'}, 
+	    {label: 'SEP', value: 'SEP'}, 
+	    {label: 'OCT', value: 'OCT'}, 
+	    {label: 'NOV', value: 'NOV'}, 
+	    {label: 'DIC', value: 'DIC'}
+    ];
+	
+	activityEventCtrl.WEEKS = [
+        {label: 'sun', value: '1'}, 
+        {label: 'mon', value: '2'}, 
+        {label: 'tue', value: '3'}, 
+        {label: 'wed', value: '4'}, 
+        {label: 'thu', value: '5'}, 
+        {label: 'fri', value: '6'}, 
+        {label: 'sat', value: '7'}
+    ];
+	
+	activityEventCtrl.WEEKS_ORDER = [
+        {label: 'First', value: '1'}, 
+        {label: 'Second', value: '2'}, 
+        {label: 'Third', value: '3'}, 
+        {label: 'Fourth', value: '4'}, 
+        {label: 'Last', value: '5'}, 
+    ];
 	
 	activityEventCtrl.jobName = '';
 	activityEventCtrl.jobGroup = '';
@@ -140,52 +193,6 @@ eventDefinitionApp.controller('ActivityEventController',
 		
 		return emptyEvent;
 	};
-	
-	activityEventCtrl.schedulerTypes = [
-        {value: 'single', label: "Single Execution"},
-        {value: 'scheduler', label: "Scheduler Execution"},
-        {value: 'event', label: "Event Execution"}
-    ];
-	
-	activityEventCtrl.eventTypes = [
-        {value: 'rest', label: translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
-        {value: 'jms', label: translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
-	    {value: 'contextbroker', label: translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
-	    {value: 'dataset', label: translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
-    ];
-	
-	activityEventCtrl.eventIntervals = [
-		{value: 'minute', label: "Minute"},
-		{value: 'hour', label: "Hour"},
-		{value: 'day', label: "Daily"},
-		{value: 'week', label: "Weekly"},
-		{value: 'month', label: "Monthly"}
-	];
-	
-	activityEventCtrl.month = [
-	    {label: 'JAN', value: 'JAN'},
-	    {label: 'FEB', value: 'FEB'}, 
-	    {label: 'MAR', value: 'MAR'}, 
-	    {label: 'APR', value: 'APR'}, 
-	    {label: 'MAY', value: 'MAY'}, 
-	    {label: 'JUN', value: 'JUN'}, 
-	    {label: 'JUL', value: 'JUL'}, 
-	    {label: 'AUG', value: 'AUG'}, 
-	    {label: 'SEP', value: 'SEP'}, 
-	    {label: 'OCT', value: 'OCT'}, 
-	    {label: 'NOV', value: 'NOV'}, 
-	    {label: 'DIC', value: 'DIC'}
-    ];
-	
-	activityEventCtrl.week = [
-        {label: 'sun', value: '1'}, 
-        {label: 'mon', value: '2'}, 
-        {label: 'tue', value: '3'}, 
-        {label: 'wed', value: '4'}, 
-        {label: 'thu', value: '5'}, 
-        {label: 'fri', value: '6'}, 
-        {label: 'sat', value: '7'}
-    ];
 	
 	activityEventCtrl.loadScheduler = function() {
 		var requestString = 
@@ -366,6 +373,7 @@ eventDefinitionApp.controller('ActivityEventController',
 		if(activityEventCtrl.eventSched.repetitionKind == undefined 
 				|| activityEventCtrl.eventSched.repetitionKind == 'single' 
 				|| activityEventCtrl.eventSched.repetitionKind == 'event' ) {
+			
 			activityEventCtrl.eventSched.repetitionKind = 'minute';
 		}
 	};

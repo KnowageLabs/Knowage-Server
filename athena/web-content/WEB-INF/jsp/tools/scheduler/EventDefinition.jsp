@@ -128,7 +128,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											<label>{{translate.load("Tipo evento")}}</label>
 											<md-select aria-label="aria-label" ng-model="activityEvent.typeOperation"
 													ng-change="activityEvent.changeTypeOperation();"> 
-												<md-option ng-repeat="type in activityEvent.schedulerTypes" 
+												<md-option ng-repeat="type in activityEvent.SCHEDULER_TYPES" 
 														value="{{type.value}}">{{type.label}}</md-option> 
 											</md-select> 
 										</md-input-container>
@@ -140,7 +140,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label>
 										<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.event_type"
 												ng-change="activityEvent.changeTypeFrequency()" required>
-											<md-option ng-repeat="eventType in activityEvent.eventTypes" 
+											<md-option ng-repeat="eventType in activityEvent.EVENT_TYPES" 
 													value="{{eventType.value}}"> {{eventType.label}} </md-option> 
 										</md-select> 
 									</md-input-container>
@@ -176,7 +176,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										<md-select aria-label="aria-label" ng-model="activityEvent.eventSched.repetitionKind"
 												style="margin:0px" ng-init="activityEvent.getActivityRepetitionKindForScheduler()"
 												ng-change="activityEvent.changeTypeFrequency();"> 
-											<md-option ng-repeat="interval in activityEvent.eventIntervals " value="{{interval.value}}">{{interval.label}}</md-option> 
+											<md-option ng-repeat="interval in activityEvent.EVENT_INTERVALS " value="{{interval.value}}">{{interval.label}}</md-option> 
 										</md-select>
 									</div>
 
@@ -210,11 +210,11 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										<span class="textspan">days</span>
 									</div>
 
-									<div ng-if="activityEvent.eventSched.repetitionKind=='week'" layout="row" class="alignedCheckbox">
-										<div layout="row" ng-repeat="week in activityEvent.week">
+									<div ng-if="activityEvent.eventSched.repetitionKind == 'week'" layout="row" class="alignedCheckbox">
+										<div layout="row" ng-repeat="week in activityEvent.WEEKS">
 											<label>{{week.label}}:</label>
 											<md-checkbox aria-label="aria-label" ng-click="activityEvent.toggleWeek(week.value)"
-													ng-checked="activityEvent.isChecked(week.value,activityEvent.event.chrono.parameter.days,(activityEvent.event.chrono.type=='week'))">
+													ng-checked="activityEvent.isChecked(week.value, activityEvent.event.chrono.parameter.days, (activityEvent.event.chrono.type == 'week'))">
 											</md-checkbox>
 										</div>
 									</div>
@@ -245,7 +245,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 												<md-select aria-label="aria-label"
 														ng-model="activityEvent.month_repetition" style="margin:0px;" multiple='true'
 														ng-change="activityEvent.toggleMonthScheduler()">
-													<md-option ng-repeat="item in activityEvent.month " value="{{item.value}}">{{item.label}}</md-option> 
+													<md-option ng-repeat="month in activityEvent.MONTHS " value="{{month.value}}">{{month.label}}</md-option> 
 												</md-select>
 											</div>
 										</div>
@@ -255,38 +255,35 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											<div layout="row" flex style="margin: 0 15px;">
 												<span>complex</span>
 												<md-switch style=" margin: 0px 10px 17px 10px;"
-														ng-change="activityEvent.toggleMonthScheduler()" class="greenSwitch"
-															aria-label="Switch " ng-model="activityEvent.typeMonthWeek"
-															ng-init="activityEvent.typeMonthWeek=activityEvent.typeMonthWeek!=undefined? activityEvent.typeMonthWeek : true">
-													</md-switch>
-													<span>simple</span>
-												</div>
+													ng-change="activityEvent.toggleMonthScheduler()" class="greenSwitch"
+														aria-label="Switch " ng-model="activityEvent.typeMonthWeek"
+														ng-init="activityEvent.typeMonthWeek=activityEvent.typeMonthWeek!=undefined? activityEvent.typeMonthWeek : true">
+												</md-switch>
+												<span>simple</span>
+											</div>
 
-												<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek==true"
-														ng-init="activityEvent.dayinmonthrep_week =activityEvent.dayinmonthrep_week || 1;">
-													<span class="textspan">The day</span>
-													<md-select aria-label="aria-label" ng-model="activityEvent.dayinmonthrep_week"
-															class="numberSelect" ng-change="activityEvent.toggleMonthScheduler()">
-														<md-option ng-repeat="item in activityEvent.getNitem(31) " value="{{item}}">{{item}}</md-option> 
-													</md-select>
-												</div>
-
-												<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek != true"
-ng-init="activityEvent.month_week_number_repetition=activityEvent.month_week_number_repetition|| '1';">
-													<span class="textspan">The week</span>
-													<md-select aria-label="aria-label" ng-model="activityEvent.month_week_number_repetition"
-															style="margin:0px;" ng-change="activityEvent.toggleMonthScheduler()">
-													<md-option value="1">First</md-option> 
-													<md-option value="2">Second</md-option>
-													<md-option value="3">Third</md-option> 
-													<md-option value="4">Fourth</md-option>
-													<md-option value="L">Last</md-option> 
+											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek==true"
+													ng-init="activityEvent.dayinmonthrep_week =activityEvent.dayinmonthrep_week || 1;">
+												<span class="textspan">The day</span>
+												<md-select aria-label="aria-label" ng-model="activityEvent.dayinmonthrep_week"
+														class="numberSelect" ng-change="activityEvent.toggleMonthScheduler()">
+													<md-option ng-repeat="item in activityEvent.getNitem(31) " value="{{item}}">{{item}}</md-option> 
 												</md-select>
+											</div>
+
+											<div layout="row" class="alignedCheckbox" ng-if="activityEvent.typeMonthWeek != true"
+													ng-init="activityEvent.month_week_number_repetition=activityEvent.month_week_number_repetition|| '1';">
+												<span class="textspan">The week</span>
+												<md-select aria-label="aria-label" ng-model="activityEvent.month_week_number_repetition"
+														style="margin:0px;" ng-change="activityEvent.toggleMonthScheduler()">
+													<md-option ng-repeat="order in activityEvent.WEEKS_ORDER" value="{{order.value}}">{{order.label}}</md-option> 
+												</md-select>
+												
 												<span class="textspan">In day</span>
 												<md-select aria-label="aria-label" ng-model="activityEvent.month_week_repetition"
 														style="margin:0px;" multiple='true'
 														ng-change="activityEvent.toggleMonthScheduler()">
-													<md-option ng-repeat="item in activityEvent.week " value="{{item.value}}">{{item.label}}</md-option>
+													<md-option ng-repeat="week in activityEvent.WEEKS " value="{{week.value}}">{{week.label}}</md-option>
 												</md-select>
 											</div>
 										</div>
@@ -311,6 +308,7 @@ ng-init="activityEvent.month_week_number_repetition=activityEvent.month_week_num
 						<div ng-include="'/athena/js/src/angular_1.4/scheduler/template/documentManagementDetail.jsp'"></div>
 					</md-tab-body> 
 				</md-tab>
+				
 				<md-tab id="json"> 
 					<md-tab-label>json</md-tab-label> 
 					<md-tab-body layout="column"> 
