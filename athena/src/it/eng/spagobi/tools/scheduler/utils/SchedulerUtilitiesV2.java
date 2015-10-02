@@ -1,18 +1,23 @@
 package it.eng.spagobi.tools.scheduler.utils;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.JobTrigger;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,10 +31,8 @@ import org.json.JSONObject;
 
 public class SchedulerUtilitiesV2 {
 
-	public static boolean isNumber(String str) {
-		return str != null && str.matches("\\d+");
-	}
-
+	// Serialization of JobTrigger save
+	// parameter----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public static void serializeSaveParameterOptions(StringBuffer message, JobTrigger trigg, boolean runImmediately, IEngUserProfile profile)
 			throws EMFUserError {
 
@@ -318,6 +321,8 @@ public class SchedulerUtilitiesV2 {
 		return saveOptString;
 	}
 
+	// Creation of JobTrigger save
+	// paramater----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public static Map<String, DispatchContext> getSaveOptionsFromRequest(JSONArray docum) throws EMFUserError, JSONException {
 		// TriggerInfo triggerInfo = (TriggerInfo) sessionContainer.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 		// TriggerInfo triggerInfo = null;
@@ -579,6 +584,149 @@ public class SchedulerUtilitiesV2 {
 			// }
 
 		}
+	}
+
+	// Load of JobTrigger
+	// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	public static JobTrigger getJobTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup) {
+		try {
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String respStr_gt = schedulerService.getJobSchedulationDefinition(triggerName, triggerGroup);
+			SourceBean triggerDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(respStr_gt);
+			String respStr_gj = schedulerService.getJobDefinition(jobName, jobGroupName);
+			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(respStr_gj);
+			if (triggerDetailSB != null) {
+				if (jobDetailSB != null) {
+					JobTrigger jt = getJobTriggerFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
+					return jt;
+					// TriggerInfo tInfo = SchedulerUtilities.getTriggerInfoFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
+					// return tInfo;
+				} else {
+					throw new Exception("Detail not recovered for job " + jobName + "associated to trigger " + triggerName);
+				}
+			} else {
+				throw new Exception("Detail not recovered for trigger " + triggerName);
+			}
+
+		} catch (Exception ex) {
+
+			throw new SpagoBIRuntimeException("Error while getting detail of the schedule(trigger)", ex);
+		}
+	}
+
+	private static JobTrigger getJobTriggerFromTriggerSourceBean(SourceBean triggerInfoSB, SourceBean jobInfoSB) {
+
+		JobTrigger triggerInfo = new JobTrigger();
+		String triggerName = (String) triggerInfoSB.getAttribute("triggerName");
+		String triggerDescription = (String) triggerInfoSB.getAttribute("triggerDescription");
+		String startdate = (String) triggerInfoSB.getAttribute("triggerStartDate");
+		String startTime = (String) triggerInfoSB.getAttribute("triggerStartTime");
+		String chronString = (String) triggerInfoSB.getAttribute("triggerChronString");
+		String endDate = (String) triggerInfoSB.getAttribute("triggerEndDate");
+		if (endDate == null) {
+			endDate = "";
+		}
+		String endTime = (String) triggerInfoSB.getAttribute("triggerEndTime");
+		if (endTime == null) {
+			endTime = "";
+		}
+		String triggerRepeatInterval = (String) triggerInfoSB.getAttribute("triggerRepeatInterval");
+		if (triggerRepeatInterval == null) {
+			triggerRepeatInterval = "";
+		}
+		triggerInfo.setEndDate(endDate);
+		triggerInfo.setEndTime(endTime);
+		triggerInfo.setRepeatInterval(triggerRepeatInterval);
+		triggerInfo.setStartDate(startdate);
+		triggerInfo.setStartTime(startTime);
+		triggerInfo.setChrono(chronString);
+		triggerInfo.setTriggerDescription(triggerDescription);
+		triggerInfo.setTriggerName(triggerName);
+
+		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobInfoSB);
+		triggerInfo.setJobInfo(jobInfo);
+
+		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
+		List<Integer> biobjIds = jobInfo.getDocumentIds();
+		int index = 0;
+		for (Integer biobjId : biobjIds) {
+			index++;
+			DispatchContext dispatchContext = new DispatchContext();
+			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_"
+					+ biobjId.toString() + "__" + index);
+			if (dispatchContextSB != null) {
+				String encodedDispatchContext = (String) dispatchContextSB.getAttribute("value");
+				dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
+			}
+			saveOptions.put(biobjId + "__" + index, dispatchContext);
+		}
+
+		triggerInfo.setSaveOptions(saveOptions);
+
+		return triggerInfo;
+	}
+
+	public static JSONArray serializeSaveOptions(JobTrigger triggerInfo) {
+		JSONArray saveOptionsJSONArray = new JSONArray();
+
+		try {
+			IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
+
+			Map<String, DispatchContext> saveOptions = triggerInfo.getSaveOptions();
+			if (!saveOptions.isEmpty()) {
+				// iterate Map
+				for (Map.Entry<String, DispatchContext> entry : saveOptions.entrySet()) {
+					String objIdentifier = entry.getKey();
+					if (objIdentifier.contains("__")) {
+						JSONObject documentJSONObject = new JSONObject();
+
+						String objId = objIdentifier.substring(0, objIdentifier.indexOf("__"));
+						BIObject biObject = biObjectDAO.loadBIObjectById(Integer.valueOf(objId));
+						if (biObject != null) {
+							String documentLabel = biObject.getLabel();
+							documentJSONObject.put("documentLabel", documentLabel);
+
+							DispatchContext dispatchContext = entry.getValue();
+							if (dispatchContext != null) {
+								String mailTos = dispatchContext.getMailTos();
+								documentJSONObject.put("mailTos", mailTos);
+								String zipMailName = dispatchContext.getZipMailName();
+								if (zipMailName == null) {
+									zipMailName = "";
+								}
+								documentJSONObject.put("zipMailName", zipMailName);
+								String datasetLabel = dispatchContext.getDataSetLabel();
+
+								if (datasetLabel == null) {
+									datasetLabel = "";
+								}
+								documentJSONObject.put("datasetLabel", datasetLabel);
+								String mailSubject = dispatchContext.getMailSubj();
+								documentJSONObject.put("mailSubject", mailSubject);
+								String mailTxt = dispatchContext.getMailTxt();
+								documentJSONObject.put("mailTxt", mailTxt);
+								String containedFileName = dispatchContext.getContainedFileName();
+								if (containedFileName == null) {
+									containedFileName = "";
+								}
+								documentJSONObject.put("containedFileName", containedFileName);
+
+							}
+
+							// put JSONObject in JSONArray
+							saveOptionsJSONArray.put(documentJSONObject);
+						}
+					}
+				}
+			}
+
+		} catch (Exception ex) {
+
+			throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+		}
+
+		return saveOptionsJSONArray;
 	}
 
 }

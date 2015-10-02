@@ -248,7 +248,7 @@ class QuartzNativeObjectsConverter {
 				chronExpression = "0 " + minute + " " + hour + " 1/" + numrep + " * ? *";
 			}
 			if (type.equals("week")) {
-				String numrep = params.getString("numRepetition");
+
 				JSONArray days = params.getJSONArray("days");
 				String daysstr = "";
 				for (int i = 0; i < days.length(); i++) {
@@ -258,71 +258,60 @@ class QuartzNativeObjectsConverter {
 					}
 				}
 
-				chronExpression = "0 " + minute + " " + hour + " ? * " + daysstr + "/" + numrep + " *";
+				chronExpression = "0 " + minute + " " + hour + " ? * " + daysstr + " *";
 			}
-			// if (type.equals("month")) {
-			// String numRep = "";
-			// String selmonths = "";
-			// String dayRep = "";
-			// String weeks = "";
-			// String days = "";
-			// String[] parchuncks = params.split(";");
-			// for (int i = 0; i < parchuncks.length; i++) {
-			// String parchunk = parchuncks[i];
-			// String[] singleparchunks = parchunk.split("=");
-			// String key = singleparchunks[0];
-			// String value = singleparchunks[1];
-			// value = value.trim();
-			// if (value.endsWith(",")) {
-			// value = value.substring(0, (value.length() - 1));
-			// }
-			// if (key.equals("numRepetition"))
-			// numRep = value;
-			// if (key.equals("months"))
-			// selmonths = value;
-			// if (key.equals("dayRepetition"))
-			// dayRep = value;
-			// if (key.equals("weeks"))
-			// weeks = value;
-			// if (key.equals("days"))
-			// days = value;
-			// }
-			// String monthcron = "";
-			// if (selmonths.equals("NONE")) {
-			// monthcron = (month + 1) + "/" + numRep;
-			// } else {
-			// if (selmonths.equals(""))
-			// selmonths = "*";
-			// monthcron = selmonths;
-			// }
-			// String daycron = "?";
-			// if (weeks.equals("NONE") && days.equals("NONE")) {
-			// if (dayRep.equals("0"))
-			// dayRep = "1";
-			// daycron = dayRep;
-			// }
-			// String dayinweekcron = "?";
-			// if (!days.equals("NONE")) {
-			// if (days.equals(""))
-			// days = "*";
-			// dayinweekcron = days;
-			// }
-			// if (!weeks.equals("NONE")) {
-			// if (!weeks.equals(""))
-			// if (weeks.equals("L"))
-			// dayinweekcron = dayinweekcron + weeks;
-			// else
-			// dayinweekcron = dayinweekcron + "#" + weeks;
-			// dayinweekcron = dayinweekcron.replaceFirst("SUN", "1");
-			// dayinweekcron = dayinweekcron.replaceFirst("MON", "2");
-			// dayinweekcron = dayinweekcron.replaceFirst("TUE", "3");
-			// dayinweekcron = dayinweekcron.replaceFirst("WED", "4");
-			// dayinweekcron = dayinweekcron.replaceFirst("THU", "5");
-			// dayinweekcron = dayinweekcron.replaceFirst("FRI", "6");
-			// dayinweekcron = dayinweekcron.replaceFirst("SAT", "7");
-			// }
-			// chronExpression = "0 " + minute + " " + hour + " " + daycron + " " + monthcron + " " + dayinweekcron + " *";
-			// }
+			if (type.equals("month")) {
+
+				String monthcron = "";
+				if (params.has("numRepetition")) {
+					String numRep = params.optString("numRepetition");
+					monthcron = (month + 1) + "/" + numRep;
+				} else {
+					JSONArray jaMonths = params.optJSONArray("months");
+					String selmonths = "";
+					if (jaMonths.length() == 0) {
+						selmonths = "*";
+					} else {
+						for (int i = 0; i < jaMonths.length(); i++) {
+							selmonths += jaMonths.getInt(i);
+							if (i != jaMonths.length() - 1) {
+								selmonths += ",";
+							}
+						}
+					}
+					monthcron = selmonths;
+				}
+
+				String daycron = "?";
+				String dayinweekcron = "?";
+				if (params.has("dayRepetition")) {
+					String dayRep = params.optString("dayRepetition");
+					daycron = dayRep;
+				} else {
+					String weeks = params.optString("weeks");
+					JSONArray jsDays = params.optJSONArray("days");
+
+					if (jsDays.length() == 0) {
+						dayinweekcron = "*";
+					} else {
+						String days = "";
+						for (int i = 0; i < jsDays.length(); i++) {
+							days += jsDays.getInt(i);
+							if (i != jsDays.length() - 1) {
+								days += ",";
+							}
+						}
+						dayinweekcron = days;
+					}
+
+					if (weeks.compareTo("") != 0) {
+						dayinweekcron += weeks.compareTo("L") == 0 ? weeks : "#" + weeks;
+					}
+
+				}
+
+				chronExpression = "0 " + minute + " " + hour + " " + daycron + " " + monthcron + " " + dayinweekcron + " *";
+			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error while converting spagobi chron expression [" + cronString + "] to quartz cron expression", t);
 		}
@@ -429,6 +418,7 @@ class QuartzNativeObjectsConverter {
 						days = "*";
 					dayinweekcron = days;
 				}
+
 				if (!weeks.equals("NONE")) {
 					if (!weeks.equals(""))
 						if (weeks.equals("L"))

@@ -21,13 +21,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.scheduler.services.rest;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSaveOptionsFromRequest;
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.serializeSaveOptions;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -501,45 +502,6 @@ public class SchedulerService {
 	}
 
 	// TODO controllare se viene usata ed in caso eliminarlo
-	@POST
-	@Path("/getTriggerSaveOptions")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getTriggerSaveOptions(@Context HttpServletRequest req) {
-		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		HashMap<String, String> logParam = new HashMap();
-		try {
-			String jobGroupName = req.getParameter("jobGroup");
-			String jobName = req.getParameter("jobName");
-			String triggerGroup = req.getParameter("triggerGroup");
-			String triggerName = req.getParameter("triggerName");
-			logParam.put("JOB NAME", jobName);
-			logParam.put("JOB GROUP", jobGroupName);
-			logParam.put("TRIGGER NAME", triggerName);
-			logParam.put("TRIGGER GROUP", triggerGroup);
-
-			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-
-			TriggerInfo triggerInfo = getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
-
-			JSONArray serializedSaveOptions = serializeSaveOptions(triggerInfo);
-			JSONObject triggerDocumentsSaveOptions = new JSONObject();
-			triggerDocumentsSaveOptions.put("documents", serializedSaveOptions);
-			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "OK");
-
-			return triggerDocumentsSaveOptions.toString();
-
-		} catch (Exception e) {
-			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");
-			logger.error("Error while create immediate trigger ", e);
-			logger.debug(canNotFillResponseError);
-			try {
-				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
-			} catch (Exception ex) {
-				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
-			}
-		}
-	}
 
 	@GET
 	@Path("/getTriggerInfo")
@@ -559,14 +521,14 @@ public class SchedulerService {
 
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 
-			TriggerInfo triggerInfo = this.getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+			JobTrigger jobtri = getJobTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
 
 			JSONObject jo = new JSONObject();
-			if (triggerInfo == null) {
+			if (jobtri == null) {
 				jo.put("errors", "NO DATA");
 			} else {
-				jo.put("item", JSON.parse(JsonConverter.objectToJson(triggerInfo, TriggerInfo.class)));
-				JSONArray serializedSaveOptions = serializeSaveOptions(triggerInfo);
+				jo.put("item", JSON.parse(JsonConverter.objectToJson(jobtri, JobTrigger.class)));
+				JSONArray serializedSaveOptions = serializeSaveOptions(jobtri);
 				jo.put("documents", serializedSaveOptions);
 
 			}
@@ -664,68 +626,6 @@ public class SchedulerService {
 		jobTrigger.setSaveOptions(saveOptions);
 
 		return jobTrigger;
-	}
-
-	private JSONArray serializeSaveOptions(TriggerInfo triggerInfo) {
-		JSONArray saveOptionsJSONArray = new JSONArray();
-
-		try {
-			IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
-
-			Map<String, DispatchContext> saveOptions = triggerInfo.getSaveOptions();
-			if (!saveOptions.isEmpty()) {
-				// iterate Map
-				for (Map.Entry<String, DispatchContext> entry : saveOptions.entrySet()) {
-					String objIdentifier = entry.getKey();
-					if (objIdentifier.contains("__")) {
-						JSONObject documentJSONObject = new JSONObject();
-
-						String objId = objIdentifier.substring(0, objIdentifier.indexOf("__"));
-						BIObject biObject = biObjectDAO.loadBIObjectById(Integer.valueOf(objId));
-						if (biObject != null) {
-							String documentLabel = biObject.getLabel();
-							documentJSONObject.put("documentLabel", documentLabel);
-
-							DispatchContext dispatchContext = entry.getValue();
-							if (dispatchContext != null) {
-								String mailTos = dispatchContext.getMailTos();
-								documentJSONObject.put("mailTos", mailTos);
-								String zipMailName = dispatchContext.getZipMailName();
-								if (zipMailName == null) {
-									zipMailName = "";
-								}
-								documentJSONObject.put("zipMailName", zipMailName);
-								String datasetLabel = dispatchContext.getDataSetLabel();
-
-								if (datasetLabel == null) {
-									datasetLabel = "";
-								}
-								documentJSONObject.put("datasetLabel", datasetLabel);
-								String mailSubject = dispatchContext.getMailSubj();
-								documentJSONObject.put("mailSubject", mailSubject);
-								String mailTxt = dispatchContext.getMailTxt();
-								documentJSONObject.put("mailTxt", mailTxt);
-								String containedFileName = dispatchContext.getContainedFileName();
-								if (containedFileName == null) {
-									containedFileName = "";
-								}
-								documentJSONObject.put("containedFileName", containedFileName);
-
-							}
-
-							// put JSONObject in JSONArray
-							saveOptionsJSONArray.put(documentJSONObject);
-						}
-					}
-				}
-			}
-
-		} catch (Exception ex) {
-			logger.debug("Error serializing Trigger Save Option in JSON");
-			throw new SpagoBIRuntimeException("Cannot fill response container", ex);
-		}
-
-		return saveOptionsJSONArray;
 	}
 
 	private TriggerInfo getTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup) {
@@ -1097,5 +997,45 @@ public class SchedulerService {
 
 		return saveOptString;
 	}
+
+	// @POST
+	// @Path("/getTriggerSaveOptions")
+	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// public String getTriggerSaveOptions(@Context HttpServletRequest req) {
+	// IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	// HashMap<String, String> logParam = new HashMap();
+	// try {
+	// String jobGroupName = req.getParameter("jobGroup");
+	// String jobName = req.getParameter("jobName");
+	// String triggerGroup = req.getParameter("triggerGroup");
+	// String triggerName = req.getParameter("triggerName");
+	// logParam.put("JOB NAME", jobName);
+	// logParam.put("JOB GROUP", jobGroupName);
+	// logParam.put("TRIGGER NAME", triggerName);
+	// logParam.put("TRIGGER GROUP", triggerGroup);
+	//
+	// ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+	//
+	// TriggerInfo triggerInfo = getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+	//
+	// JSONArray serializedSaveOptions = serializeSaveOptions(triggerInfo);
+	// JSONObject triggerDocumentsSaveOptions = new JSONObject();
+	// triggerDocumentsSaveOptions.put("documents", serializedSaveOptions);
+	// updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "OK");
+	//
+	// return triggerDocumentsSaveOptions.toString();
+	//
+	// } catch (Exception e) {
+	// updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");
+	// logger.error("Error while create immediate trigger ", e);
+	// logger.debug(canNotFillResponseError);
+	// try {
+	// return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
+	// } catch (Exception ex) {
+	// logger.debug("Cannot fill response container.");
+	// throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+	// }
+	// }
+	// }
 
 }

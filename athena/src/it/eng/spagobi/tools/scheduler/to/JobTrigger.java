@@ -31,7 +31,7 @@ public class JobTrigger implements Serializable {
 	public static final String CHRONO = "chrono";
 	public static final String CHRONO_TYPE = "type";
 	public static final String CHRONO_PARAMETER = "parameter";
-	public static final String DOCUMENTS = "document";
+	public static final String DOCUMENTS = "documents";
 
 	// obj.get(CHRONO_TYPE) == ( "minute" || "hour" || "day" || "week" || "month" )
 	// obj.get(CHRONO_TYPE) == "month" and day choice type IS simple
