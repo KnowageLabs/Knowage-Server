@@ -459,7 +459,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 				+ 'JOB_NAME=' + jobName 
 				+ '&JOB_GROUP=' + jobGroup
 				+ '&TRIGGER_NAME=' + triggerName
-				+ '&TRIGGER_GROUP=' + triggerGroup
+				+ '&TRIGGER_GROUP=' + triggerGroup;
 			
 			Ext.create('Ext.window.Window', {
 			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,

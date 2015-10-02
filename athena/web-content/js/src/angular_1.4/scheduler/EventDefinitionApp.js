@@ -42,18 +42,18 @@ eventDefinitionApp.controller('ActivityEventController',
 	];
 	
 	activityEventCtrl.MONTHS = [
-	    {label: 'JAN', value: 'JAN'},
-	    {label: 'FEB', value: 'FEB'}, 
-	    {label: 'MAR', value: 'MAR'}, 
-	    {label: 'APR', value: 'APR'}, 
-	    {label: 'MAY', value: 'MAY'}, 
-	    {label: 'JUN', value: 'JUN'}, 
-	    {label: 'JUL', value: 'JUL'}, 
-	    {label: 'AUG', value: 'AUG'}, 
-	    {label: 'SEP', value: 'SEP'}, 
-	    {label: 'OCT', value: 'OCT'}, 
-	    {label: 'NOV', value: 'NOV'}, 
-	    {label: 'DIC', value: 'DIC'}
+	    {label: 'JAN', value: '1'},
+	    {label: 'FEB', value: '2'}, 
+	    {label: 'MAR', value: '3'}, 
+	    {label: 'APR', value: '4'}, 
+	    {label: 'MAY', value: '5'}, 
+	    {label: 'JUN', value: '6'}, 
+	    {label: 'JUL', value: '7'}, 
+	    {label: 'AUG', value: '8'}, 
+	    {label: 'SEP', value: '9'}, 
+	    {label: 'OCT', value: '10'}, 
+	    {label: 'NOV', value: '11'}, 
+	    {label: 'DIC', value: '12'}
     ];
 	
 	activityEventCtrl.WEEKS = [
@@ -96,7 +96,7 @@ eventDefinitionApp.controller('ActivityEventController',
 		activityEventCtrl.jobData = null;
 		
 		var loadtri = false;
-		if(triggerName != undefined && triggerName != "" && triggerGroup != undefined && triggerGroup != "") {
+		if(triggerName != undefined && triggerName.trim() != "" && triggerGroup != undefined && triggerGroup.trim() != "") {
 			loadtri = true;
 		}
 		
@@ -137,7 +137,7 @@ eventDefinitionApp.controller('ActivityEventController',
 						if(!tmp.hasOwnProperty("parentId")) {
 							activityEventCtrl.lowFunc.push(tmp);
 						} else {
-							console.log("figlio ");
+//							console.log("figlio ");
 							for(var j = 0; j < activityEventCtrl.lowFunc.length; j++) {
 								if(insertDocChild(activityEventCtrl.lowFunc[j], tmp)) {
 									break;
@@ -174,7 +174,7 @@ eventDefinitionApp.controller('ActivityEventController',
 			jobName: activityEventCtrl.jobName,
 			jobGroup: activityEventCtrl.jobGroup,
 			isSuspended: false,
-			document: [],
+			documents: [],
 			chrono: {"type": "single"}
 		};
 		
@@ -188,7 +188,7 @@ eventDefinitionApp.controller('ActivityEventController',
 //			tmp.parameters = doc.parameters;
 			tmp.labelId = doc.labelId;
 			tmp.id = doc.id;
-			emptyEvent.document.push(tmp);
+			emptyEvent.documents.push(tmp);
 		}
 		
 		return emptyEvent;
@@ -196,10 +196,10 @@ eventDefinitionApp.controller('ActivityEventController',
 	
 	activityEventCtrl.loadScheduler = function() {
 		var requestString = 
-			"getTriggerInfo?jobName = "+loadJobDataCtrl.jobName
-			+"&jobGroup = "+loadJobDataCtrl.jobGroup
-			+"&triggerGroup = "+loadJobDataCtrl.triggerGroup
-			+"&triggerName = "+loadJobDataCtrl.triggerName;
+			"getTriggerInfo?jobName=" + activityEventCtrl.jobName
+			+"&jobGroup=" + activityEventCtrl.jobGroup
+			+"&triggerGroup=" + activityEventCtrl.triggerGroup
+			+"&triggerName=" + activityEventCtrl.triggerName;
 		
 		restServices.get("scheduler", requestString	)
 			.success(function(data, status, headers, config) {
@@ -207,24 +207,29 @@ eventDefinitionApp.controller('ActivityEventController',
 					console.error(translate.load("sbi.glossary.load.error"));
 				} else {
 					console.log("evento scaricato", data);
+					
 					var d = data;
 					activityEventCtrl.event.triggerName = d.triggerName;
 					activityEventCtrl.event.triggerDescription = d.triggerDescription;
 					activityEventCtrl.event.isSuspended = d.isSuspended;
 					activityEventCtrl.event.startDate = new Date(d.startDate);
 					activityEventCtrl.event.startTime = d.startTime;
+					
 					if(d.endTime != undefined && d.endTime != "") {
 						activityEventCtrl.event.endTime = d.endTime;
 					} else {
 						activityEventCtrl.event.endTime = "";
 					}
+					
 					if(d.endDate != undefined && d.endDate != "") {
 						activityEventCtrl.event.endDate = new Date(d.endDate);
 					}
 					
 					activityEventCtrl.event.chrono = d.chrono;
+					
 					var op = d.chrono;
 					activityEventCtrl.eventSched.repetitionKind = op.type;
+					
 					if(op.type == 'single') {
 						activityEventCtrl.typeOperation = op.type;
 						activityEventCtrl.shedulerType = false;
@@ -262,12 +267,10 @@ eventDefinitionApp.controller('ActivityEventController',
 								activityEventCtrl.dayinmonthrep_week = op.parameter.dayRepetition;
 							}
 						}
-						
 					}
 					
-					
 					//carico le informazioni dei documenti
-					activityEventCtrl.event.document = d.document;
+					activityEventCtrl.documents = d.document;
 					activityEventCtrl.selectedDocument = d.document[0];
 				}
 			})
@@ -307,8 +310,10 @@ eventDefinitionApp.controller('ActivityEventController',
 	
 	activityEventCtrl.setSelectedDocument = function() {
 		activityEventCtrl.selectedDocument = 
-			(activityEventCtrl.event.document == undefined || activityEventCtrl.event.document.length != 0)? 
-					activityEventCtrl.event.document[0] : [];
+//			(activityEventCtrl.event.document == undefined || activityEventCtrl.event.document.length != 0)? 
+//					activityEventCtrl.event.document[0] : [];
+			(activityEventCtrl.documents == undefined || activityEventCtrl.documents.length != 0)? 
+					activityEventCtrl.documents[0] : [];
 	};
 	
 	activityEventCtrl.resetForm = function() {
