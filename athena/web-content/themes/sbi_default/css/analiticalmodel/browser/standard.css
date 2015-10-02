@@ -270,8 +270,8 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box-folder .box-figure{width:100%;position:relative}
 .box-folder .box-figure img{width:100%;width: auto;display:block}
 .box-folder .box-figure .shadow{opacity:0.10;filter:alpha(opacity = 20);width:92%;height:100%;display:block;position:absolute;top:0;left:0;box-shadow:0 0 10px #000 inset}
-.box-folder .box-text{min-height:66px;height:auto !important;height:66px;position:relative;padding:0 2px 20px 20px}
-.box-folder h2{font-family:cabinmedium, sans-serif;line-height:140%;font-weight:normal;font-size:1.6em;margin:0 0 5px 0;
+.box-folder .box-text{min-height:66px;height:auto !important;height:66px;position:relative;padding:0 0 0 0}
+.box-folder h2{font-family:cabinmedium, sans-serif;line-height:140%;font-weight:bold;font-size:1.3em;margin:0 0 5px 0;
 	white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;  // IE 6+, FF 7+, Op 11+, Saf 1.3+, Chr 1+

@@ -73,33 +73,20 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		'</div>'+ //box-figure
 		
 	// Synthesis case
-		'<div title="{name}" class="box-text synthesis-box-visible">'+
-		//'<h2  style="color: #223300;">{name}</h2>'+
-		//'<b><div  style="color: #223300;word-break:normal;white-space: normal;overflow:hidden;text-overflow:ellipsis;">{name}</div></b>'+
-		//{[Ext.String.ellipsis(values.post_text_teaser,4,false)]}
-		
-		// if name is longer than 60 use short text
-	    	//'<p style="color: #223300;word-break:normal;white-space: normal;overflow:hidden;text-overflow:ellipsis;"><h2>{shortName}...</h2></p></b>'+	    
+		'<div title="{name} - {description}" class="box-text synthesis-box-visible">'+
+		// if name is longer than 60 use short text	    
 			'<p class="box-text-name">{shortName}</p>'+
-		//' <a class="viewMore" title="View Detail"><img align="right" class="button-detail" > </img> </a>'+
-		'<a class="viewMore" title="View Detail" style="float: right;">'+viewDetail+' </a>'+
+			'<a class="viewMore" title="View Detail" style="font-size: 13px;float: right;">'+viewDetail+' >> </a>'+
 		'</div>'+
 
 	// Detail case
-		'<div title="{name}" class="box-text detail-box-hidden">'+
+		'<div title="{name} - {description}" class="box-text detail-box-hidden">'+
 		'<p class="box-text-name">{name}</p>'+
 			'<p>{description}</p>'+
 			'<p><b>'+author+':</b> {creationUser}</p>'+
-			'<p class="modifiedDate">'+changed+' {creationDate}</p>'+
-			//'<a class="viewLess" title="Hide Detail"> <img align="right" class="button-syntethize" > </img> </a>'+
-			'<a class="viewLess" title="Hide Detail" style="float: right;"> '+hideDetail+'</a>'+
+			'<p class="modifiedDate">'+changed+' {creationDate}</p>'+			
+			'<a class="viewLess" title="Hide Detail" style="font-size: 13px;float: right;"> << '+hideDetail+' </a>'+
 			'</div>'+
-		//		'<div class="fav-container"> '+
-//		'  	<div class="fav" title="Favourites" > '+
-//		'         <span class="icon"><a href="#" onclick="javascript:alert(\'Functionality not supported yet!\');"></a></span> '+
-//		'         <span class="counter">12</span> '+
-//		'   </div> '+
-//		'</div>' +
 	'</div>';
 
 	
@@ -116,30 +103,16 @@ Sbi.browser.FolderViewTemplate = function(config) {
 			'<span class="shadow"></span>'+
 			'<div class="hover">'+
 	            '		<tpl for="actions">'+  
-//		        '      		<li class="{name}"><a href="#" title="{description}"></a></li>'+
 	            '			<a href="#" class="{name}" title="{description}">{description}</a>'+
 		        '		</tpl>'+
 	        '</div>'+
 		'</div>'+ 	
-//    '<div class="item-desc">' +
 //        folderAttributes +
 		'<div title="{name}" class="box-text">'+
 			'<h2>{name}</h2>'+
 			'<p>{description}</p>'+
 	    '</div>'+
 	 '</div>';
-
-	
-	var summaryTpl =''+
-		'<div id="summary" class="item-desc">{summary}</div>';
-	
-	var tooltip = new Ext.ToolTip({
-	    title: 'Summary',
-	    plain: true,
-	    showDelay: 0,
-	    hideDelay: 0,
-	    trackMouse: true
-	}); 
 
 	var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 	var noMsg = '';
@@ -170,9 +143,6 @@ Sbi.browser.FolderViewTemplate = function(config) {
 		                        	'<dd id="{label}" class="box">', //document
 		                        	documentTpl,
 		                        '</tpl>',
-		                        //'<tpl if="this.exists(description) == false">',
-		                        	//'<br>',
-		                        //'</tpl>',
 		                        // -- FOLDER -----------------------------------------------
 		                        '<tpl if="this.exists(engine) == false">',
 		                        	'<dd class="box-folder">', //Folder	
