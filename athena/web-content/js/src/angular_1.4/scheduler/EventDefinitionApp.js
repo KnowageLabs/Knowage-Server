@@ -161,7 +161,7 @@ eventDefinitionApp.controller('ActivityEventController',
 		var docs = activityEventCtrl.jobData.documents;
 		for(var i = 0; i < docs.length; i++) {
 			var doc = {
-				labelId: docs[i].id + "__" + i,
+				labelId: docs[i].id + "__" + (i+1),
 				id: docs[i].id,
 				label: docs[i].name,
 //				parameters: docs[i].condensedParameters
@@ -275,8 +275,17 @@ eventDefinitionApp.controller('ActivityEventController',
 					}
 					
 					//carico le informazioni dei documenti
-					activityEventCtrl.event.documents = d.documents;
-					activityEventCtrl.selectedDocument = d.documents[0];
+					for (var key in d.saveOptions) {
+						for(var ind=0;ind<activityEventCtrl.event.documents.length;ind++){
+							if(activityEventCtrl.event.documents[ind].labelId==key){
+								d.saveOptions[key].label=activityEventCtrl.event.documents[ind].label;
+								d.saveOptions[key].labelId=activityEventCtrl.event.documents[ind].labelId;
+								activityEventCtrl.event.documents[ind]=d.saveOptions[key];
+								break;
+							}
+						}
+					}
+					activityEventCtrl.selectedDocument = activityEventCtrl.event.documents[0];
 				}
 			})
 			.error(function(data, status, headers, config) {
