@@ -1,4 +1,4 @@
-<md-chips ng-model="activityEventCtrl.documents" readonly="true">
+<md-chips ng-model="activityEventCtrl.event.documents" readonly="true">
 	<md-chip-template ng-click="activityEventCtrl.selectedDocument=$chip">
 		<strong ng-class="{'selectedDoc' : activityEventCtrl.selectedDocument.label==$chip.label }">{{$chip.label}}</strong>
 	</md-chip-template> 

@@ -126,7 +126,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<div class="md-toolbar-tools" layout="row" style="padding-left: 0px;">
 										<md-input-container> 
 											<label>{{translate.load("Tipo evento")}}</label>
-											<md-select aria-label="aria-label" ng-model="activityEventCtrl.typeOperation"
+											<md-select aria-label="aria-label" ng-model="activityEventCtrl.event.typeOperation"
 													ng-change="activityEventCtrl.changeTypeOperation();"> 
 												<md-option ng-repeat="type in activityEventCtrl.SCHEDULER_TYPES" 
 														value="{{type.value}}">{{type.label}}</md-option> 
@@ -312,7 +312,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<md-tab id="json"> 
 					<md-tab-label>json</md-tab-label> 
 					<md-tab-body layout="column"> 
-						<pre>{{activityEventCtrl.event | json}}</pre>
+						<pre>activityEventCtrl.event: {{activityEventCtrl.event | json}}</pre>
 					</md-tab-body> 
 				</md-tab>
 			</md-tabs>

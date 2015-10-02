@@ -74,25 +74,28 @@ eventDefinitionApp.controller('ActivityEventController',
         {label: 'Last', value: '5'}, 
     ];
 	
-	activityEventCtrl.jobName = '';
-	activityEventCtrl.jobGroup = '';
-	activityEventCtrl.triggerName = '';
-	activityEventCtrl.triggerGroup = '';
+	activityEventCtrl.event = {};
+	
+	activityEventCtrl.event.jobName = '';
+	activityEventCtrl.event.jobGroup = '';
+	activityEventCtrl.event.triggerName = '';
+	activityEventCtrl.event.triggerGroup = '';
+	activityEventCtrl.event.triggerDescription = '';
+	activityEventCtrl.event.isSuspended = '';
+	activityEventCtrl.event.documents = [];
 
 	activityEventCtrl.datasets = [];
 	activityEventCtrl.documents = [];
-
-	activityEventCtrl.event = {};
 	
 	activityEventCtrl.eventSched = {};
 	activityEventCtrl.selectedDocument = [];
 	activityEventCtrl.selectedWeek = [];
 	
 	activityEventCtrl.initJobsValues = function(jobName, jobGroup, triggerName, triggerGroup) {
-		activityEventCtrl.jobName = jobName;
-		activityEventCtrl.jobGroup = jobGroup;
-		activityEventCtrl.triggerName = triggerName;
-		activityEventCtrl.triggerGroup = triggerGroup;
+		activityEventCtrl.event.jobName = jobName;
+		activityEventCtrl.event.jobGroup = jobGroup;
+		activityEventCtrl.event.triggerName = triggerName;
+		activityEventCtrl.event.triggerGroup = triggerGroup;
 		activityEventCtrl.jobData = null;
 		
 		var loadtri = false;
@@ -119,8 +122,8 @@ eventDefinitionApp.controller('ActivityEventController',
 	};
 	
 	activityEventCtrl.loadJobData = function(loadTri) {
-		var parameters = 'jobName=' + activityEventCtrl.jobName 
-			+ '&jobGroup=' + activityEventCtrl.jobGroup;
+		var parameters = 'jobName=' + activityEventCtrl.event.jobName 
+			+ '&jobGroup=' + activityEventCtrl.event.jobGroup;
 		
 		restServices.get("scheduler", "getJob", parameters)
 			.success(function(data, status, headers, config) {
@@ -171,8 +174,10 @@ eventDefinitionApp.controller('ActivityEventController',
 	
 	activityEventCtrl.getEmptyEvent = function() {
 		var emptyEvent = {
-			jobName: activityEventCtrl.jobName,
-			jobGroup: activityEventCtrl.jobGroup,
+			jobName: activityEventCtrl.event.jobName,
+			jobGroup: activityEventCtrl.event.jobGroup,
+			triggerName: activityEventCtrl.event.triggerName,
+			triggerGroup: activityEventCtrl.event.triggerGroup,
 			isSuspended: false,
 			documents: [],
 			chrono: {"type": "single"}
@@ -181,9 +186,9 @@ eventDefinitionApp.controller('ActivityEventController',
 		activityEventCtrl.typeOperation = 'single';
 		
 		//load document;
-		for (var i = 0; i < activityEventCtrl.documents.length; i++) {
+		for (var i = 0; i < activityEventCtrl.event.documents.length; i++) {
 			var tmp = {};
-			var doc = activityEventCtrl.documents[i];
+			var doc = activityEventCtrl.event.documents[i];
 			tmp.label = doc.label;
 //			tmp.parameters = doc.parameters;
 			tmp.labelId = doc.labelId;
@@ -196,10 +201,10 @@ eventDefinitionApp.controller('ActivityEventController',
 	
 	activityEventCtrl.loadScheduler = function() {
 		var requestString = 
-			"getTriggerInfo?jobName=" + activityEventCtrl.jobName
-			+"&jobGroup=" + activityEventCtrl.jobGroup
-			+"&triggerGroup=" + activityEventCtrl.triggerGroup
-			+"&triggerName=" + activityEventCtrl.triggerName;
+			"getTriggerInfo?jobName=" + activityEventCtrl.event.jobName
+			+"&jobGroup=" + activityEventCtrl.event.jobGroup
+			+"&triggerGroup=" + activityEventCtrl.event.triggerGroup
+			+"&triggerName=" + activityEventCtrl.event.triggerName;
 		
 		restServices.get("scheduler", requestString	)
 			.success(function(data, status, headers, config) {
@@ -270,7 +275,7 @@ eventDefinitionApp.controller('ActivityEventController',
 					}
 					
 					//carico le informazioni dei documenti
-					activityEventCtrl.documents = d.document;
+					activityEventCtrl.event.documents = d.document;
 					activityEventCtrl.selectedDocument = d.document[0];
 				}
 			})
@@ -310,10 +315,8 @@ eventDefinitionApp.controller('ActivityEventController',
 	
 	activityEventCtrl.setSelectedDocument = function() {
 		activityEventCtrl.selectedDocument = 
-//			(activityEventCtrl.event.document == undefined || activityEventCtrl.event.document.length != 0)? 
-//					activityEventCtrl.event.document[0] : [];
-			(activityEventCtrl.documents == undefined || activityEventCtrl.documents.length != 0)? 
-					activityEventCtrl.documents[0] : [];
+			(activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0)? 
+					activityEventCtrl.event.documents[0] : [];
 	};
 	
 	activityEventCtrl.resetForm = function() {
@@ -351,9 +354,11 @@ eventDefinitionApp.controller('ActivityEventController',
 			})
 			.error(function(data, status, headers, config) {
 				console.error(translate.load("sbi.glossary.error.save"));
+				
+				return false;
 			});
 		  
-	}
+	};
 	
 	activityEventCtrl.changeTypeOperation = function() {
 		var tip = activityEventCtrl.typeOperation;
