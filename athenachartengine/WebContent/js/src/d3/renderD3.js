@@ -536,6 +536,7 @@ function renderWordCloud(chartConf){
 				
 				/**
 				 * For TITLE tag
+				 * @author: danristo (danilo.ristovski@mht.net)
 				 */
 				titleFontWeight = (chartConf.title.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
 				
@@ -552,6 +553,7 @@ function renderWordCloud(chartConf){
 				
 				/**
 				 * For SUBTITLE TAG
+				 * @author: danristo (danilo.ristovski@mht.net)
 				 */
 				subtitleFontWeight = (chartConf.subtitle.style.fontWeight == "bold" || chartConf.chart.style.fontWeight == "bold") ? "bold" : "none";
 				
@@ -631,10 +633,10 @@ function renderWordCloud(chartConf){
 		
 //		var chartHeight = (jsonObject.chart.height != '$chart.height') ? parseInt(jsonObject.chart.height) : 400 ;
 //		var chartHeight = null;
-		var chartFontFamily = (jsonObject.chart.style.fontFamily != '$chart.style.fontFamily') ? jsonObject.chart.style.fontFamily : "Arial" ;
-		var chartFontSize = (jsonObject.chart.style.fontSize != '$chart.style.fontSize') ? jsonObject.chart.style.fontSize : "9px" ;
-		var chartFontWeight = (jsonObject.chart.style.fontWeight != '$chart.style.fontWeight') ? jsonObject.chart.style.fontWeight : "Normal" ;
-		var chartBackgroundColor = (jsonObject.chart.style.backgroundColor != '$chart.style.backgroundColor') ? jsonObject.chart.style.backgroundColor : "#000000" ;
+//		var chartFontFamily = (jsonObject.chart.style.fontFamily != '$chart.style.fontFamily') ? jsonObject.chart.style.fontFamily : "" ;
+//		var chartFontSize = (jsonObject.chart.style.fontSize != '$chart.style.fontSize') ? jsonObject.chart.style.fontSize : "" ;
+//		var chartFontWeight = (jsonObject.chart.style.fontWeight != '$chart.style.fontWeight') ? jsonObject.chart.style.fontWeight : "" ;
+//		var chartBackgroundColor = (jsonObject.chart.style.backgroundColor != '$chart.style.backgroundColor') ? jsonObject.chart.style.backgroundColor : "" ;
 		var chartOpacityOnMouseOver = (jsonObject.chart.opacMouseOver != '$chart.style.opacMouseOver') ? parseInt(jsonObject.chart.opacMouseOver) : 100 ;
 		
 		/* 'topPadding':	padding (empty space) between the breadcrumb 
@@ -662,7 +664,7 @@ function renderWordCloud(chartConf){
 		var height = jsonObject.chart.height 
 						- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
 								+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize))
-								+topPadding+bottomPadding+bcHeight)*1.2;
+								+topPadding+bottomPadding+bcHeight)*1.4;
 //	    var height = jsonObject.chart.height;
 //		/* Manage chart position on the screen (in the window) depending on
 //		 * the resizing of it, so the chart could be in the middle of it. */
@@ -687,14 +689,24 @@ function renderWordCloud(chartConf){
 //	    console.log(jsonObject);
 		/* Create necessary part of the HTML DOM - the one that code need to
 		 * position chart on the page (D3 notation) */
+		
+		/**
+		 * Add this root DIV so when we specify some font properties for the chart
+		 * it can be applied on every chart element that has some elements that are
+		 * using font properties, if they are not specified. For example, user defines
+		 * font family for the chart, but not for the title. In this case we will 
+		 * apple font family of the whole chart on the title DIV element, as well as
+		 * on other DIV elements.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		d3.select("body")
 			.append("div").attr("id","main")
-			.style("font-family", chartFontFamily)
-			.style("font-size", chartFontSize)
-			.style("font-style",jsonObject.chart.style.fontStyle ? jsonObject.chart.style.fontStyle : "none")
-    		.style("font-weight",jsonObject.chart.style.fontWeight ? jsonObject.chart.style.fontWeight : "none")
-    		.style("text-decoration",jsonObject.chart.style.textDecoration ? jsonObject.chart.style.textDecoration : "none")
-			.style("background-color",chartBackgroundColor);
+			.style("font-family", jsonObject.chart.style.fontFamily)
+			.style("font-size", jsonObject.chart.style.fontSize)
+			.style("font-style",jsonObject.chart.style.fontStyle)
+    		.style("font-weight",jsonObject.chart.style.fontWeight)
+    		.style("text-decoration",jsonObject.chart.style.textDecoration)
+			.style("background-color",jsonObject.chart.style.backgroundColor);
 		
 		// If there is no data in the recieved JSON object - print empty message
 		if (jsonObject.data[0].length < 1)
@@ -1491,8 +1503,26 @@ function renderWordCloud(chartConf){
 //		var titleDivHeight = parseInt(data.title.height);
 //		var titleTotal = titleDivHeight+titleFontSize/2;
 
+		/**
+		 * Add this root DIV so when we specify some font properties for the chart
+		 * it can be applied on every chart element that has some elements that are
+		 * using font properties, if they are not specified. For example, user defines
+		 * font family for the chart, but not for the title. In this case we will 
+		 * apple font family of the whole chart on the title DIV element, as well as
+		 * on other DIV elements.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		d3.select("body")
+			.append("div").attr("id","main")
+			.style("font-family", data.chart.style.fontFamily)
+			.style("font-size",  data.chart.style.fontSize)
+			.style("font-style",data.chart.style.fontStyle ? data.chart.style.fontStyle : "none")
+			.style("font-weight",data.chart.style.fontWeight ? data.chart.style.fontWeight : "none")
+			.style("text-decoration",data.chart.style.textDecoration ? data.chart.style.textDecoration : "none")
+			.style("background-color",data.chart.style.backgroundColor);
+		
 		// Set title
-		d3.select("body").append("div")
+		d3.select("#main").append("div")
 		.style("color",data.title.style.color)
 		.style("text-align",data.title.style.align)
 		.style("font-family",data.title.style.fontFamily)
@@ -1507,7 +1537,7 @@ function renderWordCloud(chartConf){
 //		var subtitleTotal = subtitleDivHeight+subtitleFontSize/2;
 
 		// Set subtitle
-		d3.select("body").append("div")
+		d3.select("#main").append("div")
 		.style("color",data.subtitle.style.color)
 		.style("text-align",data.subtitle.style.align)
 		.style("font-family",data.subtitle.style.fontFamily)
@@ -1525,12 +1555,17 @@ function renderWordCloud(chartConf){
 			svgHeight=h + m[0] + m[2];
 		}
 		
-		d3.select("body").append("div").attr("id","chart").style("width",w + m[1] + m[3] + 300);
+		d3.select("#main").append("div").attr("id","chart").style("width",w + m[1] + m[3] + 300);
 		
 		var heightTotal = h + m[0] + m[2];
-		console.log(heightTotal);
-		console.log(data.chart.height);
-		console.log(heightTotal- (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2);
+		
+		//console.log("highTotal:");
+		//console.log(heightTotal);
+		//console.log("data.chart.height:")
+		//console.log(data.chart.height);
+		//console.log("sum all:")
+		//console.log(heightTotal-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2);
+		
 		var svg = d3.select("#chart")
 		.append("div")
 		.style("float","left")

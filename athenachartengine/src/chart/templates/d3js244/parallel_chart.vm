@@ -36,19 +36,70 @@
 #end
 
 #foreach($value in $serie) 
- #set($serieNeeded[$serieCounter] = $value.column)
- #set($groupingFunction[$serieCounter] = $value.groupingFunction)
- #set($serieCounter = $serieCounter + 1)
+	 #set($serieNeeded[$serieCounter] = $value.column)
+	 #set($groupingFunction[$serieCounter] = $value.groupingFunction)
+	 #set($serieCounter = $serieCounter + 1)
 #end
 
-#foreach($value in $colorsPallete.COLOR) 
-	#set($colorsRequired[$colorsReqCounter] = $value.value)
-	#set($colorsReqCounter = $colorsReqCounter + 1)
+#*
+	Variable that is used for counting the number of colors user defined in 
+	the Designer when creating the chart. 
+	
+	If "colorCounter" equals 0 there are two possible solutions:
+		(1) there are no colors define - in this case value of the '$colorsPallete.COLOR' 
+		will be empty (the LinkedHashMap structure without any property); 		
+		(2) there is just one color defined (the LinkedHashMap structure with the property 
+		'value' that contains value of the color picked by the user).
+		
+	When "colorCounter" is bigger than 0, there is more than 1 color picked. We can start
+	the foreach-loop and take them. The structure of the $colorsPallete.COLOR is JSONArray.
+	
+	@author: danristo (danilo.ristovski@mht.net)
+*#
+#set($colorCounter = 0)
+
+#*
+	If the structure of this object is not LinkedHashMap (i.e. is JSONArray), we have more
+	than one color item and we can iterate through it.
+	
+	@author: danristo (danilo.ristovski@mht.net)
+*#
+#if ($colorsPallete.COLOR.class.name != "java.util.LinkedHashMap")
+	#foreach($value in $colorsPallete.COLOR) 
+		#set($colorsRequired[$colorsReqCounter] = $value.value)
+		#set($colorsReqCounter = $colorsReqCounter + 1)
+		#set($colorCounter = $colorCounter + 1)
+	#end
 #end
 
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
 
 #set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction))
+
+#if ($colorsPallete.COLOR.value && $colorCounter == 0)
+
+	#*
+		There is exactly one color picked by user.
+		
+		@author: danristo (danilo.ristovski@mht.net)
+	*#
+	
+	#set($colorsRequired = [$colorsPallete.COLOR.value])	
+	
+#elseif(!$colorsPallete.COLOR.value && $colorCounter == 0)
+
+	#*
+		If user did not specify any color in color pallete of the
+		Designer, take this single predefined value for the color
+		of the lines (no matter how many of them there are on the
+		chart). The color value "#518BC6" is the default one.
+		
+		@author: danristo (danilo.ristovski@mht.net)
+	*#
+
+	#set($colorsRequired = ["#518BC6"])
+	
+#end
 
 #set($colorsPal = $datasettransformer.getColorPallete($colorsRequired))
 
@@ -61,11 +112,30 @@
   		serie: '$series',
   		groups: '$groups',
   		tooltip: '$columnsNeeded[1]',
-  		group: '$columnsNeeded[0]',
-  		font: '$chart.style.fontFamily',
+  		group: '$columnsNeeded[0]',  	
+
   		width: '$chart.width',
   		height: '$chart.height',
-  		colors: '$colorsPal'  
+  		
+  		colors: '$colorsPal',
+  		
+  		#if($chart.style.backgroundColor!="")
+  			backgroundColor: '$chart.style.backgroundColor',
+  		#end
+  		
+  		style:
+		{
+			fontFamily: '$chart.style.fontFamily',
+			fontSize: '$chart.style.fontSize',
+					
+			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
+    			fontStyle: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'underline')
+    			textDecoration: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.style.fontWeight',
+    		#end
+		}
  	},
  	
  	limit:

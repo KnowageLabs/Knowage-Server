@@ -602,23 +602,53 @@ public class DataSetTransformer {
 
 		JSONArray ja = new JSONArray();
 
-		Map<String, String> colorsReq = (Map<String, String>) colorsRequired;
+		/**
+		 * If we receive colors from the velocity model of the PARALLEL chart with the ArrayList structure, then we are dealing with the single color that is
+		 * going to be presented on the chart (as color of chart lines). That single color can be result of the situation in which user (1) did not specify any
+		 * color in the Designer or (2) he specified single color (just one). In case (1) VM is sets a single default color value for lines on the chart,
+		 * otherwise it takes the single one that user provided on the Designer.
+		 *
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		if (colorsRequired.getClass().equals(java.util.ArrayList.class)) {
 
-		ArrayList<String> al = new ArrayList<String>();
+			ArrayList<String> colorsReq = (ArrayList<String>) colorsRequired;
 
-		int j = 0;
+			if (colorsReq.size() == 1) {
 
-		for (int i = 0; i < colorsReq.size(); i++) {
-
-			if (!al.contains(colorsReq.get(i))) {
-
-				al.add(colorsReq.get(i));
 				JSONObject jo = new JSONObject();
-				jo.put((new Integer(j).toString()), colorsReq.get(i));
+				jo.put((new Integer(0).toString()), colorsReq.get(0));
 				ja.put(jo);
-				j++;
-			}
 
+			}
+		}
+
+		/**
+		 * If we receive colors from the velocity model of the PARALLEL chart with the LinkedHashMap structure, then we are dealing with the collection of
+		 * colors that are going to be presented on the chart (as colors of chart lines).
+		 *
+		 * @commentedBy: danristo (danilo.ristovski@mht.net)
+		 */
+		else {
+
+			Map<String, String> colorsReq = (Map<String, String>) colorsRequired;
+
+			ArrayList<String> al = new ArrayList<String>();
+
+			int j = 0;
+
+			for (int i = 0; i < colorsReq.size(); i++) {
+
+				if (!al.contains(colorsReq.get(i))) {
+
+					al.add(colorsReq.get(i));
+					JSONObject jo = new JSONObject();
+					jo.put((new Integer(j).toString()), colorsReq.get(i));
+					ja.put(jo);
+					j++;
+				}
+
+			}
 		}
 
 		return ja;

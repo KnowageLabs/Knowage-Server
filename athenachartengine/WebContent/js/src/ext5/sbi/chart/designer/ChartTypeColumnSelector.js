@@ -4,7 +4,7 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
     requires: [
         'Ext.layout.container.Border'
     ],
-    id: "idchartss", 
+   // id: "idchartss", // danristo
     config: {
     	region: 'west',
     	
@@ -64,6 +64,7 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         
         this.add(config.styleLabel ? config.styleLabel : this.styleLabel);
         this.add(config.stylePickerCombo ? config.stylePickerCombo : this.stylePickerCombo);
+        this.add(config.styleLabel2 ? config.styleLabel2 : this.styleLabel2);
         this.add(config.chartTypeSelector ? config.chartTypeSelector : this.chartTypeSelector);        
         this.add(config.columnsPicker ? config.columnsPicker : this.columnsPicker);
         this.add(config.categoriesPicker ? config.categoriesPicker : this.categoriesPicker);

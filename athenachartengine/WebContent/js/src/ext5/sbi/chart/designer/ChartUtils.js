@@ -866,8 +866,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				CHART['opacMouseOver'] = (chartModel.get('opacMouseOver')) ? chartModel.get('opacMouseOver') : 100;
 			}
 
+			
 			if (chartModel.get('orientation') != undefined) {
-				CHART['orientation'] = chartType.toUpperCase() != 'PIE' ? chartModel
+				CHART['orientation'] = (chartType.toUpperCase() != 'PIE') ? chartModel
 					.get('orientation')
 					 : '';
 			}
@@ -1416,7 +1417,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			.getChartType() == 'SUNBURST';
 		},
 
-		enablePalette : function () {
+		enablePalette : function () {			
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() != 'SUNBURST'
 			 && Sbi.chart.designer.Designer.chartTypeSelector
@@ -1454,7 +1455,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 && Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() != 'HEATMAP'
 			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'GAUGE';
+			.getChartType() != 'GAUGE'
+			&& Sbi.chart.designer.Designer.chartTypeSelector
+			.getChartType() != 'CHORD';
 		},
 
 		disableXBottomContainer : function () {
@@ -1613,11 +1616,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			if (Sbi.chart.designer.Designer.chartTypeSelector
 				.getChartType() == 'SCATTER') {
-				console.log(jsonTemplate.CHART.AXES_LIST.AXIS[1]);
+			
+				var numberOfAxes = jsonTemplate.CHART.AXES_LIST.AXIS.length;
+				var axisData = null;				
+				
+				if (numberOfAxes == 1 && jsonTemplate.CHART.AXES_LIST.AXIS[0].position == "left")
+				{
+					/**
+					 * If we have only one axis defined in the JSON template and if that axis is Y-axis.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					axisData = jsonTemplate.CHART.AXES_LIST.AXIS[0];
+				}
+				else
+				{
+					axisData = jsonTemplate.CHART.AXES_LIST.AXIS[1];
+				}
+				
 				jsonScatterZoomType = jsonTemplate.CHART.zoomType ? jsonTemplate.CHART.zoomType : '';
-				jsonScatterStartOnTick = jsonTemplate.CHART.AXES_LIST.AXIS[1].startOnTick;
-				jsonScatterEndOnTick = jsonTemplate.CHART.AXES_LIST.AXIS[1].endOnTick;
-				jsonScatterShowLastLabel = jsonTemplate.CHART.AXES_LIST.AXIS[1].showLastLabel;
+				jsonScatterStartOnTick = axisData.startOnTick;
+				jsonScatterEndOnTick = axisData.endOnTick;
+				jsonScatterShowLastLabel = axisData.showLastLabel;
 			}
 
 			/**
@@ -1643,7 +1663,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				.getChartType() == 'GAUGE') {
 				jsonGaugeMinAnglePane = jsonTemplate.CHART.PANE.startAngle;
 				jsonGaugeMaxAnglePane = jsonTemplate.CHART.PANE.endAngle;
-				jsonGaugeAxesListData = jsonTemplate.CHART.AXES_LIST.AXIS[0];
+				jsonGaugeAxesListData = axisData;
 			}
 
 			var colorPalette = [];

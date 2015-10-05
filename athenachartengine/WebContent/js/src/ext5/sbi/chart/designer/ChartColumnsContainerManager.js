@@ -27,7 +27,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		resetContainers: function() {
 			var yAxisPool = this.yAxisPool;
 			var storePool = this.storePool;
-			console.log("*** B - ChartColumnsContainerManager:resetContainers() ***");
+			
 			while(yAxisPool.length > 0) {
 				var yAxis = yAxisPool[0];
 				yAxis.destroy();
@@ -49,7 +49,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 
 		promptChangeSerieStyle: function (store, rowIndex) {
 			var previousInstance = Ext.getCmp('serieStylePopup');
-			console.log("*** C - ChartColumnsContainerManager:promptChangeSerieStyle() ***");
+			
 			if(previousInstance != undefined) {
 				return;
 				// previousInstance.destroy();
@@ -64,7 +64,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 		},
 
 		createChartColumnsContainer: function(config) {
-			console.log("*** D - ChartColumnsContainerManager:createChartColumnsContainer() ***");
+		
 			// (danilo.ristovski@mht.net)
 			var idAxisesContainer = config.idAxisesContainer;
 			var id = config.id;
@@ -101,8 +101,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
-					console.log("!!! :: ");
-					console.log(idChartColumnsContainer);
+					
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -141,10 +140,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					},
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
-														
-							//console.log("!!! NEW SERIE ITEM !!!");
-//							console.log(Sbi.chart.designer.Designer.styleName);
-//							console.log(Sbi.chart.designer.Designer.getConfigurationForStyle(Sbi.chart.designer.Designer.styleName));
 							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
@@ -155,8 +150,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
 													chartType != 'TREEMAP' && chartType != 'HEATMAP';
 							
-//							var chosenTheme = Sbi.chart.designer.Designer.styleName;
-//							var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
+							var chosenTheme = Sbi.chart.designer.Designer.styleName;
+							var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
 //							
 //							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
 //							
@@ -185,6 +180,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) {
 								// *_* The original code
 								if(data.view.id != this.id) {
+									
 									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
 									if( !data.records[0].get('serieGroupingFunction')) {
 										data.records[0].set('serieGroupingFunction', 'SUM');
@@ -207,7 +203,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 									}
 								}	
 								
-								
+//								if (chartType == "GAUGE") 
+//								{
+//									console.log(data.records[0]);
+//								}
 								
 							} else  {
 								return false;
@@ -279,8 +278,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						    		axisStylePopup.getComponent('titleFieldSetForAxis').hide();
 						    		axisStylePopup.getComponent('majorGridFieldSetYAxis').hide();
 						    		axisStylePopup.getComponent('minorGridFieldSetYAxis').hide();
-					    		}						    		
-					    		
+					    		}							    	
+						    	
 					    		axisStylePopup.show();
 					    	}
 					    	
@@ -434,10 +433,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			{
 				chartColumnsContainer.columns[2].items[0].iconCls = "x-hidden";				
 			}	
-			console.log("*** W - chartColumnsContainer ***");
-			console.log(chartColumnsContainer);
 			
-//			console.log(ChartColumnsContainerManager.yAxisPool);
 			Ext.Array.push(ChartColumnsContainerManager.yAxisPool, chartColumnsContainer);
 			
 			return chartColumnsContainer;

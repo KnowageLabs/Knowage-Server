@@ -54,18 +54,22 @@ function renderTreemap(chartConf) {
 	{
     	chartObject = 
     	{
-    			renderTo: 'mainPanel',
+    			renderTo: 'mainPanel',    			
 //    			height: (chartConf.chart.height!=undefined || chartConf.chart.height!="") ? chartConf.chart.height : "",
 //    			width: (chartConf.chart.width!=undefined || chartConf.chart.width!="") ? chartConf.chart.width : "",
+    			
     			style: {
     				fontFamily: chartConf.chart.style.fontFamily,
     				fontSize: chartConf.chart.style.fontSize,
-    				fontWeight: chartConf.chart.style.fontWeight,
-    				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
-    				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
-    				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
+    				fontWeight: chartConf.chart.style.fontWeight,    				
+    				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
+    				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+    				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
     			}
-    		};
+		};
+    	
+    	if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
+    		chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
     else if (chartConf.chart.height!=""
     		&& chartConf.chart.width!="")
@@ -75,17 +79,21 @@ function renderTreemap(chartConf) {
 			renderTo: 'mainPanel',
 			height:  Number(chartConf.chart.height),
 			width:  Number(chartConf.chart.width),
+			
 			style: {
 				fontFamily: chartConf.chart.style.fontFamily,
 				fontSize: chartConf.chart.style.fontSize,
 				fontWeight: chartConf.chart.style.fontWeight,
-				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "none",
-				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "none",
-				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : "none"
+				fontStyle: chartConf.chart.style.fontStyle ? chartConf.chart.style.fontStyle : "",
+				textDecoration: chartConf.chart.style.textDecoration ? chartConf.chart.style.textDecoration : "",
+				fontWeight: chartConf.chart.style.fontWeight ? chartConf.chart.style.fontWeight : ""
 			}
 		};
+    	
+    	if (chartConf.chart.backgroundColor!=undefined && chartConf.chart.backgroundColor!="")
+    		chartObject.backgroundColor = chartConf.chart.backgroundColor;
 	}
-
+        
 	var chart = new Highcharts.Chart({
 		chart: chartObject,
 		series: [{

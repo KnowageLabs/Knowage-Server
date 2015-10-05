@@ -278,16 +278,22 @@
 		 #if( $xAxis.position == 'top' )
 		 	opposite: true,
 		 #end
-		 
-		 #if( $xAxis.startOnTick )
-		 	startOnTick: $xAxis.startOnTick,
+		 		 
+		 #if( !$xAxis.startOnTick || $xAxis.startOnTick == "" )
+		 	startOnTick: false,
+		 #else
+		 	startOnTick: $xAxis.startOnTick,		 	
 		 #end
 		 
-		 #if( $xAxis.endOnTick )
+		 #if( !$xAxis.endOnTick || $xAxis.endOnTick == "" )
+		 	endOnTick: false,		 	
+		 #else
 		 	endOnTick: $xAxis.endOnTick,
 		 #end
 		 
-		 #if( $xAxis.showLastLabel )
+		 #if( !$xAxis.showLastLabel || $xAxis.showLastLabel == "" )		 	
+		 	showLastLabel: false,
+		 #else
 		 	showLastLabel: $xAxis.showLastLabel,
 		 #end		 
 			    
