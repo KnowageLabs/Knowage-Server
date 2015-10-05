@@ -51,7 +51,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class DataSetFactory {
 
@@ -65,7 +65,6 @@ public class DataSetFactory {
 	public static final String CUSTOM_DS_TYPE = "Custom";
 	public static final String FEDERATED_DS_TYPE = "Federated";
 	public static final String FLAT_DS_TYPE = "Flat";
-	
 
 	static private Logger logger = Logger.getLogger(DataSetFactory.class);
 
@@ -160,33 +159,30 @@ public class DataSetFactory {
 
 		return toReturn;
 	}
-	
-	
 
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet) {
 		return toDataSet(sbiDataSet, null);
 	}
-	
-//	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSets, IEngUserProfile userProfile) {
-//		Set<IDataSet> ds = new java.util.HashSet<IDataSet>();
-//		for (SbiDataSet dataset : sbiDataSets) {
-//			ds.add(toDataSet(dataset));
-//		}
-//		return ds;
-//	}
+
+	// public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSets, IEngUserProfile userProfile) {
+	// Set<IDataSet> ds = new java.util.HashSet<IDataSet>();
+	// for (SbiDataSet dataset : sbiDataSets) {
+	// ds.add(toDataSet(dataset));
+	// }
+	// return ds;
+	// }
 
 	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
-		
+
 		Set<IDataSet> toReturn = new HashSet<IDataSet>();
-		
+
 		for (Iterator iterator = sbiDataSet.iterator(); iterator.hasNext();) {
 			SbiDataSet sbiDataSet3 = (SbiDataSet) iterator.next();
 			toReturn.add(toDataSet(sbiDataSet3, userProfile));
 		}
-		
+
 		return toReturn;
 	}
-
 
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;
@@ -328,17 +324,17 @@ public class DataSetFactory {
 				((CustomDataSet) ds).setJavaClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
 				ds.setDsType(CUSTOM_DS_TYPE);
 			}
-			
+
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 
 				SbiFederationDefinition sbiFederation = sbiDataSet.getFederation();
-				
+
 				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederation(sbiFederation, userProfile));
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 
 				// START -> This code should work instead of CheckQbeDataSets around the projects
-				
+
 				Map parameters = ds.getParamsMap();
 				if (parameters == null) {
 					parameters = new HashMap();
