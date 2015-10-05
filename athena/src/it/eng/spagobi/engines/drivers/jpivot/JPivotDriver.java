@@ -2,29 +2,20 @@
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * If a copy  of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.engines.drivers.jpivot;
 
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
-import it.eng.spagobi.commons.utilities.PortletUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.AbstractDriver;
 import it.eng.spagobi.engines.drivers.EngineURL;
@@ -41,7 +32,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -53,14 +43,15 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 
 	static private Logger logger = Logger.getLogger(JPivotDriver.class);
 
-
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 * 
-	 * @param profile Profile of the user
-	 * @param roleName the name of the execution role
-	 * @param biobject the biobject
+	 * @param profile
+	 *            Profile of the user
+	 * @param roleName
+	 *            the name of the execution role
+	 * @param biobject
+	 *            the biobject
 	 * 
 	 * @return Map The map of the execution call parameters
 	 */
@@ -79,13 +70,16 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 	}
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 * 
-	 * @param subObject SubObject to execute
-	 * @param profile Profile of the user
-	 * @param roleName the name of the execution role
-	 * @param object the object
+	 * @param subObject
+	 *            SubObject to execute
+	 * @param profile
+	 *            Profile of the user
+	 * @param roleName
+	 *            the name of the execution role
+	 * @param object
+	 *            the object
 	 * 
 	 * @return Map The map of the execution call parameters
 	 */
@@ -97,9 +91,9 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			map = getMap(biobj, profile, roleName);
 			SubObject subObj = (SubObject) subObject;
 			map = getParameterMap(object, profile, roleName);
-			String nameSub = (subObj.getName()==null)?"":subObj.getName();
+			String nameSub = (subObj.getName() == null) ? "" : subObj.getName();
 			map.put("nameSubObject", nameSub);
-			String descrSub = (subObj.getDescription()==null)?"":subObj.getDescription();
+			String descrSub = (subObj.getDescription() == null) ? "" : subObj.getDescription();
 			map.put("descriptionSubObject", descrSub);
 			String visStr = "Private";
 			boolean visBool = subObj.getIsPublic().booleanValue();
@@ -118,11 +112,10 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 	}
 
 	/**
-	 * Starting from a BIObject extracts from it the map of the paramaeters for
-	 * the execution call
+	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
 	 * 
 	 * @param biobj
-	 *                BIObject to execute
+	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
 	 */
 	protected Map getMap(BIObject biobj, IEngUserProfile profile, String roleName) {
@@ -153,13 +146,13 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 	 * Adds parameter for data access based on the user functionalities
 	 * 
 	 * @param profile
-	 *                Profile of the user
+	 *            Profile of the user
 	 * @param roleName
-	 *                Role name of the user
+	 *            Role name of the user
 	 * @param pars
-	 *                Map of previous parameters
+	 *            Map of previous parameters
 	 * @param template
-	 *                bytes of the biobject template
+	 *            bytes of the biobject template
 	 * @return The parameter map containing parameter for data access control
 	 */
 	protected Map addDataAccessParameter(IEngUserProfile profile, String roleName, Map pars, byte[] templateBy) {
@@ -251,10 +244,8 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			String access = (String) rulesSB.getAttribute("access");
 			if (access == null) {
 				access = "none";
-				logger.warn("Access is not defined for dimension " + dimensionName + "."
-						+ " Default value 'none' will be considered.");
-			} else if (!access.equalsIgnoreCase("custom") && !access.equalsIgnoreCase("all")
-					&& !access.equalsIgnoreCase("none")) {
+				logger.warn("Access is not defined for dimension " + dimensionName + "." + " Default value 'none' will be considered.");
+			} else if (!access.equalsIgnoreCase("custom") && !access.equalsIgnoreCase("all") && !access.equalsIgnoreCase("none")) {
 				access = "none";
 				logger.warn(" Default value 'none' will be considered.");
 			}
@@ -277,10 +268,8 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 					SourceBean member = (SourceBean) membersIt.next();
 					String memberName = (String) member.getAttribute("name");
 					String memberAccess = (String) member.getAttribute("access");
-					if (memberAccess == null
-							|| (!memberAccess.equalsIgnoreCase("all") && !memberAccess.equalsIgnoreCase("none"))) {
-						logger.warn("Access is not defined correctly for member " + memberName + "."
-								+ " Default value 'none' will be considered.");
+					if (memberAccess == null || (!memberAccess.equalsIgnoreCase("all") && !memberAccess.equalsIgnoreCase("none"))) {
+						logger.warn("Access is not defined correctly for member " + memberName + "." + " Default value 'none' will be considered.");
 						memberAccess = "none";
 					}
 					if (memberName != null) {
@@ -316,7 +305,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			String memName = (String) memNamesIter.next();
 			String tmpMemName = memName;
 			// check if the name has a profile attribute
-			int startInd = memName.indexOf("${"); 
+			int startInd = memName.indexOf("${");
 			if (startInd != -1) {
 				// if it has, recover the name and value of the profile
 				// attribute
@@ -327,14 +316,14 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 				try {
 					valueProfAttr = (String) profile.getUserAttribute(nameProfAttr);
 
-					//modify for using null or {,{''}} in EXO like default value for all elements
-					if (valueProfAttr == null || valueProfAttr.equals("{,{''}}")) valueProfAttr = "*";
+					// modify for using null or {,{''}} in EXO like default value for all elements
+					if (valueProfAttr == null || valueProfAttr.equals("{,{''}}"))
+						valueProfAttr = "*";
 
 				} catch (Exception e) {
-					logger.error("Error while recovering profile attribute " + nameProfAttr + " of the user "
-							+ ((UserProfile)profile).getUserId(), e);
+					logger.error("Error while recovering profile attribute " + nameProfAttr + " of the user " + ((UserProfile) profile).getUserId(), e);
 				}
-				valueProfAttr = valueProfAttr.replaceAll("'","");
+				valueProfAttr = valueProfAttr.replaceAll("'", "");
 				// if the value of the profile attribute is not null
 				if (valueProfAttr != null) {
 					logger.debug("** valueProfAttr: -" + valueProfAttr + "-");
@@ -355,8 +344,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 						List tmpMemNames = new ArrayList();
 						for (int i = 0; i < values.length; i++) {
 							String val = values[i];
-							String tmpMemNamei = tmpMemName.substring(0, startInd) + val
-							+ tmpMemName.substring(endInd + 1);
+							String tmpMemNamei = tmpMemName.substring(0, startInd) + val + tmpMemName.substring(endInd + 1);
 							logger.debug("** Added  tmpMemNamei: -" + tmpMemNamei + "-");
 							tmpMemNames.add(tmpMemNamei);
 						}
@@ -364,8 +352,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 						generatedMemList.addAll(tmpMemNames);
 						// the attribute is single value
 					} else {
-						tmpMemName = tmpMemName.substring(0, startInd) + valueProfAttr
-						+ tmpMemName.substring(endInd + 1);
+						tmpMemName = tmpMemName.substring(0, startInd) + valueProfAttr + tmpMemName.substring(endInd + 1);
 						List tmpMemNames = new ArrayList();
 						logger.debug("** Added tmpMemName: -" + tmpMemName + "-");
 						tmpMemNames.add(tmpMemName);
@@ -420,9 +407,9 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 	 * Add into the parameters map the BIObject's BIParameter names and values
 	 * 
 	 * @param biobj
-	 *                BIOBject to execute
+	 *            BIOBject to execute
 	 * @param pars
-	 *                Map of the parameters for the execution call
+	 *            Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	protected Map addBIParameters(BIObject biobj, Map pars) {
@@ -439,8 +426,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 				try {
 					biobjPar = (BIObjectParameter) it.next();
 					/*
-					 * value = (String)biobjPar.getParameterValues().get(0);
-					 * pars.put(biobjPar.getParameterUrlName(), value);
+					 * value = (String)biobjPar.getParameterValues().get(0); pars.put(biobjPar.getParameterUrlName(), value);
 					 */
 					value = parValuesEncoder.encode(biobjPar);
 					pars.put(biobjPar.getParameterUrlName(), value);
@@ -452,20 +438,21 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("OUT");
 		return pars;
 	}
-	
 
 	/**
 	 * Returns the url to be invoked for editing template document.
 	 * 
-	 * @param biobject The biobject
-	 * @param profile the profile
+	 * @param biobject
+	 *            The biobject
+	 * @param profile
+	 *            the profile
 	 * 
 	 * @return the url to be invoked for editing template document
 	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws InvalidOperationRequest
+	 *             the invalid operation request
 	 */
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-	throws InvalidOperationRequest {
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.debug("IN");
 		BIObject obj = null;
 		try {
@@ -500,15 +487,17 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 	/**
 	 * Returns the url to be invoked for creating a new template document.
 	 * 
-	 * @param biobject The biobject
-	 * @param profile the profile
+	 * @param biobject
+	 *            The biobject
+	 * @param profile
+	 *            the profile
 	 * 
 	 * @return the url to be invoked for creating a new template document
 	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws InvalidOperationRequest
+	 *             the invalid operation request
 	 */
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-	throws InvalidOperationRequest {
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.debug("IN");
 		BIObject obj = null;
 		try {
@@ -535,8 +524,7 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 			String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
 			IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
-			Artifact artifact = dao.loadArtifactByNameAndType(reference,
-							SpagoBIConstants.MONDRIAN_SCHEMA);
+			Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 			Content content = dao.loadActiveArtifactContent(artifact.getId());
 			pars.put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, content.getId());
 			return pars;
