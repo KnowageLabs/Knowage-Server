@@ -134,7 +134,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return Returns the id.
 	 */
 	public Integer getId() {
@@ -143,7 +143,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the id.
-	 *
+	 * 
 	 * @param businessObjectID
 	 *            The id to set.
 	 */
@@ -153,7 +153,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the bi object parameters.
-	 *
+	 * 
 	 * @return Returns the biObjectParameters.
 	 */
 	@JsonIgnore
@@ -163,7 +163,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the bi object parameters.
-	 *
+	 * 
 	 * @param businessObjectParameters
 	 *            The biObjectParameters to set.
 	 */
@@ -173,7 +173,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return Returns the description.
 	 */
 	public String getDescription() {
@@ -182,7 +182,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the description.
-	 *
+	 * 
 	 * @param description
 	 *            The description to set.
 	 */
@@ -203,7 +203,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the encrypt.
 	 * 
-	 * @param encrypt The encrypt to set.
+	 * @param encrypt
+	 *            The encrypt to set.
 	 */
 	public void setEncrypt(Integer encrypt) {
 		this.encrypt = encrypt;
@@ -222,7 +223,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the visible.
 	 * 
-	 * @param visible the new visible
+	 * @param visible
+	 *            the new visible
 	 */
 	@JsonIgnore
 	public void setVisible(Integer visible) {
@@ -233,11 +235,11 @@ public class BIObject implements Serializable, Cloneable {
 	public void setVisible(boolean visible) {
 		this.visible = visible ? new Integer(1) : new Integer(0);
 	}
-	
+
 	public boolean isVisible() {
 		return (this.visible != null && this.visible.intValue() == 1);
 	}
-	
+
 	/**
 	 * Gets the engine.
 	 * 
@@ -256,7 +258,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the engine.
 	 * 
-	 * @param engine The engine to set.
+	 * @param engine
+	 *            The engine to set.
 	 */
 	@JsonIgnore
 	public void setEngine(Engine engine) {
@@ -289,7 +292,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the data source id.
 	 * 
-	 * @param dataSourceId the data source id
+	 * @param dataSourceId
+	 *            the data source id
 	 */
 	public void setDataSourceId(Integer dataSourceId) {
 		this.dataSourceId = dataSourceId;
@@ -323,7 +327,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the label.
 	 * 
-	 * @param label The label to set.
+	 * @param label
+	 *            The label to set.
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -342,7 +347,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the rel name.
 	 * 
-	 * @param relName The relName to set.
+	 * @param relName
+	 *            The relName to set.
 	 */
 	@JsonSetter
 	public void setRelName(String relName) {
@@ -362,7 +368,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the bi object type code.
 	 * 
-	 * @param businessObjectTypeCD The biObjectTypeCode to set.
+	 * @param businessObjectTypeCD
+	 *            The biObjectTypeCode to set.
 	 */
 	@JsonIgnore
 	public void setBiObjectTypeCode(String businessObjectTypeCD) {
@@ -371,7 +378,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the bi object type code and update the type id.
-	 *
+	 * 
 	 * @param businessObjectTypeCD
 	 *            The biObjectTypeCode to set.
 	 * @throws EMFUserError
@@ -397,7 +404,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the bi object type id.
 	 * 
-	 * @param biObjectTypeID The biObjectTypeID to set.
+	 * @param biObjectTypeID
+	 *            The biObjectTypeID to set.
 	 */
 	public void setBiObjectTypeID(Integer biObjectTypeID) {
 		this.biObjectTypeID = biObjectTypeID;
@@ -416,7 +424,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the state code.
 	 * 
-	 * @param stateCD The stateCode to set.
+	 * @param stateCD
+	 *            The stateCode to set.
 	 */
 	@JsonIgnore
 	public void setStateCode(String stateCD) {
@@ -425,7 +434,7 @@ public class BIObject implements Serializable, Cloneable {
 
 	/**
 	 * Sets the state code and update the state id.
-	 *
+	 * 
 	 * @param stateCD
 	 *            The stateCode to set.
 	 * @throws EMFUserError
@@ -451,12 +460,13 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the state id.
 	 * 
-	 * @param stateID The stateID to set.
+	 * @param stateID
+	 *            The stateID to set.
 	 */
 	public void setStateID(Integer stateID) {
 		this.stateID = stateID;
 	}
-	
+
 	/**
 	 * Gets the path.
 	 * 
@@ -466,16 +476,17 @@ public class BIObject implements Serializable, Cloneable {
 	public String getPath() {
 		return path;
 	}
-	
+
 	/**
 	 * Sets the path.
 	 * 
-	 * @param path The path to set.
+	 * @param path
+	 *            The path to set.
 	 */
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
+
 	/**
 	 * Gets the name.
 	 * 
@@ -484,11 +495,12 @@ public class BIObject implements Serializable, Cloneable {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * Sets the name.
 	 * 
-	 * @param name the new name
+	 * @param name
+	 *            the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -507,7 +519,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the uuid.
 	 * 
-	 * @param uuid the new uuid
+	 * @param uuid
+	 *            the new uuid
 	 */
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
@@ -526,7 +539,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the functionalities.
 	 * 
-	 * @param functionalities the new functionalities
+	 * @param functionalities
+	 *            the new functionalities
 	 */
 	public void setFunctionalities(List functionalities) {
 		this.functionalities = functionalities;
@@ -561,17 +575,15 @@ public class BIObject implements Serializable, Cloneable {
 	@JsonIgnore
 	public ObjTemplate getActiveTemplate() {
 		ObjTemplate template = null;
-		try{
+		try {
 			IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 			template = objtempdao.getBIObjectActiveTemplate(this.getId());
-		} catch(Exception e) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
-								"getActiveTemplate", "Error while recovering current template \n", e);
+		} catch (Exception e) {
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "getActiveTemplate", "Error while recovering current template \n", e);
 		}
 		return template;
 	}
-	
-	
+
 	/**
 	 * Gets the template list.
 	 * 
@@ -580,12 +592,11 @@ public class BIObject implements Serializable, Cloneable {
 	@JsonIgnore
 	public List getTemplateList() {
 		List templates = new ArrayList();
-		try{
+		try {
 			IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 			templates = objtempdao.getBIObjectTemplateList(this.getId());
-		} catch(Exception e) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(),
-								"getTemplateList", "Error while recovering template list\n", e);
+		} catch (Exception e) {
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "getTemplateList", "Error while recovering template list\n", e);
 		}
 		return templates;
 	}
@@ -608,10 +619,11 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the creation date.
 	 * 
-	 * @param creationDate the new creation date
+	 * @param creationDate
+	 *            the new creation date
 	 */
 	public void setCreationDate(Date creationDate) {
-	    this.creationDate = creationDate;
+		this.creationDate = creationDate;
 	}
 
 	/**
@@ -621,17 +633,18 @@ public class BIObject implements Serializable, Cloneable {
 	 */
 	@JsonGetter
 	public String getCreationUser() {
-	    return creationUser;
+		return creationUser;
 	}
 
 	/**
 	 * Sets the creation user.
 	 * 
-	 * @param creationUser the new creation user
+	 * @param creationUser
+	 *            the new creation user
 	 */
 	@JsonIgnore
 	public void setCreationUser(String creationUser) {
-	    this.creationUser = creationUser;
+		this.creationUser = creationUser;
 	}
 
 	/**
@@ -647,7 +660,8 @@ public class BIObject implements Serializable, Cloneable {
 	/**
 	 * Sets the data set id.
 	 * 
-	 * @param dataSetId the new data set id
+	 * @param dataSetId
+	 *            the new data set id
 	 */
 	public void setDataSetId(Integer dataSetId) {
 		this.dataSetId = dataSetId;
@@ -685,7 +699,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @param refreshSeconds
 	 */
-	
+
 	public void setRefreshSeconds(Integer refreshSeconds) {
 		this.refreshSeconds = refreshSeconds;
 	}
@@ -707,7 +721,7 @@ public class BIObject implements Serializable, Cloneable {
 	public void setObjMetaDataAndContents(List<DocumentMetadataProperty> objMetaDataAndContents) {
 		this.objMetaDataAndContents = objMetaDataAndContents;
 	}
-	
+
 	public String getTenant() {
 		return tenant;
 	}
@@ -715,7 +729,7 @@ public class BIObject implements Serializable, Cloneable {
 	public void setTenant(String tenant) {
 		this.tenant = tenant;
 	}
-	
+
 	/**
 	 * @return the previewFile
 	 */
@@ -724,12 +738,12 @@ public class BIObject implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param previewFile the previewFile to set
+	 * @param previewFile
+	 *            the previewFile to set
 	 */
 	public void setPreviewFile(String previewFile) {
 		this.previewFile = previewFile;
 	}
-	
 
 	/**
 	 * @return the publicDoc
@@ -740,7 +754,8 @@ public class BIObject implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param publicDoc the publicDoc to set
+	 * @param publicDoc
+	 *            the publicDoc to set
 	 */
 	public void setPublicDoc(boolean publicDoc) {
 		this.publicDoc = publicDoc;
@@ -754,7 +769,8 @@ public class BIObject implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param docVersion the docVersion to set
+	 * @param docVersion
+	 *            the docVersion to set
 	 */
 	public void setDocVersion(Integer docVersion) {
 		this.docVersion = docVersion;
