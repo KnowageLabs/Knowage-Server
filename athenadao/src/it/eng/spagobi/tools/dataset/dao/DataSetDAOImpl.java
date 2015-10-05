@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * This Source Code Form  is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
@@ -9,8 +9,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
-import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -34,9 +32,9 @@ import org.hibernate.criterion.Expression;
 
 /**
  * Implement CRUD operations over spagobi datsets
- *
+ * 
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * 
  */
 public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO {
 
@@ -406,14 +404,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setParameters(dataSet.getParameters());
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
 
-			
-			/*SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
-			//save teh federations
-			if(federationDefinition != null ){
-				hibDataSet.setFederation(federationDefinition);
-			}*/
+			/*
+			 * SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); //save teh federations
+			 * if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
+			 */
 
-			
 			if (dataSet.getOwner() == null) {
 				hibDataSet.setOwner(userIn);
 			} else {
@@ -1239,14 +1234,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 
-				/*SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
-				//save teh federations
-				if(federationDefinition != null ){
-					hibDataSet.setFederation(federationDefinition);
-				}*/
+				/*
+				 * SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); //save teh federations
+				 * if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
+				 */
 
-				
-				
 				Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 				hibQuery.setBoolean(0, true);
 				hibQuery.setInteger(1, dsId);
@@ -1326,10 +1318,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> if it is not referenced by some analytical documents.
-	 *
+	 * 
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
-	 *
+	 * 
 	 * @throws SpagoBIDOAException
 	 *             if the dataset is referenced by at least one analytical document
 	 */
@@ -1406,11 +1398,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> ALSO if is referenced by some analytical documents.
-	 *
+	 * 
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
-	 *
-	 *
+	 * 
+	 * 
 	 */
 	@Override
 	public void deleteDataSetNoChecks(Integer datasetId) {
@@ -1525,10 +1517,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete the dataset version whose id is equal to <code>datasetVersionId</code> if and only if it is inactive.
-	 *
+	 * 
 	 * @param datasetVersionId
 	 *            the id of the version of the dataset to delete. Cannot be null.
-	 *
+	 * 
 	 * @return true if the version whose id is equal to <code>datasetVersionId</code> is deleted from database. false otherwise (the version does not exist or
 	 *         it exists but it is active).
 	 */
@@ -1589,10 +1581,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete all inactive versions of dataset whose id is equal to <code>datasetId</code>
-	 *
+	 * 
 	 * @param datasetId
 	 *            the id of the of the dataset whose incative version must be deleted
-	 *
+	 * 
 	 * @return true if the incative versions of dataset whose id is equal to <code>datasetId</code> have been succesfully deleted from database. false otherwise
 	 *         (i.e. the dtaset does not have any inactive versions)
 	 */
@@ -1670,7 +1662,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * copy a dataset
-	 *
+	 * 
 	 * @param hibDataSet
 	 * @return
 	 */
