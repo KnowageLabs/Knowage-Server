@@ -236,11 +236,15 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 						console.log(data.errors[0].message);
 					} else {
 						ctr.list = data;
-						console.log("List:"+ctr.list)
-						angular.toJson(ctr.list)
-						console.log("List JSON:"+ctr.list)
+						console.log("List:")
+						console.log(ctr.list)
 						angular.forEach(ctr.list, function(dataset){
+							////Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
+							if(dataset.metadata==null){
+								dataset.metadata.fieldsMeta = [];
+							}
 							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+								
 								listField.selected =  false;
 							});
 						});
@@ -255,17 +259,20 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 				}
 		)
 		
-		restServices.get("2.0/datasets","")
+	restServices.get("2.0/datasets","")
 		.success(
 				function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")) {
 						console.log(data.errors[0].message);
 					} else {
 						ctr.listAllO = data;
-						console.log("List:"+ctr.list)
-						angular.toJson(ctr.list)
-						console.log("List JSON:"+ctr.list)
-						angular.forEach(ctr.list, function(dataset){
+						console.log("ListALLO:")
+						console.log(ctr.listAllO)
+						angular.forEach(ctr.listAllO, function(dataset){
+							//Fix for --> TypeError: Cannot read property 'fieldsMeta' of null
+							if(dataset.metadata==null){
+								dataset.metadata.fieldsMeta = [];
+							}
 							angular.forEach(dataset.metadata.fieldsMeta, function(listField){
 								listField.selected =  false;
 							});
@@ -282,26 +289,97 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 		)
 		
 	ctr.kickOutFromListNew = function(param) {
-		//if dataset is used in a relationship
-		if(false){
-			//can't delete alert
-			$mdDialog.show(
-					$mdDialog.alert()
-						.clickOutsideToClose(true)
-						.content('You can\'t delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.')
-						.ok('OK')
-			);
-		} else {
-			var index = ctr.listaNew.indexOf(param);
-			if(index != -1){
-				ctr.listaNew.splice(index, 1);
-			}
-			if(ctr.list.indexOf(param)===-1){
-				ctr.list.push(param);
-			} else {
-				console.log("Parameter is already in the list.");
+		ctr.nizSourceva = [];
+		for (var i = 0; i < ctr.multiArray.length; i++) {
+			for (var j = 0; j < ctr.multiArray[i].length; j++) {
+				if(j==0){
+					ctr.nizSourceva.push(ctr.multiArray[i][j].sourceTable.name)
+					ctr.nizSourceva.push(ctr.multiArray[i][j].destinationTable.name)
+				} else {
+					ctr.nizSourceva.push(ctr.multiArray[i][j].destinationTable.name)
+				}
+				
 			}
 		}
+			console.log(ctr.nizSourceva.length)
+			if(ctr.nizSourceva==0){
+				var index = ctr.listaNew.indexOf(param);
+				if (index != -1) {
+					ctr.listaNew.splice(index, 1);
+				}
+				if (ctr.list.indexOf(param) === -1) {
+					ctr.list.push(param);
+				} else {
+					console.log("Parameter is already in the list.");
+				}
+			} else {
+				if (ctr.nizSourceva.indexOf(param.label) >= 0) {
+					
+					console.log("param leb")
+					console.log(param.label)
+					$mdDialog
+							.show($mdDialog
+									.alert()
+									.clickOutsideToClose(true)
+									.content(
+											'You can\'t delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.')
+									.ok('OK'));
+					return false;
+					
+				} else {
+					console.log("else" + j)
+					var index = ctr.listaNew.indexOf(param);
+					if (index != -1) {
+						ctr.listaNew.splice(index, 1);
+					}
+					if (ctr.list.indexOf(param) === -1) {
+						ctr.list.push(param);
+					} else {
+						console.log("Parameter is already in the list.");
+					}
+				}
+			}
+				/*console.log("ceo niz objekata")
+				console.log(ctr.multiArray)
+				console.log("param: "+param.label)
+				console.log("jedan od uslova")
+				console.log("sourcetable: "+ctr.multiArray[i][j].sourceTable.name)
+				console.log("destination:"+ctr.multiArray[i][j].destinationTable.name)*/
+			
+				//for (var i = 0; i < ctr.nizSourceva.length; i++) {
+					//if (param.label == ctr.nizSourceva[i]) {
+			
+			/*if (ctr.nizSourceva.indexOf(param.label) >= 0) {
+						
+						console.log("param leb")
+						console.log(param.label)
+						$mdDialog
+								.show($mdDialog
+										.alert()
+										.clickOutsideToClose(true)
+										.content(
+												'You can\'t delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.')
+										.ok('OK'));
+						return false;
+						
+					} else {
+						console.log("else" + j)
+						var index = ctr.listaNew.indexOf(param);
+						if (index != -1) {
+							ctr.listaNew.splice(index, 1);
+						}
+						if (ctr.list.indexOf(param) === -1) {
+							ctr.list.push(param);
+						} else {
+							console.log("Parameter is already in the list.");
+						}
+					}*/
+				//}
+				
+				
+			
+			
+			
 	}
 	
 	ctr.moveToListNew = function(param) {
@@ -409,7 +487,7 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
     ctr.prepRelForEdit = function(param) {
     	var confirm = $mdDialog.confirm()
 		.title('Confirm dialog')
-		.content('Are you sure you want to edit the relation? The former relation will be lost.')
+		.content('Are you sure you want to edit the relation? The previous relation will be lost.')
 		.targetEvent(param)
 		.ok('Yes')
 		.cancel('No')

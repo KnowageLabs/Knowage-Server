@@ -49,3 +49,6 @@ md-list-item.md-list-item-inner.relation {
 	height: 35px;
 	min-meight: 0px;
 }
+editedRelationButton {
+	backgtound-color: #009688 !important;
+}

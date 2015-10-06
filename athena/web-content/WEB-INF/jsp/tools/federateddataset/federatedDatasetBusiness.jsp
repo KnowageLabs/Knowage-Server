@@ -164,7 +164,7 @@
 				style="">
 			<div class="md-toolbar-tools">
 				<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
-				<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton"><md-tooltip md-direction="left">Add relationship</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
+				<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton"><md-tooltip md-delay=1500 md-direction="left">Add relationship</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
 					ng-click="ctrl.fillTheArray()"></md-icon></md-button> 
 			</div>
 
@@ -181,27 +181,27 @@
 							
 							<md-list-item style="min-height:35px">
 							
-							<div  ng-repeat="bla in k track by $index">
-							
-							<span ng-if="$index==0">
-								{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
-							</div>
-							<span flex=""></span>
-							 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
-							 	<md-fab-trigger>
-							 		<md-button class="md-fab md-ExtraMini">
-							 			<i class="fa fa-chevron-left"></i>
-							 		</md-button>
-							 	</md-fab-trigger>
-							 	<md-fab-actions>
-							 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
-										 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
-									</md-button>
-									<md-button  style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
-										 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(k);" ></i>
-									</md-button>
-							 	</md-fab-actions>
-							 </md-fab-speed-dial>
+								<div ng-style="myStyle"   ng-repeat="bla in k track by $index">
+								<span ng-if="$index==0">
+									{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+								</div>
+								<span flex=""></span>
+								 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
+								 	<md-fab-trigger>
+								 		<md-button class="md-fab md-ExtraMini">
+								 			<i class="fa fa-chevron-left"></i>
+								 		</md-button>
+								 	</md-fab-trigger>
+								 	<md-fab-actions>
+								 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
+											 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
+										</md-button>
+										<md-button  style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
+											 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(k);" ></i>
+										</md-button>
+										
+								 	</md-fab-actions>
+								 </md-fab-speed-dial>
 							
 						</md-list-item>
 						
@@ -224,7 +224,7 @@
 		<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack()">BACK</md-button>
 		<md-button ng-hide="ctrl.isEditState" class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
 		<md-button ng-show="ctrl.isEditState" class="buttonL" ng-click="ctrl.cancelEdit();">Cancel</md-button>
-		<md-button ng-show="ctrl.isEditState" class="editRelationButton buttonR" style="color:white" ng-click="ctrl.saveEditedRelation()">save edit</md-button>
+		<md-button ng-show="ctrl.isEditState" class="buttonR" style="color:white; background-color:#009688;" ng-click="ctrl.saveEditedRelation()">save edit</md-button>
 		
 
 	</div>
