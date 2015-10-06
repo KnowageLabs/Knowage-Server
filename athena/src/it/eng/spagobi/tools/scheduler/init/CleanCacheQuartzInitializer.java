@@ -9,6 +9,7 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.jobs.CleanCacheJob;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.List;
 
@@ -31,16 +32,20 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
 	 */
 	public void init(SourceBean config) {
 		logger.debug("IN");
 		try {
+			// just to check if a cache is available
+			SpagoBICacheConfiguration.getInstance();
 			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
 			for (SbiTenant tenant : tenants) {
 				initCleanForTenant(tenant);
 			}
+		} catch (SpagoBIRuntimeException e) {
+			logger.debug("NO WRITE DATASOURCE AVAILABLE.", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -99,7 +104,7 @@ public class CleanCacheQuartzInitializer implements InitializerIFace {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.init.InitializerIFace#getConfig()
 	 */
 	public SourceBean getConfig() {
