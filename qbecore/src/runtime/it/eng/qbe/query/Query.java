@@ -232,7 +232,13 @@ public class Query implements IQuery {
 
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern) {
-		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern));
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null));
+	}
+
+	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
+			String orderType, String pattern, String temporalOperand, String temporalOperandParameter) {
+		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, temporalOperand,
+				temporalOperandParameter));
 	}
 
 	public void addCalculatedFiled(String fieldAlias, String expression, String type, boolean included, boolean visible) {

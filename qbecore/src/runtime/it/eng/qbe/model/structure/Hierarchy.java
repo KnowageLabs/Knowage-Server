@@ -17,7 +17,6 @@ public class Hierarchy {
 		setIsDefault(isDefault);
 	}
 
-
 	/**
 	 * @return the name
 	 */
@@ -72,20 +71,31 @@ public class Hierarchy {
 				for (; i >= 0; i--) {
 					ancestors[i] = levels.get(i).getColumn();
 				}
+				break;
 			}
-			break;
 		}
 		return ancestors;
 	}
 
 	@Override
-	public boolean equals(Object obj){
-		if (obj instanceof Hierarchy){
+	public boolean equals(Object obj) {
+		if (obj instanceof Hierarchy) {
 			Hierarchy h = (Hierarchy) obj;
-			if (h.getName().equals(getName())){
+			if (h.getName().equals(getName())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public String getLevelByType(String levelType) {
+		String retVal = null;
+		for (HierarchyLevel level : getLevels()) {
+			if (level.getType().equals(levelType)) {
+				retVal = level.getColumn();
+				break;
+			}
+		}
+		return retVal;
 	}
 }

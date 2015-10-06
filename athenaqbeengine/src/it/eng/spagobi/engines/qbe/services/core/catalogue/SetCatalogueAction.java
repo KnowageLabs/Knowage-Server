@@ -5,57 +5,14 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import it.eng.qbe.model.accessmodality.IModelAccessModality;
-import it.eng.qbe.model.structure.HierarchicalDimensionField;
-import it.eng.qbe.model.structure.Hierarchy;
-import it.eng.qbe.model.structure.HierarchyLevel;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.model.structure.IModelStructure;
-import it.eng.qbe.query.ExpressionNode;
-import it.eng.qbe.query.IQueryField;
-import it.eng.qbe.query.Query;
-import it.eng.qbe.query.QueryMeta;
-import it.eng.qbe.query.QueryValidator;
-import it.eng.qbe.query.WhereField;
-import it.eng.qbe.query.WhereField.Operand;
-import it.eng.qbe.query.serializer.SerializerFactory;
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.qbe.statement.AbstractQbeDataSet;
-import it.eng.qbe.statement.graph.GraphManager;
-import it.eng.qbe.statement.graph.GraphUtilities;
-import it.eng.qbe.statement.graph.ModelFieldPaths;
-import it.eng.qbe.statement.graph.PathInspector;
-import it.eng.qbe.statement.graph.QueryGraphBuilder;
-import it.eng.qbe.statement.graph.bean.ModelObjectI18n;
-import it.eng.qbe.statement.graph.bean.PathChoice;
-import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.qbe.statement.graph.bean.Relationship;
-import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
-import it.eng.qbe.statement.graph.filter.CubeFilter;
-import it.eng.qbe.statement.graph.serializer.FieldNotAttendInTheQuery;
-import it.eng.qbe.statement.graph.serializer.ModelFieldPathsJSONDeserializer;
-import it.eng.qbe.statement.graph.serializer.ModelObjectInternationalizedSerializer;
-import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,6 +35,59 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.accessmodality.IModelAccessModality;
+import it.eng.qbe.model.structure.HierarchicalDimensionField;
+import it.eng.qbe.model.structure.Hierarchy;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.model.structure.IModelStructure;
+import it.eng.qbe.query.AbstractSelectField;
+import it.eng.qbe.query.ExpressionNode;
+import it.eng.qbe.query.IQueryField;
+import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.InLineCalculatedSelectField;
+import it.eng.qbe.query.Query;
+import it.eng.qbe.query.QueryMeta;
+import it.eng.qbe.query.QueryValidator;
+import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.query.WhereField;
+import it.eng.qbe.query.WhereField.Operand;
+import it.eng.qbe.query.serializer.SerializerFactory;
+import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.qbe.statement.AbstractQbeDataSet;
+import it.eng.qbe.statement.graph.GraphManager;
+import it.eng.qbe.statement.graph.GraphUtilities;
+import it.eng.qbe.statement.graph.ModelFieldPaths;
+import it.eng.qbe.statement.graph.PathInspector;
+import it.eng.qbe.statement.graph.QueryGraphBuilder;
+import it.eng.qbe.statement.graph.bean.ModelObjectI18n;
+import it.eng.qbe.statement.graph.bean.PathChoice;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.qbe.statement.graph.bean.Relationship;
+import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
+import it.eng.qbe.statement.graph.filter.CubeFilter;
+import it.eng.qbe.statement.graph.serializer.FieldNotAttendInTheQuery;
+import it.eng.qbe.statement.graph.serializer.ModelFieldPathsJSONDeserializer;
+import it.eng.qbe.statement.graph.serializer.ModelObjectInternationalizedSerializer;
+import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
+import it.eng.qbe.utility.TemporalRecord;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Commit all the modifications made to the catalogue on the client side
@@ -155,10 +165,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
 			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
 
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
-					+ " service before having properly created an instance of EngineInstance class");
-			Assert.assertNotNull(jsonEncodedCatalogue, "Input parameter [" + CATALOGUE + "] cannot be null in oder to execute " + this.getActionName()
-					+ " service");
+			Assert.assertNotNull(getEngineInstance(),
+					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(jsonEncodedCatalogue,
+					"Input parameter [" + CATALOGUE + "] cannot be null in oder to execute " + this.getActionName() + " service");
 
 			try {
 				queries = new JSONArray(jsonEncodedCatalogue);
@@ -232,8 +242,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			if (queryGraph != null) {
-				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl())
-						.isValid(queryGraph, modelEntities);
+				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(queryGraph,
+						modelEntities);
 				logger.debug("QueryGraph valid = " + valid);
 				if (!valid) {
 					throw new SpagoBIEngineServiceException(getActionName(), "error.mesage.description.relationship.not.enough");
@@ -310,7 +320,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 	private void handleTimeFilters(Query query) {
 		// DD: RECUPERO LA DIMENSIONE TEMPORALE
-		IModelEntity temporalDimension = getTemporalDimension();
+		IModelEntity temporalDimension = getTemporalDimension(getDataSource());
+		IModelEntity timeDimension = getTimeDimension(getDataSource());
 
 		if (temporalDimension != null) {
 			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
@@ -330,21 +341,16 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				if (lValues != null && lValues.length > 0 && rValues != null && rValues.length > 0) {
 					if ("TIME".equals(lValues[0])) {
 						String temporalLevelColumn = null;
-						List<HierarchyLevel> levels = defaultHierarchy.getLevels();
 						String temporalLevel = whereField.getLeftOperand().description;
-						for (HierarchyLevel level : levels) {
-							if (level.getType().equals(temporalLevel)) {
-								temporalLevelColumn = level.getColumn();
-							}
-						}
+						temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);
 
 						String temporalDimensionId = "time_id";
 
 						// DD: RECUPERO IL PERIODO CORRENTE
 						// TemporalRecord currentPeriodRecord = getCurrentPeriod(temporalDimension, "time_id", "quarter", "the_year");
-						TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn,
+						TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn, null,
 								defaultHierarchy.getAncestors(temporalLevelColumn));
-						// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
+								// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
 
 						// CURRENT
 						if ("Current".equals(rValues[0])) {
@@ -356,14 +362,14 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
 									temporalLevelColumn, defaultHierarchy.getAncestors(temporalLevelColumn));
 
-							int currentPeriodIndex = allPeriodsStartingDate.indexOf(currentPeriod);
+							int currentPeriodIndex = getCurrentIndex(allPeriodsStartingDate, (Integer) currentPeriod.getId());
 
 							whereFieldsIndexesToRemove.add(whereFieldIndex);
 
 							timeFilterIndex++;
 
-							Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId }, temporalDimension.getName()
-									+ ":" + temporalDimensionId, "Field Content", new String[] {}, null);
+							Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
+									temporalDimension.getName() + ":" + temporalDimensionId, "Field Content", new String[] {}, null);
 							Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() }, currentPeriod.getId().toString(),
 									"Static Content", new String[] {}, null);
 
@@ -391,7 +397,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			for (Integer index : whereFieldsIndexesToRemove) {
-				WhereField whereField = query.getWhereFields().get(index);
 				query.removeWhereField(index);
 			}
 
@@ -404,13 +409,259 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			query.updateWhereClauseStructure();
+
+			handleInLineTemporalFilter(query, temporalDimension, defaultHierarchy);
+
 		}
 
 	}
 
-	private IModelEntity getTemporalDimension() {
+	private int getCurrentIndex(LinkedList<TemporalRecord> allPeriodsStartingDate, int currentPeriodId) {
+		int index = 0;
+		for (TemporalRecord temporalRecord : allPeriodsStartingDate) {
+			int curr = (Integer) temporalRecord.getId();
+			if (currentPeriodId <= curr) {
+				break;
+			}
+			index++;
+		}
+		return index - 1;
+	}
+
+	private void handleInLineTemporalFilter(Query query, IModelEntity temporalDimension, Hierarchy defaultHierarchy) {
+
+		final String temporalDimensionId = "time_id";
+
+		final String TEMPORAL_OPERAND_YTD = "YTD";
+		final String TEMPORAL_OPERAND_QTD = "QTD";
+		final String TEMPORAL_OPERAND_MTD = "MTD";
+		final String TEMPORAL_OPERAND_WTD = "WTD";
+		final String TEMPORAL_OPERAND_LAST_YEAR = "LAST_YEAR";
+		final String TEMPORAL_OPERAND_LAST_MONTH = "LAST_MONTH";
+		final String TEMPORAL_OPERAND_LAST_WEEK = "LAST_WEEK";
+		final String TEMPORAL_OPERAND_PARALLEL_YEAR = "PARALLEL_YEAR";
+		final String TEMPORAL_OPERAND_PARALLEL_MONTH = "PARALLEL_MONTH";
+		final String TEMPORAL_OPERAND_PARALLEL_WEEK = "PARALLEL_WEEK";
+
+		final String TEMPORAL_FIELD_YEAR = "YEAR";
+		final String TEMPORAL_FIELD_QUARTER = "QUARTER";
+		final String TEMPORAL_FIELD_MONTH = "MONTH";
+		final String TEMPORAL_FIELD_WEEK = "WEEK";
+		final String TEMPORAL_FIELD_DAY = "DAY";
+
+		final String EQUALS_TO = " = ";
+		final String AND = " and ";
+		final String GREATER_EQUALS = " >= ";
+		final String LESS_EQUALS = " <= ";
+
+		List<Integer> selectFieldsIndexesToRemove = new LinkedList<Integer>();
+		List<ISelectField> selectFieldsToAdd = new LinkedList<ISelectField>();
+
+		List<ISelectField> selectFields = query.getSelectFields(true);
+		int i = 0;
+		for (ISelectField iSelectField : selectFields) {
+			if (((AbstractSelectField) iSelectField).isSimpleField()) {
+				SimpleSelectField sField = (SimpleSelectField) iSelectField;
+				String temporalOperand = sField.getTemporalOperand();
+				String temporalOperandParameter = sField.getTemporalOperandParameter();
+				if (StringUtilities.isNotEmpty(temporalOperand)) {
+
+					// SIAMO IN PRESENZA DI FILTRO TEMPORALE INLINE
+					selectFieldsIndexesToRemove.add(i);
+
+					String entity = temporalDimension.getType();
+					String temporalCondition = " 1 = 1 ";
+					String id = entity + ":" + temporalDimensionId;
+					String year = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_YEAR);
+					String quarter = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_QUARTER);
+					String month = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_MONTH);
+					String week = entity + ":" + defaultHierarchy.getLevelByType(TEMPORAL_FIELD_WEEK);
+
+					Date actualTime = new Date();
+
+					// type-safe
+					if (!temporalOperandParameter.matches("\\d+"))
+						temporalOperandParameter = "0";
+					boolean isSIMPLEOperand = false;
+					boolean isLASTOperand = false;
+					boolean isParallelOperand = false;
+					Integer slideBackHowMuch = Integer.parseInt(temporalOperandParameter);
+					slideBackHowMuch *= -1;
+					Calendar c = new GregorianCalendar();
+					int slideWhat = -1;
+					if (temporalOperand.equals(TEMPORAL_OPERAND_YTD)) {
+						isSIMPLEOperand = true;
+						slideWhat = Calendar.YEAR;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_QTD)) {
+						isSIMPLEOperand = true;
+						slideWhat = Calendar.MONTH;
+						slideBackHowMuch *= 3;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_MTD)) {
+						isSIMPLEOperand = true;
+						slideWhat = Calendar.MONTH;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_WTD)) {
+						isSIMPLEOperand = true;
+						slideWhat = Calendar.WEEK_OF_YEAR;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_YEAR)) {
+						isLASTOperand = true;
+						slideWhat = Calendar.YEAR;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_MONTH)) {
+						isLASTOperand = true;
+						slideWhat = Calendar.MONTH;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_WEEK)) {
+						isLASTOperand = true;
+						slideWhat = Calendar.WEEK_OF_YEAR;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_YEAR)) {
+						isParallelOperand = true;
+						slideWhat = Calendar.YEAR;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_MONTH)) {
+						isParallelOperand = true;
+						slideWhat = Calendar.MONTH;
+					} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_YEAR)) {
+						isParallelOperand = true;
+						slideWhat = Calendar.WEEK_OF_YEAR;
+					}
+
+					if (slideWhat > 0 && !isLASTOperand) {
+						c.add(slideWhat, slideBackHowMuch);
+						actualTime = c.getTime();
+					}
+
+					TemporalRecord actualPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, TEMPORAL_FIELD_DAY, temporalDimensionId, actualTime);
+					if (actualPeriod != null || isLASTOperand || isParallelOperand) {
+
+						String beforeOrActualPeriod = " " + id + LESS_EQUALS + actualPeriod.getId();
+						if (isSIMPLEOperand) {
+
+							String yearValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
+									TEMPORAL_FIELD_YEAR, year);
+							String withinThisYear = year + EQUALS_TO + yearValueBounded;
+
+							if (temporalOperand.equals(TEMPORAL_OPERAND_YTD)) {
+								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + " ";
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_QTD)) {
+								String quarterValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
+										TEMPORAL_FIELD_QUARTER, quarter);
+								String withinThisQuarter = quarter + EQUALS_TO + quarterValueBounded;
+
+								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + AND + withinThisQuarter + " ";
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_MTD)) {
+								String monthValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
+										TEMPORAL_FIELD_MONTH, month);
+								String withinThisMonth = month + EQUALS_TO + monthValueBounded;
+
+								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + AND + withinThisMonth + " ";
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_WTD)) {
+								String weekValueBounded = getActualPeriodValueBounded(actualTime, temporalDimension, defaultHierarchy, temporalDimensionId,
+										TEMPORAL_FIELD_WEEK, week);
+								String withinThisMonth = week + EQUALS_TO + weekValueBounded;
+
+								temporalCondition = beforeOrActualPeriod + AND + withinThisYear + AND + withinThisMonth + " ";
+							}
+
+						} else if (isLASTOperand) {
+
+							String temporalField = TEMPORAL_FIELD_YEAR;
+
+							if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_YEAR)) {
+								temporalField = TEMPORAL_FIELD_YEAR;
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_MONTH)) {
+								temporalField = TEMPORAL_FIELD_MONTH;
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_LAST_WEEK)) {
+								temporalField = TEMPORAL_FIELD_WEEK;
+							}
+
+							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
+									defaultHierarchy.getLevelByType(temporalField),
+									defaultHierarchy.getAncestors(defaultHierarchy.getLevelByType(temporalField)));
+
+							TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalField, temporalDimensionId,
+									actualTime);
+							int currentPeriodIndex = getCurrentIndex(allPeriodsStartingDate, (Integer) currentPeriod.getId());
+							int oldestPeriodIndex = currentPeriodIndex + slideBackHowMuch > 0 ? currentPeriodIndex + slideBackHowMuch : 0;
+							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
+
+							String fromStartingDate = id + GREATER_EQUALS + oldestPeriod.getId();
+
+							temporalCondition = fromStartingDate + AND + beforeOrActualPeriod;
+
+						} else if (isParallelOperand) {
+							String temporalField = TEMPORAL_FIELD_YEAR;
+
+							if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_YEAR)) {
+								temporalField = TEMPORAL_FIELD_YEAR;
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_MONTH)) {
+								temporalField = TEMPORAL_FIELD_MONTH;
+							} else if (temporalOperand.equals(TEMPORAL_OPERAND_PARALLEL_WEEK)) {
+								temporalField = TEMPORAL_FIELD_WEEK;
+							}
+
+							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId,
+									defaultHierarchy.getLevelByType(temporalField),
+									defaultHierarchy.getAncestors(defaultHierarchy.getLevelByType(temporalField)));
+
+							TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalField, temporalDimensionId,
+									actualTime);
+							int currentPeriodIndex = getCurrentIndex(allPeriodsStartingDate, (Integer) currentPeriod.getId());
+							int oldestPeriodIndex = currentPeriodIndex + slideBackHowMuch > 0 ? currentPeriodIndex + slideBackHowMuch : 0;
+							int youngestPeriodIndex = oldestPeriodIndex + 1 < allPeriodsStartingDate.size() ? oldestPeriodIndex + 1 : -1;
+							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
+							TemporalRecord youngestPeriod = youngestPeriodIndex > 0 ? allPeriodsStartingDate.get(youngestPeriodIndex) : null;
+
+							String fromStartingDate = id + GREATER_EQUALS + oldestPeriod.getId();
+							String toStartingDate = youngestPeriod != null ? id + LESS_EQUALS + youngestPeriod.getId() : " 1 = 1 ";
+
+							temporalCondition = fromStartingDate + AND + toStartingDate;
+
+						}
+					} else {
+						temporalCondition = " 1 <> 1 ";
+					}
+
+					String expression = "( case when " + temporalCondition + " then " + sField.getName() + " else NULL end ) ";
+
+					IModelField field = getDataSource().getModelStructure().getField(sField.getName());
+
+					String nature = field.getProperties().get("type").toString().toUpperCase();
+					String type = "STRING";
+					if (nature.equals("MEASURE")) {
+						type = "NUMBER";
+					}
+					String fieldAlias = sField.getAlias() + "_" + temporalOperand + "_" + temporalOperandParameter;
+
+					InLineCalculatedSelectField icField = new InLineCalculatedSelectField(fieldAlias, expression, "", type, nature, sField.isIncluded(),
+							sField.isVisible(), sField.isGroupByField(), sField.getOrderType(), sField.getFunction().getName());
+
+					selectFieldsToAdd.add(icField);
+				}
+			}
+		}
+
+		for (Integer toRemove : selectFieldsIndexesToRemove) {
+			query.removeSelectField(toRemove);
+		}
+
+		for (ISelectField iSelectField : selectFieldsToAdd) {
+			InLineCalculatedSelectField icField = (InLineCalculatedSelectField) iSelectField;
+			query.addInLineCalculatedFiled(icField.getAlias(), icField.getExpression(), icField.getSlots(), icField.getType(), icField.getNature(),
+					icField.isIncluded(), icField.isVisible(), icField.isGroupByField(), icField.getOrderType(), icField.getFunction().getName());
+		}
+
+	}
+
+	private String getActualPeriodValueBounded(Date actualTime, IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalDimensionId,
+			String temporalFieldType, String fieldUniqueName) {
+
+		String temporalLevel = defaultHierarchy.getLevelByType(temporalFieldType);
+
+		TemporalRecord value = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalLevel, temporalDimensionId, actualTime);
+		IModelField field = getDataSource().getModelStructure().getField(fieldUniqueName);
+		return getValueBounded(value.getPeriod().toString(), field.getType());
+	}
+
+	private IModelEntity getTemporalDimension(IDataSource dataSource) {
 		IModelEntity temporalDimension = null;
-		Iterator<String> it = getDataSource().getModelStructure().getModelNames().iterator();
+		Iterator<String> it = dataSource.getModelStructure().getModelNames().iterator();
 		while (it.hasNext()) {
 			String modelName = it.next();
 			List<IModelEntity> rootEntities = getDataSource().getModelStructure().getRootEntities(modelName);
@@ -424,12 +675,37 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		return temporalDimension;
 	}
 
-	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, String idField, String periodField, String... parentPeriodFields) {
+	private IModelEntity getTimeDimension(IDataSource dataSource) {
+		IModelEntity timeDimension = null;
+		Iterator<String> it = dataSource.getModelStructure().getModelNames().iterator();
+		while (it.hasNext()) {
+			String modelName = it.next();
+			List<IModelEntity> rootEntities = getDataSource().getModelStructure().getRootEntities(modelName);
+			for (IModelEntity bc : rootEntities) {
+				if ("time_dimension".equals(bc.getProperty("type"))) {
+					timeDimension = bc;
+					break;
+				}
+			}
+		}
+		return timeDimension;
+	}
+
+	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalLevel, String temporalDimensionId,
+			Date actualTime) {
+		String temporalLevelColumn;
+		temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);
+		TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn, actualTime,
+				defaultHierarchy.getAncestors(temporalLevelColumn));
+		return currentPeriod;
+	}
+
+	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, String idField, String periodField, Date actualTime, String... parentPeriodFields) {
 
 		// nullsafe
 		parentPeriodFields = parentPeriodFields != null ? parentPeriodFields : new String[0];
 
-		Date today = new Date();
+		actualTime = actualTime != null ? actualTime : new Date();
 
 		Query currentPeriodQuery = new Query();
 		currentPeriodQuery.addSelectFiled(temporalDimension.getType() + ":" + idField, null, "ID", true, true, false, "ASC", null);
@@ -440,10 +716,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		String temporalDimensionDateField = "the_date";
 
-		Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField }, temporalDimension.getName() + ":"
-				+ temporalDimensionDateField, "Field Content", new String[] {}, null);
-		Operand right = new Operand(new String[] { new SimpleDateFormat("dd/MM/yyyy").format(today) }, new SimpleDateFormat("dd/MM/yyyy").format(today),
-				"Static Content", new String[] {}, null);
+		Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField },
+				temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content", new String[] {}, null);
+		Operand right = new Operand(new String[] { new SimpleDateFormat("dd/MM/yyyy").format(actualTime) },
+				new SimpleDateFormat("dd/MM/yyyy").format(actualTime), "Static Content", new String[] {}, null);
 		currentPeriodQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
 		ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter1" + "}");
 		currentPeriodQuery.setWhereClauseStructure(newFilterNode);
@@ -734,66 +1010,228 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	protected class TemporalRecord {
+	/*
+	 * TODO metodo copiato da: AbstractStatementFilteringClause
+	 *
+	 * STANDARDIZZARE
+	 *
+	 */
+	public String getValueBounded(String operandValueToBound, String operandType) {
 
-		Object id;
-		Object period;
-		Object[] parentPeriods;
+		String boundedValue = operandValueToBound;
+		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER") || operandType.equalsIgnoreCase("java.lang.String")
+				|| operandType.equalsIgnoreCase("java.lang.Character")) {
 
-		public TemporalRecord(IRecord r, int numerOfParentPeriods) {
-			super();
-			Object id = r.getFieldAt(0).getValue();
-			Object period = r.getFieldAt(1).getValue();
-
-			this.id = id;
-			this.period = period;
-
-			if (numerOfParentPeriods > 0) {
-				this.parentPeriods = new Object[numerOfParentPeriods];
-				for (int i = 0; i < this.parentPeriods.length; i++) {
-					this.parentPeriods[i] = r.getFieldAt(i + 2).getValue();
-				}
+			// if the value is already surrounded by quotes, does not neither add quotes nor escape quotes
+			if (StringUtils.isBounded(operandValueToBound, "'")) {
+				boundedValue = operandValueToBound;
 			} else {
-				this.parentPeriods = new Object[] {};
+				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
+				return StringUtils.bound(operandValueToBound, "'");
 			}
-
+		} else if (operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")) {
+			boundedValue = parseDate(operandValueToBound);
+		} else if (operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP")) {
+			boundedValue = parseTimestamp(operandValueToBound);
 		}
 
-		public Object getId() {
-			return id;
+		return boundedValue;
+	}
+
+	/*
+	 * TODO metodo copiato da: AbstractStatementClause
+	 *
+	 * STANDARDIZZARE
+	 *
+	 */
+	protected String parseDate(String date) {
+		if (date == null || date.equals("")) {
+			return "";
 		}
 
-		public Object getPeriod() {
-			return period;
-		}
+		String toReturn = date;
 
-		public Object[] getParentPeriods() {
-			return parentPeriods;
-		}
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEngineInstance().getDataSource()
+				.getConfiguration().loadDataSourceProperties().get("datasource");
 
-		@Override
-		public String toString() {
-			return "|" + id + "|" + parentPeriods + "|" + period + "|";
-		}
+		String dialect = connection.getHibDialectClass();
 
-		public String getPeriodIdentifier() {
-			return getParentPeriods() + "" + getPeriod();
-		}
+		if (dialect != null) {
 
-		@Override
-		public int hashCode() {
-			return getPeriodIdentifier().hashCode() * 23;
-		}
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y %H:%i:%s') ";
+				} else {
+					toReturn = " STR_TO_DATE('" + toReturn + "','%d/%m/%Y %H:%i:%s') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
+				try {
+					DateFormat daf;
+					if (StringUtils.isBounded(toReturn, "'")) {
+						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					} else {
+						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof TemporalRecord)) {
-				return false;
+					Date myDate = daf.parse(toReturn);
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+					toReturn = "'" + df.format(myDate) + "'";
+
+				} catch (Exception e) {
+					toReturn = "'" + toReturn + "'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y') ";
+				} else {
+					toReturn = " STR_TO_DATE('" + toReturn + "','%d/%m/%Y') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS') ";
+				} else {
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY HH24:MI:SS') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS') ";
+				} else {
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY HH24:MI:SS') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_DATE(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS') ";
+				} else {
+					toReturn = " TO_DATE('" + toReturn + "','DD/MM/YYYY HH24:MI:SS') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = toReturn;
+				} else {
+					toReturn = "'" + toReturn + "'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
+				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
+				 * (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if (StringUtils.isBounded(toReturn, "'")) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(toReturn);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + toReturn, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
+				}
 			}
-			TemporalRecord other = (TemporalRecord) obj;
-			return this.getPeriodIdentifier().equals(other.getPeriodIdentifier());
 		}
 
+		return toReturn;
+	}
+
+	/*
+	 * TODO metodo copiato da: AbstractStatementClause
+	 *
+	 * STANDARDIZZARE
+	 *
+	 */
+	protected String parseTimestamp(String date) {
+		if (date == null || date.equals("")) {
+			return "";
+		}
+
+		String toReturn = date;
+
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEngineInstance().getDataSource()
+				.getConfiguration().loadDataSourceProperties().get("datasource");
+
+		String dialect = connection.getHibDialectClass();
+
+		if (dialect != null) {
+
+			if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_MYSQL)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y %H:%i:%s') ";
+				} else {
+					toReturn = " STR_TO_DATE('" + toReturn + "','%d/%m/%Y %H:%i:%s') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
+				try {
+					DateFormat daf;
+					if (StringUtils.isBounded(toReturn, "'")) {
+						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
+					} else {
+						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+					}
+
+					Date myDate = daf.parse(toReturn);
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+					toReturn = "'" + df.format(myDate) + "'";
+
+				} catch (Exception e) {
+					toReturn = "'" + toReturn + "'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_INGRES)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " STR_TO_DATE(" + toReturn + ",'%d/%m/%Y') ";
+				} else {
+					toReturn = " STR_TO_DATE('" + toReturn + "','%d/%m/%Y') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				} else {
+					toReturn = " TO_TIMESTAMP('" + toReturn + "','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_ORACLE9i10g)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				} else {
+					toReturn = " TO_TIMESTAMP('" + toReturn + "','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_POSTGRES)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = " TO_TIMESTAMP(" + toReturn + ",'DD/MM/YYYY HH24:MI:SS.FF') ";
+				} else {
+					toReturn = " TO_TIMESTAMP('" + toReturn + "','DD/MM/YYYY HH24:MI:SS.FF') ";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
+				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
+					toReturn = toReturn;
+				} else {
+					toReturn = "'" + toReturn + "'";
+				}
+			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
+				/*
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
+				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
+				 * (yyyy-MM-dd).
+				 */
+				try {
+					DateFormat dateFormat;
+					if (StringUtils.isBounded(toReturn, "'")) {
+						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
+					} else {
+						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+					}
+					Date myDate = dateFormat.parse(toReturn);
+					dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					toReturn = "'" + dateFormat.format(myDate) + "'";
+				} catch (Exception e) {
+					logger.error("Error parsing the date " + toReturn, e);
+					throw new SpagoBIRuntimeException("Error parsing the date " + toReturn + ".");
+				}
+			}
+		}
+
+		return toReturn;
 	}
 
 }

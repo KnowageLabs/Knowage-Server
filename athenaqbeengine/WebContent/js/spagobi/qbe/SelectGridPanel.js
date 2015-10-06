@@ -118,6 +118,25 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		 data: Sbi.constants.qbe.SELECT_CLAUSE_AGGREGATION_FUNCTION
 	 })
 
+	, temporalOperandStore:  new Ext.data.SimpleStore({
+	     fields: ['operand', 'nome', 'descrizione'],
+	     data : [
+	        ['', '', ''],
+			['YTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.ytd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.ytd')],
+			['QTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.qtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.qtd')],
+			['MTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.mtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.mtd')],
+			['WTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.wtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.wtd')],
+			
+			['LAST_YEAR',  LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastyear'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastyear')],
+			['LAST_MONTH', LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastmonth'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastmonth')],
+			['LAST_WEEK',  LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastweek'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastweek')],
+	        
+			['PARALLEL_YEAR',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelyear'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelyear')],
+			['PARALLEL_MONTH',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelmonth'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelmonth')],
+			['PARALLEL_WEEK',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelweek'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelweek')]
+		] 
+	})
+
 	, orderingTypesStore: new Ext.data.SimpleStore({
 	     fields: ['type', 'nome', 'descrizione'],
 	     data : [
@@ -280,6 +299,9 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	           {name: 'longDescription'},
 	           {name: 'field'},
 	           
+	           {name: 'temporalOperand'},
+	           {name: 'temporalOperandParameter'},
+	           
 	           {name: 'funct'},	 
 	           {name: 'group'},
 	           {name: 'order'},
@@ -310,7 +332,10 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		      
 		      {name: 'filter', type: 'string'},
 		      {name: 'having', type: 'string'},
-		      {name: 'del', type: 'string'}
+		      {name: 'del', type: 'string'},
+	           
+	          {name: 'temporalOperand', type: 'string'},
+	          {name: 'temporalOperandParameter', type: 'string'}
 		]); 
 	}
 	
@@ -386,6 +411,20 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		    , hidden: false	
 		    , width: 50
 		    , sortable: false
+		}
+		
+		, 'temporalOperand': {
+			hideable: true
+			, hidden: false	
+			, width: 50
+			, sortable: false
+		}
+		
+		, 'temporalOperandParameter': {
+			hideable: true
+			, hidden: false	
+			, width: 50
+			, sortable: false
 		}
 	}
 	
@@ -533,6 +572,40 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			     , width: 50
 			     , sortable: false
 		     }, this.columns['funct'] || {})
+		     
+		     , Ext.apply({
+		    	 header: LN('sbi.qbe.selectgridpanel.headers.temporalOperand')
+		         , dataIndex: 'temporalOperand'
+		         , editor: new Ext.form.ComboBox({
+			         tpl: '<tpl for="."><div ext:qtip="{nome}: {descrizione}" class="x-combo-list-item">{nome}</div></tpl>',	
+			         allowBlank: true,
+			         editable:false,
+			         store: this.temporalOperandStore,
+			         displayField:'nome',
+			         valueField:'operand',
+			         typeAhead: true,
+			         mode: 'local',
+			         triggerAction: 'all',
+			         autocomplete: 'off',
+			         emptyText: LN('sbi.qbe.selectgridpanel.aggfunc.editor.emptymsg'),
+			         selectOnFocus:true
+		         })
+			     , hideable: true
+			     , hidden: false
+			     , width: 50
+			     , sortable: false
+		     }, this.columns['temporalOperand'] || {})
+		     
+		     , Ext.apply({
+		         header: LN('sbi.qbe.selectgridpanel.headers.temporalOperandParameter')
+		         , dataIndex: 'temporalOperandParameter'
+		         , editor: new Ext.form.TextField({
+		        	 allowBlank: true
+		         })
+			     , hideable: true
+			     , hidden: false	
+			     , sortable: false
+		     }, this.columns['temporalOperandParameter'] || {})
 		     
 		     , Ext.apply({
 		    	 header: LN('sbi.qbe.selectgridpanel.headers.order')

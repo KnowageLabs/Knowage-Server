@@ -5,12 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.query.serializer.json;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.HavingField;
@@ -125,6 +129,9 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		String funct;
 		String pattern;
 
+		String temporalOperand;
+		String temporalOperandParameter;
+
 		JSONObject fieldClaculationDescriptor;
 		String type;
 		String nature;
@@ -150,7 +157,14 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					included = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_INCLUDE);
 					visible = fieldJSON.getBoolean(QuerySerializationConstants.FIELD_VISIBLE);
 
+					temporalOperand = fieldJSON.optString(QuerySerializationConstants.TEMPORAL_OPERAND);
+					temporalOperandParameter = fieldJSON.optString(QuerySerializationConstants.TEMPORAL_OPERAND_PARAMETER);
+					if (StringUtilities.isEmpty(temporalOperandParameter)) {
+						temporalOperandParameter = "0";
+					}
+
 					if (ISelectField.SIMPLE_FIELD.equalsIgnoreCase(fieldType)) {
+
 						fieldUniqueName = fieldJSON.getString(QuerySerializationConstants.FIELD_ID);
 						Assert.assertNotNull(fieldUniqueName, "Field name connot be null");
 
@@ -165,11 +179,50 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						funct = fieldJSON.optString(QuerySerializationConstants.FIELD_AGGREGATION_FUNCTION);
 
 						if (AggregationFunctions.get(funct).equals(AggregationFunctions.NONE_FUNCTION)) {
-							pattern = field.getPropertyAsString("format");
+							pattern = null;// pattern = field.getPropertyAsString("format");
 						} else {
 							pattern = null;
 						}
-						query.addSelectFiled(field.getUniqueName(), funct, alias, included, visible, group.equalsIgnoreCase("true"), order, pattern);
+
+						// if (StringUtilities.isEmpty(temporalOperand)) {
+						query.addSelectFiled(field.getUniqueName(), funct, alias, included, visible, group.equalsIgnoreCase("true"), order, pattern,
+								temporalOperand, temporalOperandParameter);
+								// }
+								// Handle temporal operands
+								// else {
+								/*
+								 * IModelEntity temporalDimension = getTemporalDimension(dataSource); HierarchicalDimensionField hierarchicalDimensionByEntity =
+								 * temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType()); Hierarchy defaultHierarchy =
+								 * hierarchicalDimensionByEntity.getDefaultHierarchy();
+								 * 
+								 * String entity = temporalDimension.getType(); String temporalCondition = " 1 = 1 "; String year = entity + ":" +
+								 * defaultHierarchy.getLevelByType("YEAR"); String month = entity + ":" + defaultHierarchy.getLevelByType("MONTH"); String
+								 * temporalDimensionDateField = "the_date";
+								 * 
+								 * 
+								 * if (temporalOperand.equals("YTD")) { Calendar startDate = new GregorianCalendar();
+								 * startDate.set(startDate.get(Calendar.YEAR), 0, 1, 0, 0); Date today = new Date();
+								 * 
+								 * temporalCondition = year + " = (select "+year+" from "+entity+" where "+temporalDimensionDateField+
+								 * " between :startDate and :endDate ) ";
+								 * 
+								 * } else if (temporalOperand.equals("MTD")) {
+								 * 
+								 * temporalCondition = year + " = 2015 " + " AND " + month + " = 'October'";
+								 * 
+								 * }
+								 * 
+								 * type = "STRING"; nature = "ATTRIBUTE";
+								 * 
+								 * expression = "CASE WHEN " + temporalCondition + "THEN " + field.getUniqueName() + " ELSE NULL END"; slots = "";
+								 * 
+								 * query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"),
+								 * order, funct);
+								 * 
+								 */
+
+						// }
+
 					} else if (ISelectField.CALCULATED_FIELD.equalsIgnoreCase(fieldType)) {
 
 						fieldClaculationDescriptor = fieldJSON.getJSONObject(QuerySerializationConstants.FIELD_ID);
@@ -460,6 +513,38 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		}
 
 		return str;
+	}
+
+	private IModelEntity getTemporalDimension(IDataSource dataSource) {
+		IModelEntity temporalDimension = null;
+		Iterator<String> it = dataSource.getModelStructure().getModelNames().iterator();
+		while (it.hasNext()) {
+			String modelName = it.next();
+			List<IModelEntity> rootEntities = dataSource.getModelStructure().getRootEntities(modelName);
+			for (IModelEntity bc : rootEntities) {
+				if ("temporal_dimension".equals(bc.getProperty("type"))) {
+					temporalDimension = bc;
+					break;
+				}
+			}
+		}
+		return temporalDimension;
+	}
+
+	private IModelEntity getTimeDimension(IDataSource dataSource) {
+		IModelEntity timeDimension = null;
+		Iterator<String> it = dataSource.getModelStructure().getModelNames().iterator();
+		while (it.hasNext()) {
+			String modelName = it.next();
+			List<IModelEntity> rootEntities = dataSource.getModelStructure().getRootEntities(modelName);
+			for (IModelEntity bc : rootEntities) {
+				if ("time_dimension".equals(bc.getProperty("type"))) {
+					timeDimension = bc;
+					break;
+				}
+			}
+		}
+		return timeDimension;
 	}
 
 }
