@@ -632,16 +632,6 @@ public class SpagoBIUtilities {
 		return toReturn;
 	}
 	
-	/**
-	 * Get the resource  path
-	 * @return the path for resources
-	 */
-	public static String getResourcePath(){
-		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String resourcePath= SpagoBIUtilities.readJndiResource(path);
-		return resourcePath;
-	}
-	
+
 
 }
