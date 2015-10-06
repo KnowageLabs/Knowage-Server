@@ -355,7 +355,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	              border: false,
 	              bodyBorder: false,
 	              height:'100%',
-	              src: '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET_LABEL='+this.getWidget().storeId,
+	              src: '/'+ Sbi.mainContextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET_LABEL='+this.getWidget().storeId,
 		    });
 	    	  
 	    	var dialogBox = new Ext.Window({

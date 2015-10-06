@@ -10,37 +10,37 @@
 
   
 <!-- The default Ext theme, same as Ext 3 -->
-<!-- <link id="extall" rel="styleSheet" href ="/athenacockpitengine/js/lib/ext/4.2.1/resources/css/ext-all.css" type="text/css" />  -->
-<link id="theme-gray" rel="styleSheet" href ="/athenacockpitengine/js/lib/ext/4.2.1/resources/css/ext-all-gray.css" type="text/css"/>
-<!-- <link id="theme-neptune" rel="styleSheet" href ="/athenacockpitengine/js/lib/ext/4.2.1/resources/css/ext-all-neptune.css" type="text/css" />  -->
+<!-- <link id="extall" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext/4.2.1/resources/css/ext-all.css" type="text/css" />  -->
+<link id="theme-gray" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext/4.2.1/resources/css/ext-all-gray.css" type="text/css"/>
+<!-- <link id="theme-neptune" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext/4.2.1/resources/css/ext-all-neptune.css" type="text/css" />  -->
 
 <!-- Ext 4 framework -->
-<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ext-all-debug.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext/4.2.1/ext-all-debug.js'/></script>
 
 <!-- Ext 3 Compatibility (remove after migration is complete) -->
-<script type="text/javascript" src="/athenacockpitengine/js/lib/ext/4.2.1/compatibility/ext3-core-compat.js"></script>
-<script type="text/javascript" src="/athenacockpitengine/js/lib/ext/4.2.1/compatibility/ext3-compat.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext/4.2.1/compatibility/ext3-core-compat.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext/4.2.1/compatibility/ext3-compat.js"></script>
 
 <!-- Additional Ext overrides and application-specific includes here -->
-<script type="text/javascript" src="/athenacockpitengine/js/lib/ext/4.2.1/ux/TabCloseMenu.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext/4.2.1/ux/TabCloseMenu.js"></script>
 
 <%
 	if(request.getParameter("theme")!=null && !request.getParameter("theme").equals("")){
 %>
-	<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
-	<link id="theme-access" rel="styleSheet" href ="/athenacockpitengine/js/lib/ext/4.2.1/resources/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />	
+	<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext/4.2.1/ext-theme-<%= request.getParameter("theme") %>.js'/></script>  
+	<link id="theme-access" rel="styleSheet" href ="${pageContext.request.contextPath}/js/lib/ext/4.2.1/resources/css/ext-all-<%= request.getParameter("theme") %>-debug.css" type="text/css" />	
 <%
 	}
 %>
 
 <script type="text/javascript">
 	Ext.Ajax.timeout = 300000;
-	Ext.BLANK_IMAGE_URL = '/athenacockpitengine/js/lib/ext/4.2.1/resources/themes/images/default/tree/s.gif';
+	Ext.BLANK_IMAGE_URL = '${pageContext.request.contextPath}/js/lib/ext/4.2.1/resources/themes/images/default/tree/s.gif';
 </script>
 
 <!--  
-<link id="theme-overrides" rel="styleSheet" href ="/athenacockpitengine/athenacockpitengine/js/lib/overrides/overrides.css" type="text/css" />
-<script type="text/javascript" src='/athenacockpitengine/athenacockpitengine/js/lib/overrides/overrides.js'/></script>
+<link id="theme-overrides" rel="styleSheet" href ="${pageContext.request.contextPath}${pageContext.request.contextPath}/js/lib/overrides/overrides.css" type="text/css" />
+<script type="text/javascript" src='${pageContext.request.contextPath}${pageContext.request.contextPath}/js/lib/overrides/overrides.js'/></script>
 -->
 
 	      

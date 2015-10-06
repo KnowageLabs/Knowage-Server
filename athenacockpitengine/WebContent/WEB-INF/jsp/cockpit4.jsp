@@ -227,7 +227,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 				protocol: '<%= request.getScheme()%>'     
 				, host: '<%= request.getServerName()%>'
 				, port: '<%= request.getServerPort()%>'
-				, contextPath: 'athena'
+				, contextPath:  Sbi.mainContextName
 			}
 			, controllerConf: {
 				controllerPath: 'restful-services'   

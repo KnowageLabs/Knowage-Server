@@ -4,204 +4,204 @@ IMPORTANT: every time this file get modified (i.e. a new js file is added to the
 create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
  -->
  
-<!-- TODO : Make path relative to webapp name -->
+
 
 <!-- Include Ext stylesheets here: -->
-<link id="theme" rel="styleSheet" href ="/athenacockpitengine/css/cockpit.css" type="text/css" />
+<link id="theme" rel="styleSheet" href ="${pageContext.request.contextPath}/css/cockpit.css" type="text/css" />
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js'/></script>
 
 <!-- Plugins -->
-<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ux/Draggable.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/lib/ext/4.2.1/ux/IFrame.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext/4.2.1/ux/Draggable.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext/4.2.1/ux/IFrame.js'/></script>
 
 <!-- START-DEBUG -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Settings.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/WidgetTypesConstants.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/overrides/overrides.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Sbi.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Log.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/exceptions/ExceptionHandler.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Format.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/formats/LocaleUtils.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/service/RestService.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/service/ServiceReg.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/commons/Constants.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Settings.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/WidgetTypesConstants.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/overrides/overrides.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Sbi.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Log.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/exceptions/ExceptionHandler.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Format.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/service/RestService.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/service/ServiceReg.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Constants.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/StoreManager.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/StoreManager.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/WizardPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/DatasetsBrowserPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/DatasetsBrowserView.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/FileUploadPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/SaveDocumentWindow.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/Colors.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/WizardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/DatasetsBrowserPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/DatasetsBrowserView.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/FileUploadPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/SaveDocumentWindow.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/Colors.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/SelectionsPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/SelectionsWindow.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetRuntime.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetDesigner.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetManager.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetContainerComponent.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/SheetTabMenu.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/SheetsContainerPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetContainer.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/core/WidgetExtensionPointManager.js'/></script>
-
-
-
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditor.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorMainPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorControlPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorDesignerPalette.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorFieldPalette.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorCustomConfPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorGenericConfPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/SelectionsPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/SelectionsWindow.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/WidgetRuntime.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/WidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/WidgetManager.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/WidgetContainerComponent.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/SheetTabMenu.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/SheetsContainerPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/WidgetContainer.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/core/WidgetExtensionPointManager.js'/></script>
 
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/dataset/DatasetBrowserPage.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorPage.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizard.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/DatasetFieldsModel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorList.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDataset.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDocument.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorDatasetContainer.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditor.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/editor/association/AssociationEditorPage.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/AssociationEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/data/AssociationEditorWizard.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditor.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorMainPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorControlPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorDesignerPalette.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorFieldPalette.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorCustomConfPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorGenericConfPanel.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/editor/main/FilterEditorList.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/editor/main/FilterEditor.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/editor/main/FilterEditorPage.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/FilterEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/filters/FilterEditorWizard.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/editor/main/FontEditorTabsPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/editor/main/FontEditor.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/editor/main/FontEditorPage.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/FontEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/FontEditorWizard.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/BarChartFontStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontFamilyStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontSizeStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontDecorationStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/stores/FontWeightStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/BarChartFontTabPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/LineChartFontTabPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/PieChartFontTabPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/TableFontTabPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/CrosstabFontTabPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/fonts/views/FontColorField.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/dataset/DatasetBrowserPage.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/widget/WidgetEditorPage.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/editor/WidgetEditorWizard.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorTabsPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditor.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/editor/main/LayoutEditorPage.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/LayoutEditorWizardPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/LayoutEditorWizard.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/layouts/views/ViewModeLayoutTabPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/DatasetFieldsModel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/editor/association/AssociationEditorList.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/editor/association/AssociationEditorDataset.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/editor/association/AssociationEditorDocument.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/editor/association/AssociationEditorDatasetContainer.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/editor/association/AssociationEditor.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/editor/association/AssociationEditorPage.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/AssociationEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/data/AssociationEditorWizard.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/filters/editor/main/FilterEditorList.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/filters/editor/main/FilterEditor.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/filters/editor/main/FilterEditorPage.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/filters/FilterEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/filters/FilterEditorWizard.js'/></script>
 
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/editor/main/FontEditorTabsPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/editor/main/FontEditor.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/editor/main/FontEditorPage.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/FontEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/FontEditorWizard.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/stores/BarChartFontStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/stores/FontFamilyStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/stores/FontSizeStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/stores/FontDecorationStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/stores/FontWeightStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/views/BarChartFontTabPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/views/LineChartFontTabPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/views/PieChartFontTabPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/views/TableFontTabPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/views/CrosstabFontTabPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/fonts/views/FontColorField.js'/></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/layouts/editor/main/LayoutEditorTabsPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/layouts/editor/main/LayoutEditor.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/layouts/editor/main/LayoutEditorPage.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/layouts/LayoutEditorWizardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/layouts/LayoutEditorWizard.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/layouts/views/ViewModeLayoutTabPanel.js'/></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/MainPanel.js'/></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/dummy/DummyWidget.js'/></script>
 
 <!-- Widget commons -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsContainerPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsCardPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsContainerPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/QueryFieldsCardPanel.js'/></script>
 
 <!-- Text widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/text/TextWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/text/TextWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/text/TextWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/text/TextWidgetDesigner.js'/></script>
 
 <!-- Image widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/image/ImageWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/image/ImageWidgetDesigner.js'/></script>
 
 <!-- Document widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/document/DocumentWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/document/DocumentWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/document/DocumentWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/document/DocumentWidgetDesigner.js'/></script>
 
 <!-- Table widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/TableWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/AggregationChooserWindow.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/wizard/CalculatedFieldWizard.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/wizard/CalculatedFieldEditorPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/table/wizard/SaveWindow.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/TableWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/TableWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/AggregationChooserWindow.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/wizard/CalculatedFieldWizard.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/wizard/CalculatedFieldEditorPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/table/wizard/SaveWindow.js'/></script>
 
 <!-- Cross Tab widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/GenericDropTarget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidgetDesigner.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/AttributesContainerPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/MeasuresContainerPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/HTMLCrossTab.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/crosstab/CrosstabDetailsWizard.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/GenericDropTarget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/AttributesContainerPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/MeasuresContainerPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/HTMLCrossTab.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/CrossTabStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/crosstab/CrosstabDetailsWizard.js'/></script>
 
 
 <!-- NEW Abstract Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractChartWidgetRuntime.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractCartesianChartWidgetRuntime.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractChartWidgetRuntime.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/extjs/abstractchart/AbstractCartesianChartWidgetRuntime.js'/></script>
 
 <!-- NEW Line Chart widget -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/LineChartWidgetRuntime.js'/></script> -->
 
 <!-- NEW Bar Chart widget -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/BarChartWidgetRuntime.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/BarChartWidgetRuntime.js'/></script> -->
 
 
 <!-- Chart widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/AbstractChartWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/ChartCategoryPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/SeriesGroupingPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/ChartSeriesPanel.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/ColorField.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/SeriesPalette.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chart/DefaultChartDimensionRetrieverStrategy.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/AbstractChartWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/ChartCategoryPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/SeriesGroupingPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/ChartSeriesPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/ColorField.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/SeriesPalette.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chart/DefaultChartDimensionRetrieverStrategy.js'/></script>
 
 <!-- NEW Pie Chart widget -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/PieChartWidgetRuntime.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/PieChartWidgetRuntime.js'/></script> -->
 
 
 <!-- Bar Chart widget -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidget.js'/></script> -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidgetDesigner.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidget.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/barchart/BarChartWidgetDesigner.js'/></script> -->
 
 <!-- Pie Chart widget -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidget.js'/></script> -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidgetDesigner.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidget.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/piechart/PieChartWidgetDesigner.js'/></script> -->
 
 <!-- Line Chart widget -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script> -->
-<!-- <script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidget.js'/></script> -->
+<!-- <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/linechart/LineChartWidgetDesigner.js'/></script> -->
 
 <!-- Selection widget  -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/selection/SelectionWidget.js'/></script>
 
 <!-- Selection widget  -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/store/InMemoryFilteredStore.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/widgets/grid/InMemoryPagingGridPanel.js'/></script>
 
 <!-- NEW Chart Engine widget  -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chartengine/ChartEngineWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/chartengine/ChartEngineWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chartengine/ChartEngineWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/chartengine/ChartEngineWidgetDesigner.js'/></script>
 
 <!-- Image widget -->
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidget.js'/></script>
-<script type="text/javascript" src='/athenacockpitengine/js/src/ext4/sbi/cockpit/widgets/image/ImageWidgetDesigner.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/image/ImageWidget.js'/></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/cockpit/widgets/image/ImageWidgetDesigner.js'/></script>
 
 
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION
-<script type="text/javascript" src='/athenacockpitengine/athenacockpitengine/js/spagobi/cockpit-all.js'></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}${pageContext.request.contextPath}/js/spagobi/cockpit-all.js'></script>
 END-PRODUCTION -->
 
 

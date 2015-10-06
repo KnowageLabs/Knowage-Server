@@ -24,7 +24,7 @@ Sbi.service.ServiceRegistry = function(config) {
 		protocol: 'http'
 		, host: 'localhost'
 	    , port: '8080'
-	    , contextPath: 'athena'
+	    , contextPath:  Sbi.mainContextName
 	    , controllerPath: 'servlet/AdapterHTTP'
 	    , restServicesPath: 'api/1.0'
 	});
