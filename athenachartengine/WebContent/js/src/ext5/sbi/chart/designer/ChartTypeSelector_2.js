@@ -15,62 +15,74 @@ var chartTypesStore = Ext.create
 		[
 		 	{
 		 		style: "Bar chart", // TODO: Make LN()
-		 		styleAbbr: "bar"
+		 		styleAbbr: "bar",
+		 		icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png',
  			},	
 		 	
  			{
  				style: "Line chart", // TODO: Make LN()
- 				styleAbbr: "line"
+ 				styleAbbr: "line",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Pie chart", // TODO: Make LN()
-				styleAbbr: "pie"
+				styleAbbr: "pie",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_icon_new_1.png',
 			},	
 		 	
  			{
 				style: "Radar chart", // TODO: Make LN()
-				styleAbbr: "radar"
+				styleAbbr: "radar",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/radarchart/img/radarchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Scatter chart", // TODO: Make LN()
-				styleAbbr: "scatter"
+				styleAbbr: "scatter",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/scatterchart/img/scatterchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Treemap chart", // TODO: Make LN()
-				styleAbbr: "treemap"
+				styleAbbr: "treemap",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/treemapchart/img/treemapchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Heatmap chart", // TODO: Make LN(
-				styleAbbr: "heatmap"
+				styleAbbr: "heatmap",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/heatmapchart/img/heatmapchart_icon_new_1.png'
 			},	
 			
 			{
 				style: "Gauge chart", // TODO: Make LN()
-				styleAbbr: "gauge"
+				styleAbbr: "gauge",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/gaugechart/img/gaugechart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Wordcloud chart", // TODO: Make LN()
-				styleAbbr: "wordcloud"
+				styleAbbr: "wordcloud",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/wordcloudchart/img/wordcloudchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Parallel chart", // TODO: Make LN()
-				styleAbbr: "parallel"
+				styleAbbr: "parallel",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/parallelchart/img/parallelchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Sunburst chart", // TODO: Make LN()
-				styleAbbr: "sunburst"
+				styleAbbr: "sunburst",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/sunburstchart/img/sunburstchart_icon_new_1.png'
 			},
 			
 			{
 				style: "Chord chart", // TODO: Make LN()
-				styleAbbr: "chord"
+				styleAbbr: "chord",
+				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/chordchart/img/chordchart_icon_new_1.png'
 			},	
 		]
 	}
@@ -93,13 +105,15 @@ Ext.define
 	    padding: "5 0 10 0",
 	    width: 170,
 	    
+	    tpl: '<tpl for="."><div class="x-boundlist-item"><img src="{icon}" width="20px"/>&nbsp;&nbsp;&nbsp;{style}</div></tpl>',
+	    
 	    statics:
     	{
 	    	/**
 			 * Gives us information if the Designer is completely loaded (all necessary data are available). 
 			 * If it is, we can access its data (e.g. yAxisPool) and we will not have an error in the code.
 			 */
-	    	dataLoaded: false
+	    	dataLoaded: false	    
     	},
 	    
 	    getChartType: function() {
@@ -484,9 +498,21 @@ Ext.define
 		},
 				
 		listeners:
-		{			
+		{	
+//			select: function(comboBox, records)
+//			{
+//				console.log(comboBox);
+//				
+//				comboBox.inputEl.setStyle({
+//	                'background-image':    'url(' + comboBox. + ')',
+//	                'background-repeat':   'no-repeat',
+//	                'background-position': '3px center',
+//	                'padding-left':        '25px'
+//	            });				
+//			},
+			
 			change: function(a,currentOrNewChartType,previousChartType)
-			{				
+			{			
 				/**
 				 * When Designer renders for the first time (when opening the chart in it for the first
 				 * time) second input parameters of this function (event) will be equal to the actual chart
