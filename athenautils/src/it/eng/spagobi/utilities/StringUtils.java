@@ -262,7 +262,7 @@ public class StringUtils {
 					logger.debug(" - " + parameter);
 				}
 			} catch (IOException e) {
-				// System.err.println("ERROR: malformed string: " + str[i]);
+				// logger.error("ERROR: malformed string: " + str[i]);
 				e.printStackTrace();
 			}
 

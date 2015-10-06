@@ -1,16 +1,10 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.test.AbstractSpagoBITestCase;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -18,34 +12,38 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 	ScriptDataSet dataset;
-	
+
+	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		try {
 			dataset = new ScriptDataSet();
-		} catch(Exception t) {
-			System.err.println("An unespected error occurred during setUp: ");
+		} catch (Exception t) {
+			logger.error("An unespected error occurred during setUp: ");
 			t.printStackTrace();
 			throw t;
 		}
 	}
-	
+
+	@Override
 	public void tearDown() throws Exception {
 		super.tearDown();
 	}
-	
+
 	public void testLoadWithSimpleScript() {
 		dataset.setScriptLanguage("ECMAScript");
-		dataset.setScript("'<ROWS>" +
-				"<ROW citta=\"Milano\" regione=\"Lombardia\"/>" +
-				"<ROW citta=\"Padova\" regione=\"Veneto\"/>" +
-				"</ROWS>'");
+		dataset.setScript("'<ROWS>" + "<ROW citta=\"Milano\" regione=\"Lombardia\"/>" + "<ROW citta=\"Padova\" regione=\"Veneto\"/>" + "</ROWS>'");
 		dataset.loadData();
 		IDataStore dataStore = dataset.getDataStore();
 		assertNotNull(dataStore);
@@ -60,18 +58,18 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		assertNotNull(field2MetaData);
 		assertEquals("regione", field2MetaData.getName());
 		Iterator<IRecord> records = dataStore.iterator();
-		while(records.hasNext()) {
+		while (records.hasNext()) {
 			IRecord record = records.next();
 			assertEquals(2, record.getFields().size());
 		}
-		
+
 		List<IRecord> rcds = dataStore.findRecords(0, "Milano");
 		assertNotNull(rcds);
 		assertEquals(1, rcds.size());
 		IRecord record = rcds.get(0);
 		IField field = record.getFieldAt(1);
 		assertEquals("Lombardia", field.getValue());
-		
+
 		rcds = dataStore.findRecords(0, "Padova");
 		assertNotNull(rcds);
 		assertEquals(1, rcds.size());
@@ -79,7 +77,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		field = record.getFieldAt(1);
 		assertEquals("Veneto", field.getValue());
 	}
-	
+
 	public void testLoadWithNonReturningXMLScript() {
 		dataset.setScriptLanguage("ECMAScript");
 		dataset.setScript("'Milano'");
@@ -93,13 +91,13 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IFieldMetaData field1MetaData = metaData.getFieldMeta(0);
 		assertNotNull(field1MetaData);
 		assertEquals("value", field1MetaData.getName());
-		
+
 		Iterator<IRecord> records = dataStore.iterator();
-		while(records.hasNext()) {
+		while (records.hasNext()) {
 			IRecord record = records.next();
 			assertEquals(1, record.getFields().size());
 		}
-		
+
 		List<IRecord> rcds = dataStore.findRecords(0, "Milano");
 		assertNotNull(rcds);
 		assertEquals(1, rcds.size());
@@ -107,7 +105,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IField field = record.getFieldAt(0);
 		assertEquals("Milano", field.getValue());
 	}
-	
+
 	public void testLoadWithScriptThatCallAnImportedFunction() {
 		dataset.setScriptLanguage("ECMAScript");
 		dataset.setScript("returnValue('Milano')");
@@ -128,7 +126,7 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IField field = record.getFieldAt(0);
 		assertEquals("Milano", field.getValue());
 	}
-	
+
 	public void testLoadWithProfiledScript() {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("citta", "Milano");
@@ -151,8 +149,8 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IRecord record = rcds.get(0);
 		IField field = record.getFieldAt(0);
 		assertEquals("Milano", field.getValue());
-	}	
-	
+	}
+
 	public void testLoadWithParametricScript() {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("citta", "Milano");
@@ -175,8 +173,8 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		IRecord record = rcds.get(0);
 		IField field = record.getFieldAt(0);
 		assertEquals("Milano", field.getValue());
-	}	
-	
+	}
+
 	public void testLoadWithScriptThatUsesBindings() {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("citta", "Milano");
@@ -184,13 +182,10 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		Map<String, Object> attributes = new HashMap<String, Object>();
 		attributes.put("regione", "Lombardia");
 		dataset.setUserProfileAttributes(attributes);
-		
+
 		dataset.setScriptLanguage("ECMAScript");
-		dataset.setScript("'<ROWS>" +
-				"<ROW citta=\"' + parameters.get('citta') + '\" " +
-					"regione=\"' + attributes.get('regione') + '\"/>" +
-				"<ROW citta=\"Padova\" regione=\"Veneto\"/>" +
-				"</ROWS>'");
+		dataset.setScript("'<ROWS>" + "<ROW citta=\"' + parameters.get('citta') + '\" " + "regione=\"' + attributes.get('regione') + '\"/>"
+				+ "<ROW citta=\"Padova\" regione=\"Veneto\"/>" + "</ROWS>'");
 		dataset.loadData();
 		IDataStore dataStore = dataset.getDataStore();
 		assertNotNull(dataStore);
@@ -205,18 +200,18 @@ public class ScriptDataSetTest extends AbstractSpagoBITestCase {
 		assertNotNull(field2MetaData);
 		assertEquals("regione", field2MetaData.getName());
 		Iterator<IRecord> records = dataStore.iterator();
-		while(records.hasNext()) {
+		while (records.hasNext()) {
 			IRecord record = records.next();
 			assertEquals(2, record.getFields().size());
 		}
-		
+
 		List<IRecord> rcds = dataStore.findRecords(0, "Milano");
 		assertNotNull(rcds);
 		assertEquals(1, rcds.size());
 		IRecord record = rcds.get(0);
 		IField field = record.getFieldAt(1);
 		assertEquals("Lombardia", field.getValue());
-		
+
 		rcds = dataStore.findRecords(0, "Padova");
 		assertNotNull(rcds);
 		assertEquals(1, rcds.size());
