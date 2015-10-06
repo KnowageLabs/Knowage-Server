@@ -457,7 +457,6 @@ public class SmartFilterDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("Added parameter [" + pname + "] with value [" + pvalue + "] to request parameters list");
 	}
 
-	@Override
 	public SourceBean getTemplateAsSourceBean(byte[] content) {
 		SourceBean templateSB = null;
 		try {
