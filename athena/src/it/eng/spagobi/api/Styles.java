@@ -1,5 +1,7 @@
 package it.eng.spagobi.api;
 
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+
 import java.io.File;
 
 import javax.ws.rs.GET;
@@ -13,6 +15,8 @@ import org.w3c.dom.Document;
 
 @Path("/Styles")
 public class Styles {
+	
+	private static final String PATH_TO_STYLE = "/chart/style";
 
 	@SuppressWarnings("unchecked")
 	@GET
@@ -25,7 +29,7 @@ public class Styles {
 
 		System.out.println("usao");
 
-		File folder = new File("C:/Users/lkostic/athena-runtimes/apache-tomcat-7.0.61/resources/chart/style");
+		File folder = new File(SpagoBIUtilities.getResourcePath()+PATH_TO_STYLE);
 		File[] listOfFiles = folder.listFiles();
 
 		System.out.println(listOfFiles.length);
