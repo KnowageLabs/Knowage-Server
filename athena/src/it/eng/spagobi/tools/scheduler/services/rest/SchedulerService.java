@@ -54,11 +54,14 @@ import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
+import it.eng.spagobi.tools.scheduler.wsEvents.SbiWsEvent;
+import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -565,10 +568,23 @@ public class SchedulerService {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveTrigger(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		try {
-			ISchedulerDAO dao = DAOFactory.getSchedulerDAO();
+		HashMap<String, String> logParam = new HashMap<String, String>();
 
+		try {
 			JSONObject triggerJson = RestUtilities.readBodyAsJSONObject(req);
+
+			String jobName = (String) triggerJson.opt(JobTrigger.JOB_NAME);
+			String jobGroupName = (String) triggerJson.opt(JobTrigger.JOB_GROUP);
+			String triggerName = (String) triggerJson.opt(JobTrigger.TRIGGER_NAME);
+			String triggerGroup = (String) triggerJson.opt(JobTrigger.TRIGGER_GROUP);
+			if (triggerGroup == null || triggerGroup.equals("")) {
+				triggerGroup = "DEFAULT";
+			}
+
+			logParam.put("JOB NAME", jobName);
+			logParam.put("JOB GROUP", jobGroupName);
+			logParam.put("TRIGGER NAME", triggerName);
+			logParam.put("TRIGGER GROUP", triggerGroup);
 
 			JobTrigger jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
 
@@ -581,14 +597,101 @@ public class SchedulerService {
 			return servoutStr;
 			// return "";
 		} catch (Exception e) {
-			e.printStackTrace();
+			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");
+			logger.error("Error while create immediate trigger ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+			}
 		}
 
-		return ("{resp:'ERROR'}");
+		// return ("{resp:'ERROR'}");
 	}
 
-	private JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject) throws Exception {
+	@GET
+	@Path("/triggerEvent")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String triggerEvent(@Context HttpServletRequest req) {
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		HashMap<String, String> logParam = new HashMap<String, String>();
 
+		JSONObject resp = new JSONObject();
+
+		try {
+			String eventName = req.getParameter("eventName");
+			logParam.put("EVENT NAME", eventName);
+
+			SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
+
+			Date incomingDate = new Date();
+			// String ipComeFrom = req.getHeader("X-Forwarded-For");
+			String ipComeFrom = req.getRemoteAddr();
+
+			SbiWsEvent sbiWsEvent = new SbiWsEvent(eventName, ipComeFrom, incomingDate);
+			Integer newId = wsEventsDao.triggerEvent(sbiWsEvent);
+
+			resp.put("sbiWsEventId", newId);
+
+			return resp.toString();
+
+		} catch (Exception e) {
+			updateAudit(req, profile, "SCHED_TRIGGER.PAUSE", logParam, "KO");
+			logger.error("Error while pausing trigger ", e);
+			logger.debug(canNotFillResponseError);
+			try {
+				return ExceptionUtilities.serializeException(canNotFillResponseError, null);
+			} catch (Exception ex) {
+				logger.debug("Cannot fill response container.");
+				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+			}
+		}
+	}
+
+	// TODO To remove asap. This mustn't be a service.
+	// functionality for ws event updates
+	// @GET
+	// @Path("/markTakenCharge")
+	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// public String markTakenCharge(@Context HttpServletRequest req) {
+	// IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	// HashMap<String, String> logParam = new HashMap<String, String>();
+	//
+	// JSONObject resp = new JSONObject();
+	//
+	// try {
+	// String eventName = req.getParameter("eventName");
+	// logParam.put("EVENT NAME", eventName);
+	//
+	// SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
+	//
+	// SbiWsEvent sbiWsEvent = wsEventsDao.loadSbiWsEvent(eventName);
+	//
+	// sbiWsEvent.setTakeChargeDate(new Date());
+	//
+	// wsEventsDao.updateEvent(sbiWsEvent);
+	//
+	// resp.put("sbiWsEventId", sbiWsEvent.getId());
+	// resp.put("event date taken in charge", sbiWsEvent.getTakeChargeDate());
+	//
+	// return resp.toString();
+	//
+	// } catch (Exception e) {
+	// updateAudit(req, profile, "SCHED_TRIGGER.PAUSE", logParam, "KO");
+	// logger.error("Error while pausing trigger ", e);
+	// logger.debug(canNotFillResponseError);
+	// try {
+	// return ExceptionUtilities.serializeException(canNotFillResponseError, null);
+	// } catch (Exception ex) {
+	// logger.debug("Cannot fill response container.");
+	// throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+	// }
+	// }
+	// }
+
+	private JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject) throws Exception {
 		JobTrigger jobTrigger = new JobTrigger();
 
 		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();

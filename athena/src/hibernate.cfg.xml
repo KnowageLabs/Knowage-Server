@@ -119,6 +119,8 @@
 
 		<mapping
 			resource="it/eng/spagobi/tools/scheduler/metadata/mapping/SbiTriggerPaused.hbm.xml" />
+		<mapping 
+			resource="it/eng/spagobi/tools/scheduler/wsEvents/mapping/SbiWsEvent.hbm.xml" />
 
 
 

@@ -98,6 +98,10 @@
 
 		<DAO name="SchedulerDAO"
 			implementation="it.eng.spagobi.tools.scheduler.dao.quartz.QuarzSchedulerDAOImpl" />
+		
+		<DAO name="WsEventDAO"
+			implementation="it.eng.spagobi.tools.scheduler.wsEvents.dao.impl.SbiWsEventsDaoImpl" />
+		
 		<DAO name="MetaModelsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.MetaModelsDAOImpl" />
 		<DAO name="ArtifactsDAO" implementation="it.eng.spagobi.tools.catalogue.dao.ArtifactsDAOImpl" />
 		<DAO name="CommunityDAO" implementation="it.eng.spagobi.community.dao.SbiCommunityDAOImpl" />

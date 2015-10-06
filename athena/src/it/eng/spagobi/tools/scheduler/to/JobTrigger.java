@@ -20,6 +20,7 @@ public class JobTrigger implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final String TRIGGER_NAME = "triggerName";
+	public static final String TRIGGER_GROUP = "triggerGroup";
 	public static final String TRIGGER_DESCRIPTION = "triggerDescription";
 	public static final String IS_SUSPENDED = "isSuspended";
 	public static final String START_DATE = "startDate";
