@@ -1,19 +1,17 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.bo;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
- * 
- * Triggers are the 'mechanism' by which <code>Jobs</code> are scheduled. 
- * Many <code>Triggers</code> can point to the same <code>Job</code>, 
- * but a single <code>Trigger</code> can only point to one <code>Job</code>. 
- * 
+ *
+ * Triggers are the 'mechanism' by which <code>Jobs</code> are scheduled. Many <code>Triggers</code> can point to the same <code>Job</code>, but a single
+ * <code>Trigger</code> can only point to one <code>Job</code>.
+ *
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
@@ -21,16 +19,16 @@ public class Trigger {
 	String name;
 	String groupName;
 	String description;
-	
+
 	boolean runImmediately;
-	
+
 	Date startTime;
 	Date endTime;
-	
+
 	CronExpression cronExpression;
-	
+
 	Job job;
-	
+
 	public Trigger() {
 		cronExpression = new CronExpression();
 	}
@@ -82,8 +80,7 @@ public class Trigger {
 	public void setCronExpression(CronExpression cronExpression) {
 		this.cronExpression = cronExpression;
 	}
-	
-	
+
 	public boolean isSimpleTrigger() {
 		return this.cronExpression.isSimpleExpression();
 	}
@@ -108,8 +105,7 @@ public class Trigger {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((groupName == null) ? 0 : groupName.hashCode());
+		result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -140,8 +136,5 @@ public class Trigger {
 	public String toString() {
 		return "Trigger [name=" + name + ", groupName=" + groupName + "]";
 	}
-	
-	
-	
-	
+
 }

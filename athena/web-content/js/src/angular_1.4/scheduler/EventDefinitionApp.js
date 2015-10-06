@@ -250,7 +250,13 @@ eventDefinitionApp.controller('ActivityEventController',
 					} else {
 						activityEventCtrl.typeOperation = "scheduler";
 						activityEventCtrl.shedulerType = true;
-						if(op.type == 'week') {	
+						if(op.type == 'minute'){
+							activityEventCtrl.eventSched.minute_repetition_n=op.parameter.numRepetition;
+						} else if(op.type == 'hour'){
+							activityEventCtrl.eventSched.hour_repetition_n=op.parameter.numRepetition;
+						} else if(op.type == 'day'){
+							activityEventCtrl.eventSched.day_repetition_n=op.parameter.numRepetition;
+						} else if(op.type == 'week') {	
 							activityEventCtrl.selectedWeek = op.parameter.days;
 						} else if(op.type == 'month') {
 							if(op.parameter.hasOwnProperty("months")) {
@@ -271,20 +277,12 @@ eventDefinitionApp.controller('ActivityEventController',
 								activityEventCtrl.typeMonthWeek = true;
 								activityEventCtrl.dayinmonthrep_week = op.parameter.dayRepetition;
 							}
-						}
+						}  
 					}
 					
 					//carico le informazioni dei documenti
-					for (var key in d.saveOptions) {
-						for(var ind=0;ind<activityEventCtrl.event.documents.length;ind++){
-							if(activityEventCtrl.event.documents[ind].labelId==key){
-								d.saveOptions[key].label=activityEventCtrl.event.documents[ind].label;
-								d.saveOptions[key].labelId=activityEventCtrl.event.documents[ind].labelId;
-								activityEventCtrl.event.documents[ind]=d.saveOptions[key];
-								break;
-							}
-						}
-					}
+					activityEventCtrl.event.documents=d.documents;
+				
 					activityEventCtrl.selectedDocument = activityEventCtrl.event.documents[0];
 				}
 			})

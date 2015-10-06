@@ -257,7 +257,7 @@
 		
 		<md-input-container>
 			<label>{{translate.load("Mail text")}}:</label>
-			<textarea ng-model="activityEventCtrl.selectedDocument.mailTxt" columns="1"
+			<textarea ng-model="activityEventCtrl.selectedDocument.mailtxt" columns="1"
 					maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea> 
 		</md-input-container> 
 			

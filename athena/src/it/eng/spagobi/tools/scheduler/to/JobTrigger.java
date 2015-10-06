@@ -5,10 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.to;
 
-import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.serializeSaveParameterOptions;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -272,6 +268,9 @@ public class JobTrigger implements Serializable {
 	 * @return the chron string
 	 */
 	public String getChrono() {
+		if ("single{}".compareTo(this.chrono) == 0) {
+			return "{'type': 'single' }";
+		}
 		return chrono;
 	}
 
@@ -317,87 +316,6 @@ public class JobTrigger implements Serializable {
 	 */
 	public void setSaveOptions(Map<String, DispatchContext> saveOptions) {
 		this.saveOptions = saveOptions;
-	}
-
-	/**
-	 * Gets the start date rf c3339.
-	 *
-	 * @return the start date rf c3339
-	 */
-	public String getStartDateRFC3339() {
-		String startDRFC = "";
-		String startD = this.getStartDate();
-		if ((startD != null) && !startD.trim().equals("")) {
-			String[] dateParts = startD.split("/");
-			startDRFC = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
-		}
-		return startDRFC;
-	}
-
-	/**
-	 * Gets the end date rf c3339.
-	 *
-	 * @return the end date rf c3339
-	 */
-	public String getEndDateRFC3339() {
-		String endDRFC = "";
-		String endD = this.getEndDate();
-		if ((endD != null) && !endD.trim().equals("")) {
-			if (endD.indexOf("/") > 0) {
-				String[] dateParts = endD.split("/");
-				endDRFC = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
-			} else {
-				endDRFC = endD;
-			}
-		}
-		return endDRFC;
-	}
-
-	public StringBuffer getSchedulingMessage(boolean runImmediately, IEngUserProfile profile) throws EMFUserError {
-		StringBuffer message = new StringBuffer();
-		JobInfo jobInfo = getJobInfo();
-
-		message.append("<SERVICE_REQUEST ");
-
-		message.append(" jobName=\"" + jobInfo.getJobName() + "\" ");
-
-		message.append(" jobGroup=\"" + jobInfo.getJobGroupName() + "\" ");
-		if (runImmediately) {
-			message.append(" runImmediately=\"true\" ");
-		} else {
-			message.append(" triggerName=\"" + getTriggerName() + "\" ");
-
-			message.append(" triggerDescription=\"" + getTriggerDescription() + "\" ");
-			message.append(" startDate=\"" + getStartDate() + "\" ");
-
-			message.append(" startTime=\"" + getStartTime() + "\" ");
-
-			message.append(" chronString=\"" + getChrono() + "\" ");
-
-			String enddate = getEndDate();
-			String endtime = getEndTime();
-			if (enddate != null && !enddate.trim().equals("")) {
-				message.append(" endDate=\"" + enddate + "\" ");
-
-				if (endtime != null && !endtime.trim().equals("")) {
-					message.append(" endTime=\"" + endtime + "\" ");
-
-				}
-			}
-		}
-		String repeatinterval = getRepeatInterval();
-		if (!repeatinterval.trim().equals("")) {
-			message.append(" repeatInterval=\"" + repeatinterval + "\" ");
-
-		}
-		message.append(">");
-
-		serializeSaveParameterOptions(message, this, runImmediately, profile);
-
-		message.append("</SERVICE_REQUEST>");
-
-		return message;
-
 	}
 
 }

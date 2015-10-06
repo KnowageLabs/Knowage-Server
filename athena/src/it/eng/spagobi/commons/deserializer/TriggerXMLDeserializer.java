@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUIDGenerator;
 
 /**
@@ -83,8 +84,15 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 			boolean runImmediately = deserializeRunImmediatelyAttribute(xml);
 			if (runImmediately) {
+				String cron = (String) xml.getAttribute(CRON_STRING);
+				JSONObject jo = new JSONObject(cron);
+				String t = jo.getString("type");
+				String fintype = "";
+				if (t != null && t.compareTo("event") == 0) {
+					fintype = t;
+				}
 
-				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
+				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString() + "_" + fintype;
 				triggerGroupName = null;
 				triggerDescription = null;
 				startTime = null;

@@ -21,9 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.scheduler.services.rest;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.JobTriggerToJson;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSaveOptionsFromRequest;
-import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.serializeSaveOptions;
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSchedulingMessage;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -390,9 +391,10 @@ public class SchedulerService {
 			logParam.put("TRIGGER GROUP", triggerGroup);
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 
-			TriggerInfo triggerInfo = this.getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
-
-			StringBuffer message = createMessageSaveSchedulation(triggerInfo, true, profile);
+			// TriggerInfo triggerInfo = this.getTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+			// StringBuffer message = createMessageSaveSchedulation(triggerInfo, true, profile);
+			JobTrigger jobtri = getJobTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+			StringBuffer message = getSchedulingMessage(jobtri, true, profile);
 
 			// call the web service to create the schedule
 			String resp = schedulerService.scheduleJob(message.toString());
@@ -522,32 +524,17 @@ public class SchedulerService {
 			logParam.put("TRIGGER NAME", triggerName);
 			logParam.put("TRIGGER GROUP", triggerGroup);
 
-			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-
 			JobTrigger jobtri = getJobTriggerInfo(jobName, jobGroupName, triggerName, triggerGroup);
+
+			// JSONObject j = XML.toJSONObject(getSchedulingMessage(jobtri, false, profile).toString());
 
 			JSONObject jo = new JSONObject();
 			if (jobtri == null) {
-				jo.put("errors", "NO DATA");
+				jo.put("Status", "NON OK");
+				jo.put("Errors", "NO DATA");
 			} else {
-				JSONArray serializedSaveOptions = serializeSaveOptions(jobtri);
-				return JsonConverter.objectToJson(jobtri, JobTrigger.class);
-
+				jo = JobTriggerToJson(jobtri);
 			}
-
-			// jo = new JSONObject(
-			// "{'jobName':'MyJob','jobGroup':'BIObjectExecutions','isSuspended':true,"
-			// + "'document':["
-			// + "{'label':'file11','parameters':'',"
-			// + "'sendmail':true,'uniqueMail':true,'zipMailDocument':true,'zipMailName':'ase',"
-			// + "'useFixedRecipients':true,'mailtos':'asdsad@dsad.as','useDataset':true,'datasetLabel':'dataset 11',"
-			// +
-			// "'datasetParameter':'param2','useExpression':true,'expression':'cu mancia pat n mm','mailsubj':'asasas','containedFileName':'asdas','mailTxt':'asa','reportNameInSubject':true},"
-			// + "{'label':'nnn','parameters':'','saveasdocument':true,'documentname':'das','documentdescription':'descr','useFixedFolder':true,"
-			// + "'funct':[1,2],'useFolderDataset':true,'datasetFolderLabel':'dataset 10','datasetFolderParameter':'driver2'}" + "],"
-			// + "'chrono':{'type':'week','parameter': { 'days':['MON','TUE']}}," + "'startTime':'20:55'," + "'endTime':'16:59',"
-			// + "'triggerName':'MyJob_Scheduler_1'," + "'triggerDescription':'descrizione'," + "'startDate':'2015-02-09T23:00:00.000Z',"
-			// + "'endDate':'2015-09-29T22:00:00.000Z'}");
 			return jo.toString();
 
 		} catch (Exception e) {
@@ -571,6 +558,8 @@ public class SchedulerService {
 		HashMap<String, String> logParam = new HashMap<String, String>();
 
 		try {
+			//ISchedulerDAO dao = DAOFactory.getSchedulerDAO();
+
 			JSONObject triggerJson = RestUtilities.readBodyAsJSONObject(req);
 
 			String jobName = (String) triggerJson.opt(JobTrigger.JOB_NAME);
@@ -588,7 +577,7 @@ public class SchedulerService {
 
 			JobTrigger jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
 
-			StringBuffer message = jobTrigger.getSchedulingMessage(false, profile);
+			StringBuffer message = getSchedulingMessage(jobTrigger, false, profile);
 
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 
@@ -608,9 +597,9 @@ public class SchedulerService {
 			}
 		}
 
-		// return ("{resp:'ERROR'}");
+		//return ("{resp:'ERROR'}");
 	}
-
+	
 	@GET
 	@Path("/triggerEvent")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
