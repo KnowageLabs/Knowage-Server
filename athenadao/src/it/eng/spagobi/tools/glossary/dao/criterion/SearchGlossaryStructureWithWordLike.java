@@ -3,6 +3,7 @@ package it.eng.spagobi.tools.glossary.dao.criterion;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.glossary.metadata.SbiGlWlist;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
@@ -11,6 +12,8 @@ import org.hibernate.criterion.Restrictions;
 public class SearchGlossaryStructureWithWordLike implements ICriterion<SbiGlWlist> {
 	private final String glossaryId;
 	private final String word;
+
+	static protected Logger logger = Logger.getLogger(SearchGlossaryStructureWithWordLike.class);
 
 	public SearchGlossaryStructureWithWordLike(String glossaryId, String word) {
 		this.glossaryId = glossaryId;
@@ -21,7 +24,7 @@ public class SearchGlossaryStructureWithWordLike implements ICriterion<SbiGlWlis
 	public Criteria evaluate(Session session) {
 
 		if (glossaryId == null) {
-			System.out.println("SearchGlossaryStructureWithWordLike, glossaryId =null");
+			logger.debug("SearchGlossaryStructureWithWordLike, glossaryId =null");
 			return null;
 		}
 

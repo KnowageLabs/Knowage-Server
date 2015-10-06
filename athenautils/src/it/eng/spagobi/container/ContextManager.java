@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.container;
 
@@ -14,18 +14,18 @@ import org.apache.log4j.Logger;
 
 /**
  * This class provides useful methods to manage context on a ISessionContainer
- * 
+ *
  * @author Zerbetto (davide.zerbetto@eng.it)
  *
  */
 public class ContextManager extends AbstractContainer implements IBeanContainer {
-	
+
 	private static final String _sessionAttributeBaseKey = "SPAGOBI_SESSION_ATTRIBUTE";
 	protected IBeanContainer contextsContainer;
 	protected IContextRetrieverStrategy contextRetrieverStrategy;
-	
+
 	static private Logger logger = Logger.getLogger(ContextManager.class);
-	
+
 	public ContextManager(IBeanContainer beanContainer, IContextRetrieverStrategy strategy) {
 		logger.debug("IN");
 		try {
@@ -39,10 +39,12 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Retrieves a generic object from context using the given key.
-	 * @param key The key of the object in context
+	 * 
+	 * @param key
+	 *            The key of the object in context
 	 * @return The object in context with the given key
 	 */
 	public Object get(String key) {
@@ -70,10 +72,12 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 		}
 		return toReturn;
 	}
-	
+
 	/**
 	 * Sets a generic object into context using the given key.
-	 * @param key The key to be used to store object in context
+	 * 
+	 * @param key
+	 *            The key to be used to store object in context
 	 */
 	public void set(String key, Object object) {
 		logger.debug("IN: input key = [" + key + "], object = [" + object + "]");
@@ -97,10 +101,12 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Removes an object (given its key at input) from context.
-	 * @param key The key of the object on context.
+	 * 
+	 * @param key
+	 *            The key of the object on context.
 	 */
 	public void remove(String key) {
 		logger.debug("IN: input key = [" + key + "]");
@@ -125,7 +131,7 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Destroys current context.
 	 */
@@ -137,7 +143,7 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Destroys all contexts older than the number of minutes specified at input.
 	 */
@@ -165,17 +171,18 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 			logger.debug("OUT");
 		}
 	}
+
 	/**
 	 * Print all the contexts with all personal objects
 	 */
 	public void print() {
 		List contextObjects = this.getKeys();
-		for (int i=0; i<contextObjects.size(); i++){
-			String attributeName = (String)contextObjects.get(i);
+		for (int i = 0; i < contextObjects.size(); i++) {
+			String attributeName = (String) contextObjects.get(i);
 			Object attributeObject = contextsContainer.get(attributeName);
-			//logger.debug("*** Context Object_ "+i + "  : "+ attributeName + " value: " +((attributeObject==null)?"":attributeObject.toString()));
-			System.out.println("*** Context Object_ "+i + "  : "+ attributeName + " value: " +((attributeObject==null)?"":attributeObject.toString()));
+			// logger.debug("*** Context Object_ "+i + "  : "+ attributeName + " value: " +((attributeObject==null)?"":attributeObject.toString()));
+			logger.debug("*** Context Object_ " + i + "  : " + attributeName + " value: " + ((attributeObject == null) ? "" : attributeObject.toString()));
 		}
-			
+
 	}
 }

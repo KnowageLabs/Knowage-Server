@@ -5,34 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
 import it.eng.qbe.model.structure.Hierarchy;
@@ -78,6 +50,34 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 /**
  * Commit all the modifications made to the catalogue on the client side
@@ -155,10 +155,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
 			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
 
-			Assert.assertNotNull(getEngineInstance(),
-					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-			Assert.assertNotNull(jsonEncodedCatalogue,
-					"Input parameter [" + CATALOGUE + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
+					+ " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(jsonEncodedCatalogue, "Input parameter [" + CATALOGUE + "] cannot be null in oder to execute " + this.getActionName()
+					+ " service");
 
 			try {
 				queries = new JSONArray(jsonEncodedCatalogue);
@@ -232,8 +232,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			if (queryGraph != null) {
-				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(queryGraph,
-						modelEntities);
+				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl())
+						.isValid(queryGraph, modelEntities);
 				logger.debug("QueryGraph valid = " + valid);
 				if (!valid) {
 					throw new SpagoBIEngineServiceException(getActionName(), "error.mesage.description.relationship.not.enough");
@@ -344,7 +344,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 						// TemporalRecord currentPeriodRecord = getCurrentPeriod(temporalDimension, "time_id", "quarter", "the_year");
 						TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId, temporalLevelColumn,
 								defaultHierarchy.getAncestors(temporalLevelColumn));
-								// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
+						// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
 
 						// CURRENT
 						if ("Current".equals(rValues[0])) {
@@ -362,8 +362,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 							timeFilterIndex++;
 
-							Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
-									temporalDimension.getName() + ":" + temporalDimensionId, "Field Content", new String[] {}, null);
+							Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionId }, temporalDimension.getName()
+									+ ":" + temporalDimensionId, "Field Content", new String[] {}, null);
 							Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() }, currentPeriod.getId().toString(),
 									"Static Content", new String[] {}, null);
 
@@ -440,8 +440,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		String temporalDimensionDateField = "the_date";
 
-		Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField },
-				temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content", new String[] {}, null);
+		Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField }, temporalDimension.getName() + ":"
+				+ temporalDimensionDateField, "Field Content", new String[] {}, null);
 		Operand right = new Operand(new String[] { new SimpleDateFormat("dd/MM/yyyy").format(today) }, new SimpleDateFormat("dd/MM/yyyy").format(today),
 				"Static Content", new String[] {}, null);
 		currentPeriodQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
@@ -492,7 +492,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) this.getEngineInstance().getActiveQueryAsDataSet();
 
 		String queryString = qbeDataSet.getStatement().getQueryString();
-		System.out.println("QUERY STRING: " + queryString);
+		logger.debug("QUERY STRING: " + queryString);
 
 		qbeDataSet.loadData();
 		IDataStore dataStore = qbeDataSet.getDataStore();

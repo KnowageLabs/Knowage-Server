@@ -61,11 +61,11 @@ public class SpagoBIUtilities {
 		String[] kovalues = new String[] { "a{;{a;b;c}}", "{;{a;b;c}}a", "Davide", " f s ", "{{a;b;c}}" };
 
 		for (int i = 0; i < okvalues.length; i++) {
-			System.out.println(okvalues[i] + " : " + isMultivalueProfileAttribute(okvalues[i]));
+			logger.debug(okvalues[i] + " : " + isMultivalueProfileAttribute(okvalues[i]));
 		}
-		System.out.println("***************************");
+		logger.debug("***************************");
 		for (int i = 0; i < kovalues.length; i++) {
-			System.out.println(kovalues[i] + " : " + isMultivalueProfileAttribute(kovalues[i]));
+			logger.debug(kovalues[i] + " : " + isMultivalueProfileAttribute(kovalues[i]));
 		}
 
 	}
@@ -631,18 +631,17 @@ public class SpagoBIUtilities {
 		logger.debug("OUT: toReturn = [" + toReturn + "]");
 		return toReturn;
 	}
-	
+
 	/**
-	 * Get the resource  path
+	 * Get the resource path
+	 *
 	 * @return the path for resources
 	 */
-	public static String getResourcePath(){
+	public static String getResourcePath() {
 		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String resourcePath= SpagoBIUtilities.readJndiResource(path);
+		String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String resourcePath = SpagoBIUtilities.readJndiResource(path);
 		return resourcePath;
 	}
-	
-
 
 }

@@ -18,12 +18,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/restExample")
 public class RestExampleClass {
+
+	static protected Logger logger = Logger.getLogger(RestExampleClass.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -35,12 +38,12 @@ public class RestExampleClass {
 
 		try {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
-			System.out.println("1:" + modalitiesValueDAO.toString());
+			logger.debug("1:" + modalitiesValueDAO.toString());
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
-			System.out.println("2:" + modalitiesValues.toString());
+			logger.debug("2:" + modalitiesValues.toString());
 
 			modalitiesValuesJSON = serializeModalitiesValues(modalitiesValues);
-			// System.out.println("5:" + modalitiesValuesJSON);
+			// logger.debug("5:" + modalitiesValuesJSON);
 		} catch (Throwable t) {
 			// TODO Auto-generated catch block
 			t.printStackTrace();
@@ -86,13 +89,13 @@ public class RestExampleClass {
 			if (mod.getId() == -1) {
 
 				moddao.insertModalitiesValue(mod);
-				System.out.println("Saved");
+				logger.debug("Saved");
 			}
 
 			else {
 
 				moddao.modifyModalitiesValue(mod);
-				System.out.println("Updated");
+				logger.debug("Updated");
 
 			}
 
@@ -113,7 +116,7 @@ public class RestExampleClass {
 
 			modalitiesValuesJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(modalitiesValues, null);
 
-			System.out.println("6:" + modalitiesValuesJSONArray);
+			logger.debug("6:" + modalitiesValuesJSONArray);
 
 			modalitiesValuesJSON.put("LOVs", modalitiesValuesJSONArray);
 

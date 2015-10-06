@@ -1531,7 +1531,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			logger.debug("Upload file template....");
 			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
 			/*
-			 * ----------- test code --------- String ss = new String(templateContent); System.out.println(ss); ----------- test code ---------
+			 * ----------- test code --------- String ss = new String(templateContent); logger.debug(ss); ----------- test code ---------
 			 */
 
 			osFile.write(templateContent);

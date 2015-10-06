@@ -761,7 +761,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				while ((str = reader.readLine()) != null) {
 					if (!str.trim().startsWith("--")) {
 						PreparedStatement statement = jdbcConnection.prepareStatement(str);
-						// System.out.println("\n"+str+"\n");
+						// logger.debug("\n"+str+"\n");
 						statement.setString(1, aTenant.getName());
 						statement.execute();
 						statement.close();

@@ -50,6 +50,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -63,6 +64,8 @@ import com.mongodb.util.JSON;
 @ManageAuthorization
 public class GlossaryService {
 	final String DirectDSWordChild = ".SELF";
+
+	static protected Logger logger = Logger.getLogger(GlossaryService.class);
 
 	@POST
 	@Path("/addDocWlist")
@@ -106,7 +109,7 @@ public class GlossaryService {
 	public String addDataSetWlist(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
-			System.out.println("addDataSetWlist");
+			logger.debug("addDataSetWlist");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -143,7 +146,7 @@ public class GlossaryService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
 	public String deleteDocWlist(@Context HttpServletRequest req) {
 		try {
-			System.out.println("deleteDocWlist");
+			logger.debug("deleteDocWlist");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -170,7 +173,7 @@ public class GlossaryService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })
 	public String deleteDatasetWlist(@Context HttpServletRequest req) {
 		try {
-			System.out.println("deleteDatasetWlist");
+			logger.debug("deleteDatasetWlist");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -201,7 +204,7 @@ public class GlossaryService {
 	public String loadNavigationItem(@Context HttpServletRequest req) {
 		IGlossaryDAO dao = null;
 		try {
-			System.out.println("loadNavigationItem");
+			logger.debug("loadNavigationItem");
 			dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null

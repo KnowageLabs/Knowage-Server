@@ -12,12 +12,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 /**
  * The Class StringUtils.
  *
  * @author Andrea Gioia
  */
 public class StringUtils {
+
+	static protected Logger logger = Logger.getLogger(StringUtils.class);
 
 	private static final String PLAIN_ASCII = "AaEeIiOoUu" // grave
 			+ "AaEeIiOoUuYy" // acute
@@ -151,7 +155,7 @@ public class StringUtils {
 
 	/**
 	 * Escapes the input string as a HQL static operand. At the time being, it replaces "'" with "''"
-	 * 
+	 *
 	 * @param parameter
 	 *            the parameter to be escaped
 	 * @return the escaped String
@@ -166,7 +170,7 @@ public class StringUtils {
 
 	/**
 	 * Joins the input string array into a unique string using the specified separator
-	 * 
+	 *
 	 * @param strings
 	 *            The strings to be joined
 	 * @param separator
@@ -250,12 +254,12 @@ public class StringUtils {
 
 			Set parameters;
 			try {
-				System.out.println("String: " + replaceParameters(str[i], "P", props));
+				logger.debug("String: " + replaceParameters(str[i], "P", props));
 				parameters = getParameters(str[i], "P");
 				Iterator it = parameters.iterator();
 				while (it.hasNext()) {
 					String parameter = (String) it.next();
-					System.out.println(" - " + parameter);
+					logger.debug(" - " + parameter);
 				}
 			} catch (IOException e) {
 				// System.err.println("ERROR: malformed string: " + str[i]);

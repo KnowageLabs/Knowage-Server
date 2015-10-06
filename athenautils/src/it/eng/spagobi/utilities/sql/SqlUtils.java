@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Andrea Gioia
  *
@@ -26,6 +28,8 @@ public class SqlUtils {
 	public static final String DIALECT_ORACLE9i10g = "org.hibernate.dialect.Oracle9Dialect";
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
+
+	static protected Logger logger = Logger.getLogger(SqlUtils.class);
 
 	public static boolean isSelectStatement(String query) {
 		if (query == null)
@@ -55,7 +59,7 @@ public class SqlUtils {
 
 	/**
 	 * Get the select fields of a query
-	 * 
+	 *
 	 * @param query
 	 * @param withAliasSeparator
 	 *            if true remove the quotes at the beginning and end of the alias
@@ -120,7 +124,7 @@ public class SqlUtils {
 
 		results = getSelectFields(query);
 		for (int i = 0; i < results.size(); i++) {
-			System.out.println(results.get(i)[0] + " - " + results.get(i)[1]);
+			logger.debug(results.get(i)[0] + " - " + results.get(i)[1]);
 		}
 
 	}
@@ -170,7 +174,7 @@ public class SqlUtils {
 		return toReturn;
 
 	}
-	
+
 	public static boolean isHiveLikeDialect(String dialect) {
 		return (dialect.toLowerCase().contains("hive") || dialect.toLowerCase().contains("spark") || dialect.toLowerCase().contains("phoenix") || dialect
 				.toLowerCase().contains("impala"));

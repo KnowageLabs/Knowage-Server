@@ -279,7 +279,7 @@ public class ListOfValues {
 			DatasetDetail dataSetDetail = (DatasetDetail) LovDetailFactory.getLovFromXML(lovProvider);
 			dataSetID = Integer.parseInt(dataSetDetail.getDatasetId());
 
-			System.out.println(dataSetDetail.getDatasetId());
+			logger.debug(dataSetDetail.getDatasetId());
 		}
 
 		lovToReturn.setId(id);

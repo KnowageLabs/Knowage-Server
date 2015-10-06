@@ -15,12 +15,15 @@ import java.sql.Blob;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
+
+	static protected Logger logger = Logger.getLogger(ImagesDAOImpl.class);
 
 	@Override
 	public SbiImages loadImage(Integer id) {
@@ -101,6 +104,6 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(OrderBy.valueOf("CommonInfo").valueOf("timeIn"));
+		logger.debug(OrderBy.valueOf("CommonInfo").valueOf("timeIn"));
 	}
 }

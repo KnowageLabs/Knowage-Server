@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.utilities.json;
 
@@ -24,17 +24,14 @@ import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * 
- * DATE            CONTRIBUTOR/DEVELOPER                        NOTE
- * 19-04-2013    Antonella Giachino (antonella.giachino@eng.it)      
- *               Andrea Fantappiè (andrea.fantappiè@eng.it)     Added internationalization management
- * 															    for highchart engine
- * 
- *     Utility Class to convert xml template in json template
+ *
+ *         DATE CONTRIBUTOR/DEVELOPER NOTE 19-04-2013 Antonella Giachino (antonella.giachino@eng.it) Andrea Fantappiè (andrea.fantappiè@eng.it) Added
+ *         internationalization management for highchart engine
+ *
+ *         Utility Class to convert xml template in json template
  */
 
-public class JSONTemplateUtils
-{
+public class JSONTemplateUtils {
 
 	// template constants
 
@@ -62,13 +59,12 @@ public class JSONTemplateUtils
 
 	/**
 	 * Returns a JSONObject with the input configuration (xml format).
-	 * 
+	 *
 	 * @param getTemplate
 	 *            (). the template in xml language
 	 * @param
-	 * 
-	 * @return JSONObject the same template in json format (because highcharts
-	 *         uses json format)
+	 *
+	 * @return JSONObject the same template in json format (because highcharts uses json format)
 	 */
 	public JSONObject getJSONTemplateFromXml(SourceBean xmlTemplate, JSONArray parsJSON) throws JSONException {
 		JSONObject toReturn = null;
@@ -88,7 +84,8 @@ public class JSONTemplateUtils
 				// number of chart definition (for highchart lib)
 				setNumCharts((getTemplate().getAttribute(HIGH_NUMCHARTS) != null) ? Integer.valueOf((String) getTemplate().getAttribute(HIGH_NUMCHARTS)) : 1);
 				// subtype for master/detail chart
-				setSubType((getTemplate().getAttribute(HIGH_CHART + "." + HIGH_SUBTYPE) != null) ? (String) getTemplate().getAttribute(HIGH_CHART + "." + HIGH_SUBTYPE) : "");
+				setSubType((getTemplate().getAttribute(HIGH_CHART + "." + HIGH_SUBTYPE) != null) ? (String) getTemplate().getAttribute(
+						HIGH_CHART + "." + HIGH_SUBTYPE) : "");
 
 				getTemplate().delAttribute(WIDTH);
 				getTemplate().delAttribute(HEIGHT);
@@ -99,7 +96,7 @@ public class JSONTemplateUtils
 			ow = getPropertiesDetail(this.getTemplate(), ow);
 			ow.write("}\n");
 			ow.flush();
-			// System.out.println("*** template: " + out.toString());
+			// logger.debug("*** template: " + out.toString());
 			logger.debug("ChartConfig: " + out.toString());
 
 		} catch (IOException ioe) {
@@ -248,7 +245,7 @@ public class JSONTemplateUtils
 
 	/**
 	 * Returns an OutputStreamWriter with the json template
-	 * 
+	 *
 	 * @param sbConfig
 	 *            the sourcebean with the xml configuration
 	 * @param ow
@@ -269,7 +266,7 @@ public class JSONTemplateUtils
 				SourceBeanAttribute object = (SourceBeanAttribute) atts.get(i);
 
 				// object.getValue();
-				String key = (String) object.getKey();
+				String key = object.getKey();
 				if (key.endsWith("_LIST")) {
 					String arrayKey = key.substring(0, key.indexOf("_LIST"));
 					toReturn.write("      " + convertKeyString(arrayKey) + ": [ \n");
@@ -305,9 +302,8 @@ public class JSONTemplateUtils
 	}
 
 	/**
-	 * Returns an OutputStreamWriter with all details about a single key (ie.
-	 * CHART tag)
-	 * 
+	 * Returns an OutputStreamWriter with all details about a single key (ie. CHART tag)
+	 *
 	 * @param key
 	 * @param sb
 	 * @param ow
@@ -330,7 +326,7 @@ public class JSONTemplateUtils
 					SourceBeanAttribute object = (SourceBeanAttribute) subAtts.get(i);
 					if (object.getValue() instanceof SourceBean) {
 
-						String key = (String) object.getKey();
+						String key = object.getKey();
 
 						if (key.endsWith("_LIST")) {
 							String arrayKey = key.substring(0, key.indexOf("_LIST"));
@@ -396,7 +392,7 @@ public class JSONTemplateUtils
 						// attributes
 
 						toReturn.write("{ 	\n");
-						List atts = ((SourceBean) sb1).getContainedAttributes();
+						List atts = sb1.getContainedAttributes();
 						toReturn = getAllAttributes(object, toReturn);
 						toReturn.write("} 	\n");
 					}
@@ -414,7 +410,7 @@ public class JSONTemplateUtils
 
 	/**
 	 * Returns an object (String or Integer) with the value of the property.
-	 * 
+	 *
 	 * @param key
 	 *            the attribute key
 	 * @param sbAttr
@@ -444,21 +440,21 @@ public class JSONTemplateUtils
 						boolean addFinalSpace = (key.equals("text") ? true : false);
 						finalValue = replaceParametersInValue(value, addFinalSpace);
 					}
-					
-					if(finalValue.equals(""))
+
+					if (finalValue.equals(""))
 						finalValue = value;
-					
-					if(value.contains("$R{")) {
+
+					if (value.contains("$R{")) {
 						boolean addFinalSpace = (key.equals("text") ? true : false);
-						finalValue = replaceMessagesInValue((String)finalValue, addFinalSpace);
+						finalValue = replaceMessagesInValue((String) finalValue, addFinalSpace);
 					}
-					
-					if(finalValue.equals(""))
+
+					if (finalValue.equals(""))
 						finalValue = value;
-					
+
 					if (!value.startsWith("function"))
 						finalValue = "'" + finalValue + "'";
-					
+
 				} else {
 					// the value is not a string
 					finalValue = value;
@@ -596,9 +592,8 @@ public class JSONTemplateUtils
 	}
 
 	/**
-	 * Splits the list of values and add ' around the single value. Necessary
-	 * with Jackson library!
-	 * 
+	 * Splits the list of values and add ' around the single value. Necessary with Jackson library!
+	 *
 	 * @param string
 	 *            with the original list of values
 	 * @param toReturn

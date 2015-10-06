@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -32,6 +33,8 @@ public class GridMetadataContainer {
 	private List<Map<String, String>> values;
 	private Map<String, String> metaData;
 	private int results;
+
+	static protected Logger logger = Logger.getLogger(GridMetadataContainer.class);
 
 	public GridMetadataContainer() {
 		rootPropery = "root";
@@ -174,9 +177,9 @@ public class GridMetadataContainer {
 		am4.put("112", "112");
 		gmc.getValues().add(am4);
 		try {
-			System.out.println(gmc.toJSONString());
+			logger.debug(gmc.toJSONString());
 		} catch (Exception e) {
-			System.out.println("ssss");
+			logger.debug("ssss");
 		}
 
 	}

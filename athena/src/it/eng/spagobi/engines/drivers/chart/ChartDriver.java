@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers.chart;
 
@@ -47,14 +47,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the biobject
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param analyticalDocumentSubObject
 	 *            SubObject to execute
 	 * @param profile
@@ -86,7 +86,7 @@ public class ChartDriver extends GenericDriver {
 	 *            the name of the execution role
 	 * @param analyticalDocument
 	 *            the object
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -97,14 +97,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the edits the document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -131,14 +131,14 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the new document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -371,7 +371,7 @@ public class ChartDriver extends GenericDriver {
 
 	/**
 	 * Replaces all messages reading by i18n table.
-	 * 
+	 *
 	 * @param sb
 	 *            the source bean
 	 */
@@ -415,9 +415,9 @@ public class ChartDriver extends GenericDriver {
 		ChartDriver driver = new ChartDriver();
 		// String str = "xxx $R{pippo}tail head$R{pippo}tail $R{pippo} xxx";
 		String str = "dnsadn dknwk ldwnd lkwndxlkw xnwlknd";
-		System.out.println(str);
+		logger.debug(str);
 		String newStr = driver.replaceMessagesInString(str);
-		System.out.println(newStr);
+		logger.debug(newStr);
 	}
 
 }

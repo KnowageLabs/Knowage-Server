@@ -135,13 +135,6 @@ public class DataSetTransformer {
 		return fr;
 	}
 
-	public void printOut(Object o) {
-		System.out.println("\n=====================================================\n");
-		System.out.println(o.toString());
-		System.out.println("-- " + o.getClass());
-		System.out.println("\n=====================================================\n");
-	}
-
 	/**
 	 * Method that serves for preparing the data that JS code will use for rendering the CHORD chart
 	 *
@@ -354,16 +347,10 @@ public class DataSetTransformer {
 	public JSONArray toTree(Object columnsNeeded, Object serie, Object dataColumnsMapper, List<Object> dataRows, Object groupingFunction) throws JSONException {
 		// Data columns mapper (as map)
 		Map<String, Object> mapper = (Map<String, Object>) dataColumnsMapper;
-		// System.out.println("--- dataColumnsMapper ---");
-		// System.out.println(dataColumnsMapper);
+
 		// Columns that we need for making a sequence (as map)
 		Map<String, Object> columns = (Map<String, Object>) columnsNeeded;
-		// System.out.println("--- categories ---");
-		// System.out.println(columnsNeeded);
-		// System.out.println("--- serie ---");
-		// System.out.println(serie);
-		// System.out.println("--- all data ---");
-		// System.out.println(dataRows);
+
 		/**
 		 * In this array list we will put raw names (column_1, column_2 etc) of necessary columns
 		 */
@@ -383,8 +370,6 @@ public class DataSetTransformer {
 
 			listColumns.add(mapper.get(z).toString());
 		}
-		// System.out.println("--- CCC ---");
-		// System.out.println(listColumns);
 
 		/*
 		 * Pass through all records in order to get values of just those columns that we need for sequence.
@@ -399,14 +384,7 @@ public class DataSetTransformer {
 				Object x = row.get(listColumns.get(j));
 
 				record.put(columns.get(j).toString(), x.toString());
-
-				// System.out.println("--- DDD ---");
-				// System.out.println(record);
 				record.put(serie.toString(), row.get(serieRawColumn).toString());
-
-				// System.out.println("--- EEE ---");
-				// System.out.println(serie.toString());
-				// System.out.println(row.get(serieRawColumn).toString());
 
 				result.put(new Integer(i), record);
 			}

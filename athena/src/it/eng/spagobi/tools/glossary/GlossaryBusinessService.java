@@ -28,6 +28,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,8 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class GlossaryBusinessService {
 
+	static protected Logger logger = Logger.getLogger(GlossaryBusinessService.class);
+
 	@POST
 	@Path("/modifyContentsGlossary")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -46,12 +49,12 @@ public class GlossaryBusinessService {
 	public String modifyContentsGlossary(@Context HttpServletRequest req) {
 		try {
 
-			System.out.println("ModifyContentsGlossary");
+			logger.debug("ModifyContentsGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
 			dao.setUserProfile(profile);
-			System.out.println(req.toString());
+			logger.debug(req.toString());
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 			JSONObject jo = new JSONObject();
 
@@ -101,7 +104,7 @@ public class GlossaryBusinessService {
 	public String addGlossary(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
-			System.out.println("addGlossary");
+			logger.debug("addGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -188,7 +191,7 @@ public class GlossaryBusinessService {
 		JSONObject jo = new JSONObject();
 
 		try {
-			System.out.println("addContents");
+			logger.debug("addContents");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -314,7 +317,7 @@ public class GlossaryBusinessService {
 	public String addWord(@Context HttpServletRequest req) {
 		JSONObject jo = new JSONObject();
 		try {
-			System.out.println("newWord");
+			logger.debug("newWord");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IUdpDAO daoUdp = DAOFactory.getUdpDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -427,7 +430,7 @@ public class GlossaryBusinessService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String deleteWord(@Context HttpServletRequest req) {
 		try {
-			System.out.println("deleteWord");
+			logger.debug("deleteWord");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -452,7 +455,7 @@ public class GlossaryBusinessService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String deleteGlossary(@Context HttpServletRequest req) {
 		try {
-			System.out.println("deleteGlossary");
+			logger.debug("deleteGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -476,7 +479,7 @@ public class GlossaryBusinessService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String deleteContents(@Context HttpServletRequest req) {
 		try {
-			System.out.println("deleteContents");
+			logger.debug("deleteContents");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null
@@ -507,7 +510,7 @@ public class GlossaryBusinessService {
 	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS })
 	public String cloneGlossary(@Context HttpServletRequest req) {
 		try {
-			System.out.println("cloneGlossary");
+			logger.debug("cloneGlossary");
 			IGlossaryDAO dao = DAOFactory.getGlossaryDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			// TODO check if profile is null

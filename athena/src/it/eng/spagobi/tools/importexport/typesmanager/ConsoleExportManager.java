@@ -55,7 +55,7 @@ public class ConsoleExportManager extends AbstractTypesExportManager {
 				String tempFileStr = new String(tempFileCont);
 				//				byte[] templateContent = DECODER.decodeBuffer(new String(template.getContent()));
 				//				String tempFileStr = new String(templateContent);
-				//System.out.println(tempFileStr);
+				//logger.debug(tempFileStr);
 				JSONObject jsonObject = null;
 
 				try{

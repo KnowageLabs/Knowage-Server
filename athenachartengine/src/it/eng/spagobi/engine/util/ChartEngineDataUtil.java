@@ -208,7 +208,7 @@ public class ChartEngineDataUtil {
 			}
 		}
 
-		System.out.println(q.toSql("SCHEMA", "TABLE"));
+		logger.debug(q.toSql("SCHEMA", "TABLE"));
 
 		return q;
 	}

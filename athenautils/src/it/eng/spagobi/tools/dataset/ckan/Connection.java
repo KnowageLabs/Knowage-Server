@@ -70,7 +70,7 @@ public final class Connection {
 			logger.debug("Connection URI validated");
 		} catch (MalformedURLException mue) {
 			logger.debug("[FAILED] Connection URI is non valid");
-			System.out.println(mue);
+			logger.debug(mue);
 		}
 	}
 

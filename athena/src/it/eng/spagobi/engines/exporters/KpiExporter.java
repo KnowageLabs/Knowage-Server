@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.exporters;
 
@@ -41,108 +41,107 @@ import org.hibernate.Transaction;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-
 /**
- * 
+ *
  * @author gavardi
  *
- * This class is intended to take the result of a Kpi Execution and giveBack an export in other formats
+ *         This class is intended to take the result of a Kpi Execution and giveBack an export in other formats
  *
  *
  */
 
 public class KpiExporter {
 
-	private static transient Logger logger=Logger.getLogger(KpiExporter.class);
+	private static transient Logger logger = Logger.getLogger(KpiExporter.class);
 
-
-	public File getKpiReportPDF(List<KpiResourceBlock> kpiBlocks, BIObject obj, String userId) throws Exception{
+	public File getKpiReportPDF(List<KpiResourceBlock> kpiBlocks, BIObject obj, String userId) throws Exception {
 		logger.debug("IN");
 
-
-		//Build report template
-		String docName=(obj!=null) ? obj.getName() : "";
-		BasicTemplateBuilder basic=new BasicTemplateBuilder(docName);
-		String template2= "";
+		// Build report template
+		String docName = (obj != null) ? obj.getName() : "";
+		BasicTemplateBuilder basic = new BasicTemplateBuilder(docName);
+		String template2 = "";
 		List templates = basic.buildTemplate(kpiBlocks);
 		boolean first = true;
-		
-		//String template2=basic.buildTemplate(kpiBlocks);
 
-		//System.out.println(template2);
+		// String template2=basic.buildTemplate(kpiBlocks);
+
+		// logger.debug(template2);
 
 		String outputType = "PDF";
-		HashedMap parameters=new HashedMap();
+		HashedMap parameters = new HashedMap();
 		parameters.put("PARAM_OUTPUT_FORMAT", outputType);
-		
-		//parameters.put("SBI_HTTP_SESSION", session);   ???
 
-		JREmptyDataSource conn=new JREmptyDataSource(1);
+		// parameters.put("SBI_HTTP_SESSION", session); ???
+
+		JREmptyDataSource conn = new JREmptyDataSource(1);
 
 		// identity string for object execution
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuid_local = uuidGen.generateTimeBasedUUID();
 		String executionId = uuid_local.toString();
 		executionId = executionId.replaceAll("-", "");
 
-		//Creta etemp file
+		// Creta etemp file
 		String dirS = System.getProperty("java.io.tmpdir");
 		File dir = new File(dirS);
 		dir.mkdirs();
-		
+
 		List filesToDelete = new ArrayList();
 		logger.debug("Create Temp File");
-		String fileName="report"+executionId;
+		String fileName = "report" + executionId;
 		File tmpFile = File.createTempFile(fileName, "." + outputType, dir);
 		OutputStream out = new FileOutputStream(tmpFile);
-		try {								
-			if(templates!=null && !templates.isEmpty()){
+		try {
+			if (templates != null && !templates.isEmpty()) {
 				int subreports = 0;
 				Iterator it = templates.iterator();
-				while(it.hasNext()){
-					String template =(String)it.next();
-					if(first)template2=template;
-					else{
-					
-					File f = new File(dirS + File.separatorChar + "Detail"+subreports+".jasper");
-					logger.debug("Compiling subtemplate file: " + f);
-					filesToDelete.add(f);
-					
-					File file = new File(dirS + File.separatorChar + "Detail"+subreports+".jrxml");
-					if(file.exists()){
-						boolean deleted = file.delete();
-						file =new File(dirS + File.separatorChar + "Detail"+subreports+".jrxml");
-					}
-					FileOutputStream stream = new FileOutputStream(file);
-					stream.write(template.getBytes());
-					stream.flush();
-					stream.close();
-					filesToDelete.add(file);
-					
-					JasperCompileManager.compileReportToFile(dirS + File.separatorChar + "Detail"+subreports+".jrxml",dirS + File.separatorChar + "Detail"+subreports+".jasper");
-					subreports ++;
+				while (it.hasNext()) {
+					String template = (String) it.next();
+					if (first)
+						template2 = template;
+					else {
+
+						File f = new File(dirS + File.separatorChar + "Detail" + subreports + ".jasper");
+						logger.debug("Compiling subtemplate file: " + f);
+						filesToDelete.add(f);
+
+						File file = new File(dirS + File.separatorChar + "Detail" + subreports + ".jrxml");
+						if (file.exists()) {
+							boolean deleted = file.delete();
+							file = new File(dirS + File.separatorChar + "Detail" + subreports + ".jrxml");
+						}
+						FileOutputStream stream = new FileOutputStream(file);
+						stream.write(template.getBytes());
+						stream.flush();
+						stream.close();
+						filesToDelete.add(file);
+
+						JasperCompileManager.compileReportToFile(dirS + File.separatorChar + "Detail" + subreports + ".jrxml", dirS + File.separatorChar
+								+ "Detail" + subreports + ".jasper");
+						subreports++;
 					}
 					first = false;
 				}
 			}
-			
+
 			File f = new File(dirS + File.separatorChar + "Master.jasper");
 			logger.debug("Compiling subtemplate file: " + f);
 			filesToDelete.add(f);
-			
+
 			File file = new File(dirS + File.separatorChar + "Master.jrxml");
-			if(file.exists()){
+			if (file.exists()) {
 				boolean deleted = file.delete();
-				file =new File(dirS + File.separatorChar + "Master.jrxml");
+				file = new File(dirS + File.separatorChar + "Master.jrxml");
 			}
 			FileOutputStream stream = new FileOutputStream(file);
 			stream.write(template2.getBytes());
 			stream.flush();
 			stream.close();
 			filesToDelete.add(file);
-			
-			StringBufferInputStream sbis=new StringBufferInputStream(template2);
-			JasperCompileManager.compileReportToFile(dirS + File.separatorChar + "Master.jrxml",dirS + File.separatorChar + "Master.jasper");
+
+			StringBufferInputStream sbis = new StringBufferInputStream(template2);
+			JasperCompileManager.compileReportToFile(dirS + File.separatorChar + "Master.jrxml", dirS + File.separatorChar + "Master.jasper");
 
 			logger.debug("Filling report ...");
 			Context ctx = new InitialContext();
@@ -150,9 +149,9 @@ public class KpiExporter {
 			JasperPrint jasperPrint = null;
 			try {
 				Transaction tx = aSession.beginTransaction();
-				//Connection jdbcConnection = aSession.connection();
+				// Connection jdbcConnection = aSession.connection();
 				Connection jdbcConnection = HibernateSessionManager.getConnection(aSession);
-				jasperPrint = JasperFillManager.fillReport(dirS + File.separatorChar + "Master.jasper", parameters,jdbcConnection);
+				jasperPrint = JasperFillManager.fillReport(dirS + File.separatorChar + "Master.jasper", parameters, jdbcConnection);
 				logger.debug("Report filled succesfully");
 			} finally {
 				if (aSession != null) {
@@ -161,68 +160,68 @@ public class KpiExporter {
 				}
 			}
 			logger.debug("Exporting report: Output format is [" + outputType + "]");
-			JRExporter exporter=null;
-			//JRExporter exporter = ExporterFactory.getExporter(outputType);	
+			JRExporter exporter = null;
+			// JRExporter exporter = ExporterFactory.getExporter(outputType);
 			// Set the PDF exporter
-			exporter = (JRExporter)Class.forName("net.sf.jasperreports.engine.export.JRPdfExporter").newInstance();
+			exporter = (JRExporter) Class.forName("net.sf.jasperreports.engine.export.JRPdfExporter").newInstance();
 
-			if(exporter == null) exporter = new JRPdfExporter(); 	
+			if (exporter == null)
+				exporter = new JRPdfExporter();
 
 			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);
 			exporter.exportReport();
 			logger.debug("Report exported succesfully");
-			//in = new BufferedInputStream(new FileInputStream(tmpFile));
+			// in = new BufferedInputStream(new FileInputStream(tmpFile));
 			logger.debug("OUT");
 			return tmpFile;
 
-
-		} catch(Throwable e) {
+		} catch (Throwable e) {
 			logger.error("An exception has occured", e);
 			throw new Exception(e);
 		} finally {
 			out.flush();
 			out.close();
-			if(filesToDelete!=null && !filesToDelete.isEmpty()){
+			if (filesToDelete != null && !filesToDelete.isEmpty()) {
 				Iterator it = filesToDelete.iterator();
-				while(it.hasNext()){
-					File temp =(File) it.next();
+				while (it.hasNext()) {
+					File temp = (File) it.next();
 					temp.delete();
 				}
 			}
-			//tmpFile.delete();
+			// tmpFile.delete();
 
 		}
 
 	}
-	
-	public File getKpiExportXML(List<KpiResourceBlock> kpiBlocks, BIObject obj, String userId) throws Exception{
-		File tmpFile=null;
+
+	public File getKpiExportXML(List<KpiResourceBlock> kpiBlocks, BIObject obj, String userId) throws Exception {
+		File tmpFile = null;
 		logger.debug("IN");
 
-		try{
-			
+		try {
+
 			// recover BiObject Name
-			Object idObject=obj.getId();
-			if(idObject==null){
+			Object idObject = obj.getId();
+			if (idObject == null) {
 				logger.error("Document id not found");
 			}
 
-			Integer id=Integer.valueOf(idObject.toString());
-			BIObject document=DAOFactory.getBIObjectDAO().loadBIObjectById(id);
-			String docName=document.getName();
+			Integer id = Integer.valueOf(idObject.toString());
+			BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+			String docName = document.getName();
 
-			//Recover user Id
-			HashedMap parameters=new HashedMap();
+			// Recover user Id
+			HashedMap parameters = new HashedMap();
 
-			BasicXmlBuilder basic=new BasicXmlBuilder(docName);
+			BasicXmlBuilder basic = new BasicXmlBuilder(docName);
 			String template = basic.buildTemplate(kpiBlocks);
 
 			String dirS = System.getProperty("java.io.tmpdir");
 			File dir = new File(dirS);
 			dir.mkdirs();
 
-			tmpFile = File.createTempFile("tempXmlExport", ".xml" , dir);
+			tmpFile = File.createTempFile("tempXmlExport", ".xml", dir);
 			FileOutputStream stream = new FileOutputStream(tmpFile);
 			stream.write(template.getBytes());
 			stream.flush();
@@ -233,17 +232,13 @@ public class KpiExporter {
 			logger.debug("OUT");
 			return tmpFile;
 
-		} catch(Throwable e) {
+		} catch (Throwable e) {
 			logger.error("An exception has occured", e);
 			throw new Exception(e);
 		} finally {
 
-			//tmpFile.delete();
+			// tmpFile.delete();
 
 		}
 	}
 }
-
-
-
-

@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,8 @@ public class DomainCRUD {
 
 	private static final String DOMAIN_TYPE = "DOMAIN_TYPE";
 	private static final String EXT_VERSION = "EXT_VERSION";
+
+	static protected Logger logger = Logger.getLogger(DomainCRUD.class);
 
 	@GET
 	@Path("/listValueDescriptionByType")
@@ -79,7 +82,7 @@ public class DomainCRUD {
 			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);
 		}
 
-		System.out.println("------------------------ " + result);
+		logger.debug("------------------------ " + result);
 
 		return result;
 
