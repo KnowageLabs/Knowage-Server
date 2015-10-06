@@ -81,7 +81,6 @@ eventDefinitionApp.controller('ActivityEventController',
 	activityEventCtrl.event.triggerName = '';
 	activityEventCtrl.event.triggerGroup = '';
 	activityEventCtrl.event.triggerDescription = '';
-	activityEventCtrl.event.isSuspended = '';
 	activityEventCtrl.event.documents = [];
 
 	activityEventCtrl.datasets = [];
@@ -178,7 +177,6 @@ eventDefinitionApp.controller('ActivityEventController',
 			jobGroup: activityEventCtrl.event.jobGroup,
 			triggerName: activityEventCtrl.event.triggerName,
 			triggerGroup: activityEventCtrl.event.triggerGroup,
-			isSuspended: false,
 			documents: [],
 			chrono: {"type": "single"}
 		};
@@ -216,8 +214,8 @@ eventDefinitionApp.controller('ActivityEventController',
 					var d = data;
 					activityEventCtrl.event.triggerName = d.triggerName;
 					activityEventCtrl.event.triggerDescription = d.triggerDescription;
-					activityEventCtrl.event.isSuspended = d.isSuspended;
 					activityEventCtrl.event.startDate = new Date(d.startDate);
+//					activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
 					activityEventCtrl.event.startTime = d.startTime;
 					
 					if(d.endTime != undefined && d.endTime != "") {
@@ -228,6 +226,7 @@ eventDefinitionApp.controller('ActivityEventController',
 					
 					if(d.endDate != undefined && d.endDate != "") {
 						activityEventCtrl.event.endDate = new Date(d.endDate);
+//						activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
 					}
 					
 					activityEventCtrl.event.chrono = d.chrono;
@@ -277,7 +276,7 @@ eventDefinitionApp.controller('ActivityEventController',
 								activityEventCtrl.typeMonthWeek = true;
 								activityEventCtrl.dayinmonthrep_week = op.parameter.dayRepetition;
 							}
-						}  
+						}
 					}
 					
 					//carico le informazioni dei documenti
@@ -340,6 +339,23 @@ eventDefinitionApp.controller('ActivityEventController',
 				console.log('Annulla');
 				}
 			);
+	};
+	
+	activityEventCtrl.triggerEvent = function() {
+		var requestTriggerEvent = "eventName=" + activityEventCtrl.event.triggerName
+		
+		restServices.get("scheduler", "triggerEvent", requestTriggerEvent)
+			.success(function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.error(translate.load("sbi.glossary.load.error"))
+				} else {
+					console.log("data", data);
+				}
+			})
+			.error(function(data, status, headers, config) {
+				console.error(translate.load("ERRORE triggerEvent"));
+			});
+		
 	};
 	
 	activityEventCtrl.saveEvent = function(isValid) {

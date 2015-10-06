@@ -101,12 +101,6 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								</md-input-container>
 
 								<div layout="row" class="checkboxRow">
-									<label>{{translate.load("sbi.scheduler.schedulation.events.event.suspended")}}:</label>
-									<md-checkbox aria-label="aria-label" ng-model="activityEventCtrl.event.isSuspended">
-								</div>
-
-
-								<div layout="row" class="checkboxRow">
 									<label>{{translate.load("Start date")}}:</label>
 									<md-datepicker ng-model="activityEventCtrl.event.startDate" md-placeholder="StartDate"></md-datepicker>
 									<label style="margin: 0 20px;">{{translate.load("Start time")}}:</label>
@@ -292,6 +286,10 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							</md-content>
 
 							<div layout="row" layout-align="end center" class=" bottomButtonsBox">
+								<%-- TODO REMOVE ASAP!!! button for testing of trigger triggers of type ws events --%>
+								<md-button type="button" class="md-raised md-warn" ng-click="activityEventCtrl.triggerEvent()">Scatena evento!!!</md-button>
+								<%-- TODO REMOVE ASAP!!! --%>
+							
 								<md-button type="button" class="md-raised" ng-click="activityEventCtrl.resetForm()">Cancella</md-button>
 								<div style="z-index: 1;">
 									<md-button type="submit" class="md-raised md-primary" ng-disabled="!contactForm.$valid">Salva</md-button>

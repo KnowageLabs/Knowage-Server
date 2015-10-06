@@ -694,7 +694,6 @@ public class SchedulerService {
 
 		jobTrigger.setTriggerName((String) jsonObject.opt(JobTrigger.TRIGGER_NAME));
 		jobTrigger.setTriggerDescription((String) jsonObject.opt(JobTrigger.TRIGGER_DESCRIPTION));
-		jobTrigger.setIsSuspended((Boolean) jsonObject.opt(JobTrigger.IS_SUSPENDED));
 		jobTrigger.setStartDate(jsonObject.optString(JobTrigger.START_DATE));
 		jobTrigger.setStartTime(jsonObject.optString(JobTrigger.START_TIME));
 		jobTrigger.setEndDate(jsonObject.optString(JobTrigger.END_DATE));

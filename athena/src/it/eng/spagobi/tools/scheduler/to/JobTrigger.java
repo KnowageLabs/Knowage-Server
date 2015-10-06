@@ -18,7 +18,6 @@ public class JobTrigger implements Serializable {
 	public static final String TRIGGER_NAME = "triggerName";
 	public static final String TRIGGER_GROUP = "triggerGroup";
 	public static final String TRIGGER_DESCRIPTION = "triggerDescription";
-	public static final String IS_SUSPENDED = "isSuspended";
 	public static final String START_DATE = "startDate";
 	public static final String START_TIME = "startTime";
 	public static final String END_DATE = "endDate";
@@ -49,7 +48,6 @@ public class JobTrigger implements Serializable {
 
 	private String triggerName = "";
 	private String triggerDescription = "";
-	private Boolean isSuspended = null;
 	private String startDate = "";
 	private String startTime = "";
 	private String endDate = "";
@@ -243,23 +241,6 @@ public class JobTrigger implements Serializable {
 	 */
 	public void setTriggerName(String triggerName) {
 		this.triggerName = triggerName;
-	}
-
-	/**
-	 * Gets the isSuspended value.
-	 *
-	 */
-	public Boolean getIsSuspended() {
-		return isSuspended;
-	}
-
-	/**
-	 * Sets the isSuspended value.
-	 *
-	 * @param isSuspended
-	 */
-	public void setIsSuspended(Boolean isSuspended) {
-		this.isSuspended = isSuspended;
 	}
 
 	/**
