@@ -16,6 +16,7 @@ import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -630,5 +631,17 @@ public class SpagoBIUtilities {
 		logger.debug("OUT: toReturn = [" + toReturn + "]");
 		return toReturn;
 	}
+	
+	/**
+	 * Get the resource  path
+	 * @return the path for resources
+	 */
+	public static String getResourcePath(){
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String path  = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String resourcePath= SpagoBIUtilities.readJndiResource(path);
+		return resourcePath;
+	}
+	
 
 }
