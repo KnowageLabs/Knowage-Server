@@ -9,6 +9,8 @@
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
+<%@page import="it.eng.spago.base.SourceBean"%>
+<%@page import="it.eng.spagobi.services.common.EnginConf"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.HashMap"%>
 <%@ page language="java" 
@@ -104,9 +106,11 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     String param2="?"+SpagoBIConstants.SBI_CONTEXT+"="+contextName;
 	String host=request.getServerName();
 	String param3="&"+SpagoBIConstants.SBI_HOST+"="+host;
+	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("AthenaChartEngineContextName"));
+	String chartEngineContextName = sb.getCharacters();
     
-    StringBuffer chartDesignerUrlTemp = new StringBuffer("/athenachartengine/api/1.0/pages/edit_cockpit");
-    StringBuffer chartRuntimeUrlTemp = new StringBuffer("/athenachartengine/api/1.0/pages/execute_cockpit");
+    StringBuffer chartDesignerUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/edit_cockpit");
+    StringBuffer chartRuntimeUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/execute_cockpit");
     
     chartDesignerUrlTemp.append(param2);
     chartRuntimeUrlTemp.append(param2);

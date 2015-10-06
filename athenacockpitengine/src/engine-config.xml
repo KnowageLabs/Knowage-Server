@@ -51,5 +51,6 @@
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>
 	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
 	
+	<AthenaChartEngineContextName>athenachartengine</AthenaChartEngineContextName>
 	
 </ENGINE-CONFIGURATION>
