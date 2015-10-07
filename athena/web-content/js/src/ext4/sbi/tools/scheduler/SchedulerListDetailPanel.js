@@ -30,7 +30,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		});
 		
 		this.detailPanel.on("addSchedulation",this.addSchedulation,this);
-		this.detailPanel.on("addSchedulationAngular",this.addSchedulationAngular,this);
+		this.detailPanel.on("addSchedulationAngular", this.addSchedulationAngular ,this);
 
 		this.columns = [
 		                {dataIndex:"jobName", header:LN('sbi.generic.label')}, 
@@ -86,10 +86,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		
 		
 		Ext.tip.QuickTipManager.init();
-		
-//		//custom button for scheduler events
-//		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
-//				this.columns, 'button-open-events', LN('sbi.scheduler.activity.events.openevents'), this.openEvents);
 		
 		//custom buttons for scheduler operations
 		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(
@@ -189,16 +185,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			);
 	}
 	
-	, addSchedulation: function(){
-		if (this.grid.getSelectionModel().hasSelection()) {
-		   var row = this.grid.getSelectionModel().getSelection()[0];
-		   var jobGroup = row.get('jobGroup');
-		   var jobName = row.get('jobName');
-		   window.location.assign(this.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_SCHEDULE&JOBNAME='+jobName);
-
-		}
-	}
-	
 	, addSchedulationAngular: function(){
 		if (this.grid.getSelectionModel().hasSelection()) {
 			var row = this.grid.getSelectionModel().getSelection()[0];
@@ -209,7 +195,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName 
 				+ '&JOB_GROUP=' + jobGroup;
 			
-			Ext.create('Ext.window.Window', {
+			var angularWindow = Ext.create('Ext.window.Window', {
 			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,
 			    height : '100%',
 			    width : '100%',
@@ -219,16 +205,29 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			    modal: true,
 			    layout: 'fit',
 			    
-			    items: [
-					new Ext.ux.IFrame({
-						border : false,
-						bodyBorder : false,
-						height : '100%',
-						src : addSchedulationSrc
-					})
-			    ]
-			}).show();
+			    items: []
+			});
 			
+			var angularWindowIFrame = new Ext.ux.IFrame({
+				border : false,
+				bodyBorder : false,
+				height : '100%',
+				src : addSchedulationSrc
+			});
+			
+			angularWindow.add(angularWindowIFrame);
+						
+			angularWindow.show();
+			
+		}
+	}
+	, addSchedulation: function(){
+		if (this.grid.getSelectionModel().hasSelection()) {
+		   var row = this.grid.getSelectionModel().getSelection()[0];
+		   var jobGroup = row.get('jobGroup');
+		   var jobName = row.get('jobName');
+		   window.location.assign(this.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='+jobGroup+'&PAGE=TriggerManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_NEW_SCHEDULE&JOBNAME='+jobName);
+
 		}
 	}
 	
@@ -240,39 +239,9 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 	//when selecting a row in the grid list
 	, onGridSelect: function(selectionrowmodel, record, index, eOpts){
 		this.detailPanel.show();
-		this.detailPanel.setFormState(record.data);
+//		this.detailPanel.setFormState(record.data);
+		this.detailPanel.setFormState(record);
 	}
 	
-	, openEvents: function(grid, rowIndex, colIndex) {
-		var record = grid.getStore().getAt(rowIndex);
-		var jobName = record.get('jobName');
-		var jobGroup = record.get('jobGroup');
-		var jobDescription = record.get('jobDescription');
-		
-		var eventDefinitionSrc = '/athena/restful-services/publish?PUBLISHER=' 
-			+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName 
-			+ '&JOB_GROUP=' + jobGroup 
-			+ '&JOB_DESCRIPTION=' + jobDescription;
-		
-		Ext.create('Ext.window.Window', {
-		    title: LN('sbi.scheduler.activity.events.eventdefinition') + ' - ' + jobName,
-		    height: 630,
-		    width: 900,
-		    resizable: false,
-		    closeAction : 'destroy',
-		    modal: true,
-		    draggable: false,
-		    layout: 'fit',
-		    
-		    items: [
-				new Ext.ux.IFrame({
-					border : false,
-					bodyBorder : false,
-					height : '100%',
-					src : eventDefinitionSrc
-				})
-		    ]
-		}).show();
-	}
-		
+	, onSchedulationUpdate: function(record){}
 });		

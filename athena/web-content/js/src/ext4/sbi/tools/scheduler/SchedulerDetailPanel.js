@@ -32,7 +32,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 
 			
 			this.triggersData = null;
-
+			
 			this.initFields();
 			this.items=[this.activityLabel , this.documentsGrid, this.schedulationsGrid];
 			this.tbar = Sbi.widget.toolbar.StaticToolbarBuilder.buildToolbar({items:[]},this);
@@ -461,7 +461,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 				+ '&TRIGGER_NAME=' + triggerName
 				+ '&TRIGGER_GROUP=' + triggerGroup;
 			
-			Ext.create('Ext.window.Window', {
+			var angularWindow = Ext.create('Ext.window.Window', {
 			    title: LN('sbi.scheduler.schedulation.detail') + ' - ' + jobName,
 			    height : '100%',
 			    width : '100%',
@@ -479,7 +479,9 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 						src : addSchedulationSrc
 					})
 			    ]
-			}).show();
+			});
+			
+			angularWindow.show();
 		}
 		
 		, onDetailSchedulation: function(record){ //TODO REMOVE!!!
@@ -565,7 +567,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			this.fireEvent('addSchedulation');
 		}
 		
-		, setFormState: function(values){
+		, setFormState: function(record){
+			this.jobRecordData = record;
+			
+			var values = record.data;
+			
 			this.activityLabel.setText( LN('sbi.scheduler.overview') + ' - ' + values.jobName );
 			this.documentsGridStore.loadData(values.documents,false);
 			
@@ -580,9 +586,9 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 					}
 				}
 			}
-			this.schedulationsGridStore.loadData(values.triggers,false);
+			this.schedulationsGridStore.loadData(values.triggers, false);
 			//original data for permanent delete (not only on local store)
-			this.triggersData = values.triggers
+			this.triggersData = values.triggers;
 
 		}
     	
