@@ -64,6 +64,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 
           
 	, config:{
+		cls: 'sheetsContainer',
 		border: false,
 		tabPosition: 'bottom',        
         enableTabScroll:true,
