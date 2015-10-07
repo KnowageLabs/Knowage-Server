@@ -574,12 +574,12 @@ eventDefinitionApp.controller('ActivityEventController',
 		}
 	};
 	
-	activityEventCtrl.toInt = function(item) {
-		item=parseInt(item);
+	activityEventCtrl.onlyNumberConvert = function(item) {
+		return item.replace(/\D/g,'');
 	};
 			
 			
-			activityEventCtrl.prova = function() {
-				console.log("prova", activityEventCtrl.typeMonth);
+			activityEventCtrl.prova = function(item) {
+				console.log("prova",item); 	
 			};
 }]);

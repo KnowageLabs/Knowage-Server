@@ -104,12 +104,14 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
 
 					List<SbiWsEvent> sbiWsEvents = wsEventsDao.loadSbiWsEvents(triggerName);
-					for (SbiWsEvent sb : sbiWsEvents) {
-						sb.setTakeChargeDate(new Date());
-						wsEventsDao.updateEvent(sb);
+					if (sbiWsEvents.size() != 0) {
+						Date attDate = new Date();
+						for (SbiWsEvent sb : sbiWsEvents) {
+							sb.setTakeChargeDate(attDate);
+							wsEventsDao.updateEvent(sb);
+						}
+						eventSolved = true;
 					}
-
-					eventSolved = true;
 				} else if (typeEvent.equals("dataset")) {
 
 					IDataSetDAO d = DAOFactory.getDataSetDAO();

@@ -31,9 +31,9 @@
 				maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 		</md-input-container> 
 		
-		<md-input-container ng-init="activityEventCtrl.toInt(activityEventCtrl.selectedDocument.snapshothistorylength)">
+		<md-input-container >
 			<label>History Length:</label> 
-			<input type="number" ng-model="activityEventCtrl.selectedDocument.snapshothistorylength">
+			<input ng-keyup="activityEventCtrl.selectedDocument.snapshothistorylength=activityEventCtrl.onlyNumberConvert(activityEventCtrl.selectedDocument.snapshothistorylength)" ng-model="activityEventCtrl.selectedDocument.snapshothistorylength">
 		</md-input-container>
 	</md-content>
 </div>
