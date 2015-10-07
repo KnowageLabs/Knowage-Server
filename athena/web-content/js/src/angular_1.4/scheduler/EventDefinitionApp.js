@@ -568,7 +568,12 @@ eventDefinitionApp.controller('ActivityEventController',
 		}
 	};
 	
-	activityEventCtrl.prova = function() {
-		console.log("prova", activityEventCtrl.typeMonth);
+	activityEventCtrl.toInt = function(item) {
+		item=parseInt(item);
 	};
+			
+			
+			activityEventCtrl.prova = function() {
+				console.log("prova", activityEventCtrl.typeMonth);
+			};
 }]);

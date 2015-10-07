@@ -19,7 +19,10 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ExecutionProxy;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.events.EventsManager;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
@@ -33,6 +36,8 @@ import it.eng.spagobi.tools.scheduler.dispatcher.UniqueMailDocumentDispatchChann
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
+import it.eng.spagobi.tools.scheduler.wsEvents.SbiWsEvent;
+import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
@@ -49,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -69,12 +76,70 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 			// Execute internal only if trigger isn't paused
 			if (!isTriggerPaused(jobExecutionContext)) {
-				this.executeInternal(jobExecutionContext);
+				if (eventChecked(jobExecutionContext)) {
+					this.executeInternal(jobExecutionContext);
+				}
 			}
 		} finally {
 			this.unsetTenant();
 			logger.debug("OUT");
 		}
+	}
+
+	private boolean eventChecked(JobExecutionContext jobExecutionContext) {
+		Boolean eventSolved = true;
+		if (jobExecutionContext.getMergedJobDataMap().containsKey("event_info")) {
+			eventSolved = false;
+			try {
+
+				String triggerName = jobExecutionContext.getTrigger().getName();
+				if (jobExecutionContext.getMergedJobDataMap().containsKey("originalTriggerName")) {
+					triggerName = jobExecutionContext.getMergedJobDataMap().getString("originalTriggerName");
+
+				}
+
+				JSONObject jo = new JSONObject(jobExecutionContext.getMergedJobDataMap().getString("event_info"));
+				String typeEvent = jo.getString("type");
+				if (typeEvent.equals("rest")) {
+					SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
+
+					List<SbiWsEvent> sbiWsEvents = wsEventsDao.loadSbiWsEvents(triggerName);
+					for (SbiWsEvent sb : sbiWsEvents) {
+						sb.setTakeChargeDate(new Date());
+						wsEventsDao.updateEvent(sb);
+					}
+
+					eventSolved = true;
+				} else if (typeEvent.equals("dataset")) {
+
+					IDataSetDAO d = DAOFactory.getDataSetDAO();
+					d.setUserProfile(UserProfile.createSchedulerUserProfile());
+					IDataSet dataSet = d.loadDataSetById(jo.getInt("dataset"));
+					if (dataSet != null) {
+						dataSet.loadData();
+						IDataStore dataStore = dataSet.getDataStore();
+						if (dataStore != null && dataStore.getRecordsCount() > 0) {
+							IRecord returnVal = dataStore.getRecordAt(0);
+							if (returnVal != null) {
+								Object value = returnVal.getFieldAt(0).getValue();
+								if (value.toString().equals("1") || value.toString().equals("true")) {
+									eventSolved = true;
+								}
+							}
+						}
+					}
+
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (EMFUserError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		return eventSolved;
 	}
 
 	private boolean isTriggerPaused(JobExecutionContext jobExecutionContext) {

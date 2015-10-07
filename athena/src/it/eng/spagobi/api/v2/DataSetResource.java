@@ -102,7 +102,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		SbiDataSet dataset = dsDAO.loadSbiDataSetByLabel(label);
-
+		
 		if (dataset != null)
 			return JsonConverter.objectToJson(dataset, SbiDataSet.class);
 		else

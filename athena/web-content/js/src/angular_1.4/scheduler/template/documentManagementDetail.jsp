@@ -31,10 +31,9 @@
 				maxlength="100" ng-maxlength="100" md-maxlength="100"> 
 		</md-input-container> 
 		
-		<md-input-container>
-			<label>History Length:</label> <input
-				ng-model="activityEventCtrl.selectedDocument.snapshothistorylength"
-				maxlength="100" ng-maxlength="100" md-maxlength="100">
+		<md-input-container ng-init="activityEventCtrl.toInt(activityEventCtrl.selectedDocument.snapshothistorylength)">
+			<label>History Length:</label> 
+			<input type="number" ng-model="activityEventCtrl.selectedDocument.snapshothistorylength">
 		</md-input-container>
 	</md-content>
 </div>
@@ -106,6 +105,7 @@
 				ng-model="activityEventCtrl.selectedDocument.useFixedFolder">
 		</div>
 	
+	<div ng-if="activityEventCtrl.selectedDocument.useFixedFolder==true">
 		<img style="margin: 0 0 -5px -6px;" src="/athena/themes/sbi_default/img/treebase.gif" alt="" /> 
 		
 		<span>Documents tree</span>
@@ -117,6 +117,7 @@
 					ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/lowFunctionalityTreeNode.html'"></li>
 			</ol>
 		</div>
+	</div>
 	
 		<div layout="row" class="checkboxRow">
 			<label>{{translate.load("folder from dataset")}}:</label>
