@@ -557,8 +557,10 @@ public class SchedulerService {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap<String, String>();
 
+		JobTrigger jobTrigger = null;
+
 		try {
-			//ISchedulerDAO dao = DAOFactory.getSchedulerDAO();
+			// ISchedulerDAO dao = DAOFactory.getSchedulerDAO();
 
 			JSONObject triggerJson = RestUtilities.readBodyAsJSONObject(req);
 
@@ -566,16 +568,13 @@ public class SchedulerService {
 			String jobGroupName = (String) triggerJson.opt(JobTrigger.JOB_GROUP);
 			String triggerName = (String) triggerJson.opt(JobTrigger.TRIGGER_NAME);
 			String triggerGroup = (String) triggerJson.opt(JobTrigger.TRIGGER_GROUP);
-			if (triggerGroup == null || triggerGroup.equals("")) {
-				triggerGroup = "DEFAULT";
-			}
 
 			logParam.put("JOB NAME", jobName);
 			logParam.put("JOB GROUP", jobGroupName);
 			logParam.put("TRIGGER NAME", triggerName);
 			logParam.put("TRIGGER GROUP", triggerGroup);
 
-			JobTrigger jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
+			jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
 
 			StringBuffer message = getSchedulingMessage(jobTrigger, false, profile);
 
@@ -583,23 +582,22 @@ public class SchedulerService {
 
 			String servoutStr = schedulerService.scheduleJob(message.toString());
 
-			return servoutStr;
-			// return "";
+			JSONObject jo = JobTriggerToJson(jobTrigger);
+
+			return jo.toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.GET_TRIGGER_SAVE_OPTION", logParam, "KO");
-			logger.error("Error while create immediate trigger ", e);
+			logger.error("Error while saving trigger : " + jobTrigger.toString(), e);
 			logger.debug(canNotFillResponseError);
 			try {
-				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
+				return (ExceptionUtilities.serializeException("Error while saving trigger : " + jobTrigger.toString(), null));
 			} catch (Exception ex) {
-				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
+				logger.debug("Error in ExceptionUtilities.serializeException.");
+				throw new SpagoBIRuntimeException("ExceptionUtilities.serializeException", ex);
 			}
 		}
-
-		//return ("{resp:'ERROR'}");
 	}
-	
+
 	@GET
 	@Path("/triggerEvent")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
