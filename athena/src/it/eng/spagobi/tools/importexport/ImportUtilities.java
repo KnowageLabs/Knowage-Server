@@ -1372,8 +1372,9 @@ public class ImportUtilities {
 				obj.setDataSource(localDS);
 			// reading exist datasset
 			SbiDataSet localDataSet = getAssociatedSbiDataSet(exportedObj, sessionCurrDB, metaAss);
-			if (localDataSet != null)
-				obj.setDataSet(localDataSet.getId().getDsId());
+			if (localDataSet != null) {
+			}
+			// obj.setDataSet(localDataSet.getId().getDsId());
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1406,7 +1407,9 @@ public class ImportUtilities {
 	private SbiDataSet getAssociatedSbiDataSet(SbiObjects exportedObj, Session sessionCurrDB, MetadataAssociations metaAss) {
 		logger.debug("IN");
 		SbiDataSet localDS = null;
-		Integer expDataset = exportedObj.getDataSet();
+		// Integer expDataset = exportedObj.getDataSet();
+		Integer expDataset = 111;
+
 		if (expDataset != null) {
 			Integer existingDatasetId = (Integer) metaAss.getDataSetIDAssociation().get(expDataset);
 			Query hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");

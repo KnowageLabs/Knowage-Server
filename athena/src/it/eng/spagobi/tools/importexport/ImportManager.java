@@ -160,14 +160,14 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Prepare the environment for the import procedure.
-	 *
+	 * 
 	 * @param pathImpTmpFold
 	 *            The path of the temporary import folder
 	 * @param archiveName
 	 *            the name of the compress exported file
 	 * @param archiveContent
 	 *            the bytes of the compress exported file
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -280,10 +280,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports the exported objects.
-	 *
+	 * 
 	 * @param overwrite
 	 *            the overwrite
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -371,7 +371,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the SpagoBI version of the exported file.
-	 *
+	 * 
 	 * @return The SpagoBI version of the exported file
 	 */
 	public String getExportVersion() {
@@ -380,7 +380,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the current SpagobI version.
-	 *
+	 * 
 	 * @return The current SpagoBI version
 	 */
 	public String getCurrentVersion() {
@@ -394,9 +394,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the list of all exported roles.
-	 *
+	 * 
 	 * @return The list of exported roles
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -408,9 +408,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the list of all exported engines.
-	 *
+	 * 
 	 * @return The list of exported engines
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -422,10 +422,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * checks if two or more exported roles are associate to the same current role.
-	 *
+	 * 
 	 * @param roleAssociations
 	 *            Map of assocaition between exported roles and roles of the portal in use
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             if two ore more exported roles are associate to the same current role
 	 */
@@ -455,10 +455,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Update the data source name for each list of values of type query based on association between exported data sources and current system data sources.
-	 *
+	 * 
 	 * @param mapDataSources
 	 *            Map of the associations between exported data sources and current system data sources
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -502,9 +502,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Commits all changes made on exported and current databases.
-	 *
+	 * 
 	 * @return the import result info
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -603,7 +603,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Authorizations
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importAuthorizations() throws EMFUserError {
@@ -716,7 +716,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported roles
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importRoles(boolean overwrite) throws EMFUserError {
@@ -803,7 +803,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports exported engines
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importEngines() throws EMFUserError {
@@ -943,7 +943,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * function to import ObjMetada
-	 *
+	 * 
 	 * @param overwrite
 	 * @throws EMFUserError
 	 */
@@ -1418,7 +1418,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports exported functionalities
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importFunctionalities(boolean overwrite) throws EMFUserError {
@@ -1562,7 +1562,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported lovs
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importLovs(boolean overwrite) throws EMFUserError {
@@ -1628,7 +1628,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported checks
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importChecks() throws EMFUserError {
@@ -1686,7 +1686,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported parameters
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importParameters(boolean overwrite) throws EMFUserError {
@@ -1816,7 +1816,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * import exported biobjects
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importBIObjects(boolean overwrite) throws EMFUserError {
@@ -1906,7 +1906,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 				// updates lucene index
 				BIObjectDAOHibImpl daoObj = (BIObjectDAOHibImpl) DAOFactory.getBIObjectDAO();
-				BIObject biObj = daoObj.toBIObject(obj);
+				BIObject biObj = daoObj.toBIObject(obj, null);
 				LuceneIndexer.addBiobjToIndex(biObj);
 
 				// TODO controllare che fa questo e se serve!!!
@@ -1941,7 +1941,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports viewpoint associated to object
-	 *
+	 * 
 	 * @param exportedBIObjectId
 	 *            The id of the current exported object
 	 * @throws EMFUserError
@@ -2279,7 +2279,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Controls if a subobject is already existing (i.e. they have the same name, owner, visibility, creation date and last modification date)
-	 *
+	 * 
 	 * @param expSubObject
 	 * @param currentSubObjList
 	 * @return the subobject if is already existing, null otherwise
@@ -2303,7 +2303,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Controls if a subobject is already existing (i.e. they have the same name, owner, visibility, creation date and last modification date)
-	 *
+	 * 
 	 * @param expSubObject
 	 * @param currentSubObjList
 	 * @return the subobject if is already existing, null otherwise
@@ -2425,7 +2425,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Handle already present parameter's paruse if a paruse is not present between exported delete
-	 *
+	 * 
 	 */
 
 	public void deleteOldParametersUse(Integer existingParId, Integer exportParId, List sbiExistingParuses, List sbiExpParuses, Session currSessDB)
@@ -2529,7 +2529,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Handle already present parameter's paruse if a paruse is not present between exported delete
-	 *
+	 * 
 	 */
 
 	public void deletePreviousObjParameter(Integer exstingObjectId, Integer exportObjectId, SbiObjects object) throws EMFUserError {
@@ -2547,7 +2547,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports exported paruses
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	// overwrite will be surely true or the paramete is new
@@ -2741,7 +2741,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported paruses association with roles
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	// private void importParuseDet() throws EMFUserError {
@@ -2878,7 +2878,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between parameter uses and checks
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importParuseCheck(Integer paruseOldId) throws EMFUserError {
@@ -2962,7 +2962,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports biobject links
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importBIObjectLinks() throws EMFUserError {
@@ -3036,7 +3036,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between functionalities and current object
-	 *
+	 * 
 	 * @param exportedBIObjectId
 	 *            The id of the current exported object
 	 * @throws EMFUserError
@@ -3111,7 +3111,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between functionalities and roles
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importFunctRoles() throws EMFUserError {
@@ -3185,7 +3185,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports associations between parameters and current exported biobject
-	 *
+	 * 
 	 * @param exportedBIObjectId
 	 *            The id of the current exported object
 	 * @throws EMFUserError
@@ -3287,7 +3287,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * check existing correlation: correlation must be mantained if the filter column is still present in the LOV columns
-	 *
+	 * 
 	 * @param existingParId
 	 * @param exportParId
 	 * @param sbiExistingParuses
@@ -3322,9 +3322,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports biobjParuse dependencies for current exported biobject
-	 *
+	 * 
 	 * a previous BiObjectParuse is: - updated if there is the modality the lov did not change metadata - otherwise is cancelled
-	 *
+	 * 
 	 * @param exportedBIObjectId
 	 *            The id of the current exported biobject
 	 * @throws EMFUserError
@@ -3460,7 +3460,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Imports biparameter visual dependencies for current exported biobject
-	 *
+	 * 
 	 * @param exportedBIObjectId
 	 *            The id of the current exported biobject
 	 * @throws EMFUserError
@@ -3572,9 +3572,9 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the list of exported data sources.
-	 *
+	 * 
 	 * @return List of the exported data sources
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3609,7 +3609,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/**
 	 * Check the existance of the exported metadata into the current system metadata and insert their associations into the association object
 	 * MeatadataAssociation.
-	 *
+	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4405,7 +4405,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Gets the object which contains the association between exported metadata and the current system metadata.
-	 *
+	 * 
 	 * @return MetadataAssociation the object which contains the association between exported metadata and the current system metadata
 	 */
 	public MetadataAssociations getMetadataAssociation() {
@@ -4441,7 +4441,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getImpAssMode()
 	 */
 	public String getImpAssMode() {
@@ -4759,7 +4759,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported model
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importModel(boolean overwrite) throws EMFUserError {
@@ -4833,7 +4833,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported model instance
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importModelInstance(boolean overwrite) throws EMFUserError {
@@ -4899,7 +4899,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported kpi
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importKpi(boolean overwrite) throws EMFUserError {
@@ -5026,7 +5026,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported kpi inst
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importKpiInstance(boolean overwrite) throws EMFUserError {
@@ -5092,7 +5092,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported threshold Value
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importThresholdValue(boolean overwrite) throws EMFUserError {
@@ -5164,7 +5164,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Threshold
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importThreshold(boolean overwrite) throws EMFUserError {
@@ -5235,7 +5235,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported resources
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importResources(boolean overwrite) throws EMFUserError {
@@ -5301,7 +5301,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported resources
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importModelResources(boolean overwrite) throws EMFUserError {
@@ -5375,7 +5375,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported periodicity
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importPeriodicity(boolean overwrite) throws EMFUserError {
@@ -5442,7 +5442,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported kpiInstPeriod
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importKpiInstPeriod(boolean overwrite) throws EMFUserError {
@@ -5516,7 +5516,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Alarms
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importAlarm(boolean overwrite) throws EMFUserError {
@@ -5743,7 +5743,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Alarms Contacts
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importAlarmContact(boolean overwrite) throws EMFUserError {
@@ -5811,7 +5811,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported ObjMetacontent
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importObjMetacontent(boolean overwrite) throws EMFUserError {
@@ -5902,7 +5902,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import exported Udp
-	 *
+	 * 
 	 * @throws EMFUserError
 	 */
 	private void importUdp(Integer udpId, boolean overwrite) throws EMFUserError {
@@ -5976,7 +5976,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import Udp values
-	 *
+	 * 
 	 * @param referenceId
 	 * @param overwrite
 	 * @param family
@@ -6061,7 +6061,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Import kpi relations
-	 *
+	 * 
 	 * @param kpiParentId
 	 * @param overwrite
 	 * @throws EMFUserError
@@ -6289,7 +6289,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Handle already present parameter's paruse if a paruse is not present between exported delete
-	 *
+	 * 
 	 */
 
 }
