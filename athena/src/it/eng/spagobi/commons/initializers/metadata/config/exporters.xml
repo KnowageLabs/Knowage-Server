@@ -65,4 +65,10 @@
 		defaultValue="false" />
 	<EXPORTER domain="PDF" engine="athenacompositedoce"
 		defaultValue="true" />
+	<EXPORTER domain="XLS" engine="athenacockpitengine"
+		defaultValue="false" />
+	<EXPORTER domain="XLSX" engine="athenacockpitengine"
+		defaultValue="false" />
+	<EXPORTER domain="PDF" engine="athenacockpitengine"
+		defaultValue="true" />
 </EXPORTERS>
