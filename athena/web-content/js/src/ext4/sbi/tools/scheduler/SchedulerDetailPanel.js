@@ -454,7 +454,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			var triggerName = record.get('triggerName');
 			var triggerGroup = record.get('triggerGroup');
 			
-			var addSchedulationSrc = '/athena/restful-services/publish?PUBLISHER=' 
+			var addSchedulationSrc = Sbi.config.contextName + '/restful-services/publish?PUBLISHER=' 
 				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?'
 				+ 'JOB_NAME=' + jobName 
 				+ '&JOB_GROUP=' + jobGroup
@@ -480,6 +480,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 					})
 			    ]
 			});
+
+			angularWindow.on('close', function( panel, eOpts ){
+				console.log('panel -> ', panel);
+				console.log('this -> ', this);
+			}, this);
 			
 			angularWindow.show();
 		}
@@ -494,13 +499,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 		}
 		
 		, onDeleteSchedulation: function(record){
-			
 			var values = {}
 			values.jobName = record.data.jobName;
 			values.jobGroup = record.data.jobGroup;
 			values.triggerName = record.data.triggerName;
 			values.triggerGroup = record.data.triggerGroup;
-
 			
 			Ext.MessageBox.confirm(
 					LN('sbi.generic.pleaseConfirm'),

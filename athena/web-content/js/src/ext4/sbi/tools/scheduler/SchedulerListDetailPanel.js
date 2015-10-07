@@ -191,7 +191,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			var jobGroup = row.get('jobGroup');
 			var jobName = row.get('jobName');
 			
-			var addSchedulationSrc = '/athena/restful-services/publish?PUBLISHER=' 
+			var addSchedulationSrc = Sbi.config.contextName + '/restful-services/publish?PUBLISHER=' 
 				+ '/WEB-INF/jsp/tools/scheduler/EventDefinition.jsp?JOB_NAME=' + jobName 
 				+ '&JOB_GROUP=' + jobGroup;
 			
@@ -204,7 +204,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			    closeAction : 'destroy',
 			    modal: true,
 			    layout: 'fit',
-			    
 			    items: []
 			});
 			
@@ -216,6 +215,11 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			});
 			
 			angularWindow.add(angularWindowIFrame);
+			
+			angularWindow.on('close', function( panel, eOpts ){
+				console.log('panel -> ', panel);
+				console.log('this -> ', this);
+			}, this);
 						
 			angularWindow.show();
 			
