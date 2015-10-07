@@ -443,6 +443,7 @@ public class SpagoBIConstants {
 	public static final String DS_SCOPE_USER = "USER";
 
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
+	public static final String ENABLE_FEDERATED_DATASET = "EnableFederatedDataset";
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";

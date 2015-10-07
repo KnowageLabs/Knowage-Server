@@ -52,6 +52,7 @@ public class Role implements Serializable {
 	private boolean isAbleToDeleteKpiComm;
 
 	private boolean isAbleToEnableDatasetPersistence;
+	private boolean isAbleToEnableFederatedDataset;
 
 	private boolean isAbleToManageGlossaryBusiness;
 	private boolean isAbleToManageGlossaryTechnical;
@@ -620,6 +621,14 @@ public class Role implements Serializable {
 
 	public void setAbleToManageGlossaryTechnical(boolean isAbleToManageGlossaryTechnical) {
 		this.isAbleToManageGlossaryTechnical = isAbleToManageGlossaryTechnical;
+	}
+
+	public boolean isAbleToEnableFederatedDataset() {
+		return isAbleToEnableFederatedDataset;
+	}
+
+	public void setIsAbleToEnableFederatedDataset(boolean isAbleToEnableFederatedDataset) {
+		this.isAbleToEnableFederatedDataset = isAbleToEnableFederatedDataset;
 	}
 
 }
