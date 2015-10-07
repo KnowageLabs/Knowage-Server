@@ -39,12 +39,13 @@ public class SchedulerUtilitiesV2 {
 		j.put("triggerName", trigg.getTriggerName());
 		j.put("triggerDescription", trigg.getTriggerDescription());
 		j.put("startDate", trigg.getStartDate());
+		j.put("startDateRFC3339", trigg.getStartDateRFC3339());
 		j.put("startTime", trigg.getStartTime());
 		String enddate = trigg.getEndDate();
 		if (enddate != null && !enddate.trim().equals("")) {
 			j.put("endDate", enddate);
+			j.put("endDateRFC3339", trigg.getEndDateRFC3339());
 			j.put("endTime", trigg.getEndTime());
-			String endtime = trigg.getEndTime();
 		}
 
 		j.put("chrono", new JSONObject(trigg.getChrono()));

@@ -98,7 +98,9 @@ eventDefinitionApp.controller('ActivityEventController',
 		activityEventCtrl.jobData = null;
 		
 		var loadtri = false;
-		if(triggerName != undefined && triggerName.trim() != "" && triggerGroup != undefined && triggerGroup.trim() != "") {
+		if(triggerName != undefined && triggerName != null && triggerName.trim() != "" 
+			&& triggerGroup != undefined && triggerGroup != null && triggerGroup.trim() != "") {
+			
 			loadtri = true;
 		}
 		
@@ -176,6 +178,9 @@ eventDefinitionApp.controller('ActivityEventController',
 			jobName: activityEventCtrl.event.jobName,
 			jobGroup: activityEventCtrl.event.jobGroup,
 			triggerName: activityEventCtrl.event.triggerName,
+			triggerDescription: 
+				(activityEventCtrl.event.triggerDescription  && activityEventCtrl.event.triggerDescription != null )? 
+						activityEventCtrl.event.triggerDescription : '',
 			triggerGroup: activityEventCtrl.event.triggerGroup,
 			documents: [],
 			chrono: {"type": "single"}
@@ -213,9 +218,10 @@ eventDefinitionApp.controller('ActivityEventController',
 					
 					var d = data;
 					activityEventCtrl.event.triggerName = d.triggerName;
-					activityEventCtrl.event.triggerDescription = d.triggerDescription;
-					activityEventCtrl.event.startDate = new Date(d.startDate);
-//					activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
+					activityEventCtrl.event.triggerDescription = 
+						(d.triggerDescription && d.triggerDescription != null) ? d.triggerDescription : "";
+//					activityEventCtrl.event.startDate = new Date(d.startDate);
+					activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
 					activityEventCtrl.event.startTime = d.startTime;
 					
 					if(d.endTime != undefined && d.endTime != "") {
@@ -225,8 +231,8 @@ eventDefinitionApp.controller('ActivityEventController',
 					}
 					
 					if(d.endDate != undefined && d.endDate != "") {
-						activityEventCtrl.event.endDate = new Date(d.endDate);
-//						activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
+//						activityEventCtrl.event.endDate = new Date(d.endDate);
+						activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
 					}
 					
 					activityEventCtrl.event.chrono = d.chrono;

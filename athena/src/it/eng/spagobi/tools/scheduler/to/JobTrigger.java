@@ -298,5 +298,44 @@ public class JobTrigger implements Serializable {
 	public void setSaveOptions(Map<String, DispatchContext> saveOptions) {
 		this.saveOptions = saveOptions;
 	}
+/**
+	 * Gets the start date rf c3339.
+	 *
+	 * @return the start date rf c3339
+	 */
+	public String getStartDateRFC3339() {
+		String startDRFC = "";
+		String startD = this.getStartDate();
+		if ((startD != null) && !startD.trim().equals("")) {
+			String[] dateParts = startD.split("/");
+			startDRFC = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+		}
+		return startDRFC;
+	}
 
+	/**
+	 * Gets the end date rf c3339.
+	 *
+	 * @return the end date rf c3339
+	 */
+	public String getEndDateRFC3339() {
+		String endDRFC = "";
+		String endD = this.getEndDate();
+		if ((endD != null) && !endD.trim().equals("")) {
+			if (endD.indexOf("/") > 0) {
+				String[] dateParts = endD.split("/");
+				endDRFC = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0];
+			} else {
+				endDRFC = endD;
+			}
+		}
+		return endDRFC;
+	}
+
+	@Override
+	public String toString() {
+		return "{ triggerName = \"" + triggerName + "\"; triggerDescription = \"" + triggerDescription + "\"; startDate = \"" + startDate
+				+ "\"; startTime = \"" + startTime + "\"; endDate = \"" + endDate + "\"; endTime = \"" + endTime + "\"; chrono = \"" + chrono
+				+ "\"; jobInfo = {" + " jobName = \"" + jobInfo.getJobName() + "; jobGroupName = \"" + jobInfo.getJobGroupName() + "} }";
+	}
 }
