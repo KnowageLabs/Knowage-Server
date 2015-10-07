@@ -18,7 +18,6 @@ import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.services.validation.Xss;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -66,6 +65,9 @@ public class BIObject implements Serializable, Cloneable {
 	@ExtendedAlphanumeric
 	@Size(max = 400)
 	private String description = null;
+
+	// DATASET
+	private ArrayList<Integer> datasetsIds = null;
 
 	// LABEL VARCHAR2(36) Y Engine label (short textual identifier)
 	@NotEmpty
@@ -652,7 +654,7 @@ public class BIObject implements Serializable, Cloneable {
 	 * 
 	 * @return the data set id
 	 */
-	@JsonIgnore
+	// @JsonIgnore
 	public Integer getDataSetId() {
 		return dataSetId;
 	}
@@ -668,22 +670,22 @@ public class BIObject implements Serializable, Cloneable {
 	}
 
 	public String getDataSetLabel() throws EMFUserError {
-		if (dataSetId == null)
-			return null;
-
-		IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
-
-		return dataSetDao.loadDataSetById(dataSetId).getLabel();
+		// if (dataSetId == null)
+		// return null;
+		//
+		// IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+		//
+		// return dataSetDao.loadDataSetById(dataSetId).getLabel();
+		return null;
 	}
 
-	public void setDataSetLabel(String label) throws EMFUserError {
-		if (label != null) {
-			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
-
-			this.dataSetId = dataSetDao.loadDataSetByLabel(label).getId();
-		}
-	}
-
+	// public void setDataSetLabel(String label) throws EMFUserError {
+	// if (label != null) {
+	// IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
+	//
+	// this.dataSetId = dataSetDao.loadDataSetByLabel(label).getId();
+	// }
+	// }
 	/**
 	 * Gets refresh Seconds.
 	 * 
@@ -823,6 +825,14 @@ public class BIObject implements Serializable, Cloneable {
 		clone.setDocVersion(docVersion);
 		clone.setParametersRegion(parametersRegion);
 		return clone;
+	}
+
+	public ArrayList<Integer> getDatasetsIds() {
+		return datasetsIds;
+	}
+
+	public void setDatasetsIds(ArrayList<Integer> datasetsIds) {
+		this.datasetsIds = datasetsIds;
 	}
 
 }

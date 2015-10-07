@@ -77,9 +77,6 @@
    <column name="data_set_id" not-null="false"/>
   </many-to-one>
    -->
-  <property generated="never" lazy="false" name="dataSet" type="integer">
-   <column  name="data_set_id" not-null="false"/>
-  </property>
    
   <property generated="never" lazy="false" name="objectTypeCode" type="string">
    <column length="20" name="biobj_type_cd" not-null="true"/>

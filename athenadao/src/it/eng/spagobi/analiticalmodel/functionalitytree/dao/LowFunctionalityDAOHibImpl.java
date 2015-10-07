@@ -936,7 +936,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				Set hibObjFuncs = hibFunct.getSbiObjFuncs();
 				for (Iterator it = hibObjFuncs.iterator(); it.hasNext();) {
 					SbiObjFunc hibObjFunc = (SbiObjFunc) it.next();
-					BIObject object = objDAO.toBIObject(hibObjFunc.getId().getSbiObjects());
+					BIObject object = objDAO.toBIObject(hibObjFunc.getId().getSbiObjects(), null);
 					biObjects.add(object);
 				}
 			} catch (EMFUserError e) {

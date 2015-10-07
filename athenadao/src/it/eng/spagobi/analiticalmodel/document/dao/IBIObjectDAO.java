@@ -22,6 +22,8 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a BI object.
  */
@@ -330,7 +332,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	public List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer item_per_page, Collection<CriteriaParameter> disjunctions,
 			Collection<CriteriaParameter> restrictions) throws EMFUserError;
 
-	public BIObject toBIObject(SbiObjects hibBIObject);
+	public BIObject toBIObject(SbiObjects hibBIObject, Session session) throws EMFUserError;
 
 	public List loadPagedObjectsList(Integer offset, Integer fetchSize) throws EMFUserError;
 

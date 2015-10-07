@@ -1,14 +1,13 @@
-/*
- * SpagoBI, the Open Source Business Intelligence suite
- * 
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. If a copy of the MPL was not distributed with this file, You can obtain one at
- * http://mozilla.org/MPL/2.0/.
- */
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 21-giu-2005
- * 
- * TODO To change the template for this generated file go to Window - Preferences - Java - Code Style - Code Templates
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
@@ -51,6 +50,7 @@ import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.engines.dossier.dao.IDossierPartsTempDAO;
 import it.eng.spagobi.engines.dossier.dao.IDossierPresentationsDAO;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -210,7 +210,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, biObjectID);
-			toReturn = toBIObject(hibBIObject);
+			toReturn = toBIObject(hibBIObject, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -256,7 +256,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			SbiObjects hibObject = (SbiObjects) hqlQuery.uniqueResult();
 			if (hibObject == null)
 				return null;
-			biObject = toBIObject(hibObject);
+			biObject = toBIObject(hibObject, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -301,7 +301,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			SbiObjects hibObject = (SbiObjects) criteria.uniqueResult();
 			if (hibObject == null)
 				return null;
-			biObject = toBIObject(hibObject);
+			biObject = toBIObject(hibObject, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -351,7 +351,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibObject == null) {
 				return null;
 			}
-			biObject = toBIObject(hibObject);
+			biObject = toBIObject(hibObject, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -471,15 +471,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setDataSource(dSource);
 
-			SbiDataSet dSet = null;
-			if (biObject.getDataSetId() != null) {
-				Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
-				hibQuery.setBoolean(0, true);
-				hibQuery.setInteger(1, biObject.getDataSetId());
-				dSet = (SbiDataSet) hibQuery.uniqueResult();
-			}
-			// hibBIObject.setDataSet(dSet);
-			hibBIObject.setDataSet((dSet == null) ? null : dSet.getId().getDsId());
+			// SbiDataSet dSet = null;
+			// if (biObject.getDataSetId() != null) {
+			// Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+			// hibQuery.setBoolean(0, true);
+			// hibQuery.setInteger(1, biObject.getDataSetId());
+			// dSet = (SbiDataSet) hibQuery.uniqueResult();
+			// }
+			// // hibBIObject.setDataSet(dSet);
+			// hibBIObject.setDataSet((dSet == null) ? null : dSet.getId().getDsId());
 
 			hibBIObject.setDescr(biObject.getDescription());
 			hibBIObject.setLabel(biObject.getLabel());
@@ -525,6 +525,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setSbiObjFuncs(hibObjFunc);
 
+			logger.debug("Update detail dataset");
+			DAOFactory.getBIObjDataSetDAO().updateObjectDetailDataset(biObject.getId(), biObject.getDataSetId(), aSession);
+
 			tx.commit();
 
 			// update biobject template info
@@ -536,7 +539,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					// insert or update new template
 					IObjTemplateDAO dao = DAOFactory.getObjTemplateDAO();
 					dao.setUserProfile(this.getUserProfile());
-					dao.insertBIObjectTemplate(objTemp);
+					dao.insertBIObjectTemplate(objTemp, biObject);
 					// if the input document is a document composition and template is changed deletes existing parameters
 					// and creates all new parameters automatically
 					// (the parameters are recovered from all documents that compose general document)
@@ -667,15 +670,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setDataSource(dSource);
 
 			SbiDataSet dSet = null;
-			if (obj.getDataSetId() != null) {
-				Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
-				hibQuery.setBoolean(0, true);
-				hibQuery.setInteger(1, obj.getDataSetId());
-				dSet = (SbiDataSet) hibQuery.uniqueResult();
-				// dSet = (SbiDataSet) aSession.load(SbiDataSet.class, obj.getDataSetId());
-			}
+			// if (obj.getDataSetId() != null) {
+			// Query hibQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+			// hibQuery.setBoolean(0, true);
+			// hibQuery.setInteger(1, obj.getDataSetId());
+			// dSet = (SbiDataSet) hibQuery.uniqueResult();
+			// // dSet = (SbiDataSet) aSession.load(SbiDataSet.class, obj.getDataSetId());
+			// }
 			// hibBIObject.setDataSet(dSet);
-			hibBIObject.setDataSet((dSet == null) ? null : dSet.getId().getDsId());
+			// hibBIObject.setDataSet((dSet == null) ? null : dSet.getId().getDsId());
 
 			Integer refreshSeconds = obj.getRefreshSeconds();
 			if (refreshSeconds == null)
@@ -719,6 +722,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			hibBIObject.setSbiObjFuncs(hibObjFunc);
 
+			// update detail dataset relationship
+
+			DAOFactory.getBIObjDataSetDAO().updateObjectDetailDataset(id, obj.getDataSetId(), aSession);
+
 			// we must close transaction before saving ObjTemplate,
 			// since ObjTemplateDAO opens a new transaction and it would fail in Ingres
 			tx.commit();
@@ -729,7 +736,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				IObjTemplateDAO dao = DAOFactory.getObjTemplateDAO();
 				dao.setUserProfile(this.getUserProfile());
-				dao.insertBIObjectTemplate(objTemp);
+				dao.insertBIObjectTemplate(objTemp, obj);
 			}
 
 			// if the document is a document composition creates all parameters automatically
@@ -855,6 +862,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						}
 					}
 				}
+
+				// delete ObjDataset eventually associatyed
+				DAOFactory.getBIObjDataSetDAO().eraseBIObjDataSetByObjectId(obj.getId());
 
 				// delete parameters associated
 				// before deleting parameters associated is needed to delete all dependencies,
@@ -1118,7 +1128,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * 
 	 * @return the corrispondent output <code>BIObject</code>
 	 */
-	public BIObject toBIObject(SbiObjects hibBIObject) {
+	@Override
+	public BIObject toBIObject(SbiObjects hibBIObject, Session session) throws EMFUserError {
 		logger.debug("IN");
 		// create empty biobject
 		BIObject aBIObject = new BIObject();
@@ -1150,10 +1161,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		if (hibBIObject.getDataSource() != null) {
 			aBIObject.setDataSourceId(new Integer(hibBIObject.getDataSource().getDsId()));
 		}
-		if (hibBIObject.getDataSet() != null) {
-			// aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet().getId().getDsId()));
-			aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet()));
-		}
+		// if (hibBIObject.getDataSet() != null) {
+		// // aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet().getId().getDsId()));
+		// aBIObject.setDataSetId(new Integer(hibBIObject.getDataSet()));
+		// }
 
 		// set id
 		aBIObject.setId(hibBIObject.getBiobjId());
@@ -1231,6 +1242,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 		aBIObject.setParametersRegion(region);
 
+		// put dataset
+		if (session != null) {
+			BIObjDataSet biObjDataSet = DAOFactory.getBIObjDataSetDAO().getObjectDetailDataset(aBIObject.getId(), session);
+			if (biObjDataSet != null) {
+				logger.debug("Associate dataset with id " + biObjDataSet.getDataSetId());
+				aBIObject.setDataSetId(biObjDataSet.getDataSetId());
+			}
+		}
 		logger.debug("OUT");
 		return aBIObject;
 	}
@@ -1280,7 +1299,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next()));
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1323,7 +1342,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// List hibList = criteria.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next()));
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1378,7 +1397,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			Iterator<SbiObjects> it = hibQuery.list().iterator();
 			while (it.hasNext()) {
-				realResult.add(toBIObject(it.next()));
+				realResult.add(toBIObject(it.next(), aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1446,7 +1465,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next()));
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1498,7 +1517,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next()));
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1542,7 +1561,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			SbiObjects hibObject = (SbiObjects) hqlQuery.uniqueResult();
 			if (hibObject == null)
 				return null;
-			biObject = toBIObject(hibObject);
+			biObject = toBIObject(hibObject, aSession);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);
@@ -1831,7 +1850,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
 				SbiObjects object = (SbiObjects) it.next();
-				realResult.add(toBIObject(object));
+				realResult.add(toBIObject(object, aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -1940,7 +1959,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
 				SbiObjects object = (SbiObjects) it.next();
-				realResult.add(toBIObject(object));
+				realResult.add(toBIObject(object, aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -2123,7 +2142,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
 				SbiObjects object = (SbiObjects) it.next();
-				realResult.add(toBIObject(object));
+				realResult.add(toBIObject(object, aSession));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -2230,7 +2249,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			Iterator it = toTransform.iterator();
 			while (it.hasNext()) {
 				SbiObjects object = (SbiObjects) it.next();
-				toReturn.add(toBIObject(object));
+				toReturn.add(toBIObject(object, aSession));
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of Resources", he);
@@ -2310,4 +2329,5 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		logger.debug("OUT");
 		return biObject;
 	}
+
 }

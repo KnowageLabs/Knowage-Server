@@ -550,6 +550,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToEnableDatasetPersistence()) {
 				roleFunctionalities.add(SpagoBIConstants.ENABLE_DATASET_PERSISTENCE);
 			}
+			if (virtualRole.isAbleToEnableFederatedDataset()) {
+				roleFunctionalities.add(SpagoBIConstants.ENABLE_FEDERATED_DATASET);
+			}
 			if (virtualRole.isAbleToManageGlossaryBusiness()) {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS);
 			}
@@ -617,6 +620,7 @@ public class UserUtilities {
 		virtualRole.setIsAbleToViewSocialAnalysis(false);
 		virtualRole.setIsAbleToHierarchiesManagement(false);
 		virtualRole.setIsAbleToEnableDatasetPersistence(false);
+		virtualRole.setIsAbleToEnableFederatedDataset(false);
 
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
@@ -733,6 +737,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToEnableDatasetPersistence()) {
 						logger.debug("User has role " + roleName + " that is able to persist dataset.");
 						virtualRole.setIsAbleToEnableDatasetPersistence(true);
+					}
+					if (anotherRole.isAbleToEnableFederatedDataset()) {
+						logger.debug("User has role " + roleName + " that is able to manage federated dataset.");
+						virtualRole.setIsAbleToEnableFederatedDataset(true);
 					}
 					if (anotherRole.isAbleToManageGlossaryBusiness()) {
 						logger.debug("User has role " + roleName + " that is able to manage glossary business.");

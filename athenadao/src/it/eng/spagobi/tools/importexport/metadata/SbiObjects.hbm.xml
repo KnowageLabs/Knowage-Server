@@ -33,9 +33,9 @@
             <column name="data_set_id" not-null="false" />
         </many-to-one>   
          -->
-         <property name="dataSet" type="integer">
+<!--  <property name="dataSet" type="integer">
 		   <column  name="data_set_id" not-null="false"/>
-		  </property>     
+		  </property>     -->         
         <property name="objectTypeCode" type="string">
             <column name="biobj_type_cd" length="20" not-null="true" />
         </property>

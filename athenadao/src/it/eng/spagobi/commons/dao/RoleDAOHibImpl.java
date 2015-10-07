@@ -472,9 +472,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
 						|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.isAbleToViewSocialAnalysis())
 						|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.isAbleToHierarchiesManagement())
-						|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence()
-								|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness()) || (authI.getName().equals(
-								"MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical()))
+						|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence())
+						|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.isAbleToEnableFederatedDataset())
+						|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
+						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
 
 				) {
 
@@ -768,6 +769,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
 				role.setIsAbleToEnableDatasetPersistence(true);
 			}
+			if (name.equals("ENABLE_FEDERATED_DATASET")) {
+				role.setIsAbleToEnableFederatedDataset(true);
+			}
 			if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
 				role.setAbleToManageGlossaryBusiness(true);
 			}
@@ -949,6 +953,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("HIERARCHIES_MANAGEMENT") && role.isAbleToHierarchiesManagement())
 						|| (functI.getName().equals("VIEW_SOCIAL_ANALYSIS") && role.isAbleToViewSocialAnalysis())
 						|| (functI.getName().equals("ENABLE_DATASET_PERSISTENCE") && role.isAbleToEnableDatasetPersistence())
+						|| (functI.getName().equals("ENABLE_FEDERATED_DATASET") && role.isAbleToEnableFederatedDataset())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && role.isAbleToManageGlossaryBusiness())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())) {
 

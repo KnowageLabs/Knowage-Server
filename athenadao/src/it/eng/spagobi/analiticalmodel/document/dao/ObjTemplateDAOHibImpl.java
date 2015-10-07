@@ -14,11 +14,15 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -285,7 +289,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		}
 	}
 
-	public void insertBIObjectTemplate(ObjTemplate objTemplate) throws EMFUserError, EMFInternalError {
+	@Override
+	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -347,6 +352,9 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				hibObjTemplate.setSbiBinContents(hibBinContent);
 				SbiObjects obj = (SbiObjects) aSession.load(SbiObjects.class, objTemplate.getBiobjId());
 				hibObjTemplate.setSbiObject(obj);
+
+				logger.debug("Associate template to object with label: " + obj.getLabel());
+
 				// metadata
 				String user = objTemplate.getCreationUser();
 				if (user == null || user.equals(""))
@@ -356,6 +364,37 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				updateSbiCommonInfo4Insert(hibObjTemplate);
 				aSession.save(hibObjTemplate);
 			}
+
+			byte[] templateContent = hibObjTemplate.getSbiBinContents().getContent();
+
+			// save associations among dataset and documents
+			if (biObject != null) {
+				String driverName = biObject.getEngine().getDriverName();
+				if (driverName != null) {
+					try {
+						IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
+						ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(templateContent);
+						if (datasetsAssociated != null) {
+							for (Iterator iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
+								String string = (String) iterator.next();
+								logger.debug("Dataset associated to biObject with label " + biObject.getLabel() + ": " + string);
+							}
+
+							IBIObjDataSetDAO biObjDatasetDAO = DAOFactory.getBIObjDataSetDAO();
+							biObjDatasetDAO.updateObjectNotDetailDatasets(biObject, datasetsAssociated, aSession);
+						} else {
+							logger.debug("No dataset associated to template");
+						}
+					} catch (Exception e) {
+						logger.error("Error while inserting dataset dependencies; check template format", e);
+						throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId()
+								+ "]; error while recovering dataset associations; check template format.");
+					}
+				}
+			} else {
+				logger.debug("dataset associations not inserted because object was not passed");
+			}
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);

@@ -7,6 +7,7 @@ package it.eng.spagobi.analiticalmodel.document.dao;
 
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
@@ -99,6 +100,6 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
-	public void insertBIObjectTemplate(ObjTemplate objTemplate) throws EMFUserError, EMFInternalError;
+	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
 
 }

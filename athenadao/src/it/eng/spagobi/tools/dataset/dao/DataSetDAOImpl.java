@@ -6,13 +6,17 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.event.DataSetEventManager;
+import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
+import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -943,7 +947,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			session = getSession();
 			transaction = session.beginTransaction();
 
-			String hql = "select count(*) from SbiObjects s where s.dataSet = ? ";
+			String hql = "select count(*) from SbiObjDataSet s where s.dsId = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, dsId.intValue());
 			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
@@ -1009,27 +1013,62 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 *             the EMF user error
 	 * @see it.eng.spagobi.tools.dataSet.dao.IDataSetDAO#hasBIObjAssociated(java.lang.String)
 	 */
+	// @Override
+	// public boolean hasBIObjAssociated(String dsId) {
+	// logger.debug("IN");
+	// boolean bool = false;
+	//
+	// Session session = null;
+	// Transaction transaction = null;
+	// try {
+	// session = getSession();
+	// transaction = session.beginTransaction();
+	// Integer dsIdInt = Integer.valueOf(dsId);
+	//
+	// String hql = " from SbiObjects s where s.dataSet = ?";
+	// Query aQuery = session.createQuery(hql);
+	// aQuery.setInteger(0, dsIdInt.intValue());
+	// List biObjectsAssocitedWithDs = aQuery.list();
+	// if (biObjectsAssocitedWithDs.size() > 0)
+	// bool = true;
+	// else
+	// bool = false;
+	// transaction.commit();
+	// } catch (Throwable t) {
+	// if (transaction != null && transaction.isActive()) {
+	// transaction.rollback();
+	// }
+	// throw new SpagoBIDOAException("Error while getting the objects associated with the data set with id " + dsId, t);
+	// } finally {
+	// if (session != null && session.isOpen()) {
+	// session.close();
+	// }
+	// logger.debug("OUT");
+	// }
+	// return bool;
+	// }
+
 	@Override
 	public boolean hasBIObjAssociated(String dsId) {
 		logger.debug("IN");
-		boolean bool = false;
+
+		boolean toReturn = false;
 
 		Session session = null;
 		Transaction transaction = null;
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
+
 			Integer dsIdInt = Integer.valueOf(dsId);
 
-			String hql = " from SbiObjects s where s.dataSet = ?";
-			Query aQuery = session.createQuery(hql);
-			aQuery.setInteger(0, dsIdInt.intValue());
-			List biObjectsAssocitedWithDs = aQuery.list();
-			if (biObjectsAssocitedWithDs.size() > 0)
-				bool = true;
+			ArrayList<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(dsIdInt, session);
+
+			if (objectsAssociated.isEmpty())
+				toReturn = false;
 			else
-				bool = false;
-			transaction.commit();
+				toReturn = true;
+
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
@@ -1041,10 +1080,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			logger.debug("OUT");
 		}
-		return bool;
+		return toReturn;
 	}
 
 	/**
+	 * 
 	 * Checks for bi kpi associated.
 	 * 
 	 * @param dsId
@@ -1358,13 +1398,34 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			// "cannot be erased because it is referenced by [" + objectsRelated.size() + "] document(s)";
 			// throw new SpagoBIDOAException(message);
 			// }
-			boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
+
+			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
+			ArrayList<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(datasetId, session);
+			if (!objectsAssociated.isEmpty()) {
+				for (Iterator iterator = objectsAssociated.iterator(); iterator.hasNext();) {
+					BIObject biObject = (BIObject) iterator.next();
+					logger.debug("Dataset with id " + datasetId + " is used by BiObject with label " + biObject.getLabel());
+				}
+			}
+
+			// boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
 			boolean bLovs = hasBILovAssociated(String.valueOf(datasetId));
 			boolean bKpis = hasBIKpiAssociated(String.valueOf(datasetId));
-			if (bObjects || bLovs || bKpis) {
+			// if (!objectsAssociated.isEmpty() || bObjects || bLovs || bKpis) {
+			if (!objectsAssociated.isEmpty() || bLovs || bKpis) {
 				String message = "[deleteInUseDSError]: Dataset with id [" + datasetId + "] "
 						+ "cannot be erased because it is referenced by documents or kpis or lovs.";
-				throw new SpagoBIDOAException(message);
+				// throw new SpagoBIDOAException(message);
+				DatasetInUseException diue = new DatasetInUseException(message);
+				diue.setKpi(bKpis);
+				diue.setLov(bLovs);
+				ArrayList<String> objs = new ArrayList<String>();
+				for (int i = 0; i < objectsAssociated.size(); i++) {
+					BIObject obj = objectsAssociated.get(i);
+					objs.add(obj.getLabel());
+				}
+				diue.setObjectsLabel(objs);
+				throw diue;
 			}
 
 			// deletes all versions of the dataset specified
@@ -1381,13 +1442,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			transaction.commit();
 
-		} catch (Throwable t) {
+		}
+
+		catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
-					+ datasetId + "]";
-			throw new SpagoBIDOAException(msg, t);
+			if (t instanceof DatasetException) {
+				DatasetException de = (DatasetException) t;
+				throw de;
+			} else {
+				String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting dataset " + "whose id is equal to ["
+						+ datasetId + "]";
+				throw new SpagoBIDOAException(msg, t);
+			}
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
