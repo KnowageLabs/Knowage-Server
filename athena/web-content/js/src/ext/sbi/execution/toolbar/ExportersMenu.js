@@ -114,7 +114,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 		}, 
 		'XLS' : {
 			description: LN('sbi.execution.XlsExport')
-			, iconCls: 'icon-icon-xls' 
+			, iconCls: 'icon-xls' 
 		},
 		'XLSX' : {
 			description: LN('sbi.execution.XlsxExport')
@@ -194,8 +194,10 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			,'JPG' : function() { this.exportGeoTo('jpeg'); }
 		},
 		'DOCUMENT_COMPOSITE': {
-			// 'PDF' : this.exportCompositeDocumentTo
-			'PDF' : function() { this.exportCompositeDocumentTo('PDF'); }
+//			 'PDF' : function() { this.exportCompositeDocumentTo('PDF'); }
+			 'PDF'    : function() { this.exportCockpitTo('pdf','application/pdf'); }
+			,'XLS'    : function() { this.exportCockpitTo('xls','application/vnd.ms-excel'); }
+			,'XLSX'    : function() { this.exportCockpitTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); }
 		},
 		'DATAMART': {
 			 'PDF'    : function() { this.exportQbeTo('PDF'); }
@@ -368,10 +370,14 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 							
 						}				
 					}//for 
-					
-					var urlExporter = this.services['toDCPdf'] + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
+					var urlExporter = (format=='PDF'?this.services['toDCPdf']:this.services['toDCXls']) + '&OBJECT_ID=' + this.executionInstance.OBJECT_ID;
 					urlExporter += newPars;
 					return urlExporter;
+				if(exportationUrl == null) {
+					alert("Impossible to build exportation url");
+					return;
+				}
+				return exportationUrl;
 					
 			}else if(documentType != null && documentType == 'DATAMART'){
 				if(format == 'PDF') {format = 'application/pdf'; }
@@ -556,10 +562,16 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 			, baseParams: params
 		});
 
+		/* TODO erase obsolete services
 		this.services['toDCPdf'] = Sbi.config.serviceRegistry.getServiceUrl({
-			serviceName: 'EXPORT_DOCUMENT_COMPOSITION_PDF'
+			serviceName: 'EXPORT_DOCUMENT_COMPOSITION'
 			, baseParams: params
 		});
+		
+		this.services['toDCXls'] = Sbi.config.serviceRegistry.getServiceUrl({
+			serviceName: 'EXPORT_DOCUMENT_COMPOSITION_XLS'
+			, baseParams: params
+		});*/
 		
 		this.services['getMetadataService'] = Sbi.config.serviceRegistry.getServiceUrl({
 			serviceName : 'GET_METADATA_ACTION',
@@ -678,6 +690,113 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * 
 	 * @param {format} target exportation format
 	 */
+	, exportCockpitTo: function (format, mimeType) {
+		var csvData;
+		if(format != 'pdf'){
+			csvData = [];
+			var csvDataCount = 0;
+		    var documentWindow = this.getDocumentWindow();
+		    var cockpitPanel = documentWindow.cockpitPanel;
+		    var storeManager = documentWindow.Ext.data.StoreManager;
+		    var sheets = cockpitPanel.config.lastSavedAnalysisState.widgetsConf;
+		    for (var i = 0; i < sheets.length; i++){
+		    	var widgets = sheets[i].sheetConf.widgets;
+		    	for (var j = 0; j < widgets.length; j++){
+		    		var widget = widgets[j];
+		    		if(widget.wtype == 'table'){
+		    			var store = storeManager.lookup(widget.storeId);
+		    			var metas = Object.keys(store.fieldsMeta);
+		    			var metaIndex = [];
+		    			csvData[csvDataCount] = '';
+		    			for(var k = 0; k < metas.length; k++){
+		    				var meta = store.fieldsMeta[metas[k]];
+		    				csvData[csvDataCount] += meta.header + ';'
+		    				metaIndex[k] = meta.dataIndex;
+		    			}
+		    			csvData[csvDataCount] += '\n';
+		    			
+		    			var allRecords = store.snapshot || store.data;
+		    			for(var k = 0; k < allRecords.items.length; k++){
+		    				for(var w = 0; w < metaIndex.length; w++){
+		    					csvData[csvDataCount] += allRecords.items[k].raw[metaIndex[w]]+';';
+		    				}
+		    				csvData[csvDataCount] += '\n';
+		    			}
+		    			csvData[csvDataCount] = btoa(csvData[csvDataCount]);
+		    			csvDataCount++;
+		    		}
+		    	}
+		    }
+		    if(false){
+			    var widgetContainerList = cockpitPanel.widgetContainerList;
+			    csvData = [];
+			    var csvDataCount = 0;
+			    for (var i = 0; i < widgetContainerList.length; i++){
+			    	var widgets = widgetContainerList[i].widgetManager.widgets.items;
+			    	for (var j = 0; j < widgets.length; j++){
+			    		var widget = widgets[j];
+			    		if(widget.wtype == 'table'){
+			    			var store = widget.grid.store;
+			    			var metas = Object.keys(store.fieldsMeta);
+			    			var metaIndex = [];
+			    			csvData[csvDataCount] = '';
+			    			for(var k = 0; k < metas.length; k++){
+			    				var meta = store.fieldsMeta[metas[k]];
+			    				csvData[csvDataCount] += meta.header + ';'
+			    				metaIndex[k] = meta.dataIndex;
+			    			}
+			    			csvData[csvDataCount] += '\n';
+			    			
+			    			var allRecords = store.snapshot || store.data;
+			    			for(var k = 0; k < allRecords.items.length; k++){
+			    				for(var w = 0; w < metaIndex.length; w++){
+			    					csvData[csvDataCount] += allRecords.items[k].raw[metaIndex[w]]+';';
+			    				}
+			    				csvData[csvDataCount] += '\n';
+			    			}
+			    			csvData[csvDataCount] = btoa(csvData[csvDataCount]);
+			    			csvDataCount++;
+			    		}
+			    	}
+			    }
+		    }
+		    if(csvData){
+		    	csvData = btoa(csvData);
+		    }
+		}
+		var win = window.open('', 'exportWindow');
+		var baseUrl = Sbi.config.serviceRegistry.baseUrl;
+	    var dh = Ext.DomHelper;
+	    var spec = {
+    	    id: 'form',
+    	    tag: 'form',
+    	    method: 'POST',
+    	    action: baseUrl.protocol+"://"+baseUrl.host+":"+baseUrl.port+"/highcharts-export-web/capture",
+    	    target: 'exportWindow',
+    	    children: [
+    	        {tag: 'input', type: 'hidden', name: 'username', value: Sbi.user.userId},
+    	        {tag: 'input', type: 'hidden', name: 'documentLabel', value: this.executionInstance.OBJECT_LABEL},
+    	        {tag: 'input', type: 'hidden', name: 'type', value: mimeType},
+    	        {tag: 'input', type: 'hidden', name: 'port', value: baseUrl.port},
+    	        {tag: 'input', type: 'hidden', name: 'ip', value: baseUrl.host},
+    	        {tag: 'input', type: 'hidden', name: 'protocol', value: baseUrl.protocol},
+    	        {tag: 'input', type: 'hidden', name: 'context', value: baseUrl.contextPath},
+    	        {tag: 'input', type: 'hidden', name: 'loginUrl', value: Sbi.config.loginUrl}
+    	    ]
+    	};
+    	var form = dh.append(win.document.body, spec);
+    	if(format != 'pdf'){
+    		dh.append(form, {tag: 'input', type: 'hidden', name: 'csvData', value: csvData}, true);
+    	}
+    	form.submit();
+	    
+	}
+	
+	/**
+	 * @method
+	 * 
+	 * @param {format} target exportation format
+	 */
 	, exportGeoTo: function (format, contentUrl) {	
 
 		var exportationUrl = this.getExportationUrl(format, 'MAP', contentUrl);	 
@@ -688,6 +807,7 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
 	 * @method
 	 * 
 	 * @TODO terrible code. refactor when possible!
+	 * @TODO I think this is an obsolete code
 	 */
 	, exportCompositeDocumentTo: function (format) {
 		isHighchart = false;
