@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Defines a <code>Role</code> object.
- *
+ * 
  * @author sulis
  */
 
@@ -62,7 +62,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to save subobjects.
-	 *
+	 * 
 	 * @return true, if is able to save subobjects
 	 */
 	public boolean isAbleToSaveSubobjects() {
@@ -71,7 +71,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to save subobjects.
-	 *
+	 * 
 	 * @param isAbleToSaveSubobjects
 	 *            the new checks if is able to save subobjects
 	 */
@@ -81,7 +81,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to see subobjects.
-	 *
+	 * 
 	 * @return true, if is able to see subobjects
 	 */
 	public boolean isAbleToSeeSubobjects() {
@@ -90,7 +90,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to see subobjects.
-	 *
+	 * 
 	 * @param isAbleToSeeSubobjects
 	 *            the new checks if is able to see subobjects
 	 */
@@ -100,7 +100,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to see viewpoints.
-	 *
+	 * 
 	 * @return true, if is able to see viewpoints
 	 */
 	public boolean isAbleToSeeViewpoints() {
@@ -109,7 +109,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to see viewpoints.
-	 *
+	 * 
 	 * @param isAbleToSeeViewpoints
 	 *            the new checks if is able to see viewpoints
 	 */
@@ -119,7 +119,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to see snapshots.
-	 *
+	 * 
 	 * @return true, if is able to see snapshots
 	 */
 	public boolean isAbleToSeeSnapshots() {
@@ -128,7 +128,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to see snapshots.
-	 *
+	 * 
 	 * @param isAbleToSeeSnapshots
 	 *            the new checks if is able to see snapshots
 	 */
@@ -138,7 +138,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to see notes.
-	 *
+	 * 
 	 * @return true, if is able to see notes
 	 */
 	public boolean isAbleToSeeNotes() {
@@ -147,7 +147,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to see notes.
-	 *
+	 * 
 	 * @param isAbleToSeeNotes
 	 *            the new checks if is able to see notes
 	 */
@@ -157,7 +157,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to send mail.
-	 *
+	 * 
 	 * @return true, if is able to send mail
 	 */
 	public boolean isAbleToSendMail() {
@@ -166,7 +166,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to send mail.
-	 *
+	 * 
 	 * @param isAbleToSendMail
 	 *            the new checks if is able to send mail
 	 */
@@ -176,7 +176,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to save into personal folder.
-	 *
+	 * 
 	 * @return true, if is able to save into personal folder
 	 */
 	public boolean isAbleToSaveIntoPersonalFolder() {
@@ -185,7 +185,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to save into personal folder.
-	 *
+	 * 
 	 * @param isAbleToSaveIntoPersonalFolder
 	 *            the new checks if is able to save into personal folder
 	 */
@@ -195,7 +195,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to save remember me.
-	 *
+	 * 
 	 * @return true, if is able to save remember me
 	 */
 	public boolean isAbleToSaveRememberMe() {
@@ -204,7 +204,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to save remember me.
-	 *
+	 * 
 	 * @param isAbleToSaveRememberMe
 	 *            the new checks if is able to save remember me
 	 */
@@ -214,7 +214,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to see metadata.
-	 *
+	 * 
 	 * @return true, if is able to see metadata
 	 */
 	public boolean isAbleToSeeMetadata() {
@@ -223,7 +223,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to see metadata.
-	 *
+	 * 
 	 * @param isAbleToSeeMetadata
 	 *            the new checks if is able to see metadata
 	 */
@@ -233,7 +233,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if is able to save metadata.
-	 *
+	 * 
 	 * @return the isAbleToSaveMetadata
 	 */
 	public boolean isAbleToSaveMetadata() {
@@ -242,7 +242,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the checks if is able to save metadata.
-	 *
+	 * 
 	 * @param isAbleToSaveMetadata
 	 *            the new checks if is able to save metadata
 	 */
@@ -252,7 +252,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Checks if role is able to build and modify QBE queries.
-	 *
+	 * 
 	 * @return true, if role is able to build and modify QBE queries
 	 */
 	public Boolean isAbleToBuildQbeQuery() {
@@ -261,7 +261,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets if role is able to build and modify QBE queries.
-	 *
+	 * 
 	 * @param isAbleToBuildQbeQuery
 	 */
 	public void setIsAbleToBuildQbeQuery(Boolean isAbleToBuildQbeQuery) {
@@ -278,7 +278,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Constructor.
-	 *
+	 * 
 	 * @param name
 	 *            the name
 	 * @param description
@@ -292,7 +292,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Gets the description.
-	 *
+	 * 
 	 * @return role description
 	 */
 
@@ -302,7 +302,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the description.
-	 *
+	 * 
 	 * @param description
 	 *            the description to set
 	 */
@@ -312,7 +312,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Gets the id.
-	 *
+	 * 
 	 * @return role id
 	 */
 	public Integer getId() {
@@ -321,7 +321,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the id.
-	 *
+	 * 
 	 * @param id
 	 *            the role id to set
 	 */
@@ -331,7 +331,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Gets the name.
-	 *
+	 * 
 	 * @return the role name
 	 */
 	public String getName() {
@@ -340,7 +340,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the name.
-	 *
+	 * 
 	 * @param name
 	 *            the name to set
 	 */
@@ -350,7 +350,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Gets the role type cd.
-	 *
+	 * 
 	 * @return Returns the roleTypeCD.
 	 */
 	public String getRoleTypeCD() {
@@ -359,7 +359,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the role type cd.
-	 *
+	 * 
 	 * @param roleTypeCD
 	 *            The roleTypeCD to set.
 	 */
@@ -369,7 +369,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Gets the role type id.
-	 *
+	 * 
 	 * @return Returns the roleTypeID.
 	 */
 	public Integer getRoleTypeID() {
@@ -378,7 +378,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the role type id.
-	 *
+	 * 
 	 * @param roleTypeID
 	 *            The roleTypeID to set.
 	 */
@@ -388,7 +388,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Gets the code.
-	 *
+	 * 
 	 * @return Returns the code.
 	 */
 	public String getCode() {
@@ -397,7 +397,7 @@ public class Role implements Serializable {
 
 	/**
 	 * Sets the code.
-	 *
+	 * 
 	 * @param code
 	 *            The code to set.
 	 */
