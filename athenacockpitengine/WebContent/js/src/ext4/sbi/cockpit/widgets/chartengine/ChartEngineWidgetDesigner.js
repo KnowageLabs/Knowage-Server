@@ -196,7 +196,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidgetDesigner, Sbi.cockpi
 				
 				var chartCategory= this.chartTemplate.CHART.VALUES.CATEGORY;
 				
-				if(Array.isArray(categories)){
+				if(Array.isArray(chartCategory)){
 					for(var i = 0; i < chartCategory.length; i++){
 						
 						var category = {};
