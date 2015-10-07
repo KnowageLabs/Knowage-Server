@@ -2,7 +2,7 @@
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy  of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.engines.drivers.jpivot;
 
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for JPivot Engine.
@@ -533,4 +534,10 @@ public class JPivotDriver extends AbstractDriver implements IEngineDriver {
 			throw new SpagoBIRuntimeException("Error while decorating document's template", e);
 		}
 	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -21,12 +21,14 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Geo External Engine.
@@ -270,5 +272,10 @@ public class GeoDriver extends AbstractDriver implements IEngineDriver {
 
 		logger.debug("OUT");
 		return map;
+	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

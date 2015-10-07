@@ -56,6 +56,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private static final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 	private static final String ENABLE_DATASET_PERSISTENCE = "enableDatasetPersistence";
+	private static final String ENABLE_FEDERATED_DATASET = "enableFederatedDataset";
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
@@ -107,6 +108,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(MANAGE_GLOSSARY_BUSINESS, role.isAbleToManageGlossaryBusiness());
 			result.put(MANAGE_GLOSSARY_TECHNICAL, role.isAbleToManageGlossaryTechnical());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
+			result.put(ENABLE_FEDERATED_DATASET, role.isAbleToEnableFederatedDataset());
 
 			// create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();

@@ -16,32 +16,30 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 public class AccessibilityDriver extends AbstractDriver implements
 		IEngineDriver {
 
 	static Logger logger = Logger.getLogger(AccessibilityDriver.class);
 
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject,
-			IEngUserProfile profile) throws InvalidOperationRequest {
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
 
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject,
-			IEngUserProfile profile) throws InvalidOperationRequest {
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
 
-	public Map getParameterMap(Object biobject, 
-			IEngUserProfile profile,
-			String roleName) {
+	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
 		logger.debug("IN");
 		Map map = new Hashtable();
 		try {
@@ -55,10 +53,7 @@ public class AccessibilityDriver extends AbstractDriver implements
 		return map;
 	}
 
-	public Map getParameterMap(Object object, 
-			Object subObject,
-			IEngUserProfile profile, 
-			String roleName) {
+	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName) {
 		return getParameterMap(object, profile, roleName);
 	}
 
@@ -95,8 +90,7 @@ public class AccessibilityDriver extends AbstractDriver implements
 		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
 		if (biobj.getBiObjectParameters() != null) {
 			BIObjectParameter biobjPar = null;
-			for (Iterator it = biobj.getBiObjectParameters().iterator(); it
-					.hasNext();) {
+			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
 				try {
 					biobjPar = (BIObjectParameter) it.next();
 					String value = parValuesEncoder.encode(biobjPar);
@@ -105,7 +99,7 @@ public class AccessibilityDriver extends AbstractDriver implements
 					else
 						logger.warn("value encoded IS null");
 					logger.debug("Add parameter:"
-							+ biobjPar.getParameterUrlName() + "/" + value);
+						+ biobjPar.getParameterUrlName() + "/" + value);
 				} catch (Exception e) {
 					logger.error("Error while processing a BIParameter", e);
 				}
@@ -114,4 +108,10 @@ public class AccessibilityDriver extends AbstractDriver implements
 		logger.debug("OUT");
 		return pars;
 	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

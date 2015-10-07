@@ -80,7 +80,10 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 			this.smartFilterPanelTab = Ext.create('Sbi.tools.document.SmartFilterBrowser',{title: LN("sbi.tools.document.smartfilterbrowser.title")});
 			this.items.push(this.smartFilterPanelTab);
 		}
-		
+		if (Sbi.settings.mydata.showFederatedDatasetTab == true){
+			this.federatedDatasetTab = Ext.create('Sbi.tools.dataset.FederatedDatasetBrowser',{title: LN("sbi.tools.dataset.federateddatasetbrowser.title")});
+			this.items.push(this.federatedDatasetTab);
+		}		
 
 		//this.items = [ this.datasetPanelTab,this.modelsPanelTab ];
 
@@ -107,6 +110,11 @@ Ext.define('Sbi.selfservice.ManageSelfService', {
 		}
 		if (Sbi.settings.mydata.showSmartFilterTab == true){
 			this.smartFilterPanelTab.on('executeDocument',function(docType, inputType, record){
+				this.fireEvent('executeDocument',docType,inputType,record);
+			},this);
+		}
+		if (Sbi.settings.mydata.showFederatedDatasetTab == true){
+			this.federatedDatasetTab.on('executeDocument',function(docType, inputType, record){
 				this.fireEvent('executeDocument',docType,inputType,record);
 			},this);
 		}

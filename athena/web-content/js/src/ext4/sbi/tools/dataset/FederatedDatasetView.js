@@ -5,16 +5,16 @@
 
 /**
  * 
- * Container of the meta models catalogue.
- * If the user clicks on a metamodel an execution of the associated engine will be started
+ * Container of the federated dataset catalogue.
+ * 
  * 
  *  @author
- *  Alberto Ghedin (alberto.ghedin@eng.it)
+ * Giulio Gavardi(giulio.gavardi@eng.it)
  *  
  */
  
   
-Ext.define('Sbi.tools.model.MetaModelsView', {
+Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 	extend : 'Ext.DataView'
 
 		,
@@ -90,45 +90,11 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 
 			var noItem = LN('sbi.browser.folderdetailpanel.emptytext');
 			var title = LN('sbi.ds.listTitle');
+
+			var buttonShowQbe ='<li class="qbe"><a id="showQbe" href="#" title="Show Qbe"></a></li>';
+			var buttonEditFederated = '<li class="editFederated"><a id="editFederated" href="#" title="Edit federated"></a></li>';
+			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
 			
-			/*
-			this.tpl = new Ext.XTemplate(
-					'<div id="sample-ct">', 	            
-		 	           '<div class="group-view-small">',
-		 	            '<ul>',
-		 	            	'<tpl if="root.length == 0">',
-		 	            		'<div id="empty-group-message">',
-		 	            		noItem,
-		 	            		'</div>',
-		 	            	'</tpl>',        
-		 	            	'<tpl for=".">',
-			 	            	'<dd class="box-no-border">',
-									'<a href="#" class="box-link">',
-										'<div class="box-map">',
-											'<img src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
-//											'<span class="shadow"></span>',
-										'</div>',
-										'<div class="box-text">',
-											'<br><h2>{name}</h2>',
-											'<p>{description}</p>',
-										'</div>',
-									'</a>',
-								'</dd>',
-//			                    '<dd class="group-item">',
-//			                    	'<div class="button">',
-//			                        	'<div class="meta-models-view">  &nbsp ',
-//			                    	    	'<span class="shadow"></span>',
-//			                    	    '</div>',
-//										'<p><b>{name}</b></p>',
-//										'<p>{description}</p>',
-//									'</div>',
-//			                    '</dd>',
-			                '</tpl>',	              
-			          '</ul>',
-		 	          '</div>',
-		 	        '</div>');
-			
-*/
 			this.tpl = new Ext.XTemplate(
 					'<div id="list-container" class="main-datasets-list">', 	            
 		 	            	'<tpl if="root.length == 0">',
@@ -140,14 +106,13 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 								'<dd class="box">',
 									'<div class="box-container">',
 										'<div class="box-figure">',
-										' 			<tpl if="type == \'MODEL\'">',										
-													'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/metamodel.png" alt=" " />',
-													'</tpl>',
+													'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/federatedDataset.png" alt=" " />',
 											'<span class="shadow"></span>',
 											'<div class="hover">',
 												'<div class="box-actions-container">',
 									            '    <ul class="box-actions">',	    
-									    		'<li class="qbe"><a href="#" title="Show Qbe"></a></li>',
+									    		buttonShowQbe,
+									    		buttonEditFederated,
 									    		'    </ul>',
 												'</div>',
 											'</div>',										
@@ -169,8 +134,18 @@ Ext.define('Sbi.tools.model.MetaModelsView', {
 		}
 	
 		,onClick : function(obj, record, item, index, e, eOpts) {
+			
 
-						this.fireEvent('executeDocument','QBE','MODEL',record);
-						
+				
+				if(e.target.id == 'editFederated')
+					{
+					var id = record.data.id;
+					var label = record.data.label;
+					var urlToCall = Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp&id="+id+"&label="+label;
+					window.location.href = urlToCall;
+					}
+				else {
+						this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
+				}
 	    }
 	});

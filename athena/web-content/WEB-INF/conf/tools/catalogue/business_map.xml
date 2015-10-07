@@ -4,6 +4,7 @@
 	    <MAP_ACTION actionName="MANAGE_META_MODELS_CATALOGUE_ACTION" businessProcess="MetaModelsCatalogueManagement" />
         <MAP_ACTION actionName="GET_META_MODELS_ACTION" businessProcess="MetaModelsCatalogueManagement" />
         <MAP_ACTION actionName="GET_META_MODELS_FOR_FINAL_USER_ACTION" businessProcess="SelfServiceMetaModelManagement" />
+        <MAP_ACTION actionName="GET_FEDERATED_DATASET_FOR_FINAL_USER_ACTION" businessProcess="SelfServiceMetaModelManagement" />
         <MAP_ACTION actionName="SAVE_META_MODEL_ACTION" businessProcess="MetaModelsCatalogueManagement" />
         <MAP_ACTION actionName="DELETE_META_MODEL_ACTION" businessProcess="MetaModelsCatalogueManagement" />
         <MAP_ACTION actionName="GET_META_MODEL_VERSIONS_ACTION" businessProcess="MetaModelsCatalogueManagement" />

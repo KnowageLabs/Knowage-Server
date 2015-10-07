@@ -3,7 +3,7 @@
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-package it.eng.spagobi.tools.catalogue.service;
+package it.eng.spagobi.tools.dataset.service;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
@@ -14,10 +14,10 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.catalogue.service.GetMetaModelsAction;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -28,11 +28,22 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
+public class GetFederatedDatasetForFinalUserAction extends AbstractSpagoBIAction {
+
+	public static Logger logger = Logger.getLogger(GetMetaModelsAction.class);
+
+	public static String START = "start";
+	public static String LIMIT = "limit";
+	public static String FILTERS = "Filters";
+	public static String DOMAIN_TYPE = "BM_CATEGORY";
+
+	public static Integer START_DEFAULT = 0;
+	public static Integer LIMIT_DEFAULT = 15;
 
 	@Override
 	public void doService() {
@@ -40,60 +51,33 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 		logger.debug("IN");
 
 		try {
-			IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
-			dao.setUserProfile(this.getUserProfile());
-			List<MetaModel> allModels = null;
+			List<FederationDefinition> allFederatedDatasets = null;
 
 			List<Integer> categories = getCategories();
 
-			// the administrator can see ALL models
-			if (UserUtilities.isAdministrator(this.getUserProfile())) {
-				allModels = dao.loadAllMetaModels();
-			} else {
-				if (categories == null) {// no category defined in the db
-					if (requestContainsAttribute(FILTERS)) {
-						String filterString = getAttributeAsString(FILTERS);
-						JSONObject jsonObject = new JSONObject(filterString);
-						allModels = getFilteredModels(jsonObject, dao);
-					} else {
-						allModels = dao.loadAllMetaModels();
-					}
-				} else {
-					if (categories.size() > 0) {
-						if (requestContainsAttribute(FILTERS)) {
-							String filterString = getAttributeAsString(FILTERS);
-							JSONObject jsonObject = new JSONObject(filterString);
-							allModels = getFilteredModels(jsonObject, dao, categories);
-						} else {
-							allModels = dao.loadMetaModelByCategories(categories);
-						}
-					}
-				}
-			}
-
-			if (allModels == null) {
-				allModels = new ArrayList<MetaModel>();
-			}
-
-			logger.debug("Read " + allModels.size() + " existing models");
-
 			logger.debug("Read federated dataset");
 			ISbiFederationDefinitionDAO federDsDao = DAOFactory.getFedetatedDatasetDAO();
-			dao.setUserProfile(this.getUserProfile());
+			federDsDao.setUserProfile(this.getUserProfile());
+
+			allFederatedDatasets = federDsDao.loadAllFederatedDataSets();
+			if (allFederatedDatasets == null) {
+				allFederatedDatasets = new ArrayList<FederationDefinition>();
+			}
+			logger.debug("Read " + allFederatedDatasets.size() + " existing federated datasets");
 
 			Integer start = this.getStart();
 			logger.debug("Start : " + start);
 			Integer limit = this.getLimit();
 			logger.debug("Limit : " + limit);
 
-			int startIndex = Math.min(start, allModels.size());
-			int stopIndex = (limit > 0) ? Math.min(start + limit, allModels.size()) : allModels.size();
+			int startIndex = Math.min(start, allFederatedDatasets.size());
+			int stopIndex = (limit > 0) ? Math.min(start + limit, allFederatedDatasets.size()) : allFederatedDatasets.size();
 
-			List<MetaModel> toReturnSublist = allModels.subList(startIndex, stopIndex);
+			List<FederationDefinition> toReturnSublist = allFederatedDatasets.subList(startIndex, stopIndex);
 
 			try {
-				JSONArray modelsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(toReturnSublist, null);
-				JSONObject rolesResponseJSON = createJSONResponse(modelsJSON, toReturnSublist.size());
+				JSONArray dsArraysJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(toReturnSublist, null);
+				JSONObject rolesResponseJSON = createJSONResponse(dsArraysJSON, allFederatedDatasets.size());
 				writeBackToClient(new JSONSuccess(rolesResponseJSON));
 			} catch (IOException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
@@ -106,9 +90,6 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 		} catch (EMFUserError eue) {
 			logger.error("Error in getting federated datasets", eue);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Error in getting federated datasets", eue);
-		} catch (JSONException e) {
-			logger.error("Cannot serialize objects into a JSON object", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects into a JSON object", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -147,43 +128,42 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 		return categories;
 	}
 
-	protected List<MetaModel> getFilteredModels(JSONObject jsonObject, IMetaModelsDAO dao, List<Integer> categories) throws JSONException {
-		List<MetaModel> metaModels = new ArrayList<MetaModel>();
-		String columnFilter = jsonObject.getString("columnFilter");
-		String valueFilter = jsonObject.getString("valueFilter");
-		String typeFilter = jsonObject.getString("typeFilter");
+	protected Integer getStart() {
+		Integer start = START_DEFAULT;
+		Object startObject = getAttribute(START);
+		try {
 
-		if (columnFilter.equals("category")) {
-			if (typeFilter.equals("=")) {
-				Integer categoryId = getCategoryIdbyName(valueFilter);
-				if (categories == null || categories.size() == 0 || categories.contains(categoryId)) {
-					if (categoryId != null) {
-						List<Integer> categories2 = new ArrayList<Integer>();
-						categories2.add(categoryId);
-						metaModels.addAll(dao.loadMetaModelByCategories(categories2));
-					}
-				}
-
-			} else if (typeFilter.equals("like")) {
-				List<Integer> categoryIds = getCategoryIdbyContainsName(valueFilter);
-				if (!categoryIds.isEmpty()) {
-					for (Integer categoryId : categoryIds) {
-						if (categories == null || categories.size() == 0 || categories.contains(categoryId)) {
-							List<Integer> categories2 = new ArrayList<Integer>();
-							categories.add(categoryId);
-							metaModels.addAll(dao.loadMetaModelByCategories(categories2));
-						}
-
-					}
-				}
+			if (startObject != null && !startObject.equals("")) {
+				start = getAttributeAsInteger(START);
 			}
-
-		} else if (columnFilter.equals("name")) {
-			String filter = getFilterString(columnFilter, typeFilter, valueFilter);
-			metaModels.addAll(dao.loadMetaModelByFilter(filter, categories));
-
+		} catch (NumberFormatException e) {
+			logger.debug("Error getting the limit parameter. The value should be integer but it is [" + startObject + "]");
 		}
-		return metaModels;
+
+		return start;
+	}
+
+	protected Integer getLimit() {
+		Integer limit = LIMIT_DEFAULT;
+		Object limitObject = getAttribute(LIMIT);
+		try {
+			if (limitObject != null && !limitObject.equals("")) {
+				limit = getAttributeAsInteger(LIMIT);
+			}
+		} catch (NumberFormatException e) {
+			logger.debug("Error getting the limit parameter. The value should be integer but it is [" + limitObject + "]");
+		}
+
+		return limit;
+	}
+
+	protected JSONObject createJSONResponse(JSONArray rows, Integer totalResNumber) throws JSONException {
+		JSONObject results;
+		results = new JSONObject();
+		results.put("total", totalResNumber);
+		results.put("title", "MetaModels");
+		results.put("rows", rows);
+		return results;
 	}
 
 }

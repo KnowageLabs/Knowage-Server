@@ -3140,11 +3140,14 @@ Ext
 						if (idRec == 0 || idRec == null || idRec === '') {
 							this.doSave("yes");
 						} else {
-							Ext.MessageBox
-									.confirm(
-											LN('sbi.ds.recalculatemetadataconfirm.title'),
-											LN('sbi.ds.recalculatemetadataconfirm.msg'),
-											this.doSave, this);
+							
+							this.doSave();
+							
+//							Ext.MessageBox
+//									.confirm(
+//											LN('sbi.ds.recalculatemetadataconfirm.title'),
+//											LN('sbi.ds.recalculatemetadataconfirm.msg'),
+//											this.doSave, this);
 						}
 					}
 					
@@ -3193,7 +3196,8 @@ Ext
 						var isNewRec = false;
 						var params = this.buildParamsToSendToServer(values);
 						params.dsId = idRec;
-						params.recalculateMetadata = recalculateMetadata;
+						//params.recalculateMetadata = recalculateMetadata;
+						params.recalculateMetadata = 'true';	// always recalculate metadata
 						var arrayPars = this.manageParsGrid.getParsArray();
 						var customString = this.customDataGrid.getDataString();
 						var meta = this.manageDatasetFieldMetadataGrid
@@ -3714,6 +3718,48 @@ Ext
 						}
 						;
 						win_info_3.show();
+					}
+					,
+					onDeleteItemFailure : function(response, options) {
+					
+			      		if(response.responseText !== undefined) {
+			      			var content = Ext.util.JSON.decode( response.responseText );
+			      			var errMessage ='';
+							for (var count = 0; count < content.errors.length; count++) {
+								var anError = content.errors[count];
+			        			if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
+			        				errMessage += anError.localizedMessage;
+			        			} else if (anError.message !== undefined && anError.message !== '') {
+			        				errMessage += anError.message;
+			        			}
+			        			if (count < content.errors.length - 1) {
+			        				errMessage += '<br/>';
+			        			}
+							}
+
+			                Ext.MessageBox.show({
+			                	title: LN('sbi.generic.error'),
+			                    msg: errMessage,
+			                    width: 400,
+			                    buttons: Ext.MessageBox.OK
+			               });
+			      		}else{
+			                Ext.MessageBox.show({
+			                	title: LN('sbi.generic.error'),
+			                    msg: LN('sbi.generic.deletingItemError'),
+			                    width: 150,
+			                    buttons: Ext.MessageBox.OK
+			               });
+			      		}
+					
+					
+					
+					
+					
+					
+					
+					
+					
 					}
 
 					/**

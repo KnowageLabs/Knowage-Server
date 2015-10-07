@@ -136,6 +136,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'viewSocialAnalysis'
 	                        	          , 'hierarchiesManagement'
 	                        	          , 'enableDatasetPersistence'
+	                        	          , 'enableFederatedDataset'
 	                        	        ];
 		
 		//Note: are we using this object?
@@ -174,6 +175,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                        	        viewSocialAnalysis: false,
 		                        	        hierarchiesManagement: false,
 		                        	        enableDatasetPersistence: false,
+		                        	        enableFederatedDataset: false,
 											bmCategories: []
 										});
 		
@@ -553,6 +555,17 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		        },
 		        {
 		            xtype: 'checkboxgroup',
+		            columns: 1,
+		            boxMinWidth  : 150,
+		            hideLabel  : false,
+		            fieldLabel: LN('sbi.roles.view'),
+		            itemId: 'isAbleToEnableFederatedDataset',
+		            items: [
+		                    {boxLabel: LN('sbi.roles.enableFederatedDataset'), name: 'enableFederatedDataset',id: 'enableFederatedDataset', checked:'enableFederatedDataset',inputValue: 1}
+		            ]
+		        },
+		        {
+		            xtype: 'checkboxgroup',
 		            itemId: 'finalUserCan',
 		            columns: 1,
 		            boxMinWidth  : 150,
@@ -621,7 +634,10 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
             		  item.setValue('kpiCommentEditAll', rec.get('kpiCommentEditAll'));
             	  }else if(item.getItemId() == 'isAbleToEnableDatasetPersistence'){
         			  item.setValue('enableDatasetPersistence', rec.get('enableDatasetPersistence'));
-        		  }else  if(item.getItemId() == 'finalUserCan'){
+        		  }else if(item.getItemId() == 'isAbleToEnableFederatedDataset'){
+        			  item.setValue('enableFederatedDataset', rec.get('enableFederatedDataset'));
+        		  }
+            	  else  if(item.getItemId() == 'finalUserCan'){
         			  item.setValue('seeDocBrowser', rec.get('seeDocBrowser'));
         			  item.setValue('seeMyData', rec.get('seeMyData'));
         			  item.setValue('seeSubscriptions', rec.get('seeSubscriptions'));           
@@ -708,6 +724,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
                     	        viewSocialAnalysis: this.isVisible('viewSocialAnalysis'),
                     	        hierarchiesManagement: this.isVisible('hierarchiesManagement'),
                     	        enableDatasetPersistence: this.isVisible('enableDatasetPersistence'),
+                    	        enableFederatedDataset: this.isVisible('enableFederatedDataset'),
 								bmCategories: []
 							});
 		
@@ -751,6 +768,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var kpiCommentEditMy =values['kpiCommentEditMy'];  
         var kpiCommentDelete =values['kpiCommentDelete'];
         var enableDatasetPersistence =values['enableDatasetPersistence'];  
+        var enableFederatedDataset =values['enableFederatedDataset'];  
 
 		if(savePf == 1){
         	record.set('savePersonalFolder', true);
@@ -897,6 +915,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         }else{
         	record.set('enableDatasetPersistence', false);
         }
+        if(enableFederatedDataset == 1){
+        	record.set('enableFederatedDataset', true);
+        }else{
+        	record.set('enableFederatedDataset', false);
+        }
         
         //Find selected business models categories
 		var bmCategoriesArray = [];
@@ -986,6 +1009,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			kpiCommentEditMy: newRec.data.kpiCommentEditMy,
 			kpiCommentDelete: newRec.data.kpiCommentDelete,
 			enableDatasetPersistence: newRec.data.enableDatasetPersistence,
+			enableFederatedDataset: newRec.data.enableFederatedDataset,
 			bmCategories: newRec.data.bmCategories
         };
         if(idRec){

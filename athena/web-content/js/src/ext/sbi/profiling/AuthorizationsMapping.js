@@ -33,6 +33,7 @@ Sbi.profiling.AuthorizationsMapping =  {
 			    			['createSocialAnalysis', 'CREATE_SOCIAL_ANALYSIS'],
 			    			['hierarchiesManagement', 'HIERARCHIES_MANAGEMENT'],
 			    			['enableDatasetPersistence','ENABLE_DATASET_PERSISTENCE'],
+			    			['enableFederatedDataset','ENABLE_FEDERATED_DATASET'],
 			    			['kpiCommentEditAll','KPI_COMMENT_EDIT_ALL'],
 			    			['kpiCommentEditMy','KPI_COMMENT_EDIT_MY'],
 			    			['kpiCommentDelete','KPI_COMMENT_DELETE']

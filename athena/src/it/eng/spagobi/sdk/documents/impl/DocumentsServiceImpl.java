@@ -530,9 +530,10 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			objTemplate.setCreationUser(userId);
 			objTemplate.setCreationDate(new Date());
 			logger.debug("Saving template....");
+			BIObject biObj = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 			IObjTemplateDAO tempDAO = DAOFactory.getObjTemplateDAO();
 			tempDAO.setUserProfile(profile);
-			tempDAO.insertBIObjectTemplate(objTemplate);
+			tempDAO.insertBIObjectTemplate(objTemplate, biObj);
 			logger.debug("Template stored without errors.");
 		} catch (Exception e) {
 			logger.error("Error while uploading template", e);

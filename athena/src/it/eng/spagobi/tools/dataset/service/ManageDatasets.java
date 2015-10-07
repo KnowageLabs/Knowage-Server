@@ -11,6 +11,7 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -23,6 +24,7 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
@@ -49,6 +51,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -71,6 +74,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -547,8 +551,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			logger.error("Exception occurred while retrieving dataset to delete", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.deleteDsError", e);
+			if (e instanceof DatasetInUseException) {
+				DatasetInUseException duie = (DatasetInUseException) e;
+				logger.warn("Cannot delete a dataset in use", e);
+				MessageBuilder msgBuild = new MessageBuilder();
+				String errorDescription = msgBuild.getMessage("sbi.ds.deleteDsInUseError", getLocale());
+
+				errorDescription = errorDescription.replaceAll("%0", duie.getBiObjectMessage()).replaceAll("%1", duie.getKpiMessage())
+						.replaceAll("%2", duie.getLovMessage());
+
+				throw new SpagoBIServiceException(SERVICE_NAME, errorDescription, e);
+			} else {
+				logger.error("Exception occurred while retrieving dataset to delete", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.deleteDsError", e);
+			}
 		}
 	}
 
@@ -684,9 +700,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		String datasetTypeName = getDatasetTypeName(datasetTypeCode);
 
-		if (name != null && label != null && datasetTypeName != null && !datasetTypeName.equals("")) {
-			try {
-				ds = getDataSet(datasetTypeName, true);
+		try {
+			if (name != null && label != null && datasetTypeName != null && !datasetTypeName.equals("")) {
+				try {
+					ds = getDataSet(datasetTypeName, true);
+				} catch (Exception e) {
+					logger.error("Error in building dataset of type " + datasetTypeName, e);
+					throw e;
+				}
 				if (ds != null) {
 					ds.setLabel(label);
 					ds.setName(name);
@@ -745,57 +766,128 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					ds.setPublic(isPublic);
 
 					IDataSet dsRecalc = null;
-					try {
-						if (datasetTypeName != null && !datasetTypeName.equals("")) {
-							dsRecalc = getDataSet(datasetTypeName, true);
-							if (dsRecalc != null) {
-								if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
-									dsRecalc = setTransformer(dsRecalc, trasfTypeCd);
-								}
-								String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
-								String dsMetadata = null;
-								if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) {
-									// recalculate metadata
-									logger.debug("Recalculating dataset's metadata: executing the dataset...");
-									HashMap parametersMap = new HashMap();
-									parametersMap = getDataSetParametersAsMap(true);
 
-									IEngUserProfile profile = getUserProfile();
-									ds.setPersisted(false);
-									dsMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
-									LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
-								} else {
-									// load existing metadata
-									logger.debug("Loading existing dataset...");
-									String id = getAttributeAsString(DataSetConstants.ID);
-									if (id != null && !id.equals("") && !id.equals("0")) {
-										IDataSet existingDataSet = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(id));
-										dsMetadata = existingDataSet.getDsMetadata();
-										LogMF.debug(logger, "Reloaded metadata : [{0}]", dsMetadata);
-									} else {
-										throw new SpagoBIServiceException(SERVICE_NAME, "Missing dataset id, cannot retrieve its metadata");
+					if (datasetTypeName != null && !datasetTypeName.equals("")) {
+						try {
+							dsRecalc = getDataSet(datasetTypeName, true);
+						} catch (Exception e) {
+							logger.error("Error in building dataset of type " + datasetTypeName, e);
+							throw e;
+						}
+
+						if (dsRecalc != null) {
+							if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
+								dsRecalc = setTransformer(dsRecalc, trasfTypeCd);
+							}
+							String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
+							String dsMetadata = null;
+							if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("true")) {
+								// recalculate metadata
+								logger.debug("Recalculating dataset's metadata: executing the dataset...");
+								HashMap parametersMap = new HashMap();
+								parametersMap = getDataSetParametersAsMap(true);
+
+								IEngUserProfile profile = getUserProfile();
+								ds.setPersisted(false);
+
+								IMetaData currentMetadata = null;
+								try {
+									currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
+								} catch (Exception e) {
+									logger.error("Error while recovering dataset metadata: check dataset definition ", e);
+									throw new SpagoBIServiceException(SERVICE_NAME, "Error while recovering dataset metadata: check dataset definition");
+								}
+
+								DatasetMetadataParser dsp = new DatasetMetadataParser();
+								dsMetadata = dsp.metadataToXML(currentMetadata);
+								LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+
+								// compare current metadata with previous metadata if dataset is in use
+								String previousId = getAttributeAsString(DataSetConstants.ID);
+								if (previousId != null) {
+									Integer previousIdInteger = Integer.valueOf(previousId);
+									if (previousIdInteger != 0) {
+										ArrayList<BIObject> objectsUsing = null;
+										try {
+											objectsUsing = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(previousIdInteger);
+										} catch (Exception e) {
+											logger.error("Error while getting dataset metadataa", e);
+											throw e;
+										}
+
+										if (!objectsUsing.isEmpty()) {
+											logger.debug("dataset " + ds.getLabel() + " is used by some " + objectsUsing.size() + "objects");
+											// get the previous dataset
+
+											IDataSet dataSet = null;
+											try {
+												dataSet = DAOFactory.getDataSetDAO().loadDataSetById(previousIdInteger);
+											} catch (Exception e) {
+												logger.error("Error while getting dataset metadataa", e);
+												throw e;
+											}
+
+											IMetaData previousMetadata = dataSet.getMetadata();
+											boolean isRemoving = isRemovingMetadataFields(previousMetadata, currentMetadata);
+											if (isRemoving) {
+												// TODO: better would be not to have log tracing of this warning
+												throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.deleteOrRenameMetadata");
+
+											}
+										}
+									}
+								}
+
+								LogMF.debug(logger, "Dataset executed, metadata are [{0}]", dsMetadata);
+							} else {
+								// load existing metadata
+								logger.debug("Loading existing dataset...");
+								String id = getAttributeAsString(DataSetConstants.ID);
+								if (id != null && !id.equals("") && !id.equals("0")) {
+									IDataSet existingDataSet = null;
+
+									try {
+										existingDataSet = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(id));
+									} catch (Exception e) {
+										logger.error("Error while getting dataset metadataa", e);
+										throw e;
 									}
 
+									dsMetadata = existingDataSet.getDsMetadata();
+									LogMF.debug(logger, "Reloaded metadata : [{0}]", dsMetadata);
+								} else {
+									throw new Exception("Missing dataset id, cannot retrieve its metadata");
 								}
-								ds.setDsMetadata(dsMetadata);
+
 							}
-						} else {
-							logger.error("DataSet type is not existent");
-							throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypeError");
+							ds.setDsMetadata(dsMetadata);
 						}
-					} catch (Exception e) {
-						logger.error("Error while getting dataset metadataa", e);
+					} else {
+						logger.error("DataSet type is not existent");
+						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypeError");
 					}
 				} else {
 					logger.error("DataSet type is not existent");
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypeError");
 				}
 
-				getPersistenceInfo(ds);
+				try {
+					getPersistenceInfo(ds);
+				} catch (EMFUserError e) {
+					logger.error("Erro while updating persistence info ", e);
+					throw e;
+				}
 
-			} catch (Exception e) {
-				logger.error("Error while getting dataset metadata", e);
 			}
+
+		} catch (SpagoBIServiceException e) {
+			logger.error("Service Error while updating dataset metadata, throw it to make it to user");
+			throw e;
+
+		} catch (Exception e) {
+			logger.error("Erro while updating dataset metadata, cannot save the dataset", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error while updating dataset metadata, cannot save the dataset");
+
 		}
 		return ds;
 	}
@@ -830,25 +922,25 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	/*
 	 * private GuiDataSetDetail constructDataSetDetail(String dsType){ GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
-	 *
+	 * 
 	 * if(dsActiveDetail!=null){ dsActiveDetail.setDsType(dsType);
-	 *
+	 * 
 	 * String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);
-	 *
+	 * 
 	 * String meta = getAttributeAsString(DataSetConstants.METADATA); String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
-	 *
+	 * 
 	 * List<Domain> domainsCat = (List<Domain>)getSessionContainer().getAttribute("catTypesList"); HashMap<String, Integer> domainIds = new HashMap<String,
 	 * Integer> (); if(domainsCat != null){ for(int i=0; i< domainsCat.size(); i++){ domainIds.put(domainsCat.get(i).getValueName(),
 	 * domainsCat.get(i).getValueId()); } } Integer catTypeID = domainIds.get(catTypeCd); if(catTypeID!=null){ dsActiveDetail.setCategoryValueName(catTypeCd);
 	 * dsActiveDetail.setCategoryId(catTypeID); }
-	 *
+	 * 
 	 * if(meta != null && !meta.equals("")){ dsActiveDetail.setDsMetadata(meta); }
-	 *
-	 *
+	 * 
+	 * 
 	 * String pars = getDataSetParametersAsString(); if(pars != null) { dsActiveDetail.setParameters(pars); }
-	 *
+	 * 
 	 * if(trasfTypeCd!=null && !trasfTypeCd.equals("")){ dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd); }
-	 *
+	 * 
 	 * Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED); if(isPersisted != null){
 	 * dsActiveDetail.setPersisted(isPersisted.booleanValue()); } if (isPersisted){ String dataSourcePersist =
 	 * getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST); if(dataSourcePersist != null && !dataSourcePersist.equals("")){
@@ -862,18 +954,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * setTransformer(ds, trasfTypeCd); } String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA); String dsMetadata =
 	 * null; if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) { // recalculate metadata logger
 	 * .debug("Recalculating dataset's metadata: executing the dataset..."); HashMap parametersMap = new HashMap(); parametersMap = getDataSetParametersAsMap();
-	 *
+	 * 
 	 * IEngUserProfile profile = getUserProfile(); dsMetadata = getDatasetTestMetadata(ds, parametersMap, profile, meta); LogMF.debug(logger,
 	 * "Dataset executed, metadata are [{0}]", dsMetadata); } else { // load existing metadata logger.debug("Loading existing dataset..."); String id =
 	 * getAttributeAsString(DataSetConstants.ID); if (id != null && !id.equals("") && !id.equals("0")) { IDataSet existingDataSet =
 	 * DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id)); dsMetadata = existingDataSet.getDsMetadata(); LogMF.debug(logger,
 	 * "Reloaded metadata : [{0}]", dsMetadata); } else { throw new SpagoBIServiceException(SERVICE_NAME, "Missing dataset id, cannot retrieve its metadata"); }
-	 *
+	 * 
 	 * } dsActiveDetail.setDsMetadata(dsMetadata); } } else { logger.error("DataSet type is not existent"); throw new SpagoBIServiceException(SERVICE_NAME,
 	 * "sbi.ds.dsTypeError"); } } catch (Exception e) { logger.error("Error while getting dataset metadataa", e); } } return dsActiveDetail; }
-	 *
+	 * 
 	 * private GuiDataSetDetail instantiateCorrectDsDetail(String dsType){ GuiDataSetDetail dsActiveDetail = null;
-	 *
+	 * 
 	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)){ dsActiveDetail = new FileDataSetDetail(); String fileName =
 	 * getAttributeAsString(DataSetConstants.FILE_NAME); if(fileName!=null && !fileName.equals("")){ ((FileDataSetDetail)dsActiveDetail).setFileName(fileName);
 	 * } }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){ dsActiveDetail = new JClassDataSetDetail(); String jclassName =
@@ -882,16 +974,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * QueryDataSetDetail(); String dataSourceLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE); String query =
 	 * getAttributeAsString(DataSetConstants.QUERY); String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT); String queryScriptLanguage =
 	 * getAttributeAsString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
-	 *
-	 *
+	 * 
+	 * 
 	 * if( StringUtilities.isNotEmpty(dataSourceLabel) ){ ((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel); }
-	 *
+	 * 
 	 * if( StringUtilities.isNotEmpty(query) ){ ((QueryDataSetDetail)dsActiveDetail).setQuery(query); }
-	 *
+	 * 
 	 * if( StringUtilities.isNotEmpty(queryScript) ){ ((QueryDataSetDetail)dsActiveDetail).setQueryScript(queryScript); }
-	 *
+	 * 
 	 * if( StringUtilities.isNotEmpty(queryScriptLanguage) ){ ((QueryDataSetDetail )dsActiveDetail).setQueryScriptLanguage(queryScriptLanguage); }
-	 *
+	 * 
 	 * }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){ dsActiveDetail = new QbeDataSetDetail(); String sqlQuery =
 	 * getAttributeAsString(DataSetConstants.QBE_SQL_QUERY); String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY); String dataSourceLabel =
 	 * getAttributeAsString(DataSetConstants.QBE_DATA_SOURCE); String datamarts = getAttributeAsString(DataSetConstants.QBE_DATAMARTS); ((QbeDataSetDetail)
@@ -915,11 +1007,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * if(domainsTrasf != null){ for(int i=0; i< domainsTrasf.size(); i++){ domainTrasfIds.put(domainsTrasf.get(i).getValueCd(),
 	 * domainsTrasf.get(i).getValueId()); } } Integer transformerId = domainTrasfIds.get(trasfTypeCd); dsActiveDetail.setTransformerId(transformerId);
 	 * dsActiveDetail.setTransformerCd(trasfTypeCd);
-	 *
+	 * 
 	 * String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME); String pivotColValue =
 	 * getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE); String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME); Boolean
 	 * pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
-	 *
+	 * 
 	 * if(pivotColName != null && !pivotColName.equals("")){ dsActiveDetail.setPivotColumnName(pivotColName); } if(pivotColValue != null &&
 	 * !pivotColValue.equals("")){ dsActiveDetail.setPivotColumnValue(pivotColValue); } if(pivotRowName != null && !pivotRowName.equals("")){
 	 * dsActiveDetail.setPivotRowName(pivotRowName); } if(pivotIsNumRows != null){ dsActiveDetail.setNumRows(pivotIsNumRows); } return dsActiveDetail; }
@@ -1580,9 +1672,31 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return toReturn;
 	}
 
-	public String getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
+	// public String getDatasetTestMetadataAsString(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
+	// logger.debug("IN");
+	// String toReturn = null;
+	// try {
+	// DatasetMetadataParser dsp = new DatasetMetadataParser();
+	// toReturn = dsp.metadataToXML(metaData);
+	// IMetaData metaData = getDatasetTestMetadata(dataSet, parametersFilled, profile, metadata);
+	//
+	// if (metaData == null)
+	// return null;
+	//
+	//
+	// } catch (Exception e) {
+	// logger.error("Error while executing dataset for test purpose", e);
+	// return null;
+	// }
+	//
+	// logger.debug("OUT");
+	// return toReturn;
+	// }
+
+	public IMetaData getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
 		logger.debug("IN");
-		String dsMetadata = null;
+
+		IDataStore dataStore = null;
 
 		Integer start = new Integer(0);
 		Integer limit = new Integer(10);
@@ -1593,7 +1707,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			// checkQbeDataset(dataSet);
 			checkFileDataset(dataSet);
 			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
-			IDataStore dataStore = dataSet.getDataStore();
+			dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 
 			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
@@ -1613,14 +1727,17 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				}
 			}
 
-			dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
+			// dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
 		} catch (Exception e) {
 			logger.error("Error while executing dataset for test purpose", e);
-			return null;
+			throw e;
 		}
 
 		logger.debug("OUT");
-		return dsMetadata;
+		if (dataStore == null)
+			return null;
+
+		return dataStore.getMetaData();
 	}
 
 	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile) {
@@ -1761,6 +1878,38 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		}
 		logger.debug("OUT");
 		return hsql;
+	}
+
+	private boolean isRemovingMetadataFields(IMetaData previousMetadata, IMetaData currentMetadata) {
+		logger.debug("IN");
+
+		ArrayList<String> previousFieldsName = new ArrayList<String>();
+		ArrayList<String> currentFieldsName = new ArrayList<String>();
+
+		for (int i = 0; i < previousMetadata.getFieldCount(); i++) {
+			String field = previousMetadata.getFieldAlias(i);
+			previousFieldsName.add(field);
+		}
+		for (int i = 0; i < currentMetadata.getFieldCount(); i++) {
+			String field = currentMetadata.getFieldAlias(i);
+			currentFieldsName.add(field);
+		}
+		// if number of columns is diminished return true
+		if (previousFieldsName.size() > currentFieldsName.size()) {
+			logger.warn("Cannot remove metadata from a dataset in use");
+			return true;
+		}
+		// else check that all labels previously present are still present
+		for (Iterator iterator = previousFieldsName.iterator(); iterator.hasNext();) {
+			String name = (String) iterator.next();
+			if (!currentFieldsName.contains(name)) {
+				logger.warn("Cannot remove field " + name + " of a dataset in use");
+				return true;
+			}
+		}
+
+		logger.debug("OUT");
+		return false;
 	}
 
 }

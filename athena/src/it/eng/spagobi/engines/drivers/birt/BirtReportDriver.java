@@ -17,11 +17,13 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Birt Report Engine.
@@ -171,6 +173,42 @@ public class BirtReportDriver extends AbstractDriver implements IEngineDriver {
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
+	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+
+		logger.debug("IN");
+
+		ArrayList<String> datasetsLabels = new ArrayList<String>();
+		SourceBean templateContent = getTemplateAsSourceBean(contentTemplate);
+
+		// get datasets from template
+
+		SourceBean datasets = (SourceBean) templateContent.getAttribute("data-sets");
+		if (datasets != null) {
+			ArrayList<SourceBean> datasetsBI = (ArrayList<SourceBean>) datasets.getAttributeAsList("oda-data-set");
+			for (Iterator iterator = datasetsBI.iterator(); iterator.hasNext();) {
+				SourceBean odaDataSet = (SourceBean) iterator.next();
+				ArrayList<SourceBean> properties = (ArrayList<SourceBean>) odaDataSet.getAttributeAsList("xml-property");
+				for (Iterator iterator2 = properties.iterator(); iterator2.hasNext();) {
+					SourceBean property = (SourceBean) iterator2.next();
+					String name = (String) property.getAttribute("name");
+					if (name != null && name.equalsIgnoreCase("queryText")) {
+						String datasetName = property.getCharacters();
+						logger.debug("Found SpagoBI dataset with label: " + datasetName);
+						datasetsLabels.add(name);
+					}
+
+				}
+			}
+
+		} else {
+			logger.debug("No dataset specified in Birt template");
+		}
+
+		logger.debug("OUT");
+		return datasetsLabels;
+
 	}
 
 }

@@ -22,6 +22,14 @@
        <CONFIG/>
     </ACTION>
 
+        <ACTION 
+           name="GET_FEDERATED_DATASET_FOR_FINAL_USER_ACTION" 
+           class="it.eng.spagobi.tools.dataset.service.GetFederatedDatasetForFinalUserAction" 
+           scope="REQUEST">
+       <CONFIG/>
+    </ACTION>    
+    
+
     <ACTION 
            name="SAVE_META_MODEL_ACTION" 
            class="it.eng.spagobi.tools.catalogue.service.SaveMetaModelAction" 

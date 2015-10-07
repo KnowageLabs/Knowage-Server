@@ -139,13 +139,13 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
@@ -1045,6 +1045,40 @@ public class ExporterMetadata {
 	 * ImportManager.messageBundle); }finally{ logger.debug("OUT"); } }
 	 */
 
+	public void insertBIObjDataSets(BIObject biobj, ArrayList<BIObjDataSet> biObjDatasets, Session session) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			Query hibQuery = session.createQuery(" from SbiObjDataSet where sbiObject.biobjId= " + biobj.getId());
+			List hibList = hibQuery.list();
+			if (!hibList.isEmpty()) {
+				return;
+			}
+
+			Transaction tx = session.beginTransaction();
+			for (Iterator iterator = biObjDatasets.iterator(); iterator.hasNext();) {
+				BIObjDataSet biObjDataSet = (BIObjDataSet) iterator.next();
+
+				SbiObjDataSet sbiObjDataSet = new SbiObjDataSet();
+				sbiObjDataSet.setBiObjDsId(biObjDataSet.getBiObjDsId());
+				sbiObjDataSet.setDsId(biObjDataSet.getDataSetId());
+
+				SbiObjects sbiObjDS = (SbiObjects) session.load(SbiObjects.class, biObjDataSet.getBiObject().getId());
+				sbiObjDataSet.setSbiObject(sbiObjDS);
+				sbiObjDataSet.setIsDetail(biObjDataSet.getIsDetail());
+				session.save(sbiObjDataSet);
+			}
+			tx.commit();
+
+		} catch (Exception e) {
+			logger.error("Error while inserting biObjDataSet into export database ", e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8005", ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		logger.debug("OUT");
+	}
+
 	/**
 	 * Insert a biobject into the exported database.
 	 * 
@@ -1094,28 +1128,24 @@ public class ExporterMetadata {
 				SbiDataSource ds = (SbiDataSource) session.load(SbiDataSource.class, dataSourceId);
 				hibBIObj.setDataSource(ds);
 			}
-			Integer dataSetId = biobj.getDataSetId();
 
-			if (dataSetId != null) {
-				// if the transaction is new insert dataset if missing
-				IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-				// insert dataset if parameter insertDataSet is true (in case of
-				// KPI export)
-				if (insertDataSet) {
-					hibQuery = session.createQuery(" from SbiDataSet s where s.active=true and s.id.dsId = " + biobj.getId());
-					SbiDataSet hibDataSet = (SbiDataSet) hibQuery.uniqueResult();
-					IDataSet guiDataSet = DataSetFactory.toDataSet(hibDataSet);
-
-					// IDataSet guiDataSet =
-					// datasetDao.loadDataSetById(dataSetId);
-					if (guiDataSet != null) {
-						insertDataSet(guiDataSet, session, false);
-					}
-				}
-				// SbiDataSet dataset = (SbiDataSet)
-				// session.load(SbiDataSet.class, dataSetId);
-				hibBIObj.setDataSet(dataSetId);
-			}
+			// Integer dataSetId = biobj.getDataSetId();
+			// if (dataSetId != null) {
+			// // if the transaction is new insert dataset if missing
+			// IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+			//
+			// // insert dataset if parameter insertDataSet is true (in case of KPI export)
+			// if (insertDataSet) {
+			// hibQuery = session.createQuery(" from SbiDataSet s where s.active=true and s.id.dsId = " + biobj.getId());
+			// SbiDataSet hibDataSet = (SbiDataSet) hibQuery.uniqueResult();
+			// IDataSet guiDataSet = DataSetFactory.toDataSet(hibDataSet);
+			//
+			// if (guiDataSet != null) {
+			// insertDataSet(guiDataSet, session, false);
+			// }
+			// }
+			// hibBIObj.setDataSet(dataSetId);
+			// }
 
 			hibBIObj.setCreationDate(biobj.getCreationDate());
 			hibBIObj.setCreationUser(biobj.getCreationUser());

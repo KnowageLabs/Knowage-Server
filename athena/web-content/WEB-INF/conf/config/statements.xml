@@ -115,13 +115,25 @@
 					  FROM SBI_DATA_SOURCE 
 					  WHERE ORGANIZATION = ? "/>
 -->
-	<STATEMENT name="SELECT_ALL_DATASET" 
+
+<!--  	<STATEMENT name="SELECT_ALL_DATASET" 
                query="SELECT S.DS_ID as ID, S.DESCR, S.LABEL, S.NAME, COUNT(O.BIOBJ_ID) as NUM_BIOBJECTS 
 					FROM SBI_DATA_SET S LEFT OUTER JOIN SBI_OBJECTS O ON O.DATA_SET_ID=S.DS_ID
 					WHERE S.ORGANIZATION = ?  AND S.ACTIVE= ?
 					AND (S.OWNER = ? OR S.IS_PUBLIC = ?)
 					GROUP BY S.DS_ID,S.DESCR, S.LABEL, S.NAME "/>
-
+-->
+					  
+		  <STATEMENT name="SELECT_ALL_DATASET" 
+               query="SELECT S.DS_ID as ID, S.DESCR, S.LABEL, S.NAME, COUNT(O.BIOBJ_ID) as NUM_BIOBJECTS 
+                      FROM SBI_DATA_SET S LEFT OUTER JOIN 
+                    SBI_OBJ_DATA_SET O ON S.DS_ID = O.DS_ID
+                    WHERE S.ORGANIZATION = ?  AND S.ACTIVE= ?
+                    AND (S.OWNER = ? OR S.IS_PUBLIC = ?)
+                    GROUP BY S.DS_ID,S.DESCR, S.LABEL, S.NAME "/>			  
+					  
+					  
+					  
 					  
 	<STATEMENT name="SELECT_ALL_DL" 
                query="SELECT SDL.DL_ID as ID,

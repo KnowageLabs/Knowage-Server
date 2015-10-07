@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for XMLA Engine.
@@ -534,4 +535,10 @@ public class XMLADriver extends AbstractDriver implements IEngineDriver {
 			throw new SpagoBIRuntimeException("Error while decorating document's template", e);
 		}
 	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

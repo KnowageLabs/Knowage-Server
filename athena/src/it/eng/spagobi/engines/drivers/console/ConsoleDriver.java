@@ -2,7 +2,7 @@
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
- * If a copy of  the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers.console;
 
 import it.eng.spago.base.RequestContainer;
@@ -19,10 +19,14 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Chart External Engine.
@@ -184,4 +188,31 @@ public class ConsoleDriver extends GenericDriver {
 		}
 	}
 
+	@Override
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		logger.debug("IN");
+
+		ArrayList<String> datasetsLabel = new ArrayList<String>();
+		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
+
+		// get datasets from template
+
+		Object ob = templateContent.get("datasets");
+		if (ob != null && ob instanceof JSONArray) {
+			JSONArray dsArrays = (JSONArray) ob;
+			for (int i = 0; i < dsArrays.length(); i++) {
+				JSONObject ds = (JSONObject) dsArrays.get(i);
+				String dsLabel = ds.getString("label");
+				datasetsLabel.add(dsLabel);
+				datasetsLabel.add(dsLabel + "Errors");
+				datasetsLabel.add(dsLabel + "Alarms");
+				logger.debug("added association between object console and " + dsLabel);
+			}
+		} else {
+			logger.warn("No datasets associated to the console ");
+		}
+
+		logger.debug("OUT");
+		return datasetsLabel;
+	}
 }

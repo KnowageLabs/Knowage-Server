@@ -75,6 +75,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String IS_SMARTFILTER_ENABLED = "IS_SMARTFILTER_ENABLED";
 	public static final String IS_CKAN_ENABLED = "IS_CKAN_ENABLED";
 	public static final String CAN_CREATE_DATASET_AS_FINAL_USER = "CAN_CREATE_DATASET_AS_FINAL_USER";
+	public static final String CAN_USE_FEDERATED_DATASET_AS_FINAL_USER = "CAN_USE_FEDERATED_DATASET_AS_FINAL_USER";
 
 	// public static final String GEOREPORT_EDIT_ACTION =
 	// "GEOREPORT_ENGINE_START_EDIT_ACTION";
@@ -107,6 +108,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String isSmartFilterEnabled = isSmartFilterEnabled();
 			String isCkanEnabled = isCkanEnabled();
 			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser();
+			String canUseFederatedDataset = canUseFederatedDatasetAsFinalUser();
 
 			logger.trace("Copying output parameters to response...");
 			try {
@@ -131,6 +133,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
 				setAttribute(IS_CKAN_ENABLED, isCkanEnabled);
 				setAttribute(CAN_CREATE_DATASET_AS_FINAL_USER, canCreateDatasetAsFinalUser);
+				setAttribute(CAN_USE_FEDERATED_DATASET_AS_FINAL_USER, canUseFederatedDataset);
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating service response", t);
 			}
@@ -472,6 +475,23 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			if (isAbleTo(SpagoBIConstants.CREATE_DATASETS_AS_FINAL_USER, funcs)) {
+				return "true";
+			} else {
+				return "false";
+			}
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("Error while loading role functionalities of user", e);
+		}
+
+	}
+
+	// Check if user can use federated dataset
+	protected String canUseFederatedDatasetAsFinalUser() {
+		List funcs;
+		try {
+			profile = getUserProfile();
+			funcs = (List) profile.getFunctionalities();
+			if (isAbleTo(SpagoBIConstants.ENABLE_FEDERATED_DATASET, funcs)) {
 				return "true";
 			} else {
 				return "false";

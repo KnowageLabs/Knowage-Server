@@ -5,16 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.profiling.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
@@ -31,6 +21,16 @@ import it.eng.spagobi.security.RoleSynchronizer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ManageRolesAction extends AbstractSpagoBIAction {
 	/**
@@ -83,6 +83,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String VIEW_SOCIAL_ANALYSIS = "viewSocialAnalysis";
 	private final String HIERARCHIES_MANAGEMENT = "hierarchiesManagement";
 	private final String ENABLE_DATASET_PERSISTENCE = "enableDatasetPersistence";
+	private final String ENABLE_FEDERATED_DATASET = "enableFederatedDataset";
 
 	private final String MANAGE_GLOSSARY_BUSINESS = "manageGlossaryBusiness";
 	private final String MANAGE_GLOSSARY_TECHNICAL = "manageGlossaryTechnical";
@@ -180,6 +181,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean viewAnalysisSocial = getAttributeAsBoolean(VIEW_SOCIAL_ANALYSIS);
 			Boolean hierarchiesManagement = getAttributeAsBoolean(HIERARCHIES_MANAGEMENT);
 			Boolean enableDatasetPersistence = getAttributeAsBoolean(ENABLE_DATASET_PERSISTENCE);
+			Boolean enableFederatedDataset = getAttributeAsBoolean(ENABLE_FEDERATED_DATASET);
 
 			Boolean manageGlossaryBusiness = getAttributeAsBoolean(MANAGE_GLOSSARY_BUSINESS);
 			Boolean manageGlossaryTechnical = getAttributeAsBoolean(MANAGE_GLOSSARY_TECHNICAL);
@@ -271,6 +273,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToViewSocialAnalysis(viewAnalysisSocial);
 				role.setIsAbleToHierarchiesManagement(hierarchiesManagement);
 				role.setIsAbleToEnableDatasetPersistence(enableDatasetPersistence);
+				role.setIsAbleToEnableFederatedDataset(enableFederatedDataset);
 
 				role.setAbleToManageGlossaryBusiness(manageGlossaryBusiness);
 				role.setAbleToManageGlossaryTechnical(manageGlossaryTechnical);

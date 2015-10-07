@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>athenadao</project>
-		<project>athenautils</project>
 		<project>athenautilsjson</project>
 		<project>qbecore</project>
 	</projects>

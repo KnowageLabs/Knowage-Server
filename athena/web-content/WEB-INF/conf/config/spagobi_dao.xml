@@ -118,6 +118,8 @@
 		
 		<DAO name="FederationDefinitionDAO" implementation="it.eng.spagobi.federateddataset.dao.SbiFederationDefinitionDAOHibImpl" />
 
+        <DAO name="BIObjDataSetDAO" implementation="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl" />
+
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

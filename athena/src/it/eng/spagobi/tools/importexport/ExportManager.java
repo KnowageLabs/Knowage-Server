@@ -37,6 +37,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnit;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitHierarchy;
 import it.eng.spagobi.kpi.ou.bo.OrganizationalUnitNode;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -62,8 +63,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 /**
- * Implements the interface which defines methods for managing the export
- * requests
+ * Implements the interface which defines methods for managing the export requests
  */
 public class ExportManager implements IExportManager {
 
@@ -516,20 +516,27 @@ public class ExportManager implements IExportManager {
 				exporter.insertDataSource(ds, session);
 			}
 
-			// Data set if present
-			Integer objDataSetId = biobj.getDataSetId();
-			if (objDataSetId != null) {
+			// Data set if present; get datasets used by BiOBject
+			ArrayList<BIObjDataSet> biObjDatasets = DAOFactory.getBIObjDataSetDAO().getBiObjDataSets(biobj.getId());
 
-				IDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
-				if (genericDs != null) {
-					// exporter.insertDataSet(genericDs, session);
-
-					// when inserting dataset in export must mantain same id and
-					// version to preserve costraints
-					exporter.insertDataSetAndDataSource(genericDs, session);
-				}
-
+			// new dataset handling
+			for (Iterator iterator = biObjDatasets.iterator(); iterator.hasNext();) {
+				BIObjDataSet biObjDataSet = (BIObjDataSet) iterator.next();
+				IDataSet iDataSet = DAOFactory.getDataSetDAO().loadDataSetById(biObjDataSet.getDataSetId());
+				exporter.insertDataSetAndDataSource(iDataSet, session);
 			}
+
+			// Old dataset handling
+			// Integer objDataSetId = biobj.getDataSetId();
+			// if (objDataSetId != null) {
+			// IDataSet genericDs = dataSetDao.loadDataSetById(objDataSetId);
+			// if (genericDs != null) {
+			// // exporter.insertDataSet(genericDs, session);
+			// // when inserting dataset in export must mantain same id and
+			// // version to preserve costraints
+			// exporter.insertDataSetAndDataSource(genericDs, session);
+			// }
+			// }
 
 			// Engine if present, and data source if engine uses data source
 			Engine engine = biobj.getEngine();
@@ -544,6 +551,8 @@ public class ExportManager implements IExportManager {
 			exporter.insertEngine(engine, session);
 			exporter.insertBIObject(biobj, session, false); // do not insert
 															// dataset
+
+			exporter.insertBIObjDataSets(biobj, biObjDatasets, session);
 
 			logger.debug("Export metadata associated to the object");
 			IObjMetacontentDAO objMetacontentDAO = DAOFactory.getObjMetacontentDAO();
@@ -804,8 +813,7 @@ public class ExportManager implements IExportManager {
 	}
 
 	/**
-	 * Checks if a list of value object is a query type and in this case exports
-	 * the name of the SpagoBI data source associated to the query
+	 * Checks if a list of value object is a query type and in this case exports the name of the SpagoBI data source associated to the query
 	 * 
 	 * @param lov
 	 *            List of values Object
@@ -870,8 +878,7 @@ public class ExportManager implements IExportManager {
 	}
 
 	/**
-	 * Close hibernate session and session factory relative to the export
-	 * database
+	 * Close hibernate session and session factory relative to the export database
 	 */
 	private void closeSession() {
 		logger.debug("IN");
@@ -896,21 +903,12 @@ public class ExportManager implements IExportManager {
 	}
 
 	/*
-	 * public void exportResources() throws EMFUserError { logger.debug("IN");
-	 * try { SourceBean config = (SourceBean)
-	 * ConfigSingleton.getInstance().getAttribute
-	 * ("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-	 * logger.debug("RESOURCE_PATH_JNDI_NAME configuration found: " + config);
-	 * String resourcePathJndiName = config.getCharacters(); Context ctx = new
-	 * InitialContext(); String value =
-	 * (String)ctx.lookup(resourcePathJndiName);
-	 * logger.debug("Resource path found from jndi: " + value); File
-	 * resourcesDir = new File(value); File destDir = new File(pathBaseFolder +
-	 * "/resources"); FileUtilities.copyDirectory(resourcesDir, destDir, true,
-	 * true, false); } catch (Exception e) {
-	 * logger.error("Error during the copy of maps files" , e); throw new
-	 * EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle);
-	 * } finally { logger.debug("OUT"); } }
+	 * public void exportResources() throws EMFUserError { logger.debug("IN"); try { SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute
+	 * ("SPAGOBI.RESOURCE_PATH_JNDI_NAME"); logger.debug("RESOURCE_PATH_JNDI_NAME configuration found: " + config); String resourcePathJndiName =
+	 * config.getCharacters(); Context ctx = new InitialContext(); String value = (String)ctx.lookup(resourcePathJndiName);
+	 * logger.debug("Resource path found from jndi: " + value); File resourcesDir = new File(value); File destDir = new File(pathBaseFolder + "/resources");
+	 * FileUtilities.copyDirectory(resourcesDir, destDir, true, true, false); } catch (Exception e) { logger.error("Error during the copy of maps files" , e);
+	 * throw new EMFUserError(EMFErrorSeverity.ERROR, "100", ImportManager.messageBundle); } finally { logger.debug("OUT"); } }
 	 */
 
 }

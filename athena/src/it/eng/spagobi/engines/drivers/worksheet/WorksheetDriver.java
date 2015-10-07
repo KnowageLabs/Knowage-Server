@@ -36,6 +36,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
@@ -43,6 +44,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -653,6 +655,11 @@ public class WorksheetDriver extends AbstractDriver implements IEngineDriver {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

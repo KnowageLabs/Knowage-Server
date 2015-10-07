@@ -15,11 +15,13 @@ import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Talend External Engine.
@@ -160,6 +162,11 @@ public class TalendDriver extends AbstractDriver implements IEngineDriver {
 	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
+	}
+
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -5,10 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.drivers;
 
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -18,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
@@ -118,6 +122,106 @@ public class AbstractDriver {
 
 	public void applyLocale(Locale locale) {
 		logger.warn("Method not implemented.");
+	}
+
+	/**
+	 * get template and return it in Source Bean form
+	 * 
+	 * @param biObject
+	 * @return
+	 */
+
+	public SourceBean getTemplateAsSourceBean(BIObject biObject) {
+		logger.debug("IN");
+
+		SourceBean content = null;
+
+		try {
+			ObjTemplate objtemplate = null;
+			try {
+				objtemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(biObject.getId());
+			} catch (Exception e) {
+				logger.error("Error in getting template: ", e);
+			}
+			if (objtemplate == null) {
+				throw new Exception("Active template is null");
+			}
+
+			byte[] contentBytes = null;
+			try {
+				contentBytes = DAOFactory.getBinContentDAO().getBinContent(objtemplate.getBinId());
+			} catch (Exception e) {
+				logger.error("Error in getting bin content from template: ", e);
+			}
+
+			if (contentBytes == null) {
+				throw new Exception("Content of the Active template is null");
+			}
+
+			try {
+				String contentStr = new String(contentBytes);
+				content = SourceBean.fromXMLString(contentStr);
+			} catch (Exception e) {
+				logger.error("Error while converting the Template bytes into a SourceBean object: ", e);
+				throw new Exception("Error while converting the Template bytes into a SourceBean object");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while recovering document template: \n" + e);
+		}
+
+		logger.debug("OUT");
+		return content;
+	}
+
+	public SourceBean getTemplateAsSourceBean(byte[] contentBytes) {
+		logger.debug("IN");
+
+		SourceBean content = null;
+
+		try {
+
+			try {
+				String contentStr = new String(contentBytes);
+				content = SourceBean.fromXMLString(contentStr);
+			} catch (Exception e) {
+				logger.error("Error while converting the Template bytes into a SourceBean object: ", e);
+				throw new Exception("Error while converting the Template bytes into a SourceBean object");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while recovering document template: \n" + e);
+		}
+
+		logger.debug("OUT");
+		return content;
+	}
+
+	public JSONObject getTemplateAsJsonObject(byte[] contentTemplate) {
+		logger.debug("IN");
+
+		JSONObject content = null;
+
+		try {
+
+			if (contentTemplate == null) {
+				throw new Exception("Content of the Active template is null");
+			}
+
+			try {
+				String contentStr = new String(contentTemplate);
+				content = new JSONObject(contentStr);
+			} catch (Exception e) {
+				logger.error("Error while converting the Template bytes into a JSON object: ", e);
+				throw new Exception("Error while converting the Template bytes into a JSON object");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while recovering document template: \n" + e);
+		}
+
+		logger.debug("OUT");
+		return content;
 	}
 
 }

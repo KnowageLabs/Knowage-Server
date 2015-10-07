@@ -7,8 +7,6 @@ package it.eng.spagobi.engines.drivers.network;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
@@ -31,6 +29,7 @@ import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Locale;
@@ -38,12 +37,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
 /**
- * Driver Implementation (IEngineDriver Interface) for Worksheet External Engine. 
+ * Driver Implementation (IEngineDriver Interface) for Worksheet External Engine.
  */
 public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 
@@ -53,10 +51,8 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 	public final static String PARAM_NEW_SESSION = "NEW_SESSION";
 	public final static String PARAM_ACTION_NAME = "NETWORK_ENGINE_START_ACTION";
 
-	
 	public final static String METADATA_AND_METACONTENT = "METADATA_AND_METACONTENT";
 	public final static String PARAMETERS = "PARAMETERS";
-
 
 	public final static String FORM_VALUES = "FORM_VALUES";
 
@@ -65,14 +61,15 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 	public final static String TAG_WORKSHEET_DEFINITION = "WORKSHEET_DEFINITION";
 	public final static String TAG_WORKSHEET = "WORKSHEET";
 
-
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 * 
-	 * @param profile Profile of the user
-	 * @param roleName the name of the execution role
-	 * @param analyticalDocument the biobject
+	 * @param profile
+	 *            Profile of the user
+	 * @param roleName
+	 *            the name of the execution role
+	 * @param analyticalDocument
+	 *            the biobject
 	 * 
 	 * @return Map The map of the execution call parameters
 	 */
@@ -84,14 +81,15 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 
 		try {
 			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName()+ "]");
+			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of ["
+					+ analyticalDocument.getClass().getName() + "]");
 
-			biObject = (BIObject)analyticalDocument;
+			biObject = (BIObject) analyticalDocument;
 
 			parameters = new Hashtable();
 			parameters = getRequestParameters(biObject);
 			parameters = applySecurity(parameters, profile);
-			//parameters = addDocumentParametersInfo(parameters, biObject);
+			// parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
 		} finally {
 			logger.debug("OUT");
@@ -101,13 +99,16 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 	}
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the
-	 * engine application.
+	 * Returns a map of parameters which will be send in the request to the engine application.
 	 * 
-	 * @param analyticalDocumentSubObject SubObject to execute
-	 * @param profile Profile of the user
-	 * @param roleName the name of the execution role
-	 * @param analyticalDocument the object
+	 * @param analyticalDocumentSubObject
+	 *            SubObject to execute
+	 * @param profile
+	 *            Profile of the user
+	 * @param roleName
+	 *            the name of the execution role
+	 * @param analyticalDocument
+	 *            the object
 	 * 
 	 * @return Map The map of the execution call parameters
 	 */
@@ -119,27 +120,29 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 
 		logger.debug("IN");
 
-		try{
+		try {
 			Assert.assertNotNull(analyticalDocument, "Input parameter [analyticalDocument] cannot be null");
-			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of [" + analyticalDocument.getClass().getName()+ "]");
-			biObject = (BIObject)analyticalDocument;
+			Assert.assertTrue((analyticalDocument instanceof BIObject), "Input parameter [analyticalDocument] cannot be an instance of ["
+					+ analyticalDocument.getClass().getName() + "]");
+			biObject = (BIObject) analyticalDocument;
 
-			if(analyticalDocumentSubObject == null) {
+			if (analyticalDocumentSubObject == null) {
 				logger.warn("Input parameter [subObject] is null");
 				return getParameterMap(analyticalDocument, profile, roleName);
-			}				
-			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject), "Input parameter [subObjectDetail] cannot be an instance of [" + analyticalDocumentSubObject.getClass().getName()+ "]");
+			}
+			Assert.assertTrue((analyticalDocumentSubObject instanceof SubObject), "Input parameter [subObjectDetail] cannot be an instance of ["
+					+ analyticalDocumentSubObject.getClass().getName() + "]");
 			subObject = (SubObject) analyticalDocumentSubObject;
 
 			parameters = getRequestParameters(biObject);
 
-			parameters.put("nameSubObject",  subObject.getName() != null? subObject.getName(): "" );
-			parameters.put("descriptionSubObject", subObject.getDescription() != null? subObject.getDescription(): "");
-			parameters.put("visibilitySubObject", subObject.getIsPublic().booleanValue()?"Public":"Private" );
+			parameters.put("nameSubObject", subObject.getName() != null ? subObject.getName() : "");
+			parameters.put("descriptionSubObject", subObject.getDescription() != null ? subObject.getDescription() : "");
+			parameters.put("visibilitySubObject", subObject.getIsPublic().booleanValue() ? "Public" : "Private");
 			parameters.put("subobjectId", subObject.getId());
 
 			parameters = applySecurity(parameters, profile);
-			//parameters = addDocumentParametersInfo(parameters, biObject);
+			// parameters = addDocumentParametersInfo(parameters, biObject);
 			parameters = applyService(parameters, biObject);
 			parameters.put("isFromCross", "false");
 
@@ -151,11 +154,12 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 	}
 
 	/**
-	 * Starting from a BIObject extracts from it the map of the paramaeters for the
-	 * execution call
-	 * @param biObject BIObject to execute
+	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
+	 * 
+	 * @param biObject
+	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
-	 */    
+	 */
 	private Map getRequestParameters(BIObject biObject) {
 		logger.debug("IN");
 
@@ -168,7 +172,7 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 
 		parameters = null;
 
-		try {		
+		try {
 			parameters = new Hashtable();
 			template = this.getTemplate(biObject);
 
@@ -176,10 +180,10 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 				contentDAO = DAOFactory.getBinContentDAO();
 				Assert.assertNotNull(contentDAO, "Impossible to instantiate contentDAO");
 
-				content = contentDAO.getBinContent(template.getBinId());		    
+				content = contentDAO.getBinContent(template.getBinId());
 				Assert.assertNotNull(content, "Template content cannot be null");
-			} catch (Throwable t){
-				throw new RuntimeException("Impossible to load template content for document [" + biObject.getLabel()+ "]", t);
+			} catch (Throwable t) {
+				throw new RuntimeException("Impossible to load template content for document [" + biObject.getLabel() + "]", t);
 			}
 
 			appendRequestParameter(parameters, "document", biObject.getId().toString());
@@ -193,35 +197,36 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 		}
 
 		return parameters;
-	} 
-
-
+	}
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 * @param biobj BIOBject to execute
-	 * @param pars Map of the parameters for the execution call  
+	 * 
+	 * @param biobj
+	 *            BIOBject to execute
+	 * @param pars
+	 *            Map of the parameters for the execution call
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map appendAnalyticalDriversToRequestParameters(BIObject biobj, Map pars) {
 		logger.debug("IN");
 
-		if(biobj==null) {
-			logger.warn("BIObject parameter null");	    
+		if (biobj == null) {
+			logger.warn("BIObject parameter null");
 			return pars;
 		}
 
 		ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-		if(biobj.getBiObjectParameters() != null){
+		if (biobj.getBiObjectParameters() != null) {
 			BIObjectParameter biobjPar = null;
-			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
+			for (Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();) {
 				try {
-					biobjPar = (BIObjectParameter)it.next();									
+					biobjPar = (BIObjectParameter) it.next();
 					String value = parValuesEncoder.encode(biobjPar);
 					pars.put(biobjPar.getParameterUrlName(), value);
-					logger.debug("Add parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+					logger.debug("Add parameter:" + biobjPar.getParameterUrlName() + "/" + value);
 				} catch (Exception e) {
-					logger.error("Error while processing a BIParameter",e);
+					logger.error("Error while processing a BIParameter", e);
 				}
 			}
 		}
@@ -233,15 +238,17 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 	/**
 	 * Function not implemented. Thid method should not be called
 	 * 
-	 * @param biobject The BIOBject to edit
-	 * @param profile the profile
+	 * @param biobject
+	 *            The BIOBject to edit
+	 * @param profile
+	 *            the profile
 	 * 
 	 * @return the edits the document template build url
 	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws InvalidOperationRequest
+	 *             the invalid operation request
 	 */
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-	throws InvalidOperationRequest {
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
@@ -249,15 +256,17 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 	/**
 	 * Function not implemented. Thid method should not be called
 	 * 
-	 * @param biobject  The BIOBject to edit
-	 * @param profile the profile
+	 * @param biobject
+	 *            The BIOBject to edit
+	 * @param profile
+	 *            the profile
 	 * 
 	 * @return the new document template build url
 	 * 
-	 * @throws InvalidOperationRequest the invalid operation request
+	 * @throws InvalidOperationRequest
+	 *             the invalid operation request
 	 */
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-	throws InvalidOperationRequest {
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
@@ -271,7 +280,7 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 			parameters.put(PARAM_SERVICE_NAME, PARAM_ACTION_NAME);
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
 
-		} catch(Throwable t) {
+		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to guess from template extension the engine startup service to call");
 		} finally {
 			logger.debug("OUT");
@@ -292,12 +301,12 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 			templateDAO = DAOFactory.getObjTemplateDAO();
 			Assert.assertNotNull(templateDAO, "Impossible to instantiate templateDAO");
 
-			template = templateDAO.getBIObjectActiveTemplate( biObject.getId() );
-			Assert.assertNotNull(template, "Loaded template cannot be null");	
+			template = templateDAO.getBIObjectActiveTemplate(biObject.getId());
+			Assert.assertNotNull(template, "Loaded template cannot be null");
 
 			logger.debug("Active template [" + template.getName() + "] of document [" + biObject.getLabel() + "] loaded succesfully");
-		} catch(Throwable t) {
-			throw new RuntimeException("Impossible to load template for document [" + biObject.getLabel()+ "]", t);
+		} catch (Throwable t) {
+			throw new RuntimeException("Impossible to load template for document [" + biObject.getLabel() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -310,99 +319,92 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 		logger.debug("Added parameter [" + pname + "] with value [" + pvalue + "] to request parameters list");
 	}
 
+	// private void addParametersContent(BIObject biobj, Map pars) {
+	// logger.debug("IN");
+	// JSONArray parsArray = null;
+	// if(biobj.getBiObjectParameters() != null){
+	// ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
+	// for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
+	// BIObjectParameter biobjPar = (BIObjectParameter)it.next();
+	// try {
+	// String name = biobjPar.getLabel();
+	// String value = parValuesEncoder.encode(biobjPar);
+	// JSONObject objectJSON = new JSONObject();
+	// objectJSON.put("name", name);
+	// objectJSON.put("value", value);
+	// if(parsArray == null){
+	// parsArray = new JSONArray();
+	// }
+	// parsArray.put(objectJSON);
+	// logger.debug("Add to metadata parameter:"+biobjPar.getParameterUrlName()+"/"+value);
+	// } catch (Exception e) {
+	// logger.error("Error while processing metadata for BIParameter "+biobjPar.getLabel(),e);
+	// }
+	// }
+	// pars.put(PARAMETERS, parsArray);
+	//
+	// }
+	//
+	// logger.debug("OUT");
+	// }
 
-//	private void addParametersContent(BIObject biobj, Map pars) {
-//		logger.debug("IN");
-//		JSONArray parsArray = null;
-//		if(biobj.getBiObjectParameters() != null){
-//			ParameterValuesEncoder parValuesEncoder = new ParameterValuesEncoder();
-//			for(Iterator it = biobj.getBiObjectParameters().iterator(); it.hasNext();){
-//				BIObjectParameter biobjPar = (BIObjectParameter)it.next();									
-//				try {
-//					String name = biobjPar.getLabel();
-//					String value = parValuesEncoder.encode(biobjPar);
-//					JSONObject objectJSON = new JSONObject();
-//					objectJSON.put("name", name);
-//					objectJSON.put("value", value);
-//					if(parsArray == null){
-//						parsArray = new JSONArray();
-//					}
-//					parsArray.put(objectJSON);
-//					logger.debug("Add to metadata parameter:"+biobjPar.getParameterUrlName()+"/"+value);
-//				} catch (Exception e) {
-//					logger.error("Error while processing metadata for BIParameter "+biobjPar.getLabel(),e);
-//				}
-//			}
-//			pars.put(PARAMETERS, parsArray);
-//
-//		}
-//
-//		logger.debug("OUT");
-//	}
-
-
-	private void addMetadataAndContent(BIObject biObject, Map pars){
+	private void addMetadataAndContent(BIObject biObject, Map pars) {
 		logger.debug("IN");
-		try{
-			if(biObject.getObjMetaDataAndContents() != null){
+		try {
+			if (biObject.getObjMetaDataAndContents() != null) {
 				MetadataJSONSerializer jsonSerializer = new MetadataJSONSerializer();
 				JSONArray metaArray = new JSONArray();
 				Locale locale = getLocale();
-		
+
 				Domain typeDom = DAOFactory.getDomainDAO().loadDomainById(biObject.getBiObjectTypeID());
 				MessageBuilder msgBuild = new MessageBuilder();
 				// fill thecnical metadata
-				
+
 				JSONObject labelJSON = new JSONObject();
-				String label = msgBuild.getMessage(GetMetadataAction.LABEL, locale);	
+				String label = msgBuild.getMessage(GetMetadataAction.LABEL, locale);
 				labelJSON.put("meta_name", label);
 				labelJSON.put("meta_content", biObject.getLabel());
 				labelJSON.put("meta_type", "GENERAL_META");
-				
+
 				JSONObject nameJSON = new JSONObject();
-				String name = msgBuild.getMessage(GetMetadataAction.NAME, locale);	
+				String name = msgBuild.getMessage(GetMetadataAction.NAME, locale);
 				nameJSON.put("meta_name", name);
 				nameJSON.put("meta_content", biObject.getName());
 				nameJSON.put("meta_type", "GENERAL_META");
-				
+
 				JSONObject typeJSON = new JSONObject();
 				String typeL = msgBuild.getMessage(GetMetadataAction.TYPE, locale);
 				String valueType = msgBuild.getMessage(typeDom.getValueName(), locale);
 				typeJSON.put("meta_name", typeL);
 				typeJSON.put("meta_content", valueType);
 				typeJSON.put("meta_type", "GENERAL_META");
-				
+
 				JSONObject engineJSON = new JSONObject();
 				String engine = msgBuild.getMessage(GetMetadataAction.ENG_NAME, locale);
 				engineJSON.put("meta_name", engine);
 				engineJSON.put("meta_content", biObject.getEngine().getName());
 				engineJSON.put("meta_type", "GENERAL_META");
-				
+
 				metaArray.put(labelJSON);
 				metaArray.put(nameJSON);
 				metaArray.put(typeJSON);
 				metaArray.put(engineJSON);
-				
-				
+
 				for (Iterator iterator = biObject.getObjMetaDataAndContents().iterator(); iterator.hasNext();) {
 					DocumentMetadataProperty type = (DocumentMetadataProperty) iterator.next();
 					Object o = jsonSerializer.serialize(type, locale);
 					metaArray.put(o);
-					logger.debug("Metadata serialzied "+o);
+					logger.debug("Metadata serialzied " + o);
 				}
-				logger.debug("Metadata array serialzied "+metaArray);
+				logger.debug("Metadata array serialzied " + metaArray);
 				pars.put(METADATA_AND_METACONTENT, metaArray);
-			}
-			else{
+			} else {
 				logger.debug("no meta and metacontent defined");
 			}
-		
-		
-		
-		}
-		catch (Exception e) {
-			logger.error("Impossibile to serialize metadata and metacontent for object with label "+biObject.getLabel(), e);
-			throw new RuntimeException("Impossibile to serialize metadata and metacontent for object with label "+biObject.getLabel(), e);
+
+		} catch (Exception e) {
+			logger.error("Impossibile to serialize metadata and metacontent for object with label " + biObject.getLabel(), e);
+			throw new RuntimeException("Impossibile to serialize metadata and metacontent for object with label " + biObject.getLabel(), e);
 		}
 
 		logger.debug("OUT");
@@ -422,11 +424,14 @@ public class NetworkDriver extends AbstractDriver implements IEngineDriver {
 		} catch (Exception e) {
 			logger.error("Error while getting locale; using default one", e);
 			return GeneralUtilities.getDefaultLocale();
-		} finally  {
+		} finally {
 			logger.debug("OUT");
-		}	
+		}
 	}
 
+	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
-
