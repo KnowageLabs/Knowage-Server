@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <MASTER>
 
+	<!-- common  -->
+	<CONFIGURATOR path="/WEB-INF/conf/config/common.xml" />	
+
 	<!-- imported from spagobi server  -->
 	<CONFIGURATOR path="/WEB-INF/conf/config/spagobi_dao.xml" />	
 
