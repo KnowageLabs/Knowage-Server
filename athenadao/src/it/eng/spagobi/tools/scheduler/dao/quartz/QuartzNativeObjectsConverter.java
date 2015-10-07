@@ -81,8 +81,17 @@ class QuartzNativeObjectsConverter {
 		try {
 			Assert.assertNotNull(spagobiTrigger, "Input parameter [spagobiTrigger] csannot be null");
 
-			if (spagobiTrigger.isRunImmediately()) {
+			try {
+				JSONObject jo = new JSONObject(spagobiTrigger.getChronExpression().getExpression());
+				if (jo.getString("type").equals("event")) {
+					spagobiTrigger.getJob().addParameter("event_info", jo.getString("parameter"));
+				}
+			} catch (Exception e) {
+				System.out.println("Old format of chrono string");
+			}
 
+			if (spagobiTrigger.isRunImmediately()) {
+				spagobiTrigger.getJob().addParameter("originalTriggerName", spagobiTrigger.getOriginalTriggerName());
 				quartzTrigger = TriggerUtils.makeImmediateTrigger(spagobiTrigger.getName(), 0, 10000);
 				quartzTrigger.setJobName(spagobiTrigger.getJob().getName());
 				quartzTrigger.setJobGroup(spagobiTrigger.getJob().getGroupName());
@@ -204,7 +213,7 @@ class QuartzNativeObjectsConverter {
 		Set<String> parameterNames = quartzParameters.keySet();
 		for (String parameterName : parameterNames) {
 			String parameterValue = (String) quartzParameters.get(parameterName);
-			spagobiParameters.put(parameterName, parameterValue);
+			spagobiParameters.put(parameterName, parameterValue.replaceAll("\"", "'"));
 		}
 		return spagobiParameters;
 	}
@@ -232,22 +241,32 @@ class QuartzNativeObjectsConverter {
 			String type = chrono.getString("type");
 			JSONObject params = chrono.optJSONObject("parameter");
 
-			if (type.equals("single")) {
+			if (type.equals("event")) {
+				String typeEvent = params.getString("type");
+				if (typeEvent.equals("rest")) {
+					chronExpression = "0 0/1 * * * ? *"; // every minute
+				} else if (typeEvent.equals("dataset")) {
+					int freq = params.optInt("frequency");
+					int min = freq > 0 ? freq : 1;
+					chronExpression = "0 0/" + min + " * * * ? *";
+
+				} else {
+					// non ancora settati gli altri casi
+					return chronExpression;
+				}
+
+			} else if (type.equals("single")) {
 				return chronExpression; // this will be a normal trigger
-			}
-			if (type.equals("minute")) {
+			} else if (type.equals("minute")) {
 				String numrep = params.getString("numRepetition");
 				chronExpression = "0 0/" + numrep + " * * * ? *";
-			}
-			if (type.equals("hour")) {
+			} else if (type.equals("hour")) {
 				String numrep = params.getString("numRepetition");
 				chronExpression = "0 " + minute + " 0/" + numrep + " * * ? *";
-			}
-			if (type.equals("day")) {
+			} else if (type.equals("day")) {
 				String numrep = params.getString("numRepetition");
 				chronExpression = "0 " + minute + " " + hour + " 1/" + numrep + " * ? *";
-			}
-			if (type.equals("week")) {
+			} else if (type.equals("week")) {
 
 				JSONArray days = params.getJSONArray("days");
 				String daysstr = "";
@@ -259,8 +278,7 @@ class QuartzNativeObjectsConverter {
 				}
 
 				chronExpression = "0 " + minute + " " + hour + " ? * " + daysstr + " *";
-			}
-			if (type.equals("month")) {
+			} else if (type.equals("month")) {
 
 				String monthcron = "";
 				if (params.has("numRepetition")) {

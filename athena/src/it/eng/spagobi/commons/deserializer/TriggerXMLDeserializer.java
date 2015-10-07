@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.safehaus.uuid.UUIDGenerator;
 
 /**
@@ -62,6 +61,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 		String jobName;
 		String jobGroup;
 		String cronString;
+		String originalTriggerName = "";// this variable is use to pass inof
 
 		Map<String, String> jobParameters;
 
@@ -84,25 +84,17 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 			boolean runImmediately = deserializeRunImmediatelyAttribute(xml);
 			if (runImmediately) {
-				String cron = (String) xml.getAttribute(CRON_STRING);
-				JSONObject jo = new JSONObject(cron);
-				String t = jo.getString("type");
-				String fintype = "";
-				if (t != null && t.compareTo("event") == 0) {
-					fintype = t;
-				}
-
-				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString() + "_" + fintype;
+				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
 				triggerGroupName = null;
 				triggerDescription = null;
 				startTime = null;
 				endTime = null;
-				cronString = null;
-
+				// cronString = null;
+				cronString = (String) xml.getAttribute(CRON_STRING);
 				jobName = (String) xml.getAttribute(JOB_NAME);
 				jobGroup = (String) xml.getAttribute(JOB_GROUP);
 				jobParameters = deserializeParametersAttribute(xml);
-
+				originalTriggerName = (String) xml.getAttribute("originalTriggerName");
 			} else {
 
 				triggerName = (String) xml.getAttribute(TRIGGER_NAME);
@@ -134,6 +126,10 @@ public class TriggerXMLDeserializer implements Deserializer {
 			job.setGroupName(jobGroup);
 			job.addParameters(jobParameters);
 			job.setVolatile(false);
+
+			if (originalTriggerName != null && originalTriggerName.trim().compareTo("") != 0) {
+				trigger.setOriginalTriggerName(originalTriggerName);
+			}
 
 			trigger.setJob(job);
 

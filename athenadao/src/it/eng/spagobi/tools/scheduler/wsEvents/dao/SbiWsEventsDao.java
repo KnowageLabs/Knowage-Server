@@ -12,7 +12,7 @@ public interface SbiWsEventsDao extends ISpagoBIDao {
 
 	public SbiWsEvent loadSbiWsEvent(Integer id);
 
-	public SbiWsEvent loadSbiWsEvent(String eventName);
+	public List<SbiWsEvent> loadSbiWsEvents(String eventName);
 
 	public Integer triggerEvent(SbiHibernateModel sbiWsEvent);
 

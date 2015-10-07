@@ -4,6 +4,10 @@
 	</md-chip-template> 
 </md-chips>
 
+<p ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)"> No documents associated</p>
+
+<div ng-if="activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0">
+
 <md-toolbar class="minihead unselectedItem "
 		ng-class="activityEventCtrl.selectedDocument.saveassnapshot? 'selectedItem' : 'unselectedItem'">
 	
@@ -272,3 +276,5 @@
 			ng-model="activityEventCtrl.selectedDocument.saveasdl">
 	</div>
 </md-toolbar>
+
+</div>

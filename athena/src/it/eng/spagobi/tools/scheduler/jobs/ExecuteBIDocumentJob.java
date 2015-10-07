@@ -5,7 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.scheduler.wsEvents.SbiWsEvent;
+import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
+
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -24,10 +34,47 @@ public class ExecuteBIDocumentJob implements Job {
 
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
+		Boolean eventSolved = true;
 
-		Job job = new XExecuteBIDocumentJob();
-		job.execute(jobExecutionContext);
-		logger.debug("OUT");
+		if (jobExecutionContext.getMergedJobDataMap().containsKey("event_info")) {
+			eventSolved = false;
+			try {
+
+				String triggerName = jobExecutionContext.getTrigger().getName();
+				if (jobExecutionContext.getMergedJobDataMap().containsKey("originalTriggerName")) {
+					triggerName = jobExecutionContext.getMergedJobDataMap().getString("originalTriggerName");
+
+				}
+
+				JSONObject jo = new JSONObject(jobExecutionContext.getMergedJobDataMap().getString("event_info"));
+				String typeEvent = jo.getString("type");
+				if (typeEvent.equals("rest")) {
+					SbiWsEventsDao wsEventsDao = DAOFactory.getWsEventsDao();
+
+					List<SbiWsEvent> sbiWsEvents = wsEventsDao.loadSbiWsEvents(triggerName);
+					for (SbiWsEvent sb : sbiWsEvents) {
+						sb.setTakeChargeDate(new Date());
+						wsEventsDao.updateEvent(sb);
+					}
+
+					// eventSolved=true;
+				} else if (typeEvent.equals("dataset")) {
+
+					// eventSolved=true;
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (EMFUserError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (eventSolved) {
+			Job job = new XExecuteBIDocumentJob();
+			job.execute(jobExecutionContext);
+			logger.debug("OUT");
+		}
 	}
 
 }

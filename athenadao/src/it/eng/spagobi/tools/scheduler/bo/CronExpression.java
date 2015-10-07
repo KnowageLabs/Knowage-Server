@@ -32,7 +32,7 @@ public class CronExpression {
 	}
 
 	public boolean isSimpleExpression() {
-		if ("{'type':'single'}".compareTo(expression) == 0 || "single{}".equalsIgnoreCase(expression)) {
+		if (expression.indexOf("'type':'single'") != -1 || "single{}".equalsIgnoreCase(expression)) {
 			return true;
 		}
 		return false;

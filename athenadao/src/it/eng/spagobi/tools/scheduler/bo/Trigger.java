@@ -19,6 +19,7 @@ public class Trigger {
 	String name;
 	String groupName;
 	String description;
+	String originalTriggerName;
 
 	boolean runImmediately;
 
@@ -71,6 +72,21 @@ public class Trigger {
 
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+
+	/**
+	 * @return the originalTriggerName
+	 */
+	public String getOriginalTriggerName() {
+		return originalTriggerName;
+	}
+
+	/**
+	 * @param originalTriggerName
+	 *            the originalTriggerName to set
+	 */
+	public void setOriginalTriggerName(String originalTriggerName) {
+		this.originalTriggerName = originalTriggerName;
 	}
 
 	public CronExpression getChronExpression() {

@@ -92,7 +92,7 @@ public class SchedulerUtilitiesV2 {
 		if (runImmediately) {
 			message.append(" runImmediately=\"true\" ");
 			message.append(" chronString=\"" + trigg.getChrono() + "\" ");
-
+			message.append(" originalTriggerName=\"" + trigg.getTriggerName() + "\" ");
 		} else {
 			message.append(" triggerName=\"" + trigg.getTriggerName() + "\" ");
 

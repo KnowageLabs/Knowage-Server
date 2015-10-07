@@ -5,7 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.jobs;
 
-import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -32,7 +31,6 @@ import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.dispatcher.DocumentDispatcher;
 import it.eng.spagobi.tools.scheduler.dispatcher.UniqueMailDocumentDispatchChannel;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -68,9 +66,6 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		try {
 
 			this.setTenant(jobExecutionContext);
-			String group = jobExecutionContext.getJobDetail().getGroup().split("/")[1];
-			JobTrigger jobtri = getJobTriggerInfo(jobExecutionContext.getJobDetail().getName(), group, jobExecutionContext.getTrigger().getName(),
-					jobExecutionContext.getTrigger().getGroup());
 
 			// Execute internal only if trigger isn't paused
 			if (!isTriggerPaused(jobExecutionContext)) {

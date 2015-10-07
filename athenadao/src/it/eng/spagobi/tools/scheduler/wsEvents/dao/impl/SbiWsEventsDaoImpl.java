@@ -24,8 +24,8 @@ public class SbiWsEventsDaoImpl extends AbstractHibernateDAO implements SbiWsEve
 	}
 
 	@Override
-	public SbiWsEvent loadSbiWsEvent(String eventName) {
-		return list(new SearchWsEventByName(eventName)).get(0);
+	public List<SbiWsEvent> loadSbiWsEvents(String eventName) {
+		return list(new SearchWsEventByName(eventName));
 	}
 
 	@Override
