@@ -48,7 +48,7 @@ public class SbiObjects extends SbiHibernateModel {
 	private Integer refreshSeconds = null;
 	private String previewFile = null;
 	// private SbiDataSet dataSet=null;
-	private Integer dataSet = null;
+	// private Integer dataSet=null;
 	private Set sbiKpiDocumentses = new HashSet(0);
 	private String parametersRegion = null;
 	private String organization;
@@ -600,13 +600,6 @@ public class SbiObjects extends SbiHibernateModel {
 	}
 
 	/**
-	 * @return the dataSet
-	 */
-	public Integer getDataSet() {
-		return dataSet;
-	}
-
-	/**
 	 * @return the previewFile
 	 */
 	public String getPreviewFile() {
@@ -619,14 +612,6 @@ public class SbiObjects extends SbiHibernateModel {
 	 */
 	public void setPreviewFile(String previewFile) {
 		this.previewFile = previewFile;
-	}
-
-	/**
-	 * @param dataSet
-	 *            the dataSet to set
-	 */
-	public void setDataSet(Integer dataSet) {
-		this.dataSet = dataSet;
 	}
 
 	/**
