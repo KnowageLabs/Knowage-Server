@@ -60,7 +60,9 @@ import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -71,7 +73,6 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");
 		try {
-
 			this.setTenant(jobExecutionContext);
 
 			// Execute internal only if trigger isn't paused
@@ -80,14 +81,18 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					this.executeInternal(jobExecutionContext);
 				}
 			}
+		} catch (SchedulerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} finally {
 			this.unsetTenant();
 			logger.debug("OUT");
 		}
 	}
 
-	private boolean eventChecked(JobExecutionContext jobExecutionContext) {
+	private boolean eventChecked(JobExecutionContext jobExecutionContext) throws SchedulerException {
 		Boolean eventSolved = true;
+
 		if (jobExecutionContext.getMergedJobDataMap().containsKey("event_info")) {
 			eventSolved = false;
 			try {
@@ -124,8 +129,20 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 							IRecord returnVal = dataStore.getRecordAt(0);
 							if (returnVal != null) {
 								Object value = returnVal.getFieldAt(0).getValue();
-								if (value.toString().equals("1") || value.toString().equals("true")) {
+
+								String execFlag = jobExecutionContext.getTrigger().getJobDataMap().getString("execFlag");
+								Boolean exf = execFlag == null ? false : Boolean.parseBoolean(execFlag);
+								boolean validDS = (value.toString().equals("1") || value.toString().equals("true")) ? true : false;
+
+								if (validDS && !exf) {
+									jobExecutionContext.getTrigger().getJobDataMap().put("execFlag", "true");
+									StdSchedulerFactory.getDefaultScheduler().rescheduleJob(jobExecutionContext.getTrigger().getName(),
+											jobExecutionContext.getTrigger().getGroup(), jobExecutionContext.getTrigger());
 									eventSolved = true;
+								} else if (!validDS && exf) {
+									jobExecutionContext.getTrigger().getJobDataMap().put("execFlag", "false");
+									StdSchedulerFactory.getDefaultScheduler().rescheduleJob(jobExecutionContext.getTrigger().getName(),
+											jobExecutionContext.getTrigger().getGroup(), jobExecutionContext.getTrigger());
 								}
 							}
 						}

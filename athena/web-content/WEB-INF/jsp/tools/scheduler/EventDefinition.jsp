@@ -77,22 +77,20 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 </head>
 
 <body ng-app="EventDefinitionApp">
-	<div layout-padding layout="row" flex layout-fill class="h100" 
+	<div layout-padding flex layout-fill class="h100 " 
 		ng-controller="ActivityEventController as activityEventCtrl"
 		ng-init="activityEventCtrl.initJobsValues('<%=jobName%>', '<%=jobGroup%>', '<%=triggerName%>', '<%=triggerGroup%>');">
 
-		<%-- Event detail panel --%>
-		<div layout="column" flex class="md-whiteframe-z1">
-			<md-tabs flex>
+		<form name="contactForm"  layout-fill ng-submit="contactForm.$valid && activityEventCtrl.saveEvent(contactForm.$valid)" class="detailBody md-whiteframe-z1" novalidate>
+			<md-tabs flex class="h100 mini-tabs">
 				<md-tab id="eventTabDetail" layout-padding flex>
 					<md-tab-label>{{translate.load("sbi.generic.details")}}</md-tab-label>
 					<md-tab-body class="md-padding " flex>
-						<form name="contactForm" ng-submit="contactForm.$valid && activityEventCtrl.saveEvent(contactForm.$valid)"
-								layout="column" class="detailBody" novalidate>
-							<md-content class="bottomButtonsBox"> 
+						
+							<md-content class="h100" > 
 								<md-input-container>
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
-									<input ng-model="activityEventCtrl.event.triggerName" required maxlength="100" ng-maxlength="100" md-maxlength="100"> 
+									<input ng-model="activityEventCtrl.event.triggerName" required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName"> 
 								</md-input-container>
 								<md-input-container>
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
@@ -285,25 +283,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								</div>
 							</md-content>
 
-							<div layout="row" layout-align="end center" class=" bottomButtonsBox">
-								<%-- TODO REMOVE ASAP!!! button for testing of trigger triggers of type ws events --%>
-								<md-button type="button" class="md-raised md-warn" ng-click="activityEventCtrl.triggerEvent()">Scatena evento!!!</md-button>
-								<%-- TODO REMOVE ASAP!!! --%>
 							
-								<md-button type="button" class="md-raised" ng-click="activityEventCtrl.resetForm()">Cancella</md-button>
-								<div style="z-index: 1;">
-									<md-button type="submit" class="md-raised md-primary" ng-disabled="!contactForm.$valid">Salva</md-button>
-									<md-tooltip md-direction="top" ng-if="!contactForm.$valid">completare i campi correttamente </md-tooltip>
-								</div>
-							</div>
 
-						</form>
 					</md-tab-body>
 				</md-tab> 
 				<md-tab id="eventTabDocuments">
 					<md-tab-label>{{translate.load("sbi.scheduler.schedulation.events.documentsmanagement")}}</md-tab-label>
-					<md-tab-body layout="column">
-						<div ng-include="'/athena/js/src/angular_1.4/scheduler/template/documentManagementDetail.jsp'"></div>
+					<md-tab-body layout="column" >
+						<div class="h100" ng-include="'/athena/js/src/angular_1.4/scheduler/template/documentManagementDetail.jsp'"></div>
 					</md-tab-body> 
 				</md-tab>
 				
@@ -314,7 +301,20 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					</md-tab-body> 
 				</md-tab>
 			</md-tabs>
-		</div>
+			
+			<div layout="row"  class=" bottomButtonsBox">
+				
+			
+<!-- 				<md-button type="button" class="md-raised" ng-click="activityEventCtrl.resetForm()">Cancella</md-button> -->
+				<div style="z-index: 1;">
+					<md-button type="submit" class="md-raised md-primary submButton"  ng-disabled="!contactForm.$valid">Salva
+			  		</md-button>
+					<md-tooltip md-direction="top" ng-if="!contactForm.$valid">completare i campi correttamente </md-tooltip>
+				</div>
+			</div>
+							
+							
+			</form>
 	</div>
 </body>
 </html>

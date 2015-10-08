@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.scheduler.services.rest;
 
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.JobTriggerToJson;
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerFromJsonRequest;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
-import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSaveOptionsFromRequest;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSchedulingMessage;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -124,6 +124,13 @@ public class SchedulerService {
 		}
 		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
 		resp.put("job", JSON.parse(JsonConverter.objectToJson(jobInfo, JobInfo.class)));
+
+		// JSONArray docParam=new JSONArray();
+		// List<BIObject> listDoc=jobInfo.getDocuments();
+		// for(BIObject b : listDoc){
+		// b.getBiObjectParameters()
+		// docParam.put();
+		// }
 
 		return resp.toString();
 	}
@@ -574,7 +581,20 @@ public class SchedulerService {
 			logParam.put("TRIGGER NAME", triggerName);
 			logParam.put("TRIGGER GROUP", triggerGroup);
 
-			jobTrigger = getJobTriggerFromJsonRequest(triggerJson);
+			JSONArray errorH = new JSONArray();
+			jobTrigger = getJobTriggerFromJsonRequest(triggerJson, errorH);
+
+			if (errorH.length() > 0) {
+				JSONObject jo = new JSONObject();
+				jo.put("Status", "NON OK");
+				jo.put("Errors", errorH);
+				return jo.toString();
+
+			}
+			// JSONObject valid = isValidJobTrigger(jobTrigger);
+			// if (!valid.getString("Status").equals("OK")) {
+			// return valid.toString();
+			// }
 
 			StringBuffer message = getSchedulingMessage(jobTrigger, false, profile);
 
@@ -677,45 +697,6 @@ public class SchedulerService {
 	// }
 	// }
 	// }
-
-	private JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject) throws Exception {
-		JobTrigger jobTrigger = new JobTrigger();
-
-		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-		String jobDetail = schedulerService.getJobDefinition((String) jsonObject.opt(JobTrigger.JOB_NAME), (String) jsonObject.opt(JobTrigger.JOB_GROUP));
-		SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
-		if (jobDetailSB == null) {
-			throw new Exception("Cannot recover job " + (String) jsonObject.opt(JobTrigger.JOB_NAME));
-		}
-		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
-		jobTrigger.setJobInfo(jobInfo);
-
-		jobTrigger.setTriggerName((String) jsonObject.opt(JobTrigger.TRIGGER_NAME));
-		jobTrigger.setTriggerDescription((String) jsonObject.opt(JobTrigger.TRIGGER_DESCRIPTION));
-		jobTrigger.setStartDate(jsonObject.optString(JobTrigger.START_DATE));
-		jobTrigger.setStartTime(jsonObject.optString(JobTrigger.START_TIME));
-		jobTrigger.setEndDate(jsonObject.optString(JobTrigger.END_DATE));
-		jobTrigger.setEndTime(jsonObject.optString(JobTrigger.END_TIME));
-
-		// JSONObject chronoObj = (JSONObject) jsonObject.opt(JobTrigger.CHRONO);
-		// jobTrigger.setChronoType((String) chronoObj.opt(JobTrigger.CHRONO_TYPE));
-		jobTrigger.setChrono(((JSONObject) jsonObject.opt(JobTrigger.CHRONO)).toString().replaceAll("\"", "'"));
-
-		// Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
-		JSONArray ja = (JSONArray) jsonObject.opt(JobTrigger.DOCUMENTS);
-		//
-		// // init the map of DispatchContext
-		// for (int j = 0; j < ja.length(); j++) {
-		// saveOptions.put(ja.getJSONObject(j).getString("labelId"), new DispatchContext());
-		// }
-		// jobTrigger.setSaveOptions(saveOptions);
-
-		// insert all value in the map of DispatchContext
-		Map<String, DispatchContext> saveOptions = getSaveOptionsFromRequest(ja);
-		jobTrigger.setSaveOptions(saveOptions);
-
-		return jobTrigger;
-	}
 
 	private TriggerInfo getTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup) {
 		try {

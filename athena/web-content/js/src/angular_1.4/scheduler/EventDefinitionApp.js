@@ -75,7 +75,7 @@ eventDefinitionApp.controller('ActivityEventController',
     ];
 	
 	activityEventCtrl.event = {};
-	
+	activityEventCtrl.disableName=false;
 	activityEventCtrl.event.jobName = '';
 	activityEventCtrl.event.jobGroup = '';
 	activityEventCtrl.event.triggerName = '';
@@ -215,6 +215,7 @@ eventDefinitionApp.controller('ActivityEventController',
 					console.error(translate.load("sbi.glossary.load.error"));
 				} else {
 					console.log("evento scaricato", data);
+					activityEventCtrl.disableName=true;
 					
 					var d = data;
 					activityEventCtrl.event.triggerName = d.triggerName;
@@ -368,17 +369,25 @@ eventDefinitionApp.controller('ActivityEventController',
 		if (!isValid) {
 			return false;
 		}
+		var cloneData=JSON.parse(JSON.stringify(activityEventCtrl.event));
+		if(cloneData.startDate!=undefined){
+			cloneData.startDate=(new Date(cloneData.startDate)).getTime();
+		}
+		if(cloneData.endDate!=undefined){
+			cloneData.endDate=(new Date(cloneData.endDate)).getTime();
+		}
 		
-		restServices.post("scheduler", "saveTrigger", activityEventCtrl.event)
+		restServices.post("scheduler", "saveTrigger", cloneData)
 			.success(function(data) {
 				if (data.hasOwnProperty("errors")) {
 					console.error(data.errors[0].message);
 					console.error(translate.load("sbi.glossary.error.save"));
 				} else if (data.Status == "NON OK") {
-					console.error(translate.load(data.Message));
-				} else {
-					$mdToast.show($mdToast.simple().content("SALVATO").position('top').action(
-						'OK').highlightAction(false).hideDelay(3000));
+					console.error("errori salvataggio",data.Errors);
+					$mdToast.show($mdToast.simple().content(translate.load("sbi.glossary.error.save")+" "+data.Errors).position('top').action('OK').highlightAction(true));
+				 } else {
+					 activityEventCtrl.disableName=true;
+					$mdToast.show($mdToast.simple().content("SALVATO").position('top').action('OK').highlightAction(false).hideDelay(3000));
 				}
 			})
 			.error(function(data, status, headers, config) {

@@ -8,6 +8,7 @@ package it.eng.spagobi.tools.scheduler.to;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -89,6 +90,15 @@ public class JobTrigger implements Serializable {
 	 *            the new end date
 	 */
 	public void setEndDate(String endDate) {
+		if (endDate.matches("\\d+")) {
+			// millisec
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(Long.parseLong(endDate));
+			String z = calendar.get(Calendar.DAY_OF_MONTH) < 10 ? "0" : "";
+			this.endDate = z + "" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR);
+			return;
+		}
+
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		SimpleDateFormat formatterF = new SimpleDateFormat("dd/MM/yyyy");
 		if (endDate != null && endDate.trim().compareTo("") != 0) {
@@ -165,6 +175,15 @@ public class JobTrigger implements Serializable {
 	 *            the new start date
 	 */
 	public void setStartDate(String startDate) {
+		if (startDate.matches("\\d+")) {
+			// millisec
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(Long.parseLong(startDate));
+			String z = calendar.get(Calendar.DAY_OF_MONTH) < 10 ? "0" : "";
+			this.startDate = z + "" + calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR);
+			return;
+		}
+
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		SimpleDateFormat formatterF = new SimpleDateFormat("dd/MM/yyyy");
 		if (startDate != null && startDate.trim().compareTo("") != 0) {
@@ -298,7 +317,8 @@ public class JobTrigger implements Serializable {
 	public void setSaveOptions(Map<String, DispatchContext> saveOptions) {
 		this.saveOptions = saveOptions;
 	}
-/**
+
+	/**
 	 * Gets the start date rf c3339.
 	 *
 	 * @return the start date rf c3339

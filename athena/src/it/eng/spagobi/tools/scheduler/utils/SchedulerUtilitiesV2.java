@@ -19,6 +19,9 @@ import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.JobTrigger;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +33,161 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SchedulerUtilitiesV2 {
+
+	public static JSONObject isValidJobTrigger(JobTrigger jobt) throws JSONException {
+
+		JSONArray ja = new JSONArray();
+
+		if (jobt.getTriggerName() == null || jobt.getTriggerName().trim().isEmpty()) {
+			ja.put("Empty name");
+		}
+
+		boolean validStartDate = true;
+		if (jobt.getStartDate() == null || jobt.getStartDate().trim().isEmpty()) {
+			ja.put("Null or not Valid Start date");
+			validStartDate = false;
+		}
+		if (jobt.getStartTime() == null || jobt.getStartTime().trim().isEmpty()) {
+			ja.put("Null start time");
+			validStartDate = false;
+		} else {
+			String[] tp = jobt.getStartTime().split(":");
+			int h = Integer.parseInt(tp[0]);
+			int m = Integer.parseInt(tp[1]);
+			if (h < 0 || h > 23) {
+				ja.put(" start time hours not valid ");
+				validStartDate = false;
+			}
+			if (m < 0 || m > 59) {
+				ja.put(" start time minutes not valid ");
+				validStartDate = false;
+			}
+		}
+
+		if (validStartDate && (jobt.getEndDate() != null && !jobt.getEndDate().equals(""))) {
+			boolean validTime = true;
+			String[] tp = jobt.getEndTime().split(":");
+			int h = Integer.parseInt(tp[0]);
+			int m = Integer.parseInt(tp[1]);
+			if (h < 0 || h > 23) {
+				ja.put(" end time hours not valid ");
+				validTime = false;
+			}
+			if (m < 0 || m > 59) {
+				ja.put(" end time minutes not valid ");
+				validTime = false;
+			}
+
+			if (validTime) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+				try {
+					Date dateStart = sdf.parse(jobt.getStartDate() + " " + jobt.getStartTime());
+					Date dateEnd = sdf.parse(jobt.getEndDate() + " " + jobt.getEndTime());
+					if (dateEnd.before(dateStart)) {
+						ja.put(" End time is before Start time  ");
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		// TODO controls in documents data
+
+		JSONObject jo = new JSONObject();
+		if (ja.length() >= 0) {
+			jo.put("Status", "NON OK");
+			jo.put("Errors", ja);
+		} else {
+			jo.put("Status", "OK");
+		}
+		return jo;
+
+	}
+
+	public static JobTrigger getJobTriggerFromJsonRequest(JSONObject jsonObject, JSONArray jerr) throws Exception {
+
+		JobTrigger jobTrigger = new JobTrigger();
+		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+		String jobDetail = schedulerService.getJobDefinition((String) jsonObject.opt(JobTrigger.JOB_NAME), (String) jsonObject.opt(JobTrigger.JOB_GROUP));
+		SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
+		if (jobDetailSB == null) {
+			throw new Exception("Cannot recover job " + (String) jsonObject.opt(JobTrigger.JOB_NAME));
+		}
+		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
+		jobTrigger.setJobInfo(jobInfo);
+		jobTrigger.setTriggerName((String) jsonObject.opt(JobTrigger.TRIGGER_NAME));
+		if (jobTrigger.getTriggerName() == null || jobTrigger.getTriggerName().trim().isEmpty()) {
+			jerr.put("Empty name");
+		}
+		jobTrigger.setTriggerDescription((String) jsonObject.opt(JobTrigger.TRIGGER_DESCRIPTION));
+		jobTrigger.setStartDate(jsonObject.optString(JobTrigger.START_DATE));
+		jobTrigger.setStartTime(jsonObject.optString(JobTrigger.START_TIME));
+
+		boolean validStartDate = true;
+		if (jobTrigger.getStartDate() == null || jobTrigger.getStartDate().trim().isEmpty()) {
+			jerr.put("Null or not Valid Start date");
+			validStartDate = false;
+		}
+		if (jobTrigger.getStartTime() == null || jobTrigger.getStartTime().trim().isEmpty()) {
+			jerr.put("Null start time");
+			validStartDate = false;
+		} else {
+			String[] tp = jobTrigger.getStartTime().split(":");
+			int h = Integer.parseInt(tp[0]);
+			int m = Integer.parseInt(tp[1]);
+			if (h < 0 || h > 23) {
+				jerr.put(" start time hours not valid ");
+				validStartDate = false;
+			}
+			if (m < 0 || m > 59) {
+				jerr.put(" start time minutes not valid ");
+				validStartDate = false;
+			}
+		}
+
+		jobTrigger.setEndDate(jsonObject.optString(JobTrigger.END_DATE));
+		jobTrigger.setEndTime(jsonObject.optString(JobTrigger.END_TIME));
+
+		if (validStartDate && (jobTrigger.getEndDate() != null && !jobTrigger.getEndDate().equals(""))) {
+			boolean validTime = true;
+			String[] tp = jobTrigger.getEndTime().split(":");
+			int h = Integer.parseInt(tp[0]);
+			int m = Integer.parseInt(tp[1]);
+			if (h < 0 || h > 23) {
+				jerr.put(" end time hours not valid ");
+				validTime = false;
+			}
+			if (m < 0 || m > 59) {
+				jerr.put(" end time minutes not valid ");
+				validTime = false;
+			}
+
+			if (validTime) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+				try {
+					Date dateStart = sdf.parse(jobTrigger.getStartDate() + " " + jobTrigger.getStartTime());
+					Date dateEnd = sdf.parse(jobTrigger.getEndDate() + " " + jobTrigger.getEndTime());
+					if (dateEnd.before(dateStart)) {
+						jerr.put(" End time is before Start time  ");
+					}
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		jobTrigger.setChrono(((JSONObject) jsonObject.opt(JobTrigger.CHRONO)).toString().replaceAll("\"", "'"));
+		JSONArray ja = (JSONArray) jsonObject.opt(JobTrigger.DOCUMENTS);
+		Map<String, DispatchContext> saveOptions = getSaveOptionsFromRequest(ja, jerr);
+		jobTrigger.setSaveOptions(saveOptions);
+
+		return jobTrigger;
+	}
 
 	public static JSONObject JobTriggerToJson(JobTrigger trigg) throws EMFUserError, JSONException {
 		String xml = getSchedulingMessage(trigg, false, null).toString();
@@ -422,7 +580,7 @@ public class SchedulerUtilitiesV2 {
 
 	// Creation of JobTrigger save
 	// paramater----------------------------------------------------------------------------------------------------------------------------------------------------------------
-	public static Map<String, DispatchContext> getSaveOptionsFromRequest(JSONArray docum) throws EMFUserError, JSONException {
+	public static Map<String, DispatchContext> getSaveOptionsFromRequest(JSONArray docum, JSONArray jerr) throws EMFUserError, JSONException {
 		// TriggerInfo triggerInfo = (TriggerInfo) sessionContainer.getAttribute(SpagoBIConstants.TRIGGER_INFO);
 		// TriggerInfo triggerInfo = null;
 		// JobInfo jobInfo = triggerInfo.getJobInfo();
@@ -431,12 +589,12 @@ public class SchedulerUtilitiesV2 {
 		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
 		for (int i = 0; i < docum.length(); i++) {
 			DispatchContext dispatchContext = new DispatchContext();
-			getSaveAsSnapshotOptions(docum.getJSONObject(i), dispatchContext);
-			getSaveAsFileOptions(docum.getJSONObject(i), dispatchContext);
-			getSaveAsJavaClassOptions(docum.getJSONObject(i), dispatchContext);
-			getSaveAsDocumentOptions(docum.getJSONObject(i), dispatchContext);
-			getSaveAsMailOptions(docum.getJSONObject(i), dispatchContext);
-			getSaveAsDistributionListOptions(docum.getJSONObject(i), dispatchContext);
+			getSaveAsSnapshotOptions(docum.getJSONObject(i), dispatchContext, jerr);
+			getSaveAsFileOptions(docum.getJSONObject(i), dispatchContext, jerr);
+			getSaveAsJavaClassOptions(docum.getJSONObject(i), dispatchContext, jerr);
+			getSaveAsDocumentOptions(docum.getJSONObject(i), dispatchContext, jerr);
+			getSaveAsMailOptions(docum.getJSONObject(i), dispatchContext, jerr);
+			getSaveAsDistributionListOptions(docum.getJSONObject(i), dispatchContext, jerr);
 
 			saveOptions.put(docum.getJSONObject(i).getString("labelId"), dispatchContext);
 		}
@@ -458,13 +616,16 @@ public class SchedulerUtilitiesV2 {
 		return saveOptions;
 	}
 
-	private static void getSaveAsSnapshotOptions(JSONObject request, DispatchContext dispatchContext) throws JSONException {
+	private static void getSaveAsSnapshotOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
 		Boolean saveassnap = request.optBoolean("saveassnapshot");
 		if (saveassnap) {
 			dispatchContext.setSnapshootDispatchChannelEnabled(true);
 
 			String snapshotName = request.optString("snapshotname");
 			dispatchContext.setSnapshotName(snapshotName);
+			if (snapshotName.trim().equals("")) {
+				jerr.put("Empty snapshotName");
+			}
 
 			String snapshotDescription = request.optString("snapshotdescription");
 			dispatchContext.setSnapshotDescription(snapshotDescription);
@@ -474,7 +635,7 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsFileOptions(JSONObject request, DispatchContext dispatchContext) throws JSONException {
+	private static void getSaveAsFileOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
 		Boolean saveasfile = request.optBoolean("saveasfile");
 		if (saveasfile) {
 			dispatchContext.setFileSystemDisptachChannelEnabled(true);
@@ -500,7 +661,7 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsJavaClassOptions(JSONObject request, DispatchContext dispatchContext) throws JSONException {
+	private static void getSaveAsJavaClassOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
 		Boolean sendToJavaClass = request.optBoolean("sendtojavaclass");
 		if (sendToJavaClass) {
 			dispatchContext.setJavaClassDispatchChannelEnabled(true);
@@ -511,18 +672,18 @@ public class SchedulerUtilitiesV2 {
 			} catch (ClassCastException e) {
 				// logger.error("Error in istantiating class");
 				EMFValidationError emfError = new EMFValidationError(EMFErrorSeverity.ERROR, "sendtojavaclass", "12200");
-				// errorHandler.addError(emfError);
+				jerr.put("Java class not valid");
 
 			} catch (Exception e) {
 				// logger.error("Error in istantiating class");
 				EMFValidationError emfError = new EMFValidationError(EMFErrorSeverity.ERROR, "sendtojavaclass", "12100");
-				// errorHandler.addError(emfError);
+				jerr.put("Error in setting java class ");
 			}
 			dispatchContext.setJavaClassPath(javaClassPath);
 		}
 	}
 
-	private static void getSaveAsDocumentOptions(JSONObject request, DispatchContext dispatchContext) throws JSONException {
+	private static void getSaveAsDocumentOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
 		Boolean saveasdoc = request.optBoolean("saveasdocument");
 		if (saveasdoc) {
 			dispatchContext.setFunctionalityTreeDispatchChannelEnabled(true);
@@ -571,7 +732,7 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsMailOptions(JSONObject request, DispatchContext dispatchContext) throws EMFUserError, JSONException {
+	private static void getSaveAsMailOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws EMFUserError, JSONException {
 		Boolean sendmail = request.optBoolean("sendmail");
 		if (sendmail) {
 			dispatchContext.setMailDispatchChannelEnabled(true);
@@ -661,7 +822,8 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsDistributionListOptions(JSONObject request, DispatchContext dispatchContext) throws EMFUserError, JSONException {
+	private static void getSaveAsDistributionListOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws EMFUserError,
+			JSONException {
 		Boolean sendtodl = request.optBoolean("saveasdl");
 		if (sendtodl) {
 			dispatchContext.setDistributionListDispatchChannelEnabled(true);
