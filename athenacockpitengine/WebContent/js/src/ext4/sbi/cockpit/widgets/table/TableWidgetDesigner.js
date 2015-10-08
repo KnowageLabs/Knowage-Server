@@ -1091,12 +1091,11 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 	}
 	
 	, getDatasetMetafields : function() {
-		
 		var metafields = [];
 		
 		var datasetStore = Sbi.storeManager.getStoresById('datasetStore_' + this.wcId)[0];
-		var data = datasetStore.data;
-		
+		var data = (datasetStore && datasetStore != null && datasetStore.data) ?
+				datasetStore.data : [];
 		
 		for(i = 0; i < data.length; i++) {
 			var record = data.items[i];
@@ -1104,6 +1103,8 @@ Ext.extend(Sbi.cockpit.widgets.table.TableWidgetDesigner, Sbi.cockpit.core.Widge
 			
 			metafields.push(metafield);
 		}
+		
+		Sbi.storeManager.removeStore(datasetStore, true);
 		
 		return metafields;
 	}
