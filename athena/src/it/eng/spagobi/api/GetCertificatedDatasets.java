@@ -210,7 +210,7 @@ public class GetCertificatedDatasets {
 					actions.put(georeportAction); // Annotated view map action to release SpagoBI 4
 				}
 			}
-			if (wsEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")) {
+			if ((wsEngine != null && typeDocWizard == null) || (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("REPORT"))) {
 				actions.put(worksheetAction);
 
 				if (qbeEngine != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
