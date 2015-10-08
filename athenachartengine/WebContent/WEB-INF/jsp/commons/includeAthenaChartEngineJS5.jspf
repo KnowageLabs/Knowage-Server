@@ -7,80 +7,82 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <!-- TODO : Make path relative to webapp name -->
 
 <!-- Include Ext stylesheets here: -->
-<link id="theme" rel="styleSheet" href ="/athenachartengine/css/chart.css" type="text/css" />
+<link id="theme" rel="styleSheet" href ="${pageContext.request.contextPath}/css/chart.css" type="text/css" />
 
 
 <!-- Include localized labels  -->
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/formats/<%=locale.getLanguage()%>.js' ></script>
 
 <!-- START-DEBUG -->
 
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Settings.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/overrides/overrides.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Sbi.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/commons/Log.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext4/sbi/exceptions/ExceptionHandler.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Settings.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/overrides/overrides.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Sbi.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/commons/Log.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext4/sbi/exceptions/ExceptionHandler.js' ></script>
 
-<script type="text/javascript" src="/athenachartengine/js/src/configuration/propertiesCatalogue.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/configuration/propertiesCatalogue.js" ></script>
 
-<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebService.js" ></script>
-<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebServiceManager.js" ></script>
-<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/rest/WebServiceManagerFactory.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebService.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebServiceManager.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebServiceManagerFactory.js" ></script>
 
-<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/viewer/ChartTemplateContainer.js" ></script>
-<script type="text/javascript" src="/athenachartengine/js/src/ext5/sbi/chart/viewer/HighchartsDrilldownHelper.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/ChartTemplateContainer.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/HighchartsDrilldownHelper.js" ></script>
 
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartUtils.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AdvancedEditor.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesContainerModel.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesContainerStore.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisesPicker.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartColumnsContainer.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartColumnsContainerManager.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartAxisesContainer.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartStructure.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/SerieColorPicker.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/SerieStylePopup.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/AxisStylePopup.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartUtils.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AdvancedEditor.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesContainerModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesContainerStore.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesPicker.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
 
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationModel.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartOrientationCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontAlignCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontVerticalAlignCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontDimCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/FontStyleCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/SeriesOrderCombo.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ColorPicker.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ColorPickerContainer.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopup.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationLegend.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationPalette.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelAxesLines.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopupLegendHeatmap.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationHeatmapLegendAndTooltip.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLimit.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelTooltip.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterZoomType.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterConfiguration.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartColumnsContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartColumnsContainerManager.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartCategoriesContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartAxisesContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartStructure.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/SerieColorPicker.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/SerieStylePopup.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisStylePopup.js' ></script>
 
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopupToolbar.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/StylePopupTip.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationToolbarAndTip.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationWordcloud.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartOrientationCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontAlignCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontVerticalAlignCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontDimCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/FontStyleCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/SeriesOrderCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ColorPicker.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ColorPickerContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopup.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationLegend.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationPalette.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelAxesLines.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupLegendHeatmap.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationHeatmapLegendAndTooltip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLimit.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelTooltip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterZoomType.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationScatterConfiguration.js' ></script>
 
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationMainContainer.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' ></script>
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/ChartConfiguration.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupToolbar.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupTip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationToolbarAndTip.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationWordcloud.js' ></script>
 
-<script type="text/javascript" src='/athenachartengine/js/src/ext5/sbi/chart/designer/Designer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationMainContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationSecondContainer.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfiguration.js' ></script>
+
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/Designer.js' ></script>
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION 
-<script type="text/javascript" src='/athenachartengine/js/spagobi/chart-all-5.1.0.js'></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/spagobi/chart-all-5.1.0.js'></script>
 -->
 
 <!-- END-PRODUCTION -->

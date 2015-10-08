@@ -26,7 +26,19 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 						protocol: protocol,
 						hostName: hostName,
 						tcpPort: tcpPort,
-						context: '/athenachartengine',
+
+						/**
+				    	 * (Topic: context name and context path improvement)
+				    	 * 
+				    	 * This is context of the path (gives us the root URL part that point
+				    	 * to the root project responsible for rendering the application). This 
+				    	 * variable is the global one defined inside of the 'chart.jsp' file and 
+				    	 * it is used for purpose of dynamic path specification.
+				    	 * 
+				    	 * @author: danristo (danilo.ristovski@mht.net)
+				    	 */
+						context: Sbi.context,    
+						
 						wsPrefix: '/api/1.0/',
 						sbiExecutionId: sbiExecutionId,
 						userId: userId

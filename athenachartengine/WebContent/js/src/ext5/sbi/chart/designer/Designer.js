@@ -30,62 +30,21 @@ Ext.define('Sbi.chart.designer.Designer', {
     	chartExportWebServiceManager: null,
     	docLabel: null,
     	
+    	/**
+    	 * This is a "back" (return) path for relative path implementation
+    	 * (context name and context path improvement). This global variable
+    	 * will be used by all JS files inside of this project (root of this
+    	 * file) for purpose of dynamic path specification.
+    	 * 
+    	 * @author: danristo (danilo.ristovski@mht.net)
+    	 */
+    	realtivePathReturn: '../../..',
+    	
 		// Left designer panel 
 		chartTypeColumnSelector: null,
 		
-		selectedChartType: '',
-		
-		// chart types
-    	chartTypes : [{
-			name: LN('sbi.chartengine.designer.charttype.bar'), 
-			type: 'BAR',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_64x64_ico.png',
-		}, {	
-			name: LN('sbi.chartengine.designer.charttype.line'), 
-			type: 'LINE',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.pie'), 
-			type: 'PIE',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.sunburst'), 
-			type: 'SUNBURST',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.wordcloud'), 
-			type: 'WORDCLOUD',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.treemap'), 
-			type: 'TREEMAP',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.parallel'), 
-			type: 'PARALLEL',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.radar'), 
-			type: 'RADAR',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.scatter'), 
-			type: 'SCATTER',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.heatmap'), 
-			type: 'HEATMAP',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.chord'), 
-			type: 'CHORD',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}, {
-			name: LN('sbi.chartengine.designer.charttype.gauge'), 
-			type: 'GAUGE',
-			iconUrl:'/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_64x64_ico.png',
-		}],
-		
+		selectedChartType: '',		
+				
 		chartTypeStore: null,
 		chartTypeSelector: null,
 		
@@ -245,11 +204,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    				   }
 				    				   }
 							        ]
-								},
-								VALUES: {
-									SERIE: {
-										borderColor:"#FFFFFF"
-									}
 								}
 							}						
 						},
@@ -672,11 +626,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    				   }
 				    				   }
 							        ]
-								},
-								VALUES: {
-									SERIE: {
-										borderColor:"#FFFFFF"
-									}
 								}
 							}						
 						},
@@ -1152,43 +1101,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 						
 			this.hostName = hostName; 
 			this.serverPort = serverPort;
-			
-			/**
-			 * Chart types that we specified at the beginning of the Designer and
-			 * that are available through the Chart Type Selector (needed for creating
-			 * of the top left panel on the Designer page. 
-			 * (comment by: danristo :: danilo.ristovski@mht.net) 
-			 */
-			var chartTypes = this.chartTypes;
-			
-			/**
-			 * Populating store with those chart types ('fields' define the structure 
-			 * of every single chartType).
-			 * (comment by: danristo :: danilo.ristovski@mht.net) 
-			 */
-			var chartTypeStore = Ext.create('Ext.data.Store', {
-				fields: [
-					{name: 'name', type: 'string'},
-					{name: 'type', type: 'string'},
-					{name: 'iconUrl', type: 'string'},
-				],
-	 			data: chartTypes
-		    });
-			
-			this.chartTypeStore = chartTypeStore;			
+									
 			this.chartType = jsonTemplate.CHART.type;
-			
-			/**
-			 * One of the main roles of this JS class (file) is listening to the 
-			 * event of changing the chart types inside of it (the selector), i.e.
-			 * clicking on the row of the Selector.
-			 * (comment by: danristo :: danilo.ristovski@mht.net) 
-			 */
-//			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector', {
-// 				region: 'north',
-// 				minHeight: 50,
-// 				store: chartTypeStore
-// 			});
 			
 			/**
 			 * GUI label element that will be placed immediatelly above the style combo box
@@ -1776,7 +1690,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			var previewTools = [{ xtype: 'tbfill' }, {
 	            xtype: 'image',
-	            src: '/athenachartengine/img/refresh.png',
+	            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/refresh.png',
 	            cls: 'tool-icon',
 	            listeners: {
 	            	click: {
@@ -1809,7 +1723,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      								setPreviewImage(src);
 	      							},
 	      							function (response) {
-	      								var src = '/athenachartengine/img/preview-not-available.png';
+	      								var src = Sbi.chart.designer.Designer.realtivePathReturn + '/img/preview-not-available.png';
 	      								setPreviewImage(src);
 	      							}
       							);
@@ -1818,7 +1732,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							}
 							,
   							function (response) {
-  								var src = '/athenachartengine/img/preview-not-available.png';
+  								var src = Sbi.chart.designer.Designer.realtivePathReturn + '/img/preview-not-available.png';
   								setPreviewImage(src);
   							});
   							
@@ -2257,7 +2171,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				previousTabId: '',
   				tools:[{ xtype: 'tbfill' }, {
   		            xtype: 'image',
-  		            src: '/athenachartengine/img/save.png',
+  		            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/save.png',
   		            cls: 'tool-icon',
   		            hidden: isCockpit,
   		            listeners: {
@@ -2320,7 +2234,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		        }, 
   		        {
   		            xtype: 'image',
-  		            src: '/athenachartengine/img/saveAndGoBack.png',
+  		            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/saveAndGoBack.png',
   		            cls: 'tool-icon',
   		            hidden: isCockpit,
   		            listeners: {
@@ -2595,6 +2509,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								chartType == "WORDCLOUD" || chartType == "TREEMAP"
 									|| chartType == "CHORD" || chartType == "PIE" || chartType == "RADAR"
 										||chartType == "SCATTER" || chartType == "HEATMAP") {
+							
 							if (chartType != "RADAR")
 							{
 								hideAxisTitleTextbox = true;

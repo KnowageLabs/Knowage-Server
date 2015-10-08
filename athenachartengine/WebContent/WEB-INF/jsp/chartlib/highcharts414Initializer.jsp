@@ -1,14 +1,17 @@
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-more.src.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.src.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/drilldown.src.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/heatmap.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/treemap.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/data.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/src/treemap/treemap.js"></script>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+ pageEncoding="UTF-8"%>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-more.src.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/exporting.src.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/drilldown.src.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/heatmap.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/treemap.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/data.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>
 
 <script>
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
@@ -44,13 +47,14 @@
 			
 		}
 		else if (chartConf.chart.type.toLowerCase() == 'heatmap'){
-			
+			console.log(chartConf);
 			renderHeatmap(chartConf);	
 			
 		} 
 		
 		else{
-			
+			console.log("highcharts414Initializer.jspf (line 53)");
+			console.log(chartConf);
 			new Highcharts.Chart(chartConf);
 			
 		}

@@ -1,9 +1,12 @@
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
-<script type="text/javascript" src="/athenachartengine/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
-<script type="text/javascript" src="/athenachartengine/js/src/d3/renderD3.js"></script> 
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+ pageEncoding="UTF-8"%>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/adapters/standalone-framework.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts.src.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/highcharts-3d.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3.js"></script> 
 
 <script>
 
@@ -68,7 +71,8 @@
 			If rerendering the chart, we will need cleaning of the
 			page before it. This method will destroy (remove) every
 			page element that already existed on the page (potentially).
-			(danilo.ristovski@mht.net)
+			It is implemented inside of the renderD3.js.
+			@author: (danilo.ristovski@mht.net)
 		*/
 		cleanChart();
 		

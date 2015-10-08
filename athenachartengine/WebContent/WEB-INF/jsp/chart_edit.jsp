@@ -116,14 +116,14 @@ author:
 <html>
 	<%-- == HEAD ========================================================== --%>
 	<head>
+	
 	   <title><%=docName.trim().length() > 0? docName: "AthenaChartEngine"%></title>
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
-        <%@include file="commons/includeExtJS5.jspf" %>
-        
+        <%@include file="commons/includeExtJS5.jspf" %>        
 		<%@include file="commons/includeMessageResource.jspf" %>
 		<%@include file="commons/includeAthenaChartEngineJS5.jspf" %>
-		
+				
     </head>
 	
 	<%-- == BODY ========================================================== --%>
@@ -135,15 +135,21 @@ author:
 	<script language="javascript" type="text/javascript">
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
- 			Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
-
+ 			
+ 			/**
+ 				Getting back from the end of the current URL path for 3 steps in order
+ 				to get the context (the part of the URL that gives the information about 
+				the name of the root project).
+				
+ 				@author: danristo (danilo.ristovski@mht.net)
+ 			*/
+ 			Ext.Loader.setPath('Sbi.chart', '../../../js/src/ext5/sbi/chart'); 		
  			
  			<%-- 
  			
   			initChartLibrary(mainPanel.id);
   			
-  			--%>
-  			
+  			--%>  			
   			
   			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
  			var userId = '<%=userId%>';

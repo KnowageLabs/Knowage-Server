@@ -4,7 +4,7 @@ public class ChartConfig {
 
 	/*
 	 * - Velocity Model properties vmPath="/chart/templates/{name}/" vmName="{type}_chart.vm"
-	 *
+	 * 
 	 * - Library Initializer properties libIniPath="/chartlib/" libIniNAme="{name}Initializer.jspf"
 	 */
 
@@ -21,7 +21,14 @@ public class ChartConfig {
 		this.vmPath = isEmpty(vmPath) ? "/chart/templates/" + name + "/" : vmPath;
 		this.vmName = isEmpty(vmName) ? type + "_chart.vm" : vmName;
 		this.libIniPath = isEmpty(libIniPath) ? "chartlib/" : libIniPath;
-		this.libIniName = isEmpty(libIniName) ? name + "Initializer.jspf" : libIniName;
+		
+		/**
+		 * Initializer files for two chart libraries used by the project
+		 * is changed from .jspf to .jsp file (extension).
+		 * 
+		 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+		 */
+		this.libIniName = isEmpty(libIniName) ? name + "Initializer.jsp" : libIniName;
 	}
 
 	public String getType() {

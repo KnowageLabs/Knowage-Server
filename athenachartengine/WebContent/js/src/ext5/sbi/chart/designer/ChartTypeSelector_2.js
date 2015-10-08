@@ -16,73 +16,73 @@ var chartTypesStore = Ext.create
 		 	{
 		 		style: "Bar chart", // TODO: Make LN()
 		 		styleAbbr: "bar",
-		 		icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png',
+		 		icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png',
  			},	
 		 	
  			{
  				style: "Line chart", // TODO: Make LN()
  				styleAbbr: "line",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Pie chart", // TODO: Make LN()
 				styleAbbr: "pie",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_icon_new_1.png',
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_icon_new_1.png',
 			},	
 		 	
  			{
 				style: "Radar chart", // TODO: Make LN()
 				styleAbbr: "radar",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/radarchart/img/radarchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/radarchart/img/radarchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Scatter chart", // TODO: Make LN()
 				styleAbbr: "scatter",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/scatterchart/img/scatterchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/scatterchart/img/scatterchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Treemap chart", // TODO: Make LN()
 				styleAbbr: "treemap",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/treemapchart/img/treemapchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/treemapchart/img/treemapchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Heatmap chart", // TODO: Make LN(
 				styleAbbr: "heatmap",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/heatmapchart/img/heatmapchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/heatmapchart/img/heatmapchart_icon_new_1.png'
 			},	
 			
 			{
 				style: "Gauge chart", // TODO: Make LN()
 				styleAbbr: "gauge",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/gaugechart/img/gaugechart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/gaugechart/img/gaugechart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Wordcloud chart", // TODO: Make LN()
 				styleAbbr: "wordcloud",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/wordcloudchart/img/wordcloudchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/wordcloudchart/img/wordcloudchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Parallel chart", // TODO: Make LN()
 				styleAbbr: "parallel",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/parallelchart/img/parallelchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/parallelchart/img/parallelchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: "Sunburst chart", // TODO: Make LN()
 				styleAbbr: "sunburst",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/sunburstchart/img/sunburstchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/sunburstchart/img/sunburstchart_icon_new_1.png'
 			},
 			
 			{
 				style: "Chord chart", // TODO: Make LN()
 				styleAbbr: "chord",
-				icon: '/athenachartengine/js/src/ext4/sbi/cockpit/widgets/extjs/chordchart/img/chordchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/chordchart/img/chordchart_icon_new_1.png'
 			},	
 		]
 	}
