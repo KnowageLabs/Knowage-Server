@@ -280,6 +280,8 @@
 		<!-- BUSINESS CLASS -->
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiBnessCls.hbm.xml" />
 		
+		<mapping resource="it/eng/spagobi/tools/timespan/metadata/mapping/SbiTimespan.hbm.xml" />
+		
 		<!-- EVENT JOB -->
 		<mapping resource="it/eng/spagobi/tools/events/metadata/mapping/SbiEventJob.hbm.xml" />
 		

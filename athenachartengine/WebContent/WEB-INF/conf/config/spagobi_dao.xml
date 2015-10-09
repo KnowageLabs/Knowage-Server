@@ -75,7 +75,7 @@
 	  	<DAO name="GeoLayersDAO" implementation="it.eng.spagobi.mapcatalogue.dao.SbiGeoLayersDAOHibImpl"/>
 	  	
 	  	<DAO name="GlossaryDAO" implementation="it.eng.spagobi.tools.glossary.dao.GlossaryDAOImpl"/>
-	  	
+	  	<DAO name="TimespanDAO" implementation="it.eng.spagobi.tools.timespan.dao.TimespanDAOImpl" />
 
 	 </DAO-CONF>     
      

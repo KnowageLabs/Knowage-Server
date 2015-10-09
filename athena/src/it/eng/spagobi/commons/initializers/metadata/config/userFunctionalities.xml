@@ -204,6 +204,7 @@
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement"
 		description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="Glossary" description="Glossary" />
+	<USER_FUNCTIONALITY productType="AthenaSocial" name="Timespan" description="Timespan" />
 	
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="EventJob" description="EventJob" />
 	
@@ -267,6 +268,7 @@
 	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
 	<USER_FUNCTIONALITY productType="AthenaFake" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="Glossary" description="Glossary" />
+	<USER_FUNCTIONALITY productType="AthenaFake" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="EventJob" description="EventJob" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
 	<USER_FUNCTIONALITY productType="AthenaFake" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />

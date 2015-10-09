@@ -64,7 +64,12 @@
 					
 			<ITEM	title="Dataset federation"
 					functionality="MeasuresCatalogueManagement"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp" />		
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp" />
+			
+			<ITEM	title="#menu.timespan"
+					functionality="Timespan"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/timespan/timespan.jsp" />
+								
 		</ITEM>
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"

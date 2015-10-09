@@ -378,6 +378,7 @@ public class SpagoBIConstants {
 	public static final String CKAN_FUNCTIONALITY = "CkanIntegrationFunctionality";
 	public static final String IMAGES_MANAGEMENT = "ImagesManagement";
 	public static final String GLOSSARY = "Glossary";
+	public static final String TIMESPAN = "Timespan";
 	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
@@ -447,4 +448,6 @@ public class SpagoBIConstants {
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
+
+	public static final String CREATE_TIMESPAN = "CreateTimepan";
 }

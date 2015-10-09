@@ -310,6 +310,9 @@
 	<!-- glossary -->
 	<CONFIGURATOR path="/WEB-INF/conf/tools/glossary/business_map.xml" /> 
 	
+	<!-- timespan -->
+	<CONFIGURATOR path="/WEB-INF/conf/tools/timespan/business_map.xml" /> 
+
 	<!-- eventJob -->
 	<CONFIGURATOR path="/WEB-INF/conf/tools/events/business_map.xml" /> 
 	

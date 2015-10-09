@@ -75,6 +75,7 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
+import it.eng.spagobi.tools.timespan.dao.ITimespanDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -915,6 +916,18 @@ public class DAOFactory {
 
 	public static IBIObjDataSetDAO getBIObjDataSetDAO() throws EMFUserError {
 		return (IBIObjDataSetDAO) createDAOInstance("BIObjDataSetDAO");
+	}
+
+	/**
+	 * Gets the Timespan dao.
+	 *
+	 * @return the Timespan dao
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public static ITimespanDAO getTimespanDAO() throws EMFUserError {
+		return (ITimespanDAO) createDAOInstance("TimespanDAO");
 	}
 
 }
