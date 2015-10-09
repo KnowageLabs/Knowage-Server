@@ -481,9 +481,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			    ]
 			});
 
-			angularWindow.on('close', function( panel, eOpts ){
-				console.log('panel -> ', panel);
-				console.log('this -> ', this);
+			angularWindow.on('close', function( panel, eOpts ){				
+				this.ownerCt.refreshJobAndTriggerPanels(this.ownerCt.selectedRecord);
 			}, this);
 			
 			angularWindow.show();

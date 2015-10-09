@@ -96,6 +96,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			window.location.assign(thisPanel.contextName + '/servlet/AdapterHTTP?JOBGROUPNAME='
 					+ jobGroup + '&PAGE=JobManagementPage&TYPE_LIST=TYPE_LIST&MESSAGEDET=MESSAGE_GET_JOB_DETAIL&JOBNAME=' + jobName);
 		});
+		
 		//Schedulation List button
 		/*
 		Sbi.widget.grid.StaticGridDecorator.addCustomBottonColumn(this.columns, 'button-schedule', LN('sbi.scheduler.activity.schedulationlist'),function(grid, rowIndex, colIndex) {
@@ -150,6 +151,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 		var values = {};
 		values.jobGroup = record.data.jobGroup ;
 		values.jobName = record.data.jobName ;
+		
+		if(this.selectedRecord == record) {
+			this.selectedRecord = null;
+		}
 		
 		Ext.MessageBox.confirm(
 				LN('sbi.generic.pleaseConfirm'),
@@ -216,9 +221,8 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			
 			angularWindow.add(angularWindowIFrame);
 			
-			angularWindow.on('close', function( panel, eOpts ){
-				console.log('panel -> ', panel);
-				console.log('this -> ', this);
+			angularWindow.on('close', function( panel, eOpts ){				
+				this.refreshJobAndTriggerPanels(this.selectedRecord);
 			}, this);
 						
 			angularWindow.show();
@@ -243,9 +247,53 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 	//when selecting a row in the grid list
 	, onGridSelect: function(selectionrowmodel, record, index, eOpts){
 		this.detailPanel.show();
-//		this.detailPanel.setFormState(record.data);
 		this.detailPanel.setFormState(record);
+		
+		this.selectedRecord = record;
 	}
 	
-	, onSchedulationUpdate: function(record){}
+	/**
+	 * After closing angular window for trigger definition this function is called
+	 * for refreshing Jobs and Schedulers panels. 
+	 */
+	, refreshJobAndTriggerPanels: function(record){
+		// new store that calls the rest service "scheduler/listAllJobs"
+		// with updated jobs data (and their triggers)
+		var updatedJobsStore = Ext.create('Ext.data.Store', {
+			model: 'Sbi.tools.scheduler.SchedulerModel',
+			autoLoad: true
+		});
+		
+		// after store load event
+		updatedJobsStore.on('load', function( store, records, successful, eOpts ){
+			// "store" is referred to "updatedJobsStore"
+
+			// checks for every record of the updated jobs store if it is the record to be updated
+			for(var i = 0; i < store.data.length; i++) {
+				var row = store.getAt(i);
+				var rowJobName = row.get('jobName');
+				var rowJobGroup = row.get('jobGroup');
+				
+				var recordJobName = record.get('jobName');
+				var recordJobGroup = record.get('jobGroup');
+				
+				// if it is the right job
+				if(recordJobName == rowJobName && recordJobGroup == rowJobGroup) {
+					
+					// forces the selection of the row in the jobs grid
+					this.grid.getSelectionModel().select(i);
+					
+					// updates the previous job in store with new triggers data
+					var thisGridStore = this.grid.getStore();
+					thisGridStore.getAt(i).set('triggers', row.get('triggers'));
+					
+					// updates the triggers detail panel
+					this.detailPanel.setFormState(row);
+					break;
+				}
+			}
+		}, this);
+		
+		
+	}
 });		
