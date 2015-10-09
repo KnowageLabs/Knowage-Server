@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.service;
 
+import it.eng.spago.error.EMFErrorHandler;
+import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
@@ -19,6 +21,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
@@ -32,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -86,6 +91,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	@Override
 	public void doService() {
 		logger.debug("IN");
+		HttpServletRequest httpRequest = getHttpRequest();
 		try {
 
 			String executionId = ExecuteAdHocUtility.createNewExecutionId();
@@ -139,6 +145,16 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			}
 			logger.trace("Output parameter succesfully copied to response");
 
+		} catch (CacheException ex) {
+			try {
+				logger.error(ex);
+				EMFErrorHandler errorHandler = getErrorHandler();
+				EMFInternalError internalError = new EMFInternalError(EMFErrorSeverity.ERROR, ex);
+				errorHandler.addError(internalError);
+				return;
+			} catch (Exception s) {
+				throw new SpagoBIRuntimeException("An error occurred while creating service response", s);
+			}
 		} finally {
 			logger.debug("OUT");
 		}

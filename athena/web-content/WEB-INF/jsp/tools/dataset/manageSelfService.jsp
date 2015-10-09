@@ -6,7 +6,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <%@page import="it.eng.spagobi.user.UserProfileManager"%>
 <%@page
-	import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction"%>
+	import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction,
+			it.eng.spago.error.EMFErrorHandler,
+		    it.eng.spago.error.EMFAbstractError,
+		    java.util.HashMap,
+		    java.util.Set,
+		    java.util.Iterator"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="java.util.Collection"%>
@@ -49,11 +54,26 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 	String createDatasetsAsFinalUser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_CREATE_DATASET_AS_FINAL_USER);
     String isFederatedDatasetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER);
 	String isWorksheetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_WORKSHEET_ENABLED);
+	
+	boolean checkCache = false;
+  	EMFErrorHandler errorHandler = aResponseContainer.getErrorHandler();  
+  	Collection errors = errorHandler.getErrors();
+  	Iterator iter = errors.iterator();
+  	if (iter != null && iter.hasNext()){
+	  	EMFAbstractError abErr = (EMFAbstractError)iter.next();
+	  
+	 	 if (abErr.getDescription() != null){
+		  checkCache = true;
+	 	 }
+  	 }
+	
 %>
 
 <script type="text/javascript">
 
-
+<% if (checkCache){ %>
+	alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
+<% }else{ %>
 
     Ext.onReady(function(){
     	Sbi.settings.mydata.showCkanDataSetFilter = <%=isCkanEnabled%>;
@@ -85,6 +105,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
 	    });
     });
 	
+ <%}%>
 </script>
 
 

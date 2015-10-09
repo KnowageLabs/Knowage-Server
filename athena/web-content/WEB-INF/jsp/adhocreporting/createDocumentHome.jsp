@@ -4,7 +4,13 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
-<%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction"%>
+<%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetStartAction,
+			it.eng.spago.error.EMFErrorHandler,
+		    it.eng.spago.error.EMFAbstractError,
+		    java.util.HashMap,
+		    java.util.Set,
+		    java.util.Iterator"%>
+<%@page import="java.util.Collection"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>
@@ -23,11 +29,24 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     String cockpitEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL);
     String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
+    
+    boolean checkCache = false;
+    EMFErrorHandler errorHandler = aResponseContainer.getErrorHandler();  
+    Collection errors = errorHandler.getErrors();
+    Iterator iter = errors.iterator();  
+  	if (iter != null && iter.hasNext()){
+	    EMFAbstractError abErr = (EMFAbstractError)iter.next();	   
+	    if (abErr.getDescription() != null){
+	  	  checkCache = true;
+	    }
+  	}
 %>
 
 <script type="text/javascript">
 
-
+<% if (checkCache){ %>
+	alert(LN('sbi.myanalysis.noCorrectSettingsForCache'));
+<% }else{ %>
 
     Ext.onReady(function(){
 		var selfService = Ext.create('Sbi.adhocreporting.AdhocreportingContainer',{
@@ -47,7 +66,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 	     	items: [selfService]	     	
 	    });
     });
-	
+<%}%>
+
 </script>
  
 
