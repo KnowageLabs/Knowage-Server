@@ -133,18 +133,17 @@ author:
 	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
 %>
 
-
-
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <html>
 <%-- == HEAD ========================================================== --%>
 <head>
-<title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
+<title><%=docName.trim().length() > 0? docName: "ChartEngine"%></title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <%@include file="commons/includeExtJS5.jspf"%>
+
 <%@include file="commons/includeMessageResource.jspf"%>
 
 <script>
@@ -170,21 +169,12 @@ author:
 <body>
    <%-- div with wait while loading message --%>
    <div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
-   		<img src='${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
+   		<img src='/athenachartengine/img/icon-info15.png' />  Downloading...
    </div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
-	<script language="javascript" type="text/javascript">		
-		
-		/**
-			Providing global context variable that will enable us using the context name
-			inside of JS files (e.g. in WebService.js, WebServiceManager.js and 
-			WebServiceManagerFactory.js as "context" sub-property of "config" property).
-			
-			@author: danristo (danilo.ristovski@mht.net)
-		*/
-		Sbi.context = '${pageContext.request.contextPath}';
-		
+	<script language="javascript" type="text/javascript">
+	
 		var chartConfiguration = null;
 		
 		var isChartHeightEmpty = null;
@@ -274,6 +264,8 @@ author:
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
+
+ 			//Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
 
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
@@ -379,7 +371,9 @@ author:
  						driverParams: '<%=driverParams%>'
  					};
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						 						 						
+ 						 						
+ 						//console.log(response.responseText);
+ 						
  						var chartConf = Ext.JSON.decode(response.responseText, true);			
  						
  						/* 

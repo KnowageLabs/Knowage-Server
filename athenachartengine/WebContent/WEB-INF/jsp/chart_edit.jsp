@@ -117,7 +117,8 @@ author:
 	<%-- == HEAD ========================================================== --%>
 	<head>
 	
-	   <title><%=docName.trim().length() > 0? docName: "AthenaChartEngine"%></title>
+	
+	   <title><%=docName.trim().length() > 0? docName: "ChartEngine"%></title>
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS5.jspf" %>        
