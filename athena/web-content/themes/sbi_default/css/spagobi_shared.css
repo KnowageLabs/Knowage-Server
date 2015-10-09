@@ -84,7 +84,7 @@ form#formFunct, form#parametersForm, form#engineForm, form#modalitiesValueForm{
 *
 ********************************************************************************************************/
 
-/* Table with the header title and buttons for each section of the SpagoBI portlet*/
+/* Table with the header title and buttons for each section of the portlet*/
 table.header-table-portlet-section {
 	width:100%;
 	cellspacing:0;
@@ -93,7 +93,7 @@ table.header-table-portlet-section {
 	/*margin-bottom: 4px;*/
 }
 
-/* Sub-table with the header title and buttons for each section of the SpagoBI portlet*/
+/* Sub-table with the header title and buttons for each section of the portlet*/
 table.header-sub-table-portlet-section {
 	width:100%;
 	cellspacing:0;
@@ -102,17 +102,17 @@ table.header-sub-table-portlet-section {
 	/*margin-bottom: 4px;*/
 }
 
-/* Row of the table with the header title and buttons for each section of the SpagoBI portlet*/
+/* Row of the table with the header title and buttons for each section of the portlet*/
 tr.header-row-portlet-section {
 	height: 30px;
 }
 
-/* Row of the sub-table with the header title and buttons for each section of the SpagoBI portlet*/
+/* Row of the sub-table with the header title and buttons for each section of the portlet*/
 tr.header-sub-row-portlet-section {
 	height: 20px;
 }
 
-/* Column with the header title for each section of the SpagoBI portlet*/
+/* Column with the header title for each section of the portlet*/
 td.header-title-column-portlet-section {
 	/*padding: 0px 0px 0px 1px;*/
 	/*background-color: #cccccc;*/
@@ -121,14 +121,9 @@ td.header-title-column-portlet-section {
  	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
 	font-size: 13px;
 	font-weight: 600;
-	/* color: #074B88; */
-	/* background-image: url('/SpagoBI/img/white_corner.gif');  
-	background-position: top right;
-	background-repeat: no-repeat;
-	*/
 }
 
-/* Column with the header title for each section of the SpagoBI portlet without grey background*/
+/* Column with the header title for each section of the portlet without grey background*/
 td.header-title-column-portlet-section-nogrey {
  	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
 	font-size: 14px;
@@ -136,7 +131,7 @@ td.header-title-column-portlet-section-nogrey {
 	color: #074B88;
 }
 
-/* Column with the header title for each section of the SpagoBI portlet without image on top right side*/
+/* Column with the header title for each section of the portlet without image on top right side*/
 td.header-title-column-portlet-section-noimage {
 	background-color: #E1E4E9; 
  	font-family: Arial,Verdana,Geneva,Helvetica,sans-serif;
@@ -146,7 +141,7 @@ td.header-title-column-portlet-section-noimage {
 	background-repeat: no-repeat;
 }
 
-/* Column with the header title for single object execution section of the SpagoBI portlet*/
+/* Column with the header title for single object execution section of the portlet*/
 td.header-title-column-single-object-execution-portlet-section {
 	font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
 	font-size: 12px;
@@ -164,7 +159,7 @@ td.header-title-column-single-object-execution-portlet-section {
 	*/
 }
 
-/* Column with the header sub-title for each section of the SpagoBI portlet*/
+/* Column with the header sub-title for each section of the portlet*/
 td.header-sub-title-column-portlet-section {
 	padding: 0px 0px 0px 1px;
 	/*background-color: lightgrey;*/
@@ -182,7 +177,7 @@ td.header-sub-title-column-portlet-section {
 	*/
 }
 
-/* Column with the header title for sections without buttons of the SpagoBI portlet*/
+/* Column with the header title for sections without buttons of the portlet*/
 td.header-title-column-portlet-section-no-buttons {
 	padding: 0px 0px 0px 1px;
 	/*background-color: #cccccc;*/
@@ -194,7 +189,7 @@ td.header-title-column-portlet-section-no-buttons {
 	text-align: left;
 }
 
-/* Column with the header title for sections without buttons of the SpagoBI portlet*/
+/* Column with the header title for sections without buttons of the portlet*/
 td.header-sub-title-column-portlet-section-no-buttons {
 	padding: 0px 0px 0px 1px;
 	/*background-color: lightgrey;*/
@@ -207,21 +202,21 @@ td.header-sub-title-column-portlet-section-no-buttons {
 	vertical-align: middle;
 }
 
-/* Column with the header title for sections with select form the SpagoBI portlet*/
+/* Column with the header title for sections with select form the portlet*/
 td.header-select-column-portlet-section {
 	vertical-align: middle;
 	width: 30px;
 	background-color:white;
 }
 
-/* Column with a button for each section of the SpagoBI portlet*/
+/* Column with a button for each section of the portlet*/
 td.header-button-column-portlet-section {
 	vertical-align: middle;
 	width: 30px;
 	background-color:#E1E4E9;
 }
 
-/* Column with a button for single object execution section of the SpagoBI portlet*/
+/* Column with a button for single object execution section of the portlet*/
 td.header-button-column-single-object-execution-portlet-section {
 	vertical-align: middle;
 	width: 35px;
@@ -230,34 +225,34 @@ td.header-button-column-single-object-execution-portlet-section {
 	border-bottom: 1px solid #bbb;
 }
 
-/* Image of a button in the header table for each section of the SpagoBI portlet*/
+/* Image of a button in the header table for each section of the portlet*/
 img.header-button-image-portlet-section {
 	width:25px;
 	height:25px;
 	border:none;
 }
 
-/* Image of a button in the header table for each section of the SpagoBI portlet*/
+/* Image of a button in the header table for each section of the portlet*/
 img.header-button-image-portlet-section_bis {
 	width:15px;
 	height:15px;
 	border:none;
 }
 
-/* Image of a button in the header table for each section of the SpagoBI portlet*/
+/* Image of a button in the header table for each section of the portlet*/
 input.header-button-image-portlet-section {
 	width:25px;
 	height:25px;
 	border:none;
 }
 
-/* Empty column in the header table for each section of the SpagoBI portlet*/
+/* Empty column in the header table for each section of the portlet*/
 td.header-empty-column-portlet-section {
 	background-color:#E1E4E9; 
 	width:10px;
 }
 
-/* Empty column in the header table for single object execution section of the SpagoBI portlet*/
+/* Empty column in the header table for single object execution section of the portlet*/
 td.header-empty-column-single-object-execution-portlet-section {
 	background-color:#E1E4E9;
 	width:10px;
@@ -265,37 +260,37 @@ td.header-empty-column-single-object-execution-portlet-section {
 	border-top: 1px solid #bbb;
 }
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 div.object-details-div {
 	float: left;
 	margin: 5px 5px 5px 5px;
 }
 
-/* Table with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Table with details of an object (engine, parameters, ...) in the portlet*/
 table.object-details-table {
 	cellspacing: 0;
 	border: 0;
 }
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 div.errors-object-details-div {
 	margin: 11px 5px 5px 20px;
 }
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 table.errors-object-details-table {
 	cellspacing: 0;
 	border: 1px solid #cccccc;
 }
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 ul.errors-object-details-ul {
 	margin: 0px;
 	padding: 0px 15px 0px 10px;
 	type: square;
 }
 
-/* Part with the list filter errors in the SpagoBI portlets*/
+/* Part with the list filter errors in the portlets*/
 div.filter-list-errors {
 	padding: 5px;
 	text-decoration: none;
@@ -322,7 +317,7 @@ div.filter-list-errors {
 
 /*******************************************************************************************************
 *
-*	spagobi.css 
+*	css 
 *
 ********************************************************************************************************/
 
@@ -385,7 +380,7 @@ IMG {
 }
 
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 .div_detail_area_forms {
 	margin: 10px 5px 10px 5px;
 	width:500px;
@@ -441,7 +436,7 @@ IMG {
 }
 
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 .div_detail_errors {
 	margin: 10px 0px 10px 5px;
 	border: 1px solid #cccccc;
@@ -451,7 +446,7 @@ IMG {
 }
 
 
-/* Part with details of an object (engine, parameters, ...) in the SpagoBI portlet*/
+/* Part with details of an object (engine, parameters, ...) in the portlet*/
 .ul_detail_error {
         font-family: Verdana,Geneva,Arial,Helvetica,sans-serif;
 	font-size: 8pt;
@@ -498,11 +493,6 @@ IMG {
 	height: 25px;
 	border-top: 1px solid #bbb;
 	text-align: left;
-	/*
-  background-image: url('/SpagoBI/img/white_corner.gif');
-	background-position: top right;
-	background-repeat: no-repeat;
-	*/
 	vertical-align:middle;
 }
 
@@ -682,15 +672,15 @@ IMG {
 
 .toggleKPI{
       padding-left:10px;
-      background-image: url(/SpagoBI/themes/sbi_default/img/down16.gif);
+      background-image: url(../img/down16.gif);
       background-repeat: no-repeat;
       cursor: pointer;
     }
     
 .tree-look-up{
-      background-image: url(/SpagoBI/themes/sbi_default/img/behavioural/trigger-tree-lookup.gif) !important;
+      background-image: url(../img/behavioural/trigger-tree-lookup.gif) !important;
       
     }
 .parameter-leaf{
-      background-image: url(/SpagoBI/themes/sbi_default/img/behavioural/parameter-leaf.png) !important;
+      background-image: url(../img/behavioural/parameter-leaf.png) !important;
 }
