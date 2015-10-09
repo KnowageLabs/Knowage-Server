@@ -6,7 +6,7 @@
 
 <p ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)"> No documents associated</p>
 
-<div ng-if="activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0">
+<div class="selected_document" ng-if="activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0">
 
 <md-toolbar class="minihead unselectedItem "
 		ng-class="activityEventCtrl.selectedDocument.saveassnapshot? 'selectedItem' : 'unselectedItem'">
@@ -119,7 +119,7 @@
 		</div>
 	</div>
 	
-		<div layout="row" class="checkboxRow">
+		<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
 			<label>{{translate.load("folder from dataset")}}:</label>
 			<md-checkbox aria-label="aria-label"
 				ng-model="activityEventCtrl.selectedDocument.useFolderDataset">
@@ -129,7 +129,7 @@
 				ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 			<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 			<md-select aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.datasetFolderLabel">
+					ng-model="activityEventCtrl.selectedDocument.datasetFolderLabel" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 				<md-option ng-repeat="item in activityEventCtrl.datasets " value="{{item.label}}">{{item.label}}</md-option> 
 			</md-select> 
 		</md-input-container> 
@@ -137,7 +137,7 @@
 		<md-input-container class="subCheckboxRowElement"
 				ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 			<label>{{translate.load("Driver")}}</label>
-			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter">
+			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter " required name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
 			<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
 			</md-select>
 		</md-input-container> 
@@ -204,7 +204,7 @@
 				ng-maxlength="100" md-maxlength="100"> 
 		</md-input-container>
 
-		<div layout="row" class="checkboxRow">
+		<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
 			<label>{{translate.load("Use a Datasetas recipient's list")}}:</label>
 			<md-checkbox aria-label="aria-label"
 				ng-model="activityEventCtrl.selectedDocument.useDataset">
@@ -213,15 +213,15 @@
 		<md-input-container class="subCheckboxRowElement"
 				ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 			<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetLabel">
+			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetLabel" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 				<md-option ng-repeat="item in activityEventCtrl.datasets " 
 						value="{{item.label}}">{{item.label}}</md-option>
 			</md-select> 
 		</md-input-container> 
 		
-		<md-input-container class="subCheckboxRowElement" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
+		<md-input-container class="subCheckboxRowElement" ng-if="activityEventCtrl.selectedDocument.useDataset==true ">
 			<label>{{translate.load("Parameter")}}</label> 
-			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetParameter">
+			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetParameter" required name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
 				<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
 			</md-select> 
 		</md-input-container>

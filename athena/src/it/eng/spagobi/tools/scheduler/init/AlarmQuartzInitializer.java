@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.scheduler.init;
 
@@ -24,15 +24,12 @@ import org.safehaus.uuid.UUIDGenerator;
 public class AlarmQuartzInitializer implements InitializerIFace {
 
 	private SourceBean _config = null;
-	private transient Logger logger = Logger
-			.getLogger(AlarmQuartzInitializer.class);
+	private transient Logger logger = Logger.getLogger(AlarmQuartzInitializer.class);
 
-	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
+	 *
+	 * @see it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
 	 */
 	public void init(SourceBean config) {
 		logger.debug("IN");
@@ -45,7 +42,7 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	public void initAlarmForTenant(SbiTenant tenant) {
 		try {
 			logger.debug("IN");
@@ -67,20 +64,18 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 
 				schedulerDAO.insertJob(jobDetail);
 
-				Calendar startDate = new java.util.GregorianCalendar(2012,
-						Calendar.JANUARY, 01);
+				Calendar startDate = new java.util.GregorianCalendar(2012, Calendar.JANUARY, 01);
 				startDate.set(Calendar.AM_PM, Calendar.AM);
 				startDate.set(Calendar.HOUR, 00);
 				startDate.set(Calendar.MINUTE, 00);
 				startDate.set(Calendar.SECOND, 0);
 				startDate.set(Calendar.MILLISECOND, 0);
 
-				String nameTrig = "schedule_uuid_"
-						+ UUIDGenerator.getInstance().generateTimeBasedUUID()
-								.toString();
+				String nameTrig = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
 
-				CronExpression cronExpression = new CronExpression("minute{numRepetition=5}");
-				
+				// CronExpression cronExpression = new CronExpression("minute{numRepetition=5}");
+				CronExpression cronExpression = new CronExpression("{ 'type': 'minute','parameter': {'numRepetition': '5' }");
+
 				Trigger simpleTrigger = new Trigger();
 				simpleTrigger.setName(nameTrig);
 				simpleTrigger.setStartTime(startDate.getTime());

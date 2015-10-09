@@ -151,3 +151,23 @@ md-tabs md-tabs-wrapper {
     background-color: rgba(220, 220, 220, 0.46);
     border: 1px solid #E0E0E0;
 }
+
+    md-select-menu{
+    border: 1px solid #A5A1A1;
+    -webkit-box-shadow: 0px 0px 176px -22px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 0px 176px -22px rgba(0,0,0,0.75);
+box-shadow: 0px 0px 176px -22px rgba(0,0,0,0.75);
+}
+
+.selected_document md-content{
+	overflow: hidden;
+}
+
+md-tooltip .md-content.md-show{
+	height: 100%;
+}
+
+md-tooltip .md-background {
+	 border-radius:inherit !important;
+}
+

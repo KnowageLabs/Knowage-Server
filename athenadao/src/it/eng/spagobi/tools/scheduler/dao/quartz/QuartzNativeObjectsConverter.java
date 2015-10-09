@@ -81,13 +81,16 @@ class QuartzNativeObjectsConverter {
 		try {
 			Assert.assertNotNull(spagobiTrigger, "Input parameter [spagobiTrigger] csannot be null");
 
-			try {
-				JSONObject jo = new JSONObject(spagobiTrigger.getChronExpression().getExpression());
-				if (jo.getString("type").equals("event")) {
-					spagobiTrigger.getJob().addParameter("event_info", jo.getString("parameter"));
+			if (!org.quartz.CronExpression.isValidExpression(spagobiTrigger.getChronExpression().getExpression())) {
+				try {
+					JSONObject jo = new JSONObject(spagobiTrigger.getChronExpression().getExpression());
+					if (jo.getString("type").equals("event")) {
+						spagobiTrigger.getJob().addParameter("event_info", jo.getString("parameter"));
+					}
+				} catch (Exception e) {
+					System.out.println("Old format of chrono string for Trigger: " + spagobiTrigger.getName() + "  (" + spagobiTrigger.getChronExpression()
+							+ ")");
 				}
-			} catch (Exception e) {
-				System.out.println("Old format of chrono string");
 			}
 
 			if (spagobiTrigger.isRunImmediately()) {

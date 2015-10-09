@@ -90,7 +90,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 							<md-content class="h100" > 
 								<md-input-container>
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
-									<input ng-model="activityEventCtrl.event.triggerName" required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName"> 
+									<input ng-model="activityEventCtrl.event.triggerName" name={{translate.load("sbi.scheduler.schedulation.events.event.name")}} required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName"> 
 								</md-input-container>
 								<md-input-container>
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
@@ -100,9 +100,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 								<div layout="row" class="checkboxRow">
 									<label>{{translate.load("Start date")}}:</label>
-									<md-datepicker ng-model="activityEventCtrl.event.startDate" md-placeholder="StartDate"></md-datepicker>
+									<md-datepicker ng-model="activityEventCtrl.event.startDate" name="Start date" required md-placeholder="StartDate"></md-datepicker>
 									<label style="margin: 0 20px;">{{translate.load("Start time")}}:</label>
-									<angular-time-picker id="myTimePicker" ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
+									<angular-time-picker id="myTimePicker" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
 								</div>
 
 								<div layout="row" class="checkboxRow">
@@ -131,7 +131,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<md-input-container> 
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.event_type"
-												ng-change="activityEventCtrl.changeTypeFrequency()" required>
+												ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("sbi.scheduler.schedulation.events.event.type")}}>
 											<md-option ng-repeat="eventType in activityEventCtrl.EVENT_TYPES" 
 													value="{{eventType.value}}"> {{eventType.label}} </md-option> 
 										</md-select> 
@@ -148,7 +148,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 											<md-input-container>
 												<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
 												<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.dataset"
-														ng-change="activityEventCtrl.changeTypeFrequency()" required>
+														ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 													<md-option ng-repeat="item in activityEventCtrl.datasets " 
 															value="{{item.id.dsId}}">{{item.label}}</md-option> 
 												</md-select> 
@@ -297,7 +297,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				<md-tab id="json"> 
 					<md-tab-label>json</md-tab-label> 
 					<md-tab-body layout="column"> 
-						<pre>activityEventCtrl.event: {{activityEventCtrl.event | json}}</pre>
+<!-- 						<pre>activityEventCtrl.event: {{activityEventCtrl.event | json}}</pre> -->
+<pre>{{contactForm.$error | json }}</pre>
 					</md-tab-body> 
 				</md-tab>
 			</md-tabs>
@@ -306,11 +307,24 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 				
 			
 <!-- 				<md-button type="button" class="md-raised" ng-click="activityEventCtrl.resetForm()">Cancella</md-button> -->
-				<div style="z-index: 1;">
-					<md-button type="submit" class="md-raised md-primary submButton"  ng-disabled="!contactForm.$valid">Salva
-			  		</md-button>
-					<md-tooltip md-direction="top" ng-if="!contactForm.$valid">completare i campi correttamente </md-tooltip>
-				</div>
+				
+					 <div ng-if="!contactForm.$valid">
+				        <md-icon md-font-icon="fa fa-plus"</md-icon>
+				        <md-tooltip>
+				        <ul>
+						  <li ng-repeat="(key, errors) in contactForm.$error track by $index"> <strong>{{ key }}</strong> errors
+						    <ul>
+						      <li ng-repeat="e in errors">{{ e.$name }} has an error: <strong>{{ key }}</strong>.</li>
+						    </ul>
+						  </li>
+						</ul>
+					 </md-tooltip>
+				      </div>
+      
+					<md-button type="submit" class="md-raised md-primary submButton"  ng-disabled="!contactForm.$valid">Salva</md-button>
+					
+					
+				
 			</div>
 							
 							

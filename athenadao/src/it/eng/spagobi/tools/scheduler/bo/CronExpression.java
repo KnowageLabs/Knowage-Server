@@ -51,7 +51,7 @@ public class CronExpression {
 				return ("Event-" + jo.getJSONObject("parameter").getString("type"));
 			} else {
 				// scheduler
-				return ("Scheduer-" + type);
+				return ("Scheduler-" + type);
 			}
 
 		} catch (Exception e) {

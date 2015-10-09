@@ -582,11 +582,6 @@ public class SchedulerUtilitiesV2 {
 	// Creation of JobTrigger save
 	// paramater----------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public static Map<String, DispatchContext> getSaveOptionsFromRequest(JSONArray docum, JSONArray jerr) throws EMFUserError, JSONException {
-		// TriggerInfo triggerInfo = (TriggerInfo) sessionContainer.getAttribute(SpagoBIConstants.TRIGGER_INFO);
-		// TriggerInfo triggerInfo = null;
-		// JobInfo jobInfo = triggerInfo.getJobInfo();
-		// List<Integer> biobjIds = jobInfo.getDocumentIds();
-
 		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
 		for (int i = 0; i < docum.length(); i++) {
 			DispatchContext dispatchContext = new DispatchContext();
@@ -596,24 +591,8 @@ public class SchedulerUtilitiesV2 {
 			getSaveAsDocumentOptions(docum.getJSONObject(i), dispatchContext, jerr);
 			getSaveAsMailOptions(docum.getJSONObject(i), dispatchContext, jerr);
 			getSaveAsDistributionListOptions(docum.getJSONObject(i), dispatchContext, jerr);
-
 			saveOptions.put(docum.getJSONObject(i).getString("labelId"), dispatchContext);
 		}
-
-		// int index = 0;
-		// for (Integer biobId : biobjIds) {
-		// index++;
-		// DispatchContext dispatchContext = new DispatchContext();
-		//
-		// // getSaveAsSnapshotOptions(request, dispatchContext, biobId, index);
-		// // getSaveAsFileOptions(request, dispatchContext, biobId, index);
-		// // getSaveAsJavaClassOptions(request, dispatchContext, biobId, index);
-		// // getSaveAsDocumentOptions(request, dispatchContext, biobId, index);
-		// // getSaveAsMailOptions(request, dispatchContext, biobId, index);
-		// // getSaveAsDistributionListOptions(request, dispatchContext, biobId, index);
-		//
-		// saveOptions.put(biobId + "__" + index, dispatchContext);
-		// }
 		return saveOptions;
 	}
 
@@ -720,6 +699,7 @@ public class SchedulerUtilitiesV2 {
 					// params.add(biobj.getName());
 					// this.getErrorHandler().addError(new EMFValidationError(EMFErrorSeverity.ERROR, null, "errors.trigger.missingDataSet", params,
 					// "component_scheduler_messages"));
+					jerr.put("errors.trigger.missingDataSet");
 				}
 				if (datasetParameterLabel == null || datasetParameterLabel.trim().equals("")) {
 					// BIObject biobj = DAOFactory.getBIObjectDAO().loadBIObjectById(biobId);
@@ -727,8 +707,9 @@ public class SchedulerUtilitiesV2 {
 					// params.add(biobj.getName());
 					// this.getErrorHandler().addError(new EMFValidationError(EMFErrorSeverity.ERROR, null, "errors.trigger.missingDataSetParameter", params,
 					// "component_scheduler_messages"));
+					jerr.put("errors.trigger.missingDataSetParameter ");
 				}
-				// sInfo.setFunctionalityIds(functIdsConcat);
+
 			}
 		}
 	}
