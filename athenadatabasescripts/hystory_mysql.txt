@@ -2930,11 +2930,12 @@ CREATE TABLE `SBI_FEDERATED_DATA_SET` (
 
 
 --SpagoBI: 21.09.2015 Giulio Gavardi: CREATED TABLE SBI_OBJ_DATA_SET
+
 CREATE TABLE SBI_OBJ_DATA_SET (
     BIOBJ_DS_ID INT(11) NOT NULL,
     BIOBJ_ID INT(11) NOT NULL,
     DS_ID INT(11) NOT NULL,
-    IS_DETAIL BOOLEAN DEFAULT FALSE, 
+    IS_DETAIL BOOLEAN DEFAULT FALSE,
     USER_IN VARCHAR(100) NOT NULL,
     USER_UP VARCHAR(100) DEFAULT NULL,
     USER_DE VARCHAR(100) DEFAULT NULL,
@@ -2951,34 +2952,33 @@ CREATE TABLE SBI_OBJ_DATA_SET (
 
 Alter table `SBI_OBJ_DATA_SET` add Foreign Key (`BIOBJ_ID`) references `SBI_OBJECTS` (`BIOBJ_ID`) on delete  restrict on update  restrict;
 
+ 
+    SET @row_number:=0;
+    insert into SBI_OBJ_DATA_SET(BIOBJ_DS_ID, BIOBJ_ID, DS_ID, IS_DETAIL, USER_IN, TIME_IN, ORGANIZATION)
+    select
+    @row_number:=@row_number+1 rownum,
+    BIOBJ_ID,  DATA_SET_ID, TRUE, 'server', current_timestamp,  ORGANIZATION
+    from SBI_OBJECTS where DATA_SET_ID   is not null;
+    commit;
+ 
+  ALTER TABLE SBI_OBJECTS DROP COLUMN DATA_SET_ID;
+
 
 SET @row_number:=0;
 insert into SBI_AUTHORIZATIONS (ID, NAME, PRODUCT_TYPE_ID, USER_IN, TIME_IN)
-select 
+select
 (SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME='SBI_AUTHORIZATIONS')+rownum-1
 , 'ENABLE_FEDERATED_DATASET'
-, product_type_id
+, PRODUCT_TYPE_ID
 , 'server'
 , current_timestamp
 from
-(select distinct @row_number:=@row_number+1 rownum, product_type_id from sbi_product_type) pt
+(select distinct @row_number:=@row_number+1 rownum, PRODUCT_TYPE_ID from SBI_PRODUCT_TYPE) pt;
 
-update hibernate_sequences set next_val = next_val
-        + (select count(distinct product_type_id) from sbi_product_type) 
-where sequence_name = 'SBI_AUTHORIZATIONS';
+update hibernate_sequences set NEXT_VAL = NEXT_VAL
+        + (select count(distinct PRODUCT_TYPE_ID) from SBI_PRODUCT_TYPE)
+where SEQUENCE_NAME = 'SBI_AUTHORIZATIONS';
 commit; 
-  
-  
-    SET @row_number:=0;
-    insert into SBI_OBJ_DATA_SET(BIOBJ_DS_ID, BIOBJ_ID, DS_ID, IS_DETAIL, USER_IN, TIME_IN, ORGANIZATION)
-    select 
-    @row_number:=@row_number+1 rownum,
-    BIOBJ_ID,  DATA_SET_ID, TRUE, 'server', current_timestamp,  ORGANIZATION 
-    from SBI_OBJECTS where DATA_SET_ID   is not null;
-    commit;
-  
-  ALTER TABLE sbi_objects DROP COLUMN DATA_SET_ID;
-
 
 
 -- SpagoBI: 25/09/2015 Adapting table to Federation mapping
