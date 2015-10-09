@@ -15,7 +15,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 		coreWebServiceManager: undefined,
 		chartExportWebServiceManager: undefined,
 	
-		getChartWebServiceManager: function(protocol, hostName, tcpPort, sbiExecutionId, userId) {
+		getChartWebServiceManager: function(protocol, hostName, tcpPort, contextName, sbiExecutionId, userId) {
 			
 			if(!Sbi.chart.rest.WebServiceManagerFactory.chartWebServiceManager) {
 				
@@ -26,19 +26,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 						protocol: protocol,
 						hostName: hostName,
 						tcpPort: tcpPort,
-
-						/**
-				    	 * (Topic: context name and context path improvement)
-				    	 * 
-				    	 * This is context of the path (gives us the root URL part that point
-				    	 * to the root project responsible for rendering the application). This 
-				    	 * variable is the global one defined inside of the 'chart.jsp' file and 
-				    	 * it is used for purpose of dynamic path specification.
-				    	 * 
-				    	 * @author: danristo (danilo.ristovski@mht.net)
-				    	 */
-						context: Sbi.context,    
-						
+						context: '/'+contextName,
 						wsPrefix: '/api/1.0/',
 						sbiExecutionId: sbiExecutionId,
 						userId: userId
@@ -67,7 +55,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 			return Sbi.chart.rest.WebServiceManagerFactory.chartWebServiceManager;
 		}
 		
-		, getCoreWebServiceManager:  function(protocol, hostName, tcpPort, sbiExecutionId, userId) {
+		, getCoreWebServiceManager:  function(protocol, hostName, tcpPort, contextName, sbiExecutionId, userId) {
 			
 			if(!Sbi.chart.rest.WebServiceManagerFactory.coreWebServiceManager) {
 				
@@ -78,7 +66,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 						protocol: protocol,
 						hostName: hostName,
 						tcpPort: tcpPort,
-						context: '/athena',
+						context: '/'+contextName,
 						wsPrefix: '/restful-services/1.0/',
 						sbiExecutionId: sbiExecutionId,
 						userId: userId
@@ -107,7 +95,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 			return Sbi.chart.rest.WebServiceManagerFactory.coreWebServiceManager;
 		}
 		
-		, getChartExportWebServiceManager:  function(protocol, hostName, tcpPort, sbiExecutionId, userId) {
+		, getChartExportWebServiceManager:  function(protocol, hostName, tcpPort, contextName, sbiExecutionId, userId) {
 			
 			if(!Sbi.chart.rest.WebServiceManagerFactory.chartExportWebServiceManager) {
 				
@@ -118,7 +106,7 @@ Ext.define('Sbi.chart.rest.WebServiceManagerFactory', {
 						protocol: protocol,
 						hostName: hostName,
 						tcpPort: tcpPort,
-						context: '/highcharts-export-web',
+						context: '/'+contextName,
 						wsPrefix: '/',
 						sbiExecutionId: sbiExecutionId,
 						userId: userId

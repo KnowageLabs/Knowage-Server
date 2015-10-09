@@ -169,7 +169,7 @@ author:
 <body>
    <%-- div with wait while loading message --%>
    <div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
-   		<img src='/athenachartengine/img/icon-info15.png' />  Downloading...
+   		<img src='/${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
    </div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
@@ -183,8 +183,12 @@ author:
 		function exportChart(exportType) {		
 			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
 			
-			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, sbiExecutionId, userId);
-			var chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager(protocol, hostName, serverPort, sbiExecutionId, userId); 			
+			var thisContextName			= '${pageContext.request.contextPath}';  //'athenachartengine';
+			thisContextName.replace('/','');
+			var exporterContextName 	= 'highcharts-export-web';
+			
+			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, thisContextName, sbiExecutionId, userId);
+			var chartExportWebServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartExportWebServiceManager(protocol, hostName, exporterContextName, serverPort, sbiExecutionId, userId); 			
 			
 			/* gets the template content */
 			var parameters = {
@@ -344,7 +348,7 @@ author:
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
  			Sbi.chart.viewer.ChartTemplateContainer.datasetLabel = '<%=datasetLabel%>';
  			
- 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, sbiExecutionId, userId);
+ 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, 'athenachartengine', sbiExecutionId, userId);
  			
  			if(<%=isCockpit%>) {
  				

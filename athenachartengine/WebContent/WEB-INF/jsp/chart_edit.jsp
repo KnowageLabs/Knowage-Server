@@ -164,6 +164,11 @@ author:
  			
  			var isCockpit = <%=isCockpit%>;
  			
+			var thisContextName			= '${pageContext.request.contextPath}';  //'athenachartengine';
+			thisContextName = thisContextName.replace('/','');
+			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  // 'athena';
+			var exporterContextName 	= 'highcharts-export-web';
+ 			
  			Sbi.chart.designer.Designer.initialize(
  					sbiExecutionId, 
  					userId, 
@@ -173,7 +178,10 @@ author:
  					jsonTemplate, 
  					datasetLabel,
  					chartLibNamesConfig,
- 					isCockpit
+ 					isCockpit,
+ 					thisContextName,
+ 					mainContextName,
+ 					exporterContextName
  					);
 
  		  });
