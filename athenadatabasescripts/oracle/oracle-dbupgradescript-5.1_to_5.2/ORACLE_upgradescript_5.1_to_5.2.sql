@@ -98,6 +98,12 @@ ALTER TABLE SBI_META_MODELS
     where SEQUENCE_NAME = 'SBI_AUTHORIZATIONS';
     commit; 
     
+    update hibernate_sequences set NEXT_VAL = NEXT_VAL
+        + (select count(distinct BIOBJ_DS_ID)+1 from SBI_OBJ_DATA_SET)
+where SEQUENCE_NAME = 'SBI_OBJ_DATA_SET';
+commit; 
+
+    
 	
 	  ALTER TABLE sbi_objects DROP COLUMN DATA_SET_ID;
 

@@ -2980,6 +2980,12 @@ update hibernate_sequences set NEXT_VAL = NEXT_VAL
 where SEQUENCE_NAME = 'SBI_AUTHORIZATIONS';
 commit; 
 
+update hibernate_sequences set NEXT_VAL = NEXT_VAL
+        + (select count(distinct BIOBJ_DS_ID)+1 from SBI_OBJ_DATA_SET)
+where SEQUENCE_NAME = 'SBI_OBJ_DATA_SET';
+commit; 
+
+
 
 -- SpagoBI: 25/09/2015 Adapting table to Federation mapping
 ALTER TABLE `SBI_FEDERATED_DATA_SET` 
