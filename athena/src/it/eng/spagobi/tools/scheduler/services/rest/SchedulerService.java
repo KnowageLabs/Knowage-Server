@@ -21,10 +21,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 package it.eng.spagobi.tools.scheduler.services.rest;
 
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.JobInfoToJson;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.JobTriggerToJson;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerFromJsonRequest;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getJobTriggerInfo;
 import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.getSchedulingMessage;
+import static it.eng.spagobi.tools.scheduler.utils.SchedulerUtilitiesV2.toJsonTreeLowFunctionality;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -43,7 +45,6 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.distributionlist.bo.DistributionList;
 import it.eng.spagobi.tools.distributionlist.dao.IDistributionListDAO;
 import it.eng.spagobi.tools.scheduler.bo.Job;
@@ -82,8 +83,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.mongodb.util.JSON;
-
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
  *
@@ -106,15 +105,10 @@ public class SchedulerService {
 		String jobName = req.getParameter("jobName");
 
 		JSONObject resp = new JSONObject();
-		JSONObject jobj = new JSONObject();
-		JSONArray funct = new JSONArray();
 
 		@SuppressWarnings("unchecked")
 		List<LowFunctionality> functionalities = lowfuncdao.loadAllLowFunctionalities(false);
-		for (LowFunctionality lf : functionalities) {
-			funct.put(JSON.parse(JsonConverter.objectToJson(lf, LowFunctionality.class)));
-		}
-		resp.put("functionality", funct);
+		resp.put("functionality", toJsonTreeLowFunctionality(functionalities));
 
 		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 		String jobDetail = schedulerService.getJobDefinition(jobName, jobGroupName);
@@ -123,14 +117,7 @@ public class SchedulerService {
 			throw new Exception("Cannot recover job " + jobName);
 		}
 		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
-		resp.put("job", JSON.parse(JsonConverter.objectToJson(jobInfo, JobInfo.class)));
-
-		// JSONArray docParam=new JSONArray();
-		// List<BIObject> listDoc=jobInfo.getDocuments();
-		// for(BIObject b : listDoc){
-		// b.getBiObjectParameters()
-		// docParam.put();
-		// }
+		resp.put("job", JobInfoToJson(jobInfo));
 
 		return resp.toString();
 	}

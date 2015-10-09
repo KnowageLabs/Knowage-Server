@@ -134,22 +134,7 @@ eventDefinitionApp.controller('ActivityEventController',
 					console.log("data", data);
 					
 					activityEventCtrl.jobData = data.job;
-					activityEventCtrl.lowFunc = [];
-					
-					for(var i = 0; i < data.functionality.length; i++) {
-						var tmp = data.functionality[i];
-						if(!tmp.hasOwnProperty("parentId")) {
-							activityEventCtrl.lowFunc.push(tmp);
-						} else {
-//							console.log("figlio ");
-							for(var j = 0; j < activityEventCtrl.lowFunc.length; j++) {
-								if(insertDocChild(activityEventCtrl.lowFunc[j], tmp)) {
-									break;
-								}
-							}
-						}
-					}
-					
+					activityEventCtrl.lowFunc =data.functionality;
 					activityEventCtrl.loadDocuments(loadTri);
 				}
 			})
@@ -165,7 +150,7 @@ eventDefinitionApp.controller('ActivityEventController',
 				labelId: docs[i].id + "__" + (i+1),
 				id: docs[i].id,
 				label: docs[i].name,
-//				parameters: docs[i].condensedParameters
+				parameters: docs[i].parameters
 			};
 			
 			activityEventCtrl.JobDocuments.push(doc);
@@ -193,7 +178,7 @@ eventDefinitionApp.controller('ActivityEventController',
 			var tmp = {};
 			var doc = activityEventCtrl.JobDocuments[i];
 			tmp.label = doc.label;
-//			tmp.parameters = doc.parameters;
+			tmp.parameters = doc.parameters;
 			tmp.labelId = doc.labelId;
 			tmp.id = doc.id;
 			emptyEvent.documents.push(tmp);
@@ -297,25 +282,7 @@ eventDefinitionApp.controller('ActivityEventController',
 			});
 	};
 
-	function insertDocChild(node, child) {
-		if(node.id == child.parentId) {
-			if(!node.hasOwnProperty("childs")) {
-				node.childs = [];
-			}
-			node.childs.push(child);
-			return true;
-		} else {
-			if(node.hasOwnProperty("childs")) {
-				for(var i = 0; i<node.childs.length; i++) {
-					if(insertDocChild(node.childs[i], child)) {
-						return true;
-					}
-				}
-			} else {
-				return false;
-			}
-		}
-	};
+	
 	
 	activityEventCtrl.createNewEvent = function(loadTrigger) {
 		activityEventCtrl.event = activityEventCtrl.getEmptyEvent();

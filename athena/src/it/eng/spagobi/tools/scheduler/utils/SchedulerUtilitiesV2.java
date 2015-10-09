@@ -7,6 +7,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -1136,4 +1137,85 @@ public class SchedulerUtilitiesV2 {
 		}
 
 	}
+
+	public static JSONArray toJsonTreeLowFunctionality(List<LowFunctionality> functionalities) throws JSONException {
+		JSONArray tmp = new JSONArray();
+		for (LowFunctionality lf : functionalities) {
+
+			if (lf.getParentId() == null) {
+				tmp.put(lowFuncToJson(lf));
+			} else {
+				for (int i = 0; i < tmp.length(); i++) {
+					if (insertDocChild(tmp.getJSONObject(i), lf)) {
+						break;
+					}
+				}
+			}
+
+			// funct.put(JSON.parse(JsonConverter.objectToJson(lf, LowFunctionality.class)));
+		}
+		return tmp;
+	}
+
+	private static boolean insertDocChild(JSONObject node, LowFunctionality child) throws JSONException {
+		if (node.getInt("id") == child.getParentId()) {
+			if (!node.has("childs")) {
+				node.put("childs", new JSONArray());
+			}
+			node.getJSONArray("childs").put(lowFuncToJson(child));
+			return true;
+		} else {
+			if (node.has("childs")) {
+				JSONArray t = node.getJSONArray("childs");
+				for (int i = 0; i < t.length(); i++) {
+					if (insertDocChild(t.getJSONObject(i), child)) {
+						return true;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	};
+
+	public static JSONObject lowFuncToJson(LowFunctionality lf) throws JSONException {
+		JSONObject tmp = new JSONObject();
+		tmp.put("id", lf.getId());
+		tmp.put("path", lf.getPath());
+		tmp.put("name", lf.getName());
+		tmp.put("description", lf.getDescription());
+		return tmp;
+	}
+
+	public static JSONObject JobInfoToJson(JobInfo job) throws JSONException {
+		JSONObject jo = new JSONObject();
+		jo.put("jobName", job.getJobName());
+		jo.put("jobDescription", job.getJobDescription());
+		jo.put("jobGroupName", job.getJobDescription());
+
+		JSONArray docParam = new JSONArray();
+		List<BIObject> listDoc = job.getDocuments();
+		for (BIObject b : listDoc) {
+			JSONObject docum = new JSONObject();
+			docum.put("id", b.getId());
+			docum.put("label", b.getLabel());
+			docum.put("name", b.getName());
+			docum.put("description", b.getDescription());
+
+			List<BIObjectParameter> param = b.getBiObjectParameters();
+			JSONArray pararr = new JSONArray();
+			for (BIObjectParameter p : param) {
+				pararr.put(p.getLabel());
+			}
+			docum.put("parameters", pararr);
+
+			docParam.put(docum);
+		}
+
+		jo.put("documents", docParam);
+
+		return jo;
+	}
+
 }

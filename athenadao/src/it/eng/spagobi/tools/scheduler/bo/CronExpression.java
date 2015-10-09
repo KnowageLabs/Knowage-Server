@@ -7,6 +7,8 @@ package it.eng.spagobi.tools.scheduler.bo;
 
 import junit.framework.Assert;
 
+import org.json.JSONObject;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -15,7 +17,8 @@ public class CronExpression {
 	String expression;
 
 	public CronExpression() {
-		setExpression("single{}");
+		// setExpression("single{}");
+		setExpression("{'type': 'single'}");
 	}
 
 	public CronExpression(String expression) {
@@ -36,6 +39,25 @@ public class CronExpression {
 			return true;
 		}
 		return false;
+	}
+
+	public String getChronoType() {
+		try {
+			JSONObject jo = new JSONObject(expression);
+			String type = jo.getString("type");
+			if (type.equals("single")) {
+				return "Single";
+			} else if (type.equals("event")) {
+				return ("Event-" + jo.getJSONObject("parameter").getString("type"));
+			} else {
+				// scheduler
+				return ("Scheduer-" + type);
+			}
+
+		} catch (Exception e) {
+			return "";
+		}
+
 	}
 
 	@Override

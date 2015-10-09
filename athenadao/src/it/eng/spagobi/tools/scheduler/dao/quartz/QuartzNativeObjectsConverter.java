@@ -182,7 +182,10 @@ class QuartzNativeObjectsConverter {
 				quartzCronTrigger.getJobDataMap().remove(SPAGOBI_CRON_EXPRESSION_DEPRECATED);
 			}
 			spagobiTrigger.setCronExpression(new CronExpression(expression));
+
 		}
+
+		spagobiTrigger.setChronType(spagobiTrigger.getChronExpression().getChronoType());
 
 		Job job = new Job();
 		job.setName(quartzTrigger.getJobName());

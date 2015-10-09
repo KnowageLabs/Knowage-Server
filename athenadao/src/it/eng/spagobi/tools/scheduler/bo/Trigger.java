@@ -20,7 +20,7 @@ public class Trigger {
 	String groupName;
 	String description;
 	String originalTriggerName;
-
+	String chronType;
 	boolean runImmediately;
 
 	Date startTime;
@@ -116,6 +116,25 @@ public class Trigger {
 	public void setRunImmediately(boolean runImmediately) {
 		this.runImmediately = runImmediately;
 	}
+
+	/**
+	 * @return the chronType
+	 */
+	public String getChronType() {
+		return chronType;
+	}
+
+	/**
+	 * @param chronType
+	 *            the chronType to set
+	 */
+	public void setChronType(String chronType) {
+		this.chronType = chronType;
+	}
+
+	/**
+	 * @return the triggerType
+	 */
 
 	@Override
 	public int hashCode() {

@@ -109,7 +109,7 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			        	} 
 			        },
 			      //  { text: 'Generation', dataIndex: 'generation' },
-			        { text: LN('sbi.scheduler.type'), dataIndex: 'triggerChronString' },
+			        { text: LN('sbi.scheduler.type'), dataIndex: 'triggerChronType' },
 			        { text: LN('sbi.scheduler.startdate'), dataIndex: 'triggerStartDate' },
 			        { text: LN('sbi.scheduler.starttime'), dataIndex: 'triggerStartTime' },
 			        { text: LN('sbi.scheduler.enddate'), dataIndex: 'triggerEndDate' },

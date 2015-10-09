@@ -137,10 +137,8 @@
 		<md-input-container class="subCheckboxRowElement"
 				ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 			<label>{{translate.load("Driver")}}</label>
-			<md-select aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter">
-				<md-option value="driver1">Driver1</md-option>
-				<md-option value="driver2">Driver2</md-option> 
+			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter">
+			<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
 			</md-select>
 		</md-input-container> 
 	</md-content>
@@ -223,10 +221,8 @@
 		
 		<md-input-container class="subCheckboxRowElement" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 			<label>{{translate.load("Parameter")}}</label> 
-			<md-select aria-label="aria-label"
-					ng-model="activityEventCtrl.selectedDocument.datasetParameter">
-				<md-option value="param1">param1</md-option> 
-				<md-option value="param2">param2</md-option>
+			<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetParameter">
+				<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
 			</md-select> 
 		</md-input-container>
 	
