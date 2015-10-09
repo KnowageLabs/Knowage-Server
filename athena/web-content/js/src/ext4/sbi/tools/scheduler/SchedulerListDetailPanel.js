@@ -208,7 +208,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			    draggable: false,
 			    closeAction : 'destroy',
 			    modal: true,
-			    layout: 'fit',
 			    items: []
 			});
 			
@@ -220,6 +219,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerListDetailPanel', {
 			});
 			
 			angularWindow.add(angularWindowIFrame);
+			
+			Ext.EventManager.onWindowResize(function(w, h){
+				angularWindow.doComponentLayout();
+			});
 			
 			angularWindow.on('close', function( panel, eOpts ){				
 				this.refreshJobAndTriggerPanels(this.selectedRecord);

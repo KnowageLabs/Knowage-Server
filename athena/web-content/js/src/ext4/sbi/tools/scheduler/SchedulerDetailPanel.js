@@ -84,7 +84,20 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			});
 			
 			this.schedulationsGridStore = Ext.create('Ext.data.Store', {
-				fields:['jobName','jobGroup','triggerName','triggerGroup','triggerDescription' ,'triggerChronString','triggerStartDate','triggerStartTime','triggerEndDate','triggerEndTime','triggerIsPaused'],
+				fields:[
+				        'jobName',
+				        'jobGroup',
+				        'triggerName',
+				        'triggerGroup',
+				        'triggerDescription',
+				        'triggerChronType',
+				        'triggerChronString',
+				        'triggerStartDate',
+				        'triggerStartTime',
+				        'triggerEndDate',
+				        'triggerEndTime',
+				        'triggerIsPaused'
+				],
 				data:{},
 				proxy: {
 					type: 'memory',
@@ -469,7 +482,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			    draggable: false,
 			    closeAction : 'destroy',
 			    modal: true,
-			    layout: 'fit',
 			    
 			    items: [
 					new Ext.ux.IFrame({
@@ -484,6 +496,10 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			angularWindow.on('close', function( panel, eOpts ){				
 				this.ownerCt.refreshJobAndTriggerPanels(this.ownerCt.selectedRecord);
 			}, this);
+			
+			Ext.EventManager.onWindowResize(function(w, h){
+				angularWindow.doComponentLayout();
+			});
 			
 			angularWindow.show();
 		}
