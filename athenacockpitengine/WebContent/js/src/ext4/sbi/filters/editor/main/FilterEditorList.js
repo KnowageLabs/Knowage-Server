@@ -220,57 +220,64 @@ Ext.define('Sbi.filters.editor.main.FilterEditorList', {
         this.grid = Ext.create('Ext.grid.Panel', Ext.apply(c || {}, {
 	        store: this.store,
 	        selModel: {selType: 'rowmodel', mode: 'SINGLE', allowDeselect: true},
-	        columns: [
-                { dataIndex: 'id'
-                , hidden: true
-	            },{dataIndex: 'label'
-                 , hidden: true
-	            },{
-	              header: LN('sbi.cockpit.filter.editor.wizard.list.nameObj')
-            	, width: "15%"
-            	, sortable: true
-            	, dataIndex: 'nameObj'
-            	, flex: 1
-            	, renderer: Ext.Function.bind(this.fixedCellRender, this)
-            	, style: 'font-weight:bold;'
-            	}, {
-        		  header: LN('sbi.cockpit.filter.editor.wizard.list.typeObj')
-            	, width: "15%"
-            	, sortable: true
-            	, dataIndex: 'typeObj'
-            	, renderer: Ext.Function.bind(this.fixedCellRender, this)
-            	, style: 'font-weight:bold;'
-            	},{
-          		  header: LN('sbi.cockpit.filter.editor.wizard.list.namePar')
-              	, width: "15%"
-              	, sortable: true
-              	, dataIndex: 'namePar'
-              	, renderer: Ext.Function.bind(this.fixedCellRender, this)
-              	, style: 'font-weight:bold;'
-              	},{
-          		  header: LN('sbi.cockpit.filter.editor.wizard.list.typePar')
-              	, width: "15%"
-              	, sortable: true
-              	, dataIndex: 'typePar'
-              	, renderer: Ext.Function.bind(this.fixedCellRender, this)
-              	, style: 'font-weight:bold;'
-              	},{
-          		  header: LN('sbi.cockpit.filter.editor.wizard.list.scope')
-              	, width: "15%"
-              	, sortable: true
-              	, dataIndex: 'scope'
-              	, editor: comboScope
-              	, style: 'font-weight:bold;'
-                },{
-          		  header: LN('sbi.cockpit.filter.editor.wizard.list.initialValue')
-          		, id: 'cmbInitialValue'
-              	, width: "15%"
-              	, sortable: true
-              	, dataIndex: 'initialValue'
-              	, getEditor: Ext.Function.bind(this.getCellEditor, this)
-              	, style: 'font-weight:bold;'
-              	}
-            ],
+	        columns: [{
+				dataIndex : 'id',
+				hidden : true
+			},
+			{
+				dataIndex : 'label',
+				hidden : true
+			},
+			{
+				header : LN('sbi.cockpit.filter.editor.wizard.list.datasetlabel'),
+				width : "15%",
+				sortable : true,
+				dataIndex : 'nameObj',
+				flex : 1,
+				renderer : Ext.Function.bind(this.fixedCellRender, this),
+				style : 'font-weight:bold;'
+			},
+			{
+				header : LN('sbi.cockpit.filter.editor.wizard.list.typeObj'),
+				width : "15%",
+				sortable : true,
+				dataIndex : 'typeObj',
+				renderer : Ext.Function.bind(this.fixedCellRender, this),
+				style : 'font-weight:bold;'
+			},
+			{
+				header : LN('sbi.cockpit.filter.editor.wizard.list.namePar'),
+				width : "15%",
+				sortable : true,
+				dataIndex : 'namePar',
+				renderer : Ext.Function.bind(this.fixedCellRender, this),
+				style : 'font-weight:bold;'
+			},
+			{
+				header : LN('sbi.cockpit.filter.editor.wizard.list.typePar'),
+				width : "15%",
+				sortable : true,
+				dataIndex : 'typePar',
+				renderer : Ext.Function.bind(this.fixedCellRender, this),
+				style : 'font-weight:bold;'
+			},
+			{
+				header : LN('sbi.cockpit.filter.editor.wizard.list.scope'),
+				width : "15%",
+				sortable : true,
+				dataIndex : 'scope',
+				editor : comboScope,
+				style : 'font-weight:bold;'
+			},
+			{
+				header : LN('sbi.cockpit.filter.editor.wizard.list.initialValue'),
+				id : 'cmbInitialValue',
+				width : "15%",
+				sortable : true,
+				dataIndex : 'initialValue',
+				getEditor : Ext.Function.bind(this.getCellEditor, this),
+				style : 'font-weight:bold;'
+			}],
 	        viewConfig: {
 	        	stripeRows: true
 	        },
