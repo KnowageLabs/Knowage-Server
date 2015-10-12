@@ -97,6 +97,13 @@
 		name="GeoLayersManagement" description="GeoLayersManagement" />
 	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
+	<USER_FUNCTIONALITY productType="AthenaBD" 
+		name="Glossary" description="Glossary" />
+	<USER_FUNCTIONALITY productType="AthenaBD" 
+		name="Timespan" description="Timespan" />
+	<USER_FUNCTIONALITY productType="AthenaBD"
+		name="ImagesManagement" description="ImagesManagement" />
+		
 
 	<!-- Athena Social Functionalities -->
 	<USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement"
