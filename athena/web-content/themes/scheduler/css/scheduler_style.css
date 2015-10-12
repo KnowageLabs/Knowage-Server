@@ -3,45 +3,45 @@
 }
 
 .detailBody md-input-container .md-char-counter {
-    bottom: -16px;
-    right: 2px;
+	bottom: -16px;
+	right: 2px;
 }
 
-.detailBody .checkboxRow  {
-	padding-left:  10px !important;
+.detailBody .checkboxRow {
+	padding-left: 10px !important;
 }
 
-.h100{
+.h100 {
 	height: 100% !important;
 }
-.checkboxRow label{
-	    line-height: 53px;
+
+.checkboxRow label {
+	line-height: 53px;
 }
+
 .checkboxRow {
-	   height: 53px;
+	height: 53px;
 }
 
-.subCheckboxRowElement{
-	    padding-left: 30px;
+.subCheckboxRowElement {
+	padding-left: 30px;
 }
 
-
-md-toolbar.unselectedItem{
+md-toolbar.unselectedItem {
 	background-color: white !important;
 	margin-top: 5px;
 }
 
-md-toolbar.selectedItem{
+md-toolbar.selectedItem {
 	background-color: rgb(176, 190, 197);
 	margin-top: 5px;
 }
 
-
-
-md-toolbar.selectedItem label,md-toolbar.unselectedItem label,md-toolbar.selectedItem md-select,md-toolbar.unselectedItem md-select{
-	    font-size: initial !important;
+md-toolbar.selectedItem label, md-toolbar.unselectedItem label,
+	md-toolbar.selectedItem md-select, md-toolbar.unselectedItem md-select
+	{
+	font-size: initial !important;
 }
-
 
 md-toolbar.minihead {
 	background-color: rgb(176, 190, 197);
@@ -49,74 +49,75 @@ md-toolbar.minihead {
 	height: 50px;
 	min-height: 0px;
 }
-.minihead  {
-/*  position: absolute !important; */
-  height: 29px !important;
-  color: black !important;
+
+.minihead {
+	/*  position: absolute !important; */
+	height: 29px !important;
+	color: black !important;
 }
 
-.borderBox{
-	    border: 1px solid #B0BEC5;
+.borderBox {
+	border: 1px solid #B0BEC5;
 }
 
-
-
-.bottomButtonsBox{
-    right: 4px;
-    top: 10px;
-    position: fixed;
+.bottomButtonsBox {
+	right: 4px;
+	top: 10px;
+	position: fixed;
 }
-.bottomButtonsBox .submButton{
+
+.bottomButtonsBox .submButton {
 	height: 20px;
-    min-height: 20px;
-    line-height: 20px;
-    background-color: #639EBD !important;
-}
-.bottomButtonsBox .submButton[disabled]{
-	    background-color: rgba(0,0,0,0.12) !important;
-
-	}
-
-.bottomButtonsBox button{
-margin-top: 0;
-    margin-bottom: 0;}
-
-md-content.bottomButtonsBox{
-	    height: calc( 100% - 40px);
-	        top: 0;
+	min-height: 20px;
+	line-height: 20px;
+	background-color: #639EBD !important;
 }
 
-.selectedDoc{
+.bottomButtonsBox .submButton[disabled] {
+	background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.bottomButtonsBox button {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+md-content.bottomButtonsBox {
+	height: calc(100% - 40px);
+	top: 0;
+}
+
+.selectedDoc {
 	text-decoration: underline;
 }
 
-.timePickerStyle{
-    margin-left: 20px;
-    border: none;
-    font-size: 23px;
+.timePickerStyle {
+	margin-left: 20px;
+	border: none;
+	font-size: 23px;
 }
 
-md-select.numberSelect{
+md-select.numberSelect {
 	width: 68px;
-	margin:0px;
+	margin: 0px;
 }
 
-span.textspan{
-	    line-height: 30px;
-    margin: 0 10px;
+span.textspan {
+	line-height: 30px;
+	margin: 0 10px;
 }
 
-.alignedCheckbox label{
+.alignedCheckbox label {
 	line-height: 34px;
 }
 
-.alignedCheckbox md-checkbox{
-    margin: 0 10 0 0;
-    }
-    
- md-select-menu[multiple] md-option[selected]{
-    background-color: #317CA3;
-    color: white !important;
+.alignedCheckbox md-checkbox {
+	margin: 0 10 0 0;
+}
+
+md-select-menu[multiple] md-option[selected] {
+	background-color: #317CA3;
+	color: white !important;
 }
 
 md-switch.md-checked.greenSwitch .md-thumb {
@@ -127,47 +128,47 @@ md-switch.greenSwitch .md-thumb {
 	background-color: blue;
 }
 
-md-tabs.mini-tabs{
+md-tabs.mini-tabs {
 	height: 100%;
 }
 
-
-md-tabs.mini-tabs md-tabs-canvas,md-tabs.mini-tabs md-pagination-wrapper{
-	height:23px!important;
-}
-    
-md-tabs.mini-tabs md-tab-item{
-	  padding: 0 24px;
+md-tabs.mini-tabs md-tabs-canvas, md-tabs.mini-tabs md-pagination-wrapper
+	{
+	height: 23px !important;
 }
 
-md-tabs.mini-tabs  md-tabs-content-wrapper{
-	 top:24px !important;
+md-tabs.mini-tabs md-tab-item {
+	padding: 0 24px;
+}
+
+md-tabs.mini-tabs  md-tabs-content-wrapper {
+	top: 24px !important;
 }
 
 md-tabs md-ink-bar {
-    background: rgb(255, 185, 54);
+	background: rgb(255, 185, 54);
 }
+
 md-tabs md-tabs-wrapper {
-    background-color: rgba(220, 220, 220, 0.46);
-    border: 1px solid #E0E0E0;
+	background-color: rgba(220, 220, 220, 0.46);
+	border: 1px solid #E0E0E0;
 }
 
-    md-select-menu{
-    border: 1px solid #A5A1A1;
-    -webkit-box-shadow: 0px 0px 176px -22px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 0px 176px -22px rgba(0,0,0,0.75);
-box-shadow: 0px 0px 176px -22px rgba(0,0,0,0.75);
+md-select-menu {
+	border: 1px solid #A5A1A1;
+	-webkit-box-shadow: 0px 0px 176px -22px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 0px 0px 176px -22px rgba(0, 0, 0, 0.75);
+	box-shadow: 0px 0px 176px -22px rgba(0, 0, 0, 0.75);
 }
 
-.selected_document md-content{
+.selected_document md-content {
 	overflow: hidden;
 }
 
-md-tooltip .md-content.md-show{
+md-tooltip .md-content.md-show {
 	height: 100%;
 }
 
 md-tooltip .md-background {
-	 border-radius:inherit !important;
+	border-radius: inherit !important;
 }
-

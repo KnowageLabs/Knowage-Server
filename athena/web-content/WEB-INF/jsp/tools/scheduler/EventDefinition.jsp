@@ -89,26 +89,26 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 						
 							<md-content class="h100" > 
 								<md-input-container>
-									<label>{{translate.load("sbi.scheduler.schedulation.events.event.name")}}:</label>
-									<input ng-model="activityEventCtrl.event.triggerName" name={{translate.load("sbi.scheduler.schedulation.events.event.name")}} required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName"> 
+									<label>{{translate.load("scheduler.schedname","component_scheduler_messages")}}:</label>
+									<input ng-model="activityEventCtrl.event.triggerName" name={{translate.load("scheduler.schedname","component_scheduler_messages")}} required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName"> 
 								</md-input-container>
 								<md-input-container>
-									<label>{{translate.load("sbi.scheduler.schedulation.events.event.description")}}:</label>
+									<label>{{translate.load("scheduler.scheddescription","component_scheduler_messages")}}:</label>
 									<textarea ng-model="activityEventCtrl.event.triggerDescription" 
 											columns="1" maxlength="500" ng-maxlength="500" md-maxlength="500"></textarea>
 								</md-input-container>
 
 								<div layout="row" class="checkboxRow">
-									<label>{{translate.load("Start date")}}:</label>
-									<md-datepicker ng-model="activityEventCtrl.event.startDate" name="Start date" required md-placeholder="StartDate"></md-datepicker>
-									<label style="margin: 0 20px;">{{translate.load("Start time")}}:</label>
+									<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
+									<md-datepicker ng-model="activityEventCtrl.event.startDate" name={{translate.load("scheduler.startdate","component_scheduler_messages")}} required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
+									<label style="margin: 0 20px;">{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
 									<angular-time-picker id="myTimePicker" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
 								</div>
 
 								<div layout="row" class="checkboxRow">
-									<label style="margin-right: 5px;">{{translate.load("End date")}}:</label>
-									<md-datepicker ng-model="activityEventCtrl.event.endDate" md-placeholder="EndDate"></md-datepicker>
-									<label style="margin: 0 20px; margin-right: 26px;">{{translate.load("End time")}}: </label>
+									<label style="margin-right: 5px;">{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
+									<md-datepicker ng-model="activityEventCtrl.event.endDate" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
+									<label style="margin: 0 20px; margin-right: 26px;">{{translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
 									<angular-time-picker id="myTimePicker" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
 								</div>
 
@@ -117,7 +117,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										style="height: 50px;  min-height: 30px;">
 									<div class="md-toolbar-tools" layout="row" style="padding-left: 0px;">
 										<md-input-container> 
-											<label>{{translate.load("Tipo evento")}}</label>
+											<label>{{translate.load("sbi.generic.type")}}</label>
 											<md-select aria-label="aria-label" ng-model="activityEventCtrl.typeOperation"
 													ng-change="activityEventCtrl.changeTypeOperation();"> 
 												<md-option ng-repeat="type in activityEventCtrl.SCHEDULER_TYPES" 
@@ -129,9 +129,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								
 								<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'event'"	layout-padding class="borderBox">
 									<md-input-container> 
-										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type")}}:</label>
+										<label>{{translate.load("scheduler.eventType","component_scheduler_messages")}}:</label>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.event_type"
-												ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("sbi.scheduler.schedulation.events.event.type")}}>
+												ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}>
 											<md-option ng-repeat="eventType in activityEventCtrl.EVENT_TYPES" 
 													value="{{eventType.value}}"> {{eventType.label}} </md-option> 
 										</md-select> 
@@ -164,7 +164,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 								<div ng-if="activityEventCtrl.shedulerType" layout-padding class="borderBox">
 									<div layout="row" style="margin-bottom: 15px;">
-										<span class="textspan">Frequenza</span>
+										<span class="textspan">{{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}</span>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.repetitionKind"
 												style="margin:0px" ng-init="activityEventCtrl.getActivityRepetitionKindForScheduler()"
 												ng-change="activityEventCtrl.changeTypeFrequency();"> 
@@ -174,32 +174,32 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 									<div ng-if="activityEventCtrl.eventSched.repetitionKind=='minute'" layout="row"
 											ng-init="activityEventCtrl.eventSched.minute_repetition_n =activityEventCtrl.eventSched.minute_repetition_n || 1;">
-										<span class="textspan">Every</span>
+										<span class="textspan">{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.minute_repetition_n"
 												ng-change="activityEventCtrl.changeTypeFrequency();" class="numberSelect"> 
 											<md-option ng-repeat="item in activityEventCtrl.getNitem(60) " value="{{item}}">{{item}}</md-option>
 										</md-select>
-										<span class="textspan">minutes</span>
+										<span class="textspan">{{translate.load("sbi.kpis.mins")}}</span>
 									</div>
 									
 									<div ng-if="activityEventCtrl.eventSched.repetitionKind=='hour'" layout="row" 
 											ng-init="activityEventCtrl.eventSched.hour_repetition_n = activityEventCtrl.eventSched.hour_repetition_n || 1;">
-										<span class="textspan">Every</span>
+										<span class="textspan">{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.hour_repetition_n"
 												ng-change="activityEventCtrl.changeTypeFrequency();" class="numberSelect"> 
 											<md-option ng-repeat="item in activityEventCtrl.getNitem(24) " value="{{item}}">{{item}}</md-option>
 										</md-select>
-										<span class="textspan">hours</span>
+										<span class="textspan">{{translate.load("sbi.kpis.hours")}}</span>
 									</div>
 
 									<div ng-if="activityEventCtrl.eventSched.repetitionKind=='day'" layout="row" 
 											ng-init="activityEventCtrl.eventSched.day_repetition_n = activityEventCtrl.eventSched.day_repetition_n || 1;">
-										<span class="textspan">Every</span>
+										<span class="textspan">{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
 										<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.day_repetition_n"
 												ng-change="activityEventCtrl.changeTypeFrequency();" class="numberSelect">
 											<md-option ng-repeat="item in activityEventCtrl.getNitem(31) " value="{{item}}">{{item}}</md-option>
 										</md-select>
-										<span class="textspan">days</span>
+										<span class="textspan">{{translate.load("sbi.kpis.days")}}</span>
 									</div>
 
 									<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'week'" layout="row" class="alignedCheckbox">
@@ -214,26 +214,26 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 									<div ng-if="activityEventCtrl.eventSched.repetitionKind=='month'" layout="row" flex>
 										<div layout="column" layout-align="center center">
 											<div layout="row" flex style="margin: 0 15px;">
-												<span>complex</span>
+												<span>{{translate.load("sbi.generic.advanced")}}</span>
 												<md-switch style="margin: 0px 10px 17px 10px;" ng-change="activityEventCtrl.toggleMonthScheduler()"
 														class="greenSwitch" aria-label="Switch " ng-model="activityEventCtrl.typeMonth"
 														ng-init="activityEventCtrl.typeMonth=activityEventCtrl.typeMonth!=undefined? activityEventCtrl.typeMonth : true ;">
 												</md-switch>
-												<span>simple</span>
+												<span>{{trabslate.load("sbi.behavioural.lov.type.simple")}}</span>
 											</div>
 											<div layout="row" class="alignedCheckbox" ng-if="activityEventCtrl.typeMonth==true"
 													ng-init="activityEventCtrl.monthrep_n =activityEventCtrl.monthrep_n || 1;">
-												<span class="textspan">Every</span>
+												<span class="textspan">{{translate.load("scheduler.generic.every","component_scheduler_messages")}}</span>
 												<md-select aria-label="aria-label"
 														ng-model="activityEventCtrl.monthrep_n" class="numberSelect"
 														ng-change="activityEventCtrl.toggleMonthScheduler()">
 													<md-option ng-repeat="item in activityEventCtrl.getNitem(12) " value="{{item}}">{{item}}</md-option> 
 												</md-select>
-												<span class="textspan">month</span>
+												<span class="textspan">{{translate.load("sbi.kpis.months")}}</span>
 											</div>
 
 											<div layout="row" class="alignedCheckbox" ng-if="activityEventCtrl.typeMonth!=true">
-												<span class="textspan">In Month</span>
+												<span class="textspan">{{translate.load("scheduler.generic.inMonth","component_scheduler_messages")}}</span>
 												<md-select aria-label="aria-label"
 														ng-model="activityEventCtrl.month_repetition" style="margin:0px;" multiple='true'
 														ng-change="activityEventCtrl.toggleMonthScheduler()">
@@ -245,18 +245,18 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										<div layout="column" layout-align="center center">
 
 											<div layout="row" flex style="margin: 0 15px;">
-												<span>complex</span>
+												<span>{{translate.load("sbi.generic.advanced")}}</span>
 												<md-switch style=" margin: 0px 10px 17px 10px;"
 													ng-change="activityEventCtrl.toggleMonthScheduler()" class="greenSwitch"
 														aria-label="Switch " ng-model="activityEventCtrl.typeMonthWeek"
 														ng-init="activityEventCtrl.typeMonthWeek = activityEventCtrl.typeMonthWeek!=undefined? activityEventCtrl.typeMonthWeek : true">
 												</md-switch>
-												<span>simple</span>
+												<span>{{trabslate.load("sbi.behavioural.lov.type.simple")}}</span>
 											</div>
 
 											<div layout="row" class="alignedCheckbox" ng-if="activityEventCtrl.typeMonthWeek==true"
 													ng-init="activityEventCtrl.dayinmonthrep_week = activityEventCtrl.dayinmonthrep_week || 1;">
-												<span class="textspan">The day</span>
+												<span class="textspan">{{translate.load("scheduler.generic.theDay","component_scheduler_messages")}}</span>
 												<md-select aria-label="aria-label" ng-model="activityEventCtrl.dayinmonthrep_week"
 														class="numberSelect" ng-change="activityEventCtrl.toggleMonthScheduler()">
 													<md-option ng-repeat="item in activityEventCtrl.getNitem(31) " value="{{item}}">{{item}}</md-option> 
@@ -265,13 +265,13 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 											<div layout="row" class="alignedCheckbox" ng-if="activityEventCtrl.typeMonthWeek != true"
 													ng-init="activityEventCtrl.month_week_number_repetition = activityEventCtrl.month_week_number_repetition|| '1';">
-												<span class="textspan">The week</span>
+												<span class="textspan">{{translate.load("scheduler.generic.theWeek","component_scheduler_messages")}}</span>
 												<md-select aria-label="aria-label" ng-model="activityEventCtrl.month_week_number_repetition"
 														style="margin:0px;" ng-change="activityEventCtrl.toggleMonthScheduler()">
 													<md-option ng-repeat="order in activityEventCtrl.WEEKS_ORDER" value="{{order.value}}">{{order.label}}</md-option> 
 												</md-select>
 												
-												<span class="textspan">In day</span>
+												<span class="textspan">{{translate.load("scheduler.generic.inDay","component_scheduler_messages")}}</span>
 												<md-select aria-label="aria-label" ng-model="activityEventCtrl.month_week_repetition"
 														style="margin:0px;" multiple='true'
 														ng-change="activityEventCtrl.toggleMonthScheduler()">
@@ -294,27 +294,23 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					</md-tab-body> 
 				</md-tab>
 				
-				<md-tab id="json"> 
-					<md-tab-label>json</md-tab-label> 
-					<md-tab-body layout="column"> 
-<!-- 						<pre>activityEventCtrl.event: {{activityEventCtrl.event | json}}</pre> -->
-<pre>{{contactForm.$error | json }}</pre>
-					</md-tab-body> 
-				</md-tab>
-			</md-tabs>
+<!-- 				<md-tab id="json">  -->
+<!-- 					<md-tab-label>json</md-tab-label>  -->
+<!-- 					<md-tab-body layout="column">  -->
+<!-- <!-- 						<pre>activityEventCtrl.event: {{activityEventCtrl.event | json}}</pre> --> -->
+<!-- 				<pre>{{contactForm.$error | json }}</pre> -->
+<!-- 					</md-tab-body>  -->
+<!-- 				</md-tab> -->
+<!-- 			</md-tabs> -->
 			
 			<div layout="row"  class=" bottomButtonsBox">
-				
-			
-<!-- 				<md-button type="button" class="md-raised" ng-click="activityEventCtrl.resetForm()">Cancella</md-button> -->
-				
-					 <div ng-if="!contactForm.$valid">
-				        <md-icon md-font-icon="fa fa-plus"</md-icon>
+				 <div ng-if="!contactForm.$valid">
+				        <md-icon md-font-icon="fa fa-exclamation-triangle " style="    color: red;    line-height: 20px;"></md-icon>
 				        <md-tooltip>
-				        <ul>
-						  <li ng-repeat="(key, errors) in contactForm.$error track by $index"> <strong>{{ key }}</strong> errors
-						    <ul>
-						      <li ng-repeat="e in errors">{{ e.$name }} has an error: <strong>{{ key }}</strong>.</li>
+				        <ul style="padding: 0px;" >
+						  <li style="display: block;" ng-repeat="(key, errors) in contactForm.$error track by $index"> 
+						    <ul style="padding: 0px;">
+						      <li style="display: block;" ng-repeat="e in errors">{{ e.$name }} <i class="fa fa-arrow-right"></i> <span style="color: red;    font-size: 12px;    font-weight: 900;">{{ key }}</span>.</li>
 						    </ul>
 						  </li>
 						</ul>

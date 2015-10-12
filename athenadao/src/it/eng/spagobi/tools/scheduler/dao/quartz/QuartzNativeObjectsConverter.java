@@ -88,8 +88,7 @@ class QuartzNativeObjectsConverter {
 						spagobiTrigger.getJob().addParameter("event_info", jo.getString("parameter"));
 					}
 				} catch (Exception e) {
-					System.out.println("Old format of chrono string for Trigger: " + spagobiTrigger.getName() + "  (" + spagobiTrigger.getChronExpression()
-							+ ")");
+					logger.debug("Old format of chrono string for Trigger: " + spagobiTrigger.getName() + "  (" + spagobiTrigger.getChronExpression() + ")");
 				}
 			}
 
