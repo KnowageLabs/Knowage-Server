@@ -1,6 +1,6 @@
 var app = angular.module('timespanManager', [ 'ngMaterial', 'ui.tree',
 		'angularUtils.directives.dirPagination', 'ng-context-menu',
-		'angular_rest', 'glossary_tree', 'angular_list' ]);
+		'angular_rest', 'glossary_tree', 'angular_list', 'angular_time_picker' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -79,10 +79,16 @@ function behavior(translate, restServices, $scope) {
 	
 	
 	ctrl.addInterval = function(from, to) {
-		var f = ("0" + from.getDate()).slice(-2) + "/" + ("0" + (from.getMonth()+1)).slice(-2) + "/" + from.getFullYear(); 
-		var t = ("0" + to.getDate()).slice(-2) + "/" + ("0" + (to.getMonth()+1)).slice(-2) + "/" + to.getFullYear(); 
-		var tmp = { "from": f, "to": t }
-		ctrl.selectedItem.definition.push(tmp);
+		if(ctrl.selectedItem.type=='temporal'){
+			var f = ("0" + from.getDate()).slice(-2) + "/" + ("0" + (from.getMonth()+1)).slice(-2) + "/" + from.getFullYear(); 
+			var t = ("0" + to.getDate()).slice(-2) + "/" + ("0" + (to.getMonth()+1)).slice(-2) + "/" + to.getFullYear(); 
+			var interval = { "from": f, "to": t }
+		} else {
+			var interval = { "from": from, "to": to }
+		}
+		
+		ctrl.selectedItem.definition.push(interval);
+		
 		ctrl.from = "";
 		ctrl.to = "";
 	}
@@ -153,6 +159,12 @@ function behavior(translate, restServices, $scope) {
 		})
 	}
 	
+	
+	ctrl.changeType = function() {
+		ctrl.selectedItem.definition = [];
+		ctrl.from = "";
+		ctrl.to = "";
+	}
 	
 	function listTimespan() {
 		restServices.get("1.0/timespan", "listTimespan").success(

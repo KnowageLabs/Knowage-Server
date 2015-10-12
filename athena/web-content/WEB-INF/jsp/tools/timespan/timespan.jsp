@@ -35,6 +35,9 @@
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
 	
+	<!-- time picker -->
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+	
 	<!-- context menu -->
 	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
 	
@@ -122,9 +125,8 @@
 
 					<div flex="50">
 						<md-input-container > <label>{{translate.load("sbi.generic.type");}}</label> 
-						<md-select ng-model="ctrl.selectedItem.type"> 
-							<md-option
-								ng-repeat="type in ctrl.tsType" value="{{type.value}}">
+						<md-select ng-model="ctrl.selectedItem.type" ng-change="ctrl.changeType()"> 
+							<md-option ng-repeat="type in ctrl.tsType" value="{{type.value}}" >
 								{{type.label}} 
 							</md-option> 
 						</md-select> 
@@ -149,40 +151,31 @@
 				
 				<md-divider style="margin:20px;"></md-divider>
 				
-				<div layout="row" layout-align="center center" layout-wrap>
-					<div flex="30">
-						<label style="color:rgba(0,0,0,0.54)">{{translate.load("sbi.timespan.from");}}</label>
-						<md-datepicker ng-model="ctrl.from" md-placeholder="Enter date" >
-						</md-datepicker>
-					</div>
-					
-					<div flex="30">
-						<label style="color:rgba(0,0,0,0.54)">{{translate.load("sbi.timespan.to");}}</label>
-						<md-datepicker ng-model="ctrl.to" md-placeholder="Enter date" >
-						</md-datepicker>
-					</div>
-					
-					<md-button ng-click="ctrl.addInterval(ctrl.from, ctrl.to)"
-						class="md-fab md-ExtraMini addButtonBody" aria-label="add interval"> 
-						<md-icon md-font-icon="fa fa-plus" style="margin-top: 6px; color: white;">
-						</md-icon> 
-					</md-button>
-				</div>
-				
-				
 				<div layout="row" layout-align="center center" >
-					<table style="width: 50%; font-size: 10pt; margin-top: 20px; table-layout: fixed; text-align: center;">
+					<table style="width: 70%; font-size: 10pt; margin-top: 20px; table-layout: fixed; text-align: center;">
 						<tr>
-							<th>{{translate.load("sbi.timespan.from");}}</th>
-							<th>{{translate.load("sbi.timespan.to");}}</th>
-							<th></th>
+							<th>
+								<span style="display: block;">{{translate.load("sbi.timespan.from");}}</span>
+								<md-datepicker layout-align="center center" ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.from" md-placeholder="Enter date" style="display: block;"></md-datepicker>
+								<angular-time-picker ng-if="ctrl.selectedItem.type=='time'" ng-model="ctrl.from" style="display: block; padding-left: 85px;"></angular-time-picker>
+							</th>
+							<th>
+								<span style="display: block; ">{{translate.load("sbi.timespan.to");}}</span>
+								<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.to" md-placeholder="Enter date" style="display: block; "></md-datepicker>
+								<angular-time-picker ng-if="ctrl.selectedItem.type=='time'" ng-model="ctrl.to" style="display: block; padding-left: 85px;"></angular-time-picker>
+							</th>
+							<th>
+								<md-button ng-click="ctrl.addInterval(ctrl.from, ctrl.to)" class="md-fab md-MiniList blue" aria-label="add interval"> 
+									<md-icon md-font-icon="fa fa-plus" ></md-icon> 
+								</md-button>
+							</th>
 						</tr>
 						<tr ng-repeat="span in ctrl.selectedItem.definition">
 							<td>{{span.from}}</td>
 							<td>{{span.to}}</td>
 							<td>
 								<md-button ng-click="ctrl.removeInterval(span)" class="md-fab md-MiniList" aria-label="remove interval">
-								<md-icon md-font-icon="fa fa-times"></md-icon>
+									<md-icon md-font-icon="fa fa-times"></md-icon>
 								</md-button>
 							</td>
 						</tr>

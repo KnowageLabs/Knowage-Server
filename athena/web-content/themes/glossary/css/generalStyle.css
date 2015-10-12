@@ -53,7 +53,7 @@
 	float: left;
     width: 20px;
     height: 20px;
-    padding-left: 5px;
+    padding-left: 4px;
     padding-top: 3px;
     min-height: 0;
 }
@@ -281,6 +281,10 @@ md-input-container.search-input md-icon{
 	margin: 0px;
   margin-left: 15px;
   height: 18px;
+}
+
+.blue{
+  	background-color: rgb(0, 148, 255)!important;
 }
 
 .addButton{
