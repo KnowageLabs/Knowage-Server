@@ -1,11 +1,17 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="it.eng.spagobi.tools.dataset.bo.IDataSet"%>
+<%@page import="java.util.Set"%>
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+<%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>Insert title here</title>
 
 	<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
 	
@@ -30,27 +36,46 @@
 	<!-- context menu -->
  	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
 
-
+	 <!-- angular tree -->
+	 <link rel="stylesheet"  href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
+	 <script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+	 <link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
+	 
+	 <!-- context menu -->
+	 <script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
+	 
+	 <!--pagination-->
+	 <script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
  
- <!-- angular tree -->
- <link rel="stylesheet"  href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
- <script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
- <link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
- 
- <!-- context menu -->
- <script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
- 
- <!--pagination-->
- <script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
-
-	
-
 </head>
-<body class="bodyStyle" ng-app="FEDERATIONDEFINITION">
 
+<body class="bodyStyle" ng-app="FEDERATIONDEFINITION">
 	<div ng-controller="FederationDefinitionCTRL as ctrl" layout="column"
 		style="width: 100%; height: 100%;"
-		class="contentdemoBasicUsage">
+		class="contentdemoBasicUsage" >
+		
+	<%
+		String lisOfDSL = "";
+		if(request.getParameter("id")!=null){
+			String federationID = request.getParameter("id");
+			if(federationID!=null && federationID.length()!=0){
+				FederationDefinition obj = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(new Integer(federationID));
+				Set<IDataSet> datasets = obj.getSourceDatasets();
+				List<String> listOfDatasetLabels = new ArrayList<String>();
+				if(datasets!=null){
+					for(IDataSet ds : datasets){
+						listOfDatasetLabels.add(ds.getLabel());
+					}
+				}
+				lisOfDSL = listOfDatasetLabels.toString();	
+			}
+		}
+	%>
+	
+	<script>
+		var value = '<%= lisOfDSL %>';
+	</script>
+	
 		<md-toolbar class="miniheadfederation">
 		<div class="md-toolbar-tools">
 			<i class="fa fa-bar-chart fa-2x"></i>
@@ -58,7 +83,7 @@
 		</div>
 		</md-toolbar>
 
-		<md-content layout-padding=""
+		<md-content  layout-padding=""
 			style="height: 90%; padding: 20px;"">
 		<div ng-show="ctrl.state" layout="row" layout-wrap>
 			
@@ -73,7 +98,7 @@
 			
 				<div style="height:80%">
 					<angular-list layout-fill="" 
-					id="selectedDatasets" 
+					id="availableDatasets" 
 					ng-model="ctrl.list" 
 					item-name="label"
 					show-search-bar=true
@@ -232,4 +257,5 @@
 	</div>
 
 </body>
+
 </html>

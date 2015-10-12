@@ -7,9 +7,9 @@ app.service('translate', function() {
 });
 
 app.controller('FederationDefinitionCTRL', [ "translate", "restServices", "$scope",
-                   		"$mdDialog", funkcija]);
+                   		"$mdDialog", "$timeout", funkcija]);
 
-function funkcija(translate, restServices, $scope, $mdDialog) {
+function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	ctr = this;
 	$scope.translate =  translate;
 	
@@ -19,10 +19,15 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
+	
 	ctr.list = {};
 	ctr.listaNew = [];
 	ctr.listAllO = {};
 	ctr.listAll = [];
+
+	//used to check if ctr.list and ctr.listALLO are loaded
+	ctr.loadedList = false;
+	ctr.loadedListAllO = false; 	
 	
 	//state is used to show or hide components on the page
 	ctr.state = true;
@@ -249,6 +254,12 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 							});
 						});
 					}
+					ctr.loadedList = true;
+					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
+						ctr.loadDatasetsEditMode();
+					} else {
+						console.log("Only loadedList is loaded")
+					}
 				}
 		)
 		.error(
@@ -277,6 +288,13 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 								listField.selected =  false;
 							});
 						});
+					}
+
+					ctr.loadedListAllO = true;
+					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
+						ctr.loadDatasetsEditMode();
+					} else {
+						console.log("Only loadedListAllO is loaded")
 					}
 				}
 		)
@@ -338,53 +356,13 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
 						console.log("Parameter is already in the list.");
 					}
 				}
-			}
-				/*console.log("ceo niz objekata")
-				console.log(ctr.multiArray)
-				console.log("param: "+param.label)
-				console.log("jedan od uslova")
-				console.log("sourcetable: "+ctr.multiArray[i][j].sourceTable.name)
-				console.log("destination:"+ctr.multiArray[i][j].destinationTable.name)*/
-			
-				//for (var i = 0; i < ctr.nizSourceva.length; i++) {
-					//if (param.label == ctr.nizSourceva[i]) {
-			
-			/*if (ctr.nizSourceva.indexOf(param.label) >= 0) {
-						
-						console.log("param leb")
-						console.log(param.label)
-						$mdDialog
-								.show($mdDialog
-										.alert()
-										.clickOutsideToClose(true)
-										.content(
-												'You can\'t delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.')
-										.ok('OK'));
-						return false;
-						
-					} else {
-						console.log("else" + j)
-						var index = ctr.listaNew.indexOf(param);
-						if (index != -1) {
-							ctr.listaNew.splice(index, 1);
-						}
-						if (ctr.list.indexOf(param) === -1) {
-							ctr.list.push(param);
-						} else {
-							console.log("Parameter is already in the list.");
-						}
-					}*/
-				//}
-				
-				
-			
-			
-			
+			}	
 	}
 	
-	ctr.moveToListNew = function(param) {
+	ctr.moveToListNew = function(param) {		
 		var index = ctr.list.indexOf(param);
-		console.log("Index"+index);
+		console.log("param");
+		console.log(param)
 		if(index != -1) {
 			ctr.list.splice(index,1);
 		}
@@ -529,8 +507,48 @@ function funkcija(translate, restServices, $scope, $mdDialog) {
     
     ctr.cancelEdit = function() {
     	ctr.isEditState = false;
-    }    
+    }
     
+	ctr.loadDatasetsEditMode = function(){
+		if(ctr.loadedList==true && ctr.loadedListAllO==true) {
+			console.log("izvrsava se loaddataseteditmode")
+    		console.log(value)
+        	if(value!=null){
+        		console.log(value)
+        		var arr = value.replace(/ /g,'')
+        		var array = arr.substring(1,arr.length-1);
+        		var array1 = array.split(',');
+        		for (var i = 0; i < array1.length; i++) {
+        			console.log("array[i]")
+        			console.log(array1[i])
+    				for (var j = 0; j < ctr.listAllO.length; j++) {
+    					console.log("listAllO")
+    					console.log(ctr.listAllO.length)
+        				if(ctr.listAllO[j].label==array1[i]){
+        					for (var k = 0; k < ctr.list.length; k++) {
+        						console.log("list")
+        						console.log(ctr.list.length)
+    							if(ctr.list[k].name==ctr.listAllO[j].name) {
+    								var index = ctr.list.indexOf(ctr.list[k]);
+    								if(index != -1) {
+    									ctr.list.splice(index,1);
+    									console.log("did splice")
+    								}
+    							}
+    						}
+        					ctr.listaNew.push(ctr.listAllO[j])
+        					console.log("did push")
+        				} else {
+        					console.log("no dataset like that in ALL DATASETS")
+        				}
+        			}
+    			}
+        	} 
+		} else {
+			console.log("List or ListaNew are not loaded!!")
+		}
+    }
+        
 }
 
 
