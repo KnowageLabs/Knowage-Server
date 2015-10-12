@@ -600,6 +600,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'offsetBorderFromYAxis',
 			        value: this.axisData.offset,
+			        maxValue: 60,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.offset") 
 			    }	
@@ -1499,7 +1500,11 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisData.lineColor = lineColorYAxis;
 			
 			var offsetBorderFromYAxis = this.offsetBorderFromYAxis.getValue();
-			this.axisData.offset = offsetBorderFromYAxis;
+			console.log(offsetBorderFromYAxis);
+			if (offsetBorderFromYAxis <= 60)
+				this.axisData.offset = offsetBorderFromYAxis;
+			else
+				this.axisData.offset = 60;
 			
 			var lineWidthYAxis = this.lineWidthYAxis.getValue();
 			this.axisData.lineWidth = lineWidthYAxis;

@@ -265,38 +265,33 @@ Ext.define
 									var chartColumnsContainerNew = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool;
 									var numberOfYAxis = chartColumnsContainerNew.length;
 									
-										if (numberOfYAxis > 1) 
+									if (numberOfYAxis > 1) 
+									{
+										for (var i=0; i<numberOfYAxis; i++) 
 										{
-											for (var i=0; i<numberOfYAxis; i++) 
-											{
-												chartColumnsContainerNew[i+1].close();
-											}
-										} 										
-										else 
-										{									
-											Ext.getCmp("chartLeftAxisesContainer").items.items[0].header.items.items[1].hide();
+											chartColumnsContainerNew[i+1].close();
 										}
-									
-									/* ---------- BOTTOM (X) AXIS PANEL ---------- */
-									// Hide the gear tool on the toolbar of the bottom (X) axis panel							
-									if (newlySelectedType.toLowerCase()!="heatmap") {
+									} 									
+														
+									if (newlySelectedType.toLowerCase()!="heatmap") 
+									{		
+										/* ---------- BOTTOM (X) AXIS PANEL ---------- */
+										// Hide the gear tool on the toolbar of the bottom (X) axis panel		
 										globalScope.stylePopupBottomPanel.hide();
-									}										
-									
-									// Hide the textfield dedicated for the title of the bottom (X) axis
-									globalScope.textfieldAxisTitle.hide();
-									
-									/* ---------- LEFT (Y) AXIS PANEL ---------- */									
-									if (newlySelectedType.toLowerCase()!="heatmap") {
+										
+										/* ---------- LEFT (Y) AXIS PANEL ---------- */	
+										// Hide the textfield dedicated for the title of the bottom (X) axis
+										globalScope.textfieldAxisTitle.hide();
+										
 										// Hide the gear tool on the toolbar of the left (Y) axis panel
-										globalScope.stylePopupLeftAxis.hide();									
+										globalScope.stylePopupLeftAxis.hide();
+										
+										// Hide the textfield dedicated for the title of the left (Y) axis
+										globalScope.titleTextfield.hide();
 									}											
 									
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									globalScope.plusLeftAxis.hide();
-									
-									// Hide the textfield dedicated for the title of the left (Y) axis
-									globalScope.titleTextfield.hide();
 									
 									/**
 									 * For PIE chart we will need serie style configuration popup
@@ -311,9 +306,16 @@ Ext.define
 									{
 										globalScope.actionColumnLeftAxis.items[0].iconCls = "x-hidden";
 									}	
-								} 						
+								} 
 								
-								return true;
+								else if(newlySelectedType.toLowerCase()=="radar" || newlySelectedType.toLowerCase()=="scatter")
+								{
+									// Hide the plus tool on the toolbar of the left (Y) axis panel
+									globalScope.plusLeftAxis.hide();
+								}
+									
+								
+								//return true;
 							} 									
 							else if (buttonValue == 'cancel') 
 							{
@@ -464,7 +466,7 @@ Ext.define
 					 */
 					else 
 					{
-						
+						globalScope.resetStep1();
 						// Hide the plus tool on the toolbar of the left (Y) axis panel
 						(globalScope.plusLeftAxis!=undefined) ? globalScope.plusLeftAxis.hide() : null;
 						
@@ -481,7 +483,6 @@ Ext.define
 							}
 						}	
 						
-						globalScope.resetStep1();
 						globalScope.fireEvent("resetStep2");
 					}
 				}

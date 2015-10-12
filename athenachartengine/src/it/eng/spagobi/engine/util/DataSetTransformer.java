@@ -18,6 +18,13 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 public class DataSetTransformer {
 
+	public void print(Object object) {
+		System.out.println("-----------------------");
+		System.out.println(object);
+		System.out.println(object.getClass().toString());
+		System.out.println("-----------------------");
+	}
+
 	public JSONArray toWordcloud(Object columnsNeeded, Object dataColumnsMapper, List<Object> dataRows, Object serie, Object sizeCriteria,
 			Object groupingFunction) throws JSONException {
 

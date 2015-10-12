@@ -216,18 +216,7 @@
 		 	 	enabled: $xAxis.TITLE.enabled
 		 	 #end
 		 	 
-			 text: '$xAxis.TITLE.text',
-			 
-			 #set ($xTitleAlign = $xAxis.TITLE.style.align)
-			 #if( $xTitleAlign != '' )
-			 	#if ($xTitleAlign == 'center' )
-				align: 'middle',
-				#elseif ($xTitleAlign == 'left' )
-				align: 'low',
-				#elseif ($xTitleAlign == 'right' )
-				align: 'high',
-				#end
-			 #end
+			 text: '$xAxis.TITLE.text',	 
 			 
 			 style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
@@ -236,18 +225,27 @@
 	        			fontStyle: '$axisTitleStyle',
 					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 	        			textDecoration: 'underline',
+	        		#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisTitleStyle)
 					#elseif($axisTitleStyle != '')
 	        			$styleName: '$axisTitleStyle',
 	        		#end
 	        	#end
 		     },
+		     
+		     #if ($labelAlign == 'center' || $labelAlign == '')
+			align: 'middle',
+			#elseif ($labelAlign == 'left' )
+			align: 'low',
+			#elseif ($labelAlign == 'right' )
+			align: 'high',
+			#end
 		 },
 
 		labels:{
 				 
 				 #if( $xAxis.style != '' ) 
-        		
-        		
+        		        		
         		style:{
 	        	#foreach($styleName in $xAxis.style.keySet())
 	        		#set ($axisStyle = $xAxis.style[$styleName])
@@ -263,7 +261,7 @@
 	        			$styleName: '$axisStyle',
 	        		#end
 	        	#end
-        		},
+        		},        		
         		
         		#if($labelAlign)
         			align:"$labelAlign",
@@ -315,13 +313,7 @@
 		 	 
         		text: '$yAxis.TITLE.text',
         		
-        		#if( $yAxis.TITLE.style.align != '' )
-        			#if ($yAxis.TITLE.style.align == 'center' )
-					align: 'middle',
-					#else
-					align: '$yAxis.TITLE.style.align',
-					#end
-				#end
+        		margin: 60,
 			 
         		style:{
 		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
@@ -330,16 +322,28 @@
 		        			fontStyle: '$axisTitleStyle',
 						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 		        			textDecoration: 'underline',
+		        		#elseif($styleName == 'align')
+	        				#set($labelAlign=$axisTitleStyle)
 						#else		        			
 		        			$styleName: '$axisTitleStyle',
 		        		#end
 		        	#end
         		},
+        		
+        		#if ($labelAlign == 'center' || $labelAlign == '')
+			align: 'middle',
+			#elseif ($labelAlign == 'left' )
+			align: 'low',
+			#elseif ($labelAlign == 'right' )
+			align: 'high',
+			#end
         	},
         	
         	labels:{
 				 
 				 #if( $yAxis.style != '' ) 
+        		
+        		x:0,
 				 
         		style:{
 	        	#foreach($styleName in $yAxis.style.keySet())

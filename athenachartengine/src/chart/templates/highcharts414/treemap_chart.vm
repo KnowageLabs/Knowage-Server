@@ -31,9 +31,14 @@
 {
  chart: 
  {
-  type: '$chartType',
-  height: '$chart.height',
-  width: '$chart.width',
+  	type: '$chartType',
+  	height: '$chart.height',
+  	width: '$chart.width',
+  
+	## I think this is necessary when title and subtitle are not provided (danristo)
+	#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
+		marginTop: 50,
+	#end
   
   #if($chart.style.backgroundColor!="")
   	backgroundColor: '$chart.style.backgroundColor',

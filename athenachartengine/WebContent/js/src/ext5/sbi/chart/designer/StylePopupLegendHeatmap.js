@@ -14,7 +14,7 @@ Ext.define
 		config : 
 		{
 			bindFontAlign: null,
-    	    bindSymbolWidth: null
+    	    bindSymbolHeight: null
 		},
 	
 		items : [],
@@ -29,28 +29,28 @@ Ext.define
 	        
 	        var align = Ext.create
 	        (
-        		'Sbi.chart.designer.FontAlignCombo',
+        		'Sbi.chart.designer.VerticalAlignmentCombo',
         		{
         			viewModel: this.viewModel,
         			bind : this.config.bindFontAlign
         		}
     		);
 	        
-	        var symbolWidth = Ext.create
+	        var symbolHeight = Ext.create
 	        (
 	        	{
 	        		xtype: 'numberfield',
 	        		viewModel: this.viewModel,
-           		 	bind : '{configModel.symbolWidth}',	
-           		 	fieldLabel: LN("sbi.chartengine.configuration.heatmap.symbolWidth"),
+           		 	bind : '{configModel.symbolHeight}',	
+           		 	fieldLabel: LN("sbi.chartengine.configuration.heatmap.symbolHeight"),
            		 	width: "200",
-           		 	maxValue: '1000',
-           		 	minValue: '10'       		
+           		 	maxValue: '800',
+           		 	minValue: '100'       		
 	        	}
 	        );
 	        
         	this.add(align);
-        	this.add(symbolWidth);
+        	this.add(symbolHeight);
 		}	        
     }
 );

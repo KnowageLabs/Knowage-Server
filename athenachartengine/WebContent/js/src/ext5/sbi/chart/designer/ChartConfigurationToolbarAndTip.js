@@ -1,3 +1,6 @@
+/**
+ * SUNBURST chart type
+ */
 Ext.define
 (
 	"Sbi.chart.designer.ChartConfigurationToolbarAndTip", 
@@ -5,7 +8,8 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "chartToolbarAndTip",
-		columnWidth: 0.2,
+		//columnWidth: 0.2,
+		width: 200, // fixed value: current solution for the ATHENA-154 bug
 		title: LN("sbi.chartengine.configuration.toolbarAndTip.title"),
 		bodyPadding: 10,
 		items: [],

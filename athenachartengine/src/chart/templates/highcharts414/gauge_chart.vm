@@ -170,19 +170,39 @@
 	        		
 				 	#if( $yAxis.TITLE.style )
 		        		style:{
+		        		
 				        	#foreach($styleName in $yAxis.TITLE.style.keySet())
 				        	
-				        	
 				        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+				        		
 				        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
 				        			fontStyle: '$axisTitleStyle',
 								#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 				        			textDecoration: 'underline',
+				        		#elseif($styleName == 'align')
+				        			#set($alignTitle = $axisTitleStyle)
 								#else		        			
 				        			$styleName: '$axisTitleStyle',
 				        		#end
-				        	#end
+				        		
+				        	#end			        	
 		        		},
+		        		
+		        		#*
+			        		Mapping between alignment types provided by the alignment combo of the Y-axis Title
+			        		and the alignment types provided for this item by the Highcharts library
+			        		
+			        		@author: danristo (danilo.ristovski@mht.net)
+			        	*#				        	
+			        	#if($alignTitle!="" && $alignTitle!="null")			        	
+			        		#if($alignTitle == "left")
+			        			align: "high",
+			        		#elseif($alignTitle == "right")
+			        			align: "low",
+			        		#else
+			        			align: "middle",
+			        		#end				        		
+			        	#end
 		        	#end
 	        	},
 	        	
@@ -253,18 +273,30 @@
 	                
 		    		#if($yAxis.style)
 		        		style:{
-			        	#foreach($styleName in $yAxis.style.keySet())
-			        	
+			        	#foreach($styleName in $yAxis.style.keySet())			        	
 			        		#set ($axisStyle = $yAxis.style[$styleName])
-			        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
-			        			fontStyle: '$axisTitleStyle',
-							#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
-			        			textDecoration: 'underline',
+			        					        		
+			        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+			        			fontStyle: '$axisStyle',
+							#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+			        			textDecoration: 'underline',			        					        		
+							#elseif($styleName == 'align')
+			        			#set($alignLabels = $axisStyle)
 							#else
 			        			$styleName: '$axisStyle',
 			        		#end
 			        	#end
 		        		},
+		        		
+		        		#*			        				        		
+			        		Alignment for Y-axis labels.
+			        		
+			        		@author: danristo (danilo.ristovski@mht.net)
+			        	*#				        	
+			        	#if($alignLabels!="" && $alignLabels!="null")	
+			        		align: "$alignLabels"		        					        				        		
+			        	#end
+		        		
 		        	#end
 	            },
 	        	#end
@@ -488,6 +520,7 @@
         		Depending on font style chosen by the user for the serie tooltip
         		we will specify respective CSS attribute so it can be taken by the
         		tooltip.
+        		
         		@author: danristo (danilo.ristovski@mht.net)
         	*#
         	var tooltipFontStyle = "";

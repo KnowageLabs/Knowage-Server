@@ -68,7 +68,7 @@
  	{
  		type: '$chartType',
 	  	height: '$chart.height',
-	  	width: '$chart.width',
+	  	width: '$chart.width', 		
   
   		style:
 		{			
@@ -204,9 +204,16 @@
 		}
 	},
 	
+	#*
+		Property changed from 'symbolWidth' for the former horizontal orientation
+		of the legend to 'symbolHeight' for its vertical orientation. Now the
+		alignment is one of these: top, middle, bottom.
+		
+		@modifiedBy: danristo (danilo.ristovski@mht.net)
+	*#
 	legend:
 	{
-		symbolWidth: '$chart.LEGEND.symbolWidth',
+		symbolHeight: '$chart.LEGEND.symbolHeight',
 		
 		style:
 		{
@@ -234,19 +241,40 @@
 		#foreach($xAxisKey in $xAxisList.keySet())
 			
 			#set($xAxis = $xAxisList.get($xAxisKey))
-			
-			style:
+					
+			title: 
 			{
-				fontFamily: '$xAxis.style.fontFamily',
-				fontWeight: '$xAxis.style.fontWeight',
-				fontSize: '$xAxis.style.fontSize',
-				fontColor: '$xAxis.style.color'
-			},
+			 	text: '$xAxis.TITLE.text',			 
+			 
+				 style:
+				 {				 	
+		        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+			        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
+			        	
+			        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',
+	        			#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisTitleStyle) 
+						#else
+		        			$styleName: '$axisTitleStyle',
+		        		#end
+		        	#end
+			     },
+			     
+		     	#if ($labelAlign == 'center' || $labelAlign=="")
+					align: 'middle',
+				#elseif ($labelAlign == 'left' )
+					align: 'low',
+				#elseif ($labelAlign == 'right' )
+					align: 'high',
+				#end
+		 	},
 			
-			labels:{
-				 
-				 #if( $xAxis.style != '' ) 
-        		
+			labels:
+			{				 
+				 #if( $xAxis.style != '' )         		
         		
         		style:{
 	        	#foreach($styleName in $xAxis.style.keySet())
@@ -265,8 +293,13 @@
 	        	#end
         		},
         		
+        		#*
+        			
+        			
+        			@author: danristo (danilo.ristovski@mht.net)
+        		*#  
         		#if($labelAlign)
-        			align:"$labelAlign",
+        			align: "$labelAlign",
         		#end
         		
         		#if($rotation!="" &&  $rotation!="null")
@@ -286,6 +319,36 @@
 		#foreach($yAxisKey in $yAxisList.keySet())
 			
 			#set($yAxis = $yAxisList.get($yAxisKey))
+			
+			title: 
+			{
+			 	text: '$yAxis.TITLE.text',
+			 	 			 
+				 style:
+				 {				 	
+		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+			        	#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+			        	
+			        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',	
+	        			#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisTitleStyle)        			
+						#else
+		        			$styleName: '$axisTitleStyle',
+		        		#end
+		        	#end
+			     },
+			     
+				#if ($labelAlign == 'center' || $labelAlign=="")
+					align: 'middle',
+				#elseif ($labelAlign == 'left' )
+					align: 'low',
+				#elseif ($labelAlign == 'right' )
+					align: 'high',
+				#end
+		 	},
 			
 			labels:{
 				 
@@ -307,9 +370,9 @@
 	        		#end
 	        	#end
         		},
-        		
+        			        		       		
         		#if($labelAlign)
-        			align:"$labelAlign",
+        			align: "$labelAlign",
         		#end
         		
         		#if($rotation!="" &&  $rotation!="null")

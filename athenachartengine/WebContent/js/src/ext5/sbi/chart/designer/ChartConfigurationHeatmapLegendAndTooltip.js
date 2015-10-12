@@ -9,11 +9,11 @@ Ext.define
 		           'Sbi.chart.designer.StylePopup',
 		           'Sbi.chart.designer.StylePopupLegendHeatmap'
 		           ],
-		columnWidth: 0.2,
+        width: 200,
 		title: LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-		bodyPadding: 10,
 		items: [],
 		height: 110,
+		bodyPadding: 10,
 	
 	    fieldDefaults: 
 	    {
@@ -38,7 +38,7 @@ Ext.define
 					title:LN('sbi.chartengine.configuration.legendstyle'), 
 		    	    viewModel: this.viewModel,		
 		    	    bindFontAlign:'{configModel.legendAlign}',
-		    	    bindSymbolWidth:'{configModel.symbolWidth}'
+		    	    bindSymbolHeight:'{configModel.symbolHeight}'
 				}
 			);
 			
@@ -64,8 +64,9 @@ Ext.define
 			 		
 			 		defaults : 
 			 		{
-			 			labelWidth : '100%',
-			 			margin:'0 30 0 0'
+			 			//labelWidth : '100%',
+			 			// (top, right, bottom, left)
+			 			margin:'5 0 5 0'
 			 		},
 			 		
 			 		items:
@@ -80,6 +81,7 @@ Ext.define
 						{
                     		 xtype : 'button',
                     		 text: LN("sbi.chartengine.configuration.heatmap.legendButtonText"), 
+                    		 margin: '5 20 5 30',
                     		 
                     		 handler: function()
                     		 {
@@ -96,7 +98,7 @@ Ext.define
 					defaults : 
 					{
 						labelWidth : '100%',
-						margin:'0 30 0 0'
+						margin: '0 0 5 0'
 					},
 					
 					items:
@@ -109,8 +111,9 @@ Ext.define
 						},
 					 
 						{
-				     		 xtype : 'button',
+				     		 xtype : 'button',				     	
 				     		 text: LN("sbi.chartengine.configuration.heatmap.tooltipButtonText"),
+				     		 margin: '0 0 0 30',
 				     		 
 				     		 handler: function()
 				     		 {

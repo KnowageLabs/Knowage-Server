@@ -1102,14 +1102,14 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 : '';
 
 				/**
-				 * If we have a HEATMAP chart we need 'symbolWidth' parameter since it is necessary
+				 * If we have a HEATMAP chart we need 'symbolHeight' parameter since it is necessary
 				 * for rendering of it's legend (the bar with the interval of 'temperatures'). This
-				 * parameter represents the width of the bar (legend).
+				 * parameter represents the height of the bar (legend).
 				 * (danilo.ristovski@mht.net)
 				 */
 				if (chartType.toUpperCase() == "HEATMAP") {
-					LEGEND['symbolWidth'] = (chartModel.get('symbolWidth') != undefined) ? chartModel
-					.get('symbolWidth') : 0;
+					LEGEND['symbolHeight'] = (chartModel.get('symbolHeight') != undefined) ? chartModel
+					.get('symbolHeight') : 0;
 				}
 
 				var legendStyle = '';
@@ -1644,11 +1644,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * Variable used for the HEATMAP chart
 			 * (danilo.ristovski@mht.net)
 			 */
-			var jsonHeatmapChartSybmolWidth = null;
+			var jsonHeatmapChartSybmolHeight = null;
 
 			if (Sbi.chart.designer.Designer.chartTypeSelector
 				.getChartType() == 'HEATMAP') {
-				jsonHeatmapChartSybmolWidth = jsonTemplate.CHART.LEGEND.symbolWidth ? jsonTemplate.CHART.LEGEND.symbolWidth : '';
+				jsonHeatmapChartSybmolHeight = jsonTemplate.CHART.LEGEND.symbolHeight ? jsonTemplate.CHART.LEGEND.symbolHeight : '';
 			}
 
 			/**
@@ -1844,7 +1844,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 * (danilo.ristovski@mht.net)
 					 *
 					 */
-					symbolWidth : (jsonHeatmapChartSybmolWidth != null) ? jsonHeatmapChartSybmolWidth : null,
+					symbolHeight : (jsonHeatmapChartSybmolHeight != null) ? jsonHeatmapChartSybmolHeight : null,
 
 					/**
 					 * Added for the GAUGE chart. Mandatory parameters for the chart -

@@ -47,6 +47,11 @@
     	#if($chartType == 'line' || $chartType == 'radar')
     		#set($chartTypeToPrint = 'line')
     	#end
+    	
+    	## I think this could be useful (danristo) !!!
+    	#if ($chartType != 'radar')
+    		marginRight: 110,
+		#end
     
         type: '$chartTypeToPrint',
     	#if($chartType == 'radar')
@@ -301,6 +306,7 @@
 	 {
 		 title: {
 			 text: '$xAxis.TITLE.text',
+			 ##y:-150,
 			 
 			 #set ($xTitleAlign = $xAxis.TITLE.style.align)
 			 #if( $xTitleAlign != '' )
@@ -320,6 +326,8 @@
 	        			fontStyle: '$axisTitleStyle',
 					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 	        			textDecoration: 'underline',
+	        		#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisTitleStyle)
 					#elseif($axisTitleStyle != '')
 	        			$styleName: '$axisTitleStyle',
 	        		#end
@@ -346,8 +354,17 @@
 	        	#end
         		},
         		
-        		#if($labelAlign)
-        			align:"$labelAlign",
+        		#*
+        			If chart's orientation is horizontal, then skip axis label alignment (it will be 
+        			predefined one - defined by the Highcharts library), since the label aligned left will 
+        			overlap with the title (characteristic of this library). Hence, the value inside 
+        			of the combo for alignment of labels on the axis inside of the X-axis panel's Axis 
+        			style configuration popup will not be taken into account.
+        			
+        			@author: danristo (danilo.ristovski@mht.net)
+        		*#  
+        		#if($labelAlign && ($chart.orientation == 'vertical' || $chartType == "radar"))
+        			align: "$labelAlign",
         		#end
         		
         		#if($rotation!="" &&  $rotation!="null")
@@ -372,16 +389,17 @@
         
         {
         	min: 0,
+        	
         	title: {
         		text: '$yAxis.TITLE.text',
-        		
+        		##x:50,
         		#*
         		#if( $yAxis.style.rotate != '' ) 
         			rotation: $yAxis.style.rotate,
         		#end
         		*#
         		
-        		#if( $yAxis.TITLE.style.align != '' )
+        		#if( $chartType != "radar" && $yAxis.TITLE.style.align != '' )
         			#if ($yAxis.TITLE.style.align == 'center' )
 					align: 'middle',
 					#else
@@ -396,42 +414,65 @@
 		        			fontStyle: '$axisTitleStyle',
 						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
 		        			textDecoration: 'underline',
+		        		#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisTitleStyle)
 						#else		        			
 		        			$styleName: '$axisTitleStyle',
 		        		#end
 		        	#end
         		},
+        		
+        		#if ($chartType == "radar")
+	    			#if($labelAlign=="center" || $labelAlign=="")
+	    				align: "middle",
+	    			#elseif($labelAlign=="left")
+	    				align: "low",
+	    			#elseif($labelAlign=="right")
+	    				align: "high",
+	    			#end   
+    			#end   
         	},
         	
         	labels: {
-    		#if( $yAxis.style != '' ) 
-        		style:{
-	        	#foreach($styleName in $yAxis.style.keySet())
-	        		#set ($axisStyle = $yAxis.style[$styleName])
-	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
-	        			fontStyle: '$axisStyle',
-					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
-	        			textDecoration: 'underline',
-	        		#elseif($styleName == 'align')
-	        			#set($labelAlign=$axisStyle)
-	        		#elseif($styleName == 'rotate')
-	        			#set($rotation=$axisStyle)
-					#else		        			
-	        			$styleName: '$axisStyle',
+        		
+        		x:0,
+        	
+	    		#if( $yAxis.style != '' ) 
+	        		style:{
+		        	#foreach($styleName in $yAxis.style.keySet())
+		        		#set ($axisStyle = $yAxis.style[$styleName])
+		        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+		        			fontStyle: '$axisStyle',
+						#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+		        			textDecoration: 'underline',
+		        		#elseif($styleName == 'align')
+		        			#set($labelAlign=$axisStyle)
+		        		#elseif($styleName == 'rotate')
+		        			#set($rotation=$axisStyle)
+						#else		        			
+		        			$styleName: '$axisStyle',
+		        		#end
+		        	#end
+	        		},
+	        		
+	        		#*
+	        			If chart's orientation is vertical, then skip axis label alignment (it will be 
+	        			predefined one - defined by the Highcharts library), since the label aligned left 
+	        			will overlap with the title (characteristic of this library). Hence, the value inside 
+	        			of the combo for alignment of labels on the axis inside of the Y-axis panel's Axis 
+	        			style configuration popup will not be taken into account.
+	        			
+	        			@author: danristo (danilo.ristovski@mht.net)
+	        		*# 	        		       		
+	        		#if($labelAlign && ($chart.orientation == 'horizontal' || $chartType == "radar"))
+	        			align: "$labelAlign",	        		     			
 	        		#end
-	        	#end
-        		},
-        		
-        		#if($labelAlign)
-        			align:"$labelAlign" ,
-        		#end
-        		
-        		#if($rotation!="" &&  $rotation!="null")
-        			rotation: $rotation,
-    			#end
-        	#end
-        		
-    		
+	        		        		
+	        		#if($rotation!="" &&  $rotation!="null")
+	        			rotation: $rotation,
+	    			#end
+	    			
+	        	#end     		
             },
         	
 	        #if($yAxis.MAJORGRID.interval != '')

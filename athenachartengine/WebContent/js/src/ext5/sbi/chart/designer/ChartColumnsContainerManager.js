@@ -269,13 +269,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		});
 					    		
 					    		/**
-					    		 * For the HEATMAP chart type hide these three fieldsets inside the
+					    		 * For the HEATMAP chart type hide these two fieldsets inside the
 					    		 * Axis style configuration popup window since we don't need them.
+					    		 * 
 					    		 * @author: danristo (danilo.ristovski@mht.net)
 					    		 */
 						    	if (chartType.toUpperCase() == 'HEATMAP')
 					    		{
-						    		axisStylePopup.getComponent('titleFieldSetForAxis').hide();
 						    		axisStylePopup.getComponent('majorGridFieldSetYAxis').hide();
 						    		axisStylePopup.getComponent('minorGridFieldSetYAxis').hide();
 					    		}							    	

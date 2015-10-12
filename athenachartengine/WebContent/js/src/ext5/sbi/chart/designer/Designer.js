@@ -204,6 +204,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    				   }
 				    				   }
 							        ]
+								},
+								
+								VALUES:
+								{
+									SERIE:
+									{
+										postfixChar: "TTTRRRUUU"
+									}
 								}
 							}						
 						},
@@ -310,8 +318,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 								type: "HEATMAP",
 								
 								LEGEND: {		
-									symbolWidth: 50,
-									style: "align:center;"									
+									symbolHeight: 400,
+									style: "align:middle;"									
 								},
 								
 								TOOLTIP: {										
@@ -626,6 +634,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 					    				   }
 				    				   }
 							        ]
+								},
+								
+								VALUES:
+								{
+									SERIE:
+									{
+										postfixChar: "TTTRRRUUU"
+									}
 								}
 							}						
 						},
@@ -732,8 +748,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 								type: "HEATMAP",
 								
 								LEGEND: {		
-									symbolWidth: 50,
-									style: "align:center;"									
+									symbolHeight: 100,
+									style: "align:top;"									
 								},
 								
 								TOOLTIP: {										
@@ -1062,7 +1078,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (danristo :: danilo.ristovski@mht.net) 
 			 */			
 			var applyAxes = true;
-			var configApplyAxes = {applyAxes: applyAxes};
+			var applySeries = true;
+			   var configApplyAxes = {
+			     applyAxes: applyAxes,
+			     applySeries: applySeries,
+			     };
 			
 			if (newChart == true) {
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
@@ -2012,17 +2032,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 						    	var axisStylePopup = Ext.create('Sbi.chart.designer.AxisStylePopup', {
 						    		axisData: thisChartColumnsContainer.getAxisData()
 								});
-								
-						    	/**
-					    		 * Hide the Title collapsable field container when we open the
-					    		 * Axis style configuration popup for the HEATMAP chart. We do
-					    		 * not need the one.
-					    		 * (danilo.ristovski@mht.net)
-					    		 */
-						    	// TODO: Extend this if-statement also with other chart types that don't need the element
-						    	if (chartType.toUpperCase() == 'HEATMAP') {
-						    		axisStylePopup.getComponent('titleFieldSetForAxis').hide();
-					    		}	
 						    	
 						    	axisStylePopup.show();						    	
 					    	}					    		
@@ -2103,8 +2112,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			if (typeOfChart == "SUNBURST" || typeOfChart == "WORDCLOUD" || 
 					typeOfChart == "TREEMAP" || typeOfChart == "PARALLEL" ||
-						typeOfChart == "HEATMAP" || typeOfChart == "CHORD" || 
-							typeOfChart == "PIE" || typeOfChart == "RADAR") {
+						 typeOfChart == "CHORD" || typeOfChart == "PIE") {
 				/**
 				 * Hide the bottom (X) axis title textbox	
 				 */
@@ -2113,9 +2121,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/**
 				 * Hide the gear icon on the bottom (X) axis panel	
 				 */
-				if (typeOfChart != "HEATMAP") {
-					Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;
-				}
+				Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;
+				
 			}
 		
 			this.chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
@@ -2510,22 +2517,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 									|| chartType == "CHORD" || chartType == "PIE" || chartType == "RADAR"
 										||chartType == "SCATTER" || chartType == "HEATMAP") {
 							
-							if (chartType != "RADAR")
-							{
+							if (chartType != "RADAR" && chartType != "HEATMAP" && chartType != "SCATTER")
+							{		
 								hideAxisTitleTextbox = true;
-								
-								if (chartType != "HEATMAP")
-									hideGearTool = true;
+								hideGearTool = true;
 							}
 							
 							hidePlusGear = true;
 						}
-						// (danilo.ristovski@mht.net)
-//						else if (chartType == "HEATMAP") {
-//							
-//								hideAxisTitleTextbox = true;
-//						}
-						// END
 						
 						// (danilo.ristovski@mht.net)
 						var config = {
@@ -3071,8 +3070,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				(chartViewModelData.legendAlign=="" || chartViewModelData.legendAlign==null || chartViewModelData.legendAlign==undefined) ?
 						errorMsg += "- " + "<b>Alignment</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.symbolWidth=="" || chartViewModelData.symbolWidth==null || chartViewModelData.symbolWidth==undefined) ?
-						errorMsg += "- " + "<b>Symbol width</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(chartViewModelData.symbolHeight=="" || chartViewModelData.symbolHeight==null || chartViewModelData.symbolHeight==undefined) ?
+						errorMsg += "- " + "<b>Symbol height</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				
 				(chartViewModelData.tipFontFamily=="" || chartViewModelData.tipFontFamily==null || chartViewModelData.tipFontFamily==undefined) ?
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
