@@ -1564,7 +1564,12 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 *  @return {Object[]} The parameters list
 	 */
 	, getParameters: function() {
-		return this.parameters.getRange();
+		if (Sbi.isValorized(this.parameters))
+			return this.parameters.getRange();
+		else if (Sbi.isValorized(this.storesConf.parameters))
+			return this.storesConf.parameters;
+		else
+			return [];
 	}
 
 	, getParameter: function(parameterId) {
@@ -1698,19 +1703,22 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
     	Sbi.trace("[StoreManager.createStore]: IN");
     	Sbi.trace("[StoreManager.createStore]: store [" + storeConf.storeId + "] conf is equal to [" + Sbi.toSource(storeConf, true)+ "]");
     	
+    	var p = this.getStoreParametersValues(storeConf.storeId);
+    	var parameters = Ext.JSON.encode( p );
+    	
     	var proxy = new Ext.data.HttpProxy({
 			url: Sbi.config.serviceReg.getServiceUrl('loadDataSetStore', {
 				pathParams: {datasetLabel: storeConf.storeId}
 			})
 			, method: 'GET'
-//			, params: {
-//			    	parameters: Ext.JSON.encode( this.storesConf.parameters )
-//			 },
+			, extraParams: {
+			    	parameters: parameters 
+			 }
 	    	//, timeout : this.timeout
 	    });
-    	
+		
     	proxy.on('exception', this.onStoreLoadException, this);
-    	Sbi.trace("[StoreManager.createStore]: proxy sucesfully created");
+    	Sbi.trace("[StoreManager.createStore]: proxy succesfully created");
 
 		Ext.define(storeConf.storeId, {
 		     extend: 'Ext.data.Model',
@@ -1727,16 +1735,6 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		if(storeConf.stype=="crosstab"){
 			storeType = 'Sbi.cockpit.widgets.crosstab.CrossTabStore';
 		}
-
-
-
-//
-//		for(var i=0; i<this.widgetConfig.length; i++){
-//			var aWidget = this.widgetConfig[i];
-//			if(aWidget.wtype == "crosstab" && (storeConf.storeId == aWidget.storeId)){
-//				storeType = "Sbi.cockpit.widgets.crosstab.CrossTabStore";
-//			}
-//		}
 
 		var store = Ext.create(storeType,{
 			storeId: storeConf.storeId,

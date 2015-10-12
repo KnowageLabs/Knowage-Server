@@ -42,7 +42,6 @@ Sbi.cockpit.MainPanel = function(config) {
 		c = Ext.apply(c, {
 			id: "mainPanel",
 			bodyCls : "mainPanelVisualizationMode"
-//	      ,  items    : [this.widgetContainer]
 		});
 	}
 	else
@@ -51,7 +50,6 @@ Sbi.cockpit.MainPanel = function(config) {
 		c = Ext.apply(c, {
 			id: "mainPanel",
 			bodyCls : "mainPanel"
-//	       , items    : [this.widgetContainer]
 		});
 	}
 
@@ -59,7 +57,6 @@ Sbi.cockpit.MainPanel = function(config) {
 	Sbi.cockpit.MainPanel.superclass.constructor.call(this, c);
 };
 
-//Ext.extend(Sbi.cockpit.MainPanel, Ext.Panel, {
 Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 
 	// =================================================================================================================
@@ -124,7 +121,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 
     , msgPanel: null
     
-//	, widgetContainerList: new Array()
 	, widgetContainerList: null
 
     // TODO remove from global
@@ -291,7 +287,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 			var sheetConf = {sheetId: tmpWc.id, sheetTitle:tmpWc.title, sheetConf: tmpWcConf};
 			conf.sheets.push(sheetConf);
 		}
-//		analysisState.widgetsConf = this.widgetContainer.getConfiguration();
 		analysisState.widgetsConf = conf.sheets;
 		analysisState.storesConf = Sbi.storeManager.getConfiguration();
 
@@ -466,7 +461,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 			
 			for (var i=0; i<this.widgetContainerList.length; i++){
 				var tmpWc = this.widgetContainerList[i];
-//				var selections = this.widgetContainer.getWidgetManager().getSelections() || [];
 				var selections = tmpWc.getWidgetManager().getSelections() || [];
 				
 				for(var widgetId in selections)  {
