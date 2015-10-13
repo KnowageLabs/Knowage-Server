@@ -462,6 +462,12 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     }
 
     , hideWidgetEditorWizard: function() {
+    	// Checks if the target component exists, if not the target widget container is destroyed
+    	var component = this.widgetEditorWizard.getWizardTargetComponent();
+    	if(!Sbi.isValorized(component.getWidget())) {
+    		component.destroy();
+    	}
+    	
     	if(Sbi.isValorized(this.widgetEditorWizard.getDatasetBrowserPage())){
         	this.widgetEditorWizard.getDatasetBrowserPage().resetPageState();
         	this.widgetEditorWizard.getDatasetBrowserPage().datasetsBrowserPanel.viewPanel.destroy();
