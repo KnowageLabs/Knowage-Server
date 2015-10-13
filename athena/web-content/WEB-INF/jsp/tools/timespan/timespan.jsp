@@ -14,9 +14,13 @@
 	.md-datepicker-button {
 		display: none !important;
 	}
-	.md-datepicker-input-container{
+	.md-datepicker-input-container {
 		margin-top: 10px;
-		padding-left: 40px;
+		margin-left: 0px !important;
+	}
+	.md-datepicker-input {
+		text-align: center;
+		font-weight: bold;
 	}
 </style>
 <head>
@@ -160,17 +164,21 @@
 				<md-divider style="margin:20px;"></md-divider>
 				
 				<div ng-if="ctrl.selectedItem.type" layout="row" layout-align="center center" >
-					<table style="width: 80%; font-size: 10pt; margin-top: 20px; table-layout: fixed; text-align: center;">
+					<table style="width: 80%; font-size: 10pt; table-layout: fixed; text-align: center;">
 						<tr>
 							<th>
 								<label >{{translate.load("sbi.timespan.from");}}</label>
 								<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.from" md-placeholder="Enter date" style="display: block;"></md-datepicker>
-								<angular-time-picker ng-if="ctrl.selectedItem.type=='time'" ng-model="ctrl.from" style="display: block; padding-left: 68px;"></angular-time-picker>
+								<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
+									<angular-time-picker ng-model="ctrl.from" />
+								</div>
 							</th>
 							<th>
 								<label >{{translate.load("sbi.timespan.to");}}</label>
-								<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.to" md-placeholder="Enter date" style="display: block; "></md-datepicker>
-								<angular-time-picker ng-if="ctrl.selectedItem.type=='time'" ng-model="ctrl.to" style="display: block; padding-left: 68px;"></angular-time-picker>
+								<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.to" md-placeholder="Enter date" style="display: block;"></md-datepicker>
+								<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
+									<angular-time-picker  ng-model="ctrl.to" />
+								</div>
 							</th>
 							<th>
 								<md-button ng-click="ctrl.addInterval(ctrl.from,ctrl.to)" class="md-fab md-MiniList blue" aria-label="add interval"> 
@@ -178,7 +186,7 @@
 								</md-button>
 							</th>
 							<th>
-								<md-input-container ng-if="ctrl.selectedItem.type=='temporal'">
+								<md-input-container ng-if="ctrl.selectedItem.type=='temporal'" style="padding-bottom:0px;">
 									<label>{{translate.load("sbi.timespan.delay");}}</label>
 									<input type="number" ng-model="ctrl.delay" >
 								</md-input-container>
