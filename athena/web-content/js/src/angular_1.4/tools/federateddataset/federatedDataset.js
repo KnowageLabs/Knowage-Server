@@ -375,6 +375,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	}
 	
 	ctr.toggle = function() {
+		console.log("STATE1")
+		console.log(ctr.state)
 		if(ctr.listaNew.length==0){
 			$mdDialog.show(
 					$mdDialog.alert()
@@ -391,11 +393,17 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			);
 		} else {
 			ctr.state=!ctr.state;
+			console.log("STATE2")
+			console.log(ctr.state)
 		}
 	}
 	
 	ctr.toggleBack = function() {
+		console.log("STATE b 1")
+		console.log(ctr.state)
 		ctr.state=!ctr.state;
+		console.log("STATE b 2")
+		console.log(ctr.state)
 	}
 	
 	ctr.kickOutFromAssociationArray = function(param) {//ispitati
@@ -543,7 +551,9 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
         				}
         			}
     			}
-        	} 
+        	}
+			ctr.multiArray = JSON.parse(valueRelString);
+			
 		} else {
 			console.log("List or ListaNew are not loaded!!")
 		}
