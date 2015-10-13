@@ -33,6 +33,7 @@ function behavior(translate, restServices, $scope) {
 	ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
 	ctrl.from;
 	ctrl.to;
+	ctrl.delay;
 	
 	ctrl.menuTs = [{
 		label : translate.load('sbi.generic.delete'),
@@ -67,8 +68,7 @@ function behavior(translate, restServices, $scope) {
 				} else {
 					ctrl.selectedItem = data;
 					ctrl.selectedItem.isnew = false;
-					ctrl.from = "";
-					ctrl.to = "";
+					ctrl.resetFields();
 					console.log("item loaded " + ctrl.selectedItem.id);					
 				}
 			}).error(function(data, status, headers, config) {
@@ -79,24 +79,28 @@ function behavior(translate, restServices, $scope) {
 	
 	
 	ctrl.addInterval = function(from, to) {
-		if(ctrl.selectedItem.type=='temporal'){
-			var f = ("0" + from.getDate()).slice(-2) + "/" + ("0" + (from.getMonth()+1)).slice(-2) + "/" + from.getFullYear(); 
-			var t = ("0" + to.getDate()).slice(-2) + "/" + ("0" + (to.getMonth()+1)).slice(-2) + "/" + to.getFullYear(); 
-			var interval = { "from": f, "to": t }
-		} else {
-			var interval = { "from": from, "to": to }
+		if(from && to){
+			if(ctrl.selectedItem.type=='temporal'){
+				if (ctrl.delay){
+					from = delayDate(from, ctrl.delay);
+					to = delayDate(to, ctrl.delay);
+				}
+				var f = ("0" + from.getDate()).slice(-2) + "/" + ("0" + (from.getMonth()+1)).slice(-2) + "/" + from.getFullYear(); 
+				var t = ("0" + to.getDate()).slice(-2) + "/" + ("0" + (to.getMonth()+1)).slice(-2) + "/" + to.getFullYear(); 
+				var interval = { "from": f, "to": t };
+			} else {
+				var interval = { "from": from, "to": to };
+			}
+			ctrl.selectedItem.definition.push(interval);
 		}
-		
-		ctrl.selectedItem.definition.push(interval);
-		
-		ctrl.from = "";
-		ctrl.to = "";
 	}
+
 	
 	ctrl.removeInterval = function(interval) {
 		ctrl.selectedItem.definition.splice(ctrl.selectedItem.definition
 				.indexOf(interval), 1)
 	}
+	
 	
 	ctrl.cancel = function() {
 		if (ctrl.selectedItem.isnew)
@@ -104,14 +108,13 @@ function behavior(translate, restServices, $scope) {
 		else {
 			ctrl.selectedItem = ctrl.loadTimespan(ctrl.selectedItem);
 		}
-		ctrl.from = "";
-		ctrl.to = "";
+		ctrl.resetFields();
 	}
+	
 	
 	ctrl.newTs = function() {
 		ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
-		ctrl.from = "";
-		ctrl.to = "";
+		ctrl.resetFields();
 	}
 	
 	
@@ -136,6 +139,7 @@ function behavior(translate, restServices, $scope) {
 				console.log("save error "+status);
 			})
 	}
+	
 	
 	ctrl.deleteTimespan = function(item) {
 		restServices
@@ -162,23 +166,36 @@ function behavior(translate, restServices, $scope) {
 	
 	ctrl.changeType = function() {
 		ctrl.selectedItem.definition = [];
+		ctrl.resetFields();
+	}
+	
+	
+	ctrl.resetFields = function() {
 		ctrl.from = "";
 		ctrl.to = "";
+		ctrl.delay = "";
 	}
+	
 	
 	function listTimespan() {
 		restServices.get("1.0/timespan", "listTimespan").success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					console.log("nope");
+					console.log("list error");
 				} else {
 					console.log("success");
 					ctrl.tsList = data;
 				}
 			}).error(function(data, status, headers, config) {
-				console.log("nope nope");
+				console.log("list error "+status);
 			})
 	}
 	
 	
+	function delayDate(date, delay) {
+		var d_orig = new Date(date);
+		var d_delay = new Date();
+		d_delay.setDate(d_orig.getDate()+delay);
+		return d_delay;
+	}
 }
