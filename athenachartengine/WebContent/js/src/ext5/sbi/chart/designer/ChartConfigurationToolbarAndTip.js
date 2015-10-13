@@ -1,5 +1,7 @@
 /**
- * SUNBURST chart type
+ * Customization panel for the SUNBURST chart type (Step 2).
+ * 
+ * @author: danristo (danilo.ristovski@mht.net)
  */
 Ext.define
 (
@@ -8,12 +10,24 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "chartToolbarAndTip",
+		
+		/**
+		 * NOTE: 
+		 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+		 * Instead of using dynamic width for this panel that relies
+		 * on the width of the width of the window of the browser, fix this
+		 * value so it can be entirely visible to the end user. Also the
+		 * height will be defined as the fixed value.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		//columnWidth: 0.2,
 		width: 200, // fixed value: current solution for the ATHENA-154 bug
+		height: 110,
+		
 		title: LN("sbi.chartengine.configuration.toolbarAndTip.title"),
 		bodyPadding: 10,
-		items: [],
-		height: 110,
+		items: [],		
 		
 		requires : [
 			            'Sbi.chart.designer.StylePopupTip',

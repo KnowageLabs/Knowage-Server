@@ -6,6 +6,19 @@ Ext.define('Sbi.chart.designer.ChartConfiguration',{
     main:null,
     second:null,
     
+    /**
+	 * NOTE: 
+	 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+	 * Allow vertical and horizontal scroll bar appearance for the chart
+	 * configuration panel (the one that contains the main and the second 
+	 * panel) on the Step 2 when its item are not visible anymore due to 
+	 * resizing of the window of the browser.
+	 * 
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
+    overflowX: "auto", 
+    overflowY: "auto",
+    
     requires: [
                'Sbi.chart.designer.ChartConfigurationSecondContainer'
            ],

@@ -8,11 +8,25 @@ Ext.define
 		requires: [
 		           'Sbi.chart.designer.ChartConfigurationScatterZoomType'
 		           ],
-		columnWidth: 0.3,
-		title: LN("sbi.chartengine.configuration.scatter.panelTitle"),
+				
+       /**
+       	 * NOTE: 
+       	 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+       	 * Instead of using dynamic width for this panel (Scatter configuration) 
+       	 * that relies on the width of the width of the window of the browser, 
+       	 * fix this value so it can be entirely visible to the end user. Also the
+       	 * height will be defined as the fixed value.
+       	 * 
+       	 * @author: danristo (danilo.ristovski@mht.net)
+       	 */
+       //columnWidth: 0.3,     		          
+        width: 290,
+        height: 230,
+        
+        title: LN("sbi.chartengine.configuration.scatter.panelTitle"),
 		bodyPadding: 10,
 		items: [],
-		height: 230,
+		
 	
 	    fieldDefaults: 
 	    {

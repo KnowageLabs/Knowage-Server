@@ -2,7 +2,19 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     alternateClassName: ['ChartConfigurationPalette'],
     id: "chartColorPallete",
 	extend : 'Ext.panel.Panel',
-	columnWidth: 0.3,
+	
+	/**
+	 * NOTE: 
+	 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+	 * Instead of using dynamic width for this panel (Palette) that relies
+	 * on the width of the width of the window of the browser, fix this
+	 * value so it can be entirely visible to the end user. 
+	 * 
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
+	//columnWidth: 0.3,
+	width: 270,
+	
 	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,
 	items : [],

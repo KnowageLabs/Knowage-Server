@@ -5,7 +5,21 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "chartParallelLegend",
-		columnWidth: 0.2,
+		
+		/**
+		 * NOTE: 
+		 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+		 * Instead of using dynamic width for this panel that relies
+		 * on the width of the width of the window of the browser, fix this
+		 * value so it can be entirely visible to the end user. Also the
+		 * height will be defined as the fixed value.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+//		columnWidth: 0.2,
+		width: 200,
+		height: 110,
+		
 		title: LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
 		bodyPadding: 10,
 		items: [],

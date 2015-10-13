@@ -1421,9 +1421,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			return Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() != 'SUNBURST'
 			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'WORDCLOUD'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'SCATTER'
+			.getChartType() != 'WORDCLOUD'			 
 			 && Sbi.chart.designer.Designer.chartTypeSelector
 			.getChartType() != 'GAUGE';
 		},

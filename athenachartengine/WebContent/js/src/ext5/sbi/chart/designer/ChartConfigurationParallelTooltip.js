@@ -5,12 +5,25 @@ Ext.define
 	{
 		extend: 'Ext.panel.Panel',
 		id: "chartParallelTooltip",
-		columnWidth: 0.5,
+		
+		/**
+		 * NOTE: 
+		 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+		 * Instead of using dynamic width for this panel that relies
+		 * on the width of the width of the window of the browser, fix this
+		 * value so it can be entirely visible to the end user. Also the
+		 * height will be defined as the fixed value.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+//		columnWidth: 0.5,
+		width: 500,
+		height: 220,
+		
 		title: LN("sbi.chartengine.configuration.parallel.tooltip.title"), 
 		bodyPadding: 10,
 		items: [],
-		height: 220,
-	
+			
 	    fieldDefaults: 
 	    {
 	        anchor: '100%'

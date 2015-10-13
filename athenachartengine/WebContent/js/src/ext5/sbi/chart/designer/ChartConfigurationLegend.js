@@ -1,6 +1,20 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	extend : 'Ext.panel.Panel',
-	columnWidth : 0.7,
+	
+	/**
+	 * NOTE: 
+	 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+	 * Instead of using dynamic width for this panel (Legend) that relies
+	 * on the width of the width of the window of the browser, fix this
+	 * value so it can be entirely visible to the end user. Also the
+	 * height will be defined as the fixed value.
+	 * 
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
+	//columnWidth : 0.7, 
+	width: 470, 
+	height: 120,
+	
 	id: "chartLegend",
 	title : LN('sbi.chartengine.configuration.legend'),
 	bodyPadding : 10,

@@ -16,11 +16,23 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	fieldDefaults: {
         anchor: '100%'
 	},
+	
 	//**********************//
 	
 	height: null,
-	
 	width: null,
+	
+	/**
+	 * NOTE: 
+	 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
+	 * Allow vertical and horizontal scroll bar appearance for the main
+	 * (Generic) configuration panel on the Step 2 when its item are not 
+	 * visible anymore due to resizing of the window of the browser.
+	 * 
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
+	overflowX: "auto",
+	overflowY: "auto",
 	
 	chartOrientation : null,
 	

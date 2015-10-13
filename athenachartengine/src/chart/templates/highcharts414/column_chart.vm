@@ -59,7 +59,7 @@
     	#end
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
-        #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'pie')
+        #if($chart.orientation == 'horizontal' && $chartTypeToPrint != 'pie' && $chartTypeToPrint != 'radar')
         inverted: true,
         #end
         
