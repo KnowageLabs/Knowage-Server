@@ -84,8 +84,10 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiArtifact;
 import it.eng.spagobi.tools.catalogue.metadata.SbiArtifactContent;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -1888,7 +1890,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				if (existingObjId != null) {
 					logger.debug("delete existing SbiObjPar referring to object with label: " + obj.getLabel());
 					deletePreviousObjParameter(existingObjId, obj.getBiobjId(), obj);
-
+					logger.debug("delete existing SbiObjDs referring to object with label: " + obj.getLabel());
+					deletePreviousObjDataSet(existingObjId, obj.getBiobjId(), obj);
 				} else {
 					logger.debug("not an existing document with label " + obj.getLabel() + " was present before import.");
 				}
@@ -1897,6 +1900,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				// puts parameters into object
 				importBIObjPar(exportedObj.getBiobjId());
 
+				// puts dataset relationships
+				importBIObjDataSet(exportedObj.getBiobjId());
 				// puts dependencies into object
 				importObjParUse(exportedObj.getBiobjId());
 				// puts visual into object
@@ -2173,6 +2178,66 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			logger.error("Error while getting exported template objects ", he);
 			List params = new ArrayList();
 			params.add("Sbi_subobject");
+			params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	/**
+	 * Imports associations between dataset and current exported biobject
+	 * 
+	 * @param exportedBIObjectId
+	 *            The id of the current exported object
+	 * @throws EMFUserError
+	 */
+	private void importBIObjDataSet(Integer exportedBIObjectId) throws EMFUserError {
+		logger.debug("IN");
+		try {
+			List exportedObjDataSetList = importer.getFilteredExportedSbiObjects(sessionExpDB, "SbiObjDataSet", "sbiObject.biobjId", exportedBIObjectId);
+			Iterator iterSbiObjDataSet = exportedObjDataSetList.iterator();
+			while (iterSbiObjDataSet.hasNext()) {
+				SbiObjDataSet exportedObjDataSet = (SbiObjDataSet) iterSbiObjDataSet.next();
+				Integer oldDataSetId = exportedObjDataSet.getDsId();
+				SbiObjects biobj = exportedObjDataSet.getSbiObject();
+				Integer oldBIObjId = biobj.getBiobjId();
+				Map assBIObj = metaAss.getBIobjIDAssociation();
+				Map assDataSet = metaAss.getDataSetIDAssociation();
+				Integer newDataSetId = (Integer) assDataSet.get(oldDataSetId);
+				Integer newBIObjId = (Integer) assBIObj.get(oldBIObjId);
+
+				logger.debug("importing SbiObjDataSet with previous keys: biObjId " + oldBIObjId + " dataSetId " + oldDataSetId);
+				logger.debug("importing SbiObjDataSet with new keys: biObjId " + newBIObjId + " dataSetId " + newDataSetId);
+
+				Integer oldId = exportedObjDataSet.getBiObjDsId();
+
+				SbiObjDataSet newObjDataSet = importUtilities.makeNew(exportedObjDataSet, sessionCurrDB, metaAss);
+				this.updateSbiCommonInfo4Insert(newObjDataSet);
+				sessionCurrDB.save(newObjDataSet);
+				sessionCurrDB.flush();
+
+				logger.debug("Inserted new biobject dataset association with dataset " + newObjDataSet.getDsId() + " for biobject "
+						+ newObjDataSet.getSbiObject().getName());
+				metaLog.log("Inserted new biobject dataset association with dataset " + newObjDataSet.getDsId() + " for biobject "
+						+ newObjDataSet.getSbiObject().getName());
+				Integer newId = newObjDataSet.getBiObjDsId();
+				// sessionExpDB.evict(objpar);
+				metaAss.insertCoupleObjDataSet(oldId, newId);
+				// }
+			}
+		} catch (EMFUserError he) {
+			throw he;
+		} catch (HibernateException he) {
+			logger.error("Error while inserting object ", he);
+			List params = new ArrayList();
+			params.add("sbi_obj_par");
+			params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} catch (Exception e) {
+			logger.error("Error while inserting object ", e);
+			List params = new ArrayList();
+			params.add("sbi_obj_par");
 			params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
 		} finally {
@@ -2541,6 +2606,19 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		logger.debug("Ecxisting ParObjects referring to document with label" + object.getLabel() + " have been deleted");
 
 		objParameterDao.eraseBIObjectParametersByObjectId(exstingObjectId, sessionCurrDB);
+
+		logger.debug("OUT");
+	}
+
+	public void deletePreviousObjDataSet(Integer exstingObjectId, Integer exportObjectId, SbiObjects object) throws EMFUserError {
+		logger.debug("IN");
+
+		IBIObjDataSetDAO objDatasetDAO = DAOFactory.getBIObjDataSetDAO();
+
+		objDatasetDAO.eraseBIObjDataSetByObjectId(exstingObjectId, sessionCurrDB);
+
+		metaLog.log("Existing ObjDataSet referring to document with label" + object.getLabel() + " have been deleted");
+		logger.debug("Existing ObjDataSet referring to document with label" + object.getLabel() + " have been deleted");
 
 		logger.debug("OUT");
 	}

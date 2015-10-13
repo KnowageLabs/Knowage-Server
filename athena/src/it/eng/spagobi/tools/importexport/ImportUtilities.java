@@ -70,6 +70,7 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
 import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
@@ -1213,6 +1214,73 @@ public class ImportUtilities {
 	}
 
 	/**
+	 * Creates a new hibernate biobject dataset object.
+	 * 
+	 * @param objDs
+	 *            the objDs
+	 * 
+	 * @return the sbi obj dataset
+	 * @throws EMFUserError
+	 */
+	public SbiObjDataSet makeNew(SbiObjDataSet expObjDataSet, Session sessionCurrDB, MetadataAssociations metaAss) throws EMFUserError {
+		logger.debug("IN");
+		SbiObjDataSet newObjDataSet = new SbiObjDataSet();
+		try {
+
+			newObjDataSet.setIsDetail(expObjDataSet.isIsDetail());
+			entitiesAssociations(expObjDataSet, newObjDataSet, sessionCurrDB, metaAss);
+		} catch (EMFUserError e) {
+			logger.error("Error while modifying creating new objDataset", e);
+			throw e;
+		}
+		logger.debug("OUT");
+		return newObjDataSet;
+	}
+
+	public void entitiesAssociations(SbiObjDataSet exportedSbiObjDs, SbiObjDataSet newSbiObjDs, Session sessionCurrDB, MetadataAssociations metaAss)
+			throws EMFUserError {
+		logger.debug("IN");
+		// overwrite existging entities
+
+		if (exportedSbiObjDs.getSbiObject() != null) {
+			Integer objId = exportedSbiObjDs.getSbiObject().getBiobjId();
+
+			Integer newObjId = (Integer) metaAss.getBIobjIDAssociation().get(exportedSbiObjDs.getSbiObject().getBiobjId());
+			if (newObjId != null) {
+				SbiObjects sbiObject = (SbiObjects) sessionCurrDB.load(SbiObjects.class, newObjId);
+				newSbiObjDs.setSbiObject(sbiObject);
+			} else {
+				logger.error("could not find corresponding BiObject");
+				List params = new ArrayList();
+				params.add("Sbi_Object");
+				params.add("sbi_obj_ds");
+				params.add(exportedSbiObjDs.getDsId());
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params, ImportManager.messageBundle);
+			}
+		}
+
+		if (exportedSbiObjDs.getDsId() != null) {
+			Integer oldDsId = exportedSbiObjDs.getDsId();
+
+			Integer newDsId = (Integer) metaAss.getDataSetIDAssociation().get(exportedSbiObjDs.getDsId());
+
+			if (newDsId != null) {
+				// SbiDataSet sbiParameters = (SbiDataSet) sessionCurrDB.load(SbiDataSet.class, newDsId);
+				newSbiObjDs.setDsId(newDsId);
+			} else {
+				logger.error("could not find corresponding dataset");
+				List params = new ArrayList();
+				params.add("Sbi_dataset");
+				params.add("sbi_obj_dataset");
+				params.add(exportedSbiObjDs.getBiObjDsId());
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "10000", params, ImportManager.messageBundle);
+			}
+		}
+
+		logger.debug("OUT");
+	}
+
+	/**
 	 * Creates a new hibernate biobject parameter object.
 	 * 
 	 * @param objpar
@@ -1370,11 +1438,11 @@ public class ImportUtilities {
 			SbiDataSource localDS = getAssociatedSbiDataSource(exportedObj, sessionCurrDB, metaAss);
 			if (localDS != null)
 				obj.setDataSource(localDS);
-			// reading exist datasset
-			SbiDataSet localDataSet = getAssociatedSbiDataSet(exportedObj, sessionCurrDB, metaAss);
-			if (localDataSet != null) {
-			}
+			// reading exist datasset; now added later
+			// SbiDataSet localDataSet = getAssociatedSbiDataSet(exportedObj, sessionCurrDB, metaAss);
+			// if (localDataSet != null) {
 			// obj.setDataSet(localDataSet.getId().getDsId());
+			// }
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1404,41 +1472,40 @@ public class ImportUtilities {
 
 	}
 
-	private SbiDataSet getAssociatedSbiDataSet(SbiObjects exportedObj, Session sessionCurrDB, MetadataAssociations metaAss) {
-		logger.debug("IN");
-		SbiDataSet localDS = null;
-		// Integer expDataset = exportedObj.getDataSet();
-		Integer expDataset = 111;
+	// private SbiDataSet getAssociatedSbiDataSet(SbiObjects exportedObj, Session sessionCurrDB, MetadataAssociations metaAss) {
+	// logger.debug("IN");
+	// SbiDataSet localDS = null;
+	// Integer expDataset = exportedObj.getDataSet();
+	//
+	// if (expDataset != null) {
+	// Integer existingDatasetId = (Integer) metaAss.getDataSetIDAssociation().get(expDataset);
+	// Query hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+	// hqlQuery.setBoolean(0, true);
+	// hqlQuery.setInteger(1, existingDatasetId);
+	// // hqlQuery.setInteger(1, expDataset);
+	// localDS = (SbiDataSet) hqlQuery.uniqueResult();
+	// if (datasetMap.get(localDS.getId().getDsId()) == null) {
+	// datasetMap.put(localDS.getId().getDsId(), localDS);
+	// }
+	//
+	// } else {
+	// logger.debug("no dataset associated to document");
+	// }
+	//
+	// if (localDS != null) {
+	// logger.debug("OUT");
+	// return localDS;
+	// } else {
+	// logger.debug("OUT");
+	// return null;
+	// }
 
-		if (expDataset != null) {
-			Integer existingDatasetId = (Integer) metaAss.getDataSetIDAssociation().get(expDataset);
-			Query hqlQuery = sessionCurrDB.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
-			hqlQuery.setBoolean(0, true);
-			hqlQuery.setInteger(1, existingDatasetId);
-			// hqlQuery.setInteger(1, expDataset);
-			localDS = (SbiDataSet) hqlQuery.uniqueResult();
-			if (datasetMap.get(localDS.getId().getDsId()) == null) {
-				datasetMap.put(localDS.getId().getDsId(), localDS);
-			}
-
-		} else {
-			logger.debug("no dataset associated to document");
-		}
-
-		if (localDS != null) {
-			logger.debug("OUT");
-			return localDS;
-		} else {
-			logger.debug("OUT");
-			return null;
-		}
-
-		/*
-		 * orig: SbiDataSetConfig expDataset = exportedObj.getDataSet(); if (expDataset != null) { Integer existingDatasetId = (Integer)
-		 * metaAss.getDataSetIDAssociation().get(new Integer(expDataset.getDsId())); SbiDataSetConfig localDS = (SbiDataSetConfig)
-		 * sessionCurrDB.load(SbiDataSetConfig.class, existingDatasetId); logger.debug("OUT"); return localDS; } else { logger.debug("OUT"); return null; }
-		 */
-	}
+	/*
+	 * orig: SbiDataSetConfig expDataset = exportedObj.getDataSet(); if (expDataset != null) { Integer existingDatasetId = (Integer)
+	 * metaAss.getDataSetIDAssociation().get(new Integer(expDataset.getDsId())); SbiDataSetConfig localDS = (SbiDataSetConfig)
+	 * sessionCurrDB.load(SbiDataSetConfig.class, existingDatasetId); logger.debug("OUT"); return localDS; } else { logger.debug("OUT"); return null; }
+	 */
+	// }
 
 	private SbiDomains getAssociatedBIObjectState(SbiObjects exportedObj, Session sessionCurrDB, ImporterMetadata importer) throws EMFUserError {
 		logger.debug("IN");

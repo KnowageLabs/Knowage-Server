@@ -104,6 +104,7 @@ public class MetadataAssociations {
 	private Map ouGrantNodesAssociation = new HashMap();
 	private Map authorizationsIDAssociation = new HashMap();
 	private Map authorizationsAssociation = new HashMap();
+	private Map objDataSetIDAssociation = new HashMap();
 
 	/**
 	 * Checks if the metadata association is empty.
@@ -197,6 +198,8 @@ public class MetadataAssociations {
 			return false;
 		if (!authorizationsIDAssociation.keySet().isEmpty())
 			return false;
+		if (!objDataSetIDAssociation.keySet().isEmpty())
+			return false;
 
 		return true;
 	}
@@ -266,7 +269,7 @@ public class MetadataAssociations {
 		artifactIDAssociation = new HashMap();
 		authorizationsAssociation = new HashMap();
 		authorizationsIDAssociation = new HashMap();
-
+		objDataSetIDAssociation = new HashMap();
 	}
 
 	/**
@@ -820,6 +823,27 @@ public class MetadataAssociations {
 	 */
 	public void insertCoupleObjpar(Integer exp, Integer curr) {
 		objparIDAssociation.put(exp, curr);
+	}
+
+	/**
+	 * Inserts a couple of objpar id into the associations.
+	 * 
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
+	 */
+	public void insertCoupleObjDataSet(Integer exp, Integer curr) {
+		objDataSetIDAssociation.put(exp, curr);
+	}
+
+	/**
+	 * Gets the Map of associations between current and exported associations among dataset and object.
+	 * 
+	 * @return Map of associations
+	 */
+	public Map getObjDataSetAssociation() {
+		return objDataSetIDAssociation;
 	}
 
 	/**
