@@ -1832,8 +1832,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			);
 			
 			this.categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  				storeId: 'categoriesStore',
-				autoLoad: true  				
+  				storeId: 'categoriesStore'	
 			});
 			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
@@ -2542,13 +2541,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 						};
 						
 						var newColumn = Sbi.chart.designer.ChartColumnsContainerManager.createChartColumnsContainer(config);
-						
-											
-						
 						leftYAxisesPanel.add(newColumn);
 
 					} else {
-						
 						// (danilo.ristovski@mht.net)
 						var config = {
 							"idAxisesContainer":rightYAxisesPanel.id, 
@@ -2617,9 +2612,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
 									serieTooltipFontSize: jsonTooltipStyle.fontSize
 								});								
-							}
-							else
-							{
+							} 
+							else {
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
 									axisName: serie.name && serie.name != '' ? serie.name : serie.column,
@@ -2654,6 +2648,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					});
 				});
 			}
+			
+			//Forcing reset of each store if it is empty in order to show the empty message 
+			Ext.Array.each(theStorePool, function(store, index){
+				if(store.getCount() == 0) {
+					store.reload();
+				}
+			});
 			
 			// danristo : listen when axes load (final)
 			globalScope.chartTypeSelector.fireEvent("axesSet");	

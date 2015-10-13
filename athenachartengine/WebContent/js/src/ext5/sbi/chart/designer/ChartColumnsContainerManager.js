@@ -91,7 +91,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var chartColumnsContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
 				idAxisesContainer: idChartColumnsContainer,
 				autoDestroy : true,
-				autoLoad: true,
 				axisAlias: axisAlias
 			});
 			
@@ -404,8 +403,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	            							
 	            							var rec = store.removeAt(rowIndex);
 	            							
-	            							// need to force reload for showing the emptyText message 
-	            							store.reload();
+	            							// need to force reload for showing the emptyText message
+	            							if(store.getCount() == 0) {
+	            								store.reload();
+	            							}
 	            						}
 	            					}
 	            				});
