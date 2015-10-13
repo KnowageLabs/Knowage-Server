@@ -12,9 +12,9 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
@@ -54,10 +54,10 @@ public class MetadataAssociations {
 	private Map checkAssociation = new HashMap();
 	private Map paruseIDAssociation = new HashMap();
 	private Map paruseAssociation = new HashMap();
-	private Map domainIDAssociation = new HashMap();
-	private Map domainAssociation = new HashMap();
-	private Map objparIDAssociation = new HashMap();
-	private Map objparAssociation = new HashMap();
+	private final Map domainIDAssociation = new HashMap();
+	private final Map domainAssociation = new HashMap();
+	private final Map objparIDAssociation = new HashMap();
+	private final Map objparAssociation = new HashMap();
 	private Map datasourcesIDAssociation = new HashMap();
 	private Map datasetsIDAssociation = new HashMap();
 	private Map metaModelIDAssociation = new HashMap();
@@ -105,100 +105,99 @@ public class MetadataAssociations {
 	private Map authorizationsIDAssociation = new HashMap();
 	private Map authorizationsAssociation = new HashMap();
 
-	
 	/**
 	 * Checks if the metadata association is empty.
 	 * 
 	 * @return boolean, true is associations are empty false otherwise
 	 */
 	public boolean isEmpty() {
-		if(!parameterAssociation.keySet().isEmpty())
+		if (!parameterAssociation.keySet().isEmpty())
 			return false;
-		if(!roleAssociation.keySet().isEmpty())
+		if (!roleAssociation.keySet().isEmpty())
 			return false;
-		if(!biobjAssociation.keySet().isEmpty())
+		if (!biobjAssociation.keySet().isEmpty())
 			return false;
-		if(!lovAssociation.keySet().isEmpty())
+		if (!lovAssociation.keySet().isEmpty())
 			return false;
-		if(!functAssociation.keySet().isEmpty())
+		if (!functAssociation.keySet().isEmpty())
 			return false;
-		if(!engineAssociation.keySet().isEmpty())
+		if (!engineAssociation.keySet().isEmpty())
 			return false;
-		if(!checkAssociation.keySet().isEmpty())
+		if (!checkAssociation.keySet().isEmpty())
 			return false;
-		if(!paruseAssociation.keySet().isEmpty())
+		if (!paruseAssociation.keySet().isEmpty())
 			return false;
-		if(!kpiAssociation.keySet().isEmpty())
+		if (!kpiAssociation.keySet().isEmpty())
 			return false;
-		if(!kpiInstanceAssociation.keySet().isEmpty())
+		if (!kpiInstanceAssociation.keySet().isEmpty())
 			return false;
-		if(!modelAssociation.keySet().isEmpty())
+		if (!modelAssociation.keySet().isEmpty())
 			return false;
-		if(!modelInstanceAssociation.keySet().isEmpty())
+		if (!modelInstanceAssociation.keySet().isEmpty())
 			return false;
-		if(!thresholdAssociation.keySet().isEmpty())
+		if (!thresholdAssociation.keySet().isEmpty())
 			return false;
-		if(!thresholdValueAssociation.keySet().isEmpty())
+		if (!thresholdValueAssociation.keySet().isEmpty())
 			return false;
-		if(!resourcesIDAssociation.keySet().isEmpty())
+		if (!resourcesIDAssociation.keySet().isEmpty())
 			return false;
-		if(!resourcesAssociation.keySet().isEmpty())
+		if (!resourcesAssociation.keySet().isEmpty())
 			return false;
-		if(!modelResourcesIDAssociation.keySet().isEmpty())
+		if (!modelResourcesIDAssociation.keySet().isEmpty())
 			return false;
-		if(!modelResourcesAssociation.keySet().isEmpty())
+		if (!modelResourcesAssociation.keySet().isEmpty())
 			return false;
-		if(!periodicityIDAssociation.keySet().isEmpty())
+		if (!periodicityIDAssociation.keySet().isEmpty())
 			return false;
-		if(!periodicityAssociation.keySet().isEmpty())
+		if (!periodicityAssociation.keySet().isEmpty())
 			return false;
-		if(!kpiInstPeriodIDAssociation.keySet().isEmpty())
+		if (!kpiInstPeriodIDAssociation.keySet().isEmpty())
 			return false;
-		if(!kpiInstPeriodAssociation.keySet().isEmpty())
-			return false;		
-		if(!alarmIDAssociation.keySet().isEmpty())
+		if (!kpiInstPeriodAssociation.keySet().isEmpty())
 			return false;
-		if(!alarmAssociation.keySet().isEmpty())
+		if (!alarmIDAssociation.keySet().isEmpty())
 			return false;
-		if(!alarmContactIDAssociation.keySet().isEmpty())
+		if (!alarmAssociation.keySet().isEmpty())
 			return false;
-		if(!alarmContactAssociation.keySet().isEmpty())
+		if (!alarmContactIDAssociation.keySet().isEmpty())
 			return false;
-		if(!objMetadataIDAssociation.keySet().isEmpty())
-			return false;	
-		if(!objMetadataAssociation.keySet().isEmpty())
-			return false;	
-		if(!objMetacontentsIDAssociation.keySet().isEmpty())
-			return false;	
-		if(!objMetacontentsAssociation.keySet().isEmpty())
-			return false;	
-		if(!subObjectIDAssociation.keySet().isEmpty())
-			return false;	
-		if(!kpiRelAssociation.keySet().isEmpty())
+		if (!alarmContactAssociation.keySet().isEmpty())
 			return false;
-		if(!udpValueAssociation.keySet().isEmpty())
+		if (!objMetadataIDAssociation.keySet().isEmpty())
 			return false;
-		if(!udpAssociation.keySet().isEmpty())
+		if (!objMetadataAssociation.keySet().isEmpty())
 			return false;
-		if(!ouAssociation.keySet().isEmpty())
+		if (!objMetacontentsIDAssociation.keySet().isEmpty())
 			return false;
-		if(!ouHierarchiesAssociation.keySet().isEmpty())
+		if (!objMetacontentsAssociation.keySet().isEmpty())
 			return false;
-		if(!ouNodesAssociation.keySet().isEmpty())
+		if (!subObjectIDAssociation.keySet().isEmpty())
 			return false;
-		if(!ouGrantAssociation.keySet().isEmpty())
+		if (!kpiRelAssociation.keySet().isEmpty())
 			return false;
-		if(!ouGrantNodesAssociation.keySet().isEmpty())
+		if (!udpValueAssociation.keySet().isEmpty())
 			return false;
-		if(!metaModelIDAssociation.keySet().isEmpty())
+		if (!udpAssociation.keySet().isEmpty())
 			return false;
-		if(!artifactIDAssociation.keySet().isEmpty())
+		if (!ouAssociation.keySet().isEmpty())
 			return false;
-		if(!authorizationsAssociation.keySet().isEmpty())
+		if (!ouHierarchiesAssociation.keySet().isEmpty())
 			return false;
-		if(!authorizationsIDAssociation.keySet().isEmpty())
+		if (!ouNodesAssociation.keySet().isEmpty())
 			return false;
-		
+		if (!ouGrantAssociation.keySet().isEmpty())
+			return false;
+		if (!ouGrantNodesAssociation.keySet().isEmpty())
+			return false;
+		if (!metaModelIDAssociation.keySet().isEmpty())
+			return false;
+		if (!artifactIDAssociation.keySet().isEmpty())
+			return false;
+		if (!authorizationsAssociation.keySet().isEmpty())
+			return false;
+		if (!authorizationsIDAssociation.keySet().isEmpty())
+			return false;
+
 		return true;
 	}
 
@@ -255,28 +254,27 @@ public class MetadataAssociations {
 		objMetacontentsIDAssociation = new HashMap();
 		objMetacontentsAssociation = new HashMap();
 		subObjectIDAssociation = new HashMap();
-		kpiRelAssociation = new HashMap ();
-		udpValueAssociation = new HashMap ();
+		kpiRelAssociation = new HashMap();
+		udpValueAssociation = new HashMap();
 		udpAssociation = new HashMap();
-		ouAssociation = new HashMap ();
+		ouAssociation = new HashMap();
 		ouHierarchiesAssociation = new HashMap();
 		ouNodesAssociation = new TreeMap();
 		ouGrantAssociation = new HashMap();
 		ouGrantNodesAssociation = new HashMap();
 		metaModelIDAssociation = new HashMap();
-		artifactIDAssociation = new HashMap();	
-		authorizationsAssociation = new HashMap();	
-		authorizationsIDAssociation = new HashMap();	
-		
-	}
+		artifactIDAssociation = new HashMap();
+		authorizationsAssociation = new HashMap();
+		authorizationsIDAssociation = new HashMap();
 
+	}
 
 	/**
 	 * Checks if Associations for the specific object are empty.
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isParameterAssEmpty(){
+	public boolean isParameterAssEmpty() {
 		return parameterAssociation.keySet().isEmpty();
 	}
 
@@ -285,7 +283,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isRoleAssEmpty(){
+	public boolean isRoleAssEmpty() {
 		return roleAssociation.keySet().isEmpty();
 	}
 
@@ -294,7 +292,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isBIObjAssEmpty(){
+	public boolean isBIObjAssEmpty() {
 		return biobjAssociation.keySet().isEmpty();
 	}
 
@@ -303,7 +301,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isLovAssEmpty(){
+	public boolean isLovAssEmpty() {
 		return lovAssociation.keySet().isEmpty();
 	}
 
@@ -312,7 +310,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isFunctAssEmpty(){
+	public boolean isFunctAssEmpty() {
 		return functAssociation.keySet().isEmpty();
 	}
 
@@ -321,7 +319,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isEngineAssEmpty(){
+	public boolean isEngineAssEmpty() {
 		return engineAssociation.keySet().isEmpty();
 	}
 
@@ -330,7 +328,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isCheckAssEmpty(){
+	public boolean isCheckAssEmpty() {
 		return checkAssociation.keySet().isEmpty();
 	}
 
@@ -339,17 +337,16 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isParuseAssEmpty(){
+	public boolean isParuseAssEmpty() {
 		return paruseAssociation.keySet().isEmpty();
 	}
-
 
 	/**
 	 * Checks if Associations for the specific object are empty.
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isKpiEmpty(){
+	public boolean isKpiEmpty() {
 		return kpiAssociation.keySet().isEmpty();
 	}
 
@@ -358,7 +355,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isModelEmpty(){
+	public boolean isModelEmpty() {
 		return modelAssociation.keySet().isEmpty();
 	}
 
@@ -367,17 +364,16 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isModelInstanceEmpty(){
+	public boolean isModelInstanceEmpty() {
 		return modelInstanceAssociation.keySet().isEmpty();
 	}
-
 
 	/**
 	 * Checks if Associations for the specific object are empty.
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isThresholdInstanceEmpty(){
+	public boolean isThresholdInstanceEmpty() {
 		return thresholdAssociation.keySet().isEmpty();
 	}
 
@@ -386,7 +382,7 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isThresholdValueInstanceEmpty(){
+	public boolean isThresholdValueInstanceEmpty() {
 		return thresholdValueAssociation.keySet().isEmpty();
 	}
 
@@ -395,11 +391,9 @@ public class MetadataAssociations {
 	 * 
 	 * @return boolean, true if associations are empty, false otherwise
 	 */
-	public boolean isKpiInstanceEmpty(){
+	public boolean isKpiInstanceEmpty() {
 		return kpiInstanceAssociation.keySet().isEmpty();
 	}
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported parameter ids.
@@ -422,19 +416,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of parameters into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleParameter(SbiParameters exp, SbiParameters curr) {
-		//parameterIDAssociation.put(exp.getParId().toString(), curr.getParId().toString());
+		// parameterIDAssociation.put(exp.getParId().toString(), curr.getParId().toString());
 		parameterAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of parameter ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleParameter(Integer exp, Integer curr) {
 		parameterIDAssociation.put(exp, curr);
@@ -461,19 +459,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of roles into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleRole(SbiExtRoles exp, SbiExtRoles curr) {
-		//roleIDAssociation.put(exp.getExtRoleId().toString(), curr.getExtRoleId().toString());
+		// roleIDAssociation.put(exp.getExtRoleId().toString(), curr.getExtRoleId().toString());
 		roleAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of role ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleRole(Integer exp, Integer curr) {
 		roleIDAssociation.put(exp, curr);
@@ -500,19 +502,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of biobjects into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleBIObj(SbiObjects exp, SbiObjects curr) {
-		//biobjIDAssociation.put(exp.getBiobjId().toString(), curr.getBiobjId().toString());
+		// biobjIDAssociation.put(exp.getBiobjId().toString(), curr.getBiobjId().toString());
 		biobjAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of biobject ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleBIObj(Integer exp, Integer curr) {
 		biobjIDAssociation.put(exp, curr);
@@ -539,19 +545,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of lovs into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleLov(SbiLov exp, SbiLov curr) {
-		//lovIDAssociation.put(exp.getLovId().toString(), curr.getLovId().toString());
+		// lovIDAssociation.put(exp.getLovId().toString(), curr.getLovId().toString());
 		lovAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of lov ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleLov(Integer exp, Integer curr) {
 		lovIDAssociation.put(exp, curr);
@@ -578,8 +588,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of functionalities into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleFunct(SbiFunctions exp, SbiFunctions curr) {
 		functAssociation.put(exp, curr);
@@ -588,8 +600,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of functionality ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleFunct(Integer exp, Integer curr) {
 		functIDAssociation.put(exp, curr);
@@ -616,19 +630,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of engines into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleEngine(SbiEngines exp, SbiEngines curr) {
-		//engineIDAssociation.put(exp.getEngineId().toString(), curr.getEngineId().toString());
+		// engineIDAssociation.put(exp.getEngineId().toString(), curr.getEngineId().toString());
 		engineAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of engine ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleEngine(Integer exp, Integer curr) {
 		engineIDAssociation.put(exp, curr);
@@ -655,19 +673,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of checks into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleCheck(SbiChecks exp, SbiChecks curr) {
-		//checkIDAssociation.put(exp.getCheckId().toString(), curr.getCheckId().toString());
+		// checkIDAssociation.put(exp.getCheckId().toString(), curr.getCheckId().toString());
 		checkAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of check ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleCheck(Integer exp, Integer curr) {
 		checkIDAssociation.put(exp, curr);
@@ -694,19 +716,23 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of parameter uses into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleParuse(SbiParuse exp, SbiParuse curr) {
-		//paruseIDAssociation.put(exp.getUseId().toString(), curr.getUseId().toString());
+		// paruseIDAssociation.put(exp.getUseId().toString(), curr.getUseId().toString());
 		paruseAssociation.put(exp, curr);
 	}
 
 	/**
 	 * Inserts a couple of parameter use ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleParuse(Integer exp, Integer curr) {
 		paruseIDAssociation.put(exp, curr);
@@ -733,8 +759,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of domains into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleDomain(SbiDomains exp, SbiDomains curr) {
 		domainAssociation.put(exp, curr);
@@ -743,13 +771,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of domain id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleDomain(Integer exp, Integer curr) {
 		domainIDAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported objpar id.
@@ -772,8 +801,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of objpar into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleObjpar(SbiObjPar exp, SbiObjPar curr) {
 		objparAssociation.put(exp, curr);
@@ -782,8 +813,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of objpar id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleObjpar(Integer exp, Integer curr) {
 		objparIDAssociation.put(exp, curr);
@@ -801,13 +834,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of datasource id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleDataSources(Integer exp, Integer curr) {
 		datasourcesIDAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported datasets.
@@ -821,8 +855,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of dataset id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleDataSets(Integer exp, Integer curr) {
 		datasetsIDAssociation.put(exp, curr);
@@ -831,14 +867,16 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of metaMdel id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
-	
+
 	public void insertCoupleMetaModel(Integer exp, Integer curr) {
 		metaModelIDAssociation.put(exp, curr);
 	}
-	
+
 	/**
 	 * Gets the Map of associations between current and exported metamodel.
 	 * 
@@ -851,14 +889,16 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of artifacts id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
-	
+
 	public void insertCoupleArtifact(Integer exp, Integer curr) {
 		artifactIDAssociation.put(exp, curr);
 	}
-	
+
 	/**
 	 * Gets the Map of associations between current and exported artifact.
 	 * 
@@ -867,8 +907,7 @@ public class MetadataAssociations {
 	public Map getArtifactIDAssociation() {
 		return artifactIDAssociation;
 	}
-	
-	
+
 	/**
 	 * Gets the Map of associations between current and exported maps.
 	 * 
@@ -881,8 +920,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of maps id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleMaps(Integer exp, Integer curr) {
 		mapsIDAssociation.put(exp, curr);
@@ -900,8 +941,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of features id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleFeatures(Integer exp, Integer curr) {
 		featuresIDAssociation.put(exp, curr);
@@ -919,8 +962,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of kpi id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpi(Integer exp, Integer curr) {
 		kpiIDAssociation.put(exp, curr);
@@ -938,8 +983,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of kpi id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpi(SbiKpi exp, SbiKpi curr) {
 		kpiIDAssociation.put(exp, curr);
@@ -957,13 +1004,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of kpi instanceid into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpiInstance(Integer exp, Integer curr) {
 		kpiInstanceIDAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported kpi instance.
@@ -977,13 +1025,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of kpi instanceid into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpiInstance(SbiKpiInstance exp, SbiKpiInstance curr) {
 		kpiInstanceAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported model.
@@ -997,13 +1046,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of model id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleModel(Integer exp, Integer curr) {
 		modelIDAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported model.
@@ -1017,14 +1067,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of model id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleModel(SbiKpiModel exp, SbiKpiModel curr) {
 		modelAssociation.put(exp, curr);
 	}
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported model instance.
@@ -1038,15 +1088,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of model instanceid into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleModelInstance(Integer exp, Integer curr) {
 		modelInstanceIDAssociation.put(exp, curr);
 	}
-
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported model instance ID.
@@ -1060,21 +1109,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of model instance into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleModelInstance(SbiKpiModelInst exp, SbiKpiModelInst curr) {
 		modelInstanceAssociation.put(exp, curr);
 	}
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported threshold.
@@ -1088,13 +1130,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of threshold into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleThreshold(Integer exp, Integer curr) {
 		thresholdIDAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported threshold.
@@ -1108,15 +1151,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of threshold into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleThreshold(SbiThreshold exp, SbiThreshold curr) {
 		thresholdAssociation.put(exp, curr);
 	}
-
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported thresholdValue.
@@ -1130,8 +1172,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of threshold value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleThresholdValue(Integer exp, Integer curr) {
 		thresholdValueIDAssociation.put(exp, curr);
@@ -1149,8 +1193,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of threshold value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleThresholdValue(SbiThresholdValue exp, SbiThresholdValue curr) {
 		thresholdValueAssociation.put(exp, curr);
@@ -1168,8 +1214,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of resources value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleResources(Integer exp, Integer curr) {
 		resourcesIDAssociation.put(exp, curr);
@@ -1187,14 +1235,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of resources into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleResources(SbiResources exp, SbiResources curr) {
-		resourcesAssociation.put(exp, curr);	
+		resourcesAssociation.put(exp, curr);
 	}
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported ModelResources.
@@ -1208,8 +1256,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of model resources value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleModelResources(Integer exp, Integer curr) {
 		modelResourcesIDAssociation.put(exp, curr);
@@ -1227,15 +1277,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of model Resources into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleModelResources(SbiKpiModelResources exp, SbiKpiModelResources curr) {
-		modelResourcesAssociation.put(exp, curr);	
+		modelResourcesAssociation.put(exp, curr);
 	}
-
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported Periodicity.
@@ -1249,8 +1298,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of periodicity value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCouplePeriodicity(Integer exp, Integer curr) {
 		periodicityIDAssociation.put(exp, curr);
@@ -1268,15 +1319,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of Periodicity into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCouplePeriodicity(SbiKpiPeriodicity exp, SbiKpiPeriodicity curr) {
-		periodicityAssociation.put(exp, curr);	
+		periodicityAssociation.put(exp, curr);
 	}
-
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported kpiInstPeriod.
@@ -1290,8 +1340,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of kpiInstPeriod value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpiInstPeriod(Integer exp, Integer curr) {
 		kpiInstPeriodIDAssociation.put(exp, curr);
@@ -1309,14 +1361,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of kpiInstPeriod into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpiInstPeriod(SbiKpiInstPeriod exp, SbiKpiInstPeriod curr) {
-		kpiInstPeriodAssociation.put(exp, curr);	
+		kpiInstPeriodAssociation.put(exp, curr);
 	}
-
-
 
 	/**
 	 * Gets the Map of associations between current and exported Alarms
@@ -1330,8 +1382,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of Alarm value into the associations
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleAlarm(Integer exp, Integer curr) {
 		alarmIDAssociation.put(exp, curr);
@@ -1349,11 +1403,13 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of alarm into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleAlarm(SbiAlarm exp, SbiAlarm curr) {
-		alarmAssociation.put(exp, curr);	
+		alarmAssociation.put(exp, curr);
 	}
 
 	/**
@@ -1368,8 +1424,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of Alarm Contact value into the associations
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleAlarmContact(Integer exp, Integer curr) {
 		alarmContactIDAssociation.put(exp, curr);
@@ -1387,13 +1445,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of alarmContact into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleAlarmContact(SbiAlarmContact exp, SbiAlarmContact curr) {
-		alarmContactAssociation.put(exp, curr);	
+		alarmContactAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported ObjMetadata.
@@ -1407,14 +1466,15 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of ObjMetadata into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleObjMetadataAssociation(SbiObjMetadata exp, SbiObjMetadata curr) {
-		objMetadataAssociation.put(exp, curr);	
+		objMetadataAssociation.put(exp, curr);
 	}
 
-	
 	/**
 	 * Gets the Map of associations between current and exported ObjMetadata ID.
 	 * 
@@ -1427,13 +1487,14 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of ObjMetadata ID into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleObjMetadataIDAssociation(Integer exp, Integer curr) {
-		objMetadataIDAssociation.put(exp, curr);	
+		objMetadataIDAssociation.put(exp, curr);
 	}
-
 
 	/**
 	 * Gets the Map of associations between current and exported ObjMetacontents.
@@ -1447,14 +1508,15 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of ObjMetacontents into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleObjMetacontentsAssociation(SbiObjMetacontents exp, SbiObjMetacontents curr) {
-		objMetacontentsAssociation.put(exp, curr);	
+		objMetacontentsAssociation.put(exp, curr);
 	}
 
-	
 	/**
 	 * Gets the Map of associations between current and exported ObjMetacontents ID.
 	 * 
@@ -1467,14 +1529,15 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of ObjMetacontents ID into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleObjMetacontentsIDAssociation(Integer exp, Integer curr) {
-		objMetacontentsIDAssociation.put(exp, curr);	
+		objMetacontentsIDAssociation.put(exp, curr);
 	}
 
-	
 	/**
 	 * Gets the Map of associations between current and exported SubObjects ID.
 	 * 
@@ -1487,12 +1550,15 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of SubObjects ID into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleSubObjectsIDAssociation(Integer exp, Integer curr) {
-		subObjectIDAssociation.put(exp, curr);	
+		subObjectIDAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported kpi relation ID.
 	 * 
@@ -1505,12 +1571,15 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of KpiRel ID into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleKpiRelAssociation(Integer exp, Integer curr) {
-		kpiRelAssociation.put(exp, curr);	
+		kpiRelAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported udp.
 	 * 
@@ -1519,16 +1588,19 @@ public class MetadataAssociations {
 	public Map getUdpAssociation() {
 		return udpAssociation;
 	}
-	
+
 	/**
 	 * Inserts a couple of Udp into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleUdpAssociation(Integer exp, Integer curr) {
-		udpAssociation.put(exp, curr);	
+		udpAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported udp value.
 	 * 
@@ -1537,15 +1609,19 @@ public class MetadataAssociations {
 	public Map getUdpValueAssociation() {
 		return udpValueAssociation;
 	}
+
 	/**
 	 * Inserts a couple of Udp value into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleUdpValueAssociation(Integer exp, Integer curr) {
-		udpValueAssociation.put(exp, curr);	
+		udpValueAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported ou.
 	 * 
@@ -1554,32 +1630,40 @@ public class MetadataAssociations {
 	public Map getOuAssociation() {
 		return ouAssociation;
 	}
+
 	/**
 	 * Inserts a couple of ou id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleIdOuAssociation(Integer exp, Integer curr) {
-		ouAssociation.put(exp, curr);	
+		ouAssociation.put(exp, curr);
 	}
+
 	/**
-	 * Gets the Map of associations between current and exported ou  hierarchy.
+	 * Gets the Map of associations between current and exported ou hierarchy.
 	 * 
 	 * @return Map of hierarchies
 	 */
 	public Map getOuHierarchiesAssociation() {
 		return ouHierarchiesAssociation;
 	}
+
 	/**
 	 * Inserts a couple of ou hierarchy id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleIdOuHierarchyAssociation(Integer exp, Integer curr) {
-		ouHierarchiesAssociation.put(exp, curr);	
+		ouHierarchiesAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported ou node.
 	 * 
@@ -1588,15 +1672,19 @@ public class MetadataAssociations {
 	public Map getOuNodeAssociation() {
 		return ouNodesAssociation;
 	}
+
 	/**
 	 * Inserts a couple of ou nodes id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleIdOuNodeAssociation(Integer exp, Integer curr) {
-		ouNodesAssociation.put(exp, curr);	
+		ouNodesAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported ou grant.
 	 * 
@@ -1605,15 +1693,19 @@ public class MetadataAssociations {
 	public Map getOuGrantAssociation() {
 		return ouGrantAssociation;
 	}
+
 	/**
 	 * Inserts a couple of ou Grant id into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleIdOuGrantAssociation(Integer exp, Integer curr) {
-		ouGrantAssociation.put(exp, curr);	
+		ouGrantAssociation.put(exp, curr);
 	}
+
 	/**
 	 * Gets the Map of associations between current and exported ou grant node.
 	 * 
@@ -1622,18 +1714,18 @@ public class MetadataAssociations {
 	public Map getOuGrantNodesAssociation() {
 		return ouGrantNodesAssociation;
 	}
+
 	/**
 	 * Inserts a couple of ou Grant node id objects into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleIdOuGrantNodesAssociation(SbiOrgUnitGrantNodesId exp, SbiOrgUnitGrantNodesId curr) {
-		ouGrantNodesAssociation.put(exp, curr);	
+		ouGrantNodesAssociation.put(exp, curr);
 	}
-	
-	
-	
 
 	/**
 	 * Gets the Map of associations between current and exported authorizations ids.
@@ -1656,8 +1748,10 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of authorizations into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleAuthorizations(SbiAuthorizations exp, SbiAuthorizations curr) {
 		authorizationsAssociation.put(exp, curr);
@@ -1666,11 +1760,13 @@ public class MetadataAssociations {
 	/**
 	 * Inserts a couple of authorizations ids into the associations.
 	 * 
-	 * @param exp the exp
-	 * @param curr the curr
+	 * @param exp
+	 *            the exp
+	 * @param curr
+	 *            the curr
 	 */
 	public void insertCoupleAuthorizations(Integer exp, Integer curr) {
 		authorizationsIDAssociation.put(exp, curr);
 	}
-	
+
 }
