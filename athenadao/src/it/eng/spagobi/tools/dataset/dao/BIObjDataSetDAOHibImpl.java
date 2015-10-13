@@ -275,15 +275,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 			transaction = session.beginTransaction();
 			Assert.assertNotNull(transaction, "transaction cannot be null");
 
-			String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + biObjId + "";
-			Query hqlQuery = session.createQuery(hql);
-			List hibObjectPars = hqlQuery.list();
-
-			for (Iterator iterator = hibObjectPars.iterator(); iterator.hasNext();) {
-				SbiObjDataSet sbiObjDataSet = (SbiObjDataSet) iterator.next();
-				session.delete(sbiObjDataSet);
-
-			}
+			eraseBIObjDataSetByObjectId(biObjId, session);
 
 			transaction.commit();
 		} catch (Throwable t) {
@@ -295,6 +287,23 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
+		}
+		logger.debug("OUT");
+	}
+
+	@Override
+	public void eraseBIObjDataSetByObjectId(Integer biObjId, Session currSession) throws EMFUserError {
+
+		logger.debug("IN");
+
+		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = " + biObjId + "";
+		Query hqlQuery = currSession.createQuery(hql);
+		List hibObjectPars = hqlQuery.list();
+
+		for (Iterator iterator = hibObjectPars.iterator(); iterator.hasNext();) {
+			SbiObjDataSet sbiObjDataSet = (SbiObjDataSet) iterator.next();
+			currSession.delete(sbiObjDataSet);
+
 		}
 		logger.debug("OUT");
 	}

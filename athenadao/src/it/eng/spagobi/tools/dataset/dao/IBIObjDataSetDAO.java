@@ -55,4 +55,5 @@ public interface IBIObjDataSetDAO extends ISpagoBIDao {
 
 	public void eraseBIObjDataSetByObjectId(Integer biObjId) throws EMFUserError;
 
+	public void eraseBIObjDataSetByObjectId(Integer biObjId, Session currSession) throws EMFUserError;
 }

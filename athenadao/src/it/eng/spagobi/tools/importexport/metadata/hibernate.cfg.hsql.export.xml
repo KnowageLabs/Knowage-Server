@@ -26,6 +26,7 @@
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiLov.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiChecks.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjPar.hbm.xml" />
+        <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjDataSet.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjects.hbm.xml" />
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjFunc.hbm.xml" />        
         <mapping resource="it/eng/spagobi/tools/importexport/metadata/SbiObjState.hbm.xml" />
