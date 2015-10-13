@@ -15,7 +15,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
 		axisData: {}
 		
     },
-    model: Sbi.chart.designer.AxisesContainerModel, 
+    model: Sbi.chart.designer.AxisesContainerModel,
     
     columns: [],
     hideHeaders: true,

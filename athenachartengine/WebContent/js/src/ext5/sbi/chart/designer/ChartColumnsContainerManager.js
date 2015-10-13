@@ -91,6 +91,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var chartColumnsContainerStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
 				idAxisesContainer: idChartColumnsContainer,
 				autoDestroy : true,
+				autoLoad: true,
 				axisAlias: axisAlias
 			});
 			
@@ -106,6 +107,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
 				axisData: axisData,
+				emptyText : LN('sbi.chartengine.designer.emptytext.dragdropmeasures'),	
+				
+				store: chartColumnsContainerStore,
 				
 				controller: Ext.create('Ext.app.ViewController', {
 			        onTitleChange: function (barTextField, textValue) {
@@ -134,7 +138,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				viewConfig: {
 					plugins: {
 						ptype: 'gridviewdragdrop',
-//						containerScroll: true,
 						dragGroup: dragGroup,
 						dropGroup: dropGroup
 					},
@@ -221,8 +224,6 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						}
 					}
 				},
-				
-				store: chartColumnsContainerStore,
 				
 				title: {
 					hidden: true 
@@ -402,6 +403,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
             								}	    							
 	            							
 	            							var rec = store.removeAt(rowIndex);
+	            							
+	            							// need to force reload for showing the emptyText message 
+	            							store.reload();
 	            						}
 	            					}
 	            				});

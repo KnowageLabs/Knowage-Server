@@ -1832,7 +1832,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			);
 			
 			this.categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
-  				storeId: 'categoriesStore'
+  				storeId: 'categoriesStore',
+				autoLoad: true  				
 			});
 			
 			this.bottomXAxisesPanel = Ext.create("Sbi.chart.designer.ChartCategoriesContainer", {
@@ -1976,8 +1977,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   					}
   				},
   				
+  				emptyText : LN('sbi.chartengine.designer.emptytext.dragdropattributes'),	
   				store: this.categoriesStore,
-  				
   				axisData: Sbi.chart.designer.ChartUtils.createEmptyAxisData(true),
   				
 				plugins: [{
