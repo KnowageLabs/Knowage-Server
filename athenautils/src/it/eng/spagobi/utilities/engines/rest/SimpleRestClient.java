@@ -90,9 +90,9 @@ public class SimpleRestClient {
 		
 		
 		if(type.equals(RequestTypeEnum.POST))
-			request.post();
+			response = request.post();
 		else 
-			request.get();
+			response = request.get();
 		
 		if (response.getStatus() >= 400) {
 			throw new RuntimeException("Request failed with HTTP error code : " + response.getStatus());
