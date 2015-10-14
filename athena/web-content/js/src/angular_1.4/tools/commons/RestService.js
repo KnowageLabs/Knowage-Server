@@ -38,6 +38,18 @@ Restapp.service('restServices', function($http, ENDPOINT_URI) {
 		console.log(item);
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item);
 	};
+	
+	service.put = function(endP_path, req_Path, item) {
+		console.log("PUT: "+getBaseUrl(endP_path) + "" + req_Path);
+		console.log(item);
+		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item);
+	};
+	
+	service.delete = function(endP_path, req_Path) {
+		console.log("PUT: "+getBaseUrl(endP_path) + "" + req_Path);
+		console.log(item);
+		return $http.delete(getBaseUrl(endP_path) + "" + req_Path);
+	};
 
 	// prendo i nodi di un glossario
 
