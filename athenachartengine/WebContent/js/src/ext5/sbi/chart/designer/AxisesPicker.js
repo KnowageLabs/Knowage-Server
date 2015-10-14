@@ -1,6 +1,14 @@
 Ext.define('Sbi.chart.designer.AxisesPicker', {
 	extend: 'Ext.grid.Panel',
     multiSelect: true,
+    
+    /**
+     * Providing collapsible attribute/measure (category/serie) picker.
+     * 
+     *  @author: danristo (danilo.ristovski@mht.net)
+     */
+    collapsible: true, 
+    
     requires: [
         'Ext.grid.*',
         'Sbi.chart.designer.AxisesContainerStore'

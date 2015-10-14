@@ -1464,6 +1464,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 //  				flex:  1,
 //  				margin: '0 15 5 0',
   				store: columnsPickerStore,
+  				
+  				/**
+  				 * Hide non-collapsible header so the collapsible one defined 
+  				 * inside of the AxisesPicker class (file) can be rendered 
+  				 * only.
+  				 * 
+  				 * @author: danristo (danilo.ristovski@mht.net)
+  				 */
+  				hideHeaders: true, 
+  				title: LN('sbi.chartengine.designer.measureslist'),
+  				
   				viewConfig: {
   					copy: true,
   					plugins: {
@@ -1491,13 +1502,25 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			/** 
 			 * Type of the 'this.categoriesPicker' is the grid panel
-			 * (commented by: danilo.ristovski@mht.net) 
+			 * 
+			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			this.categoriesPicker = Ext.create('Sbi.chart.designer.AxisesPicker', {
   				region: 'south',
 //  				flex: 1,
 //  				margin: '0 0 5 0',
-  				store: categoriesPickerStore, 
+  				store: categoriesPickerStore,
+  				
+  				/**
+  				 * Hide non-collapsible header so the collapsible one defined 
+  				 * inside of the AxisesPicker class (file) can be rendered 
+  				 * only.
+  				 * 
+  				 * @author: danristo (danilo.ristovski@mht.net)
+  				 */
+  				hideHeaders: true,  				
+  				title: LN('sbi.chartengine.designer.attributeslist'),
+  				
   				viewConfig: {
   					copy: true,
   					plugins: {
@@ -1526,7 +1549,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/**
 			 * Static store for styles for the generic parameters of the document (chart)
 			 * with combo items that have predefined names (Red, Green, Blue, ...).
-			 * (danilo.ristovski@mht.net)
+			 * 
+			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			var styleStore = Ext.create ( "Ext.data.Store", {
 				fields: ["style", "styleAbbr"],
