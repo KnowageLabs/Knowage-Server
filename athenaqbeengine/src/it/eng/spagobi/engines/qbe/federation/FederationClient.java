@@ -6,18 +6,16 @@
 
 package it.eng.spagobi.engines.qbe.federation;
 
-import it.eng.spagobi.commons.utilities.DataSetPersister;
+import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hsqldb.lib.HashSet;
 import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -40,10 +38,10 @@ public class FederationClient extends SimpleRestClient{
 		
 		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
 
-		serviceUrl = serviceUrl+"/"+federationID;
+		parameters.put("federationId", federationID);
 		
 		logger.debug("Call persist service in post");
-		ClientResponse<String> resp = executeGetService(parameters, serviceUrl);
+		ClientResponse<String> resp = executePostService(parameters, serviceUrl);
 		
 		
 		String respString = resp.getEntity(String.class);

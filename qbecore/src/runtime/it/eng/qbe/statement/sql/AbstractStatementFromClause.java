@@ -114,7 +114,7 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 					
 				}else{
 					//for Cassandra dont add the entityAlias
-					String fromClauseElement = me.getName() + " "+ entityAlias;
+					String fromClauseElement = getTableName(me) + " "+ entityAlias;
 					buffer.append(fromClauseElement);
 				}
 				if (i<entities.size()-1) {
@@ -125,6 +125,9 @@ public abstract class AbstractStatementFromClause extends AbstractStatementClaus
 
 	} 
 	
-
+	//returns the table name for an entity
+	public String getTableName(IModelEntity me){
+		return me.getName();
+	}
 
 }

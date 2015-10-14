@@ -97,10 +97,11 @@ public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder 
 	private void addEntity (IModelStructure modelStructure, String modelName, IDataSet entity){
 
 		String entityLabel = entity.getName();
-		String entityName = entity.getTableNameForReading();
+		String tableName = entity.getTableNameForReading();
 		
-		IModelEntity dataMartEntity = modelStructure.addRootEntity(modelName, entityName, null, null, entityName);
+		IModelEntity dataMartEntity = modelStructure.addRootEntity(modelName, entityLabel, null, null, entityLabel);
 		dataMartEntity.getProperties().put("label", entityLabel);
+		dataMartEntity.getProperties().put("tableName", tableName);
 		
 		// the query name is used when building the SQL statement, because we need to know the name of the actual table that contains the data of the dataset
 		// i.e. we need to know the persistence table name

@@ -313,6 +313,8 @@
 		domainNm="Data Set Type" valueDs="SbiFlatDataSet" />
 	<DOMAIN valueCd="Ckan" valueNm="SbiCkanDataSet" domainCd="DATA_SET_TYPE"
 		domainNm="Data Set Type" valueDs="SbiCkanDataSet" />
+	<DOMAIN valueCd="Federated" valueNm="SbiFederatedDataSet" domainCd="DATA_SET_TYPE"
+		domainNm="Data Set Type" valueDs="SbiFederatedDataSet" />
 	<DOMAIN valueCd="Cat1" valueNm="Cat1" domainCd="CATEGORY_TYPE"
 		domainNm="Category Type" valueDs="Cat1" />
 	<DOMAIN valueCd="Cat2" valueNm="Cat2" domainCd="CATEGORY_TYPE"

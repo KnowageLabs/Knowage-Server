@@ -2,6 +2,7 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.qbe.dataset.FederationUtils;
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.federation.FederationClient;
@@ -207,21 +208,26 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 			logger.debug("Setting user profile attributes into dataset...");
 			logger.debug(userAttributes);
 
-
-			//			DataSetPersister dsp = new DataSetPersister();
-			//			try {
-			//				dsp.cacheDataSets(dsLabels, getUserId());
-			//			} catch (Exception e1) {
-			//				logger.error("Error executing the service that persist the datasets on the cache",e1);
-			//				throw new SpagoBIEngineRuntimeException("Error executing the service that persist the datasets on the cache",e1);
-			//			}
-			//		
+			//dave in cache the derived datasets
+			logger.debug("Saving the datasets on cache");
+			DataSetPersister dsp = new DataSetPersister();
+			JSONObject datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsLabels);
+					
 			
 			for (int i = 0; i < dsLabels.size(); i++) {
 
 				String dsLabel = dsLabels.get(i);
+				
+				
+				
 				//adds the link between dataset and cached table name
-				mapNameTable.put(dsLabel, dsLabel + "cached");
+				Assert.assertNotNull(datasetPersistedLabels.optString(dsLabel), "Not found the label name of teh cache table for the datase "+dsLabel);
+				try {
+					mapNameTable.put(dsLabel, datasetPersistedLabels.getString(dsLabel));
+				} catch (JSONException e) {
+					logger.error("Error getting cached table name form the json object");
+					throw new SpagoBIEngineRuntimeException("Error getting cached table name form the json object", e);
+				}
 
 				IDataSet originalDataset = this.getDataSet(dsLabel);
 				IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(mapNameTable.get(dsLabel), originalDataset,cachedDataSource);
@@ -237,14 +243,8 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 			}
 
 			JSONObject relations = null;
-//			try {
-//				relations = new JSONObject(
-//						"{ 	relationships: [{ 		bidirectional: true, 		cardinality: 'many-to-one', 		sourceTable: { 			name: 'test1', 			className: 'test1' 		}, 		sourceColumns: ['customer_id'], 		destinationTable: { 			name: 'test2', 			className: 'test2' 		}, 		destinationColumns: ['store_id'] 	}] }");
-//			} catch (JSONException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			
+		
+			logger.debug("Adding relationships on envinronment");
 			try {
 				JSONArray array = new JSONArray(dsf.getRelationships());
 				if(array!=null && array.length()>0){
@@ -257,10 +257,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 				throw new SpagoBIEngineRuntimeException("Error building the relations object" ,e);
 			}
 
-			FederationUtils.adjustRelationName(relations, mapNameTable);
-
 			env.put(EngineConstants.ENV_RELATIONS, relations);
-
 			env.put(EngineConstants.ENV_DATASET_CACHE_MAP,mapNameTable);
 			env.put(EngineConstants.ENV_RELATIONS,relations);
 			env.put(EngineConstants.ENV_DATASETS, dataSets);

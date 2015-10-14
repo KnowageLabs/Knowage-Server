@@ -11,6 +11,8 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -408,10 +410,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setParameters(dataSet.getParameters());
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
 
-			/*
-			 * SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); //save teh federations
-			 * if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
-			 */
+			//save teh federations
+			if(dataSet.getDatasetFederation()!=null){
+				SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); 
+				if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
+			}
+
+			
 
 			if (dataSet.getOwner() == null) {
 				hibDataSet.setOwner(userIn);

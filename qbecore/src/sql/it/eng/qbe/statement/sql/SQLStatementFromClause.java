@@ -6,6 +6,7 @@
 
 package it.eng.qbe.statement.sql;
 
+import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
 
 import java.util.Map;
@@ -31,6 +32,11 @@ public class SQLStatementFromClause extends AbstractStatementFromClause {
 		parentStatement = statement;
 	}
 
+	//returns the table name for an entity
+	public String getTableName(IModelEntity me){
+		String name = (String)me.getProperties().get("tableName");
+		return name;
+	}
 
 
 

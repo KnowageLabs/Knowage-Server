@@ -5,12 +5,13 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.dataset;
 
-import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -70,6 +71,23 @@ public class FederationUtils {
 
 	}
 
+	/**
+	 * Invokes the service that persits the datasets
+	 */
+	public static JSONObject createDatasetsOnCache(List<String> datasetLabels){
+		//dave in cache the derived datasets
+		logger.debug("Saving the datasets on cache");
+		DataSetPersister dsp = new DataSetPersister();
+		JSONObject datasetPersistedLabels = null;
+		try {
+			datasetPersistedLabels = dsp.cacheDataSets(datasetLabels );
+		} catch (Exception e1) {
+			logger.error("Error executing the service that persist the datasets on the cache",e1);
+			throw new SpagoBIRuntimeException("Error executing the service that persist the datasets on the cache",e1);
+		}
+		return datasetPersistedLabels;
+	}
+	
 
 	/**
 	 * Creates a jdbc dataset on the cached table

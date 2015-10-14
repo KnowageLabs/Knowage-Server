@@ -123,7 +123,6 @@ public class QbeEngineFromDatasetStartAction extends QbeEngineStartAction {
 	@Override
 	public Map addDatasetsToEnv() {
 		String federatedDatasetId = this.getAttributeAsString(FEDERATED_DATASET);
-		federatedDatasetId="9";
 		if(federatedDatasetId== null || federatedDatasetId.length()==0){
 			logger.debug("Not Found a federated dataset on the request");
 			return addSimpleDataSetToEnv();

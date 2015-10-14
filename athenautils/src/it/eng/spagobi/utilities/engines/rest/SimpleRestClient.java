@@ -14,17 +14,13 @@ package it.eng.spagobi.utilities.engines.rest;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
-import org.json.JSONArray;
 
 /**
  * 
@@ -35,21 +31,36 @@ import org.json.JSONArray;
 public class SimpleRestClient {
 	
 	static protected Logger logger = Logger.getLogger(SimpleRestClient.class);
-	
+	private String credential = "YmlhZG1pbjpiaWFkbWlu";
 	private boolean addServerUrl = true;
+	
 
 	
 	/**
-	 * Invokes a rest service and return parameters
-	 * @param parameters
-	 * @param serviceUrl
-	 * @return
-	 * @throws ServletException
-	 * @throws IOException
+	 * Invokes a rest service in get and return response
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service 
+	 * @return the response
 	 * @throws Exception
 	 */
 	protected ClientResponse executeGetService(Map<String,Object> parameters,  String serviceUrl) throws Exception {
-
+		return executeService(parameters, serviceUrl, RequestTypeEnum.GET);
+	}
+	
+	
+	/**
+	 * Invokes a rest service in post and return response
+	 * @param parameters the parameters of the request
+	 * @param serviceUrl the relative (refers always to core application context) path of the service 
+	 * @return the response
+	 * @throws Exception
+	 */
+	protected ClientResponse executePostService(Map<String,Object> parameters,  String serviceUrl) throws Exception {
+		return executeService(parameters, serviceUrl, RequestTypeEnum.POST);
+	}
+	
+	
+	private ClientResponse executeService(Map<String,Object> parameters,  String serviceUrl, RequestTypeEnum type) throws Exception{
 		logger.debug("IN");
 
 		if(!serviceUrl.contains("http") && addServerUrl){
@@ -62,7 +73,9 @@ public class SimpleRestClient {
 		ApacheHttpClientExecutor httpExecutor = new ApacheHttpClientExecutor(CKANClient.getHttpClient());
 		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
 
-		JSONArray array = new JSONArray();
+		
+		request.header("Authorization", credential);
+		
 		if(parameters!=null){
 			Iterator<String> iter = parameters.keySet().iterator();
 			while (iter.hasNext()) {
@@ -73,8 +86,14 @@ public class SimpleRestClient {
 		}
 
 		logger.debug("Call service");
-		ClientResponse response = request.get();
-
+		ClientResponse response = null;
+		
+		
+		if(type.equals(RequestTypeEnum.POST))
+			request.post();
+		else 
+			request.get();
+		
 		if (response.getStatus() >= 400) {
 			throw new RuntimeException("Request failed with HTTP error code : " + response.getStatus());
 		}
@@ -82,8 +101,6 @@ public class SimpleRestClient {
 		logger.debug("OUT");
 		return response;
 	}
-	
-	
 	
 	public boolean isAddServerUrl() {
 		return addServerUrl;
@@ -93,6 +110,10 @@ public class SimpleRestClient {
 
 	public void setAddServerUrl(boolean addServerUrl) {
 		this.addServerUrl = addServerUrl;
+	}
+	
+	public enum RequestTypeEnum{
+		POST,GET
 	}
 
 }

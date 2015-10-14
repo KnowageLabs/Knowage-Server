@@ -1408,6 +1408,39 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 
 		}
+		
+//		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
+//
+//			
+//			FederatedDataSet ds = (FederatedDataSet)dataSet;
+//			SbiFederationDefinition sbiFederation = dataSet.getFederation();
+//
+//			ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederation(sbiFederation, userProfile));
+//			ds.setConfiguration(sbiDataSet.getConfiguration());
+//			((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
+//
+//			// START -> This code should work instead of CheckQbeDataSets around the projects
+//
+//			Map parameters = ds.getParamsMap();
+//			if (parameters == null) {
+//				parameters = new HashMap();
+//				ds.setParamsMap(parameters);
+//			}
+//			// END
+//
+//			DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+//			if (userProfile != null)
+//				dataSourceDao.setUserProfile(userProfile);
+//			IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+//			if (dataSource != null) {
+//				((QbeDataSet) ds).setDataSource(dataSource);
+//				if (!dataSource.checkIsReadOnly()) {
+//					ds.setDataSourceForWriting(dataSource);
+//				}
+//			}
+//			ds.setDsType(FEDERATED_DS_TYPE);
+//
+//		}
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 			dataSet = new FlatDataSet();

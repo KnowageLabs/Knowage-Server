@@ -7,8 +7,9 @@
 	</MAP_PAGE_MODULES>
 	
 	<MAP_REST_SERVICES>
-	
+		
 	    <MAP_REST_SERVICE serviceUrl="/datasets.*" businessProcess="SelfServiceDatasetManagement" />
+	    
 	    <MAP_REST_SERVICE serviceUrl="/documents.*" businessProcess="SelfServiceDatasetManagement" />
 	    <MAP_REST_SERVICE serviceUrl="/cache.*" businessProcess="SelfServiceDatasetManagement" />
         <MAP_REST_SERVICE serviceUrl="/fileservicedataset/createdataset" businessProcess="SelfServiceDatasetManagement" />                                              
@@ -108,11 +109,12 @@
 		<MAP_REST_SERVICE serviceUrl="/authorizations" businessProcess="ProfileManagement" />	
 		
 		<MAP_REST_SERVICE serviceUrl="/ckan-management/download" businessProcess="CkanIntegrationFunctionality" />
-
+		<MAP_REST_SERVICE serviceUrl="/datasets/list/persist" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/federateddataset/federation" businessProcess="publicFunctionality"  />
 	</MAP_REST_SERVICES>
 	
 	<MAP_EXTERNAL_REST_SERVICES>
-		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/federateddataset/federation" businessProcess="publicFunctionality"  />
+
 		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/subscribe/getUserInfo" />
 		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/prepare" businessProcess="publicFunctionality" />
 		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/signup/create" businessProcess="publicFunctionality" />

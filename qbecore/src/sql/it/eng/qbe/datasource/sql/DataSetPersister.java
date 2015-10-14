@@ -1,4 +1,4 @@
-package it.eng.spagobi.commons.utilities;
+package it.eng.qbe.datasource.sql;
 
 /* SpagoBI, the Open Source Business Intelligence suite
 
@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * 
@@ -22,6 +24,7 @@ import org.json.JSONArray;
 public class DataSetPersister extends SimpleRestClient{
 
 	private String serviceUrl = "/restful-services/1.0/datasets/list/persist";
+
 	
 	public DataSetPersister(){
 		
@@ -29,7 +32,7 @@ public class DataSetPersister extends SimpleRestClient{
 	
 	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
 
-	public void cacheDataSets(List<String> datasetLabels, String userId) throws Exception {
+	public JSONObject cacheDataSets(List<String> datasetLabels) throws Exception {
 
 		logger.debug("IN");
 
@@ -43,12 +46,17 @@ public class DataSetPersister extends SimpleRestClient{
 		
 		
 		parameters.put("labels", datasetLabelsArray);
-		parameters.put("user_id", userId);
 
 		logger.debug("Call persist service in post");
-		executeGetService(parameters, serviceUrl);
+		ClientResponse resp = executePostService(parameters, serviceUrl);
+		
+		String respString = (String)resp.getEntity(String.class);
+		
+		JSONObject ja = new JSONObject(respString);
 		
 		logger.debug("OUT");
+		
+		return ja;
 	}
 
 }

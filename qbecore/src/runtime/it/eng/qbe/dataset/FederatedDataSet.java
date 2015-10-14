@@ -15,12 +15,10 @@ import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,6 +147,7 @@ public class FederatedDataSet extends QbeDataSet {
 	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
 
 		it.eng.qbe.datasource.IDataSource dataSource;
+		List<String> datasetNames = new ArrayList<String>();
 
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
@@ -158,14 +157,24 @@ public class FederatedDataSet extends QbeDataSet {
 		}
 
 		//adjust the name of the relations
-		try {
-			FederationUtils.adjustRelationName(new JSONArray(federation.getRelationships()), getDataset2CacheTableName());
-		} catch (JSONException e) {
-			logger.error("Error adjusting the table names in the relation for federation",e);
-			throw new SpagoBIRuntimeException("Error adjusting the table names in the relation for federation",e);
-		}
+//		try {
+//			FederationUtils.adjustRelationName(new JSONArray(federation.getRelationships()), getDataset2CacheTableName());
+//		} catch (JSONException e) {
+//			logger.error("Error adjusting the table names in the relation for federation",e);
+//			throw new SpagoBIRuntimeException("Error adjusting the table names in the relation for federation",e);
+//		}
 		
-
+		
+		//refresh the datasets on cache
+		for (Iterator iterator = federation.getSourceDatasets().iterator(); iterator.hasNext();) {
+			IDataSet dataSets = (IDataSet) iterator.next();
+			datasetNames.add(dataSets.getLabel());
+		}
+		JSONObject datasetLabels = FederationUtils.createDatasetsOnCache(datasetNames);
+		setDataset2CacheTableName(datasetLabels);
+		
+		
+		//create the jdbc datasets linked to the tables on cache
 		for (Iterator iterator = federation.getSourceDatasets().iterator(); iterator.hasNext();) {
 			IDataSet dataSets = (IDataSet) iterator.next();
 			IDataSet cachedDataSet = null;

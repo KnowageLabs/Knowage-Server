@@ -1187,24 +1187,34 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 * @param labels
 	 */
 
-	@GET
+	@POST
 	@Path("/list/persist")
-	public void persistDataSets(@QueryParam("labels") JSONArray labels) {
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String persistDataSets(@QueryParam("labels") JSONArray labels) {
 		logger.debug("IN");
+
+		JSONObject labelsJSON = new JSONObject();
 
 		for (int i = 0; i < labels.length(); i++) {
 			String label = null;
 			try {
 				label = labels.getString(i);
 				DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
+				dataSetManagementAPI.setUserProfile(getUserProfile());
 				dataSetManagementAPI.persistDataset(label);
+				String tableName = dataSetManagementAPI.persistDataset(label);
+				logger.debug("Dataset with label " + label + " is stored in table with name " + tableName);
+				if (tableName != null) {
+					labelsJSON.put(label, tableName);
+				}
 			} catch (JSONException e) {
-				logger.error("error in persisting dataset with label " + label, e);
+				logger.error("error in persisting dataset with label: " + label, e);
 				throw new RuntimeException("error in persisting dataset with label " + label);
 			}
 		}
 
 		logger.debug("OUT");
+		return labelsJSON.toString();
 	}
 
 	// @POST
