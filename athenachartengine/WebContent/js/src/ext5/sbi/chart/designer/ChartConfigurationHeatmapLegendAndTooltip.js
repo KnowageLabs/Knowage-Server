@@ -43,7 +43,12 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;			
 			
-			var heatmapChartLegend = Ext.create
+			var globalScope = this;
+			
+			this.heatmapChartLegend = null;
+			this.heatmapChartTooltip = null;
+			
+			this.heatmapChartLegend = Ext.create
 			(
 				'Sbi.chart.designer.StylePopupLegendHeatmap',
 				
@@ -55,7 +60,7 @@ Ext.define
 				}
 			);
 			
-			var heatmapChartTooltip = Ext.create
+			this.heatmapChartTooltip = Ext.create
 			(
 				'Sbi.chart.designer.StylePopup',
 				
@@ -98,7 +103,7 @@ Ext.define
                     		 
                     		 handler: function()
                     		 {
-                    			 heatmapChartLegend.show();
+                    			 globalScope.heatmapChartLegend.show();
                     		 }
                     	 }
 		 			 ]
@@ -130,7 +135,7 @@ Ext.define
 				     		 
 				     		 handler: function()
 				     		 {
-				     			heatmapChartTooltip.show();
+				     			globalScope.heatmapChartTooltip.show();
 				     		 }
 				     	 }
 					 ]

@@ -41,8 +41,13 @@ Ext.define
 			
 			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
 					
+			this.colorPickerAxisColor = null;
+			this.colorPickerBrushColor = null;
+			this.axisColNamePadd = null;
+			this.brushWidth = null;
+			
 			/* Color picker drop-down matrix (table) */
-	        var colorPickerAxisColor = Ext.create
+	        this.colorPickerAxisColor = Ext.create
 	        (
         		'Sbi.chart.designer.ColorPickerContainer',
         		
@@ -54,7 +59,7 @@ Ext.define
     		);
 	        
 	        /* Color picker drop-down matrix (table) */
-	        var colorPickerBrushColor= Ext.create
+	        this.colorPickerBrushColor= Ext.create
 	        (
         		'Sbi.chart.designer.ColorPickerContainer',
         		
@@ -65,35 +70,37 @@ Ext.define
         		}
     		);
 			
-			var axisColNamePadd = 
-			[
+			this.axisColNamePadd = Ext.create
+			(
 				{
 					 xtype: 'numberfield',
 					 bind : '{configModel.axisColNamePadd}',	
+					 id: "parallelAxisColNamePadd",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd"),	
 					 width: "200",
-					 value: "15",
+//					 value: "15",
 					 maxValue: '30',
 					 minValue: '0'
 				}
-			 ];
-			
-			var brushWidth = 
-			[
+			 );
+			 
+			this.brushWidth= Ext.create
+	        (
 				{
 					 xtype: 'numberfield',
 					 bind : '{configModel.brushWidth}',	
+					 id: "parallelBrushWidth",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth"),	
 					 width: "200",
-					 value: "20",
+//					 value: "20",
 					 maxValue: '100',
 					 minValue: '5'
 				}
-			 ];
+			);
 						
-			this.add(colorPickerAxisColor);
-			this.add(axisColNamePadd);
-			this.add(colorPickerBrushColor);
-			this.add(brushWidth);
+			this.add(this.colorPickerAxisColor);
+			this.add(this.axisColNamePadd);
+			this.add(this.colorPickerBrushColor);
+			this.add(this.brushWidth);
 		}
 });

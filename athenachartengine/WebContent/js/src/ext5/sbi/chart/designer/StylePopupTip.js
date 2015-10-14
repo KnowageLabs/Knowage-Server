@@ -97,9 +97,10 @@ Ext.define
     	         		{
 	                		 xtype: 'numberfield',
 	                		 bind : '{configModel.tipWidth}',	
+	                		 id: "sunburstTipWidth",
 	                		 fieldLabel: LN("sbi.chartengine.configuration.tip.width"),	
 	                		 width: "200",
-	                		 value: "10",
+//	                		 value: "10",
 	                		 maxValue: '200',
 	                		 minValue: '10'
 	                	}

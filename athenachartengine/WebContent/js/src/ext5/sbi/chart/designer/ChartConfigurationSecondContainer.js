@@ -9,7 +9,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
                'Sbi.chart.designer.ChartConfigurationParallelLimit',
                'Sbi.chart.designer.ChartConfigurationParallelTooltip',
                'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
-               'Sbi.chart.designer.ChartConfigurationToolbarAndTip',
+               'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
                'Sbi.chart.designer.ChartConfigurationWordcloud',
            ],
     border:false,
@@ -51,7 +51,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 */
 		var toolbarAndTip = Ext.create
 		(
-			"Sbi.chart.designer.ChartConfigurationToolbarAndTip",
+			"Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip",
 			
 			{
 				viewModel: this.viewModel

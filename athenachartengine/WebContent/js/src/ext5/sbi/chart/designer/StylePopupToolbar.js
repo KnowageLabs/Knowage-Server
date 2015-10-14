@@ -9,6 +9,7 @@ Ext.define
 		closable : true,
 		closeAction : 'hide',
 	    modal: true,
+	    id: "sunburstToolbarPopup",
 		bodyPadding : 10,
 	
 		config : 
@@ -90,7 +91,7 @@ Ext.define
 	        
 	        if (this.config.bindToolbarSpacing && this.config.bindToolbarTail)
         	{
-	        	var toolbarSpacingAndTail = Ext.create
+	        	this.toolbarSpacingAndTail = Ext.create
 	        	(
         			/* Horizontal line with two number fields - SPACING and TAIL */
                     {            
@@ -107,33 +108,35 @@ Ext.define
 	               		 [		                    	         
 	           	         	{
 	           	         		xtype: 'numberfield',
-	           	         		bind : '{configModel.toolbarSpacing}',		
+	           	         		bind : '{configModel.toolbarSpacing}',	
+	           	         		id: "sunburstToolbarSpacing",
 	           	         		fieldLabel: LN("sbi.chartengine.configuration.toolbar.spacing"),	
 	       	         			maxWidth: '120',
 	       	         			maxValue: '50',
 	       	         			minValue: '1',
-	       	         			value: "1"
+//	       	         			value: "1"
 	       	         		},
 	       	         		
 	       	         		{
 	   	                		 xtype: 'numberfield',
-	   	                		 bind : '{configModel.toolbarTail}',	
+	   	                		 bind : '{configModel.toolbarTail}',
+	   	                		 id: "sunburstToolbarTail",
 	   	                		 fieldLabel: LN("sbi.chartengine.configuration.toolbar.tail"),	
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '100',
 	   	                		 minValue: '10',
-	   	                		 value: "10"
+//	   	                		 value: "10"
 	   	                	}
 	   	         		]		                     
                     }
 	        	);
 	        	
-	        	this.add(toolbarSpacingAndTail);
+	        	this.add(this.toolbarSpacingAndTail);
         	}
 	        
 	        if (this.config.bindToolbarHeight && this.config.bindToolbarWidth)
         	{
-	        	var toolbarHeightAndWidth = Ext.create
+	        	this.toolbarHeightAndWidth = Ext.create
 	        	(
         			/* Horizontal line with two number fields - HEIGHT and WIDTH */
                     {            
@@ -150,28 +153,30 @@ Ext.define
 	               		 [		                    	         
 	           	         	{
 	           	         		xtype: 'numberfield',
-	           	         		bind : '{configModel.toolbarHeight}',		
+	           	         		bind : '{configModel.toolbarHeight}',	
+	           	         		id: "sunburstToolbarHeight",
 	           	         		fieldLabel: LN("sbi.chartengine.configuration.toolbar.height"),	
 	           	         		maxWidth: '120',
 	           	         		maxValue: '100',
 	           	         		minValue: '10',
-	           	         		value: "10"
+//	           	         		value: "10"
 	       	         		},
 	       	         		
 	       	         		{
 	   	                		 xtype: 'numberfield',
 	   	                		 bind : '{configModel.toolbarWidth}',	
+	   	                		 id: "sunburstToolbarWidth",
 	   	                		 fieldLabel: LN("sbi.chartengine.configuration.toolbar.width"),	
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '200',
 	   	                		 minValue: '10',
-	   	                		 value: "10"
+//	   	                		 value: "10"
 	   	                	}
 	   	         		]		                     
                     }	
 	        	);
 	        	
-	        	this.add(toolbarHeightAndWidth);
+	        	this.add(this.toolbarHeightAndWidth);
         	}
 	        
 	        var toolbarFontFamily = Ext.create

@@ -321,10 +321,13 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		this.axisFieldSet.add(this.styleFontSizeComboBox);
 		
 		/**
-		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type
-		 * (danristo :: danilo.ristovski@mht.net) 
-		 */		
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER")
+		 * The 'opposite' parameter is enabled only when we have the SCATTER chart type 
+		 * and for the Y-axis exclusively.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */	
+		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "SCATTER"
+			 && this.axisData.axisType.toLowerCase() != "category")
 		{
 			this.styleOpposite = Ext.create
 	    	(

@@ -64,23 +64,27 @@ Ext.define
 				}
 			);
 			
-			var items = 
-			[
+			this.maxNumberOfLines = Ext.create
+			(
 				{
 					 xtype: 'numberfield',
-					 bind : '{configModel.maxNumberOfLines}',	
+					 bind : '{configModel.maxNumberOfLines}',
+					 id: "parallelLimitMaxNumbOfRec",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines"),	
 					 width: "200",
-					 value: "100",
+					 //value: "100",
 					 maxValue: '1000',
 					 minValue: '5'
-				},
-				
+				}
+			);
+			
+			this.orderTopMinBottomMax = Ext.create 
+			(								
 				/* Combobox for POSITION of the TOOLBAR (top, bottom) */
 	         	{
 	         		xtype : 'combo',
 	         		queryMode : 'local',
-	         		value : 'bottom',
+	         		//value : 'bottom',
 	         		triggerAction : 'all',
 	         		forceSelection : true,
 	         		editable : false,
@@ -107,10 +111,11 @@ Ext.define
         				   ]
             		 }
 	         	}
-			 ];
+			 );
 						
 			this.add(this.seriesColumnsOnYAxisCombo);
-			this.add(items);
+			this.add(this.maxNumberOfLines);			
+			this.add(this.orderTopMinBottomMax);
 		},
 		
 		addItem: function(data)

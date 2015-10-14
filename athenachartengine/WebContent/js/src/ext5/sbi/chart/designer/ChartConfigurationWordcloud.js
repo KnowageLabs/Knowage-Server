@@ -45,7 +45,7 @@ Ext
 								{
 									xtype : 'combo',
 									queryMode : 'local',
-									value : 'serie', 
+									//value : 'serie', 
 									forceSelection : true,
 									editable : false,
 									width: 200,
@@ -69,9 +69,10 @@ Ext
 								{
 									xtype : 'numberfield',
 									bind : '{configModel.maxWords}',
+									id: "wordcloudMaxWords",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords"),
 									width : "200",
-									value : "10",
+//									value : "10",
 									maxValue : '100',
 									minValue : '10'
 								},
@@ -79,9 +80,10 @@ Ext
 								{
 									xtype : 'numberfield',
 									bind : '{configModel.maxAngle}',
+									id: "wordcloudMaxAngle",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxAngle"),
 									width : "200",
-									value : "60",
+//									value : "60",
 									maxValue : '360',
 									minValue : '60'
 								},
@@ -89,9 +91,10 @@ Ext
 								{
 									xtype : 'numberfield',
 									bind : '{configModel.minAngle}',
+									id: "wordcloudMinAngle",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minAngle"),
 									width : "200",
-									value : "0",
+//									value : "0",
 									maxValue : '270',
 									minValue : '0'
 								},
@@ -99,9 +102,10 @@ Ext
 								{
 									xtype : 'numberfield',
 									bind : '{configModel.maxFontSize}',
+									id: "wordcloudMaxFontSize",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize"),
 									width : "200",
-									value : "100",
+//									value : "100",
 									maxValue : '200',
 									minValue : '50'
 								},
@@ -109,9 +113,10 @@ Ext
 								{
 									xtype : 'numberfield',
 									bind : '{configModel.wordPadding}',
+									id: "wordcloudWordPadding",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.wordPadding"),
 									width : "200",
-									value : "10",
+//									value : "10",
 									maxValue : '20',
 									minValue : '2'
 								} ];

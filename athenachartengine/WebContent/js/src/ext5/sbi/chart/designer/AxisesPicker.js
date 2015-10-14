@@ -9,6 +9,8 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
      */
     collapsible: true, 
     
+    //layout: "fit", // danristo (for IE problem)
+    
     requires: [
         'Ext.grid.*',
         'Sbi.chart.designer.AxisesContainerStore'

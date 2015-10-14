@@ -1480,7 +1480,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 || chartType == 'WORDCLOUD'
 			 || chartType == 'TREEMAP'
 			 || chartType == 'PARALLEL'
-			 || chartType == 'HEATMAP';
+			 || chartType == 'HEATMAP'
+				 || chartType == 'SCATTER'
+					 || chartType == 'GAUGE'
+						 || chartType == 'CHORD'
+							 || chartType == 'PIE'
+								 || chartType == 'RADAR';
 		},
 
 		enableOpacityMouseOver : function () {

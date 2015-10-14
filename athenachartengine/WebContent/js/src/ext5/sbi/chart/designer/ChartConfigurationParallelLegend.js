@@ -46,7 +46,12 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;
 			
-			var stylePopupLegendTitle = Ext.create
+			var globalScope = this;
+			
+			this.stylePopupLegendTitle = null;
+			this.stylePopupLegendElement = null;
+			
+			this.stylePopupLegendTitle = Ext.create
 			(
 				'Sbi.chart.designer.StylePopupLegendTitle',
 				
@@ -60,7 +65,7 @@ Ext.define
 		        }
 			);		
 			
-			var stylePopupLegendElement = Ext.create
+			this.stylePopupLegendElement = Ext.create
 			(
 				'Sbi.chart.designer.StylePopupLegendElement',
 				
@@ -102,7 +107,7 @@ Ext.define
     	    	            
     	    	            handler: function()
     	    	            {
-    	    	            	stylePopupLegendTitle.show();
+    	    	            	globalScope.stylePopupLegendTitle.show();
     	    	            }
     				 	}
     				 ]
@@ -134,7 +139,7 @@ Ext.define
 		    	            
 		    	            handler: function()
 		    	            {
-		    	            	stylePopupLegendElement.show();
+		    	            	globalScope.stylePopupLegendElement.show();
 		    	            }
     				 	}
     				 ]

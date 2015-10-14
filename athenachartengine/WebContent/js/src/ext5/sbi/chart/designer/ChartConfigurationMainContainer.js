@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Ext.panel.Panel',
 	requires : [
-	            'Sbi.chart.designer.ChartConfigurationToolbarAndTip',
+	            'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
 	            'Sbi.chart.designer.ChartOrientationCombo',
 	            'Sbi.chart.designer.ColorPickerContainer',
 	            'Sbi.chart.designer.FontCombo',

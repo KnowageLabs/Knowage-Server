@@ -1254,7 +1254,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					if (isChartSunburst || isChartWordCloud || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge 
-								|| isChartChord || isChartPie) {
+								|| isChartChord || isChartPie || isChartRadar 
+									|| isChartScatter) {
 						chartOrientation.hide();
 					} else {
 						chartOrientation.show();
@@ -2883,7 +2884,193 @@ Ext.define('Sbi.chart.designer.Designer', {
 				else if (chartType == "TREEMAP" && categoriesAsJson.length < 2) {
 					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
 				}
-			}
+			}		
+			
+			
+			
+			/* ************************************************************************ */
+			/* ************************************************************************ */
+			// TODO: THE WHOLE BLOCK OF CODE BENEATG THIS OBJECT NEEDS LN() !!!!!!!
+			/* ************************************************************************ */
+			/* ************************************************************************ */
+			
+			/**
+			 * only numerical values (fields) from panels 
+			 */
+			var checkParamValuesForCharts = 
+			{
+				heatmap:
+				{
+					legend:
+					{
+						symbolHeight:
+						{
+							minValue: Ext.getCmp("heatmapLegendSymbolHeight").minValue,
+//							defaultValue: ,
+							maxValue: Ext.getCmp("heatmapLegendSymbolHeight").maxValue
+						}
+					}					
+				},
+				
+				parallel:
+				{
+					limit:
+					{
+						maxNumbOfRec:
+						{
+							minValue: Ext.getCmp("parallelLimitMaxNumbOfRec").minValue,
+							maxValue: Ext.getCmp("parallelLimitMaxNumbOfRec").maxValue
+						}						
+					},
+					
+					axesLines:
+					{
+						axisColNamePadd:
+						{
+							minValue: Ext.getCmp("parallelAxisColNamePadd").minValue,
+							maxValue: Ext.getCmp("parallelAxisColNamePadd").maxValue
+						},
+						
+						brushWidth:
+						{
+							minValue: Ext.getCmp("parallelBrushWidth").minValue,
+							maxValue: Ext.getCmp("parallelBrushWidth").maxValue
+						}
+					},
+					
+					tooltip:
+					{
+						minWidth:
+						{
+							minValue: Ext.getCmp("parallelTooltipMinWidth").minValue,
+							maxValue: Ext.getCmp("parallelTooltipMinWidth").maxValue
+						},
+						
+						maxWidth:
+						{
+							minValue: Ext.getCmp("parallelTooltipMaxWidth").minValue,
+							maxValue: Ext.getCmp("parallelTooltipMaxWidth").maxValue
+						},
+						
+						minHeight:
+						{
+							minValue: Ext.getCmp("parallelTooltipMinHeight").minValue,
+							maxValue: Ext.getCmp("parallelTooltipMinHeight").maxValue
+						},
+						
+						maxHeight:
+						{
+							minValue: Ext.getCmp("parallelTooltipMaxHeight").minValue,
+							maxValue: Ext.getCmp("parallelTooltipMaxHeight").maxValue
+						},
+						
+						textPadding:
+						{
+							minValue: Ext.getCmp("parallelTooltipPadding").minValue,
+							maxValue: Ext.getCmp("parallelTooltipPadding").maxValue
+						},
+						
+						borderWidth:
+						{
+							minValue: Ext.getCmp("parallelTooltipBorder").minValue,
+							maxValue: Ext.getCmp("parallelTooltipBorder").maxValue
+						},
+						
+						borderRadius:
+						{
+							minValue: Ext.getCmp("parallelTooltipBorderRadius").minValue,
+							maxValue: Ext.getCmp("parallelTooltipBorderRadius").maxValue
+						}
+					}
+				},
+				
+				sunburst:
+				{
+					toolbar:
+					{
+						spacing:
+						{
+							minValue: Ext.getCmp("sunburstToolbarSpacing").minValue,
+							maxValue: Ext.getCmp("sunburstToolbarSpacing").maxValue
+						},
+						
+						tail:
+						{
+							minValue: Ext.getCmp("sunburstToolbarTail").minValue,
+							maxValue: Ext.getCmp("sunburstToolbarTail").maxValue
+						},
+						
+						height:
+						{
+							minValue: Ext.getCmp("sunburstToolbarHeight").minValue,
+							maxValue: Ext.getCmp("sunburstToolbarHeight").maxValue
+						},
+						
+						width:
+						{
+							minValue: Ext.getCmp("sunburstToolbarWidth").minValue,
+							maxValue: Ext.getCmp("sunburstToolbarWidth").maxValue
+						}
+					},
+					
+					tip:
+					{
+						width:
+						{
+							minValue: Ext.getCmp("sunburstTipWidth").minValue,
+							maxValue: Ext.getCmp("sunburstTipWidth").maxValue
+						}
+					}
+				},
+				
+				wordcloud:
+				{
+					maxNumOfWords:
+					{
+						minValue: Ext.getCmp("wordcloudMaxWords").minValue,
+						maxValue: Ext.getCmp("wordcloudMaxWords").maxValue
+					},
+					
+					maxWordAngle:
+					{
+						minValue: Ext.getCmp("wordcloudMaxAngle").minValue,
+						maxValue: Ext.getCmp("wordcloudMaxAngle").maxValue
+					},
+					
+					minWordAngle:
+					{
+						minValue: Ext.getCmp("wordcloudMinAngle").minValue,
+						maxValue: Ext.getCmp("wordcloudMinAngle").maxValue
+					},
+					
+					maxFontSize:
+					{
+						minValue: Ext.getCmp("wordcloudMaxFontSize").minValue,
+						maxValue: Ext.getCmp("wordcloudMaxFontSize").maxValue
+					},
+					
+					wordPadding:
+					{
+						minValue: Ext.getCmp("wordcloudWordPadding").minValue,
+						maxValue: Ext.getCmp("wordcloudWordPadding").maxValue
+					}
+				},
+				
+				gauge:
+				{
+					startAnglePane:
+					{
+						minValue: Ext.getCmp("gaugeStartAnglePane").minValue,
+						maxValue: Ext.getCmp("gaugeStartAnglePane").maxValue
+					},
+					
+					endAnglePane:
+					{
+						minValue: Ext.getCmp("gaugeEndAnglePane").minValue,
+						maxValue: Ext.getCmp("gaugeEndAnglePane").maxValue
+					}
+				}
+			};
 			
 			/**
 			 * PIE, PARALLEL, HEATMAP chart: Instead of forcing user to specify at least one or two colors in the color pallete, 
@@ -2907,7 +3094,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * need these data (e.g. GAUGE chart).
 				 */
 				var gaugeStep1YAxisPopupData = Sbi.chart.designer.ChartUtils.getAxesDataAsOriginalJson();
-				
+				console.log(gaugeStep1YAxisPopupData[0]);
 				/**
 				 * Optional parameters: endOnTickGauge, lineColor, tickPosition, tickColor, minorTickPosition, minorTickColor
 				 * Mandatory parameters: 
@@ -2963,35 +3150,191 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				/**
 				 * STEP 2 -> Pane panel
-				 */				
-				(chartViewModelData.startAnglePane=="" || chartViewModelData.startAnglePane==null || chartViewModelData.startAnglePane==undefined) ? 
-						errorMsg += "- " + "<b>Start angle</b> not specified [Step 2 -> Pane panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				 */	
+				var gaugeStartAnglePaneGUI = Ext.getCmp("gaugeStartAnglePane").value;
+				var gaugeEndAnglePaneGUI = Ext.getCmp("gaugeEndAnglePane").value;
 				
-				(chartViewModelData.endAnglePane=="" || chartViewModelData.endAnglePane==null || chartViewModelData.endAnglePane==undefined) ?
-					errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				var gaugeStartAnglePaneCModel = chartViewModelData.startAnglePane;
+				var gaugeEndAnglePaneCModel = chartViewModelData.endAnglePane;
+				
+				if (gaugeStartAnglePaneGUI == null)
+				{
+					if (gaugeStartAnglePaneCModel == null || gaugeStartAnglePaneCModel == "")
+					{
+						errorMsg : errorMsg += "- " + "<b>Start angle</b> not specified [Step 2 -> Pane panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (gaugeStartAnglePaneGUI < checkParamValuesForCharts.gauge.startAnglePane.minValue)
+					{
+						errorMsg += "- " + "<b>Start angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.gauge.startAnglePane.minValue + 
+							"</b> [Step 2 -> Pane panel]" + '<br>';
+					}
+					else if (gaugeStartAnglePaneGUI > checkParamValuesForCharts.gauge.startAnglePane.maxValue)
+					{
+						errorMsg += "- " + "<b>Start angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.gauge.startAnglePane.maxValue + 
+							"</b> [Step 2 -> Pane panel]" + '<br>';
+					}
+				}
+				
+				if (gaugeEndAnglePaneGUI == null)
+				{
+					if (gaugeEndAnglePaneCModel == null || gaugeEndAnglePaneCModel=="")
+					{
+						errorMsg : errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>'
+					}						
+				}
+				else 
+				{					
+					if (gaugeEndAnglePaneGUI < checkParamValuesForCharts.gauge.endAnglePane.minValue)
+					{
+						errorMsg += "- " + "<b>End angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.gauge.endAnglePane.minValue + 
+							"</b> [Step 2 -> Pane panel]" + '<br>';
+					}
+					else if (gaugeEndAnglePaneGUI > checkParamValuesForCharts.gauge.endAnglePane.maxValue)
+					{
+						errorMsg += "- " + "<b>End angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.gauge.endAnglePane.maxValue + 
+							"</b> [Step 2 -> Pane panel]" + '<br>';
+					}
+				}
 			}		
 			
 			else if(chartType == "PARALLEL") {
+								
+				var parallelLimit = Ext.getCmp("chartParallelLimit");
+				var parallelAxesLines = Ext.getCmp("chartParallelAxesLines");
+				var parallelTooltip = Ext.getCmp("chartParallelTooltip");
+				
+				/* =================================================================== */
+				/* PARALLEL fields (parameters) values from the GUI - NUMERICAL VALUES */
+				/* =================================================================== */
+				// == Limit panel ==
+				var parallelLimitMaxNumOfRecGUI = parallelLimit.maxNumberOfLines.value;
+				// == Axes lines panel ==
+				var parallelAxesLinesAxisColNamePaddGUI = parallelAxesLines.axisColNamePadd.value;
+				var parallelAxesLinesBrushWidthGUI = parallelAxesLines.brushWidth.value;
+				// == Tooltip panel ==
+				var parallelTooltipMinWidthGUI = parallelTooltip.tooltipMinWidth.value;
+				var parallelTooltipMaxWidthGUI = parallelTooltip.tooltipMaxWidth.value;
+				var parallelTooltipMinHeighGUI = parallelTooltip.tooltipMinHeight.value;
+				var parallelTooltipMaxHeightGUI = parallelTooltip.tooltipMaxHeight.value;
+				var parallelTooltipPaddingGUI = parallelTooltip.tooltipPadding.value;
+				var parallelTooltipBorderGUI = parallelTooltip.tooltipBorder.value;
+				var parallelTooltipBorderRadiusGUI = parallelTooltip.tooltipBorderRadius.value;
+						
+				/* ================================================================================= */
+				/* PARALLEL fields (parameters) values from the chart model	- NON-NUMERICAL VALUES	 */
+				/* ================================================================================= */
+				// == Limit panel ==
+				var parallelLimitMaxNumOfLinesCModel = chartViewModelData.maxNumberOfLines;
+				var parallelLimitSerieAsFiltColCModel = chartViewModelData.serieFilterColumn;
+				var parallelLimitOrderTopMinBottMaxCModel = chartViewModelData.orderTopMinBottomMax;
+				// == Axes lines panel ==
+				var parallelAxesLinesAxisColorCModel = chartViewModelData.axisColor;
+				var parallelAxesLinesAxisColNamePaddCModel = chartViewModelData.axisColNamePadd;
+				var parallelAxesLinesBrushColorCModel = chartViewModelData.brushColor;
+				var parallelAxesLinesBrushWidthCModel = chartViewModelData.brushWidth;
+				// == Tooltip panel ==
+				var parallelTooltipFontFamilyCModel = chartViewModelData.parallelTooltipFontFamily;
+				var parallelTooltipFontSizeCModel = chartViewModelData.parallelTooltipFontSize;
+				var parallelTooltipMinWidthCModel = chartViewModelData.parallelTooltipMinWidth;
+				var parallelTooltipMaxWidthCModel = chartViewModelData.parallelTooltipMaxWidth;
+				var parallelTooltipMinHeightCModel = chartViewModelData.parallelTooltipMinHeight;
+				var parallelTooltipMaxHeightCModel = chartViewModelData.parallelTooltipMaxHeight;
+				var parallelTooltipPaddingCModel = chartViewModelData.parallelTooltipPadding;
+				var parallelTooltipBorderCModel = chartViewModelData.parallelTooltipBorder;
+				var parallelTooltipBorderRadiusCModel = chartViewModelData.parallelTooltipBorderRadius;
+				// == Legend panel : Title button ==
+				var parallelLegendTitleFontFamilyCModel = chartViewModelData.parallelLegendTitleFontFamily;
+				var parallelLegendTitleFontSizeCModel = chartViewModelData.parallelLegendTitleFontSize;
+				var parallelLegendTitleFontStyleCModel = chartViewModelData.parallelLegendTitleFontWeight;				
+				// == Legend panel : Element button ==
+				var parallelLegendElementFontFamilyCModel = chartViewModelData.parallelLegendElementFontFamily;
+				var parallelLegendElementFontSizeCModel = chartViewModelData.parallelLegendElementFontSize;
+				var parallelLegendElementFontStyleCModel = chartViewModelData.parallelLegendElementFontWeight;
+					
 				/**
 				 * STEP 2 -> Limit panel
 				 */
-				(chartViewModelData.serieFilterColumn=="" || chartViewModelData.serieFilterColumn==null || chartViewModelData.serieFilterColumn==undefined) ?
+				(parallelLimitSerieAsFiltColCModel=="" || parallelLimitSerieAsFiltColCModel==null || parallelLimitSerieAsFiltColCModel==undefined) ?
 						errorMsg += "- " + "<b>Serie as filter column</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.maxNumberOfLines=="" || chartViewModelData.maxNumberOfLines==null || chartViewModelData.maxNumberOfLines==undefined) ?
-						errorMsg += "- " + "<b>Maximum number of records</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.orderTopMinBottomMax=="" || chartViewModelData.orderTopMinBottomMax==null || chartViewModelData.orderTopMinBottomMax==undefined) ?
+								
+				if (parallelLimitMaxNumOfRecGUI == null)
+				{
+					if (parallelLimitMaxNumOfLinesCModel == null || parallelLimitMaxNumOfLinesCModel=="")
+					{
+						errorMsg += "- " + "<b>Maximum number of records</b> not specified [Step 2 -> Limit panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (parallelLimitMaxNumOfRecGUI < checkParamValuesForCharts.parallel.limit.maxNumbOfRec.minValue)
+					{
+						errorMsg += "- " + "<b>Maximum number of records</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.limit.maxNumbOfRec.minValue + 
+							"</b> [Step 2 -> Limit panel]" + '<br>';
+					}
+					else if (parallelLimitMaxNumOfRecGUI > checkParamValuesForCharts.parallel.limit.maxNumbOfRec.maxValue)
+					{
+						errorMsg += "- " + "<b>Maximum number of records</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.limit.maxNumbOfRec.maxValue + 
+							"</b> [Step 2 -> Limit panel]" + '<br>';
+					}
+				}	
+				
+				(parallelLimitOrderTopMinBottMaxCModel=="" || parallelLimitOrderTopMinBottMaxCModel==null || parallelLimitOrderTopMinBottMaxCModel==undefined) ?
 						errorMsg += "- " + "<b>Order</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
 				/**
 				 * STEP 2 -> Axes lines panel
 				 */
 				(chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined) ?
 						errorMsg += "- " + "<b>Axis color</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.axisColNamePadd=="" || chartViewModelData.axisColNamePadd==null || chartViewModelData.axisColNamePadd==undefined) ?
-						errorMsg += "- " + "<b>Axis column name padding</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				if (parallelAxesLinesAxisColNamePaddGUI == null)
+				{
+					if (parallelAxesLinesAxisColNamePaddCModel == null || parallelAxesLinesAxisColNamePaddCModel=="")
+					{
+						errorMsg += "- " + "<b>Axis column name padding</b> not specified [Step 2 -> Axes lines panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (parallelAxesLinesAxisColNamePaddGUI < checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.minValue)
+					{
+						errorMsg += "- " + "<b>Axis column name padding</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.minValue + 
+							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+					}
+					else if (parallelAxesLinesAxisColNamePaddGUI > checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.maxValue)
+					{
+						errorMsg += "- " + "<b>Axis column name padding</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.maxValue + 
+							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+					}
+				}
+				
 				(chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined) ?
 						errorMsg += "- " + "<b>Brush color</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.brushWidth=="" || chartViewModelData.brushWidth==null || chartViewModelData.brushWidth==undefined) ?
-						errorMsg += "- " + "<b>Brush width</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				if (parallelAxesLinesBrushWidthGUI == null)
+				{
+					if (parallelAxesLinesBrushWidthCModel == null || parallelAxesLinesBrushWidthCModel == "")
+					{
+						errorMsg += "- " + "<b>Brush width</b> not specified [Step 2 -> Axes lines panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (parallelAxesLinesBrushWidthGUI < checkParamValuesForCharts.parallel.axesLines.brushWidth.minValue)
+					{
+						errorMsg += "- " + "<b>Brush width</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.brushWidth.minValue + 
+							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+					}
+					else if (parallelAxesLinesBrushWidthGUI > checkParamValuesForCharts.parallel.axesLines.brushWidth.maxValue)
+					{
+						errorMsg += "- " + "<b>Brush width</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.brushWidth.maxValue + 
+							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+					}
+				}
+				
 				/**
 				 * STEP 2 -> Tooltip panel
 				 */
@@ -2999,35 +3342,169 @@ Ext.define('Sbi.chart.designer.Designer', {
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(chartViewModelData.parallelTooltipFontSize=="" || chartViewModelData.parallelTooltipFontSize==null || chartViewModelData.parallelTooltipFontSize==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipMinWidth=="" || chartViewModelData.parallelTooltipMinWidth==null || chartViewModelData.parallelTooltipMinWidth==undefined) ?
-						errorMsg += "- " + "<b>Minimum width</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipMaxWidth=="" || chartViewModelData.parallelTooltipMaxWidth==null || chartViewModelData.parallelTooltipMaxWidth==undefined) ?
-						errorMsg += "- " + "<b>Maximim width</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipMinHeight=="" || chartViewModelData.parallelTooltipMinHeight==null || chartViewModelData.parallelTooltipMinHeight==undefined) ?
-						errorMsg += "- " + "<b>Minimum height</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipMaxHeight=="" || chartViewModelData.parallelTooltipMaxHeight==null || chartViewModelData.parallelTooltipMaxHeight==undefined) ?
-						errorMsg += "- " + "<b>Maximim height</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipPadding=="" || chartViewModelData.parallelTooltipPadding==null || chartViewModelData.parallelTooltipPadding==undefined) ?
-						errorMsg += "- " + "<b>Text padding</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipBorder=="" || chartViewModelData.parallelTooltipBorder==null || chartViewModelData.parallelTooltipBorder==undefined) ?
-						errorMsg += "- " + "<b>Border</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelTooltipBorderRadius=="" || chartViewModelData.parallelTooltipBorderRadius==null || chartViewModelData.parallelTooltipBorderRadius==undefined) ?
-						errorMsg += "- " + "<b>Border radius</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				if (parallelTooltipMinWidthGUI == null)
+				{
+					if (parallelTooltipMinWidthCModel == null || parallelTooltipMinWidthCModel=="")
+					{
+						errorMsg += "- " + "<b>Minimum width</b> not specified [Step 2 -> Tooltip panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipMinWidthGUI < checkParamValuesForCharts.parallel.tooltip.minWidth.minValue)
+					{
+						errorMsg += "- " + "<b>Minimum width</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minWidth.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipMinWidthGUI > checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue)
+					{
+						errorMsg += "- " + "<b>Minimum width</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+				
+				if (parallelTooltipMaxWidthGUI == null)
+				{
+					if (parallelTooltipMaxWidthCModel == null || parallelTooltipMaxWidthCModel=="")
+					{
+						errorMsg += "- " + "<b>Maximim width</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipMaxWidthGUI < checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue)
+					{
+						errorMsg += "- " + "<b>Maximim width</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipMaxWidthGUI > checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue)
+					{
+						errorMsg += "- " + "<b>Maximim width</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+				
+				if (parallelTooltipMinHeighGUI == null)
+				{
+					if (parallelTooltipMinHeightCModel == null || parallelTooltipMinHeightCModel=="")
+					{
+						errorMsg += "- " + "<b>Minimum height</b> not specified [Step 2 -> Tooltip panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipMinHeighGUI < checkParamValuesForCharts.parallel.tooltip.minHeight.minValue)
+					{
+						errorMsg += "- " + "<b>Minimum height</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minHeight.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipMinHeighGUI > checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue)
+					{
+						errorMsg += "- " + "<b>Minimum height</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+				
+				if (parallelTooltipMaxHeightGUI == null)
+				{
+					if (parallelTooltipMaxHeightCModel == null || parallelTooltipMaxHeightCModel=="")
+					{
+						errorMsg += "- " + "<b>Maximim height</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipMaxHeightGUI < checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue)
+					{
+						errorMsg += "- " + "<b>Maximim height</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipMaxHeightGUI > checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue)
+					{
+						errorMsg += "- " + "<b>Maximim height</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+				
+				if (parallelTooltipPaddingGUI == null)
+				{
+					if (parallelTooltipPaddingCModel == null || parallelTooltipPaddingCModel=="")
+					{
+						errorMsg += "- " + "<b>Text padding</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipPaddingGUI < checkParamValuesForCharts.parallel.tooltip.textPadding.minValue)
+					{
+						errorMsg += "- " + "<b>Text padding</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.textPadding.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipPaddingGUI > checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue)
+					{
+						errorMsg += "- " + "<b>Text padding</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue + 
+							"</b>[ Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+					
+				if (parallelTooltipBorderGUI == null)
+				{
+					if (parallelTooltipBorderCModel == null || parallelTooltipBorderCModel=="")
+					{
+						errorMsg += "- " + "<b>Border</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipBorderGUI < checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue)
+					{
+						errorMsg += "- " + "<b>Border</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipBorderGUI > checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue)
+					{
+						errorMsg += "- " + "<b>Border</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+				
+				if (parallelTooltipBorderRadiusGUI == null)
+				{
+					if (parallelTooltipBorderRadiusCModel == null || parallelTooltipBorderRadiusCModel=="")
+					{
+						errorMsg += "- " + "<b>Border radius</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+					}						
+				}
+				else 
+				{					
+					if (parallelTooltipBorderRadiusGUI < checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue)
+					{
+						errorMsg += "- " + "<b>Border radius</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+					else if (parallelTooltipBorderRadiusGUI > checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue)
+					{
+						errorMsg += "- " + "<b>Border radius</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue + 
+							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					}
+				}
+				
 				/**
 				 * STEP 2 -> Legend panel (Title and Element button)
 				 */
-				(chartViewModelData.parallelLegendTitleFontFamily=="" || chartViewModelData.parallelLegendTitleFontFamily==null || chartViewModelData.parallelLegendTitleFontFamily==undefined) ?
+				(parallelLegendTitleFontFamilyCModel=="" || parallelLegendTitleFontFamilyCModel==null || parallelLegendTitleFontFamilyCModel==undefined) ?
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelLegendTitleFontSize=="" || chartViewModelData.parallelLegendTitleFontSize==null || chartViewModelData.parallelLegendTitleFontSize==undefined) ?
+				(parallelLegendTitleFontSizeCModel=="" || parallelLegendTitleFontSizeCModel==null || parallelLegendTitleFontSizeCModel==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelLegendTitleFontWeight=="" || chartViewModelData.parallelLegendTitleFontWeight==null || chartViewModelData.parallelLegendTitleFontWeight==undefined) ?
+				(parallelLegendTitleFontStyleCModel=="" || parallelLegendTitleFontStyleCModel==null || parallelLegendTitleFontStyleCModel==undefined) ?
 						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelLegendElementFontFamily=="" || chartViewModelData.parallelLegendElementFontFamily==null || chartViewModelData.parallelLegendElementFontFamily==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelLegendElementFontSize=="" || chartViewModelData.parallelLegendElementFontSize==null || chartViewModelData.parallelLegendElementFontSize==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.parallelLegendElementFontWeight=="" || chartViewModelData.parallelLegendElementFontWeight==null || chartViewModelData.parallelLegendElementFontWeight==undefined) ?
-						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(parallelLegendElementFontFamilyCModel=="" || parallelLegendElementFontFamilyCModel==null || parallelLegendElementFontFamilyCModel==undefined) ?
+						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(parallelLegendElementFontSizeCModel=="" || parallelLegendElementFontSizeCModel==null || parallelLegendElementFontSizeCModel==undefined) ?
+						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				(parallelLegendElementFontStyleCModel=="" || parallelLegendElementFontStyleCModel==null || parallelLegendElementFontStyleCModel==undefined) ?
+						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				
 				/**
 				 * STEP 2 -> Palette panel
@@ -3039,19 +3516,130 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}
 			
 			else if (chartType == "SUNBURST") {
+				
+				var sunburstToolbar = Ext.getCmp("chartToolbarAndTip").stylePopupToolbar;
+				var sunburstTip = Ext.getCmp("chartToolbarAndTip").stylePopupTip;
+				
+				/* =================================================================== */
+				/* SUNBURST fields (parameters) values from the GUI - NUMERICAL VALUES */
+				/* =================================================================== */
+				// == Toolbar and tip panel : Toolbar button ==
+				var sunburstToolbarSpacingGUI = Ext.getCmp("sunburstToolbarSpacing").value;
+				var sunburstToolbarTailGUI = Ext.getCmp("sunburstToolbarTail").value;
+				var sunburstToolbarHeightGUI = Ext.getCmp("sunburstToolbarHeight").value;
+				var sunburstToolbarWidthGUI = Ext.getCmp("sunburstToolbarWidth").value;
+				// == Toolbar and tip panel : Tip button ==
+				var sunburstTipWidthGUI = Ext.getCmp("sunburstTipWidth").value;
+				
+				/* ================================================================================= */
+				/* SUNBURST fields (parameters) values from the chart model	- NON-NUMERICAL VALUES	 */
+				/* ================================================================================= */
+				// == Toolbar and tip panel : Toolbar button ==
+				var sunburstToolbarSpacingCModel = chartViewModelData.toolbarSpacing;
+				var sunburstToolbarTailCModel = chartViewModelData.toolbarTail;
+				var sunburstToolbarHeightCModel = chartViewModelData.toolbarHeight;
+				var sunburstToolbarWidthCModel = chartViewModelData.toolbarWidth;
+				// == Toolbar and tip panel : Tip button ==
+				var sunburstTipFontWeightCModel = chartViewModelData.tipFontWeight;
+				var sunburstTipColorCModel = chartViewModelData.tipColor;
+				var sunburstTipFontSizeCModel = chartViewModelData.tipFontSize;
+				var sunburstTipFontFamilyCModel = chartViewModelData.tipFontFamily;
+				var sunburstTipWidthCModel = chartViewModelData.tipWidth;
+				var sunburstTipTextCModel = chartViewModelData.tipText;				
+				
 				/**
 				 * STEP 2 -> Toolbar and tip configuration (Toolbar style button)
 				 */
 				(chartViewModelData.toolbarPosition=="" || chartViewModelData.toolbarPosition==null || chartViewModelData.toolbarPosition==undefined) ?
 						errorMsg += "- " + "<b>Position</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.toolbarSpacing=="" || chartViewModelData.toolbarSpacing==null || chartViewModelData.toolbarSpacing==undefined) ?
-						errorMsg += "- " + "<b>Spacing</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.toolbarTail=="" || chartViewModelData.toolbarTail==null || chartViewModelData.toolbarTail==undefined) ?
-						errorMsg += "- " + "<b>Tail</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.toolbarHeight=="" || chartViewModelData.toolbarHeight==null || chartViewModelData.toolbarHeight==undefined) ?
-						errorMsg += "- " + "<b>Height</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.toolbarWidth=="" || chartViewModelData.toolbarWidth==null || chartViewModelData.toolbarWidth==undefined) ?
-						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				console.log(sunburstToolbarSpacingGUI);
+				console.log(sunburstToolbarSpacingCModel);
+				
+				if (sunburstToolbarSpacingGUI == null)
+				{
+					if (sunburstToolbarSpacingCModel == null || sunburstToolbarSpacingCModel=="")
+					{
+						errorMsg += "- " + "<b>Spacing</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (sunburstToolbarSpacingGUI < checkParamValuesForCharts.sunburst.toolbar.spacing.minValue)
+					{
+						errorMsg += "- " + "<b>Spacing</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.spacing.minValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+					else if (sunburstToolbarSpacingGUI > checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue)
+					{
+						errorMsg += "- " + "<b>Spacing</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+				}
+				
+				if (sunburstToolbarTailGUI == null)
+				{
+					if (sunburstToolbarTailCModel == null || sunburstToolbarTailCModel=="")
+					{
+						errorMsg += "- " + "<b>Tail</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (sunburstToolbarTailGUI < checkParamValuesForCharts.sunburst.toolbar.tail.minValue)
+					{
+						errorMsg += "- " + "<b>Tail</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.tail.minValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+					else if (sunburstToolbarTailGUI > checkParamValuesForCharts.sunburst.toolbar.tail.maxValue)
+					{
+						errorMsg += "- " + "<b>Tail</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.tail.maxValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+				}
+				
+				if (sunburstToolbarHeightGUI == null)
+				{
+					if (sunburstToolbarHeightCModel == null || sunburstToolbarHeightCModel == "")
+					{
+						errorMsg += "- " + "<b>Height</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (sunburstToolbarHeightGUI < checkParamValuesForCharts.sunburst.toolbar.height.minValue)
+					{
+						errorMsg += "- " + "<b>Height</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.height.minValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+					else if (sunburstToolbarHeightGUI > checkParamValuesForCharts.sunburst.toolbar.height.maxValue)
+					{
+						errorMsg += "- " + "<b>Height</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.height.maxValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+				}
+				
+				if (sunburstToolbarWidthGUI == null)
+				{
+					if (sunburstToolbarWidthCModel == null || sunburstToolbarWidthCModel=="")
+					{
+						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (sunburstToolbarWidthGUI < checkParamValuesForCharts.sunburst.toolbar.width.minValue)
+					{
+						errorMsg += "- " + "<b>Width</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.width.minValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+					else if (sunburstToolbarWidthGUI > checkParamValuesForCharts.sunburst.toolbar.width.maxValue)
+					{
+						errorMsg += "- " + "<b>Width</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.width.maxValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					}
+				}
+				
 				(chartViewModelData.toolbarPercFontColor=="" || chartViewModelData.toolbarPercFontColor==null || chartViewModelData.toolbarPercFontColor==undefined) ?
 						errorMsg += "- " + "<b>Percentage color</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(chartViewModelData.toolbarFontFamily=="" || chartViewModelData.toolbarFontFamily==null || chartViewModelData.toolbarFontFamily==undefined) ?
@@ -3060,50 +3648,224 @@ Ext.define('Sbi.chart.designer.Designer', {
 						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(chartViewModelData.toolbarFontSize=="" || chartViewModelData.toolbarFontSize==null || chartViewModelData.toolbarFontSize==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
 				/**
 				 * STEP 2 -> Toolbar and tip configuration (Tip style button)
-				 */
-				(chartViewModelData.tipFontWeight=="" || chartViewModelData.tipFontWeight==null || chartViewModelData.tipFontWeight==undefined) ?
+				 */					
+				(sunburstTipFontWeightCModel=="" || sunburstTipFontWeightCModel==null || sunburstTipFontWeightCModel==undefined) ?
 						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipColor=="" || chartViewModelData.tipColor==null || chartViewModelData.tipColor==undefined) ?
+				(sunburstTipColorCModel=="" || sunburstTipColorCModel==null || sunburstTipColorCModel==undefined) ?
 						errorMsg += "- " + "<b>Font color</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipFontSize=="" || chartViewModelData.tipFontSize==null || chartViewModelData.tipFontSize==undefined) ?
+				(sunburstTipFontSizeCModel=="" || sunburstTipFontSizeCModel==null || sunburstTipFontSizeCModel==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipFontFamily=="" || chartViewModelData.tipFontFamily==null || chartViewModelData.tipFontFamily==undefined) ?
+				(sunburstTipFontFamilyCModel=="" || sunburstTipFontFamilyCModel==null || sunburstTipFontFamilyCModel==undefined) ?
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipWidth=="" || chartViewModelData.tipWidth==null || chartViewModelData.tipWidth==undefined) ?
-						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipText=="" || chartViewModelData.tipText==null || chartViewModelData.tipText==undefined) ?
+								
+				if (sunburstTipWidthGUI == null)
+				{
+					if (sunburstTipWidthCModel == null || sunburstTipWidthCModel=="")
+					{
+						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (sunburstTipWidthGUI < checkParamValuesForCharts.sunburst.tip.width.minValue)
+					{
+						errorMsg += "- " + "<b>Width</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.tip.width.minValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>';
+					}
+					else if (sunburstTipWidthGUI > checkParamValuesForCharts.sunburst.tip.width.maxValue)
+					{
+						errorMsg += "- " + "<b>Width</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.tip.width.maxValue + 
+							"</b> [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>';
+					}
+				}
+				
+				(sunburstTipTextCModel=="" || sunburstTipTextCModel==null || sunburstTipTextCModel==undefined) ?
 						errorMsg += "- " + "<b>Text</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()				
 			}
 			
 			else if (chartType == "WORDCLOUD") {
-				(chartViewModelData.sizeCriteria=="" || chartViewModelData.sizeCriteria==null || chartViewModelData.sizeCriteria==undefined) ?
+				
+				/* ==================================================================== */
+				/* WORDCLOUD fields (parameters) values from the GUI - NUMERICAL VALUES */
+				/* ==================================================================== */
+				var wordcloudMaxWordsGUI = Ext.getCmp("wordcloudMaxWords").value;
+				var wordcloudMaxAngleGUI = Ext.getCmp("wordcloudMaxAngle").value;
+				var wordcloudMinAngleGUI = Ext.getCmp("wordcloudMinAngle").value;
+				var wordcloudMaxFontSizeGUI = Ext.getCmp("wordcloudMaxFontSize").value;
+				var wordcloudWordPaddingGUI = Ext.getCmp("wordcloudWordPadding").value;
+			
+				/* ================================================================================= */
+				/* WORDCLOUD fields (parameters) values from the chart model - NON-NUMERICAL VALUES	 */
+				/* ================================================================================= */
+				var wordcloudSizeCriteriaCModel = chartViewModelData.sizeCriteria;
+				var wordcloudMaxWordsCModel = chartViewModelData.maxWords;
+				var wordcloudMaxAngleCModel = chartViewModelData.maxAngle;
+				var wordcloudMinAngleCModel = chartViewModelData.minAngle;
+				var wordcloudMaxFontSizeCModel = chartViewModelData.maxFontSize;
+				var wordcloudWordPaddingCModel = chartViewModelData.wordPadding;
+				
+				
+				(wordcloudSizeCriteriaCModel=="" || wordcloudSizeCriteriaCModel==null || wordcloudSizeCriteriaCModel==undefined) ?
 						errorMsg += "- " + "<b>Size criteria</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()				
-				(chartViewModelData.maxWords=="" || chartViewModelData.maxWords==null || chartViewModelData.maxWords==undefined) ?
-						errorMsg += "- " + "<b>Maximum number of words</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.maxAngle=="" || chartViewModelData.maxAngle==null || chartViewModelData.maxAngle==undefined) ?
-						errorMsg += "- " + "<b>Maximum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.minAngle=="" || chartViewModelData.minAngle==null || chartViewModelData.minAngle==undefined) ?
-						errorMsg += "- " + "<b>Minimum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.maxFontSize=="" || chartViewModelData.maxFontSize==null || chartViewModelData.maxFontSize==undefined) ?
-						errorMsg += "- " + "<b>Maximum font size</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.wordPadding=="" || chartViewModelData.wordPadding==null || chartViewModelData.wordPadding==undefined) ?
-						errorMsg += "- " + "<b>Word padding</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+				
+				if (wordcloudMaxWordsGUI == null)
+				{
+					if (wordcloudMaxWordsCModel == null || wordcloudMaxWordsCModel == "")
+					{
+						errorMsg += "- " + "<b>Maximum number of words</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (wordcloudMaxWordsGUI < checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue)
+					{
+						errorMsg += "- " + "<b>Maximum number of words</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+					else if (wordcloudMaxWordsGUI > checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue)
+					{
+						errorMsg += "- " + "<b>Maximum number of words</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+				}
+				
+				if (wordcloudMaxAngleGUI == null)
+				{
+					if (wordcloudMaxAngleCModel == null || wordcloudMaxAngleCModel=="")
+					{
+						errorMsg += "- " + "<b>Maximum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (wordcloudMaxAngleGUI < checkParamValuesForCharts.wordcloud.maxWordAngle.minValue)
+					{
+						errorMsg += "- " + "<b>Maximum word angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.maxWordAngle.minValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+					else if (wordcloudMaxAngleGUI > checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue)
+					{
+						errorMsg += "- " + "<b>Maximum word angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+				}
+				
+				
+				if (wordcloudMinAngleGUI == null)
+				{
+					if (wordcloudMinAngleCModel == null || wordcloudMinAngleCModel=="")
+					{
+						errorMsg += "- " + "<b>Minimum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (wordcloudMinAngleGUI < checkParamValuesForCharts.wordcloud.minWordAngle.minValue)
+					{
+						errorMsg += "- " + "<b>Minimum word angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.minWordAngle.minValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+					else if (wordcloudMinAngleGUI > checkParamValuesForCharts.wordcloud.minWordAngle.maxValue)
+					{
+						errorMsg += "- " + "<b>Minimum word angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxWordAngle + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+				}
+				
+				if (wordcloudMaxFontSizeGUI == null)
+				{
+					if (wordcloudMaxFontSizeCModel == null || wordcloudMaxFontSizeCModel=="")
+					{
+						errorMsg += "- " + "<b>Maximum font size</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (wordcloudMaxFontSizeGUI < checkParamValuesForCharts.wordcloud.maxFontSize.minValue)
+					{
+						errorMsg += "- " + "<b>Maximum font size</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.maxFontSize.minValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+					else if (wordcloudMaxFontSizeGUI > checkParamValuesForCharts.wordcloud.maxFontSize.maxValue)
+					{
+						errorMsg += "- " + "<b>Maximum font size</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxFontSize.maxValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+				}				
+				
+				if (wordcloudWordPaddingGUI == null)
+				{
+					if (wordcloudWordPaddingCModel == null || wordcloudWordPaddingCModel=="")
+					{
+						errorMsg += "- " + "<b>Word padding</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+					}						
+				}
+				else 
+				{					
+					if (wordcloudWordPaddingGUI < checkParamValuesForCharts.wordcloud.wordPadding.minValue)
+					{
+						errorMsg += "- " + "<b>Word padding</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.wordPadding.minValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+					else if (wordcloudWordPaddingGUI > checkParamValuesForCharts.wordcloud.wordPadding.maxValue)
+					{
+						errorMsg += "- " + "<b>Word padding</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.wordPadding.maxValue + 
+							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					}
+				}
 			}
 			
-			else if (chartType == "HEATMAP") {	
+			else if (chartType == "HEATMAP") {
+//				
+				var heatmapLegend = Ext.getCmp("chartHeatmapLegendAndTooltip").heatmapChartLegend;
+				var heatmapTooltip = Ext.getCmp("chartHeatmapLegendAndTooltip").heatmapChartTooltip;
 				
-				(chartViewModelData.legendAlign=="" || chartViewModelData.legendAlign==null || chartViewModelData.legendAlign==undefined) ?
+				// HEATMAP fields (parameters) values from the GUI 	
+//				var heatmapLegendVertAlignGUI = heatmapLegend.items.items[0].value;
+				var heatmapLegendSymbolHeightGUI = heatmapLegend.items.items[1].value;
+//				var heatmapTooltipFontFamilyGUI = heatmapTooltip.items.items[0].value;
+//				var heatmapTooltipFontSizeGUI = heatmapTooltip.items.items[1].value;
+//				var heatmapTooltipFontColorGUI = heatmapTooltip.items.items[2].value;
+				
+				// HEATMAP fields (parameters) values from the chart model
+				var heatmapLegendVertAlignCModel = chartViewModelData.legendAlign;
+				var heatmapLegendSymbolHeightCModel = chartViewModelData.symbolHeight;
+				var heatmapTooltipFontFamilyCModel = chartViewModelData.tipFontFamily;
+				var heatmapTooltipFontSizeCModel = chartViewModelData.tipFontSize;
+				var heatmapTooltipFontColorCModel = chartViewModelData.tipColor;
+				
+				(heatmapLegendVertAlignCModel=="" || heatmapLegendVertAlignCModel==null || heatmapLegendVertAlignCModel==undefined) ?
 						errorMsg += "- " + "<b>Alignment</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.symbolHeight=="" || chartViewModelData.symbolHeight==null || chartViewModelData.symbolHeight==undefined) ?
-						errorMsg += "- " + "<b>Symbol height</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
+								
+				if (heatmapLegendSymbolHeightGUI == null)
+				{
+					if (heatmapLegendSymbolHeightCModel == null || heatmapLegendSymbolHeightCModel=="")
+					{
+						errorMsg += "- " + "<b>Symbol height</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>';
+					}						
+				}
+				else 
+				{
+					if (heatmapLegendSymbolHeightGUI < checkParamValuesForCharts.heatmap.legend.symbolHeight.minValue)
+					{
+						errorMsg += "- " + "<b>Symbol height</b>'s minimum value is: <b>" + checkParamValuesForCharts.heatmap.legend.symbolHeight.minValue + 
+							"</b> [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>';
+					}
+					else if (heatmapLegendSymbolHeightGUI > checkParamValuesForCharts.heatmap.legend.symbolHeight.maxValue)
+					{
+						errorMsg += "- " + "<b>Symbol height</b>'s maximum value is: <b>" + checkParamValuesForCharts.heatmap.legend.symbolHeight.maxValue + 
+							"</b> [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>';
+					}
+				}	
 				
-				(chartViewModelData.tipFontFamily=="" || chartViewModelData.tipFontFamily==null || chartViewModelData.tipFontFamily==undefined) ?
+				(heatmapTooltipFontFamilyCModel=="" || heatmapTooltipFontFamilyCModel==null || heatmapTooltipFontFamilyCModel==undefined) ?
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipFontSize=="" || chartViewModelData.tipFontSize==null || chartViewModelData.tipFontSize==undefined) ?
+				( heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.tipColor=="" || chartViewModelData.tipColor==null || chartViewModelData.tipColor==undefined) ?
+				(heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
 						errorMsg += "- " + "<b>Color</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
 			}
 

@@ -41,7 +41,17 @@ Ext.define
 			
 			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
 			
-			var tooltipFontFamily = Ext.create
+			this.tooltipFontFamily = null;
+			this.tooltipFontSize = null;
+			this.tooltipMinWidth = null;
+			this.tooltipMaxWidth = null;
+			this.tooltipMinHeight = null;
+			this.tooltipMaxHeight = null;
+			this.tooltipPadding = null;
+			this.tooltipBorder = null;
+			this.tooltipBorderRadius = null;
+			
+			this.tooltipFontFamily = Ext.create
 			(	
 				'Sbi.chart.designer.FontCombo',
 				
@@ -51,7 +61,7 @@ Ext.define
 				}	
 			);
 	        
-			var tooltipFontSize = Ext.create
+			this.tooltipFontSize = Ext.create
 	        (
     			'Sbi.chart.designer.FontDimCombo',
     			
@@ -59,6 +69,34 @@ Ext.define
     				bind : '{configModel.parallelTooltipFontSize}'
     			}
 			);
+			
+			this.tooltipMinWidth = Ext.create
+			(
+				{
+					 xtype: 'numberfield',
+					 bind : '{configModel.parallelTooltipMinWidth}',
+					 id: "parallelTooltipMinWidth",
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth"),	
+					 width: "200",
+//					 value: "20",
+					 maxValue: '100',
+					 minValue: '10'
+				}
+			);
+			
+			this.tooltipMaxWidth = Ext.create
+			(
+				{
+					 xtype: 'numberfield',
+					 bind : '{configModel.parallelTooltipMaxWidth}',
+					 id: "parallelTooltipMaxWidth",
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth"),
+					 width: "200",
+//					 value: "300",
+					 maxValue: '500',
+					 minValue: '50'
+				}
+			);		
 			
 			var tooltipWidth = 
 			[			 
@@ -74,28 +112,41 @@ Ext.define
 				       	 
 					 items: 
 					 [				 
-						{
-							 xtype: 'numberfield',
-							 bind : '{configModel.parallelTooltipMinWidth}',	
-							 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth"),	
-							 width: "200",
-							 value: "20",
-							 maxValue: '100',
-							 minValue: '10'
-						},
-						
-						{
-							 xtype: 'numberfield',
-							 bind : '{configModel.parallelTooltipMaxWidth}',	
-							 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth"),
-							 width: "200",
-							 value: "300",
-							 maxValue: '500',
-							 minValue: '50'
-						}
-					]
+					  	this.tooltipMinWidth,
+					  	this.tooltipMaxWidth						
+					 ]
 				}
 			 ];
+			
+			this.tooltipMinHeight = Ext.create
+			(
+				{
+					 xtype: 'numberfield',
+					 bind : '{configModel.parallelTooltipMinHeight}',	
+					 id: "parallelTooltipMinHeight",
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight"),	
+					 width: "200",
+//					 value: "20",
+					 maxValue: '50',
+					 minValue: '5'
+				}
+			);
+			
+			this.tooltipMaxHeight = Ext.create
+			(
+				{
+					 xtype: 'numberfield',
+					 bind : '{configModel.parallelTooltipMaxHeight}',
+					 id: "parallelTooltipMaxHeight",
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight"),	
+					 width: "200",
+//					 value: "300",
+					 maxValue: '500',
+					 minValue: '50'
+				}
+			);
+			
+			
 			
 			var tooltipHeight = 
 			[			 
@@ -111,84 +162,79 @@ Ext.define
 				       	 
 					 items: 
 					 [				 
-						{
-							 xtype: 'numberfield',
-							 bind : '{configModel.parallelTooltipMinHeight}',	
-							 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight"),	
-							 width: "200",
-							 value: "20",
-							 maxValue: '50',
-							 minValue: '5'
-						},
-						
-						{
-							 xtype: 'numberfield',
-							 bind : '{configModel.parallelTooltipMaxHeight}',
-							 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight"),	
-							 width: "200",
-							 value: "300",
-							 maxValue: '500',
-							 minValue: '50'
-						}
+						this.tooltipMinHeight,
+						this.tooltipMaxHeight
 					]
 				}
 			 ];
 			
-			var tooltipPadding = 
-			[
+			this.tooltipPadding = Ext.create
+			( 			
 				{
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipPadding}',	
+					 id: "parallelTooltipPadding",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding"),	
 					 width: "200",
-					 value: "2",
+//					 value: "2",
 					 maxValue: '20',
 					 minValue: '0'
 				}
-			 ];
+			 );
+			
+			this.tooltipBorder = Ext.create
+			(
+				{
+					 xtype: 'numberfield',
+					 bind : '{configModel.parallelTooltipBorder}',
+					 id: "parallelTooltipBorder",
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder"),	
+					 width: "200",
+//					 value: "0",
+					 maxValue: '10',
+					 minValue: '0'
+				}
+			);
+			
+			this.tooltipBorderRadius = Ext.create
+			(
+				{
+					 xtype: 'numberfield',
+					 bind : '{configModel.parallelTooltipBorderRadius}',
+					 id: "parallelTooltipBorderRadius",
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius"),	
+					 width: "200",
+//					 value: "5",
+					 maxValue: '20',
+					 minValue: '0'
+				}
+			);
 			
 			var tooltipBorder = 
-				[			 
-					{            
-						 xtype : 'fieldcontainer',
-						 layout : 'hbox',
-						 
-						 defaults : 
-						 {
-					//		 labelWidth : '100%',
-							 margin:'0 30 0 0'
-						 },
-					       	 
-						 items: 
-						 [				 
-							{
-								 xtype: 'numberfield',
-								 bind : '{configModel.parallelTooltipBorder}',	
-								 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder"),	
-								 width: "200",
-								 value: "0",
-								 maxValue: '10',
-								 minValue: '0'
-							},
-							
-							{
-								 xtype: 'numberfield',
-								 bind : '{configModel.parallelTooltipBorderRadius}',	
-								 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius"),	
-								 width: "200",
-								 value: "5",
-								 maxValue: '20',
-								 minValue: '0'
-							}
-						]
-					}
-				 ];
+			[			 
+				{            
+					 xtype : 'fieldcontainer',
+					 layout : 'hbox',
+					 
+					 defaults : 
+					 {
+				//		 labelWidth : '100%',
+						 margin:'0 30 0 0'
+					 },
+				       	 
+					 items: 
+					 [				 
+					  	this.tooltipBorder,
+					  	this.tooltipBorderRadius
+					]
+				}
+			 ];
 						
-			this.add(tooltipFontFamily);
-			this.add(tooltipFontSize);
+			this.add(this.tooltipFontFamily);
+			this.add(this.tooltipFontSize);
 			this.add(tooltipWidth);
 			this.add(tooltipHeight);
-			this.add(tooltipPadding);
+			this.add(this.tooltipPadding);
 			this.add(tooltipBorder);
 		}
 });

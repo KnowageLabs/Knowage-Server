@@ -30,6 +30,7 @@ Ext.define
 				{
 					xtype : 'numberfield',
 					bind : '{configModel.startAnglePane}',
+					id: "gaugeStartAnglePane",
 					fieldLabel : LN("sbi.chartengine.configuration.gauge.startAnglePane"),
 					width : "200",
 					//value : "0",
@@ -40,6 +41,7 @@ Ext.define
 				{
 					xtype : 'numberfield',
 					bind : '{configModel.endAnglePane}',
+					id: "gaugeEndAnglePane",
 					fieldLabel : LN("sbi.chartengine.configuration.gauge.endAnglePane"),
 					width : "200",
 					//value : "90",

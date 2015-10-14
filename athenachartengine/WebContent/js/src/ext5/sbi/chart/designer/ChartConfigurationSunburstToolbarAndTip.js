@@ -5,7 +5,7 @@
  */
 Ext.define
 (
-	"Sbi.chart.designer.ChartConfigurationToolbarAndTip", 
+	"Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip", 
 	
 	{
 		extend: 'Ext.panel.Panel',
@@ -50,7 +50,12 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;
 			
-			var stylePopupToolbar = Ext.create
+			var globalScope = this;
+			
+			this.stylePopupToolbar = null;
+			this.stylePopupTip = null;
+			
+			this.stylePopupToolbar = Ext.create
 			(
 				'Sbi.chart.designer.StylePopupToolbar',
 				
@@ -67,7 +72,7 @@ Ext.define
 		        }
 			);		
 			
-			var stylePopupTip = Ext.create
+			this.stylePopupTip = Ext.create
 			(
 				'Sbi.chart.designer.StylePopupTip',
 				
@@ -113,7 +118,7 @@ Ext.define
     	    	            
     	    	            handler: function()
     	    	            {
-    	    	            	stylePopupToolbar.show();
+    	    	            	globalScope.stylePopupToolbar.show();
     	    	            }
     				 	}
     				 ]
@@ -145,7 +150,7 @@ Ext.define
 		    	            
 		    	            handler: function()
 		    	            {
-		    	            	stylePopupTip.show();
+		    	            	globalScope.stylePopupTip.show();
 		    	            }
     				 	}
     				 ]

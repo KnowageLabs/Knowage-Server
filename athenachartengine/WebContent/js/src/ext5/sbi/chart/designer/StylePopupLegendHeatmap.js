@@ -32,6 +32,7 @@ Ext.define
         		'Sbi.chart.designer.VerticalAlignmentCombo',
         		{
         			viewModel: this.viewModel,
+        			id: "heatmapLegendVertAlign",
         			bind : this.config.bindFontAlign
         		}
     		);
@@ -41,11 +42,12 @@ Ext.define
 	        	{
 	        		xtype: 'numberfield',
 	        		viewModel: this.viewModel,
+	        		id: "heatmapLegendSymbolHeight",
            		 	bind : '{configModel.symbolHeight}',	
            		 	fieldLabel: LN("sbi.chartengine.configuration.heatmap.symbolHeight"),
-           		 	width: "200",
+           		 	width: 200,
            		 	maxValue: '800',
-           		 	minValue: '100'       		
+           		 	minValue: '50'       		
 	        	}
 	        );
 	        
