@@ -1405,6 +1405,11 @@ function renderWordCloud(chartConf){
 		};
 	}	
 	
+	/**
+	 * The rendering function for the PARALLEL chart.
+	 * 
+	 * @param data JSON containing data (parameters) about the chart 
+	 */
 	function renderParallelChart(data){
 				
 	var records = data.data[0];
@@ -1650,18 +1655,20 @@ function renderWordCloud(chartConf){
 		.append("div")
 		.attr("class","tooltip")
 		.style("opacity","0");
-
+		
+		console.log(data);
+		
 		d3.selectAll(".tooltip")
 		.style("position","absolute")
 		.style("text-align","center")
-		.style("min-width",data.tooltip.minWidth+"px")
-		.style("max-width",data.tooltip.maxWidth+"px")
-		.style("min-height",data.tooltip.minHeight+"px")
-		.style("max-height",data.tooltip.maxHeight+"px")
-		.style("padding",data.tooltip.padding+"px")
-		.style("font-size",data.tooltip.fontSize+"px")
+		.style("min-width",data.tooltip.minWidth)
+		.style("max-width",data.tooltip.maxWidth)
+		.style("min-height",data.tooltip.minHeight)
+		.style("max-height",data.tooltip.maxHeight)
+		.style("padding",data.tooltip.padding)
+		.style("font-size",data.tooltip.fontSize)
 		.style("font-family",data.tooltip.fontFamily)
-		.style("border",data.tooltip.border+"px")
+		.style("border",data.tooltip.border+"px solid black")	// @modifiedBy: danristo (danilo.ristovski@mht.net)
 		.style("border-radius",data.tooltip.borderRadius+"px")
 		.style("pointer-events","none");
 		
@@ -1707,7 +1714,8 @@ function renderWordCloud(chartConf){
 
 				tooltip.transition().duration(50).style("opacity","1");
 				tooltip.style("background",myColors(d[groupcolumn]));
-				tooltip.text(d[data.chart.tooltip])
+				tooltip.text(d[data.chart.tooltip])				
+				.style("text-shadow", "0px 0px 10px #FFFFFF")	// @addedBy: danristo (danilo.ristovski@mht.net)			
 				.style("left", (d3.event.pageX) + "px")     
 				.style("top", (d3.event.pageY - 25) + "px");
 
