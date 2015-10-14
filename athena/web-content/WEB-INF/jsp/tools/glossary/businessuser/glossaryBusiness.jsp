@@ -5,11 +5,7 @@
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
-
-
-
-
+<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
 
 <%
 // check for user profile autorization
@@ -24,41 +20,9 @@
 <html ng-app="glossaryWordManager">
 
 <head>
-	
-	<meta http-equiv="x-ua-compatible" content="IE=EmulateIE9" >
-	
-	<!-- JavaScript --> 
- <!--[if IE 8]> 
- <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
- <script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script> 
- <![endif]--> 
-	
-		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
-	
-	<!-- angular reference-->
-	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular.js"></script>
-	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-	
-	
-	<!-- angular-material-->
-	<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-	<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
-	
-	<!-- angular tree -->
-	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
-	
-	<!-- angular list -->
-	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
-	
-	<!-- context menu -->
-	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
-	
-	<!--pagination-->
-	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
-	
+
+	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+		
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario.css">
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 	
@@ -67,9 +31,7 @@
 	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 	
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
-	
 	
 	
 </head>
@@ -77,14 +39,8 @@
 
 <body class="bodyStyle">
 
-
-
-
-
 	<div ng-controller="Controller as ctrl" class="h100">
-	
-
-	
+		
 
 		<div class="preloader" ng-show="ctrl.showPreloader">
 			<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>

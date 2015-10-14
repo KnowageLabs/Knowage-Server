@@ -14,6 +14,5 @@
 	<classpathentry kind="lib" path="/athenautils/lib/commonj-twm.jar"/>
 	<classpathentry kind="lib" path="/athenautils/lib/foo-commonj.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/athenachartengine/WebContent/WEB-INF/lib/json-20140107.jar"/>
 	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
 </classpath>

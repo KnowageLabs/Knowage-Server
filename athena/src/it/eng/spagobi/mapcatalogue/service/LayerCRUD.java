@@ -82,7 +82,7 @@ public class LayerCRUD {
 			throw new SpagoBIRuntimeException("Error serializing the layers",e);
 		}
 		logger.debug("Layers serialized");
-		return  "{root:"+s+"}";
+		return  "{\"root\":"+s+"}";
 	}
 	
 	@DELETE
@@ -233,13 +233,14 @@ public class LayerCRUD {
 	
 	
 	private String validateLayer (GeoLayer aLayer, JSONObject requestBodyJSON){
-		if(aLayer.getType().equals(FILE)){
+		/*if(aLayer.getType().equals(FILE)){
 			String file = requestBodyJSON.optString(PROPS_FILE);
 			if(file==null || file.contains("/") || file.contains("\\")){
 				return ( ExceptionUtilities.serializeException(fileValidationError,null));
 			}
-		}
+		}*/
 		return null;
+		
 	}
 	
 	

@@ -54,8 +54,8 @@
 		<MAP_REST_SERVICE serviceUrl="/domains/listValueDescriptionByType" businessProcess="publicFunctionality" />		
 	 	<MAP_REST_SERVICE serviceUrl="/domainsforfinaluser/listValueDescriptionByType" businessProcess="SelfServiceDatasetManagement" /> 
 	 	
-		<MAP_REST_SERVICE serviceUrl="/layers" businessProcess="GeoLayersManagement" />			
-		<MAP_REST_SERVICE serviceUrl="/layers/getLayerProperties" businessProcess="GeoLayersManagement" />
+		<MAP_REST_SERVICE serviceUrl="/layers.*" businessProcess="GeoLayersManagement" />			
+		<!-- MAP_REST_SERVICE serviceUrl="/layers/getLayerProperties" businessProcess="GeoLayersManagement" / -->
 	 								
 		<MAP_REST_SERVICE serviceUrl="/selfservicedataset" businessProcess="SelfServiceDatasetManagement" />			
 		<MAP_REST_SERVICE serviceUrl="/selfservicedataset/save" businessProcess="SelfServiceDatasetManagement" />
