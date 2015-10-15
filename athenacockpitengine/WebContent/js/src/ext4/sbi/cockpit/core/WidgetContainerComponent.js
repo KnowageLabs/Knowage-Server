@@ -359,7 +359,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		    });
 	    	  
 	    	var dialogBox = new Ext.Window({
-	              title: 'Help Online',
+	              title: LN('sbi.generic.helpOnLine'),
 	              modal:true,
 	              width:'90%',
 	              height:Ext.getBody().getViewSize().height*0.9 ,
@@ -456,14 +456,7 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     		handler: this.onShowWidgetEditor,
     		scope: this,
     		hidden: Sbi.config.docAuthor != '' && Sbi.user.userId != Sbi.config.docAuthor
-    	},
-    	/*{
-    		type:'help',
-    		tooltip: LN('sbi.cockpit.window.toolbar.configuration'),
-            handler: this.onShowWidgetConfiguration,
-    		scope: this
-        }, */
-        {
+    	}, {
         	type:'refresh',
         	tooltip: LN('sbi.cockpit.window.toolbar.refresh'),
         	handler: this.onWidgetRefresh,
