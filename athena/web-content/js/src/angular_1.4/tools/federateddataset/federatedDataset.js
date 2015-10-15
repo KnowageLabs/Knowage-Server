@@ -589,6 +589,37 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			console.log("List or ListaNew are not loaded!!")
 		}
     }
+	
+	ctr.clearSelections = function() {
+		ctr.myselectedvariable = null;
+	}
+	
+	ctr.retrieveSelections = function(param) {
+		
+		ctr.selectedFields = [];
+		ctr.datasetofSelectedField = [];
+		
+		for (var i = 0; i < param.length; i++) {
+			if(i==0){
+				ctr.selectedFields.push(param[i].sourceColumns[0])
+				ctr.selectedFields.push(param[i].destinationColumns[0])
+			} else {
+				ctr.selectedFields.push(param[i].destinationColumns[0])					
+			}
+		}
+		console.log(ctr.selectedFields)
+		for (var i = 0; i < param.length; i++) {
+			if(i==0){
+				ctr.datasetofSelectedField.push(param[i].sourceTable.name)
+				ctr.datasetofSelectedField.push(param[i].destinationTable.name)
+			} else {
+				ctr.datasetofSelectedField.push(param[i].destinationTable.name)					
+			}
+		}
+		console.log(ctr.datasetofSelectedField)
+		
+		
+	}
         
 }
 
