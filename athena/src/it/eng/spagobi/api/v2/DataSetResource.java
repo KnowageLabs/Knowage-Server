@@ -5,17 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.api.v2;
 
-import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.commons.bo.CriteriaParameter;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -24,7 +17,6 @@ import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.glossary.dao.IGlossaryDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.net.URI;
@@ -52,7 +44,7 @@ import com.mongodb.util.JSON;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- *
+ * 
  */
 @Path("/2.0/datasets")
 public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
@@ -102,7 +94,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		SbiDataSet dataset = dsDAO.loadSbiDataSetByLabel(label);
-		
+
 		if (dataset != null)
 			return JsonConverter.objectToJson(dataset, SbiDataSet.class);
 		else
@@ -167,33 +159,28 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 		return Response.ok().build();
 	}
-	
+
 	@GET
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req,@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,@QueryParam("label") String search) throws EMFUserError {
-		
+	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
+			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search) throws EMFUserError {
+
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
-		IEngUserProfile profile = (IEngUserProfile) req.getSession()
-				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		// TODO check if profile is null
 		dao.setUserProfile(profile);
-		
-		
-		
-		
+
 		Integer page = getNumberOrNull(pageStr);
 		Integer item_per_page = getNumberOrNull(itemPerPageStr);
-		search=search!=null? search:"";
-		
+		search = search != null ? search : "";
+
 		try {
-			List<SbiDataSet> dataset=dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page);
-		
-			
-			
+			List<SbiDataSet> dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page);
+
 			JSONObject jo = new JSONObject();
-			JSONArray ja=new JSONArray();
-			for(SbiDataSet ds: dataset){
+			JSONArray ja = new JSONArray();
+			for (SbiDataSet ds : dataset) {
 				ja.put(JSON.parse(JsonConverter.objectToJson(ds, SbiDataSet.class)));
 			}
 			jo.put("item", ja);
