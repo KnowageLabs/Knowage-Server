@@ -153,7 +153,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 													chartType != 'TREEMAP' && chartType != 'HEATMAP';
 							
 							var chosenTheme = Sbi.chart.designer.Designer.styleName;
-							var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
+							//var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
 //							
 //							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
 //							

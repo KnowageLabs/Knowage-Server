@@ -105,7 +105,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 		      
 			   var styles=JSON.parse(Sbi.chart.designer.Styles);
 			          
-			   
 			   /**
 			    * JSON template that keeps the predefined values for the different styles parameters. 
 			    * We will return this JSON object when needed (e.g. before merging old JSON template 
@@ -1110,13 +1109,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 			     applyAxes: applyAxes,
 			     applySeries: applySeries,
 			     };
-			
-			if (newChart == true) {
-				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-						jsonTemplate, 
-						Designer.getConfigurationForStyle(Designer.styleName).generic,
-						configApplyAxes);
-			}
+			   
+			/**
+			 * We will not provide default style, rather than user specifies the
+			 * one he want to use (specify) for the chart (document).
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
+//			if (newChart == true) {
+//				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+//						jsonTemplate, 
+//						Designer.getConfigurationForStyle(jsonTemplate.CHART.styleName).generic,
+//						configApplyAxes);
+//			}
 			
 			/**
 			 * If the chart is already existing (not just created) and if it is of the 
