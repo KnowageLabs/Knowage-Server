@@ -33,6 +33,7 @@ author:
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="org.json.XML"%>
+<%@page import="org.json.JSONArray"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -63,7 +64,8 @@ author:
 	List<String> includes;
 	String datasetLabel;
 	boolean isCockpit = false;
-
+	JSONArray styles;
+	
 	engineInstance = (ChartEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
 	profile = engineInstance.getUserProfile();
@@ -108,6 +110,8 @@ author:
 	
     Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
     
+    styles=(JSONArray)request.getSession().getAttribute(EngineConstants.DEFAULT_CHART_STYLES);
+    
 %>
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -134,6 +138,8 @@ author:
 	    
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">
+	    Sbi.chart.designer.Styles= '<%=styles%>';
+	    
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
  			
@@ -169,6 +175,9 @@ author:
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  // 'athena';
 			var exporterContextName 	= 'highcharts-export-web';
  			
+			
+			
+			
  			Sbi.chart.designer.Designer.initialize(
  					sbiExecutionId, 
  					userId, 
