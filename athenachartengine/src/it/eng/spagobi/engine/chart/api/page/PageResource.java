@@ -15,6 +15,7 @@ import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
 import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
+import it.eng.spagobi.engine.chart.api.StyleResource;
 import it.eng.spagobi.engine.util.ChartEngineUtil;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -128,6 +129,8 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				JSONArray styles= new JSONArray(new StyleResource().getStyles());
+				getIOManager().getHttpSession().setAttribute(EngineConstants.DEFAULT_CHART_STYLES, styles);
 				break;
 
 			case "test":
