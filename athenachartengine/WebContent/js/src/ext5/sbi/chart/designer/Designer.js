@@ -2915,13 +2915,24 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * TREEMAP chart needs exactly one serie item.
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
-					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.treemap') + '<br>';
+					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.exactlyOne') + '<br>';
 				}
 				else
 				{
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
 				}
 				
+			}
+			else if (numberOfSerieItems < 2)
+			{				
+				if (chartType == "PARALLEL")
+				{
+					/**
+					 * PARALLEL chart needs at least two serie items.
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
+				}
 			}
 			
 			if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson() == null && chartType != "GAUGE") {

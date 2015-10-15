@@ -150,9 +150,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							 */
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
-													chartType != 'TREEMAP' && chartType != 'HEATMAP';
+													chartType != 'TREEMAP' && chartType != 'HEATMAP';													
 							
-							var chosenTheme = Sbi.chart.designer.Designer.styleName;
+							/**
+							 * Benedetto's code
+							 * @commentBy: danristo (danilo.ristovski@mht.net)
+							 */
+							//var chosenTheme = Sbi.chart.designer.Designer.styleName;
 							//var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
 //							
 //							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
@@ -177,7 +181,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   	  						if (data.records.length > 1 && (chartType == 'SUNBURST' || chartType == 'WORDCLOUD' || 
 									chartType == 'TREEMAP' || chartType == 'HEATMAP')) {
   	  							return false;
-  							}  
+  							} 
 							
 							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) {
 								// *_* The original code

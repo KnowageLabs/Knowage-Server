@@ -487,8 +487,9 @@ function renderWordCloud(chartConf){
 			if (chartConf.data[0].length < 1)
 			{
 				var emptyMsgFontSize = parseInt(chartConf.emptymessage.style.fontSize);
-				var emptyMsgDivHeight = parseInt(chartConf.emptymessage.height);
-				var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
+				//var emptyMsgDivHeight = parseInt(chartConf.emptymessage.height);
+				//var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
+				var emptyMsgTotal = emptyMsgFontSize;
 				
 				var emptyMsgFontWeight = null;
 				var emptyMsgFontStyle = null;
@@ -712,7 +713,8 @@ function renderWordCloud(chartConf){
 		if (jsonObject.data[0].length < 1)
 		{
 			var emptyMsgFontSize = parseInt(jsonObject.emptymessage.style.fontSize);
-			var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
+			//var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
+			var emptyMsgTotal = emptyMsgFontSize;
 			
 			// Set empty text on the chart
 			d3.select("#main").append("div")
@@ -842,34 +844,66 @@ function renderWordCloud(chartConf){
 		createVisualization(json);
 		
 //		  function getGradientColorsHSL(args) {
-//		     var  baseColor = args[0];
-//		     var  from =args[1];
-//		     var  to =args[2];
-//		     var  number =args[3];
-//		        var hsl = baseColor,
-//		            fromH = 'h' in from ? from.h : hsl[0],
-//		            fromS = 's' in from ? from.s : hsl[1],
-//		            fromL = 'l' in from ? from.l : hsl[2],
-//		            toH = 'h' in to ? to.h : hsl[0],
-//		            toS = 's' in to ? to.s : hsl[1],
-//		            toL = 'l' in to ? to.l : hsl[2],
-//		            i, colors = [],
-//		            deltaH = (toH - fromH) / number,
-//		            deltaS = (toS - fromS) / number,
-//		            deltaL = (toL - fromL) / number;
-//		        for (i = 0; i <= number; i++) {
-//		            colors.push(Ext.draw.Color.fromHSL(
-//		                fromH + deltaH * i,
-//		                fromS + deltaS * i,
-//		                fromL + deltaL * i
-//		            ).toString());
-//		        }
-//		        return colors;
-//		    }
+			  function getGradientColorsHSL(h,s,l,fromH,fromL,fromS,toH,toL,toS,number) {
+			  
+			  console.log("Unutar funkcije");
+		        
+				this.fromH = fromH ? fromH : h;
+				this.fromS = fromS ? fromS : s;
+				this.fromL = fromL ? fromL : l;
+				this.toH = toH ? toH : h;
+				this.toS = toS ? toS : s;
+				this.toL = toL ? toL : l;
+				
+				var i, colors = [],
+				
+				deltaH = (toH - fromH) / number,
+				deltaS = (toS - fromS) / number,
+				deltaL = (toL - fromL) / number;
+		        
+		        for (i = 0; i <= number; i++) {
+		            colors.push(Ext.draw.Color.fromHSL(
+		                fromH + deltaH * i,
+		                fromS + deltaS * i,
+		                fromL + deltaL * i
+		            ).toString());
+		        }
+		        
+		        return colors;
+		    }
+		
+		function rgbToHsl(r, g, b){
+		    r /= 255, g /= 255, b /= 255;
+		    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+		    var h, s, l = (max + min) / 2;
+
+		    if(max == min){
+		        h = s = 0; // achromatic
+		    }else{
+		        var d = max - min;
+		        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+		        switch(max){
+		            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+		            case g: h = (b - r) / d + 2; break;
+		            case b: h = (r - g) / d + 4; break;
+		        }
+		        h /= 6;
+		    }
+
+		    return [h, s, l];
+		}
 		
 		// Main function to draw and set up the visualization, once we have the data.
 		function createVisualization(json) 
 		{	
+			console.log("Pre poziva funkcije");
+			//var ooo = getGradientColorsHSL("#FF0000");
+			var ooo = rgbToHsl(255,0,0);			
+			console.log(ooo);
+			
+			var yyy = getGradientColorsHSL(ooo[0],ooo[1],ooo[2],255,255,255,255,0,0,10);
+			console.log(yyy);
+			
 			// Basic setup of page elements.
 			/* Set the initial configuration of the breadcrumb - 
 			 * defining dimensions of the trail, color of the text 
@@ -906,14 +940,16 @@ function renderWordCloud(chartConf){
 			
 			var storeColors = 
 			[
-			 	"red", "green", "blue"
+			 	"red", "green", "blue", "orange", "purple"
 			 ];
 			
 			var varietiesOfMainColors = 
 			{
 				red: 	["#CC0000", "#FF4747", "#FF7A7A", "#FF9595", "#FFAAAA", "#FFBBBB", "#FFC9C9", "#FFD4D4", "#FFDDDD", "#FFE4E4", "#FFECEC"],
 				green: 	["#003D00", "#003100", "#194619", "#305830", "#456945", "#587858", "#698669", "#789278", "#869D86", "#92A792", "#9DB09D"],
-				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"]
+				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"],
+				orange: ["#E68A00", "#FF9900", "#EBA133", "#FFAD33", "#FFC266", "#FFCC80", "#FFD699", "#FFE0B2", "#FFEBCC", "#FFF5E6", "#FFE3BA"],
+				purple: ["#7A297A", "#8A2E8A", "#993399", "#A347A3", "#AD5CAD", "#B870B8", "#C285C2", "#CC99CC", "#D6ADD6", "#E0C2E0", "#EBD6EB"],
 			};
 			
 //			var rbgRedColor = d3.rgb("#CC0000");
@@ -930,10 +966,7 @@ function renderWordCloud(chartConf){
 //		     var  to =args[2];
 //		     var  number =args[3];
 			
-			var firstLayerPairs = {};
-			var aaaa = aaa(nodes);
-			var iii = 0;
-			
+			var rootParentsNodes = getRootParentNodes(nodes);
 			var counter = 0;
 			
 			var path = vis.data([json]).selectAll("path")
@@ -955,41 +988,31 @@ function renderWordCloud(chartConf){
 //								  var numberOfColor = Math.floor(Math.random()*children.length);
 //								  colors[d.name] = children[numberOfColor];								  
 //							  }
-							  
-							  // NEW ***
-							  
+							
 							  /* If current node is not a root */
 							  if (d.name != "root")
 							  {								  
 								  /* If current node's parent name is root
 								   * (if this node is part of the first layer) */
-								  					  
+								  
 								  if (d.parent.name=="root")
 								  {
-									  colors[d.name] = varietiesOfMainColors[storeColors[iii]][0];									 
-									  iii++;
+									  console.log("parent is root");
+									  
+									  colors[d.name] = varietiesOfMainColors[storeColors[counter]][0];									 
+									  
+									  counter++;
 								  }		
 								  else
 								  {
-//									  console.log(d);
-//									  console.log(d.layer);
-//									  console.log(varietiesOfMainColors);
-//									  
-//									  console.log(aaaa);									  
-//									  console.log(aaaa.indexOf(d.firstLayerParent));
-//									  
-//									  
-//									  //console.log(rrr);
-//									  console.log(storeColors);
-									  colors[d.name] = varietiesOfMainColors[storeColors[aaaa.indexOf(d.firstLayerParent)]][d.layer+1];
+									  colors[d.name] = varietiesOfMainColors[storeColors[rootParentsNodes.indexOf(d.firstLayerParent)]][d.layer+1];
 								  }
 								  
 								  d['color'] = colors[d.name];
 							  }		
 							  
-//							  console.log(colors);
-//							  console.log(colors[d.name]);
 							  colorArrangement[i] = colors[d.name];
+							  
 							  return colors[d.name];	  
 						}
 				)					
@@ -1005,20 +1028,12 @@ function renderWordCloud(chartConf){
 				totalSize = path.node().__data__.value;
 		 };
 		
-		 function aaa(nodes)
-		 {			 
-			 /* Dark colors for the chart's first layer items */
-				var storeFirstLayerColor = 
-				[
-				 	"#CC0000", 	// red
-				 	"#003D00", 	// green
-				 	"#151B54", 	// blue	
-				 	"#CC3399",	// purple
-				 	"#808080",	// gray
-				 	"#FF9900"	// orange			 			 	
-			 	];
-			 
-				var arrayOfParents = [];
+		 /**
+		  * danristo
+		  */
+		 function getRootParentNodes(nodes)
+		 {				 
+			var arrayOfParents = [];
 				
 			 for (var i=0; i<nodes.length; i++)
 			 {
@@ -1027,8 +1042,6 @@ function renderWordCloud(chartConf){
 					 arrayOfParents.push(nodes[i].name);
 				 }
 			 }
-			 
-//			 console.log(arrayOfParents);
 			 
 			 return arrayOfParents;
 		 };
@@ -1517,14 +1530,15 @@ function renderWordCloud(chartConf){
 		 * on other DIV elements.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
+		d3.select("body").style("background-color",data.chart.style.backgroundColor);
+		
 		d3.select("body")
 			.append("div").attr("id","main")
 			.style("font-family", data.chart.style.fontFamily)
 			.style("font-size",  data.chart.style.fontSize)
 			.style("font-style",data.chart.style.fontStyle ? data.chart.style.fontStyle : "none")
 			.style("font-weight",data.chart.style.fontWeight ? data.chart.style.fontWeight : "none")
-			.style("text-decoration",data.chart.style.textDecoration ? data.chart.style.textDecoration : "none")
-			.style("background-color",data.chart.style.backgroundColor);
+			.style("text-decoration",data.chart.style.textDecoration ? data.chart.style.textDecoration : "none");
 		
 		// Set title
 		d3.select("#main").append("div")

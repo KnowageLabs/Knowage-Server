@@ -119,14 +119,14 @@
   		
   		colors: '$colorsPal',
   		
-  		#if($chart.style.backgroundColor!="")
-  			backgroundColor: '$chart.style.backgroundColor',
-  		#end
-  		
   		style:
 		{
 			fontFamily: '$chart.style.fontFamily',
 			fontSize: '$chart.style.fontSize',
+			
+			#if($chart.style.backgroundColor!="")
+  				backgroundColor: '$chart.style.backgroundColor',
+  			#end
 					
 			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
     			fontStyle: '$chart.style.fontWeight',
