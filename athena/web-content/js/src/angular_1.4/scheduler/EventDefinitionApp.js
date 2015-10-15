@@ -5,13 +5,12 @@ eventDefinitionApp.config(function($mdThemingProvider) {
 });
 	
 eventDefinitionApp.service('translate', function() {
-this.addMessageFile= function(file){
-	   messageResource.load([file,"messages"], function(){});
-	    
-}
+	this.addMessageFile = function(file){
+		messageResource.load([file,"messages"], function(){});
+	};
 	
 	this.load = function(key,sourceFile) {
-		var sf= sourceFile==undefined? 'messages':sourceFile;
+		var sf= sourceFile == undefined? 'messages' : sourceFile;
 		return messageResource.get(key, sf);
 	};
 });
@@ -28,9 +27,9 @@ eventDefinitionApp.controller('ActivityEventController',
 	$scope.translate = translate;
 
 	activityEventCtrl.SCHEDULER_TYPES = [
-        {value: 'single', label: translate.load("scheduler.singleExec","component_scheduler_messages")},
-        {value: 'scheduler', label: translate.load("scheduler.schedulerExec","component_scheduler_messages")},
-        {value: 'event', label: translate.load("scheduler.eventExec","component_scheduler_messages")}
+        {value: 'single', label: translate.load("scheduler.singleExec", "component_scheduler_messages")},
+        {value: 'scheduler', label: translate.load("scheduler.schedulerExec", "component_scheduler_messages")},
+        {value: 'event', label: translate.load("scheduler.eventExec", "component_scheduler_messages")}
     ];
 	
 	activityEventCtrl.EVENT_TYPES = [
@@ -41,44 +40,44 @@ eventDefinitionApp.controller('ActivityEventController',
     ];
 	
 	activityEventCtrl.EVENT_INTERVALS = [
-		{value: 'minute', label: translate.load("scheduler.minuteExec","component_scheduler_messages")},
-		{value: 'hour', label: translate.load("scheduler.hourExec","component_scheduler_messages")},
-		{value: 'day', label: translate.load("scheduler.dayExec","component_scheduler_messages")},
-		{value: 'week', label: translate.load("scheduler.weekExec","component_scheduler_messages")},
-		{value: 'month', label: translate.load("scheduler.monthExec","component_scheduler_messages")}
+		{value: 'minute', label: translate.load("scheduler.minuteExec", "component_scheduler_messages")},
+		{value: 'hour', label: translate.load("scheduler.hourExec", "component_scheduler_messages")},
+		{value: 'day', label: translate.load("scheduler.dayExec", "component_scheduler_messages")},
+		{value: 'week', label: translate.load("scheduler.weekExec", "component_scheduler_messages")},
+		{value: 'month', label: translate.load("scheduler.monthExec", "component_scheduler_messages")}
 	];
 	
 	activityEventCtrl.MONTHS = [
-	    {label: translate.load("scheduler.jan","component_scheduler_messages"), value: '1'},
-	    {label: translate.load("scheduler.feb","component_scheduler_messages"), value: '2'}, 
-	    {label: translate.load("scheduler.mar","component_scheduler_messages"), value: '3'}, 
-	    {label: translate.load("scheduler.apr","component_scheduler_messages"), value: '4'}, 
-	    {label: translate.load("scheduler.may","component_scheduler_messages"), value: '5'}, 
-	    {label: translate.load("scheduler.jun","component_scheduler_messages"), value: '6'}, 
-	    {label: translate.load("scheduler.jul","component_scheduler_messages"), value: '7'}, 
-	    {label: translate.load("scheduler.aug","component_scheduler_messages"), value: '8'}, 
-	    {label: translate.load("scheduler.sep","component_scheduler_messages"), value: '9'}, 
-	    {label: translate.load("scheduler.oct","component_scheduler_messages"), value: '10'}, 
-	    {label: translate.load("scheduler.nov","component_scheduler_messages"), value: '11'}, 
-	    {label: translate.load("scheduler.dic","component_scheduler_messages"), value: '12'}
+	    {label: translate.load("scheduler.jan", "component_scheduler_messages"), value: '1'},
+	    {label: translate.load("scheduler.feb", "component_scheduler_messages"), value: '2'}, 
+	    {label: translate.load("scheduler.mar", "component_scheduler_messages"), value: '3'}, 
+	    {label: translate.load("scheduler.apr", "component_scheduler_messages"), value: '4'}, 
+	    {label: translate.load("scheduler.may", "component_scheduler_messages"), value: '5'}, 
+	    {label: translate.load("scheduler.jun", "component_scheduler_messages"), value: '6'}, 
+	    {label: translate.load("scheduler.jul", "component_scheduler_messages"), value: '7'}, 
+	    {label: translate.load("scheduler.aug", "component_scheduler_messages"), value: '8'}, 
+	    {label: translate.load("scheduler.sep", "component_scheduler_messages"), value: '9'}, 
+	    {label: translate.load("scheduler.oct", "component_scheduler_messages"), value: '10'}, 
+	    {label: translate.load("scheduler.nov", "component_scheduler_messages"), value: '11'}, 
+	    {label: translate.load("scheduler.dic", "component_scheduler_messages"), value: '12'}
     ];
 	
 	activityEventCtrl.WEEKS = [
-        {label: translate.load("scheduler.sun","component_scheduler_messages"), value: '1'}, 
-        {label: translate.load("scheduler.mon","component_scheduler_messages"), value: '2'}, 
-        {label: translate.load("scheduler.tue","component_scheduler_messages"), value: '3'}, 
-        {label: translate.load("scheduler.wed","component_scheduler_messages"), value: '4'}, 
-        {label: translate.load("scheduler.thu","component_scheduler_messages"), value: '5'}, 
-        {label: translate.load("scheduler.fri","component_scheduler_messages"), value: '6'}, 
-        {label: translate.load("scheduler.sat","component_scheduler_messages"), value: '7'}
+        {label: translate.load("scheduler.sun", "component_scheduler_messages"), value: '1'}, 
+        {label: translate.load("scheduler.mon", "component_scheduler_messages"), value: '2'}, 
+        {label: translate.load("scheduler.tue", "component_scheduler_messages"), value: '3'}, 
+        {label: translate.load("scheduler.wed", "component_scheduler_messages"), value: '4'}, 
+        {label: translate.load("scheduler.thu", "component_scheduler_messages"), value: '5'}, 
+        {label: translate.load("scheduler.fri", "component_scheduler_messages"), value: '6'}, 
+        {label: translate.load("scheduler.sat", "component_scheduler_messages"), value: '7'}
     ];
 	
 	activityEventCtrl.WEEKS_ORDER = [
-        {label: translate.load("scheduler.firstweek","component_scheduler_messages"), value: '1'}, 
-        {label: translate.load("scheduler.secondweek","component_scheduler_messages"), value: '2'}, 
-        {label: translate.load("scheduler.thirdweek","component_scheduler_messages"), value: '3'}, 
-        {label: translate.load("scheduler.fourthweek","component_scheduler_messages"), value: '4'}, 
-        {label: translate.load("scheduler.lastweek","component_scheduler_messages"), value: '5'}, 
+        {label: translate.load("scheduler.firstweek", "component_scheduler_messages"), value: '1'}, 
+        {label: translate.load("scheduler.secondweek", "component_scheduler_messages"), value: '2'}, 
+        {label: translate.load("scheduler.thirdweek", "component_scheduler_messages"), value: '3'}, 
+        {label: translate.load("scheduler.fourthweek", "component_scheduler_messages"), value: '4'}, 
+        {label: translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'}, 
     ];
 	
 	activityEventCtrl.event = {};
@@ -548,7 +547,7 @@ eventDefinitionApp.controller('ActivityEventController',
 	};
 			
 			
-			activityEventCtrl.prova = function(item) {
-				console.log("prova",item); 	
-			};
+	activityEventCtrl.prova = function(item) {
+		console.log("prova",item); 	
+	};
 }]);
