@@ -17,9 +17,11 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 
 	public List<SbiDataSet> loadSbiDataSets();
 
+	public List<SbiDataSet> loadNotDerivedSbiDataSets();
+
 	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
-			String implementation);
-	
+			String implementation, Boolean showDerivedDatasets);
+
 	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search,Integer page, Integer item_per_page);
 	
 	public Integer countSbiDataSet(String search) throws EMFUserError;

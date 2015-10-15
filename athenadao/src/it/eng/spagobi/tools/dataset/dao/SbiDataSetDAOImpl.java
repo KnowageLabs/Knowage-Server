@@ -1,8 +1,3 @@
-/* SpagoBI, the Open Source Business Intelligence suite
-
- * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
- * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -73,7 +68,12 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 	@Override
 	public List<SbiDataSet> loadSbiDataSets() {
-		return loadDataSets(null, null, null, null, null, null, null);
+		return loadDataSets(null, null, null, null, null, null, null, true);
+	}
+	
+	@Override
+	public List<SbiDataSet> loadNotDerivedSbiDataSets() {
+		return loadDataSets(null, null, null, null, null, null, null, false);
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 	@Override
 	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
-			String implementation) {
+			String implementation, Boolean showDerivedDatasets) {
 
 		Session session = getSession();
 
@@ -156,6 +156,8 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 				statement += " and h.category.valueCd = ? ";
 			if (implementation != null)
 				statement += " and h.type = ? ";
+			if (showDerivedDatasets == null || showDerivedDatasets.equals(false))
+				statement += " and h.federation is null ";
 
 			// inject parameters
 			int paramIndex = 0;

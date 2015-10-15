@@ -19,6 +19,7 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.event.DataSetEventManager;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetException;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -150,37 +151,54 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
-	public List<IDataSet> loadDataSetsOwnedByUser(String user) {
-		return loadDataSetsByOwner(user, true, false);
+	public List<IDataSet> loadDataSetsOwnedByUser(String user, Boolean showDerivedDatasets) {
+		return loadDataSetsByOwner(user, true, false, showDerivedDatasets);
 	}
 
 	@Override
-	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic) {
-		return loadDataSets(owner, includeOwned, includePublic, null, null, null, null);
+	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets) {
+		return loadDataSets(owner, includeOwned, includePublic, null, null, null, null, showDerivedDatasets);
 	}
 
 	@Override
 	public List<IDataSet> loadEnterpriseDataSets() {
-		return loadDataSets(null, null, null, null, "ENTERPRISE", null, null);
+		return loadDataSets(null, null, null, null, "ENTERPRISE", null, null, true);
 	}
 
 	@Override
 	public List<IDataSet> loadUserDataSets(String user) {
-		return loadDataSets(user, true, false, null, "USER", null, null);
+		return loadDataSets(user, true, false, null, "USER", null, null, true);
 	}
 
 	@Override
-	public List<IDataSet> loadDatasetsSharedWithUser(String user) {
-		return loadDataSets(user, false, false, "PUBLIC", "USER", null, null);
+	public List<IDataSet> loadNotDerivedUserDataSets(String user) {
+		return loadDataSets(user, true, false, null, "USER", null, null, false);
+	}
+
+	@Override
+	public List<IDataSet> loadDatasetsSharedWithUser(String user, Boolean showDerivedDataset) {
+		return loadDataSets(user, false, false, "PUBLIC", "USER", null, null, showDerivedDataset);
 	}
 
 	@Override
 	public List<IDataSet> loadDatasetOwnedAndShared(String user) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
 
-		List<IDataSet> owened = loadDataSetsOwnedByUser(user);
+		List<IDataSet> owened = loadDataSetsOwnedByUser(user, true);
 		results.addAll(owened);
-		List<IDataSet> shared = loadDatasetsSharedWithUser(user);
+		List<IDataSet> shared = loadDatasetsSharedWithUser(user, true);
+		results.addAll(shared);
+
+		return results;
+	}
+
+	@Override
+	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(String user) {
+		List<IDataSet> results = new ArrayList<IDataSet>();
+
+		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
+		results.addAll(owened);
+		List<IDataSet> shared = loadDatasetsSharedWithUser(user, false);
 		results.addAll(shared);
 
 		return results;
@@ -188,7 +206,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadCkanDataSets(String user) {
-		return loadDataSets(user, true, false, null, "USER", null, "SbiCkanDataSet");
+		return loadDataSets(user, true, false, null, "USER", null, "SbiCkanDataSet", false);
 	}
 
 	@Override
@@ -203,9 +221,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		// " ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?) "+
 		// ")"
 
-		List<IDataSet> owened = loadDataSetsOwnedByUser(user);
+		List<IDataSet> owened = loadDataSetsOwnedByUser(user, true);
 		results.addAll(owened);
-		List<IDataSet> shared = loadDatasetsSharedWithUser(user);
+		List<IDataSet> shared = loadDatasetsSharedWithUser(user, true);
 		results.addAll(shared);
 		List<IDataSet> enterprise = loadEnterpriseDataSets();
 		results.addAll(enterprise);
@@ -215,18 +233,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadFlatDatasets() {
-		return loadDataSets(null, false, false, null, "TECHNICAL", null, "SbiFlatDataSet");
+		return loadDataSets(null, false, false, null, "TECHNICAL", null, "SbiFlatDataSet", true);
 		// "from SbiDataSet h where h.active = ? and h.scope.valueCd ='TECHNICAL' and h.type='SbiFlatDataSet'"
 	}
 
 	@Override
 	public List<IDataSet> loadDataSets() {
-		return loadDataSets(null, null, null, null, null, null, null);
+		return loadDataSets(null, null, null, null, null, null, null, true);
 	}
 
 	@Override
 	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
-			String implementation) {
+			String implementation, Boolean showDerivedDatasets) {
 
 		List<IDataSet> results;
 		Session session = getSession();
@@ -258,6 +276,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				statement += " and h.category.valueCd = ? ";
 			if (implementation != null)
 				statement += " and h.type = ? ";
+			if (showDerivedDatasets == false) {
+				statement += " and h.federation is null ";
+			}
 
 			// inject parameters
 			int paramIndex = 0;
@@ -1413,13 +1434,22 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
+			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
+			List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(datasetId, session);
+			if (!federationsAssociated.isEmpty()) {
+				for (Iterator iterator = federationsAssociated.iterator(); iterator.hasNext();) {
+					FederationDefinition fedDef = (FederationDefinition) iterator.next();
+					logger.debug("Dataset with id " + datasetId + " is used by Federation with label " + fedDef.getLabel());
+				}
+			}
+
 			// boolean bObjects = hasBIObjAssociated(String.valueOf(datasetId));
 			boolean bLovs = hasBILovAssociated(String.valueOf(datasetId));
 			boolean bKpis = hasBIKpiAssociated(String.valueOf(datasetId));
 			// if (!objectsAssociated.isEmpty() || bObjects || bLovs || bKpis) {
-			if (!objectsAssociated.isEmpty() || bLovs || bKpis) {
+			if (!objectsAssociated.isEmpty() || !federationsAssociated.isEmpty() || bLovs || bKpis) {
 				String message = "[deleteInUseDSError]: Dataset with id [" + datasetId + "] "
-						+ "cannot be erased because it is referenced by documents or kpis or lovs.";
+						+ "cannot be erased because it is referenced by documents or federations or kpis or lovs.";
 				// throw new SpagoBIDOAException(message);
 				DatasetInUseException diue = new DatasetInUseException(message);
 				diue.setKpi(bKpis);
@@ -1430,6 +1460,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					objs.add(obj.getLabel());
 				}
 				diue.setObjectsLabel(objs);
+				ArrayList<String> federations = new ArrayList<String>();
+				for (int i = 0; i < federationsAssociated.size(); i++) {
+					FederationDefinition fedDef = federationsAssociated.get(i);
+					federations.add(fedDef.getLabel());
+				}
+				diue.setFederationsLabel(federations);
+
 				throw diue;
 			}
 

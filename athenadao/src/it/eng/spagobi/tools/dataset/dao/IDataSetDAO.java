@@ -24,26 +24,30 @@ public interface IDataSetDAO extends ISpagoBIDao {
 
 	public IDataSet loadDataSetById(Integer id);
 
-	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic);
+	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets);
 
 	public List<IDataSet> loadEnterpriseDataSets();
 
 	public List<IDataSet> loadUserDataSets(String user);
 
+	public List<IDataSet> loadNotDerivedUserDataSets(String user);
+
 	public List<IDataSet> loadFlatDatasets();
 
-	public List<IDataSet> loadDataSetsOwnedByUser(String user);
+	public List<IDataSet> loadDataSetsOwnedByUser(String user, Boolean showDerivedDatasets);
 
-	public List<IDataSet> loadDatasetsSharedWithUser(String user);
+	public List<IDataSet> loadDatasetsSharedWithUser(String user, Boolean showDerivedDatasets);
 
 	public List<IDataSet> loadDatasetOwnedAndShared(String user);
+
+	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(String user);
 
 	public List<IDataSet> loadCkanDataSets(String user);
 
 	public List<IDataSet> loadMyDataDataSets(String owner);
 
 	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String visibility, String type, String category,
-			String implementation);
+			String implementation, Boolean showDerivedDatasets);
 
 	public List<IDataSet> loadDataSets();
 

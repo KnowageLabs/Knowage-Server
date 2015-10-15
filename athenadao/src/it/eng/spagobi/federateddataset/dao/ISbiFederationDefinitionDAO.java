@@ -12,12 +12,16 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 
 	public void saveSbiFederationDefinition(FederationDefinition dataset);
 
 	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError;
- 
+	 
 	public List<FederationDefinition> loadAllFederatedDataSets() throws EMFUserError;
+
+	public List<FederationDefinition> loadFederationsUsingDataset(Integer dsId, Session currSession) throws EMFUserError;
 
 }

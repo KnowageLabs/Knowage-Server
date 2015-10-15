@@ -10,6 +10,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -158,4 +159,29 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		logger.debug("OUT");
 		return realResult;
 	}
+
+	@Override
+	public List<FederationDefinition> loadFederationsUsingDataset(Integer dsId, Session currSession) throws EMFUserError {
+		logger.debug("IN");
+
+		ArrayList<FederationDefinition> toReturn = new ArrayList<FederationDefinition>();
+
+		String hql = "from SbiDataSetFederation s where s.id.dsId=" + dsId;
+
+		Query hqlQuery = currSession.createQuery(hql);
+		List hibDsFed = hqlQuery.list();
+
+		Iterator it = hibDsFed.iterator();
+		while (it.hasNext()) {
+			SbiDataSetFederation sbiDsFed = (SbiDataSetFederation) it.next();
+			SbiFederationDefinition sbiFedDef = (SbiFederationDefinition) currSession.load(SbiFederationDefinition.class, sbiDsFed.getId().getFederationId());
+			FederationDefinition fedDef = SbiFederationUtils.toDatasetFederation(sbiFedDef, getUserProfile());
+			toReturn.add(fedDef);
+
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 }
