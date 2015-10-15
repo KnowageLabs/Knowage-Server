@@ -6,6 +6,7 @@
 package it.eng.spagobi.engine.chart;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
 import it.eng.spagobi.services.common.EnginConf;
 
@@ -80,5 +81,17 @@ public class ChartEngineConfig {
 	public static Map<String, ChartConfig> getChartLibConf() {
 		return chartLibConf;
 	}
+	
+	public static String getEngineResourcePath(){
+		 String path = null;
+		  if(getEngineConfig().getResourcePath() != null) {
+		   path = getEngineConfig().getResourcePath() + System.getProperty("file.separator") + "chart";
+		  } else {
+		   path = ConfigSingleton.getRootPath() + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + "chart";
+		  }
+		  
+		  return path;
+	}
+	}
 
-}
+
