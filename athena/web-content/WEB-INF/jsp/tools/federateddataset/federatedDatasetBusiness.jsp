@@ -5,8 +5,8 @@
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
-<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -14,42 +14,13 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>Insert title here</title>
+		<title>Federation Definition</title>
 	
-		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
-		
-		<!-- angular reference-->
-		<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular.js"></script>
-		<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-		<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-	
-		<!-- angular-material-->
-		<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-		<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
-		
-		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
+		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">		
 		<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
 		<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
-		
-		<!-- angular list -->
-		<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/angular-list.css">
-		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
-		
-		<!-- context menu -->
-	 	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
-	
-		<!-- angular tree -->
-		<link rel="stylesheet"  href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-		<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
-		<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
-		 
-		<!-- context menu -->
-		<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
-		 
-		<!--pagination-->
-		<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
-		
+
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<%
 			String relString = "";
@@ -216,10 +187,13 @@
 									<div ng-repeat="k in ctrl.multiArray track by $index">
 										
 										<md-list-item style="min-height:35px">
-										
-											<div ng-style="myStyle"   ng-repeat="bla in k track by $index">
-											<span ng-if="$index==0">
+											
+											<div ng-style="myStyle"  ng-click="ctrl.retrieveSelections(k)" ng-repeat="bla in k track by $index">
+											<span>
+												<span ng-if="$index==0">
 												{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+											</span>
+											
 											</div>
 											<span flex=""></span>
 											 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">

@@ -36,7 +36,7 @@
      				close
     			</md-button>
     			<md-button style="color:grey" 
-    			ng-click="feddsCtrl.saveFedDataSet(); ctrl.hide(); ctrl.showAlert($event); " class="md-primary" 
+    			ng-click="feddsCtrl.saveFedDataSet(); ctrl.hide(); ctrl.showAlert($event); ctrl.clearSelections()" class="md-primary" 
     			ng-disabled="saveFDSForm.$invalid">
       				save
     			</md-button>
