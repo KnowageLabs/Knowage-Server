@@ -101,6 +101,33 @@ Ext.define('Sbi.chart.designer.Designer', {
 		getConfigurationForStyle : function(style) {
 //			Designer.styleName = style;
 			
+		//   Designer.styleName = style;
+		      
+			   var styles=JSON.parse(Sbi.chart.designer.Styles);
+			          
+			   
+			   /**
+			    * JSON template that keeps the predefined values for the different styles parameters. 
+			    * We will return this JSON object when needed (e.g. before merging old JSON template 
+			    * with the new one (that keeps the predefined style parameters), after changing the style).
+			    */
+			   //var templateToReturn = null;
+			   var retTemplate=null;
+			   
+			   /**
+			    * This method is called when changing (choosing) the style of the chart's default parameters 
+			    * and it will return the JSON template depending on the chosen style (red, blue, ...). This
+			    * switch statement servers for that purpose.
+			    */
+			   for(i=0;i<styles.length;i++){
+			    if(styles[i].STYLE.name===style){
+			     retTemplate=styles[i].TEMPLATE;
+			     break;
+			    } 
+			   }
+			   
+			      return retTemplate;
+			
 			/**
 			 * JSON template that keeps the predefined values for the different styles parameters. 
 			 * We will return this JSON object when needed (e.g. before merging old JSON template 
@@ -1547,22 +1574,47 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
+			var allStyleNames= function (){
+			    var allStyles=[];
+			    var styles=JSON.parse(Sbi.chart.designer.Styles);
+			    
+			    for(i=0; i< styles.length;i++){
+			     style={
+			      styleAbbr:styles[i].STYLE.name, 
+			      style:styles[i].STYLE.name
+			     };
+			     allStyles.push(style);
+			    }
+			    return allStyles;
+			   };
+			   var allStyles=allStyleNames();
+			   var styleStore = Ext.create ( "Ext.data.Store", {
+			    fields: ["styleAbbr", "style"],
+			    
+			    data: allStyles
+			     /*[
+			      {style: LN('sbi.chartengine.designer.stylecolor.red'), styleAbbr: "red"},
+			      {style: LN('sbi.chartengine.designer.stylecolor.blue'), styleAbbr: "blue"},
+			      //{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"}
+			       ]*/
+			   });
+			
 			/**
 			 * Static store for styles for the generic parameters of the document (chart)
 			 * with combo items that have predefined names (Red, Green, Blue, ...).
 			 * 
 			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
-			var styleStore = Ext.create ( "Ext.data.Store", {
-				fields: ["style", "styleAbbr"],
-				
-				data: [
-				 	{style: LN('sbi.chartengine.designer.stylecolor.red'), styleAbbr: "red"},
-				 	{style: LN('sbi.chartengine.designer.stylecolor.blue'), styleAbbr: "blue"},
-				 	//{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"}
-						 ]
-			});
-			
+//			var styleStore = Ext.create ( "Ext.data.Store", {
+//				fields: ["style", "styleAbbr"],
+//				
+//				data: [
+//				 	{style: LN('sbi.chartengine.designer.stylecolor.red'), styleAbbr: "red"},
+//				 	{style: LN('sbi.chartengine.designer.stylecolor.blue'), styleAbbr: "blue"},
+//				 	//{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"}
+//						 ]
+//			});
+//			
 			/**
 			 * GUI label element that will be placed immediatelly above the style combo box
 			 * (on the top of the left panel on the Designer page).
@@ -1587,7 +1639,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    queryMode: 'local',
 			    displayField: 'style',
 			    valueField: 'styleAbbr',
-			    value: Designer.styleName,
+			    value:  this.jsonTemplate.CHART.styleName,
 			    editable: false,
 			    padding: "5 0 10 0",
 			    width: 170,
