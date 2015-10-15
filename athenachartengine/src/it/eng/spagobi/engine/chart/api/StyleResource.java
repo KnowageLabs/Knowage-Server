@@ -25,10 +25,17 @@ public class StyleResource {
     public String getStyles() throws Exception {
 		
 	String resourcePath= ChartEngineConfig.getEngineResourcePath();
+
 	JSONArray allStyles= new JSONArray();
 	
 	File folder = new File(resourcePath+PATH_TO_STYLE);
+	
+	if(!folder.exists()){
+		return allStyles.toString();
+	}
+	
 	File[] listOfFiles = folder.listFiles();
+	
 	
 	for (int i=0;i< listOfFiles.length;i++){
 		if(listOfFiles[i].isFile()){
