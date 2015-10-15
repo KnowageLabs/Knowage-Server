@@ -17,6 +17,7 @@ import java.util.Iterator;
 public class DatasetInUseException extends DatasetException {
 
 	ArrayList<String> objectsLabel;
+	ArrayList<String> federationsLabel;
 	boolean kpi;
 	boolean lov;
 
@@ -48,6 +49,19 @@ public class DatasetInUseException extends DatasetException {
 		String toReturn = "";
 
 		for (Iterator iterator = objectsLabel.iterator(); iterator.hasNext();) {
+			String label = (String) iterator.next();
+			toReturn += label;
+			if (iterator.hasNext())
+				toReturn += ", ";
+		}
+
+		return toReturn;
+	}
+
+	public String getFederationsMessage() {
+		String toReturn = "";
+
+		for (Iterator iterator = federationsLabel.iterator(); iterator.hasNext();) {
 			String label = (String) iterator.next();
 			toReturn += label;
 			if (iterator.hasNext())
@@ -93,6 +107,14 @@ public class DatasetInUseException extends DatasetException {
 
 	public void setLov(boolean lov) {
 		this.lov = lov;
+	}
+
+	public ArrayList<String> getFederationsLabel() {
+		return federationsLabel;
+	}
+
+	public void setFederationsLabel(ArrayList<String> federationsLabel) {
+		this.federationsLabel = federationsLabel;
 	}
 
 }
