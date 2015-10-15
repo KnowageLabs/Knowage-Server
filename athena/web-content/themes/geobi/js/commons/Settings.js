@@ -69,6 +69,8 @@ Sbi.settings.geobi.mydata = {
 	 * put true for showing only owned datasets
 	 */
 	, showOnlyOwner: false
+	, showDerivedDataset: false
+	
 	/**
 	 * Visibility of MyData tabs
 	 */

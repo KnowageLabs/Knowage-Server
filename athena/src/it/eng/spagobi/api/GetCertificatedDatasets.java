@@ -98,7 +98,7 @@ public class GetCertificatedDatasets {
 					synchronizeDatasets(dataSets, ckanJSONArray);
 				} else {
 					// else it is a custom dataset list --> get all datasets public with owner != user itself
-					dataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile).getUserId().toString());
+					dataSets = dataSetDao.loadDatasetsSharedWithUser(((UserProfile) profile).getUserId().toString(), true);
 				}
 			}
 			logger.debug("Creating JSON...");

@@ -265,7 +265,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 		});
 	}
 	
-	restServices.get("2.0/datasets","")
+	restServices.get("2.0/datasets","listNotDerivedDataset")
 		.success(
 				function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")) {
@@ -301,7 +301,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 				}
 		)
 		
-	restServices.get("2.0/datasets","")
+	restServices.get("2.0/datasets","listNotDerivedDataset")
 		.success(
 				function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")) {

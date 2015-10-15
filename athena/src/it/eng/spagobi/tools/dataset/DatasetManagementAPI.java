@@ -777,7 +777,7 @@ public class DatasetManagementAPI {
 			if (userId == null) {
 				userId = this.getUserId();
 			}
-			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(userId);
+			List<IDataSet> dataSets = getDataSetDAO().loadDataSetsOwnedByUser(userId, true);
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }
@@ -799,7 +799,7 @@ public class DatasetManagementAPI {
 			if (userId == null) {
 				userId = this.getUserId();
 			}
-			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser(userId);
+			List<IDataSet> dataSets = getDataSetDAO().loadDatasetsSharedWithUser(userId, true);
 			// for (IDataSet dataSet : dataSets) {
 			// checkQbeDataset(dataSet);
 			// }

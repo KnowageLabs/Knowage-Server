@@ -47,6 +47,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 		}
 		baseParams.isTech = this.config.isTech;
 		baseParams.showOnlyOwner = Sbi.settings.mydata.showOnlyOwner;
+		baseParams.showDerivedDataset = false;
 
 		/*
 		this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -214,6 +215,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = true;
+			baseParams.showDerivedDataset = false;
+
 			baseParams.typeDoc = this.typeDoc;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -226,6 +229,8 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = true;
 			baseParams.showOnlyOwner = false;
+			baseParams.showDerivedDataset = false;
+
 			baseParams.typeDoc = this.typeDoc;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -238,6 +243,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
+			baseParams.showDerivedDataset = false;
 			baseParams.typeDoc = this.typeDoc;
 
 			this.services["list"] = Sbi.config.serviceRegistry.getRestServiceUrl({
@@ -249,6 +255,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				baseParams = {};
 				baseParams.isTech = false;
 				baseParams.showOnlyOwner = true;
+				baseParams.showDerivedDataset = false;
 				baseParams.typeDoc = this.typeDoc;
 				baseParams.ckanDs = true;
 				baseParams.ckanFilter = arguments[1];
@@ -265,6 +272,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 			baseParams ={};
 			baseParams.isTech = false;
 			baseParams.showOnlyOwner = false;
+			baseParams.showDerivedDataset = false;
 			baseParams.typeDoc = this.typeDoc;
 			baseParams.allMyDataDs = true;
 

@@ -77,6 +77,7 @@ Ext.define('Sbi.tools.dataset.CkanDataSetsWizard', {
 		baseParams.id = this.ckanId;
 		baseParams.format = this.ckanFormat
 		baseParams.showOnlyOwner = true;
+		baseParams.showDerivedDataset = false;
 
 		this.services["download"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: 'ckan-management/download',

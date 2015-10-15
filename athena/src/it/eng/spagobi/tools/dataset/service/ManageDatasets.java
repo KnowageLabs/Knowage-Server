@@ -557,8 +557,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				MessageBuilder msgBuild = new MessageBuilder();
 				String errorDescription = msgBuild.getMessage("sbi.ds.deleteDsInUseError", getLocale());
 
-				errorDescription = errorDescription.replaceAll("%0", duie.getBiObjectMessage()).replaceAll("%1", duie.getKpiMessage())
-						.replaceAll("%2", duie.getLovMessage());
+				errorDescription = errorDescription.replaceAll("%0", duie.getBiObjectMessage()).replaceAll("%1", duie.getFederationsMessage())
+						.replaceAll("%2", duie.getKpiMessage()).replaceAll("%3", duie.getLovMessage());
 
 				throw new SpagoBIServiceException(SERVICE_NAME, errorDescription, e);
 			} else {

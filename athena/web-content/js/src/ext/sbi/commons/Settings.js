@@ -56,6 +56,7 @@ Sbi.settings.mydata = {
 	 * put true for showing only owned datasets
 	 */
 	, showOnlyOwner: true
+	, showDerivedDataset: false
 	/**
 	 * Visibility of MyData tabs
 	 */

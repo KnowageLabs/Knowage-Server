@@ -19,7 +19,6 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -133,11 +132,23 @@ public class SelfServiceDataSetCRUD {
 
 			boolean isTechDsMngr = UserUtilities.isTechDsManager(profile);
 			String showOnlyOwner = req.getParameter("showOnlyOwner");
+			String showDerivedDatasetsStr = req.getParameter("showDerivedDataset");
+			boolean showDerivedDatasets = showDerivedDatasetsStr != null && showDerivedDatasetsStr.equalsIgnoreCase("true") ? true : false;
+
 			if (!isTechDsMngr) {
 				if (showOnlyOwner != null && !showOnlyOwner.equalsIgnoreCase("true")) {
-					dataSets = dataSetDao.loadDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+					if (showDerivedDatasets) {
+						dataSets = dataSetDao.loadDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+					} else {
+						dataSets = dataSetDao.loadNotDerivedDatasetOwnedAndShared(profile.getUserUniqueIdentifier().toString());
+					}
 				} else {
-					dataSets = dataSetDao.loadUserDataSets(profile.getUserUniqueIdentifier().toString());
+					if (showDerivedDatasets) {
+						dataSets = dataSetDao.loadUserDataSets(profile.getUserUniqueIdentifier().toString());
+					} else {
+						dataSets = dataSetDao.loadNotDerivedUserDataSets(profile.getUserUniqueIdentifier().toString());
+
+					}
 				}
 			}
 

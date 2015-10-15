@@ -44,7 +44,7 @@ import com.mongodb.util.JSON;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
- * 
+ *
  */
 @Path("/2.0/datasets")
 public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
@@ -82,6 +82,38 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 	}
 
+	@GET
+	@Path("/listNotDerivedDataset")
+	public String getNotDerivedDataSets(String typeDoc, String callback) {
+		logger.debug("IN");
+
+		ISbiDataSetDAO dsDAO;
+		try {
+			dsDAO = DAOFactory.getSbiDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Error while looking for datasets", e);
+			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
+		}
+
+		List<SbiDataSet> dataSets = dsDAO.loadNotDerivedSbiDataSets();
+		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
+
+		for (SbiDataSet dataset : dataSets) {
+			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
+			if (DataSetUtilities.isExecutableByUser(iDataSet, getUserProfile()))
+				toBeReturned.add(dataset);
+		}
+
+		logger.debug("OUT");
+		if (callback == null || callback.isEmpty())
+			return JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
+		else {
+			String jsonString = JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
+
+			return callback + "(" + jsonString + ")";
+		}
+	}
+
 	@Override
 	public String getDataSet(String label) {
 
@@ -94,7 +126,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		SbiDataSet dataset = dsDAO.loadSbiDataSetByLabel(label);
-
+		
 		if (dataset != null)
 			return JsonConverter.objectToJson(dataset, SbiDataSet.class);
 		else
@@ -159,7 +191,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 		return Response.ok().build();
 	}
-
+	
 	@GET
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
