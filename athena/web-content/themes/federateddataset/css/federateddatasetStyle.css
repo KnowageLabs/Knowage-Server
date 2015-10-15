@@ -28,17 +28,17 @@
   background-color: #E0E0E0 !important;
 	color: black !important;
 }
-
-.miniheadfedsmall{
-	background-color: #E0E0E0 !important;
-	color: black !important;
-	height: 35px;
-}
 md-toolbar.miniheadfedsmall {
 	background-color: rgb(176, 190, 197);
 	color: #000000255255255;
 	height: 35px;
 	min-height: 0px;
+}
+
+.miniheadfedsmall{
+	background-color: #E0E0E0 !important;
+	color: black !important;
+	height: 35px;
 }
 
 .createRelationButton {

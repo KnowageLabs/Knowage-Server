@@ -84,20 +84,20 @@
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
 		<div ng-controller="FederationDefinitionCTRL as ctrl" layout="column" style="width: 100%; height: 100%;" class="contentdemoBasicUsage" >		
 		
-			<md-toolbar class="miniheadfederation">
+			<md-toolbar class="miniheadfederation" style="height:50px">
 				<div class="md-toolbar-tools">
 					<i class="fa fa-bar-chart fa-2x"></i>
 					<h2 class="md-flex" style="padding-left: 14px">DATASET FEDERATION</h2>
 				</div>
 			</md-toolbar>
 	
-			<md-content  layout-padding="" style="height: 90%; padding: 20px;"">
+			<md-content  layout-padding="" style="height: 100%-50px; padding: 20px;"">
 			
 				<!-- Wrapping content that will be shown when ctrl.state is true -->
-				<div ng-show="ctrl.state" layout="row" layout-wrap>
+				<div ng-show="ctrl.state" layout="row" layout-sm="column" layout-wrap">
 					
 					<!-- Avaliable datasets -->
-					<div style="width: 49%; margin-right: 20px">
+					<div  flex flex-sm="100" style="margin-right: 20px;">
 					
 						<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
 							<div class="md-toolbar-tools">
@@ -107,8 +107,8 @@
 							</div>
 						</md-toolbar>
 					
-						<md-content style="height:80%">
-							<angular-list layout-fill="" 
+						<md-content style="height:80%;">
+							<angular-list
 							id="availableDatasets" 
 							ng-model="ctrl.list" 
 							item-name="label"
@@ -121,8 +121,8 @@
 						
 					</div>
 				
-				<!-- Selected datasets -->
-				<div style="width: 49%; ">
+					<!-- Selected datasets -->
+					<div  flex flex-sm="100">
 				
 					<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
 						<div class="md-toolbar-tools">
@@ -144,128 +144,127 @@
 					
 				</div>
 				
-			</div>
-			
-			<!-- Wrapping content that will be shown when ctrl.state is false -->
-			<div ng-hide="ctrl.state">
-				
-				<!-- Associations editor -->
-				<md-toolbar class="miniheadfedsmall" style="">
-					<div class="md-toolbar-tools">
-						<h2 class="md-flex" style="position:fixed; padding-left: 14px; padding-top:10px;">ASSOCIATIONS EDITOR</h2>
-						<span flex=""></span>
-						<!-- MD-SELECT is shown when edit mode is on -->
-						<div ng-if="ctrl.isEditState" style="height: 100px;">
-							<md-select placeholder="Add dataset" ng-model="kkk"> 
-								<md-option ng-value="dataset"  ng-repeat="dataset in ctrl.list" ng-click="ctrl.moveToListNew(dataset)">{{dataset.label}}</md-option> 
-							</md-select>
-						</div>
-					</div>
-				</md-toolbar>
-				
-				<md-content	style=" padding: 5px;  height:41%">
-					<!-- Going throuh ctrl.listaNew and making a list of metadata for every single dataset -->
-					<div ng-repeat="dataset in ctrl.listaNew track by $index">
-						<div style="width: 250px; float: left; padding: 5px;">
-							<!-- Datset name-->
-							<md-toolbar class="miniheadfedsmall"
-								style="">
-							<div class="md-toolbar-tools">
-								<h2 class="md-flex">{{dataset.label | uppercase}}</h2>
-							</div>
-							</md-toolbar>
-							<div style=" height:85%;">
-							<div ng-show="true">
-								<angular-list
-									layout-fill="" 
-									id='{{dataset.label}}'
-									ng-model="dataset.metadata.fieldsMeta" 
-									item-name="name"
-									highlights-selected-item=true
-									selected-item="ctrl.myselectedvariable[dataset.label]"
-									click-function="ctrl.selektuj(item, listId)"
-									
-								>
-								</angular-list>
-								
-							</div>
-							</div>
-						</div>
-					</div>
-				</md-content>
-			</div>
-	
-			<div ng-hide="ctrl.state" style="padding-top: 5px">
-				<md-toolbar class="miniheadfedsmall"
-					style="">
-				<div class="md-toolbar-tools">
-					<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
-					<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton"><md-tooltip md-delay=1500 md-direction="left">Add relationship</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
-						ng-click="ctrl.fillTheArray()"></md-icon></md-button> 
 				</div>
-	
-	
-				</md-toolbar>
-				<md-content style=" height:40%">
-	
-				<div>
+			
+				<!-- Wrapping content that will be shown when ctrl.state is false -->
+				<div ng-hide="ctrl.state">
 					
-					<md-content >
-					
-						<md-list>
-							<div ng-repeat="k in ctrl.multiArray track by $index">
-								
-								<md-list-item style="min-height:35px">
-								
-									<div ng-style="myStyle"   ng-repeat="bla in k track by $index">
-									<span ng-if="$index==0">
-										{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
-									</div>
-									<span flex=""></span>
-									 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
-									 	<md-fab-trigger>
-									 		<md-button class="md-fab md-ExtraMini">
-									 			<i class="fa fa-chevron-left"></i>
-									 		</md-button>
-									 	</md-fab-trigger>
-									 	<md-fab-actions>
-									 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
-												 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
-											</md-button>
-											<md-button  style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
-												 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(k);" ></i>
-											</md-button>
-											
-									 	</md-fab-actions>
-									 </md-fab-speed-dial>
-								
-							</md-list-item>
-							
+					<!-- Associations editor -->
+					<md-toolbar class="miniheadfedsmall" style="">
+						<div class="md-toolbar-tools">
+							<h2 class="md-flex" style="position:fixed; padding-left: 14px; padding-top:10px;">ASSOCIATIONS EDITOR</h2>
+							<span flex=""></span>
+							<!-- MD-SELECT is shown when edit mode is on -->
+							<div ng-if="ctrl.isEditState" style="height: 100px;">
+								<md-select placeholder="Add dataset" ng-model="kkk"> 
+									<md-option ng-value="dataset"  ng-repeat="dataset in ctrl.list" ng-click="ctrl.moveToListNew(dataset)">{{dataset.label}}</md-option> 
+								</md-select>
 							</div>
-							
-						</md-list>
+						</div>
+					</md-toolbar>
+					
+					<md-content	style=" padding: 5px;  height:41%">
+						<!-- Going throuh ctrl.listaNew and making a list of metadata for every single dataset -->
+						<div ng-repeat="dataset in ctrl.listaNew track by $index">
+							<div style="width: 250px; float: left; padding: 5px;">
+								<!-- Datset name-->
+								<md-toolbar class="miniheadfedsmall"
+									style="">
+								<div class="md-toolbar-tools">
+									<h2 class="md-flex">{{dataset.label | uppercase}}</h2>
+								</div>
+								</md-toolbar>
+								<div style=" height:85%;">
+								<div ng-show="true">
+									<angular-list
+										layout-fill="" 
+										id='{{dataset.label}}'
+										ng-model="dataset.metadata.fieldsMeta" 
+										item-name="name"
+										highlights-selected-item=true
+										selected-item="ctrl.myselectedvariable[dataset.label]"
+										click-function="ctrl.selektuj(item, listId)"
+										
+									>
+									</angular-list>
+									
+								</div>
+								</div>
+							</div>
+						</div>
+					</md-content>
+				</div>
+		
+				<div ng-hide="ctrl.state" style="padding-top: 5px">
+					<md-toolbar class="miniheadfedsmall"
+						style="">
+					<div class="md-toolbar-tools">
+						<h2 class="md-flex" style="padding-left: 14px">ASSOCIATIONS LIST</h2>
+						<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton"><md-tooltip md-delay=1500 md-direction="left">Add relationship</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
+							ng-click="ctrl.fillTheArray()"></md-icon></md-button> 
 					</div>
+		
+		
+					</md-toolbar>
+					<md-content style=" height:40%">
+		
+						<div>
+							
+							<md-content >
+							
+								<md-list>
+									<div ng-repeat="k in ctrl.multiArray track by $index">
+										
+										<md-list-item style="min-height:35px">
+										
+											<div ng-style="myStyle"   ng-repeat="bla in k track by $index">
+											<span ng-if="$index==0">
+												{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+											</div>
+											<span flex=""></span>
+											 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
+											 	<md-fab-trigger>
+											 		<md-button class="md-fab md-ExtraMini">
+											 			<i class="fa fa-chevron-left"></i>
+											 		</md-button>
+											 	</md-fab-trigger>
+											 	<md-fab-actions>
+											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
+														 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
+													</md-button>
+													<md-button  style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
+														 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(k);" ></i>
+													</md-button>
+													
+											 	</md-fab-actions>
+											 </md-fab-speed-dial>
+										
+									</md-list-item>
+									
+									</div>
+									
+								</md-list>
+													
+							</md-content>
+							
+						</div>
 					
 					</md-content>
-					
-				</md-content>
-		</div>
-		
-		<div ng-show="ctrl.state">
-			<md-button class="md-raised buttonR" aria-label="btn_next_step"
-				style=" margin-top: 20px; float:right;" ng-click="ctrl.toggle();">NEXT STEP
-			</md-button>
-		</div>
-		
-		<div ng-hide="ctrl.state">
-			<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack()">BACK</md-button>
-			<md-button ng-hide="ctrl.isEditState" class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
-			<md-button ng-show="ctrl.isEditState" class="buttonL" ng-click="ctrl.cancelEdit();">Cancel</md-button>
-			<md-button ng-show="ctrl.isEditState" class="buttonR" style="color:white; background-color:#009688;" ng-click="ctrl.saveEditedRelation()">save edit</md-button>
+			</div>
 			
-	
-		</div>
-		</md-content>
+				<div ng-show="ctrl.state">
+					<md-button class="md-raised buttonR" aria-label="btn_next_step"
+						style=" margin-top: 20px; float:right;" ng-click="ctrl.toggle();">NEXT STEP
+					</md-button>
+				</div>
+			
+				<div ng-hide="ctrl.state">
+					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack()">BACK</md-button>
+					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
+					<md-button ng-show="ctrl.isEditState" class="buttonL" ng-click="ctrl.cancelEdit();">Cancel</md-button>
+					<md-button ng-show="ctrl.isEditState" class="buttonR" style="color:white; background-color:#009688;" ng-click="ctrl.saveEditedRelation()">save edit</md-button>		
+				</div>
+			</md-content>
 		</div>
 	
 	</body>

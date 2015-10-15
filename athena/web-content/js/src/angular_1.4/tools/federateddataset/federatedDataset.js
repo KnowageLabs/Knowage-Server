@@ -150,6 +150,28 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	}
 	
 	ctr.showAdvanced = function(ev){
+		
+		ctr.multiArrayDatasets = [];
+		ctr.listaNewDatasets = [];
+		ctr.index = "";
+		for (var i = 0; i < ctr.listaNew.length; i++) {
+			ctr.listaNewDatasets.push(ctr.listaNew[i].name)
+		}
+		console.log(ctr.listaNewDatasets)
+		for (var i = 0; i < ctr.multiArray.length; i++) {
+			for (var j = 0; j < ctr.multiArray[i].length; j++) {
+				if(j==0){
+					ctr.multiArrayDatasets.push(ctr.multiArray[i][j].sourceTable.name)
+					ctr.multiArrayDatasets.push(ctr.multiArray[i][j].destinationTable.name)
+				} else {
+						ctr.multiArrayDatasets.push(ctr.multiArray[i][j].destinationTable.name)					
+				}
+			}
+		}
+		console.log(ctr.multiArrayDatasets)
+		for (var a = 0; a < ctr.listaNewDatasets.length; a++) {
+			ctr.index = ctr.multiArrayDatasets.indexOf(ctr.listaNewDatasets[a])	
+		}				
 		if(ctr.multiArray.length==0){
 			$mdDialog.show(
 					$mdDialog.alert()
@@ -157,7 +179,16 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 						.content('You didn\'t create any relationships!')
 						.ok('OK')
 			);
-		} else{
+		} 
+		else if(ctr.index==-1){
+			$mdDialog.show(
+					$mdDialog.alert()
+						.clickOutsideToClose(true)
+						.content('All selected datasets must be cantained at least in one relationship!')
+						.ok('OK')
+			);
+		}		
+		else{
 			$mdDialog
 				.show({
 					scope: $scope,
