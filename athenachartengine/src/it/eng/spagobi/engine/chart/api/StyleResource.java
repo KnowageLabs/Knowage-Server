@@ -5,19 +5,22 @@ import java.io.File;
 import java.io.FileReader;
 
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
+import it.eng.spagobi.engine.chart.api.engine.EngineResource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
 
 @Path("/style")
 public class StyleResource {
-	
+	static private Logger logger = Logger.getLogger(StyleResource.class);
 	private static final String PATH_TO_STYLE = "/style";
 	@SuppressWarnings("unchecked")
 	@GET
@@ -57,7 +60,7 @@ public class StyleResource {
 	        	  allStyles.put(obj);
 	          }
 			}catch(Exception e){
-				e.printStackTrace();	
+			  logger.error("Invalid xml style template");
 			}
 			
 		}
