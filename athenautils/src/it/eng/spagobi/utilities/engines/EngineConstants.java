@@ -74,6 +74,6 @@ public class EngineConstants {
 	
 	public static final String ENV_OLAP_SCHEMA = "ENV_OLAP_SCHEMA";
 
-
+    public static final String DEFAULT_CHART_STYLES= "DEFAULT_CHART_STYLES";
 
 }
