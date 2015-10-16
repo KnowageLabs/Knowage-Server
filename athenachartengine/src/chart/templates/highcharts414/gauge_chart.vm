@@ -42,7 +42,6 @@
         plotShadow: false
     },
     
-    
     title: {
         text: '$chart.TITLE.text',
         
@@ -103,7 +102,6 @@
     },
     #end
     
-    
     pane: {    
         
     	#if($chart.PANE.startAngle)
@@ -138,8 +136,7 @@
             borderWidth: 0,
             outerRadius: '105%',
             innerRadius: '103%'
-        }]
-        
+        }] 
     },
     
     #set($axisList = {})
@@ -153,7 +150,6 @@
         ## Serie add
        
         #foreach ($yAxis in $axisList)   
-                 
         	#if ($yAxis.position != "bottom")
         	{    
         		min: $yAxis.min,
@@ -240,24 +236,31 @@
 	        	#if($yAxis.minorTickWidth)
 	            	minorTickWidth: $yAxis.minorTickWidth,
 	            #end
+	            
 	            #if($yAxis.minorTickPosition)
 	            	minorTickPosition: '$yAxis.minorTickPosition',
 	            #end
+	            
 	            #if($yAxis.minorTickColor)
 	            	minorTickColor: '$yAxis.minorTickColor',
 				#end
+				
 				#if($yAxis.tickPixelInterval)
 	            	tickPixelInterval: $yAxis.tickPixelInterval,
 	            #end
+	            
 	            #if($yAxis.tickWidth)
 	            	tickWidth: $yAxis.tickWidth,
 	            #end
+	            
 	            #if($yAxis.tickPosition)
 	            	tickPosition: '$yAxis.tickPosition',
 	            #end
+	            
 	            #if($yAxis.tickLength)
 	            	tickLength: $yAxis.tickLength,
 	            #end
+	            
 	            #if($yAxis.tickColor)
 	            	tickColor: '$yAxis.tickColor',
 	        	#end
@@ -392,7 +395,7 @@
 		        },
     		#end             
         #end
-        ## FINE Serie add
+        ## END Serie add
         ],
 
     
@@ -432,8 +435,34 @@
 	    	#if($relatedSerie.DATA_LABELS.colorDataLabels)
 	    		color: '$relatedSerie.DATA_LABELS.colorDataLabels',
 	    	#end
-	    	#if($relatedSerie.DATA_LABELS.formatDataLabels)
+	    	
+	    	#set($formatDataLabels = '')
+	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
+			#if ($relatedSerieShowValue != '')
+                enabled: $relatedSerieShowValue,
+                
+                #set ($postfixValueAsString = '')
+                #if ($relatedSerie.postfixChar != '')
+                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+				#end
+                
+                #set ($prefixValueAsString = '')
+                #if ($relatedSerie.prefixChar != '')
+                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+				#end
+                
+                #set ($precisionValueAsString = '')
+                #if ($relatedSerie.precision != '')
+                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
+				#end
+                
+                #set ($formatDataLabels = ${prefixValueAsString} + '{y' + $precisionValueAsString + '}' + ${postfixValueAsString})
+			#end
+	    		    	
+	    	#if($relatedSerie.DATA_LABELS.formatDataLabels && $relatedSerie.DATA_LABELS.formatDataLabels != '')
 	    		format: '$relatedSerie.DATA_LABELS.formatDataLabels',
+	    	#else
+	    		format: '$formatDataLabels',
 	    	#end
 	    	},
 	    	
@@ -525,20 +554,13 @@
         	*#
         	var tooltipFontStyle = "";
         	
-        	if (ttFontWeight == " underline")
-        	{
+        	if (ttFontWeight == " underline") {
         		tooltipFontStyle = " text-decoration: underline;";
-        	}
-        	else if (ttFontWeight == " italic")
-        	{
+        	} else if (ttFontWeight == " italic") {
         		tooltipFontStyle = "font-style: italic;";
-        	}
-        	else if (ttFontWeight == " bold")
-        	{
+        	} else if (ttFontWeight == " bold") {
         		tooltipFontStyle = "font-weight: bold;";
-        	}
-        	else
-        	{
+        	} else {
         		tooltipFontStyle = "font-weight: normal;";
         	}
         	

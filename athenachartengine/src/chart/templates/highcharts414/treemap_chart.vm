@@ -16,8 +16,8 @@
 
    
 #foreach($value in $category) 
- #set($columnsNeeded[$columnCouter] = $value.column)
- #set($columnCouter = $columnCouter + 1)
+ 	#set($columnsNeeded[$columnCouter] = $value.column)
+ 	#set($columnCouter = $columnCouter + 1)
 #end
 
 #set($serie = $chart.VALUES.SERIE.name)
@@ -29,23 +29,21 @@
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction))
 
 {
- chart: 
- {
-  	type: '$chartType',
-  	height: '$chart.height',
-  	width: '$chart.width',
-  
+ 	chart: {
+	  	type: '$chartType',
+	  	height: '$chart.height',
+	  	width: '$chart.width',
+	  
 	## I think this is necessary when title and subtitle are not provided (danristo)
 	#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
 		marginTop: 50,
 	#end
+
+	#if($chart.style.backgroundColor!="")
+  		backgroundColor: '$chart.style.backgroundColor',
+  	#end
   
-  #if($chart.style.backgroundColor!="")
-  	backgroundColor: '$chart.style.backgroundColor',
-  #end
-  
-  style:
-		{			
+  		style: {			
 			fontFamily: '$chart.style.fontFamily',
 			fontSize: '$chart.style.fontSize',
 					
@@ -57,33 +55,30 @@
     			fontWeight: '$chart.style.fontWeight',
     		#end
   		}
- },
+ 	},
  
- colors: [
- 	
- 		#*
- 			Since the Highcharts library for this chart defines default color
- 			for items, we do not need to check if there is more than one defined
- 			in the structure that hold data about picked colors. It is permitted
- 			not to have colors (after users saving of the file).
- 		 	@author: danristo (danilo.ristovski@mht.net)
-	 	*#
- 		
- 		#if ($chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
-			#foreach($color in $chart.COLORPALETTE.COLOR)
-				'$color.value', 
-			#end
-		#else
-			'$chart.COLORPALETTE.COLOR.value'
+ 	colors: [
+	#*
+		Since the Highcharts library for this chart defines default color
+		for items, we do not need to check if there is more than one defined
+		in the structure that hold data about picked colors. It is permitted
+		not to have colors (after users saving of the file).
+	 	@author: danristo (danilo.ristovski@mht.net)
+ 	*#
+	
+	#if ($chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+		#foreach($color in $chart.COLORPALETTE.COLOR)
+			'$color.value', 
 		#end
+	#else
+		'$chart.COLORPALETTE.COLOR.value'
+	#end
     ],
  
- emptymessage:
-	{
+ 	emptymessage: {
 		text: '$chart.EMPTYMESSAGE.text',
 		
-		style:
-		{
+		style: {
 			fontFamily: '$chart.EMPTYMESSAGE.style.fontFamily',
 			fontSize: '$chart.EMPTYMESSAGE.style.fontSize',
 			fontColor: '$chart.EMPTYMESSAGE.style.color',
@@ -99,12 +94,10 @@
 		}
 	},
 	
-	title:
-	{
+	title: {
 		text: '$chart.TITLE.text',
 		
-		style:
-		{
+		style: {
 			fontFamily: '$chart.TITLE.style.fontFamily',
 			fontSize: '$chart.TITLE.style.fontSize',
 			fontColor: '$chart.TITLE.style.color',
@@ -120,12 +113,10 @@
 		}
 	},
 	
-	subtitle:
-	{
+	subtitle: {
 		text: '$chart.SUBTITLE.text',
 		
-		style:
-		{
+		style: {
 			fontFamily: '$chart.SUBTITLE.style.fontFamily',
 			fontSize: '$chart.SUBTITLE.style.fontSize',
 			fontColor: '$chart.SUBTITLE.style.color',
@@ -151,8 +142,7 @@
     	enabled: false
     },
 	
-	data:
- [
-  $result
- ]
+	data: [
+  		$result
+ 	]
 }
