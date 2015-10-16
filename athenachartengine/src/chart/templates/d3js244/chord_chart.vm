@@ -32,8 +32,15 @@
 		style:
 		{
 			backgroundColor: '$chart.style.backgroundColor',
-			fontWeight: '$chart.style.fontWeight',
-			fontSize: '$chart.style.fontSize'
+			fontSize: '$chart.style.fontSize',
+			
+			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')
+    			fontStyle: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'underline')
+    			textDecoration: '$chart.style.fontWeight',
+			#elseif($chart.style.fontWeight == 'bold')		        			
+    			fontWeight: '$chart.style.fontWeight',
+    		#end
 		}
 	},
 	

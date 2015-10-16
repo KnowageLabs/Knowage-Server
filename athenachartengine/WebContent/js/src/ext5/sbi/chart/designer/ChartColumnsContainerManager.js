@@ -278,7 +278,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		 * 
 					    		 * @author: danristo (danilo.ristovski@mht.net)
 					    		 */
-						    	if (chartType.toUpperCase() == 'HEATMAP')
+						    	if (chartType.toUpperCase() == 'HEATMAP' || chartType.toUpperCase() == 'GAUGE')
 					    		{
 						    		axisStylePopup.getComponent('majorGridFieldSetYAxis').hide();
 						    		axisStylePopup.getComponent('minorGridFieldSetYAxis').hide();

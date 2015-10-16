@@ -842,68 +842,51 @@ function renderWordCloud(chartConf){
 		var json = buildHierarchy(jsonObject.data[0]);
 		
 		createVisualization(json);
-		
-//		  function getGradientColorsHSL(args) {
-			  function getGradientColorsHSL(h,s,l,fromH,fromL,fromS,toH,toL,toS,number) {
-			  
-			  console.log("Unutar funkcije");
-		        
-				this.fromH = fromH ? fromH : h;
-				this.fromS = fromS ? fromS : s;
-				this.fromL = fromL ? fromL : l;
-				this.toH = toH ? toH : h;
-				this.toS = toS ? toS : s;
-				this.toL = toL ? toL : l;
-				
-				var i, colors = [],
-				
-				deltaH = (toH - fromH) / number,
-				deltaS = (toS - fromS) / number,
-				deltaL = (toL - fromL) / number;
-		        
-		        for (i = 0; i <= number; i++) {
-		            colors.push(Ext.draw.Color.fromHSL(
-		                fromH + deltaH * i,
-		                fromS + deltaS * i,
-		                fromL + deltaL * i
-		            ).toString());
-		        }
-		        
-		        return colors;
-		    }
-		
-		function rgbToHsl(r, g, b){
-		    r /= 255, g /= 255, b /= 255;
-		    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-		    var h, s, l = (max + min) / 2;
 
-		    if(max == min){
-		        h = s = 0; // achromatic
-		    }else{
-		        var d = max - min;
-		        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-		        switch(max){
-		            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-		            case g: h = (b - r) / d + 2; break;
-		            case b: h = (r - g) / d + 4; break;
-		        }
-		        h /= 6;
-		    }
+		/**
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		function getGradientColorsHSL(fromH,fromS,fromL,toH,toS,toL,numberOfLayers) 
+		{		
+			var i, colors = [],
+	
+			deltaH = (toH - fromH) / numberOfLayers,
+			deltaS = (toS - fromS) / numberOfLayers,
+			deltaL = (toL - fromL) / numberOfLayers;
+	
+			for (i = 0; i <= numberOfLayers; i++) 
+			{		        	
+				colors.push( d3.hsl(fromH + deltaH * i, fromS + deltaS * i, fromL + deltaL * i) );
+			}
 
-		    return [h, s, l];
+				return colors;
 		}
+		
+		// TODO: remove - not needed
+//		function rgbToHsl(r, g, b){
+//		    r /= 255, g /= 255, b /= 255;
+//		    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+//		    var h, s, l = (max + min) / 2;
+//
+//		    if(max == min){
+//		        h = s = 0; // achromatic
+//		    }else{
+//		        var d = max - min;
+//		        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+//		        switch(max){
+//		            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+//		            case g: h = (b - r) / d + 2; break;
+//		            case b: h = (r - g) / d + 4; break;
+//		        }
+//		        h /= 6;
+//		    }
+//
+//		    return [h, s, l];
+//		}
 		
 		// Main function to draw and set up the visualization, once we have the data.
 		function createVisualization(json) 
-		{	
-			console.log("Pre poziva funkcije");
-			//var ooo = getGradientColorsHSL("#FF0000");
-			var ooo = rgbToHsl(255,0,0);			
-			console.log(ooo);
-			
-			var yyy = getGradientColorsHSL(ooo[0],ooo[1],ooo[2],255,255,255,255,0,0,10);
-			console.log(yyy);
-			
+		{				
 			// Basic setup of page elements.
 			/* Set the initial configuration of the breadcrumb - 
 			 * defining dimensions of the trail, color of the text 
@@ -928,29 +911,76 @@ function renderWordCloud(chartConf){
 			// NEW
 			
 			/* Dark colors for the chart's first layer items */
-			var storeFirstLayerColor = 
-			[
-			 	"#CC0000", 	// red
-			 	"#003D00", 	// green
-			 	"#151B54", 	// blue	
-			 	"#CC3399",	// purple
-			 	"#808080",	// gray
-			 	"#FF9900"	// orange			 			 	
-		 	];
+//			var storeFirstLayerColor = 
+//			[
+//			 	"#CC0000", 	// red
+//			 	"#003D00", 	// green
+//			 	"#151B54", 	// blue	
+//			 	"#CC3399",	// purple
+//			 	"#808080",	// gray
+//			 	"#FF9900"	// orange			 			 	
+//		 	];
 			
-			var storeColors = 
-			[
-			 	"red", "green", "blue", "orange", "purple"
-			 ];
+			var storeFirstLayerColor = new Array();
+			var allColorsLayered = new Array();
 			
-			var varietiesOfMainColors = 
+			var allColorsUserPicked = jsonObject.colors;
+			
+			// START: TODO: maybe not necessary (danristo)
+			var differentLayersArray = new Array();
+			var numberOfLayers = -1;
+			
+			for (j=0; j<nodes.length; j++)
 			{
-				red: 	["#CC0000", "#FF4747", "#FF7A7A", "#FF9595", "#FFAAAA", "#FFBBBB", "#FFC9C9", "#FFD4D4", "#FFDDDD", "#FFE4E4", "#FFECEC"],
-				green: 	["#003D00", "#003100", "#194619", "#305830", "#456945", "#587858", "#698669", "#789278", "#869D86", "#92A792", "#9DB09D"],
-				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"],
-				orange: ["#E68A00", "#FF9900", "#EBA133", "#FFAD33", "#FFC266", "#FFCC80", "#FFD699", "#FFE0B2", "#FFEBCC", "#FFF5E6", "#FFE3BA"],
-				purple: ["#7A297A", "#8A2E8A", "#993399", "#A347A3", "#AD5CAD", "#B870B8", "#C285C2", "#CC99CC", "#D6ADD6", "#E0C2E0", "#EBD6EB"],
-			};
+				if (differentLayersArray.indexOf(nodes[j].layer) < 0)
+				{
+					differentLayersArray.push(nodes[j].layer);
+					numberOfLayers++;
+				}
+			}
+			// END : maybe not necessary
+						
+			for (p=0; p<allColorsUserPicked.length; p++)
+			{
+				storeFirstLayerColor.push(allColorsUserPicked[p]);
+				
+				var layeringColorRaw = allColorsUserPicked[p];	// start color			
+				var layeringColorRGB = d3.rgb(layeringColorRaw);			
+				var layeringColorHSL = layeringColorRGB.hsl();			
+							
+				// number of layers: 20
+				var yyyHSL = getGradientColorsHSL(layeringColorHSL.h,layeringColorHSL.s,layeringColorHSL.l,0,0,0.99,numberOfLayers);
+				var yyyRGB = new Array();
+				//console.log(yyyHSL);
+				
+				for (w=0; w<yyyHSL.length; w++)
+				{
+					var uuu = yyyHSL[w];
+					//console.log(uuu);
+					//console.log(uuu.rgb());
+					yyyRGB.push(uuu.rgb());
+				}
+				
+				allColorsLayered.push(yyyRGB);
+			}
+			
+			//console.log(storeFirstLayerColor);
+			//console.log(allColorsLayered);
+			
+			
+//			var storeColors = 
+//			[
+//			 	"red", "green", "blue", "orange", "purple"
+//			 ];
+//			
+//			var varietiesOfMainColors = 
+//			{
+//				red: 	["#CC0000", "#FF4747", "#FF7A7A", "#FF9595", "#FFAAAA", "#FFBBBB", "#FFC9C9", "#FFD4D4", "#FFDDDD", "#FFE4E4", "#FFECEC"],
+//				green: 	["#003D00", "#003100", "#194619", "#305830", "#456945", "#587858", "#698669", "#789278", "#869D86", "#92A792", "#9DB09D"],
+//				blue: 	["#151B54", "#2C3265", "#414674", "#545882", "#65698E", "#747899", "#8286A3", "#8E92AC", "#999DB4", "#A3A7BC", "#BDC0CF"],
+//				orange: ["#E68A00", "#FF9900", "#EBA133", "#FFAD33", "#FFC266", "#FFCC80", "#FFD699", "#FFE0B2", "#FFEBCC", "#FFF5E6", "#FFE3BA"],
+//				purple: ["#7A297A", "#8A2E8A", "#993399", "#A347A3", "#AD5CAD", "#B870B8", "#C285C2", "#CC99CC", "#D6ADD6", "#E0C2E0", "#EBD6EB"],
+//			};
 			
 //			var rbgRedColor = d3.rgb("#CC0000");
 //			var rgbRedWhiteColor = d3.rgb("#FFECEC");
@@ -996,16 +1026,21 @@ function renderWordCloud(chartConf){
 								   * (if this node is part of the first layer) */
 								  
 								  if (d.parent.name=="root")
-								  {
-									  console.log("parent is root");
-									  
-									  colors[d.name] = varietiesOfMainColors[storeColors[counter]][0];									 
-									  
+								  {									  
+//									  colors[d.name] = varietiesOfMainColors[storeColors[counter]][0];	
+									  //console.log(allColorsLayered[counter][0]); //ok
+									  colors[d.name] = allColorsLayered[counter][0];
+//									  colors[d.name] = varietiesOfMainColors[counter][0];		
 									  counter++;
 								  }		
 								  else
 								  {
-									  colors[d.name] = varietiesOfMainColors[storeColors[rootParentsNodes.indexOf(d.firstLayerParent)]][d.layer+1];
+									  //console.log(d.firstLayerParent);
+//									  console.log(rootParentsNodes.indexOf(d.firstLayerParent));
+									  //console.log(storeColors[rootParentsNodes.indexOf(d.firstLayerParent)]);
+//									  colors[d.name] = varietiesOfMainColors[storeColors[rootParentsNodes.indexOf(d.firstLayerParent)]][d.layer+1];
+									  //console.log(allColorsLayered[rootParentsNodes.indexOf(d.firstLayerParent)][d.layer+1]);
+									  colors[d.name] = allColorsLayered[rootParentsNodes.indexOf(d.firstLayerParent)][d.layer+1];
 								  }
 								  
 								  d['color'] = colors[d.name];
@@ -1530,6 +1565,8 @@ function renderWordCloud(chartConf){
 		 * on other DIV elements.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
+		console.log(data.chart.style.textDecoration);
+		
 		d3.select("body").style("background-color",data.chart.style.backgroundColor);
 		
 		d3.select("body")
@@ -1777,6 +1814,7 @@ function renderWordCloud(chartConf){
 		.append("svg:text")
 		.attr("text-anchor", "middle")
 		.attr("y", -data.axis.axisColNamePadd)
+		.style("text-decoration","underline")
 		.text(String)
 		.style({"cursor":"move"});
 
@@ -2571,6 +2609,11 @@ function renderChordChart(jsonData)
 //	console.log(jsonData);
 //	console.log(jsonData.colors);
 		
+	/**
+	 * Set the background on the chart.
+	 */
+	d3.select("body").style("background-color",jsonData.chart.style.backgroundColor);
+	
 	// Set title
 	d3.select("body").append("div")
 		.style("color",jsonData.title.style.color)
@@ -2596,10 +2639,11 @@ function renderChordChart(jsonData)
 	var svg = d3.select("#chartD3").append("div")
 	 			.attr("class", "chart")	 			
 	 			.style("width", width + "px")
-	 			.style("height", Number(height))	 			
+	 			.style("height", Number(height))	
 				.append("svg:svg")
 				.attr("width", width)
-				.attr("height", Number(height)+spaceForLabels)				
+				.attr("height", Number(height)+spaceForLabels)	
+				.style("background-color",jsonData.chart.style.backgroundColor)	
 				.append("svg:g")
 				.attr("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
 	
@@ -2766,6 +2810,7 @@ function renderChordChart(jsonData)
 				+ (d.angle > Math.PI ? "rotate(180)" : "");
 		  })
 //		  .style("font-weight","bold")
+		  .style("font-family","Impact")	// TODO: customize (for labels)
 		  .text(function(d,i) { return allFieldsArray[i];})		  
 
 		 //aggiunge le lineette "graduate"		 
@@ -2782,6 +2827,7 @@ function renderChordChart(jsonData)
 			.attr("dy", ".35em")
 			.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
 			.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+			.style("font-family","Impact")	// TODO: customize (for ticks)
 			.text(function(d) { return d.label; });
 			
 		 //disegna le fasce da un'area ad un altra
@@ -2794,8 +2840,7 @@ function renderChordChart(jsonData)
 			.style("fill", function(d) { return fill(d.target.index); })
 			.style("opacity", opacityMouseOutAndDefault) 
 			.style("stroke", "#000")	// TODO: Customize ??
-			.style("stroke-width", ".5px");	// TODO: Customize ??
-		 
+			.style("stroke-width", ".5px");	// TODO: Customize ??		 
 		}
 	 
 	 /**

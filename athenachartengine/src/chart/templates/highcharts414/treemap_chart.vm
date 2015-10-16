@@ -16,8 +16,8 @@
 
    
 #foreach($value in $category) 
- 	#set($columnsNeeded[$columnCouter] = $value.column)
- 	#set($columnCouter = $columnCouter + 1)
+ #set($columnsNeeded[$columnCouter] = $value.column)
+ #set($columnCouter = $columnCouter + 1)
 #end
 
 #set($serie = $chart.VALUES.SERIE.name)
@@ -30,18 +30,18 @@
 
 {
  	chart: {
-	  	type: '$chartType',
-	  	height: '$chart.height',
-	  	width: '$chart.width',
-	  
+  	type: '$chartType',
+  	height: '$chart.height',
+  	width: '$chart.width',
+  
 	## I think this is necessary when title and subtitle are not provided (danristo)
 	#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
-		marginTop: 50,
+		marginTop: 60,
 	#end
-
-	#if($chart.style.backgroundColor!="")
-  		backgroundColor: '$chart.style.backgroundColor',
-  	#end
+  
+  #if($chart.style.backgroundColor!="")
+  	backgroundColor: '$chart.style.backgroundColor',
+  #end
   
   		style: {			
 			fontFamily: '$chart.style.fontFamily',
@@ -55,24 +55,25 @@
     			fontWeight: '$chart.style.fontWeight',
     		#end
   		}
- 	},
+ },
  
- 	colors: [
-	#*
-		Since the Highcharts library for this chart defines default color
-		for items, we do not need to check if there is more than one defined
-		in the structure that hold data about picked colors. It is permitted
-		not to have colors (after users saving of the file).
-	 	@author: danristo (danilo.ristovski@mht.net)
- 	*#
-	
-	#if ($chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
-		#foreach($color in $chart.COLORPALETTE.COLOR)
-			'$color.value', 
+ colors: [
+ 	
+ 		#*
+ 			Since the Highcharts library for this chart defines default color
+ 			for items, we do not need to check if there is more than one defined
+ 			in the structure that hold data about picked colors. It is permitted
+ 			not to have colors (after users saving of the file).
+ 		 	@author: danristo (danilo.ristovski@mht.net)
+	 	*#
+ 		
+ 		#if ($chart.COLORPALETTE.COLOR.class.name != 'java.util.LinkedHashMap') 
+			#foreach($color in $chart.COLORPALETTE.COLOR)
+				'$color.value', 
+			#end
+		#else
+			'$chart.COLORPALETTE.COLOR.value'
 		#end
-	#else
-		'$chart.COLORPALETTE.COLOR.value'
-	#end
     ],
  
  	emptymessage: {
@@ -143,6 +144,6 @@
     },
 	
 	data: [
-  		$result
- 	]
+  $result
+ ]
 }

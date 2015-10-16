@@ -35,6 +35,11 @@
         
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
+        ## I think this is necessary when title and subtitle are not provided (danristo)
+		#if ($chart.TITLE.text == "" && $chart.SUBTITLE.text == "")
+			marginTop: 40,
+		#end
+        
         #if($chart.height != '')
         height: $chart.height,
         #end
@@ -208,68 +213,68 @@
 	#end
 	
     xAxis:
- 	#foreach($xAxisKey in $xAxisList.keySet())
- 	#set ($xAxis = $xAxisList[$xAxisKey])
- 	{
-	 	title: {
-	 	 	#if($xAxis.TITLE.enabled)
- 			enabled: $xAxis.TITLE.enabled
-	 	 	#end
+	 #foreach($xAxisKey in $xAxisList.keySet())
+	 #set ($xAxis = $xAxisList[$xAxisKey])
+	 {
+		 title: {
+		 	 #if($xAxis.TITLE.enabled)
+		 	 	enabled: $xAxis.TITLE.enabled
+		 	 #end
 		 	 
-		 	text: '$xAxis.TITLE.text',	 
+			 text: '$xAxis.TITLE.text',	 
 			 
-		 	style:{
-    		#foreach($styleName in $xAxis.TITLE.style.keySet())
-    			#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
-        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
-    				fontStyle: '$axisTitleStyle',
-				#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
-        			textDecoration: 'underline',
-        		#elseif($styleName == 'align')
-					#set($labelAlign=$axisTitleStyle)
-				#elseif($axisTitleStyle != '')
-        			$styleName: '$axisTitleStyle',
-        		#end
-        	#end
-	     	},
+			 style:{
+	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
+		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
+		        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+	        			fontStyle: '$axisTitleStyle',
+					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+	        			textDecoration: 'underline',
+	        		#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisTitleStyle)
+					#elseif($axisTitleStyle != '')
+	        			$styleName: '$axisTitleStyle',
+	        		#end
+	        	#end
+		     },
 		     
-	     	#if ($labelAlign == 'center' || $labelAlign == '')
+		     #if ($labelAlign == 'center' || $labelAlign == '')
 			align: 'middle',
 			#elseif ($labelAlign == 'left' )
 			align: 'low',
 			#elseif ($labelAlign == 'right' )
 			align: 'high',
 			#end
-	 	},
+		 },
 
 		labels:{
 				 
-	 		#if( $xAxis.style != '' ) 
+				 #if( $xAxis.style != '' ) 
         		        		
-			style:{
-        	#foreach($styleName in $xAxis.style.keySet())
-        		#set ($axisStyle = $xAxis.style[$styleName])
-        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
-        			fontStyle: '$axisStyle',
-				#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
-        			textDecoration: 'underline',
-				#elseif($styleName == 'align')
-        			#set($labelAlign=$axisStyle)
-        		#elseif($styleName == 'rotate')
-        			#set($rotation=$axisStyle)		        			
-				#else		        			
-        			$styleName: '$axisStyle',
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},        		
+        		
+        		#if($labelAlign)
+        			align:"$labelAlign",
         		#end
-        	#end
-    		},        		
-
-    		#if($labelAlign)
-			align:"$labelAlign",
-    		#end
-
-    		#if($rotation!="" &&  $rotation!="null")
-			rotation: $rotation,
-			#end
+        		
+        		#if($rotation!="" &&  $rotation!="null")
+        			rotation: $rotation,
+    			#end
         	#end
 		 },
 
@@ -291,13 +296,13 @@
 		 
 		 #if( !$xAxis.showLastLabel || $xAxis.showLastLabel == "" )		 	
 		 	showLastLabel: false,
-		#else
-			showLastLabel: $xAxis.showLastLabel,
-		#end		 
+		 #else
+		 	showLastLabel: $xAxis.showLastLabel,
+		 #end		 
 			    
-		type: 'category',
-	},
-	#end
+		 type: 'category',
+	 },
+	 #end
     
     
     yAxis: [
@@ -306,31 +311,31 @@
         	#set ($yAxis = $yAxisList[$yAxisKey] )
         
         {
-			title: {
-        	#if($yAxis.TITLE.enabled)
-		 	 	enabled: $yAxis.TITLE.enabled
-		 	#end
-	 	 
-    		text: '$yAxis.TITLE.text',
-    		
-    		margin: 60,
-		 
-    		style:{
-	        	#foreach($styleName in $yAxis.TITLE.style.keySet())
-	        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
-	        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
-	        			fontStyle: '$axisTitleStyle',
-					#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
-	        			textDecoration: 'underline',
-	        		#elseif($styleName == 'align')
-        				#set($labelAlign=$axisTitleStyle)
-					#else		        			
-	        			$styleName: '$axisTitleStyle',
-	        		#end
-	        	#end
-    		},
-    		
-    		#if ($labelAlign == 'center' || $labelAlign == '')
+        	title: {
+	        	#if($yAxis.TITLE.enabled)
+			 	 	enabled: $yAxis.TITLE.enabled
+			 	#end
+		 	 
+        		text: '$yAxis.TITLE.text',
+        		
+        		margin: 60,
+			 
+        		style:{
+		        	#foreach($styleName in $yAxis.TITLE.style.keySet())
+		        		#set ($axisTitleStyle = $yAxis.TITLE.style[$styleName])
+		        		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+		        			fontStyle: '$axisTitleStyle',
+						#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+		        			textDecoration: 'underline',
+		        		#elseif($styleName == 'align')
+	        				#set($labelAlign=$axisTitleStyle)
+						#else		        			
+		        			$styleName: '$axisTitleStyle',
+		        		#end
+		        	#end
+        		},
+        		
+        		#if ($labelAlign == 'center' || $labelAlign == '')
 			align: 'middle',
 			#elseif ($labelAlign == 'left' )
 			align: 'low',
@@ -341,7 +346,7 @@
         	
         	labels:{
 				 
-			 	#if( $yAxis.style != '' ) 
+				 #if( $yAxis.style != '' ) 
         		
         		x:0,
 				 
@@ -370,55 +375,55 @@
         			rotation: $rotation,
     			#end
         	#end
-	 	},
+		 },
         	
-    	#if($yAxis.MAJORGRID)
-	        #if($yAxis.MAJORGRID.interval != '')
-        		tickInterval: $yAxis.MAJORGRID.interval,
-		    #end
-		    
-	        #if($yAxis.MAJORGRID.style.color)
-        		gridLineColor: '$yAxis.MAJORGRID.style.color',
-		    #end
-        	
-        	#set($typeline = $yAxis.MAJORGRID.style.typeline)
-        	#if($yAxis.MAJORGRID.style.typeline)
-	        	#if($typeline == 'dashed')
-	        		#set($convertedTypeline = 'Dash')
-	        	#elseif($typeline == 'dotted')
-	        		#set($convertedTypeline = 'Dot')
-	    		#elseif($typeline == 'solid')
-	        		#set($convertedTypeline = 'Solid')
-				#else
-	        		#set($convertedTypeline = $typeline)
+        	#if($yAxis.MAJORGRID)
+		        #if($yAxis.MAJORGRID.interval != '')
+	        		tickInterval: $yAxis.MAJORGRID.interval,
+			    #end
+			    
+		        #if($yAxis.MAJORGRID.style.color)
+	        		gridLineColor: '$yAxis.MAJORGRID.style.color',
+			    #end
+	        	
+	        	#set($typeline = $yAxis.MAJORGRID.style.typeline)
+	        	#if($yAxis.MAJORGRID.style.typeline)
+		        	#if($typeline == 'dashed')
+		        		#set($convertedTypeline = 'Dash')
+		        	#elseif($typeline == 'dotted')
+		        		#set($convertedTypeline = 'Dot')
+		    		#elseif($typeline == 'solid')
+		        		#set($convertedTypeline = 'Solid')
+					#else
+		        		#set($convertedTypeline = $typeline)
+		        	#end
+		        	gridLineDashStyle: '$convertedTypeline',
 	        	#end
-	        	gridLineDashStyle: '$convertedTypeline',
         	#end
-    	#end
         	
-    	#if($yAxis.MINORGRID)
-	        #if($yAxis.MINORGRID.interval != '')
-        	minorTickInterval: $yAxis.MINORGRID.interval,
-		    #end
-		    
-	        #if($yAxis.MINORGRID.style.color)
-        	minorGridLineColor: '$yAxis.MINORGRID.style.color',
-		    #end
-        	
-        	#set($typeline = $yAxis.MINORGRID.style.typeline)
-        	#if($typeline == 'dashed')
-        		#set($convertedMinorTpeline = 'Dash')
-    		#elseif($typeline == 'dotted')
-        		#set($convertedMinorTpeline = 'Dot')
-    		#elseif($typeline == 'solid')
-        		#set($convertedMinorTpeline = 'Solid')
-        	#else
-        		#set($convertedMinorTpeline = $typeline)
+        	#if($yAxis.MINORGRID)
+		        #if($yAxis.MINORGRID.interval != '')
+	        	minorTickInterval: $yAxis.MINORGRID.interval,
+			    #end
+			    
+		        #if($yAxis.MINORGRID.style.color)
+	        	minorGridLineColor: '$yAxis.MINORGRID.style.color',
+			    #end
+	        	
+	        	#set($typeline = $yAxis.MINORGRID.style.typeline)
+	        	#if($typeline == 'dashed')
+	        		#set($convertedMinorTpeline = 'Dash')
+	    		#elseif($typeline == 'dotted')
+	        		#set($convertedMinorTpeline = 'Dot')
+	    		#elseif($typeline == 'solid')
+	        		#set($convertedMinorTpeline = 'Solid')
+	        	#else
+	        		#set($convertedMinorTpeline = $typeline)
+	        	#end
+	        	minorGridLineDashStyle: '$convertedMinorTpeline',
         	#end
-        	minorGridLineDashStyle: '$convertedMinorTpeline',
-    	#end
-    	
-    	## (by danilo.ristovski@mht.net)
+        	
+        	## (by danilo.ristovski@mht.net)
         	opposite: $yAxis.style.opposite
         	
         },
@@ -535,8 +540,8 @@
 	#end
     ],
     
- 	tooltip: {
-    	useHTML: true,
+     tooltip: {
+        useHTML: true,
         backgroundColor: null,
         borderWidth: 2,
         style: {
@@ -619,23 +624,24 @@
     },
     
     plotOptions: {
-    	scatter: {
-            marker: {
-                radius: 5,
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
                 states: {
                     hover: {
-                        enabled: true,
-                        lineColor: 'rgb(100,100,100)'
+                        marker: {
+                            enabled: false
+                        }
                     }
                 }
-            },
-            states: {
-                hover: {
-                    marker: {
-                        enabled: false
-                    }
-                }
+                
             }
         }
-    }
 }

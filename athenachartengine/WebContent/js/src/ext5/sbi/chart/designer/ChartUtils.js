@@ -1417,13 +1417,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			.getChartType() == 'SUNBURST';
 		},
 
-		enablePalette : function () {			
-			return Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'SUNBURST'
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'WORDCLOUD'			 
-			 && Sbi.chart.designer.Designer.chartTypeSelector
-			.getChartType() != 'GAUGE';
+		enablePalette : function () {				
+			return Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'WORDCLOUD' && 
+				Sbi.chart.designer.Designer.chartTypeSelector.getChartType() != 'GAUGE';
 		},
 
 		disableShowLegendCheck : function () {
