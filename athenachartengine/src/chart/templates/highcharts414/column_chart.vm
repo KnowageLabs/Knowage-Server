@@ -571,12 +571,22 @@
 						dataLabels: {
 		                    enabled: $relatedSerieShowValue,
 		                    
+		                    #set ($postfixValueAsString = '')
+		                    #if ($relatedSerie.postfixChar != '')
+			                    #set ($postfixValueAsString = ' ' + $relatedSerie.postfixChar)
+							#end
+		                    
+		                    #set ($prefixValueAsString = '')
+		                    #if ($relatedSerie.prefixChar != '')
+			                    #set ($prefixValueAsString = $relatedSerie.prefixChar + ' ')
+							#end
+		                    
 		                    #set ($precisionValueAsString = '')
 		                    #if ($relatedSerie.precision != '')
 			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
 							#end
 		                    
-		                    format: '{y$precisionValueAsString}'
+		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}'
 		                }
 						#end
 					},
