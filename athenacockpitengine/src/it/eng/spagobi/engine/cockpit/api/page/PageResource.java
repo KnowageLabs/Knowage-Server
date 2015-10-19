@@ -3,11 +3,11 @@
  * © 2005-2015 Engineering Group
  *
  * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file.
  */
 package it.eng.spagobi.engine.cockpit.api.page;
 
@@ -16,17 +16,20 @@ import it.eng.spagobi.engine.cockpit.CockpitEngineInstance;
 import it.eng.spagobi.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -36,7 +39,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 
 @Path("/1.0/pages")
@@ -123,6 +126,28 @@ public class PageResource extends AbstractCockpitEngineResource {
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("/executeTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String testAction(@Context HttpServletResponse response) {
+
+		logger.debug("IN");
+
+		try {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("result", "ok");
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			String successString = obj.toString();
+			return successString;
 		} finally {
 			logger.debug("OUT");
 		}
