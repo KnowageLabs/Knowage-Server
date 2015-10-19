@@ -51,7 +51,7 @@
 	</head>
 
 	<body class="bodyStyle" ng-app="FEDERATIONDEFINITION">
-		
+		<div><%= lisOfDSL %></div>
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
 		<div ng-controller="FederationDefinitionCTRL as ctrl" layout="column" style="width: 100%; height: 100%;" class="contentdemoBasicUsage" >		
 		
@@ -233,7 +233,7 @@
 				</div>
 			
 				<div ng-hide="ctrl.state">
-					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack()">BACK</md-button>
+					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack(); ctrl.ispisiSleektovane()">BACK</md-button> 
 					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">SAVE federation</md-button>
 					<md-button ng-show="ctrl.isEditState" class="buttonL" ng-click="ctrl.cancelEdit();">Cancel</md-button>
 					<md-button ng-show="ctrl.isEditState" class="buttonR" style="color:white; background-color:#009688;" ng-click="ctrl.saveEditedRelation()">save edit</md-button>		

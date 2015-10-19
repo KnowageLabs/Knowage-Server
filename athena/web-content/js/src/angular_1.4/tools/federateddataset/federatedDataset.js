@@ -549,8 +549,9 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
     }
     
 	ctr.loadDatasetsEditMode = function(){
-		if(ctr.loadedList==true && ctr.loadedListAllO==true) {
+			
 			console.log("izvrsava se loaddataseteditmode")
+			
     		console.log(value)
         	if(value!=null){
         		console.log(value)
@@ -584,39 +585,58 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
     			}
         	}
 			ctr.multiArray = JSON.parse(valueRelString);
-			
-		} else {
-			console.log("List or ListaNew are not loaded!!")
-		}
+		
     }
 	
 	ctr.clearSelections = function() {
-		ctr.myselectedvariable = null;
+		ctr.myselectedvariable = {};
 	}
 	
-	ctr.retrieveSelections = function(param) {
-		
-		ctr.selectedFields = [];
-		ctr.datasetofSelectedField = [];
+	ctr.retrieveSelections = function(param) {		
 		
 		for (var i = 0; i < param.length; i++) {
 			if(i==0){
-				ctr.selectedFields.push(param[i].sourceColumns[0])
-				ctr.selectedFields.push(param[i].destinationColumns[0])
+				var key1 = param[i].sourceTable.name;
+				var key2 = param[i].destinationTable.name
+				var json = { };
+				json[key1] = param[i].sourceColumns[0];
+				json[key2] = param[i].destinationColumns[0];
+				
 			} else {
-				ctr.selectedFields.push(param[i].destinationColumns[0])					
+				var key3 = param[i].destinationTable.name
+				json[key3] = param[i].destinationColumns[0];
+							
 			}
+		}	
+				
+		ctr.applySelections(json)
+		
+	}
+	
+	ctr.applySelections = function (json) {
+		ctr.myselectedvariable = {};
+		console.log("*********")
+		console.log(json)
+		console.log("*********")
+		
+		for (var i = 0; i < ctr.listaNew.length; i++) {
+			for (var key in json) {
+			  if (json.hasOwnProperty(key)) {
+				
+				if(key==ctr.listaNew[i].label){
+					console.log(json[key])
+					console.log("Pronadjen"+key)
+					
+					for (var z = 0; z < ctr.listaNew[i].metadata.fieldsMeta.length; z++) {
+						if(json[key]==ctr.listaNew[i].metadata.fieldsMeta[z].name){
+							console.log("pronadjen i item i dataset")
+							ctr.myselectedvariable[ctr.listaNew[i].label] = ctr.listaNew[i].metadata.fieldsMeta[z];
+						}
+					}
+				}
+			  }
+			}			
 		}
-		console.log(ctr.selectedFields)
-		for (var i = 0; i < param.length; i++) {
-			if(i==0){
-				ctr.datasetofSelectedField.push(param[i].sourceTable.name)
-				ctr.datasetofSelectedField.push(param[i].destinationTable.name)
-			} else {
-				ctr.datasetofSelectedField.push(param[i].destinationTable.name)					
-			}
-		}
-		console.log(ctr.datasetofSelectedField)
 		
 		
 	}
