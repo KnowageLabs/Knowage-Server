@@ -350,7 +350,7 @@ Ext
 							name : 'documentType',
 							store : this.documentTypesStore,
 							width : 150,
-							fieldLabel : 'Document Type',
+							fieldLabel : LN('sbi.engines.documentType'),
 							displayField : 'VALUE_CD',
 							valueField : 'VALUE_ID',
 							typeAhead : true,
@@ -368,7 +368,7 @@ Ext
 							name : 'engineType',
 							store : this.engineTypesStore,
 							width : 150,
-							fieldLabel : 'Engine Types',
+							fieldLabel : LN('sbi.engines.engineTypes'),
 							displayField : 'VALUE_CD',
 							valueField : 'VALUE_ID',
 							typeAhead : true,
@@ -386,13 +386,13 @@ Ext
 
 						this.detailFieldUseDataSet = new Ext.form.Checkbox ({
 							
-							fieldLabel : 'Use Data Set',
+							fieldLabel : LN('sbi.engines.usaDataSet'),
 							name : 'useDataSet'
 
 						});
 
 						this.detailFieldUseDataSource = new Ext.form.Checkbox({
-							fieldLabel : 'Use Data Source',
+							fieldLabel : LN('sbi.engines.useDataSource'),
 							name : 'useDataSource',
 							listeners : {
 						          check : {
@@ -411,7 +411,7 @@ Ext
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
-							fieldLabel : 'Class',
+							fieldLabel : LN('sbi.engines.class'),
 							allowBlank : true,
 							validationEvent : false,
 							name : 'engine_class'
@@ -434,7 +434,7 @@ Ext
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
-							fieldLabel : 'Secondary Url',
+							fieldLabel : LN('sbi.engines.secondaryUrl'),
 							allowBlank : true,
 							validationEvent : false,
 							name : 'secondaryUrl'
@@ -445,7 +445,7 @@ Ext
 							minLength : 1,
 							width : 350,
 							regexText : LN('sbi.roles.alfanumericString'),
-							fieldLabel : 'Driver Name',
+							fieldLabel : LN('sbi.engines.driverName'),
 							allowBlank : true,
 							validationEvent : false,
 							name : 'driver'
@@ -897,13 +897,39 @@ Ext
 											});
 										}
 										else {
-
-											Ext.MessageBox.show({
-												title : LN('Test'),
-												msg : LN('Test successful'),
-												width : 200,
-												buttons : Ext.MessageBox.OK
-											});
+											if (values.url !== "" && values.url !== null && values.url !== undefined){
+												//call url for testing correct webapp presence
+												Ext.Ajax.request({
+													url : values.url +"Test",
+//													url : values.url,
+													params : params,
+													method : 'GET',
+													success : function(response, options) {
+														Ext.MessageBox.show({
+															title : LN('Test'),
+															msg : LN('sbi.engines.testOK'),
+															width : 200,
+															buttons : Ext.MessageBox.OK
+														});								
+													},
+												    failure : function(reponse, options){
+												    	Ext.MessageBox.show({
+															title : LN('Test'),
+															msg : LN('sbi.engines.testKO'),
+															width : 400,
+															buttons : Ext.MessageBox.OK
+														});		
+												    },
+													scope : this
+												});
+											}else{
+												Ext.MessageBox.show({
+													title : LN('Test'),
+													msg : LN('sbi.engines.testOK'),
+													width : 200,
+													buttons : Ext.MessageBox.OK
+												});
+											}
 										}
 
 									} else {
@@ -919,7 +945,7 @@ Ext
 							},
 							failure : Sbi.exception.ExceptionHandler.handleFailure,
 							scope : this
-						});
+						});				
 					}
 
 
