@@ -13,6 +13,7 @@
     
     <MAP_EXTERNAL_REST_SERVICES>
 		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/test" businessProcess="publicFunctionality" />
+		<MAP_EXTERNAL_REST_SERVICE serviceUrl="/pages/executeTest" businessProcess="publicFunctionality" />
 	</MAP_EXTERNAL_REST_SERVICES>
     
 </BUSINESS_MAP>
