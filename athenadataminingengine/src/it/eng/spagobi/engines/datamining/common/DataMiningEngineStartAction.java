@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.datamining.common;
 
@@ -14,6 +14,7 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,11 +29,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-@Path("/start")
+@Path("/")
 public class DataMiningEngineStartAction extends AbstractDataMiningEngineService {
 
 	// http://localhost:8080/SpagoBIDataMiningEngine/restful-services/start
@@ -57,6 +61,7 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 
 	@GET
+	@Path("/start")
 	@Produces("text/html")
 	public void startAction(@Context HttpServletResponse response) {
 
@@ -126,6 +131,28 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 				throw new SpagoBIEngineRuntimeException("Error starting the Data Mining engine: error while forwarding the execution to the jsp "
 						+ FAILURE_REQUEST_DISPATCHER_URL, ex);
 			}
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@GET
+	@Path("/startTest")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String testAction(@Context HttpServletResponse response) {
+
+		logger.debug("IN");
+
+		try {
+			JSONObject obj = new JSONObject();
+			try {
+				obj.put("result", "ok");
+			} catch (JSONException e) {
+				logger.error("Error building the success string");
+				throw new SpagoBIRuntimeException("Error building the success string");
+			}
+			String successString = obj.toString();
+			return successString;
 		} finally {
 			logger.debug("OUT");
 		}
