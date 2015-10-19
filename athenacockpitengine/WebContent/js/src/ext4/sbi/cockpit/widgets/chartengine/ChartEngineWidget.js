@@ -131,8 +131,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		
 		var thePanel = this;
 		
-		Ext.Ajax.request 
-	    ({ 
+		Ext.Ajax.request({ 
 	        url: Sbi.config.chartRuntimeUrl, 
 	        method: 'POST',
 	        params: {
@@ -143,7 +142,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	        	this.successFunction(response.responseText);
 	        },
 			failure: function(response){
-					this.failureFunction();				
+				this.failureFunction();				
 			}
 	    });
 		
@@ -210,7 +209,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 			var metaData = {};
 			metaData['metaData'] = chartStore.meta;
 			
-			var inMemoryData = chartStore.inMemoryData;
+			var inMemoryData = chartStore.inMemoryData || chartStore.data.items;
 			
 			metaData['results'] = inMemoryData.length;
 			
@@ -247,7 +246,8 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 	
 	, refresh:  function() {
     	Sbi.trace("[ChartEngineWidget.refresh]: IN");
-		
+    	Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.refresh.call(this);
+    	
     	this.chartEngineServicePostCall();
 
 		Sbi.trace("[ChartEngineWidget.refresh]: OUT");
