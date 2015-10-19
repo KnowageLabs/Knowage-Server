@@ -199,7 +199,7 @@ END-CAS -->
 	</servlet>
 	
 	<servlet>
-		<servlet-name>EngineTestServlet</servlet-name>
+		<servlet-name>JobRunServiceTest</servlet-name>
 		<servlet-class>
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
@@ -235,7 +235,7 @@ END-CAS -->
 	</servlet-mapping>
 	
 	 <servlet-mapping>
-		<servlet-name>EngineTestServlet</servlet-name>
+		<servlet-name>JobRunServiceTest</servlet-name>
 		<url-pattern>/JobRunServiceTest</url-pattern>
 	</servlet-mapping>
 	
