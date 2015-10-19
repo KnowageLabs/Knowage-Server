@@ -171,7 +171,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		
 		var executionContext = {};
         <% 
-        Iterator it = analyticalDrivers.keySet().iterator();
+        Iterator it = analyticalDrivers.keySet().iterator();        
 		while(it.hasNext()) {
 			String parameterName = (String)it.next();
 			String parameterValue = (String)analyticalDrivers.get(parameterName);		

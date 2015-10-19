@@ -1661,7 +1661,19 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 					var label = obj.namePar;
 					var value = null;
 					if (obj.scope == 'Relative'){
-						value = this.getContextValue(obj.initialValue);
+						var gblValue = this.getContextValue(obj.initialValue) || '';
+						//if parameter is an array (multivalue) set standard syntax : {;{valA,valB}}
+						//otherwise set the real value
+						if (Array.isArray(gblValue)){
+							value = '{;{';
+							for (v=0; v<gblValue.length;v++){
+								if (v>0) value += ";";
+								value += gblValue[v];
+							}
+							value += '}}'
+						}else{
+							value = gblValue;
+						}
 					}else{
 						value = obj.initialValue;
 					}
