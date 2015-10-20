@@ -55,6 +55,9 @@
 		<property name="category" type="string">
 		    <column name="CATEGORY" length="45" />
 		</property>
+		<property name="staticFilter" type="boolean"  >
+		    <column name="STATIC_FILTER" />
+		</property>
 		<property name="definition" type="string">
 		    <column name="DEFINITION" length="4000" />
 		</property>

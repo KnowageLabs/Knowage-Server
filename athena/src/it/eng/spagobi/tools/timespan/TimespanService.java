@@ -29,10 +29,34 @@ import org.json.JSONObject;
 public class TimespanService {
 
 	@GET
+	@Path("/listDynTimespan")
+	@Produces(MediaType.APPLICATION_JSON)
+//	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
+	public String listDynTimespan(@Context HttpServletRequest req) {
+		try {
+			ITimespanDAO dao = DAOFactory.getTimespanDAO();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			dao.setUserProfile(profile);
+
+			List<SbiTimespan> lst = dao.listDynTimespan();
+			JSONArray ja = new JSONArray();
+			if (lst != null) {
+				for (Iterator<SbiTimespan> iterator = lst.iterator(); iterator.hasNext();) {
+					SbiTimespan sbiTimespan = iterator.next();
+					ja.put(Util.getAsJSON(sbiTimespan));
+				}
+			}
+			return ja.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
+		}
+	}
+
+	@GET
 	@Path("/listTimespan")
 	@Produces(MediaType.APPLICATION_JSON)
 //	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_TIMESPAN })
-	public String listTimespan(@Context HttpServletRequest req) {
+	public String listAllTimespan(@Context HttpServletRequest req) {
 		try {
 			ITimespanDAO dao = DAOFactory.getTimespanDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -46,7 +70,9 @@ public class TimespanService {
 					ja.put(Util.getAsJSON(sbiTimespan));
 				}
 			}
-			return ja.toString();
+			JSONObject root = new JSONObject();
+			root.put("data", ja);
+			return root.toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service", t);
 		}

@@ -141,6 +141,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 			Sbi.config.queryExecutionTimeout = <%= timeout %>;
 			Sbi.config.crosstabCellLimit = <%= crosstabCellLimit %>;
 			Sbi.config.crosstabCalculatedFieldsDecimalePrecison = <%= crosstabCalculatedFieldsDecimalePrecison %>;
+			Sbi.config.contextName = '<%= spagobiContext %>';
 			
 			var url = {
 		    	host: '<%= request.getServerName()%>'

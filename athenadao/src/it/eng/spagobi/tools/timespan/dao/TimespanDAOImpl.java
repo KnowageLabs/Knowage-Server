@@ -1,9 +1,14 @@
 package it.eng.spagobi.tools.timespan.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.tools.timespan.metadata.SbiTimespan;
 
 import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 
 public class TimespanDAOImpl extends AbstractHibernateDAO implements ITimespanDAO {
 
@@ -15,6 +20,18 @@ public class TimespanDAOImpl extends AbstractHibernateDAO implements ITimespanDA
 	@Override
 	public List<SbiTimespan> listTimespan() {
 		return list(SbiTimespan.class);
+	}
+
+	@Override
+	public List<SbiTimespan> listDynTimespan() {
+		return list(new ICriterion<SbiTimespan>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiTimespan.class);
+				c.add(Restrictions.eq("staticFilter", false));
+				return c;
+			}
+		});
 	}
 
 	@Override

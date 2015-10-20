@@ -178,7 +178,7 @@ function behavior(translate, restServices, $scope) {
 	
 	
 	function listTimespan() {
-		restServices.get("1.0/timespan", "listTimespan").success(
+		restServices.get("1.0/timespan", "listDynTimespan").success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("list error");

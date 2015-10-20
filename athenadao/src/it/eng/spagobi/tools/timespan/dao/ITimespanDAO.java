@@ -11,6 +11,8 @@ public interface ITimespanDAO extends ISpagoBIDao {
 
 	public List<SbiTimespan> listTimespan();
 
+	public List<SbiTimespan> listDynTimespan();
+
 	public Integer insertTimespan(SbiTimespan timespan);
 
 	public void modifyTimespan(SbiTimespan timespan);

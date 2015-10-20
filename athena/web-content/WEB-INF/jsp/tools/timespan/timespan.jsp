@@ -5,8 +5,7 @@
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<%@include file="/WEB-INF/jsp/tools/glossary/commons/headerInclude.jspf"%>
-
+<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="timespanManager">
@@ -164,7 +163,7 @@
 				<md-divider style="margin:20px;"></md-divider>
 				
 				<div ng-if="ctrl.selectedItem.type" layout="row" layout-align="center center" >
-					<table style="width: 80%; font-size: 10pt; table-layout: fixed; text-align: center;">
+					<table style="width: 70%; font-size: 10pt; table-layout: fixed; text-align: center;">
 						<tr>
 							<th>
 								<label >{{translate.load("sbi.timespan.from");}}</label>
@@ -180,12 +179,12 @@
 									<angular-time-picker  ng-model="ctrl.to" />
 								</div>
 							</th>
-							<th>
+							<th style="width:15%;">
 								<md-button ng-click="ctrl.addInterval(ctrl.from,ctrl.to)" class="md-fab md-MiniList blue" aria-label="add interval"> 
 									<md-icon md-font-icon="fa fa-plus" ></md-icon> 
 								</md-button>
 							</th>
-							<th>
+							<th style="width:20%">
 								<md-input-container ng-if="ctrl.selectedItem.type=='temporal'" style="padding-bottom:0px;">
 									<label>{{translate.load("sbi.timespan.delay");}}</label>
 									<input type="number" ng-model="ctrl.delay" >

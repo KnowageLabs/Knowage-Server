@@ -12,6 +12,7 @@ public class SbiTimespan extends SbiHibernateModel {
 	private String name;
 	private String type;
 	private String category;
+	private Boolean staticFilter = false;
 	private String definition;
 
 
@@ -71,6 +72,20 @@ public class SbiTimespan extends SbiHibernateModel {
 	 */
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	/**
+	 * @return the staticFilter
+	 */
+	public Boolean getStaticFilter() {
+		return staticFilter;
+	}
+
+	/**
+	 * @param staticFilter the staticFilter to set
+	 */
+	public void setStaticFilter(Boolean staticFilter) {
+		this.staticFilter = staticFilter;
 	}
 
 	/**
