@@ -115,11 +115,29 @@
 				
 				<div id="docTree" ui-tree="" data-drag-enabled="false"
 						data-drag-delay="false" data-empty-placeholder-enabled="false">
+					
+					<script type="text/ng-template" id="lowFunctionalityTreeNodeTemplate">						
+						<div ui-tree-handle layout="row">
+							<div class="indicator-child "></div>
+							<span class="fa fa-folder-open-o" style="color: turquoise;"></span>
+							<md-checkbox md-no-ink style="margin: -3px 0 0 5px;" aria-label="Checkbox 1" 
+									ng-click="activityEventCtrl.toggleDocFunct(activityEventCtrl.selectedDocument, elementToIterate.id);"
+									ng-checked="activityEventCtrl.isChecked(elementToIterate.id, activityEventCtrl.selectedDocument.funct, true)">
+								{{elementToIterate.name}}
+							</md-checkbox>
+						</div>
+						<ol ui-tree-nodes ng-model="elementToIterate" ng-if="elementToIterate.childs">
+							<li ng-repeat="elementToIterate in elementToIterate.childs" 
+									ui-tree-node class="figlioVisibile" 
+									ng-include="'lowFunctionalityTreeNodeTemplate'"></li>
+						</ol>
+					</script>
+					
 					<ol id="olchiproot" ui-tree-nodes ng-model="activityEventCtrl.lowFunc">
-						<li ng-repeat="subItem in activityEventCtrl.lowFunc" ui-tree-node 
-								ng-include="'/athena/js/src/angular_1.4/tools/commons/templates/lowFunctionalityTreeNode.html'"></li>
-								
+						<li ng-repeat="elementToIterate in activityEventCtrl.lowFunc" ui-tree-node 
+								ng-include="'lowFunctionalityTreeNodeTemplate'"></li>
 					</ol>
+					
 				</div>
 			</div>
 		
