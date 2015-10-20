@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JDBCDataProxy extends AbstractDataProxy {
 
@@ -100,18 +100,18 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
 			}
-
+			String sqlQuery = "";
 			try {
 				// get max size
 				if (getMaxResults() > 0) {
 					stmt.setMaxRows(getMaxResults());
 				}
-				String sqlQuery = getStatement();
+				sqlQuery = getStatement();
 				logger.debug("Executing query " + sqlQuery + " ...");
 				resultSet = stmt.executeQuery(sqlQuery);
 
 			} catch (Throwable t) {
-				logger.error("Trovata!:", t);
+				logger.error("An error occurred while executing statement: " + sqlQuery);
 				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
 
