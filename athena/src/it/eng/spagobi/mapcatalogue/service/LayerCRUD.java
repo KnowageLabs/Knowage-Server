@@ -19,6 +19,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -33,6 +34,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.Version;
@@ -85,15 +88,18 @@ public class LayerCRUD {
 		return  "{\"root\":"+s+"}";
 	}
 	
-	@DELETE
+	@POST
+	@Path("/deleteLayer")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteLayer(@Context HttpServletRequest req) {
 		Object id=null;
 		Integer layerId = null;
-		JSONObject requestBodyJSON;
+	//	JSONObject requestBodyJSON;
 		try {
-			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-			id = requestBodyJSON.opt("id");
+		//	requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			id= req.getParameter("id");
+			System.out.println(id);
+		//	id = requestBodyJSON.opt("id");
 			if(id==null || id.equals("")){
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
@@ -117,10 +123,11 @@ public class LayerCRUD {
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String saveLayer(@Context HttpServletRequest req) {
+	public String saveLayer( @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON=null;
 		Integer id;
 		try {
+		//	Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			requestBodyJSON= RestUtilities.readBodyAsJSONObject(req);
 		} catch (Exception e) {
 			logger.error("Error reading the body from the request",e);
@@ -154,6 +161,7 @@ public class LayerCRUD {
 	public String modifyLayer(@Context HttpServletRequest req) {
 		JSONObject requestBodyJSON=null;
 		try {
+		//	Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			requestBodyJSON= RestUtilities.readBodyAsJSONObject(req);
 		} catch (Exception e) {
 			logger.error("Error reading the body from the request",e);
@@ -181,6 +189,9 @@ public class LayerCRUD {
 		logger.debug("Layer updated: layer label "+aLayer.getLabel());
 		return "{}";
 	}
+	
+	
+	
 	
 	@POST
 	@Path("/getLayerProperties")
@@ -240,6 +251,7 @@ public class LayerCRUD {
 			}
 		}*/
 		return null;
+		
 		
 	}
 	

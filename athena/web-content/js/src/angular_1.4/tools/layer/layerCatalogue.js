@@ -13,22 +13,8 @@ app.service('translate', function() {
 	};
 });
 
-app.directive("fileread", [function () {
-    return {
-        scope: {
-            fileread: "="
-        },
-        link: function (scope, element, attributes) {
-            element.bind("change", function (changeEvent) {
-                scope.$apply(function () {
-                    scope.fileread = changeEvent.target.files[0];
-                    // or all selected files:
-                    // scope.fileread = changeEvent.target.files;
-                });
-            });
-        }
-    }
-}]);
+
+var showme = false;
 
 var EmptyLayer = {
 		name : "",
@@ -45,32 +31,32 @@ var EmptyLayer = {
 
 };
 //this variable is used to split add new entry from update entry
-var flag = false;
+//var flag = false;
 
 
-app.controller('Controller', [ "translate", "restServices", "$scope", funzione ]);
+app.controller('Controller', [ "translate", "restServices", "$scope","$mdDialog", funzione ]);
 
 
 
 
-function funzione(translate, restServices, $scope) {
+function funzione(translate, restServices, $scope, $mdDialog) {
 	$scope.translate = translate;
 	$scope.layerList = [];
 	$scope.selectLayer = {};
-	$scope.newLayer = function(){
-	//EmptyLayer serve poi per il reset
-	$scope.newLayer = JSON.parse(JSON.stringify(EmptyLayer));
-		
+	$scope.image = "/athena/web-content/WEB-INF/jsp/tools/layer/img/logo_globo.png";
+	$scope.flag=false;
 	
-	}
 	$scope.loadLayer = function(){
+		console.log("dentro loadLayer");
 		restServices.get("layers", '').success(
 				function(data, status, headers, config) {
-					console.log(data)
+					
+					console.log(data);
 					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
+						console.log("layer non Ottenuti bo");
 					} else {
 						$scope.layerList = data.root;
+						
 
 					}
 					
@@ -78,8 +64,10 @@ function funzione(translate, restServices, $scope) {
 					console.log("layer non Ottenuti " + status);
 			
 				})
+				
 		
 	}
+
 	$scope.listType = [
 	                {value : 'File', label : translate.load("sbi.tools.layer.props.type.file")},
 	                {value : 'WFS', label: translate.load("sbi.tools.layer.props.type.wfs")},
@@ -95,50 +83,113 @@ function funzione(translate, restServices, $scope) {
 	//$scope.translate = translate;
 	
 	$scope.saveLayer = function(){
-		if(flag){
-			flag=false;
-			console.log("dentro if")
+		if($scope.flag){
+			
+	//		console.log("contengo:");
+	//		console.log($scope.selectedLayer.layerFile);
 			restServices.put("layers", '', $scope.selectedLayer).success(
+					
 					function(data, status, headers, config) {
 						console.log(data)
+					
 						if (data.hasOwnProperty("errors")) {
 							console.log("layer non Ottenuti");
 							
 						} else {
 							//$scope.layerList = selectedLayer;
-	
+							$scope.flag=false;
+							$scope.loadLayer();
+							
 						}
 						
 					}).error(function(data, status, headers, config) {
 						console.log("layer non Ottenuti " + status);
-				
+						$scope.loadLayer();
 					})
+					
+					
 		} else{
-			console.log("dentro else")
+		//	console.log("contengo:");
+		//	console.log($scope.selectedLayer.layerFile);
 			restServices.post("layers", '', $scope.selectedLayer).success(
+					
 					function(data, status, headers, config) {
 						console.log(data)
+						
 						if (data.hasOwnProperty("errors")) {
 							console.log("layer non Ottenuti");
 							
 						} else {
 							//$scope.layerList = selectedLayer;
-	
+							$scope.loadLayer();
 						}
 						
 					}).error(function(data, status, headers, config) {
+						
 						console.log("layer non Ottenuti " + status);
-				
+						$scope.loadLayer();
 					})
+					
+				
+			
 		}
 				
 	}
 
 	$scope.loadLayerList = function(item){
 		//function calls when you clic on the list of layers
-		console.log(item);
-		flag = true;
-		$scope.selectedLayer = item;
+		if(item!= null){
+			//siamo in una condizione di caricamento dati dalla lista
+			if($scope.selectedLayer != null){
+				console.log("beccato");
+				var confirm = $mdDialog
+				.confirm()
+				.title(translate.load("sbi.layer.modify.progress"))
+				.content(
+						translate
+								.load("sbi.layer.modify.progress.message.modify"))
+				.ariaLabel('Lucky day').ok(
+						translate.load("sbi.general.continue")).cancel(
+						translate.load("sbi.general.cancel"));
+
+				$mdDialog.show(confirm).then(function() {
+					$scope.selectedLayer = item;	
+
+				}, function() {
+					console.log('Annulla');
+				});
+
+			} else {
+				console.log("carico"+item);
+				$scope.flag = true;
+				$scope.selectedLayer = item;
+			}
+		} else {
+			if($scope.selectedLayer != null ){
+				console.log("beccato");
+				var confirm = $mdDialog
+				.confirm()
+				.title(translate.load("sbi.layer.modify.progress"))
+				.content(
+						translate
+								.load("sbi.layer.modify.progress.message.modify"))
+				.ariaLabel('Lucky day').ok(
+						translate.load("sbi.general.continue")).cancel(
+						translate.load("sbi.general.cancel"));
+
+				$mdDialog.show(confirm).then(function() {
+					$scope.cancel();		
+
+				}, function() {
+					console.log('Annulla');
+				});
+
+			} else if($scope.selectedLayer == null ) {
+				$scope.newLayer = JSON.parse(JSON.stringify(EmptyLayer));
+				$scope.showme=true;
+			}
+		}
+		
 
 	}
 		
@@ -146,12 +197,49 @@ function funzione(translate, restServices, $scope) {
 
 	$scope.cancel = function(){
 		console.log("Reset");
-		$scope.selectedLayer = EmptyLayer;
-		flag=false;
-		
+		$scope.selectedLayer = {};
+		$scope.flag=false;
+	
 	}
 	
-		  
+	$scope.menuLayer= [{
+		label : translate.load('sbi.generic.delete'),
+		action : function(item,event) {
+			console.log("prima");
+			$scope.selectedLayer = item;
+			console.log("dopo");
+			console.log("cancello:"+item);
+			
+			$scope.deleteLayer();
+			
+		}
+	}];	
+	
+	$scope.deleteLayer = function(){
+		
+		restServices.remove("layers", 'deleteLayer',"id="+$scope.selectedLayer.id).success(
+				
+				function(data, status, headers, config) {
+					console.log(data)
+					if (data.hasOwnProperty("errors")) {
+						console.log("layer non Ottenuti");
+					} else {
+						//$scope.layerList = data.root;
+						$scope.loadLayer();
+					}
+					
+				}).error(function(data, status, headers, config) {
+					console.log("layer non Ottenuti " + status);
+			
+				})
+		$scope.cancel();
+		
+
+	}
+	
+	
+		
+	
 };
 
 
