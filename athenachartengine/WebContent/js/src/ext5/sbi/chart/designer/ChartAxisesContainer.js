@@ -7,6 +7,16 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 	],
 	alternateClassName: ['ChartAxisesContainer'],
 	
+	/**
+	 * We need to disable the border in order to hide the
+	 * horizontal line that appears on the place of additional
+	 * Y-axis panels (when we add ones by clicking on the plus 
+	 * button on the left Y-axis panel) when we close them.
+	 * 
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
+	border: false,
+	
 	xtype: 'layout-horizontal-box',
 	layout: {
 		type: 'hbox',
@@ -14,6 +24,7 @@ Ext.define('Sbi.chart.designer.ChartAxisesContainer', {
 		align: 'stretch'
 	},
 	defaults: {
+		
 	},
 	
 	statics: {

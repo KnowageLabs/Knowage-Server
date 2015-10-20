@@ -93,7 +93,16 @@ Ext.define('Sbi.chart.designer.ChartStructure', {
 
     width: "100%",
     defaults: {
-        border: true
+    	/**
+    	 * We need to disable the border in order to hide the
+    	 * horizontal line that appears after rendering of the
+    	 * Designer on the Step 1 (on the place where additional
+    	 * Y-axis panels should be placed when clicking on the
+    	 * left Y-axis plus button).
+    	 * 
+    	 * @author: danristo (danilo.ristovski@mht.net)
+    	 */
+        border: false	
     },
     items: []
 });
