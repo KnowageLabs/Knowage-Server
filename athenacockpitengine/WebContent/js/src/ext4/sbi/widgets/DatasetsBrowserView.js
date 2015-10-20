@@ -243,14 +243,11 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 
 		var datasetTpl = ''+
 		'<div class="box-container">'+
-//	        '<div id="box-figure-{label}" class="box-figure">'+
 	        '<div id="box-figure-{id}" class="box-figure">'+
-//				'<img  align="center" src="' + img + '" '+ classImg+'" + ext:qtip="<b>{views}</b><br/>{summary}"></img>' +
 				'<img  align="center" src="' + img + '" '+ classImg +'"></img>' +
 			'</div>'+ //box-figure
 			'<tpl if="this.checkIsUsed(isUsed, label) == true">'+
-//				'<div id="box-text-{label}" title="{name}" class="box-text box-text-select">'+
-				'<div id="box-text-{id}" title="{name}" class="box-text box-text-select">'+
+				'<div id="box-text-{id}" title="{name} - {description}" class="box-text box-text-select">'+
 					'<h3>{[this.shortenTitle(values.name)]}</h3>'+
 					'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
@@ -259,8 +256,7 @@ Ext.extend(Sbi.widgets.DatasetsBrowserView, Ext.DataView, {
 				'</div>'+
 			'</tpl>'+
 	        '<tpl if="this.checkIsUsed(isUsed, label) == false">'+
-//		        '<div id="box-text-{label}" title="{name}" class="box-text">'+
-		        '<div id="box-text-{id}" title="{name}" class="box-text">'+
+		        '<div id="box-text-{id}" title="{name} - {description}" class="box-text">'+
 					'<h3>{[this.shortenTitle(values.name)]}</h3>'+
 						'<p>{[this.shorten(values.description)]}</p>'+
 //					'<p>{description}</p>'+
