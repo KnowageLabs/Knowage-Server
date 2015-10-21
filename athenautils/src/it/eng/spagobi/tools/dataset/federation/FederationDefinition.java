@@ -77,7 +77,10 @@ public class FederationDefinition {
 		JSONArray array = new JSONArray(getRelationships());
 		if(array!=null && array.length()>0){
 			for(int i=0; i<array.length();i++){
-				flatJSONArray.put(array.get(i));
+				JSONArray temp = array.getJSONArray(i);
+				for(int j=0; j<temp.length(); j++){
+					flatJSONArray.put(temp.get(j));
+				}
 			}
 		}
 
