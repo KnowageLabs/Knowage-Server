@@ -251,20 +251,19 @@ public class RestFederationDefinition  {
 		//loading the datsets
 		try {
 			JSONArray array = new JSONArray(relationships);
-			JSONArray innerArray = array.getJSONArray(0);
+			
+			
+			for(int j=0; j<array.length(); j++){
+				JSONArray innerArray = array.getJSONArray(j);
+				for(int i=0; i<innerArray.length(); i++){
+					JSONObject relation = innerArray.getJSONObject(i);
+					JSONObject startRel = relation.getJSONObject("sourceTable");
+					JSONObject destinationRel = relation.getJSONObject("destinationTable");
 
-
-
-			for(int i=0; i<innerArray.length(); i++){
-				JSONObject relation = innerArray.getJSONObject(i);
-				JSONObject startRel = relation.getJSONObject("sourceTable");
-				JSONObject destinationRel = relation.getJSONObject("destinationTable");
-
-				datasetNames.add(startRel.getString("name"));
-				datasetNames.add(destinationRel.getString("name"));
-
+					datasetNames.add(startRel.getString("name"));
+					datasetNames.add(destinationRel.getString("name"));
+				}
 			}
-
 
 		} catch (JSONException e) {
 			logger.error("Error loading the datset");
