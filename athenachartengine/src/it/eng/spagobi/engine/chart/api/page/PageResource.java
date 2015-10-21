@@ -132,8 +132,17 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				JSONArray styles= new JSONArray(new StyleResource().getStyles());
+
+				/**
+				 * These two lines are responsible for setting all chart styles that are available on the server (through their XML files) into the session and
+				 * forwarding them to the Designer.js which will take them and put inside of the chart style combo box on the top left of the Designer page.
+				 *
+				 * @author: atomic (ana.tomic@mht.net)
+				 * @commentBy: danristo (danilo.ristovski@mht.net)
+				 */
+				JSONArray styles = new JSONArray(new StyleResource().getStyles());
 				getIOManager().getHttpSession().setAttribute(EngineConstants.DEFAULT_CHART_STYLES, styles);
+
 				break;
 
 			case "test":
@@ -258,6 +267,18 @@ public class PageResource extends AbstractChartEngineResource {
 				engineInstance.getEnv().put("EDIT_COCKPIT", true);
 				// TODO put this not in session but in context
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+
+				/**
+				 * These two lines are called when the Cockpit engine is initializing (creating, calling) the Designer (not the Chart engine). They are
+				 * important for setting all chart types available on the server (inside of XML files) into the session through which we will forward this data
+				 * to the Designer.js. This one will use the data and put it inside of the chart style combo box on the top left of the Designer page.
+				 *
+				 * @author: atomic (ana.tomic@mht.net)
+				 * @addedBy: danristo (danilo.ristovski@mht.net)
+				 */
+				JSONArray styles = new JSONArray(new StyleResource().getStyles());
+				getIOManager().getHttpSession().setAttribute(EngineConstants.DEFAULT_CHART_STYLES, styles);
+
 				break;
 
 			default:
