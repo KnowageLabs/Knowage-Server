@@ -7,22 +7,27 @@
 package it.eng.spagobi.tools.dataset.federation;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class FederationDefinition {
 
-	
+
 	private int federation_id;
-	
+
 	private String name;
-	
+
 	private String label;
-	
+
 	private String description;
-	
+
 	private String relationships;
-	
+
 	private Set<IDataSet> sourceDatasets;
 
 	public int getFederation_id() {
@@ -61,6 +66,24 @@ public class FederationDefinition {
 		return relationships;
 	}
 
+	/**
+	 * Flats the relationships and return the single relations between couple tables
+	 * @return
+	 * @throws JSONException
+	 */
+	public JSONArray getFlatReslationsShips() throws JSONException{
+
+		JSONArray flatJSONArray = new JSONArray();
+		JSONArray array = new JSONArray(getRelationships());
+		if(array!=null && array.length()>0){
+			for(int i=0; i<array.length();i++){
+				flatJSONArray.put(array.get(i));
+			}
+		}
+
+		return flatJSONArray;
+	}
+
 	public void setRelationships(String relationships) {
 		this.relationships = relationships;
 	}
@@ -72,7 +95,7 @@ public class FederationDefinition {
 	public void setSourceDatasets(Set<IDataSet> sourceDatasets) {
 		this.sourceDatasets = sourceDatasets;
 	}
-	
-	
-	
+
+
+
 }
