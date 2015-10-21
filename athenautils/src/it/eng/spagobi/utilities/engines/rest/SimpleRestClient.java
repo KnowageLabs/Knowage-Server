@@ -17,6 +17,8 @@ import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
@@ -44,7 +46,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	protected ClientResponse executeGetService(Map<String,Object> parameters,  String serviceUrl) throws Exception {
-		return executeService(parameters, serviceUrl, RequestTypeEnum.GET);
+		return executeService(parameters, serviceUrl, RequestTypeEnum.GET, null, null);
 	}
 	
 	
@@ -52,15 +54,17 @@ public class SimpleRestClient {
 	 * Invokes a rest service in post and return response
 	 * @param parameters the parameters of the request
 	 * @param serviceUrl the relative (refers always to core application context) path of the service 
-	 * @return the response
+	 * @param mediaType
+	 * @param data
+	 * @return
 	 * @throws Exception
 	 */
-	protected ClientResponse executePostService(Map<String,Object> parameters,  String serviceUrl) throws Exception {
-		return executeService(parameters, serviceUrl, RequestTypeEnum.POST);
+	protected ClientResponse executePostService(Map<String,Object> parameters,  String serviceUrl, MediaType mediaType, Object data) throws Exception {
+		return executeService(parameters, serviceUrl, RequestTypeEnum.POST, mediaType, data);
 	}
 	
 	
-	private ClientResponse executeService(Map<String,Object> parameters,  String serviceUrl, RequestTypeEnum type) throws Exception{
+	private ClientResponse executeService(Map<String,Object> parameters,  String serviceUrl, RequestTypeEnum type, MediaType mediaType, Object data) throws Exception{
 		logger.debug("IN");
 
 		if(!serviceUrl.contains("http") && addServerUrl){
@@ -73,8 +77,15 @@ public class SimpleRestClient {
 		ApacheHttpClientExecutor httpExecutor = new ApacheHttpClientExecutor(CKANClient.getHttpClient());
 		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
 
-		
+		logger.debug("adding headers");
 		request.header("Authorization", credential);
+		
+		
+		if(mediaType!=null && data!=null){
+			logger.debug("adding body");
+			request.body(mediaType, data);
+		}
+		
 		
 		if(parameters!=null){
 			Iterator<String> iter = parameters.keySet().iterator();

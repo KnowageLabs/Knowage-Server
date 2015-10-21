@@ -731,6 +731,7 @@ public class AbstractEngineStartAction extends AbstractBaseHttpAction {
 	}
 
 	public void setDataSource(IDataSource dataSource) {
+		logger.debug("Setting datasource for engine. The label is "+dataSource.getLabel());
 		this.dataSource = dataSource;
 	}
 	
