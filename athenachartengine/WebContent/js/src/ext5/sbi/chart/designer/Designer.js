@@ -40,6 +40,8 @@ Ext.define('Sbi.chart.designer.Designer', {
     	 */
     	realtivePathReturn: '../../..',
     	
+    	chartTypeChanged: null,
+    	
 		// Left designer panel 
 		chartTypeColumnSelector: null,
 		
@@ -96,12 +98,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * Get the missing JSON configuration elements (properties) in order to define
 		 * their default values for any type of chart (including the BAR chart).
 		 * (danilo.ristovski@mht.net)
-		 * (lazar.kostic@mht.net)
+		 * (ana.kostic@mht.net)
 		 */
 		getConfigurationForStyle : function(style) {
-//			Designer.styleName = style;
-			
-		//   Designer.styleName = style;
 		      
 			   var styles=JSON.parse(Sbi.chart.designer.Styles);
 			          
@@ -110,896 +109,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    * We will return this JSON object when needed (e.g. before merging old JSON template 
 			    * with the new one (that keeps the predefined style parameters), after changing the style).
 			    */
-			   //var templateToReturn = null;
 			   var retTemplate=null;
-			   
-			   /**
-			    * This method is called when changing (choosing) the style of the chart's default parameters 
-			    * and it will return the JSON template depending on the chosen style (red, blue, ...). This
-			    * switch statement servers for that purpose.
-			    */
+			   			   
 			   for(i=0;i<styles.length;i++){
-			    if(styles[i].STYLE.name===style){
-			     retTemplate=styles[i].TEMPLATE;
-			     break;
-			    } 
-			   }
+				   if(styles[i].STYLE.name===style){
+					   retTemplate=styles[i].TEMPLATE;
+					   break;
+				   } 
+			   } 			   
 			   
-			      return retTemplate;
-			
-			/**
-			 * JSON template that keeps the predefined values for the different styles parameters. 
-			 * We will return this JSON object when needed (e.g. before merging old JSON template 
-			 * with the new one (that keeps the predefined style parameters), after changing the style).
-			 */
-			var templateToReturn = null;
-			
-			/**
-			 * This method is called when changing (choosing) the style of the chart's default parameters 
-			 * and it will return the JSON template depending on the chosen style (red, blue, ...). This
-			 * switch statement servers for that purpose.
-			 */
-			switch(style) {				
-				case "red":	
-
-					templateToReturn = {
-						/**
-						 * Generic parameters are common for any type of chart and their default values 
-						 * are going to be set through this 'generic' property of the JSON template.
-						 */
-						generic: {
-							CHART: {
-								height: "",
-								width: "",	
-								isCockpitEngine: "false",
-								orientation: "horizontal",
-								style: "fontFamily:Verdana;fontSize:16px;fontWeight:bold;backgroundColor:#FF0000;",
-								styleName: "red",
-//								styleCustom: styleCustom, 
-								
-								TITLE: {
-									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:normal;fontSize:26px;",
-	 								text: "This is red chart"
-								},
-								
-								SUBTITLE: {
-									style: "align:center;color:#000000;fontFamily:Verdana;fontWeight:italic;fontSize:14px;",
-									text: "Insert your subtitle"
-								},
-								
-								EMPTYMESSAGE: {
-									style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
-									text: "Insert your empty message (when data for chart does not exist)"
-								},
-								
-								LEGEND: {
-									floating: false,
-									layout: "",
-									position: "",
-									show: false,
-									style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;",
-									x: 0,
-									y: 0
-								},
-								
-								COLORPALETTE: {
-									COLOR: [
-									        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
-									        {id:2 , order: 2, name: '434348', value: '434348' }, 
-									        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
-									        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
-									        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
-									        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
-									        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
-									        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
-									        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
-									        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
-									        ]
-								},
-								
-								// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
-								AXES_LIST: {
-									AXIS: [														 
-								       {
-								    	   type: 'Serie',
-								    	  // position: "",
-								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-								    	   
-								    	   MAJORGRID: {
-								    		   interval: "",
-								    		   style: "typeline:;color:#D8D8D8;"
-							    		   },
-								       
-							    		   MINORGRID: {
-							    			   interval: "", 
-							    			   style: "typeline:;color:#E0E0E0;"
-						    			   },
-							    		   
-							    		   TITLE: {
-							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   text: "red measure axis title" 
-						    			   }
-						    		   }, {
-						    			   type: 'Category',
-						    			  // position: "", 
-						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   
-						    			   TITLE: {
-						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    				   text: ""
-					    				   }
-				    				   }
-							        ]
-								},
-								
-								VALUES:
-								{
-									SERIE:
-									{
-										postfixChar: "TTTRRRUUU"
-									}
-								}
-							}						
-						},
-						
-						/**
-						 * Specific parameters are specific for certain (particular) type of chart and 
-						 * their default values are going to be set through separate properties of the 
-						 * JSON template that are going to be named by the name of the chart that is
-						 * considered (that we choosed for our chart (document). For example, specific 
-						 * default parameters for the WORDCLOUD chart type are going to be put inside 
-						 * the 'wordcloud' property of the JSON template and so on.
-						 */
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the WORDCLOUD chart
-						 */
-						wordcloud: {								
-							CHART: {		
-								type: "WORDCLOUD",
-								
-								maxAngle: 121,
-								maxFontSize: 51,
-								maxWords: 51,
-								minAngle: 61, 
-								sizeCriteria: 'serie',
-								wordPadding: 5									
-							}
-						},
-						
-						bar: {
-							CHART: {
-								type: "BAR"
-							}
-						},
-						
-						line: {
-							CHART: {
-								type: "LINE"
-							}
-						},
-						
-						pie: {
-							CHART: {
-								type: "PIE"
-							}
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the TREEMAP chart
-						 */
-						treemap: {
-							CHART: {		
-								type: "TREEMAP"								
-							}
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the PARALLEL chart
-						 */
-						parallel: {								
-							CHART: {
-								type: "PARALLEL",
-								
-								AXES_LIST: {									
-									style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"										
-								},
-								
-								LIMIT: {					
-									/**
-									 * 'serieFilterColumn' attribute depends on available (picked) SERIE items (values)
-									 * for the chart, since it is always empty as a default value
-									 * (danilo.ristovski@mht.net)
-									 */
-									style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"										
-								},
-								
-								PARALLEL_TOOLTIP: {										
-									style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"										
-								},
-								
-								LEGEND: {										
-									TITLE: {											
-										style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"											
-									},
-									
-									ELEMENT: {											
-										style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"											
-									}
-									
-								},
-								
-								AXES_LIST: {
-									style: "axisColNamePadd:15;brushWidth:12;axisColor:#FF6600;brushColor:#339966;"
-								}
-							}
-							
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the HEATMAP chart
-						 */
-						heatmap: {								
-							CHART: {		
-								type: "HEATMAP",
-								
-								LEGEND: {		
-									symbolHeight: 400,
-									style: "align:middle;"									
-								},
-								
-								TOOLTIP: {										
-									style: "fontFamily:Gungsuh;fontSize:24px;color:#003366;"										
-								}									
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the RADAR chart
-						 */
-						radar: {
-							CHART: {		
-								type: "RADAR"								
-							}
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the SCATTER chart
-						 */
-						scatter: {	
-							CHART: {	
-								type: "SCATTER",	
-								
-								zoomType:"xy",
-								
-								AXES_LIST: {
-									AXIS: [														 
-								       {
-								    	   //alias:'Y', 
-								    	   type: 'Serie',
-								    	  // position: "",
-								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-								    	   //id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
-								    	   
-								    	   MAJORGRID: {
-								    		   interval: "",
-								    		   style: "typeline:;color:#D8D8D8;"
-							    		   },
-								       
-							    		   MINORGRID: {
-							    			   interval: "", 
-							    			   style: "typeline:;color:#E0E0E0;"
-						    			   },
-							    		   
-							    		   TITLE: {
-							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   text: "" 
-						    			   }
-						    		   }, {
-						    			   //alias:'X', 
-						    			   type: 'Category',
-						    			   //position: "", 
-						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   
-						    			   /**
-						    			    * Specific for this chart type
-						    			    */
-						    			   startOnTick: "false", 
-						    			   showLastLabel: "true",
-						    			   endOnTick: "false",
-						    			   
-						    			   TITLE: {
-						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    				   text: ""
-					    				   }
-				    				   }
-							        ]
-								}
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the GAUGE chart
-						 */
-						// TODO: Waiting for the AXES_LIST and VALUES decisions (multiple Y-axis and dynamic SERIE items and their number)
-						gauge: {								
-							CHART: {		
-								type: "GAUGE",
-								
-								// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
-								AXES_LIST: {
-									AXIS: [{
-							    	   lineColor: "#FF0000", 
-							    	   lineWidth: "1",
-							    	   
-							    	   max: "60",
-							    	   min: "1", 
-							    	   
-							    	   minorTickColor: "#FF0000",
-							    	   minorTickInterval: "",									    	   
-							    	   minorTickLength: "10",
-							    	   minorTickPosition: "inside",
-							    	   minorTickWidth: "1",
-							    	   
-							    	   offset:"1",
-							    	   
-						               tickColor: "#FF0000",
-						               tickLength: "10",
-						               tickPixelInterval: "30",
-						               tickPosition: "inside",
-						               tickWidth: "2", 
-							    	   
-							    	   
-							    	   type: 'Serie',
-							    	  // position: "",
-							    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-							    	   
-							    	   MAJORGRID: {
-							    		   interval: "",
-							    		   style: "typeline:;color:#FF0000;"
-						    		   },
-							       
-						    		   MINORGRID: {
-						    			   interval: "", 
-						    			   style: "typeline:;color:#FF0000;"
-					    			   },
-						    		   
-						    		   TITLE: {
-						    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   text: "red measure axis title" 
-					    			   }
-					    		   }, {
-					    			   type: 'Category',
-					    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-					    			   
-					    			   TITLE: {
-					    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-					    				   text: ""
-				    				   }
-			    				   }]
-								},
-								
-								PANE: {											
-									endAngle:"121",
-									startAngle:"-121"
-								},
-								
-								// 14.9 (start)
-								PLOTBANDS: {
-									
-								},
-								
-								LABELS: {
-									distance: "5",
-									rotation: "1"
-								},
-								
-								/**
-								 * Added VALUE tag with SERIE subtag so every new serie item
-								 * can have parameters with these values (according to the 
-								 * current style - in this case, the RED style).
-								 * @author: danristo (danilo.ristovski@mht.net)
-								 */
-								VALUES: {
-									SERIE: {
-																		       
-								        animation: "true",
-								        borderColor: "#FF0000",
-								        color:"",
-								        groupingFunction:"SUM",							        
-							        	orderType:"",
-							        	pointInterval:"1",
-							        	postfixChar:"",
-							        	precision:"",
-							            prefixChar:"",
-							            showInLegend: "true",
-							            showValue: "true",
-							            type:"",
-							            
-							            TOOLTIP: {
-							            	backgroundColor:"",
-							                style:"color:;fontFamily:;fontWeight:;fontSize:;",
-							                templateHtml:""
-						            	},
-						            	
-						            	DIAL: {
-						            		backgroundColorDial:"#FF0000"
-						            	},
-						            	
-						            	DATA_LABELS: {
-						            		colorDataLabels:"#FF0000",
-						            		formatDataLabels:"",
-						            		yPositionDataLabels:"-40"
-						            	}
-									}
-								}
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the SUNBURST chart
-						 */
-						sunburst: {								
-							CHART: {
-								type: "SUNBURST",
-								
-								opacMouseOver:"10",
-								
-								TOOLBAR: {										
-									style: "position:bottom;height:50;width:60;spacing:5;tail:10;percFontColor:#FF9900;fontFamily:Calibri;fontWeight:normal;fontSize:14px;"
-								},
-								
-								TIP: {										
-									style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
-									text: "Insert text here"										
-								}									
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the CHORD chart
-						 */
-						chord: {
-							CHART: {	
-								type: "CHORD"						
-							}	
-						}
-					};
-					
-					return templateToReturn;
-					
-					break;
-					
-				case "blue":
-					
-					templateToReturn = {
-						/**
-						 * Generic parameters are common for any type of chart and their default values 
-						 * are going to be set through this 'generic' property of the JSON template.
-						 */
-						generic: {
-							CHART: {
-								height: "",
-								width: "",	
-								isCockpitEngine: "false",
-								orientation: "horizontal",
-								style: "fontFamily:;fontSize:;fontWeight:;backgroundColor:;",
-								styleName: "blue",
-//								styleCustom: styleCustom, 
-								
-								TITLE: {
-									style: "align:center;color:;fontFamily:;fontWeight:;fontSize:;",
-	 								text: ""
-								},
-								
-								SUBTITLE: {
-									style: "align:center;color:;fontFamily:;fontWeight:;fontSize:;",
-									text: ""
-								},
-								
-								EMPTYMESSAGE: {
-									style: "align:left;color:#FF0000;fontFamily:Verdana;fontWeight:normal;fontSize:10px;",
-									text: "Insert your empty message (when data for chart does not exist)"
-								},
-								
-								LEGEND: {
-									floating: false,
-									layout: "",
-									position: "",
-									show: false,
-									style: "align:;fontFamily:;fontSize:;fontWeight:;borderWidth:;color:;backgroundColor:;",
-									x: 0,
-									y: 0
-								},
-								
-								COLORPALETTE: {
-									COLOR: [
-									        {id:1 , order: 1, name: '7cb5ec', value: '7cb5ec' }, 
-									        {id:2 , order: 2, name: '434348', value: '434348' }, 
-									        {id:3 , order: 3, name: '90ed7d', value: '90ed7d' }, 
-									        {id:4 , order: 4, name: 'f7a35c', value: 'f7a35c' }, 
-									        {id:5 , order: 5, name: '8085e9', value: '8085e9' }, 
-									        {id:6 , order: 6, name: 'f15c80', value: 'f15c80' }, 
-									        {id:7 , order: 7, name: 'e4d354', value: 'e4d354' }, 
-									        {id:8 , order: 8, name: '2b908f', value: '2b908f' }, 
-									        {id:9 , order: 9, name: 'f45b5b', value: 'f45b5b' }, 
-									        {id:10, order: 10,name: '91e8e1', value: '91e8e1' }
-									        ]
-								},
-								
-								// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
-								AXES_LIST: {
-									AXIS: [														 
-								       {
-								    	   type: 'Serie',
-								    	  // position: "",
-								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-								    	   
-								    	   MAJORGRID: {
-								    		   interval: "",
-								    		   style: "typeline:;color:#D8D8D8;"
-							    		   },
-								       
-							    		   MINORGRID: {
-							    			   interval: "", 
-							    			   style: "typeline:;color:#E0E0E0;"
-						    			   },
-							    		   
-							    		   TITLE: {
-							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   text: "red measure axis title" 
-						    			   }
-						    		   }, {
-						    			   type: 'Category',
-						    			  // position: "", 
-						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   
-						    			   TITLE: {
-						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    				   text: ""
-					    				   }
-				    				   }
-							        ]
-								},
-								
-								VALUES:
-								{
-									SERIE:
-									{
-										postfixChar: "TTTRRRUUU"
-									}
-								}
-							}						
-						},
-						
-						/**
-						 * Specific parameters are specific for certain (particular) type of chart and 
-						 * their default values are going to be set through separate properties of the 
-						 * JSON template that are going to be named by the name of the chart that is
-						 * considered (that we choosed for our chart (document). For example, specific 
-						 * default parameters for the WORDCLOUD chart type are going to be put inside 
-						 * the 'wordcloud' property of the JSON template and so on.
-						 */
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the WORDCLOUD chart
-						 */
-						wordcloud: {								
-							CHART: {		
-								type: "WORDCLOUD",
-								
-								maxAngle: 121,
-								maxFontSize: 51,
-								maxWords: 51,
-								minAngle: 61, 
-								sizeCriteria: 'serie',
-								wordPadding: 5									
-							}
-						},
-						
-						bar: {
-							CHART: {
-								type: "BAR"
-							}
-						},
-						
-						line: {
-							CHART: {
-								type: "LINE"
-							}
-						},
-						
-						pie: {
-							CHART: {
-								type: "PIE"
-							}
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the TREEMAP chart
-						 */
-						treemap: {
-							CHART: {		
-								type: "TREEMAP"								
-							}
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the PARALLEL chart
-						 */
-						parallel: {								
-							CHART: {
-								type: "PARALLEL",
-								
-								AXES_LIST: {									
-									style:"axisColNamePadd:16;brushWidth:10;axisColor:#FF6600;brushColor:#339966;"										
-								},
-								
-								LIMIT: {					
-									/**
-									 * 'serieFilterColumn' attribute depends on available (picked) SERIE items (values)
-									 * for the chart, since it is always empty as a default value
-									 * (danilo.ristovski@mht.net)
-									 */
-									style:"maxNumberOfLines:20;orderTopMinBottomMax:bottom;serieFilterColumn:;"										
-								},
-								
-								PARALLEL_TOOLTIP: {										
-									style:"fontFamily:Cambria;fontSize:18px;minWidth:10;maxWidth:50;minHeight:5;maxHeight:50;padding:1;border:1;borderRadius:1;"										
-								},
-								
-								LEGEND: {										
-									TITLE: {											
-										style:"fontFamily:Arial;fontSize:9px;fontWeight:bold;"											
-									},
-									
-									ELEMENT: {											
-										style:"fontFamily:Cambria;fontSize:12px;fontWeight:normal;"											
-									}
-									
-								},
-								
-								AXES_LIST: {
-									style: "axisColNamePadd:15;brushWidth:12;axisColor:#FF6600;brushColor:#339966;"
-								}
-							}
-							
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the HEATMAP chart
-						 */
-						heatmap: {								
-							CHART: {		
-								type: "HEATMAP",
-								
-								LEGEND: {		
-									symbolHeight: 100,
-									style: "align:top;"									
-								},
-								
-								TOOLTIP: {										
-									style: "fontFamily:Gungsuh;fontSize:24px;color:#003366;"										
-								}									
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the RADAR chart
-						 */
-						radar: {
-							CHART: {		
-								type: "RADAR"								
-							}
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the SCATTER chart
-						 */
-						scatter: {	
-							CHART: {	
-								type: "SCATTER",	
-								
-								zoomType:"",
-								
-								AXES_LIST: {
-									AXIS: [														 
-								       {
-								    	   //alias:'Y', 
-								    	   type: 'Serie',
-								    	  // position: "",
-								    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-								    	   //id: Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id,
-								    	   
-								    	   MAJORGRID: {
-								    		   interval: "",
-								    		   style: "typeline:;color:#D8D8D8;"
-							    		   },
-								       
-							    		   MINORGRID: {
-							    			   interval: "", 
-							    			   style: "typeline:;color:#E0E0E0;"
-						    			   },
-							    		   
-							    		   TITLE: {
-							    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-							    			   text: "" 
-						    			   }
-						    		   }, {
-						    			   //alias:'X', 
-						    			   type: 'Category',
-						    			   //position: "", 
-						    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   
-						    			   /**
-						    			    * Specific for this chart type
-						    			    */
-						    			   startOnTick: "", 
-						    			   showLastLabel: "",
-						    			   endOnTick: "",
-						    			   
-						    			   TITLE: {
-						    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    				   text: ""
-					    				   }
-				    				   }
-							        ]
-								}
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the GAUGE chart
-						 */
-						// TODO: Waiting for the AXES_LIST and VALUES decisions (multiple Y-axis and dynamic SERIE items and their number)
-						gauge: {								
-							CHART: {		
-								type: "GAUGE",
-								
-								// TODO: Need to adjust this tag with the mergeObjects concept of treating the multiply Y-axis panels
-								AXES_LIST: {
-									AXIS: [{
-							    	   lineColor: "#FF0000", 
-							    	   lineWidth: "1",
-							    	   
-							    	   max: "60",
-							    	   min: "1", 
-							    	   
-							    	   minorTickColor: "#FF0000",
-							    	   minorTickInterval: "",									    	   
-							    	   minorTickLength: "10",
-							    	   minorTickPosition: "inside",
-							    	   minorTickWidth: "1",
-							    	   
-							    	   offset:"1",
-							    	   
-						               tickColor: "#FF0000",
-						               tickLength: "10",
-						               tickPixelInterval: "30",
-						               tickPosition: "inside",
-						               tickWidth: "2", 
-							    	   
-							    	   
-							    	   type: 'Serie',
-							    	  // position: "",
-							    	   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;opposite:false;",
-							    	   
-							    	   MAJORGRID: {
-							    		   interval: "",
-							    		   style: "typeline:;color:#FF0000;"
-						    		   },
-							       
-						    		   MINORGRID: {
-						    			   interval: "", 
-						    			   style: "typeline:;color:#FF0000;"
-					    			   },
-						    		   
-						    		   TITLE: {
-						    			   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-						    			   text: "red measure axis title" 
-					    			   }
-					    		   }, {
-					    			   type: 'Category',
-					    			   style: "rotate:;align:;color:;fontFamily:;fontWeight:;fontSize:;",
-					    			   
-					    			   TITLE: {
-					    				   style: "align:;color:;fontFamily:;fontWeight:;fontSize:;",
-					    				   text: ""
-				    				   }
-			    				   }]
-								},
-								
-								PANE: {											
-									endAngle:"121",
-									startAngle:"-121"
-								},
-								
-								// 14.9 (start)
-								PLOTBANDS: {
-									
-								},
-								
-								LABELS: {
-									distance: "5",
-									rotation: "1"
-								},
-								
-								/**
-								 * Added VALUE tag with SERIE subtag so every new serie item
-								 * can have parameters with these values (according to the 
-								 * current style - in this case, the RED style).
-								 * @author: danristo (danilo.ristovski@mht.net)
-								 */
-								VALUES: {
-									SERIE: {
-																		       
-								        animation: "true",
-								        borderColor: "#FF0000",
-								        color:"",
-								        groupingFunction:"SUM",							        
-							        	orderType:"",
-							        	pointInterval:"1",
-							        	postfixChar:"",
-							        	precision:"",
-							            prefixChar:"",
-							            showInLegend: "true",
-							            showValue: "true",
-							            type:"",
-							            
-							            TOOLTIP: {
-							            	backgroundColor:"",
-							                style:"color:;fontFamily:;fontWeight:;fontSize:;",
-							                templateHtml:""
-						            	},
-						            	
-						            	DIAL: {
-						            		backgroundColorDial:"#FF0000"
-						            	},
-						            	
-						            	DATA_LABELS: {
-						            		colorDataLabels:"#FF0000",
-						            		formatDataLabels:"",
-						            		yPositionDataLabels:"-40"
-						            	}
-									}
-								}
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the SUNBURST chart
-						 */
-						sunburst: {								
-							CHART: {
-								type: "SUNBURST",
-								
-								opacMouseOver:"10",
-								
-								TOOLBAR: {										
-									style: "position:;height:;width:;spacing:;tail:10;percFontColor:#FF9900;fontFamily:;fontWeight:normal;fontSize:14px;"
-								},
-								
-								TIP: {										
-									style: "fontFamily:Cambria;fontWeight:bold;fontSize:14px;color:#FF0000;align:;width:200;",
-									text: "Insert text here"										
-								}									
-							}								
-						},
-						
-						/**
-						 * Default (predefined) values for the specific parameters of the CHORD chart
-						 */
-						chord: {
-							CHART: {	
-								type: "CHORD"						
-							}	
-						}
-					};	
-					
-					return templateToReturn;
-					
-					break;										
-			}			
+			   return retTemplate;						
 		},
 				
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit, thisContextName, mainContextName, exporterContextName) {
@@ -1061,8 +180,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Predefined style type for any chart is RED.
 			 * (danilo.ristovski@mht.net)
 			 */		
-			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "red";
-			
+			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "";
+			console.log(jsonTemplate);
 			/**
 			 * Merging JSON templates of specified chart types with the base JSON template
 			 * (of type BAR) in order to make the union of all of the JSON elements within
@@ -1172,8 +291,12 @@ Ext.define('Sbi.chart.designer.Designer', {
  				//minHeight: 50		
  			});
 			
-			var onSelectJsonTemplate = "";
-						
+			var onSelectJsonTemplate = "";					
+			
+			this.chartTypeSelector.on("chartTypeChanged", function() {
+				
+				Sbi.chart.designer.Designer.chartTypeChanged = true;});
+			
 			/**
 			 * Listener for the 'rowclick' event that happens when we change the chart type
 			 * on the left part of the Designer page (from the chart type picker). 
@@ -1209,7 +332,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var colorPallete = secondConfigurationPanel.getComponent("chartColorPallete");
 					var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
 					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
-					
+					//console.log(colorPallete);
 					/**
 					 * The additional second configuration panel element to show when the WORDCLOUD is selected.
 					 */
@@ -1262,9 +385,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					if (isChartSunburst || isChartWordCloud  || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge 
-								|| isChartChord) {						
+								|| isChartChord) {	
+						//console.log(chartLegendCheckBox);
 						chartLegendCheckBox.hide();
 					} else {
+						//console.log(chartLegendCheckBox);
 						chartLegendCheckBox.show();
 					}
 					
@@ -1275,8 +400,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 					if (isChartSunburst || isChartWordCloud || isChartTreemap 
 							|| isChartParallel || isChartHeatmap || isChartGauge
 								|| isChartChord) {
+						//console.log(chartLegend);
 						chartLegend.hide();
 					} else {
+						//console.log(chartLegend);
 						chartLegend.show();
 					}
 					
@@ -1317,10 +444,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 					/**
 					 * Show/hide the color pallete on the second configuration panel on the 
 					 * Step 2 tab of the Designer page.
-					 */
-					if (isChartSunburst || isChartWordCloud || isChartGauge) {
+					 */					
+					if (isChartWordCloud || isChartGauge) {	
+						//console.log(colorPallete);
 						colorPallete.hide();
 					} else {
+						//console.log(colorPallete);
 						colorPallete.show();
 					}
 					
@@ -1579,9 +708,27 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
-			var allStyleNames= function (){
+			var allStyleNames= function ()
+			{
 			    var allStyles=[];
-			    var styles=JSON.parse(Sbi.chart.designer.Styles);
+			    var styles=JSON.parse(Sbi.chart.designer.Styles);			    
+				   
+			   /**
+			    * For the problem of inability of loading all styles available on
+			    * the server inside of the Cockpit engine we will introduce this
+			    * checking of all styles available. Since we get value of NULL
+			    * when the Designer is rendered from the Cockpit engine, we will
+			    * provide a fake styles array of zero length, just in order to 
+			    * skip the error that appears when trying to get the 'length' of
+			    * object which value is NULL. Outcome: Designer page can be loaded
+			    * from the Cockpit engine, but with the empty chart styles combo.
+			    * 
+			    * @author: danristo (danilo.ristovski@mht.net)
+			    */
+			   if (!(styles && styles!=null && styles.length>0))
+			   {
+				   styles = [];
+			   }
 			    
 			    for(i=0; i< styles.length;i++){
 			     style={
@@ -1590,9 +737,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			     };
 			     allStyles.push(style);
 			    }
+			    
 			    return allStyles;
-			   };
-			   var allStyles=allStyleNames();
+		   };
+			   
+		   var allStyles=allStyleNames();
 			   var styleStore = Ext.create ( "Ext.data.Store", {
 			    fields: ["styleAbbr", "style"],
 			    
@@ -1636,7 +785,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * of the chart.
 			 * (danilo.ristovski@mht.net)
 			 * (lazar.kostic@mht.net)
-			 */
+			 */			
 			this.stylePickerCombo = Ext.create ( "Ext.form.ComboBox", {
 //				fieldLabel: 'Choose style',
 			    store: styleStore,
@@ -1644,7 +793,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    queryMode: 'local',
 			    displayField: 'style',
 			    valueField: 'styleAbbr',
-			    value:  this.jsonTemplate.CHART.styleName,
+			    value:  jsonTemplate.CHART.styleName,
 			    editable: false,
 			    padding: "5 0 10 0",
 			    width: 170,
@@ -1653,6 +802,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	listeners: {
 				    	itemclick: function(combo,k) {
 				    		
+				    		//console.log(jsonTemplate);
+				    		
+				    		//console.log("==========================");
+				    		//console.log("== STYLE COMBO (start) ===");
+				    		//console.log("==========================");
+			    			
 				    		/**
 							 * Depending on the style that we choose for the document's generic
 							 * customizable parameters (Red, Green, Blue, ... style), take the
@@ -1661,42 +816,66 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 */
 				    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();	
 				    		
+				    		var localJsonTemplate = jsonTemplate;					    		
+				    		
+				    		/**
+				    		 * If current chart is of type PARALLEL, when changing the chart's style
+				    		 * it is needed for combobox (Limit panel on the Step 2 of the Designer) 
+				    		 * that containes serie items for filtering to be cleaned from previous 
+				    		 * content in order to contain up-to-date serie items available inside of 
+				    		 * the Y-axis panel on the Step 1.
+				    		 */
+				    		if (chartType == "PARALLEL")
+			    			{
+				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
+			    			}				    		
+				    		
+				    		//console.log("=== Chart type: " + chartType + " ===");
+				    		
 				    		/* 4.9. Keep the VALUES tag (keep them when only changing the   */
 				    		
 //					    		var colorpalleteToKeep = jsonTemplate.CHART.COLORPALLETE;
 //					    		var yAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[0].alias;
 //					    		var xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[1].alias;
-				    		
+				    		//console.log(jsonTemplate);
 				    		var valuesToKeep = jsonTemplate.CHART.VALUES;
 				    		
-				    		var yAxesAliasToKeep = new Array();
-				    		var xAxisAliasToKeep = {};
+				    		//console.log("=== Values to keep... ===");
+				    		//console.log(valuesToKeep);
 				    		
-				    		for (var i=0; i < jsonTemplate.CHART.AXES_LIST.AXIS.length; i++) {
-				    			if (i < jsonTemplate.CHART.AXES_LIST.AXIS.length-1) {
-				    				yAxesAliasToKeep.push(jsonTemplate.CHART.AXES_LIST.AXIS[i]);
-			    				}
-				    			else
-			    				{
-				    				xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[i];
-			    				}
-			    			}
-				    		
-				    		/* 4.9. Clear the JSON template */
-				    		jsonTemplate.CHART = {};		// clean the JSON object (template)
-				    		jsonTemplate.CHART.AXES_LIST = {};
-				    		jsonTemplate.CHART.AXES_LIST.AXIS = new Array(yAxesAliasToKeep.length+1);
-				    		
-				    		// keep the series axes
-				    		for (var i=0; i < yAxesAliasToKeep.length; i++) {
-				    			jsonTemplate.CHART.AXES_LIST.AXIS[i] = yAxesAliasToKeep[i];
-			    			}
-				    		
-				    		// keep the category axis
-				    		jsonTemplate.CHART.AXES_LIST.AXIS[yAxesAliasToKeep.length] = xAxisAliasToKeep;
+//				    		var yAxesAliasToKeep = new Array();
+//				    		var xAxisAliasToKeep = {};
+//				    		
+//				    		for (var i=0; i < jsonTemplate.CHART.AXES_LIST.AXIS.length; i++) {
+//				    			if (i < jsonTemplate.CHART.AXES_LIST.AXIS.length-1) {
+//				    				yAxesAliasToKeep.push(jsonTemplate.CHART.AXES_LIST.AXIS[i]);
+//			    				}
+//				    			else
+//			    				{
+//				    				xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[i];
+//			    				}
+//			    			}
+//				    		
+//				    		/* 4.9. Clear the JSON template */
+				    		localJsonTemplate.CHART = {};		// clean the JSON object (template)
+//				    		jsonTemplate.CHART.AXES_LIST = {};
+//				    		jsonTemplate.CHART.AXES_LIST.AXIS = new Array(yAxesAliasToKeep.length+1);
+//				    		
+//				    		// keep the series axes
+//				    		for (var i=0; i < yAxesAliasToKeep.length; i++) {
+//				    			jsonTemplate.CHART.AXES_LIST.AXIS[i] = yAxesAliasToKeep[i];
+//			    			}
+//				    		
+//				    		// keep the category axis
+//				    		jsonTemplate.CHART.AXES_LIST.AXIS[yAxesAliasToKeep.length] = xAxisAliasToKeep;
 				    		
 				    		// keep the values (items) on these axes (X and Y)
-				    		jsonTemplate.CHART.VALUES = valuesToKeep;
+				    		
+				    		//console.log("=== Chart type changed: " + Sbi.chart.designer.Designer.chartTypeChanged + " ===");
+				    		
+				    		// TODO: uncomment so to keep data
+				    		if (Sbi.chart.designer.Designer.chartTypeChanged == false || Sbi.chart.designer.Designer.chartTypeChanged==null)
+				    			localJsonTemplate.CHART.VALUES = valuesToKeep;
 				    		
 				    		// Previously I have defined generic configuration first and then the second (specific) configuration
 //								var genericConfigurationForStyle = Designer.getConfigurationForStyle(k.data.styleAbbr).generic;
@@ -1717,6 +896,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 */
 							Designer.styleName = k.data.styleAbbr;
 							
+							//console.log("=== Style name: " + Designer.styleName + " ===");
+							
 							/**
 							 * Reset the JSON template for the document (chart) after changing the 
 							 * previously selected style (changing the selected item of the combo)
@@ -1730,18 +911,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							var chartTypeToLowerCase = chartType.toLowerCase();
 							
-							jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-									jsonTemplate, 
+							//console.log("=== Template... ===");
+							//console.log(Designer.getConfigurationForStyle(k.data.styleAbbr));
+							
+							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(localJsonTemplate,Designer.getConfigurationForStyle(k.data.styleAbbr).generic);
+							
+							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+									localJsonTemplate, 
 									Designer.getConfigurationForStyle(k.data.styleAbbr)[chartTypeToLowerCase], 
 									configApplyAxes);							
 							
-							jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(Designer.getConfigurationForStyle(k.data.styleAbbr).generic,jsonTemplate);
-														
+							jsonTemplate = localJsonTemplate;
+							
+							//console.log(jsonTemplate);
+							
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
 							 */
 				    		Sbi.chart.designer.Designer.update(jsonTemplate);
+				    		
+				    		//console.log("==========================");
+				    		//console.log("== STYLE COMBO (end) ===");
+				    		//console.log("==========================");
 				    	}
 			    	}
 			    }
@@ -2203,8 +1395,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/**
 				 * Hide the gear icon on the bottom (X) axis panel	
 				 */
-				Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;
-				
+				if (typeOfChart != "CHORD" && typeOfChart != "PARALLEL")
+				{
+					Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;	
+				}				
 			}
 		
 			this.chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
@@ -2299,6 +1493,11 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  		            							};
   	  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
   	  		            							Ext.getBody().unmask();
+  	  		            							
+  	  		            							// (danristo)
+  	  		            							//console.log(exportedAsOriginalJson);
+  	  		            							jsonTemplate = exportedAsOriginalJson;
+  	  		            							Sbi.chart.designer.Designer.chartTypeChanged = false; // danristo (19.10)
   		            							}
   		            					}
   		            				});
@@ -2361,6 +1560,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            								parent.location.href = context+'/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
 
   		            							});
+  		            							
+  		            							Sbi.chart.designer.Designer.chartTypeChanged = false; // danristo (19.10)
   		            						}
   		            					}
   		            				});
@@ -2600,9 +1801,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 										||chartType == "SCATTER" || chartType == "HEATMAP") {
 							
 							if (chartType != "RADAR" && chartType != "HEATMAP" && chartType != "SCATTER")
-							{		
+							{										
 								hideAxisTitleTextbox = true;
-								hideGearTool = true;
+								
+								if (chartType != "CHORD" && chartType != "PARALLEL")
+								{
+									hideGearTool = true;
+								}								
 							}
 							
 							hidePlusGear = true;
@@ -2723,6 +1928,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							}
 							
 							// *_* 
+							//console.log("+++++++++++++++++++++++++++++++++++++");
 							globalScope.seriesBeforeDropStore.add(newCol);
 							
 							store.add(newCol);
@@ -2935,7 +2141,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 			}
 			
-			if (Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson() == null && chartType != "GAUGE") {
+			/**
+			 * Check if there are no categories selected for the chart. For the SUNBURST chart
+			 * this one can be an empty array when there are no category items picked. If the
+			 * chart type is GAUGE we are not supposed to have any category item at all.
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
+			var categoriesPicked = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();
+			
+			if ((categoriesPicked== null || (Array.isArray(categoriesPicked) && categoriesPicked.length==0)) && chartType != "GAUGE") {				
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
 			}	
 			/**
@@ -2945,7 +2160,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			{
 				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();				
 				
-				if ((chartType == "PARALLEL" || chartType == "HEATMAP") &&
+				if ((chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD") &&
 						categoriesAsJson.length != 2) {
 					errorMsg += "- " + LN("sbi.chartengine.validation.exactlyTwoCategories") + '<br>'; 
 				}
@@ -3620,9 +2835,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 */
 				(chartViewModelData.toolbarPosition=="" || chartViewModelData.toolbarPosition==null || chartViewModelData.toolbarPosition==undefined) ?
 						errorMsg += "- " + "<b>Position</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				
-				console.log(sunburstToolbarSpacingGUI);
-				console.log(sunburstToolbarSpacingCModel);
 				
 				if (sunburstToolbarSpacingGUI == null)
 				{
