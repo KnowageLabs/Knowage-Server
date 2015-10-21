@@ -152,7 +152,13 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		if(getEnv().get(EngineConstants.ENV_FEDERATED_ID)!=null){
 			
 			FederationDefinition federation = new FederationDefinition();
-			federation.setRelationships((getEnv().get(EngineConstants.ENV_RELATIONS).toString()));
+			Object relations  = (getEnv().get(EngineConstants.ENV_RELATIONS));
+			if(relations!=null){
+				federation.setRelationships(relations.toString());
+			}else{
+				logger.debug("No relation defined "+relations);
+			}
+			
 			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
 			federation.setFederation_id(new Integer((String)(getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
 			

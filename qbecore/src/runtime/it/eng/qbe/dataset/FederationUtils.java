@@ -117,4 +117,12 @@ public class FederationUtils {
 		return dataset;
 	}
 	
+	/**
+	 * Prefix for federated dataset built automatically
+	 * @return
+	 */
+	public static String getDatasetFederationLabelSuffix(){
+		return "_fed_from_ds";
+	}
+	
 }

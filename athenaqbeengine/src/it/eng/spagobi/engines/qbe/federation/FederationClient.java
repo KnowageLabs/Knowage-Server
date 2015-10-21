@@ -9,20 +9,29 @@ package it.eng.spagobi.engines.qbe.federation;
 import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.VersionAccessor;
 import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class FederationClient extends SimpleRestClient{
 
-	private String serviceUrl = "/restful-services/federateddataset/federation";
+	private String getServiceUrl = "/restful-services/federateddataset/federation";
+	private String addServiceUrl = "/restful-services/federateddataset/insertNoDup";
+	public static final String DATASET_ID = "id";
+	public static final String VERSION_NUM = "versionNum";
 	
 	public FederationClient(){
 		
@@ -41,7 +50,7 @@ public class FederationClient extends SimpleRestClient{
 		parameters.put("federationId", federationID);
 		
 		logger.debug("Call persist service in post");
-		ClientResponse<String> resp = executePostService(parameters, serviceUrl);
+		ClientResponse<String> resp = executePostService(parameters, getServiceUrl, null, null);
 		
 		
 		String respString = resp.getEntity(String.class);
@@ -51,8 +60,8 @@ public class FederationClient extends SimpleRestClient{
 		toReturn.setFederation_id(jo.getInt("id"));
 		toReturn.setLabel(jo.getString("label"));
 		toReturn.setName(jo.getString("name"));
-		toReturn.setDescription(jo.getString("description"));
-		toReturn.setRelationships(jo.getString("relationships"));
+		toReturn.setDescription(jo.optString("description"));
+		toReturn.setRelationships(jo.optString("relationships"));
 		
 		JSONArray datasetsArray = jo.optJSONArray("sourceDataset");
 		Set<IDataSet> datasest = new java.util.HashSet<IDataSet>();
@@ -73,4 +82,59 @@ public class FederationClient extends SimpleRestClient{
 		return toReturn;
 	}
 
+	
+	
+	public FederationDefinition addFederation(FederationDefinition federation) throws Exception {
+		logger.debug("IN");
+
+		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
+	
+		logger.debug("Call persist service in post");
+		ClientResponse<String> resp = executePostService(parameters, addServiceUrl, MediaType.TEXT_HTML_TYPE, serialize(federation).toString());
+		//ClientResponse<String> resp = executePostService(parameters, addServiceUrl, null,null);
+				
+		String respString = resp.getEntity(String.class);
+		
+		
+		federation.setFederation_id(new Integer(respString));
+		
+		
+		return federation;
+	}
+	
+	
+	public static JSONObject serialize(FederationDefinition fd) {
+		JSONObject result = null;
+
+		try {
+			result = new JSONObject();
+			result.put("id", fd.getFederation_id());
+			result.put("label", fd.getLabel());
+			result.put("name", fd.getName());
+			result.put("description", fd.getDescription());
+			
+			
+			JSONArray ja = new JSONArray();
+			Set<IDataSet> sourceDatasets = fd.getSourceDatasets();
+			
+			for (Iterator iterator = sourceDatasets.iterator(); iterator.hasNext();) {
+				IDataSet iDataSet = (IDataSet) iterator.next();
+				JSONObject jo = new JSONObject();
+				jo.put(DATASET_ID, iDataSet.getId());
+				
+				ja.put(jo);
+			}
+			
+			
+			result.put("sourcesDataset", ja);
+			
+		}catch (Exception e){
+			logger.error("Error creating a new federation linked to datase. Serialization error", e);
+			throw new SpagoBIEngineRuntimeException("Error creating a new federation linked to datase. Serialization error", e);
+		}
+
+		return result;
+	}
+	
+	
 }

@@ -48,7 +48,7 @@ public class DataSetPersister extends SimpleRestClient{
 		parameters.put("labels", datasetLabelsArray);
 
 		logger.debug("Call persist service in post");
-		ClientResponse resp = executePostService(parameters, serviceUrl);
+		ClientResponse resp = executePostService(parameters, serviceUrl, null, null);
 		
 		String respString = (String)resp.getEntity(String.class);
 		

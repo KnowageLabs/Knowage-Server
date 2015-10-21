@@ -6,33 +6,45 @@
 
 package it.eng.spagobi.federateddataset.dao;
 
-import java.util.Set;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
+
 
 public class SbiFederationUtils {
 
 	static private Logger logger = Logger.getLogger(SbiFederationUtils.class);
 
-	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
-		return toDatasetFederation(hibFd, userProfile, true);
-	}
-	
-	public static FederationDefinition toDatasetFederationNoDatasets(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
-		return toDatasetFederation(hibFd, userProfile, false);
+	public static FederationDefinition toDatasetFederationNoDataset(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
+		return toDatasetFederationWithDataset(hibFd, userProfile, null);
 	}
 
-	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd, IEngUserProfile userProfile, boolean datasets) {
+	
+	public static FederationDefinition toDatasetFederationWithDataset(SbiFederationDefinition hibFd, IEngUserProfile userProfile, Set<IDataSet> sourceDatasets) {
+		FederationDefinition fd = toDatasetFederation(hibFd, userProfile);
+		if(sourceDatasets==null){
+			logger.debug("No dataset is added in the definition");
+			sourceDatasets= new HashSet<IDataSet>();
+		}else{
+			logger.debug("Adding also the dataset to the federation definition");
+		}
+		fd.setSourceDatasets(sourceDatasets);
+		return fd;
+	}
+	
+	
+
+	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
 		logger.debug("IN");
 		FederationDefinition fd = new FederationDefinition();
 
@@ -44,10 +56,10 @@ public class SbiFederationUtils {
 			fd.setDescription(hibFd.getDescription());
 			fd.setRelationships(hibFd.getRelationships());
 			fd.setFederation_id(hibFd.getFederation_id());
-			if(datasets){
-				fd.setSourceDatasets(DataSetFactory.toDataSet(hibFd.getSourceDatasets(), userProfile));
-			}
-			
+//			if(datasets){
+//				fd.setSourceDatasets(DataSetFactory.toDataSet(hibFd.getSourceDatasets(), userProfile));
+//			}
+//			
 		}else{
 			logger.debug("The federation is null");
 		}

@@ -43,8 +43,8 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 		logger.debug("IN");
 		if (dataSet == null) {
 			// dataset information is coming with the request
-			String datasetLabel = this.getAttributeAsString( QbeEngineFromDatasetStartAction.DATASET_LABEL );
-			logger.debug("Parameter [" + QbeEngineFromDatasetStartAction.DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
+			String datasetLabel = this.getAttributeAsString( QbeEngineFromFederationStartAction.DATASET_LABEL );
+			logger.debug("Parameter [" + QbeEngineFromFederationStartAction.DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
 			Assert.assertNotNull(datasetLabel, "Dataset not specified");
 			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);  
 			Assert.assertNotNull(dataSet, "Dataset with label [" + datasetLabel + "] not found");
@@ -57,8 +57,8 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 	public Map addDatasetsToEnv() {
 		Map env = super.getEnv();
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
-		String datasetLabel = this.getAttributeAsString( QbeEngineFromDatasetStartAction.DATASET_LABEL );
-		logger.debug("Parameter [" + QbeEngineFromDatasetStartAction.DATASET_LABEL + "] is equals to [" + datasetLabel + "]");
+		String datasetLabel = this.getAttributeAsString( QbeEngineFromFederationStartAction.DATASET_LABEL );
+		logger.debug("Parameter [" + QbeEngineFromFederationStartAction.DATASET_LABEL + "] is equals to [" + datasetLabel + "]");
 		Assert.assertNotNull(datasetLabel, "Missing dataset label");
 		
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);

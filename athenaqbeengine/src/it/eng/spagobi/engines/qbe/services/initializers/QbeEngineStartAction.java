@@ -208,16 +208,8 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	@Override
 	public Map getEnv() {
 		
-		IDataSource datasource = this.getDataSource();
-		
-		return getEnv(datasource);
-	}
-	
-	public Map getEnv(IDataSource dataSource) {
-		
-		this.setDataSource(dataSource);
+		IDataSource dataSource = this.getDataSource();
 		Map env = super.getEnv();
-
 		
 		if (dataSource == null || dataSource.checkIsReadOnly()) {
 			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");

@@ -10,8 +10,10 @@ import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
@@ -43,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -184,6 +187,19 @@ public class DataSetFactory {
 		return toReturn;
 	}
 
+	
+	public static Set<IDataSet> toDataSet(List<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
+
+		Set<IDataSet> toReturn = new HashSet<IDataSet>();
+
+		for (Iterator iterator = sbiDataSet.iterator(); iterator.hasNext();) {
+			SbiDataSet sbiDataSet3 = (SbiDataSet) iterator.next();
+			toReturn.add(toDataSet(sbiDataSet3, userProfile));
+		}
+
+		return toReturn;
+	}
+	
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;
 		VersionedDataSet versionDS = null;
@@ -328,8 +344,11 @@ public class DataSetFactory {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 
 				SbiFederationDefinition sbiFederation = sbiDataSet.getFederation();
+				
+				ISbiFederationDefinitionDAO dao = DAOFactory.getFedetatedDatasetDAO();
+				Set<IDataSet> sourcesDatasets =  dao.loadAllFederatedDataSets(sbiFederation.getFederation_id());
 
-				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederation(sbiFederation, userProfile));
+				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, userProfile,sourcesDatasets));
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 

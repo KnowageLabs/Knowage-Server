@@ -132,7 +132,7 @@ public class SelfServiceDataSetCRUD {
 
 			boolean isTechDsMngr = UserUtilities.isTechDsManager(profile);
 			String showOnlyOwner = req.getParameter("showOnlyOwner");
-			String showDerivedDatasetsStr = req.getParameter("showDerivedDataset");
+			String showDerivedDatasetsStr = "true";//req.getParameter("showDerivedDataset");
 			boolean showDerivedDatasets = showDerivedDatasetsStr != null && showDerivedDatasetsStr.equalsIgnoreCase("true") ? true : false;
 
 			if (!isTechDsMngr) {
