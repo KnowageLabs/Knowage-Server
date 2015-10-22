@@ -98,7 +98,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * Get the missing JSON configuration elements (properties) in order to define
 		 * their default values for any type of chart (including the BAR chart).
 		 * (danilo.ristovski@mht.net)
-		 * (ana.kostic@mht.net)
+		 * (ana.tomic@mht.net)
 		 */
 		getConfigurationForStyle : function(style) {
 		      
@@ -2368,68 +2368,68 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			if (chartType == "GAUGE") {								
-				/**
-				 * STEP 1 -> Axis style configuration popup
-				 * 
-				 * *** NOTE: In order to collect the data defined in the Axis style configuration
-				 * popup window (all data about the axis) we need to call the getAxesDataAsOriginalJson
-				 * function from the ChartUtils.js. This call will be done just for those charts that 
-				 * need these data (e.g. GAUGE chart).
-				 */
-				var gaugeStep1YAxisPopupData = Sbi.chart.designer.ChartUtils.getAxesDataAsOriginalJson();
-				console.log(gaugeStep1YAxisPopupData[0]);
-				/**
-				 * Optional parameters: endOnTickGauge, lineColor, tickPosition, tickColor, minorTickPosition, minorTickColor
-				 * Mandatory parameters: 
-				 * 		(1) Axis additional parameters:
-				 * 			-	min, max, offset, lineWidth, 
-				 * 		(2) Main tick parameters:
-				 * 			-	tickPixelInterval, tickWidth, tickLength,  
-				 * 		(3) Minor tick parameters:
-				 * 			-	minorTickPixelInterval, minorTickWidth, minorTickLength, 
-				 * 		(4) Label parameters:
-				 * 			-	distance, rotation
-				 */
-				
-				/**
-				 *  Axis additional parameters
-				 */								
-				(gaugeStep1YAxisPopupData[0].min=="" || gaugeStep1YAxisPopupData[0].min==null || gaugeStep1YAxisPopupData[0].min==undefined) ? 
-						errorMsg += "- " + "<b>Min value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].max=="" || gaugeStep1YAxisPopupData[0].max==null || gaugeStep1YAxisPopupData[0].max==undefined) ? 
-						errorMsg += "- " + "<b>Max value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].offset=="" || gaugeStep1YAxisPopupData[0].offset==null || gaugeStep1YAxisPopupData[0].offset==undefined) ? 
-						errorMsg += "- " + "<b>Offset</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].lineWidth=="" || gaugeStep1YAxisPopupData[0].lineWidth==null || gaugeStep1YAxisPopupData[0].lineWidth==undefined) ? 
-						errorMsg += "- " + "<b>Line width</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				
-				/**
-				 *  Main tick parameters
-				 */							
-				(gaugeStep1YAxisPopupData[0].tickPixelInterval=="" || gaugeStep1YAxisPopupData[0].tickPixelInterval==null || gaugeStep1YAxisPopupData[0].tickPixelInterval==undefined) ? 
-						errorMsg += "- " + "<b>Tick pixel interval</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].tickWidth=="" || gaugeStep1YAxisPopupData[0].tickWidth==null || gaugeStep1YAxisPopupData[0].tickWidth==undefined) ? 
-						errorMsg += "- " + "<b>Tick width</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].tickLength=="" || gaugeStep1YAxisPopupData[0].tickLength==null || gaugeStep1YAxisPopupData[0].tickLength==undefined) ? 
-						errorMsg += "- " + "<b>Tick length</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				
-				/**
-				 *  Minor tick parameters
-				 */				
-				(gaugeStep1YAxisPopupData[0].minorTickInterval=="" || gaugeStep1YAxisPopupData[0].minorTickInterval==null || gaugeStep1YAxisPopupData[0].minorTickInterval==undefined) ? 
-						errorMsg += "- " + "<b>Minor tick interval</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].minorTickWidth=="" || gaugeStep1YAxisPopupData[0].minorTickWidth==null || gaugeStep1YAxisPopupData[0].minorTickWidth==undefined) ? 
-						errorMsg += "- " + "<b>Minor tick width</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].minorTickLength=="" || gaugeStep1YAxisPopupData[0].minorTickLength==null || gaugeStep1YAxisPopupData[0].minorTickLength==undefined) ? 
-						errorMsg += "- " + "<b>Minor tick length</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-				
-				/**
-				 * Labels parameters
-				 */
-				(gaugeStep1YAxisPopupData[0].distance=="" || gaugeStep1YAxisPopupData[0].distance==null || gaugeStep1YAxisPopupData[0].distance==undefined) ? 
-						errorMsg += "- " + "<b>Distance</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
-				(gaugeStep1YAxisPopupData[0].rotation=="" || gaugeStep1YAxisPopupData[0].rotation==null || gaugeStep1YAxisPopupData[0].rotation==undefined) ? 
-						errorMsg += "- " + "<b>Rotation</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
+//				/**
+//				 * STEP 1 -> Axis style configuration popup
+//				 * 
+//				 * *** NOTE: In order to collect the data defined in the Axis style configuration
+//				 * popup window (all data about the axis) we need to call the getAxesDataAsOriginalJson
+//				 * function from the ChartUtils.js. This call will be done just for those charts that 
+//				 * need these data (e.g. GAUGE chart).
+//				 */
+//				var gaugeStep1YAxisPopupData = Sbi.chart.designer.ChartUtils.getAxesDataAsOriginalJson();
+//				console.log(gaugeStep1YAxisPopupData[0]);
+//				/**
+//				 * Optional parameters: endOnTickGauge, lineColor, tickPosition, tickColor, minorTickPosition, minorTickColor
+//				 * Mandatory parameters: 
+//				 * 		(1) Axis additional parameters:
+//				 * 			-	min, max, offset, lineWidth, 
+//				 * 		(2) Main tick parameters:
+//				 * 			-	tickPixelInterval, tickWidth, tickLength,  
+//				 * 		(3) Minor tick parameters:
+//				 * 			-	minorTickPixelInterval, minorTickWidth, minorTickLength, 
+//				 * 		(4) Label parameters:
+//				 * 			-	distance, rotation
+//				 */
+//				
+//				/**
+//				 *  Axis additional parameters
+//				 */								
+//				(gaugeStep1YAxisPopupData[0].min=="" || gaugeStep1YAxisPopupData[0].min==null || gaugeStep1YAxisPopupData[0].min==undefined) ? 
+//						errorMsg += "- " + "<b>Min value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].max=="" || gaugeStep1YAxisPopupData[0].max==null || gaugeStep1YAxisPopupData[0].max==undefined) ? 
+//						errorMsg += "- " + "<b>Max value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].offset=="" || gaugeStep1YAxisPopupData[0].offset==null || gaugeStep1YAxisPopupData[0].offset==undefined) ? 
+//						errorMsg += "- " + "<b>Offset</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].lineWidth=="" || gaugeStep1YAxisPopupData[0].lineWidth==null || gaugeStep1YAxisPopupData[0].lineWidth==undefined) ? 
+//						errorMsg += "- " + "<b>Line width</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				
+//				/**
+//				 *  Main tick parameters
+//				 */							
+//				(gaugeStep1YAxisPopupData[0].tickPixelInterval=="" || gaugeStep1YAxisPopupData[0].tickPixelInterval==null || gaugeStep1YAxisPopupData[0].tickPixelInterval==undefined) ? 
+//						errorMsg += "- " + "<b>Tick pixel interval</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].tickWidth=="" || gaugeStep1YAxisPopupData[0].tickWidth==null || gaugeStep1YAxisPopupData[0].tickWidth==undefined) ? 
+//						errorMsg += "- " + "<b>Tick width</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].tickLength=="" || gaugeStep1YAxisPopupData[0].tickLength==null || gaugeStep1YAxisPopupData[0].tickLength==undefined) ? 
+//						errorMsg += "- " + "<b>Tick length</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				
+//				/**
+//				 *  Minor tick parameters
+//				 */				
+//				(gaugeStep1YAxisPopupData[0].minorTickInterval=="" || gaugeStep1YAxisPopupData[0].minorTickInterval==null || gaugeStep1YAxisPopupData[0].minorTickInterval==undefined) ? 
+//						errorMsg += "- " + "<b>Minor tick interval</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].minorTickWidth=="" || gaugeStep1YAxisPopupData[0].minorTickWidth==null || gaugeStep1YAxisPopupData[0].minorTickWidth==undefined) ? 
+//						errorMsg += "- " + "<b>Minor tick width</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].minorTickLength=="" || gaugeStep1YAxisPopupData[0].minorTickLength==null || gaugeStep1YAxisPopupData[0].minorTickLength==undefined) ? 
+//						errorMsg += "- " + "<b>Minor tick length</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
+//				
+//				/**
+//				 * Labels parameters
+//				 */
+//				(gaugeStep1YAxisPopupData[0].distance=="" || gaugeStep1YAxisPopupData[0].distance==null || gaugeStep1YAxisPopupData[0].distance==undefined) ? 
+//						errorMsg += "- " + "<b>Distance</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
+//				(gaugeStep1YAxisPopupData[0].rotation=="" || gaugeStep1YAxisPopupData[0].rotation==null || gaugeStep1YAxisPopupData[0].rotation==undefined) ? 
+//						errorMsg += "- " + "<b>Rotation</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
 				
 				/**
 				 * STEP 2 -> Pane panel
