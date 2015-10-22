@@ -70,7 +70,10 @@ public class SimpleRestClient {
 		if(!serviceUrl.contains("http") && addServerUrl){
 			logger.debug("Adding the server URL");
 			String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
-			serviceUrl = serverUrl + serviceUrl;
+			if(serverUrl!=null){
+				logger.debug("Executing the dataset from the core so use relative path to service");
+				serviceUrl = serverUrl + serviceUrl;
+			}
 			logger.debug("Call service URL " + serviceUrl);
 		}
 

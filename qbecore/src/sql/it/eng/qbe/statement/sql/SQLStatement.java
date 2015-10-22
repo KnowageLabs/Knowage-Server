@@ -12,6 +12,7 @@ import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.jpa.JPQLStatementWhereClause;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -94,6 +95,7 @@ public class SQLStatement extends AbstractStatement {
 		havingClause = SQLStatementHavingClause.build(this, query, entityAliasesMaps);
 		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps);
 
+		whereClause = JPQLStatementWhereClause.injectAutoJoins(this, whereClause, query, entityAliasesMaps);
 		
 		queryStr = selectClause    + " " 
 				   + fromClause    + " " 

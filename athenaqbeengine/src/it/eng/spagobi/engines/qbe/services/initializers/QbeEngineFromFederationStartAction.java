@@ -224,9 +224,9 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 			Assert.assertNotNull(datasetPersistedLabels.optString(dsLabel), "Not found the label name of the cache table for the datase "+dsLabel);
 			try {
 				mapNameTable.put(dsLabel, datasetPersistedLabels.getString(dsLabel));
-			} catch (JSONException e) {
-				logger.error("Error getting cached table name form the json object");
-				throw new SpagoBIEngineRuntimeException("Error getting cached table name form the json object", e);
+			} catch (Exception e) {
+				logger.error("Error loading the dataset. Please check tha all the dataset linked to this federation are still working",e);
+				throw new SpagoBIEngineRuntimeException("Error loading the dataset. Please check that all the dataset linked to this federation are still working");
 			}
 
 			IDataSet originalDataset = originalDataSets.get(i);

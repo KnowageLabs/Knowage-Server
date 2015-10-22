@@ -12,6 +12,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
+import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -1300,10 +1301,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 
-				/*
-				 * SbiFederatedDataset federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); //save teh federations
-				 * if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
-				 */
+				if(dataSet.getDatasetFederation()!=null){
+					SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); 
+					if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
+				}
 
 				Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 				hibQuery.setBoolean(0, true);
