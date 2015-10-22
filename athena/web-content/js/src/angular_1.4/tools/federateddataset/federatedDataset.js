@@ -45,6 +45,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	ctr.myselectedvariable = {};
 	
 	ctr.fillTheArray = function() {
+		ctr.clearSelections()
 		var check = false;
 		var obj1 = ctr.createAssociations();
 		var counter = 0;
@@ -93,6 +94,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 				}
 			}
 		}
+		
 	}
 	
 	ctr.createAssociations = function(){
@@ -189,6 +191,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			);
 		}		
 		else{
+			ctr.clearSelections()
 			$mdDialog
 				.show({
 					scope: $scope,
@@ -289,7 +292,9 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 					}
 					ctr.loadedList = true;
 					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
-						ctr.loadDatasetsEditMode();
+						if(value!=0) {
+							ctr.loadDatasetsEditMode();
+						}						
 					} else {
 						console.log("Only loadedList is loaded")
 					}
@@ -325,7 +330,9 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 
 					ctr.loadedListAllO = true;
 					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
-						ctr.loadDatasetsEditMode();
+						if(value!=0) {
+							ctr.loadDatasetsEditMode();
+						}
 					} else {
 						console.log("Only loadedListAllO is loaded")
 					}

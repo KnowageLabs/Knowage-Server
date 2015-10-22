@@ -4,7 +4,7 @@
 <%@page import="java.util.Set"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
 
@@ -14,7 +14,7 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>Federation Definition</title>
+		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
 	
 		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
 		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">		
