@@ -1054,6 +1054,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				otherPanel: this.rightYAxisesPanel
   			});	
 			
+			// (danristo) TODO: i donn't know if it is used anymore
 			this.leftYAxisesPanel.on ("newSerieItem", 
 				function(newSerieItem) {
 					// This is not working!!! Appending the current style parameters values to the newly dropped serie item
@@ -1425,7 +1426,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			// Creating step 2 panel
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
-					
+								
 			this.cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {
   					configModel: this.cModel
@@ -1867,8 +1868,26 @@ Ext.define('Sbi.chart.designer.Designer', {
 							var tooltipStyle = serie.TOOLTIP ? serie.TOOLTIP.style : '';
 							var jsonTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(tooltipStyle);
 							
-							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE") {	
-																
+							/**
+							 * This variable is introduces since the majority of chart types has experienced 
+							 * change of name of the property that represents the font family: from 'font' to
+							 * 'fontFamily'. 
+							 * 
+							 * @author: danristo (danilo.ristovski@mht.net)
+							 */
+							var tooltipFontFamily = "";
+							
+							if (jsonTooltipStyle.fontFamily)
+							{
+								tooltipFontFamily = jsonTooltipStyle.fontFamily;
+							}
+							else if (jsonTooltipStyle.font)
+							{
+								tooltipFontFamily = jsonTooltipStyle.font;
+							}
+							
+							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE") {									
+								
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
 									axisName: serie.name && serie.name != '' ? serie.name : serie.column,
@@ -1895,7 +1914,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieTooltipBackgroundColor: tooltip.backgroundColor,
 									serieTooltipAlign: jsonTooltipStyle.align,
 									serieTooltipColor: jsonTooltipStyle.color,
-									serieTooltipFont: jsonTooltipStyle.font,
+									serieTooltipFont: tooltipFontFamily,
 									serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
 									serieTooltipFontSize: jsonTooltipStyle.fontSize
 								});								
@@ -1921,14 +1940,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 									serieTooltipBackgroundColor: tooltip.backgroundColor,
 									serieTooltipAlign: jsonTooltipStyle.align,
 									serieTooltipColor: jsonTooltipStyle.color,
-									serieTooltipFont: jsonTooltipStyle.font,
+									serieTooltipFont: tooltipFontFamily,
 									serieTooltipFontWeight: jsonTooltipStyle.fontWeight,
 									serieTooltipFontSize: jsonTooltipStyle.fontSize
 								});
 							}
 							
 							// *_* 
-							//console.log("+++++++++++++++++++++++++++++++++++++");
 							globalScope.seriesBeforeDropStore.add(newCol);
 							
 							store.add(newCol);
