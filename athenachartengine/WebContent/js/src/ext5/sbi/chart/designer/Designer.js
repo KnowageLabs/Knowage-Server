@@ -1823,6 +1823,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
 							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
 							"axis":axis, 
+//							"gaugeLabels": (chartType == "GAUGE") ? jsonTemplate.CHART.AXES_LIST.AXIS[0].LABELS : null,
 							"axisTitleTextboxHidden":hideAxisTitleTextbox, 
 							"gearHidden":hideGearTool, 
 							"plusHidden":hidePlusGear
@@ -2460,10 +2461,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				if (gaugeStartAnglePaneGUI == null)
 				{
-					if (gaugeStartAnglePaneCModel == null || gaugeStartAnglePaneCModel == "")
-					{
-						errorMsg : errorMsg += "- " + "<b>Start angle</b> not specified [Step 2 -> Pane panel]" + '<br>';
-					}						
+//					if (gaugeStartAnglePaneCModel == null || gaugeStartAnglePaneCModel == "")
+//					{
+//						errorMsg : errorMsg += "- " + "<b>Start angle</b> not specified [Step 2 -> Pane panel]" + '<br>';
+//					}						
 				}
 				else 
 				{					
@@ -2481,10 +2482,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				if (gaugeEndAnglePaneGUI == null)
 				{
-					if (gaugeEndAnglePaneCModel == null || gaugeEndAnglePaneCModel=="")
-					{
-						errorMsg : errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>'
-					}						
+//					if (gaugeEndAnglePaneCModel == null || gaugeEndAnglePaneCModel=="")
+//					{
+//						errorMsg : errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>'
+//					}						
 				}
 				else 
 				{					
@@ -2498,6 +2499,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 						errorMsg += "- " + "<b>End angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.gauge.endAnglePane.maxValue + 
 							"</b> [Step 2 -> Pane panel]" + '<br>';
 					}
+				}
+				
+				if ((gaugeEndAnglePaneGUI!=null && gaugeStartAnglePaneGUI!=null) || (gaugeEndAnglePaneCModel!="" && gaugeStartAnglePaneCModel!=""))
+				{
+					if ((gaugeEndAnglePaneGUI < gaugeStartAnglePaneGUI) || (gaugeEndAnglePaneCModel < gaugeStartAnglePaneCModel))
+					errorMsg += "- " + "<b>Start angle</b>'s value cannot be bigger than <b>End angle</b>'s value [Step 2 -> Pane panel]" + '<br>';
 				}
 			}		
 			

@@ -39,7 +39,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result['lineColor'] = axis.lineColor ? axis.lineColor : '';
 				result['tickPosition'] = axis.tickPosition ? axis.tickPosition : '';
 				result['tickColor'] = axis.tickColor ? axis.tickColor : '';
-				result['minorTickColor'] = axis.minorTickColor ? axis.minorTickColor : '';
 				result['minorTickLength'] = axis.minorTickLength ? axis.minorTickLength : '';
 				result['offset'] = (axis.offset != undefined && axis.offset != null) ? axis.offset : 0;
 				result['lineWidth'] = axis.lineWidth ? axis.lineWidth : '';
@@ -51,13 +50,31 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result['tickPixelInterval'] = axis.tickPixelInterval ? axis.tickPixelInterval : '';
 				result['tickWidth'] = axis.tickWidth ? axis.tickWidth : '';
 				result['tickLength'] = axis.tickLength ? axis.tickLength : '';
+//				result['distance'] = axis.distance ? axis.distance : '';
+//				result['rotation'] = axis.rotation ? axis.rotation : '';				
 			}
 
 			var axisStyleAsMap = ChartUtils.jsonizeStyle(axis.style);
+//			console.log(axisStyleAsMap);
 			result['styleRotate'] = axisStyleAsMap.rotate && axisStyleAsMap.rotate != '' ? axisStyleAsMap.rotate : '';
 			result['styleAlign'] = axisStyleAsMap.align && axisStyleAsMap.align != '' ? axisStyleAsMap.align : '';
 			result['styleColor'] = axisStyleAsMap.color && axisStyleAsMap.color != '' ? axisStyleAsMap.color : '';
-			result['styleFont'] = axisStyleAsMap.font && axisStyleAsMap.font != '' ? axisStyleAsMap.font : '';
+			
+			/**
+			 * The problem appeared when introducing axis style configuration feature to 
+			 * the CHORD chart. It has the "fontFamily" property, instead of "font" property.
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
+			if (axisStyleAsMap.font)
+			{
+				result['styleFont'] = axisStyleAsMap.font && axisStyleAsMap.font != '' ? axisStyleAsMap.font : '';
+			}
+			else if (axisStyleAsMap.fontFamily)
+			{
+				result['styleFont'] = axisStyleAsMap.fontFamily && axisStyleAsMap.fontFamily != '' ? axisStyleAsMap.fontFamily : '';
+			}			
+			
 			result['styleFontWeigh'] = axisStyleAsMap.fontWeight && axisStyleAsMap.fontWeight != '' ? axisStyleAsMap.fontWeight : '';
 			result['styleFontSize'] = axisStyleAsMap.fontSize && axisStyleAsMap.fontSize != '' ? axisStyleAsMap.fontSize : '';
 
@@ -96,15 +113,28 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				var titlegridStyleAsMap = ChartUtils
 					.jsonizeStyle(axis.TITLE.style);
+				
+//				console.log(titlegridStyleAsMap);
+				
+				if (titlegridStyleAsMap.font)
+				{
+					result['titleStyleFont'] = titlegridStyleAsMap.font
+					 && titlegridStyleAsMap.font != '' ? titlegridStyleAsMap.font
+					 : '';
+				}
+				else if (titlegridStyleAsMap.fontFamily)
+				{
+					result['titleStyleFont'] = titlegridStyleAsMap.fontFamily
+					 && titlegridStyleAsMap.fontFamily != '' ? titlegridStyleAsMap.fontFamily
+					 : '';
+				}
+				
 				result['titleStyleAlign'] = titlegridStyleAsMap.align
 					 && titlegridStyleAsMap.align != '' ? titlegridStyleAsMap.align
 					 : '';
 				result['titleStyleColor'] = titlegridStyleAsMap.color
 					 && titlegridStyleAsMap.color != '' ? titlegridStyleAsMap.color
-					 : '';
-				result['titleStyleFont'] = titlegridStyleAsMap.font
-					 && titlegridStyleAsMap.font != '' ? titlegridStyleAsMap.font
-					 : '';
+					 : '';				
 				result['titleStyleFontWeigh'] = titlegridStyleAsMap.fontWeight
 					 && titlegridStyleAsMap.fontWeight != '' ? titlegridStyleAsMap.fontWeight
 					 : '';
@@ -147,7 +177,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result['to'] = to ? to : "";
 				result['color'] = color ? color : "";
 			}
-
+			
 			return result;
 		},
 		createEmptyAxisData : function (isCategory, isLeftSerie) {
@@ -280,7 +310,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['CHART'] = CHART;
 
 //			console.log("-- After saving the chart: --");
-//			console.log(result);
+			//console.log(result);
 
 			return result;
 		},
@@ -315,25 +345,24 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 * (danilo.ristovski@mht.net)
 					 */
 					if (chartType == "GAUGE") {
-						axisAsJson['min'] = axisData.min ? axisData.min : '';
-						axisAsJson['max'] = axisData.max ? axisData.max : '';
+						axisAsJson['min'] = Number(axisData.min) ? Number(axisData.min) : '';
+						axisAsJson['max'] = Number(axisData.max) ? Number(axisData.max) : '';
 						axisAsJson['lineColor'] = axisData.lineColor ? axisData.lineColor : '';
 						axisAsJson['tickPosition'] = axisData.tickPosition ? axisData.tickPosition : '';
 						axisAsJson['tickColor'] = axisData.tickColor ? axisData.tickColor : '';
-						axisAsJson['rotation'] = axisData.rotation ? axisData.rotation : '';
-						axisAsJson['distance'] = axisData.distance ? axisData.distance : '';
-						axisAsJson['minorTickColor'] = axisData.minorTickColor ? axisData.minorTickColor : '';
-						axisAsJson['minorTickLength'] = axisData.minorTickLength ? axisData.minorTickLength : '';
-						axisAsJson['offset'] = axisData.offset ? axisData.offset : '';
-						axisAsJson['lineWidth'] = axisData.lineWidth ? axisData.lineWidth : '';
+//						axisAsJson['rotation'] = Number(axisData.rotation) ? Number(axisData.rotation) : '';
+//						axisAsJson['distance'] = Number(axisData.distance) ? Number(axisData.distance) : '';
+						axisAsJson['minorTickLength'] = Number(axisData.minorTickLength) ? Number(axisData.minorTickLength) : '';
+						axisAsJson['offset'] = Number(axisData.offset) ? Number(axisData.offset) : '';
+						axisAsJson['lineWidth'] = Number(axisData.lineWidth) ? Number(axisData.lineWidth) : '';
 						axisAsJson['endOnTickGauge'] = axisData.endOnTickGauge;
-						axisAsJson['minorTickInterval'] = axisData.minorTickInterval ? axisData.minorTickInterval : '';
+						axisAsJson['minorTickInterval'] = Number(axisData.minorTickInterval) ? Number(axisData.minorTickInterval) : '';
 						axisAsJson['minorTickPosition'] = axisData.minorTickPosition ? axisData.minorTickPosition : '';
-						axisAsJson['minorTickWidth'] = axisData.minorTickWidth ? axisData.minorTickWidth : '';
+						axisAsJson['minorTickWidth'] = Number(axisData.minorTickWidth) ? Number(axisData.minorTickWidth) : '';
 						axisAsJson['minorTickColor'] = axisData.minorTickColor ? axisData.minorTickColor : '';
-						axisAsJson['tickPixelInterval'] = axisData.tickPixelInterval ? axisData.tickPixelInterval : '';
-						axisAsJson['tickWidth'] = axisData.tickWidth ? axisData.tickWidth : '';
-						axisAsJson['tickLength'] = axisData.tickLength ? axisData.tickLength : '';
+						axisAsJson['tickPixelInterval'] = Number(axisData.tickPixelInterval) ? Number(axisData.tickPixelInterval) : '';
+						axisAsJson['tickWidth'] = Number(axisData.tickWidth) ? Number(axisData.tickWidth) : '';
+						axisAsJson['tickLength'] = Number(axisData.tickLength) ? Number(axisData.tickLength) : '';
 					}
 
 					var style = '';
@@ -620,7 +649,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 + ((serieAsMap
 								.get('serieTooltipColor') != undefined) ? serieAsMap
 							.get('serieTooltipColor')
-							 : '') + ';';
+							 : '') + ';';						
 						tooltipStyle += 'fontFamily:'
 						 + ((serieAsMap
 								.get('serieTooltipFont') != undefined) ? serieAsMap
@@ -641,7 +670,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 + ((serieAsMap.get('serieTooltipAlign') != undefined) ? serieAsMap.get('serieTooltipAlign')
 							 : '') + ';';
 						TOOLTIP['style'] = tooltipStyle;
-
+						
 						serie['TOOLTIP'] = TOOLTIP;
 					}
 
@@ -1619,24 +1648,33 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var numberOfAxes = jsonTemplate.CHART.AXES_LIST.AXIS.length;
 				var axisData = null;				
 				
-				if (numberOfAxes == 1 && jsonTemplate.CHART.AXES_LIST.AXIS[0].position == "left")
-				{
-					/**
-					 * If we have only one axis defined in the JSON template and if that axis is Y-axis.
-					 * 
-					 * @author: danristo (danilo.ristovski@mht.net)
-					 */
-					axisData = jsonTemplate.CHART.AXES_LIST.AXIS[0];
-				}
-				else
-				{
+//				if (numberOfAxes == 1 && jsonTemplate.CHART.AXES_LIST.AXIS[0].position == "left")
+//				{
+//					/**
+//					 * If we have only one axis defined in the JSON template and if that axis is Y-axis.
+//					 * 
+//					 * @author: danristo (danilo.ristovski@mht.net)
+//					 */
+//					axisData = jsonTemplate.CHART.AXES_LIST.AXIS[0];
+//				}
+//				else
+//				{
 					axisData = jsonTemplate.CHART.AXES_LIST.AXIS[1];
-				}
+//				}
 				
 				jsonScatterZoomType = jsonTemplate.CHART.zoomType ? jsonTemplate.CHART.zoomType : '';
 				jsonScatterStartOnTick = axisData.startOnTick;
 				jsonScatterEndOnTick = axisData.endOnTick;
 				jsonScatterShowLastLabel = axisData.showLastLabel;
+			}
+			
+			var labelsData = null;
+			
+			if (Sbi.chart.designer.Designer.chartTypeSelector
+					.getChartType() == 'GAUGE')
+			{
+				axisData = jsonTemplate.CHART.AXES_LIST.AXIS[0]; 
+				labelsData = jsonTemplate.CHART.LABELS;
 			}
 
 			/**
@@ -1685,7 +1723,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					});
 				});
 			}
-
+			
 			var cModel = Ext
 				.create(
 					'Sbi.chart.designer.ChartConfigurationModel', {
@@ -1873,10 +1911,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					gaugeMinorTickPosition : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickPosition : null,
 					gaugeMinorTickWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.minorTickWidth : null,
 
-					gaugeDistance : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.LABELS.distance : null,
-					gaugeRotation : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.LABELS.rotation : null
+					gaugeDistance : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.distance != null) ? jsonGaugeAxesListData.LABELS.distance : null,
+					gaugeRotation : (jsonGaugeAxesListData!=null && jsonGaugeAxesListData.LABELS.rotation != null) ? jsonGaugeAxesListData.LABELS.rotation : null
 				});
-
+			
 			return cModel;
 		},
 

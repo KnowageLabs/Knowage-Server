@@ -152,8 +152,21 @@
         #foreach ($yAxis in $axisList)   
         	#if ($yAxis.position != "bottom")
         	{    
-        		min: $yAxis.min,
-		        max: $yAxis.max,
+        		#if ($yAxis.min)		
+    				#if ($yAxis.min == "" || $yAxis.min == "0")
+    					min: 0,
+    				#else
+    					min: $yAxis.min,
+    				#end    				
+    			#end
+		        
+		        #if ($yAxis.max)    			
+    				#if ($yAxis.max == "" || $yAxis.max == "0")
+    					max: 0,
+    				#else
+    					max: $yAxis.max,
+    				#end    				
+    			#end
 		        
 	        	title: {
 		        	#if($yAxis.TITLE.enabled)
@@ -205,24 +218,73 @@
 	        	#if($yAxis.lineColor)
 	        		lineColor: '$yAxis.lineColor', ##'#339',
 	            #end
+	            
 	        	#if($yAxis.tickPosition)
 	        		tickPosition: '$yAxis.tickPosition',
 	        	#end
+	        	
 	            #if($yAxis.tickColor)
 	            	tickColor: '$yAxis.tickColor',
 	            #end
+	            
 	            #if($yAxis.minorTickColor)
 	            	minorTickColor: '$yAxis.minorTickColor',
 	            #end
-	            #if($yAxis.offset)
-	            	offset: $yAxis.offset,
-	            #end
-	            #if($yAxis.lineWidth)
-	            	lineWidth: $yAxis.lineWidth,
-	            #end
-	            #if($yAxis.minorTickLength)
-	            	minorTickLength: $yAxis.minorTickLength,
-	            #end
+	            	        	
+	        	 #if ($yAxis.offset)    			
+    				#if ($yAxis.offset == "" || $yAxis.offset == "0")
+    					offset: 0,
+    				#else
+    					offset: $yAxis.offset,
+    				#end    				
+    			#end
+    			
+    			 #if ($yAxis.lineWidth)    			
+    				#if ($yAxis.lineWidth == "" || $yAxis.lineWidth == "0")
+    					lineWidth: 0,
+    				#else
+    					lineWidth: $yAxis.lineWidth,
+    				#end    				
+    			#end
+    			
+    			 #if ($yAxis.minorTickLength)    			
+    				#if ($yAxis.minorTickLength == "" || $yAxis.minorTickLength == "0")
+    					minorTickLength: 0,
+    				#else
+    					minorTickLength: $yAxis.minorTickLength,
+    				#end    				
+    			#end
+    			
+    			 #if ($yAxis.minorTickWidth)
+    			
+    				#if ($yAxis.minorTickWidth == "" || $yAxis.minorTickWidth == "0")
+    					minorTickWidth: 0,
+    				#else
+    					minorTickWidth: $yAxis.minorTickWidth,
+    				#end
+    				
+    			#end
+    			
+    			 #if ($yAxis.tickWidth)
+    			
+    				#if ($yAxis.tickWidth == "" || $yAxis.tickWidth == "0")
+    					tickWidth: 0,
+    				#else
+    					tickWidth: $yAxis.tickWidth,
+    				#end
+    				
+    			#end
+	            
+			 	#if ($yAxis.tickLength)
+    			
+    				#if ($yAxis.tickLength == "" || $yAxis.tickLength == "0")
+    					tickLength: 0,
+    				#else
+    					tickLength: $yAxis.tickLength,
+    				#end
+    				
+    			#end
+	        	
 	            #if($yAxis.endOnTickGauge)
 	            	endOnTick: $yAxis.endOnTickGauge,
 	            #end
@@ -232,10 +294,6 @@
         		#else
         			minorTickInterval: $yAxis.minorTickInterval,
 	        	#end
-	        	
-	        	#if($yAxis.minorTickWidth)
-	            	minorTickWidth: $yAxis.minorTickWidth,
-	            #end
 	            
 	            #if($yAxis.minorTickPosition)
 	            	minorTickPosition: '$yAxis.minorTickPosition',
@@ -245,20 +303,12 @@
 	            	minorTickColor: '$yAxis.minorTickColor',
 				#end
 				
-				#if($yAxis.tickPixelInterval)
+				#if($yAxis.tickPixelInterval && $yAxis.tickPixelInterval!="")
 	            	tickPixelInterval: $yAxis.tickPixelInterval,
-	            #end
-	            
-	            #if($yAxis.tickWidth)
-	            	tickWidth: $yAxis.tickWidth,
 	            #end
 	            
 	            #if($yAxis.tickPosition)
 	            	tickPosition: '$yAxis.tickPosition',
-	            #end
-	            
-	            #if($yAxis.tickLength)
-	            	tickLength: $yAxis.tickLength,
 	            #end
 	            
 	            #if($yAxis.tickColor)
@@ -267,12 +317,23 @@
 	        	
 	        	#if($yAxis.LABELS)
 	        	labels: {
-	        		#if($yAxis.LABELS.distance)
-	                	distance: $yAxis.LABELS.distance,
-	            	#end
-	             	#if($yAxis.LABELS.rotation)
-	                	rotation: $yAxis.LABELS.rotation,
-	                #end
+	        		
+	        			 #if ($yAxis.LABELS.distance == "" || $yAxis.LABELS.distance == "0")    			
+    						#if ($yAxis.LABELS.distance == "")
+    							distance: 0,
+    						#else
+    							distance: $yAxis.LABELS.distance,
+    						#end
+    				
+    					#end
+    			
+	    			 	#if ($yAxis.LABELS.rotation)    			
+	    					#if ($yAxis.LABELS.rotation == "" || $yAxis.LABELS.rotation == "0")
+	    						rotation: 0,
+	    					#else
+	    						rotation: $yAxis.LABELS.rotation,
+	    					#end    				
+    					#end
 	                
 		    		#if($yAxis.style)
 		        		style:{

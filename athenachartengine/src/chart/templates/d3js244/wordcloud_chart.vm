@@ -53,7 +53,6 @@
   		style:
   		{
   			fontFamily: '$chart.style.fontFamily',
-	  		fontSize: '$chart.style.fontSize',
 	  		backgroundColor: '$chart.style.backgroundColor',	  		
 					
 			#if($chart.style.fontWeight == 'italic' || $chart.style.fontWeight == 'normal')

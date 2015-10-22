@@ -41,7 +41,6 @@ Ext.define
 			this.viewModel = config.viewModel;
 			
 			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
-			//console.log(this.storeForSeriesBeforeDrop);
 			
 			/* We are communicating with the ChartColumnsContainerManager.js for additional
 			 * serie columns or for the removed ones (after loading of the Designer). */
@@ -58,9 +57,7 @@ Ext.define
 				    editable : false,
 				    queryMode: 'local',
 				    displayField: 'serieColumn',
-				    valueField: 'serieColumn',
-				    //value: this.storeForSeriesBeforeDrop.getAt(0)
-				    value: config.viewModel.data.configModel.data.serieFilterColumn
+				    valueField: 'serieColumn'
 				}
 			);
 			

@@ -133,6 +133,8 @@ author:
 	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
 %>
 
+
+
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -143,7 +145,6 @@ author:
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <%@include file="commons/includeExtJS5.jspf"%>
-
 <%@include file="commons/includeMessageResource.jspf"%>
 
 <script>
@@ -173,12 +174,22 @@ author:
    </div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
-	<script language="javascript" type="text/javascript">
-	
+	<script language="javascript" type="text/javascript">		
+		
 		var chartConfiguration = null;
 		
 		var isChartHeightEmpty = null;
 		var isChartWidthEmpty= null;
+		
+		var isChartParallel = false;
+		var parallelLegendWidth = 0;
+		var parallelTableRowHeight = 0;
+		var parallelTableRowElements = 0;
+		var parallelTablePaginationHeight = 0;
+		var parallelTablePaddingTop = 0;
+		var parallelTablePaddingBottom = 0;
+		var parallelTitleHeight = "";
+		var parallelSubtitleHeight = "";
 	
 		function exportChart(exportType) {		
 			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
@@ -264,12 +275,28 @@ author:
 					}					
 			);
 		}
+		
+		/*  
+			Needed for the PARALLEL chart
+		*/
+		
+		function removePixelsFromFontSize(fontSize)
+		{
+			var indexOfPx = fontSize.indexOf('px');
+			
+			if (indexOfPx > 0)
+			{
+				return fontSize.substring(0,indexOfPx);
+			}
+			else
+			{
+				return fontSize;
+			}
+		}
 				
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
-
- 			//Ext.Loader.setPath('Sbi.chart', '/athenachartengine/js/src/ext5/sbi/chart');
 
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
@@ -322,14 +349,33 @@ author:
  	 							(panel). This will eventually affect on those chart elements that 
  	 							depend on these two parameters.
  							*/
+ 							
  							if (isChartHeightEmpty==true)
-							{
- 								chartConfiguration.chart.height = newHeight;
+							{ 								
+ 								if (isChartParallel==true)
+ 								{	 						
+ 									
+	 								chartConfiguration.chart.height = window.innerHeight - parallelTableRowHeight*parallelTableRowElements - parallelTablePaginationHeight
+	 									- (Number(parallelTitleHeight) + Number(parallelSubtitleHeight))*1.2+12;
+ 								}
+ 	 							else
+ 								{
+ 	 								//chartConfiguration.chart.height = newHeight;
+ 	 								chartConfiguration.chart.height = window.innerHeight; // sometimes is newHeight != window.innerHeight
+ 								}  								
 							}
  	 						
  	 						if (isChartWidthEmpty==true)
  							{
- 	 							chartConfiguration.chart.width = newWidth; 
+ 	 							if (isChartParallel==true)
+ 								{	 								
+	 								chartConfiguration.chart.width = window.innerWidth - parallelLegendWidth;
+ 								}
+ 	 							else
+ 								{
+ 	 								//chartConfiguration.chart.width = newWidth;
+ 	 								chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth
+ 								} 	 						 
  							}				
  							
  	 						/* Re-render the chart after resizing the window (panel). */
@@ -375,11 +421,11 @@ author:
  						driverParams: '<%=driverParams%>'
  					};
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						 						
- 						//console.log(response.responseText);
+ 						 			
+ 						console.log(response.responseText);
  						
  						var chartConf = Ext.JSON.decode(response.responseText, true);			
- 						
+ 						 						
  						/* 
  							Set the initial size of the chart if the height and width are not 
  							defined by the user (through the Designer). This is mandatory for
@@ -415,12 +461,37 @@ author:
 						//if (isD3Chart && ((chartConf.chart.width=="" || chartConf.chart.height=="") || typeChart == "SUNBURST"))
 						if (isD3Chart)
 						{	
+							if (typeChart == "PARALLEL")
+ 							{
+								isChartParallel = true;
+ 								parallelLegendWidth = chartConf.legend.width;
+ 								parallelTableRowHeight = chartConf.table.heightRow;
+ 								parallelTableRowElements = chartConf.table.numberOfRows;
+ 								parallelTablePaginationHeight = chartConf.table.heightPageNavigator;
+ 								
+ 								parallelTitleHeight = removePixelsFromFontSize(chartConf.title.style.fontSize);
+ 								parallelSubtitleHeight = removePixelsFromFontSize(chartConf.subtitle.style.fontSize);
+ 								
+ 								parallelTablePaddingTop = chartConf.table.paddingTop;
+ 								var parallelTablePaddingBottom = chartConf.table.paddingBottom;
+ 							}
+							
 							if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST")
 							{
 		 						if (heightChart == "")	
 		 						{
-		 							isChartHeightEmpty = true;
-		 							chartConf.chart.height = window.innerHeight;
+		 							if (isChartParallel)
+	 								{
+		 								chartConf.chart.height = window.innerHeight-parallelTableRowHeight*parallelTableRowElements-parallelTablePaginationHeight
+		 									- (Number(parallelTitleHeight)+Number(parallelSubtitleHeight))*1.2+12;
+	 								}
+		 							else
+	 								{
+		 								console.log(window.innerHeight);
+			 							chartConf.chart.height = window.innerHeight;
+	 								}
+		 							
+		 							isChartHeightEmpty = true;		 							
 		 						}
 		 						else
 	 							{
@@ -429,8 +500,17 @@ author:
 		 						
 		 						if (widthChart == "" || typeChart == "SUNBURST")	
 		 						{
+		 							if (isChartParallel)
+	 								{
+		 								chartConf.chart.width = Number(window.innerWidth)-Number(chartConf.legend.width);
+	 								}
+		 							else
+	 								{
+			 							chartConf.chart.width = window.innerWidth;
+			 							console.log(window.innerWidth);
+	 								}	
+		 							
 		 							isChartWidthEmpty = true;
-		 							chartConf.chart.width = window.innerWidth;
 		 						}
 		 						else
 	 							{
@@ -440,9 +520,6 @@ author:
 		 						chartConfiguration = chartConf;
 							} 							
 						} 						
- 						
-						//console.log("CHART.JSP: chartConf");
-						//console.log(chartConf);
 						
  						renderChart(chartConf);
  					});

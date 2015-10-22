@@ -235,6 +235,8 @@ Ext.define
 								 */
 								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();	
 								
+								globalScope.fireEvent("chartTypeChanged");	
+								
 								/**
 								 * Since we approved changing of the chart type, we need to reset the GUI elements on
 								 * Step 1 and Step 2 of the Designer. 
@@ -275,19 +277,22 @@ Ext.define
 														
 									if (newlySelectedType.toLowerCase()!="heatmap") 
 									{		
-										/* ---------- BOTTOM (X) AXIS PANEL ---------- */
-										// Hide the gear tool on the toolbar of the bottom (X) axis panel		
-										globalScope.stylePopupBottomPanel.hide();
+										if (newlySelectedType.toLowerCase()!="chord" && newlySelectedType.toLowerCase()!="parallel")
+										{
+											/* ---------- BOTTOM (X) AXIS PANEL ---------- */
+											// Hide the gear tool on the toolbar of the bottom (X) axis panel		
+											globalScope.stylePopupBottomPanel.hide();
+											
+											// Hide the gear tool on the toolbar of the left (Y) axis panel
+											globalScope.stylePopupLeftAxis.hide();	
+										}
 										
 										/* ---------- LEFT (Y) AXIS PANEL ---------- */	
 										// Hide the textfield dedicated for the title of the bottom (X) axis
 										globalScope.textfieldAxisTitle.hide();
 										
-										// Hide the gear tool on the toolbar of the left (Y) axis panel
-										globalScope.stylePopupLeftAxis.hide();
-										
 										// Hide the textfield dedicated for the title of the left (Y) axis
-										globalScope.titleTextfield.hide();
+										globalScope.titleTextfield.hide();									
 									}											
 									
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
@@ -499,19 +504,7 @@ Ext.define
 		},
 				
 		listeners:
-		{	
-//			select: function(comboBox, records)
-//			{
-//				console.log(comboBox);
-//				
-//				comboBox.inputEl.setStyle({
-//	                'background-image':    'url(' + comboBox. + ')',
-//	                'background-repeat':   'no-repeat',
-//	                'background-position': '3px center',
-//	                'padding-left':        '25px'
-//	            });				
-//			},
-			
+		{				
 			change: function(a,currentOrNewChartType,previousChartType)
 			{			
 				/**

@@ -73,6 +73,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var dragGroup = config.dragGroup;
 			var dropGroup = config.dropGroup;
 			var axis = config.axis;
+			// Commented (22.10)
+			//var gaugeLabels = config.gaugeLabels;
 			var axisTitleTextboxHidden = config.axisTitleTextboxHidden ? config.axisTitleTextboxHidden : false;
 			var gearHidden = config.gearHidden ? config.gearHidden : false;
 			var plusHidden = config.plusHidden ? config.plusHidden : false;
@@ -118,9 +120,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			    listeners: {
 			    	updateAxisTitleValue: function(textValue) {
 			        	this.axisData.titleText = textValue;
-			        	
+			        	//console.log("AAAAAAAAAAAAAAAAAAAAAAA");
+			        	//console.log(this.id);
 			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
+			        	//console.log(textfieldAxisTitleId);
 			    		var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);
+			    		//console.log(textfieldAxisTitle);
+			    		//console.log(textValue);
 			    		textfieldAxisTitle.setValue(textValue);
 			    	}
 			    },
@@ -278,15 +284,15 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		 * 
 					    		 * @author: danristo (danilo.ristovski@mht.net)
 					    		 */
-						    	if (chartType.toUpperCase() == 'HEATMAP' || chartType.toUpperCase() == 'GAUGE')
+						    	if (chartType.toUpperCase() == 'HEATMAP' || chartType.toUpperCase() == 'GAUGE'
+						    		 || chartType.toUpperCase() == 'CHORD' || chartType.toUpperCase() == 'PARALLEL')
 					    		{
 						    		axisStylePopup.getComponent('majorGridFieldSetYAxis').hide();
 						    		axisStylePopup.getComponent('minorGridFieldSetYAxis').hide();
 					    		}							    	
 						    	
 					    		axisStylePopup.show();
-					    	}
-					    	
+					    	}					    	
 						}
 					},
 					

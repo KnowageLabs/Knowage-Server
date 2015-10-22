@@ -138,6 +138,97 @@
 		}
  	},
  	
+ 	## Axises selection
+    #set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+ 		
+	 		#set($yAxisCounter = $yAxisCounter + 1)
+	 	#end
+	#end
+	
+	xAxis:
+	 #foreach($xAxisKey in $xAxisList.keySet())
+	 #set ($xAxis = $xAxisList[$xAxisKey])
+	 {
+		labels:{
+				 
+			 #if( $xAxis.style != '' ) 
+        		        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},  
+        		
+        	#end
+		 },	 
+			    
+		 type: 'category',
+	 },
+	 #end
+	
+	yAxis: 
+    ## START Serie add
+	#foreach($yAxisKey in $yAxisList.keySet())
+	#set ($yAxis = $yAxisList[$yAxisKey])        
+    {
+    	labels:{
+    				 
+			#if( $yAxis.style != '' )         		
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		}
+        	#end
+        	
+	 	},
+	 	
+	 	type: 'serie'
+    },
+	#end
+	## END Serie add
+ 	
  	limit:
  	{
 	 	maxNumberOfLines: '$chart.LIMIT.style.maxNumberOfLines',
@@ -180,8 +271,35 @@
 		}
 	},
 	
+	#* 
+		This parameter can and should be changed here, since we need the chart 
+		to be displayed in complete when dimensions for the one are not specified
+		in the Designer. This way we will provide somehow dynamic approach to the
+		table's dimension.
+		
+		@author: danristo (danilo.ristovski@mht.net)			
+	*#
+	table:
+	{
+		numberOfRows: 6,	## 5 rows + 1 header
+		heightRow: 30,
+		heightPageNavigator: 20,
+		paddingTop: 20,
+		paddingBottom: 20
+	},
+	
 	legend:
 	{
+		#* 
+			This parameter can and should be changed here, since we need the chart 
+			to be displayed in complete when dimensions for the one are not specified
+			in the Designer. This way we will provide somehow dynamic approach to the
+			legend's dimension.
+			
+			@author: danristo (danilo.ristovski@mht.net)			
+		*#
+		width: 300,
+		
 		title:
 		{
 			style:

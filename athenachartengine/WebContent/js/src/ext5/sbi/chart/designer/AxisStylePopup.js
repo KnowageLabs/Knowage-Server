@@ -62,6 +62,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
     constructor: function(config) {
 		this.callParent(config);
 		
+		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+		
 		var plotbandsStore = Ext.create('Sbi.chart.designer.PlotbandsStore', {});
 		
 		this.axisData = config.axisData;
@@ -83,6 +85,15 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		this.titleFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
+			
+			/**
+			 * Only for those two D3 chart types we need axis style configuration popup,
+			 * but without the Title fieldset.
+			 * 
+			 * @author: danristo (danilo.ristovski@mht.net) 
+			 */
+			hidden: (chartType == "CHORD" || chartType == "PARALLEL"),
+			
 			id: 'titleFieldSetForAxis',	// (danristo :: danilo.ristovski@mht.net) 
 			title: 'Title',
 			defaults: {anchor: '100%',
@@ -93,7 +104,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			items : []
 		});		
 		
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		if (chartType == "GAUGE")
 		{
 			this.axisAdditionalParamsFieldSet = Ext.create
 			(
@@ -242,7 +253,16 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			maxValue: 180,
 			minValue: -180,
 		});
-		this.axisFieldSet.add(this.styleRotateNumberField);
+		
+		/**
+		 * For those two chart types we do not need this parameter (feature).
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		if (chartType != "CHORD" && chartType != "PARALLEL")
+		{
+			this.axisFieldSet.add(this.styleRotateNumberField);
+		}
 		
 		var styleAlign = this.axisData.styleAlign;
 		if(isYAxis) {
@@ -256,7 +276,16 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
 			});
 		}
-		this.axisFieldSet.add(this.styleAlignComboBox);
+		
+		/**
+		 * For those two chart types we do not need this parameter (feature).
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		if (chartType != "CHORD" && chartType != "PARALLEL")
+		{
+			this.axisFieldSet.add(this.styleAlignComboBox);
+		}
 		
 		var axisStyleColor = this.axisData.styleColor;
 		this.styleColor = {
@@ -300,6 +329,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		this.axisFieldSet.add(this.styleColor);
 		
 		var styleFont = this.axisData.styleFont;
+		
 		this.styleFontComboBox = Ext.create('Sbi.chart.designer.FontCombo', {
 			value: (styleFont && styleFont.trim() != '') ? styleFont.trim() : '',
 			fieldLabel : LN('sbi.chartengine.axisstylepopup.font'),
@@ -621,6 +651,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'lineWidthYAxis',
 			        value: this.axisData.lineWidth,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.lineWidth") 
 			    }	
@@ -785,6 +816,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'tickPixelInterval',
 			        value: this.axisData.tickPixelInterval,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval")
 			    }
@@ -802,6 +834,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'tickWidth',
 			        value: this.axisData.tickWidth,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth") 
 			    }
@@ -819,6 +852,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'tickLength',
 			        value: this.axisData.tickLength,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickLength") 
 			    }
@@ -891,7 +925,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 			Axis minor tick color
 			 */
 			var minorTickColor = this.axisData.minorTickColor;
-			
+		
 			this.minorTickColor = 
 			{
 				xtype : 'fieldcontainer',
@@ -966,6 +1000,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'minorTickInterval',
 			        value: this.axisData.minorTickInterval,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval") 
 			    }
@@ -983,6 +1018,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'minorTickWidth',
 			        value: this.axisData.minorTickWidth,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")
 			    }
@@ -1000,6 +1036,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'minorTickLength',
 			        value: this.axisData.minorTickLength,
+			        minValue: 0,
 			        labelSeparator: '',
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength")
 			    }
@@ -1055,8 +1092,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				{
 			        xtype: 'numberfield',
 			        id: 'rotationOfLabelYAxis',
-			        minValue: 0,
-			        maxValue: 359,
+//			        minValue: 0,
+//			        maxValue: 359,
 			        value: this.axisData.rotation,
 			        labelSeparator: '',			        
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis") 
@@ -1075,14 +1112,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			// ----------------------------------------------------------------------
 			
 			if (this.axisData.from)
-			{
-//				console.log(this.axisData);
-//				console.log(plotbandsStore);
-//				
-//				console.log(this.axisData.from);
-//				console.log(this.axisData.to);
-//				console.log(this.axisData.color);
-				
+			{				
 				if (this.axisData.from.length)
 				{
 					var numPlots = this.axisData.from.length;
@@ -1157,19 +1187,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				                    color: ''
 				                });
 						    	
-//						    	console.log(plotbandsStore.data.length);
-						    	
-//						    	var currentNumberOfItemsInArray = plotbandsStore.data.length;
-						    	
-//						    	if (currentNumberOfItemsInArray === 0)
-//						    	{
-//						    		var r = Ext.create('Sbi.chart.designer.PlotbandsModel', {
-//					                    from: 0,
-//					                    to: 0,
-//					                    color: ''
-//					                });
-//						    	}
-						    	
 						    	plotbandsStore.insert(plotbandsStore.data.length, r);
 						    }							
 						}						
@@ -1220,9 +1237,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 									click: 
 									{
 										fn: function(ad, gg, index)
-										{ 
-											console.log('click el'); 
-											
+										{ 											
 											Ext.create
 											(
 												'Ext.window.Window', 
@@ -1246,9 +1261,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 												        	select: 
 											        		{
 												        		fn: function(a, b, cc)
-													        	{
-													        		console.log("Color picker window");
-													        		
+													        	{													        		
 													        		var plotbandsParamsFieldSet = axisStylePopupScope.getComponent("axisPlotbandsParamsFieldSet");
 													        		var plotsContainer = plotbandsParamsFieldSet.getComponent("plotsContainer");
 													        		
@@ -1294,9 +1307,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 											
 											var store = grid.getStore();
 											var item = store.getAt(rowIndex);
-											
-//											console.log(item);
-											
+																						
 											var from = item.get('from');
 											var to = item.get('to');
 											
@@ -1321,15 +1332,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				            					fn : function(buttonValue, inputText, showConfig)
 				            					{
 				            						if (buttonValue == 'ok') 
-				            						{		
-//				            							console.log(store);
-//				            							console.log(rowIndex);
-//				            							console.log(store.getAt(rowIndex));
-				            							
+				            						{						            							
 				            							var rec = store.removeAt(rowIndex);
-//				            							plotbandsStore.reload();
-//				            							console.log(store);
-				            							//grid.reconfigure(plotbandsStore);
 				            						}
 				            					}
 				            				});
@@ -1490,70 +1494,157 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisData.minorgridStyleColor = minorgridStyleColor;
 		}
 		
+		// For GAUGE (danristo)
+		var errorMessages = "";
+		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+		
 		// ** START **
-		if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE")
+		if (chartType == "GAUGE")
 		{
 			var minValueYAxis = this.minValueYAxis.getValue();
-			this.axisData.min = minValueYAxis;
-			
-			var maxValueYAxis = this.maxValueYAxis.getValue();
-			this.axisData.max = maxValueYAxis;	
-			
-			var lineColorYAxis = this.lineColor.getColor();
-			this.axisData.lineColor = lineColorYAxis;
-			
+			var maxValueYAxis = this.maxValueYAxis.getValue();			
+			var lineColorYAxis = this.lineColor.getColor();			
 			var offsetBorderFromYAxis = this.offsetBorderFromYAxis.getValue();
-			console.log(offsetBorderFromYAxis);
-			if (offsetBorderFromYAxis <= 60)
-				this.axisData.offset = offsetBorderFromYAxis;
-			else
-				this.axisData.offset = 60;
 			
 			var lineWidthYAxis = this.lineWidthYAxis.getValue();
-			this.axisData.lineWidth = lineWidthYAxis;
-			
 			var endOnTick = this.endOnTick.getValue();
-			this.axisData.endOnTickGauge = endOnTick;
-			
 			var tickPosition = this.tickPosition.getValue();
-			this.axisData.tickPosition = tickPosition;
-			
 			var tickColor = this.tickColor.getColor();
-			this.axisData.tickColor = tickColor;
-			
-			var tickPixelInterval = this.tickPixelInterval.getValue();
-			this.axisData.tickPixelInterval = tickPixelInterval;
-			
+			var tickPixelInterval = this.tickPixelInterval.getValue();			
+
 			var tickWidth = this.tickWidth.getValue();
-			this.axisData.tickWidth = tickWidth;
-			
 			var tickLength = this.tickLength.getValue();
-			this.axisData.tickLength = tickLength;
-			
 			var minorTickPosition = this.minorTickPosition.getValue();
-			this.axisData.minorTickPosition = minorTickPosition;
-			
 			var minorTickColor = this.minorTickColor.getColor();
-			this.axisData.minorTickColor = minorTickColor;
-			
 			var minorTickInterval = this.minorTickInterval.getValue();
-			this.axisData.minorTickInterval = minorTickInterval;
-			
 			var minorTickWidth = this.minorTickWidth.getValue();
-			this.axisData.minorTickWidth = minorTickWidth;
-			
 			var minorTickLength = this.minorTickLength.getValue();
-			this.axisData.minorTickLength = minorTickLength;
+			var distanceLabelFromYAxis = this.distanceLabelFromYAxis.getValue();
+			var rotationOfLabelYAxis = this.rotationOfLabelYAxis.getValue();
 			
 			/**
-			 * LABELS sub-tag of the AXIS tag
+			 * VALIDATION 
 			 */
-			var distanceLabelFromYAxis = this.distanceLabelFromYAxis.getValue();
-			this.axisData.distance = distanceLabelFromYAxis;
+			/*
+			(minValueYAxis==null) ?
+				errorMessages += "- " + "<b>Min value</b> value must be defined" + '<br>' : errorMessages;
 			
-			var rotationOfLabelYAxis = this.rotationOfLabelYAxis.getValue();
-			this.axisData.rotation = rotationOfLabelYAxis;
+			(maxValueYAxis==null) ?
+					errorMessages += "- " + "<b>Max value</b> value must be defined" + '<br>' : errorMessages;*/
 			
+			/**
+			 * The indicator that min is bigger than max, so the plotbands cannot be examined. 
+			 */
+			var minBiggerThanMax = false;
+			var minDefinedMaxNotDefined = false;
+			
+			/**
+			 * Maximum value as the ending point of the GAUGE chart axis must be 
+			 * bigger than the minimum value as the starting point of the chart.
+			 */
+			if (maxValueYAxis!=null) 
+			{
+				if (minValueYAxis!=null && (minValueYAxis >= maxValueYAxis))
+				{
+					errorMessages += "- " + "<b>Max value</b> value must be bigger than value of <b>Min value</b> [Axis additional parameters]" + '<br>';
+					minBiggerThanMax = true;
+				}				
+			}	
+			else
+			{
+				errorMessages += "- " + "<b>Max value</b> must be defined when value of <b>Min value</b> is defined [Axis additional parameters]" + '<br>';
+				minDefinedMaxNotDefined = true;
+			}
+			
+			!(lineWidthYAxis!=null && lineWidthYAxis < this.lineWidthYAxis.minValue) ? lineWidthYAxis :
+				errorMessages += "- " + "<b>Line width</b>'s minimum value is: <b>" + this.lineWidthYAxis.minValue + 
+							"</b> [Axis additional parameters]" + '<br>';
+			
+			!(tickPixelInterval!=null && tickPixelInterval < this.tickPixelInterval.minValue) ? tickPixelInterval :
+				errorMessages += "- " + "<b>Tick pixel interval</b>'s minimum value is: <b>" + this.tickPixelInterval.minValue + 
+							"</b> [Main tick parameters]" + '<br>';
+			
+			!(tickWidth!=null && tickWidth < this.tickWidth.minValue) ? tickWidth :
+				errorMessages += "- " + "<b>Tick width</b>'s minimum value is: <b>" + this.tickWidth.minValue + 
+							"</b> [Main tick parameters]" + '<br>';
+			
+			!(tickLength!=null && tickLength < this.tickLength.minValue) ? tickLength :
+				errorMessages += "- " + "<b>Tick length</b>'s minimum value is: <b>" + this.tickLength.minValue + 
+							"</b> [Main tick parameters]" + '<br>';
+			
+			!(minorTickInterval!=null && minorTickInterval < this.minorTickInterval.minValue) ? minorTickInterval :
+				errorMessages += "- " + "<b>Minor tick interval</b>'s minimum value is: <b>" + this.minorTickInterval.minValue + 
+							"</b> [Minor tick parameters]" + '<br>';
+			
+			!(minorTickWidth!=null && minorTickWidth < this.minorTickWidth.minValue) ? minorTickWidth :
+				errorMessages += "- " + "<b>Minor tick width</b>'s minimum value is: <b>" + this.minorTickWidth.minValue + 
+							"</b> [Minor tick parameters]" + '<br>';
+			
+			!(minorTickLength!=null && minorTickLength < this.minorTickLength.minValue) ? minorTickLength :
+				errorMessages += "- " + "<b>Minor tick length</b>'s minimum value is: <b>" + this.minorTickLength.minValue + 
+							"</b> [Minor tick parameters]" + '<br>';
+			
+			!(distanceLabelFromYAxis!=null && distanceLabelFromYAxis < this.distanceLabelFromYAxis.minValue) ? distanceLabelFromYAxis : 
+				errorMessages += "- " + "<b>Distance</b>'s minimum value is: <b>" + this.minorTickLength.minValue + 
+					"</b> [Labels parameters]" + '<br>';
+			
+			/*
+			(lineColorYAxis==null) ?
+					errorMessages += "- " + "<b>Line color</b> value must be defined" + '<br>' : errorMessages;
+			
+			if(offsetBorderFromYAxis==null) 
+			{
+				errorMessages += "- " + "<b>Offset</b> value must be defined" + '<br>';
+			}
+			else
+			{
+				if (Number(offsetBorderFromYAxis) > this.offsetBorderFromYAxis.maxValue)
+				{
+					errorMessages += "- " + "<b>Offset</b> maximum value is: <b>" + this.offsetBorderFromYAxis.maxValue +  '</b><br>';
+				}
+			}
+			console.log(errorMessages);
+			(lineWidthYAxis==null) ?
+					errorMessages += "- " + "<b>Line width</b> value must be defined" + '<br>' : errorMessages;
+						
+			(tickPosition==null) ?
+					errorMessages += "- " + "<b>Tick position</b> value must be defined" + '<br>' : errorMessages;
+			
+			(tickColor==null) ?
+					errorMessages += "- " + "<b>Tick color</b> value must be defined" + '<br>' : errorMessages;
+			
+			(tickPixelInterval==null) ?
+					errorMessages += "- " + "<b>Tick pixel interval</b> value must be defined" + '<br>' : errorMessages;
+			
+			(tickWidth==null) ?
+					errorMessages += "- " + "<b>Tick width</b> value must be defined" + '<br>' : errorMessages;
+			
+			(tickLength==null) ?
+					errorMessages += "- " + "<b>Tick length</b> value must be defined" + '<br>' : errorMessages;
+			
+			(minorTickPosition==null) ?
+					errorMessages += "- " + "<b>Minor tick position</b> value must be defined" + '<br>' : errorMessages;			
+			
+			(minorTickColor==null) ?
+					errorMessages += "- " + "<b>Minor tick color</b> value must be defined" + '<br>' : errorMessages;
+			
+			(minorTickInterval==null) ?
+					errorMessages += "- " + "<b>Minor tick interval</b> value must be defined" + '<br>' : errorMessages;
+			
+			(minorTickWidth==null) ?
+					errorMessages += "- " + "<b>Minor tick width</b> value must be defined" + '<br>' : errorMessages;
+			
+			(minorTickLength==null) ?
+					errorMessages += "- " + "<b>Minor tick length</b> value must be defined" + '<br>' : errorMessages;
+			
+			// TODO: check if minimum value can be bigger than the maximum 
+			
+			(distanceLabelFromYAxis==null) ?
+					errorMessages += "- " + "<b>Distance</b> value must be defined" + '<br>' : errorMessages;
+			
+			(rotationOfLabelYAxis==null) ?
+					errorMessages += "- " + "<b>Rotation</b> value must be defined" + '<br>' : errorMessages;*/
+						
 			/**
 			 * PLOTBANDS sub-tag of the AXIS tag
 			 */
@@ -1568,7 +1659,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			{
 				var plotbandsData = plotbandsStoreTemp.data.items[0].data;
 				
-				var idValueOfPlotArray = new Array();
 				var fromValueForPlotbandsArray  = new Array();
 				var toValueForPlotbandsArray  = new Array();
 				var colorPlotbandArray  = new Array();
@@ -1577,15 +1667,34 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				{
 					var plotData = plotbandsStoreTemp.data.items[i].data;
 					
-					idValueOfPlotArray.push(plotData.idPlot);
 					fromValueForPlotbandsArray.push(plotData.from);
 					toValueForPlotbandsArray.push(plotData.to);
 					colorPlotbandArray.push(plotData.color);
+					
+					if (!minBiggerThanMax && !minDefinedMaxNotDefined)
+					{
+						(plotData.from < minValueYAxis) ? 
+								errorMessages += "- " + "<b>From</b> value of plot <b>#" + (i+1) + 
+									"</b> cannot be less than minimum value of <b>" + minValueYAxis + '</b> [Plotbands parameters]<br>' : 
+									errorMessages;
+						
+						(plotData.from > maxValueYAxis) ? 
+								errorMessages += "- " + "<b>From</b> value of plot <b>#" + (i+1) + "</b> cannot be more than maximum value of <b>" + maxValueYAxis + '</b> [Plotbands parameters]<br>' : 
+									errorMessages;
+								
+						(plotData.to < minValueYAxis) ? 
+								errorMessages += "- " + "<b>To</b> value of plot <b>#" + (i+1) + "</b> cannot be less than minimum value of <b>" + minValueYAxis + '</b> [Plotbands parameters]<br>' : 
+									errorMessages;
+						
+						(plotData.to > maxValueYAxis) ? 
+								errorMessages += "- " + "<b>To</b> value of plot <b>#" + (i+1) + "</b> cannot be more than maximum value of <b>" + maxValueYAxis + '</b> [Plotbands parameters]<br>' : 
+									errorMessages;
+					}					
 				}				
 	
 				fromValueForPlotbands = fromValueForPlotbandsArray;
 				toValueForPlotbands = toValueForPlotbandsArray;	
-				colorPlotband = colorPlotbandArray;		
+				colorPlotband = colorPlotbandArray;					
 			}
 			else
 			{				
@@ -1594,12 +1703,51 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				colorPlotband = "";	
 			}
 			
-			this.axisData.from = fromValueForPlotbands;
-			this.axisData.to = toValueForPlotbands;
-			this.axisData.color = colorPlotband;
+			if (errorMessages!="")
+			{
+				Ext.Msg.show
+				(
+					{
+						title : "Validation errors [Step 1]:",	// TODO: Make LN
+						message : errorMessages,
+						icon : Ext.Msg.WARNING,
+						closable : false,
+						buttons : Ext.Msg.OK
+					}
+				);
+			}
+			else
+			{
+				this.axisData.min = minValueYAxis;		
+				this.axisData.max = maxValueYAxis;			
+				
+				this.axisData.lineColor = lineColorYAxis;				
+				this.axisData.offset = offsetBorderFromYAxis;				
+				this.axisData.lineWidth = lineWidthYAxis;			
+				this.axisData.endOnTickGauge = endOnTick;		
 			
-//			console.log(this.axisData);
-			
+				this.axisData.tickPosition = tickPosition;				
+				this.axisData.tickColor = tickColor;				
+				this.axisData.tickPixelInterval = tickPixelInterval;				
+				this.axisData.tickWidth = tickWidth;				
+				this.axisData.tickLength = tickLength;				
+				
+				this.axisData.minorTickPosition = minorTickPosition;				
+				this.axisData.minorTickColor = minorTickColor;				
+				this.axisData.minorTickInterval = minorTickInterval;				
+				this.axisData.minorTickWidth = minorTickWidth;				
+				this.axisData.minorTickLength = minorTickLength;
+				
+				/**
+				 * LABELS sub-tag of the AXIS tag
+				 */;
+				this.axisData.distance = distanceLabelFromYAxis;
+				this.axisData.rotation = rotationOfLabelYAxis;
+				
+				this.axisData.from = fromValueForPlotbands;
+				this.axisData.to = toValueForPlotbands;
+				this.axisData.color = colorPlotband;
+			}							
 			// ** END **
 		}		
 		
@@ -1621,7 +1769,19 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var titleStyleFontSize = this.titleStyleFontSizeComboBox.getValue();
 		this.axisData.titleStyleFontSize = titleStyleFontSize;
 		
-		this.destroy();
+		// TODO: Try to simplify this
+		if (chartType == "GAUGE")
+		{
+			if (errorMessages=="")
+			{
+				this.destroy();
+			}
+		}
+		else
+		{
+			this.destroy();
+		}
+			
     },
 
 	items: [],

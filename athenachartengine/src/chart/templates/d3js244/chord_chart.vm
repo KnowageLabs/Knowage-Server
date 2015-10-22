@@ -44,29 +44,147 @@
 		}
 	},
 	
+	## Axises selection
+    #set($axisList = $chart.AXES_LIST.AXIS)
+
+    #set($xAxisList = {}) ## X Axises list container
+    #set($yAxisList = {}) ## Y Axises list container
+    #set($xAxisPositions = {}) ## X Axises integer positions list, for series references
+    #set($yAxisPositions = {}) ## Y Axises integer positions list, for series references
+    #set($xAxisCounter = 0) 
+    #set($yAxisCounter = 0) 
+    
+    #foreach($axis in $axisList)
+	 	#if($axis.type == 'Category')
+	 		#set($workAroundNoPrint = $xAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $xAxisPositions.put($axis.alias , $xAxisCounter))
+	 		
+	 		#set($xAxisCounter = $xAxisCounter + 1)
+	 	#end
+	 	
+	 	#if($axis.type == 'Serie')
+	 		#set($workAroundNoPrint = $yAxisList.put($axis.alias , $axis))
+	 		#set($workAroundNoPrint = $yAxisPositions.put($axis.alias , $yAxisCounter))
+ 		
+	 		#set($yAxisCounter = $yAxisCounter + 1)
+	 	#end
+	#end
+	
+	xAxis:
+	 #foreach($xAxisKey in $xAxisList.keySet())
+	 #set ($xAxis = $xAxisList[$xAxisKey])
+	 {
+		labels:{
+				 
+			 #if( $xAxis.style != '' ) 
+        		        		
+        		style:{
+	        	#foreach($styleName in $xAxis.style.keySet())
+	        		#set ($axisStyle = $xAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		},  
+        		
+        	#end
+		 },	 
+			    
+		 type: 'category',
+	 },
+	 #end
+	
+	yAxis: 
+    ## START Serie add
+	#foreach($yAxisKey in $yAxisList.keySet())
+	#set ($yAxis = $yAxisList[$yAxisKey])        
+    {
+    	labels:{
+    				 
+			#if( $yAxis.style != '' )         		
+        		style:{
+	        	#foreach($styleName in $yAxis.style.keySet())
+	        		#set ($axisStyle = $yAxis.style[$styleName])
+	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
+	        			fontStyle: '$axisStyle',
+					#elseif($styleName == 'fontWeight' && $axisStyle == 'underline')
+	        			textDecoration: 'underline',
+					#elseif($styleName == 'align')
+	        			#set($labelAlign=$axisStyle)
+	        		#elseif($styleName == 'rotate')
+	        			#set($rotation=$axisStyle)		        			
+					#else		        			
+	        			$styleName: '$axisStyle',
+	        		#end
+	        	#end
+        		}
+        	#end
+        	
+	 	},
+	 	
+	 	type: 'serie'
+    },
+	#end
+	## END Serie add
+        
+	
 	title:
 	{
 		text: '$chart.TITLE.text',
 		
-		style:
+		#*style:
 		{
 			align: '$chart.TITLE.style.align',
 			color: '$chart.TITLE.style.color',
 			fontWeight: '$chart.TITLE.style.fontWeight',
 			fontSize: '$chart.TITLE.style.fontSize'
-		}
+		}*#
+		
+		style:{
+        #foreach($styleName in $chart.TITLE.style.keySet())
+        	#set ($axisTitleStyle = $chart.TITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
+    			fontStyle: '$axisTitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisTitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisTitleStyle',
+    		#end
+		#end
+	    }
 	},
 	
 	subtitle:
 	{
 		text: '$chart.SUBTITLE.text',
 		
-		style:
+		#*style:
 		{
 			align: '$chart.SUBTITLE.style.align',
 			color: '$chart.SUBTITLE.style.color',
 			fontWeight: '$chart.SUBTITLE.style.fontWeight',
 			fontSize: '$chart.SUBTITLE.style.fontSize'
+		}*#
+		
+		style:{
+        #foreach($styleName in $chart.SUBTITLE.style.keySet())
+        	#set ($axisSubtitleStyle = $chart.SUBTITLE.style[$styleName])
+    		#if ($styleName == 'fontWeight' && ($axisSubtitleStyle == 'italic' || $axisSubtitleStyle == 'normal'))
+    			fontStyle: '$axisSubtitleStyle',
+			#elseif($styleName == 'fontWeight' && $axisSubtitleStyle == 'underline')
+    			textDecoration: 'underline',
+			#else		        			
+    			$styleName: '$axisSubtitleStyle',
+    		#end
+		#end
 		}
 	},
 		
