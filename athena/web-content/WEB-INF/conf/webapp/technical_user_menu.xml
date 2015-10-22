@@ -62,7 +62,7 @@
 					functionality="Glossary"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />
 					
-			<ITEM	title="Dataset federation"
+			<ITEM	title="#menu.federationdefinition"
 					functionality="MeasuresCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp" />
 			

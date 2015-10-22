@@ -1,15 +1,15 @@
 <md-dialog>
-	<md-toolbar  style="padding-top:5px"class="miniheadfedsmall md-flex" align="center";>Dataset Details</md-toolbar>
+	<md-toolbar  style="padding-top:5px"class="miniheadfedsmall md-flex" align="center";>{{translate.load("sbi.federationdefinition.template.title.DatasetDetails");}}</md-toolbar>
 		<md-content style="padding:10px">
 			<div>
-				Name:  <span>{{dsname}}</span>
+				{{translate.load("sbi.federationdefinition.template.name");}}:  <span>{{dsname}}</span>
 				<p></p>
-				Label:  <span>{{dslabel}}</span>
+				{{translate.load("sbi.federationdefinition.template.label");}}:  <span>{{dslabel}}</span>
 				<p></p>
-				Description:  <span>{{dsdescription}}</span>
+				{{translate.load("sbi.federationdefinition.template.description");}}:  <span>{{dsdescription}}</span>
 			</div>
 			<md-button style="color:grey; float:right;" ng-click="ctrl.hide();" class="md-primary">
-     				got it
+     				{{translate.load("sbi.federationdefinition.template.button.gotIt");}}
     			</md-button>
 	</md-content>
 </md-dialog>

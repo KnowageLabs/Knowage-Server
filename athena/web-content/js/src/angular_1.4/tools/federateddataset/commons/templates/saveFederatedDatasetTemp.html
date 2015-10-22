@@ -2,7 +2,7 @@
  <div>
 	<md-toolbar class="miniheadfederation">
 	
-		<p class="md-flex"  align="center">Fill in the dataset details and click on Save</p>
+		<p class="md-flex"  align="center">{{sbi.federationdefinition.template.title.SaveFederation");}}</p>
 	
 	</md-toolbar>
   			<md-content class="sticky-container">
@@ -10,7 +10,7 @@
 					<form name="saveFDSForm">
 					
 						<md-input-container flex> 
-						<label>Name</label> 
+						<label>{{translate.load("sbi.federationdefinition.template.name");}}</label> 
 						<input ng-model="federateddataset.name" name="name" required>
 						<div ng-messages="saveFDSForm.name.$error" ng-if="saveFDSForm.name.$dirty && !federateddataset.name.length">
 							<div ng-message="required">Required!</div>
@@ -18,27 +18,27 @@
 						</md-input-container>
 						
 						<md-input-container flex> 
-						<label>Label</label> 
+						<label>{{translate.load("sbi.federationdefinition.template.label");}}</label> 
 						<input ng-model="federateddataset.label" name="label" required>
 						<div ng-messages="saveFDSForm.label.$error" ng-if="saveFDSForm.label.$dirty && !federateddataset.label.length">
-							<div ng-message="required">Required!</div>
+							<div ng-message="required">{{translate.load("sbi.federationdefinition.required");}}</div>
 						</div>
 						</md-input-container>
 						
 						<md-input-container> 
-	        				<label>Description</label>
+	        				<label>{{translate.load("sbi.federationdefinition.template.description");}}</label>
 	        				<input ng-model='federateddataset.description'></input>
       					</md-input-container>
       					
       					<div class="md-actions" layout="row">
     			<span flex></span>
     			<md-button style="color:grey" ng-click="ctrl.hide();" class="md-primary">
-     				close
+     				{{translate.load("sbi.federationdefinition.template.button.close");}}
     			</md-button>
     			<md-button style="color:grey" 
-    			ng-click="feddsCtrl.saveFedDataSet(); ctrl.hide(); ctrl.showAlert($event); ctrl.clearSelections()" class="md-primary" 
+    			ng-click="feddsCtrl.saveFedDataSet(); ctrl.hide(); ctrl.clearSelections()" class="md-primary" 
     			ng-disabled="saveFDSForm.$invalid">
-      				save
+      				{{translate.load("sbi.federationdefinition.template.button.save");}}
     			</md-button>
   			</div>
 						

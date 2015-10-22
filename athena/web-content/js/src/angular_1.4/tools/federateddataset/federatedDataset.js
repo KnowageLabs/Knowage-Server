@@ -61,15 +61,15 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content('You didn\'t select any field!')
-						.ok('Got it!')
+						.content(translate.load("sbi.federationdefinition.no.field.selected"))
+						.ok(translate.load("sbi.federationdefinition.ok"))
 			);
 		} else if(counter==1){
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content('You selected only 1 field! You have to select at least two fields to create a relation.')
-						.ok('OK')
+						.content(translate.load("sbi.federationdefinition.only.one.field.selected"))
+						.ok(translate.load("sbi.federationdefinition.ok"))
 			);
 		} else{
 			if(ctr.multiArray.length==0){
@@ -82,8 +82,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 						$mdDialog.show(
 								$mdDialog.alert()
 									.clickOutsideToClose(true)
-									.content('The relation is already created!')
-									.ok('Got it!')
+									.content(translate.load("sbi.federationdefinition.relation.exists"))
+									.ok(translate.load("sbi.federationdefinition.ok"))
 						);
 					}
 				});
@@ -176,16 +176,16 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content('You didn\'t create any relationships!')
-						.ok('OK')
+						.content(translate.load("sbi.federationdefinition.no.relation.created"))
+						.ok(translate.load("sbi.federationdefinition.ok"))
 			);
 		} 
 		else if(ctr.index==-1){
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content('All selected datasets must be cantained at least in one relationship!')
-						.ok('OK')
+						.content(translate.load("sbi.federationdefinition.contain.all.selected.datasets"))
+						.ok(translate.load("sbi.federationdefinition.ok"))
 			);
 		}		
 		else{
@@ -206,7 +206,9 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 							item.relationships = ctr.multiArray;
 							
 							restServices.post("federateddataset","post",item)
-								.success(console.log("success"))
+								.success(
+										ctr.showAlert()
+								)
 								.error(console.log("error"))
 						}
 					},
@@ -370,9 +372,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 							.show($mdDialog
 									.alert()
 									.clickOutsideToClose(true)
-									.content(
-											'You can\'t delete the dataset! It is used in a relationship! To delete this dataset you have to remove the relationship first.')
-									.ok('OK'));
+									.content(translate.load("sbi.federationdefinition.cant.delete.dataset"))
+									.ok(translate.load("sbi.federationdefinition.ok")));
 					return false;
 					
 				} else {
@@ -446,11 +447,11 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	
 	ctr.deleteFromMultiArray = function(param) {
 		var confirm = $mdDialog.confirm()
-		.title('Confirm delete')
-		.content('Are you sure you want to delete the relationship?')
+		.title(translate.load("sbi.federationdefinition.confirm.delete"))
+		.content(translate.load("sbi.federationdefinition.confirm.delete.content"))
 		.targetEvent(param)
-		.ok('Yes')
-		.cancel('No')
+		.ok(translate.load("sbi.federationdefinition.yes"))
+		.cancel(translate.load("sbi.federationdefinition.no"))
 		
 		$mdDialog.show(confirm).then(function(){
 			var index = ctr.multiArray.indexOf(param);
@@ -469,15 +470,15 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 		$mdDialog.show(
 				$mdDialog.alert()
 					.clickOutsideToClose(true)
-					.title('Operation succeded')
-					.ok('OK')
+					.title(translate.load("sbi.federationdefinition.operation.succeded"))
+					.ok(translate.load("sbi.federationdefinition.ok"))
 					.targetEvent(ev)
 		);
 	}
 	
 	ctr.glossSpeedMenuOpt = [ 			 		               	
 		 		               	{
-		 		               		label: 'Delete',
+		 		               		label: translate.load("sbi.federationdefinition.delete"),
 		 		               		icon:"fa fa-trash-o",
 		 		               		backgroundColor:'red',
 		 		               		action : function(param) {
@@ -488,7 +489,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 
 	ctr.glossSpeedMenuOptAD = [ 			 		               	
 		 		               	{
-		 		               		label: 'Info',
+		 		               		label: translate.load("sbi.federationdefinition.info"),
 		 		               		icon:"fa fa-info-circle",
 		 		               		backgroundColor:'green',
 		 		               		action : function(ev) {
@@ -503,11 +504,11 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
     
     ctr.prepRelForEdit = function(param) {
     	var confirm = $mdDialog.confirm()
-		.title('Confirm dialog')
-		.content('Are you sure you want to edit the relation? The previous relation will be lost.')
+		.title(translate.load("sbi.federationdefinition.confirm.dialog"))
+		.content(translate.load("sbi.federationdefinition.confirm.dialog.edit.relation"))
 		.targetEvent(param)
-		.ok('Yes')
-		.cancel('No')
+		.ok(translate.load("sbi.federationdefinition.yes"))
+		.cancel(translate.load("sbi.federationdefinition.no"))
 		
 		$mdDialog.show(confirm).then(function(){
 			ctr.isEditState = true;
@@ -585,7 +586,6 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
     			}
         	}
 			ctr.multiArray = JSON.parse(valueRelString);
-		
     }
 	
 	ctr.clearSelections = function() {
@@ -635,10 +635,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 					}
 				}
 			  }
-			}			
+		   }			
 		}
-		
-		
 	}
         
 }
