@@ -280,22 +280,21 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	}
 	
 	
-	private String buildQbeEditFromBMServiceUrl(String executionId){
+	protected String buildQbeEditFromBMServiceUrl(String executionId) {
 		Engine qbeEngine = null;
 		String qbeEditActionUrl = null;
-		String label = null;
-		Map<String, String> parametersMap = buildQbeEditFromFederationServiceBaseParametersMap();
+
+		Map<String, String> parametersMap = buildQbeEditFromBMServiceBaseParametersMap();
 		parametersMap.put("SBI_EXECUTION_ID", executionId);
 
-		ICache cache = SpagoBICacheManager.getCache();
-		if (cache instanceof SQLDBCache) {
-			logger.debug("The cache is a SQL cache so we have the datasource");
-			label = ((SQLDBCache) cache).getDataSource().getLabel();
-			logger.debug("The datasource is " + label);
+		IDataSource datasource;
+		try {
+			datasource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error while loading default datasource for writing", e);
 		}
-
-		if (label != null) {
-			parametersMap.put(EngineConstants.ENV_DATASOURCE_FOR_CACHE, label);
+		if (datasource != null) {
+			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
 		} else {
 			logger.debug("There is no default datasource for writing");
 		}
