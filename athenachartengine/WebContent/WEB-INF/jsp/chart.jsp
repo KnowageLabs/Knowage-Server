@@ -351,31 +351,13 @@ author:
  							*/
  							
  							if (isChartHeightEmpty==true)
-							{ 								
- 								if (isChartParallel==true)
- 								{	 						
- 									
-	 								chartConfiguration.chart.height = window.innerHeight - parallelTableRowHeight*parallelTableRowElements - parallelTablePaginationHeight
-	 									- (Number(parallelTitleHeight) + Number(parallelSubtitleHeight))*1.2+12;
- 								}
- 	 							else
- 								{
- 	 								//chartConfiguration.chart.height = newHeight;
- 	 								chartConfiguration.chart.height = window.innerHeight; // sometimes is newHeight != window.innerHeight
- 								}  								
+							{ 	
+ 								chartConfiguration.chart.height = window.innerHeight-2; // sometimes is newHeight != window.innerHeight 								 								
 							}
  	 						
  	 						if (isChartWidthEmpty==true)
  							{
- 	 							if (isChartParallel==true)
- 								{	 								
-	 								chartConfiguration.chart.width = window.innerWidth - parallelLegendWidth;
- 								}
- 	 							else
- 								{
- 	 								//chartConfiguration.chart.width = newWidth;
- 	 								chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth
- 								} 	 						 
+ 								chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth	 						 
  							}				
  							
  	 						/* Re-render the chart after resizing the window (panel). */
@@ -422,7 +404,7 @@ author:
  					};
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
  						 			
- 						console.log(response.responseText);
+ 						//console.log(response.responseText);
  						
  						var chartConf = Ext.JSON.decode(response.responseText, true);			
  						 						
@@ -464,33 +446,25 @@ author:
 							if (typeChart == "PARALLEL")
  							{
 								isChartParallel = true;
- 								parallelLegendWidth = chartConf.legend.width;
- 								parallelTableRowHeight = chartConf.table.heightRow;
- 								parallelTableRowElements = chartConf.table.numberOfRows;
- 								parallelTablePaginationHeight = chartConf.table.heightPageNavigator;
- 								
- 								parallelTitleHeight = removePixelsFromFontSize(chartConf.title.style.fontSize);
- 								parallelSubtitleHeight = removePixelsFromFontSize(chartConf.subtitle.style.fontSize);
- 								
- 								parallelTablePaddingTop = chartConf.table.paddingTop;
- 								var parallelTablePaddingBottom = chartConf.table.paddingBottom;
+								
+								// HEIGHT
+								parallelTableRowElements = chartConf.table.numberOfRows;
+								parallelTableRowHeight = chartConf.table.heightRow;
+								parallelTablePaginationHeight = chartConf.table.heightPageNavigator;
+								parallelTitleHeight = removePixelsFromFontSize(chartConf.title.style.fontSize);
+								parallelSubtitleHeight = removePixelsFromFontSize(chartConf.subtitle.style.fontSize);
+								parallelTablePaddingTop = chartConf.table.paddingTop;
+ 								parallelTablePaddingBottom = chartConf.table.paddingBottom;
+								
+								// WIDTH
+ 								parallelLegendWidth = chartConf.legend.width; 		 								
  							}
 							
 							if (heightChart=="" || widthChart=="" || typeChart == "SUNBURST")
 							{
 		 						if (heightChart == "")	
 		 						{
-		 							if (isChartParallel)
-	 								{
-		 								chartConf.chart.height = window.innerHeight-parallelTableRowHeight*parallelTableRowElements-parallelTablePaginationHeight
-		 									- (Number(parallelTitleHeight)+Number(parallelSubtitleHeight))*1.2+12;
-	 								}
-		 							else
-	 								{
-		 								console.log(window.innerHeight);
-			 							chartConf.chart.height = window.innerHeight;
-	 								}
-		 							
+		 							chartConf.chart.height = window.innerHeight-2;		 							
 		 							isChartHeightEmpty = true;		 							
 		 						}
 		 						else
@@ -500,16 +474,7 @@ author:
 		 						
 		 						if (widthChart == "" || typeChart == "SUNBURST")	
 		 						{
-		 							if (isChartParallel)
-	 								{
-		 								chartConf.chart.width = Number(window.innerWidth)-Number(chartConf.legend.width);
-	 								}
-		 							else
-	 								{
-			 							chartConf.chart.width = window.innerWidth;
-			 							console.log(window.innerWidth);
-	 								}	
-		 							
+		 							chartConf.chart.width = window.innerWidth;		 							
 		 							isChartWidthEmpty = true;
 		 						}
 		 						else

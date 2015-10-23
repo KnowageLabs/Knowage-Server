@@ -482,6 +482,8 @@ function renderWordCloud(chartConf){
 			
 			d3.select("body")
 			.append("div").attr("id","main")
+			.style("height",chartConf.chart.height)
+			.style("width",chartConf.chart.width)
 			.style("font-family", chartConf.chart.style.fontFamily)	
 			.style("font-style", chartConf.chart.style.fontStyle)
     		.style("font-weight", chartConf.chart.style.fontWeight)
@@ -598,7 +600,7 @@ function renderWordCloud(chartConf){
 			d3.select("#main").append("svg")
 			.attr("width", chartConf.chart.width)
 			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
-					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.8)
+					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6)
 			.append("g")
 			.attr("transform", "translate("+(chartConf.chart.width/2-40)+","+(chartConf.chart.height/2-10)+")")
 			.selectAll("text")
@@ -736,9 +738,9 @@ function renderWordCloud(chartConf){
 				.style("color",jsonObject.emptymessage.style.color)
 				.style("text-align",jsonObject.emptymessage.style.align)
 	    		.style("font-family",jsonObject.emptymessage.style.fontFamily)
-	    		.style("font-style",jsonObject.emptymessage.style.fontStyle ? jsonObject.emptymessage.style.fontStyle : "none")
-	    		.style("font-weight",jsonObject.emptymessage.style.fontWeight ? jsonObject.emptymessage.style.fontWeight : "none")
-	    		.style("text-decoration",jsonObject.emptymessage.style.textDecoration ? jsonObject.emptymessage.style.textDecoration : "none")
+	    		.style("font-style",jsonObject.emptymessage.style.fontStyle)
+	    		.style("font-weight",jsonObject.emptymessage.style.fontWeight)
+	    		.style("text-decoration",jsonObject.emptymessage.style.textDecoration)
 	    		.style("font-size",emptyMsgFontSize)
 				.text(jsonObject.emptymessage.text);	
 		}
@@ -750,9 +752,9 @@ function renderWordCloud(chartConf){
 				.style("color",jsonObject.title.style.color)
 				.style("text-align",jsonObject.title.style.align)
 	    		.style("font-family",jsonObject.title.style.fontFamily)
-	    		.style("font-style",jsonObject.title.style.fontStyle ? jsonObject.title.style.fontStyle : "none")
-	    		.style("font-weight",jsonObject.title.style.fontWeight ? jsonObject.title.style.fontWeight : "none")
-	    		.style("text-decoration",jsonObject.title.style.textDecoration ? jsonObject.title.style.textDecoration : "none")
+	    		.style("font-style",jsonObject.title.style.fontStyle)
+	    		.style("font-weight",jsonObject.title.style.fontWeight)
+	    		.style("text-decoration",jsonObject.title.style.textDecoration)
 	    		.style("font-size",jsonObject.title.style.fontSize)
 				.text(jsonObject.title.text);	
 			
@@ -762,9 +764,9 @@ function renderWordCloud(chartConf){
 				.style("color",jsonObject.subtitle.style.color)
 				.style("text-align",jsonObject.subtitle.style.align)
 	    		.style("font-family",jsonObject.subtitle.style.fontFamily)
-	    		.style("font-style",jsonObject.subtitle.style.fontStyle ? jsonObject.subtitle.style.fontStyle : "none")
-	    		.style("font-weight",jsonObject.subtitle.style.fontWeight ? jsonObject.subtitle.style.fontWeight : "none")
-	    		.style("text-decoration",jsonObject.subtitle.style.textDecoration ? jsonObject.subtitle.style.textDecoration : "none")
+	    		.style("font-style",jsonObject.subtitle.style.fontStyle)
+	    		.style("font-weight",jsonObject.subtitle.style.fontWeight)
+	    		.style("text-decoration",jsonObject.subtitle.style.textDecoration)
 	    		.style("font-size",jsonObject.subtitle.style.fontSize)
 				.text(jsonObject.subtitle.text);
 		    
@@ -1014,7 +1016,7 @@ function renderWordCloud(chartConf){
 			
 			var rootParentsNodes = getRootParentNodes(nodes);
 			var counter = 0;
-			console.log(jsonObject.chart.style.backgroundColor);
+			
 			var path = vis.data([json]).selectAll("path")
 				.data(nodes)
 				.enter().append("svg:path")
@@ -1497,8 +1499,6 @@ function renderWordCloud(chartConf){
 	function renderParallelChart(data){
 				
 	var records = data.data[0];
-	
-	console.log(data.limit.serieFilterColumn);
 
 	if(records.length>0){
 
@@ -1582,29 +1582,7 @@ function renderWordCloud(chartConf){
 		var m = [40, 40, 40, 100],
 		w = data.chart.width - m[1] - m[3],
 		h = data.chart.height - m[0] - m[2];
-
-		var x = d3.scale.ordinal().domain(columns).rangePoints([0, w]),
-		y = {};
-
-		var line = d3.svg.line(),
-		axis = d3.svg.axis().orient("left"),
-		foreground;
-
-//		var titleFontSize = parseInt(data.title.style.fontSize);
-//		var titleDivHeight = parseInt(data.title.height);
-//		var titleTotal = titleDivHeight+titleFontSize/2;
-
-		/**
-		 * Add this root DIV so when we specify some font properties for the chart
-		 * it can be applied on every chart element that has some elements that are
-		 * using font properties, if they are not specified. For example, user defines
-		 * font family for the chart, but not for the title. In this case we will 
-		 * apple font family of the whole chart on the title DIV element, as well as
-		 * on other DIV elements.
-		 * @author: danristo (danilo.ristovski@mht.net)
-		 */
-		console.log(data);
-					
+		
 		/**
 		 * Configuration that we get directly from the VM (needed for displaying
 		 * the full (complete) chart when resizing. The biggest problems are
@@ -1615,12 +1593,35 @@ function renderWordCloud(chartConf){
 		var legendWidth = data.legend.width;
 		var tableRowElements = data.table.numberOfRows;
 		var tablePaginationHeight = data.table.heightPageNavigator;
-		var divHeightAfterTable = data.table.afterTableDivHeight;		
-				
+		var divHeightAfterTable = data.table.afterTableDivHeight;	
+
+		/**
+		 * This is the part when we set the width of the chart itself (the width between axes
+		 * on edges of the chart).
+		 * 
+		 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+		 */
+		var x = d3.scale.ordinal().domain(columns).rangePoints([0, w-legendWidth]),
+		y = {};
+
+		var line = d3.svg.line(),
+			axis = d3.svg.axis().orient("left"),
+			foreground;
+
+		/**
+		 * Add this root DIV so when we specify some font properties for the chart
+		 * it can be applied on every chart element that has some elements that are
+		 * using font properties, if they are not specified. For example, user defines
+		 * font family for the chart, but not for the title. In this case we will 
+		 * apple font family of the whole chart on the title DIV element, as well as
+		 * on other DIV elements.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		
 		d3.select("body")
 			.append("div").attr("id","main")
 			.style("height",data.chart.height)
-			.style("width",Number(data.chart.width) + legendWidth)
+			.style("width",data.chart.width)
 			.style("background-color",data.chart.style.backgroundColor)
 			.style("font-family", data.chart.style.fontFamily)
 			.style("font-size",  data.chart.style.fontSize)
@@ -1638,10 +1639,6 @@ function renderWordCloud(chartConf){
 		.style("text-decoration",data.title.style.textDecoration)
 		.style("font-size",data.title.style.fontSize)
 		.text(data.title.text);
-
-//		var subtitleFontSize = parseInt(data.subtitle.style.fontSize);
-//		var subtitleDivHeight = parseInt(data.subtitle.height);
-//		var subtitleTotal = subtitleDivHeight+subtitleFontSize/2;
 
 		// Set subtitle
 		d3.select("#main").append("div")
@@ -1662,37 +1659,41 @@ function renderWordCloud(chartConf){
 			svgHeight=h + m[0] + m[2];
 		}
 		
-		d3.select("#main").append("div").attr("id","chart").style("width",w + m[1] + m[3] + legendWidth);
+		d3.select("#main").append("div").attr("id","chart").style("width",data.chart.width).style("height",data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20);
 		
 		var heightTotal = h + m[0] + m[2];
-		
-		//console.log("highTotal:");
-		//console.log(heightTotal);
-		//console.log("data.chart.height:")
-		//console.log(data.chart.height);
-		//console.log("sum all:")
-		//console.log(heightTotal-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2);
 		
 		var svg = d3.select("#chart")
 		.append("div")
 		.style("float","left")
-		.style("width",w + m[1] + m[3])
-//		.style("height", heightTotal)
-		.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2+30)
+		.style("width",data.chart.width-legendWidth)
+		// "...-180" for table height plus pagination height (150+30)
+		// "...-20" for bottom padding of the pagination  
+		.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
 		.append("svg:svg")
 		.style("font-size",18)
-		.attr("width", w + m[1] + m[3])
-//		.style("height", heightTotal)
-		.attr("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2+30)
+		.style("width", data.chart.width-legendWidth)
+		// "...-180" for table height plus pagination height (150+30)
+		// "...-20" for bottom padding of the pagination  
+		.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
 		.append("svg:g")
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 		columns.forEach(function(d){
 			records.forEach(function(p) {p[d] = +p[d]; });
 
+			/**
+			 * This is the part when we set the height of the chart itself.
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
 			y[d] = d3.scale.linear()
 			.domain(d3.extent(records, function(p) {return p[d]; }))
-			.range([h, 0]);
+			// "...-180" for table height plus pagination height (150+30)
+			// "...-m[0]" for translation of the chart from the top downwards
+			// "...-20" for bottom padding of the pagination 
+			// "...-20" for enabling text on labels (serie values) to be visible
+			.range([data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4- 180-20-m[0]-20, 0]);
 
 			y[d].brush = d3.svg.brush()
 			.y(y[d])
@@ -1703,11 +1704,15 @@ function renderWordCloud(chartConf){
 		var legend=d3.select("#chart").append("div")
 		         .style("float","right")
 		         .style("width",legendWidth)
-		         .style("height",h + m[0] + m[2]+150)
+		         // "...-180" for table height plus pagination height (150+30)
+		         // "...-20" for bottom padding of the pagination 
+		         .style("height",data.chart.height-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2- 180-20)
 		         .style("overflow","auto")
 		         .append("svg:svg")
 		         .style("font-size",10)
-		         .attr("height", svgHeight)
+		         // "...-180" for table height plus pagination height (150+30)
+		         // "...-20" for bottom padding of the pagination 
+		         .attr("height",data.chart.height-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2- 180-20)
 		         .append("svg:g")
 		         .attr("transform", "translate("+0 + "," + m[0] + ")");
 		
@@ -1753,7 +1758,7 @@ function renderWordCloud(chartConf){
 			return d; });
 
 		//tooltip
-		var tooltip=d3.select("body")
+		var tooltip=d3.select("#chart")
 		.append("div")
 		.attr("class","tooltip")
 		.style("opacity","0");
@@ -1892,15 +1897,8 @@ function renderWordCloud(chartConf){
 
 	else{
 
-//		var emptyMsgFontSize = parseInt(data.emptymessage.style.fontSize);
-//		var emptyMsgDivHeight = parseInt(data.emptymessage.height);
-//		var emptyMsgTotal = emptyMsgDivHeight+emptyMsgFontSize/2;
-
 		// Set title
 		d3.select("body").append("div")
-//		.style("height",emptyMsgTotal)
-//		.style("position",data.emptymessage.position)
-//		.style("left",data.emptymessage.paddingLeft)
 		.style("color",data.emptymessage.style.color)
 		.style("text-align",data.emptymessage.style.align)
 		.style("font-family",data.emptymessage.style.fontFamily)
@@ -1923,11 +1921,11 @@ function renderWordCloud(chartConf){
 		lastDisplayed=allTableData.length;
 	}
 
-	var tableDiv=d3.select("body").append("div").attr("id","tableDiv").style("width",Number(data.chart.width)+legendWidth).style("padding-top",20).style("padding-bottom",20).style("background-color",data.chart.style.backgroundColor);
-	var table= tableDiv.append("table").style("width",w+m[3]).style("padding-left",m[3]).style("background-color",data.chart.style.backgroundColor);
-	var paginationBar=tableDiv.append("div").attr("id","pBar").style("padding-left",w/2+m[3]/2).style("padding-top",10);
+	var tableDiv=d3.select("#chart").append("div").attr("id","tableDiv").style("width",data.chart.width-legendWidth).style("padding-bottom",10).style("padding-top",20);
+	var table= tableDiv.append("table").style("width",data.chart.width-legendWidth).style("padding-left",m[3]);
+	var paginationBar=tableDiv.append("div").attr("id","pBar").style("padding-left",w/2+m[3]/2-150).style("padding-top",10);
 	var prevButton=paginationBar.append("button").text("<< Prev").on("click",function(){return showPrev();});
-	var paginationText= paginationBar.append("label").text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length + " ").style("font-weight","bold");
+	var paginationText= paginationBar.append("label").text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length + " ").style("font-weight","bold").style("font-size", "8px");
 	var nextButton=paginationBar.append("button").text("Next >>").on("click",function(){return showNext();});
 	
 	if(firstDisplayed===1){
@@ -1999,8 +1997,7 @@ function renderWordCloud(chartConf){
 	}
 
 	function dragend(d) {
-
-		x.domain(columns).rangePoints([0, w]);
+		x.domain(columns).rangePoints([0, w-legendWidth]);
 		var t = d3.transition().duration(500);
 		t.selectAll(".column").attr("transform", function(d) { 
 			return "translate(" + x(d) + ")"; });
@@ -2016,6 +2013,7 @@ function renderWordCloud(chartConf){
 
 	// Handles a brush event, toggling the display of foreground lines.
 	function brush() {
+		
 		var actives = columns.filter(function(p) { return !y[p].brush.empty(); }),
 		extents = actives.map(function(p) { return y[p].brush.extent(); });
 		foreground.classed("fade", function(d) {
@@ -2246,22 +2244,15 @@ function renderWordCloud(chartConf){
 			lastDisplayed=allTableData.length;
 		}
 
-
-
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
-
-
 
 		if(lastDisplayed === allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-
-
-
+		
 		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 		updateTable();	
-
 
 	}
 
@@ -2278,8 +2269,6 @@ function renderWordCloud(chartConf){
 		else{
 			lastDisplayed=lastDisplayed-5;
 		}
-
-
 
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
