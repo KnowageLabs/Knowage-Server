@@ -638,7 +638,8 @@
 				<file name="./src/ext/sbi/home/DefaultRoleWindow.js" />
 
 				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
-
+				
+				
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
@@ -651,32 +652,42 @@
 				<file name="./src/ext4/sbi/widgets/grid/GrouppedGrid.js" />
 				<file name="./src/ext4/sbi/widgets/compositepanel/ListDetailPanel.js" />
 				<file name="./src/ext4/sbi/widgets/compositepanel/SplittedPanel.js" />
-
 				<file name="./src/ext4/sbi/widgets/toolbar/InLineFilterAndOrder.js" />
 				<file name="./src/ext4/sbi/widgets/toolbar/StaticToolbarBuilder.js" />
 				<file name="./src/ext4/sbi/widgets/wizard/WizardWindow.js" />
 				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" />
 				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js" />
-
+				
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverListDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverModel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseModel.js" />
+				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseTabPanel.js" />
+				
 				<file name="./src/ext4/sbi/browser/DocumentsTree.js" />
 				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" />
-
-
+				
+				
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovPanel.js" />
-
+				<file name="./src/ext4/sbi/behavioural/lov/LOVDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVListDetailPanel.js" />
+				<file name="./src/ext4/sbi/behavioural/lov/LOVModel.js" />
+				
+				
+				
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
 				
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantModel.js" />
-				<file name="./src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantDetailPanel.js" />
-
-				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
-
+				<file name="./src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js" />
+				
+				<file name="./src/ext4/sbi/tools/dataset/FileDatasetPanel.js" />
+				
 				<file name="./src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js" />
 				<file name="./src/ext4/sbi/tools/dataset/ValidateDataset.js" />
 				<file name="./src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
@@ -684,28 +695,31 @@
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
-				<file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" />
 				<file name="./src/ext4/sbi/tools/dataset/QbeDataSetsWizard.js" />
+				<file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" />
 				<file name="./src/ext4/sbi/tools/dataset/DatasetMetadataMainPage.js" />
 				<file name="./src/ext4/sbi/tools/dataset/GeoBIDatasetFieldMetadata.js" />
-
-
+				
 				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" />
+				<file name="./src/ext4/sbi/tools/dataset/FederatedDatasetBrowser.js" />
 				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" />
 				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" />
+				<file name="./src/ext4/sbi/tools/dataset/FederatedDatasetView.js" />
+				<file name="./src/ext4/sbi/tools/dataset/FederatedDatasetModel.js" />
 				
 				<file name="./src/ext4/sbi/tools/document/SmartFilterBrowser.js" />
 				<file name="./src/ext4/sbi/tools/document/SmartFilterView.js" />
 				<file name="./src/ext4/sbi/tools/document/SmartFilterModel.js" />
-
+				
+				
 				<file name="./src/ext4/sbi/tools/measure/MeasuresCatalogue.js" />
 				<file name="./src/ext4/sbi/tools/measure/MeasureModel.js" />
-
+				
 				<file name="./src/ext4/sbi/selfservice/ManageSelfService.js" />
 				<file name="./src/ext4/sbi/selfservice/ManageSelfServiceContainer.js" />
 				<file name="./src/ext4/sbi/selfservice/SelfServiceExecutionIFrame.js" />
-
-
+				
+				
 				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingTabsPanel.js" />
 				<file name="./src/ext4/sbi/adhocreporting/AdhocreportingContainer.js" />
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisBrowser.js" />
@@ -713,22 +727,24 @@
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisView.js" />
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisWizard.js" />
 				<file name="./src/ext4/sbi/adhocreporting/MyAnalysisMetadataWindow.js" />
-
-
+				
+				
 				<file name="./src/ext4/sbi/community/CommunityDetailPanel.js" />
 				<file name="./src/ext4/sbi/community/CommunityListDetailPanel.js" />
 				<file name="./src/ext4/sbi/community/CommunityModel.js" />
-
-
+				
+				
 				<file name="./src/ext4/sbi/tools/layer/LayerModel.js" />
 				<file name="./src/ext4/sbi/tools/layer/LayerListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/layer/LayerDetailPanel.js" />
+				
+				<file name="./src/ext4/sbi/execution/toolbar/MetadataWindow.js" />
 				
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerModel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerListDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/SchedulerDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/scheduler/TriggerInfoWindow.js" />
-
+				
 				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorSplittedPanel.js" />
 				<file name="./src/ext4/sbi/tools/hierarchieseditor/HierarchiesEditorContextMenu.js" />
 
