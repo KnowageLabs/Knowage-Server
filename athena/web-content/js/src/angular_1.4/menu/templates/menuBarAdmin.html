@@ -1,0 +1,34 @@
+<div>
+   <div class="sidebar-overlay" data-ng-click="toggleMenu()" data-ng-class="{'active' : openAside}"></div>
+   <aside id="sidebar" class="sidebar  sidebar-fixed-left sidebar-inverse" role="navigation" data-ng-class="{'open' : openAside}">
+      <div class="sidebar-header header-cover" >
+         <i class="sidebar-icon material-icons md-32">account_circle</i> {{userName}}
+      </div>
+      <!--ul class="nav sidebar-nav">
+         <li class="dropdown">
+            <ul id="settings-dropdown class=dropdown-menu">
+            	<li data-ng-repeat="fix in fixed"><a href="#" tabindex=-1 title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
+            </ul>
+         </li>
+         <li data-ng-repeat="link in links"> <a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> <i class="sidebar-icon material-icons md-32">{{link.iconCls}}</i>  {{link.tooltip}}</a> </li>
+      </ul-->
+      <ul class="nav sidebar-nav">
+         <li data-ng-repeat="fix in fixed"><a href="#" tabindex=-1 title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
+      </ul>
+               <div class="top-bar"><button type="button" class="sidebar-toggle" data-ng-click="toggleMenu()"> <i class="material-icons">chevron_left</i> </button></div>
+      
+   </aside>
+   <div id="contieniLinkAdmin" data-ng-class="{'open' : openAside}">
+      <div class="row">
+         <div class="col-xs-4 gruppoLinkAdmin" data-ng-repeat="group in groups">
+            <h4 data-ng-if="!group.href">{{group.title}}</h4>
+            <a data-ng-if="group.href" href="#" data-ng-click="menuCall(group.src,group.linkType)"><h4 >{{group.tooltip}}</h4></a>
+            <ul class="list-unstyled">
+               <li data-ng-repeat="item in group.items">
+                  <a href="#" data-ng-click="menuCall(item.src,item.linkType)">{{item.text}}</a>
+               </li>
+            </ul>
+         </div>
+      </div>
+   </div>
+</div>

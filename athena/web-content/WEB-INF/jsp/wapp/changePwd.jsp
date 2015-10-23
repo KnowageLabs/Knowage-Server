@@ -55,187 +55,90 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 		
 	}
 
-	//IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
+	IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 
 	String sbiMode = "WEB";
 	IUrlBuilder urlBuilder = null;
 	urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 %>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>SpagoBI</title>
-<style media="screen" type="text/css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Knowage</title>
+	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLinkByTheme(request, "img/favicon.ico",currTheme)%>" />
+    <!-- Bootstrap -->
+    <!-- Latest compiled and minified CSS -->
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
+	
 
-	input.login    {
-	display:block;
-	border: 1px solid #a9a9a9; 
-	color: #7b7575;
-	background: #d4d4d4; 
-	height: 25px;
-	width: 300px;
-	-webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-	-moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
-	}
-	body {
-background: #dedede; /* Old browsers */
-background: -moz-linear-gradient(top,  #dedede 0%, #efefef 100%); /* FF3.6+ */
-background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dedede), color-stop(100%,#efefef)); /* Chrome,Safari4+ */
-background: -webkit-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Chrome10+,Safari5.1+ */
-background: -o-linear-gradient(top,  #dedede 0%,#efefef 100%); /* Opera 11.10+ */
-background: -ms-linear-gradient(top,  #dedede 0%,#efefef 100%); /* IE10+ */
-background: linear-gradient(to bottom,  #dedede 0%,#efefef 100%); /* W3C */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dedede', endColorstr='#efefef',GradientType=0 ); /* IE6-9 */
-
-	}
-	td.login-label{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 10 px;
-	color: #7d7d7d;
-}
-
-a:link{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
-a:visited{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
-a:hover{
- 	font-family: Tahoma,Verdana,Geneva,Helvetica,sans-serif;
-	font-size: 9px;
-	color: #7d7d7d;
-}
-
- </style>
+	<!-- Optional theme -->
+	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"-->
+	<LINK rel='StyleSheet' 
+    href='<%=urlBuilder.getResourceLinkByTheme(request, "css/knowageHome/style.css",currTheme)%>' 
+    type='text/css' />
   </head>
 
 
 	
   <body>
-	
-  <LINK rel='StyleSheet' 
-      href='<%=urlBuilder.getResourceLinkByTheme(request, "css/spagobi_shared.css",currTheme)%>' 
-      type='text/css' />
+	<!-- NEW FORM -->
+    <div class="container">
+        <div class="card card-container">
+
+            <img id="profile-img" class="logoHeader" src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logoKnowage.png", currTheme)%>' />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin"  role="form" action="<%=contextName%>/ChangePwdServlet" method="POST">
+            	<input type="hidden" id="MESSAGE" name="MESSAGE" value="CHANGE_PWD" />
+				<input type="hidden" id="user_id" name="user_id" value="<%=userId%>" />
+				<input type="hidden" id="start_url" name="start_url" value="<%=startUrl%>" />
+				<label  >Change your password here</label>
+				<% if (("").equals(userId)) { %> 
+                <input id="username" name="username" type="text" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus>
+                <% } %>               
+                <input id="oldPassword" name="oldPassword" type="password" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("old_password")%>" required>
+                <input id="NewPassword" name="NewPassword" type="password" size="30"  class="form-control" placeholder="<%=msgBuilder.getMessage("new_password")%>" required>
+                <input id="NewPassword2" name="NewPassword2" type="password" size="30" class="form-control" placeholder="<%=msgBuilder.getMessage("retype_new_password")%>" required>
+ 				<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Change Password</button> 	
+ 				
+					<button data-toggle="tooltip" data-placement="bottom" title="Clear form" type="reset" class="btn btn-lg btn-primary btn-block btn-signup" >
+					<span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> Clear
+					</button>
+			
+             
+                
+		<div>
+
+		<div ><label><%=authFailed%></label></div>
+
+     	</form><!-- /form -->
+
+        </div><!-- /card-container -->
+       <spagobi:error/>
+        
+    </div><!-- /container -->
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+ <script src="${pageContext.request.contextPath}/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
+ <script src="${pageContext.request.contextPath}/js/lib/bootstrap/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function(){
+   // Select all elements with data-toggle="tooltips" in the document
+$('[data-toggle="tooltip"]').tooltip(); 
+
+// Select a specified element
+$('#myTooltip').tooltip();
+});
+</script>		
+	<!-- END NEW FORM -->
+
       
-	
-	<form action="<%=contextName%>/ChangePwdServlet" method="POST" >
-		<input type="hidden" id="MESSAGE" name="MESSAGE" value="CHANGE_PWD" />
-		<input type="hidden" id="user_id" name="user_id" value="<%=userId%>" />
-		<input type="hidden" id="start_url" name="start_url" value="<%=startUrl%>" />
-	    
 
-    <div id="content" style="width:100%;height:100%" >
-      			        	<div style="float:left;!important;width:570px;height:310px;margin-top:80px;margin-left:50px; " >
-
-      
-      		<table border=0>
-      			<tr>
-						<td></td>
-						<td><img src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/spagobi40logo.png", currTheme)%>' width='180px' height='51px'/></td>
-						<td></td>
-					</tr>
-      			<tr>
-      			<tr>
-      					<td></td>
-						<td class='login-label'>Change your password here.</td>
-						<td></td>
-      			</tr>
-      				<td class='header-title-column-portlet-section-nogrey' width = "100px">
-      				  
-      				</td>
-      				<td>
-  				    <br/> 
-  				    <table>		
-                  <% if (("").equals(userId)) { %>        				  
-        				     <tr class='header-row-portlet-section'>
-        				    		<td class='login-label' width="150px" align="left">
-        						      Username : 
-        							</td>
-        							<td width="25px">&nbsp;</td>
-
-        						</tr> 
-        					<tr class='header-row-portlet-section'>
-        						<td class='header-title-column-portlet-section-nogrey'>
-        						<input name="username" type="text" size="30" class="login" />
-        						</td>	
-        						<td></td>
-        					</tr>	
-      						<% } %>
-      						<tr class='header-row-portlet-section'>
-      				    	<td class='login-label' width="150px" align="left">
-      								Old Password:
-      							</td>
-      							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>
-
-      						</tr>
-      						<tr class='header-row-portlet-section'>
-      						    <td>
-      								<input name="oldPassword" type="password" size="30" class="login"/>
-      							</td>	
-      							<td>
-      							</td>
-      						</tr>
-      						<tr class='header-row-portlet-section'>
-      				    	<td class='login-label' width="150px" align="left">
-      								New Password:
-      							</td>
-      							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>
-      						</tr>
-      						<tr>
-      						   <td>
-      								<input name="NewPassword" type="password" size="30" class="login"/>
-      							</td>	
-      							<td>
-      							</td>
-      						</tr>
-      						<tr class='header-row-portlet-section'>
-      				    	<td class='login-label' width="150px" align="left">
-      								Retype New Password:
-      							</td>
-      							<td class='header-title-column-portlet-section-nogrey' width="30px">&nbsp;</td>
-	
-      						</tr>
-      						<tr>
-      						    <td>
-      								<input name="NewPassword2" type="password" size="30" class="login"/>
-      							</td>
-      							<td>
-      							</td>
-      						</tr>
-      					</table>	
-      				</td>
-      			</tr>
-      			<tr>
-      				<td class='header-title-column-portlet-section-nogrey'>&nbsp;</td>
-      				<td class='header-title-column-portlet-section-nogrey' style='color:red;font-size:11pt;'><br/><%=authFailed%></td>
-      			</tr>
-      			<tr><td>&nbsp;</td></tr>
-      			<tr>
-      			 <td class='header-title-column-portlet-section-nogrey'>&nbsp;</td>
-      			 <td align="left"> 					    		        					      
-     						<input type="image" border="0" width="100px" height="37px" title='Confirm'
-     							 src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/confirm_button.png", currTheme)%>" 
-     							alt='Confirm' />                  				
-      			
-    					&nbsp;
-    			        	 <a href='<%=startUrl%>'>
-             						<img border="0" width="100px" height="37px" title='Cancel'
-             							 src="<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/cancel_button.png", currTheme)%>" 
-             							alt='Cancel' />
-             				</a>
-      				</td>
-      			</tr>
-
-      		</table>
-      	</div>
-      </div>
-	</form>
-	<spagobi:error/>
 
 
   	

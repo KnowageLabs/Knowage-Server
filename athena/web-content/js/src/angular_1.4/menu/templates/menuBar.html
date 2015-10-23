@@ -1,0 +1,18 @@
+<div>
+   <div class="sidebar-overlay" data-ng-click="toggleMenu()" data-ng-class="{'active' : openAside}"></div>
+   <aside id="sidebar" class="sidebar  sidebar-fixed-left sidebar-inverse" role="navigation" data-ng-class="{'open' : openAside}">
+      <div class="sidebar-header header-cover" >
+         <a data-toggle="dropdown" class="sidebar-brand" role="link" href="#settings-dropdown" aria-expanded="false"><i aria-hidden="true" class="sidebar-icon material-icons md-32">account_circle</i> {{userName}} <b class="caret"></b> </a> 
+      </div>
+      <ul class="nav sidebar-nav">
+         <li class="dropdown">
+            <ul id=settings-dropdown class=dropdown-menu >
+            	<li data-ng-repeat="fix in fixed"><a href="#" title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
+            </ul>
+         </li>
+         <li data-ng-repeat="link in links"> <a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">{{link.iconCls}}</i>  {{link.tooltip}}</a> </li>
+      </ul>
+               <div class="top-bar"><button aria-label="Close Menu" type="button" class="sidebar-toggle" data-ng-click="toggleMenu()"> <i aria-hidden="true" class="material-icons">chevron_left</i> </button></div>
+      
+   </aside>
+</div>

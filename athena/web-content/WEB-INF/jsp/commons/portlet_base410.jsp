@@ -203,7 +203,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <html
 	lang="<%=locale != null ? locale.getLanguage() : GeneralUtilities.getDefaultLocale().getLanguage()%>">
 <head>
-<title>SpagoBI</title>
+<title>Knowage</title>
 <% if (forceIE8Compatibility == true){ %>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
@@ -239,6 +239,8 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 	document.domain='<%= GeneralUtilities.getSpagoBiDomain() %>';
 </script>
 <!-- END SCRIPT FOR DOMAIN DEFINITION --%>
+
+
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -393,6 +395,31 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 	<script>
 	document.onselectstart = function() { return true; }
 </script>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE Angular JS														--%>
+<%-- ---------------------------------------------------------------------- --%>
+	<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js'></script>
+	<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js'></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+	
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
+	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/sbi_default/css/menuBar/style.css" type="text/css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE JQuery															--%>
+<%-- ---------------------------------------------------------------------- --%>	
+<script src="${pageContext.request.contextPath}/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery-ui-1.11.4/jquery-ui.min.js" ></script>
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE Bootstrap														--%>
+<%-- ---------------------------------------------------------------------- --%>		
+
+<script src="${pageContext.request.contextPath}/js/lib/bootstrap/bootstrap.min.js"></script>
+
+
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>

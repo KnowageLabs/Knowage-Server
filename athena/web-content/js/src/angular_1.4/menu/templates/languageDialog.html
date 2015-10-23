@@ -1,0 +1,15 @@
+        	           <md-dialog aria-label="List dialog"> 
+        	             <md-dialog-content>
+          	           		<h2 class="md-title">Select Language</h2>
+        	               <md-list>
+        	                 <md-list-item ng-repeat="language in languages">
+        	                  <p> <a href="#" class="icoFlag {{language.iconCls}}" data-ng-click="menuCall(language.href,language.linkType)">{{language.text | uppercase: true}}</p> </a>
+
+        	             </md-list-item></md-list>
+        	           </md-dialog-content>
+        	           <div class="md-actions">
+							<md-button ng-click="closeDialog()" class="md-primary">
+								Close
+        	              </md-button>
+        	           </div>
+        	           </md-dialog>

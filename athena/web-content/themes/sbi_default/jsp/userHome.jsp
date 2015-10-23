@@ -7,6 +7,8 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@page language="java" 
 	contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
 %>
+
+<!-- %@ page trimDirectiveWhitespaces="true"% -->
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>
 
 <link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/sbi_default/css/home40/layout.css" type="text/css" />
@@ -27,10 +29,12 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <script>
 sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 
+var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
+firstUrlTocallvar = firstUrl;
+
 Ext.onReady(function () {
 	
-	var firstUrl =  '<%= StringEscapeUtils.escapeJavaScript(firstUrlToCall) %>';  
-	firstUrlTocallvar = firstUrl;
+
     Ext.tip.QuickTipManager.init();
     this.mainframe = Ext.create('Ext.ux.IFrame', 
     			{ xtype: 'uxiframe'
@@ -40,35 +44,8 @@ Ext.onReady(function () {
   	  			});
     Sbi.execution.ExporterUtils.setIFrame( this.mainframe );
     
-    this.titlePath = Ext.create("Ext.Panel",{title :'Home'});
-    var itemsM = <%=jsonMenuList%>;
-	for(i=0; i< itemsM.length; i++){
-		var menuItem = itemsM[i];
-		if(menuItem.itemLabel != null && menuItem.itemLabel == "LANG"){
-	 		var languagesMenuItems = [];
-	 		for (var j = 0; j < Sbi.config.supportedLocales.length ; j++) {
-	 			var aLocale = Sbi.config.supportedLocales[j];
-	 			aLocale.currTheme = '<%=currTheme%>';
- 				var aLanguagesMenuItem = new Ext.menu.Item({
-					id: '',
-					text: aLocale.language,
-					iconCls:'icon-' + aLocale.language,
-					href: this.getLanguageUrl(aLocale)
-				})
- 				languagesMenuItems.push(aLanguagesMenuItem);
-	 		}
-	 		menuItem.menu= languagesMenuItems;
-		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "ROLE"){
-			if(Sbi.user.roles && Sbi.user.roles.length == 1){
-				menuItem.hidden=true;
-			}
-		}else if(menuItem.itemLabel != null && menuItem.itemLabel == "HOME"){
-			menuItem.tooltip = '<p style="color: blue; ">'+LN('sbi.home.Welcome')+'<b>'+ 
-			'<p style="color: white; font-weight: bold;">'+Sbi.user.userName+'</p>'
-								+'<b></p>'
-		}
-		
-	}
+
+	
 	function hideItem( menu, e, eOpts){
        // console.log('bye bye ');
         menu.hide();
@@ -81,11 +58,11 @@ Ext.onReady(function () {
 	    	items: [
 				//this.titlePath	,		
 	    	    mainframe]
-	    	, dockedItems: [{
+	    	, dockedItems: [/*{
 		   	    xtype: 'toolbar',
 		   	    dock: 'left',
 		   	    items: itemsM
-	    	}]
+	    	}*/]
 	    });
 	<%}else{%>	
 		this.mainpanel =  Ext.create("Ext.panel.Panel",{
@@ -104,8 +81,30 @@ Ext.onReady(function () {
     });
     
     
+    
 });
 
-	
 </script>
+<!-- Include AngularJS application -->
+<script type="text/javascript" src="/athena/js/src/angular_1.4/menu/menuApp.js"></script>
+
+
+<div data-ng-controller="menuCtrl" ng-app="menuApp">
+<div id="divContainer" class="overlayButtonBar ">
+	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
+	<a href="#" aria-hidden="true" class="logoKnowage"><img src="<%=contextName %>/themes/sbi_default/css/menuBar/logo_knowage.png" width="120"/></a>
+</div>
+<menu-aside></menu-aside>
+
+</div>
+
+<script>
+$(document).ready(function() {
+     $(function() { $('#divContainer').draggable(); });
+});
+</script>
+
+
+
+
  
