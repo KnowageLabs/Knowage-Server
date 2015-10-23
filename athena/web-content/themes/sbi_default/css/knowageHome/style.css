@@ -12,6 +12,8 @@ body, html {
     /*background: linear-gradient( rgb(97, 148, 165),rgb(225, 229, 231));*/
     background-image: url("back.png");
     background-size: cover;
+    font-family: 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
+    
 }
 
 .card-container.card {
