@@ -113,7 +113,7 @@ Ext.define
 			 * Gives us information if the Designer is completely loaded (all necessary data are available). 
 			 * If it is, we can access its data (e.g. yAxisPool) and we will not have an error in the code.
 			 */
-	    	dataLoaded: false	    
+	    	dataLoaded: false
     	},
 	    
 	    getChartType: function() {
@@ -310,7 +310,7 @@ Ext.define
 									if (newlySelectedType.toLowerCase()!="pie" && newlySelectedType.toLowerCase()!="radar")
 									{
 										globalScope.actionColumnLeftAxis.items[0].iconCls = "x-hidden";
-									}	
+									}
 								} 
 								
 								else if(newlySelectedType.toLowerCase()=="radar" || newlySelectedType.toLowerCase()=="scatter")

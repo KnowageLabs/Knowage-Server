@@ -13,6 +13,7 @@ Ext.define('Sbi.chart.designer.Designer', {
         'Sbi.chart.designer.ChartStructure',
         'Sbi.chart.designer.ChartConfigurationModel',
         'Sbi.chart.designer.ChartConfiguration',
+        'Sbi.chart.designer.CrossNavigationPanel',
         'Sbi.chart.designer.AdvancedEditor',
     ],
 
@@ -122,7 +123,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		},
 				
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit, thisContextName, mainContextName, exporterContextName) {
-
+			
 			Sbi.chart.designer.ChartUtils.setCockpitEngine(isCockpit);	
 			
 			/**
@@ -188,16 +189,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * these two types - the base one and the current one. 			 
 			 * (danristo :: danilo.ristovski@mht.net) 
 			 */
-			if (jsonTemplate.CHART.type.toUpperCase() == 'PIE' 
-				|| jsonTemplate.CHART.type.toUpperCase() == 'SUNBURST'
-					|| jsonTemplate.CHART.type.toUpperCase() == 'WORDCLOUD'
-						|| jsonTemplate.CHART.type.toUpperCase() == 'TREEMAP'
-							|| jsonTemplate.CHART.type.toUpperCase() == 'PARALLEL'
-								|| jsonTemplate.CHART.type.toUpperCase() == 'RADAR'
-									|| jsonTemplate.CHART.type.toUpperCase() == 'SCATTER'
-										|| jsonTemplate.CHART.type.toUpperCase() == 'HEATMAP'
-											|| jsonTemplate.CHART.type.toUpperCase() == 'CHORD'
-												|| jsonTemplate.CHART.type.toUpperCase() == 'GAUGE') {
+			var chartTypeUpperCase = jsonTemplate.CHART.type.toUpperCase();
+			
+			if (chartTypeUpperCase == 'PIE' 
+				|| chartTypeUpperCase == 'SUNBURST'
+					|| chartTypeUpperCase == 'WORDCLOUD'
+						|| chartTypeUpperCase == 'TREEMAP'
+							|| chartTypeUpperCase == 'PARALLEL'
+								|| chartTypeUpperCase == 'RADAR'
+									|| chartTypeUpperCase == 'SCATTER'
+										|| chartTypeUpperCase == 'HEATMAP'
+											|| chartTypeUpperCase == 'CHORD'
+												|| chartTypeUpperCase == 'GAUGE') {
 								
 				/**
 				 * If there is just one axis (Y-axis and no X-axis), like in the GAUGE chart and 
@@ -224,11 +227,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */			
 			var applyAxes = true;
 			var applySeries = true;
-			   var configApplyAxes = {
-			     applyAxes: applyAxes,
-			     applySeries: applySeries,
-			     };
-			   
+			var configApplyAxes = {
+				applyAxes: applyAxes,
+				applySeries: applySeries,
+			};
+
 			/**
 			 * We will not provide default style, rather than user specifies the
 			 * one he want to use (specify) for the chart (document).
@@ -250,7 +253,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * the grid panel for the plotbands populated with existing plots (intervals).
 			 * (danristo :: danilo.ristovski@mht.net) 
 			 */
-			if (jsonTemplate.CHART.type.toUpperCase() == "GAUGE") {
+			if (chartTypeUpperCase == "GAUGE") {
 				Sbi.chart.designer.ChartColumnsContainerManager.setPlotbandsStore(jsonTemplate);
 			}				
 			
@@ -294,9 +297,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var onSelectJsonTemplate = "";					
 			
 			this.chartTypeSelector.on("chartTypeChanged", function() {
-				
-				Sbi.chart.designer.Designer.chartTypeChanged = true;});
-			
+				Sbi.chart.designer.Designer.chartTypeChanged = true;
+			});
 			/**
 			 * Listener for the 'rowclick' event that happens when we change the chart type
 			 * on the left part of the Designer page (from the chart type picker). 
@@ -708,50 +710,53 @@ Ext.define('Sbi.chart.designer.Designer', {
   				]
   			});
 			
-			var allStyleNames= function ()
-			{
-			    var allStyles=[];
-			    var styles=JSON.parse(Sbi.chart.designer.Styles);			    
-				   
-			   /**
-			    * For the problem of inability of loading all styles available on
-			    * the server inside of the Cockpit engine we will introduce this
-			    * checking of all styles available. Since we get value of NULL
-			    * when the Designer is rendered from the Cockpit engine, we will
-			    * provide a fake styles array of zero length, just in order to 
-			    * skip the error that appears when trying to get the 'length' of
-			    * object which value is NULL. Outcome: Designer page can be loaded
-			    * from the Cockpit engine, but with the empty chart styles combo.
-			    * 
-			    * @author: danristo (danilo.ristovski@mht.net)
-			    */
-			   if (!(styles && styles!=null && styles.length>0))
-			   {
-				   styles = [];
-			   }
-			    
-			    for(i=0; i< styles.length;i++){
-			     style={
-			      styleAbbr:styles[i].STYLE.name, 
-			      style:styles[i].STYLE.name
-			     };
-			     allStyles.push(style);
-			    }
-			    
-			    return allStyles;
-		   };
-			   
-		   var allStyles=allStyleNames();
-			   var styleStore = Ext.create ( "Ext.data.Store", {
-			    fields: ["styleAbbr", "style"],
-			    
-			    data: allStyles
-			     /*[
-			      {style: LN('sbi.chartengine.designer.stylecolor.red'), styleAbbr: "red"},
-			      {style: LN('sbi.chartengine.designer.stylecolor.blue'), styleAbbr: "blue"},
-			      //{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"}
-			       ]*/
-			   });
+			var allStyleNames = function() {
+				var allStyles=[];
+				var styles=JSON.parse(Sbi.chart.designer.Styles);			    
+
+				/**
+				 * For the problem of inability of loading all styles available on
+				 * the server inside of the Cockpit engine we will introduce this
+				 * checking of all styles available. Since we get value of NULL
+				 * when the Designer is rendered from the Cockpit engine, we will
+				 * provide a fake styles array of zero length, just in order to 
+				 * skip the error that appears when trying to get the 'length' of
+				 * object which value is NULL. Outcome: Designer page can be loaded
+				 * from the Cockpit engine, but with the empty chart styles combo.
+				 * 
+				 * @author: danristo (danilo.ristovski@mht.net)
+				 */
+				if (!(styles && styles!=null && styles.length>0)) {
+					styles = [];
+				}
+
+				for(i=0; i < styles.length; i++) {
+					style = {
+						styleAbbr: styles[i].STYLE.name, 
+						style: styles[i].STYLE.name
+					};
+					allStyles.push(style);
+				}
+
+				return allStyles;
+			};
+			
+			var allStyles = allStyleNames();
+			var styleStore = Ext.create("Ext.data.Store", {
+				fields : [ "styleAbbr", "style" ],
+
+				data : allStyles
+				/*
+				 * [{
+				 * 	style: LN('sbi.chartengine.designer.stylecolor.red'),
+				 * 	styleAbbr : "red"
+				 * }, {
+				 * 	style: LN('sbi.chartengine.designer.stylecolor.blue'),
+				 * 	styleAbbr: "blue"
+				 * }, //{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"} 
+				 * ]
+				 */
+			});
 			
 			/**
 			 * Static store for styles for the generic parameters of the document (chart)
@@ -785,7 +790,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * of the chart.
 			 * (danilo.ristovski@mht.net)
 			 * (lazar.kostic@mht.net)
-			 */			
+			 */
 			this.stylePickerCombo = Ext.create ( "Ext.form.ComboBox", {
 //				fieldLabel: 'Choose style',
 			    store: styleStore,
@@ -1247,7 +1252,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			  	      				}
 			  	      			}
 	  	  					}
-  						},
+  						}
   					}
   				},
   				
@@ -1399,11 +1404,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				if (typeOfChart != "CHORD" && typeOfChart != "PARALLEL")
 				{
 					Ext.getCmp("chartBottomCategoriesContainer").tools[1].hidden = true;	
-				}				
+				}
 			}
-		
+			
 			this.chartStructure = Ext.create('Sbi.chart.designer.ChartStructure', {
-  				title: LN('sbi.chartengine.designer.step1'),
+  				title: LN('sbi.chartengine.designer.stepChartStructure'),
   				leftYAxisesPanel: this.leftYAxisesPanel,
   				previewPanel: this.previewPanel,
   				rightYAxisesPanel: this.rightYAxisesPanel,
@@ -1423,10 +1428,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				this.bottomXAxisesPanel.show();
 			}
 			
-			// Creating step 2 panel
+			// Creating Configuration step panel
 			this.cModel = 
 				Sbi.chart.designer.ChartUtils.createChartConfigurationModelFromJson(jsonTemplate);
-								
+					
 			this.cViewModel = Ext.create('Ext.app.ViewModel',{
   				data: {
   					configModel: this.cModel
@@ -1434,14 +1439,27 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 						
 			this.chartConfiguration = Ext.create('Sbi.chart.designer.ChartConfiguration', {
-  				title: LN('sbi.chartengine.designer.step2'),
+  				title: LN('sbi.chartengine.designer.stepChartConfiguration'),
   				viewModel: this.cViewModel
   			});
 			
-			// Creating step 3 panel
+			// Creating Cross navigation step panel
+			this.crossNavigationPanel = Ext.create('Sbi.chart.designer.CrossNavigationPanel', {
+				id: 'crossNavigation',
+				
+				contextName: thisContextName,
+				mainContextName: mainContextName,
+				userId: userId, 
+				hostName: hostName,
+				sbiExecutionId: sbiExecutionId,
+			       
+				title: LN('sbi.chartengine.designer.stepCrossNavigation'),
+			});
+						
+			// Creating Advanced Editor step
 			this.advancedEditor = Ext.create('Sbi.chart.designer.AdvancedEditor', {
   				id: 'advancedEditor',
-  				title: LN('sbi.chartengine.designer.step3')
+  				title: LN('sbi.chartengine.designer.stepAdvancedEditor')
   			});
 			
 			// tabs integration
@@ -1453,7 +1471,9 @@ Ext.define('Sbi.chart.designer.Designer', {
   				region: 'center',
 				title: {hidden: true },
 				previousTabId: '',
-  				tools:[{ xtype: 'tbfill' }, {
+  				tools:[{
+  					xtype: 'tbfill' 
+  				}, {
   		            xtype: 'image',
   		            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/save.png',
   		            cls: 'tool-icon',
@@ -1629,6 +1649,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				items: [
   					this.chartStructure,
   					this.chartConfiguration,
+  					this.crossNavigationPanel,
   					this.advancedEditor,
   				]
   			});
@@ -1659,6 +1680,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			Ext.on('resize', function(w, h){
 				this.chartStructure.updateLayout();
 				this.chartConfiguration.updateLayout();
+				this.crossNavigationPanel.updateLayout();
 				this.advancedEditor.updateLayout();
 				this.designerMainPanel.updateLayout();
 			}, this);
@@ -1673,7 +1695,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			/* END LOADING CATEGORIES <<<<<<<<<<<<<<<<<<<< */
   			
-  			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
+			/* START LOADING CROSS NAVIGATION DATA>>>>>>>>>>>>>>>>>>>> */
+			this.crossNavigationPanel.setCrossNavigationData(jsonTemplate.CHART.DRILL);
+			/* END LOADING CROSS NAVIGATION DATA <<<<<<<<<<<<<<<<<<<< */
+
+			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
 		},
 		
 		loadCategories: function(jsonTemplate) {
@@ -2018,8 +2044,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 		exportAsJson: function(finalJson) {
 			finalJson = finalJson || false;
 			
-			// resulted json from 1st and 2nd designer steps (without properties catalogue)
-			var exported1st2ndSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
+			// resulted json from 1st, 2nd and 3rd designer steps (without properties catalogue)
+			var exportedDesignerSteps = Sbi.chart.designer.ChartUtils.exportAsJson(this.cModel);
 						
 			// default properties catalogue by used chart library, depending on selected chart type 
     		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -2042,7 +2068,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var removeNotFoundItemsFlag = true;
 			var overwrittenJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 					appliedPropertiesOnOldJson, 
-					exported1st2ndSteps, 
+					exportedDesignerSteps, 
 					{
 						removeNotFoundItemsFlag: removeNotFoundItemsFlag
 					}
@@ -2058,19 +2084,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 						})
 				: Sbi.chart.designer.ChartUtils.mergeObjects(
 						catalogue, 
-						exported1st2ndSteps, 
+						exportedDesignerSteps, 
 						{
 							removeNotFoundItemsFlag: removeNotFoundItemsFlag
 						}
 					);
-				
+			
 			if(finalJson == true) {
 				return Sbi.chart.designer.Designer.removeIdAttribute(newJsonTemplate);
 			} else {
 				return newJsonTemplate;
 			}
-			
 		},
+		
 		removeIdAttribute: function(templateJson) {
 			
 			if(templateJson.CHART){

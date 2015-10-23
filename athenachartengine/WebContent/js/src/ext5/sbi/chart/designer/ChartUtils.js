@@ -306,6 +306,12 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (Object.keys(VALUES).length !== 0) {
 				CHART['VALUES'] = VALUES;
 			}
+			
+			// Exporting Cross navigation data
+			var crossNavigationData = Sbi.chart.designer.Designer.crossNavigationPanel.getCrossNavigationData();
+			if(crossNavigationData) {
+				CHART['DRILL'] = crossNavigationData;
+			}
 
 			result['CHART'] = CHART;
 
