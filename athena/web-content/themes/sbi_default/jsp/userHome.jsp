@@ -86,7 +86,7 @@ Ext.onReady(function () {
 
 </script>
 <!-- Include AngularJS application -->
-<script type="text/javascript" src="/athena/js/src/angular_1.4/menu/menuApp.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuApp.js"></script>
 
 
 <div data-ng-controller="menuCtrl" ng-app="menuApp">
