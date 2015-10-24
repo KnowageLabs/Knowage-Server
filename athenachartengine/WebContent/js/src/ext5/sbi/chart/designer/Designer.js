@@ -2830,14 +2830,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(parallelLegendTitleFontSizeCModel=="" || parallelLegendTitleFontSizeCModel==null || parallelLegendTitleFontSizeCModel==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(parallelLegendTitleFontStyleCModel=="" || parallelLegendTitleFontStyleCModel==null || parallelLegendTitleFontStyleCModel==undefined) ?
-						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+//				(parallelLegendTitleFontStyleCModel=="" || parallelLegendTitleFontStyleCModel==null || parallelLegendTitleFontStyleCModel==undefined) ?
+//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(parallelLegendElementFontFamilyCModel=="" || parallelLegendElementFontFamilyCModel==null || parallelLegendElementFontFamilyCModel==undefined) ?
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(parallelLegendElementFontSizeCModel=="" || parallelLegendElementFontSizeCModel==null || parallelLegendElementFontSizeCModel==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(parallelLegendElementFontStyleCModel=="" || parallelLegendElementFontStyleCModel==null || parallelLegendElementFontStyleCModel==undefined) ?
-						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
+//				(parallelLegendElementFontStyleCModel=="" || parallelLegendElementFontStyleCModel==null || parallelLegendElementFontStyleCModel==undefined) ?
+//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				
 				/**
 				 * STEP 2 -> Palette panel
@@ -2974,16 +2974,16 @@ Ext.define('Sbi.chart.designer.Designer', {
 						errorMsg += "- " + "<b>Percentage color</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(chartViewModelData.toolbarFontFamily=="" || chartViewModelData.toolbarFontFamily==null || chartViewModelData.toolbarFontFamily==undefined) ?
 						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-				(chartViewModelData.toolbarFontWeight=="" || chartViewModelData.toolbarFontWeight==null || chartViewModelData.toolbarFontWeight==undefined) ?
-						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+//				(chartViewModelData.toolbarFontWeight=="" || chartViewModelData.toolbarFontWeight==null || chartViewModelData.toolbarFontWeight==undefined) ?
+//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(chartViewModelData.toolbarFontSize=="" || chartViewModelData.toolbarFontSize==null || chartViewModelData.toolbarFontSize==undefined) ?
 						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				
 				/**
 				 * STEP 2 -> Toolbar and tip configuration (Tip style button)
 				 */					
-				(sunburstTipFontWeightCModel=="" || sunburstTipFontWeightCModel==null || sunburstTipFontWeightCModel==undefined) ?
-						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+//				(sunburstTipFontWeightCModel=="" || sunburstTipFontWeightCModel==null || sunburstTipFontWeightCModel==undefined) ?
+//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(sunburstTipColorCModel=="" || sunburstTipColorCModel==null || sunburstTipColorCModel==undefined) ?
 						errorMsg += "- " + "<b>Font color</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
 				(sunburstTipFontSizeCModel=="" || sunburstTipFontSizeCModel==null || sunburstTipFontSizeCModel==undefined) ?

@@ -1664,20 +1664,20 @@ function renderWordCloud(chartConf){
 		var heightTotal = h + m[0] + m[2];
 		
 		var svg = d3.select("#chart")
-		.append("div")
-		.style("float","left")
-		.style("width",data.chart.width-legendWidth)
-		// "...-180" for table height plus pagination height (150+30)
-		// "...-20" for bottom padding of the pagination  
-		.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
-		.append("svg:svg")
-		.style("font-size",18)
-		.style("width", data.chart.width-legendWidth)
-		// "...-180" for table height plus pagination height (150+30)
-		// "...-20" for bottom padding of the pagination  
-		.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
-		.append("svg:g")
-		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+			.append("div")
+			.style("float","left")
+			.style("width",data.chart.width-legendWidth)
+			// "...-180" for table height plus pagination height (150+30)
+			// "...-20" for bottom padding of the pagination  
+			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
+			.append("svg:svg")
+			.style("font-size",18)
+			.style("width", data.chart.width-legendWidth)
+			// "...-180" for table height plus pagination height (150+30)
+			// "...-20" for bottom padding of the pagination  
+			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
+			.append("svg:g")
+			.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 		columns.forEach(function(d){
 			records.forEach(function(p) {p[d] = +p[d]; });
@@ -1719,7 +1719,8 @@ function renderWordCloud(chartConf){
 		legend.append("svg:g")
 		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
 		.style("height",30)
-		.append("svg:text").style("font-family",data.legend.title.style.fontFamily)
+		.append("svg:text")
+		.style("font-family",data.legend.title.style.fontFamily)
 		.style("font-size",data.legend.title.style.fontSize)
 		.style("font-style",data.legend.title.style.fontStyle)
 		.style("font-weight",data.legend.title.style.fontWeight)
@@ -1854,6 +1855,19 @@ function renderWordCloud(chartConf){
 		.enter().append("svg:g")
 		.attr("class", "column")
 		.style({"font-family":data.chart.font})
+		
+		/**
+		 * Added so to follow the main font style of the chart: e.g. if the font style
+		 * of the chart (main font style) is 'underline', then all elements on the 
+		 * PARALLEL chart should have this style (undeline) as the base.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		.style("font-size",data.chart.style.fontSize)
+		.style("font-style",data.chart.style.fontStyle)
+		.style("font-weight",data.chart.style.fontWeight)
+		.style("text-decoration",data.chart.style.textDecoration)
+		
 		.attr("transform", function(d) {return "translate(" + x(d) + ")"; })
 		.call(d3.behavior.drag()
 				.origin(function(d) { return {x: x(d)}; })
@@ -1921,12 +1935,32 @@ function renderWordCloud(chartConf){
 		lastDisplayed=allTableData.length;
 	}
 
-	var tableDiv=d3.select("#chart").append("div").attr("id","tableDiv").style("width",data.chart.width-legendWidth).style("padding-bottom",10).style("padding-top",20);
-	var table= tableDiv.append("table").style("width",data.chart.width-legendWidth).style("padding-left",m[3]);
-	var paginationBar=tableDiv.append("div").attr("id","pBar").style("padding-left",w/2+m[3]/2-150).style("padding-top",10);
-	var prevButton=paginationBar.append("button").text("<< Prev").on("click",function(){return showPrev();});
-	var paginationText= paginationBar.append("label").text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length + " ").style("font-weight","bold").style("font-size", "8px");
-	var nextButton=paginationBar.append("button").text("Next >>").on("click",function(){return showNext();});
+	var tableDiv = d3.select("#chart")
+						.append("div").attr("id","tableDiv")
+						.style("width",data.chart.width-legendWidth)
+						.style("padding-bottom",10)
+						.style("padding-top",20);
+	
+	var table = tableDiv.append("table")
+					.style("width",data.chart.width-legendWidth)
+					.style("padding-left",m[3]);
+	
+	var paginationBar = tableDiv.append("div").attr("id","pBar")
+							.style("padding-left",w/2+m[3]/2-150)
+							.style("padding-top",10);
+	
+	var prevButton = paginationBar.append("button")
+						.text("<< Prev")
+						.on("click", function(){ return showPrev(); });
+	
+	var paginationText = paginationBar.append("label")
+							.text(" " + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + " ")
+							.style("font-weight", "bold")	// fixed BOLD for better transparency
+							.style("font-size", "14px");
+	
+	var nextButton = paginationBar.append("button")
+						.text("Next >>")
+						.on("click", function(){ return showNext(); });
 	
 	if(firstDisplayed===1){
 		prevButton.attr("disabled","true");	

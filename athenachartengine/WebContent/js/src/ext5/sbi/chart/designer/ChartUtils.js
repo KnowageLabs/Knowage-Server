@@ -114,8 +114,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				var titlegridStyleAsMap = ChartUtils
 					.jsonizeStyle(axis.TITLE.style);
 				
-//				console.log(titlegridStyleAsMap);
-				
 				if (titlegridStyleAsMap.font)
 				{
 					result['titleStyleFont'] = titlegridStyleAsMap.font
@@ -2003,7 +2001,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var nivel = (level != undefined && typeof level === 'number') ? level
 			 : 0;
 			var treeData = [];
-			console.log(data);
+			
 			var keys = Object.keys(data);
 
 			for (index in keys) {

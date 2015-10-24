@@ -57,8 +57,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	
 	//**********************//
 	
-	
-	
 	constructor: function(config) {
 		
         this.callParent(config);
@@ -66,21 +64,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
        
         var globalThis = this;
         
-        // danilo
-        var chartOrientationInitial = null;
-        
         this.height = {
     		xtype : 'numberfield',
     		bind : '{configModel.height}',
-    		fieldLabel : LN('sbi.chartengine.configuration.height'),
-//    		listeners:
-//			{
-//    			change: function(a, b, c)
-//    			{
-//    				if (c != null)
-//    					Ext.getCmp("idchartss").fireEvent("ppp", "height");
-//    			}
-//			}
+    		fieldLabel : LN('sbi.chartengine.configuration.height')
     	};
         
         this.width = {
@@ -88,32 +75,13 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
     		id: "chartWidthNumberfield",
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
-    		hidden: ChartUtils.disableChartWidth(),
-//    		listeners:
-//			{
-//    			change: function(a, b, c)
-//    			{
-//    				if (c != null)
-//    					Ext.getCmp("idchartss").fireEvent("ppp", "width");
-//    			}
-//			}
+    		hidden: ChartUtils.disableChartWidth()
     	};
         
         this.chartOrientation = Ext.create('Sbi.chart.designer.ChartOrientationCombo',{
     		id: 'chartOrientationCombo',
     		bind : '{configModel.orientation}',
-    		hidden: ChartUtils.disableChartOrientation(),
-//    		listeners:
-//			{
-//    			change: function(a, b)
-//    			{
-//    				if (chartOrientationInitial != null)
-//    					Ext.getCmp("idchartss").fireEvent("ppp", "chartOrientation");
-//    				
-//    				chartOrientationInitial = b;
-////    				globalThis.ownerCt.ownerCt.ownerCt.fireEvent("aaa", "");
-//    			}
-//			}
+    		hidden: ChartUtils.disableChartOrientation()
     	});
         
         var font = this.font;
@@ -196,15 +164,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			items : [ {
 	            xtype : 'textfield',
 	            bind : '{configModel.title}',
-	            fieldLabel : LN('sbi.chartengine.configuration.title'),
-//	            listeners:
-//            	{
-//	            	change: function(a,b,c)
-//	            	{
-//	            		console.log(b);
-//	            		Ext.getCmp("idchartss").fireEvent("ppp", "titleText");
-//	            	}
-//            	}
+	            fieldLabel : LN('sbi.chartengine.configuration.title')
 	        },{
 				xtype : 'button',
 	            text: 'St',
@@ -222,15 +182,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            xtype : 'textfield',
 	            bind : '{configModel.subtitle}',
 	            fieldLabel : LN('sbi.chartengine.configuration.subtitle'),
-	            maxWidth:'500',
-//	            listeners:
-//            	{
-//	            	change: function(a,b,c)
-//	            	{
-//	            		console.log(b);
-//	            		Ext.getCmp("idchartss").fireEvent("ppp", "subtitleText");
-//	            	}
-//            	}
+	            maxWidth:'500'
 	        }, {
 	            xtype : 'button',
 	            text: 'St',
@@ -246,15 +198,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            xtype : 'textfield',
 	            bind : '{configModel.nodata}',
 	            fieldLabel : LN('sbi.chartengine.configuration.nodata') ,
-	            labelWidth : '100%',
-//	            listeners:
-//            	{
-//	            	change: function(a,b,c)
-//	            	{
-//	            		console.log(b);
-//	            		Ext.getCmp("idchartss").fireEvent("ppp", "nodataEmptyMsg");
-//	            	}
-//            	}
+	            labelWidth : '100%'
 	        },{
 	            xtype : 'button',
 	            text: 'St',
@@ -303,7 +247,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			xtype: 'checkboxfield',
 			id: 'showLegend',
 			bind : '{configModel.showLegend}',
-			hidden: ChartUtils.disableShowLegendCheck(),	// (danilo.ristovski@mht.net)
+			hidden: ChartUtils.disableShowLegendCheck(),	// danristo (danilo.ristovski@mht.net)
 			margin: '20 0 0 0',
 			labelSeparator: '',
 			fieldLabel: LN('sbi.chartengine.configuration.showlegend'),
