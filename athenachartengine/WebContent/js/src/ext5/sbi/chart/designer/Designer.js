@@ -313,8 +313,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					/**
 					 * Get the main configuration panel (the one on the top of the Step 2 tab of the Designer page)
 					 * and the second configuration panel (everything under the main panel).
-					 */
-					
+					 */					
 					var mainConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(0);
 					var secondConfigurationPanel = globalThis.stepsTabPanel.getComponent(1).getComponent(1);					
 					
@@ -790,7 +789,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * of the chart.
 			 * (danilo.ristovski@mht.net)
 			 * (lazar.kostic@mht.net)
-			 */
+			 */			
 			this.stylePickerCombo = Ext.create ( "Ext.form.ComboBox", {
 //				fieldLabel: 'Choose style',
 			    store: styleStore,
@@ -806,8 +805,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    listConfig: {
 			    	listeners: {
 				    	itemclick: function(combo,k) {
-				    		
-				    		//console.log(jsonTemplate);
 				    		
 				    		//console.log("==========================");
 				    		//console.log("== STYLE COMBO (start) ===");
@@ -930,12 +927,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							//console.log(jsonTemplate);
 							
+							
+							
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
 							 */
 				    		Sbi.chart.designer.Designer.update(jsonTemplate);
-				    		
+			    		
 				    		//console.log("==========================");
 				    		//console.log("== STYLE COMBO (end) ===");
 				    		//console.log("==========================");

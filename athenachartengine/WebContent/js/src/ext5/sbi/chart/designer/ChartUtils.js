@@ -255,15 +255,21 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					.get('brushWidth')
 					 : '') + ';';
 
+				/**
+				 * Checking if the specified value for is 'transparent' is important since we must not 
+				 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+				 * 
+				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+				 */
 				axesList += 'axisColor:'
 				 + ((chartModel.get('axisColor') != undefined && chartModel
-						.get('axisColor') != '') ? '#'
+						.get('axisColor') != '' && chartModel.get('axisColor') != 'transparent') ? '#'
 					 + chartModel.get('axisColor')
 					 : '') + ';';
 
 				axesList += 'brushColor:'
 				 + ((chartModel.get('brushColor') != undefined && chartModel
-						.get('brushColor') != '') ? '#'
+						.get('brushColor') != '' && chartModel.get('brushColor') != 'transparent') ? '#'
 					 + chartModel.get('brushColor')
 					 : '') + ';';
 
@@ -921,12 +927,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 + ((chartModel.get('fontWeight') != undefined) ? chartModel
 				.get('fontWeight')
 				 : '') + ';';
+			
+			/**
+			 * Checking if the specified value for the background color of the chart is 'transparent'
+			 * is important since we must not concatenate the hashtag sign (#) to the defined color
+			 * value (in that case: '#transparent'). The 'transparent' value is useful when user wants
+			 * to take predefined background value characteristic for the chart type used, i.e. for
+			 * the library that this chart type uses.
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
 			chartStyle += 'backgroundColor:'
 			 + ((chartModel.get('backgroundColor') != undefined && chartModel
-					.get('backgroundColor') != '') ? '#'
+					.get('backgroundColor') != '' && chartModel.get('backgroundColor')!="transparent") ? '#'
 				 + chartModel.get('backgroundColor')
 				 : '') + ';';
-
+			
 			CHART['style'] = chartStyle;
 
 			var COLORPALETTE = {};
@@ -973,11 +989,19 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 + ((chartModel.get('nodataAlign') != undefined) ? chartModel
 				.get('nodataAlign')
 				 : '') + ';';
+			
+			/**
+			 * Checking if the specified value for is 'transparent' is important since we must not 
+			 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
 			emptymessageStyle += 'color:'
 			 + ((chartModel.get('nodataColor') != undefined && chartModel
-					.get('nodataColor') != '') ? '#'
+					.get('nodataColor') != '' && chartModel.get('nodataColor') != 'transparent') ? '#'
 				 + chartModel.get('nodataColor')
 				 : '') + ';';
+			
 			emptymessageStyle += 'fontFamily:'
 			 + ((chartModel.get('font') != undefined) ? chartModel
 				.get('font')
@@ -1004,9 +1028,16 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 + ((chartModel.get('titleAlign') != undefined) ? chartModel
 				.get('titleAlign')
 				 : '') + ';';
+			
+			/**
+			 * Checking if the specified value for is 'transparent' is important since we must not 
+			 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+			 * 
+			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 */
 			titleStyle += 'color:'
 			 + ((chartModel.get('titleColor') != undefined && chartModel
-					.get('titleColor') != '') ? '#'
+					.get('titleColor') != ''&& chartModel.get('titleColor') != 'transparent') ? '#'
 				 + chartModel.get('titleColor') : '')
 			 + ';';
 			titleStyle += 'fontFamily:'
@@ -1036,11 +1067,19 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 + ((chartModel.get('subtitleAlign') != undefined) ? chartModel
 				.get('subtitleAlign')
 				 : '') + ';';
+			
+			 /**
+			  * Checking if the specified value for is 'transparent' is important since we must not 
+			  * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+			  * 
+			  * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			  */
 			subtitleStyle += 'color:'
 			 + ((chartModel.get('subtitleColor') != undefined && chartModel
-					.get('subtitleColor') != '') ? '#'
+					.get('subtitleColor') != '' && chartModel.get('subtitleColor') != 'transparent') ? '#'
 				 + chartModel.get('subtitleColor')
 				 : '') + ';';
+			
 			subtitleStyle += 'fontFamily:'
 			 + ((chartModel.get('subtitleFont') != undefined) ? chartModel
 				.get('subtitleFont')
@@ -1168,14 +1207,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 + ((chartModel.get('legendBorderWidth') != undefined) ? chartModel
 					.get('legendBorderWidth')
 					 : '') + ';';
+				
+				/**
+				 * Checking if the specified value for is 'transparent' is important since we must not 
+				 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+				 * 
+				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+				 */
 				legendStyle += 'color:'
 				 + ((chartModel.get('legendColor') != undefined && chartModel
-						.get('legendColor') != '') ? '#'
+						.get('legendColor') != '' && chartModel.get('legendColor') != 'transparent') ? '#'
 					 + chartModel.get('legendColor')
 					 : '') + ';';
+				
 				legendStyle += 'backgroundColor:'
 				 + ((chartModel.get('legendBackgroundColor') != undefined && chartModel
-						.get('legendBackgroundColor') != '') ? '#'
+						.get('legendBackgroundColor') != '' && chartModel.get('legendBackgroundColor') != 'transparent') ? '#'
 					 + chartModel
 					.get('legendBackgroundColor')
 					 : '') + ';';
@@ -1215,13 +1262,20 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					.get('toolbarTail')
 					 : '') + ';';
 
+				/**
+				 * Checking if the specified value for is 'transparent' is important since we must not 
+				 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+				 * 
+				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+				 */
 				toolbarStyle += 'percFontColor:'
 				 + ((chartModel
 						.get('toolbarPercFontColor') != undefined && chartModel
-						.get('toolbarPercFontColor') != '') ? '#'
+						.get('toolbarPercFontColor') != '' && chartModel.get('toolbarPercFontColor') != 'transparent') ? '#'
 					 + chartModel
 					.get('toolbarPercFontColor')
 					 : '') + ';';
+				
 				toolbarStyle += 'fontFamily:'
 				 + ((chartModel.get('toolbarFontFamily')) ? chartModel
 					.get('toolbarFontFamily')
@@ -1253,11 +1307,19 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 + ((chartModel.get('tipFontSize')) ? chartModel
 					.get('tipFontSize')
 					 : '') + ';';
+				
+				/**
+				 * Checking if the specified value for is 'transparent' is important since we must not 
+				 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+				 * 
+				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+				 */
 				tipStyle += 'color:'
 				 + ((chartModel.get('tipColor') != undefined && chartModel
-						.get('tipColor') != '') ? '#'
+						.get('tipColor') != '' && chartModel.get('tipColor') != 'transparent') ? '#'
 					 + chartModel.get('tipColor')
 					 : '') + ';';
+				
 				tipStyle += 'align:'
 				 + ((chartModel.get('tipAlign')) ? chartModel
 					.get('tipAlign')
@@ -1309,11 +1371,19 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				 + ((chartModel.get('tipFontSize')) ? chartModel
 					.get('tipFontSize')
 					 : '') + ';';
+				
+				/**
+				 * Checking if the specified value for is 'transparent' is important since we must not 
+				 * concatenate the hash tag sign (#) to the defined color value (in that case: '#transparent').
+				 * 
+				 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+				 */
 				tipStyle += 'color:'
 				 + ((chartModel.get('tipColor') != undefined && chartModel
-						.get('tipColor') != '') ? '#'
+						.get('tipColor') != '' && chartModel.get('tipColor') != 'transparent') ? '#'
 					 + chartModel.get('tipColor')
 					 : '') + ';';
+				
 				tipStyle += 'align:'
 				 + ((chartModel.get('tipAlign')) ? chartModel
 					.get('tipAlign')

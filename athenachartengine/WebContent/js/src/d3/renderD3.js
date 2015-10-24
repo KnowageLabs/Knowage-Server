@@ -2289,8 +2289,6 @@ function renderWordCloud(chartConf){
  */
 function renderChordChart(jsonData)
 {
-//	console.log(jsonData);
-	
 	/**
 	 *  'opacityMouseOver' - value for the opacity of the item (row) that is covered by the mouse pointer and all the items 
 	 *  that are linked (connected) to that row (item)
@@ -2849,7 +2847,6 @@ function renderChordChart(jsonData)
 			.style("stroke", function(d) { return fill(d.index); })
 			.attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));			
 
-		 // TODO: Customize color of number values on ticks ???
 		 var ticks1 = svg.append("svg:g").selectAll("g")
 			.data(chord.groups)
 			.enter();
@@ -2863,12 +2860,13 @@ function renderChordChart(jsonData)
 				});
 		
 		/**
+		 * Customization for category labels (desciptions over arcs of the CHORD chart).
+		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var tickLabelsFontCustom = jsonData.yAxis.labels.style;
+		var literalLabelsFontCustom = jsonData.xAxis.labels.style;
 		
 		ticks1.append("svg:text")
-//		.attr("id","aaa")
 		  .each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
 		   .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		  .attr("transform", function(d) {
@@ -2876,12 +2874,12 @@ function renderChordChart(jsonData)
 				+ "translate(" + (innerRadius + 60) + ")"
 				+ (d.angle > Math.PI ? "rotate(180)" : "");
 		  })
-		  .attr("fill", tickLabelsFontCustom.color)
-		  .style("font-family",tickLabelsFontCustom.fontFamily)	
-		  .style("font-style",tickLabelsFontCustom.fontStyle)
-		  .style("font-size",tickLabelsFontCustom.fontSize)
-		  .style("font-weight",tickLabelsFontCustom.fontWeight)
-		  .style("text-decoration",tickLabelsFontCustom.textDecoration)
+		  .attr("fill", literalLabelsFontCustom.color)
+		  .style("font-family",literalLabelsFontCustom.fontFamily)	
+		  .style("font-style",literalLabelsFontCustom.fontStyle)
+		  .style("font-size",literalLabelsFontCustom.fontSize)
+		  .style("font-weight",literalLabelsFontCustom.fontWeight)
+		  .style("text-decoration",literalLabelsFontCustom.textDecoration)
 		  .text(function(d,i) { return allFieldsArray[i];})		  
 
 		 //aggiunge le lineette "graduate"		 
@@ -2893,9 +2891,11 @@ function renderChordChart(jsonData)
 			.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
 
 		/**
+		 * Customization for serie labels (ticks on arcs of the CHORD chart).
+		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var literalLabelsFontCustom = jsonData.xAxis.labels.style;
+		var tickLabelsFontCustom = jsonData.yAxis.labels.style;
 		
 		 //aggiunge le label unit� di misura
 		 ticks.append("svg:text")
@@ -2903,13 +2903,12 @@ function renderChordChart(jsonData)
 			.attr("dy", ".35em")
 			.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
 			.style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-			.style("font-family","Impact")	// TODO: customize (for ticks)
-			.attr("fill", literalLabelsFontCustom.color)
-			.style("font-family",literalLabelsFontCustom.fontFamily)	// TODO: customize (for labels)
-			.style("font-style",literalLabelsFontCustom.fontStyle)
-			.style("font-size",literalLabelsFontCustom.fontSize)
-			.style("font-weight",literalLabelsFontCustom.fontWeight)
-			.style("text-decoration",literalLabelsFontCustom.textDecoration)
+			.attr("fill", tickLabelsFontCustom.color)
+			.style("font-family",tickLabelsFontCustom.fontFamily)	
+			.style("font-style",tickLabelsFontCustom.fontStyle)
+			.style("font-size",tickLabelsFontCustom.fontSize)
+			.style("font-weight",tickLabelsFontCustom.fontWeight)
+			.style("text-decoration",tickLabelsFontCustom.textDecoration)
 			.text(function(d) { return d.label; });
 			
 		 //disegna le fasce da un'area ad un altra
