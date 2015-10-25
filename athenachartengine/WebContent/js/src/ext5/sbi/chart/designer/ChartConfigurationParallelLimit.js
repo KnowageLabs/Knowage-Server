@@ -40,13 +40,12 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;
 			
+			var globalScope = this;
+			
 			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
 			
 			/* We are communicating with the ChartColumnsContainerManager.js for additional
-			 * serie columns or for the removed ones (after loading of the Designer). */
-			//console.log(this.storeForSeriesBeforeDrop.getAt(0));
-			//console.log(config.viewModel.data.configModel.data.serieFilterColumn);
-			
+			 * serie columns or for the removed ones (after loading of the Designer). */			
 			this.seriesColumnsOnYAxisCombo = Ext.create
 			(
 				'Ext.form.ComboBox', 
@@ -57,7 +56,26 @@ Ext.define
 				    editable : false,
 				    queryMode: 'local',
 				    displayField: 'serieColumn',
-				    valueField: 'serieColumn'
+				    valueField: 'serieColumn',
+				    
+				    /**
+				     * Listen if currently selected serie is removed from the serie (Y-axis) panel. If it is,
+				     * clean the combo box - no selected item.
+				     * 
+				     * @author: danristo (danilo.ristovski@mht.net)
+				     */
+				    listeners: 
+				    {
+				    	serieRemoved: function(serieRemoved)
+				    	{	
+				    		if  (serieRemoved == globalScope.viewModel._data.configModel.data.serieFilterColumn)
+			    			{
+				    			globalScope.viewModel._data.configModel.data.serieFilterColumn = "";
+				    			this.setViewModel(globalScope.viewModel);
+				    			this.setBind('{configModel.serieFilterColumn}');	// refresh the binding
+			    			}
+				    	}
+				    }
 				}
 			);
 			

@@ -409,7 +409,17 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	    												Ext.getCmp("chartParallelLimit") != null)
             								{
 	            								Ext.getCmp("chartParallelLimit").removeItem(store.getAt(rowIndex));
-            								}	    							
+	            								
+	            								/**
+	            								 * Send information about removed serie item towards combo that
+	            								 * holds the value for serie as filter column (Limit panel, Step 2)
+	            								 * so it can remove it if it is selected prior to this remove.
+	            								 * 
+	            								 * @author: danristo (danilo.ristovski@mht.net)
+	            								 */
+	            								Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo
+	            									.fireEvent("serieRemoved",store.getAt(rowIndex).data.serieColumn);
+            								}	 
 	            							
 	            							var rec = store.removeAt(rowIndex);
 	            							
