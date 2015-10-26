@@ -21,9 +21,9 @@ var emptyTs = {
 		isnew : true
 };
 
-app.controller('Controller', [ "translate", "restServices", "$scope", behavior ]);
+app.controller('Controller', [ "translate", "restServices", "$scope", "$mdDialog", "$mdToast", behavior ]);
 
-function behavior(translate, restServices, $scope) {
+function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	ctrl = this;
 	$scope.translate = translate;
 	
@@ -31,6 +31,7 @@ function behavior(translate, restServices, $scope) {
 	listTimespan();
 	
 	ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
+	ctrl.activeTab = 'empty';
 	ctrl.from;
 	ctrl.to;
 	ctrl.delay;
@@ -38,7 +39,7 @@ function behavior(translate, restServices, $scope) {
 	ctrl.menuTs = [{
 		label : translate.load('sbi.generic.delete'),
 		action : function(item, event) {
-			ctrl.deleteTimespan(item);
+			ctrl.deleteTimespan(item, event);
 		}
 	}];
 	
@@ -69,6 +70,7 @@ function behavior(translate, restServices, $scope) {
 					ctrl.selectedItem = data;
 					ctrl.selectedItem.isnew = false;
 					ctrl.resetFields();
+					ctrl.activeTab = 'details';
 					console.log("item loaded " + ctrl.selectedItem.id);					
 				}
 			}).error(function(data, status, headers, config) {
@@ -81,12 +83,15 @@ function behavior(translate, restServices, $scope) {
 	ctrl.addInterval = function(from, to) {
 		if(from && to){
 			if(ctrl.selectedItem.type=='temporal'){
+				var f_date = new Date(from);
+				var t_date = new Date(to);
 				if (ctrl.delay){
-					from = delayDate(from, ctrl.delay);
-					to = delayDate(to, ctrl.delay);
+					var dist = to.getDate() - from.getDate();
+					f_date.setDate(to.getDate() + ctrl.delay); 
+					t_date.setDate(to.getDate() + ctrl.delay + dist);					
 				}
-				var f = ("0" + from.getDate()).slice(-2) + "/" + ("0" + (from.getMonth()+1)).slice(-2) + "/" + from.getFullYear(); 
-				var t = ("0" + to.getDate()).slice(-2) + "/" + ("0" + (to.getMonth()+1)).slice(-2) + "/" + to.getFullYear(); 
+				var f = ("0" + f_date.getDate()).slice(-2) + "/" + ("0" + (f_date.getMonth()+1)).slice(-2) + "/" + f_date.getFullYear(); 
+				var t = ("0" + t_date.getDate()).slice(-2) + "/" + ("0" + (t_date.getMonth()+1)).slice(-2) + "/" + t_date.getFullYear(); 
 				var interval = { "from": f, "to": t };
 			} else {
 				var interval = { "from": from, "to": to };
@@ -103,23 +108,20 @@ function behavior(translate, restServices, $scope) {
 	
 	
 	ctrl.cancel = function() {
-		if (ctrl.selectedItem.isnew)
-			ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
-		else {
-			ctrl.selectedItem = ctrl.loadTimespan(ctrl.selectedItem);
-		}
+		ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
 		ctrl.resetFields();
+		ctrl.activeTab = 'empty';
 	}
 	
 	
 	ctrl.newTs = function() {
 		ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
 		ctrl.resetFields();
+		ctrl.activeTab = 'details';
 	}
 	
 	
 	ctrl.saveTimespan = function() {
-		console.log(ctrl.selectedItem);
 		restServices
 		.post("1.0/timespan", "saveTimespan", ctrl.selectedItem).success(
 			function(data, status, headers, config){
@@ -141,26 +143,48 @@ function behavior(translate, restServices, $scope) {
 	}
 	
 	
-	ctrl.deleteTimespan = function(item) {
-		restServices
-		.remove("1.0/timespan",
-				"deleteTimespan",
-				"ID=" + item.id)
-		.success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) { 
-						console.log("delete error");
-					} else {
-						var index = ctrl.tsList.indexOf(item);
-						ctrl.tsList.splice(index, 1);
-						if (item.id == ctrl.selectedItem.id) {
-							ctrl.newTs();
-						}
-					}
+	ctrl.deleteTimespan = function(item, event) {
+		var confirm = $mdDialog.confirm()
+			.title(translate.load("sbi.timespan.delete"))
+			.content(translate.load("sbi.timespan.delete.message"))
+			.ariaLabel('Lucky day')
+			.ok(translate.load("sbi.generic.delete"))
+			.cancel( translate.load("sbi.ds.wizard.cancel")).targetEvent(event);
+
+		$mdDialog
+			.show( confirm )
+			.then(function() {
+				restServices
+				.remove("1.0/timespan",
+						"deleteTimespan",
+						"ID=" + item.id)
+				.success(
+						function( data, status, headers, config ) {
+							if (data.hasOwnProperty( "errors" )) { 
+								console.log( "delete error" );
+								$mdToast.show(
+										$mdToast.simple()
+										.content(translate.load("sbi.timespan.delete.error"))
+										.position('top')
+										.action('OK')
+										.highlightAction(false).hideDelay(3000));
+								
+							} else {
+								var index = ctrl.tsList.indexOf(item);
+								ctrl.tsList.splice(index, 1);
+								ctrl.activeTab = 'empty';
+								$mdToast.show(
+										$mdToast.simple()
+										.content(translate.load("sbi.timespan.delete.success"))
+										.position('top')
+										.action('OK')
+										.highlightAction(false).hideDelay(3000));
+							}
+						})
+				.error(function(data, status, headers, config) {
+					console.log("delete error "+status);
 				})
-		.error(function(data, status, headers, config) {
-			console.log("delete error "+status);
-		})
+			});
 	}
 	
 	
@@ -183,7 +207,7 @@ function behavior(translate, restServices, $scope) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("list error");
 				} else {
-					console.log("success");
+					console.log("list success");
 					ctrl.tsList = data;
 				}
 			}).error(function(data, status, headers, config) {
@@ -191,11 +215,4 @@ function behavior(translate, restServices, $scope) {
 			})
 	}
 	
-	
-	function delayDate(date, delay) {
-		var d_orig = new Date(date);
-		var d_delay = new Date();
-		d_delay.setDate(d_orig.getDate()+delay);
-		return d_delay;
-	}
 }

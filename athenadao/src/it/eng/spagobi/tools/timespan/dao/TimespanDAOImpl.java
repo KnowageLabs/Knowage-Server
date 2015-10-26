@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class TimespanDAOImpl extends AbstractHibernateDAO implements ITimespanDAO {
@@ -19,7 +20,14 @@ public class TimespanDAOImpl extends AbstractHibernateDAO implements ITimespanDA
 
 	@Override
 	public List<SbiTimespan> listTimespan() {
-		return list(SbiTimespan.class);
+		return list(new ICriterion<SbiTimespan>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiTimespan.class);
+				c.addOrder(Order.desc("staticFilter"));
+				return c;
+			}
+		});
 	}
 
 	@Override
