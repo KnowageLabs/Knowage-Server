@@ -25,7 +25,7 @@
 }
 .miniheadfederation  {
 /*  position: absolute !important; */
-  background-color: #E0E0E0 !important;
+  background-color: rgb(176, 190, 197) !important;
 	color: black !important;
 }
 md-toolbar.miniheadfedsmall {
@@ -36,9 +36,13 @@ md-toolbar.miniheadfedsmall {
 }
 
 .miniheadfedsmall{
-	background-color: #E0E0E0 !important;
+	background-color: rgb(176, 190, 197) !important;
 	color: black !important;
 	height: 35px;
+}
+
+.listBackground{
+	background-color: rgb(232, 232, 232) !important;
 }
 
 .createRelationButton {

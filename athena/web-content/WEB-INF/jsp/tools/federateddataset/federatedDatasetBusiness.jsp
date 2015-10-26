@@ -50,7 +50,7 @@
 	 
 	</head>
 
-	<body class="bodyStyle" ng-app="FEDERATIONDEFINITION">
+	<body class="bodyStyle" ng-app="FEDERATIONDEFINITION" id="ng-app">
 		
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
 		<div ng-controller="FederationDefinitionCTRL as ctrl" layout="column" style="width: 100%; height: 100%;" class="contentdemoBasicUsage" >		
@@ -62,7 +62,7 @@
 				</div>
 			</md-toolbar>
 	
-			<md-content  layout-padding="" style="height: 96%; padding: 20px;"">
+			<md-content layout-padding="" style="height: 96%; padding: 20px;">
 			
 				<!-- Wrapping content that will be shown when ctrl.state is true -->
 				<div ng-show="ctrl.state" layout="row" layout-sm="column" layout-wrap">
@@ -78,8 +78,9 @@
 							</div>
 						</md-toolbar>
 					
-						<md-content style="height:80%;">
+						<md-content  layout-padding>
 							<angular-list
+							layout-fill 
 							id="availableDatasets" 
 							ng-model="ctrl.list" 
 							item-name="label"
@@ -103,7 +104,7 @@
 						</div>
 					</md-toolbar>
 				
-					<md-content style="height:80%">
+					<md-content layout-padding >
 						<angular-list  
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
@@ -123,7 +124,7 @@
 					<!-- Associations editor -->
 					<md-toolbar class="miniheadfedsmall" style="">
 						<div class="md-toolbar-tools">
-							<h2 class="md-flex" style="position:fixed; padding-left: 14px; padding-top:10px;">{{translate.load("sbi.federationdefinition.associationsEditor");}}</h2>
+							<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsEditor");}}</h2>
 							<span flex=""></span>
 							<!-- MD-SELECT is shown when edit mode is on -->
 							<div ng-if="ctrl.isEditState" style="height: 100px;">
@@ -145,8 +146,8 @@
 									<h2 class="md-flex">{{dataset.label | uppercase}}</h2>
 								</div>
 								</md-toolbar>
-								<div style=" height:85%;">
-								<div ng-show="true">
+								<div  style=" height:85%;">
+								<div ng-show="true" >
 									<angular-list
 										layout-fill="" 
 										id='{{dataset.label}}'
@@ -170,9 +171,9 @@
 					<md-toolbar class="miniheadfedsmall"
 						style="">
 					<div class="md-toolbar-tools">
-						<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
-						<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
-							ng-click="ctrl.fillTheArray()"></md-icon></md-button> 
+						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
+						<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
+							></md-icon></md-button> 
 					</div>
 		
 		
@@ -183,7 +184,7 @@
 							
 							<md-content >
 							
-								<md-list>
+								<md-list >
 									<div ng-repeat="k in ctrl.multiArray track by $index">
 										
 										<md-list-item style="min-height:35px">

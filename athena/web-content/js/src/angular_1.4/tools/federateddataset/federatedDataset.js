@@ -45,7 +45,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	ctr.myselectedvariable = {};
 	
 	ctr.fillTheArray = function() {
-		ctr.clearSelections()
+		
 		var check = false;
 		var obj1 = ctr.createAssociations();
 		var counter = 0;
@@ -153,6 +153,12 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	
 	ctr.showAdvanced = function(ev){
 		
+		/*if(value){
+			ctr.SaveOrUpdate = "Update";
+		} else {
+			ctr.SaveOrUpdate = "Save";
+		}*/
+		
 		ctr.multiArrayDatasets = [];
 		ctr.listaNewDatasets = [];
 		ctr.index = "";
@@ -207,12 +213,19 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 							item.description = $scope.update.description;
 							item.relationships = "";
 							item.relationships = ctr.multiArray;
-							
+												
 							restServices.post("federateddataset","post",item)
 								.success(
-										ctr.showAlert()
+										function(data, status, headers, config) {
+											ctr.showAlert()
+										}
+										
 								)
-								.error(console.log("error"))
+								.error(
+										function(data, status, headers, config) {
+											console.log("error")
+										}
+								)
 						}
 					},
 					templateUrl: '/athena/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
@@ -294,6 +307,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 					if(ctr.loadedListAllO==true && ctr.loadedList==true) {
 						if(value!=0) {
 							ctr.loadDatasetsEditMode();
+							
 						}						
 					} else {
 						console.log("Only loadedList is loaded")
@@ -597,6 +611,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	
 	ctr.clearSelections = function() {
 		ctr.myselectedvariable = {};
+		
 	}
 	
 	ctr.retrieveSelections = function(param) {		
@@ -645,7 +660,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 		   }			
 		}
 	}
-        
+	
 }
 
 
