@@ -5,6 +5,37 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.qbe.services.core.catalogue;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
@@ -57,37 +88,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * Commit all the modifications made to the catalogue on the client side
@@ -652,7 +652,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	private String getActualPeriodValueBounded(Date actualTime, IModelEntity temporalDimension, Hierarchy defaultHierarchy, String temporalDimensionId,
 			String temporalFieldType, String fieldUniqueName) {
 
-		String temporalLevel = defaultHierarchy.getLevelByType(temporalFieldType);
+		String temporalLevel = temporalFieldType;// defaultHierarchy.getLevelByType(temporalFieldType);
 
 		TemporalRecord value = getCurrentPeriod(temporalDimension, defaultHierarchy, temporalLevel, temporalDimensionId, actualTime);
 		IModelField field = getDataSource().getModelStructure().getField(fieldUniqueName);
