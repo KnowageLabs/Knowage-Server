@@ -108,9 +108,20 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	
 	
 	ctrl.cancel = function() {
-		ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
-		ctrl.resetFields();
-		ctrl.activeTab = 'empty';
+		var confirm = $mdDialog.confirm()
+		.title(translate.load("sbi.timespan"))
+		.content(translate.load("sbi.timespan.cancel.message"))
+		.ariaLabel('Lucky day')
+		.ok(translate.load("sbi.general.ok"))
+		.cancel( translate.load("sbi.ds.wizard.cancel")).targetEvent(event);
+		
+		$mdDialog
+		.show( confirm )
+		.then(function() {
+			ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
+			ctrl.resetFields();
+			ctrl.activeTab = 'empty';
+		});
 	}
 	
 	
@@ -135,10 +146,11 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 					} else {
 						console.log("item updated "+data);
 					}
+					showToast(translate.load("sbi.timespan.save.success"));
 					listTimespan();
 				}
 			}).error(function(data, status, headers, config) {
-				console.log("save error "+status);
+				showToast(translate.load("sbi.timespan.save.error"));
 			})
 	}
 	
@@ -162,31 +174,21 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 						function( data, status, headers, config ) {
 							if (data.hasOwnProperty( "errors" )) { 
 								console.log( "delete error" );
-								$mdToast.show(
-										$mdToast.simple()
-										.content(translate.load("sbi.timespan.delete.error"))
-										.position('top')
-										.action('OK')
-										.highlightAction(false).hideDelay(3000));
+								showToast(translate.load("sbi.timespan.delete.error"));
 								
 							} else {
 								var index = ctrl.tsList.indexOf(item);
 								ctrl.tsList.splice(index, 1);
 								ctrl.activeTab = 'empty';
-								$mdToast.show(
-										$mdToast.simple()
-										.content(translate.load("sbi.timespan.delete.success"))
-										.position('top')
-										.action('OK')
-										.highlightAction(false).hideDelay(3000));
+								showToast(translate.load("sbi.timespan.delete.success"));
 							}
 						})
 				.error(function(data, status, headers, config) {
 					console.log("delete error "+status);
+					showToast(translate.load("sbi.timespan.delete.success"));
 				})
 			});
 	}
-	
 	
 	ctrl.changeType = function() {
 		ctrl.selectedItem.definition = [];
@@ -214,5 +216,15 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 				console.log("list error "+status);
 			})
 	}
+	
+	function showToast(msg) {
+		$mdToast.show(
+				$mdToast.simple()
+				.content(msg)
+				.position('top')
+				.action('OK')
+				.highlightAction(false).hideDelay(3000));
+	}
+	
 	
 }
