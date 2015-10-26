@@ -7,7 +7,8 @@
 			
 		<ITEM	code="data_providers" 
 				title="#menu.DataProviders"
-				groupingMenu="true">			
+				groupingMenu="true"
+				iconCls="storage">			
 			<ITEM	title="#menu.TenantMan"
 					functionality="TenantManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagement.jsp" 
@@ -27,7 +28,8 @@
 		</ITEM>
 		<ITEM	code="catalogs" 
 				title="#menu.Catalogs"
-				groupingMenu="true">
+				groupingMenu="true"
+				iconCls="style">
 			<ITEM   title="#menu.MetaModelsCatalogue"
 	                functionality="MetaModelsCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_META_MODELS_CATALOGUE_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -73,7 +75,8 @@
 		</ITEM>
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"
-				groupingMenu="true">
+				groupingMenu="true"
+				iconCls="settings">
 			<ITEM	title="#menu.UdpMan"
 					functionality="UserDefinedPropertyManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_UDP_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -99,7 +102,8 @@
 			iconCls="group">
 		<ITEM	code="profile_mng" 
 			title="#menu.ProfileMenu"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="supervisor_account">
 			<ITEM	title="#menu.Attributes"
 					functionality="ProfileManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_ATTRIBUTES_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -115,7 +119,8 @@
 		</ITEM>
 		<ITEM	code="behaviouralModel" 
 			title="#menu.BehaviouralModelMenu"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="group_work">
 			<ITEM	title="#menu.LovMan"
 					functionality="LovsView"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListLovsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -131,7 +136,8 @@
 		</ITEM>
 		<ITEM	code="menu_config" 
 			title="#menu.MenuConfig"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="format_list_bulleted">
 			<ITEM	title="#menu.menuconfiguration"
 					functionality="MenuManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=MenuConfigurationPage"
@@ -143,7 +149,8 @@
 		</ITEM>
 		<ITEM	code="tree_mng" 
 			title="#menu.TreeMng"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="folder_shared">
 			<ITEM	title="#menu.FunctMan"
 						functionality="FunctionalitiesManagement"
 						url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=FUNCTIONALITIES_OPERATION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -161,14 +168,15 @@
 	             functionality="SelfServiceMetaModelManagement" 
 	             url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE&amp;MYDATA=TRUE" 
 	             iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/40/mydata.png"
-	             iconCls="my_data"/>
+	             iconCls="web"/>
 			
 	<ITEM	code="analyticalModel" 
 			title="#menu.AnalyticalModel"
 			iconCls="charts">
 		<ITEM	code="kpiDefinition" 
 			title="#menu.KpiModel"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="traffic">
 			<ITEM	title="#menu.KpiDefinition"
 					functionality="KpiManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_KPIS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -209,7 +217,8 @@
 		</ITEM>
 		<ITEM	code="subscription" 
 			title="#menu.Subscription"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="email">
 			<ITEM	title="#menu.DistributionListList"
 					functionality="DistributionListManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListDistributionListPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -226,7 +235,8 @@
 			iconCls="repo">
 		<ITEM	code="menu_tools" 
 			title="#menu.ToolsMenu"
-			groupingMenu="true">
+			groupingMenu="true"
+			iconCls="build">
 			<ITEM	title="#menu.ImpExp"
 					functionality="ImportExportManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=BIObjectsPage&amp;OPERATION=IMPORTEXPORT_OPERATION&amp;OBJECTS_VIEW=VIEW_OBJECTS_AS_TREE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"

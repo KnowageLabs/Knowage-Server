@@ -122,7 +122,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				home.put(HREF, "javascript:goHome(null, 'spagobi');");
 				home.put(LINK_TYPE, "goHome");
 
-				// TODO: to check
 				String userMenuMessage = msgBuild.getMessage("menu.UserMenu", locale);
 				personal.put(ICON_CLS, "spagobi");
 				personal.put(TOOLTIP, userMenuMessage);
@@ -203,8 +202,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 								JSONArray tempMenuList = (JSONArray) getChildren(lstChildrenLev2, 1, locale);
 								temp.put(MENU, tempMenuList);
 							}
-							// TODO: commented this for test
-							// tempFirstLevelMenuList.put(temp);
 							userMenu.put(temp);
 						}
 
@@ -214,14 +211,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 
 			if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
-				// TODO: commented this for test
-				// tempFirstLevelMenuList = createEndUserMenu(locale, 1, tempFirstLevelMenuList);
 				userMenu = createEndUserMenu(locale, 1, new JSONArray());
 
 			}
 
-			// TODO: commented this for test
-			// tempFirstLevelMenuList = createFixedMenu(locale, 1, tempFirstLevelMenuList);
 			JSONArray fixedMenuPart = createFixedMenu(locale, 1, new JSONArray());
 
 			JSONObject wholeMenu = new JSONObject();
@@ -229,8 +222,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			wholeMenu.put("userMenu", userMenu);
 			wholeMenu.put("customMenu", tempFirstLevelMenuList);
 
-			// TODO: commented this for test
-			// result = tempFirstLevelMenuList;
 			result = wholeMenu;
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
@@ -410,13 +401,6 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		MessageBuilder messageBuilder = new MessageBuilder();
 
-		// tempMenuList.put("->");
-		// JSONObject logo = new JSONObject();
-		// logo.put("xtype", "tbtext");
-		// logo.put("text", "<DIV style=\"WIDTH: 25px; HEIGHT: 100px; margin-left: 10px; background-image: url(" + contextName
-		// + "/themes/sbi_default/img/logo_toolbar.png);\" align=\"center\"> &nbsp; </DIV>");
-		// tempMenuList.put(logo);
-
 		JSONObject spacer = new JSONObject();
 		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false, "LANG");
 
@@ -424,16 +408,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		JSONObject info = createMenuItem("info", "", messageBuilder.getMessage("menu.info", locale), false, "INFO");
 
-		JSONObject help = createMenuItem("help", "", messageBuilder.getMessage("menu.help", locale), false, "HELP");
-
-		// spacer.put("xtype", "spacer");
-		// tempMenuList.put("->");
+		// JSONObject help = createMenuItem("help", "", messageBuilder.getMessage("menu.help", locale), false, "HELP");
 
 		tempMenuList.put(roles);
 
 		tempMenuList.put(lang);
 
-		tempMenuList.put(help);
+		// tempMenuList.put(help);
 
 		tempMenuList.put(info);
 
@@ -495,13 +476,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			temp2.put(TITLE_ALIGN, "left");
 			temp2.put(COLUMNS, 1);
 			temp2.put(XTYPE, "buttongroup");
+			temp2.put(ICON_CLS, childElem.getIconCls());
 		} else {
 
 			temp2.put(TEXT, text);
 			temp2.put("style", "text-align: left;");
-			temp2.put(SRC, childElem.getUrl());
 			temp2.put(TARGET, "_self");
 			temp2.put(ICON_CLS, "bullet");
+
+			String src = childElem.getUrl();
 
 			if (childElem.getObjId() != null) {
 				temp2.put(HREF,
@@ -525,12 +508,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
 				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
 				url = url.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
+				src = src.replace("${SPAGOBI_CONTEXT}", contextName);
+				src = src.replace("${SPAGO_ADAPTER_HTTP}", GeneralUtilities.getSpagoAdapterHttpUrl());
 				path = path.replace("#", "");
 
 				// code to manage SpagoBISocialAnalysis link in admin menu
 				if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
 					url = url.substring(0, url.length() - 1);
 					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
+					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					// if (!GeneralUtilities.isSSOEnabled()) {
 					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
 							+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
@@ -539,7 +525,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					 * locale.getCountry() + "'"; }
 					 */
 				}
-
+				temp2.put(SRC, src);
 				temp2.put(HREF, url + ", '" + path + "')");
 				temp2.put(LINK_TYPE, "execDirectUrl");
 			}

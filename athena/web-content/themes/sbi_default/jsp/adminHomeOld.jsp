@@ -9,7 +9,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 %>
 <%@ include file="/WEB-INF/jsp/wapp/homeBase.jsp"%>    
 <!-- Include Ext stylesheets here: -->
-<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/sbi_default/css/home40/layout.css" type="text/css" />
+<link id="spagobi-ext-4" rel="styleSheet" href ="<%=contextName %>/themes/geobi/css/home40/layout.css" type="text/css" />
 
 
 
@@ -73,11 +73,11 @@ Ext.onReady(function () {
 	    	items: [
 				//this.titlePath	,		
 	    	    mainframe]
-	    	, dockedItems: [/*{
+	    	, dockedItems: [{
 		   	    xtype: 'toolbar',
 		   	    dock: 'left',
 		   	    items: itemsM
-	    	}*/]
+	    	}]
 	    });
 	<%}else{%>	
 		this.mainpanel =  Ext.create("Ext.panel.Panel",{
@@ -99,22 +99,5 @@ Ext.onReady(function () {
 });
 
 	
-</script>
-<!-- Include AngularJS application -->
-<script type="text/javascript" src="/athena/js/src/angular_1.4/menu/menuAppAdmin.js"></script>
-
-
-<div data-ng-controller="menuCtrl" ng-app="menuAppAdmin">
-<menu-aside></menu-aside>
-<div id="divContainer" class="overlayButtonBar ">
-	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
-	<a href="#" class="logoKnowage"><img src="<%=contextName %>/themes/sbi_default/css/menuBar/logo_knowage.png" width="120"/></a>
-</div>
-</div>
-
-<script>
-$(document).ready(function() {
-     $(function() { $('#divContainer').draggable(); });
-});
 </script>
  
