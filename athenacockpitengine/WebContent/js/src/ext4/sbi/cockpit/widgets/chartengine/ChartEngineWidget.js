@@ -21,9 +21,13 @@ Sbi.cockpit.widgets.chartengine.ChartEngineWidget = function(config) {
 	
 	this.aggregations = this.wconf.aggregations;
 	
-	c = {
-			layout: 'fit',
-		};
+//	c = {
+//			layout: 'fit',
+//		};
+	
+	c = Ext.apply(c, {
+		layout: 'fit'
+	});
 	
 	// constructor
 	Sbi.cockpit.widgets.chartengine.ChartEngineWidget.superclass.constructor.call(this, c);
@@ -108,9 +112,16 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		
 		var el = this.getEl();
 		var iFrameHTML = Ext.DomQuery.selectNode("iframe", el.dom);
-		iFrameHTML.contentWindow.document.open();
-		iFrameHTML.contentWindow.document.write(responseText);
-		iFrameHTML.contentWindow.document.close();
+		
+//		if (!Sbi.isValorized(iFrameHTML)){
+//			this.onStoreLoad();
+//		}
+		
+		if (Sbi.isValorized(iFrameHTML)){
+			iFrameHTML.contentWindow.document.open();
+			iFrameHTML.contentWindow.document.write(responseText);
+			iFrameHTML.contentWindow.document.close();
+		}
 		
 		if (!this.areIncomingEventsEnabled()) {
 			var previousStore = this.getStore();
@@ -263,7 +274,7 @@ Ext.extend(Sbi.cockpit.widgets.chartengine.ChartEngineWidget, Sbi.cockpit.core.W
 		Sbi.exception.ExceptionHandler.showWarningMessage(LN('sbi.cockpit.widgets.chartengine.chartEngine.serverError'), 'Server Error');
 		this.up().body.unmask();
     }
-
+	
 });
 
 

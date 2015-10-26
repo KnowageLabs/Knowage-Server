@@ -42,22 +42,34 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 
 		sheetremove: function(tab){		
 			//removes the selected widget container from the internal list
+			this.tabPanel.hideElementsOfTab(tab);
 			this.tabPanel.widgetContainerList.remove(tab);
+			if (this.tabPanel.widgetContainerList.length > 0) {
+				this.tabPanel.setActiveTab(this.tabPanel.widgetContainerList[0]);
+			}
 		},
 		sheetremoveothers: function(tab){		
 			//removes all widget container except the selected one from the internal list
 			for (var i=0; i < this.tabPanel.widgetContainerList.length; i++){
 				var tmpWc = this.tabPanel.widgetContainerList[i];
 				if (tmpWc.id !== tab.id){
+					this.tabPanel.hideElementsOfTab(tmpWc);
 					this.tabPanel.widgetContainerList.remove(tmpWc);
 				}
+			}
+			if (this.tabPanel.widgetContainerList.length > 0) {				
+				this.tabPanel.setActiveTab(this.tabPanel.widgetContainerList[0]);
 			}
 		},
 		sheetremoveall: function(tab){		
 			//remove all widget containers from the internal list
 			for (var i=0; i < this.tabPanel.widgetContainerList.length; i++){
-				var tmpWc = this.tabPanel.widgetContainerList[i];				
-					this.tabPanel.widgetContainerList.remove(tmpWc);		
+				var tmpWc = this.tabPanel.widgetContainerList[i];	
+				this.tabPanel.hideElementsOfTab(tmpWc);
+				this.tabPanel.widgetContainerList.remove(tmpWc);		
+			}
+			if (this.tabPanel.widgetContainerList.length > 0) {
+				this.tabPanel.setActiveTab(this.tabPanel.widgetContainerList[0]);
 			}
 		}
 		}})
@@ -120,12 +132,14 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			conf = this.lastSavedAnalysisState.widgetsConf;
 		}		
 		 
-		if (Sbi.isValorized(conf) && !Sbi.isValorized(sheetConf)){
+		var loadingFromTemplate = Sbi.isValorized(conf) && !Sbi.isValorized(sheetConf);
+//		if (Sbi.isValorized(conf) && !Sbi.isValorized(sheetConf)){
+		if (loadingFromTemplate){
 			//execution: cycle for view all tabs
 			for (var j=0; j<conf.length; j++){
 				var sheetConf = conf[j].sheetConf;
 				var widgetContainer = new Sbi.cockpit.core.WidgetContainer(sheetConf);
-				
+
 				var sheet =  widgetContainer; 
 				sheet.id = this.sheetId; //conf[j].sheetId;
 				sheet.title= conf[j].sheetTitle;
@@ -138,9 +152,12 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 		        if (j<conf.length-1) {
 		        	//update index for the default name
 		        	this.index = this.index + 1;		        	
-		        }
+		        }		        	       
 		        //update the id of the sheet (unique for all sheets)
 		        this.sheetId = this.sheetId +1;
+		        
+		        //force loading all widgets for all sheet
+		        this.setActiveTab(sheet.id);		        
 			}
 		}else {
 			//creation: add one tab anytime
@@ -156,20 +173,22 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	        this.widgetContainerList.push(sheet);
 	        var tab = this.add(sheet);
 	        this.index = this.index + 1;
-	        this.sheetId = this.sheetId +1;
+	        this.sheetId = this.sheetId +1;	 
+	        this.setActiveTab(sheet.id);
 		}
         
 	    if (Sbi.config.documentMode === 'EDIT'){
 	    	this.add(addPanel);   
 	    }
 
-	    if(this.getActiveTab()==null){
+//	    if (this.getActiveTab()==null){
+	    if (loadingFromTemplate || this.getActiveTab()==null){	    	
 	    	this.setActiveTab(0);
 	    	this.widgetContainer = this.activeTab; //update of main widget manager with the newest one
 	    }
 	    
 	    this.resumeEvents();
-	    
+	     
 	    tab.on('beforeClose',function(panel){
 			Ext.MessageBox.confirm(
 					LN('sbi.cockpit.msg.deletetab.title'),
@@ -187,8 +206,8 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	    }, this);
 	    
 	}
-	 
-	, manageVisibilityTabsWindows: function(tabPanel, tab){		
+	 		
+	, manageVisibilityTabsWindows: function(tab){	
 		
 		Sbi.trace("[SheetsContainerPanel.manageVisibilityTabsWindows]: IN");
 		this.suspendEvents();
@@ -199,34 +218,15 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			
 			//hides all windows of other sheets
 			if (currentTab.id !== tab.id){
-				if (Sbi.isValorized(currentTab.getComponents())){
-					var tabWindows =  currentTab.getComponents();
-					if (Sbi.isValorized(tabWindows) && tabWindows.length>0 ){						
-						for (var j=0; j<tabWindows.length; j++){
-							var w = tabWindows[j];
-							w.hide();
-						}
-					}else{
-						Sbi.trace("[SheetsContainerPanel.manageVisibilityTabsWindows]: widgetContainer " + tab.id + 
-										" hasn't got any windows to hide! ");
-					}
-				
+				if (Sbi.isValorized(currentTab.getComponents())){					
+					this.hideElementsOfTab(currentTab); 
 				}
 			}
 			
 			//shows all windows of selected sheets
 			if (currentTab.id === tab.id){
-				if (Sbi.isValorized(currentTab.getComponents())){
-					var tabWindows = currentTab.getComponents();
-					if (Sbi.isValorized(tabWindows) && tabWindows.length>0 ){
-						for (var j=0; j<tabWindows.length; j++){
-							var w = tabWindows[j];
-							w.show();
-						}
-					}else{
-						Sbi.trace("[SheetsContainerPanel.manageVisibilityTabsWindows]: widgetContainer " + tab.id + 
-										" hasn't got any windows to show! ");
-					}
+				if (Sbi.isValorized(currentTab.getComponents())){					
+					this.showElementsOfTab(currentTab); 
 				}
 			}
 		}
@@ -242,6 +242,37 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			for (var j=0; j<tabWindows.length; j++){
 				var w = tabWindows[j];
 				w.hide();
+			}
+		}
+	}
+	
+	// Removes  all elements (windows) of input tab
+	, removeElementsOfTab: function(tab){
+		var tabWindows =  tab.getComponents();
+		if (Sbi.isValorized(tabWindows) && tabWindows.length>0 ){						
+			for (var j=0; j<tabWindows.length; j++){
+				var w = tabWindows[j];
+				w.remove();
+			}
+		}
+	}
+	
+	// Shows  all elements (windows) of input tab
+	, showElementsOfTab: function(tab){
+		var tabWindows =  tab.getComponents();
+		if (Sbi.isValorized(tabWindows) && tabWindows.length>0 ){						
+			for (var j=0; j<tabWindows.length; j++){
+				var w = tabWindows[j];
+				//check x, y coordinates before showing widget:
+				if (Sbi.isValorized(w.getWidgetConfiguration()) && 
+						Sbi.isValorized(w.getWidgetConfiguration().wlayout)){
+					var wl = w.getWidgetConfiguration().wlayout.region;
+					if (w.x== 0 && Sbi.isValorized(wl.x) && typeof wl.x == 'string')					
+						w.setX( tab.convertToAbsoluteY(wl.x));
+					if (w.y== 0 && Sbi.isValorized(wl.y) && typeof wl.y == 'string')
+						w.setY( tab.convertToAbsoluteY(wl.y));
+				}				
+				w.show();
 			}
 		}
 	}
@@ -262,9 +293,14 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 		
 		this.on('render',function(){ 			
 							this.index = 1;
-							this.addTab(); 
+							this.addTab();
 						},
 						this);
+		
+		this.on('afterlayout',function(){ 				
+			this.manageVisibilityTabsWindows(this.activeTab);
+		},
+		this);
 
 		Sbi.trace("[SheetsContainerPanel.initEvents]: OUT");
 	}
@@ -278,9 +314,9 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	    	if(tab==null || tab.id=='addTab'){
 	    		this.addTab('addTab');
 //	    	    tabPanel.setActiveTab(tabPanel.items.length-2);
-	    	    tabPanel.setActiveTab(tabPanel.items.length-1);
+//	    	    tabPanel.setActiveTab(tabPanel.items.length-1);
 	    	}else{
-	    		this.manageVisibilityTabsWindows(tabPanel, tab);
+	    		this.manageVisibilityTabsWindows(tab);
 	    		//update contents of new tab
 	    		var associationGroups = Sbi.storeManager.getAssociationGroups();
 				var selections = this.widgetContainer.getWidgetManager().getSelectionsByAssociations();

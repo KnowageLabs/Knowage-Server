@@ -1118,7 +1118,7 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 	 * has been destroyed (see autoDestroy parameter).
 	 */
 	, loadStore: function(store, selections, params){
-
+		
 		Sbi.trace("[StoreManager.loadStore]: IN");
 
 		if(Sbi.isNotValorized(store)) {
@@ -1134,8 +1134,8 @@ Ext.extend(Sbi.data.StoreManager, Ext.util.Observable, {
 		}
 
 		var storeId = this.getStoreId(store);
-		params = params || {};
-
+		params = params || {}; 
+		
 		// add pareameters to params
 		var p = this.getStoreParametersValues(storeId);
 		//alert("[StoreManager.loadStore]: store [" + storeId + "] parameters are equal to [" + Sbi.toSource(p) + "]");

@@ -79,7 +79,7 @@ Ext.define('Sbi.cockpit.core.SheetTabMenu', {
 				LN('sbi.cockpit.msg.deletetab.title'),
 				LN('sbi.cockpit.msg.deletetab.msg'),            
 	            function(btn, text) {
-	                if (btn=='yes') {	              
+	                if (btn=='yes') {	    	                	
 	                	me.tabPanel.remove(tabSelected);
 	                	me.fireEvent('sheetremove',tabSelected, me);
 	                }

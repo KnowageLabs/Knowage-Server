@@ -149,7 +149,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.setConfiguration]: IN");
     	for(var i = 0; i < configuration.widgets.length; i++) {
 			var widgetConf = configuration.widgets[i];
-			var w = this.addWidget(widgetConf);
+//			var w = this.addWidget(widgetConf);
+			var w = this.addWidget(widgetConf, widgetConf.wlayout);
 		}
     	Sbi.trace("[WidgetContainer.setConfiguration]: OUT");
     }
@@ -338,15 +339,19 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	Sbi.trace("[WidgetContainer.removeAllWidgets]: OUT");
     }
 
-    , getComponentRegion: function(component, relative) {
+    , getComponentRegion: function(component, r, relative) {
     	Sbi.trace("[WidgetContainer.getComponentRegion]: IN");
     	var region = null;
-    	if( this.components.contains(component) ) {
+    	if( this.components.contains(component) ) {    		
     		//with the multisheet management is necessary get current y from the component instead of the hidden box
+    		if  (!this.isAbsoluteRegion(r)) 
+    			r = this.convertToAbsoluteRegion(r);
+    		
+    		var localY = (Sbi.isValorized(r))? r.y : 0;
     		var box = component.getBox();
     		region = {};
     		region.x = box.x;
-    		region.y = ( box.y > 0)?box.y:component.y;
+    		region.y = ( box.y > 0)?box.y:(component.y > 0)?component.y:localY ;
     		region.width = box.width;
     		region.height = box.height;
 
@@ -366,6 +371,16 @@ Ext.extend(Sbi.cockpit.core.WidgetContainer, Sbi.cockpit.core.WidgetRuntime, {
     	return this.widgetManager;
     }
 
+    , isAbsoluteRegion: function(r){
+    	if (Sbi.isValorized(r)){
+	    	if (typeof r.height == 'string' || typeof r.width == 'string' || 
+	    		typeof r.x == 'string' || typeof r.y == 'string')
+	    		return false;
+	    	else
+	    		return true;
+    	}
+    	return true;
+    }
     /**
      * TODO: integrate ace-extjs editor to have the configuration not only pretty printed
      * but also highlighted

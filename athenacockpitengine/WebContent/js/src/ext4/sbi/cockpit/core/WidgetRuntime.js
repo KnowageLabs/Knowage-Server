@@ -585,7 +585,8 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 
 		if(this.isBoundToAContainer() === true) {
 			wl = wl || {};
-			wl.region = this.getWidgetRegion(true) || wl.region;
+//			wl.region = this.getWidgetRegion(true) || wl.region;
+			wl.region = this.getWidgetRegion(true, wl.region) || wl.region;
 		}
 		return wl;
 	}
@@ -601,7 +602,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
 	 *
 	 * @returns {Object} The region used by the widget
 	 */
-    , getWidgetRegion: function(relative) {
+    , getWidgetRegion: function(relative, region) {
     	Sbi.trace("[WidgetRuntime.getWidgetRegion]: IN");
 
     	var r = null;
@@ -610,7 +611,7 @@ Ext.extend(Sbi.cockpit.core.WidgetRuntime, Ext.Panel, {
     		Sbi.trace("[WidgetRuntime.getWidgetRegion]: widget [" + this.getId()+ "] is bound to a container");
     		var parentContainer = this.getParentContainer();
     		var parentComponent = this.getParentComponent();
-    		r = parentContainer.getComponentRegion( parentComponent, relative );
+    		r = parentContainer.getComponentRegion( parentComponent, region, relative );
     		if(r === null) {
     			Sbi.warn("[Widget.getWidgetManager]: Widget [" + this.toString() + "] is bound to a widget container but it is not possible to retrive the region it occupies");
     		}
