@@ -385,7 +385,7 @@ function funzione(translate, restServices, $scope, $mdDialog, $mdToast) {
 
 	$scope.showActionError = function() {
 		var toast = $mdToast.simple()
-		.content('Error...Reload Object')
+		.content('Error...Reload the Object or the label is not unique...try again')
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)

@@ -137,7 +137,7 @@
 					</div>
 					<div flex=25>
 						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
-							<md-select required ng-show="flagtype" aria-label="aria-label" ng-model="selectedLayer.type" ng-change=""> 
+							<md-select ng-required="isRequired" ng-change="isRequired=true" ng-show="flagtype" aria-label="aria-label" ng-model="selectedLayer.type" ng-change=""> 
 								<md-option	ng-repeat="type in listType" value="{{type.value}}">{{type.label}}</md-option>
 							</md-select> 
 						</md-input-container>
