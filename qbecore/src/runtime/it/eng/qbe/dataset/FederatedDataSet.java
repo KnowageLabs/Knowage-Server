@@ -135,6 +135,16 @@ public class FederatedDataSet extends QbeDataSet {
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
+		
+		if (this.getSourceDataset() != null) {
+			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			dataSets.add(this.getSourceDataset());
+			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
+		}
+		
+		JSONObject relations = federation.getRelationshipsAsJSONObject();
+		dataSourceProperties.put(EngineConstants.ENV_RELATIONS, relations);
+		
 
 		return getDataSourceFromDataSet(dataSourceProperties, useCache);
 	}

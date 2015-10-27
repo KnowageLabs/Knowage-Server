@@ -65,6 +65,20 @@ public class FederationDefinition {
 	public String getRelationships() {
 		return relationships;
 	}
+	
+	public JSONObject getRelationshipsAsJSONObject(){
+		JSONObject relations = null;
+		if(getRelationships()!=null && getRelationships().length()>0){
+			try {
+				JSONArray array = getFlatReslationsShips();
+				relations = new JSONObject();
+				relations.put("relationships", array);
+			} catch (JSONException e) {
+				throw new SpagoBIEngineRuntimeException("Error building the relations object" ,e);
+			}
+		}
+		return relations;
+	}
 
 	/**
 	 * Flats the relationships and return the single relations between couple tables

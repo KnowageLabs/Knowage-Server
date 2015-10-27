@@ -243,17 +243,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 
 		
 		logger.debug("Adding relationships on envinronment");
-		JSONObject relations = null;
-		if(dsf.getRelationships()!=null && dsf.getRelationships().length()>0){
-			try {
-				JSONArray array = dsf.getFlatReslationsShips();
-				relations = new JSONObject();
-				relations.put("relationships", array);
-			} catch (JSONException e) {
-				logger.error("Error building the relations object");
-				throw new SpagoBIEngineRuntimeException("Error building the relations object" ,e);
-			}
-		}
+		JSONObject relations = dsf.getRelationshipsAsJSONObject();
 
 
 		env.put(EngineConstants.ENV_RELATIONS, relations);
