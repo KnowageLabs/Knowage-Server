@@ -611,6 +611,13 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	
 	ctr.clearSelections = function() {
 		ctr.myselectedvariable = {};
+		angular.forEach(ctr.listaNew, function(dataset){
+			angular.forEach(dataset.metadata.fieldsMeta, function(listField){
+				if(listField.selected==true){
+					listField.selected=false;
+				}
+			});
+		});
 		
 	}
 	
