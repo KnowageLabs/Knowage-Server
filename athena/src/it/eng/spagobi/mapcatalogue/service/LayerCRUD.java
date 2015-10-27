@@ -13,14 +13,26 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+import sun.text.resources.FormatData;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -33,9 +45,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.jboss.resteasy.util.Base64;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.core.Version;
@@ -45,7 +60,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @Path("/layers")
 public class LayerCRUD {
-	
+
 	static private Logger logger = Logger.getLogger(LayerCRUD.class);
 	private static final String FILE = "File";
 	private static final String PROPS_FILE = "propsFile";
@@ -53,9 +68,6 @@ public class LayerCRUD {
 	public static final String LAYER_ID = "id";
 	public static final String LAYER_LABEL = "label";
 
-	
-	
-	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String loadLayers(@Context HttpServletRequest req) {
@@ -71,12 +83,12 @@ public class LayerCRUD {
 			logger.debug("No layer found");
 			return "{root:[]}";
 		}
-		
+		System.out.println("Contengo "+layers.toString());
 		logger.debug("Serializing the layers");
 		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
-		simpleModule.addSerializer(GeoLayer.class, new GeoLayerJSONSerializer());
-		mapper.registerModule(simpleModule);
+		//		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
+		//		simpleModule.addSerializer(GeoLayer.class, new GeoLayerJSONSerializer());
+		//		mapper.registerModule(simpleModule);
 		String s="[]";
 		try {
 			s = mapper.writeValueAsString(layers);
@@ -84,22 +96,22 @@ public class LayerCRUD {
 			logger.error("Error serializing the layers",e);
 			throw new SpagoBIRuntimeException("Error serializing the layers",e);
 		}
+
 		logger.debug("Layers serialized");
 		return  "{\"root\":"+s+"}";
 	}
-	
+
 	@POST
 	@Path("/deleteLayer")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String deleteLayer(@Context HttpServletRequest req) {
 		Object id=null;
 		Integer layerId = null;
-	//	JSONObject requestBodyJSON;
+
 		try {
-		//	requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+
 			id= req.getParameter("id");
 			System.out.println(id);
-		//	id = requestBodyJSON.opt("id");
 			if(id==null || id.equals("")){
 				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
 			}
@@ -108,11 +120,10 @@ public class LayerCRUD {
 			logger.error("error loading the layer to delete from the request",e);
 			throw new SpagoBIRuntimeException("error loading the layer to delete from the request",e);
 		} 
-		
+
 		logger.debug("Deleting the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		try {
-			
 			dao.eraseLayer(layerId);
 		} catch (EMFUserError e) {
 			logger.error("Error delationg the ayer with id "+id,e);
@@ -120,30 +131,22 @@ public class LayerCRUD {
 		}
 		return "{}";
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String saveLayer( @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON=null;
 		Integer id;
 		try {
-		//	Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			requestBodyJSON= RestUtilities.readBodyAsJSONObject(req);
 		} catch (Exception e) {
 			logger.error("Error reading the body from the request",e);
 			throw new SpagoBIRuntimeException("Error reading the body from the request",e);
 		}
-		
+
 		GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-	
-		String validation = validateLayer(aLayer, requestBodyJSON);
-		if(validation!=null){
-			return validation;
-		}
-		
 		Assert.assertNotNull(aLayer, "The layer is null");
-		logger.debug("Layer deserialized correctly");
-		
+		logger.debug("Layer deserialized correctly");	
 		logger.debug("Saving the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		try {
@@ -153,31 +156,128 @@ public class LayerCRUD {
 			throw new SpagoBIRuntimeException("Error saving the layer",e);
 		}
 		logger.debug("Layer saved: layer label "+aLayer.getLabel());
-		return "{id:"+id+"}";
+		//	String id_return = "{id:" +id + "}";
+		return "{\"id\":"+id+"}";
 	}
-	
+
+
+	@POST
+	@Path("/addData")
+	@Consumes("multipart/form-data")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String saveLayer2(MultipartFormDataInput input, @Context HttpServletRequest req) {
+		JSONObject requestBodyJSON=null;
+		Integer id;
+
+		try {
+
+			Map<String, List<InputPart>> formDataMap = input.getFormDataMap();
+			List<InputPart> dataList = formDataMap.get("data");
+			for (InputPart inputPart : dataList) {
+				requestBodyJSON = new JSONObject(inputPart.getBodyAsString());
+			}
+
+			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
+
+			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+
+			//prendo i pacchetti del file
+			List<InputPart> inputParts = formDataMap.get("layerFile");
+			LayerServices layerServices = new LayerServices();
+			for (InputPart inputPart : inputParts) {
+				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
+				data = layerServices.decode64(data);
+				String path = layerServices.getResourcePath(data);
+				aLayer.setPathFile(path);
+				aLayer.setLayerDef(data);
+
+				id = dao.insertLayer(aLayer);
+
+				logger.debug("Layer saved: layer label "+aLayer.getLabel());
+				//return "{id:"+id+"}";
+				return "{\"id\":"+id+"}";
+			}
+
+		} catch (EMFUserError | IOException | JSONException e) {
+			logger.error("Error reading the body from the request",e);
+			throw new SpagoBIRuntimeException("Error reading the body from the request",e);
+		}
+
+		return null;
+	}
+
+	@PUT
+	@Path("/updateData")
+	@Consumes("multipart/form-data")
+	@Produces(MediaType.TEXT_PLAIN)
+	public String modifyLayerwithFile(MultipartFormDataInput input, @Context HttpServletRequest req) {
+		JSONObject requestBodyJSON=null;
+		Integer id;
+
+		try {
+
+			Map<String, List<InputPart>> formDataMap = input.getFormDataMap();
+			List<InputPart> dataList = formDataMap.get("data");
+			for (InputPart inputPart : dataList) {
+				requestBodyJSON = new JSONObject(inputPart.getBodyAsString());
+			}
+
+			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
+
+			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+
+			//prendo i pacchetti del file
+			List<InputPart> inputParts = formDataMap.get("layerFile");
+			LayerServices layerServices = new LayerServices();
+			for (InputPart inputPart : inputParts) {
+
+				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				byte[] data = IOUtils.toByteArray(inputStream);
+
+				//decodifico i file dalla base64
+				data = layerServices.decode64(data);
+				//prendo il contenuto del file				
+				//				data = layerServices.getFile(data);
+				//salvo il file sul server e mi ritorno il path
+				String path = layerServices.getResourcePath(data);
+				//setPath in maniera temporanea per passarlo al dao che crea il vero path
+				aLayer.setPathFile(path);
+				aLayer.setLayerDef(data);
+
+				dao.modifyLayer(aLayer);
+
+				logger.debug("Layer saved: layer label "+aLayer.getLabel());
+				return "{}";
+
+			}
+
+		} catch (EMFUserError | IOException | JSONException e) {
+			logger.error("Error reading the body from the request",e);
+			throw new SpagoBIRuntimeException("Error reading the body from the request",e);
+		}
+
+		return null;
+
+
+	}
+
+
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String modifyLayer(@Context HttpServletRequest req) {
 		JSONObject requestBodyJSON=null;
 		try {
-		//	Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 			requestBodyJSON= RestUtilities.readBodyAsJSONObject(req);
 		} catch (Exception e) {
 			logger.error("Error reading the body from the request",e);
 			throw new SpagoBIRuntimeException("Error reading the body from the request",e);
 		}
-		
+
 		GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-		
-		String validation = validateLayer(aLayer, requestBodyJSON);
-		if(validation!=null){
-			return validation;
-		}
-		
+		aLayer.setPathFile(null);
 		Assert.assertNotNull(aLayer, "The layer is null");
 		logger.debug("Layer deserialized correctly");
-		
+
 		logger.debug("Updating the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		try {
@@ -189,20 +289,17 @@ public class LayerCRUD {
 		logger.debug("Layer updated: layer label "+aLayer.getLabel());
 		return "{}";
 	}
-	
-	
-	
-	
+
+
+
+
 	@POST
 	@Path("/getLayerProperties")
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getLayerProperties(@Context HttpServletRequest req, MultivaluedMap<String, String> form){
-		logger.debug("IN");
-		
-		String s="[]";
 
-		
+		String s="[]";
 		List<String> labels = form.get("labels");
 		List<GeoLayer> layers = new ArrayList<GeoLayer>();
 
@@ -215,8 +312,6 @@ public class LayerCRUD {
 					layers.add(geoLayer);
 
 				}
-
-
 			} catch (EMFUserError e) {
 				logger.error("Error getting layer properties",e);
 				throw new SpagoBIRuntimeException("Error getting layer properties",e);
@@ -241,21 +336,29 @@ public class LayerCRUD {
 		return  "{\"root\":"+s+"}";
 
 	}
-	
-	
-	private String validateLayer (GeoLayer aLayer, JSONObject requestBodyJSON){
-		/*if(aLayer.getType().equals(FILE)){
-			String file = requestBodyJSON.optString(PROPS_FILE);
-			if(file==null || file.contains("/") || file.contains("\\")){
-				return ( ExceptionUtilities.serializeException(fileValidationError,null));
+
+	// get uploaded filename, is there a easy way in RESTEasy?
+	private String getFileName(MultivaluedMap<String, String> header) {
+		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
+
+		for (String filename : contentDisposition) {
+			if ((filename.trim().startsWith("filename"))) {
+				String[] name = filename.split("=");
+				String fn = name[1];
+
+				if (fn.contains(File.separator)) {
+					int beginIndex = fn.lastIndexOf(File.separator) + 1;
+					if (beginIndex < fn.length()) {
+						fn = fn.substring(beginIndex);
+					}
+				}
+
+				String finalFileName = fn.trim().replaceAll("\"", "");
+				return finalFileName;
 			}
-		}*/
-		return null;
-		
-		
+		}
+		return "unknown";
 	}
-	
-	
-	
-	
+
+
 }

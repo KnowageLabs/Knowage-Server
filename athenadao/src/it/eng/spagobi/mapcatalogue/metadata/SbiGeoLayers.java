@@ -20,6 +20,14 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private boolean baseLayer = false;
 	private String label;
 	private byte[] layerDef;
+	private String pathFile;
+	private String layerLabel;
+	private String layerName;
+	private String layerId2;
+	private String layerURL;
+	private String layerOptions;
+	private String layerParams;
+	private int layerOrder;
 
 	public SbiGeoLayers(){
 		super();
@@ -56,7 +64,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	public int getLayerId() {
 		return layerId;
 	}
@@ -64,7 +72,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	public void setLayerId(int layerId) {
 		this.layerId = layerId;
 	}
-	
+
 	public byte[] getLayerDef() {
 		return layerDef;
 	}
@@ -73,6 +81,13 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerDef = layerDef;
 	}
 
+	public void setPathFile(String path){
+		this.pathFile =path;
+
+	}
+	public String getPathFile(){
+		return pathFile;
+	}
 	/**
 	 * @return the isBaseLayer
 	 */
@@ -87,6 +102,65 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.baseLayer = baseLayer;
 	}
 
+
+	public String getLayerLabel() {
+		return layerLabel;
+	}
+
+	public void setLayerLabel(String layerLabel) {
+		this.layerLabel = layerLabel;
+	}
+
+	public String getLayerName() {
+		return layerName;
+	}
+
+	public void setLayerName(String layerName) {
+		this.layerName = layerName;
+	}
+
+
+	public String getLayerId2() {
+		return layerId2;
+	}
+
+	public void setLayerId2(String layerId2) {
+		this.layerId2 = layerId2;
+	}
+
+	public String getLayerURL() {
+		return layerURL;
+	}
+
+	public void setLayerURL(String layerURL) {
+		this.layerURL = layerURL;
+	}
+
+	public String getLayerOptions() {
+		return layerOptions;
+	}
+
+	public void setLayerOptions(String layerOptions) {
+		this.layerOptions = layerOptions;
+	}
+
+	public String getLayerParams() {
+		return layerParams;
+	}
+
+	public void setLayerParams(String layerParams) {
+		this.layerParams = layerParams;
+	}
+	
+
+	public int getLayerOrder() {
+		return layerOrder;
+	}
+
+	public void setLayerOrder(int layerOrder) {
+		this.layerOrder = layerOrder;
+	}
+
 	public GeoLayer toGeoLayer(){	
 		GeoLayer geo = new GeoLayer();
 		geo.setDescr(getDescr());
@@ -96,6 +170,14 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		geo.setType(type);
 		geo.setLayerId(layerId);
 		geo.setBaseLayer(baseLayer);
+		geo.setPathFile(pathFile);
+		geo.setLayerLabel(layerLabel);
+		geo.setLayerName(layerName);
+		geo.setLayerId2(layerId2);
+		geo.setLayerURL(layerURL);
+		geo.setLayerOptions(layerOptions);
+		geo.setLayerParams(layerParams);
+		geo.setLayerOrder(layerOrder);
 		return geo;
 	}
 

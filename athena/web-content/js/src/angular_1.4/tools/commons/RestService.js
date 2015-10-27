@@ -33,16 +33,16 @@ Restapp.service('restServices', function($http, ENDPOINT_URI) {
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item);
 	};
 
-	service.post = function(endP_path, req_Path, item) {
+	service.post = function(endP_path, req_Path, item, conf) {
 		console.log("POST: "+getBaseUrl(endP_path) + "" + req_Path);
 		console.log(item);
-		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item);
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
-	service.put = function(endP_path, req_Path, item) {
+	service.put = function(endP_path, req_Path, item, conf) {
 		console.log("PUT: "+getBaseUrl(endP_path) + "" + req_Path);
 		console.log(item);
-		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item);
+		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
 	service.delete = function(endP_path, req_Path) {

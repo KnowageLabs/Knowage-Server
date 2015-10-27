@@ -1,1 +1,10 @@
+#listItemTemplate:hover {
+	color : #0099CC;
+	background-color: #FFFFFF;
+	opacity:0.6;
+}
 
+#listItemTemplate:click {
+	background-color: #0099CC;
+	opacity:0.6;
+}

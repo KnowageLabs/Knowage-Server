@@ -16,6 +16,14 @@ public class GeoLayer{
 	private String label;
 	private boolean baseLayer;
 	private byte[] layerDef;
+	private String pathFile;
+	private String layerLabel;
+	private String layerName;
+	private String layerId2;
+	private String layerURL;
+	private String layerOptions;
+	private String layerParams;
+	private int layerOrder;
 	
 	public GeoLayer() {
 		super();
@@ -82,8 +90,74 @@ public class GeoLayer{
 	public void setLayerDef(byte[] layerDef) {
 		this.layerDef = layerDef;
 	}
+	//Chiara add this functions
+
+	public String getPathFile() {
+		return pathFile;
+	}
+
+	public void setPathFile(String pathFile) {
+		this.pathFile = pathFile;
+	}
+	public String getLayerLabel() {
+		return layerLabel;
+	}
+
+	public void setLayerLabel(String layerLabel) {
+		this.layerLabel = layerLabel;
+	}
+
+	public String getLayerName() {
+		return layerName;
+	}
+
+	public void setLayerName(String layerName) {
+		this.layerName = layerName;
+	}
 
 
-	
+
+	public String getLayerId2() {
+		return layerId2;
+	}
+
+	public void setLayerId2(String layerId2) {
+		this.layerId2 = layerId2;
+	}
+
+
+	public String getLayerURL() {
+		return layerURL;
+	}
+
+	public void setLayerURL(String layerURL) {
+		this.layerURL = layerURL;
+	}
+
+	public String getLayerOptions() {
+		return layerOptions;
+	}
+
+	public void setLayerOptions(String layerOptions) {
+		this.layerOptions = layerOptions;
+	}
+
+	public String getLayerParams() {
+		return layerParams;
+	}
+
+	public void setLayerParams(String layerParams) {
+		this.layerParams = layerParams;
+	}
+
+	public int getLayerOrder() {
+		return layerOrder;
+	}
+
+	public void setLayerOrder(int layerOrder) {
+		this.layerOrder = layerOrder;
+	}
+
+
 	
 }

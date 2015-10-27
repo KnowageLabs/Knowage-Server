@@ -7,6 +7,7 @@
 package it.eng.spagobi.mapcatalogue.serializer;
 
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.service.LayerCRUD;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import org.apache.log4j.Logger;
@@ -16,17 +17,22 @@ import org.json.JSONObject;
 public class GeoLayerJSONDeserializer {
 
 	static private Logger logger = Logger.getLogger(GeoLayerJSONSerializer.class);
-	private static final String ID = "id";
+	private static final String ID = "layerId";
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
 	private static final String DESCRIPTION = "descr";
 	private static final String TYPE = "type";
 	private static final String IS_BASE_LAYER = "baseLayer";
-
-	
-	
+	private static final String PATHFILE = "pathFile";
+	private static final String LAYERLABEL = "layerLabel";
+	private static final String LAYERNAME = "layerName";
+	private static final String LAYERIDENTIFY = "layerId2";
+	private static final String LAYERURL = "layerURL";
+	private static final String LAYEROPTIONS = "layerOptions";
+	private static final String LAYERPARAMS = "layerParams";
+	private static final String LAYERORDER = "layerOrder";
 	public static GeoLayer deserialize(JSONObject serialized){
-		
+
 		if(serialized!=null){
 			String[] properties = JSONObject.getNames(serialized);
 			if(properties!=null){
@@ -39,7 +45,7 @@ public class GeoLayerJSONDeserializer {
 							if(id!=null && !id.equals("")){
 								layer.setLayerId(new Integer(id));
 							}
-							
+
 						}else if(properties[i].equals(NAME)){
 							layer.setName(serialized.getString(properties[i]));
 						}else if(properties[i].equals(LABEL)){
@@ -50,6 +56,22 @@ public class GeoLayerJSONDeserializer {
 							layer.setType(serialized.getString(properties[i]));
 						}else if(properties[i].equals(IS_BASE_LAYER)){
 							layer.setBaseLayer(Boolean.parseBoolean(serialized.getString(properties[i])));
+						}else if(properties[i].equals(PATHFILE)){
+							layer.setPathFile(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYERLABEL)){
+							layer.setLayerLabel(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYERNAME)){
+							layer.setLayerName(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYERIDENTIFY)){
+							layer.setLayerId2(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYERURL)){
+							layer.setLayerURL(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYEROPTIONS)){
+							layer.setLayerOptions(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYERPARAMS)){
+							layer.setLayerParams(serialized.getString(properties[i]));
+						}else if(properties[i].equals(LAYERORDER)){
+							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
 						}
 						else {
 							layerDef.put(properties[i], serialized.get(properties[i]));
@@ -58,14 +80,14 @@ public class GeoLayerJSONDeserializer {
 						logger.error("Error deserializing the layer.",e);
 						throw new SpagoBIRuntimeException("Error deserializing the layer.",e);
 					}
-					
+
 				}
 				logger.debug("Layer deserialized. Label: "+layer.getLabel());
 				layer.setLayerDef(layerDef.toString().getBytes());
 				return layer;
 			}
 		}
-		
+
 		logger.debug("Impossible to deserialize layer. No field found");
 		return null;
 	}
