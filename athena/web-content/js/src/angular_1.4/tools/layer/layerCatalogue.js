@@ -1,6 +1,6 @@
 var app = angular.module('layerWordManager', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                               'angular_rest', 'angular_list' ]);
+                                               'angular_rest', 'angular_list', 'angular_table' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -61,7 +61,8 @@ function funzione(translate, restServices, $scope, $mdDialog, $mdToast) {
 	$scope.object_temp={};
 	$scope.flagtype=true;
 	$scope.flag=false;
-
+	$scope.roles = [];
+	
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
 		console.log("dentro loadLayer");
@@ -363,9 +364,47 @@ function funzione(translate, restServices, $scope, $mdDialog, $mdToast) {
 
 
 	}
+	$scope.loadCategory = function() {
+		restServices.get("domains", "listValueDescriptionByType",
+				"DOMAIN_TYPE=GEO_CATEGORY").success(
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						//change sbi.glossary.load.error
+						showToast(translate.load("sbi.glossary.load.error"),
+								3000);
+					} else {
 
+						$scope.category = data;
+					}
+				}).error(function(data, status, headers, config) {
+			showToast(translate.load("sbi.glossary.load.error"), 3000);
 
+		})
+	}
+	$scope.loadCategory();
+	
+	
+	/*
+	$scope.showRoles=function(){
+		restServices.get("layers", "getroles","").success(
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						//change sbi.glossary.load.error
+						console.log(translate.load("sbi.glossary.load.error"),3000);
+					} else {
+						console.log("contiene data");
+						console.log(data);
+						$scope.roles = data;
+						
+						
+					}
+				}).error(function(data, status, headers, config) {
+					console.log(translate.load("sbi.glossary.load.error"), 3000);
 
+				})
+	}
+	$scope.showRoles();
+	*/
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
 		.content('Layer saved corretly...')

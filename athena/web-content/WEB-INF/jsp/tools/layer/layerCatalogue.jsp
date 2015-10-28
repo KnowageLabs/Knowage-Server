@@ -23,11 +23,14 @@
 	href="/athena/themes/glossary/css/generalStyle.css">
 <link rel="stylesheet" type="text/css"
 	href="/athena/themes/layer/css/layerStyle.css">
-<link rel="stylesheet" type="text/css"
-	href="/athena/themes/glossary/css/gestione_glossario.css">
+<!--  <link rel="stylesheet" type="text/css"
+	href="/athena/themes/glossary/css/gestione_glossario.css">-->
 <!-- controller -->
 <script type="text/javascript"
 	src="/athena/js/src/angular_1.4/tools/layer/layerCatalogue.js"></script>
+
+<script type="text/javascript"
+	src="/athena/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 
 </head>
@@ -53,12 +56,18 @@
 
 			<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox"> 
 				
-				<angular-list 
+		<!--  		<angular-list 
 					
 					ng-click="showme=true" layout-fill id='layerlist' ng-model=layerList
 					item-name='name' show-search-bar=true highlights-selected-item=true
 					click-function="loadLayerList(item)" menu-option=menuLayer>
 				</angular-list> 
+				
+				--> <angular-table  ng-click="showme=true" layout-fill
+				id='layerlist' ng-model=layerList 
+				columns='["name","type"]'
+				show-search-bar=true highlights-selected-item=true
+				click-function="loadLayerList(item)" menu-option=menuLayer></angular-table>
 				
 			</md-content>
 
@@ -84,9 +93,23 @@
 					</div>
 				</div>
 				</md-toolbar>
-
+				
 				<md-content flex style="margin-left:20px;"
 					class="ToolbarBox miniToolbar noBorder">
+
+				<div layout="row" layout-wrap>
+					<div flex=3 style="margin-top: 30px;">
+						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
+					</div>
+					<div flex=25>
+						<md-input-container> <label>{{translate.load("sbi.glossary.category")}}</label>
+							<md-select ng-required="isRequired" ng-change="isRequired=true" aria-label="aria-label" ng-model="selectedLayer.category_id" ng-change=""> 
+								<md-option	ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
+							</md-select> 
+						</md-input-container>
+					</div>
+				</div>
+				
 				<div layout="row" layout-wrap>
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-bookmark"></md-icon>
@@ -194,6 +217,8 @@
 							type="number" min="0"> </md-input-container>
 					</div>
 				</div>
+				
+				
 				<!-- inizio campi variabili -->
 				<div layout="row" layout-wrap ng-if="selectedLayer.type == 'File'">
 					<div flex=3 style="margin-top: 10px;">
@@ -240,6 +265,23 @@
 					</div>
 				</div>
 
+				<!-- role selection work in progress.... -->
+				<!--  <div layout="row" layout-wrap>
+					<div flex=3 style="margin-top: 30px;">
+						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
+					</div>
+					<div flex=45>
+						<md-input-container> <label>{{translate.load("sbi.execution.roleselection.title")}}</label>
+							<md-select ng-required="isRequired" ng-change="isRequired=true" multiple aria-label="aria-label" ng-model="selectedLayer.roles" ng-change=""> 
+								<md-option	ng-repeat="rs in roles" value="{{rs.id}}">{{rs.name}}</md-option>
+							</md-select> 
+						</md-input-container>
+					</div>
+					
+					-->	
+				</div>
+				
+				
 				</md-content>
 
 			</form>
