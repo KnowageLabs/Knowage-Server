@@ -37,21 +37,24 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	/**
 	 * Saves the FederationDefinition. If already exist returns that one
+	 * 
 	 * @param dataset
 	 */
+	@Override
 	public void saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition) {
 		saveSbiFederationDefinition(federationDefinition, false);
 	}
-	
+
 	/**
 	 * Saves the FederationDefinition. If already exist one with same label thrown an exception
+	 * 
 	 * @param dataset
 	 */
+	@Override
 	public void saveSbiFederationDefinition(FederationDefinition federationDefinition) {
 		saveSbiFederationDefinition(federationDefinition, true);
 	}
-	
-	
+
 	private void saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
 
@@ -72,14 +75,14 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
-			
-			if(!duplicated){
+
+			if (!duplicated) {
 				logger.debug("Checking if the federation already exists");
 				Query hibQuery = session.createQuery(" from SbiFederationDefinition fd where fd.label = ? ");
-				hibQuery.setString(0, dataset.getLabel() );
+				hibQuery.setString(0, dataset.getLabel());
 				SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
-				if(sbiResult!=null){
-					logger.debug("The federation already exisists and the id is "+sbiResult.getFederation_id());
+				if (sbiResult != null) {
+					logger.debug("The federation already exisists and the id is " + sbiResult.getFederation_id());
 					dataset.setFederation_id(sbiResult.getFederation_id());
 					transaction.commit();
 					return;
@@ -135,7 +138,8 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			hibQuery.setInteger(0, id);
 			SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
 
-			toReturn = SbiFederationUtils.toDatasetFederationWithDataset(sbiResult, getUserProfile(), loadDatasetsUsedByFederation(sbiResult.getFederation_id(), aSession));
+			toReturn = SbiFederationUtils.toDatasetFederationWithDataset(sbiResult, getUserProfile(),
+					loadDatasetsUsedByFederation(sbiResult.getFederation_id(), aSession));
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -156,7 +160,6 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		return toReturn;
 
 	}
-	 
 
 	@Override
 	public List<FederationDefinition> loadAllFederatedDataSets() throws EMFUserError {
@@ -220,20 +223,17 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * Loads the datsets linked to a federation
+	 * 
 	 * @param federationID
 	 * @param currSession
 	 * @param profile
 	 * @return
 	 * @throws EMFUserError
 	 */
+	@Override
 	public Set<IDataSet> loadAllFederatedDataSets(Integer federationID) throws EMFUserError {
 
 		logger.debug("IN");
@@ -264,14 +264,14 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		logger.debug("OUT");
 		return realResult;
 	}
-	
+
 	private Set<IDataSet> loadDatasetsUsedByFederation(Integer federationID, Session currSession) throws EMFUserError {
 		logger.debug("IN");
 
-		logger.debug("Loading dataset for federation "+federationID);
+		logger.debug("Loading dataset for federation " + federationID);
 		Set<IDataSet> dataSets = new HashSet<IDataSet>();
 		List<Integer> datasetIds = new ArrayList<Integer>();
-		
+
 		logger.debug("Getting SbiDataSetFederation");
 		Query hibQuery = currSession.createQuery("from SbiDataSetFederation s where s.id.federationId= ?");
 		hibQuery.setInteger(0, federationID);
@@ -280,10 +280,10 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		Iterator it = hibDsFed.iterator();
 		while (it.hasNext()) {
 			SbiDataSetFederation sbiDsFed = (SbiDataSetFederation) it.next();
-			Integer dsId =  sbiDsFed.getId().getDsId();
+			Integer dsId = sbiDsFed.getId().getDsId();
 			datasetIds.add(dsId);
 		}
-		
+
 		logger.debug("Getting source datasets");
 		Query hibQueryDs = currSession.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId in ( :datasets )");
 		hibQueryDs.setBoolean(0, true);
@@ -292,8 +292,8 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		if (dsActiveDetail != null) {
 			dataSets = DataSetFactory.toDataSet(dsActiveDetail, this.getUserProfile());
 		}
-		
-		logger.debug("Loaded "+dataSets.size()+" dataset for federation "+federationID);
+
+		logger.debug("Loaded " + dataSets.size() + " dataset for federation " + federationID);
 		logger.debug("OUT");
 		return dataSets;
 	}
