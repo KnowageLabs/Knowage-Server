@@ -55,12 +55,12 @@
 		
 		
 		<!--  TODO: fix permissions!!! -->
-			<ITEM	title="#menu.glossary"
+			<ITEM	title="#menu.glossary.business"
 					functionality="Glossary"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/businessuser/glossaryBusiness.jsp" />			
 
 		<!--  TODO: fix permissions!!! -->
-			<ITEM	title="#menu.glossary"
+			<ITEM	title="#menu.glossary.technical"
 					functionality="Glossary"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />
 					

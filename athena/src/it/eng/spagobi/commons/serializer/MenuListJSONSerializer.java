@@ -294,7 +294,7 @@ public class MenuListJSONSerializer implements Serializer {
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
 			glossaryManagementTechnical.put(ICON_CLS, "glossary_management");
-			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary", locale));
+			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.technical", locale));
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
 			glossaryManagementTechnical.put(TARGET, "_self");
@@ -305,7 +305,7 @@ public class MenuListJSONSerializer implements Serializer {
 		if (isAbleTo(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS, funcs)) {
 			JSONObject glossaryManagementTechnical = new JSONObject();
 			glossaryManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
-			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary", locale));
+			glossaryManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.glossary.business", locale));
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
 			glossaryManagementTechnical.put(TARGET, "_self");
