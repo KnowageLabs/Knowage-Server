@@ -132,6 +132,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 			conf = this.lastSavedAnalysisState.widgetsConf;
 		}		
 		 
+		var isFirstTab = false;
 		var loadingFromTemplate = Sbi.isValorized(conf) && !Sbi.isValorized(sheetConf);
 //		if (Sbi.isValorized(conf) && !Sbi.isValorized(sheetConf)){
 		if (loadingFromTemplate){
@@ -157,7 +158,8 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 		        this.sheetId = this.sheetId +1;
 		        
 		        //force loading all widgets for all sheet
-		        this.setActiveTab(sheet.id);		        
+		        this.setActiveTab(sheet.id);	
+		        isFirstTab = false;
 			}
 		}else {
 			//creation: add one tab anytime
@@ -174,7 +176,8 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	        var tab = this.add(sheet);
 	        this.index = this.index + 1;
 	        this.sheetId = this.sheetId +1;	 
-	        this.setActiveTab(sheet.id);
+	        this.setActiveTab(tab.id);
+	        if (!isFirstTab && tab.id == 1) isFirstTab = true;
 		}
         
 	    if (Sbi.config.documentMode === 'EDIT'){
@@ -182,7 +185,7 @@ Ext.define('Sbi.cockpit.core.SheetsContainerPanel', {
 	    }
 
 //	    if (this.getActiveTab()==null){
-	    if (loadingFromTemplate || this.getActiveTab()==null){	    	
+	    if (isFirstTab || loadingFromTemplate || this.getActiveTab()==null){	    	
 	    	this.setActiveTab(0);
 	    	this.widgetContainer = this.activeTab; //update of main widget manager with the newest one
 	    }
