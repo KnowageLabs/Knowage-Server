@@ -458,7 +458,7 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 //			tmpWc.getWidgetManager().setSelections(selectionData);
 			var tmpSel = tmpWc.getWidgetManager().getSelections();
 			if (!Sbi.isEmptyObject(tmpSel)){
-//				config.selections = selectionData;
+				config.selections = selectionData;
 				config.widgetManager = tmpWc;
 				var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
 				tmpWc.addSelectionWidget(selectionWidget, config.wlayout);
