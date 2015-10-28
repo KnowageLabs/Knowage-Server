@@ -19,15 +19,18 @@ import org.hibernate.Session;
 public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 
 	public void saveSbiFederationDefinition(FederationDefinition dataset);
-
+	
 	public void saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition);
 
 	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError;
-
+	 
 	public List<FederationDefinition> loadAllFederatedDataSets() throws EMFUserError;
 
-	public List<FederationDefinition> loadFederationsUsingDataset(Integer dsId, Session currSession) throws EMFUserError;
+	public List<FederationDefinition> loadFederationsUsingDataset(Integer dsId) throws EMFUserError;
 
+	public List<FederationDefinition> loadFederationsUsingDataset(Integer dsId, Session currSession) throws EMFUserError;
+	
 	public Set<IDataSet> loadAllFederatedDataSets(Integer federationID) throws EMFUserError;
 
+	public Integer countFederationsUsingDataset(Integer dsId);
 }

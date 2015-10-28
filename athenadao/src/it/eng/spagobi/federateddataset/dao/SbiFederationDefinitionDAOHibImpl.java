@@ -197,6 +197,80 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		}
 		logger.debug("OUT");
 		return realResult;
+
+	}
+
+	@Override
+	public List<FederationDefinition> loadFederationsUsingDataset(Integer dsId) throws EMFUserError {
+		logger.debug("IN");
+
+		List<FederationDefinition> toReturn = new ArrayList<FederationDefinition>();
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			toReturn = loadFederationsUsingDataset(dsId, aSession);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			logger.error("Error in loading datasets linked to federation", he);
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
+	/**
+	 * Counts number of BIObj associated.
+	 * 
+	 * @param dsId
+	 *            the ds id
+	 * @return Integer, number of BIObj associated
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	@Override
+	public Integer countFederationsUsingDataset(Integer dsId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiDataSetFederation s where s.id.dsId = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, dsId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDOAException("Error while counting the federations associated with the data set with id " + dsId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+
 	}
 
 	@Override
@@ -204,8 +278,6 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		logger.debug("IN");
 
 		ArrayList<FederationDefinition> toReturn = new ArrayList<FederationDefinition>();
-
-		String hql = "from SbiDataSetFederation s where s.id.dsId=" + dsId;
 
 		Query hibQuery = currSession.createQuery("from SbiDataSetFederation s where s.id.dsId= ?");
 		hibQuery.setInteger(0, dsId);
