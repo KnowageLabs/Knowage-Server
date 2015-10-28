@@ -5,7 +5,7 @@ Ext.define
 	{
 		extend : 'Ext.panel.Panel',
 		id : "gaugePaneConfiguration",
-		//columnWidth: 0.3,
+		
 		width : 245,
 		title : LN("sbi.chartengine.configuration.gauge.panelTitle"),
 		bodyPadding : 10,
@@ -16,9 +16,9 @@ Ext.define
 			anchor : '100%'
 		},
 
-		layout : {
-			type : 'vbox',
-		//align: 'center'
+		layout : 
+		{
+			type : 'vbox'
 		},
 
 		constructor : function(config) {

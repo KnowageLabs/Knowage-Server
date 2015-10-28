@@ -4,7 +4,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 	requires: [
         'Sbi.chart.rest.WebServiceManagerFactory',
         'Sbi.chart.designer.ChartUtils',
-        'Sbi.chart.designer.ChartTypeSelector',
         'Sbi.chart.designer.AxisesContainerStore',
         'Sbi.chart.designer.AxisesPicker',
         'Sbi.chart.designer.ChartTypeColumnSelector',
@@ -14,7 +13,7 @@ Ext.define('Sbi.chart.designer.Designer', {
         'Sbi.chart.designer.ChartConfigurationModel',
         'Sbi.chart.designer.ChartConfiguration',
         'Sbi.chart.designer.CrossNavigationPanel',
-        'Sbi.chart.designer.AdvancedEditor',
+        'Sbi.chart.designer.AdvancedEditor'
     ],
 
     statics: {
@@ -94,6 +93,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 		serverPort: '',
 		
 		styleType: '',
+		
+		chartTypeStoreLoaded: false,
 		
 		/**
 		 * Get the missing JSON configuration elements (properties) in order to define
@@ -289,9 +290,47 @@ Ext.define('Sbi.chart.designer.Designer', {
 			        //margin: '5 3 3 0'
 			});
 			
-			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector_2', {
- 				region: 'north',
- 				//minHeight: 50		
+			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector_2', 
+			{ 				
+				region: 'north',
+ 				
+				listeners:
+ 				{
+					/**
+					 * Listen for the moment in which the item is rendered (this one)
+					 * so to be able to customize the combo properly (icon of the chart
+					 * type + name of the chart type). This will happen on the load of 
+					 * the document inside of the Designer - combo box for chart type 
+					 * is set to it's initial state (the icon of chart type of the 
+					 * current document and it's name).
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+ 					afterrender: function(chartTypeOfDocument)
+ 					{
+ 						var iconPath = "";
+ 						
+ 						for (i=0; i<this.store.data.length; i++)
+						{
+ 							if (this.store.data.items[i].data.styleAbbr.toLowerCase() == chartTypeOfDocument.value.toLowerCase())
+							{
+ 								iconPath = this.store.data.items[i].data.icon;
+ 								break;
+							}
+						}
+ 					
+	 					this.inputEl.setStyle
+	 		            (
+ 		            		{
+ 				                'background-image': 	'url('+iconPath+')',
+ 				                'background-repeat': 	'no-repeat',
+ 				                'background-position': 	'left center',
+ 				                'padding-left': 		'35px', 
+ 				                'background-size': 		"30px 30px"	            
+ 		            		}
+ 		        		);	
+ 					}
+ 				}	
  			});
 			
 			var onSelectJsonTemplate = "";					
@@ -570,10 +609,27 @@ Ext.define('Sbi.chart.designer.Designer', {
  			});
 			
 			/** 
-			 * (danilo.ristovski@mht.net) 
-			 */
-			// TODO: Explain the usage of this global variable
-			this.seriesBeforeDropStore = Ext.create("Ext.data.Store",{id:"storeForSeriesBeforeDrop", fields: [{name: 'seriesColumn'}]});
+			 * This store serves for keeping data about series existing inside 
+			 * of the Y-axis panel at the moment, so the PARALLEL chart 'Limit'
+			 * panel's combo box for "Serie as filter column" on the Configuration 
+			 * tab (previously Step 2) can be up-to-date about available serie
+			 * items. This store is used inside of the ChartConfigurationParallelLimit
+			 * file (panel). ID of the panel: "chartParallelLimit".
+			 *   
+			 * @author: danristo (danilo.ristovski@mht.net)
+			 */			
+			this.seriesBeforeDropStore = Ext.create
+			(
+				"Ext.data.Store",
+				{
+					id:"storeForSeriesBeforeDrop", 
+					
+					fields: 
+					[
+			         	{name: 'seriesColumn'}
+		         	]
+				}
+			);
 			
 			var columnsPickerStore = this.columnsPickerStore;
 			
@@ -649,7 +705,9 @@ Ext.define('Sbi.chart.designer.Designer', {
   					},
   					listeners: {
   						drop: function(node, data, dropRec, dropPosition) {  
+  							console.log("AAA");
   							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('serieColumn') : ' on empty view';
+  							console.log("BBB");
   						}
   					}
   				},
@@ -805,11 +863,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    listConfig: {
 			    	listeners: {
 				    	itemclick: function(combo,k) {
-				    		
-				    		//console.log("==========================");
-				    		//console.log("== STYLE COMBO (start) ===");
-				    		//console.log("==========================");
-			    			
+				    					    			
 				    		/**
 							 * Depending on the style that we choose for the document's generic
 							 * customizable parameters (Red, Green, Blue, ... style), take the
@@ -817,9 +871,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * style. This part is needed for later merging of the templates 
 							 */
 				    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();	
-				    		
-				    		var localJsonTemplate = jsonTemplate;					    		
-				    		
+				    						    		
 				    		/**
 				    		 * If current chart is of type PARALLEL, when changing the chart's style
 				    		 * it is needed for combobox (Limit panel on the Step 2 of the Designer) 
@@ -831,92 +883,31 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    			{
 				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
 			    			}				    		
-				    		
-				    		//console.log("=== Chart type: " + chartType + " ===");
-				    		
-				    		/* 4.9. Keep the VALUES tag (keep them when only changing the   */
-				    		
-//					    		var colorpalleteToKeep = jsonTemplate.CHART.COLORPALLETE;
-//					    		var yAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[0].alias;
-//					    		var xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[1].alias;
-				    		//console.log(jsonTemplate);
-				    		var valuesToKeep = jsonTemplate.CHART.VALUES;
-				    		
-				    		//console.log("=== Values to keep... ===");
-				    		//console.log(valuesToKeep);
-				    		
-//				    		var yAxesAliasToKeep = new Array();
-//				    		var xAxisAliasToKeep = {};
-//				    		
-//				    		for (var i=0; i < jsonTemplate.CHART.AXES_LIST.AXIS.length; i++) {
-//				    			if (i < jsonTemplate.CHART.AXES_LIST.AXIS.length-1) {
-//				    				yAxesAliasToKeep.push(jsonTemplate.CHART.AXES_LIST.AXIS[i]);
-//			    				}
-//				    			else
-//			    				{
-//				    				xAxisAliasToKeep = jsonTemplate.CHART.AXES_LIST.AXIS[i];
-//			    				}
-//			    			}
-//				    		
-//				    		/* 4.9. Clear the JSON template */
-				    		localJsonTemplate.CHART = {};		// clean the JSON object (template)
-//				    		jsonTemplate.CHART.AXES_LIST = {};
-//				    		jsonTemplate.CHART.AXES_LIST.AXIS = new Array(yAxesAliasToKeep.length+1);
-//				    		
-//				    		// keep the series axes
-//				    		for (var i=0; i < yAxesAliasToKeep.length; i++) {
-//				    			jsonTemplate.CHART.AXES_LIST.AXIS[i] = yAxesAliasToKeep[i];
-//			    			}
-//				    		
-//				    		// keep the category axis
-//				    		jsonTemplate.CHART.AXES_LIST.AXIS[yAxesAliasToKeep.length] = xAxisAliasToKeep;
-				    		
-				    		// keep the values (items) on these axes (X and Y)
-				    		
-				    		//console.log("=== Chart type changed: " + Sbi.chart.designer.Designer.chartTypeChanged + " ===");
-				    		
-				    		// TODO: uncomment so to keep data
-				    		if (Sbi.chart.designer.Designer.chartTypeChanged == false || Sbi.chart.designer.Designer.chartTypeChanged==null)
-				    			localJsonTemplate.CHART.VALUES = valuesToKeep;
-				    		
-				    		// Previously I have defined generic configuration first and then the second (specific) configuration
-//								var genericConfigurationForStyle = Designer.getConfigurationForStyle(k.data.styleAbbr).generic;
-														
-							/* Keep the ID of the left Y-axis panel when changing the style of the chart
-							 * since the one (left Y-axis panel) is always present */
-//								console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
-//								jsonTemplate.CHART.AXES_LIST.AXIS[0].id = "Axis_6";
-															
-							/* Clean the chart type value because it is maybe going to be changed. Case: we firstly change
-							 * type of the chart and then we change the style - it is needed because of the merging function,
-							 * since we have the old chart type in the old JSON template that was linked to the previous
-							 * (initial) chart (document) and we want to change that value  */
-//								jsonTemplate.CHART.type = "";
+			    		
 
 							/**
 							 * Reset (refresh, modify) the 'styleName' field of the Designer, also
 							 */
 							Designer.styleName = k.data.styleAbbr;
 							
-							//console.log("=== Style name: " + Designer.styleName + " ===");
-							
 							/**
 							 * Reset the JSON template for the document (chart) after changing the 
 							 * previously selected style (changing the selected item of the combo)
 							 */
-//								jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplate,genericConfigurationForStyle);
 							
 							/**
 							 * Set the predefined values for specific parameters of different chart types.
 							 */								
-							// TODO: See the differences with the new code (Benedetto)
 							
 							var chartTypeToLowerCase = chartType.toLowerCase();
 							
-							//console.log("=== Template... ===");
-							//console.log(Designer.getConfigurationForStyle(k.data.styleAbbr));
+							/**
+							 * This is JSON template that we take form the Advance editor (previously, Step 3)
+							 * so we can be up-to-date with current structure of the document inside the Designer.
+							 */
+							var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();
 							
-							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(localJsonTemplate,Designer.getConfigurationForStyle(k.data.styleAbbr).generic);
+							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(k.data.styleAbbr).generic,configApplyAxes);
 							
 							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 									localJsonTemplate, 
@@ -925,23 +916,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							jsonTemplate = localJsonTemplate;
 							
-							//console.log(jsonTemplate);
-							
-							
-							
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
 							 */
 				    		Sbi.chart.designer.Designer.update(jsonTemplate);
-			    		
-				    		//console.log("==========================");
-				    		//console.log("== STYLE COMBO (end) ===");
-				    		//console.log("==========================");
 				    	}
 			    	}
 			    }
 			});
+			
+			
 			
 			this.chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
 				styleLabel2: this.styleLabel2,
@@ -953,6 +938,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   				region: 'west'
   			});			
 
+			
+			
 			var chartExportWebServiceManager = this.chartExportWebServiceManager;
 			var chartServiceManager = this.chartServiceManager;
 			
@@ -1058,58 +1045,6 @@ Ext.define('Sbi.chart.designer.Designer', {
   				otherPanel: this.rightYAxisesPanel
   			});	
 			
-			// (danristo) TODO: i donn't know if it is used anymore
-			this.leftYAxisesPanel.on ("newSerieItem", 
-				function(newSerieItem) {
-					// This is not working!!! Appending the current style parameters values to the newly dropped serie item
-					//console.log("!!! newSerieItem !!!");
-					
-					// TODO: This is only for the GAUGE (specific VALUES tag)
-					var valueForSerieToAddInJson = {
-						CHART: {
-							VALUES: {
-								SERIE: {
-									DATA_LABELS: {
-										colorDataLabels: "#00FF00",
-										formatDataLabels: "{y}",
-										yPositionDataLabels: "-40"
-									},
-									
-									DIAL: {
-										backgroundColorDial: ""
-									},
-									
-									TOOLTIP: {
-										backgroundColor: "",
-										style: "color:;fontFamily:;fontWeight:;fontSize:;align:;",
-										templateHtml: ""
-									},
-									
-									//axis: "Y",
-									color: "",
-									column: newSerieItem.data.serieColumn,
-									name: newSerieItem.data.axisName,
-									groupingFunction: newSerieItem.data.serieGroupingFunction,
-									orderType: "",
-									postfixChar: "", 
-									precision: "",
-									prefixChar: "",
-									showValue: true,
-									type: ""
-								}
-							}
-						}
-					};
-					
-					jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-							jsonTemplate, 
-							valueForSerieToAddInJson,
-							configApplyAxes);	
-					
-					return true;
-				}
-			);
-			
 			this.categoriesStore = Ext.create('Sbi.chart.designer.AxisesContainerStore', {
   				storeId: 'categoriesStore'	
 			});
@@ -1204,8 +1139,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  						/**
   	  						 * Prevent taking more than one category from the container when we have
   	  						 * one of these chart types.
-  	  						 * TODO: check if this works
-  	  						 * (danilo.ristovski@mht.net)
+  	  						 *   	  						
+  	  						 * @author: danristo (danilo.ristovski@mht.net)
   	  						 */
   	  						if (data.records.length > 1 && (chartType == "RADAR" || chartType == "SCATTER" || 
   	  								chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD")) {
@@ -1503,8 +1438,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            					fn : function(buttonValue, inputText, showConfig){
   		            						if (buttonValue == 'ok') {  		            							
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
-  		            							  		
-  		            							  		// TODO: See what is happening here   		            							
+  		            							  		 		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
   		            							  	  		            							
   		            								var parameters = {
@@ -1514,10 +1448,18 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  		            							coreServiceManager.run('saveChartTemplate', parameters, [], function (response) {});
   	  		            							Ext.getBody().unmask();
   	  		            							
-  	  		            							// (danristo)
-  	  		            							//console.log(exportedAsOriginalJson);
+  	  		            							/**
+  	  		            							 * Change (update) the JSON template (jsonTemplate) of the current file
+  	  		            							 * when saving since we need it for some other potential modifications 
+  	  		            							 * of the chart (document). This is useful in the case when user saves
+  	  		            							 * the document and then stays inside of the same document (without
+  	  		            							 * reloading the Designer) and then modifies it somewhat more afterwards.
+  	  		            							 * Logically, we do not need this feature when clicking on "Save and back". 
+  	  		            							 * 
+  	  		            							 * @author: danristo (danilo.ristovski@mht.net)
+  	  		            							 */
   	  		            							jsonTemplate = exportedAsOriginalJson;
-  	  		            							Sbi.chart.designer.Designer.chartTypeChanged = false; // danristo (19.10)
+  	  		            							Sbi.chart.designer.Designer.chartTypeChanged = false;
   		            							}
   		            					}
   		            				});
@@ -1676,13 +1618,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 			
 			//Handle resize event for making the designer responsive
-			Ext.on('resize', function(w, h){
-				this.chartStructure.updateLayout();
-				this.chartConfiguration.updateLayout();
-				this.crossNavigationPanel.updateLayout();
-				this.advancedEditor.updateLayout();
-				this.designerMainPanel.updateLayout();
-			}, this);
+//			Ext.on('resize', function(w, h){
+//				this.chartStructure.updateLayout();
+//				this.chartConfiguration.updateLayout();
+//				this.crossNavigationPanel.updateLayout();
+//				this.advancedEditor.updateLayout();
+//				this.designerMainPanel.updateLayout();
+//			}, this);
 			
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
   			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */
@@ -2213,14 +2155,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 				}
 			}		
 			
-			
-			
-			/* ************************************************************************ */
-			/* ************************************************************************ */
-			// TODO: THE WHOLE BLOCK OF CODE BENEATG THIS OBJECT NEEDS LN() !!!!!!!
-			/* ************************************************************************ */
-			/* ************************************************************************ */
-			
 			/**
 			 * only numerical values (fields) from panels 
 			 */
@@ -2233,7 +2167,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 						symbolHeight:
 						{
 							minValue: Ext.getCmp("heatmapLegendSymbolHeight").minValue,
-//							defaultValue: ,
 							maxValue: Ext.getCmp("heatmapLegendSymbolHeight").maxValue
 						}
 					}					
@@ -2401,79 +2334,22 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			/**
 			 * PIE, PARALLEL, HEATMAP chart: Instead of forcing user to specify at least one or two colors in the color pallete, 
-			 * we provided  possibility for him not to specify any color while the VM will take care of 
-			 * this and  dedicate predefined color as set of colors for the PIE chart.
+			 * we provided  possibility for him not to specify any color while the VM will take care of this and dedicate predefined 
+			 * color as set of colors for the PIE chart.
 			 * 
 			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			
 			/**
-			 * Validation for Step 2 if the mandatory fields are not defined for particular chart type
+			 * Validation for Step 2 if the mandatory fields are not defined for particular chart type.
+			 * 
+			 * Two ways of getting data about parameters: 
+			 * 		(1) through the corresponding GUI element
+			 * 		(2) through the corresponding property inside of the cModel
+			 * 
 			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			if (chartType == "GAUGE") {								
-//				/**
-//				 * STEP 1 -> Axis style configuration popup
-//				 * 
-//				 * *** NOTE: In order to collect the data defined in the Axis style configuration
-//				 * popup window (all data about the axis) we need to call the getAxesDataAsOriginalJson
-//				 * function from the ChartUtils.js. This call will be done just for those charts that 
-//				 * need these data (e.g. GAUGE chart).
-//				 */
-//				var gaugeStep1YAxisPopupData = Sbi.chart.designer.ChartUtils.getAxesDataAsOriginalJson();
-//				console.log(gaugeStep1YAxisPopupData[0]);
-//				/**
-//				 * Optional parameters: endOnTickGauge, lineColor, tickPosition, tickColor, minorTickPosition, minorTickColor
-//				 * Mandatory parameters: 
-//				 * 		(1) Axis additional parameters:
-//				 * 			-	min, max, offset, lineWidth, 
-//				 * 		(2) Main tick parameters:
-//				 * 			-	tickPixelInterval, tickWidth, tickLength,  
-//				 * 		(3) Minor tick parameters:
-//				 * 			-	minorTickPixelInterval, minorTickWidth, minorTickLength, 
-//				 * 		(4) Label parameters:
-//				 * 			-	distance, rotation
-//				 */
-//				
-//				/**
-//				 *  Axis additional parameters
-//				 */								
-//				(gaugeStep1YAxisPopupData[0].min=="" || gaugeStep1YAxisPopupData[0].min==null || gaugeStep1YAxisPopupData[0].min==undefined) ? 
-//						errorMsg += "- " + "<b>Min value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].max=="" || gaugeStep1YAxisPopupData[0].max==null || gaugeStep1YAxisPopupData[0].max==undefined) ? 
-//						errorMsg += "- " + "<b>Max value</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].offset=="" || gaugeStep1YAxisPopupData[0].offset==null || gaugeStep1YAxisPopupData[0].offset==undefined) ? 
-//						errorMsg += "- " + "<b>Offset</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].lineWidth=="" || gaugeStep1YAxisPopupData[0].lineWidth==null || gaugeStep1YAxisPopupData[0].lineWidth==undefined) ? 
-//						errorMsg += "- " + "<b>Line width</b> not specified [Step 1 -> Axis additional parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				
-//				/**
-//				 *  Main tick parameters
-//				 */							
-//				(gaugeStep1YAxisPopupData[0].tickPixelInterval=="" || gaugeStep1YAxisPopupData[0].tickPixelInterval==null || gaugeStep1YAxisPopupData[0].tickPixelInterval==undefined) ? 
-//						errorMsg += "- " + "<b>Tick pixel interval</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].tickWidth=="" || gaugeStep1YAxisPopupData[0].tickWidth==null || gaugeStep1YAxisPopupData[0].tickWidth==undefined) ? 
-//						errorMsg += "- " + "<b>Tick width</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].tickLength=="" || gaugeStep1YAxisPopupData[0].tickLength==null || gaugeStep1YAxisPopupData[0].tickLength==undefined) ? 
-//						errorMsg += "- " + "<b>Tick length</b> not specified [Step 1 -> Main tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				
-//				/**
-//				 *  Minor tick parameters
-//				 */				
-//				(gaugeStep1YAxisPopupData[0].minorTickInterval=="" || gaugeStep1YAxisPopupData[0].minorTickInterval==null || gaugeStep1YAxisPopupData[0].minorTickInterval==undefined) ? 
-//						errorMsg += "- " + "<b>Minor tick interval</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].minorTickWidth=="" || gaugeStep1YAxisPopupData[0].minorTickWidth==null || gaugeStep1YAxisPopupData[0].minorTickWidth==undefined) ? 
-//						errorMsg += "- " + "<b>Minor tick width</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].minorTickLength=="" || gaugeStep1YAxisPopupData[0].minorTickLength==null || gaugeStep1YAxisPopupData[0].minorTickLength==undefined) ? 
-//						errorMsg += "- " + "<b>Minor tick length</b> not specified [Step 1 -> Minor tick parameters]" + '<br>' : errorMsg; // TODO: Make LN()
-//				
-//				/**
-//				 * Labels parameters
-//				 */
-//				(gaugeStep1YAxisPopupData[0].distance=="" || gaugeStep1YAxisPopupData[0].distance==null || gaugeStep1YAxisPopupData[0].distance==undefined) ? 
-//						errorMsg += "- " + "<b>Distance</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
-//				(gaugeStep1YAxisPopupData[0].rotation=="" || gaugeStep1YAxisPopupData[0].rotation==null || gaugeStep1YAxisPopupData[0].rotation==undefined) ? 
-//						errorMsg += "- " + "<b>Rotation</b> not specified [Step 1 -> Labels parameters]" + '<br>' : ""; // TODO: Make LN()
 				
 				/**
 				 * STEP 2 -> Pane panel
@@ -2484,52 +2360,81 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var gaugeStartAnglePaneCModel = chartViewModelData.startAnglePane;
 				var gaugeEndAnglePaneCModel = chartViewModelData.endAnglePane;
 				
-				if (gaugeStartAnglePaneGUI == null)
-				{
-//					if (gaugeStartAnglePaneCModel == null || gaugeStartAnglePaneCModel == "")
-//					{
-//						errorMsg : errorMsg += "- " + "<b>Start angle</b> not specified [Step 2 -> Pane panel]" + '<br>';
-//					}						
-				}
-				else 
+				if (gaugeStartAnglePaneGUI != null)
 				{					
 					if (gaugeStartAnglePaneGUI < checkParamValuesForCharts.gauge.startAnglePane.minValue)
-					{
-						errorMsg += "- " + "<b>Start angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.gauge.startAnglePane.minValue + 
-							"</b> [Step 2 -> Pane panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.gauge.startAnglePane"),
+								checkParamValuesForCharts.gauge.startAnglePane.minValue,
+								LN('sbi.chartengine.configuration.gauge.panelTitle')
+							]
+						);
 					}
 					else if (gaugeStartAnglePaneGUI > checkParamValuesForCharts.gauge.startAnglePane.maxValue)
-					{
-						errorMsg += "- " + "<b>Start angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.gauge.startAnglePane.maxValue + 
-							"</b> [Step 2 -> Pane panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.gauge.startAnglePane"),
+								checkParamValuesForCharts.gauge.startAnglePane.maxValue,
+								LN('sbi.chartengine.configuration.gauge.panelTitle')
+							]
+						);
 					}
 				}
 				
-				if (gaugeEndAnglePaneGUI == null)
-				{
-//					if (gaugeEndAnglePaneCModel == null || gaugeEndAnglePaneCModel=="")
-//					{
-//						errorMsg : errorMsg += "- " + "<b>End angle</b> not specified [Step 2 -> Pane panel]" + '<br>'
-//					}						
-				}
-				else 
+				if (gaugeEndAnglePaneGUI != null) 
 				{					
 					if (gaugeEndAnglePaneGUI < checkParamValuesForCharts.gauge.endAnglePane.minValue)
-					{
-						errorMsg += "- " + "<b>End angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.gauge.endAnglePane.minValue + 
-							"</b> [Step 2 -> Pane panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.gauge.endAnglePane"),
+								checkParamValuesForCharts.gauge.endAnglePane.minValue,
+								LN('sbi.chartengine.configuration.gauge.panelTitle')
+							]
+						);
 					}
 					else if (gaugeEndAnglePaneGUI > checkParamValuesForCharts.gauge.endAnglePane.maxValue)
-					{
-						errorMsg += "- " + "<b>End angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.gauge.endAnglePane.maxValue + 
-							"</b> [Step 2 -> Pane panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.gauge.endAnglePane"),
+								checkParamValuesForCharts.gauge.endAnglePane.maxValue,
+								LN('sbi.chartengine.configuration.gauge.panelTitle')
+							]
+						);
 					}
 				}
 				
 				if ((gaugeEndAnglePaneGUI!=null && gaugeStartAnglePaneGUI!=null) || (gaugeEndAnglePaneCModel!="" && gaugeStartAnglePaneCModel!=""))
 				{
 					if ((gaugeEndAnglePaneGUI < gaugeStartAnglePaneGUI) || (gaugeEndAnglePaneCModel < gaugeStartAnglePaneCModel))
-					errorMsg += "- " + "<b>Start angle</b>'s value cannot be bigger than <b>End angle</b>'s value [Step 2 -> Pane panel]" + '<br>';
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.gauge.pane.startAngleBiggerThanEndAngle"),
+							
+							[
+								LN("sbi.chartengine.configuration.gauge.startAnglePane"),
+								LN("sbi.chartengine.configuration.gauge.endAnglePane"),
+								LN('sbi.chartengine.configuration.gauge.panelTitle')
+							]
+						);	
+					}
 				}
 			}		
 			
@@ -2591,80 +2496,184 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * STEP 2 -> Limit panel
 				 */
 				(parallelLimitSerieAsFiltColCModel=="" || parallelLimitSerieAsFiltColCModel==null || parallelLimitSerieAsFiltColCModel==undefined) ?
-						errorMsg += "- " + "<b>Serie as filter column</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
-								
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn"),
+								LN("sbi.chartengine.configuration.parallel.limit.title")
+							]
+						) : errorMsg;
+				
 				if (parallelLimitMaxNumOfRecGUI == null)
 				{
 					if (parallelLimitMaxNumOfLinesCModel == null || parallelLimitMaxNumOfLinesCModel=="")
-					{
-						errorMsg += "- " + "<b>Maximum number of records</b> not specified [Step 2 -> Limit panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines"),
+								LN("sbi.chartengine.configuration.parallel.limit.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelLimitMaxNumOfRecGUI < checkParamValuesForCharts.parallel.limit.maxNumbOfRec.minValue)
-					{
-						errorMsg += "- " + "<b>Maximum number of records</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.limit.maxNumbOfRec.minValue + 
-							"</b> [Step 2 -> Limit panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines"),
+								checkParamValuesForCharts.parallel.limit.maxNumbOfRec.minValue,
+								LN("sbi.chartengine.configuration.parallel.limit.title")
+							]
+						);
 					}
 					else if (parallelLimitMaxNumOfRecGUI > checkParamValuesForCharts.parallel.limit.maxNumbOfRec.maxValue)
-					{
-						errorMsg += "- " + "<b>Maximum number of records</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.limit.maxNumbOfRec.maxValue + 
-							"</b> [Step 2 -> Limit panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines"),
+								checkParamValuesForCharts.parallel.limit.maxNumbOfRec.maxValue,
+								LN("sbi.chartengine.configuration.parallel.limit.title")
+							]
+						);
 					}
 				}	
 				
 				(parallelLimitOrderTopMinBottMaxCModel=="" || parallelLimitOrderTopMinBottMaxCModel==null || parallelLimitOrderTopMinBottMaxCModel==undefined) ?
-						errorMsg += "- " + "<b>Order</b> not specified [Step 2 -> Limit panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax"),
+								LN("sbi.chartengine.configuration.parallel.limit.title")
+							]
+						) : errorMsg;
 				
 				/**
 				 * STEP 2 -> Axes lines panel
 				 */
 				(chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined) ?
-						errorMsg += "- " + "<b>Axis color</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						) : errorMsg;						
 				
 				if (parallelAxesLinesAxisColNamePaddGUI == null)
 				{
 					if (parallelAxesLinesAxisColNamePaddCModel == null || parallelAxesLinesAxisColNamePaddCModel=="")
-					{
-						errorMsg += "- " + "<b>Axis column name padding</b> not specified [Step 2 -> Axes lines panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd"),
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						);	
 					}						
 				}
 				else 
 				{					
 					if (parallelAxesLinesAxisColNamePaddGUI < checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.minValue)
-					{
-						errorMsg += "- " + "<b>Axis column name padding</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.minValue + 
-							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd"),
+								checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.minValue,
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						);
 					}
 					else if (parallelAxesLinesAxisColNamePaddGUI > checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.maxValue)
 					{
-						errorMsg += "- " + "<b>Axis column name padding</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.maxValue + 
-							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd"),
+								checkParamValuesForCharts.parallel.axesLines.axisColNamePadd.maxValue,
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						);
 					}
 				}
 				
 				(chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined) ?
-						errorMsg += "- " + "<b>Brush color</b> not specified [Step 2 -> Axes lines panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						) : errorMsg;
 				
 				if (parallelAxesLinesBrushWidthGUI == null)
 				{
 					if (parallelAxesLinesBrushWidthCModel == null || parallelAxesLinesBrushWidthCModel == "")
-					{
-						errorMsg += "- " + "<b>Brush width</b> not specified [Step 2 -> Axes lines panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth"),
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelAxesLinesBrushWidthGUI < checkParamValuesForCharts.parallel.axesLines.brushWidth.minValue)
 					{
-						errorMsg += "- " + "<b>Brush width</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.brushWidth.minValue + 
-							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth"),
+								checkParamValuesForCharts.parallel.axesLines.brushWidth.minValue,
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						);
 					}
 					else if (parallelAxesLinesBrushWidthGUI > checkParamValuesForCharts.parallel.axesLines.brushWidth.maxValue)
-					{
-						errorMsg += "- " + "<b>Brush width</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.axesLines.brushWidth.maxValue + 
-							"</b> [Step 2 -> Axes lines panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth"),
+								checkParamValuesForCharts.parallel.axesLines.brushWidth.maxValue,
+								LN("sbi.chartengine.configuration.parallel.axesLines.title")
+							]
+						);
 					}
 				}
 				
@@ -2672,49 +2681,114 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * STEP 2 -> Tooltip panel
 				 */
 				(chartViewModelData.parallelTooltipFontFamily=="" || chartViewModelData.parallelTooltipFontFamily==null || chartViewModelData.parallelTooltipFontFamily==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.font'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						) : errorMsg;
+								
 				(chartViewModelData.parallelTooltipFontSize=="" || chartViewModelData.parallelTooltipFontSize==null || chartViewModelData.parallelTooltipFontSize==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Tooltip panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontsize'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						) : errorMsg;
 				
 				if (parallelTooltipMinWidthGUI == null)
 				{
 					if (parallelTooltipMinWidthCModel == null || parallelTooltipMinWidthCModel=="")
 					{
-						errorMsg += "- " + "<b>Minimum width</b> not specified [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipMinWidthGUI < checkParamValuesForCharts.parallel.tooltip.minWidth.minValue)
 					{
-						errorMsg += "- " + "<b>Minimum width</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minWidth.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth'),
+								checkParamValuesForCharts.parallel.tooltip.minWidth.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipMinWidthGUI > checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue)
 					{
-						errorMsg += "- " + "<b>Minimum width</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth'),
+								checkParamValuesForCharts.parallel.tooltip.minWidth.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 				
 				if (parallelTooltipMaxWidthGUI == null)
 				{
 					if (parallelTooltipMaxWidthCModel == null || parallelTooltipMaxWidthCModel=="")
-					{
-						errorMsg += "- " + "<b>Maximim width</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipMaxWidthGUI < checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue)
-					{
-						errorMsg += "- " + "<b>Maximim width</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth'),
+								checkParamValuesForCharts.parallel.tooltip.maxWidth.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipMaxWidthGUI > checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue)
 					{
-						errorMsg += "- " + "<b>Maximim width</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth'),
+								checkParamValuesForCharts.parallel.tooltip.maxWidth.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 				
@@ -2722,20 +2796,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (parallelTooltipMinHeightCModel == null || parallelTooltipMinHeightCModel=="")
 					{
-						errorMsg += "- " + "<b>Minimum height</b> not specified [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipMinHeighGUI < checkParamValuesForCharts.parallel.tooltip.minHeight.minValue)
 					{
-						errorMsg += "- " + "<b>Minimum height</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minHeight.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight'),
+								checkParamValuesForCharts.parallel.tooltip.minHeight.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipMinHeighGUI > checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue)
 					{
-						errorMsg += "- " + "<b>Minimum height</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight'),
+								checkParamValuesForCharts.parallel.tooltip.minHeight.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 				
@@ -2743,20 +2841,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (parallelTooltipMaxHeightCModel == null || parallelTooltipMaxHeightCModel=="")
 					{
-						errorMsg += "- " + "<b>Maximim height</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipMaxHeightGUI < checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue)
 					{
-						errorMsg += "- " + "<b>Maximim height</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight'),
+								checkParamValuesForCharts.parallel.tooltip.maxHeight.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipMaxHeightGUI > checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue)
 					{
-						errorMsg += "- " + "<b>Maximim height</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight'),
+								checkParamValuesForCharts.parallel.tooltip.maxHeight.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 				
@@ -2764,20 +2886,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (parallelTooltipPaddingCModel == null || parallelTooltipPaddingCModel=="")
 					{
-						errorMsg += "- " + "<b>Text padding</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipPaddingGUI < checkParamValuesForCharts.parallel.tooltip.textPadding.minValue)
 					{
-						errorMsg += "- " + "<b>Text padding</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.textPadding.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding'),
+								checkParamValuesForCharts.parallel.tooltip.textPadding.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipPaddingGUI > checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue)
 					{
-						errorMsg += "- " + "<b>Text padding</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue + 
-							"</b>[ Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding'),
+								checkParamValuesForCharts.parallel.tooltip.textPadding.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 					
@@ -2785,20 +2931,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (parallelTooltipBorderCModel == null || parallelTooltipBorderCModel=="")
 					{
-						errorMsg += "- " + "<b>Border</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipBorderGUI < checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue)
 					{
-						errorMsg += "- " + "<b>Border</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+								checkParamValuesForCharts.parallel.tooltip.borderWidth.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipBorderGUI > checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue)
 					{
-						errorMsg += "- " + "<b>Border</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder'),
+								checkParamValuesForCharts.parallel.tooltip.borderWidth.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 				
@@ -2806,38 +2976,98 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (parallelTooltipBorderRadiusCModel == null || parallelTooltipBorderRadiusCModel=="")
 					{
-						errorMsg += "- " + "<b>Border radius</b> not specified [Step 2 -> Tooltip panel]" + '<br>'
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (parallelTooltipBorderRadiusGUI < checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue)
 					{
-						errorMsg += "- " + "<b>Border radius</b>'s minimum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+								checkParamValuesForCharts.parallel.tooltip.borderRadius.minValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 					else if (parallelTooltipBorderRadiusGUI > checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue)
 					{
-						errorMsg += "- " + "<b>Border radius</b>'s maximum value is: <b>" + checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue + 
-							"</b> [Step 2 -> Tooltip panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius'),
+								checkParamValuesForCharts.parallel.tooltip.borderRadius.maxValue,
+								LN("sbi.chartengine.configuration.parallel.tooltip.title")
+							]
+						);
 					}
 				}
 				
 				/**
 				 * STEP 2 -> Legend panel (Title and Element button)
 				 */
+				
 				(parallelLegendTitleFontFamilyCModel=="" || parallelLegendTitleFontFamilyCModel==null || parallelLegendTitleFontFamilyCModel==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.font'),
+								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
+								LN("sbi.chartengine.configuration.parallel.legend.title.popupTitle")
+							]
+						) : errorMsg;
+							
 				(parallelLegendTitleFontSizeCModel=="" || parallelLegendTitleFontSizeCModel==null || parallelLegendTitleFontSizeCModel==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
-//				(parallelLegendTitleFontStyleCModel=="" || parallelLegendTitleFontStyleCModel==null || parallelLegendTitleFontStyleCModel==undefined) ?
-//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Title button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontsize'),
+								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
+								LN("sbi.chartengine.configuration.parallel.legend.title.popupTitle")
+							]
+						) : errorMsg;	
+			
 				(parallelLegendElementFontFamilyCModel=="" || parallelLegendElementFontFamilyCModel==null || parallelLegendElementFontFamilyCModel==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.font'),
+								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
+								LN("sbi.chartengine.configuration.parallel.legend.element.popupTitle")
+							]
+						) : errorMsg;
+				
 				(parallelLegendElementFontSizeCModel=="" || parallelLegendElementFontSizeCModel==null || parallelLegendElementFontSizeCModel==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
-//				(parallelLegendElementFontStyleCModel=="" || parallelLegendElementFontStyleCModel==null || parallelLegendElementFontStyleCModel==undefined) ?
-//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Legend panel -> Element button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontsize'),
+								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
+								LN("sbi.chartengine.configuration.parallel.legend.element.popupTitle")
+							]
+						) : errorMsg;				
 				
 				/**
 				 * STEP 2 -> Palette panel
@@ -2845,7 +3075,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 //				var itemsIncolorPalette = Ext.getCmp("chartColorPallete").paletteGrid.getStore().data.length;
 //				
 //				(itemsIncolorPalette < 2) ? 
-//						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	// TODO: Make LN()
+//						errorMsg += "- " + "Color palette needs at least 2 colors [Step 2 -> Palette panel]" + '<br>' : errorMsg;	
 			}
 			
 			else if (chartType == "SUNBURST") {
@@ -2883,48 +3113,114 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/**
 				 * STEP 2 -> Toolbar and tip configuration (Toolbar style button)
 				 */
+				
+				
+				
 				(chartViewModelData.toolbarPosition=="" || chartViewModelData.toolbarPosition==null || chartViewModelData.toolbarPosition==undefined) ?
-						errorMsg += "- " + "<b>Position</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.position'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						)  : errorMsg;	
 				
 				if (sunburstToolbarSpacingGUI == null)
 				{
 					if (sunburstToolbarSpacingCModel == null || sunburstToolbarSpacingCModel=="")
-					{
-						errorMsg += "- " + "<b>Spacing</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (sunburstToolbarSpacingGUI < checkParamValuesForCharts.sunburst.toolbar.spacing.minValue)
-					{
-						errorMsg += "- " + "<b>Spacing</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.spacing.minValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
+								checkParamValuesForCharts.sunburst.toolbar.spacing.minValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 					else if (sunburstToolbarSpacingGUI > checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue)
 					{
-						errorMsg += "- " + "<b>Spacing</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
+								checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 				}
 				
 				if (sunburstToolbarTailGUI == null)
 				{
 					if (sunburstToolbarTailCModel == null || sunburstToolbarTailCModel=="")
-					{
-						errorMsg += "- " + "<b>Tail</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (sunburstToolbarTailGUI < checkParamValuesForCharts.sunburst.toolbar.tail.minValue)
 					{
-						errorMsg += "- " + "<b>Tail</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.tail.minValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
+								checkParamValuesForCharts.sunburst.toolbar.tail.minValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 					else if (sunburstToolbarTailGUI > checkParamValuesForCharts.sunburst.toolbar.tail.maxValue)
 					{
-						errorMsg += "- " + "<b>Tail</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.tail.maxValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
+								checkParamValuesForCharts.sunburst.toolbar.tail.maxValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 				}
 				
@@ -2932,88 +3228,235 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (sunburstToolbarHeightCModel == null || sunburstToolbarHeightCModel == "")
 					{
-						errorMsg += "- " + "<b>Height</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (sunburstToolbarHeightGUI < checkParamValuesForCharts.sunburst.toolbar.height.minValue)
 					{
-						errorMsg += "- " + "<b>Height</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.height.minValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
+								checkParamValuesForCharts.sunburst.toolbar.height.minValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 					else if (sunburstToolbarHeightGUI > checkParamValuesForCharts.sunburst.toolbar.height.maxValue)
 					{
-						errorMsg += "- " + "<b>Height</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.height.maxValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
+								checkParamValuesForCharts.sunburst.toolbar.height.maxValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 				}
 				
 				if (sunburstToolbarWidthGUI == null)
 				{
-					if (sunburstToolbarWidthCModel == null || sunburstToolbarWidthCModel=="")
+					if (sunburstToolbarWidthCModel == null || sunburstToolbarWidthCModel == "")
 					{
-						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
-					}						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
+					}										
 				}
 				else 
 				{					
 					if (sunburstToolbarWidthGUI < checkParamValuesForCharts.sunburst.toolbar.width.minValue)
 					{
-						errorMsg += "- " + "<b>Width</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.width.minValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
+								checkParamValuesForCharts.sunburst.toolbar.width.minValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 					else if (sunburstToolbarWidthGUI > checkParamValuesForCharts.sunburst.toolbar.width.maxValue)
 					{
-						errorMsg += "- " + "<b>Width</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.toolbar.width.maxValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
+								checkParamValuesForCharts.sunburst.toolbar.width.maxValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 				}
 				
 				(chartViewModelData.toolbarPercFontColor=="" || chartViewModelData.toolbarPercFontColor==null || chartViewModelData.toolbarPercFontColor==undefined) ?
-						errorMsg += "- " + "<b>Percentage color</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						) : errorMsg;
+							
+							
+							
 				(chartViewModelData.toolbarFontFamily=="" || chartViewModelData.toolbarFontFamily==null || chartViewModelData.toolbarFontFamily==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
-//				(chartViewModelData.toolbarFontWeight=="" || chartViewModelData.toolbarFontWeight==null || chartViewModelData.toolbarFontWeight==undefined) ?
-//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.font'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						) : errorMsg;
+							
 				(chartViewModelData.toolbarFontSize=="" || chartViewModelData.toolbarFontSize==null || chartViewModelData.toolbarFontSize==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Toolbar button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontsize'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						) : errorMsg;
 				
 				/**
 				 * STEP 2 -> Toolbar and tip configuration (Tip style button)
 				 */					
-//				(sunburstTipFontWeightCModel=="" || sunburstTipFontWeightCModel==null || sunburstTipFontWeightCModel==undefined) ?
-//						errorMsg += "- " + "<b>Font style</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+
 				(sunburstTipColorCModel=="" || sunburstTipColorCModel==null || sunburstTipColorCModel==undefined) ?
-						errorMsg += "- " + "<b>Font color</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.tip.fontColor'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+							]
+						) : errorMsg;
+							
 				(sunburstTipFontSizeCModel=="" || sunburstTipFontSizeCModel==null || sunburstTipFontSizeCModel==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontsize'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+							]
+						) : errorMsg;
+							
 				(sunburstTipFontFamilyCModel=="" || sunburstTipFontFamilyCModel==null || sunburstTipFontFamilyCModel==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.font'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+							]
+						) : errorMsg;
 								
 				if (sunburstTipWidthGUI == null)
 				{
 					if (sunburstTipWidthCModel == null || sunburstTipWidthCModel=="")
-					{
-						errorMsg += "- " + "<b>Width</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.tip.width'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (sunburstTipWidthGUI < checkParamValuesForCharts.sunburst.tip.width.minValue)
 					{
-						errorMsg += "- " + "<b>Width</b>'s minimum value is: <b>" + checkParamValuesForCharts.sunburst.tip.width.minValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.tip.width'),
+								checkParamValuesForCharts.sunburst.tip.width.minValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 					else if (sunburstTipWidthGUI > checkParamValuesForCharts.sunburst.tip.width.maxValue)
 					{
-						errorMsg += "- " + "<b>Width</b>'s maximum value is: <b>" + checkParamValuesForCharts.sunburst.tip.width.maxValue + 
-							"</b> [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.tip.width'),
+								checkParamValuesForCharts.sunburst.tip.width.maxValue,
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						);
 					}
 				}
 				
 				(sunburstTipTextCModel=="" || sunburstTipTextCModel==null || sunburstTipTextCModel==undefined) ?
-						errorMsg += "- " + "<b>Text</b> not specified [Step 2 -> Toolbar and tip panel -> Tip button]" + '<br>' : errorMsg;	// TODO: Make LN()				
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.sunburst.tip.text'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+							]
+						) : errorMsg;			
 			}
 			
 			else if (chartType == "WORDCLOUD") {
@@ -3039,26 +3482,58 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				
 				(wordcloudSizeCriteriaCModel=="" || wordcloudSizeCriteriaCModel==null || wordcloudSizeCriteriaCModel==undefined) ?
-						errorMsg += "- " + "<b>Size criteria</b> not specified [Step 2 -> Wordcloud panel]" + '<br>' : errorMsg;	// TODO: Make LN()				
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.sizeCriteria'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						) : errorMsg;
 				
 				if (wordcloudMaxWordsGUI == null)
 				{
 					if (wordcloudMaxWordsCModel == null || wordcloudMaxWordsCModel == "")
-					{
-						errorMsg += "- " + "<b>Maximum number of words</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxWords'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (wordcloudMaxWordsGUI < checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue)
-					{
-						errorMsg += "- " + "<b>Maximum number of words</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxWords'),
+								checkParamValuesForCharts.wordcloud.maxNumOfWords.minValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 					else if (wordcloudMaxWordsGUI > checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue)
-					{
-						errorMsg += "- " + "<b>Maximum number of words</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxWords'),
+								checkParamValuesForCharts.wordcloud.maxNumOfWords.maxValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 				}
 				
@@ -3066,20 +3541,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (wordcloudMaxAngleCModel == null || wordcloudMaxAngleCModel=="")
 					{
-						errorMsg += "- " + "<b>Maximum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (wordcloudMaxAngleGUI < checkParamValuesForCharts.wordcloud.maxWordAngle.minValue)
 					{
-						errorMsg += "- " + "<b>Maximum word angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.maxWordAngle.minValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+								checkParamValuesForCharts.wordcloud.maxWordAngle.minValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 					else if (wordcloudMaxAngleGUI > checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue)
 					{
-						errorMsg += "- " + "<b>Maximum word angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxAngle'),
+								checkParamValuesForCharts.wordcloud.maxWordAngle.maxValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 				}
 				
@@ -3088,20 +3587,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (wordcloudMinAngleCModel == null || wordcloudMinAngleCModel=="")
 					{
-						errorMsg += "- " + "<b>Minimum word angle</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (wordcloudMinAngleGUI < checkParamValuesForCharts.wordcloud.minWordAngle.minValue)
 					{
-						errorMsg += "- " + "<b>Minimum word angle</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.minWordAngle.minValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+								checkParamValuesForCharts.wordcloud.minWordAngle.minValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 					else if (wordcloudMinAngleGUI > checkParamValuesForCharts.wordcloud.minWordAngle.maxValue)
 					{
-						errorMsg += "- " + "<b>Minimum word angle</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxWordAngle + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.minAngle'),
+								checkParamValuesForCharts.wordcloud.minWordAngle.maxValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 				}
 				
@@ -3109,20 +3632,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (wordcloudMaxFontSizeCModel == null || wordcloudMaxFontSizeCModel=="")
 					{
-						errorMsg += "- " + "<b>Maximum font size</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxFontSize'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (wordcloudMaxFontSizeGUI < checkParamValuesForCharts.wordcloud.maxFontSize.minValue)
 					{
-						errorMsg += "- " + "<b>Maximum font size</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.maxFontSize.minValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxFontSize'),
+								checkParamValuesForCharts.wordcloud.maxFontSize.minValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 					else if (wordcloudMaxFontSizeGUI > checkParamValuesForCharts.wordcloud.maxFontSize.maxValue)
 					{
-						errorMsg += "- " + "<b>Maximum font size</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.maxFontSize.maxValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.maxFontSize'),
+								checkParamValuesForCharts.wordcloud.maxFontSize.maxValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 				}				
 				
@@ -3130,20 +3677,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					if (wordcloudWordPaddingCModel == null || wordcloudWordPaddingCModel=="")
 					{
-						errorMsg += "- " + "<b>Word padding</b> not specified [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.wordPadding'),
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}						
 				}
 				else 
 				{					
 					if (wordcloudWordPaddingGUI < checkParamValuesForCharts.wordcloud.wordPadding.minValue)
 					{
-						errorMsg += "- " + "<b>Word padding</b>'s minimum value is: <b>" + checkParamValuesForCharts.wordcloud.wordPadding.minValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.wordPadding'),
+								checkParamValuesForCharts.wordcloud.wordPadding.minValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 					else if (wordcloudWordPaddingGUI > checkParamValuesForCharts.wordcloud.wordPadding.maxValue)
 					{
-						errorMsg += "- " + "<b>Word padding</b>'s maximum value is: <b>" + checkParamValuesForCharts.wordcloud.wordPadding.maxValue + 
-							"</b> [Step 2 -> Wordcloud panel]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN('sbi.chartengine.configuration.wordcloud.wordPadding'),
+								checkParamValuesForCharts.wordcloud.wordPadding.maxValue,
+								LN("sbi.chartengine.configuration.wordcloud.configPanelTitle")
+							]
+						);
 					}
 				}
 			}
@@ -3168,35 +3739,102 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var heatmapTooltipFontColorCModel = chartViewModelData.tipColor;
 				
 				(heatmapLegendVertAlignCModel=="" || heatmapLegendVertAlignCModel==null || heatmapLegendVertAlignCModel==undefined) ?
-						errorMsg += "- " + "<b>Alignment</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.alignment'),
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						) : errorMsg;	
+				
+				
 								
 				if (heatmapLegendSymbolHeightGUI == null)
 				{
 					if (heatmapLegendSymbolHeightCModel == null || heatmapLegendSymbolHeightCModel=="")
 					{
-						errorMsg += "- " + "<b>Symbol height</b> not specified [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.heatmap.symbolHeight'),
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						);
 					}						
 				}
 				else 
 				{
 					if (heatmapLegendSymbolHeightGUI < checkParamValuesForCharts.heatmap.legend.symbolHeight.minValue)
-					{
-						errorMsg += "- " + "<b>Symbol height</b>'s minimum value is: <b>" + checkParamValuesForCharts.heatmap.legend.symbolHeight.minValue + 
-							"</b> [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>';
+					{						
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.heatmap.symbolHeight'),
+								checkParamValuesForCharts.heatmap.legend.symbolHeight.minValue,
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						);
 					}
 					else if (heatmapLegendSymbolHeightGUI > checkParamValuesForCharts.heatmap.legend.symbolHeight.maxValue)
 					{
-						errorMsg += "- " + "<b>Symbol height</b>'s maximum value is: <b>" + checkParamValuesForCharts.heatmap.legend.symbolHeight.maxValue + 
-							"</b> [Step 2 -> Legend and tooltip panel -> Legend button]" + '<br>';
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.heatmap.symbolHeight'),
+								checkParamValuesForCharts.heatmap.legend.symbolHeight.maxValue,
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						);
 					}
 				}	
 				
 				(heatmapTooltipFontFamilyCModel=="" || heatmapTooltipFontFamilyCModel==null || heatmapTooltipFontFamilyCModel==undefined) ?
-						errorMsg += "- " + "<b>Font</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.font'),
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						) : errorMsg;
+				
 				( heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
-						errorMsg += "- " + "<b>Font size</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontsize'),
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						) : errorMsg;
+							
 				(heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
-						errorMsg += "- " + "<b>Color</b> not specified [Step 2 -> Legend and tooltip panel -> Tooltip button]" + '<br>' : errorMsg;	// TODO: Make LN()
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.color'),
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+							]
+						) : errorMsg;
 			}
 
 			var selectedChartType = this.chartTypeSelector.getChartType().toLowerCase();

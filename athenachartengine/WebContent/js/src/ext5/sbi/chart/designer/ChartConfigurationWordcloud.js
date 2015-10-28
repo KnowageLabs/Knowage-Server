@@ -16,7 +16,7 @@ Ext
 					 * 
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */
-					//columnWidth: 0.3,
+					
 					width : 230,
 					height : 250,
 					
@@ -32,8 +32,7 @@ Ext
 					},
 
 					layout : {
-						type : 'vbox',
-					//align: 'center'
+						type : 'vbox'
 					},
 
 					constructor : function(config) {
@@ -72,7 +71,6 @@ Ext
 									id: "wordcloudMaxWords",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords"),
 									width : "200",
-//									value : "10",
 									maxValue : '100',
 									minValue : '10'
 								},
@@ -83,7 +81,6 @@ Ext
 									id: "wordcloudMaxAngle",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxAngle"),
 									width : "200",
-//									value : "60",
 									maxValue : '360',
 									minValue : '60'
 								},
@@ -94,7 +91,6 @@ Ext
 									id: "wordcloudMinAngle",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minAngle"),
 									width : "200",
-//									value : "0",
 									maxValue : '270',
 									minValue : '0'
 								},
@@ -105,7 +101,6 @@ Ext
 									id: "wordcloudMaxFontSize",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize"),
 									width : "200",
-//									value : "100",
 									maxValue : '200',
 									minValue : '50'
 								},
@@ -116,7 +111,6 @@ Ext
 									id: "wordcloudWordPadding",
 									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.wordPadding"),
 									width : "200",
-//									value : "10",
 									maxValue : '20',
 									minValue : '2'
 								} ];

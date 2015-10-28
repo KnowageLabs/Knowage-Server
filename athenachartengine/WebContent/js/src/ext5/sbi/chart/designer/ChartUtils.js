@@ -485,8 +485,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 							for (var i = 0; i < numberOfPlots; i++) {
 								var object = {};
 
-								object['from'] = axisData.from[i]; // TODO: additional checking part for the intervals and possible values are missing
-								object['to'] = axisData.to[i]; // TODO: additional checking part for the intervals and possible values are missing
+								object['from'] = axisData.from[i];
+								object['to'] = axisData.to[i]; 
 								object['color'] = axisData.color[i] ? axisData.color[i] : '';
 
 								PLOT.push(object);
@@ -495,8 +495,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						} else {
 							var object = {};
 
-							object['from'] = axisData.from; // TODO: additional checking part for the intervals and possible values are missing
-							object['to'] = axisData.to; // TODO: additional checking part for the intervals and possible values are missing
+							object['from'] = axisData.from; 
+							object['to'] = axisData.to; 
 							object['color'] = axisData.color ? axisData.color : '';
 
 							PLOT.push(object);
@@ -718,7 +718,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			/**
 			 * Enabling multiply categories for following chart types.
-			 * (danilo.ristovski@mht.net)
+			 * 
+			 * @author: danristo (danilo.ristovski@mht.net)
 			 */
 			if (chartType.toUpperCase() == "SUNBURST"
 				 || chartType.toUpperCase() == "WORDCLOUD"
@@ -2215,16 +2216,23 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			// Assume both are objects and don't care about
 			// inherited properties
 			for (var prop in source) {
+				
+				// Daniele (commented part)
+//				if (applyAxes && prop == 'AXIS') {
+				if (applyAxes && prop == 'AXES_LIST') {
 
-				if (applyAxes && prop == 'AXIS') {
-
-//					console.log("-- AXIS --");
-//					console.log(target[prop]);
-//					console.log(source[prop]);
-
-					newTarget[prop] = ChartUtils.applyAxes(target[prop], source[prop]);
-
-//					console.log(newTarget[prop]);
+					if (source[prop]['AXIS']!=undefined)
+						newTarget[prop]['AXIS'] = ChartUtils.applyAxes(target[prop]['AXIS'], source[prop]['AXIS']);
+					
+					/**
+					 * Characteristic for PARALLEL chart
+					 */
+					// TODO: Can i do something like this (just associating the property of the same level from right to left side)????
+					if (source[prop]['style']!=undefined)
+						newTarget[prop]['style'] = source[prop]['style'];
+					
+					// Daniele (commented part)
+//					newTarget['AXES_LIST'][prop] = ChartUtils.applyAxes(target['AXES_LIST'][prop], source[prop]);
 
 					continue;
 				}

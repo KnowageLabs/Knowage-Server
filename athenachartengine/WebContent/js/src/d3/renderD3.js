@@ -2422,35 +2422,8 @@ function renderChordChart(jsonData)
 	{	
 		return function(g, i) {
 			
-//				console.log(i);
-//				
-//				console.log(columnsPairedWithRows[i]);
-//				console.log("row: " + columnsPairedWithRows[i].row);
-//				console.log("columnsPaired: ");
-//				
-//				// To which columns is this row linked to (column name + value)
-//				for (var j=0; j<columnsPairedWithRows[i].pairedWith.length; j++)
-//				{
-//					console.log(columnsPairedWithRows[i].pairedWith[j].column);
-//					console.log(columnsPairedWithRows[i].pairedWith[j].value);
-//				}
-//				
-//				console.log("column: " + rowsPairedWithColumns[i].column);
-//				console.log("rowsPaired: ");
-//				
-//				// To which columns is this row linked to (name + value)
-//				for (var k=0; k<rowsPairedWithColumns[i].pairedWith.length; k++)
-//				{
-//					if (rowsPairedWithColumns[i].column != rowsPairedWithColumns[i].pairedWith[k].row)
-//					{
-//						console.log(rowsPairedWithColumns[i].pairedWith[k].row);
-//						console.log(rowsPairedWithColumns[i].pairedWith[k].value);	
-//					}				
-//				}	
-			
 			setParamsClickAndMouseOver(g,i,false);
 			
-//			if (deselectClickedItem==undefined || deselectClickedItem==true || (previouslySelected == true && deselectClickedItem==false))
 			/**
 			 * With filtering we are getting pairs of stripes: one member of the pair is the source item (the row) whose 
 			 * outgoing stripe(s) we need to leave as default color (darker); the second member of the pair is the target
@@ -2476,8 +2449,7 @@ function renderChordChart(jsonData)
 		return function(g, i) 
 		{		
 			setParamsClickAndMouseOver(g,i,false);
-			
-//			if ((deselectClickedItem==undefined || deselectClickedItem==true) && previouslySelected==false)
+
 			if (enableMouseOut)
 			{
 				svg.selectAll(".chord path")
@@ -2597,53 +2569,6 @@ function renderChordChart(jsonData)
 				enableMouseOut = false;		
 			}				 
 		}
-
-//			/**
-//			  * Select particular item on the chart (freeze the chart)
-//			  */
-//		 
-//			 if ((deselectClickedItem == undefined || indexOfItemSelected == -1) && previouslySelected==false)
-//			 {
-//				 console.log("++ 1 ++");
-//				 deselectClickedItem = false;
-//				 indexOfItemSelected = i; 
-//				 
-//				 previouslySelected = true;
-//	 			
-////	 			// With which columns is this (selected, clicked) row paired 
-////	 			console.log(columnsPairedWithRows[i]);
-////	 			// Which columns are paired with this (selected, clicked) row 
-////		 		console.log(rowsPairedWithColumns[i]);
-//			 }  		 			
-//			 /**
-//			  * Deselect particular (already selected) item on the chart (unfreeze the chart)
-//			  */
-////			else if (indexOfItemSelected == i || (deselectClickedItem == true && indexOfItemSelected != i))
-//			 else if ((indexOfItemSelected == i && deselectClickedItem==false) && previouslySelected == true)
-//			 { 		
-//				 console.log("++ 2 ++");
-//				 indexOfItemSelected = -1;				 				
-//				 deselectClickedItem = !deselectClickedItem;  	
-//				 
-//				 previouslySelected = false;
-//				 
-////					// With which columns is this (selected, clicked) row paired 
-////	 				console.log(columnsPairedWithRows[i]);
-////	 				// Which columns are paired with this (selected, clicked) row 
-////	 		 		console.log(rowsPairedWithColumns[i]);							
-//			 } 	 	
-//			 else if (previouslySelected == true && deselectClickedItem==false && indexOfItemSelected!=-1 && indexOfItemSelected != i)
-//			 {
-//				 console.log("++ 3 ++");
-////				 deselectClickedItem = false;
-//				 indexOfItemSelected = i;
-//				 
-//				 fadeMouseOver();
-//			 }
-//	 		
-//			 console.log("--- IZLAZ ---");
-//			 console.log(indexOfItemSelected);
-//			 console.log(deselectClickedItem);
 	}
 	
 	function printTheResultWhenSelecting(i)
@@ -2685,15 +2610,7 @@ function renderChordChart(jsonData)
 	
 	var fill = d3.scale.ordinal()
     			.domain(d3.range(elemSize))
-				.range(jsonData.colors);
-	
-//	console.log(jsonData);
-//	console.log(jsonData.colors);
-		
-//	/**
-//	 * Set the background on the chart.
-//	 */
-//	d3.select("body").style("background-color",jsonData.chart.style.backgroundColor);
+				.range(jsonData.colors);	
 		
 	d3.select("body").append("div").attr("id","main")
 		.style("height",height)
@@ -2766,8 +2683,6 @@ function renderChordChart(jsonData)
   	 
   	 // Variable that will let us render this chart part, but preventing listening for the mouseover event
   	 var arcs = null;
-
-//  	 console.log(rows);
   	 
   	/**
   	  * Which column is paired with which row (row is the initial point of view)

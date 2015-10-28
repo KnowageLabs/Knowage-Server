@@ -74,7 +74,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		
 		this.axisFieldSet = Ext.create('Ext.form.FieldSet', {
 			collapsible: true,
-			title: 'Axis',
+			title: LN("sbi.chartengine.axisstylepopup.axis"),	// danristo
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
 				labelWidth : 115
@@ -95,7 +95,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			hidden: (chartType == "CHORD" || chartType == "PARALLEL"),
 			
 			id: 'titleFieldSetForAxis',	// (danristo :: danilo.ristovski@mht.net) 
-			title: 'Title',
+			title: LN("sbi.chartengine.axisstylepopup.title"),	// danristo
 			defaults: {anchor: '100%',
 				labelAlign : 'left',
 				labelWidth : 115
@@ -1142,16 +1142,9 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					}
 				}
 			}
-			
-			
-			this.colorPickerContainer = Ext.create('Sbi.chart.designer.ColorPickerContainer',{
-	    		viewModel: null,
-	    		customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
-	       		fieldBind: '{configModel.backgroundColor}',
-	       	});
 					
 			var axisStylePopupScope = this;
-			
+					
 			this.plotsContainer = Ext.create
 			(
 				"Sbi.chart.designer.ChartColumnsContainer", 
@@ -1174,7 +1167,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 						// PLUS BUTTON
 						{
 						    type:'plus',
-//						    tooltip: "AAA",
 						    
 						    flex: 1,							
 							
@@ -1203,6 +1195,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 								dataIndex: 'from',
 								flex: 1,
 								layout: 'fit',
+								align : 'center',
 								sortable: false,
 								text: LN("sbi.chartengine.axisstylepopup.plotbandParams.columnFrom"),
 								
@@ -1216,6 +1209,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				                dataIndex: 'to',
 				                flex: 1,
 								layout: 'fit',
+								align : 'center',
 								sortable: false,
 								text: LN("sbi.chartengine.axisstylepopup.plotbandParams.columnTo"),
 								
@@ -1230,10 +1224,11 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				                flex: 1,
 								layout: 'fit',
 								sortable: false,
+								align : 'center',
 								text: LN("sbi.chartengine.axisstylepopup.plotbandParams.columnColor"),
 								
 								listeners:  
-								{
+								{									
 									click: 
 									{
 										fn: function(ad, gg, index)
@@ -1242,7 +1237,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 											(
 												'Ext.window.Window', 
 												{
-												    title: 'Choose the color for the plot',	// TODO: LN()
+												    title: LN("sbi.chartengine.configuration.gauge.axisStyle.plotbandsParameters.pickColor"),
 												    height: 110,
 												    width: 200,
 												    resizable: false,
@@ -1267,6 +1262,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 													        		
 													        		plotsContainer.store.data.items[index].data.color = "#" + b;
 													        		
+													        		console.log(plotsContainer);
+													        		
 													        		plotsContainer.store.commitChanges();
 													        		plotsContainer.reconfigure();
 													        		
@@ -1287,7 +1284,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 									xtype: 'textfield',
 									readOnly: true									
 								}							              
-			                },
+			                },			                
 			                
 							{
 								menuDisabled: true,
@@ -1299,8 +1296,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 								items: 
 								[
 								 	{
-										icon: '/athena/themes/sbi_default/img/delete.gif',
-		//								tooltip: LN('sbi.chartengine.columnscontainer.tooltip.removecolumn'),											
+										icon: '/athena/themes/sbi_default/img/delete.gif',										
 										
 										handler: function(grid, rowIndex, colIndex) 
 										{
@@ -1314,9 +1310,6 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 											Ext.Msg.show({
 				            					title : '',
 				            					
-//				            					message : Sbi.locale.sobstituteParams(
-//				      								LN('sbi.chartengine.designer.removeplotParamsremoveplot'), 
-//				      								[from, to]),
 				            					message : LN('sbi.chartengine.designer.removeplot'),
 				      								
 				            					icon : Ext.Msg.QUESTION,
@@ -1494,7 +1487,12 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisData.minorgridStyleColor = minorgridStyleColor;
 		}
 		
-		// For GAUGE (danristo)
+		/**
+		 * Validation for the GAUGE chart's values of the axis style configuration 
+		 * parameters.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		var errorMessages = "";
 		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 		
@@ -1522,129 +1520,178 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			var distanceLabelFromYAxis = this.distanceLabelFromYAxis.getValue();
 			var rotationOfLabelYAxis = this.rotationOfLabelYAxis.getValue();
 			
-			/**
-			 * VALIDATION 
-			 */
-			/*
-			(minValueYAxis==null) ?
-				errorMessages += "- " + "<b>Min value</b> value must be defined" + '<br>' : errorMessages;
-			
-			(maxValueYAxis==null) ?
-					errorMessages += "- " + "<b>Max value</b> value must be defined" + '<br>' : errorMessages;*/
+			/* **************************************************
+			 * **************** VALIDATION **********************
+			 * **************************************************/
 			
 			/**
 			 * The indicator that min is bigger than max, so the plotbands cannot be examined. 
 			 */
 			var minBiggerThanMax = false;
 			var minDefinedMaxNotDefined = false;
+			var maxDefinedMinNotDefined = false;
 			
 			/**
 			 * Maximum value as the ending point of the GAUGE chart axis must be 
 			 * bigger than the minimum value as the starting point of the chart.
-			 */
+			 */			
 			if (maxValueYAxis!=null) 
 			{
-				if (minValueYAxis!=null && (minValueYAxis >= maxValueYAxis))
+				if (minValueYAxis!=null)
+				{		
+					/**
+					 * Min and max are not mandatory, but if defined they must satisfy 
+					 * criterie by which minimum value for the chart cannot be bigger
+					 * than the maximum value.
+					 */
+					if (minValueYAxis >= maxValueYAxis)
+					{
+						errorMessages += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.structure.gauge.additionalParameters.maxLessThanMin"),
+							
+							[
+								LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis"),
+								LN("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis"),
+								LN('sbi.chartengine.axisstylepopup.additionalParams.title')
+							]
+						);
+					
+						minBiggerThanMax = true;	
+					}					
+				}	
+				else
 				{
-					errorMessages += "- " + "<b>Max value</b> value must be bigger than value of <b>Min value</b> [Axis additional parameters]" + '<br>';
-					minBiggerThanMax = true;
-				}				
+					/**
+					 * Since the Ext JS library let us not specifying the minimum value
+					 * for the chart, we can leave it empty. Library treat this as value
+					 * of 0 (zero).
+					 */
+					maxDefinedMinNotDefined = true;
+				}
 			}	
 			else
-			{
-				errorMessages += "- " + "<b>Max value</b> must be defined when value of <b>Min value</b> is defined [Axis additional parameters]" + '<br>';
-				minDefinedMaxNotDefined = true;
-			}
-			
-			!(lineWidthYAxis!=null && lineWidthYAxis < this.lineWidthYAxis.minValue) ? lineWidthYAxis :
-				errorMessages += "- " + "<b>Line width</b>'s minimum value is: <b>" + this.lineWidthYAxis.minValue + 
-							"</b> [Axis additional parameters]" + '<br>';
-			
-			!(tickPixelInterval!=null && tickPixelInterval < this.tickPixelInterval.minValue) ? tickPixelInterval :
-				errorMessages += "- " + "<b>Tick pixel interval</b>'s minimum value is: <b>" + this.tickPixelInterval.minValue + 
-							"</b> [Main tick parameters]" + '<br>';
-			
-			!(tickWidth!=null && tickWidth < this.tickWidth.minValue) ? tickWidth :
-				errorMessages += "- " + "<b>Tick width</b>'s minimum value is: <b>" + this.tickWidth.minValue + 
-							"</b> [Main tick parameters]" + '<br>';
-			
-			!(tickLength!=null && tickLength < this.tickLength.minValue) ? tickLength :
-				errorMessages += "- " + "<b>Tick length</b>'s minimum value is: <b>" + this.tickLength.minValue + 
-							"</b> [Main tick parameters]" + '<br>';
-			
-			!(minorTickInterval!=null && minorTickInterval < this.minorTickInterval.minValue) ? minorTickInterval :
-				errorMessages += "- " + "<b>Minor tick interval</b>'s minimum value is: <b>" + this.minorTickInterval.minValue + 
-							"</b> [Minor tick parameters]" + '<br>';
-			
-			!(minorTickWidth!=null && minorTickWidth < this.minorTickWidth.minValue) ? minorTickWidth :
-				errorMessages += "- " + "<b>Minor tick width</b>'s minimum value is: <b>" + this.minorTickWidth.minValue + 
-							"</b> [Minor tick parameters]" + '<br>';
-			
-			!(minorTickLength!=null && minorTickLength < this.minorTickLength.minValue) ? minorTickLength :
-				errorMessages += "- " + "<b>Minor tick length</b>'s minimum value is: <b>" + this.minorTickLength.minValue + 
-							"</b> [Minor tick parameters]" + '<br>';
-			
-			!(distanceLabelFromYAxis!=null && distanceLabelFromYAxis < this.distanceLabelFromYAxis.minValue) ? distanceLabelFromYAxis : 
-				errorMessages += "- " + "<b>Distance</b>'s minimum value is: <b>" + this.minorTickLength.minValue + 
-					"</b> [Labels parameters]" + '<br>';
-			
-			/*
-			(lineColorYAxis==null) ?
-					errorMessages += "- " + "<b>Line color</b> value must be defined" + '<br>' : errorMessages;
-			
-			if(offsetBorderFromYAxis==null) 
-			{
-				errorMessages += "- " + "<b>Offset</b> value must be defined" + '<br>';
-			}
-			else
-			{
-				if (Number(offsetBorderFromYAxis) > this.offsetBorderFromYAxis.maxValue)
+			{	
+				/**
+				 * Since the nature of the library, user cannot set just minimum value for the chart.
+				 */
+				if (minValueYAxis!=null)
 				{
-					errorMessages += "- " + "<b>Offset</b> maximum value is: <b>" + this.offsetBorderFromYAxis.maxValue +  '</b><br>';
+					errorMessages += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.structure.gauge.additionalParameters.maxAndMinDefine"),
+						
+						[
+							LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis"),
+							LN("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis"),
+							LN('sbi.chartengine.axisstylepopup.additionalParams.title')
+						]
+					);
+				
+					minDefinedMaxNotDefined = true;
 				}
 			}
-			console.log(errorMessages);
-			(lineWidthYAxis==null) ?
-					errorMessages += "- " + "<b>Line width</b> value must be defined" + '<br>' : errorMessages;
-						
-			(tickPosition==null) ?
-					errorMessages += "- " + "<b>Tick position</b> value must be defined" + '<br>' : errorMessages;
 			
-			(tickColor==null) ?
-					errorMessages += "- " + "<b>Tick color</b> value must be defined" + '<br>' : errorMessages;
+			/**
+			 * If values for these parameters are provided by the user they must be valid (correct).
+			 */
 			
-			(tickPixelInterval==null) ?
-					errorMessages += "- " + "<b>Tick pixel interval</b> value must be defined" + '<br>' : errorMessages;
+			!(lineWidthYAxis!=null && lineWidthYAxis < this.lineWidthYAxis.minValue) ? lineWidthYAxis :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.additionalParams.lineWidth"),
+						this.lineWidthYAxis.minValue,
+						LN('sbi.chartengine.axisstylepopup.additionalParams.title')
+					]
+				);
 			
-			(tickWidth==null) ?
-					errorMessages += "- " + "<b>Tick width</b> value must be defined" + '<br>' : errorMessages;
+			!(tickPixelInterval!=null && tickPixelInterval < this.tickPixelInterval.minValue) ? tickPixelInterval :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval"),
+						this.tickPixelInterval.minValue,
+						LN('sbi.chartengine.axisstylepopup.mainTickParams.title')
+					]
+				);
 			
-			(tickLength==null) ?
-					errorMessages += "- " + "<b>Tick length</b> value must be defined" + '<br>' : errorMessages;
+			!(tickWidth!=null && tickWidth < this.tickWidth.minValue) ? tickWidth :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth"),
+						this.tickWidth.minValue,
+						LN('sbi.chartengine.axisstylepopup.mainTickParams.title')
+					]
+				);
 			
-			(minorTickPosition==null) ?
-					errorMessages += "- " + "<b>Minor tick position</b> value must be defined" + '<br>' : errorMessages;			
+			!(tickLength!=null && tickLength < this.tickLength.minValue) ? tickLength :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.mainTickParams.tickLength"),
+						this.tickLength.minValue,
+						LN('sbi.chartengine.axisstylepopup.mainTickParams.title')
+					]
+				);
 			
-			(minorTickColor==null) ?
-					errorMessages += "- " + "<b>Minor tick color</b> value must be defined" + '<br>' : errorMessages;
+			!(minorTickInterval!=null && minorTickInterval < this.minorTickInterval.minValue) ? minorTickInterval :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval"),
+						this.minorTickInterval.minValue,
+						LN('sbi.chartengine.axisstylepopup.minorTickParams.title')
+					]
+				);
 			
-			(minorTickInterval==null) ?
-					errorMessages += "- " + "<b>Minor tick interval</b> value must be defined" + '<br>' : errorMessages;
+			!(minorTickWidth!=null && minorTickWidth < this.minorTickWidth.minValue) ? minorTickWidth :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth"),
+						this.minorTickWidth.minValue,
+						LN('sbi.chartengine.axisstylepopup.minorTickParams.title')
+					]
+				);
 			
-			(minorTickWidth==null) ?
-					errorMessages += "- " + "<b>Minor tick width</b> value must be defined" + '<br>' : errorMessages;
+			!(minorTickLength!=null && minorTickLength < this.minorTickLength.minValue) ? minorTickLength :
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength"),
+						this.minorTickLength.minValue,
+						LN('sbi.chartengine.axisstylepopup.minorTickParams.title')
+					]
+				);
 			
-			(minorTickLength==null) ?
-					errorMessages += "- " + "<b>Minor tick length</b> value must be defined" + '<br>' : errorMessages;
-			
-			// TODO: check if minimum value can be bigger than the maximum 
-			
-			(distanceLabelFromYAxis==null) ?
-					errorMessages += "- " + "<b>Distance</b> value must be defined" + '<br>' : errorMessages;
-			
-			(rotationOfLabelYAxis==null) ?
-					errorMessages += "- " + "<b>Rotation</b> value must be defined" + '<br>' : errorMessages;*/
-						
+			!(distanceLabelFromYAxis!=null && distanceLabelFromYAxis < this.distanceLabelFromYAxis.minValue) ? distanceLabelFromYAxis : 
+				errorMessages += Sbi.locale.sobstituteParams
+				(
+					LN("sbi.chartengine.validation.structure.gauge.paramsMinValue"),
+					
+					[
+						LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis"),
+						this.distanceLabelFromYAxis.minValue,
+						LN('sbi.chartengine.axisstylepopup.labelParams.title')
+					]
+				);
+									
 			/**
 			 * PLOTBANDS sub-tag of the AXIS tag
 			 */
@@ -1663,34 +1710,102 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				var toValueForPlotbandsArray  = new Array();
 				var colorPlotbandArray  = new Array();
 				
-				for (var i=0; i<numberOfPlots; i++)
-				{
-					var plotData = plotbandsStoreTemp.data.items[i].data;
-					
-					fromValueForPlotbandsArray.push(plotData.from);
-					toValueForPlotbandsArray.push(plotData.to);
-					colorPlotbandArray.push(plotData.color);
-					
-					if (!minBiggerThanMax && !minDefinedMaxNotDefined)
+				/**
+				 * In case user did not define max value (maxValueYAxis == null), he cannot 
+				 * set any plot (the 'else' block).
+				 */
+				if (maxValueYAxis!=null)
+				{			
+					if (maxDefinedMinNotDefined)
 					{
-						(plotData.from < minValueYAxis) ? 
-								errorMessages += "- " + "<b>From</b> value of plot <b>#" + (i+1) + 
-									"</b> cannot be less than minimum value of <b>" + minValueYAxis + '</b> [Plotbands parameters]<br>' : 
-									errorMessages;
+						/**
+						 * Since the Ext JS library let us not specifying the minimum value
+						 * for the chart, we can leave it empty. Library treat this as value
+						 * of 0 (zero). This way we are setting this parameter to the value
+						 * of 0 (because plots need information about the minimum value when
+						 * validating the parameters).
+						 */
+						minValueYAxis = 0;
+					}
+					
+					for (var i=0; i<numberOfPlots; i++)
+					{
+						var plotData = plotbandsStoreTemp.data.items[i].data;
 						
-						(plotData.from > maxValueYAxis) ? 
-								errorMessages += "- " + "<b>From</b> value of plot <b>#" + (i+1) + "</b> cannot be more than maximum value of <b>" + maxValueYAxis + '</b> [Plotbands parameters]<br>' : 
-									errorMessages;
+						fromValueForPlotbandsArray.push(plotData.from);
+						toValueForPlotbandsArray.push(plotData.to);
+						colorPlotbandArray.push(plotData.color);
+						
+						if (!minBiggerThanMax && !minDefinedMaxNotDefined)
+						{		
+							(plotData.from < minValueYAxis) ? 
+								errorMessages += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.plotbandsParameters.fromLessThanMinValue"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.plotbandParams.columnFrom"),
+										i+1,
+										minValueYAxis,
+										LN('sbi.chartengine.axisstylepopup.plotbandParams.title')
+									]
+								) : errorMessages;		
+												
+							(plotData.from > maxValueYAxis) ? 
+								errorMessages += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.plotbandsParameters.fromMoreThanMaxValue"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.plotbandParams.columnFrom"),
+										i+1,
+										maxValueYAxis,
+										LN('sbi.chartengine.axisstylepopup.plotbandParams.title')
+									]
+								) : errorMessages;
 								
-						(plotData.to < minValueYAxis) ? 
-								errorMessages += "- " + "<b>To</b> value of plot <b>#" + (i+1) + "</b> cannot be less than minimum value of <b>" + minValueYAxis + '</b> [Plotbands parameters]<br>' : 
-									errorMessages;
+							(plotData.to < minValueYAxis) ? 
+								errorMessages += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.plotbandsParameters.toLessThanMinValue"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.plotbandParams.columnTo"),
+										i+1,
+										minValueYAxis,
+										LN('sbi.chartengine.axisstylepopup.plotbandParams.title')
+									]
+								) : errorMessages;							
 						
-						(plotData.to > maxValueYAxis) ? 
-								errorMessages += "- " + "<b>To</b> value of plot <b>#" + (i+1) + "</b> cannot be more than maximum value of <b>" + maxValueYAxis + '</b> [Plotbands parameters]<br>' : 
-									errorMessages;
-					}					
-				}				
+										
+							(plotData.to > maxValueYAxis) ? 
+								errorMessages += Sbi.locale.sobstituteParams
+								(
+									LN("sbi.chartengine.validation.structure.gauge.plotbandsParameters.toMoreThanMaxValue"),
+									
+									[
+										LN("sbi.chartengine.axisstylepopup.plotbandParams.columnTo"),
+										i+1,
+										maxValueYAxis,
+										LN('sbi.chartengine.axisstylepopup.plotbandParams.title')
+									]
+								) : errorMessages;
+						}					
+					}
+				}
+				else
+				{					
+					errorMessages += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.structure.gauge.plotbandsParameters.maxNotDefined"),
+						
+						[
+							LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis"),
+							LN('sbi.chartengine.axisstylepopup.additionalParams.title'),
+							LN('sbi.chartengine.axisstylepopup.plotbandParams.title')
+						]
+					);
+				}			
 	
 				fromValueForPlotbands = fromValueForPlotbandsArray;
 				toValueForPlotbands = toValueForPlotbandsArray;	
@@ -1703,15 +1818,21 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				colorPlotband = "";	
 			}
 			
+			/**
+			 * If there are no error messages after validation, destroy (close)
+			 * the popup. Otherwise, show new popup that will inform user about 
+			 * errors (in a meanwhile, the initial one (axis style configuration
+			 * popup will stay active (opened) in the background.
+			 */
 			if (errorMessages!="")
 			{
 				Ext.Msg.show
 				(
 					{
-						title : "Validation errors [Step 1]:",	// TODO: Make LN
+						title : LN("sbi.chartengine.validation.structure.massageWarning.headerTitle"),
 						message : errorMessages,
 						icon : Ext.Msg.WARNING,
-						closable : false,
+						closable : true,
 						buttons : Ext.Msg.OK
 					}
 				);
@@ -1769,13 +1890,19 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var titleStyleFontSize = this.titleStyleFontSizeComboBox.getValue();
 		this.axisData.titleStyleFontSize = titleStyleFontSize;
 		
-		// TODO: Try to simplify this
+		/**
+		 * In the case of the GAUGE chart only if there are no error
+		 * messages we can destroy the axis style configuration popup
+		 * window.
+		 * 
+		 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+		 */
 		if (chartType == "GAUGE")
-		{
+		{			
 			if (errorMessages=="")
 			{
 				this.destroy();
-			}
+			}			
 		}
 		else
 		{

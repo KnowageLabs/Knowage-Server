@@ -104,9 +104,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				
 				{
 					collapsible: true,
-					// TODO: uncomment
-//					collapsed: true,
-					title: "Dial",	// TODO: LN()
+					title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dial.fieldSetTitle"),	
 					
 					defaults: 
 					{
@@ -129,9 +127,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 				
 				{
 					collapsible: true,
-					// TODO: uncomment
-//					collapsed: true,
-					title: "Data labels",	// TODO: LN()
+					title: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.fieldSetTitle"),	
 					
 					defaults: 
 					{
@@ -210,7 +206,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'yPositionDataLabels',
 			        value: dataAtRow.get('yPositionDataLabels'),
-			        fieldLabel: "Y position" // TODO: LN()
+			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.yPosition") 
 			    }	
 	    	);
 			
@@ -267,7 +263,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			        xtype: 'textfield',
 			        id: 'formatDataLabels',
 			        value: dataAtRow.get('formatDataLabels'),
-			        fieldLabel: "Format" // TODO: LN()
+			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.format") 
 			    }	
 	    	);
 			
@@ -549,6 +545,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
 		});
 		this.tooltipFieldSet.add(this.tooltipAlignComboBox);
+		
 		
 		var serieTooltipFont = dataAtRow.get('serieTooltipFont');
 		this.tooltipFontComboBox = Ext.create('Sbi.chart.designer.FontCombo', {

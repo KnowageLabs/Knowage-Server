@@ -50,7 +50,7 @@ Ext.define
         		
         		{
         			viewModel: this.viewModel,
-        			customLabel: LN("sbi.chartengine.configuration.tip.fontColor"), 
+        			customLabel: LN("sbi.chartengine.configuration.sunburst.tip.fontColor"), 
         			fieldBind: '{configModel.tipColor}',	
         		}
     		);
@@ -98,7 +98,7 @@ Ext.define
 	                		 xtype: 'numberfield',
 	                		 bind : '{configModel.tipWidth}',	
 	                		 id: "sunburstTipWidth",
-	                		 fieldLabel: LN("sbi.chartengine.configuration.tip.width"),	
+	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.width"),	
 	                		 width: "200",
 //	                		 value: "10",
 	                		 maxValue: '200',
@@ -130,7 +130,7 @@ Ext.define
             		  		padding: "0 0 20 50",
             		  		grow: true,
             		        name: 'tipText',
-            		        fieldLabel: LN("sbi.chartengine.configuration.tip.text"),
+            		        fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.text"),
             		        anchor: '100%',
             		  		bind: '{configModel.tipText}',
             		  		emptyText: "... empty text ..."

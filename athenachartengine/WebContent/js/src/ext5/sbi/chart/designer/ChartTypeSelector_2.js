@@ -14,76 +14,76 @@ var chartTypesStore = Ext.create
 		data: 
 		[
 		 	{
-		 		style: "Bar chart", // TODO: Make LN()
+		 		style: LN("sbi.chartengine.designer.charttype.bar"), 
 		 		styleAbbr: "bar",
-		 		icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png',
+		 		icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png'
  			},	
 		 	
  			{
- 				style: "Line chart", // TODO: Make LN()
+ 				style: LN("sbi.chartengine.designer.charttype.line"), 
  				styleAbbr: "line",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Pie chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.pie"), 
 				styleAbbr: "pie",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_icon_new_1.png',
 			},	
 		 	
  			{
-				style: "Radar chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.radar"), 
 				styleAbbr: "radar",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/radarchart/img/radarchart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Scatter chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.scatter"), 
 				styleAbbr: "scatter",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/scatterchart/img/scatterchart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Treemap chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.treemap"), 
 				styleAbbr: "treemap",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/treemapchart/img/treemapchart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Heatmap chart", // TODO: Make LN(
+				style: LN("sbi.chartengine.designer.charttype.heatmap"), 
 				styleAbbr: "heatmap",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/heatmapchart/img/heatmapchart_icon_new_1.png'
 			},	
 			
 			{
-				style: "Gauge chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.gauge"), 
 				styleAbbr: "gauge",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/gaugechart/img/gaugechart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Wordcloud chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.wordcloud"), 
 				styleAbbr: "wordcloud",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/wordcloudchart/img/wordcloudchart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Parallel chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.parallel"),
 				styleAbbr: "parallel",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/parallelchart/img/parallelchart_icon_new_1.png'
 			},	
 		 	
  			{
-				style: "Sunburst chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.sunburst"),
 				styleAbbr: "sunburst",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/sunburstchart/img/sunburstchart_icon_new_1.png'
 			},
 			
 			{
-				style: "Chord chart", // TODO: Make LN()
+				style: LN("sbi.chartengine.designer.charttype.chord"),
 				styleAbbr: "chord",
 				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/chordchart/img/chordchart_icon_new_1.png'
-			},	
+			}
 		]
 	}
 );
@@ -104,9 +104,19 @@ Ext.define
 	    editable: false,
 	    padding: "5 0 10 0",
 	    width: 170,
+	    height: 35,
 	    
-	    tpl: '<tpl for="."><div class="x-boundlist-item"><img src="{icon}" width="20px"/>&nbsp;&nbsp;&nbsp;{style}</div></tpl>',
-	    
+	    /**
+	     * Show icon that represents the chart type along with it's name.
+	     */
+	    tpl: [
+	          '<tpl for=".">',
+	          	'<div class="x-boundlist-item">',
+	          		'<img src="{icon}" width="30px"/>',
+	          		'&nbsp;&nbsp;&nbsp;<b style="display: inline-block;vertical-align: middle;line-height: 30px;">{style}</b>',
+	          	'</div>',
+	          	'</tpl>'],
+	   	    
 	    statics:
     	{
 	    	/**
@@ -505,79 +515,108 @@ Ext.define
 				
 		listeners:
 		{				
-			change: function(a,currentOrNewChartType,previousChartType)
-			{			
-				/**
-				 * When Designer renders for the first time (when opening the chart in it for the first
-				 * time) second input parameters of this function (event) will be equal to the actual chart
-				 * type (document). The third input parameter will be null. 
-				 * 
-				 * When we change the chart type inside the Designer the second parameter will contain newly
-				 * selected chart type, while the third parameter will contain value of the chart type that 
-				 * was previously selected.
-				 * 
-				 * @commentBy: danristo (danilo.ristovski@mht.net)
-				 */				
+			select: function(comboBox,records)
+			{
+				var record = records;
 				
 				/**
-				 * The chart type that is actually picked (clicked). Newly selected chart type.
-				 * @commentBy: danristo (danilo.ristovski@mht.net)
+				 * Set the icon next to the text (the name of the selected
+				 * chart type) in the combo box.
 				 */
-				var newlySelectedType = currentOrNewChartType.toLowerCase();	
+	            comboBox.inputEl.setStyle
+	            (
+            		{
+		                'background-image': 	'url('+records.data.icon+')',
+		                'background-repeat': 	'no-repeat',
+		                'background-position': 	'left center',
+		                'padding-left': 		'35px', 
+		                'background-size': 		"30px 30px"	            
+            		}
+        		);				
+			},
 				
+			change: function(comboBox,currentOrNewChartType,previousChartType)
+			{		
 				/**
-				 * Scope of the chart type selector.
-				 * @commentBy: danristo (danilo.ristovski@mht.net)
+				 * If currentOrNewChartType is not null - if user did not click-down on the
+				 * chart type and then move mouse on some other chart type and make a click-up
+				 * we can proceed with change of the chart type. Otherwise (without this ckeck)
+				 * the error will appear.
 				 */
-				var globalScope = this;
-				
-				/**
-				 * If the Designer is loaded for the first time, i.e. document is just opened. This will
-				 * help us to determine if we should call customization function for Designer's Step 1
-				 * and Step 2. If it is just loaded, we do not need customization.
-				 */
-				var designerJustLoaded = false;
-				(previousChartType != null) ? designerJustLoaded = false : designerJustLoaded = true;
-				
-				/**
-				 * The chart type that has been already chosen (defined) - the one we had just before
-				 * we picked a new one from the chart type selector.
-				 * @commentBy: danristo (danilo.ristovski@mht.net)
-				 */
-				var previousChartType = (previousChartType != null) ? previousChartType.toLowerCase() : newlySelectedType;
-										
-				/**
-				 * If newly clicked (selected) chart type ('selectedType') in ChartTypeSelector is 
-				 * of the same type as the chart that we have in Designer (the one that has already
-				 * been chosen or defined by the loading of the already existing chart document, 
-				 * 'previousChartType'), do not take any action.
-				 *  
-				 * @author: danristo (danilo.ristovski@mht.net)
-				 */				
-				if (newlySelectedType != previousChartType)
-				{						
-					globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);										
-				}
-				/**
-				 * Previous and current chart type are the same: (1) the same chart type is chosen twice or
-				 * (2) we are just loading the Designer page for the first time
-				 */
-				else
+				if (currentOrNewChartType!=null)
 				{
-					globalScope.on
-					(
-						"axesSet",function() 
-						{
-							Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;	
-							
-//							if(Sbi.chart.designer.ChartTypeSelector_2.dataLoaded)
-//							{	
-//								//globalScope.resetStep1();
-//								//globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);
-//							}
-						}
-					);					
-				}				
+					/**
+					 * When Designer renders for the first time (when opening the chart in it for the first
+					 * time) second input parameters of this function (event) will be equal to the actual chart
+					 * type (document). The third input parameter will be null. 
+					 * 
+					 * When we change the chart type inside the Designer the second parameter will contain newly
+					 * selected chart type, while the third parameter will contain value of the chart type that 
+					 * was previously selected.
+					 * 
+					 * @commentBy: danristo (danilo.ristovski@mht.net)
+					 */				
+					
+					/**
+					 * The chart type that is actually picked (clicked). Newly selected chart type.
+					 * @commentBy: danristo (danilo.ristovski@mht.net)
+					 */
+					var newlySelectedType = currentOrNewChartType.toLowerCase();	
+					
+					/**
+					 * Scope of the chart type selector.
+					 * @commentBy: danristo (danilo.ristovski@mht.net)
+					 */
+					var globalScope = this;
+					
+					/**
+					 * If the Designer is loaded for the first time, i.e. document is just opened. This will
+					 * help us to determine if we should call customization function for Designer's Step 1
+					 * and Step 2. If it is just loaded, we do not need customization.
+					 */
+					var designerJustLoaded = false;
+					(previousChartType != null) ? designerJustLoaded = false : designerJustLoaded = true;
+					
+					/**
+					 * The chart type that has been already chosen (defined) - the one we had just before
+					 * we picked a new one from the chart type selector.
+					 * @commentBy: danristo (danilo.ristovski@mht.net)
+					 */
+					var previousChartType = (previousChartType != null) ? previousChartType.toLowerCase() : newlySelectedType;
+											
+					/**
+					 * If newly clicked (selected) chart type ('selectedType') in ChartTypeSelector is 
+					 * of the same type as the chart that we have in Designer (the one that has already
+					 * been chosen or defined by the loading of the already existing chart document, 
+					 * 'previousChartType'), do not take any action.
+					 *  
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */				
+					if (newlySelectedType != previousChartType)
+					{						
+						globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);										
+					}
+					/**
+					 * Previous and current chart type are the same: (1) the same chart type is chosen twice or
+					 * (2) we are just loading the Designer page for the first time
+					 */
+					else
+					{
+						globalScope.on
+						(
+							"axesSet",function() 
+							{
+								Sbi.chart.designer.ChartTypeSelector_2.dataLoaded = true;	
+								
+	//							if(Sbi.chart.designer.ChartTypeSelector_2.dataLoaded)
+	//							{	
+	//								//globalScope.resetStep1();
+	//								//globalScope.customizeStep1AndStep2(newlySelectedType,previousChartType);
+	//							}
+							}
+						);					
+					}
+				}
 			}
 		}
 	}

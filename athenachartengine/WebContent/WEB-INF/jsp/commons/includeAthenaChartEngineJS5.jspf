@@ -38,9 +38,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesContainerModel.js' ></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesContainerStore.js' ></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/AxisesPicker.js' ></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
 
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeSelector.js' ></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeColumnSelector.js' ></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartColumnsContainer.js' ></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartColumnsContainerManager.js' ></script>
@@ -82,6 +80,18 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfiguration.js' ></script>
 
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/Designer.js' ></script>
+
+<!-- @addedBy: danristo (danilo.ristovski@mht.net) -->
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartTypeSelector_2.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationParallelLegend.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupLegendTitle.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/StylePopupLegendElement.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/VerticalAlignmentCombo.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartConfigurationGauge.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/PlotbandsModel.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/PlotbandsStore.js' ></script>
+<script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/TypeLineCombo.js' ></script>
+
 <!-- END-DEBUG -->
 
 <!-- START-PRODUCTION 
@@ -89,6 +99,3 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 -->
 
 <!-- END-PRODUCTION -->
-
-
-

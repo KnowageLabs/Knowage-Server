@@ -39,8 +39,6 @@ Ext.define
 			this.callParent(config);
 			this.viewModel = config.viewModel;
 			
-			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
-			
 			this.tooltipFontFamily = null;
 			this.tooltipFontSize = null;
 			this.tooltipMinWidth = null;

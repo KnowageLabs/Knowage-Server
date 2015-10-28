@@ -38,8 +38,6 @@ Ext.define
 		{
 			this.callParent(config);
 			this.viewModel = config.viewModel;
-			
-			this.storeForSeriesBeforeDrop = Ext.data.StoreManager.lookup('storeForSeriesBeforeDrop');
 					
 			this.colorPickerAxisColor = null;
 			this.colorPickerBrushColor = null;

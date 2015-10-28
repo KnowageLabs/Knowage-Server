@@ -25,7 +25,7 @@ Ext.define
 		width: 200, // fixed value: current solution for the ATHENA-154 bug
 		height: 110,
 		
-		title: LN("sbi.chartengine.configuration.toolbarAndTip.title"),
+		title: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
 		bodyPadding: 10,
 		items: [],		
 		
@@ -60,7 +60,7 @@ Ext.define
 				'Sbi.chart.designer.StylePopupToolbar',
 				
 				{
-					title: LN("sbi.chartengine.configuration.toolbarAndTip.toolbarPopup.title"), 
+					title: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title"), 
 		        	viewModel: this.viewModel,
 		        	bindToolbarPosition: '{configModel.toolbarPosition}',
 		        	bindToolbarSpacing: '{configModel.toolbarSpacing}',
@@ -77,7 +77,7 @@ Ext.define
 				'Sbi.chart.designer.StylePopupTip',
 				
 				{
-					title: LN("sbi.chartengine.configuration.toolbarAndTip.tipPopup.title"),
+					title: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title"),
 		        	viewModel: this.viewModel,
 		        	bindTipText: '{configModel.tipText}',
 		        	bindTipFontWeight: '{configModel.tipFontWeight}',
@@ -106,14 +106,14 @@ Ext.define
     				[
     				 	{
     				 		xtype: 'label',
-				 	        text: LN("sbi.chartengine.configuration.toolbarAndTip.toolbarLabelText"),
+				 	        text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarLabelText"),
 				 	        padding: "3 0 0 0"
 //				 	        margin: '0 0 0 10'
     				 	},
     				 	
     				 	{
     				 		xtype : 'button',
-    	    	            text: LN("sbi.chartengine.configuration.toolbarAndTip.toolbarConfigButtonText"),	
+    	    	            text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarConfigButtonText"),	
     	    	            margin: '5 20 5 30',
     	    	            
     	    	            handler: function()
@@ -139,13 +139,13 @@ Ext.define
     				[
     				 	{
 							xtype: 'label',
-							text: LN("sbi.chartengine.configuration.toolbarAndTip.tipLabelText"),
+							text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipLabelText"),
 					     	padding: "3 0 0 0"
 						},
 						
     				 	{
 		    				xtype : 'button',
-		    	            text: LN("sbi.chartengine.configuration.toolbarAndTip.tipConfigButtonText"),   	
+		    	            text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipConfigButtonText"),   	
 		    	            margin: '0 0 5 53',
 		    	            
 		    	            handler: function()

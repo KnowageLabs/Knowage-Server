@@ -229,7 +229,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			items: [{
 				xtype: 'numberfield',
 				bind: '{configModel.opacMouseOver}',		
-				fieldLabel: LN("sbi.chartengine.configuration.opacityMouseOver"),
+				fieldLabel: LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
 				width: "200",
 				maxValue: '100', 	// opacity: 100%
 				minValue: '1',		// opacity: 1%

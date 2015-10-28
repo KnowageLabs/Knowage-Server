@@ -59,7 +59,7 @@ Ext.define
 	            	         		triggerAction : 'all',
 	            	         		forceSelection : true,
 	            	         		editable : false,
-	            	         		fieldLabel : LN('sbi.chartengine.configuration.position'),
+	            	         		fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.position'),
 	            	         		bind : '{configModel.toolbarPosition}',
 	            	         		displayField : 'name',
 	            	         		valueField : 'value',
@@ -110,7 +110,7 @@ Ext.define
 	           	         		xtype: 'numberfield',
 	           	         		bind : '{configModel.toolbarSpacing}',	
 	           	         		id: "sunburstToolbarSpacing",
-	           	         		fieldLabel: LN("sbi.chartengine.configuration.toolbar.spacing"),	
+	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing"),	
 	       	         			maxWidth: '120',
 	       	         			maxValue: '50',
 	       	         			minValue: '1',
@@ -121,7 +121,7 @@ Ext.define
 	   	                		 xtype: 'numberfield',
 	   	                		 bind : '{configModel.toolbarTail}',
 	   	                		 id: "sunburstToolbarTail",
-	   	                		 fieldLabel: LN("sbi.chartengine.configuration.toolbar.tail"),	
+	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail"),	
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '100',
 	   	                		 minValue: '10',
@@ -155,7 +155,7 @@ Ext.define
 	           	         		xtype: 'numberfield',
 	           	         		bind : '{configModel.toolbarHeight}',	
 	           	         		id: "sunburstToolbarHeight",
-	           	         		fieldLabel: LN("sbi.chartengine.configuration.toolbar.height"),	
+	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height"),	
 	           	         		maxWidth: '120',
 	           	         		maxValue: '100',
 	           	         		minValue: '10',
@@ -166,7 +166,7 @@ Ext.define
 	   	                		 xtype: 'numberfield',
 	   	                		 bind : '{configModel.toolbarWidth}',	
 	   	                		 id: "sunburstToolbarWidth",
-	   	                		 fieldLabel: LN("sbi.chartengine.configuration.toolbar.width"),	
+	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width"),	
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '200',
 	   	                		 minValue: '10',
@@ -197,7 +197,7 @@ Ext.define
 	        		
 	        		{
 	        			viewModel: this.viewModel,
-	        			customLabel: LN("sbi.chartengine.configuration.toolbar.percentageColor"), 
+	        			customLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.percentageColor"), 
 	        			fieldBind: '{configModel.toolbarPercFontColor}',	
 	        		}
 	    		);		        
