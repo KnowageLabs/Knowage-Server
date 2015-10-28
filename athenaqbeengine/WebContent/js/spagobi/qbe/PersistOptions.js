@@ -197,35 +197,25 @@ Ext.extend(
 				
 				
 				
-				/* Datepicker */
-				var datefield = new Ext.form.FieldSet(
-						{
-							// renderTo: 'datefield',
-							labelWidth : 100, // label settings here
-												// cascade unless
-												// overridden
-							// title: 'Datepicker',
-							bodyStyle : 'padding:5px 5px 0',
-							width : 360,
-							defaults : {
-								width : 220
-							},
-							defaultType : 'datefield',
-							items : [
-							         	this.startDateField,
-							         	this.endDateField
-//									{
-//										fieldLabel : LN('sbi.ds.persist.cron.startdate'),
-//										name : 'startDate',
-//										format : 'd/m/Y'
-//									},
-//									{
-//										fieldLabel : LN('sbi.ds.persist.cron.enddate'),
-//										name : 'endDate',
-//										format : 'd/m/Y'
-//									} 
-									]
-						});
+//				/* Datepicker */
+//				var datefield = new Ext.form.FieldSet(
+//						{
+//							// renderTo: 'datefield',
+//							labelWidth : 100, // label settings here
+//												// cascade unless
+//												// overridden
+//							// title: 'Datepicker',
+//							bodyStyle : 'padding:5px 5px 0',
+//							width : 360,
+//							defaults : {
+//								width : 220
+//							},
+//							defaultType : 'datefield',
+//							items : [
+//							         	this.startDateField,
+//							         	this.endDateField
+//									]
+//						});
 
 				var minutesDs = new Ext.data.ArrayStore({
 					data : [ [ '0', '00' ], [ '1', '01' ],
@@ -640,7 +630,7 @@ Ext.extend(
 						{
 							width : 300,
 							value : '0 * * * * *',
-							fieldLabel : LN('sbi.ds.persist.cron.schedulingline'),
+							//fieldLabel : LN('sbi.ds.persist.cron.schedulingline'),
 							labelSeparator : ':',
 							readOnly : true,
 							hidden : true,
@@ -665,7 +655,9 @@ Ext.extend(
 										: "10px"
 							},
 							items : [
-									datefield,
+									//datefield,
+									this.startDateField,
+									this.endDateField,
 									{
 										layout : 'column',
 										border : false,

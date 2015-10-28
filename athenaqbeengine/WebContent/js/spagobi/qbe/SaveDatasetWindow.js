@@ -13,7 +13,7 @@ Sbi.qbe.SaveDatasetWindow = function(config) {
 		// public
 		title : LN('sbi.qbe.savedatasetwindow.title')
 		, layout : 'fit'
-		, width : 640
+		, width : 680
 		, height : 460
 		, closeAction : 'close'
 		, frame : true
@@ -60,7 +60,6 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	, queries : null
 	, services: null
 	, persistPanel : null
-	
 	,
 	initServices: function() {
 		this.services = new Array();
@@ -123,11 +122,12 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		
 		//default value
 		this.scopeField.setValue(this.scopesStore.getAt(1).get('value'));
-		
-	    this.datasetForm = new Ext.FormPanel({
+	    
+	    var  genericForm = new Ext.Panel({
 	        columnWidth: 0.6
-	        , frame : true
-	        , autoScroll : true
+	    	//, frame : true
+	    	, autoScroll : true
+	    	, title : LN('sbi.qbe.savedatasetwindow.generic')
 	        , items: {
 	 		   	 columnWidth : 0.4
 	             , xtype : 'fieldset'
@@ -142,8 +142,78 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	                 //"margin-left": "4px",
 	                 //"margin-top": "10px"
 	             }
-	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeField, this.persistPanel ]
-	    	}
+	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeField]
+
+	        }
+	    });
+
+	    var persistForm = new Ext.Panel({
+	    	columnWidth: 0.6
+	    	//, frame : true
+	    	, autoScroll : true
+	    	, title : LN('sbi.qbe.savedatasetwindow.persistence')
+	        , items: {
+	 		   	 columnWidth : 0.4
+	             , xtype : 'fieldset'
+	             , labelWidth : 80
+	             //, defaults : { border : false }
+	             , defaultType : 'textfield'
+	             , autoHeight : true
+	             , autoScroll : true
+	             , bodyStyle : Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding:0px 5px;'
+	             , border : false
+	             , style : {
+	                 //"margin-left": "4px",
+	                 //"margin-top": "10px"
+	             }
+	             , items :  [ this.persistPanel ]
+	        }
+	    });
+
+
+	    var metadataForm = new Ext.Panel({
+	    	columnWidth: 0.6
+	    	//, frame : true
+	    	, autoScroll : true
+	    	, title : LN('sbi.qbe.savedatasetwindow.metadata')
+	        , items: {
+	 		   	 columnWidth : 0.4
+	             , xtype : 'fieldset'
+	             , labelWidth : 80
+	             //, defaults : { border : false }
+	             , defaultType : 'textfield'
+	             , autoHeight : true
+	             , autoScroll : true
+	             , bodyStyle : Ext.isIE ? 'padding:0 0 5px 5px;' : 'padding:0px 5px;'
+	             , border : false
+	             , style : {
+	                 //"margin-left": "4px",
+	                 //"margin-top": "10px"
+	             }
+	             , items :  [ ]
+	        }
+	    });
+	    
+	    
+	    var tabPanel = new Ext.TabPanel({
+	        activeTab         : 0,
+	        id                : 'myTPanel',
+	        enableTabScroll   : true,
+	        items             : [
+	            genericForm,
+	            persistForm,
+	            metadataForm
+
+	        ]
+	    });
+	    
+	    
+	    this.datasetForm = new Ext.FormPanel({
+	        //columnWidth: 0.6
+	        //, 
+	        frame : true
+	        , autoScroll : true
+	    	, items :  [ tabPanel]
 	    });
 	    
 	}
