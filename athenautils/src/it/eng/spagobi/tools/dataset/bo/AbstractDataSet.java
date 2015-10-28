@@ -63,6 +63,10 @@ public abstract class AbstractDataSet implements IDataSet {
 	protected boolean numRows;
 	protected String organization;
 
+	protected String startDateField;
+	protected String endDateField;
+	protected String schedulingCronLine;
+
 	protected IDataSource datasourceForWriting;
 	protected IDataSource datasourceForReading;
 
@@ -185,6 +189,10 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setScopeId(getScopeId());
 		sbd.setScopeCd(getScopeCd());
 		sbd.setOwner(getOwner());
+
+		sbd.setStartDateField(getStartDateField());
+		sbd.setEndDateField(getEndDateField());
+		sbd.setSchedulingCronLine(getSchedulingCronLine());
 
 		return sbd;
 	}
@@ -800,6 +808,30 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	public void setDatasetFederation(FederationDefinition datasetFederation) {
 		this.datasetFederation = datasetFederation;
+	}
+
+	public String getStartDateField() {
+		return startDateField;
+	}
+
+	public void setStartDateField(String startDateField) {
+		this.startDateField = startDateField;
+	}
+
+	public String getEndDateField() {
+		return endDateField;
+	}
+
+	public void setEndDateField(String endDateField) {
+		this.endDateField = endDateField;
+	}
+
+	public String getSchedulingCronLine() {
+		return schedulingCronLine;
+	}
+
+	public void setSchedulingCronLine(String schedulingCronLine) {
+		this.schedulingCronLine = schedulingCronLine;
 	}
 
 	// /**

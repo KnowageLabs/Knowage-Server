@@ -70,6 +70,12 @@ public class SpagoBiDataSet implements java.io.Serializable {
 
 	private int versionNum;
 
+	private java.lang.String startDateField;
+
+	private java.lang.String endDateField;
+
+	private java.lang.String schedulingCronLine;
+
 	public SpagoBiDataSet() {
 	}
 
@@ -80,7 +86,7 @@ public class SpagoBiDataSet implements java.io.Serializable {
 			java.lang.String name, boolean numRows, java.lang.String organization, java.lang.String owner, java.lang.String parameters,
 			java.lang.String persistTableName, boolean persisted, java.lang.String pivotColumnName, java.lang.String pivotColumnValue,
 			java.lang.String pivotRowName, boolean scheduled, java.lang.String scopeCd, java.lang.Integer scopeId, java.lang.Integer transformerId,
-			java.lang.String type, int versionNum) {
+			java.lang.String type, int versionNum, java.lang.String startDateField, java.lang.String endDateField, java.lang.String schedulingCronLine) {
 		this._public = _public;
 		this.active = active;
 		this.categoryId = categoryId;
@@ -112,6 +118,10 @@ public class SpagoBiDataSet implements java.io.Serializable {
 		this.transformerId = transformerId;
 		this.type = type;
 		this.versionNum = versionNum;
+		this.startDateField = startDateField;
+		this.endDateField = endDateField;
+		this.schedulingCronLine = schedulingCronLine;
+
 	}
 
 	/**
@@ -672,6 +682,30 @@ public class SpagoBiDataSet implements java.io.Serializable {
 		this.versionNum = versionNum;
 	}
 
+	public java.lang.String getStartDateField() {
+		return startDateField;
+	}
+
+	public void setStartDateField(java.lang.String startDateField) {
+		this.startDateField = startDateField;
+	}
+
+	public java.lang.String getEndDateField() {
+		return endDateField;
+	}
+
+	public void setEndDateField(java.lang.String endDateField) {
+		this.endDateField = endDateField;
+	}
+
+	public java.lang.String getSchedulingCronLine() {
+		return schedulingCronLine;
+	}
+
+	public void setSchedulingCronLine(java.lang.String schedulingCronLine) {
+		this.schedulingCronLine = schedulingCronLine;
+	}
+
 	private java.lang.Object __equalsCalc = null;
 
 	@Override
@@ -730,8 +764,14 @@ public class SpagoBiDataSet implements java.io.Serializable {
 				&& ((this.scopeCd == null && other.getScopeCd() == null) || (this.scopeCd != null && this.scopeCd.equals(other.getScopeCd())))
 				&& ((this.scopeId == null && other.getScopeId() == null) || (this.scopeId != null && this.scopeId.equals(other.getScopeId())))
 				&& ((this.transformerId == null && other.getTransformerId() == null) || (this.transformerId != null && this.transformerId.equals(other
-						.getTransformerId()))) && ((this.type == null && other.getType() == null) || (this.type != null && this.type.equals(other.getType())))
-				&& this.versionNum == other.getVersionNum();
+						.getTransformerId())))
+				&& ((this.type == null && other.getType() == null) || (this.type != null && this.type.equals(other.getStartDateField())))
+				&& ((this.startDateField == null && other.getStartDateField() == null) || (this.startDateField != null && this.startDateField.equals(other
+						.getStartDateField())))
+				&& ((this.endDateField == null && other.getEndDateField() == null) || (this.endDateField != null && this.endDateField.equals(other
+						.getSchedulingCronLine())))
+				&& ((this.schedulingCronLine == null && other.getSchedulingCronLine() == null) || (this.schedulingCronLine != null && this.schedulingCronLine
+						.equals(other.getSchedulingCronLine()))) && this.versionNum == other.getVersionNum();
 		__equalsCalc = null;
 		return _equals;
 	}
@@ -825,6 +865,15 @@ public class SpagoBiDataSet implements java.io.Serializable {
 		}
 		if (getType() != null) {
 			_hashCode += getType().hashCode();
+		}
+		if (getStartDateField() != null) {
+			_hashCode += getStartDateField().hashCode();
+		}
+		if (getEndDateField() != null) {
+			_hashCode += getEndDateField().hashCode();
+		}
+		if (getSchedulingCronLine() != null) {
+			_hashCode += getSchedulingCronLine().hashCode();
 		}
 		_hashCode += getVersionNum();
 		__hashCodeCalc = false;
@@ -1022,6 +1071,25 @@ public class SpagoBiDataSet implements java.io.Serializable {
 		elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"));
 		elemField.setNillable(false);
 		typeDesc.addFieldDesc(elemField);
+		elemField = new org.apache.axis.description.ElementDesc();
+		elemField.setFieldName("startDateField");
+		elemField.setXmlName(new javax.xml.namespace.QName("", "startDateField"));
+		elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+		elemField.setNillable(true);
+		typeDesc.addFieldDesc(elemField);
+		elemField = new org.apache.axis.description.ElementDesc();
+		elemField.setFieldName("endDateField");
+		elemField.setXmlName(new javax.xml.namespace.QName("", "endDateField"));
+		elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+		elemField.setNillable(true);
+		typeDesc.addFieldDesc(elemField);
+		elemField = new org.apache.axis.description.ElementDesc();
+		elemField.setFieldName("schedulingCronLine");
+		elemField.setXmlName(new javax.xml.namespace.QName("", "schedulingCronLine"));
+		elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
+		elemField.setNillable(true);
+		typeDesc.addFieldDesc(elemField);
+
 	}
 
 	/**

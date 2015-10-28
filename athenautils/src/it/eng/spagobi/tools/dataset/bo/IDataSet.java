@@ -247,4 +247,16 @@ public interface IDataSet {
 
 	public void setDatasetFederation(FederationDefinition datasetFederation);
 
+	public String getStartDateField();
+
+	public void setStartDateField(String startDateField);
+
+	public String getEndDateField();
+
+	public void setEndDateField(String endDateField);
+
+	public String getSchedulingCronLine();
+
+	public void setSchedulingCronLine(String schedulingCronLine);
+
 }

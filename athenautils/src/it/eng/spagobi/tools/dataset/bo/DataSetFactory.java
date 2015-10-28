@@ -184,6 +184,14 @@ public class DataSetFactory {
 		// + dataSetConfig.getType() + "]");
 		// }
 
+		// retrieve persisting and scheduling informations
+		dataSet.setPersisted(dataSetConfig.isPersisted());
+		dataSet.setScheduled(dataSetConfig.isScheduled());
+		dataSet.setPersistTableName(dataSetConfig.getPersistTableName());
+		dataSet.setStartDateField(dataSetConfig.getStartDateField());
+		dataSet.setEndDateField(dataSetConfig.getEndDateField());
+		dataSet.setSchedulingCronLine(dataSetConfig.getSchedulingCronLine());
+
 		return dataSet;
 	}
 }

@@ -502,4 +502,34 @@ public class VersionedDataSet implements IDataSet {
 
 	}
 
+	public String getStartDateField() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setStartDateField(String startDateField) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public String getEndDateField() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setEndDateField(String endDateField) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public String getSchedulingCronLine() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setSchedulingCronLine(String schedulingCronLine) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
