@@ -13,8 +13,8 @@ Sbi.qbe.SaveDatasetWindow = function(config) {
 		// public
 		title : LN('sbi.qbe.savedatasetwindow.title')
 		, layout : 'fit'
-		, width : 540
-		, height : 260
+		, width : 640
+		, height : 460
 		, closeAction : 'close'
 		, frame : true
 		// private
@@ -41,7 +41,7 @@ Sbi.qbe.SaveDatasetWindow = function(config) {
 			, scope: this
 			, text: LN('sbi.generic.actions.save')
            }]
-		, items : this.datasetForm
+		, items : [this.datasetForm]
 	});   
 	
     Sbi.qbe.SaveDatasetWindow.superclass.constructor.call(this, c);
@@ -59,6 +59,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	datasetForm : null
 	, queries : null
 	, services: null
+	, persistPanel : null
 	
 	,
 	initServices: function() {
@@ -117,6 +118,9 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
     	   	hidden: true
 		});
 		
+		
+		this.initPersistPanel();
+		
 		//default value
 		this.scopeField.setValue(this.scopesStore.getAt(1).get('value'));
 		
@@ -138,7 +142,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	                 //"margin-left": "4px",
 	                 //"margin-top": "10px"
 	             }
-	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeField ]
+	             , items :  [ this.labelField, this.nameField, this.descriptionField, this.scopeField, this.persistPanel ]
 	    	}
 	    });
 	    
@@ -151,11 +155,22 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
       	formState.name = this.nameField.getValue();
       	formState.description = this.descriptionField.getValue();
       	formState.isPublic = this.scopeField.getValue() === 'true';
+      	
+
+      	formState.isPersisted = this.persistPanel.isPersisted.getValue();
+      	formState.isScheduled = this.persistPanel.isScheduled.getValue();
+      	formState.persistTable = this.persistPanel.persistTableName.getValue();
+      	formState.startDateField = this.persistPanel.startDateField.getValue();
+      	formState.endDateField = this.persistPanel.endDateField.getValue();
+      	formState.schedulingCronLine = this.persistPanel.schedulingCronLine.getValue();
+      	
       	return formState;
     }
 	
 	,
 	saveDatasetHandler: function () {
+
+		this.persistPanel.setSchedulingCronLine();
 		
 		var params = this.getInfoToBeSentToServer();
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
@@ -174,7 +189,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		var formState = this.getFormState();
 		formState.qbeJSONQuery = Ext.util.JSON.encode(this.queries);
 		formState.qbeDataSource = this.datasourceLabel;
-		formState.isPersisted = true;
+		//formState.isPersisted = true;
 		formState.isFlatDataset = false;
 		formState.sourceDatasetLabel = this.sourceDatasetLabel;
 		return formState;
@@ -219,5 +234,50 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
     		data : scopeComboBoxData 
     	}); 
 	}
+	,
+	initPersistPanel : function () {
+		this.persistPanel = new Sbi.qbe.PersistOptions({});
+	}
+	,
+	setSchedulingCronLine : function() {
+		var second, minute, hour, day, month, weekday;
+
+		second = '0';
+		minute = this.getSelection('minute');
+		hour = this.getSelection('hour');
+		day = this.getSelection('day');
+		month = this.getSelection('month');
+		weekday = this.getSelection('weekday');
+		// Support for specifying both a day-of-week and a
+		// day-of-month value is not complete
+		// (you must currently use the '?' character in one of
+		// these fields).
+		if (day == '*' && weekday != '*') {
+			day = '?';
+		} else {
+			weekday = '?';
+		}
+
+		Ext.get('schedulingCronLine').dom.value = second + " "
+				+ minute + " " + hour + " " + day + " " + month
+				+ " " + weekday;
+	}
+	,
+	getSelection : function(name) {
+		var chosen;
+		if (Ext.get(name + "-every").dom.checked) {
+			chosen = '*';
+		} else {
+			chosen = Ext.getCmp(name + 'sMultiselect')
+					.getValue();
+			if (!chosen.length) {
+				chosen = '*';
+			}
+		}
+		return chosen;
+	}
+
+
+	
 	
 });

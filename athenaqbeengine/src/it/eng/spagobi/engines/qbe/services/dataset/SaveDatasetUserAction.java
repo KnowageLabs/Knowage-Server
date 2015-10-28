@@ -208,6 +208,29 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		}
 
 		newDataset.setConfiguration(jsonConfig.toString());
+
+		// get Persist and scheduling informations
+		boolean isPersisted = getAttributeAsBoolean("isPersisted");
+		newDataset.setPersisted(isPersisted);
+		boolean isScheduled = getAttributeAsBoolean("isScheduled");
+		newDataset.setScheduled(isScheduled);
+		if (getAttributeAsString("persistTable") != null) {
+			String persistTable = getAttributeAsString("persistTable").toString();
+			newDataset.setPersistTableName(persistTable);
+		}
+		if (getAttributeAsString("startDateField") != null) {
+			String startDateField = getAttributeAsString("startDateField").toString();
+			newDataset.setStartDateField(startDateField);
+		}
+		if (getAttributeAsString("endDateField") != null) {
+			String endDateField = getAttributeAsString("endDateField").toString();
+			newDataset.setEndDateField(endDateField);
+		}
+		if (getAttributeAsString("schedulingCronLine") != null) {
+			String schedulingCronLine = getAttributeAsString("schedulingCronLine").toString();
+			newDataset.setSchedulingCronLine(schedulingCronLine);
+		}
+
 		return newDataset;
 	}
 

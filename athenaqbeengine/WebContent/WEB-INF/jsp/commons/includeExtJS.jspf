@@ -32,6 +32,7 @@
 <link id="theme-overrides" rel="styleSheet" href ="../js/lib/overrides-ext-3.2.1/resources/css/overrides-xtheme-gray.css" type="text/css" />
 
 
+
 <script type="text/javascript">
 	Ext.chart.Chart.CHART_URL = '../js/lib/ext-3.2.1/resources/charts.swf';
 	Ext.Ajax.timeout = 300000;
@@ -66,3 +67,7 @@
 <!--  HighCharts -->
 <script type="text/javascript" src="../js/lib/highcharts-3.0.7/highcharts.js"></script>
 <script type="text/javascript" src="../js/lib/highcharts-3.0.7/modules/exporting.js"></script>
+
+<!-- Multiselect -->
+<script type="text/javascript" src="../js/lib/ext-3.2.1/ux/form/MultiSelect.js"></script>
+<link id="multiselectcss" rel="styleSheet" href ="../js/lib/ext-3.4.1/ux/css/MultiSelect.css" type="text/css" />
