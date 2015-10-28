@@ -38,7 +38,7 @@ function removePixelsFromFontSize(fontSize)
 }
 
 function renderWordCloud(chartConf){
-
+   
 	var maxic = 0;
 	
 	for (var i=0; i<chartConf.data[0].length; i++){
@@ -616,10 +616,31 @@ function renderWordCloud(chartConf){
 			.attr("transform", function(d) {
 				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
 			})
-			.text(function(d) { return d.text; });
+			.text(function(d) { return d.text; })
+			.on('click', function(d,i){
+				
+				paramethers=fetchParamethers(d,i);
+				alert("category value: "+paramethers.categoryValue+" seriesValue: "+paramethers.serieValue);
+				
+			});
+			
 			}	
 		}
 		
+		function fetchParamethers(d,i){
+			
+			var param={
+					"categoryValue":'',
+					"serieValue":''
+			};
+			for(j=0;j<chartConf.data[0].length;j++){
+				if(chartConf.data[0][j].name===d.text){
+					param.categoryValue=chartConf.data[0][j].name;
+					param.serieValue=chartConf.data[0][j].value;
+				}
+			}
+			return param;
+		}
 	}
 
 	function renderSunburst(jsonObject)
@@ -676,8 +697,8 @@ function renderWordCloud(chartConf){
 	    else
     	{
 	    	height = jsonObject.chart.height 
-			- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
-					+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize))
+						- (Number(removePixelsFromFontSize(jsonObject.title.style.fontSize)) 
+								+ Number(removePixelsFromFontSize(jsonObject.subtitle.style.fontSize))
 					)*1.4 - topPadding*2 - bottomPadding - bcHeight;
     	}
 		
@@ -877,7 +898,7 @@ function renderWordCloud(chartConf){
 				colors.push( d3.hsl(fromH + deltaH * i, fromS + deltaS * i, fromL + deltaL * i) );
 			}
 
-			return colors;
+				return colors;
 		}
 		
 		// TODO: remove - not needed
@@ -1082,15 +1103,16 @@ function renderWordCloud(chartConf){
 								 console.log("RRRRR");
 								  console.log(d);
 								  return "invisible";
-							}
-							
+							  }		
+							  
 //							colorArrangement[i] = colors[d.name];
 //							  
 //							return colors[d.name];	
 						}
 				)					
 				.style("opacity", 1)
-				.on("mouseover", mouseover);
+				.on("mouseover", mouseover)
+				.on("click",clickFunction);
 
 				drawLegend();
 			
@@ -1489,6 +1511,21 @@ function renderWordCloud(chartConf){
 		  return root;
 		  
 		};
+		
+		function clickFunction(d){
+			var pars= crossNavigationParams(d);
+			alert("category value " + pars.categoryValue + " serie value: "+ pars.serieValue);
+		}
+		
+		function crossNavigationParams(d){
+			var par={
+				"categoryValue":null,
+				"serieValue":null	
+			};
+			par.categoryValue=d.name;
+			par.serieValue=d.value;
+			return par;
+		}
 	}	
 	
 	/**
@@ -1574,7 +1611,7 @@ function renderWordCloud(chartConf){
 		}
 
      var myColors=d3.scale.ordinal().domain(groups).range(colors);
-     
+
 	    var brushWidth = data.axis.brushWidth;
 
 		var brushx = -Number(brushWidth)/2;
@@ -1582,7 +1619,7 @@ function renderWordCloud(chartConf){
 		var m = [40, 40, 40, 100],
 		w = data.chart.width - m[1] - m[3],
 		h = data.chart.height - m[0] - m[2];
-		
+
 		/**
 		 * Configuration that we get directly from the VM (needed for displaying
 		 * the full (complete) chart when resizing. The biggest problems are
@@ -1605,8 +1642,8 @@ function renderWordCloud(chartConf){
 		y = {};
 
 		var line = d3.svg.line(),
-			axis = d3.svg.axis().orient("left"),
-			foreground;
+		axis = d3.svg.axis().orient("left"),
+		foreground;
 
 		/**
 		 * Add this root DIV so when we specify some font properties for the chart
@@ -1664,20 +1701,20 @@ function renderWordCloud(chartConf){
 		var heightTotal = h + m[0] + m[2];
 		
 		var svg = d3.select("#chart")
-			.append("div")
-			.style("float","left")
+		.append("div")
+		.style("float","left")
 			.style("width",data.chart.width-legendWidth)
 			// "...-180" for table height plus pagination height (150+30)
 			// "...-20" for bottom padding of the pagination  
 			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
-			.append("svg:svg")
-			.style("font-size",18)
+		.append("svg:svg")
+		.style("font-size",18)
 			.style("width", data.chart.width-legendWidth)
 			// "...-180" for table height plus pagination height (150+30)
 			// "...-20" for bottom padding of the pagination  
 			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
-			.append("svg:g")
-			.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+		.append("svg:g")
+		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 		columns.forEach(function(d){
 			records.forEach(function(p) {p[d] = +p[d]; });
@@ -1877,7 +1914,7 @@ function renderWordCloud(chartConf){
 
 		// Axis
 		g.append("svg:g")
-		.attr("class","axis")		
+		.attr("class","axis")
 		.each(function(d) { d3.select(this).call(axis.scale(y[d])); })
 		.attr("fill",data.yAxis.labels.style.color)
 		.style("font-family",data.yAxis.labels.style.fontFamily)
@@ -1921,6 +1958,33 @@ function renderWordCloud(chartConf){
 		.text(data.emptymessage.text);	
 
 	}
+	
+	//cross navigation
+	foreground.on("click",clickLine);
+	
+	function clickLine(d){
+	  var pars=crossNavigationParamethers(d);
+	  alert("category name: "+ pars.categoryName+" category value: "+pars.categoryValue+" grouping category name: "+pars.groupCategoryName +
+			  " group category value: "+ pars.groupCategoryValue);
+	   
+	}
+	
+	function crossNavigationParamethers(d){
+		 var params={
+					"categoryName":null,
+					"categoryValue":null,
+					"groupCategoryName":null,
+					"groupCategoryValue":null
+				   };	
+				   var category=data.chart.tooltip;
+				   params.categoryName=category;
+				   params.categoryValue=d[category];
+				   var groupCategory=data.chart.group;
+				   params.groupCategoryName=groupCategory;
+				   params.groupCategoryValue=d[groupCategory];
+				   
+				   return params;
+	}
 
 	// TABLE
 	var initialTableData=records;
@@ -1961,7 +2025,7 @@ function renderWordCloud(chartConf){
 	var nextButton = paginationBar.append("button")
 						.text("Next >>")
 						.on("click", function(){ return showNext(); });
-	
+
 	if(firstDisplayed===1){
 		prevButton.attr("disabled","true");	
 	}
@@ -2047,7 +2111,6 @@ function renderWordCloud(chartConf){
 
 	// Handles a brush event, toggling the display of foreground lines.
 	function brush() {
-		
 		var actives = columns.filter(function(p) { return !y[p].brush.empty(); }),
 		extents = actives.map(function(p) { return y[p].brush.extent(); });
 		foreground.classed("fade", function(d) {
@@ -2278,15 +2341,22 @@ function renderWordCloud(chartConf){
 			lastDisplayed=allTableData.length;
 		}
 
+
+
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
+
+
 
 		if(lastDisplayed === allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-		
+
+
+
 		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
 		updateTable();	
+
 
 	}
 
@@ -2303,6 +2373,8 @@ function renderWordCloud(chartConf){
 		else{
 			lastDisplayed=lastDisplayed-5;
 		}
+
+
 
 		currentTableData=[];
 		currentTableData=allTableData.slice(firstDisplayed-1,lastDisplayed);
@@ -2449,7 +2521,7 @@ function renderChordChart(jsonData)
 		return function(g, i) 
 		{		
 			setParamsClickAndMouseOver(g,i,false);
-
+			
 			if (enableMouseOut)
 			{
 				svg.selectAll(".chord path")
@@ -2461,9 +2533,11 @@ function renderChordChart(jsonData)
 	}
 
 	function clickOnItem()
-	{
+	{   
+		
 		return function(g, i) 
 		{	
+		    
 			setParamsClickAndMouseOver(g,i,true);
 				
 			/**
@@ -2481,9 +2555,33 @@ function renderChordChart(jsonData)
 			svg.selectAll(".chord path")
 				.filter(function(d) { return d.source.index != i && d.target.index != i; })
 			 	.transition()
-			 	.style("opacity", opacityMouseOver);		
+			 	.style("opacity", opacityMouseOver);
+		
+			var pars= crossNavigationParamethers(jsonData.data[0].rows[i]);
+			alert("category value: "+pars.categoryValue+ " serie value: "+pars.serieValue);
+			
 		};
 	}
+	
+	function crossNavigationParamethers(d){
+		
+		var param={
+			"categoryValue":null,
+			"serieValue":null
+		};
+		param.categoryValue=d.column_0;
+		serie=0;
+		
+		for(property in d){
+			if(property != "column_0"){
+				serie=serie+d[property];
+			}
+		}
+	   param.serieValue=serie;	
+		
+	   return param;
+	}
+	
 	
 	/**
 	 * Set parameters that are necessary for the events that we are listening to: the mouse over and click event.
@@ -2492,6 +2590,7 @@ function renderChordChart(jsonData)
 	 */
 	function setParamsClickAndMouseOver(d,i,isClick)
 	{
+		
 		/**
 		 * The function responsible for processing the 'click' event listener's call is calling this function.
 		 * This function is not called by the 'fadeMouseOver'/'fadeMouseOut' functions that are responsible
@@ -2574,9 +2673,9 @@ function renderChordChart(jsonData)
 	function printTheResultWhenSelecting(i)
 	{
 		// With which columns is this (selected, clicked) row paired 
-		console.log(columnsPairedWithRows[i]);
+		//console.log(columnsPairedWithRows[i]);
 		// Which columns are paired with this (selected, clicked) row 
-		console.log(rowsPairedWithColumns[i]);
+	   //	console.log(rowsPairedWithColumns[i]);
 	}
 	
 
@@ -2610,8 +2709,8 @@ function renderChordChart(jsonData)
 	
 	var fill = d3.scale.ordinal()
     			.domain(d3.range(elemSize))
-				.range(jsonData.colors);	
-		
+				.range(jsonData.colors);
+	
 	d3.select("body").append("div").attr("id","main")
 		.style("height",height)
 		.style("width",width)
@@ -2629,7 +2728,7 @@ function renderChordChart(jsonData)
 		.style("font-style",jsonData.title.style.fontStyle)
 		.style("font-weight",jsonData.title.style.fontWeight)
 		.style("text-decoration",jsonData.title.style.textDecoration)
-		.style("font-size",jsonData.title.style.fontSize)	
+		.style("font-size",jsonData.title.style.fontSize)
 		.text(jsonData.title.text);
 
 	// Set subtitle
@@ -2648,15 +2747,15 @@ function renderChordChart(jsonData)
 	d3.select("#main").append("div").attr("id","chartD3");
 	
 	var svg = d3.select("#chartD3").append("div")
-	 			.attr	("class", "chart")	 			
+	 			.attr("class", "chart")	 			
 	 			.style	("width", width)
-	 			.style	("height", Number(height))	
-				.append	("svg:svg")
-				.attr	("width", width)
-				.attr	("height", Number(height)+spaceForLabels)	
-				.style	("background-color",jsonData.chart.style.backgroundColor)	
-				.append	("svg:g")
-				.attr	("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
+	 			.style("height", Number(height))	
+				.append("svg:svg")
+				.attr("width", width)
+				.attr("height", Number(height)+spaceForLabels)	
+				.style("background-color",jsonData.chart.style.backgroundColor)	
+				.append("svg:g")
+				.attr("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
 	
 	/**
 	 * [START] Data processing part
@@ -2683,7 +2782,7 @@ function renderChordChart(jsonData)
   	 
   	 // Variable that will let us render this chart part, but preventing listening for the mouseover event
   	 var arcs = null;
-  	 
+ 
   	/**
   	  * Which column is paired with which row (row is the initial point of view)
   	  * - 	array of objects that are composed of row attribute and its array of 
@@ -2763,6 +2862,7 @@ function renderChordChart(jsonData)
   	 arcs.on
   	 (
 		 "click", clickOnItem()
+		 
   	 );
 	 
 	 function drawGraph(matrix)
