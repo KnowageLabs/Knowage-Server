@@ -32,6 +32,7 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.apache.metamodel.pojo.ArrayTableDataProvider;
 import org.apache.metamodel.pojo.PojoDataContext;
+import org.apache.metamodel.query.CompiledQuery;
 import org.apache.metamodel.query.FunctionType;
 import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
@@ -415,7 +416,9 @@ public class DataStore implements IDataStore {
 		// Change table name to be concurrency-safe
 		String newSqlQuery = sqlQuery.replace(DEFAULT_TABLE_NAME, uniqueTableName);
 		Query query = dataContext.parseQuery(newSqlQuery);
-		DataSet dataSet = dataContext.executeQuery(query);
+		CompiledQuery cQuery = dataContext.compileQuery(query);
+		DataSet dataSet = dataContext.executeQuery(cQuery);
+		// DataSet dataSet = dataContext.executeQuery(query);
 
 		// *************************************************************************************************
 		// **** This part generates a SpagoBI datastore starting from the Apache MetaModel dataset *********

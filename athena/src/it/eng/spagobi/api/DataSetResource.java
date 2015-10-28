@@ -10,6 +10,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -78,7 +79,7 @@ import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 @Path("/1.0/datasets")
 public class DataSetResource extends AbstractSpagoBIResource {
@@ -318,15 +319,23 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
+			int maxResults;
+			try {
+				maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+			} catch (NumberFormatException nfe) {
+				logger.debug("The value of SPAGOBI.API.DATASET.MAX_ROWS_NUMBER config must be an integer");
+				maxResults = -1;
+			}
+
 			UserProfile profile = getUserProfile();
 
 			HttpSession session = this.getServletRequest().getSession();
 			IDataStore dataStore = null;
 			synchronized (session) {
 				if (groupCriteria.size() == 0 && projectionCriteria.size() == 0 && filterCriteria.size() == 0) {
-					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters));
+					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters));
 				} else {
-					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, -1, getParametersMap(parameters), groupCriteria, filterCriteria,
+					dataStore = getDatasetManagementAPI().getDataStore(label, -1, -1, maxResults, getParametersMap(parameters), groupCriteria, filterCriteria,
 							projectionCriteria);
 				}
 			}
@@ -423,7 +432,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			if (groupCriteria.size() == 0 && projectionCriteria.size() == 0) {
 				List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
 				List<String> datasetLabels = new ArrayList<String>();
-				//filtering datasets related to document (they are not real datasets)
+				// filtering datasets related to document (they are not real datasets)
 				for (String label : associationGroupObject.getDataSetLabels()) {
 					if (DAOFactory.getDataSetDAO().loadDataSetByLabel(label) != null) {
 						datasetLabels.add(label);
@@ -1017,7 +1026,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard
@@ -1025,7 +1034,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 *            la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento alla dimensione
 	 *            spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è una follia che andrebbe
 	 *            rifattorizzata al più presto.
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
@@ -1152,7 +1161,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Check if the association passed is valid ',' is valid if number of record from association is lower than maximum of single datasets
-	 * 
+	 *
 	 * @param association
 	 */
 
@@ -1168,9 +1177,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 			JSONArray arrayAss = new JSONArray(association);
 
-			boolean valid = getDatasetManagementAPI().checkAssociation(arrayAss);
-			logger.debug("The association is valid? " + valid);
-			toReturn.put("valid", valid);
+			//boolean valid = getDatasetManagementAPI().checkAssociation(arrayAss);
+			//logger.debug("The association is valid? " + valid);
+			//toReturn.put("valid", valid);
+			toReturn.put("valid", true);
 
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while checking association " + association, e);
@@ -1183,7 +1193,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Persist a dataset list
-	 * 
+	 *
 	 * @param labels
 	 */
 

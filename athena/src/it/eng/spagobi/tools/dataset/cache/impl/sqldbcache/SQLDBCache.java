@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
 import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -68,6 +69,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import commonj.work.Work;
 import commonj.work.WorkItem;
 
@@ -702,19 +705,22 @@ public class SQLDBCache implements ICache {
 
 		IDataStore dataStore = null;
 		try {
+			// If the dataset is a JoinedDataset, then the loadData will take care of creating the temp table for it
 			dataSet.loadData();
-			dataStore = dataSet.getDataStore();
+			if (!(dataSet instanceof JoinedDataSet)) {
+				dataStore = dataSet.getDataStore();
 
-			if (wait == true) {
-				this.put(dataSet, dataStore);
-			} else {
-				if (spagoBIWorkManager == null) {
-					throw new RuntimeException("Impossible to save the store in background because the work manager is not properly initialized");
+				if (wait == true) {
+					this.put(dataSet, dataStore);
+				} else {
+					if (spagoBIWorkManager == null) {
+						throw new RuntimeException("Impossible to save the store in background because the work manager is not properly initialized");
+					}
+
+					commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+					Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet, userProfile);
+					workManager.schedule(cacheWriteWork);
 				}
-
-				commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
-				Work cacheWriteWork = new SQLDBCacheWriteWork(this, dataStore, dataSet, userProfile);
-				workManager.schedule(cacheWriteWork);
 			}
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while executing method", t);
@@ -823,6 +829,8 @@ public class SQLDBCache implements ICache {
 				throw new SpagoBIRuntimeException("Error while creating cache table with base query [" + queryText + "]", e);
 			}
 
+			// ACTUALLY NOT NEEDED! IT IS ONLY USED TO KNOW THE MEMORY REQUIRED FOR THIS JOINED DATASET
+			// TODO: fix it so that no need to retrieve useless data. we only need the table metadata
 			IDataStore dataStore = dataSource.executeStatement("SELECT * FROM " + descriptor.getTableName(), 0, 0);
 
 			// dataStore.getMetaData().setProperty("BREAK_INDEXES", columnBreakIndexes);
@@ -938,10 +946,23 @@ public class SQLDBCache implements ICache {
 	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {
 		logger.trace("IN");
 		try {
+			int queryTimeout;
+			try {
+				queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+			} catch (NumberFormatException nfe) {
+				logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
+				queryTimeout = -1;
+			}
+
 			PersistedTableManager persistedTableManager = new PersistedTableManager();
 			persistedTableManager.setRowCountColumIncluded(!(dataset instanceof JoinedDataSet));
+			if (queryTimeout > 0) {
+				persistedTableManager.setQueryTimeout(queryTimeout);
+			}
 			String tableName = persistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
+			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persistStoreInCache.persistdataset");
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+			monitor.stop();
 			return tableName;
 		} catch (Throwable t) {
 			if (t instanceof CacheException)

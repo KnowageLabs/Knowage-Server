@@ -65,9 +65,9 @@ import commonj.work.Work;
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
  * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
  * calling directly the DAO.
- * 
+ *
  * @author gavardi, gioia
- * 
+ *
  */
 
 public class DatasetManagementAPI {
@@ -259,7 +259,6 @@ public class DatasetManagementAPI {
 		}
 	}
 
-
 	/*
 	 * Refresh cache for a specific dataset
 	 */
@@ -306,7 +305,7 @@ public class DatasetManagementAPI {
 	// }
 
 	/**
-	 * 
+	 *
 	 * @param label
 	 * @param offset
 	 * @param fetchSize
@@ -334,17 +333,21 @@ public class DatasetManagementAPI {
 			if (cachedResultSet == null) {
 				dataSet.setParamsMap(parametersValues);
 				dataStore = cache.refresh(dataSet, false);
-
 				// if result was not cached put refresh date as now
 				dataStore.setCacheDate(new Date());
 
 			} else {
 				dataStore = cachedResultSet;
-
 				addLastCacheDate(cache, dataStore, dataSet);
-
 			}
-			return dataStore;
+
+			if (maxResults > 0 && dataStore.getRecordsCount() > maxResults) {
+				// building the limited DataStore....
+				// TODO: move this part in a lower component..
+				return dataStore.aggregateAndFilterRecords(generateQuery(maxResults));
+			} else {
+				return dataStore;
+			}
 		} catch (ParametersNotValorizedException p) {
 			throw new ParametersNotValorizedException(p.getMessage());
 		} catch (Throwable t) {
@@ -356,7 +359,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * insert into data store last cache date if present
-	 * 
+	 *
 	 * @param cache
 	 * @param dataStore
 	 * @param dataSet
@@ -398,25 +401,37 @@ public class DatasetManagementAPI {
 
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 			cache.setUserProfile(userProfile);
+
+			// //////////// OLD WAY ////////////////////
+			//
+			// if (cache.contains(dataSet) == false) {
+			// dataSet.loadData();
+			// IDataStore baseDataStore = dataSet.getDataStore();
+			// cache.put(dataSet, baseDataStore);
+			// }
+			//
+			// // just get without storing...ok?
+			// dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
+			// /////////////////////////////////////////
+
 			IDataStore dataStore = null;
+			IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
 
-			if (cache.contains(dataSet) == false) {
-				dataSet.loadData();
-				IDataStore baseDataStore = dataSet.getDataStore();
-				cache.put(dataSet, baseDataStore);
+			if (cachedResultSet == null) {
+				dataStore = cache.refresh(dataSet, false);
+				// if result was not cached put refresh date as now
+				dataStore.setCacheDate(new Date());
+				dataStore = dataStore.aggregateAndFilterRecords(generateQuery(groupCriteria, filterCriteria, projectionCriteria, maxResults));
+			} else {
+				dataStore = cachedResultSet;
+				addLastCacheDate(cache, dataStore, dataSet);
+				/*
+				 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
+				 * therefore we adjust its metadata
+				 */
+				this.adjustMetadata((DataStore) dataStore, dataSet, null);
+				dataSet.decode(dataStore);
 			}
-
-			// just get without storing...ok?
-			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria);
-
-			addLastCacheDate(cache, dataStore, dataSet);
-
-			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
-			 * therefore we adjust its metadata
-			 */
-			this.adjustMetadata((DataStore) dataStore, dataSet, null);
-			dataSet.decode(dataStore);
 
 			return dataStore;
 
@@ -432,7 +447,7 @@ public class DatasetManagementAPI {
 	 * @param selections
 	 * @param parametersValues
 	 *            A map of map with the following structure: storeId->paramName->paramValue
-	 * 
+	 *
 	 * @return
 	 */
 	public IDataStore getJoinedDataStore(AssociationGroup associationGroup, JSONObject selections, Map<String, Map<String, String>> parametersValues) {
@@ -1083,7 +1098,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
-	 * 
+	 *
 	 * @param dsLabel1
 	 * @param dsLabel2
 	 * @param field1
@@ -1145,10 +1160,12 @@ public class DatasetManagementAPI {
 						// checkQbeDataset(dataset);
 
 						// check datasets are cached otherwise cache it
-						IDataStore cachedResultSet = cache.get(dataset);
-						if (cachedResultSet == null) {
+						// IDataStore cachedResultSet = cache.get(dataset);
+						// if (cachedResultSet == null) {
+						if (!cache.getMetadata().containsCacheItem(dataset.getSignature())) {
 							logger.error("dataset " + dataset.getLabel() + " is not already cached, cache it");
-							IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+							// IDataStore dataStore = dataStore = cache.refresh(dataset, false);
+							cache.refresh(dataset, true);
 						}
 
 						String table = cache.getMetadata().getCacheItem(dataset.getSignature()).getTable();
@@ -1254,5 +1271,94 @@ public class DatasetManagementAPI {
 			logger.debug("OUT");
 		}
 		return toReturn;
+	}
+
+	private String generateQuery(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int maxResults) {
+		SelectBuilder sqlBuilder = new SelectBuilder();
+		sqlBuilder.from(DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME);
+
+		// Columns to SELECT
+		if (projections != null) {
+			for (ProjectionCriteria projection : projections) {
+				String aggregateFunction = projection.getAggregateFunction();
+
+				String columnName = projection.getColumnName();
+
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					String aliasName = projection.getAliasName();
+					if (aliasName != null && !aliasName.isEmpty()) {
+						columnName = aggregateFunction + "(" + columnName + ") AS " + aliasName;
+					}
+				}
+				sqlBuilder.column(columnName);
+
+			}
+		}
+
+		// WHERE conditions
+		if (filters != null) {
+			for (FilterCriteria filter : filters) {
+				String leftOperand = null;
+				if (filter.getLeftOperand().isCostant()) {
+					// why? warning!
+					leftOperand = filter.getLeftOperand().getOperandValueAsString();
+				} else { // it's a column
+					leftOperand = filter.getLeftOperand().getOperandValueAsString();
+				}
+
+				String operator = filter.getOperator();
+
+				String rightOperand = null;
+				if (filter.getRightOperand().isCostant()) {
+					if (filter.getRightOperand().isMultivalue()) {
+						rightOperand = "(";
+						String separator = "";
+						String stringDelimiter = "'";
+						List<String> values = filter.getRightOperand().getOperandValueAsList();
+						for (String value : values) {
+							rightOperand += separator + stringDelimiter + value + stringDelimiter;
+							separator = ",";
+						}
+						rightOperand += ")";
+					} else {
+						rightOperand = filter.getRightOperand().getOperandValueAsString();
+					}
+				} else { // it's a column
+					rightOperand = filter.getRightOperand().getOperandValueAsString();
+				}
+
+				sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+			}
+		}
+
+		// GROUP BY conditions
+		if (groups != null) {
+			for (GroupCriteria group : groups) {
+				String aggregateFunction = group.getAggregateFunction();
+
+				String columnName = group.getColumnName();
+
+				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
+					columnName = aggregateFunction + "(" + columnName + ")";
+				}
+				sqlBuilder.groupBy(columnName);
+			}
+		}
+
+		String queryText = sqlBuilder.toString() + " LIMIT " + maxResults;
+		logger.debug("Cached dataset access query is equal to [" + queryText + "]");
+
+		return queryText;
+	}
+
+	private String generateQuery(int maxResults) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT * FROM ");
+		sb.append(DataStore.DEFAULT_SCHEMA_NAME);
+		sb.append(".");
+		sb.append(DataStore.DEFAULT_TABLE_NAME);
+		sb.append(" LIMIT ");
+		sb.append(maxResults);
+		return sb.toString();
 	}
 }

@@ -55,6 +55,7 @@ public class PersistedTableManager {
 	private String tableName = new String();
 	private boolean rowCountColumIncluded = false;
 	private Map<String, Integer> columnSize = new HashMap<String, Integer>();
+	private int queryTimeout = -1;
 
 	private IEngUserProfile profile = null;
 
@@ -209,12 +210,16 @@ public class PersistedTableManager {
 			// Steps #1: define prepared statement (and max column size for
 			// strings type)
 			PreparedStatement statement = defineStatements(datastore, datasource, connection);
-			// Steps #2: define create table statement
+			// Steps #2: set query timeout (if necessary)
+			if (queryTimeout > 0) {
+				statement.setQueryTimeout(queryTimeout);
+			}
+			// Steps #3: define create table statement
 			String createStmtQuery = getCreateTableQuery(datastore, datasource);
 			dropTableIfExists(datasource);
-			// Step #3: execute create table statament
+			// Step #4: execute create table statament
 			executeStatement(createStmtQuery, datasource);
-			// Step #4: execute batch with insert statements
+			// Step #5: execute batch with insert statements
 			statement.executeBatch();
 			statement.close();
 			if (!dialect.contains("VoltDB")) {
@@ -826,6 +831,14 @@ public class PersistedTableManager {
 
 	public String getRowCountColumnName() {
 		return "sbicache_row_id";
+	}
+
+	public int getQueryTimeout() {
+		return queryTimeout;
+	}
+
+	public void setQueryTimeout(int queryTimeout) {
+		this.queryTimeout = queryTimeout;
 	}
 
 }

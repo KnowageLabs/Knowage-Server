@@ -64,3 +64,6 @@
 	        return me.menu;
 	    }
 	});
+	
+	Ext.override(Ext.data.proxy.Ajax, { 
+		timeout:600000});
