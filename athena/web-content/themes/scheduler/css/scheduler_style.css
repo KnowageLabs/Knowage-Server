@@ -165,6 +165,9 @@ md-select-menu {
 	overflow: hidden;
 }
 
+md-tooltip{
+	background-color: black;
+}
 md-tooltip .md-content.md-show {
 	height: 100%;
 }

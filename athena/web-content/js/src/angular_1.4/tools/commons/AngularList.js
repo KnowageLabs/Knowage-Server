@@ -1,3 +1,8 @@
+/**
+ * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
+ *
+ */
+
 //var jsDep=["/athena/js/lib/angular/angular-material_0.10.0/angular-material.js",
 //           "/athena/js/lib/angular/contextmenu/ng-context-menu.min.js",
 //           "/athena/js/lib/angular/pagination/dirPagination.js",
@@ -151,7 +156,6 @@ function ListControllerFunction($scope,translate,$mdDialog,$mdToast,$timeout,$co
 	$scope.localSearch=false;
 	$scope.searchFastVal="";
 	
-	
 	$scope.searchItem=function(searchVal){
 		
 		if($scope.localSearch){
@@ -171,6 +175,7 @@ function ListControllerFunction($scope,translate,$mdDialog,$mdToast,$timeout,$co
 		
 		
 	}
+	
 	$scope.isSelected=function(item){
 		return angular.equals($scope.selectedItem, item) ;
 	}

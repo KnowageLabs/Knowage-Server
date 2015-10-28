@@ -51,7 +51,7 @@
 		<div layout="row" layout-wrap class="h100">
 
 			<!-- 			LEFT BOX WORD -->
-			<div flex="20" style="width: 20%;" class="leftBox_word" >
+			<div flex="20"  class="leftBox_word" >
 
 
 				<div layout="column" class="wordListBox" style="height: 60%;">
@@ -124,7 +124,7 @@
 
 			</div>
 			
-			<div flex="80" offset="20"  class="rightBox_GLOSS  h100">
+			<div flex  class="rightBox_GLOSS  h100">
 				<md-content  layout="column" flex>
 <!-- 					<md-content  class="h100"> -->
 				 	<md-tabs  md-dynamic-height  class="hideTabs h100" md-border-bottom > 
@@ -376,8 +376,5 @@
 </html>
 
 <%}else{ %>
-
-UNAUTHORIZED
-<%-- <%@include file="/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp"%> --%>
-
+<%@include file="/WEB-INF/jsp/tools/geo/mapPage.jsp"%>
 <%} %>

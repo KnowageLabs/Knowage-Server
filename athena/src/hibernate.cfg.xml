@@ -283,9 +283,6 @@
 		
 		<mapping resource="it/eng/spagobi/tools/timespan/metadata/mapping/SbiTimespan.hbm.xml" />
 		
-		<!-- EVENT JOB -->
-		<mapping resource="it/eng/spagobi/tools/events/metadata/mapping/SbiEventJob.hbm.xml" />
-		
 		<!-- TABLE -->
 		<mapping resource="it/eng/spagobi/tools/glossary/metadata/mapping/SbiTable.hbm.xml" />
 		

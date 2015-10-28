@@ -167,7 +167,6 @@ md-icon.sm-font-icon {
 .leftBox_word {
 	z-index: 2;
 	box-shadow: 10px 0px 39px -20px rgba(0, 0, 0, 0.75);
-	position: fixed;
 	height: 100%;
 	overflow: auto;
 }

@@ -312,9 +312,6 @@
 	
 	<!-- timespan -->
 	<CONFIGURATOR path="/WEB-INF/conf/tools/timespan/business_map.xml" /> 
-
-	<!-- eventJob -->
-	<CONFIGURATOR path="/WEB-INF/conf/tools/events/business_map.xml" /> 
 	
 	<!-- image widget service -->
 	<CONFIGURATOR path="/WEB-INF/conf/images/business_map.xml" /> 

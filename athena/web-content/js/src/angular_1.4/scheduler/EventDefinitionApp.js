@@ -1,4 +1,4 @@
-var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial', 'angular_rest', 'angular_list', 'angular_time_picker']);
+var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial', 'angular_rest', 'angular_list', 'angular_time_picker','angular_table']);
 
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
@@ -550,4 +550,52 @@ eventDefinitionApp.controller('ActivityEventController',
 	activityEventCtrl.prova = function(item) {
 		console.log("prova",item); 	
 	};
+	
+	activityEventCtrl.sampleModel=[{name:"name1",surname:"surname1",age:"18"},
+	                               {name:"name2",surname:"surname2",age:"18"},
+	                               {name:"name3",surname:"surname3",age:"20"},
+	                               {name:"name4",surname:"surname4",age:"18"},
+	                               {name:"name5",surname:"surname5",age:"18"},
+	                               {name:"name6",surname:"surname6",age:"32"},
+	                               {name:"name7",surname:"surname7",age:"18"},
+	                               {name:"name8",surname:"surname8",age:"18"},
+	                               {name:"name9",surname:"surname9",age:"18"},
+	                               {name:"name10",surname:"surname10",age:"18"},
+	                               {name:"name11",surname:"surname11",age:"27"},
+	                               {name:"name12",surname:"surname12",age:"18"},
+	                               {name:"name13",surname:"surname13",age:"18"},
+	                               {name:"name14",surname:"surname14",age:"11"},
+	                               {name:"name15",surname:"surname15",age:"18"},
+	                               {name:"name16",surname:"surname16",age:"18"},
+	                               {name:"name17",surname:"surname17",age:"80"},
+	                               {name:"name18",surname:"surname18",age:"18"},
+	                               {name:"name19",surname:"surname19",age:"18"},
+	                             ];
+	activityEventCtrl.MenuOpt = 
+		[{
+			label : 'action1',
+			action : function(item,event) {
+					myfunction1(event,item);
+			}
+		},
+		{
+			label : 'action2',
+			action : function(item,event) {
+					myfunction2 (event,item);
+			}
+		}];
+
+	activityEventCtrl.SpeedMenuOpt  = [
+	            	 {
+	            		label : 'action1',
+	            		 icon:'fa fa-pencil' ,  
+	            		backgroundColor:'red',  
+	            		 color:'black',		
+	            		action : function(item,event) {
+	            				myFunction(event,item);
+	            		 }
+	            	} 
+	            ];
+
+	
 }]);

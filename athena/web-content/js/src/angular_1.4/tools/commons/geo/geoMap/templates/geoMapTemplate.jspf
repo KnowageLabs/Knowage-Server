@@ -1,0 +1,23 @@
+<div layout="row" layout-wrap ng-cloak>
+
+<geo-layers  id="layer" ></geo-layers>
+
+<div  flex id='map' >
+
+<geo-legend id="legend" ></geo-legend>
+<geo-distance-calculator id="calculator" ></geo-distance-calculator>
+
+</div>
+
+
+<geo-rigth-menu  id="menu"></geo-rigth-menu>
+
+
+
+
+
+<!-- this is to include child directive -->
+<div ng-transclude ></div>
+
+
+</div>

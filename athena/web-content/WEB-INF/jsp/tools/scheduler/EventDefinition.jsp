@@ -5,7 +5,6 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
 <%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
-<%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
 
 <%
 	String jobName = "default jobName value", jobGroup = "default jobGroup value", triggerName="", triggerGroup="";
@@ -29,45 +28,16 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <meta http-equiv="x-ua-compatible" content="IE=EmulateIE9">
 <meta name="viewport" content="width=device-width">
-<!-- JavaScript -->
-<!--[if IE 8]> 
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
-	<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/3.4.0/es5-shim.min.js"></script> 
-	<![endif]-->
 
-<!-- angular reference-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-
-<!-- angular-material-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
-
-
-<!-- 	queste sono per la angular list -->
-<!-- angular tree -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/tree-style.css">
-
-<!-- context menu -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
-
-<!--pagination-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/pagination/dirPagination.js"></script>
-
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">
-
-<!-- angular list -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/angular-list.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/AngularList.js"></script>
-
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <!-- 	angular time picker -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+
+<!-- TODO remove angulartable -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
 
 <!-- fine -->
 
@@ -297,23 +267,36 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <!-- 				<pre>{{contactForm.$error | json }}</pre> -->
 <!-- 					</md-tab-body>  -->
 <!-- 				</md-tab> -->
+<!-- 			</md-tabs> -->
+				<md-tab id="table"> 
+					<md-tab-label>Table</md-tab-label> 
+					<md-tab-body > 
+						
+						<angular-table
+						 id="mytab"
+						 ng-model=activityEventCtrl.sampleModel
+						 columns='["name","age","surname"]'
+						 columns-search='["name","age"]'
+						 highlights-selected-item=true
+						 show-search-bar=true
+						 menu-option=activityEventCtrl.MenuOpt
+						 speed-menu-option=activityEventCtrl.SpeedMenuOpt
+						 ></angular-table>
+					</md-tab-body> 
+				</md-tab>
 			</md-tabs>
 
-			<div layout="row" class=" bottomButtonsBox">
-				<div ng-if="!contactForm.$valid">
-					<md-icon md-font-icon="fa fa-exclamation-triangle "
-							style="color: red;line-height: 20px;"></md-icon>
-					<md-tooltip>
-						<ul style="padding: 0px;">
-							<li style="display: block;" ng-repeat="(key, errors) in contactForm.$error track by $index">
-								<ul style="padding: 0px;">
-									<li style="display: block;" ng-repeat="e in errors">
-										{{ e.$name }}
-										<i class="fa fa-arrow-right"></i>
-										<span style="color: red; font-size: 12px; font-weight: 900;"> {{ key }} </span>.
-									</li>
-								</ul>
-							</li>
+			
+			<div layout="row"  class=" bottomButtonsBox">
+				 <div ng-if="!contactForm.$valid">
+				        <md-icon md-font-icon="fa fa-info-circle" style="    color:  #104D71;    line-height: 20px;"></md-icon>
+				        <md-tooltip>
+				        <ul style="padding: 0px;" >
+						  <li style="display: block;" ng-repeat="(key, errors) in contactForm.$error track by $index"> 
+						    <ul style="padding: 0px;">
+						      <li style="display: block;" ng-repeat="e in errors">{{ e.$name }} <i class="fa fa-arrow-right"></i> <span style="color: red;    font-size: 12px;    font-weight: 900;">{{ key }}</span>.</li>
+						    </ul>
+						  </li>
 						</ul>
 					</md-tooltip>
 				</div>

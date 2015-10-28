@@ -1,0 +1,50 @@
+<md-whiteframe class="md-whiteframe-3dp legendBox"   layout layout-align="center center" ng-if="showLegend" >
+    <div layout="column" layout-wrap> 
+	    <div layout="row" layout-wrap ng-repeat="item in legendItem" >
+	    <div class="colorbox" style="background-color: {{item.color}}"></div>
+	    <span>{{item.min}}-{{item.max}} ({{item.number}})</span>
+	    
+	    </div>
+			
+	    </div>
+</md-whiteframe>
+  
+
+ 
+<md-button  id="showLegend" class="md-fab md-mini" ng-click="toggleLegend($event)" aria-label="toggle legend" >
+<md-icon md-font-icon="fa fa-wifi fa-2x"></md-icon> 
+</md-button>
+
+  <md-button ng-click="changeLegendStyle()" class="md-fab  changeStyleButton" aria-label="More" ng-if="showLegend" >
+       			 <md-icon md-font-icon="fa fa-cog"></md-icon>
+ </md-button>
+
+<!-- <md-bottom-sheet class=" md-has-header" ng-cloak> -->
+<!--   <md-subheader>{{headTitle}}</md-subheader> -->
+<!--  La leggenda narra che...{{mapScope.mapName}} -->
+
+ 
+<!-- </md-bottom-sheet> -->
+ 
+
+<!-- template -->
+
+<script type="text/ng-template" id="changeLegendTemplate.html">
+   <md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+  <form>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      changeLegend
+    </div>
+  </md-toolbar>
+  <md-dialog-content >
+    <div class="md-dialog-content">
+      TODO
+    </div>
+  </md-dialog-content>
+  <div class="md-actions" layout="row">
+    
+  </div>
+  </form>
+</md-dialog>
+</script>

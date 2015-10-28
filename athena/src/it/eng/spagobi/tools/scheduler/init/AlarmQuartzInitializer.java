@@ -28,7 +28,7 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spago.init.InitializerIFace#init(it.eng.spago.base.SourceBean)
 	 */
 	public void init(SourceBean config) {
@@ -74,7 +74,7 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 				String nameTrig = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
 
 				// CronExpression cronExpression = new CronExpression("minute{numRepetition=5}");
-				CronExpression cronExpression = new CronExpression("{ 'type': 'minute','parameter': {'numRepetition': '5' }");
+				CronExpression cronExpression = new CronExpression("{ 'type': 'minute','parameter': {'numRepetition': '5' }}");
 
 				Trigger simpleTrigger = new Trigger();
 				simpleTrigger.setName(nameTrig);
@@ -95,7 +95,7 @@ public class AlarmQuartzInitializer implements InitializerIFace {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.init.InitializerIFace#getConfig()
 	 */
 	public SourceBean getConfig() {

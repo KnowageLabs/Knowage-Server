@@ -7,6 +7,7 @@
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/messageResource/messageResource.min.js")%>'></script>
 
 <script type="text/javascript">
+
 	//Function that gets the properties file's content in an synchronous way
 	getSynch=function(url, callback){
 		var xmlhttp;
