@@ -26,7 +26,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         if(this.config.bindFontAlign) {
         	var align = Ext.create('Sbi.chart.designer.FontAlignCombo',{
         		viewModel: this.viewModel,
-        		bind : this.config.bindFontAlign
+        		bind : this.config.bindFontAlign,
+        		fieldLabel : LN('sbi.chartengine.configuration.title.alignment'),
         	});
         	this.add(align);
         }

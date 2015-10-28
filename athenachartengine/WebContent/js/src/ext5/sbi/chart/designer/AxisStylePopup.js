@@ -9,7 +9,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
   	    'Sbi.chart.designer.TypeLineCombo'
   	],
 	id: 'axisStylePopup',
-	title: LN('sbi.chartengine.axisstylepopup.title'),
+	title: LN('sbi.chartengine.axisstylepopup.popup.title'),
     layout: 'border',
     bodyPadding: 5,
 	floating: true,
@@ -268,12 +268,12 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		if(isYAxis) {
 			this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontVerticalAlignCombo', {
 				value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
-						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.axis.align'),
 			});
 		} else {
 			this.styleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 				value: (styleAlign && styleAlign.trim() != '') ? styleAlign.trim() : '',
-						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.axis.align'),
 			});
 		}
 		
@@ -399,7 +399,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 	                	id: 'majorgridStyleColorColorField',
 						fieldStyle : (majorgridStyleColor && majorgridStyleColor.trim() != '') ? 
 							'background-image: none; background-color: ' + majorgridStyleColor.trim() : '',
-	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
+	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
 						labelWidth : 115,
 	                    readOnly : true,
 						flex: 15,
@@ -456,7 +456,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 	                	id: 'minorgridStyleColorColorField',
 						fieldStyle : (minorgridStyleColor && minorgridStyleColor.trim() != '') ? 
 							'background-image: none; background-color: ' + minorgridStyleColor.trim() : '',
-	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.color'),
+	                    fieldLabel : LN('sbi.chartengine.axisstylepopup.majorminorgrid.color'),
 						labelWidth : 115,
 	                    readOnly : true,
 						flex: 15,
@@ -493,12 +493,12 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		if(isYAxis) {
 			this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontVerticalAlignCombo', {
 				value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
-						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.title.align'),
 			});
 		} else {
 			this.titleStyleAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 				value: (titleStyleAlign && titleStyleAlign.trim() != '') ? titleStyleAlign.trim() : '',
-						fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+						fieldLabel : LN('sbi.chartengine.axisstylepopup.title.align'),
 			});
 		}
 		this.titleFieldSet.add(this.titleStyleAlignComboBox);
@@ -1157,18 +1157,18 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					id: "plotsContainer",
 					store: plotbandsStore, // IMPLEMENT YOUR STORE
 					
-					title:
-					{
-						hidden: true //???
-					},
+					title: "Add plots",
+//					title:
+//					{
+//						hidden: true //???
+//					},
 					
 					tools:
 					[						
 						// PLUS BUTTON
 						{
 						    type:'plus',
-						    
-						    flex: 1,							
+						    //flex: 1,
 							
 							// IMPLEMENT YOUR HANDLER
 						    handler: function(event, toolEl, panelHeader) 

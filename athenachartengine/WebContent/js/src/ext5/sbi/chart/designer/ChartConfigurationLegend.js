@@ -12,7 +12,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
 	//columnWidth : 0.7, 
-	width: 470, 
+	width: 500, 
 	height: 120,
 	
 	id: "chartLegend",

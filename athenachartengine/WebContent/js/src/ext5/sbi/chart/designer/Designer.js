@@ -97,7 +97,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 		chartTypeStoreLoaded: false,
 		
 		/**
+		 * The function that is called on creating completely new chart (new document)
+		 * for getting the default style. The default chart style has 'isDefault' 
+		 * parameter set to 'true'.
+		 * 
 		 * @author atomic (ana.tomic@mht.net)
+		 * @commentBy: danristo (danilo.ristovski@mht.net)
 		 */
 		getDefaultStyle: function(){
 		   var styles=JSON.parse(Sbi.chart.designer.Styles);
@@ -180,18 +185,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			/**
 			 * Global scope (scope of the Designer). 
-			 * (danilo.ristovski@mht.net)
+			 * 
+			 * @author atomic (ana.tomic@mht.net)
 			 */
 			var globalThis = this;
 			
 			/**
-			 * This part is executed whenever we create the fresh (new) document (chart)
-			 * and start the initialization of the chart through the Designer interface
-			 * (when we open in Designer completely new chart, not the existing one).
-			 * (danilo.ristovski@mht.net)
-			 */
-			/**
+			 * If we are creating completely new chart (new document) immediately on loading
+			 * the Designer page apply the default style.
+			 * 
 			 * @author atomic (ana.tomic@mht.net)
+			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
 			if (!jsonTemplate.CHART) {
 			    var defaultStyleTemplate=this.getDefaultStyle();
@@ -1815,7 +1819,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 							"dragGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure,
 							"dropGroup":Sbi.chart.designer.ChartUtils.ddGroupMeasure, 
 							"axis":axis, 
-//							"gaugeLabels": (chartType == "GAUGE") ? jsonTemplate.CHART.AXES_LIST.AXIS[0].LABELS : null,
 							"axisTitleTextboxHidden":hideAxisTitleTextbox, 
 							"gearHidden":hideGearTool, 
 							"plusHidden":hidePlusGear

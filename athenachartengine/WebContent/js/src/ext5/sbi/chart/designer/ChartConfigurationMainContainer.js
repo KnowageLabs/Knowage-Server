@@ -37,7 +37,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	chartOrientation : null,
 	
 	font : Ext.create('Sbi.chart.designer.FontCombo',{
-		bind : '{configModel.font}'
+		bind : '{configModel.font}',
+		fieldLabel : LN("sbi.chartengine.configuration.fontFamily")
 	}),
 	
    	fontSize : Ext.create('Sbi.chart.designer.FontDimCombo',{
@@ -167,7 +168,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            fieldLabel : LN('sbi.chartengine.configuration.title')
 	        },{
 				xtype : 'button',
-	            text: 'St',
+				// top, right, bottom, left
+				margin: "10 0 0 10",
+	            text: LN("sbi.chartengine.configuration.configurationButton.label"),
 	            handler: function(){
 	            	stylePanelTitle.show();
 	            }
@@ -185,7 +188,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            maxWidth:'500'
 	        }, {
 	            xtype : 'button',
-	            text: 'St',
+	            // top, right, bottom, left
+				margin: "0 0 0 10",
+	            text: LN("sbi.chartengine.configuration.configurationButton.label"),
 	            handler: function(){
 	            	stylePanelSubtitle.show();
 	            }
@@ -201,7 +206,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            labelWidth : '100%'
 	        },{
 	            xtype : 'button',
-	            text: 'St',
+	            // top, right, bottom, left
+				margin: "0 0 0 10",
+	            text: LN("sbi.chartengine.configuration.configurationButton.label"),
 	            handler: function(){
 	            	stylePanelNoData.show();
 	            }

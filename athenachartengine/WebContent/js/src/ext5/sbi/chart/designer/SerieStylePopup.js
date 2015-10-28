@@ -466,7 +466,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
                     id : 'tooltipColorField',
 					fieldStyle : (serieTooltipColor && serieTooltipColor.trim() != '') ? 
 						'background-image: none; background-color: ' + serieTooltipColor.trim() : '',
-                    fieldLabel : LN('sbi.chartengine.designer.color'),
+                    fieldLabel : LN('sbi.chartengine.designer.tooltip.color'),
 					labelWidth : 115,
                     readOnly : true,
 					flex: 15,
@@ -542,7 +542,7 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 		var serieTooltipAlign = dataAtRow.get('serieTooltipAlign');
 		this.tooltipAlignComboBox = Ext.create('Sbi.chart.designer.FontAlignCombo', {
 			value: (serieTooltipAlign && serieTooltipAlign.trim() != '') ? serieTooltipAlign.trim() : '',
-			fieldLabel : LN('sbi.chartengine.axisstylepopup.align'),
+			fieldLabel : LN('sbi.chartengine.designer.tooltip.align'),
 		});
 		this.tooltipFieldSet.add(this.tooltipAlignComboBox);
 		
