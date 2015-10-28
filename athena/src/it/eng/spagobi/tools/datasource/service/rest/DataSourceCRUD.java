@@ -120,7 +120,6 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 			// not in cache anymore since the caching db is changed
 			if (ds.checkIsWriteDefault()) {
 				ICache cache = SpagoBICacheManager.getCache();
-				cache.deleteAll();
 				// unset the cache
 				SpagoBICacheManager.removeCache();
 			}
@@ -178,7 +177,6 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				// not in cache yet since the caching db is changed
 				if (dsNew.checkIsWriteDefault()) {
 					ICache cache = SpagoBICacheManager.getCache();
-					cache.deleteAll();
 					// unset the cache
 					SpagoBICacheManager.removeCache();
 				}
@@ -195,7 +193,6 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				// not in cache yet since the caching db is changed
 				if (isWriteDefaultChanged) {
 					ICache cache = SpagoBICacheManager.getCache();
-					cache.deleteAll();
 					// unset the cache
 					SpagoBICacheManager.removeCache();
 				}

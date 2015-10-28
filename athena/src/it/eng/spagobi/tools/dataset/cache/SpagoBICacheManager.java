@@ -51,6 +51,7 @@ public class SpagoBICacheManager {
 	}
 
 	public static void removeCache() {
+		cache.deleteAll();
 		cache = null;
 	}
 
