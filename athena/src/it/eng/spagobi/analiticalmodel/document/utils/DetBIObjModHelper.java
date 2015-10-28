@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.analiticalmodel.document.utils;
 
@@ -37,7 +37,9 @@ import it.eng.spagobi.community.mapping.SbiCommunity;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.file.FileUtils;
 
 import java.io.File;
@@ -65,7 +67,7 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Instantiates a new det bi obj mod helper.
-	 * 
+	 *
 	 * @param reqCont
 	 *            the req cont
 	 * @param request
@@ -85,12 +87,12 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Recover bi object details.
-	 * 
+	 *
 	 * @param mod
 	 *            the mod
-	 * 
+	 *
 	 * @return the bI object
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -290,9 +292,9 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Recover bi obj template details.
-	 * 
+	 *
 	 * @return the obj template
-	 * 
+	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -337,10 +339,10 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Recover bi object parameter details.
-	 * 
+	 *
 	 * @param biobjIdInt
 	 *            the biobj id int
-	 * 
+	 *
 	 * @return the bI object parameter
 	 */
 	public BIObjectParameter recoverBIObjectParameterDetails(Integer biobjIdInt) {
@@ -394,7 +396,7 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Fills the response SourceBean with some needed BI Objects information.
-	 * 
+	 *
 	 * @param initialPath
 	 *            the initial path
 	 * @throws Exception
@@ -407,13 +409,19 @@ public class DetBIObjModHelper {
 
 			// List types = domaindao.loadListDomainsByType("BIOBJ_TYPE");
 			// load list of states and engines
-			List states = domaindao.loadListDomainsByType("STATE");
+
+			// List states = domaindao.loadListDomainsByType("STATE");
+			List states = domaindao.loadListDomainsByTypeAndTenant("STATE");
 			IEngineDAO enginedao = DAOFactory.getEngineDAO();
 			enginedao.setUserProfile(profile);
-			List engines = enginedao.loadAllEngines();
+			List engines = enginedao.loadAllEnginesByTenant();
 
-			List datasource = DAOFactory.getDataSourceDAO().loadAllDataSources();
-			List dataset = DAOFactory.getDataSetDAO().loadDataSets();
+			IDataSourceDAO datasourcedao = DAOFactory.getDataSourceDAO();
+			datasourcedao.setUserProfile(profile);
+			List datasource = datasourcedao.loadAllDataSources();
+			IDataSetDAO datasetdao = DAOFactory.getDataSetDAO();
+			datasetdao.setUserProfile(profile);
+			List dataset = datasetdao.loadDataSets();
 			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(profile.getUserUniqueIdentifier().toString());
 
 			// List languages = ConfigSingleton.getInstance().getFilteredSourceBeanAttributeAsList("LANGUAGE_SUPPORTED", "LANGUAGE", "language");
@@ -444,10 +452,10 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Clone.
-	 * 
+	 *
 	 * @param biObjPar
 	 *            the bi obj par
-	 * 
+	 *
 	 * @return the bI object parameter
 	 */
 	public static BIObjectParameter clone(BIObjectParameter biObjPar) {
@@ -474,10 +482,10 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Clone.
-	 * 
+	 *
 	 * @param obj
 	 *            the obj
-	 * 
+	 *
 	 * @return the bI object
 	 */
 	public static BIObject clone(BIObject obj) {
@@ -507,12 +515,12 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Creates the new bi object parameter.
-	 * 
+	 *
 	 * @param objId
 	 *            the obj id
-	 * 
+	 *
 	 * @return the bI object parameter
-	 * 
+	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -540,10 +548,10 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Find bi obj par id.
-	 * 
+	 *
 	 * @param objParIdObj
 	 *            the obj par id obj
-	 * 
+	 *
 	 * @return the int
 	 */
 	public static int findBIObjParId(Object objParIdObj) {
