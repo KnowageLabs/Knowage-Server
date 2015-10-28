@@ -42,7 +42,7 @@ public class StyleResource {
 	
 	for (int i=0;i< listOfFiles.length;i++){
 		if(listOfFiles[i].isFile()){
-			String pathToFile=folder.getPath()+"\\"+listOfFiles[i].getName();
+			String pathToFile=folder.getPath()+File.separator+listOfFiles[i].getName();
 			BufferedReader br= new BufferedReader(new FileReader(pathToFile));
 			StringBuilder fileContent= new StringBuilder();
 			String line= null;
