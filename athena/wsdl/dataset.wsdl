@@ -81,6 +81,9 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element name="transformerId" nillable="true" type="soapenc:int"/>
      <element name="type" nillable="true" type="soapenc:string"/>
      <element name="versionNum" type="xsd:int"/>
+     <element name="startDateField" nillable="true" type="soapenc:string"/>
+     <element name="endDateField" nillable="true" type="soapenc:string"/>
+     <element name="schedulingCronLine" nillable="true" type="soapenc:string"/>
     </sequence>
    </complexType>
   </schema>

@@ -2432,6 +2432,12 @@ Ext
 										disabled : true,
 										allowBlank : false,
 										store : weekdaysDs,
+										style : {
+											"margin-left" : "5px",
+											"margin-right" : Ext.isIE6 ? (Ext.isStrict ? "-5px"
+													: "-7px")
+													: "0"
+										},
 										listeners : {
 											// change:
 											// this.setSchedulingCronLine,

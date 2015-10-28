@@ -6,13 +6,17 @@
 package it.eng.spagobi.services.dataset.service;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -154,7 +158,14 @@ public class DataSetSupplier {
 			IDataSet dataSet = DataSetFactory.getDataSet(datasetConfig, userId, session);
 			Integer id = DAOFactory.getDataSetDAO().insertDataSet(dataSet);
 			dataSet.setId(id);
+			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(userId);
+			ManageDatasets md = new ManageDatasets();
+			md.setProfile(profile);
+
+			md.insertPersistenceAndScheduling(dataSet, new HashMap<String, String>());
+
 			toReturn = dataSet.toSpagoBiDataSet();
+
 		} catch (Exception e) {
 			logger.error("Error while saving dataset", e);
 		} finally {

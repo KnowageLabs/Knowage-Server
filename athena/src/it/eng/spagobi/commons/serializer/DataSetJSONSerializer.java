@@ -120,9 +120,14 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(LABEL, ds.getLabel());
 			result.put(NAME, ds.getName());
 			result.put(DESCRIPTION, ds.getDescription());
-			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(new Integer(ds.getId()));
-			if (numObjAssociated != null) {
-				result.put(USED_BY_N_DOCS, numObjAssociated);
+			Integer numObjAssociated = DAOFactory.getDataSetDAO().countBIObjAssociated(dsId);
+
+			Integer numFederAssociated = DAOFactory.getFedetatedDatasetDAO().countFederationsUsingDataset(dsId);
+
+			Integer allUsing = numObjAssociated + numFederAssociated;
+
+			if (allUsing != null) {
+				result.put(USED_BY_N_DOCS, allUsing);
 			}
 
 			// result.put(CATEGORY_TYPE_VN, ds.getCategoryValueName());
