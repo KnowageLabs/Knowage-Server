@@ -262,6 +262,41 @@
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/javax.persistence-2.0.1.jar" />
 		<delete file="${build}/${webapp_name}/WEB-INF/lib/eclipselink-2.1.2.v20101206-r8635.jar" />
 	</target>
+	
+	<target name="jbossEAP64">
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/jaxrs-api-2.3.5.Final.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/resteasy-jaxb-provider-2.3.5.Final.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/resteasy-jaxrs-2.3.5.Final.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/resteasy-multipart-provider-2.3.5.final.jar" />
+		<delete file="${build}/${webapp_name}/WEB-INF/tlds/liferay-portlet.tld" />
+		<delete file="${build}/${webapp_name}/WEB-INF/tlds/portlet.tld" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/log4j.properties" token="${catalina.base}/logs" value="${jboss.server.log.dir}" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/jbpm.hibernate.cfg.xml" token="java:comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/quartz.properties" token="java:comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- START TOMCAT RES -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START TOMCAT RES]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- END TOMCAT RES -->]]></replacetoken>
+			<replacevalue><![CDATA[ END TOMCAT RES -->]]></replacevalue>
+		</replace>
+		<unzip src="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" dest="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}" />
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+			token="java://comp/env/spagobi_resource_path" value="java:/urls/spagobi_resource_path" />
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+				token="java://comp/env/spagobi_host_url" value="java:/urls/spagobi_host_url" />
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+				token="java://comp/env/spagobi_sso_class" value="java:/urls/spagobi_sso_class" />
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+				token="java:/comp/env/wm/SpagoWorkManager" value="java:global/SpagoBIWorkManager" />
+		<replace file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}/it/eng/spagobi/commons/initializers/metadata/config/configs.xml" 
+				token="java:comp/env/jdbc/foodmart" value="java:/jdbc/foodmart" />
+		<delete file="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" />
+		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}.jar" basedir="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}"/>
+		<delete dir="${build}/${webapp_name}/WEB-INF/lib/spagobi.core-${project.version}" />
+	</target>
 
 
 	<target name="liferay.jboss">
