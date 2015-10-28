@@ -8,8 +8,6 @@ package it.eng.spagobi.engines.qbe.services.dataset;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.statement.AbstractQbeDataSet;
-import it.eng.qbe.statement.hibernate.HQLDataSet;
-import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spago.error.EMFErrorHandler;
@@ -45,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -103,13 +100,13 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 
 			IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
 			int datasetId = -1;
-//			if (dataset instanceof HQLDataSet || dataset instanceof JPQLDataSet) {
-				// dataset defined on a model --> save it as a Qbe dataset
-				datasetId = this.saveQbeDataset(dataset);
-//			} else {
-//				// dataset defined on another dataset --> save it as a flat dataset
-//				datasetId = this.saveFlatDataset(dataset);
-//			}
+			// if (dataset instanceof HQLDataSet || dataset instanceof JPQLDataSet) {
+			// dataset defined on a model --> save it as a Qbe dataset
+			datasetId = this.saveQbeDataset(dataset);
+			// } else {
+			// // dataset defined on another dataset --> save it as a flat dataset
+			// datasetId = this.saveFlatDataset(dataset);
+			// }
 
 			try {
 				JSONObject obj = new JSONObject();
@@ -147,29 +144,28 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
 
 		QbeDataSet newDataset;
-		
-		//if its a federated dataset we've to add the dependent datasets
-		if(getEnv().get(EngineConstants.ENV_FEDERATED_ID)!=null){
-			
+
+		// if its a federated dataset we've to add the dependent datasets
+		if (getEnv().get(EngineConstants.ENV_FEDERATED_ID) != null) {
+
 			FederationDefinition federation = new FederationDefinition();
-			Object relations  = (getEnv().get(EngineConstants.ENV_RELATIONS));
-			if(relations!=null){
+			Object relations = (getEnv().get(EngineConstants.ENV_RELATIONS));
+			if (relations != null) {
 				federation.setRelationships(relations.toString());
-			}else{
-				logger.debug("No relation defined "+relations);
+			} else {
+				logger.debug("No relation defined " + relations);
 			}
-			
+
 			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
-			federation.setFederation_id(new Integer((String)(getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
-			
-			
+			federation.setFederation_id(new Integer((String) (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
+
 			newDataset = new FederatedDataSet(federation);
-			((FederatedDataSet)newDataset).setDependentDataSets((List<IDataSet>)getEnv().get(EngineConstants.ENV_DATASETS));
-			newDataset.setDataSourceForWriting((IDataSource)getEnv().get(EngineConstants.ENV_DATASOURCE));
-		}else{
+			((FederatedDataSet) newDataset).setDependentDataSets((List<IDataSet>) getEnv().get(EngineConstants.ENV_DATASETS));
+			newDataset.setDataSourceForWriting((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
+		} else {
 			newDataset = new QbeDataSet();
 		}
-		
+
 		newDataset.setLabel(getAttributeAsString(LABEL));
 		newDataset.setName(getAttributeAsString(NAME));
 		newDataset.setDescription(getAttributeAsString(DESCRIPTION));
@@ -190,7 +186,6 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		logger.debug("Dataset's metadata: [" + metadata + "]");
 		newDataset.setDsMetadata(metadata);
 
-		
 		newDataset.setDataSource(qbeDataset.getDataSource());
 
 		String datamart = qbeDataset.getStatement().getDataSource().getConfiguration().getModelName();
