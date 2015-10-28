@@ -14,12 +14,17 @@
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
 	
 #set($enableDrilldown = false)
-
 #if($categorieColumns.groupby != '' && $chart.isCockpitEngine == 'false')
 	#set($enableDrilldown = true)
 #end
 
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
+/*
+ $ crossNavigation:
+ $crossNavigation
+*/
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
@@ -38,8 +43,12 @@
 #end
 
 {
+	#set($drilldownEnabledFlag = false)
+	#if($enableDrilldown || $crossNavigation != '')
+		#set($drilldownEnabledFlag = true)
+	#end
 	meta: {
-		drilldownEnabled: $enableDrilldown,
+		drilldownEnabled: $drilldownEnabledFlag,
 	},
 
     chart: {
@@ -85,11 +94,19 @@
     		#end
     	},
     	
-    	#if($enableDrilldown)
-	    events: {
-			drilldown: handleDrilldown,
-			drillup: handleDrillup
-	    },
+    	#if($drilldownEnabledFlag)
+	    	#if($crossNavigation != '')
+		    events: {
+				drilldown: handleCrossNavigationTo,
+				drillup: handleCrossNavigationFrom
+		    },
+    	
+	    	#elseif($enableDrilldown)
+		    events: {
+				drilldown: handleDrilldown,
+				drillup: handleDrillup
+		    },
+		    #end
 	    #end
     },
    
@@ -562,9 +579,27 @@
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					{
-						drilldown: $enableDrilldown,
+						##drilldown: $enableDrilldown,
+						drilldown: $drilldownEnabledFlag,
 						y: $serieValue,
 						name: '$serieCategoryName',
+						
+						#if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end
 						
 						#set($relatedSerieShowValue = $relatedSerie.showValue)
 						#if ($relatedSerieShowValue != '')

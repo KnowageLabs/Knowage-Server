@@ -42,23 +42,18 @@
 
 	function renderChart(chartConf){
 		if(chartConf.chart.type.toLowerCase() == 'treemap'){
-			
 			renderTreemap(chartConf);	
-			
 		}
 		else if (chartConf.chart.type.toLowerCase() == 'heatmap'){
 			console.log(chartConf);
 			renderHeatmap(chartConf);	
-			
 		} 
 		
 		else{
 			console.log("highcharts414Initializer.jspf (line 53)");
 			console.log(chartConf);
 			new Highcharts.Chart(chartConf);
-			
 		}
-		
 	};
 	
 	function handleDrilldown(e) {
@@ -78,6 +73,10 @@
 			});
 		}
 	};
+	
+	function handleDrillup() {
+		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
+	}
 	
 	function handleCockpitSelection(e) {
 		if (!e.seriesOptions) {
@@ -105,8 +104,22 @@
 		}
 	};
 	
-	function handleDrillup() {
-		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
-	}
+	function handleCrossNavigationTo(e) {
+		if (!e.seriesOptions) {
+			var chart = this;
+			chart.showLoading('Loading...');
+			Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateTo(
+					e.point.crossNavigationDocumentName, 
+					e.point.crossNavigationDocumentParams,
+					e.point.name, 
+					e.point.series.name
+					);
+			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+			chart.hideLoading();
+		}
+	};
 	
+	function handleCrossNavigationFrom() {
+		Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateBackTo();
+	};
 </script>
