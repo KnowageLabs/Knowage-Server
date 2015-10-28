@@ -29,13 +29,13 @@ public class VersionedDataSet implements IDataSet {
 	private IDataSet wrappedDataset;
 	private Integer version;
 	private boolean isActive;
-	
+
 	private static transient Logger logger = Logger.getLogger(VersionedDataSet.class);
 
-	public VersionedDataSet(){		
+	public VersionedDataSet() {
 	}
-	
-	public VersionedDataSet(IDataSet wrappedDataset, Integer version, boolean isActive){
+
+	public VersionedDataSet(IDataSet wrappedDataset, Integer version, boolean isActive) {
 		this.wrappedDataset = wrappedDataset;
 		this.version = version;
 		this.isActive = isActive;
@@ -49,13 +49,13 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param wrappedDataset the wrappedDataset to set
+	 * @param wrappedDataset
+	 *            the wrappedDataset to set
 	 */
 	public void setWrappedDataset(IDataSet wrappedDataset) {
 		this.wrappedDataset = wrappedDataset;
 	}
-	
-	
+
 	/**
 	 * @return the organization
 	 */
@@ -64,12 +64,12 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param wrappedDataset the organization to set
+	 * @param wrappedDataset
+	 *            the organization to set
 	 */
 	public void setOrganization(String organization) {
 		this.wrappedDataset.setOrganization(organization);
 	}
-	
 
 	/**
 	 * @return the version
@@ -79,7 +79,8 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param version the version to set
+	 * @param version
+	 *            the version to set
 	 */
 	public void setVersionNum(Integer version) {
 		this.version = version;
@@ -93,223 +94,241 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	/**
-	 * @param isActive the isActive to set
+	 * @param isActive
+	 *            the isActive to set
 	 */
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
 
-	public String getDsMetadata(){
+	public String getDsMetadata() {
 		return wrappedDataset.getDsMetadata();
 	}
-	
-	public void setDsMetadata(String dsMetadata){
+
+	public void setDsMetadata(String dsMetadata) {
 		wrappedDataset.setDsMetadata(dsMetadata);
 	}
-	
-	public IMetaData getMetadata(){
+
+	public IMetaData getMetadata() {
 		return wrappedDataset.getMetadata();
 	}
-	
-	public void setMetadata(IMetaData metadata){
+
+	public void setMetadata(IMetaData metadata) {
 		wrappedDataset.setMetadata(metadata);
 	}
-	
+
 	// general properties ....
-	public int getId(){
+	public int getId() {
 		return wrappedDataset.getId();
 	}
-	
-	public void setId(int id){
+
+	public void setId(int id) {
 		wrappedDataset.setId(id);
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return wrappedDataset.getName();
 	}
-	
-	public void setName(String name){
+
+	public void setName(String name) {
 		wrappedDataset.setName(name);
 	}
-	
-	public String getDescription(){
+
+	public String getDescription() {
 		return wrappedDataset.getDescription();
 	}
-	
-	public void setDescription(String description){
+
+	public void setDescription(String description) {
 		wrappedDataset.setDescription(description);
 	}
-	
-	public String getLabel(){
+
+	public String getLabel() {
 		return wrappedDataset.getLabel();
 	}
-	
-	public void setLabel(String label){
+
+	public void setLabel(String label) {
 		wrappedDataset.setLabel(label);
 	}
-	
-	public Integer getCategoryId(){
+
+	public Integer getCategoryId() {
 		return wrappedDataset.getCategoryId();
 	}
-	public void setCategoryId(Integer categoryId){
+
+	public void setCategoryId(Integer categoryId) {
 		wrappedDataset.setCategoryId(categoryId);
 	}
-	
-	public String getCategoryCd(){
+
+	public String getCategoryCd() {
 		return wrappedDataset.getCategoryCd();
 	}
-	
-	public void setCategoryCd(String categoryCd){
+
+	public void setCategoryCd(String categoryCd) {
 		wrappedDataset.setCategoryCd(categoryCd);
 	}
-	
-	public String getDsType(){
+
+	public String getDsType() {
 		return wrappedDataset.getDsType();
 	}
-	
-	public void setDsType(String dsType){
+
+	public void setDsType(String dsType) {
 		wrappedDataset.setDsType(dsType);
 	}
 
-
-	public String getConfiguration(){
+	public String getConfiguration() {
 		return wrappedDataset.getConfiguration();
 	}
-	public void setConfiguration(String configuration){
+
+	public void setConfiguration(String configuration) {
 		wrappedDataset.setConfiguration(configuration);
 	}
 
-	public Map getProperties(){
+	public Map getProperties() {
 		return wrappedDataset.getProperties();
 	}
-	
-	public void setProperties(Map map){
+
+	public void setProperties(Map map) {
 		wrappedDataset.setProperties(map);
 	}
-	
-	
+
 	// parametrization ....
 	// --------------------------------------------------------------------------------------------------
 	// INVESTIGATE: why this 2 similar methods ??? FIND OUT & REFACTOR !
-	public String getParameters(){
+	public String getParameters() {
 		return wrappedDataset.getParameters();
 	}
-	public void setParameters(String parameters){
+
+	public void setParameters(String parameters) {
 		wrappedDataset.setParameters(parameters);
 	}
 
-	public Map getParamsMap(){
+	public Map getParamsMap() {
 		return wrappedDataset.getParamsMap();
 	}
-	public void setParamsMap(Map params){
+
+	public void setParamsMap(Map params) {
 		wrappedDataset.setParamsMap(params);
 	}
+
 	// --------------------------------------------------------------------------------------------------
-	
+
 	// profilation ...
-	public Map getUserProfileAttributes(){
+	public Map getUserProfileAttributes() {
 		return wrappedDataset.getUserProfileAttributes();
 	}
-	public void setUserProfileAttributes(Map<String, Object> attributes){
+
+	public void setUserProfileAttributes(Map<String, Object> attributes) {
 		wrappedDataset.setUserProfileAttributes(attributes);
 	}
-	
+
 	// execution ...
 	// --------------------------------------------------------------------------------------------------
-	public void loadData(){
+	public void loadData() {
 		wrappedDataset.loadData();
 	}
-	public void loadData(int offset, int fetchSize, int maxResults){
+
+	public void loadData(int offset, int fetchSize, int maxResults) {
 		wrappedDataset.loadData(offset, fetchSize, maxResults);
 	}
+
 	// --------------------------------------------------------------------------------------------------
- 	
-	public IDataStore getDataStore(){
+
+	public IDataStore getDataStore() {
 		return wrappedDataset.getDataStore();
 	}
-	
-	
+
 	// extension points ...
-	public boolean hasBehaviour(String behaviourId){
+	public boolean hasBehaviour(String behaviourId) {
 		return wrappedDataset.hasBehaviour(behaviourId);
 	}
-	public Object getBehaviour(String behaviourId){
+
+	public Object getBehaviour(String behaviourId) {
 		return wrappedDataset.getBehaviour(behaviourId);
 	}
-	public void addBehaviour(IDataSetBehaviour behaviour){
+
+	public void addBehaviour(IDataSetBehaviour behaviour) {
 		wrappedDataset.addBehaviour(behaviour);
 	}
-	
+
 	// =================================================================================================
 	// TO BE DEPRECATED ( do not cross this line ;-) )
 	// =================================================================================================
-	public Integer getTransformerId(){
+	public Integer getTransformerId() {
 		return wrappedDataset.getTransformerId();
 	}
-	public void setTransformerId(Integer transformerId){
+
+	public void setTransformerId(Integer transformerId) {
 		wrappedDataset.setTransformerId(transformerId);
 	}
-	
-	public String getTransformerCd(){
+
+	public String getTransformerCd() {
 		return wrappedDataset.getTransformerCd();
 	}
-	public void setTransformerCd(String transfomerCd){
+
+	public void setTransformerCd(String transfomerCd) {
 		wrappedDataset.setTransformerCd(transfomerCd);
 	}
 
-	public String getPivotColumnName(){
+	public String getPivotColumnName() {
 		return wrappedDataset.getPivotColumnName();
 	}
-	public void setPivotColumnName(String pivotColumnName){
+
+	public void setPivotColumnName(String pivotColumnName) {
 		wrappedDataset.setPivotColumnName(pivotColumnName);
 	}
 
-	public String getPivotRowName(){
+	public String getPivotRowName() {
 		return wrappedDataset.getPivotRowName();
 	}
-	public void setPivotRowName(String pivotRowName){
+
+	public void setPivotRowName(String pivotRowName) {
 		wrappedDataset.setPivotRowName(pivotRowName);
 	}
-	
-	public boolean isNumRows(){
+
+	public boolean isNumRows() {
 		return wrappedDataset.isNumRows();
 	}
-	public void setNumRows(boolean numRows){
+
+	public void setNumRows(boolean numRows) {
 		wrappedDataset.setNumRows(numRows);
 	}
 
-	public String getPivotColumnValue(){
+	public String getPivotColumnValue() {
 		return wrappedDataset.getPivotColumnValue();
 	}
-	public void setPivotColumnValue(String pivotColumnValue){
+
+	public void setPivotColumnValue(String pivotColumnValue) {
 		wrappedDataset.setPivotColumnValue(pivotColumnValue);
 	}
-	
+
 	public boolean hasDataStoreTransformer() {
 		return wrappedDataset.hasDataStoreTransformer();
 	}
+
 	public void removeDataStoreTransformer() {
 		wrappedDataset.removeDataStoreTransformer();
 	}
-	
-	public void setAbortOnOverflow(boolean abortOnOverflow){
+
+	public void setAbortOnOverflow(boolean abortOnOverflow) {
 		wrappedDataset.setAbortOnOverflow(abortOnOverflow);
 	}
-	public void addBinding(String bindingName, Object bindingValue){
+
+	public void addBinding(String bindingName, Object bindingValue) {
 		wrappedDataset.addBinding(bindingName, bindingValue);
 	}
-	
-	public void setDataStoreTransformer(IDataStoreTransformer transformer){
+
+	public void setDataStoreTransformer(IDataStoreTransformer transformer) {
 		wrappedDataset.setDataStoreTransformer(transformer);
 	}
-	public IDataStoreTransformer getDataStoreTransformer(){
+
+	public IDataStoreTransformer getDataStoreTransformer() {
 		return wrappedDataset.getDataStoreTransformer();
 	}
-	
-	public boolean isPersisted(){
+
+	public boolean isPersisted() {
 		return wrappedDataset.isPersisted();
 	}
-	public void setPersisted(boolean persisted){
+
+	public void setPersisted(boolean persisted) {
 		wrappedDataset.setPersisted(persisted);
 	}
 
@@ -324,22 +343,24 @@ public class VersionedDataSet implements IDataSet {
 	public boolean isFlatDataset() {
 		return wrappedDataset.isFlatDataset();
 	}
-	
-	public String getFlatTableName(){
+
+	public String getFlatTableName() {
 		return wrappedDataset.getFlatTableName();
 	}
-	
-	public boolean isPublic(){
+
+	public boolean isPublic() {
 		return wrappedDataset.isPublic();
 	}
-	public void setPublic(boolean publicDS){
+
+	public void setPublic(boolean publicDS) {
 		wrappedDataset.setPublic(publicDS);
 	}
-	
-	public String getOwner(){
+
+	public String getOwner() {
 		return wrappedDataset.getOwner();
 	}
-	public void setOwner(String owner){
+
+	public void setOwner(String owner) {
 		wrappedDataset.setOwner(owner);
 	}
 
@@ -350,7 +371,7 @@ public class VersionedDataSet implements IDataSet {
 	public void setUserIn(String userIn) {
 		wrappedDataset.setUserIn(userIn);
 	}
-	
+
 	public Date getDateIn() {
 		return wrappedDataset.getDateIn();
 	}
@@ -358,57 +379,58 @@ public class VersionedDataSet implements IDataSet {
 	public void setDateIn(Date dateIn) {
 		wrappedDataset.setDateIn(dateIn);
 	}
-	
-	public List getNoActiveVersions(){
+
+	public List getNoActiveVersions() {
 		return wrappedDataset.getNoActiveVersions();
 	}
+
 	public void setNoActiveVersions(List noActiveVersions) {
 		wrappedDataset.setNoActiveVersions(noActiveVersions);
 	}
 
 	// TODO these methods do NOT belong to the dataset interface. remove them and refactor the code.
 	// --------------------------------------------------------------------------------------------------
-	
+
 	// --------------------------------------------------------------------------------------------------
 	// TODO these methods must be moved into a proper factory that convert SpagoBI BO into data bean passed
 	// to the DAO. For the conversion from data bean and SpagoBI BO such a factory alredy exist
-	// NOTE: SpagoBiDataSet: change when possible the name SpagoBiDataSet following a convention common to 
+	// NOTE: SpagoBiDataSet: change when possible the name SpagoBiDataSet following a convention common to
 	// all data bean
-	public SpagoBiDataSet toSpagoBiDataSet(){
+	public SpagoBiDataSet toSpagoBiDataSet() {
 		return wrappedDataset.toSpagoBiDataSet();
 	}
-	
+
 	// --------------------------------------------------------------------------------------------------
 
-	public IDataStore test(){
+	public IDataStore test() {
 		return wrappedDataset.test();
 	}
-	public IDataStore test(int offset, int fetchSize, int maxResults){
+
+	public IDataStore test(int offset, int fetchSize, int maxResults) {
 		return wrappedDataset.test(offset, fetchSize, maxResults);
 	}
-	
-	public String getSignature(){
+
+	public String getSignature() {
 		return wrappedDataset.getSignature();
 	}
-	
-	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource){
+
+	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		return wrappedDataset.persist(tableName, dataSource);
 	}
-	
-	public IDataStore getDomainValues(String fieldName, 
-            Integer start, Integer limit, IDataStoreFilter filter){
+
+	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		return wrappedDataset.getDomainValues(fieldName, start, limit, filter);
 	}
-	
-	public IDataStore decode(IDataStore datastore){
+
+	public IDataStore decode(IDataStore datastore) {
 		return wrappedDataset.decode(datastore);
 	}
-	
-	public boolean isCalculateResultNumberOnLoadEnabled(){
+
+	public boolean isCalculateResultNumberOnLoadEnabled() {
 		return wrappedDataset.isCalculateResultNumberOnLoadEnabled();
 	}
-	
-	public void setCalculateResultNumberOnLoad(boolean enabled){
+
+	public void setCalculateResultNumberOnLoad(boolean enabled) {
 		wrappedDataset.setCalculateResultNumberOnLoad(enabled);
 	}
 
@@ -427,7 +449,7 @@ public class VersionedDataSet implements IDataSet {
 	public IDataSource getDataSourceForReading() {
 		return wrappedDataset.getDataSourceForReading();
 	}
-	
+
 	public void setDataSourceForReading(IDataSource dataSource) {
 		wrappedDataset.setDataSourceForReading(dataSource);
 	}
@@ -454,7 +476,7 @@ public class VersionedDataSet implements IDataSet {
 
 	public void setScopeId(Integer scopeId) {
 		wrappedDataset.setScopeId(scopeId);
-		
+
 	}
 
 	public String getScopeCd() {
@@ -463,12 +485,12 @@ public class VersionedDataSet implements IDataSet {
 
 	public void setScopeCd(String scopeCd) {
 		wrappedDataset.setScopeCd(scopeCd);
-		
+
 	}
-	
+
 	public void getFe(String scopeCd) {
 		wrappedDataset.setScopeCd(scopeCd);
-		
+
 	}
 
 	public FederationDefinition getDatasetFederation() {
@@ -477,9 +499,7 @@ public class VersionedDataSet implements IDataSet {
 
 	public void setDatasetFederation(FederationDefinition datasetFederation) {
 		wrappedDataset.setDatasetFederation(datasetFederation);
-		
+
 	}
 
-	
-	
 }
