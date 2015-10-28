@@ -41,6 +41,7 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
 	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
 	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
+	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
 	private static final String JNDI_THREAD_MANAGER = "JNDI_THREAD_MANAGER";
 
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
@@ -54,6 +55,7 @@ public class SpagoBICacheConfiguration {
 		cacheConfiguration.setCacheDsLastAccessTtl(getCacheDsLastAccessTtl());
 		cacheConfiguration.setCacheSchedulingFullClean(getCacheSchedulingFullClean());
 		cacheConfiguration.setSchema(getCacheDatabaseSchema());
+		cacheConfiguration.setCachePercentageToStore(getCachePercentageToStore());
 		cacheConfiguration.setObjectsTypeDimension(getDimensionTypes());
 		cacheConfiguration.setWorkManager(getWorkManager());
 		return cacheConfiguration;
@@ -151,6 +153,19 @@ public class SpagoBICacheConfiguration {
 				cacheDatabaseSchema = propertyValue;
 			}
 			return cacheDatabaseSchema;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+		}
+	}
+
+	private static Integer getCachePercentageToStore() {
+		try {
+			Integer cachePercentageToStore = null;
+			String propertyValue = getSpagoBIConfigurationProperty(CACHE_LIMIT_FOR_STORE_CONFIG);
+			if (propertyValue != null) {
+				cachePercentageToStore = Integer.valueOf(propertyValue);
+			}
+			return cachePercentageToStore;
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
 		}
