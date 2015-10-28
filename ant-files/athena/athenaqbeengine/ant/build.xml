@@ -206,6 +206,7 @@
 <file name='./spagobi/qbe/QbePanel.js' />
 <file name='./spagobi/qbe/FreeConditionsWindow.js' />
 <file name='./spagobi/qbe/OperandsWindow.js' />
+<file name='./spagobi/qbe/PersistOptions.js' />
 <file name='./spagobi/qbe/CalculatedFieldEditorPanel.js' />
 <file name='./spagobi/qbe/RangeDefinitionWindow.js' />
 <file name='./spagobi/qbe/SlotEditorPanel.js' />
