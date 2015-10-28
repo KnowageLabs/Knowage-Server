@@ -97,6 +97,23 @@ Ext.define('Sbi.chart.designer.Designer', {
 		chartTypeStoreLoaded: false,
 		
 		/**
+		 * @author atomic (ana.tomic@mht.net)
+		 */
+		getDefaultStyle: function(){
+		   var styles=JSON.parse(Sbi.chart.designer.Styles);
+		   
+		   var retTemplate=null;
+		   
+		   for(i=0;i<styles.length;i++){
+		    if(styles[i].STYLE.isDefault===true){
+		     retTemplate=styles[i].TEMPLATE;
+		    }
+		   }
+		   
+		   return retTemplate;
+		},
+		
+		/**
 		 * Get the missing JSON configuration elements (properties) in order to define
 		 * their default values for any type of chart (including the BAR chart).
 		 * (danilo.ristovski@mht.net)
@@ -173,10 +190,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (when we open in Designer completely new chart, not the existing one).
 			 * (danilo.ristovski@mht.net)
 			 */
+			/**
+			 * @author atomic (ana.tomic@mht.net)
+			 */
 			if (!jsonTemplate.CHART) {
-				newChart = true;
-				jsonTemplate = baseTemplate;
-			}			
+			    var defaultStyleTemplate=this.getDefaultStyle();
+			    if(defaultStyleTemplate){
+			     jsonTemplate=Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplate.generic);
+			    }else{
+			     jsonTemplate=baseTemplate;
+			    }
+			    newChart = true; 
+			}		
 			
 			/**
 			 * Predefined style type for any chart is RED.
