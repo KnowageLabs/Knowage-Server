@@ -124,13 +124,15 @@ public class DatasetPersistenceUtils {
 				}
 			}
 			try {
-				AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "OK");
+				if (request != null)
+					AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "OK");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} catch (Exception ex) {
 			try {
-				AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
+				if (request != null)
+					AuditLogUtilities.updateAudit(request, profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
