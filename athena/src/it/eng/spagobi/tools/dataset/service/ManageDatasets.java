@@ -69,22 +69,20 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.apache.tomcat.jni.File;
+import org.apache.xpath.operations.String;
+import org.hibernate.mapping.Map;
+import org.hsqldb.lib.HashMap;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.sun.star.io.IOException;
+import com.sun.star.lang.NullPointerException;
+import com.sun.star.uno.Exception;
 
 public class ManageDatasets extends AbstractSpagoBIAction {
 
@@ -1408,16 +1406,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 
 		}
-		
+
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
-			
+
 			Integer id = getAttributeAsInteger(DataSetConstants.DS_ID);
-			if(id==null){
+			if (id == null) {
 				logger.error("The federated dataset id is null");
 			}
-			
+
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
-			
+
 			dataSet = dao.loadDataSetById(id);
 			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
 
