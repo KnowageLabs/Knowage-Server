@@ -431,20 +431,50 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 //		config.widgetManager = this.widgetContainer.getWidgetManager();
 //		config.selections = this.widgetContainer.getWidgetManager().getSelections() || [];
 		
-		var selectionData = [];
+		var selectionData = {};
 		for (var i=0; i<this.widgetContainerList.length; i++){
 			var tmpWc = this.widgetContainerList[i];
-			var pippo = tmpWc.getWidgetManager().getSelections() ;
-			selectionData.push(tmpWc.getWidgetManager().getSelections() || []);
+			var selections = tmpWc.getWidgetManager().getSelections() || [];
+			
+			for(var widgetId in selections)  {
+	    		var selectionsOnWidget = selections[widgetId];
+	    		for(var fieldHeader in selectionsOnWidget) {	    			
+	    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
+	    				selectionData[fieldHeader] = selectionsOnWidget[fieldHeader].values;
+	    			}
+	    		}
+			}
 		}
-		
-		config.selections = selectionData;
+
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: config.selections is equal to [" + Sbi.toSource(config.selections) + "]");
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: instatiating the window");
-
-		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
-
-		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
+//		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
+//		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
+		
+		//enable selection to all containers (tab)
+		var isViewed = false;
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+//			tmpWc.getWidgetManager().setSelections(selectionData);
+			var tmpSel = tmpWc.getWidgetManager().getSelections();
+			if (!Sbi.isEmptyObject(tmpSel)){
+//				config.selections = selectionData;
+				config.widgetManager = tmpWc;
+				var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
+				tmpWc.addSelectionWidget(selectionWidget, config.wlayout);
+				isViewed = true;
+				break;
+			}
+		}
+		if (!isViewed){
+			Ext.MessageBox
+			.show({
+				title : LN(''),
+				msg : LN('There aren\'t some ACTIVE selections.'),
+				width : 200,
+				buttons : Ext.MessageBox.OK
+			});
+		}
 	}
 	
 	, onShowSelectionsView: function(){
@@ -1034,27 +1064,6 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
                 }]
         });
         win.show();
-
-
-//		testFunctions = [];
-//		for(p in this) {
-//			if( p.indexOf("Test", p.length - "Test".length) !== -1 ) {
-//				if(Ext.isFunction(this[p]))
-//				testFunctions.push(p);
-//			}
-//		}
-//
-//		for(var i = 0; i < testFunctions.length; i++) {
-//			this.setUp();
-//			try {
-//				this[testFunctions[i]]();
-//				alert("Test [" + testFunctions[i] + "] succesfully executed");
-//			} catch(e) {
-//				alert("Test [" + testFunctions[i] + "] not passed: " + e);
-//			}
-//
-//			this.tearDown();
-//		}
 
 		Sbi.trace("[MainPanel.debug]: OUT");
 	}
