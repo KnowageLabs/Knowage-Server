@@ -58,6 +58,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private boolean isActiveCleanAction = false;
 	private Integer cachePercentageToClean;
 	private Integer cacheDsLastAccessTtl;
+	private Integer cachePercentageToStore;
 
 	private final Map<String, Integer> columnSize = new HashMap<String, Integer>();
 
@@ -69,6 +70,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
 	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
+	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
 	public static final String DIALECT_MYSQL = "MySQL";
 	public static final String DIALECT_POSTGRES = "PostgreSQL";
 	public static final String DIALECT_ORACLE = "OracleDialect";
@@ -88,6 +90,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
 			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
 			cacheDsLastAccessTtl = this.cacheConfiguration.getCacheDsLastAccessTtl();
+			cachePercentageToStore = this.cacheConfiguration.getCachePercentageToStore();
 		}
 
 		String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
@@ -108,6 +111,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 	}
 
+	@Override
 	public BigDecimal getTotalMemory() {
 		logger.debug("Total memory is equal to [" + totalMemory + "]");
 		return totalMemory;
@@ -116,6 +120,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	/**
 	 * Returns the number of bytes used by the table already cached (approximate)
 	 */
+	@Override
 	public BigDecimal getUsedMemory() {
 		IDataBase dataBase = DataBase.getDataBase(cacheConfiguration.getCacheDataSource());
 		BigDecimal usedMemory = dataBase.getUsedMemorySize(cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
@@ -126,6 +131,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	/**
 	 * Returns the number of bytes available in the cache (approximate)
 	 */
+	@Override
 	public BigDecimal getAvailableMemory() {
 		BigDecimal availableMemory = getTotalMemory();
 		BigDecimal usedMemory = getUsedMemory();
@@ -138,10 +144,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	/**
 	 * @return the number of bytes used by the resultSet (approximate)
 	 */
+	@Override
 	public BigDecimal getRequiredMemory(IDataStore store) {
 		return DataStoreStatistics.extimateMemorySize(store, cacheConfiguration.getObjectsTypeDimension());
 	}
 
+	@Override
 	public Integer getAvailableMemoryAsPercentage() {
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getAvailableMemory();
@@ -149,14 +157,17 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return toReturn;
 	}
 
+	@Override
 	public Integer getNumberOfObjects() {
 		return cacheDao.loadAllCacheItems().size();
 	}
 
+	@Override
 	public boolean isCleaningEnabled() {
 		return isActiveCleanAction;
 	}
 
+	@Override
 	public Integer getCleaningQuota() {
 		return cachePercentageToClean;
 	}
@@ -165,6 +176,11 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheDsLastAccessTtl;
 	}
 
+	public Integer getCachePercentageToStore() {
+		return cachePercentageToStore;
+	}
+
+	@Override
 	public boolean isAvailableMemoryGreaterThen(BigDecimal requiredMemory) {
 		BigDecimal availableMemory = getAvailableMemory();
 		if (availableMemory.compareTo(requiredMemory) <= 0) {
@@ -174,6 +190,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 	}
 
+	@Override
 	public boolean hasEnoughMemoryForStore(IDataStore store) {
 		BigDecimal availableMemory = getAvailableMemory();
 		BigDecimal requiredMemory = getRequiredMemory(store);
@@ -192,6 +209,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheDao.loadAllCacheItems();
 	}
 
+	@Override
 	public void addCacheItem(String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
 		CacheItem item = new CacheItem();
 		item.setName(tableName);
@@ -208,10 +226,12 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 				+ " bytes (approximately)  ]");
 	}
 
+	@Override
 	public void updateCacheItem(CacheItem cacheItem) {
 		cacheDao.updateCacheItem(cacheItem);
 	}
 
+	@Override
 	public void removeCacheItem(String signature) {
 		cacheDao.deleteCacheItemBySignature(getHashedSignature(signature));
 	}
@@ -224,6 +244,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		}
 	}
 
+	@Override
 	public void removeAllCacheItems() {
 		cacheDao.deleteAllCacheItem();
 	}
@@ -232,6 +253,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheDao.loadCacheItemByTableName(tableName);
 	}
 
+	@Override
 	public CacheItem getCacheItem(String resultSetSignature) {
 		return cacheDao.loadCacheItemBySignature(getHashedSignature(resultSetSignature));
 	}
@@ -248,6 +270,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return getCacheItemByResultSetTableName(tableName) != null;
 	}
 
+	@Override
 	public boolean containsCacheItem(String resultSetSignature) {
 		return getCacheItem(resultSetSignature) != null;
 	}
@@ -265,6 +288,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheMetadata#getSignatures()
 	 */
+	@Override
 	public List<String> getSignatures() {
 		List<String> signatures = new ArrayList<String>();
 		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems();
@@ -278,6 +302,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		return cacheConfiguration.getTableNamePrefix().toUpperCase();
 	}
 
+	@Override
 	public List<String> getJoinedsReferringDataset(String datasetSignature) {
 		return getJoinedsReferringDataset(datasetSignature, false);
 	}

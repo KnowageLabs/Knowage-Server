@@ -3,11 +3,11 @@
  * © 2005-2015 Engineering Group
  *
  * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file.
  */
 package it.eng.spagobi.tools.dataset.cache;
 
@@ -24,61 +24,77 @@ import java.util.Set;
  *
  */
 public class SimpleCacheConfiguration implements ICacheConfiguration {
-	
+
 	IDataSource dataSource;
 	Map<String, Object> properties;
-	
+
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
 	public static final String CACHE_DS_LAST_ACCESS_TTL = "SPAGOBI.CACHE.DS_LAST_ACCESS_TTL";
 	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
+	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
+
 	private static final String CACHE_WORK_MANAGER = "SPAGOBI.CACHE.WORK_MANAGER";
 
-	
-	public SimpleCacheConfiguration()  {
+	public SimpleCacheConfiguration() {
 		dataSource = null;
 		properties = new HashMap<String, Object>();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#getCacheDataSource()
 	 */
+	@Override
 	public IDataSource getCacheDataSource() {
 		return dataSource;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#setCacheDataSource(it.eng.spagobi.tools.datasource.bo.IDataSource)
 	 */
+	@Override
 	public void setCacheDataSource(IDataSource dataSource) {
-		this.dataSource = dataSource;		
+		this.dataSource = dataSource;
 	}
-	
+
 	// =========================================================================================
 	// FACILITY METHODS
 	// =========================================================================================
-	
+
 	/**
 	 * @return the cacheSpaceAvailable
 	 */
+	@Override
 	public BigDecimal getCacheSpaceAvailable() {
-		return (BigDecimal)getProperty(CACHE_SPACE_AVAILABLE_CONFIG);
+		return (BigDecimal) getProperty(CACHE_SPACE_AVAILABLE_CONFIG);
 	}
+
 	/**
-	 * @param cacheSpaceAvailable the cacheSpaceAvailable to set
+	 * @param cacheSpaceAvailable
+	 *            the cacheSpaceAvailable to set
 	 */
+	@Override
 	public void setCacheSpaceAvailable(BigDecimal cacheSpaceAvailable) {
 		setProperty(CACHE_SPACE_AVAILABLE_CONFIG, cacheSpaceAvailable);
 	}
+
 	/**
 	 * @return the cachePercentageToClean
 	 */
+	@Override
 	public Integer getCachePercentageToClean() {
-		return (Integer)getProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG);
+		return (Integer) getProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG);
 	}
+
 	/**
-	 * @param cachePercentageToClean the cachePercentageToClean to set
+	 * @param cachePercentageToClean
+	 *            the cachePercentageToClean to set
 	 */
+	@Override
 	public void setCachePercentageToClean(Integer cachePercentageToClean) {
 		setProperty(CACHE_LIMIT_FOR_CLEAN_CONFIG, cachePercentageToClean);
 	}
@@ -86,6 +102,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cacheDsLastAccessTtl
 	 */
+	@Override
 	public Integer getCacheDsLastAccessTtl() {
 		return (Integer) getProperty(CACHE_DS_LAST_ACCESS_TTL);
 	}
@@ -94,6 +111,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cacheDsLastAccessTtl
 	 *            the cacheDsLastAccessTtl to set
 	 */
+	@Override
 	public void setCacheDsLastAccessTtl(Integer cacheDsLastAccessTtl) {
 		setProperty(CACHE_DS_LAST_ACCESS_TTL, cacheDsLastAccessTtl);
 	}
@@ -101,6 +119,7 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	/**
 	 * @return the cacheSchedulingFullClean
 	 */
+	@Override
 	public String getCacheSchedulingFullClean() {
 		return (String) getProperty(CACHE_SCHEDULING_FULL_CLEAN);
 	}
@@ -109,74 +128,117 @@ public class SimpleCacheConfiguration implements ICacheConfiguration {
 	 * @param cacheSchedulingFullClean
 	 *            the cacheSchedulingFullClean to set
 	 */
+	@Override
 	public void setCacheSchedulingFullClean(String cacheSchedulingFullClean) {
 		setProperty(CACHE_SCHEDULING_FULL_CLEAN, cacheSchedulingFullClean);
 	}
 
 	/**
+	 * @return the cachePercentageToStore
+	 */
+	@Override
+	public Integer getCachePercentageToStore() {
+		return (Integer) getProperty(CACHE_LIMIT_FOR_STORE_CONFIG);
+	}
+
+	/**
+	 * @param cachePercentageToStore
+	 *            the cachePercentageToStore to set
+	 */
+	@Override
+	public void setCachePercentageToStore(Integer cachePercentageToStore) {
+		setProperty(CACHE_LIMIT_FOR_STORE_CONFIG, cachePercentageToStore);
+	}
+
+	/**
 	 * @return the work manger used by cache to perform task in background
 	 */
+	@Override
 	public WorkManager getWorkManager() {
-		return (WorkManager)getProperty(CACHE_WORK_MANAGER);
+		return (WorkManager) getProperty(CACHE_WORK_MANAGER);
 	}
+
 	/**
-	 * @param the work manger used by cache to perform task in background
+	 * @param the
+	 *            work manger used by cache to perform task in background
 	 */
+	@Override
 	public void setWorkManager(WorkManager workManager) {
 		setProperty(CACHE_WORK_MANAGER, workManager);
 	}
-	
+
 	// =========================================================================================
 	// GENERICS
 	// =========================================================================================
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#containsProperty(java.lang.String)
 	 */
+	@Override
 	public boolean containsProperty(String propertyName) {
 		return properties.containsKey(propertyName);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#getPropertyNames()
 	 */
+	@Override
 	public Set<String> getPropertyNames() {
 		return properties.keySet();
-	}	
-	
-	/* (non-Javadoc)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#getProperty(java.lang.String)
 	 */
+	@Override
 	public Object getProperty(String propertyName) {
 		return properties.get(propertyName);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#setProperty(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public Object setProperty(String propertyName, Object propertyValue) {
 		Object oldValue = properties.get(propertyName);
 		properties.put(propertyName, propertyValue);
 		return oldValue;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#deleteProperty(java.lang.String)
 	 */
+	@Override
 	public Object deleteProperty(String propertyName) {
 		return properties.remove(propertyName);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#deleteAllProperties(java.lang.String)
 	 */
-	public void  deleteAllProperties(String propertyName) {
+	@Override
+	public void deleteAllProperties(String propertyName) {
 		properties.clear();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.tools.dataset.cache.ICacheConfiguration#addAllProperties(Map<String, Object>)
 	 */
+	@Override
 	public void addAllProperties(Map<String, Object> properties) {
 		properties.putAll(properties);
 	}

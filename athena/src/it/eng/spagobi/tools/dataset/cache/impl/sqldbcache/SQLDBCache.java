@@ -57,6 +57,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -121,6 +122,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
+	@Override
 	public boolean contains(IDataSet dataSet) {
 		return contains(dataSet.getSignature());
 	}
@@ -141,6 +143,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
+	@Override
 	public boolean contains(String resultsetSignature) {
 		return getMetadata().containsCacheItem(resultsetSignature);
 	}
@@ -150,6 +153,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
+	@Override
 	public boolean contains(List<IDataSet> dataSets) {
 		return getNotContained(dataSets).size() > 0;
 	}
@@ -159,6 +163,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
+	@Override
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
 		List<IDataSet> notContainedDataSets = new ArrayList<IDataSet>();
 		for (IDataSet dataSet : dataSets) {
@@ -178,6 +183,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
+	@Override
 	public IDataStore get(IDataSet dataSet) {
 		IDataStore dataStore = null;
 
@@ -213,6 +219,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
+	@Override
 	public IDataStore get(String resultsetSignature) {
 		IDataStore dataStore = null;
 
@@ -258,6 +265,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
+	@Override
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
 		IDataStore dataStore = null;
 
@@ -610,6 +618,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
+	@Override
 	public IDataStore load(IDataSet dataSet, boolean wait) {
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		dataSets.add(dataSet);
@@ -622,6 +631,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
+	@Override
 	public List<IDataStore> load(List<IDataSet> dataSets, boolean wait) {
 		List<IDataStore> dataStores = new ArrayList<IDataStore>();
 
@@ -690,6 +700,7 @@ public class SQLDBCache implements ICache {
 	// REFRESH METHODS
 	// ===================================================================================
 
+	@Override
 	public synchronized void refreshIfNotContained(IDataSet dataSet, boolean wait) {
 		if (contains(dataSet) == false) {
 			refresh(dataSet, wait);
@@ -701,6 +712,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
+	@Override
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
 
 		IDataStore dataStore = null;
@@ -731,6 +743,7 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
+	@Override
 	public IDataStore refresh(JoinedDataSet joinedDataSet, AssociationGroup associationGroup) {
 		logger.trace("IN");
 		try {
@@ -874,6 +887,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
+	@Override
 	public synchronized void put(IDataSet dataSet, IDataStore dataStore) {
 		logger.trace("IN");
 		try {
@@ -885,51 +899,58 @@ public class SQLDBCache implements ICache {
 			}
 
 			BigDecimal requiredMemory = getMetadata().getRequiredMemory(dataStore);
+			BigDecimal maxUsableMemory = getMetadata().getTotalMemory().divide(new BigDecimal(getMetadata().getCachePercentageToStore()), RoundingMode.FLOOR);
 
-			if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
-				deleteToQuota();
-			}
+			if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
 
-			// check again if the cleaning mechanism is on and if there is enough space for the resultset
-			if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
-				String signature = dataSet.getSignature();
-				String tableName = persistStoreInCache(dataSet, signature, dataStore);
-				Map<String, Object> properties = new HashMap<String, Object>();
-				List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
-				if (breakIndexes != null) {
-					properties.put("BREAK_INDEXES", breakIndexes);
-				}
-				Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
-				if (columnNames != null) {
-					properties.put("COLUMN_NAMES", columnNames);
-				}
-				// a
-				Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
-				if (datasetAlias != null) {
-					properties.put("DATASET_ALIAS", datasetAlias);
+				if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+					deleteToQuota();
 				}
 
-				getMetadata().addCacheItem(signature, properties, tableName, dataStore);
-
-				// if it is a joined dataset update references
-				if (dataSet instanceof JoinedDataSet) {
-					logger.debug("dataset " + dataSet.getLabel() + " is a joined dataset, add reference in map");
-					JoinedDataSet jDs = (JoinedDataSet) dataSet;
-					List<IDataSet> dsReferred = jDs.getDataSets();
-					// item.setProperty("DATASETS_REFERRED", datasetAlias);
-
-					for (Iterator iterator = dsReferred.iterator(); iterator.hasNext();) {
-						logger.debug("add reference");
-						IDataSet iDataSet = (IDataSet) iterator.next();
-						getMetadata().addJoinedDatasetReference(iDataSet.getSignature(), dataSet.getSignature());
+				// check again if the cleaning mechanism is on and if there is enough space for the resultset
+				if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
+					String signature = dataSet.getSignature();
+					String tableName = persistStoreInCache(dataSet, signature, dataStore);
+					Map<String, Object> properties = new HashMap<String, Object>();
+					List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
+					if (breakIndexes != null) {
+						properties.put("BREAK_INDEXES", breakIndexes);
+					}
+					Map<String, List<String>> columnNames = (Map<String, List<String>>) dataStore.getMetaData().getProperty("COLUMN_NAMES");
+					if (columnNames != null) {
+						properties.put("COLUMN_NAMES", columnNames);
+					}
+					// a
+					Map<String, String> datasetAlias = (Map<String, String>) dataStore.getMetaData().getProperty("DATASET_ALIAS");
+					if (datasetAlias != null) {
+						properties.put("DATASET_ALIAS", datasetAlias);
 					}
 
-				}
+					getMetadata().addCacheItem(signature, properties, tableName, dataStore);
 
+					// if it is a joined dataset update references
+					if (dataSet instanceof JoinedDataSet) {
+						logger.debug("dataset " + dataSet.getLabel() + " is a joined dataset, add reference in map");
+						JoinedDataSet jDs = (JoinedDataSet) dataSet;
+						List<IDataSet> dsReferred = jDs.getDataSets();
+						// item.setProperty("DATASETS_REFERRED", datasetAlias);
+
+						for (Iterator iterator = dsReferred.iterator(); iterator.hasNext();) {
+							logger.debug("add reference");
+							IDataSet iDataSet = (IDataSet) iterator.next();
+							getMetadata().addJoinedDatasetReference(iDataSet.getSignature(), dataSet.getSignature());
+						}
+
+					}
+
+				} else {
+					throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
+							+ " while cache available space is [" + getMetadata().getAvailableMemory() + "]."
+							+ " Incrase cache size or execute the dataset disabling cache.");
+				}
 			} else {
-				throw new CacheException("Store is to big to be persisted in cache." + " Store extimated dimenion is ["
-						+ getMetadata().getRequiredMemory(dataStore) + "]" + " while cache available space is [" + getMetadata().getAvailableMemory() + "]."
-						+ " Incrase cache size or execute the dataset disabling cache.");
+				throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
+						+ " while the maximum dimension allowed is [" + maxUsableMemory + "]." + " Incrase cache size or execute the dataset disabling cache.");
 			}
 		} catch (Throwable t) {
 			if (t instanceof CacheException)
@@ -983,6 +1004,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
+	@Override
 	public boolean delete(IDataSet dataSet) {
 		boolean result = false;
 
@@ -1019,6 +1041,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
+	@Override
 	public boolean delete(String signature) {
 		return delete(signature, false);
 	}
@@ -1103,6 +1126,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
+	@Override
 	public void deleteToQuota() {
 		logger.trace("IN");
 		boolean isEnough = false;
@@ -1142,6 +1166,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
+	@Override
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 
@@ -1268,6 +1293,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
+	@Override
 	public SQLDBCacheMetadata getMetadata() {
 		return cacheMetadata;
 	}
@@ -1278,6 +1304,7 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
+	@Override
 	public void addListener(ICacheEvent event, ICacheListener listener) {
 		// TODO Auto-generated method stub
 
@@ -1289,6 +1316,7 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
+	@Override
 	public void scheduleActivity(ICacheActivity activity, ICacheTrigger trigger) {
 		// TODO Auto-generated method stub
 
@@ -1299,6 +1327,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
+	@Override
 	public void enable(boolean enable) {
 		this.enabled = enable;
 
@@ -1309,6 +1338,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -1334,6 +1364,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
+	@Override
 	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {
 		// TODO Auto-generated method stub
 		return null;
