@@ -121,6 +121,8 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 			if (ds.checkIsWriteDefault()) {
 				ICache cache = SpagoBICacheManager.getCache();
 				cache.deleteAll();
+				// unset the cache
+				SpagoBICacheManager.removeCache();
 			}
 			DAOFactory.getDataSourceDAO().eraseDataSource(ds);
 			logParam.put("TYPE", ds.getJndi());
@@ -177,16 +179,25 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				if (dsNew.checkIsWriteDefault()) {
 					ICache cache = SpagoBICacheManager.getCache();
 					cache.deleteAll();
+					// unset the cache
+					SpagoBICacheManager.removeCache();
 				}
 				updateAudit(req, profile, "DATA_SOURCE.ADD", logParam, "OK");
 			} else {
+				IDataSource dsOld = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(dsNew.getLabel());
 				// update ds
 				dao.modifyDataSource(dsNew);
+
+				// logical XOR operator -> it is true only if one has true value, but not both
+				boolean isWriteDefaultChanged = dsNew.checkIsWriteDefault() ^ dsOld.checkIsWriteDefault();
+
 				// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
 				// not in cache yet since the caching db is changed
-				if (dsNew.checkIsWriteDefault()) {
+				if (isWriteDefaultChanged) {
 					ICache cache = SpagoBICacheManager.getCache();
 					cache.deleteAll();
+					// unset the cache
+					SpagoBICacheManager.removeCache();
 				}
 				updateAudit(req, profile, "DATA_SOURCE.MODIFY", logParam, "OK");
 			}
