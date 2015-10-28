@@ -374,6 +374,8 @@ END-LIFERAY -->
 		<env-entry-value>it.eng.spagobi.services.common.TamSsoService</env-entry-value>
 	</env-entry>	
 	  -->
+	  
+	<!-- START TOMCAT RES -->
 	<resource-ref id="ResourceRef_1233743772692">
 		<description>
 		</description>
@@ -382,5 +384,6 @@ END-LIFERAY -->
 		<res-auth>Container</res-auth>
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
+	<!-- END TOMCAT RES -->
 	
 </web-app>

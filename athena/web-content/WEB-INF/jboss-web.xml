@@ -1,20 +1,9 @@
-<jboss-web>
-    <class-loading java2ClassLoadingCompliance="false">
-      <loader-repository>
-        dot.com:loader=spagobi
-          <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
-      </loader-repository>
-    </class-loading>
-    <resource-ref>
-        <res-ref-name>jdbc/spagobi</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <jndi-name>java:/spagobi</jndi-name>
-    </resource-ref>
-   <!--
-    <resource-ref>
-        <res-ref-name>jdbc/sbifoodmart</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <jndi-name>java:/sbifoodmart</jndi-name>
-    </resource-ref>
-    -->
+<jboss-web xmlns="http://www.jboss.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee      
+		http://www.jboss.org/j2ee/schema/jboss-web_5_1.xsd">
+
+	<context-root>/athena</context-root>
+
+
 </jboss-web>
