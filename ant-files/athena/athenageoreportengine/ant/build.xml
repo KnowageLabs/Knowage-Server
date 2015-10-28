@@ -126,6 +126,22 @@
 
 	<target name="jboss6">
 	</target>
+	
+	<target name="jbossEAP64">
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/log4j.properties" token="${catalina.base}/logs" value="${jboss.server.log.dir}" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/hibernate.cfg.xml" token="java:/comp/env/jdbc/spagobi" value="java:/jdbc/spagobi" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/spagobi_resource_path" value="java:/urls/spagobi_resource_path" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/spagobi_service_url" value="java:/urls/spagobi_service_url" />
+		<replace file="${build}/${webapp_name}/WEB-INF/classes/engine-config.xml" token="java://comp/env/spagobi_sso_class" value="java:/urls/spagobi_sso_class" />
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- START ProxyTicketReceptor -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START ProxyTicketReceptor]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/web.xml">
+			<replacetoken><![CDATA[<!-- END ProxyTicketReceptor -->]]></replacetoken>
+			<replacevalue><![CDATA[ END ProxyTicketReceptor -->]]></replacevalue>
+		</replace>
+	</target>
 
 
 	<target name="liferay.jboss">
