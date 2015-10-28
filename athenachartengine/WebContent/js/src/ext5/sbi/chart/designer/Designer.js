@@ -2178,7 +2178,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 						categoriesAsJson.length != 2) {
 					errorMsg += "- " + LN("sbi.chartengine.validation.exactlyTwoCategories") + '<br>'; 
 				}
-				else if (chartType == "TREEMAP" && categoriesAsJson.length < 2) {
+				else if ((chartType == "TREEMAP" || chartType=="SUNBURST") && categoriesAsJson.length < 2) {
 					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
 				}
 			}		

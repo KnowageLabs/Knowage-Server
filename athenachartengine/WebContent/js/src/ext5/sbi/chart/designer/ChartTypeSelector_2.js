@@ -123,7 +123,8 @@ Ext.define
 			 * Gives us information if the Designer is completely loaded (all necessary data are available). 
 			 * If it is, we can access its data (e.g. yAxisPool) and we will not have an error in the code.
 			 */
-	    	dataLoaded: false
+	    	dataLoaded: false,
+	    	chartType: null
     	},
 	    
 	    getChartType: function() {
@@ -132,6 +133,18 @@ Ext.define
 		
 		setChartType: function(newChartType) {
 			this.setValue(newChartType.toLowerCase());
+		},
+		
+		getChartTypesIcons: function()
+		{			
+			var arrayIcons = {};
+			
+			for (i=0; i<chartTypesStore.data.length; i++)
+			{
+				arrayIcons[chartTypesStore.data.items[i].data.styleAbbr] = chartTypesStore.data.items[i].data.icon;
+			}
+			
+			return arrayIcons;
 		},
 		
 		resetStep1: function()
@@ -176,8 +189,27 @@ Ext.define
 		 */
 		customizeStep1AndStep2: function(newlySelectedType,previousChartType)
 		{			
-			var globalScope = this;			
+			var globalScope = this;	
+						
+			var iconsPath = this.getChartTypesIcons();	
 			
+			/**
+			 * Set the icon next to the text (the name of the selected
+			 * chart type) in the combo box.
+			 */
+			this.inputEl.setStyle
+            (
+        		{
+	                'background-image': 	'url('+iconsPath[previousChartType.toLowerCase()]+')',
+	                'background-repeat': 	'no-repeat',
+	                'background-position': 	'left center',
+	                'padding-left': 		'35px', 
+	                'background-size': 		"30px 30px",
+	                'display': 'none'
+        		}
+    		);	
+							
+							
 			/**
 			 * Lookup for checking the compatibility of the chart types when we are determining
 			 * should all the data that exists in the current chart within the X and Y panels
@@ -237,13 +269,15 @@ Ext.define
 						},
 					
 						fn : function(buttonValue, inputText, showConfig)
-						{
+						{							
 							if (buttonValue == 'ok') 
 							{								
 								/**
 								 * Cleaning of axis panels since previous and current chart types are not compatible.
 								 */
 								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();	
+								
+								Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
 								
 								globalScope.fireEvent("chartTypeChanged");	
 								
@@ -328,12 +362,12 @@ Ext.define
 									// Hide the plus tool on the toolbar of the left (Y) axis panel
 									globalScope.plusLeftAxis.hide();
 								}
-									
-								
 								//return true;
 							} 									
 							else if (buttonValue == 'cancel') 
 							{
+								
+								Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
 								// danristo
 								// Suspend "change" event that will definitely happen when changing the active combo item (previous chart type)
 								globalScope.suspendEvents(false);
@@ -342,7 +376,9 @@ Ext.define
 								globalScope.setValue(previousChartType);
 																
 								// Resume events
-								globalScope.resumeEvents();															
+								globalScope.resumeEvents();	
+								
+								globalScope.fireEvent("cancel");
 							}
 						}
 				});
@@ -381,6 +417,9 @@ Ext.define
 								if (buttonValue == 'ok') 
 								{
 									Sbi.chart.designer.Designer.cleanCategoriesAxis();	
+									
+									Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+									
 									globalScope.fireEvent("resetStep2");
 								}
 								else
@@ -390,8 +429,12 @@ Ext.define
 									// Set previous chart type
 									globalScope.setValue(previousChartType);
 									
+									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
+									
 									// Resume events
 									globalScope.resumeEvents();
+									
+									globalScope.fireEvent("cancel");
 								}
 							}
 						}
@@ -452,6 +495,8 @@ Ext.define
 										}
 									}
 									
+									Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+									
 									/** 
 									 * Set active type chart as the one that we chosen now (in other words, set 
 									 * the chart type as 'radar'. 
@@ -462,16 +507,20 @@ Ext.define
 									 * Clean the X-axis bottom panel for RADAR and SCATTER chart types
 									 */
 									Sbi.chart.designer.Designer.cleanCategoriesAxis();	
-									
-								} else if (buttonValue == 'cancel') {
 																		
+								} else if (buttonValue == 'cancel') {																
+									
 									globalScope.suspendEvents(false);
 									
 									// Set previous chart type
 									globalScope.setValue(previousChartType);
 									
+									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
+									
 									// Resume events
 									globalScope.resumeEvents();
+									
+									globalScope.fireEvent("cancel");
 								}
 							}	
 						});
@@ -498,6 +547,8 @@ Ext.define
 							}
 						}	
 						
+						Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+						
 						globalScope.fireEvent("resetStep2");
 					}
 				}
@@ -508,35 +559,63 @@ Ext.define
 				else 
 				{
 					globalScope.resetStep1();
+					Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
 					globalScope.fireEvent("resetStep2");
 				}
 			}	
 		},
 				
 		listeners:
-		{				
-			select: function(comboBox,records)
+		{
+			cancel: function()
 			{
-				var record = records;
+				var chartType = Sbi.chart.designer.ChartTypeSelector_2.chartType;
+				
+				var iconsPath = this.getChartTypesIcons();				
 				
 				/**
 				 * Set the icon next to the text (the name of the selected
 				 * chart type) in the combo box.
 				 */
-	            comboBox.inputEl.setStyle
+				this.inputEl.setStyle
 	            (
             		{
-		                'background-image': 	'url('+records.data.icon+')',
+		                'background-image': 	'url('+iconsPath[chartType.toLowerCase()]+')',
 		                'background-repeat': 	'no-repeat',
 		                'background-position': 	'left center',
 		                'padding-left': 		'35px', 
-		                'background-size': 		"30px 30px"	            
+		                'background-size': 		"30px 30px",
+		                'display': 'inline'
+            		}
+        		);	
+			},
+			
+			resetStep2: function()
+			{
+				var chartType = Sbi.chart.designer.ChartTypeSelector_2.chartType;
+								
+				var iconsPath = this.getChartTypesIcons();				
+				
+				/**
+				 * Set the icon next to the text (the name of the selected
+				 * chart type) in the combo box.
+				 */
+				this.inputEl.setStyle
+	            (
+            		{
+		                'background-image': 	'url('+iconsPath[chartType.toLowerCase()]+')',
+		                'background-repeat': 	'no-repeat',
+		                'background-position': 	'left center',
+		                'padding-left': 		'35px', 
+		                'background-size': 		"30px 30px",
+		                'display': 'inline'
             		}
         		);				
 			},
 				
 			change: function(comboBox,currentOrNewChartType,previousChartType)
 			{		
+				
 				/**
 				 * If currentOrNewChartType is not null - if user did not click-down on the
 				 * chart type and then move mouse on some other chart type and make a click-up
