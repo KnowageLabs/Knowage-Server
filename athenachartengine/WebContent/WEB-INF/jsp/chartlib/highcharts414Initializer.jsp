@@ -108,11 +108,15 @@
 		if (!e.seriesOptions) {
 			var chart = this;
 			chart.showLoading('Loading...');
+			
+			var categoryName = e.point.name;
+			var serieName = e.point.series.name;
+			
 			Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName, 
 					e.point.crossNavigationDocumentParams,
-					e.point.name, 
-					e.point.series.name
+					categoryName,
+					serieName
 					);
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
 			chart.hideLoading();
