@@ -9,6 +9,7 @@ import it.eng.qbe.dataset.QueryTransformer;
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.Query;
@@ -18,12 +19,14 @@ import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.graph.bean.RootEntitiesGraph;
 import it.eng.qbe.statement.graph.cover.ShortestPathsCoverGraph;
 import it.eng.qbe.statement.graph.validator.ConnectionValidator;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,19 +40,23 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 
 	public static transient Logger logger = Logger.getLogger(ProfileAttributesModelAccessModality.class);
 
-	private List<Filter> filters = null;
+	private List<Filter> filtersOnProfileAttributes = null;
+	private Map<String, List<String>> fieldsFilteredByRole = null;
+	private UserProfile userProfile = null;
 
-	public ProfileAttributesModelAccessModality(List<Filter> filters) {
-		this.filters = filters;
+	public ProfileAttributesModelAccessModality(List<Filter> filtersOnProfileAttributes, Map<String, List<String>> fieldsFilteredByRole, UserProfile profile) {
+		this.filtersOnProfileAttributes = filtersOnProfileAttributes;
+		this.fieldsFilteredByRole = fieldsFilteredByRole;
+		this.userProfile = profile;
 	}
 
 	protected List<Filter> getFilters() {
-		return filters;
+		return filtersOnProfileAttributes;
 	}
 
 	@Override
 	public Query getFilteredStatement(Query query, IDataSource dataSource, Map userProfileAttributes) {
-		if (filters == null || filters.isEmpty()) {
+		if (filtersOnProfileAttributes == null || filtersOnProfileAttributes.isEmpty()) {
 			logger.debug("No filters defined, returning input query unchanged");
 			return query;
 		}
@@ -69,7 +76,7 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 
 	private List<Filter> getAppliableFilters(Query query, IDataSource dataSource) {
 		List<Filter> toReturn = new ArrayList<Filter>();
-		Iterator<Filter> it = filters.iterator();
+		Iterator<Filter> it = filtersOnProfileAttributes.iterator();
 		while (it.hasNext()) {
 			Filter filter = it.next();
 			if (isApplicable(filter, query, dataSource)) {
@@ -135,5 +142,31 @@ public class ProfileAttributesModelAccessModality extends AbstractModelAccessMod
 			toReturn.put(filter.getField().getUniqueName(), values);
 		}
 		return toReturn;
+	}
+
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public boolean isFieldAccessible(IModelField field) {
+		String fieldUniqueName = field.getUniqueName();
+		boolean fieldFilteredByRole = fieldsFilteredByRole.containsKey(fieldUniqueName);
+		boolean fieldVisibleByRole = false;
+		if(fieldFilteredByRole) {
+			try {
+				Collection<String> userRoles = this.userProfile.getRoles();
+				for (String roleOwned : userRoles) {
+					List<String> rolesAllowed = fieldsFilteredByRole.get(fieldUniqueName);
+					for (String roleAllowed : rolesAllowed) {
+						if(roleOwned.equals(roleAllowed)) {
+							fieldVisibleByRole = true;
+							break;
+						}
+					}
+				}
+			} catch (Exception e) {
+				logger.error("ProfileAttributesModelAccessModality encountered problem while evaluating "+fieldUniqueName+" access modality!", e);
+			}
+		}
+		return !fieldFilteredByRole || fieldVisibleByRole;
 	}
 }

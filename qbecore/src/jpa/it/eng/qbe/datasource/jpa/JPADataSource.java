@@ -22,12 +22,14 @@ import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.jpa.JPAModelStructureBuilder;
 import it.eng.qbe.query.Filter;
 import it.eng.qbe.query.filters.ProfileAttributesModelAccessModality;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +48,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	private EntityManagerFactory factory;
 	private final boolean classLoaderExtended = false;
+
+	private UserProfile userProfile = null;
 
 	private static transient Logger logger = Logger.getLogger(JPADataSource.class);
 
@@ -81,7 +85,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
 	 */
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
@@ -152,19 +156,30 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		return dataSource;
 	}
 
-	public IModelStructure getModelStructure() {
+	public IModelStructure getModelStructure(UserProfile profile) {
+		userProfile = profile;
+		System.out.println("getModelStructure(UserProfile profile) userprofile: " + (userProfile != null ? userProfile.getUserName() : " NULL") + "dataMartModelStructure: " + dataMartModelStructure);
 		IModelStructureBuilder structureBuilder;
 		if (dataMartModelStructure == null) {
 			structureBuilder = new JPAModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
-			List<Filter> filters = getFiltersOnProfileAttributes();
-			if (!filters.isEmpty()) {
+
+			Map<String, List<String>> fieldsFilteredByRole = getFieldsFilteredByRole();
+
+			List<Filter> filtersOnProfileAttributes = getFiltersOnProfileAttributes();
+			if (!filtersOnProfileAttributes.isEmpty() || !fieldsFilteredByRole.isEmpty()) {
 				logger.debug("One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
-				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filters));
+				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes, fieldsFilteredByRole, profile));
 			}
 		}
-
 		return dataMartModelStructure;
+	}
+
+	public IModelStructure getModelStructure() {
+
+		System.out.println("getModelStructure() userprofile: " + (userProfile != null ? userProfile.getUserName() : " NULL"));
+
+		return getModelStructure(userProfile);
 	}
 
 	private List<Filter> getFiltersOnProfileAttributes() {
@@ -196,6 +211,34 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 					values.add(attributeName);
 					Filter filter = new Filter(field, values);
 					toReturn.add(filter);
+				}
+			}
+		}
+		return toReturn;
+	}
+	private Map<String, List<String>> getFieldsFilteredByRole() {
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
+		Iterator<String> it = dataMartModelStructure.getModelNames().iterator();
+		while (it.hasNext()) {
+			List<IModelEntity> list = dataMartModelStructure.getRootEntities(it.next());
+			Map<String, List<String>> roles = getFieldsFilteredByRole(list);
+			toReturn.putAll(roles);
+		}
+		return toReturn;
+	}
+
+	private Map<String, List<String>> getFieldsFilteredByRole(List<IModelEntity> list) {
+		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
+		Iterator<IModelEntity> it = list.iterator();
+		while (it.hasNext()) {
+			IModelEntity entity = it.next();
+			List<IModelField> allFields = entity.getAllFields();
+			Iterator<IModelField> fieldsIt = allFields.iterator();
+			while (fieldsIt.hasNext()) {
+				IModelField field = fieldsIt.next();
+				String roles = (String) field.getProperty("excludedRoles");
+				if (roles != null && !roles.trim().equals("")) {
+					toReturn.put(field.getUniqueName(), Arrays.asList(roles.split(";")));
 				}
 			}
 		}

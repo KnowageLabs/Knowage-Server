@@ -6,6 +6,7 @@
 package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.FilteredModelStructure;
@@ -21,6 +22,7 @@ import it.eng.qbe.query.serializer.json.QueryJSONSerializer;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -74,14 +76,14 @@ public class ExtJsQbeTreeBuilder {
 		setQbeTreeFilter(qbeTreeFilter);
 	}
 
-	public JSONArray getQbeTree(IDataSource dataSource, Locale locale, String datamartName) {
+	public JSONArray getQbeTree(IDataSource dataSource, Locale locale, String datamartName, UserProfile userProfile) {
 		setLocale(locale);
 		setDatamartModel(dataSource);
 		setDatamartLabels(dataSource.getModelI18NProperties(getLocale()));
 		if (getDatamartLabels() == null) {
 			setDatamartLabels(new SimpleModelProperties());
 		}
-		return buildQbeTree(datamartName);
+		return buildQbeTree(datamartName, userProfile);
 	}
 
 	private String getEntityLabel(IModelEntity entity) {
@@ -126,7 +128,7 @@ public class ExtJsQbeTreeBuilder {
 	 *
 	 * @return the jSON array
 	 */
-	private JSONArray buildQbeTree(String datamartName) {
+	private JSONArray buildQbeTree(String datamartName, UserProfile userProfile) {
 		JSONArray nodes = new JSONArray();
 		File file = new File(new File(ConfigSingleton.getRootPath()), "labels.properties");
 		try {
@@ -135,7 +137,7 @@ public class ExtJsQbeTreeBuilder {
 			e.printStackTrace();
 			writer = new PrintWriter(new CharArrayWriter());
 		}
-		addEntityNodes(nodes, datamartName);
+		addEntityNodes(nodes, datamartName, userProfile);
 		writer.flush();
 		writer.close();
 		return nodes;
@@ -149,8 +151,8 @@ public class ExtJsQbeTreeBuilder {
 	 * @param datamartName
 	 *            the datamart name
 	 */
-	public void addEntityNodes(JSONArray nodes, String datamartName) {
-		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(dataSource.getModelStructure(), getDataSource(), getQbeTreeFilter());
+	public void addEntityNodes(JSONArray nodes, String datamartName, UserProfile userProfile) {
+		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(((JPADataSource)dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
 		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
 
 		Iterator<IModelEntity> it = entities.iterator();

@@ -8,6 +8,7 @@
 <%-- 
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
+<%@page import="it.eng.qbe.datasource.jpa.JPADataSource"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -190,8 +191,9 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
 	      	qbeConfig.displayWorksheetPanel = <%= isWorksheetEnabled %>;
 	      	<%
-	      	StringBuffer datamartNamesBuffer = new StringBuffer("["); 
-	      	IModelStructure ms = qbeEngineInstance.getDataSource().getModelStructure();
+	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
+	      	
+	      	IModelStructure ms = ((JPADataSource)qbeEngineInstance.getDataSource()).getModelStructure(profile);
 	      	Iterator<String> it = ms.getModelNames().iterator();
 	      	while (it.hasNext()) {
 	      		datamartNamesBuffer.append("'" + it.next() + "'");
