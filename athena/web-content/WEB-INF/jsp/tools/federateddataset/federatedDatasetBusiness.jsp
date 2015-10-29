@@ -17,7 +17,7 @@
 		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
 	
 		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
-		<link rel="stylesheet" href="/athena/themes/glossary/css/font-awesome-4.3.0/css/font-awesome.min.css">		
+		<!-- <link rel="stylesheet" href="/athena/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.css">	 -->	
 		<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
 		<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 
@@ -62,7 +62,7 @@
 				</div>
 			</md-toolbar>
 	
-			<md-content layout-padding="" style="height: 96%; padding: 20px;">
+			<md-content layout-padding style="height: 96%; padding: 20px;">
 			
 				<!-- Wrapping content that will be shown when ctrl.state is true -->
 				<div ng-show="ctrl.state" layout="row" layout-sm="column" layout-wrap">
@@ -78,7 +78,7 @@
 							</div>
 						</md-toolbar>
 					
-						<md-content  layout-padding>
+						<md-content  layout-padding >
 							<angular-list
 							layout-fill 
 							id="availableDatasets" 
@@ -104,7 +104,7 @@
 						</div>
 					</md-toolbar>
 				
-					<md-content layout-padding >
+					<md-content layout-padding>
 						<angular-list  
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
@@ -126,12 +126,6 @@
 						<div class="md-toolbar-tools">
 							<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsEditor");}}</h2>
 							<span flex=""></span>
-							<!-- MD-SELECT is shown when edit mode is on -->
-							<div ng-if="ctrl.isEditState" style="height: 100px;">
-								<md-select placeholder="Add dataset" ng-model="kkk">
-									<md-option ng-value="dataset"  ng-repeat="dataset in ctrl.list" ng-click="ctrl.moveToListNew(dataset)">{{dataset.label}}</md-option> 
-								</md-select>
-							</div>
 						</div>
 					</md-toolbar>
 					
@@ -147,9 +141,9 @@
 								</div>
 								</md-toolbar>
 								<div  style=" height:85%;">
-								<div ng-show="true" >
+								<div ng-show="true" layout-padding>
 									<angular-list
-										layout-fill="" 
+										layout-fill 
 										id='{{dataset.label}}'
 										ng-model="dataset.metadata.fieldsMeta" 
 										item-name="name"
@@ -172,7 +166,7 @@
 						style="">
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
-						<span flex=""></span><md-button ng-hide="ctrl.isEditState" class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon class="fa fa-plus" style="position:absolute; left:0px; top:5px; right:5px; color:white"
+						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus" style="position:absolute; left:5px; top:5px; right:5px; color:white"
 							></md-icon></md-button> 
 					</div>
 		
@@ -197,22 +191,10 @@
 											
 											</div>
 											<span flex=""></span>
-											 <md-fab-speed-dial ng-hide="ctrl.isEditState"  md-direction="{{ctrl.selectedDirection}}" ng-class="ctrl.selectedMode">
-											 	<md-fab-trigger>
-											 		<md-button class="md-fab md-ExtraMini">
-											 			<i class="fa fa-chevron-left"></i>
-											 		</md-button>
-											 	</md-fab-trigger>
-											 	<md-fab-actions>
+											 
 											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
 														 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
 													</md-button>
-													<md-button  style="background-color:#009688;" aria-label="edit" class="md-fab md-ExtraMini">
-														 <i class="fa fa-pencil-square-o"  ng-click="ctrl.prepRelForEdit(k);" ></i>
-													</md-button>
-													
-											 	</md-fab-actions>
-											 </md-fab-speed-dial>
 										
 									</md-list-item>
 									
@@ -234,10 +216,8 @@
 				</div>
 			
 				<div ng-hide="ctrl.state">
-					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack(); ctrl.ispisiSleektovane(); ctrl.clearSelections()">{{translate.load("sbi.federationdefinition.button.back");}}</md-button> 
-					<md-button ng-hide="ctrl.isEditState" class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">{{translate.load("sbi.federationdefinition.button.saveFederation");}}</md-button>
-					<md-button ng-show="ctrl.isEditState" class="buttonL" ng-click="ctrl.cancelEdit();">{{translate.load("sbi.federationdefinition.button.cancel");}}</md-button>
-					<md-button ng-show="ctrl.isEditState" class="buttonR" style="color:white; background-color:#009688;" ng-click="ctrl.saveEditedRelation()">{{translate.load("sbi.federationdefinition.button.saveEdit");}}</md-button>		
+					<md-button  class="md-raised buttonL" aria-label="btn_back_to_first_page" ng-click="ctrl.toggleBack(); ctrl.ispisiSleektovane(); ctrl.clearSelections()">{{translate.load("sbi.federationdefinition.button.back");}}</md-button> 
+					<md-button  class="md-raised buttonR" aria-label="btn_save_federation" ng-click="ctrl.showAdvanced($event)">{{translate.load("sbi.federationdefinition.button.saveFederation");}}</md-button>	
 				</div>
 			</md-content>
 		</div>

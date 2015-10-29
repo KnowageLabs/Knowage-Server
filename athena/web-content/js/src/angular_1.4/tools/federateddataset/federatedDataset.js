@@ -31,7 +31,6 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	
 	//state is used to show or hide components on the page
 	ctr.state = true;
-	ctr.isEditState = false;
 	
 	ctr.relation = "";
 	ctr.relNew = null;
@@ -469,6 +468,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	}
 	
 	ctr.deleteFromMultiArray = function(param) {
+		/*console.log(param)
+		console.log(ctr.multiArray)
 		var confirm = $mdDialog.confirm()
 		.title(translate.load("sbi.federationdefinition.confirm.delete"))
 		.content(translate.load("sbi.federationdefinition.confirm.delete.content"))
@@ -481,7 +482,11 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			if(index !=-1){
 				ctr.multiArray.splice(index, 1);
 			}
-		})
+		})*/
+		var index = ctr.multiArray.indexOf(param);
+		if(index !=-1){
+			ctr.multiArray.splice(index, 1);
+		}
 		
 	}
 	
@@ -525,7 +530,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	ctr.selectedDirection = 'left';
     ctr.selectedMode = 'md-scale';
     
-    ctr.prepRelForEdit = function(param) {
+    /*ctr.prepRelForEdit = function(param) {
     	var confirm = $mdDialog.confirm()
 		.title(translate.load("sbi.federationdefinition.confirm.dialog"))
 		.content(translate.load("sbi.federationdefinition.confirm.dialog.edit.relation"))
@@ -570,7 +575,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
     
     ctr.cancelEdit = function() {
     	ctr.isEditState = false;
-    }
+    }*/
     
 	ctr.loadDatasetsEditMode = function(){
 			
