@@ -18,6 +18,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,6 +37,8 @@ import org.apache.log4j.Logger;
  *
  */
 public class StringUtilities {
+
+	public static final String DEFAULT_CHARSET = "UTF-8";
 
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
 
@@ -749,7 +753,7 @@ public class StringUtilities {
 
 			char[] buffer = new char[1024];
 			try {
-				Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				Reader reader = new BufferedReader(new InputStreamReader(is, DEFAULT_CHARSET));
 				int n;
 				while ((n = reader.read(buffer)) != -1) {
 					writer.write(buffer, 0, n);
@@ -805,6 +809,47 @@ public class StringUtilities {
 			s = s.replace("\n", "<br>");
 		}
 		return s;
+	}
+
+	/**
+	 * Thanks to http://stackoverflow.com/questions/3103652/hash-string-via-sha-256-in-java
+	 *
+	 * @param s
+	 * @return
+	 * @throws IOException
+	 */
+	public static String sha256(String s) throws IOException {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			md.update(s.getBytes(DEFAULT_CHARSET)); // Change this to "UTF-16" if needed
+			byte[] digest = md.digest();
+			String res = String.format("%064x", new java.math.BigInteger(1, digest));
+			return res;
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException("Error during hashing", e);
+		}
+	}
+
+	public static String readStream(InputStream inputStream) throws IOException {
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader bufferedReader = null;
+		try {
+			if (inputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream, DEFAULT_CHARSET));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
+		} finally {
+			if (bufferedReader != null) {
+				bufferedReader.close();
+			}
+		}
+		return stringBuilder.toString();
 	}
 
 }

@@ -141,12 +141,25 @@
 		<filter-name>AntiInjectionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
+	
+	<!-- HMAC filter 
+	 <filter>
+        <filter-name>HMACFilter</filter-name>
+        <filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
+        <description>HMAC Filter for authentication. HMAC key is configured in  server.xml and available to all engines thanks to main context.xml</description>
+    </filter>
+    <filter-mapping>
+		<filter-name>HMACFilter</filter-name>
+		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
+		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
+		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
+	</filter-mapping>
+    HMAC filter ends -->
  
     <!-- START LISTENERS -->
     <listener>
         <listener-class>it.eng.spagobi.tools.scheduler.listeners.SchedulerContextListener</listener-class>
     </listener>
-
 
 <!-- EXO
 
