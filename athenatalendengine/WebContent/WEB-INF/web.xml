@@ -242,13 +242,14 @@ END-CAS -->
 	<!--  ============================================================================ -->
 	<!--  RESOURCES								 									   -->
 	<!--  ============================================================================ -->
+	<!-- START TOMCAT RES -->
 	<resource-ref>
 		<res-ref-name>wm/SpagoWorkManager</res-ref-name>
  		<res-type>commonj.work.WorkManager</res-type>
  		<res-auth>Container</res-auth>
  		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
-		 
+	<!-- END TOMCAT RES -->	 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
