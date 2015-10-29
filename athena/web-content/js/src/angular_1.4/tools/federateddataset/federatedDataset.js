@@ -91,11 +91,12 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 				if(!check){
 					console.log("Add new to array.")
 					ctr.multiArray.push(ctr.createAssociations());
+					ctr.clearSelections();
 				}
 			}
 		}
 		
-		ctr.clearSelections();
+		
 	}
 	
 	ctr.createAssociations = function(){
@@ -661,6 +662,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 						if(json[key]==ctr.listaNew[i].metadata.fieldsMeta[z].name){
 							console.log("pronadjen i item i dataset")
 							ctr.myselectedvariable[ctr.listaNew[i].label] = ctr.listaNew[i].metadata.fieldsMeta[z];
+							ctr.listaNew[i].metadata.fieldsMeta[z].selected=true;
 						}
 					}
 				}
