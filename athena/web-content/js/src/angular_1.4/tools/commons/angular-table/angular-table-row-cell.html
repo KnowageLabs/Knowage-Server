@@ -1,4 +1,4 @@
-<div layout-fill ng-click="clickItem(row,row[key])" context-menu  data-target="{{id}}TableContextMenu-{{ $parent.$parent.$parent.$index}}-{{$index}}"  ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+<div ng-click="clickItem(row,row[key])" context-menu  data-target="{{id}}TableContextMenu-{{ $parent.$parent.$parent.$index}}-{{$index}}"  ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 {{row[key]}}
 </div>
 

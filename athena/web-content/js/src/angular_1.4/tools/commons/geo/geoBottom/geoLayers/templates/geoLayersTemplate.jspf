@@ -123,6 +123,7 @@
 						 multi-select=true
 						selected-item=selectedLayerList
 						click-function=toggleLayerFromCatalogue(item)
+						menu-option=menuItem
 		></angular-table>
     </div>
   </md-dialog-content>

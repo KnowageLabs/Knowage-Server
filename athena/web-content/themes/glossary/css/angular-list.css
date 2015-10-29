@@ -64,19 +64,19 @@ i.dragged-item-icon {
 	margin-top: 4px;
 }
 
-#angularListTemplate md-list-item, #angularListTemplate md-list-item button,
-	#angularListTemplate md-list-item .md-list-item-inner {
+#angularListTemplate .dropdown_menu_list md-list-item, #angularListTemplate .dropdown_menu_list md-list-item button,
+	#angularListTemplate .dropdown_menu_list md-list-item .md-list-item-inner {
 /* 	min-height: 15px !important; */
 min-height: 22px !important;
 }
 
-#angularListTemplate md-list-item p ,.p_small_button{
+#angularListTemplate .dropdown_menu_list md-list-item p {
 	line-height: 20px;
 	margin: 3px;
 }
 
 #angularListTemplate button {
-	height: 25px;
+	    height: 22px !important;
 	padding: 0px;
 }
 

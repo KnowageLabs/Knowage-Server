@@ -102,6 +102,30 @@ function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,b
 	    }
 	    
 	    $scope.layerFromCatalogueController=function($scope, $mdDialog) {
+	    	$scope.menuItem=[ 
+	 	               	{
+		               		label : "mod",
+		               		action : function(item,event) {
+//		               			ctr.createNewGlossary(event,item);
+		               			}
+		               	},
+		               	
+		               	{
+		               		label :"mod",
+		               		action : function(item,event) {
+//		               			ctr.CloneGloss(event,item);
+		               			}
+		               	} ,
+		               	
+		               	{
+		               		label :"mod",
+		               		action : function(item,event) {
+//		               			ctr.deleteGlossary(item);
+		               			}
+		               	} 
+		             
+		             ];
+	    	
 	    	
 	    	$scope.layerCatalogueList=[];
 	    	$scope.selectedLayerList=[];
@@ -160,7 +184,13 @@ function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,b
 	    						$scope.layers[categ]={};
 	    					}
 	    					
-	    					$scope.layers[categ].hasOwnProperty(item.id)
+	    					if(	$scope.layers[categ].hasOwnProperty(item.id)){
+	    						//remove
+	    						delete $scope.layers[categ][item.id]
+	    					}else{
+	    						//add
+	    						
+	    					}
 	    					
 	    					
 	    				}
