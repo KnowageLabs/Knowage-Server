@@ -95,6 +95,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			}
 		}
 		
+		ctr.clearSelections();
 	}
 	
 	ctr.createAssociations = function(){
