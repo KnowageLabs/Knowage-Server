@@ -6,6 +6,7 @@
 package it.eng.spagobi.mapcatalogue.bo;
 
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId;
 
 public class GeoLayer {
 
@@ -26,7 +27,7 @@ public class GeoLayer {
 	private int layerOrder;
 	private int category_id;
 	private SbiDomains category;
-	// private SbiGeoLayersRolesId roles;
+	private SbiGeoLayersRolesId roles;
 
 	public GeoLayer() {
 		super();
@@ -176,10 +177,12 @@ public class GeoLayer {
 		this.category_id = category_id;
 	}
 
-	/*
-	 * public SbiGeoLayersRolesId getRoles() { return roles; }
-	 * 
-	 * public void setRoles(SbiGeoLayersRolesId roles) { this.roles = roles; }
-	 */
+	public SbiGeoLayersRolesId getRoles() {
+		return roles;
+	}
+
+	public void setRoles(SbiGeoLayersRolesId roles) {
+		this.roles = roles;
+	}
 
 }

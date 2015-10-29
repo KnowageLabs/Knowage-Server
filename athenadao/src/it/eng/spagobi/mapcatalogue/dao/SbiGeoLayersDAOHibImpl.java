@@ -26,7 +26,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId;
+//import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -226,7 +226,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			SbiGeoLayers hibLayer = new SbiGeoLayers();
-			SbiGeoLayersRolesId hibLayRol = new SbiGeoLayersRolesId();
+			// SbiGeoLayersRolesId hibLayRol = new SbiGeoLayersRolesId();
 			hibLayer.setName(aLayer.getName());
 			if (aLayer.getDescr() == null) {
 				aLayer.setDescr("");

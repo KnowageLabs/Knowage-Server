@@ -30,7 +30,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private int layerOrder;
 	private int category_id;
 	private SbiDomains category;
-	// private SbiGeoLayersRolesId roles;
+	//private SbiGeoLayersRolesId roles;
 
 	public SbiGeoLayers() {
 		super();
@@ -179,12 +179,15 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	public void setCategory_id(int category_id) {
 		this.category_id = category_id;
 	}
+/*
+	public SbiGeoLayersRolesId getRoles() {
+		return roles;
+	}
 
-	/*
-	 * public SbiGeoLayersRolesId getRoles() { return roles; }
-	 * 
-	 * public void setRoles(SbiGeoLayersRolesId roles) { this.roles = roles; }
-	 */
+	public void setRoles(SbiGeoLayersRolesId roles) {
+		this.roles = roles;
+	}
+*/
 	public GeoLayer toGeoLayer() {
 		GeoLayer geo = new GeoLayer();
 		geo.setDescr(getDescr());
@@ -204,7 +207,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		geo.setLayerOrder(layerOrder);
 		geo.setCategory(category);
 		geo.setCategory_id(category_id);
-		// geo.setRoles(roles);
+		//geo.setRoles(roles);
 		return geo;
 	}
 
