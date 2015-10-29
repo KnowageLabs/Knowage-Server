@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -103,6 +104,9 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 			getExecutionSession().setAttributeInSession(ENGINE_INSTANCE, dataMiningEngineInstance);
 
 			try {
+				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 				servletRequest.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception e) {
@@ -125,6 +129,10 @@ public class DataMiningEngineStartAction extends AbstractDataMiningEngineService
 
 			getExecutionSession().setAttributeInSession(STARTUP_ERROR, serviceException);
 			try {
+				// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+				servletRequest = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+				response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+
 				servletRequest.getRequestDispatcher(FAILURE_REQUEST_DISPATCHER_URL).forward(servletRequest, response);
 			} catch (Exception ex) {
 				logger.error("Error starting the Data Mining engine: error while forwarding the execution to the jsp " + FAILURE_REQUEST_DISPATCHER_URL, ex);
