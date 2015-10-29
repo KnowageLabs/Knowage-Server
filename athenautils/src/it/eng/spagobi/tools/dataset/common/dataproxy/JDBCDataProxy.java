@@ -115,16 +115,6 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
 			}
 
-			// If offset=0 and fetchSize=-1 or =0, then we can delegate the calculation of the result number to the reader.
-			// If so, we can save the computation overhead from "resultNumber = getResultNumber(connection);" (line 128),
-			// which can be heavy for a large dataset
-			if (getOffset() == 0 && (getFetchSize() == -1 || getFetchSize() == 0)) {
-				setCalculateResultNumberOnLoad(false);
-				dataReader.setCalculateResultNumberEnabled(true);
-			} else {
-				setCalculateResultNumberOnLoad(true);
-				dataReader.setCalculateResultNumberEnabled(false);
-			}
 
 			boolean inlineViewStrategyUsedSuccessfully = false;
 			int resultNumber = -1;

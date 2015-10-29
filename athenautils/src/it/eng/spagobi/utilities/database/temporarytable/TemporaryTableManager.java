@@ -487,18 +487,7 @@ public class TemporaryTableManager {
 				connection.setAutoCommit(false);
 			}
 			Statement stmt = connection.createStatement();
-			try {
-				int queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.TEMP_TABLE.TIMEOUT"));
-				if (queryTimeout > 0) {
-					logger.debug("Query [" + sql + "] has a timeout set to " + queryTimeout);
-					stmt.setQueryTimeout(queryTimeout);
-				} else {
-					logger.debug("Query [" + sql + "] has no timeout limit");
-				}
-			} catch (NumberFormatException nfe) {
-				logger.debug("The value of SPAGOBI.CACHE.TEMP_TABLE.TIMEOUT config must be an integer");
-				logger.debug("Query [" + sql + "] has no timeout limit");
-			}
+
 
 			logger.debug("Executing sql " + sql);
 			stmt.execute(sql);
