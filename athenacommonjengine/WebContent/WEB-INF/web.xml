@@ -239,6 +239,7 @@ END-CAS -->
 	<!--  RESOURCES								 									   -->
 	<!--  ============================================================================ -->
 
+  <!-- START TOMCAT RES -->
   <resource-ref>
     <description>Spagobi db</description>
     <res-ref-name>jdbc/spagobi</res-ref-name>
@@ -252,6 +253,7 @@ END-CAS -->
     <res-auth>Container</res-auth>
     <res-sharing-scope>Shareable</res-sharing-scope>
   </resource-ref>
+  <!-- END TOMCAT RES -->
 		 
 
 	
