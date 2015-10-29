@@ -73,6 +73,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var dragGroup = config.dragGroup;
 			var dropGroup = config.dropGroup;
 			var axis = config.axis;
+			
 			// Commented (22.10)
 			//var gaugeLabels = config.gaugeLabels;
 			var axisTitleTextboxHidden = config.axisTitleTextboxHidden ? config.axisTitleTextboxHidden : false;
@@ -81,6 +82,23 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			
 			if( ChartColumnsContainerManager.instanceCounter == ChartColumnsContainerManager.COUNTER_LIMIT) {
 				Ext.log('Maximum number of ChartColumnsContainer instances reached');
+				
+				/**
+				 * @author: danristo (danilo.ristovski@mht.net)
+				 */
+				Ext.Msg.show({
+  					title : LN("sbi.chartengine.structure.yAxisPanel.plusButton.maximumNumberOfAxisExceeded.information"),
+  					message : LN("sbi.chartengine.structure.yAxisPanel.plusButton.maximumNumberOfAxisExceeded"),
+  					icon : Ext.Msg.INFO,
+  					closable : false,
+  					buttons : Ext.Msg.OK,
+  					minWidth: 200,
+  					
+  					buttonText : {
+  						ok : LN('sbi.chartengine.generic.ok')
+  					}
+					});
+				
 				return null;
 			}
 	    	
@@ -148,6 +166,14 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					},
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
+//							console.log("aaa");
+//							console.log(node);
+//							console.log(data);
+//							console.log(dropRec);
+//							
+//							//data.copy = true;
+//							
+//							console.log(data);
 							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
@@ -159,25 +185,19 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 													chartType != 'TREEMAP' && chartType != 'HEATMAP';													
 							
 							/**
-							 * Benedetto's code
+							 * Style chosen by the user (the one already set in the Designer).
+							 * 
 							 * @commentBy: danristo (danilo.ristovski@mht.net)
 							 */
-							//var chosenTheme = Sbi.chart.designer.Designer.styleName;
-							//var styledThemeBaseTemplate = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenTheme)[chartType.toLowerCase()];
-//							
-//							console.log('styledThemeBaseTemplate -> ', styledThemeBaseTemplate);
-//							
-//							var applySeries = true;
-//							
-//							var thisTemplate = Sbi.chart.designer.Designer.exportAsJson();
-//							var tempNewMergedTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-//									thisTemplate, 
-//									styledThemeBaseTemplate,
-//									{
-//										applySeries: applySeries
-//									});
-//							
-//							console.log('tempNewMergedTemplate -> ', tempNewMergedTemplate);
+							var chosenStyle = Sbi.chart.designer.Designer.styleName;
+							
+							/**
+							 * Current JSON structure of the document
+							 */							
+							var genericJsonForStyle =  Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle).generic;
+							var specificJsonForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle)[chartType.toLowerCase()];
+							
+							var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
 							
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
@@ -188,17 +208,64 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 									chartType == 'TREEMAP' || chartType == 'HEATMAP')) {
   	  							return false;
   							} 
-							
+  	  					
 							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) {
 								// *_* The original code
 								if(data.view.id != this.id) {
 									
-									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
-									if( !data.records[0].get('serieGroupingFunction')) {
+									/**
+									 * danristo (1) 
+									 */
+									var serieTagExists = combination.CHART.VALUES && combination.CHART.VALUES.SERIE;
+									var serieTooltipTagExists = serieTagExists && combination.CHART.VALUES.SERIE.TOOLTIP;
+									
+									var serieTagParameters = null;
+									var serieTooltipTagParameters = null;
+									
+									/**
+									 * danristo (2)
+									 */
+									(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
+									(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
+									
+									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);														
+									
+//									/**
+//									 * danristo (3) - serieGroupingFunction
+//									 */
+//									var storeForGroupingFunctions = this.grid.columns[1].editor.store;
+//									
+//									if (!data.records[0].get('serieGroupingFunction'))
+//									{
+//										for (i=0; i<storeForGroupingFunctions.length; i++)
+//										{											
+//											if (serieTagExists && serieTagParameters.groupingFunction)
+//											{												
+//												if (storeForGroupingFunctions[i][0] == serieTagParameters.groupingFunction.toUpperCase())
+//												{
+//													data.records[0].set('serieGroupingFunction', serieTagParameters.groupingFunction.toUpperCase());
+//													break;
+//												}
+//											}										
+//										}
+//										
+//										if (!data.records[0].get('serieGroupingFunction'))
+//										{
+//											data.records[0].set('serieGroupingFunction', 'SUM');
+//										}
+//									}
+									
+									if (!data.records[0].get('serieGroupingFunction'))
+									{
 										data.records[0].set('serieGroupingFunction', 'SUM');
 									}
+									
+									/**
+									 * danristo (4) - serieColumn
+									 */
 									if( !data.records[0].get('axisName')) {
 										var serieColumn = data.records[0].get('serieColumn', 'SUM');
+										
 										data.records[0].set('axisName', serieColumn);
 										
 										// (danilo.ristovski@mht.net)								
@@ -210,26 +277,108 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										}										
 									}
 									
-									if( !data.records[0].get('serieGroupingFunction')) {
-										data.records[0].set('serieGroupingFunction', 'SUM');
-									}
+//									/**
+//									 * danristo (5)
+//									 * Current serie types: "" (empty), "line", "bar", "area" (available in
+//									 * SerieStylePopup.js file.
+//									 */
+//									if (!data.records[0].get('serieType'))
+//									{										
+//										if (serieTagExists && serieTagParameters.type)
+//										{												
+//											if (serieTagParameters.type.toLowerCase()=="" || serieTagParameters.type.toLowerCase()=="line" || 
+//													serieTagParameters.type.toLowerCase()=="bar" || serieTagParameters.type.toLowerCase()=="area")
+//											{
+//												data.records[0].set('serieType', serieTagParameters.type.toLowerCase());
+//											}
+//											else
+//											{
+//												data.records[0].set('serieType', "");
+//											}
+//										}
+//									}
+									
+//									/**
+//									 * danristo (6)
+//									 * Current serie order types: "" (empty), "asc", "desc" (available in
+//									 * SerieStylePopup.js file.
+//									 */
+//									if (!data.records[0].get('serieOrderType'))
+//									{										
+//										if (serieTagExists && serieTagParameters.orderType)
+//										{												
+//											if (serieTagParameters.orderType.toLowerCase()=="" || 
+//													serieTagParameters.orderType.toLowerCase()=="asc" || 
+//														serieTagParameters.orderType.toLowerCase()=="desc")
+//											{
+//												data.records[0].set('serieOrderType', serieTagParameters.orderType.toLowerCase());
+//											}
+//											else
+//											{
+//												data.records[0].set('serieOrderType', "");
+//											}
+//										}
+//									}
+									
+									/**
+									 * danristo (7)
+									 */
+									(!data.records[0].get('serieColor')) ? data.records[0].set('serieColor', serieTagParameters.color) : null;									
+									(!data.records[0].get('serieShowValue')) ? data.records[0].set('serieShowValue', serieTagParameters.showValue) : null;
+									(!data.records[0].get('seriePrecision')) ? data.records[0].set('seriePrecision', serieTagParameters.precision) : null;
+									(!data.records[0].get('seriePrefixChar')) ? data.records[0].set('seriePrefixChar', serieTagParameters.prefixChar) : null;
+									(!data.records[0].get('seriePostfixChar')) ? data.records[0].set('seriePostfixChar', serieTagParameters.postfixChar) : null;
+									
+									(!data.records[0].get('serieTooltipTemplateHtml')) ? 
+											data.records[0].set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
+									(!data.records[0].get('serieTooltipBackgroundColor')) ? 
+											data.records[0].set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
+											
+									var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
+									
+									for (j=0; j<splitSerieTooltipStyle.length; j++)
+									{
+										(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !data.records[0].get('serieTooltipColor')) ? 
+												(data.records[0].set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
+												
+										(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !data.records[0].get('serieTooltipFont')) ? 
+												(data.records[0].set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
+												
+										(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !data.records[0].get('serieTooltipFontWeight')) ? 
+												(data.records[0].set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
+												
+										(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !data.records[0].get('serieTooltipFontSize')) ? 
+												(data.records[0].set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
+												
+										(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !data.records[0].get('serieTooltipAlign')) ? 
+												(data.records[0].set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
+									}	
+									
+									/**
+									 * danristo (8)
+									 * If the chart type is GAUGE: we have additional tags in the style XML
+									 */
+									var serieDialTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DIAL;
+									var serieDataLabelsTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DATA_LABELS;
+									
+									var serieDialTagParameters = null;
+									var serieDataLabelsTagParameters = null;
+									
+									(serieDialTagExists) ? (serieDialTagParameters = serieTagParameters.DIAL) : null;
+									(serieDataLabelsTagExists) ? (serieDataLabelsTagParameters = serieTagParameters.DATA_LABELS) : null;
+									
+									// DIAL properties
+									(!data.records[0].get('backgroundColorDial') && serieDialTagExists) ? data.records[0].set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
+									
+									// DATA_LABELS properties
+									(!data.records[0].get('yPositionDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
+									(!data.records[0].get('formatDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
+									(!data.records[0].get('colorDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;									
 								}	
 								
-//								if (chartType == "GAUGE") 
-//								{
-//									console.log(data.records[0]);
-//								}
-								
-							} else  {
+							} else  {								
 								return false;
 							}
-							
-//							if (chartType == 'GAUGE') {
-////								this.ownerCt.ownerCt.fireEvent("newSerieItem", data.records[0]);
-//							
-//								var chartLeftAxisesContainer = Ext.getCmp('chartLeftAxisesContainer');
-//								chartLeftAxisesContainer.fireEvent("newSerieItem", data.records[0]);
-//							}
 						}
 					}
 				},
