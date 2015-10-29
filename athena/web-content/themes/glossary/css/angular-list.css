@@ -255,8 +255,8 @@ ol.angular-ui-tree-nodes li {
 }
 
 #angularListTemplate md-fab-speed-dial md-fab-trigger button, #angularListTemplate button.singleActionButton {
-  height: 15px;
-  width: 15px;
+    height: 15px!important;
+    width: 15px !important;
   min-height: 0;
  
 }
