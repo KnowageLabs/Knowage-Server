@@ -8,3 +8,9 @@
 	background-color: #0099CC;
 	opacity:0.6;
 }
+
+.table-chiara{
+	border-collapse: collapse;
+	 border: 1px solid #0099CC;
+	 color:red;
+}

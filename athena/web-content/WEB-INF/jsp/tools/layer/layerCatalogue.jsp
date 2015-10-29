@@ -17,11 +17,11 @@
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- non c'entra	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
-<link rel="stylesheet" type="text/css"
+ <link rel="stylesheet" type="text/css"
 	href="/athena/themes/glossary/css/tree-style.css">
-<link rel="stylesheet" type="text/css"
+ <link rel="stylesheet" type="text/css"
 	href="/athena/themes/glossary/css/generalStyle.css">
-<link rel="stylesheet" type="text/css"
+ <link rel="stylesheet" type="text/css"
 	href="/athena/themes/layer/css/layerStyle.css">
 <!--  <link rel="stylesheet" type="text/css"
 	href="/athena/themes/glossary/css/gestione_glossario.css">-->
@@ -200,7 +200,7 @@
 					</div>
 					<div flex=90>
 						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.id")}}</label>
-						<input ng-model="selectedLayer.layerId2"
+						<input ng-model="selectedLayer.layerIdentify"
 							ng-change="isRequired=true" ng-required="isRequired"
 							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
@@ -266,7 +266,7 @@
 				</div>
 
 				<!-- role selection work in progress.... -->
-				<!--  <div layout="row" layout-wrap>
+			<!--    <div layout="row" layout-wrap>
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
 					</div>
@@ -278,9 +278,9 @@
 						</md-input-container>
 					</div>
 					
-					-->	
+					
 				</div>
-				
+				-->	
 				
 				</md-content>
 

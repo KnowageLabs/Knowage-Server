@@ -384,8 +384,8 @@ function funzione(translate, restServices, $scope, $mdDialog, $mdToast) {
 	$scope.loadCategory();
 	
 	
-	/*
-	$scope.showRoles=function(){
+	
+	/*$scope.showRoles=function(){
 		restServices.get("layers", "getroles","").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
