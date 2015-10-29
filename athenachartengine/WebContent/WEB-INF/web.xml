@@ -42,6 +42,7 @@
     </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
+  <!-- START ProxyTicketReceptor -->
   <servlet>
     <servlet-name>ProxyTicketReceptor</servlet-name>
     <servlet-class>edu.yale.its.tp.cas.proxy.ProxyTicketReceptor</servlet-class>
@@ -50,6 +51,7 @@
       <param-value>https://localhost:8443/exo-cas-2/proxy</param-value>
     </init-param>
   </servlet>
+  <!-- END ProxyTicketReceptor -->
   <servlet>
     <servlet-name>Resteasy</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
@@ -61,10 +63,13 @@
   <welcome-file-list>
     <welcome-file>/html/index.html</welcome-file>
   </welcome-file-list>
+  
+  <!-- START TOMCAT RES -->
   <resource-ref>
     <res-ref-name>wm/SpagoWorkManager</res-ref-name>
     <res-type>commonj.work.WorkManager</res-type>
     <res-auth>Container</res-auth>
     <res-sharing-scope>Shareable</res-sharing-scope>
   </resource-ref>
+  <!-- END TOMCAT RES -->
 </web-app>

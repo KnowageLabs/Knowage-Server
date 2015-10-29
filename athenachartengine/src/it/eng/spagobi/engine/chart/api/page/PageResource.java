@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -152,6 +154,10 @@ public class PageResource extends AbstractChartEngineResource {
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 				break;
 			}
+
+			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
@@ -285,6 +291,10 @@ public class PageResource extends AbstractChartEngineResource {
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 				break;
 			}
+
+			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
+			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 				request.getRequestDispatcher(dispatchUrl).include(request, response);
