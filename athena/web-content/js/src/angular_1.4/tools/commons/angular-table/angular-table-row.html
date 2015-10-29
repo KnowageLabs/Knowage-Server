@@ -1,8 +1,8 @@
 <td ng-if="multiSelect==true" class="multiSelectBox">
-	<md-checkbox ng-checked="isSelected(row)" ng-click="toggleMultiSelect(row)" aria-label="selected item checked"> </md-checkbox>
+	<md-checkbox ng-checked="isSelected(row)" ng-click="clickItem(row)" aria-label="selected item checked"> </md-checkbox>
 </td>
 
-<td ng-if="columns==undefined || columns.length==0" ng-repeat="(key,val) in row" ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row-cell.html'" ng-class="{'selectedRowItem': (isSelected(row) && highlightsSelectedItem==true)}"></td>
+<td ng-if="columns==undefined || columns.length==0" ng-repeat="(key,val) in row" ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row-cell.html'" ng-class="{'selectedRowItem': (isSelected(row) && highlightsSelectedItem==true)}"</td>
 <td ng-if="!(columns==undefined || columns.length==0)" ng-repeat="key in columns" ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row-cell.html'" ng-class="{'selectedRowItem': (isSelected(row) && highlightsSelectedItem==true)}"></td>
 
 <td ng-if="speedMenuOption!=undefined && speedMenuOption.length>0" >

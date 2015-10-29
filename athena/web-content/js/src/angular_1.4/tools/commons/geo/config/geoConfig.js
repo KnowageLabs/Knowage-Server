@@ -26,7 +26,7 @@ geoM.factory('baseLayer', function() {
 					        "OpenStreetMap": {
 					            "type": "TMS",
 					            "category":"Default",
-					            "name": "OpenStreetMap",
+					            "label": "OpenStreetMap",
 					            "url": "http://tile.openstreetmap.org/",
 					            "options": {
 					                "type": "png",
@@ -36,7 +36,7 @@ geoM.factory('baseLayer', function() {
 					        "OSM": {
 					            "type": "OSM",
 					            "category":"Default",
-					            "name":"OSM"
+					            "label":"OSM"
 					        }
 					    }
 					};
@@ -55,7 +55,7 @@ geoM.service('layerServices', function(baseLayer, $map,$http) {
 	}
 	
 	this.layerIsLoaded=function(layer){
-		return (this.loadedLayerOBJ[layer.id]!=undefined);
+		return (this.loadedLayerOBJ[layer.layerId]!=undefined);
 	}
 
 	this.alterBaseLayer = function(layerConf) {
@@ -73,15 +73,15 @@ geoM.service('layerServices', function(baseLayer, $map,$http) {
 
 	this.toggleLayer = function(layerConf) {
 		console.log("addLayer");
-		if(this.loadedLayer[layerConf.id]!=undefined){
-			$map.removeLayer(this.loadedLayer[layerConf.id]);
-			delete this.loadedLayer[layerConf.id];
-			delete this.loadedLayerOBJ[layerConf.id];
+		if(this.loadedLayer[layerConf.layerId]!=undefined){
+			$map.removeLayer(this.loadedLayer[layerConf.layerId]);
+			delete this.loadedLayer[layerConf.layerId];
+			delete this.loadedLayerOBJ[layerConf.layerId];
 		}else{
 			var layer=this.createLayer(layerConf,false);
 			if(layer!=undefined){
-				this.loadedLayer[layerConf.id]=layer;
-				this.loadedLayerOBJ[layerConf.id]=layerConf;
+				this.loadedLayer[layerConf.layerId]=layer;
+				this.loadedLayerOBJ[layerConf.layerId]=layerConf;
 				$map.addLayer(layer);
 				$map.render();
 			}

@@ -63,11 +63,11 @@ position: relative;
   margin-top: 14px;
 }
 
-.selectLabel {
-  margin-top: -25px;
-  color: rgba(0,0,0,0.54);
-  font-size: 10px;
-}
+/* .selectLabel { */
+/*   margin-top: -25px; */
+/*   color: rgba(0,0,0,0.54); */
+/*   font-size: 10px; */
+/* } */
 .wordForm md-select md-select-label{
 	width: 95%;
 	}

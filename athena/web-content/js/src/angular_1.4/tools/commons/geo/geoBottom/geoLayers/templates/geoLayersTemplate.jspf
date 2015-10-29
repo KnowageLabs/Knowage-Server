@@ -39,7 +39,7 @@
 				<md-list class="indicatorList whiteBG" ng-show="baseLayerCategoryExpander[CatKey]">
 					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)" >  
 						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="layerServices.isSelectedBaseLayer(val)"></md-icon > 
-						{{key}}
+						{{val.label}}
 					</md-list-item>
 				</md-list>
 			</div>
@@ -67,7 +67,7 @@
 				<md-list class="indicatorList whiteBG" ng-show=" LayerCategoryExpander[CatKey]">
 					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" >  
 						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="layerServices.layerIsLoaded(val)"></md-icon > 
-						{{key}}
+						{{val.label}}
 					</md-list-item>
 				</md-list>
 			</div>
@@ -116,8 +116,8 @@
  	  <angular-table flex
 						 id="layerCatalogue"
 						 ng-model=layerCatalogueList
- 						 columns='["layerLabel","type","layerURL"]'
-						 columns-search='["layerLabel","type"]'
+ 						 columns='["layerLabel","type","layerURL","baseLayer"]'
+						 columns-search='["layerLabel","type","baseLayer"]'
 						 highlights-selected-item=true
 						 show-search-bar=true
 						 multi-select=true

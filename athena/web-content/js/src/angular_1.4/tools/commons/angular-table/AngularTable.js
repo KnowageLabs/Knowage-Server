@@ -59,22 +59,21 @@ angular
 						}
 					}
 				}).filter('filterBySpecificColumns', function(){
-					 return function(items,columnSearch,searchTerm,localSearch) {
-						
+					 return function(items,columnsSearch,searchTerm,localSearch) { 
 						 if(searchTerm==undefined || searchTerm==""){
 							 return items;
 						 }
 						  var filtered = [];
 						  for(var item in items){
-							if(columnSearch!=undefined && columnSearch.length!=0){
-								for( var cols in columnSearch){
-									if (items[item][columnSearch[cols]].indexOf(searchTerm) !== -1) {
+							if(columnsSearch!=undefined && columnsSearch.length!=0){
+								for( var cols in columnsSearch){
+									if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
 										filtered.push(items[item]);
 										break;
 									}
 								};
 							}else{
-								if (JSON.stringify(items[item]).indexOf(searchTerm) !== -1) {
+								if (JSON.stringify(items[item]).toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
 									filtered.push(items[item]);
 								}
 							}
@@ -98,8 +97,8 @@ function TableControllerFunction($scope, translate,$timeout,$filter) {
 	
 	
 	
-	$scope.searchItem=function(searchVal){
-		if($scope.localSearch){
+	$scope.searchItem=function(searchVal){ 
+		if($scope.searchItem){
 			$scope.searchFastVal=searchVal;
 		}else{
 		$scope.tmpWordSearch = searchVal;
@@ -114,10 +113,19 @@ function TableControllerFunction($scope, translate,$timeout,$filter) {
 	}
 	}
 	
-
+$scope.indexInList=function(list,item){
+	for( var i=0;i<list.length;i++){
+		if(angular.equals(list[i], item)){
+			return i;
+		}
+	}
+	 return -1;
+}
+	
 	$scope.isSelected=function(item){
 		if($scope.multiSelect){
-			 return $scope.selectedItem.indexOf(item) > -1;
+			return $scope.indexInList($scope.selectedItem,item) >-1;
+			
 		}else{
 			return angular.equals($scope.selectedItem, item) ;
 		}
@@ -144,7 +152,7 @@ function TableControllerFunction($scope, translate,$timeout,$filter) {
 		var searchBoxHeight= $scope.showSearchBar==true? angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .searchBarList'))[0].offsetHeight : 0;
 		var paginBoxHeight= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .box_pagination_list'))[0] == undefined ? 18 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .box_pagination_list'))[0].offsetHeight;
 		paginBoxHeight=paginBoxHeight==0? 18:paginBoxHeight;
-		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .rowItem'))[0]==undefined? 21 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .rowItem'))[0].offsetHeight;
+		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .rowItem'))[0]==undefined? 29 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .rowItem'))[0].offsetHeight;
 		var headButtonHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .thButton'))[0]==undefined? 21 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .thButton'))[0].offsetHeight;
 		
 		var nit = parseInt((boxHeight - searchBoxHeight - paginBoxHeight-headButtonHeight-16) / listItemTemplBoxHeight);
@@ -199,7 +207,7 @@ function TableControllerFunction($scope, translate,$timeout,$filter) {
 	
 	 
 	 $scope.toggleMultiSelect=function(row){
-		 var index=$scope.selectedItem.indexOf(row)
+		 var index=$scope.indexInList($scope.selectedItem,row) ;
 		 if(index>-1){
 			 $scope.selectedItem.splice(index, 1)
 		 }else{

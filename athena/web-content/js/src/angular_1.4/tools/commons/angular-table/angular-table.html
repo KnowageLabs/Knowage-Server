@@ -11,11 +11,12 @@
 
 	<table  flex>
 		<th ng-if="multiSelect==true" width="26px"></th>
-<!-- 		<th class="thButton" ng-if="columns==undefined || columns.length==0" ng-repeat="(key,val) in ngModel[0]"><md-button class="md-raised" ng-click="orderBy(key)" ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}" >{{key}}</md-button></th> -->
-		<th   ng-if="columns==undefined || columns.length==0" ng-repeat="(key,val) in ngModel[0]">
-			<div   ng-click="orderBy(key)" ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}" >
-			{{key}}
-			</div>
+
+		
+		<th class="thButton" ng-if="(columns==undefined || columns.length==0)"  ng-repeat="(key,val) in ngModel[0]">
+			<md-button class="md-raised" ng-click="orderBy(key)" >
+			{{val}}<md-icon ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}"></md-icon>
+			</md-button>
 		</th>
 		
 		<th class="thButton" ng-if="!(columns==undefined || columns.length==0)" ng-repeat="val in columns">
@@ -23,6 +24,7 @@
 			{{val}}<md-icon ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}"></md-icon>
 			</md-button>
 		</th>
+		
 		<th  ng-if="speedMenuOption!=undefined && speedMenuOption.length>0" width="{{speedMenuOption.length*30}} px"></th>	
 		
 		<tr ng-if='SyncPagination && paginate' class="rowItem" dir-paginate="row in ngModel | filterBySpecificColumns:columnsSearch:searchFastVal | orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
@@ -88,6 +90,7 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+	line-height: 26px;
 	}
 
 #angularTableTemplate table th button {
@@ -109,7 +112,7 @@
 
 #angularTableTemplate table, #angularTableTemplate td {
 	border-collapse: collapse;
-	 padding: 4px;
+	 padding: 0 4px;
 	 border : 1px solid #ddd;
 /*     border-bottom: 1px solid #ddd; */
 }
@@ -118,8 +121,8 @@ padding: 0px;}
 
 
 #angularTableTemplate td.selectedRowItem {
- background-color:#005080;
- color:#DDDDDD;
+ background-color:#9CC3DA;
+/*  color:#DDDDDD; */
 }
 
 #angularTableTemplate tr.rowItem:hover {
@@ -226,7 +229,7 @@ margin-top: 10px;
     height: 20px;
     width: 20px;
     min-height: 0;
-    margin: 0 5px;
+    margin: 0 ;
         padding: 0;
     }
     
@@ -292,7 +295,10 @@ min-height: 22px !important;
 }
 
 #angularTableTemplate .multiSelectBox  md-checkbox{
-margin : 0px 5px;
-padding: 0;
+margin : 0px ;
+}
+
+#angularTableTemplate .multiSelectBox {
+    background-color: white;
 }
 </style>
