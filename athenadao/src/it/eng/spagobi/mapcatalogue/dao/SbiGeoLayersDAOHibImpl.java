@@ -5,12 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,6 +20,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -154,11 +155,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setLayerDef(null);
 			hibLayer.setLayerLabel(aLayer.getLayerLabel());
 			hibLayer.setLayerName(aLayer.getLayerName());
-			hibLayer.setLayerId2(aLayer.getLayerId2());
+			hibLayer.setLayerIdentify(aLayer.getLayerIdentify());
 			hibLayer.setLayerURL(aLayer.getLayerURL());
 			hibLayer.setLayerOptions(aLayer.getLayerOptions());
 			hibLayer.setLayerParams(aLayer.getLayerParams());
 			hibLayer.setLayerOrder(aLayer.getLayerOrder());
+			hibLayer.setCategory(aLayer.getCategory());
+			hibLayer.setCategory_id(aLayer.getCategory_id());
 			String path = "";
 
 			if (aLayer.getPathFile() != null) {
@@ -223,6 +226,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			SbiGeoLayers hibLayer = new SbiGeoLayers();
+			SbiGeoLayersRolesId hibLayRol = new SbiGeoLayersRolesId();
 			hibLayer.setName(aLayer.getName());
 			if (aLayer.getDescr() == null) {
 				aLayer.setDescr("");
@@ -234,11 +238,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setLayerDef(null);
 			hibLayer.setLayerLabel(aLayer.getLayerLabel());
 			hibLayer.setLayerName(aLayer.getLayerName());
-			hibLayer.setLayerId2(aLayer.getLayerId2());
+			hibLayer.setLayerIdentify(aLayer.getLayerIdentify());
 			hibLayer.setLayerURL(aLayer.getLayerURL());
 			hibLayer.setLayerOptions(aLayer.getLayerOptions());
 			hibLayer.setLayerParams(aLayer.getLayerParams());
 			hibLayer.setLayerOrder(aLayer.getLayerOrder());
+			hibLayer.setCategory_id(aLayer.getCategory_id());
 			String path = null;
 			if (aLayer.getPathFile() != null) {
 				path = aLayer.getPathFile() + getTenant() + File.separator + "Layer" + File.separator;
@@ -249,6 +254,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setPathFile(path);
 			updateSbiCommonInfo4Insert(hibLayer);
 			id = (Integer) tmpSession.save(hibLayer);
+
+			// setto i ruoli utenti scelti
+			// hibLayRol.setLayer(aLayer.getRoles().getLayer());
+			// hibLayRol.setRole(aLayer.getRoles().getRole());
 
 			tx.commit();
 

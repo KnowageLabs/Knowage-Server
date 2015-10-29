@@ -74,7 +74,7 @@
 		<property name="layerName" type="string">
 			<column name="LAYER_NAME" />
 		</property>
-		<property name="layerId2" type="string">
+		<property name="layerIdentify" type="string">
 			<column name="LAYER_IDENTIFY" />
 		</property>
 		<property name="layerURL" type="string">
@@ -89,6 +89,12 @@
 		<property name="layerOrder" type="int">
 			<column name="LAYER_ORDER" />
 		</property>
+		<property name="category_id" type="integer">
+            <column name="GEO_CATEGORY"  />
+        </property>
+		<many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false" update="false" insert="false" fetch="select">
+            <column name="GEO_CATEGORY" not-null="false" />
+        </many-to-one>
 		<filter name="tenantFilter" condition="organization=:tenant" />
 	</class>
 	<filter-def name="tenantFilter">

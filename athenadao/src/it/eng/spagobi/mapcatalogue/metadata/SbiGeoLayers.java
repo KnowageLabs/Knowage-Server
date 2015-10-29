@@ -1,16 +1,16 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.mapcatalogue.metadata;
 
+import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 
 public class SbiGeoLayers extends SbiHibernateModel {
-
 
 	private static final long serialVersionUID = 9129008218416362745L;
 	private int layerId;
@@ -23,13 +23,16 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private String pathFile;
 	private String layerLabel;
 	private String layerName;
-	private String layerId2;
+	private String layerIdentify;
 	private String layerURL;
 	private String layerOptions;
 	private String layerParams;
 	private int layerOrder;
+	private int category_id;
+	private SbiDomains category;
+	// private SbiGeoLayersRolesId roles;
 
-	public SbiGeoLayers(){
+	public SbiGeoLayers() {
 		super();
 	}
 
@@ -81,13 +84,15 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerDef = layerDef;
 	}
 
-	public void setPathFile(String path){
-		this.pathFile =path;
+	public void setPathFile(String path) {
+		this.pathFile = path;
 
 	}
-	public String getPathFile(){
+
+	public String getPathFile() {
 		return pathFile;
 	}
+
 	/**
 	 * @return the isBaseLayer
 	 */
@@ -96,12 +101,12 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param isBaseLayer the isBaseLayer to set
+	 * @param isBaseLayer
+	 *            the isBaseLayer to set
 	 */
 	public void setBaseLayer(boolean baseLayer) {
 		this.baseLayer = baseLayer;
 	}
-
 
 	public String getLayerLabel() {
 		return layerLabel;
@@ -119,13 +124,12 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerName = layerName;
 	}
 
-
-	public String getLayerId2() {
-		return layerId2;
+	public String getLayerIdentify() {
+		return layerIdentify;
 	}
 
-	public void setLayerId2(String layerId2) {
-		this.layerId2 = layerId2;
+	public void setLayerIdentify(String layerIdentify) {
+		this.layerIdentify = layerIdentify;
 	}
 
 	public String getLayerURL() {
@@ -151,7 +155,6 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	public void setLayerParams(String layerParams) {
 		this.layerParams = layerParams;
 	}
-	
 
 	public int getLayerOrder() {
 		return layerOrder;
@@ -161,7 +164,28 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerOrder = layerOrder;
 	}
 
-	public GeoLayer toGeoLayer(){	
+	public SbiDomains getCategory() {
+		return category;
+	}
+
+	public void setCategory(SbiDomains category) {
+		this.category = category;
+	}
+
+	public int getCategory_id() {
+		return category_id;
+	}
+
+	public void setCategory_id(int category_id) {
+		this.category_id = category_id;
+	}
+
+	/*
+	 * public SbiGeoLayersRolesId getRoles() { return roles; }
+	 * 
+	 * public void setRoles(SbiGeoLayersRolesId roles) { this.roles = roles; }
+	 */
+	public GeoLayer toGeoLayer() {
 		GeoLayer geo = new GeoLayer();
 		geo.setDescr(getDescr());
 		geo.setLabel(label);
@@ -173,11 +197,14 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		geo.setPathFile(pathFile);
 		geo.setLayerLabel(layerLabel);
 		geo.setLayerName(layerName);
-		geo.setLayerId2(layerId2);
+		geo.setLayerIdentify(layerIdentify);
 		geo.setLayerURL(layerURL);
 		geo.setLayerOptions(layerOptions);
 		geo.setLayerParams(layerParams);
 		geo.setLayerOrder(layerOrder);
+		geo.setCategory(category);
+		geo.setCategory_id(category_id);
+		// geo.setRoles(roles);
 		return geo;
 	}
 

@@ -1,13 +1,13 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.bo;
 
+import it.eng.spagobi.commons.metadata.SbiDomains;
 
-
-public class GeoLayer{
+public class GeoLayer {
 
 	private int layerId;
 	private String name;
@@ -19,12 +19,15 @@ public class GeoLayer{
 	private String pathFile;
 	private String layerLabel;
 	private String layerName;
-	private String layerId2;
+	private String layerIdentify;
 	private String layerURL;
 	private String layerOptions;
 	private String layerParams;
 	private int layerOrder;
-	
+	private int category_id;
+	private SbiDomains category;
+	// private SbiGeoLayersRolesId roles;
+
 	public GeoLayer() {
 		super();
 	}
@@ -81,7 +84,8 @@ public class GeoLayer{
 	}
 
 	/**
-	 * @param isBaseLayer the isBaseLayer to set
+	 * @param isBaseLayer
+	 *            the isBaseLayer to set
 	 */
 	public void setBaseLayer(boolean baseLayer) {
 		this.baseLayer = baseLayer;
@@ -90,7 +94,7 @@ public class GeoLayer{
 	public void setLayerDef(byte[] layerDef) {
 		this.layerDef = layerDef;
 	}
-	//Chiara add this functions
+	// Chiara add this functions
 
 	public String getPathFile() {
 		return pathFile;
@@ -99,6 +103,7 @@ public class GeoLayer{
 	public void setPathFile(String pathFile) {
 		this.pathFile = pathFile;
 	}
+
 	public String getLayerLabel() {
 		return layerLabel;
 	}
@@ -115,16 +120,13 @@ public class GeoLayer{
 		this.layerName = layerName;
 	}
 
-
-
-	public String getLayerId2() {
-		return layerId2;
+	public String getLayerIdentify() {
+		return layerIdentify;
 	}
 
-	public void setLayerId2(String layerId2) {
-		this.layerId2 = layerId2;
+	public void setLayerIdentify(String layerIdentify) {
+		this.layerIdentify = layerIdentify;
 	}
-
 
 	public String getLayerURL() {
 		return layerURL;
@@ -158,6 +160,26 @@ public class GeoLayer{
 		this.layerOrder = layerOrder;
 	}
 
+	public SbiDomains getCategory() {
+		return category;
+	}
 
-	
+	public void setCategory(SbiDomains category) {
+		this.category = category;
+	}
+
+	public int getCategory_id() {
+		return category_id;
+	}
+
+	public void setCategory_id(int category_id) {
+		this.category_id = category_id;
+	}
+
+	/*
+	 * public SbiGeoLayersRolesId getRoles() { return roles; }
+	 * 
+	 * public void setRoles(SbiGeoLayersRolesId roles) { this.roles = roles; }
+	 */
+
 }
