@@ -12,6 +12,9 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -31,6 +34,16 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public class HMACFilter implements Filter {
+
+	public static final String AUTHORIZATION_USER_HEADER = "Authorization";
+
+	public static List<String> HEADERS_SIGNED = Arrays.asList(AUTHORIZATION_USER_HEADER);
+
+	static {
+		// ensure that must be sorted and not modifiable
+		Collections.sort(HEADERS_SIGNED);
+		HEADERS_SIGNED = Collections.unmodifiableList(HEADERS_SIGNED);
+	}
 
 	public static final String HMAC_JNDI_LOOKUP = "java:/comp/env/hmacKey";
 
@@ -91,8 +104,22 @@ public class HMACFilter implements Filter {
 		String queryPath = getQueryPath(req);
 		String paramsString = getParamsString(req);
 		String uniqueToken = getUniqueToken(req);
-		String signature = sign(queryPath, paramsString, body, uniqueToken, key);
+		String headers = getHeadersString(req);
+		String signature = sign(queryPath, paramsString, body, uniqueToken, key, headers);
 		return signature;
+	}
+
+	private static String getHeadersString(HttpServletRequest req) {
+		StringBuilder res = new StringBuilder();
+		for (String header : HEADERS_SIGNED) {
+			String value = req.getHeader(header);
+			if (value == null) {
+				continue;
+			}
+			res.append(header);
+			res.append(value);
+		}
+		return res.toString();
 	}
 
 	private String getParamsString(HttpServletRequest req) {
@@ -104,11 +131,12 @@ public class HMACFilter implements Filter {
 		return req.getHeader(HMAC_SIGNATURE_HEADER);
 	}
 
-	public static String sign(String queryPath, String paramsString, String body, String uniqueToken, String key) throws IOException {
+	public static String sign(String queryPath, String paramsString, String body, String uniqueToken, String key, String headers) throws IOException {
 		StringBuilder res = new StringBuilder(queryPath);
 		res.append(paramsString);
 		res.append(body);
 		res.append(uniqueToken);
+		res.append(headers);
 		res.append(key);
 		String s = res.toString();
 		return StringUtilities.sha256(s);

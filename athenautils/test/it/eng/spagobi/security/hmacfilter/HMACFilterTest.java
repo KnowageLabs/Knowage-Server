@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -43,10 +44,20 @@ public class HMACFilterTest {
 	}
 
 	public static void startHMACFilterServer() throws Exception {
+		startHMACFilterServer(null);
+	}
+
+	public static void startHMACFilterServer(Class<? extends Filter> filterManInTheMiddle) throws Exception {
 		server = new Server(8080);
 		ServletContextHandler context = new ServletContextHandler();
 		ServletHolder defaultServ = new ServletHolder("default", DummyServlet.class);
 		context.addServlet(defaultServ, "/hmac");
+
+		if (filterManInTheMiddle != null) {
+			FilterHolder fh = new FilterHolder(filterManInTheMiddle);
+			context.addFilter(fh, "/hmac", EnumSet.of(DispatcherType.REQUEST));
+		}
+
 		FilterHolder fh = new FilterHolder(HMACFilter.class);
 		fh.setInitParameter(HMACFilter.KEY_CONFIG_NAME, key);
 		context.addFilter(fh, "/hmac", EnumSet.of(DispatcherType.REQUEST));

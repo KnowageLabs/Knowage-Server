@@ -1,7 +1,16 @@
 package it.eng.spagobi.security.hmacfilter;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.resteasy.client.ClientRequest;
@@ -36,6 +45,8 @@ public class HMACFilterAuthenticationProviderTest {
 	public void setUp() throws Exception {
 		DummyServlet.arrived = false;
 		DummyServlet.body = null;
+		HeaderChanges.changed = false;
+
 		provider = new HMACFilterAuthenticationProvider(HMACFilterTest.key, new SystemTimeHMACTokenValidator(HMACFilter.MAX_TIME_DELTA_DEFAULT_MS));
 		httpExecutor = new ApacheHttpClientExecutor();
 	}
@@ -45,6 +56,8 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header("r", "f");
 		provider.provideAuthentication(request);
 		ClientResponse<?> resp = request.get();
 		Assert.assertEquals(200, resp.getStatus());
@@ -56,6 +69,8 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header("r", "f");
 		provider = new HMACFilterAuthenticationProvider("cde", new SystemTimeHMACTokenValidator(HMACFilter.MAX_TIME_DELTA_DEFAULT_MS));
 		provider.provideAuthentication(request);
 		ClientResponse<?> resp = request.get();
@@ -64,10 +79,64 @@ public class HMACFilterAuthenticationProviderTest {
 	}
 
 	@Test
+	public void testProvideAuthenticationGetFailUserManInTheMiddle() throws Exception {
+		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
+		request.queryParameter("a", "b");
+		request.queryParameter("c", "d");
+		request.header("r", "f");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		provider.provideAuthentication(request);
+		HMACFilterTest.stopHMACFilterServer();
+		HMACFilterTest.startHMACFilterServer(HeaderChanges.class);
+
+		ClientResponse<?> resp;
+		try {
+			resp = request.get();
+		} finally {
+			HMACFilterTest.stopHMACFilterServer();
+			HMACFilterTest.startHMACFilterServer();
+		}
+		Assert.assertTrue(HeaderChanges.changed);
+		Assert.assertTrue(resp.getStatus() >= 400);
+		Assert.assertFalse(DummyServlet.arrived);
+	}
+
+	public static class HeaderChanges implements Filter {
+
+		public static boolean changed;
+
+		@Override
+		public void destroy() {
+		}
+
+		@Override
+		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+			HttpServletRequestWrapper hsrw = new HttpServletRequestWrapper((HttpServletRequest) request) {
+				@Override
+				public String getHeader(String name) {
+					if (name.equals(HMACFilter.HEADERS_SIGNED.get(0))) {
+						changed = true;
+						return "manInTheMiddle";
+					}
+					return super.getHeader(name);
+				}
+			};
+			chain.doFilter(hsrw, response);
+		}
+
+		@Override
+		public void init(FilterConfig filterConfig) throws ServletException {
+		}
+
+	}
+
+	@Test
 	public void testProvideAuthenticationGetFailToken() throws Exception {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b");
 		request.queryParameter("c", "d");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header("r", "f");
 		provider = new HMACFilterAuthenticationProvider(HMACFilterTest.key, new HMACTokenValidator() {
 
 			@Override
@@ -91,6 +160,8 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b"); // with also params in URI
 		request.queryParameter("c", "d");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header("r", "f");
 		request.body(MediaType.TEXT_PLAIN, "k=t&r=f");
 		provider.provideAuthentication(request);
 		ClientResponse<?> resp = request.post();
@@ -103,6 +174,8 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b"); // with also params in URI
 		request.queryParameter("c", "d");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header("r", "f");
 		request.body(MediaType.TEXT_PLAIN, "abcdhjk");
 		// without providing authentication
 		ClientResponse<?> resp = request.post();
@@ -115,6 +188,8 @@ public class HMACFilterAuthenticationProviderTest {
 		ClientRequest request = new ClientRequest("http://localhost:8080/hmac", httpExecutor);
 		request.queryParameter("a", "b"); // with also params in URI
 		request.queryParameter("c", "d");
+		request.header(HMACFilter.HEADERS_SIGNED.get(0), "z");
+		request.header("r", "f");
 		byte[] body = new byte[] { 12, 100, 24, 38 };
 		request.body(MediaType.APPLICATION_OCTET_STREAM_TYPE, new ByteArrayInputStream(body));
 		provider.provideAuthentication(request);

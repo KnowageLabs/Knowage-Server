@@ -8,6 +8,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.jboss.resteasy.client.ClientRequest;
 
@@ -45,19 +48,36 @@ public class HMACFilterAuthenticationProvider {
 
 		String token = validator.generateToken();
 		Assert.assertNotNull(token, "token");
-		req.header(HMACFilter.HMAC_TOKEN_HEADER, token);
 		String signature;
 		try {
 			signature = getSignature(req, token);
 		} catch (Exception e) {
 			throw new HMACSecurityException("Problems while signing the request", e);
 		}
+
+		req.header(HMACFilter.HMAC_TOKEN_HEADER, token);
 		req.header(HMACFilter.HMAC_SIGNATURE_HEADER, signature);
 	}
 
 	private String getSignature(ClientRequest req, String token) throws IOException, Exception {
-		String res = HMACFilter.sign(getQueryPath(req), getParamsString(req), getBody(req), token, key);
+		String res = HMACFilter.sign(getQueryPath(req), getParamsString(req), getBody(req), token, key, getHeaders(req));
 		return res;
+	}
+
+	private static String getHeaders(ClientRequest req) {
+		MultivaluedMap<String, String> headers = req.getHeaders();
+		StringBuilder res = new StringBuilder();
+		for (String name : HMACFilter.HEADERS_SIGNED) {
+			List<String> values = headers.get(name); // only 1 value admitted
+			if (values == null) {
+				// header not present
+				continue;
+			}
+			Assert.assertTrue(values.size() == 1, "only one value admitted for each header");
+			res.append(name);
+			res.append(values.get(0));
+		}
+		return res.toString();
 	}
 
 	private static String getBody(ClientRequest req) throws IOException {

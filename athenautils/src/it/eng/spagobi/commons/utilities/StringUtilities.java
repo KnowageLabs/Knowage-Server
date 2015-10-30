@@ -821,7 +821,7 @@ public class StringUtilities {
 	public static String sha256(String s) throws IOException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			md.update(s.getBytes(DEFAULT_CHARSET)); // Change this to "UTF-16" if needed
+			md.update(s.getBytes(DEFAULT_CHARSET));
 			byte[] digest = md.digest();
 			String res = String.format("%064x", new java.math.BigInteger(1, digest));
 			return res;
