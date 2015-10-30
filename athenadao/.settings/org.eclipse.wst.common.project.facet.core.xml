@@ -2,6 +2,6 @@
 <faceted-project>
   <fixed facet="java"/>
   <fixed facet="jst.utility"/>
-  <installed facet="java" version="1.6"/>
   <installed facet="jst.utility" version="1.0"/>
+  <installed facet="java" version="1.7"/>
 </faceted-project>

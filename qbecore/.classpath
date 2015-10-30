@@ -35,10 +35,14 @@
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxrs-2.3.5.Final.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrs-api-2.3.5.Final.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -8,13 +8,13 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JDK 7">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
