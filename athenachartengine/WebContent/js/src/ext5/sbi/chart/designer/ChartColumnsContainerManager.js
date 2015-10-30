@@ -183,22 +183,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
 													chartType != 'TREEMAP' && chartType != 'HEATMAP';													
-							
-							/**
-							 * Style chosen by the user (the one already set in the Designer).
-							 * 
-							 * @commentBy: danristo (danilo.ristovski@mht.net)
-							 */
-							var chosenStyle = Sbi.chart.designer.Designer.styleName;
-							
-							/**
-							 * Current JSON structure of the document
-							 */							
-							var genericJsonForStyle =  Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle).generic;
-							var specificJsonForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle)[chartType.toLowerCase()];
-							
-							var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
-							
+														
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
   	  						 * one of these chart types.
@@ -213,47 +198,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								// *_* The original code
 								if(data.view.id != this.id) {
 									
-									/**
-									 * danristo (1) 
-									 */
-									var serieTagExists = combination.CHART.VALUES && combination.CHART.VALUES.SERIE;
-									var serieTooltipTagExists = serieTagExists && combination.CHART.VALUES.SERIE.TOOLTIP;
-									
-									var serieTagParameters = null;
-									var serieTooltipTagParameters = null;
-									
-									/**
-									 * danristo (2)
-									 */
-									(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
-									(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
-									
-									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);														
-									
-//									/**
-//									 * danristo (3) - serieGroupingFunction
-//									 */
-//									var storeForGroupingFunctions = this.grid.columns[1].editor.store;
-//									
-//									if (!data.records[0].get('serieGroupingFunction'))
-//									{
-//										for (i=0; i<storeForGroupingFunctions.length; i++)
-//										{											
-//											if (serieTagExists && serieTagParameters.groupingFunction)
-//											{												
-//												if (storeForGroupingFunctions[i][0] == serieTagParameters.groupingFunction.toUpperCase())
-//												{
-//													data.records[0].set('serieGroupingFunction', serieTagParameters.groupingFunction.toUpperCase());
-//													break;
-//												}
-//											}										
-//										}
-//										
-//										if (!data.records[0].get('serieGroupingFunction'))
-//										{
-//											data.records[0].set('serieGroupingFunction', 'SUM');
-//										}
-//									}
+									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
 									
 									if (!data.records[0].get('serieGroupingFunction'))
 									{
@@ -277,103 +222,167 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										}										
 									}
 									
-//									/**
-//									 * danristo (5)
-//									 * Current serie types: "" (empty), "line", "bar", "area" (available in
-//									 * SerieStylePopup.js file.
-//									 */
-//									if (!data.records[0].get('serieType'))
-//									{										
-//										if (serieTagExists && serieTagParameters.type)
-//										{												
-//											if (serieTagParameters.type.toLowerCase()=="" || serieTagParameters.type.toLowerCase()=="line" || 
-//													serieTagParameters.type.toLowerCase()=="bar" || serieTagParameters.type.toLowerCase()=="area")
-//											{
-//												data.records[0].set('serieType', serieTagParameters.type.toLowerCase());
-//											}
-//											else
-//											{
-//												data.records[0].set('serieType', "");
-//											}
-//										}
-//									}
-									
-//									/**
-//									 * danristo (6)
-//									 * Current serie order types: "" (empty), "asc", "desc" (available in
-//									 * SerieStylePopup.js file.
-//									 */
-//									if (!data.records[0].get('serieOrderType'))
-//									{										
-//										if (serieTagExists && serieTagParameters.orderType)
-//										{												
-//											if (serieTagParameters.orderType.toLowerCase()=="" || 
-//													serieTagParameters.orderType.toLowerCase()=="asc" || 
-//														serieTagParameters.orderType.toLowerCase()=="desc")
-//											{
-//												data.records[0].set('serieOrderType', serieTagParameters.orderType.toLowerCase());
-//											}
-//											else
-//											{
-//												data.records[0].set('serieOrderType', "");
-//											}
-//										}
-//									}
+									/**
+									 * Style chosen by the user (the one already set in the Designer).
+									 * 
+									 * @commentBy: danristo (danilo.ristovski@mht.net)
+									 */
+									var chosenStyle = Sbi.chart.designer.Designer.styleName;
 									
 									/**
-									 * danristo (7)
-									 */
-									(!data.records[0].get('serieColor')) ? data.records[0].set('serieColor', serieTagParameters.color) : null;									
-									(!data.records[0].get('serieShowValue')) ? data.records[0].set('serieShowValue', serieTagParameters.showValue) : null;
-									(!data.records[0].get('seriePrecision')) ? data.records[0].set('seriePrecision', serieTagParameters.precision) : null;
-									(!data.records[0].get('seriePrefixChar')) ? data.records[0].set('seriePrefixChar', serieTagParameters.prefixChar) : null;
-									(!data.records[0].get('seriePostfixChar')) ? data.records[0].set('seriePostfixChar', serieTagParameters.postfixChar) : null;
-									
-									(!data.records[0].get('serieTooltipTemplateHtml')) ? 
-											data.records[0].set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
-									(!data.records[0].get('serieTooltipBackgroundColor')) ? 
-											data.records[0].set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
-											
-									var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
-									
-									for (j=0; j<splitSerieTooltipStyle.length; j++)
+									 * If for the current document is defined some chart style that does not
+									 * exist anymore. If user defined some chart style for the document and
+									 * if delete it afterwards and then re-renders the Designer, he will still
+									 * see the old (not existing) chart style, but when dropping serie items 
+									 * in the Y-axis panel it does not take serie parameterization of any
+									 * particular style (since the one set in the combo is not existing anymore). 
+									 */				
+									if (Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle) != null)
 									{
-										(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !data.records[0].get('serieTooltipColor')) ? 
-												(data.records[0].set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
+										var genericJsonForStyle =  Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle).generic;
+										var specificJsonForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle)[chartType.toLowerCase()];
+										
+										var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
+										
+										/**
+										 * danristo (1) 
+										 */
+										var serieTagExists = combination.CHART.VALUES && combination.CHART.VALUES.SERIE;
+										var serieTooltipTagExists = serieTagExists && combination.CHART.VALUES.SERIE.TOOLTIP;
+										
+										var serieTagParameters = null;
+										var serieTooltipTagParameters = null;
+										
+										/**
+										 * danristo (2)
+										 */
+										(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
+										(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
+																					
+										
+//										/**
+//										 * danristo (3) - serieGroupingFunction
+//										 */
+//										var storeForGroupingFunctions = this.grid.columns[1].editor.store;
+//										
+//										if (!data.records[0].get('serieGroupingFunction'))
+//										{
+//											for (i=0; i<storeForGroupingFunctions.length; i++)
+//											{											
+//												if (serieTagExists && serieTagParameters.groupingFunction)
+//												{												
+//													if (storeForGroupingFunctions[i][0] == serieTagParameters.groupingFunction.toUpperCase())
+//													{
+//														data.records[0].set('serieGroupingFunction', serieTagParameters.groupingFunction.toUpperCase());
+//														break;
+//													}
+//												}										
+//											}
+//											
+//											if (!data.records[0].get('serieGroupingFunction'))
+//											{
+//												data.records[0].set('serieGroupingFunction', 'SUM');
+//											}
+//										}										
+										
+//										/**
+//										 * danristo (5)
+//										 * Current serie types: "" (empty), "line", "bar", "area" (available in
+//										 * SerieStylePopup.js file.
+//										 */
+//										if (!data.records[0].get('serieType'))
+//										{										
+//											if (serieTagExists && serieTagParameters.type)
+//											{												
+//												if (serieTagParameters.type.toLowerCase()=="" || serieTagParameters.type.toLowerCase()=="line" || 
+//														serieTagParameters.type.toLowerCase()=="bar" || serieTagParameters.type.toLowerCase()=="area")
+//												{
+//													data.records[0].set('serieType', serieTagParameters.type.toLowerCase());
+//												}
+//												else
+//												{
+//													data.records[0].set('serieType', "");
+//												}
+//											}
+//										}
+										
+//										/**
+//										 * danristo (6)
+//										 * Current serie order types: "" (empty), "asc", "desc" (available in
+//										 * SerieStylePopup.js file.
+//										 */
+//										if (!data.records[0].get('serieOrderType'))
+//										{										
+//											if (serieTagExists && serieTagParameters.orderType)
+//											{												
+//												if (serieTagParameters.orderType.toLowerCase()=="" || 
+//														serieTagParameters.orderType.toLowerCase()=="asc" || 
+//															serieTagParameters.orderType.toLowerCase()=="desc")
+//												{
+//													data.records[0].set('serieOrderType', serieTagParameters.orderType.toLowerCase());
+//												}
+//												else
+//												{
+//													data.records[0].set('serieOrderType', "");
+//												}
+//											}
+//										}
+										
+										/**
+										 * danristo (7)
+										 */
+										(!data.records[0].get('serieColor')) ? data.records[0].set('serieColor', serieTagParameters.color) : null;									
+										(!data.records[0].get('serieShowValue')) ? data.records[0].set('serieShowValue', serieTagParameters.showValue) : null;
+										(!data.records[0].get('seriePrecision')) ? data.records[0].set('seriePrecision', serieTagParameters.precision) : null;
+										(!data.records[0].get('seriePrefixChar')) ? data.records[0].set('seriePrefixChar', serieTagParameters.prefixChar) : null;
+										(!data.records[0].get('seriePostfixChar')) ? data.records[0].set('seriePostfixChar', serieTagParameters.postfixChar) : null;
+										
+										(!data.records[0].get('serieTooltipTemplateHtml')) ? 
+												data.records[0].set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
+										(!data.records[0].get('serieTooltipBackgroundColor')) ? 
+												data.records[0].set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
 												
-										(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !data.records[0].get('serieTooltipFont')) ? 
-												(data.records[0].set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
-												
-										(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !data.records[0].get('serieTooltipFontWeight')) ? 
-												(data.records[0].set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
-												
-										(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !data.records[0].get('serieTooltipFontSize')) ? 
-												(data.records[0].set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
-												
-										(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !data.records[0].get('serieTooltipAlign')) ? 
-												(data.records[0].set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
-									}	
-									
-									/**
-									 * danristo (8)
-									 * If the chart type is GAUGE: we have additional tags in the style XML
-									 */
-									var serieDialTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DIAL;
-									var serieDataLabelsTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DATA_LABELS;
-									
-									var serieDialTagParameters = null;
-									var serieDataLabelsTagParameters = null;
-									
-									(serieDialTagExists) ? (serieDialTagParameters = serieTagParameters.DIAL) : null;
-									(serieDataLabelsTagExists) ? (serieDataLabelsTagParameters = serieTagParameters.DATA_LABELS) : null;
-									
-									// DIAL properties
-									(!data.records[0].get('backgroundColorDial') && serieDialTagExists) ? data.records[0].set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
-									
-									// DATA_LABELS properties
-									(!data.records[0].get('yPositionDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
-									(!data.records[0].get('formatDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
-									(!data.records[0].get('colorDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;									
+										var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
+										
+										for (j=0; j<splitSerieTooltipStyle.length; j++)
+										{
+											(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !data.records[0].get('serieTooltipColor')) ? 
+													(data.records[0].set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
+													
+											(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !data.records[0].get('serieTooltipFont')) ? 
+													(data.records[0].set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
+													
+											(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !data.records[0].get('serieTooltipFontWeight')) ? 
+													(data.records[0].set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
+													
+											(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !data.records[0].get('serieTooltipFontSize')) ? 
+													(data.records[0].set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
+													
+											(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !data.records[0].get('serieTooltipAlign')) ? 
+													(data.records[0].set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
+										}	
+										
+										/**
+										 * danristo (8)
+										 * If the chart type is GAUGE: we have additional tags in the style XML
+										 */
+										var serieDialTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DIAL;
+										var serieDataLabelsTagExists = serieTagExists && combination.CHART.VALUES.SERIE.DATA_LABELS;
+										
+										var serieDialTagParameters = null;
+										var serieDataLabelsTagParameters = null;
+										
+										(serieDialTagExists) ? (serieDialTagParameters = serieTagParameters.DIAL) : null;
+										(serieDataLabelsTagExists) ? (serieDataLabelsTagParameters = serieTagParameters.DATA_LABELS) : null;
+										
+										// DIAL properties
+										(!data.records[0].get('backgroundColorDial') && serieDialTagExists) ? data.records[0].set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
+										
+										// DATA_LABELS properties
+										(!data.records[0].get('yPositionDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
+										(!data.records[0].get('formatDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
+										(!data.records[0].get('colorDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;							
+									}											
 								}	
 								
 							} else  {								
