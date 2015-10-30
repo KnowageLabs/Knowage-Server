@@ -428,7 +428,9 @@ Ext.extend(Sbi.cockpit.core.WidgetManager, Ext.util.Observable, {
     , clearFieldSelections: function(widgetId, fieldHeader) {
     	this.selections[widgetId] = this.selections[widgetId] || {};
     	this.selections[widgetId][fieldHeader] = {values: []};
-    	this.onSelection(this.getWidget(widgetId), this.selections[widgetId]);
+    	if (this.getWidget(widgetId)){
+    		this.onSelection(this.getWidget(widgetId), this.selections[widgetId]);
+    	}
     }
 
     , addFieldSelections: function(widgetId, fieldHeader, valuesToAdd) {

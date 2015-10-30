@@ -440,41 +440,26 @@ Ext.extend(Sbi.cockpit.MainPanel, Sbi.cockpit.core.SheetsContainerPanel, {
 	    		var selectionsOnWidget = selections[widgetId];
 	    		for(var fieldHeader in selectionsOnWidget) {	    			
 	    			if(selectionsOnWidget[fieldHeader].values && selectionsOnWidget[fieldHeader].values.length > 0) {
-	    				selectionData[fieldHeader] = selectionsOnWidget[fieldHeader].values;
+	    				var selectionDataObj = {};
+	    				selectionDataObj[fieldHeader] = selectionsOnWidget[fieldHeader];
+	    				selectionData[widgetId] = selectionDataObj;
 	    			}
 	    		}
 			}
-		}
-
+		}		
+		
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: config.selections is equal to [" + Sbi.toSource(config.selections) + "]");
 		Sbi.trace("[MainPanel.onShowSelectionsWindow]: instatiating the window");
 //		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
 //		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
 		
 		//enable selection to all containers (tab)
-		var isViewed = false;
-		for (var i=0; i<this.widgetContainerList.length; i++){			
-			var tmpWc = this.widgetContainerList[i];
-//			tmpWc.getWidgetManager().setSelections(selectionData);
-			var tmpSel = tmpWc.getWidgetManager().getSelections();
-			if (!Sbi.isEmptyObject(tmpSel)){
-				config.selections = selectionData;
-				config.widgetManager = tmpWc;
-				var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
-				tmpWc.addSelectionWidget(selectionWidget, config.wlayout);
-				isViewed = true;
-				break;
-			}
-		}
-		if (!isViewed){
-			Ext.MessageBox
-			.show({
-				title : LN(''),
-				msg : LN('There aren\'t some ACTIVE selections.'),
-				width : 200,
-				buttons : Ext.MessageBox.OK
-			});
-		}
+		config.widgetContainerList = this.widgetContainerList;
+		config.selections = selectionData;		
+		this.widgetContainer.getWidgetManager().setSelections(selectionData);
+		config.widgetManager = this.widgetContainer.getWidgetManager();
+		var selectionWidget = new Sbi.cockpit.widgets.selection.SelectionWidget(config);
+		this.widgetContainer.addSelectionWidget(selectionWidget, config.wlayout);
 	}
 	
 	, onShowSelectionsView: function(){

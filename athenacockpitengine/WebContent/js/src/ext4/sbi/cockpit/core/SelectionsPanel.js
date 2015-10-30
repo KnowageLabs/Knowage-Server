@@ -14,7 +14,8 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		, gridHeader: null
 		, gridColumns: null
 		, store: null
-		, widgetManager: null
+//		, widgetManager: null 	// not used directly with multi-tab management
+		, widgetContainerList: null
 		, showByAssociation: true
 		, showGridHeader: true
 	}
@@ -26,7 +27,11 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		this.initEvents();
 		this.callParent(arguments);
 
-		this.widgetManager.on('selectionChange', this.onSelectionChange,this);
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+			tmpWc.getWidgetManager().on('selectionChange', this.onSelectionChange,this);
+		}
+//		this.widgetManager.on('selectionChange', this.onSelectionChange,this);
 
 		Sbi.trace("[SelectionsPanel.constructor]: OUT");
 	}
@@ -110,30 +115,27 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 
 		var initialData = [];
 		
-//		if (this.widgetManager){
-//			var selections = this.widgetManager.getSelectionsByAssociations();
-//
-//			for(var association in selections) {
-//				var el = ['_association_', association, selections[association].join()];
-//				initialData.push(el);
-//			}
-//		}
-
 		// Until we will change selection model we use an hybrid approach. We show selection on association
 		// plus selection on fields for chart widget
 
-		if (this.widgetManager) {
-			var selections = this.widgetManager.getSelections() || [];
-
-			for (var widgetId in selections){
-				Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: processing selection on widget [" + widgetId + "]");
-				var widget = this.widgetManager.getWidget(widgetId);
-				if(widget && widget.fieldsSelectionEnabled === true) {
-					Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: field selections are enabled on widget [" + widgetId + "]");
-					for (field in selections[widgetId]){
-						if(selections[widgetId][field].values.length == 0) continue;
-						var el = [widgetId, field, selections[widgetId][field].values.join()];
-						initialData.push(el);
+//		if (this.widgetManager) {
+		if (this.widgetContainerList) {
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
+				var selections = tmpWc.getWidgetManager().getSelections() || [];
+//				var selections = this.widgetManager.getSelections() || [];
+	
+				for (var widgetId in selections){
+					Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: processing selection on widget [" + widgetId + "]");
+					var widget = tmpWc.getWidgetManager().getWidget(widgetId);
+//					if(widget && widget.fieldsSelectionEnabled === true) {
+					if(widget && widget.wgeneric.outcomingeventsenabled === true) {
+						Sbi.trace("[SelectionsPanel.initStoreDataByAssociation]: field selections are enabled on widget [" + widgetId + "]");
+						for (field in selections[widgetId]){
+							if(selections[widgetId][field].values.length == 0) continue;
+							var el = [widgetId, field, selections[widgetId][field].values.join()];
+							initialData.push(el);
+						}
 					}
 				}
 			}
@@ -149,16 +151,22 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 
 		var initialData = [];
 
-		if (this.widgetManager){
-			var selections = this.widgetManager.getSelections() || [];
+//		if (this.widgetManager){
+		if (this.widgetContainerList){
+			for (var i=0; i<this.widgetContainerList.length; i++){			
+				var tmpWc = this.widgetContainerList[i];
 
-			for (widget in selections){
-				var values = [];
-				for (field in selections[widget]){
-					if (!Ext.isFunction(selections[widget])){
-						values = this.getFieldValues(selections[widget][field].values);
-						var el = [widget,  field, values];
-						initialData.push(el);
+//				var selections = this.widgetManager.getSelections() || [];
+				var selections = tmpWc.getWidgetManager().getSelections() || [];
+					
+				for (widget in selections){
+					var values = [];
+					for (field in selections[widget]){
+						if (!Ext.isFunction(selections[widget])){
+							values = this.getFieldValues(selections[widget][field].values);
+							var el = [widget,  field, values];
+							initialData.push(el);
+						}
 					}
 				}
 			}
@@ -273,18 +281,31 @@ Ext.define('Sbi.cockpit.core.SelectionsPanel', {
 		var record = this.grid.getStore().getAt(rowIndex);
 		var widgetId = record.get('widget');
 		var fieldHeader = record.get('association');
-		if(widgetId != "_association_") {
-			this.widgetManager.clearFieldSelections(widgetId, fieldHeader);
-			this.fireEvent("performunselect");
-		} else {
-			this.widgetManager.clearAssociationSelections(fieldHeader);
+		
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+			if(widgetId != "_association_") {
+//				this.widgetManager.clearFieldSelections(widgetId, fieldHeader);							
+				tmpWc.getWidgetManager().clearFieldSelections(widgetId, fieldHeader);
+				if (tmpWc.getWidgetManager().getWidget(widgetId)){		
+					this.fireEvent("performunselect");
+				}
+			} else {
+//				this.widgetManager.clearAssociationSelections(fieldHeader);
+				if (tmpWc.getWidgetManager().getWidget(widgetId)){
+					tmpWc.getWidgetManager().clearAssociationSelections(fieldHeader);
+				}
+			}
 		}
-
 	}
 
 	, onPerformUnselectAll: function(){
-		this.widgetManager.clearSelections();
-		this.fireEvent("performunselectall");
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+//			this.widgetManager.clearSelections();
+			tmpWc.getWidgetManager().clearSelections();
+			this.fireEvent("performunselectall");
+		}
 	}
 
 	, initEvents: function() {

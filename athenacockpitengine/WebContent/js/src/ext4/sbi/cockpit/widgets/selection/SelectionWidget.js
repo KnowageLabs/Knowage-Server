@@ -34,7 +34,8 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 	// =================================================================================================================
 
 	selectionsPanel: null
-	, widgetManager: null
+//	, widgetManager: null // not used directly with multi-tab management
+	, widgetContainerList: null
 	, gridHeader: null
 
     // =================================================================================================================
@@ -46,15 +47,27 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 	// -----------------------------------------------------------------------------------------------------------------
 
 	, onCancelSingle: function(grid, rowIndex, colIndex) {
-		this.widgetManager.clearSingleSelection(grid, rowIndex, colIndex);
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+			tmpWc.getWidgetManager().clearSingleSelection(grid, rowIndex, colIndex);
+		}
+//		this.widgetManager.clearSingleSelection(grid, rowIndex, colIndex);
 	}
 
 	, onClearSelections: function(){
-		this.widgetManager.clearSelections();
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+			tmpWc.getWidgetManager().clearSelections();
+		}
+//		this.widgetManager.clearSelections();
 	}
 
 	, onSelectionChange: function() {
-	    this.selectionsPanel.refreshStore();
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+			tmpWc.selectionsPanel.refreshStore();
+		}
+//	    this.selectionsPanel.refreshStore();
 	}
 
 	, onRender: function(ct, position) {
@@ -73,16 +86,22 @@ Ext.extend(Sbi.cockpit.widgets.selection.SelectionWidget, Sbi.cockpit.core.Widge
 
 		var config = {};
 
-		this.widgetManager = this.getWidgetManager();
-
-		config.widgetManager = this.widgetManager;
+//		this.widgetManager = this.getWidgetManager();
+//		config.widgetManager = this.widgetManager;
+		config.widgetContainerList = this.widgetContainerList;
 
 		this.selectionsPanel = new Sbi.cockpit.core.SelectionsPanel({
-			widgetManager: config.widgetManager,
+//			widgetManager: config.widgetManager,
+			widgetContainerList: config.widgetContainerList,
 			gridHeader: this.gridHeader
 		});
 
-		this.widgetManager.on('selectionChange',this.onSelectionChange,this);
+		for (var i=0; i<this.widgetContainerList.length; i++){			
+			var tmpWc = this.widgetContainerList[i];
+			tmpWc.on('selectionChange',this.onSelectionChange,this);
+//			tmpWc.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
+		}
+//		this.widgetManager.on('selectionChange',this.onSelectionChange,this);
 		this.selectionsPanel.on('cancelSingle', this.onCancelSingle, this);
 
 		Sbi.trace("[SelectionWidget.onBeforeRender][" + this.getId() + "]: OUT");
