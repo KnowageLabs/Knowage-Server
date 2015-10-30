@@ -47,8 +47,35 @@ public class SimpleRestClientTest {
 		Assert.assertTrue(DummyServlet.arrived);
 	}
 
+	@Test
+	public void testExecuteGetServiceFail() throws Exception {
+		SimpleRestClient client = getSimpleRestClientFail();
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("a", "b");
+		parameters.put("c", "d");
+		boolean done = false;
+
+		try {
+			client.executeGetService(parameters, "http://localhost:8080/hmac");
+		} catch (Exception e) {
+			done = true;
+		}
+		Assert.assertTrue(done);
+		Assert.assertFalse(DummyServlet.arrived);
+	}
+
 	protected SimpleRestClient getSimpleRestClient() {
 		SimpleRestClient client = new SimpleRestClient(HMACFilterTest.key) {
+			@Override
+			protected HttpClient getHttpClient() {
+				return null;
+			}
+		};
+		return client;
+	}
+
+	protected SimpleRestClient getSimpleRestClientFail() {
+		SimpleRestClient client = new SimpleRestClient("qw9") {
 			@Override
 			protected HttpClient getHttpClient() {
 				return null;
@@ -66,6 +93,23 @@ public class SimpleRestClientTest {
 		ClientResponse<?> resp = client.executePostService(parameters, "http://localhost:8080/hmac", MediaType.TEXT_PLAIN_TYPE, "etc.17");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
+	}
+
+	@Test
+	public void testExecutePostServiceFail() throws Exception {
+		SimpleRestClient client = getSimpleRestClientFail();
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("a", "b");
+		parameters.put("c", "d");
+		boolean done = false;
+
+		try {
+			client.executePostService(parameters, "http://localhost:8080/hmac", MediaType.TEXT_PLAIN_TYPE, "etc.17");
+		} catch (Exception e) {
+			done = true;
+		}
+		Assert.assertTrue(done);
+		Assert.assertFalse(DummyServlet.arrived);
 	}
 
 }

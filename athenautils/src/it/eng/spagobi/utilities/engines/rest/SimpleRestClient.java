@@ -133,6 +133,7 @@ public class SimpleRestClient {
 		logger.debug("Call service");
 		ClientResponse response = null;
 
+		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request);
 		if (type.equals(RequestTypeEnum.POST))
 			response = request.post();
