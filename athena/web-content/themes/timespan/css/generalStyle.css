@@ -377,8 +377,7 @@ md-tabs.mini-tabs {
 	height: 100%;
 }
 
-md-tabs.mini-tabs md-tabs-canvas, md-tabs.mini-tabs md-pagination-wrapper
-	{
+md-tabs.mini-tabs md-tabs-canvas, md-tabs.mini-tabs md-pagination-wrapper {
 	height: 23px !important;
 }
 
@@ -390,18 +389,27 @@ md-tabs.mini-tabs  md-tabs-content-wrapper {
 	top: 24px !important;
 }
 
-.md-datepicker-button {
-	display: none !important;
+md-divider {
+	margin: 20px;
 }
 
 .md-datepicker-input-container {
-	margin-top: 10px;
 	margin-left: 0px !important;
+	margin-right: 25px;
 }
 
 .md-datepicker-input {
-	text-align: center;
-	font-weight: bold;
+	max-width: 100px;
+}
+
+.divNoData {
+	width: 400px;
+    margin: auto;
+    margin-top: 15px;
+}
+
+.divNoData label {
+	color: rgba(0,0,0,0.26);
 }
 
 md-tabs.hideTabs md-tabs-wrapper {

@@ -1,6 +1,5 @@
-var app = angular.module('timespanManager', [ 'ngMaterial', 'ui.tree',
-		'angularUtils.directives.dirPagination', 'ng-context-menu',
-		'angular_rest', 'glossary_tree', 'angular_list', 'angular_time_picker' ]);
+var app = angular.module('timespanManager', [ 'ngMaterial',
+		'angular_rest', 'angular_list', 'angular_time_picker' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -28,7 +27,9 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	$scope.translate = translate;
 	
 	ctrl.tsList;
+	ctrl.tsCategory;
 	listTimespan();
+	loadCategories();
 	
 	ctrl.selectedItem = JSON.parse(JSON.stringify(emptyTs));
 	ctrl.activeTab = 'empty';
@@ -38,26 +39,17 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	
 	ctrl.menuTs = [{
 		label : translate.load('sbi.generic.delete'),
-		action : function(item, event) {
-			ctrl.deleteTimespan(item, event);
+		action : function(item) {
+			ctrl.deleteTimespan(item);
 		}
 	}];
 	
 	ctrl.tsType = [{
-		"label":"Time",
-		"value":"time"
+		"label": translate.load('sbi.timespan.type.time'),
+		"value": "time"
 	},{
-		"label":"Temporal",
-		"value":"temporal"
-	}];
-	
-	
-	ctrl.tsCategory = [{
-		"label":"Cat 1",
-		"value":"Cat1"
-	},{
-		"label":"Cat 2",
-		"value":"Cat2"
+		"label": translate.load('sbi.timespan.type.temporal'),
+		"value": "temporal"
 	}];
 	
 	
@@ -79,21 +71,75 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 
 	}
 	
-	
 	ctrl.addInterval = function(from, to) {
 		if(from && to){
 			if(ctrl.selectedItem.type=='temporal'){
 				var f_date = new Date(from);
 				var t_date = new Date(to);
+				
+				if(f_date > t_date){
+					var alert = $mdDialog.alert()
+						.title(translate.load("sbi.generic.warning"))
+						.content(translate.load("sbi.timespan.temporal.viceversa.alert"))
+						.ok(translate.load("sbi.general.ok"));
+					$mdDialog.show( alert );
+					return false;
+				}
+				
 				if (ctrl.delay){
 					var dist = to.getDate() - from.getDate();
 					f_date.setDate(to.getDate() + ctrl.delay); 
 					t_date.setDate(to.getDate() + ctrl.delay + dist);					
 				}
+				
+				for(var i in ctrl.selectedItem.definition){
+					var start = new Date(ctrl.selectedItem.definition[i].from.replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3") );
+					var end = new Date(ctrl.selectedItem.definition[i].to.replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3") );
+					
+					if( f_date <= end && t_date >= start ){
+						var alert = $mdDialog.alert()
+							.title(translate.load("sbi.generic.warning"))
+							.content(translate.load("sbi.timespan.temporal.overlap.alert"))
+							.ok(translate.load("sbi.general.ok"));
+						$mdDialog.show( alert );
+						return false;
+					}
+				}
+				
+				
 				var f = ("0" + f_date.getDate()).slice(-2) + "/" + ("0" + (f_date.getMonth()+1)).slice(-2) + "/" + f_date.getFullYear(); 
 				var t = ("0" + t_date.getDate()).slice(-2) + "/" + ("0" + (t_date.getMonth()+1)).slice(-2) + "/" + t_date.getFullYear(); 
 				var interval = { "from": f, "to": t };
+				
+				
+				
 			} else {
+				var f_time = Date.parse('01/01/2011 '+from);
+				var t_time = Date.parse('01/01/2011 '+to);
+				
+				if(f_time > t_time){
+					var alert = $mdDialog.alert()
+						.title(translate.load("sbi.generic.warning"))
+						.content(translate.load("sbi.timespan.time.viceversa.alert"))
+						.ok(translate.load("sbi.general.ok"));
+					$mdDialog.show( alert );
+					return false;
+				}
+				
+				for(var i in ctrl.selectedItem.definition){
+					var start = Date.parse('01/01/2011 '+ctrl.selectedItem.definition[i].from);
+					var end = Date.parse('01/01/2011 '+ctrl.selectedItem.definition[i].to);
+					
+					if( f_time <= end && t_time >= start ){
+						var alert = $mdDialog.alert()
+							.title(translate.load("sbi.generic.warning"))
+							.content(translate.load("sbi.timespan.time.overlap.alert"))
+							.ok(translate.load("sbi.general.ok"));
+						$mdDialog.show( alert );
+						return false;
+					}
+				}
+				
 				var interval = { "from": from, "to": to };
 			}
 			ctrl.selectedItem.definition.push(interval);
@@ -133,6 +179,15 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 	
 	
 	ctrl.saveTimespan = function() {
+		if(ctrl.selectedItem.definition.length==0){
+			var alert = $mdDialog.alert()
+				.title(translate.load("sbi.generic.warning"))
+				.content(translate.load("sbi.timespan.nointerval.alert"))
+				.ok(translate.load("sbi.general.ok"));
+			$mdDialog.show( alert );
+			
+		} else {	
+			
 		restServices
 		.post("1.0/timespan", "saveTimespan", ctrl.selectedItem).success(
 			function(data, status, headers, config){
@@ -152,16 +207,17 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 			}).error(function(data, status, headers, config) {
 				showToast(translate.load("sbi.timespan.save.error"));
 			})
+		}
 	}
 	
 	
-	ctrl.deleteTimespan = function(item, event) {
+	ctrl.deleteTimespan = function(item) {
 		var confirm = $mdDialog.confirm()
 			.title(translate.load("sbi.timespan.delete"))
 			.content(translate.load("sbi.timespan.delete.message"))
 			.ariaLabel('Lucky day')
 			.ok(translate.load("sbi.generic.delete"))
-			.cancel( translate.load("sbi.ds.wizard.cancel")).targetEvent(event);
+			.cancel( translate.load("sbi.ds.wizard.cancel"));
 
 		$mdDialog
 			.show( confirm )
@@ -214,6 +270,20 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 				}
 			}).error(function(data, status, headers, config) {
 				console.log("list error "+status);
+			})
+	}
+	
+	function loadCategories() {
+		restServices.get("domains", "listValueDescriptionByType",
+		"DOMAIN_TYPE=TIMESPAN_CATEGORY").success(
+			function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
+					console.log("error loading category");
+				} else {
+					ctrl.tsCategory = data;
+				}
+			}).error(function(data, status, headers, config) {
+				console.log("error loading category "+status);
 			})
 	}
 	

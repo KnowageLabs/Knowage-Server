@@ -14,42 +14,13 @@
 	<meta http-equiv="x-ua-compatible" content="IE=EmulateIE9" >
 	
 	<link rel="stylesheet" href="/athena/themes/timespan/css/font-awesome-4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/generalStyle.css">
 	
-	<!-- angular reference-->
-	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular.js"></script>
-	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-	<script type="text/javascript" src="/athena/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-	
-	
-	<!-- angular-material-->
-	<link rel="stylesheet" href="/athena/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-	<script type="text/javascript" src="/athena/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
-	
-	<!-- angular tree -->
-	<link rel="stylesheet" 	href="/athena/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-	<script type="text/javascript" src="/athena/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
-	
-	<!-- angular list -->
-	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/angular-list.css">
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/AngularList.js"></script>
+	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
 	<!-- time picker -->
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
-	
-	<!-- context menu -->
-	<script type="text/javascript" src="/athena/js/lib/angular/contextmenu/ng-context-menu.min.js"></script>
-	
-	<!--pagination-->
-	<script type="text/javascript" src="/athena/js/lib/angular/pagination/dirPagination.js"></script>
-	
-	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/generalStyle.css">
-	
 
-	<!-- tree -->
-	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/tree-style.css">
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
-	
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/RestService.js"></script>
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/timespan/timespan.js"></script>
 	
 </head>
@@ -146,8 +117,8 @@
 								<md-input-container > <label>{{translate.load("sbi.generic.category");}}</label> 
 								<md-select ng-model="ctrl.selectedItem.category"> 
 									<md-option
-										ng-repeat="cat in ctrl.tsCategory" value="{{cat.value}}">
-										{{cat.label}} 
+										ng-repeat="cat in ctrl.tsCategory" value="{{cat.VALUE_ID}}">
+										{{cat.VALUE_NM}} 
 									</md-option> 
 								</md-select> 
 								
@@ -155,7 +126,7 @@
 							</div>
 						</div>
 						
-						<md-divider style="margin:20px;"></md-divider>
+						<md-divider ></md-divider>
 						
 						<div ng-if="ctrl.selectedItem.type" layout="row" layout-align="center center" >
 							<table style="width: 70%; font-size: 10pt; table-layout: fixed; text-align: center;">
@@ -195,10 +166,13 @@
 										</md-button>
 									</td>
 								</tr>
-								
 							</table>
+							
 						</div>
-						
+						<div ng-if="ctrl.selectedItem.definition.length==0" class="divNoData">
+							<label>{{translate.load("sbi.timespan.nointerval.message");}}</label>
+						</div>
+						<md-divider ></md-divider>
 					</form>
 					</md-content>
 		
