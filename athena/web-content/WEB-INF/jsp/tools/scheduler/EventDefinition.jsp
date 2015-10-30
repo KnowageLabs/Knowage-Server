@@ -25,25 +25,9 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <html>
 <head>
-
-<meta http-equiv="x-ua-compatible" content="IE=EmulateIE9">
-<meta name="viewport" content="width=device-width">
-
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-
-<!-- 	angular time picker -->
-<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
-
-<!-- TODO remove angulartable -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
-
-<!-- fine -->
-
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/scheduler/css/scheduler_style.css">
-
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/RestService.js"></script>
 </head>
 
 <body ng-app="EventDefinitionApp">

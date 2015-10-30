@@ -5,7 +5,6 @@
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
 <%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
-<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -15,9 +14,8 @@
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
-	
+	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
-		<!-- <link rel="stylesheet" href="/athena/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.css">	 -->	
 		<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
 		<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
 

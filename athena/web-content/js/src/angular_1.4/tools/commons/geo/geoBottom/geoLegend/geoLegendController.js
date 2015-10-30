@@ -4,10 +4,10 @@
  */
 
 angular.module('geo_module')
-.directive('geoLegend',function(){
+.directive('geoLegend',function(sbiModule_config ){
 	return{
 		 restrict: "E",
-		 templateUrl: '/athena/js/src/angular_1.4/tools/commons/geo/geoBottom/geoLegend/templates/geoLegendTemplate.jspf',
+		 templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/commons/geo/geoBottom/geoLegend/templates/geoLegendTemplate.jspf',
 		 controller: geoLegendControllerFunction,
 		require: "^geoMap",
 		scope: {

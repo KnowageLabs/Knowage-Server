@@ -11,7 +11,7 @@
 
 <%
 // check for user profile autorization
-		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		boolean canSee=false,canSeeAdmin=false;
 		if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL})){
 			canSee=true;

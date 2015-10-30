@@ -21,7 +21,7 @@ angular.module('geo_module')
 		}
 	}
 })
-function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,baseLayer,layerServices,restServices){
+function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,baseLayer,layerServices,sbiModule_restServices){
 	$scope.layerServices=layerServices;
 
 	$scope.openLayersMenu=false;
@@ -93,7 +93,7 @@ function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,b
 	    	      targetEvent: ev,
 	    	      openFrom: '#addLayer',
 	    	      closeTo: '#map',
-	    	      clickOutsideToClose:false,
+	    	      clickOutsideToClose:true,
 	    	      preserveScope :true,
 	    	      scope: $scope
 	    	    });
@@ -109,39 +109,41 @@ function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,b
     		
 	    	$scope.loadSelectedLayerList=function(){
 	    	    		for(cat in $scope.layers){
-	    	    			
 	    	    			for(lay in $scope.layers[cat] ){
-	    	    				$scope.selectedLayerList.push($scope.layers[cat][lay])
-   	    				
+	    	    				$scope.selectedLayerList.push($scope.layers[cat][lay]);
 	    	    			}
-	    	    			
 	    	    		}
+	    	    		
+	    	    		for(cat in $scope.baseLayers){
+	    	    			for(lay in $scope.baseLayers[cat] ){
+	    	    				$scope.selectedLayerList.push($scope.baseLayers[cat][lay]);
+	    	    			}
+	    	    		}
+	    	    		
 	    	    		console.log("$scope.selectedLayerList",$scope.selectedLayerList)
 	    	    		
 	    	    	}
-	    	    	$scope.loadSelectedLayerList();    	
+	    	$scope.loadSelectedLayerList();    	
 	    	    	
-	    	restServices.get("layers", '').success(
-					function(data, status, headers, config) {
+	    	sbiModule_restServices.get("layers", '').success(
+			function(data, status, headers, config) {
 
-						console.log("layer caricati",data);
-						if (data.hasOwnProperty("errors")) {
-							console.log("layer non Ottenuti");
-						} else {
-							$scope.layerCatalogueList = data.root;
+				console.log("layer caricati",data);
+				if (data.hasOwnProperty("errors")) {
+					console.log("layer non Ottenuti");
+				} else {
+					$scope.layerCatalogueList = data.root;
 
 
-						}
+				}
 
-					}).error(function(data, status, headers, config) {
-						console.log("layer non Ottenuti " + status);
+			}).error(function(data, status, headers, config) {
+				console.log("layer non Ottenuti " + status);
 
-					});
+			});
 			
 					
 					$scope.updateChange=function(){
-	    			console.log("Update change");
-	    			console.log("$scope.selectedLayerList",$scope.selectedLayerList)
 	    			   $mdDialog.cancel();
 	    			};
 					
@@ -152,7 +154,23 @@ function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,b
 	    				var categ=item.hasOwnProperty("category")? item.category.valueNm : "Default";
 	    				
 	    				if(item.baseLayer){
+	    					//insert category if not present
+	    					if(!$scope.baseLayers.hasOwnProperty(categ)){
+	    						$scope.baseLayers[categ]={};
+	    					}
 	    					
+	    					if(	$scope.baseLayers[categ].hasOwnProperty(item.layerId)){
+	    						//remove
+	    						delete $scope.baseLayers[categ][item.layerId];
+	    					}else{
+	    						//add
+	    						$scope.baseLayers[categ][item.layerId]=item;
+	    					}
+	    					
+	    					//remove category if empty
+		    				if($scope.baseLayers[categ].length==0){
+		    					delete $scope.baseLayers[categ];
+		    				}
 	    				}else{
 	    					
 	    					//insert category if not present
@@ -168,13 +186,14 @@ function geoLayersControllerFunction($map,$scope,$mdSidenav,$mdDialog,$timeout,b
 	    						$scope.layers[categ][item.layerId]=item;
 	    					}
 	    					
+	    					//remove category if empty
+		    				if($scope.layers[categ].length==0){
+		    					delete $scope.layers[categ];
+		    				}
 	    					
 	    				}
 	    				
-	    				//remove category if empty
-	    				if($scope.layers[categ].length==0){
-	    					delete $scope.layers[categ];
-	    				}
+	    				
 		    				
 	    				
 	    			}

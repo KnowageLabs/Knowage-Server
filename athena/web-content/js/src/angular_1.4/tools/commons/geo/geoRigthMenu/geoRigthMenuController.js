@@ -4,10 +4,10 @@
  */
 
 angular.module('geo_module')
-.directive('geoRigthMenu',function(){
+.directive('geoRigthMenu',function(sbiModule_config){
 	return{
 		 restrict: "E",
-		templateUrl:'/athena/js/src/angular_1.4/tools/commons/geo/geoRigthMenu/templates/geoRigthMenuTemplate.jspf',
+		templateUrl:sbiModule_config.contextName+'/js/src/angular_1.4/tools/commons/geo/geoRigthMenu/templates/geoRigthMenuTemplate.jspf',
 		controller: geoRigthMenuControllerFunction,
 //		require: "^geoMap",
 		scope: {

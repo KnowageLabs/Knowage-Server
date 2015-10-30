@@ -4,10 +4,10 @@
  */
 
 angular.module('geo_module')
-.directive('geoDistanceCalculator',function(){
+.directive('geoDistanceCalculator',function(sbiModule_config){
 	return{
 		 restrict: "E",
-		 templateUrl: '/athena/js/src/angular_1.4/tools/commons/geo/geoBottom/geoDistanceCalculator/templates/geoDistanceCalculatorTemplate.jspf',
+		 templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/commons/geo/geoBottom/geoDistanceCalculator/templates/geoDistanceCalculatorTemplate.jspf',
 //		template: '<md-button  id="showDistanceCalculator" class="md-fab md-mini" ng-click="showBottomSheet($event)" aria-label="toggle menu"><md-icon md-font-icon="fa fa-wifi fa-2x"></md-icon> </md-button>',
 		 controller: geoDistanceCalculatorControllerFunction,
 		require: "^geoMap",

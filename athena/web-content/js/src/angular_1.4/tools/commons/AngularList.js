@@ -57,7 +57,7 @@
 	
 	
 
-angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angularUtils.directives.dirPagination'])
+angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angularUtils.directives.dirPagination','sbiModule'])
 .directive('angularList', function() {
   return {
     templateUrl: '/athena/js/src/angular_1.4/tools/commons/templates/angular-list.html',
@@ -147,9 +147,9 @@ angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angula
   	});
 
 
-function ListControllerFunction($scope,translate,$mdDialog,$mdToast,$timeout,$compile){
+function ListControllerFunction($scope,sbiModule_translate,$mdDialog,$mdToast,$timeout,$compile){
 	
-	$scope.translate=translate;
+	$scope.translate=sbiModule_translate;
 	$scope.currentPageNumber=1;
 	$scope.tmpWordSearch = "";
 	$scope.prevSearch = "";

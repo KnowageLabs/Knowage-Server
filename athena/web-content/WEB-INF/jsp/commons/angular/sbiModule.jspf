@@ -1,0 +1,101 @@
+
+
+<script>
+var sbiM=angular.module('sbiModule',[]);
+
+sbiM.config(function($mdThemingProvider) {
+	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
+});
+
+
+
+sbiM.factory('sbiModule_config',function(){
+	return {
+    	contextName: '<%= GeneralUtilities.getSpagoBiContext() %>',
+    	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
+    	curr_country: '<%= curr_country %>',
+    	curr_language: '<%= curr_language%>',
+	};
+});
+
+sbiM.factory('sbiModule_user',function(){
+	
+	var user={};
+	user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
+	user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
+	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
+	user.ismodeweb = <%= sbiMode.equals("WEB")? "true" : "false"%>;
+	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
+	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	
+	// 	set roles
+	user.roles =[];
+	<% for(Object rol : userRoles) { 	%>
+	user.roles.push('<%=StringEscapeUtils.escapeJavaScript(rol.toString())%>');
+	<% } %>
+	
+	//set functionalities
+	user.functionalities =[];
+	<% if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) {
+		for(Object fun :  userProfile.getFunctionalities()){ %>
+		user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>');
+		<% } }%>
+		
+	return user;
+});
+
+sbiM.service('sbiModule_translate', function() {
+	this.addMessageFile = function(file){
+		messageResource.load([file,"messages"], function(){});
+	};
+	
+	this.load = function(key,sourceFile) {
+		var sf= sourceFile == undefined? 'messages' : sourceFile;
+		return messageResource.get(key, sf);
+	};
+});
+
+
+sbiM.service('sbiModule_restServices', function($http, sbiModule_config) {
+	var alteredContextPath=null;
+
+	this.alterContextPath=function(cpat){
+		alteredContextPath=cpat;
+	}
+
+	function getBaseUrl(endP_path) {
+		return alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path ;
+	};
+
+	this.get = function(endP_path, req_Path, item) {
+		item == undefined ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
+		console.log("GET: "+getBaseUrl(endP_path) + "" + req_Path + "" + item);
+		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item);
+	};
+
+	this.remove = function(endP_path, req_Path, item) {
+		item == undefined ? item = "" : item = "?" + item;
+		console.log("REMOVE: "+getBaseUrl(endP_path) + "" + req_Path + "" + item);
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path + "" + item);
+	};
+
+	this.post = function(endP_path, req_Path, item, conf) {
+		console.log("POST: "+getBaseUrl(endP_path) + "" + req_Path);
+		console.log(item);
+		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
+	this.put = function(endP_path, req_Path, item, conf) {
+		console.log("PUT: "+getBaseUrl(endP_path) + "" + req_Path);
+		console.log(item);
+		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
+	this.delete = function(endP_path, req_Path) {
+		console.log("PUT: "+getBaseUrl(endP_path) + "" + req_Path);
+		console.log(item);
+		return $http.delete(getBaseUrl(endP_path) + "" + req_Path);
+	};
+});
+
+</script>

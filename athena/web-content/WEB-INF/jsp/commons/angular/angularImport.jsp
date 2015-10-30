@@ -4,9 +4,9 @@
 	makes use of AngularJS  
 --%>
 
-<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-<meta name="viewport" content="width=device-width">
-
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+	<meta name="viewport" content="width=device-width">
+	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 	
 	<!-- angular reference-->
@@ -33,5 +33,16 @@
 	<!--pagination-->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/pagination/dirPagination.js"></script>
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/RestService.js"></script>
+	<!-- angular table -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+
+	<!-- 	angular time picker -->
+	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+
+
+<%-- 	<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%> --%>
+
+
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/RestService.js"></script> <!-- da rimuovere -->
+	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	

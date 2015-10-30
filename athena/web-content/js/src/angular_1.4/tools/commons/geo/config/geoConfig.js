@@ -27,8 +27,8 @@ geoM.factory('baseLayer', function() {
 					            "type": "TMS",
 					            "category":"Default",
 					            "label": "OpenStreetMap",
-					            "url": "http://tile.openstreetmap.org/",
-					            "options": {
+					            "layerURL": "http://tile.openstreetmap.org/",
+					            "layerOptions": {
 					                "type": "png",
 					                "displayOutsideMaxExtent": true
 					            }
@@ -103,17 +103,17 @@ geoM.service('layerServices', function(baseLayer, $map,$http) {
 				zIndex : zIndex,
 				source : new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */
 				({
-					url : layerConf.url,
-					params : layerConf.params,
-					options : layerConf.options
+					url : layerConf.layerURL,
+					params : JSON.parse(layerConf.layerParams),
+					options :JSON.parse(layerConf.layerOptions)
 				}))
 			});
 			break;
 		case 'WFS': // TODO test if works
 			var vectorSource = new ol.source.Vector({
-				  url: 'http://pacweb.eng.it/astuto-geoserver/ATeSO/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ATeSO:v_at_gis_limite_comunale_wgs84&maxFeatures=50&outputFormat=application/json',
+				  url: layerConf.layerURL,
 				  format: new ol.format.GeoJSON(),
-				  options : layerConf.options
+//				  options : JSON.parse(layerConf.layerOptions)
 				});
 			
 		
@@ -125,6 +125,8 @@ geoM.service('layerServices', function(baseLayer, $map,$http) {
 				
 			break;
 		case 'TMS': // TODO check if work
+			
+			var options=(layerConf.layerOptions instanceof Object)? layerConf.layerOptions : JSON.parse(layerConf.layerOptions);
 			tmpLayer = new ol.layer.Tile({
 				zIndex : zIndex,
 				source : new ol.source.XYZ({
@@ -136,8 +138,7 @@ geoM.service('layerServices', function(baseLayer, $map,$http) {
 						var x = coordinate[1];
 						// var y = (1 << z) -coordinate[2] - 1;
 						var y = -coordinate[2] - 1;
-						return layerConf.url + '' + z + '/' + x + '/' + y + '.'
-								+ layerConf.options.type;
+						return layerConf.layerURL + '' + z + '/' + x + '/' + y + '.'+ options.type;
 					},
 
 				})

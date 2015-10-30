@@ -4,7 +4,7 @@
  */
 
 angular
-		.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagination','ng-context-menu' ])
+		.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagination','ng-context-menu','sbiModule' ])
 		.directive('angularTable',
 				function() {
 					return {
@@ -82,9 +82,9 @@ angular
 						return filtered;
 					  }});
 
-function TableControllerFunction($scope, translate,$timeout,$filter) {
+function TableControllerFunction($scope, sbiModule_translate,$timeout,$filter) {
 	var $scope = $scope;
-	$scope.translate = translate;
+	$scope.translate = sbiModule_translate;
 	$scope.currentPageNumber=1;
 	$scope.tmpWordSearch = "";
 	$scope.prevSearch = "";

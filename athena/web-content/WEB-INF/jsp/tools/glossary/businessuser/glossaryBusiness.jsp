@@ -9,7 +9,7 @@
 
 <%
 // check for user profile autorization
-		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		boolean canSee=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ROLE_TYPE_USER, new String[]{SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS});
 		
 %>

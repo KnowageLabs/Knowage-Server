@@ -14,6 +14,11 @@
 <%@page import="it.eng.spagobi.commons.utilities.PortletUtilities"%>
 <%@ page import="it.eng.spago.security.IEngUserProfile" %>
 <%@ page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 
 <%
 	RequestContainer aRequestContainer = null;
@@ -69,6 +74,30 @@
 		} else {
 			locale = MessageBuilder.getBrowserLocaleFromSpago();
 		}
+		// updates locale information on permanent container for Spago messages mechanism
+		if (locale != null) {
+			permanentSession.setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
+			permanentSession.setAttribute(Constants.USER_COUNTRY, locale.getCountry());
+		}
+	}
+	
+	//load user profile 
+	IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+	
+	String userUniqueIdentifier="";
+	String userId="";
+	String userName="";
+	String defaultRole="";
+	List userRoles = new ArrayList();
+	
+	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
+	if (userProfile!=null){
+		userId=(String)((UserProfile)userProfile).getUserId();
+		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
+		userName=(String)((UserProfile)userProfile).getUserName();
+		userRoles = (ArrayList)userProfile.getRoles();
+		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
+		
 	}
 	
 %>
