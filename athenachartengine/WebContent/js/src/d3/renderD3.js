@@ -1993,6 +1993,7 @@ function renderWordCloud(chartConf){
 	var currentTableData=allTableData.slice(0,5); // up to 5 recoords
 	var firstDisplayed=1;
 	var lastDisplayed=0;
+	
 	if(allTableData.length > 5){
 		lastDisplayed=5;
 	}else{
@@ -2001,12 +2002,36 @@ function renderWordCloud(chartConf){
 
 	var tableDiv = d3.select("#chart")
 						.append("div").attr("id","tableDiv")
-						.style("width",data.chart.width-legendWidth)
+						.style("width",data.chart.width-legendWidth)						
 						.style("padding-bottom",10)
 						.style("padding-top",20);
 	
 	var table = tableDiv.append("table")
-					.style("width",data.chart.width-legendWidth)
+					.style("width", data.chart.width-legendWidth)
+					
+					/**
+					 * The next style parameter setting allow us to reset font stylization provided 
+					 * for the whole chart (independency of the table element over whole chart). 
+					 * This way we can e.g. reset the text decoration (that the whole chart has) and
+					 * provide that table does not have the one. This is important since (for now)
+					 * table gets font customization from the legend's elements.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */ 
+					.style("display", "inline-block") 
+					
+					/**
+					 * For now, table text elements will use the font customization provided for
+					 * legend's elements.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					.style("font-family", data.legend.element.style.fontFamily)
+					.style("font-size", data.legend.element.style.fontSize)
+					.style("font-style", data.legend.element.style.fontStyle)
+					.style("font-weight", data.legend.element.style.fontWeight)
+					.style("text-decoration", data.legend.element.style.textDecoration)
+					
 					.style("padding-left",m[3]);
 	
 	var paginationBar = tableDiv.append("div").attr("id","pBar")
@@ -2018,9 +2043,29 @@ function renderWordCloud(chartConf){
 						.on("click", function(){ return showPrev(); });
 	
 	var paginationText = paginationBar.append("label")
-							.text(" " + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + " ")
-							.style("font-weight", "bold")	// fixed BOLD for better transparency
-							.style("font-size", "14px");
+							.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
+							/**
+							 * The next style parameter setting allow us to reset font stylization provided 
+							 * for the whole chart (independency of the table element over whole chart). 
+							 * This way we can e.g. reset the text decoration (that the whole chart has) and
+							 * provide that table does not have the one. This is important since (for now)
+							 * table gets font customization from the legend's elements.
+							 * 
+							 * @author: danristo (danilo.ristovski@mht.net)
+							 */ 
+							.style("display", "inline-block") 
+							
+							/**
+							 * For now, table text elements will use the font customization provided for
+							 * legend's elements.
+							 * 
+							 * @author: danristo (danilo.ristovski@mht.net)
+							 */
+							.style("font-family",data.legend.element.style.fontFamily)
+							.style("font-size",data.legend.element.style.fontSize)
+							.style("font-style",data.legend.element.style.fontStyle)
+							.style("font-weight",data.legend.element.style.fontWeight)
+							.style("text-decoration",data.legend.element.style.textDecoration);
 	
 	var nextButton = paginationBar.append("button")
 						.text("Next >>")
@@ -2157,7 +2202,31 @@ function renderWordCloud(chartConf){
 		if(lastDisplayed===allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
+		
+		paginationText.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
+					/**
+					 * The next style parameter setting allow us to reset font stylization provided 
+					 * for the whole chart (independency of the table element over whole chart). 
+					 * This way we can e.g. reset the text decoration (that the whole chart has) and
+					 * provide that table does not have the one. This is important since (for now)
+					 * table gets font customization from the legend's elements.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */ 
+					.style("display", "inline-block") 
+					
+					/**
+					 * For now, table text elements will use the font customization provided for
+					 * legend's elements.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					.style("font-family",data.legend.element.style.fontFamily)
+					.style("font-size",data.legend.element.style.fontSize)
+					.style("font-style",data.legend.element.style.fontStyle)
+					.style("font-weight",data.legend.element.style.fontWeight)
+					.style("text-decoration",data.legend.element.style.textDecoration);
+		
 		var dummy=[];
 		d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
 		
@@ -2233,7 +2302,29 @@ function renderWordCloud(chartConf){
 		if(lastDisplayed===allTableData.length){
 			nextButton.attr("disabled","true");
 		}
-		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
+		paginationText.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
+					/**
+					 * The next style parameter setting allow us to reset font stylization provided 
+					 * for the whole chart (independency of the table element over whole chart). 
+					 * This way we can e.g. reset the text decoration (that the whole chart has) and
+					 * provide that table does not have the one. This is important since (for now)
+					 * table gets font customization from the legend's elements.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */ 
+					.style("display", "inline-block") 
+					
+					/**
+					 * For now, table text elements will use the font customization provided for
+					 * legend's elements.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					.style("font-family",data.legend.element.style.fontFamily)
+					.style("font-size",data.legend.element.style.fontSize)
+					.style("font-style",data.legend.element.style.fontStyle)
+					.style("font-weight",data.legend.element.style.fontWeight)
+					.style("text-decoration",data.legend.element.style.textDecoration);
 
 		var dummy=[];
 		d3.select("table").select("tbody").selectAll("tr").data(dummy).exit().remove();
@@ -2354,7 +2445,30 @@ function renderWordCloud(chartConf){
 
 
 
-		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
+		paginationText.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
+			/**
+			 * The next style parameter setting allow us to reset font stylization provided 
+			 * for the whole chart (independency of the table element over whole chart). 
+			 * This way we can e.g. reset the text decoration (that the whole chart has) and
+			 * provide that table does not have the one. This is important since (for now)
+			 * table gets font customization from the legend's elements.
+			 * 
+			 * @author: danristo (danilo.ristovski@mht.net)
+			 */ 
+			.style("display", "inline-block") 
+			
+			/**
+			 * For now, table text elements will use the font customization provided for
+			 * legend's elements.
+			 * 
+			 * @author: danristo (danilo.ristovski@mht.net)
+			 */
+			.style("font-family",data.legend.element.style.fontFamily)
+			.style("font-size",data.legend.element.style.fontSize)
+			.style("font-style",data.legend.element.style.fontStyle)
+			.style("font-weight",data.legend.element.style.fontWeight)
+			.style("text-decoration",data.legend.element.style.textDecoration);
+		
 		updateTable();	
 
 
@@ -2383,7 +2497,31 @@ function renderWordCloud(chartConf){
 			prevButton.attr("disabled","true");	
 		}
 
-		paginationText.text(" "+firstDisplayed+" to "+lastDisplayed+" of "+allTableData.length).style("font-weight","bold");
+		paginationText.html("&nbsp;&nbsp;" + firstDisplayed + " to " + lastDisplayed + " of " + allTableData.length + "&nbsp;&nbsp;")
+				/**
+				 * The next style parameter setting allow us to reset font stylization provided 
+				 * for the whole chart (independency of the table element over whole chart). 
+				 * This way we can e.g. reset the text decoration (that the whole chart has) and
+				 * provide that table does not have the one. This is important since (for now)
+				 * table gets font customization from the legend's elements.
+				 * 
+				 * @author: danristo (danilo.ristovski@mht.net)
+				 */ 
+				.style("display", "inline-block") 
+				
+				/**
+				 * For now, table text elements will use the font customization provided for
+				 * legend's elements.
+				 * 
+				 * @author: danristo (danilo.ristovski@mht.net)
+				 */
+				.style("font-family",data.legend.element.style.fontFamily)
+				.style("font-size",data.legend.element.style.fontSize)
+				.style("font-style",data.legend.element.style.fontStyle)
+				.style("font-weight",data.legend.element.style.fontWeight)
+				.style("text-decoration",data.legend.element.style.textDecoration);
+		
+		
 		updateTable();	
 
 	}
