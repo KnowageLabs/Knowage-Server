@@ -94,7 +94,7 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config) {
 	}
 
 	function getBaseUrl(endP_path) {
-		return alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path ;
+		return alteredContextPath==null? sbiModule_config.contextName +'/restful-services/'+ endP_path+"/"  : alteredContextPath+ "/restful-services/" + endP_path+"/" ;
 	};
 
 	this.get = function(endP_path, req_Path, item) {
