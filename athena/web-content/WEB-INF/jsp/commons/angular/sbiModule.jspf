@@ -15,6 +15,36 @@ sbiM.factory('sbiModule_config',function(){
     	adapterPath: '<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>',
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
+    	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
+    	<%--     	currTheme: '<%= currTheme %>', --%>
+		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
+		<%-- 		 localizedDateFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %>',  // the date format localized according to user language and country --%>
+		<%-- localizedTimestampFormat: '<%= GeneralUtilities.getLocaleDateFormatForExtJs(permanentSession) %> H:i:s',  // the timestamp format localized according to user language and country --%>
+		<%-- clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server --%>
+		<%-- clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server --%>
+		
+		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
+		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>
+		<%-- <%}%> --%>
+		
+		<%-- <%if(parameterStatePersistenceScope != null) {%> --%>
+		<%-- parameterStatePersistenceScope: '<%= parameterStatePersistenceScope.toUpperCase() %>', --%>
+		<%-- <%}%> --%>
+		
+		<%-- <%if(parametersMementoPersistenceEnabled != null) {%> --%>
+		<%-- isParametersMementoPersistenceEnabled: <%= Boolean.valueOf(parametersMementoPersistenceEnabled) %>, --%>
+		<%-- <%}%> --%>
+		
+		<%-- <%if(parameterMementoPersistenceScope != null) {%> --%>
+		<%-- parameterMementoPersistenceScope: '<%= parameterMementoPersistenceScope.toUpperCase() %>', --%>
+		<%-- <%}%> --%>
+		
+		<%-- <%if(parameterMementoPersistenceDepth != null) {%> --%>
+		<%-- parameterMementoPersistenceDepth: <%= parameterMementoPersistenceDepth %>, --%>
+		<%-- <%}%> --%>
+		
+		<%-- isSSOEnabled: <%= GeneralUtilities.isSSOEnabled() %> --%>
+
 	};
 });
 

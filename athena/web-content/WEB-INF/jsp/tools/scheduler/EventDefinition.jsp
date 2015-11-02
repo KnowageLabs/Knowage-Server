@@ -4,7 +4,7 @@ Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competenc
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
 
-<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <%
 	String jobName = "default jobName value", jobGroup = "default jobGroup value", triggerName="", triggerGroup="";

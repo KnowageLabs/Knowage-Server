@@ -5,7 +5,7 @@
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <%
 // check for user profile autorization
