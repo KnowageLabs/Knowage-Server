@@ -38,7 +38,7 @@ function removePixelsFromFontSize(fontSize)
 }
 
 function renderWordCloud(chartConf){
-   
+    console.log(chartConf);
 	var maxic = 0;
 	
 	for (var i=0; i<chartConf.data[0].length; i++){
@@ -617,21 +617,37 @@ function renderWordCloud(chartConf){
 				return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
 			})
 			.text(function(d) { return d.text; })
-			.on('click', function(d,i){
-				
-				paramethers=fetchParamethers(d,i);
-				alert("category value: "+paramethers.categoryValue+" seriesValue: "+paramethers.serieValue);
+			.on('click', function(d){
+				if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+					paramethers=fetchParamethers(d);
+					var navigParams={
+						crossNavigationDocumentName:chartConf.crossNavigation.crossNavigationDocumentName,
+						crossNavigationDocumentParams:chartConf.crossNavigation.crossNavigationDocumentParams,
+						categoryName:paramethers.categoryName,
+						categoryValue:paramethers.categoryValue,
+						serieName:paramethers.serieName,
+						serieValue:paramethers.serieValue,
+						groupingCategoryName:paramethers.groupingCategoryName,
+						groupingCategoryValue:paramethers.groupingCategoryValue
+					};
+					console.log(navigParams)
+					handleCrossNavigationTo(navigParams);
+				}
 				
 			});
 			
 			}	
 		}
 		
-		function fetchParamethers(d,i){
+		function fetchParamethers(d){
 			
 			var param={
-					"categoryValue":'',
-					"serieValue":''
+					"categoryName" : null,
+					"categoryValue":null,
+					"serieName":null,
+					"serieValue":null,
+					"groupingCategoryName":null,
+					"groupingCategoryValue":null
 			};
 			for(j=0;j<chartConf.data[0].length;j++){
 				if(chartConf.data[0][j].name===d.text){
@@ -642,9 +658,10 @@ function renderWordCloud(chartConf){
 			return param;
 		}
 	}
-
+    
 	function renderSunburst(jsonObject)
 	{
+		console.log(jsonObject);
 		/*The part that we need to place into HTML (JSP) in order to attach 
 		 * given data to them - we are going to create it through D3 notation */
 				
@@ -1513,14 +1530,32 @@ function renderWordCloud(chartConf){
 		};
 		
 		function clickFunction(d){
-			var pars= crossNavigationParams(d);
-			alert("category value " + pars.categoryValue + " serie value: "+ pars.serieValue);
+			if(jsonObject.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+				paramethers=crossNavigationParams(d);
+				var navigParams={
+					crossNavigationDocumentName:jsonObject.crossNavigation.crossNavigationDocumentName,
+					crossNavigationDocumentParams:jsonObject.crossNavigation.crossNavigationDocumentParams,
+					categoryName:paramethers.categoryName,
+					categoryValue:paramethers.categoryValue,
+					serieName:paramethers.serieName,
+					serieValue:paramethers.serieValue,
+					groupingCategoryName:paramethers.groupingCategoryName,
+					groupingCategoryValue:paramethers.groupingCategoryValue
+				};
+				handleCrossNavigationTo(navigParams);
+			}
+			
+			
 		}
 		
 		function crossNavigationParams(d){
 			var par={
+				"categoryName":null,
 				"categoryValue":null,
-				"serieValue":null	
+				"serieName":null,
+				"serieValue":null,
+				"groupingCategoryName":null,
+				"groupingCategoryValue":null
 			};
 			par.categoryValue=d.name;
 			par.serieValue=d.value;
@@ -1534,7 +1569,7 @@ function renderWordCloud(chartConf){
 	 * @param data JSON containing data (parameters) about the chart 
 	 */
 	function renderParallelChart(data){
-				
+	 console.log(data);	
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1737,7 +1772,16 @@ function renderWordCloud(chartConf){
 			.on("brush", brush);
 
 		});
-
+		//counting height of svg to depend on groups number
+		var gr=JSON.parse(data.chart.groups);
+		
+		var svgHeight=Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+8+gr.length*(Number(removePixelsFromFontSize(data.legend.element.style.fontSize))+8)+30;
+	
+        console.log(Number(gr.length));
+        console.log(Number(removePixelsFromFontSize(data.legend.element.style.fontSize)));
+        console.log(Number(removePixelsFromFontSize(data.legend.title.style.fontSize)));
+        console.log(Number(removePixelsFromFontSize(data.title.style.fontSize)));
+        console.log(Number(removePixelsFromFontSize(data.subtitle.style.fontSize)));
 		var legend=d3.select("#chart").append("div")
 		         .style("float","right")
 		         .style("width",legendWidth)
@@ -1746,16 +1790,16 @@ function renderWordCloud(chartConf){
 		         .style("height",data.chart.height-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2- 180-20)
 		         .style("overflow","auto")
 		         .append("svg:svg")
-		         .style("font-size",10)
+		         //.style("font-size",10)
 		         // "...-180" for table height plus pagination height (150+30)
 		         // "...-20" for bottom padding of the pagination 
-		         .attr("height",data.chart.height-(Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2- 180-20)
+		         .attr("height",svgHeight)
 		         .append("svg:g")
 		         .attr("transform", "translate("+0 + "," + m[0] + ")");
 		
 		legend.append("svg:g")
 		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
-		.style("height",30)
+		//.style("height",Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+5)
 		.append("svg:text")
 		.style("font-family",data.legend.title.style.fontFamily)
 		.style("font-size",data.legend.title.style.fontSize)
@@ -1772,8 +1816,9 @@ function renderWordCloud(chartConf){
 		.data(groups)
 		.enter().append("svg:g")
 		.attr("class", "legend")
+		//.attr("height",Number(removePixelsFromFontSize(data.legend.element.style.fontSize)))
 		.attr("transform", function(d, i) {
-			return "translate("+ 20 +"," + (i* 20 + 20) + ")"; 
+			return "translate("+ 20 +"," + (i*(Number(removePixelsFromFontSize(data.legend.element.style.fontSize))+8) +Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+8) + ")"; 
 			});
 
 		legend.selectAll("g.legend").append("svg:rect")
@@ -1963,25 +2008,38 @@ function renderWordCloud(chartConf){
 	foreground.on("click",clickLine);
 	
 	function clickLine(d){
-	  var pars=crossNavigationParamethers(d);
-	  alert("category name: "+ pars.categoryName+" category value: "+pars.categoryValue+" grouping category name: "+pars.groupCategoryName +
-			  " group category value: "+ pars.groupCategoryValue);
+		if(data.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+			paramethers=crossNavigationParamethers(d);
+			var navigParams={
+				crossNavigationDocumentName:data.crossNavigation.crossNavigationDocumentName,
+				crossNavigationDocumentParams:data.crossNavigation.crossNavigationDocumentParams,
+				categoryName:paramethers.categoryName,
+				categoryValue:paramethers.categoryValue,
+				serieName:paramethers.serieName,
+				serieValue:paramethers.serieValue,
+				groupingCategoryName:paramethers.groupingCategoryName,
+				groupingCategoryValue:paramethers.groupingCategoryValue
+			};
+			handleCrossNavigationTo(navigParams);
+		}
 	   
 	}
 	
 	function crossNavigationParamethers(d){
 		 var params={
-					"categoryName":null,
+				    "categoryName" : null,
 					"categoryValue":null,
-					"groupCategoryName":null,
-					"groupCategoryValue":null
+					"serieName":null,
+					"serieValue":null,
+					"groupingCategoryName":null,
+					"groupingCategoryValue":null
 				   };	
 				   var category=data.chart.tooltip;
 				   params.categoryName=category;
 				   params.categoryValue=d[category];
 				   var groupCategory=data.chart.group;
-				   params.groupCategoryName=groupCategory;
-				   params.groupCategoryValue=d[groupCategory];
+				   params.groupingCategoryName=groupCategory;
+				   params.groupingCategoryValue=d[groupCategory];
 				   
 				   return params;
 	}
@@ -2006,7 +2064,7 @@ function renderWordCloud(chartConf){
 						.style("padding-bottom",10)
 						.style("padding-top",20);
 	
-	var table = tableDiv.append("table")
+	var table = tableDiv.append("div").attr("id","tDiv").attr("align","center").append("table")
 					.style("width", data.chart.width-legendWidth)
 					
 					/**
@@ -2035,8 +2093,10 @@ function renderWordCloud(chartConf){
 					.style("padding-left",m[3]);
 	
 	var paginationBar = tableDiv.append("div").attr("id","pBar")
-							.style("padding-left",w/2+m[3]/2-150)
-							.style("padding-top",10);
+	                        .attr("align","center")
+							//.style("padding-left",w/2+m[3]/2-150)
+							.style("padding-top",10)
+	                        .style("padding-left",m[3]);
 	
 	var prevButton = paginationBar.append("button")
 						.text("<< Prev")
@@ -2533,6 +2593,7 @@ function renderWordCloud(chartConf){
  */
 function renderChordChart(jsonData)
 {
+	console.log(jsonData);
 	/**
 	 *  'opacityMouseOver' - value for the opacity of the item (row) that is covered by the mouse pointer and all the items 
 	 *  that are linked (connected) to that row (item)
@@ -2694,9 +2755,21 @@ function renderChordChart(jsonData)
 				.filter(function(d) { return d.source.index != i && d.target.index != i; })
 			 	.transition()
 			 	.style("opacity", opacityMouseOver);
-		
-			var pars= crossNavigationParamethers(jsonData.data[0].rows[i]);
-			alert("category value: "+pars.categoryValue+ " serie value: "+pars.serieValue);
+		    
+			if(jsonData.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+				paramethers=crossNavigationParamethers(jsonData.data[0].rows[i]);
+				var navigParams={
+					crossNavigationDocumentName:jsonData.crossNavigation.crossNavigationDocumentName,
+					crossNavigationDocumentParams:jsonData.crossNavigation.crossNavigationDocumentParams,
+					categoryName:paramethers.categoryName,
+					categoryValue:paramethers.categoryValue,
+					serieName:paramethers.serieName,
+					serieValue:paramethers.serieValue,
+					groupingCategoryName:paramethers.groupingCategoryName,
+					groupingCategoryValue:paramethers.groupingCategoryValue
+				};
+				handleCrossNavigationTo(navigParams);
+			}
 			
 		};
 	}
@@ -2704,8 +2777,12 @@ function renderChordChart(jsonData)
 	function crossNavigationParamethers(d){
 		
 		var param={
+			"categoryName":null,
 			"categoryValue":null,
-			"serieValue":null
+			"serieName":null,
+			"serieValue":null,
+			"groupingCategoryName":null,
+			"groupingCategoryValue":null
 		};
 		param.categoryValue=d.column_0;
 		serie=0;
