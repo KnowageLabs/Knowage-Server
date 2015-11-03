@@ -29,8 +29,17 @@
 		        plotShadow: true,
 		        plotBorderWidth: 1
 		    },
-		    exporting: {
-		        url: 'http://'+hostName+':'+serverPort+'/highcharts-export-web/'
+		   exporting: {
+			   
+				/**
+						Removing button on the top-right corner that offers us
+						printing of the chart.
+						
+						@author: danristo (danilo.ristovski@mht.net)
+				*/
+			   	enabled: false,
+			   
+		   		url: 'http://'+hostName+':'+serverPort+'/highcharts-export-web/'
 		    },
 		    lang: {
 	            drillUpText: drillUpText,
