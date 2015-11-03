@@ -165,7 +165,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			String path = "";
 
 			if (aLayer.getPathFile() != null) {
-				path = aLayer.getPathFile() + getTenant() + File.separator + "Layer" + File.separator;
+
+				String separator = "";
+				if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
+					separator += File.separatorChar;
+				}
+
+				path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
 				hibLayer.setPathFile(path);
 			} else {
 				hibLayer.setPathFile(null);
@@ -246,7 +252,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setCategory_id(aLayer.getCategory_id());
 			String path = null;
 			if (aLayer.getPathFile() != null) {
-				path = aLayer.getPathFile() + getTenant() + File.separator + "Layer" + File.separator;
+
+				String separator = "";
+				if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
+					separator += File.separatorChar;
+				}
+
+				path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
 				aLayer.setPathFile(path);
 			} else {
 				aLayer.setPathFile(null);
@@ -265,7 +277,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			try {
 				if (aLayer.getPathFile() != null) {
-					new File(path).mkdir();
+					new File(path).mkdirs();
 					OutputStreamWriter out;
 					String name = aLayer.getLabel();
 					out = new FileWriter(path + name);
