@@ -138,8 +138,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			hibQuery.setInteger(0, id);
 			SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
 
-			toReturn = SbiFederationUtils.toDatasetFederationWithDataset(sbiResult, getUserProfile(),
-					loadDatasetsUsedByFederation(sbiResult.getFederation_id(), aSession));
+			toReturn = SbiFederationUtils.toDatasetFederationWithDataset(sbiResult,	loadDatasetsUsedByFederation(sbiResult.getFederation_id(), aSession));
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -178,7 +177,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			Iterator it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(SbiFederationUtils.toDatasetFederationNoDataset((SbiFederationDefinition) it.next(), getUserProfile()));
+				realResult.add(SbiFederationUtils.toDatasetFederationNoDataset((SbiFederationDefinition) it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -287,7 +286,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		while (it.hasNext()) {
 			SbiDataSetFederation sbiDsFed = (SbiDataSetFederation) it.next();
 			SbiFederationDefinition sbiFedDef = (SbiFederationDefinition) currSession.load(SbiFederationDefinition.class, sbiDsFed.getId().getFederationId());
-			FederationDefinition fedDef = SbiFederationUtils.toDatasetFederationNoDataset(sbiFedDef, getUserProfile());
+			FederationDefinition fedDef = SbiFederationUtils.toDatasetFederationNoDataset(sbiFedDef);
 			toReturn.add(fedDef);
 
 		}

@@ -54,7 +54,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet identifier in input is null!");
 				return null;
 			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetById(dataSetId);
+			
+			IDataSetDAO dao = DAOFactory.getDataSetDAO();
+			dao.setUserProfile(getUserProfile());
+			IDataSet dataSet = dao.loadDataSetById(dataSetId);
+			
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not existing.");
 				return null;
@@ -81,7 +85,11 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		
 		try {
 			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
-			List dataSetList = DAOFactory.getDataSetDAO().loadDataSets();
+			
+			IDataSetDAO dao = DAOFactory.getDataSetDAO();
+			dao.setUserProfile(getUserProfile());
+			List dataSetList = dao.loadDataSets();
+			
 			toReturn = new SDKDataSet[dataSetList.size()];
 			for (int i = 0; i < dataSetList.size(); i++) {
 				IDataSet dataSet = (IDataSet) dataSetList.get(i);
@@ -117,7 +125,10 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 			}
 			dataSetId = sdkDataSet.getId();
 			logger.debug("Looking for dataset with id = " + dataSetId);
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetById(dataSetId);
+			IDataSetDAO dao = DAOFactory.getDataSetDAO();
+			dao.setUserProfile(getUserProfile());
+			IDataSet dataSet = dao.loadDataSetById(dataSetId);
+
 			if (dataSet == null) {
 				logger.warn("DataSet with identifier [" + dataSetId + "] not found.");
 				return null;
@@ -281,7 +292,9 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 				logger.warn("DataSet identifier in input is null!");
 				return null;
 			}
-			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			IDataSetDAO dao = DAOFactory.getDataSetDAO();
+			dao.setUserProfile(getUserProfile());
+			IDataSet dataSet = dao.loadDataSetByLabel(label);
 			if (dataSet == null) {
 				logger.warn("DataSet with label [" + label + "] not existing.");
 				return null;

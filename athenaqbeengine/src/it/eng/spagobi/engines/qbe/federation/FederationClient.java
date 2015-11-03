@@ -9,7 +9,6 @@ package it.eng.spagobi.engines.qbe.federation;
 import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
@@ -21,7 +20,6 @@ import java.util.Set;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.internal.jpa.metadata.accessors.mappings.VersionAccessor;
 import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,7 +37,7 @@ public class FederationClient extends SimpleRestClient{
 	
 	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
 
-	public FederationDefinition getFederation(String federationID, DataSetServiceProxy proxy) throws Exception {
+	public FederationDefinition getFederation(String federationID, String userId, DataSetServiceProxy proxy) throws Exception {
 
 		logger.debug("IN");
 
@@ -50,7 +48,7 @@ public class FederationClient extends SimpleRestClient{
 		parameters.put("federationId", federationID);
 		
 		logger.debug("Call persist service in post");
-		ClientResponse<String> resp = executePostService(parameters, getServiceUrl, null, null);
+		ClientResponse<String> resp = executePostService(parameters, getServiceUrl, userId, null, null);
 		
 		
 		String respString = resp.getEntity(String.class);
@@ -84,13 +82,13 @@ public class FederationClient extends SimpleRestClient{
 
 	
 	
-	public FederationDefinition addFederation(FederationDefinition federation) throws Exception {
+	public FederationDefinition addFederation(FederationDefinition federation, String userId) throws Exception {
 		logger.debug("IN");
 
 		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
 	
 		logger.debug("Call persist service in post");
-		ClientResponse<String> resp = executePostService(parameters, addServiceUrl, MediaType.TEXT_HTML_TYPE, serialize(federation).toString());
+		ClientResponse<String> resp = executePostService(parameters, addServiceUrl, userId, MediaType.TEXT_HTML_TYPE, serialize(federation).toString());
 		//ClientResponse<String> resp = executePostService(parameters, addServiceUrl, null,null);
 				
 		String respString = resp.getEntity(String.class);

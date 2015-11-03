@@ -56,8 +56,8 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements DataSetSe
 		Monitor monitor = MonitorFactory.start("spagobi.service.dataset.getDataSetByLabel");
 		try {
 			validateTicket(token, user);
-			this.setTenantByUserId(user);
-			return supplier.getDataSetByLabel(label);
+			IEngUserProfile profile = this.setTenantByUserId(user);
+			return supplier.getDataSetByLabel(label,profile);
 		} catch (Exception e) {
 			logger.error("Error while getting dataset with label " + label, e);
 			return null;

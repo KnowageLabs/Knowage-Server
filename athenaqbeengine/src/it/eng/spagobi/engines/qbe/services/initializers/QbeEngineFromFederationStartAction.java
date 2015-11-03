@@ -1,7 +1,6 @@
 package it.eng.spagobi.engines.qbe.services.initializers;
 
 import it.eng.qbe.dataset.FederationUtils;
-import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.federation.FederationClient;
@@ -22,8 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
@@ -139,7 +136,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		logger.debug("send request to server for the federation creation");
 		FederationClient fc = new FederationClient();
 		try {
-			federationDefinition = fc.addFederation(federationDefinition);
+			federationDefinition = fc.addFederation(federationDefinition, getUserId());
 		} catch (Exception e) {
 			logger.error("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
 			throw new SpagoBIRuntimeException("Error saving the federated definition automatically generated in order to manage the creation datasets on the dataset "+dataset.getLabel(),e);
@@ -157,7 +154,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		logger.debug("Loading federation with id "+federationId);
 		FederationClient fc = new FederationClient();
 		try {
-			return fc.getFederation(federationId, getDataSetServiceProxy());
+			return fc.getFederation(federationId,getUserId(), getDataSetServiceProxy());
 		} catch (Exception e) {
 			logger.error("Error loading the federation definition");
 			throw new SpagoBIEngineRuntimeException("Error loading the federation definition", e);
@@ -217,7 +214,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		//save in cache the derived datasets
 		logger.debug("Saving the datasets on cache");
 
-		JSONObject datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsLabels);
+		JSONObject datasetPersistedLabels = FederationUtils.createDatasetsOnCache(dsLabels, getUserId());
 		for (int i = 0; i < dsLabels.size(); i++) {
 			String dsLabel = dsLabels.get(i);
 			//adds the link between dataset and cached table name

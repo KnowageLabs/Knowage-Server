@@ -67,7 +67,7 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 			dataSetConfig = null;
 			try {
 				dataSetSupplier = new DataSetSupplier();
-				dataSetConfig = dataSetSupplier.getDataSetByLabel(dataSetLabel);
+				dataSetConfig = dataSetSupplier.getDataSetByLabel(dataSetLabel, getUserProfile());
 			} catch (Throwable t) {
 				throw new SpagoBIServiceException("Impossible to find a dataset whose label is [" + dataSetLabel + "]", t);
 			}

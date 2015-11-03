@@ -24,6 +24,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
@@ -39,7 +40,7 @@ import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 public class SimpleRestClient {
 
 	static protected Logger logger = Logger.getLogger(SimpleRestClient.class);
-	private final String credential = "YmlhZG1pbjpiaWFkbWlu";
+
 	private boolean addServerUrl = true;
 
 	private HMACFilterAuthenticationProvider authenticationProvider;
@@ -69,12 +70,13 @@ public class SimpleRestClient {
 	 *            the parameters of the request
 	 * @param serviceUrl
 	 *            the relative (refers always to core application context) path of the service
-	 * @return the response
+	 * @param userId
+	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	protected ClientResponse executeGetService(Map<String, Object> parameters, String serviceUrl) throws Exception {
-		return executeService(parameters, serviceUrl, RequestTypeEnum.GET, null, null);
+	protected ClientResponse executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
 
 	/**
@@ -84,18 +86,19 @@ public class SimpleRestClient {
 	 *            the parameters of the request
 	 * @param serviceUrl
 	 *            the relative (refers always to core application context) path of the service
+	 * @param userId
 	 * @param mediaType
 	 * @param data
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	protected ClientResponse executePostService(Map<String, Object> parameters, String serviceUrl, MediaType mediaType, Object data) throws Exception {
-		return executeService(parameters, serviceUrl, RequestTypeEnum.POST, mediaType, data);
+	protected ClientResponse executePostService(Map<String, Object> parameters, String serviceUrl, String userId, MediaType mediaType, Object data) throws Exception {
+		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private ClientResponse executeService(Map<String, Object> parameters, String serviceUrl, RequestTypeEnum type, MediaType mediaType, Object data)
+	private ClientResponse executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, MediaType mediaType, Object data)
 			throws Exception {
 		logger.debug("IN");
 
@@ -114,8 +117,9 @@ public class SimpleRestClient {
 		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
 
 		logger.debug("adding headers");
-		request.header("Authorization", credential);
-
+		
+		addAuthorizations(request, userId);
+		
 		if (mediaType != null && data != null) {
 			logger.debug("adding body");
 			request.body(mediaType, data);
@@ -146,6 +150,14 @@ public class SimpleRestClient {
 
 		logger.debug("OUT");
 		return response;
+	}
+	
+	private void addAuthorizations(ClientRequest request, String userId) throws Exception{
+		logger.debug("Adding auth for user "+userId);
+		
+		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
+		request.header("Authorization", "Direct "+encodedBytes);
+
 	}
 
 	protected HttpClient getHttpClient() {

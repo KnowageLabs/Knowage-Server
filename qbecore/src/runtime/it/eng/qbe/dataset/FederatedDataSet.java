@@ -11,6 +11,7 @@ import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDriver;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
@@ -29,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,10 +45,12 @@ public class FederatedDataSet extends QbeDataSet {
 
 	private static transient Logger logger = Logger.getLogger(FederatedDataSet.class);
 
-	FederationDefinition federation;
+	private FederationDefinition federation;
+	private  String userId = "";
 
 	public FederatedDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
+		
 		federation = new FederationDefinition();
 		setDependentDataSets((SpagoBiDataSet[])dataSetConfig.getDependentDataSets());
 
@@ -66,20 +68,18 @@ public class FederatedDataSet extends QbeDataSet {
 		}
 	}
 
-	public FederatedDataSet(FederationDefinition federation){
+	public FederatedDataSet(FederationDefinition federation, String userId){
+		this.userId = userId;
 		this.federation = federation;
 	}
 
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = super.toSpagoBiDataSet();
 
-
 		int i=0;
 
 		Set<IDataSet> dependentDataSets= federation.getSourceDatasets();
 		SpagoBiDataSet[] dependantDatasets = new SpagoBiDataSet[dependentDataSets.size()];
-
-
 
 		for (IDataSet dataset : dependentDataSets) {
 			dependantDatasets[i] = dataset.toSpagoBiDataSet();
@@ -135,20 +135,15 @@ public class FederatedDataSet extends QbeDataSet {
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
-		
-		if (this.getSourceDataset() != null) {
-			List<IDataSet> dataSets = new ArrayList<IDataSet>();
-			dataSets.add(this.getSourceDataset());
-			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
-		}
-		
+	
 		JSONObject relations = federation.getRelationshipsAsJSONObject();
 		dataSourceProperties.put(EngineConstants.ENV_RELATIONS, relations);
 		
-
+		dataSourceProperties.put(EngineConstants.ENV_USER_ID, getUserId());
+		
 		return getDataSourceFromDataSet(dataSourceProperties, useCache);
 	}
-
+	
 
 	public String getDsType() {
 		return DS_TYPE;
@@ -161,26 +156,20 @@ public class FederatedDataSet extends QbeDataSet {
 
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
+		
 		while(it.hasNext()) {
 			String propertyName = it.next();
 			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
 		}
-
-		//adjust the name of the relations
-//		try {
-//			FederationUtils.adjustRelationName(new JSONArray(federation.getRelationships()), getDataset2CacheTableName());
-//		} catch (JSONException e) {
-//			logger.error("Error adjusting the table names in the relation for federation",e);
-//			throw new SpagoBIRuntimeException("Error adjusting the table names in the relation for federation",e);
-//		}
-		
 		
 		//refresh the datasets on cache
 		for (Iterator iterator = federation.getSourceDatasets().iterator(); iterator.hasNext();) {
 			IDataSet dataSets = (IDataSet) iterator.next();
 			datasetNames.add(dataSets.getLabel());
 		}
-		JSONObject datasetLabels = FederationUtils.createDatasetsOnCache(datasetNames);
+		
+		String userId = (String) dataSourceProperties.get(EngineConstants.ENV_USER_ID);
+		JSONObject datasetLabels = FederationUtils.createDatasetsOnCache(datasetNames, userId);
 		setDataset2CacheTableName(datasetLabels);
 		
 		
@@ -189,7 +178,7 @@ public class FederatedDataSet extends QbeDataSet {
 			IDataSet dataSets = (IDataSet) iterator.next();
 			IDataSet cachedDataSet = null;
 			try {
-				cachedDataSet = FederationUtils.createDatasetOnCache(getDataset2CacheTableName().getString(dataSets.getLabel()), dataSets, getDataSourceForWriting());
+				cachedDataSet = FederationUtils.createDatasetOnCache(getDataset2CacheTableName().getString(dataSets.getLabel()), dataSets, getDataSourceForReading());
 			} catch (JSONException e) {
 				logger.error("Error getting the name of the cached table linked to the dataset "+dataSets.getLabel(),e);
 				throw new SpagoBIRuntimeException("Error getting the name of the cached table linked to the dataset "+dataSets.getLabel(),e);
@@ -213,6 +202,18 @@ public class FederatedDataSet extends QbeDataSet {
 	}   
 	public JSONObject getDataset2CacheTableName() {
 		return this.dataset2CacheTableName;
+	}
+
+	public String getUserId() {
+		String userIdFromParam = (String)getParamsMap().get(SpagoBIConstants.USER_ID);
+		if(userIdFromParam!=null && userIdFromParam.length()>0){
+			userId = userIdFromParam;
+		}
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 

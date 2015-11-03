@@ -41,7 +41,8 @@ public class EngineConstants {
 	public static final String ENV_AUDIT_SERVICE_PROXY = "AUDIT_SERVICE_PROXY";
 	public static final String ENV_LOCALE = "LOCALE";
 	public static final String ENV_EVENT_SERVICE_PROXY = "EVENT_SERVICE_PROXY";
-	public static final String ENV_USER_PROFILE = "ENV_USER_PROFILE";	
+	public static final String ENV_USER_PROFILE = "ENV_USER_PROFILE";
+	public static final String ENV_USER_ID = "ENV_USER_ID";
 	public static final String ENV_EXECUTION_ROLE = "ENV_EXECUTION_ROLE";	
 	public static final String ENV_USER_DATE_FORMAT = "ENV_USER_DATE_FORMAT";
 	public static final String ENV_DB_DATE_FORMAT = "ENV_DB_DATE_FORMAT";
@@ -75,5 +76,7 @@ public class EngineConstants {
 	public static final String ENV_OLAP_SCHEMA = "ENV_OLAP_SCHEMA";
 
     public static final String DEFAULT_CHART_STYLES= "DEFAULT_CHART_STYLES";
+    
+    public static final String PERSISTER_PROXY = "PERSISTER_PROXY";
 
 }

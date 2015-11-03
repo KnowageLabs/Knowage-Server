@@ -12,7 +12,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.federateddataset.dao.SbiFederationUtils;
-import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -739,7 +738,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 							while (it2.hasNext()) {
 								SbiDataSet hibOldDataSet = (SbiDataSet) it2.next();
 								if (hibOldDataSet != null && !hibOldDataSet.isActive()) {
-									VersionedDataSet dsD = (VersionedDataSet) DataSetFactory.toDataSet(hibOldDataSet);
+									VersionedDataSet dsD = (VersionedDataSet) DataSetFactory.toDataSet(hibOldDataSet, getUserProfile());
 									oldDsVersion.add(dsD);
 								}
 							}

@@ -254,7 +254,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
-        
+        	
 		if (dataSourceProperties.get(EngineConstants.ENV_DATASETS) != null) {
 			return getDataSourceFromDataSet(dataSourceProperties, useCache);
 		} else {
@@ -316,6 +316,8 @@ public class QbeDataSet extends ConfigurableDataSet {
     	IQbeDataSetDatamartRetriever retriever = (IQbeDataSetDatamartRetriever) this.params.get(SpagoBIConstants.DATAMART_RETRIEVER);
     	return retriever;
 	}
+    
+
 
 	/**
      * Get the driver name (hibernate or jpa). It checks if the passed jar file contains the persistence.xml

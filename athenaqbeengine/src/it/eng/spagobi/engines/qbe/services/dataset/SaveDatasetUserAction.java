@@ -144,6 +144,8 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
 
 		QbeDataSet newDataset;
+		
+		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 		// if its a federated dataset we've to add the dependent datasets
 		if (getEnv().get(EngineConstants.ENV_FEDERATED_ID) != null) {
@@ -159,9 +161,10 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 			federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
 			federation.setFederation_id(new Integer((String) (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
 
-			newDataset = new FederatedDataSet(federation);
+			newDataset = new FederatedDataSet(federation, (String)profile.getUserId());
 			((FederatedDataSet) newDataset).setDependentDataSets((List<IDataSet>) getEnv().get(EngineConstants.ENV_DATASETS));
 			newDataset.setDataSourceForWriting((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
+			newDataset.setDataSourceForReading((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
 		} else {
 			newDataset = new QbeDataSet();
 		}
@@ -175,7 +178,7 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		newDataset.setCategoryCd(dataset.getCategoryCd());
 		newDataset.setCategoryId(dataset.getCategoryId());
 
-		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		
 		String owner = profile.getUserId().toString();
 		// saves owner of the dataset
 		newDataset.setOwner(owner);

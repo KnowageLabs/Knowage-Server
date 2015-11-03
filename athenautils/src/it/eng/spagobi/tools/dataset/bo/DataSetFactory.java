@@ -106,7 +106,16 @@ public class DataSetFactory {
 			dataSet = (IDataSet) object;
 
 			logger.debug("Check if the dataset type is a Qbe dataset");
-			if (className.endsWith("QbeDataSet")) {
+			
+			
+			if (className.endsWith("FederatedDataSet")) {
+				Map parameters = dataSet.getParamsMap();
+				if (parameters == null) {
+					parameters = new HashMap();
+					dataSet.setParamsMap(parameters);
+				}
+				dataSet.getParamsMap().put(SpagoBIConstants.USER_ID, userId);
+			}else if (className.endsWith("QbeDataSet")) {
 
 				logger.debug("The current dataset is a Qbe dataset. Looking for correct datamart retriever");
 				String datamartRetrieverClass = p.getProperty("SbiQbeDatamartRetriever");

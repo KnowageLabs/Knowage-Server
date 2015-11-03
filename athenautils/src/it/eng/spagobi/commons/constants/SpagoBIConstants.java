@@ -129,6 +129,7 @@ public class SpagoBIConstants {
 	public static final String PARAMETERS = "PARAMETERS";
 
 	public static final String PROFILE_ATTRS = "PROFILE_ATTRS";
+	public static final String USER_ID = "user_id";
 
 	public static final String INPUT_TYPE = "INPUT_TYPE";
 	public static final String INPUT_TYPE_QUERY_CODE = "QUERY";

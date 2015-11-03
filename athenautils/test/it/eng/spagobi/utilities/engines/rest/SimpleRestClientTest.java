@@ -42,7 +42,7 @@ public class SimpleRestClientTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
-		ClientResponse<?> resp = client.executeGetService(parameters, "http://localhost:8080/hmac");
+		ClientResponse<?> resp = client.executeGetService(parameters, "http://localhost:8080/hmac","biadmin");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
 	}
@@ -56,7 +56,7 @@ public class SimpleRestClientTest {
 		boolean done = false;
 
 		try {
-			client.executeGetService(parameters, "http://localhost:8080/hmac");
+			client.executeGetService(parameters, "http://localhost:8080/hmac","biadmin");
 		} catch (Exception e) {
 			done = true;
 		}
@@ -90,7 +90,7 @@ public class SimpleRestClientTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
-		ClientResponse<?> resp = client.executePostService(parameters, "http://localhost:8080/hmac", MediaType.TEXT_PLAIN_TYPE, "etc.17");
+		ClientResponse<?> resp = client.executePostService(parameters, "http://localhost:8080/hmac","biadmin", MediaType.TEXT_PLAIN_TYPE, "etc.17");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
 	}
@@ -104,7 +104,7 @@ public class SimpleRestClientTest {
 		boolean done = false;
 
 		try {
-			client.executePostService(parameters, "http://localhost:8080/hmac", MediaType.TEXT_PLAIN_TYPE, "etc.17");
+			client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE, "etc.17");
 		} catch (Exception e) {
 			done = true;
 		}

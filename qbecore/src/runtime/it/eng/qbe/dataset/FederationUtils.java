@@ -74,13 +74,13 @@ public class FederationUtils {
 	/**
 	 * Invokes the service that persits the datasets
 	 */
-	public static JSONObject createDatasetsOnCache(List<String> datasetLabels){
+	public static JSONObject createDatasetsOnCache(List<String> datasetLabels, String userId){
 		//dave in cache the derived datasets
 		logger.debug("Saving the datasets on cache");
 		DataSetPersister dsp = new DataSetPersister();
 		JSONObject datasetPersistedLabels = null;
 		try {
-			datasetPersistedLabels = dsp.cacheDataSets(datasetLabels );
+			datasetPersistedLabels = dsp.cacheDataSets(datasetLabels, userId );
 		} catch (Exception e1) {
 			logger.error("Error executing the service that persist the datasets on the cache",e1);
 			throw new SpagoBIRuntimeException("Error executing the service that persist the datasets on the cache",e1);

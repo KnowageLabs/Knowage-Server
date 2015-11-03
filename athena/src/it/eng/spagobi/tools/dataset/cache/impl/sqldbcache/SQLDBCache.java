@@ -122,7 +122,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
-	@Override
+	
 	public boolean contains(IDataSet dataSet) {
 		return contains(dataSet.getSignature());
 	}
@@ -143,7 +143,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
-	@Override
+	
 	public boolean contains(String resultsetSignature) {
 		return getMetadata().containsCacheItem(resultsetSignature);
 	}
@@ -153,7 +153,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
-	@Override
+	
 	public boolean contains(List<IDataSet> dataSets) {
 		return getNotContained(dataSets).size() > 0;
 	}
@@ -163,7 +163,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
-	@Override
+	
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
 		List<IDataSet> notContainedDataSets = new ArrayList<IDataSet>();
 		for (IDataSet dataSet : dataSets) {
@@ -183,7 +183,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
-	@Override
+	
 	public IDataStore get(IDataSet dataSet) {
 		IDataStore dataStore = null;
 
@@ -219,7 +219,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
-	@Override
+	
 	public IDataStore get(String resultsetSignature) {
 		IDataStore dataStore = null;
 
@@ -265,7 +265,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
-	@Override
+	
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections) {
 		IDataStore dataStore = null;
 
@@ -618,7 +618,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
-	@Override
+	
 	public IDataStore load(IDataSet dataSet, boolean wait) {
 		List<IDataSet> dataSets = new ArrayList<IDataSet>();
 		dataSets.add(dataSet);
@@ -631,7 +631,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
-	@Override
+	
 	public List<IDataStore> load(List<IDataSet> dataSets, boolean wait) {
 		List<IDataStore> dataStores = new ArrayList<IDataStore>();
 
@@ -700,7 +700,7 @@ public class SQLDBCache implements ICache {
 	// REFRESH METHODS
 	// ===================================================================================
 
-	@Override
+	
 	public synchronized void refreshIfNotContained(IDataSet dataSet, boolean wait) {
 		if (contains(dataSet) == false) {
 			refresh(dataSet, wait);
@@ -712,7 +712,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
-	@Override
+	
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
 
 		IDataStore dataStore = null;
@@ -743,7 +743,7 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	@Override
+	
 	public IDataStore refresh(JoinedDataSet joinedDataSet, AssociationGroup associationGroup) {
 		logger.trace("IN");
 		try {
@@ -887,7 +887,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
-	@Override
+	
 	public synchronized void put(IDataSet dataSet, IDataStore dataStore) {
 		logger.trace("IN");
 		try {
@@ -1004,7 +1004,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
-	@Override
+	
 	public boolean delete(IDataSet dataSet) {
 		boolean result = false;
 
@@ -1041,7 +1041,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
-	@Override
+	
 	public boolean delete(String signature) {
 		return delete(signature, false);
 	}
@@ -1126,7 +1126,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
-	@Override
+	
 	public void deleteToQuota() {
 		logger.trace("IN");
 		boolean isEnough = false;
@@ -1166,7 +1166,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
-	@Override
+	
 	public void deleteAll() {
 		logger.debug("Removing all tables from [SQLDBCache]");
 
@@ -1293,7 +1293,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
-	@Override
+	
 	public SQLDBCacheMetadata getMetadata() {
 		return cacheMetadata;
 	}
@@ -1304,7 +1304,7 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
-	@Override
+	
 	public void addListener(ICacheEvent event, ICacheListener listener) {
 		// TODO Auto-generated method stub
 
@@ -1316,7 +1316,7 @@ public class SQLDBCache implements ICache {
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
-	@Override
+	
 	public void scheduleActivity(ICacheActivity activity, ICacheTrigger trigger) {
 		// TODO Auto-generated method stub
 
@@ -1327,7 +1327,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
-	@Override
+	
 	public void enable(boolean enable) {
 		this.enabled = enable;
 
@@ -1338,7 +1338,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
-	@Override
+	
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -1364,7 +1364,7 @@ public class SQLDBCache implements ICache {
 	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
-	@Override
+	
 	public IDataStore refresh(List<IDataSet> dataSets, boolean wait) {
 		// TODO Auto-generated method stub
 		return null;

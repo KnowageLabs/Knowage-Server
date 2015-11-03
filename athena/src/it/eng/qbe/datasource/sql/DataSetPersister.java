@@ -2,7 +2,10 @@ package it.eng.qbe.datasource.sql;
 
 import it.eng.spagobi.api.v2.DataSetResource;
 
+
 import java.util.List;
+
+
 
 
 import org.json.JSONArray;
@@ -12,7 +15,7 @@ import org.json.JSONObject;
 /**
  * Override the DataSetPersister of the qbe. This is because if the dataset is tested in the dataset management interface ther isn't the need to call a service, but directly the api 
  */
-public class DataSetPersister {
+public class DataSetPersister{
 
 	/**
 	 * Override the perdidter of 
@@ -20,7 +23,7 @@ public class DataSetPersister {
 	 * @return
 	 * @throws Exception
 	 */
-	public JSONObject cacheDataSets(List<String> datasetLabels) throws Exception {
+	public JSONObject cacheDataSets(List<String> datasetLabels, String userId) throws Exception {
 
 		JSONArray datasetLabelsArray = new JSONArray();
 		

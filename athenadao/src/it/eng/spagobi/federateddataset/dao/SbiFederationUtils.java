@@ -25,13 +25,13 @@ public class SbiFederationUtils {
 
 	static private Logger logger = Logger.getLogger(SbiFederationUtils.class);
 
-	public static FederationDefinition toDatasetFederationNoDataset(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
-		return toDatasetFederationWithDataset(hibFd, userProfile, null);
+	public static FederationDefinition toDatasetFederationNoDataset(SbiFederationDefinition hibFd) {
+		return toDatasetFederationWithDataset(hibFd, null);
 	}
 
 	
-	public static FederationDefinition toDatasetFederationWithDataset(SbiFederationDefinition hibFd, IEngUserProfile userProfile, Set<IDataSet> sourceDatasets) {
-		FederationDefinition fd = toDatasetFederation(hibFd, userProfile);
+	public static FederationDefinition toDatasetFederationWithDataset(SbiFederationDefinition hibFd, Set<IDataSet> sourceDatasets) {
+		FederationDefinition fd = toDatasetFederation(hibFd);
 		if(sourceDatasets==null){
 			logger.debug("No dataset is added in the definition");
 			sourceDatasets= new HashSet<IDataSet>();
@@ -44,7 +44,7 @@ public class SbiFederationUtils {
 	
 	
 
-	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd, IEngUserProfile userProfile) {
+	public static FederationDefinition toDatasetFederation(SbiFederationDefinition hibFd) {
 		logger.debug("IN");
 		FederationDefinition fd = new FederationDefinition();
 
@@ -56,10 +56,7 @@ public class SbiFederationUtils {
 			fd.setDescription(hibFd.getDescription());
 			fd.setRelationships(hibFd.getRelationships());
 			fd.setFederation_id(hibFd.getFederation_id());
-//			if(datasets){
-//				fd.setSourceDatasets(DataSetFactory.toDataSet(hibFd.getSourceDatasets(), userProfile));
-//			}
-//			
+
 		}else{
 			logger.debug("The federation is null");
 		}

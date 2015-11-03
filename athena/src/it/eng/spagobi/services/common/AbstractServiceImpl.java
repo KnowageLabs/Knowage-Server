@@ -95,21 +95,22 @@ public abstract class AbstractServiceImpl {
 		TenantManager.unset();
 	}
 
-	protected void setTenantByUserId(String userId) {
+	protected IEngUserProfile setTenantByUserId(String userId) {
 		logger.debug("IN");
 		try {
 			if (UserProfile.isSchedulerUser(userId)) {
 				UserProfile scheduler = UserProfile.createSchedulerUserProfile(userId);
 				this.setTenantByUserProfile(scheduler);
-				return;
+				return scheduler;
 			}
 			if (UserProfile.isWorkflowUser(userId)) {
 				UserProfile workflow = UserProfile.createWorkflowUserProfile(userId);
 				this.setTenantByUserProfile(workflow);
-				return;
+				return workflow;
 			}
 			IEngUserProfile profile = UserUtilities.getUserProfile(userId);
 			this.setTenantByUserProfile(profile);
+			return profile;
 		} catch (Exception e) {
 			logger.error("Cannot set tenant", e);
 			throw new SpagoBIRuntimeException("Cannot set tenant", e);

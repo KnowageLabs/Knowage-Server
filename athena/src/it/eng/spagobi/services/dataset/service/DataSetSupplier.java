@@ -13,6 +13,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 import java.util.ArrayList;
@@ -88,14 +89,16 @@ public class DataSetSupplier {
 	 *
 	 * @return the data set by label
 	 */
-	public SpagoBiDataSet getDataSetByLabel(String label) {
+	public SpagoBiDataSet getDataSetByLabel(String label, IEngUserProfile userProfile) {
 		SpagoBiDataSet datasetConfig = null;
 		IDataSet ds = null;
 
 		logger.debug("IN");
 
 		try {
-			ds = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(userProfile);
+			ds = dsDao.loadDataSetByLabel(label);
 			if (ds != null) {
 				datasetConfig = ds.toSpagoBiDataSet();
 			} else {

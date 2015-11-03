@@ -32,7 +32,7 @@ public class DataSetPersister extends SimpleRestClient{
 	
 	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
 
-	public JSONObject cacheDataSets(List<String> datasetLabels) throws Exception {
+	public JSONObject cacheDataSets(List<String> datasetLabels, String userId) throws Exception {
 
 		logger.debug("IN");
 
@@ -44,11 +44,10 @@ public class DataSetPersister extends SimpleRestClient{
 			datasetLabelsArray.put(datasetLabels.get(i));
 		}
 		
-		
 		parameters.put("labels", datasetLabelsArray);
 
 		logger.debug("Call persist service in post");
-		ClientResponse resp = executePostService(parameters, serviceUrl, null, null);
+		ClientResponse resp = executePostService(parameters, serviceUrl, userId, null, null);
 		
 		String respString = (String)resp.getEntity(String.class);
 		

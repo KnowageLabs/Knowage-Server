@@ -9,6 +9,7 @@ import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -39,6 +40,7 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -168,14 +170,6 @@ public class DataSetFactory {
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet) {
 		return toDataSet(sbiDataSet, null);
 	}
-
-	// public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSets, IEngUserProfile userProfile) {
-	// Set<IDataSet> ds = new java.util.HashSet<IDataSet>();
-	// for (SbiDataSet dataset : sbiDataSets) {
-	// ds.add(toDataSet(dataset));
-	// }
-	// return ds;
-	// }
 
 	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
 
@@ -350,7 +344,8 @@ public class DataSetFactory {
 				ISbiFederationDefinitionDAO dao = DAOFactory.getFedetatedDatasetDAO();
 				Set<IDataSet> sourcesDatasets =  dao.loadAllFederatedDataSets(sbiFederation.getFederation_id());
 
-				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, userProfile,sourcesDatasets));
+				UserProfile profile = (UserProfile) userProfile;
+				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation,sourcesDatasets), (String)profile.getUserId());
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 
@@ -361,6 +356,8 @@ public class DataSetFactory {
 					parameters = new HashMap();
 					ds.setParamsMap(parameters);
 				}
+	
+				
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
@@ -371,6 +368,7 @@ public class DataSetFactory {
 					((QbeDataSet) ds).setDataSource(dataSource);
 					if (!dataSource.checkIsReadOnly()) {
 						ds.setDataSourceForWriting(dataSource);
+						ds.setDataSourceForReading(dataSource);
 					}
 				}
 				ds.setDsType(FEDERATED_DS_TYPE);
@@ -421,7 +419,7 @@ public class DataSetFactory {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage(), e);
 		}
 
 		if (ds != null) {
