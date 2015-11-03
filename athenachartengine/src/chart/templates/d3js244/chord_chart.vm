@@ -21,6 +21,8 @@
 	#set($columnsNeeded[$columnCounter] = $value.column)
 	#set($columnCounter = $columnCounter + 1)
 #end
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
 
 {
 	chart:
@@ -41,7 +43,9 @@
 			#elseif($chart.style.fontWeight == 'bold')		        			
     			fontWeight: '$chart.style.fontWeight',
     		#end
-		}
+		},
+		
+		
 	},
 	
 	## Axises selection
@@ -255,7 +259,25 @@
 			
 		#end
     ],	
-	
+	crossNavigation:
+	{
+	   #if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end
+	},
 	data:
 	[
 		$datasettransformer.toMatrix($results,$columnsNeeded,$serie,$dataColumnsMapper)
