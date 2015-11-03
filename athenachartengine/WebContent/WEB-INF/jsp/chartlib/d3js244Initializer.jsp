@@ -7,7 +7,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3.js"></script> 
-
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/HighchartsCrossNavigationHelper.js"></script>
 <script>
 
 	// TODO: check if ext was imported (don't care)
@@ -101,5 +101,36 @@
 			alert("Chart not defined");
 		}
 	}
+	
+	function handleCrossNavigationTo(e){
+		if (!e.seriesOptions) {
+			var chart = this;
+			//chart.showLoading('Loading...');
+			var categoryName=e.categoryName;
+			var categoryValue = e.categoryValue;
+			var serieName=e.serieName;
+			var serieValue = e.serieValue;
+			var groupingCategoryName=e.groupingCategoryName;
+			var groupingCategoryValue=e.groupingCategoryValue;
+			
+			Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateTo(
+					e.crossNavigationDocumentName, 
+					e.crossNavigationDocumentParams,
+					categoryName,
+					categoryValue,
+					serieName,
+					serieValue,
+					groupingCategoryName,
+					groupingCategoryValue
+					);
+			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+			chart.hideLoading();
+		}
+		
+	};
+	
+	function handleCrossNavigationFrom(){
+		Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateBackTo();
+	};
 	
 </script>
