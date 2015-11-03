@@ -121,12 +121,22 @@
 			var categoryName = e.point.name;
 			var serieName = e.point.series.name;
 			
+			var categoryValue = null;
+			var serieValue = null;
+			var groupingCategoryName=null;
+			var groupingCategoryValue=null;
+			
 			Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName, 
 					e.point.crossNavigationDocumentParams,
 					categoryName,
-					serieName
+					categoryValue,
+					serieName,
+					serieValue,
+					groupingCategoryName,
+					groupingCategoryValue
 					);
+			
 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
 			chart.hideLoading();
 		}
