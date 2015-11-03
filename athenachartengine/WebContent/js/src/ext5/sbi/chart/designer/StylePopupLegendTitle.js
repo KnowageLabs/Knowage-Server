@@ -33,7 +33,8 @@ Ext.define
 				'Sbi.chart.designer.FontStyleCombo',
 				
 				{
-					bind: '{configModel.parallelLegendTitleFontWeight}'
+					bind: '{configModel.parallelLegendTitleFontWeight}',
+					fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
         	
@@ -44,7 +45,8 @@ Ext.define
      			'Sbi.chart.designer.FontDimCombo',
      			
      			{
-     				bind : '{configModel.parallelLegendTitleFontSize}'
+     				bind : '{configModel.parallelLegendTitleFontSize}',
+     				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
      			}
  			);
  	        
@@ -55,7 +57,8 @@ Ext.define
 				'Sbi.chart.designer.FontCombo',
 				
 				{
-					bind: '{configModel.parallelLegendTitleFontFamily}'
+					bind: '{configModel.parallelLegendTitleFontFamily}',
+					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
  	        

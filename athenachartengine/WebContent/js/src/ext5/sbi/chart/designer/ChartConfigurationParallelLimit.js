@@ -50,7 +50,7 @@ Ext.define
 			(
 				'Ext.form.ComboBox', 
 				{
-				    fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn"),	
+				    fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 				    bind : '{configModel.serieFilterColumn}',
 				    store: this.storeForSeriesBeforeDrop,
 				    editable : false,
@@ -85,7 +85,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.maxNumberOfLines}',
 					 id: "parallelLimitMaxNumbOfRec",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 					 //value: "100",
 					 maxValue: '1000',
@@ -103,7 +103,7 @@ Ext.define
 	         		triggerAction : 'all',
 	         		forceSelection : true,
 	         		editable : false,
-	         		fieldLabel : LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax"), 
+	         		fieldLabel : LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields, 
 	         		bind : '{configModel.orderTopMinBottomMax}',
 	         		displayField : 'name',
 	         		valueField : 'value',

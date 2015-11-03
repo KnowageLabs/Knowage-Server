@@ -13,6 +13,11 @@ Ext.define
 	{
 	    extend:'Ext.form.ComboBox',
 	    
+	    config:
+	    {
+	    	isMandatory: this.isMandatory
+	    },
+	    
 	    store: 
 	    {
 	        fields: [ 'name','value' ],
@@ -20,17 +25,17 @@ Ext.define
 	        data: 
         	[ 		    	
 		    	{
-		    		name : "Top",	// TODO: LN()
+		    		name : LN("sbi.chartengine.configuration.title.verticalAlignCombo.top"),	
 		    		value : 'top'
 		    	}, 
 		    	
 		    	{
-		    		name : "Middle", // TODO: LN()
+		    		name : LN("sbi.chartengine.configuration.title.verticalAlignCombo.middle"),
 		    		value : 'middle'
 		    	}, 
 		    	
 		    	{
-		    		name : "Bottom",// TODO: LN()
+		    		name : LN("sbi.chartengine.configuration.title.verticalAlignCombo.bottom"),
 		    		value : 'bottom'
 		    	} 
 	    	]
@@ -39,7 +44,7 @@ Ext.define
 	    editable : false,
 	    displayField: 'name',
 	    valueField: 'value',
-	    fieldLabel : "Vertical align", // TODO: LN()
+	    fieldLabel : LN("sbi.chartengine.configuration.title.verticalAlignCombo"), 
 	    queryMode : 'local',
 	}
 );

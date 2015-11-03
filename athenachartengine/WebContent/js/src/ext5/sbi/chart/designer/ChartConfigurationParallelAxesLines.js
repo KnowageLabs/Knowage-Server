@@ -51,7 +51,8 @@ Ext.define
         		
         		{
         			viewModel: this.viewModel,
-        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"), 
+        			isColorMandatory: true, 
+        			label: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
         			fieldBind: '{configModel.axisColor}'
         		}
     		);
@@ -63,7 +64,8 @@ Ext.define
         		
         		{
         			viewModel: this.viewModel,
-        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"), 
+        			isColorMandatory: true, 
+        			label: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
         			fieldBind: '{configModel.brushColor}',	
         		}
     		);
@@ -74,7 +76,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.axisColNamePadd}',	
 					 id: "parallelAxisColNamePadd",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "15",
 					 maxValue: '30',
@@ -88,7 +90,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.brushWidth}',	
 					 id: "parallelBrushWidth",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "20",
 					 maxValue: '100',

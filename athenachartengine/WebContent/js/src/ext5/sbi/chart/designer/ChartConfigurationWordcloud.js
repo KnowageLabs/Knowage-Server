@@ -18,7 +18,7 @@ Ext
 					 */
 					
 					width : 230,
-					height : 250,
+					height : 260,
 					
 					title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
 					bodyPadding : 10,
@@ -48,7 +48,7 @@ Ext
 									forceSelection : true,
 									editable : false,
 									width: 200,
-									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.sizeCriteria"),
+									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.sizeCriteria") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 									bind : '{configModel.sizeCriteria}',
 									displayField : 'name',
 									valueField : 'value',
@@ -69,7 +69,7 @@ Ext
 									xtype : 'numberfield',
 									bind : '{configModel.maxWords}',
 									id: "wordcloudMaxWords",
-									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords"),
+									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxWords") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 									width : "200",
 									maxValue : '100',
 									minValue : '10'
@@ -79,7 +79,7 @@ Ext
 									xtype : 'numberfield',
 									bind : '{configModel.maxAngle}',
 									id: "wordcloudMaxAngle",
-									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxAngle"),
+									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxAngle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 									width : "200",
 									maxValue : '360',
 									minValue : '60'
@@ -89,7 +89,7 @@ Ext
 									xtype : 'numberfield',
 									bind : '{configModel.minAngle}',
 									id: "wordcloudMinAngle",
-									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minAngle"),
+									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.minAngle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 									width : "200",
 									maxValue : '270',
 									minValue : '0'
@@ -99,7 +99,7 @@ Ext
 									xtype : 'numberfield',
 									bind : '{configModel.maxFontSize}',
 									id: "wordcloudMaxFontSize",
-									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize"),
+									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 									width : "200",
 									maxValue : '200',
 									minValue : '50'
@@ -109,7 +109,7 @@ Ext
 									xtype : 'numberfield',
 									bind : '{configModel.wordPadding}',
 									id: "wordcloudWordPadding",
-									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.wordPadding"),
+									fieldLabel : LN("sbi.chartengine.configuration.wordcloud.wordPadding") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 									width : "200",
 									maxValue : '20',
 									minValue : '2'

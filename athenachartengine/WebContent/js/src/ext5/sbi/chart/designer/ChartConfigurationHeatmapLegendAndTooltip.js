@@ -53,7 +53,7 @@ Ext.define
 				'Sbi.chart.designer.StylePopupLegendHeatmap',
 				
 				{
-					title:LN('sbi.chartengine.configuration.legendstyle'), 
+					title: LN('sbi.chartengine.configuration.legendstyle'), 
 		    	    viewModel: this.viewModel,		
 		    	    bindFontAlign:'{configModel.legendAlign}',
 		    	    bindSymbolHeight:'{configModel.symbolHeight}'
@@ -70,6 +70,9 @@ Ext.define
 		        	bindFont:'{configModel.tipFontFamily}',
 		        	bindFontDim:'{configModel.tipFontSize}',
 		        	bindColor:'{configModel.tipColor}', 
+		        	isFontFamilyMandatory: true,
+		        	isFontSizeMandatory: true,
+		        	isFontColorMandatory: true
 //	        		bindFontStyle:'{configModel.tipFontWeight}' // (does not work)
 				}
 			);	
@@ -91,7 +94,8 @@ Ext.define
 		 			[
 						{
 							xtype: 'label',
-							text: LN("sbi.chartengine.configuration.heatmap.labelLegend"),
+//							text: Sbi.chart.designer.Designer.htmlForMandatoryFields + LN("sbi.chartengine.configuration.heatmap.labelLegend"),
+							html: LN("sbi.chartengine.configuration.heatmap.labelLegend") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
 							padding: "3 0 0 0"
 							//     margin: '0 0 0 10'
 						},
@@ -123,7 +127,8 @@ Ext.define
 					[
 						{
 							xtype: 'label',
-							text: LN("sbi.chartengine.configuration.heatmap.tooltipLegend"),
+						//	text: Sbi.chart.designer.Designer.htmlForMandatoryFields + LN("sbi.chartengine.configuration.heatmap.tooltipLegend"),
+							html: LN("sbi.chartengine.configuration.heatmap.tooltipLegend") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
 							padding: "3 0 0 0"
 							//     margin: '0 0 0 10'
 						},

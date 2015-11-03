@@ -1,5 +1,6 @@
 Ext.define('Sbi.chart.designer.FontCombo',{
     extend : 'Ext.form.ComboBox',
+    
     store: {
         fields: [ 'name' ],
         

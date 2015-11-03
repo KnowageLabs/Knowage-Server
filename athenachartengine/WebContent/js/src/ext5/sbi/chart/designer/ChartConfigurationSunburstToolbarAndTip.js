@@ -22,7 +22,7 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		//columnWidth: 0.2,
-		width: 200, // fixed value: current solution for the ATHENA-154 bug
+		width: 210, // fixed value: current solution for the ATHENA-154 bug
 		height: 110,
 		
 		title: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
@@ -106,7 +106,8 @@ Ext.define
     				[
     				 	{
     				 		xtype: 'label',
-				 	        text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarLabelText"),
+//				 	        text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarLabelText"),
+				 	        html: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarLabelText") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 				 	        padding: "3 0 0 0"
 //				 	        margin: '0 0 0 10'
     				 	},
@@ -139,7 +140,8 @@ Ext.define
     				[
     				 	{
 							xtype: 'label',
-							text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipLabelText"),
+//							text: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipLabelText"),
+							html: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipLabelText") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 					     	padding: "3 0 0 0"
 						},
 						

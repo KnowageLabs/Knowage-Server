@@ -18,7 +18,7 @@ Ext.define
 		 */
 //		columnWidth: 0.5,
 		width: 500,
-		height: 220,
+		height: 230,
 		
 		title: LN("sbi.chartengine.configuration.parallel.tooltip.title"), 
 		bodyPadding: 10,
@@ -55,7 +55,8 @@ Ext.define
 				
 				{
 					bind: '{configModel.parallelTooltipFontFamily}',
-					viewModel: this.viewModel
+					viewModel: this.viewModel,
+					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
 	        
@@ -64,7 +65,8 @@ Ext.define
     			'Sbi.chart.designer.FontDimCombo',
     			
     			{
-    				bind : '{configModel.parallelTooltipFontSize}'
+    				bind : '{configModel.parallelTooltipFontSize}',
+    				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
     			}
 			);
 			
@@ -74,7 +76,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipMinWidth}',
 					 id: "parallelTooltipMinWidth",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "20",
 					 maxValue: '100',
@@ -88,7 +90,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipMaxWidth}',
 					 id: "parallelTooltipMaxWidth",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth"),
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 					 width: "200",
 //					 value: "300",
 					 maxValue: '500',
@@ -122,7 +124,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipMinHeight}',	
 					 id: "parallelTooltipMinHeight",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "20",
 					 maxValue: '50',
@@ -136,7 +138,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipMaxHeight}',
 					 id: "parallelTooltipMaxHeight",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "300",
 					 maxValue: '500',
@@ -172,7 +174,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipPadding}',	
 					 id: "parallelTooltipPadding",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "2",
 					 maxValue: '20',
@@ -186,7 +188,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipBorder}',
 					 id: "parallelTooltipBorder",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "0",
 					 maxValue: '10',
@@ -200,7 +202,7 @@ Ext.define
 					 xtype: 'numberfield',
 					 bind : '{configModel.parallelTooltipBorderRadius}',
 					 id: "parallelTooltipBorderRadius",
-					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius"),	
+					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: "200",
 //					 value: "5",
 					 maxValue: '20',

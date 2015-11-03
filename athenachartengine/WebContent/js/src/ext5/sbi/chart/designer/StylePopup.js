@@ -13,7 +13,14 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		bindFontDim:null,
 		bindFontStyle:null,
 		bindBorderWidth:null,
-		bindBackgroundColor:null
+		bindBackgroundColor:null,
+		isFontAlignMandatory: false,
+		isFontSizeMandatory: false,
+		isFontFamilyMandatory: false,
+		isFontStyleMandatory: false,
+		isBorderWidthMandatory: false,
+		isFontColorMandatory: false,
+		isBackgroundColorMandatory: false
 	},
 	
 	items : [],
@@ -23,24 +30,34 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         this.title = config.title && config.title != null ? config.title: this.title;
         Ext.apply(this.config,config);
         
+        var globalScope = this;
+        
         if(this.config.bindFontAlign) {
         	var align = Ext.create('Sbi.chart.designer.FontAlignCombo',{
         		viewModel: this.viewModel,
         		bind : this.config.bindFontAlign,
-        		fieldLabel : LN('sbi.chartengine.configuration.title.alignment'),
+        		fieldLabel : (globalScope.config.isFontAlignMandatory) ?  
+        				LN('sbi.chartengine.configuration.title.alignment') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+        				: LN('sbi.chartengine.configuration.title.alignment'),
         	});
         	this.add(align);
         }
         
 		var font = Ext.create('Sbi.chart.designer.FontCombo',{
 			viewModel: this.viewModel,
-			bind : this.config.bindFont
+			bind : this.config.bindFont,
+			fieldLabel : (globalScope.config.isFontFamilyMandatory) ?  
+					LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+    				: LN('sbi.chartengine.configuration.font')
 		});
 		this.add(font);
 
 		var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
         	viewModel: this.viewModel,
-        	bind : this.config.bindFontDim
+        	bind : this.config.bindFontDim,
+        	fieldLabel : (globalScope.config.isFontSizeMandatory) ?  
+        			LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+    				: LN('sbi.chartengine.configuration.fontsize')
         });
 		this.add(dim);
         
@@ -50,7 +67,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		if(this.config.bindFontAlign) {
 		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
         	viewModel: this.viewModel,
-        	bind : this.config.bindFontStyle
+        	bind : this.config.bindFontStyle,
+        	fieldLabel : (globalScope.config.isFontStyleMandatory) ?  
+        			LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+    				: LN('sbi.chartengine.configuration.fontstyle')
         });
 		this.add(style);
 		}
@@ -59,7 +79,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			var borderWidth = Ext.create('Ext.form.field.Number',{
 				fieldLabel : LN('sbi.chartengine.configuration.borderwidth'),
 				viewModel: this.viewModel,
-				bind:  this.config.bindBorderWidth
+				bind:  this.config.bindBorderWidth,
+	        	fieldLabel : (globalScope.config.isBorderWidthMandatory) ?  
+	        			LN('sbi.chartengine.configuration.borderwidth') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+	    				: LN('sbi.chartengine.configuration.borderwidth')
 			})
 			this.add(borderWidth);
 		};
@@ -67,7 +90,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		var color = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 			viewModel: this.viewModel,
 			fieldBind : this.config.bindColor,
-			bind : this.config.bindColor
+			bind : this.config.bindColor,
+			isColorMandatory: this.config.isFontColorMandatory
 		});
 		this.add(color);
 		
@@ -75,7 +99,10 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 				viewModel: this.viewModel,
 				fieldBind : this.config.bindBackgroundColor,
-				customLabel : LN('sbi.chartengine.configuration.backgroundcolor')
+				//customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
+	        	fieldLabel : (globalScope.config.isBackgroundColorMandatory) ?  
+	        			LN('sbi.chartengine.configuration.backgroundcolor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+	    				: LN('sbi.chartengine.configuration.backgroundcolor')
 			});
 			this.add(bkgrColor);
 		}

@@ -37,7 +37,8 @@ Ext.define
 				'Sbi.chart.designer.FontStyleCombo',
 				
 				{
-					bind: '{configModel.tipFontWeight}'
+					bind: '{configModel.tipFontWeight}',
+					fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
 	        
@@ -50,8 +51,9 @@ Ext.define
         		
         		{
         			viewModel: this.viewModel,
-        			customLabel: LN("sbi.chartengine.configuration.sunburst.tip.fontColor"), 
-        			fieldBind: '{configModel.tipColor}',	
+        			fieldBind: '{configModel.tipColor}',
+        			isColorMandatory: true,
+        			label: LN("sbi.chartengine.configuration.sunburst.tip.fontColor")
         		}
     		);
 	        
@@ -62,7 +64,8 @@ Ext.define
     			'Sbi.chart.designer.FontDimCombo',
     			
     			{
-    				bind : '{configModel.tipFontSize}'
+    				bind : '{configModel.tipFontSize}',
+    				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
     			}
 			);
 	        
@@ -73,7 +76,8 @@ Ext.define
 				'Sbi.chart.designer.FontCombo',
 				
 				{
-					bind: '{configModel.tipFontFamily}'
+					bind: '{configModel.tipFontFamily}',
+					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
 	        
@@ -98,7 +102,7 @@ Ext.define
 	                		 xtype: 'numberfield',
 	                		 bind : '{configModel.tipWidth}',	
 	                		 id: "sunburstTipWidth",
-	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.width"),	
+	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 	                		 width: "200",
 //	                		 value: "10",
 	                		 maxValue: '200',
@@ -130,7 +134,7 @@ Ext.define
             		  		padding: "0 0 20 50",
             		  		grow: true,
             		        name: 'tipText',
-            		        fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.text"),
+            		        fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.text") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
             		        anchor: '100%',
             		  		bind: '{configModel.tipText}',
             		  		emptyText: "... empty text ..."

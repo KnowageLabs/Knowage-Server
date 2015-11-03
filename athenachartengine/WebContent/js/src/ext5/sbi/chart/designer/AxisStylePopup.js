@@ -1074,7 +1074,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				{
 			        xtype: 'numberfield',
 			        id: 'distanceLabelFromYAxis',
-			        minValue: 0,
+			        minValue: -60,
 			        value: this.axisData.distance,
 			        labelSeparator: '',			        
 			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis") 

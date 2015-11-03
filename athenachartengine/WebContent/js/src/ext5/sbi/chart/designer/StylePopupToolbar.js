@@ -59,7 +59,7 @@ Ext.define
 	            	         		triggerAction : 'all',
 	            	         		forceSelection : true,
 	            	         		editable : false,
-	            	         		fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.position'),
+	            	         		fieldLabel : LN('sbi.chartengine.configuration.sunburst.toolbar.position') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
 	            	         		bind : '{configModel.toolbarPosition}',
 	            	         		displayField : 'name',
 	            	         		valueField : 'value',
@@ -101,6 +101,7 @@ Ext.define
 	                   	 defaults : 
 	                   	 {
 	                   		 labelWidth : '100%',
+	                   		 // (top, right, bottom, left)
 	                   		 margin:'0 30 0 0'
 	                   	 },
 	   	                    	 
@@ -110,7 +111,7 @@ Ext.define
 	           	         		xtype: 'numberfield',
 	           	         		bind : '{configModel.toolbarSpacing}',	
 	           	         		id: "sunburstToolbarSpacing",
-	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing"),	
+	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.spacing") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 	       	         			maxWidth: '120',
 	       	         			maxValue: '50',
 	       	         			minValue: '1',
@@ -121,7 +122,7 @@ Ext.define
 	   	                		 xtype: 'numberfield',
 	   	                		 bind : '{configModel.toolbarTail}',
 	   	                		 id: "sunburstToolbarTail",
-	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail"),	
+	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.tail") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '100',
 	   	                		 minValue: '10',
@@ -155,7 +156,7 @@ Ext.define
 	           	         		xtype: 'numberfield',
 	           	         		bind : '{configModel.toolbarHeight}',	
 	           	         		id: "sunburstToolbarHeight",
-	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height"),	
+	           	         		fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.height") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 	           	         		maxWidth: '120',
 	           	         		maxValue: '100',
 	           	         		minValue: '10',
@@ -166,7 +167,7 @@ Ext.define
 	   	                		 xtype: 'numberfield',
 	   	                		 bind : '{configModel.toolbarWidth}',	
 	   	                		 id: "sunburstToolbarWidth",
-	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width"),	
+	   	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '200',
 	   	                		 minValue: '10',
@@ -184,7 +185,8 @@ Ext.define
 				'Sbi.chart.designer.FontCombo',
 				
 				{
-					bind: '{configModel.toolbarFontFamily}'
+					bind: '{configModel.toolbarFontFamily}',
+					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
 	        
@@ -197,7 +199,8 @@ Ext.define
 	        		
 	        		{
 	        			viewModel: this.viewModel,
-	        			customLabel: LN("sbi.chartengine.configuration.sunburst.toolbar.percentageColor"), 
+	        			isColorMandatory: true,
+	        			label: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
 	        			fieldBind: '{configModel.toolbarPercFontColor}',	
 	        		}
 	    		);		        
@@ -212,7 +215,8 @@ Ext.define
 				'Sbi.chart.designer.FontStyleCombo',
 				
 				{
-					bind: '{configModel.toolbarFontWeight}'
+					bind: '{configModel.toolbarFontWeight}',
+					fieldLabel: LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 				}	
 			);
 	        
@@ -223,7 +227,8 @@ Ext.define
     			'Sbi.chart.designer.FontDimCombo',
     			
     			{
-    				bind : '{configModel.toolbarFontSize}'
+    				bind : '{configModel.toolbarFontSize}',
+    				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
     			}
 			);
 	        

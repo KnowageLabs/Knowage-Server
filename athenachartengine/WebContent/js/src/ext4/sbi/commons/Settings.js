@@ -13,6 +13,19 @@ Sbi.settings.cockpit = {
 
 };
 
+/**
+ * Added property for sign that will prepresent mandatory fields on
+ * the Designer.
+ * 
+ * @author: danristo (danilo.ristovski@mht.net)
+ */
+Sbi.settings.chart = 
+{
+	configurationStep:
+	{
+		htmlForMandatoryFields: "<span style='color: rgb(255, 0, 0);'> [&#9873]</span>"
+	}
+};
 
 Sbi.settings.mydata = {
 	/**
