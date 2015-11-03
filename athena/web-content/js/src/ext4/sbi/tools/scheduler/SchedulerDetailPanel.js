@@ -160,22 +160,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 						}]
 					},		
 					{
-						//DETAIL BUTTON (OLD) TODO REMOVE!!!
-			        	menuDisabled: true,
-						sortable: false,
-						xtype: 'actioncolumn',
-						width: 20,
-						columnType: "decorated",
-						items: [{
-							tooltip: LN('sbi.scheduler.schedulation.detail') + ' old',
-							iconCls   : 'button-detail',  
-							handler: function(grid, rowIndex, colIndex) {
-								var selectedRecord =  grid.store.getAt(rowIndex);
-								thisPanel.onDetailSchedulation(selectedRecord);
-							}
-						}]
-					},		
-					{
 						//EXECUTE NOW BUTTON
 			        	menuDisabled: true,
 						sortable: false,
@@ -256,13 +240,6 @@ Ext.define('Sbi.tools.scheduler.SchedulerDetailPanel', {
 			    	scope: this,
 			    	tooltip: LN('sbi.scheduler.addschedulation'),
 			    	handler: this.onAddClickAngular
-			    },
-			    {
-			    	text: 'Vecchio Add scheduler',
-			        iconCls: 'icon-add',
-			    	scope: this,
-			    	tooltip: LN('sbi.scheduler.addschedulation'),
-			    	handler: this.onAddClick
 			    }]
 			});
 			
