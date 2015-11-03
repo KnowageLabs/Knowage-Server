@@ -182,8 +182,12 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 		var paramTypeStore = Ext.create('Ext.data.Store', {
 			fields: ['label', 'value'],
 			data : [
-				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.serie'), value: 'SERIE'},
-				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.category'), value: 'CATEGORY'},
+		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.seriename'), value: 'SERIE_NAME'},
+		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.serievalue'), value: 'SERIE_VALUE'},
+		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.categoryname'), value: 'CATEGORY_NAME'},
+		        {label: LN('sbi.chartengine.designer.crossnavigation.paramType.categoryvalue'), value: 'CATEGORY_VALUE'},
+				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryname'), value: 'GROUPING_NAME'},
+				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.groupingcategoryvalue'), value: 'GROUPING_VALUE'},
 				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.absolute'), value: 'ABSOLUTE'},
 				{label: LN('sbi.chartengine.designer.crossnavigation.paramType.relative'), value: 'RELATIVE'}
 			]

@@ -6,21 +6,16 @@ Ext.define('Sbi.chart.viewer.HighchartsCrossNavigationHelper', {
 		breadcrumb: [],
 		
 		navigateTo: function(documentName, documentParameters, categoryName, serieName){ 
-//			console.log('navigateTo(documentName) -> ', documentName);
-//			console.log('navigateTo(documentParameters) -> ', documentParameters);
-//			console.log('navigateTo(categoryName) -> ', categoryName);
-//			console.log('navigateTo(serieName) -> ', serieName);
-			
 			var parametersAsString = '';
 			
 			for(var i = 0; i < documentParameters.length; i++) {
 				var param = documentParameters[i];
 				
-				if(param.type == 'CATEGORY') {
+				if(param.type == 'CATEGORY_NAME') {
 					parametersAsString += param.urlName + '=' + categoryName + '&';
-				} else if(param.type == 'SERIE') {
+				} else if(param.type == 'SERIE_NAME') {
 					parametersAsString += param.urlName +  '=' + serieName + '&';
-				} else if(param.type == 'ABSOLUTE' || param.type == 'RELATIE') {
+				} else if(param.type == 'ABSOLUTE' || param.type == 'RELATIVE') {
 					parametersAsString += param.urlName +  '=' + param.value + '&';
 				}
 			}
