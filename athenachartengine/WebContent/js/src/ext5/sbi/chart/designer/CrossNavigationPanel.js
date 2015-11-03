@@ -271,14 +271,14 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
      * this function must be used in order to create the "DRILL" node of the jsonTemplate.
      */
 	getCrossNavigationData: function() {
-		if (this.documentParamStore.getCount() == 0) {
+		if(!this.documentName) {
 			return null;
 		} else {
 			var crossNavigationData = {};
 			crossNavigationData['document'] = this.documentName;
 			
 			var params = [];
-			
+			if(this.documentParamStore.getCount() != 0){
 			var documentParamStoreItems = this.documentParamStore.data.items;
 			for(var i = 0; i < documentParamStoreItems.length; i++) {
 				var storeItem = documentParamStoreItems[i];
@@ -290,7 +290,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 				};
 				params.push(param);
 			}
-			
+			}
 			var paramList = {};
 			paramList['PARAM'] = params;
 			crossNavigationData['PARAM_LIST'] = paramList;
@@ -306,9 +306,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 		crossNavigationData = crossNavigationData || {};
 		
 		if(!crossNavigationData 
-				|| !crossNavigationData.document 
-				|| !crossNavigationData.PARAM_LIST 
-				|| !crossNavigationData.PARAM_LIST.PARAM) {
+				|| !crossNavigationData.document) {
 			return;
 		} else {
 			this.documentName = crossNavigationData['document'];
