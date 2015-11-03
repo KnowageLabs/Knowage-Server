@@ -96,6 +96,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 				documentStore.load({
 					params: {
 						'name': filterValue,
+						'parameterUrlName': filterValue,
 						'label': filterValue,
 						'description': filterValue
 					}
@@ -193,11 +194,12 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 		    columns: [{
 	        		header: LN('sbi.chartengine.designer.crossnavigation.paramName'),
 	        		dataIndex: 'label',
-	        		flex: 1, 
+	        		flex: 1 
 	        	}, {
-//	        		header: LN('sbi.chartengine.designer.crossnavigation.paramUrlName'),
-//	        		dataIndex: 'parameterUrlName'
-//    			}, {
+	        		header: LN('sbi.chartengine.designer.crossnavigation.paramUrlName'),
+	        		dataIndex: 'parameterUrlName',
+        			flex: 1 
+    			}, {
     				header: LN('sbi.chartengine.designer.crossnavigation.paramType'),
     				dataIndex: 'fieldType',
     				layout: 'fit',
@@ -278,6 +280,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 				var storeItem = documentParamStoreItems[i];
 				var param = {
 					name: storeItem.get('label'),
+					parameterUrlName: storeItem.get('parameterUrlName'),
 					type: storeItem.get('fieldType'),
 					value: storeItem.get('value')
 				};
@@ -316,6 +319,7 @@ Ext.define('Sbi.chart.designer.CrossNavigationPanel', {
 				
 				var paramAsModel = Ext.create('Sbi.chart.designer.DocumentParamModel', {
 					label: param.name,
+					parameterUrlName: param.parameterUrlName,
 				    fieldType: param.type,
 				    value: param.value
 				});

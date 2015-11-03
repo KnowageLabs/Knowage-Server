@@ -3,6 +3,7 @@ Ext.define('Sbi.chart.designer.DocumentParamModel', {
 //    idProperty: 'parameterUrlName',
     fields: [
        {name: 'label', type: 'string'},
+       {name: 'parameterUrlName', type: 'string'},
        {name: 'fieldType', type: 'string'},
        {name: 'value', defaultValue: ''} //Here "defaultValue" is needed to fix a bug on firefox SBI-530/ATHENA-136 
     ],
