@@ -105,6 +105,9 @@
 
 #set($result = $datasettransformer.toParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows, $serieNeeded, $groupingFunction))
 
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
+
 {
  	chart: 
  	{
@@ -375,7 +378,25 @@
     		#end
 		}
 	},
-	
+	crossNavigation:
+	{
+	   #if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end
+	},
 	data:
  	[
  		$result
