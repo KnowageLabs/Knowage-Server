@@ -1,25 +1,21 @@
-var app = angular.module('FEDERATIONDEFINITION', ['ngMaterial','angular_rest','angular_list']);
+var app = angular.module('FEDERATIONDEFINITION', ['ngMaterial','angular_list','sbiModule']);
 
-app.service('translate', function() {
-	this.load = function(key) {
-		return messageResource.get(key, 'messages');
-	};
-});
+app.controller('FederationDefinitionCTRL', ["$scope",
+                   		"$mdDialog", "$timeout", "sbiModule_translate","sbiModule_restServices",funkcija]);
 
-app.controller('FederationDefinitionCTRL', [ "translate", "restServices", "$scope",
-                   		"$mdDialog", "$timeout", funkcija]);
-
-function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
+function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_restServices) {
 	ctr = this;
-	$scope.translate =  translate;
 	
+	//creating translate variable that is accessible from the global scope, and can be used as an expression inside html
+	$scope.translate = sbiModule_translate;
+
 	//data from the fields of saveFederateddataset.html
 	$scope.federateddataset = {};
 	$scope.update = {};
 	$scope.update = $scope.federateddataset;
 	angular.toJson($scope.update);
 	
-	
+	//lists that will be filled after the sbiModule_restServices.get call
 	ctr.list = {};
 	ctr.listaNew = [];
 	ctr.listAllO = {};
@@ -32,6 +28,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	//state is used to show or hide components on the page
 	ctr.state = true;
 	
+	//used for the JSON structure of a relationship
 	ctr.relation = "";
 	ctr.relNew = null;
 	ctr.associationArray = [];
@@ -39,6 +36,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 	ctr.multiArray = [];
 	ctr.bla = {}
 	
+	//used for highlighting dataset fields 
 	ctr.item = {};
 	ctr.selectedVariable = {};
 	ctr.myselectedvariable = {};
@@ -61,15 +59,15 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content(translate.load("sbi.federationdefinition.no.field.selected"))
-						.ok(translate.load("sbi.federationdefinition.ok"))
+						.content(sbiModule_translate.load("sbi.federationdefinition.no.field.selected"))
+						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 			);
 		} else if(counter==1){
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content(translate.load("sbi.federationdefinition.only.one.field.selected"))
-						.ok(translate.load("sbi.federationdefinition.ok"))
+						.content(sbiModule_translate.load("sbi.federationdefinition.only.one.field.selected"))
+						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 			);
 		} else{
 			if(ctr.multiArray.length==0){
@@ -82,8 +80,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 						$mdDialog.show(
 								$mdDialog.alert()
 									.clickOutsideToClose(true)
-									.content(translate.load("sbi.federationdefinition.relation.exists"))
-									.ok(translate.load("sbi.federationdefinition.ok"))
+									.content(sbiModule_translate.load("sbi.federationdefinition.relation.exists"))
+									.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 						);
 					}
 				});
@@ -185,16 +183,16 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content(translate.load("sbi.federationdefinition.no.relation.created"))
-						.ok(translate.load("sbi.federationdefinition.ok"))
+						.content(sbiModule_translate.load("sbi.federationdefinition.no.relation.created"))
+						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 			);
 		} 
 		else if(ctr.index==-1){
 			$mdDialog.show(
 					$mdDialog.alert()
 						.clickOutsideToClose(true)
-						.content(translate.load("sbi.federationdefinition.contain.all.selected.datasets"))
-						.ok(translate.load("sbi.federationdefinition.ok"))
+						.content(sbiModule_translate.load("sbi.federationdefinition.contain.all.selected.datasets"))
+						.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 			);
 		}		
 		else{
@@ -215,7 +213,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 							item.relationships = "";
 							item.relationships = ctr.multiArray;
 												
-							restServices.post("federateddataset","post",item)
+							sbiModule_restServices.post("federateddataset","post",item)
 								.success(
 										function(data, status, headers, config) {
 											ctr.showAlert()
@@ -284,7 +282,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 		});
 	}
 	
-	restServices.get("2.0/datasets","listNotDerivedDataset")
+	sbiModule_restServices.get("2.0/datasets","listNotDerivedDataset")
 		.success(
 				function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")) {
@@ -323,7 +321,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 				}
 		)
 		
-	restServices.get("2.0/datasets","listNotDerivedDataset")
+	sbiModule_restServices.get("2.0/datasets","listNotDerivedDataset")
 		.success(
 				function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")) {
@@ -394,8 +392,8 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 							.show($mdDialog
 									.alert()
 									.clickOutsideToClose(true)
-									.content(translate.load("sbi.federationdefinition.cant.delete.dataset"))
-									.ok(translate.load("sbi.federationdefinition.ok")));
+									.content(sbiModule_translate.load("sbi.federationdefinition.cant.delete.dataset"))
+									.ok(sbiModule_translate.load("sbi.federationdefinition.ok")));
 					return false;
 					
 				} else {
@@ -471,11 +469,11 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 		/*console.log(param)
 		console.log(ctr.multiArray)
 		var confirm = $mdDialog.confirm()
-		.title(translate.load("sbi.federationdefinition.confirm.delete"))
-		.content(translate.load("sbi.federationdefinition.confirm.delete.content"))
+		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.delete"))
+		.content(sbiModule_translate.load("sbi.federationdefinition.confirm.delete.content"))
 		.targetEvent(param)
-		.ok(translate.load("sbi.federationdefinition.yes"))
-		.cancel(translate.load("sbi.federationdefinition.no"))
+		.ok(sbiModule_translate.load("sbi.federationdefinition.yes"))
+		.cancel(sbiModule_translate.load("sbi.federationdefinition.no"))
 		
 		$mdDialog.show(confirm).then(function(){
 			var index = ctr.multiArray.indexOf(param);
@@ -498,15 +496,15 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 		$mdDialog.show(
 				$mdDialog.alert()
 					.clickOutsideToClose(true)
-					.title(translate.load("sbi.federationdefinition.operation.succeded"))
-					.ok(translate.load("sbi.federationdefinition.ok"))
+					.title(sbiModule_translate.load("sbi.federationdefinition.operation.succeded"))
+					.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 					.targetEvent(ev)
 		);
 	}
 	
 	ctr.glossSpeedMenuOpt = [ 			 		               	
 		 		               	{
-		 		               		label: translate.load("sbi.federationdefinition.delete"),
+		 		               		label: sbiModule_translate.load("sbi.federationdefinition.delete"),
 		 		               		icon:"fa fa-trash-o",
 		 		               		backgroundColor:'red',
 		 		               		action : function(param) {
@@ -517,7 +515,7 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
 
 	ctr.glossSpeedMenuOptAD = [ 			 		               	
 		 		               	{
-		 		               		label: translate.load("sbi.federationdefinition.info"),
+		 		               		label: sbiModule_translate.load("sbi.federationdefinition.info"),
 		 		               		icon:"fa fa-info-circle",
 		 		               		backgroundColor:'green',
 		 		               		action : function(ev) {
@@ -532,11 +530,11 @@ function funkcija(translate, restServices, $scope, $mdDialog, $timeout) {
     
     /*ctr.prepRelForEdit = function(param) {
     	var confirm = $mdDialog.confirm()
-		.title(translate.load("sbi.federationdefinition.confirm.dialog"))
-		.content(translate.load("sbi.federationdefinition.confirm.dialog.edit.relation"))
+		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog"))
+		.content(sbiModule_translate.load("sbi.federationdefinition.confirm.dialog.edit.relation"))
 		.targetEvent(param)
-		.ok(translate.load("sbi.federationdefinition.yes"))
-		.cancel(translate.load("sbi.federationdefinition.no"))
+		.ok(sbiModule_translate.load("sbi.federationdefinition.yes"))
+		.cancel(sbiModule_translate.load("sbi.federationdefinition.no"))
 		
 		$mdDialog.show(confirm).then(function(){
 			ctr.isEditState = true;

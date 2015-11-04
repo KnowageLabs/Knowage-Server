@@ -13,7 +13,7 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
+		<title>{{sbiModule_translate.load("sbi.federationdefinition.title");}}</title>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
 		<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
@@ -76,7 +76,7 @@
 							</div>
 						</md-toolbar>
 					
-						<md-content  layout-padding >
+						<md-content  layout-padding style="height:80%">
 							<angular-list
 							layout-fill 
 							id="availableDatasets" 
@@ -102,7 +102,7 @@
 						</div>
 					</md-toolbar>
 				
-					<md-content layout-padding>
+					<md-content layout-padding style="height:80%" >
 						<angular-list  
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
@@ -164,7 +164,7 @@
 						style="">
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
-						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus" style="position:absolute; left:5px; top:5px; right:5px; color:white"
+						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{sbiModule_translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus" style="position:absolute; left:5px; top:5px; right:5px; color:white"
 							></md-icon></md-button> 
 					</div>
 		
