@@ -21,14 +21,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['axisType'] = axis.type && axis.type != '' ? axis.type : '';
 			result['position'] = axis.position && axis.position != '' ? axis.position : '';
 
-			result['id'] = axis.alias && axis.alias != '' ? axis.alias
-				 : '';
-			result['alias'] = axis.alias && axis.alias != '' ? axis.alias
-				 : '';
-			result['axisType'] = axis.type && axis.type != '' ? axis.type
-				 : '';
-			result['position'] = axis.position
-				 && axis.position != '' ? axis.position : '';
+			// This is excessive
+//			result['id'] = axis.alias && axis.alias != '' ? axis.alias
+//				 : '';
+//			result['alias'] = axis.alias && axis.alias != '' ? axis.alias
+//				 : '';
+//			result['axisType'] = axis.type && axis.type != '' ? axis.type
+//				 : '';
+//			result['position'] = axis.position
+//				 && axis.position != '' ? axis.position : '';
 
 			/**
 			 * (danilo.ristovski@mht.net)
@@ -233,6 +234,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var AXES_LIST = {};
 
+			var AXIS = ChartUtils.getAxesDataAsOriginalJson();
+			
 			/**
 			 * Only for the PARALLEL chart type we will have some properties (attributes) for
 			 * the AXES_LIST tag.
@@ -240,7 +243,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 */
 			if (Sbi.chart.designer.Designer.chartTypeSelector
 				.getChartType() == "PARALLEL") {
-
+				
 				var axesList = "";
 
 				axesList += 'axisColNamePadd:'
@@ -274,8 +277,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				AXES_LIST['style'] = axesList;
 				CHART['AXES_LIST'] = AXES_LIST;
 			}
-
-			var AXIS = ChartUtils.getAxesDataAsOriginalJson();
 
 //			console.log(AXIS);
 
@@ -516,7 +517,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			if (chartType != "GAUGE") {
 				var axisData = Ext.getCmp('chartBottomCategoriesContainer').axisData;
 				var axisAsJson = {};
-
+				
 				axisAsJson['id'] = axisData.id;
 				axisAsJson['alias'] = axisData.alias;
 				axisAsJson['type'] = axisData.axisType;
@@ -1689,6 +1690,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			if (Sbi.chart.designer.Designer.chartTypeSelector
 				.getChartType() == 'PARALLEL') {
+								
 				jsonParallelLimitStyle = jsonTemplate.CHART.LIMIT ? Sbi.chart.designer.ChartUtils
 					.jsonizeStyle(jsonTemplate.CHART.LIMIT.style)
 					 : '';
@@ -1696,7 +1698,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				jsonParallelAxisStyle = jsonTemplate.CHART.AXES_LIST ? Sbi.chart.designer.ChartUtils
 					.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style)
 					 : '';
-
+					
 				jsonParallelTooltipStyle = jsonTemplate.CHART.PARALLEL_TOOLTIP ? Sbi.chart.designer.ChartUtils
 					.jsonizeStyle(jsonTemplate.CHART.PARALLEL_TOOLTIP.style)
 					 : '';
@@ -2228,7 +2230,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					 * Characteristic for PARALLEL chart
 					 */
 					// TODO: Can i do something like this (just associating the property of the same level from right to left side)????
-					if (source[prop]['style']!=undefined)
+					if (source[prop]['style'] != undefined)
 						newTarget[prop]['style'] = source[prop]['style'];
 					
 					// Daniele (commented part)

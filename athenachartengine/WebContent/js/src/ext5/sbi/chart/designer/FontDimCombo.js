@@ -9,5 +9,22 @@ Ext.define('Sbi.chart.designer.FontDimCombo', {
     editable : false,
     displayField : 'name',
     valueField : 'name',
-    fieldLabel : LN('sbi.chartengine.configuration.fontsize')
+    fieldLabel : LN('sbi.chartengine.configuration.fontsize'),
+    
+    /**
+     * @author: danristo (danilo.ristovski@mht.net)
+     */
+    listeners : 
+    {
+        change: function(sender, newValue, oldValue, opts) 
+        {           
+        	/**
+             * @author: danristo (danilo.ristovski@mht.net)
+             */
+            if (newValue=="")	// empty by style
+            	this.fireEvent("fontSizeEmpty");
+            else
+            	this.fireEvent("fontSizePicked");        	
+        }
+    }
 });

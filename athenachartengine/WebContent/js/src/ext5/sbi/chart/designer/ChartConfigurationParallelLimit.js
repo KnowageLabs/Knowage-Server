@@ -74,6 +74,15 @@ Ext.define
 				    			this.setViewModel(globalScope.viewModel);
 				    			this.setBind('{configModel.serieFilterColumn}');	// refresh the binding
 			    			}
+				    	},
+				    	
+				    	change: function(thisEl, newValue, oldValue)
+				    	{			
+				    		console.log(newValue);
+				    		if (newValue)
+				    		{
+				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + ":"); 
+				    		}	
 				    	}
 				    }
 				}
@@ -89,7 +98,23 @@ Ext.define
 					 width: "200",
 					 //value: "100",
 					 maxValue: '1000',
-					 minValue: '5'
+					 minValue: '5',
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 			
@@ -108,23 +133,37 @@ Ext.define
 	         		displayField : 'name',
 	         		valueField : 'value',
             		 
-            		 store: 
-            		 {
-            			 fields : ['name', 'value'],
-            			 
-            			 data : 
-        				 [ 
-            				   {
-            					   name : LN('sbi.chartengine.configuration.position.b'),	
-            					   value : 'bottom'
-            				   }, 
-            				   
-            				   {
-            					   name : LN('sbi.chartengine.configuration.position.t'),	
-            					   value : 'top'
-            				   }
-        				   ]
-            		 }
+	         		store: 
+	         		{
+	         			fields : ['name', 'value'],
+        			 
+	         			data : 
+         				[ 
+        				   	{
+        				   		name : LN('sbi.chartengine.configuration.position.b'),	
+        				   		value : 'bottom'
+        				   	}, 
+        				   
+        				   	{
+        				   		name : LN('sbi.chartengine.configuration.position.t'),	
+        				   		value : 'top'
+        				   	}
+    				   	]
+	         		},
+	         		
+	         		listeners:
+         			{
+	         			change: function(thisEl, newValue, oldValue)
+				    	{			
+	         				console.log(newValue);
+	         				
+				    		if (newValue)
+				    		{
+				    			console.log("NEEE");
+				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax") + ":"); 
+				    		}	
+				    	}
+         			}
 	         	}
 			 );
 						

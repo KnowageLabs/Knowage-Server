@@ -96,7 +96,7 @@ Ext.define
     				 	{
     				 		xtype: 'label',
 //				 	        text: LN("sbi.chartengine.configuration.parallel.legend.title.labelTitle"), 
-				 	        html: LN("sbi.chartengine.configuration.parallel.legend.title.labelTitle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields, 
+				 	        html: LN("sbi.chartengine.configuration.parallel.legend.title.labelTitle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":", 
 				 	        padding: "3 0 0 0"
 //				 	        margin: '0 0 0 10'
     				 	},
@@ -130,7 +130,7 @@ Ext.define
     				 	{
 							xtype: 'label',
 //							text: LN("sbi.chartengine.configuration.parallel.legend.element.labelElement"), 
-							html: LN("sbi.chartengine.configuration.parallel.legend.element.labelElement") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields, 
+							html: LN("sbi.chartengine.configuration.parallel.legend.element.labelElement") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":", 
 					     	padding: "3 0 0 0"
 						},
 						

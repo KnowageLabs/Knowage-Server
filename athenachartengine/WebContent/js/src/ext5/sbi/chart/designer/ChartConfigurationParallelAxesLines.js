@@ -80,7 +80,23 @@ Ext.define
 					 width: "200",
 //					 value: "15",
 					 maxValue: '30',
-					 minValue: '0'
+					 minValue: '0',
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {			
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd")+":"); 
+							 }								 
+							 else 
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			 );
 			 
@@ -94,7 +110,23 @@ Ext.define
 					 width: "200",
 //					 value: "20",
 					 maxValue: '100',
-					 minValue: '5'
+					 minValue: '5',
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 						

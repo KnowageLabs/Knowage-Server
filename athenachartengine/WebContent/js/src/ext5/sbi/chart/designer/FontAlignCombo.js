@@ -19,4 +19,21 @@ Ext.define('Sbi.chart.designer.FontAlignCombo', {
     valueField: 'value',
     fieldLabel : LN('sbi.chartengine.configuration.alignment'),
     queryMode : 'local',
+    
+    /**
+     * danristo
+     */
+    listeners: 
+	{
+    	change: function(sender, newValue, oldValue, opts)
+    	{
+    		/**
+             * @author: danristo (danilo.ristovski@mht.net)
+             */
+            if (newValue=="")	// empty by style
+            	this.fireEvent("fontAlignEmpty");
+            else
+            	this.fireEvent("fontAlignPicked");
+    	}
+	}
 });

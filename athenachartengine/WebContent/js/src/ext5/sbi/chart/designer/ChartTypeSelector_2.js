@@ -164,6 +164,7 @@ Ext.define
 			/* ----------------------------------------- */
 			
 			// Show the gear tool on the toolbar of the left (Y) axis panel
+			//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
 			this.stylePopupLeftAxis = Ext.getCmp("stylePopupLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
 			
 			// Show the textfield dedicated for the title of the left (Y) axis
@@ -175,6 +176,13 @@ Ext.define
 			// Show the serie&tooltip icon for SERIE records inside the left (Y) panel
 			this.actionColumnLeftAxis = Ext.getCmp("actionColumnLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
 				
+			//console.log(this.stylePopupBottomPanel);
+			//console.log(this.textfieldAxisTitle);
+			//console.log(this.stylePopupLeftAxis); 	//
+			//console.log(this.plusLeftAxis); 		//
+			//console.log(this.titleTextfield);
+			//console.log(this.titleTextfield);
+			
 			this.stylePopupBottomPanel.show();		
 			this.textfieldAxisTitle.show();			
 			this.stylePopupLeftAxis.show();						
@@ -218,8 +226,8 @@ Ext.define
 			 */
 			var compatibilityAddDataLookup = 
 			{
-				bar: 		['line','radar','scatter', 'gauge'],
-				line: 		['bar','radar','scatter', 'gauge'],
+				bar: 		['line','radar','scatter'],
+				line: 		['bar','radar','scatter'],
 				pie: 		[],
 				sunburst: 	[],
 				wordcloud: 	[],
@@ -229,7 +237,7 @@ Ext.define
 				scatter:	['bar','line','radar'],
 				heatmap:	[],
 				chord: 		[],
-				gauge:		['bar', 'line']
+				gauge:		[]
 			};	
 			
 			/**

@@ -8,6 +8,8 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 		
 		var vm = config.viewModel;
 		var fb = config.fieldBind;
+
+		var globalScope = this;
 		
 		var menu = Ext.create('Ext.menu.ColorPicker', {
 			listeners : {
@@ -19,7 +21,14 @@ Ext.define('Sbi.chart.designer.ColorPicker',{
 					
 					vm.data.configModel.data[bindValue] = selColor;
 					
-					//Ext.getCmp("idchartss").fireEvent("ppp", "backgroundColor"); //danilo
+					/**
+					 * Important when this component is mandatory for the chart.
+					 * Firing an event will inform us that color is picked and we
+					 * don't need the flag that warns the user.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					globalScope.fireEvent("colorPicked");
 				}
 			},
 		});

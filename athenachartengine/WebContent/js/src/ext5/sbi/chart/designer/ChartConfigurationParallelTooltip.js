@@ -56,7 +56,20 @@ Ext.define
 				{
 					bind: '{configModel.parallelTooltipFontFamily}',
 					viewModel: this.viewModel,
-					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+					fieldLabel: LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+					
+					listeners:
+					{
+						fontFamilyPicked: function()
+						{
+							this.labelEl.update(LN('sbi.chartengine.configuration.font') + ":"); 
+						},
+				
+						fontFamilyEmpty: function()
+						{
+							this.labelEl.update(LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+						}
+					}
 				}	
 			);
 	        
@@ -66,7 +79,20 @@ Ext.define
     			
     			{
     				bind : '{configModel.parallelTooltipFontSize}',
-    				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
+    				fieldLabel: LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
+    				
+    				listeners:
+					{
+    					fontSizePicked: function()
+    					{
+    						this.labelEl.update(LN('sbi.chartengine.configuration.fontsize') + ":"); 
+    					},
+    					
+    					fontSizeEmpty: function()
+    					{
+    						this.labelEl.update(LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+    					}
+					}
     			}
 			);
 			
@@ -80,7 +106,25 @@ Ext.define
 					 width: "200",
 //					 value: "20",
 					 maxValue: '100',
-					 minValue: '10'
+					 minValue: '10',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 			
@@ -94,7 +138,25 @@ Ext.define
 					 width: "200",
 //					 value: "300",
 					 maxValue: '500',
-					 minValue: '50'
+					 minValue: '50',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);		
 			
@@ -107,7 +169,8 @@ Ext.define
 					 defaults : 
 					 {
 				//		 labelWidth : '100%',
-						 margin:'0 30 0 0'
+						 //(top, right, bottom, left).
+						 margin:'2 20 2 0'
 					 },
 				       	 
 					 items: 
@@ -128,7 +191,25 @@ Ext.define
 					 width: "200",
 //					 value: "20",
 					 maxValue: '50',
-					 minValue: '5'
+					 minValue: '5',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 			
@@ -142,7 +223,25 @@ Ext.define
 					 width: "200",
 //					 value: "300",
 					 maxValue: '500',
-					 minValue: '50'
+					 minValue: '50',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 			
@@ -178,7 +277,25 @@ Ext.define
 					 width: "200",
 //					 value: "2",
 					 maxValue: '20',
-					 minValue: '0'
+					 minValue: '0',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			 );
 			
@@ -192,7 +309,25 @@ Ext.define
 					 width: "200",
 //					 value: "0",
 					 maxValue: '10',
-					 minValue: '0'
+					 minValue: '0',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 			
@@ -206,7 +341,25 @@ Ext.define
 					 width: "200",
 //					 value: "5",
 					 maxValue: '20',
-					 minValue: '0'
+					 minValue: '0',
+					 labelWidth: 120,
+					 labelPad: 10,
+					 
+					 listeners:
+					 {
+						 change: function(thisEl, newValue, oldValue)
+						 {							 
+							 if (newValue || parseInt(newValue)==0)
+							 {
+								 this.labelEl.update(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius")+":"); 
+							 }								 
+							 else
+							 {
+								 this.labelEl.update
+								 	(LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+							 }								 								 				 
+						 }
+					 }
 				}
 			);
 			

@@ -20,6 +20,14 @@ Ext.define('Sbi.chart.designer.FontCombo',{
     listeners : {
         change: function(sender, newValue, oldValue, opts) {
             this.inputEl.setStyle('font-family', newValue);
+            
+            /**
+             * @author: danristo (danilo.ristovski@mht.net)
+             */
+            if (newValue=="")	// empty by style
+            	this.fireEvent("fontFamilyEmpty");
+            else
+            	this.fireEvent("fontFamilyPicked");
         }
     }
 });

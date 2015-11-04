@@ -14,6 +14,8 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		this.callParent(config);
 		Ext.apply(this.config,config);
 		
+		var globalScope = this;
+		
 		this.viewModel = config.viewModel;
 		
 		var picker = Ext.create('Sbi.chart.designer.ColorPicker',{
@@ -31,6 +33,26 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 				fieldStyle : 'background-image: none; background-color: '+this.config.fieldBind,
 			}
 		});
+		
+		/**
+		 * Important when this component is mandatory for the chart.
+		 * This event will inform us that color is picked and we
+		 * don't need the flag that warns the user.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		picker.on
+		(
+			"colorPicked", 
+			
+			function() 
+			{
+				if (globalScope.config.isColorMandatory)
+				{					
+					field.labelEl.update(globalScope.config.label + ":"); 
+				}					
+			}
+		);	
 		
 		this.add(field);
 		this.add(picker);

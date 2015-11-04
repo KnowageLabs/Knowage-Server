@@ -17,28 +17,6 @@
 	function initChartLibrary(panelId) {
 		
 		document.getElementById(panelId).setAttribute("style","height:0px");
-		
-		/*
-		Highcharts.setOptions({
-		    chart: {
-		 	   renderTo: panelId,
-		        backgroundColor: {
-		            linearGradient: [0, 0, 500, 500],
-		            stops: [
-		                [0, 'rgb(255, 255, 255)'],
-		                [1, 'rgb(240, 240, 255)']
-		            ]
-		        },
-		        borderWidth: 2,
-		        plotBackgroundColor: 'rgba(255, 255, 255, .9)',
-		        plotShadow: true,
-		        plotBorderWidth: 1
-		    },
-		    exporting: {
-		        url: 'https://export.highcharts.com/'
-		    }
-		}); 
-		*/
 	}
 	
 	/* 	
@@ -63,9 +41,6 @@
 	}
 
 	function renderChart(chartConf){
-
-		//new Highcharts.Chart(chartConf);
-		// console.log(chartConf);
 		
 		/* 
 			If rerendering the chart, we will need cleaning of the
