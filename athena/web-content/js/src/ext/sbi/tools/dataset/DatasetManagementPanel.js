@@ -587,7 +587,28 @@ Ext
 							ckanUrl : values['ckanUrl']
 						};
 						arrayPars = this.parsGrid.getParametersValues();
-						if (arrayPars) {
+
+						//merge only default values of preview params with
+						//general managed params
+						var mergeParams = function (currParams,defaultValeusParams) {
+							for (var i=0;i<currParams.length;i++) {
+								for (var j=0;j<defaultValeusParams.length;j++) {
+									var itemA=currParams[i];
+									var itemM=defaultValeusParams[j];
+									if (itemA.name === itemM.name) {
+										if (typeof itemM.defaultValue !== 'undefined'){
+											itemA.defaultValue = itemM.defaultValue;
+										}
+										break;
+									}
+								}
+							}
+						};
+
+						if (arrayPars) { 
+							var manageParsArray=this.manageParsGrid.getParsArray();
+							mergeParams(arrayPars,manageParsArray);
+
 							requestParameters.pars = Ext.util.JSON
 									.encode(arrayPars);
 						}

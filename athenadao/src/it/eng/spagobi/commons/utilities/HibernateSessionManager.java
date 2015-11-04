@@ -1,13 +1,14 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
 import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.spagobi.commons.dao.DAOConfig;
 
+import java.io.File;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -40,7 +41,13 @@ public class HibernateSessionManager {
 	private synchronized static void initSessionFactory() {
 		logger.info("Initializing hibernate Session Factory Described by [" + DAOConfig.getHibernateConfigurationFile() + "]");
 		Configuration conf = new Configuration();
-		conf = conf.configure(DAOConfig.getHibernateConfigurationFile());
+		File hibernateConfigurationFileFile = DAOConfig.getHibernateConfigurationFileFile();
+		if (hibernateConfigurationFileFile != null) {
+			// for testing
+			conf = conf.configure(hibernateConfigurationFileFile);
+		} else {
+			conf = conf.configure(DAOConfig.getHibernateConfigurationFile());
+		}
 		sessionFactory = conf.buildSessionFactory();
 	}
 
@@ -53,7 +60,7 @@ public class HibernateSessionManager {
 
 	/**
 	 * Current session.
-	 * 
+	 *
 	 * @return the session
 	 */
 	public static Session getCurrentSession() {
@@ -62,7 +69,7 @@ public class HibernateSessionManager {
 
 	/**
 	 * Retrieve current session
-	 * 
+	 *
 	 * @return
 	 */
 	public static Session getExistingSession() {

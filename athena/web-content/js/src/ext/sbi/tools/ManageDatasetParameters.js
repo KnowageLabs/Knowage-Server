@@ -74,7 +74,18 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	              allowBlank: false,
 	              validationEvent:true
 	          })
-		}			
+		}, {
+	    	header: LN('sbi.generic.defaultValue'), 
+	    	width: 230, 
+			id:'defaultValue',
+			sortable: true, 
+			dataIndex: 'defaultValue',  
+			editor: new Ext.form.TextField({
+				 maxLength:20,
+				 allowBlank: true,
+	             validationEvent:true
+			})
+	    }			
 	];
     
 	 var cm = new Ext.grid.ColumnModel({
@@ -84,7 +95,7 @@ Sbi.tools.ManageDatasetParameters = function(config) {
 	 this.store = new Ext.data.JsonStore({
 		    fields: ['name'
      	          , 'type'
-      	          ],
+      	          ,'defaultValue'],
 		    data:{}
 		});
 	 

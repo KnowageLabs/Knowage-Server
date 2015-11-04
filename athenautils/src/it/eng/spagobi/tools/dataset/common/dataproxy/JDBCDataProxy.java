@@ -62,6 +62,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		return load(dataReader);
 	}
 
+	@Override
 	public IDataStore load(IDataReader dataReader) {
 
 		IDataStore dataStore;
@@ -111,10 +112,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 				resultSet = stmt.executeQuery(sqlQuery);
 
 			} catch (Throwable t) {
-				logger.error("An error occurred while executing statement: " + sqlQuery);
-				throw new SpagoBIRuntimeException("An error occurred while executing statement", t);
+				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
-
 
 			boolean inlineViewStrategyUsedSuccessfully = false;
 			int resultNumber = -1;

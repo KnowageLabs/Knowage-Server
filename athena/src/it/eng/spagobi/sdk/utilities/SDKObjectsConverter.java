@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.sdk.utilities;
 
@@ -74,7 +74,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 public class SDKObjectsConverter {
-	
+
 	static private Logger logger = Logger.getLogger(SDKObjectsConverter.class);
 
 	public SDKDocument fromBIObjectToSDKDocument(BIObject obj) {
@@ -197,7 +197,7 @@ public class SDKObjectsConverter {
 			is = dh.getInputStream();
 			byte[] templateContent = SpagoBIUtilities.getByteArrayFromInputStream(is);
 			toReturn.setContent(templateContent);
-			toReturn.setDimension(Long.toString(templateContent.length/1000)+" KByte");
+			toReturn.setDimension(Long.toString(templateContent.length / 1000) + " KByte");
 		} catch (Exception e) {
 			logger.error("Error while converting SDKTemplate into ObjTemplate.", e);
 			logger.debug("Returning null.");
@@ -328,12 +328,6 @@ public class SDKObjectsConverter {
 		return sdkEngine;
 	}
 
-
-
-
-
-
-
 	public SDKDataSource fromSpagoBiDataSourceToSDKDataSource(SpagoBiDataSource spagoBiDataSource) {
 		logger.debug("IN");
 		if (spagoBiDataSource == null) {
@@ -347,13 +341,12 @@ public class SDKObjectsConverter {
 			toReturn.setLabel(spagoBiDataSource.getLabel());
 			toReturn.setJndi(spagoBiDataSource.getJndiName());
 			toReturn.setAttrSchema(spagoBiDataSource.getSchemaAttribute());
-			//toReturn.setDescr(spagoBiDataSource.)
-			//toReturn.setDialectId(spagoBiDataSource.get)
+			// toReturn.setDescr(spagoBiDataSource.)
+			// toReturn.setDialectId(spagoBiDataSource.get)
 			toReturn.setDriver(spagoBiDataSource.getDriver());
-			if(spagoBiDataSource.getMultiSchema()!=null){
-				toReturn.setMultiSchema(spagoBiDataSource.getMultiSchema()== true ? Integer.valueOf(1) :Integer.valueOf(0));
-			}
-			else{
+			if (spagoBiDataSource.getMultiSchema() != null) {
+				toReturn.setMultiSchema(spagoBiDataSource.getMultiSchema() == true ? Integer.valueOf(1) : Integer.valueOf(0));
+			} else {
 				toReturn.setMultiSchema(null);
 			}
 			toReturn.setName(spagoBiDataSource.getUser());
@@ -370,8 +363,6 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-
-
 	public SDKDataSet fromSpagoBiDataSetToSDKDataSet(SpagoBiDataSet spagoBiDataSet) {
 		logger.debug("IN");
 		if (spagoBiDataSet == null) {
@@ -380,7 +371,7 @@ public class SDKObjectsConverter {
 		}
 		SDKDataSet toReturn = null;
 		try {
-			
+
 			toReturn = new SDKDataSet();
 			toReturn.setId(spagoBiDataSet.getDsId());
 			toReturn.setVersionNum(spagoBiDataSet.getVersionNum());
@@ -394,71 +385,50 @@ public class SDKObjectsConverter {
 			toReturn.setPivotRowName(spagoBiDataSet.getPivotRowName());
 			toReturn.setNumberingRows(spagoBiDataSet.isNumRows());
 			toReturn.set_public(spagoBiDataSet.is_public());
-		
+
 			toReturn.setConfiguration(spagoBiDataSet.getConfiguration());
 			toReturn.setOrganization(spagoBiDataSet.getOrganization());
-			
+
 			/*
-			// file dataset			
-			toReturn.setFileName(spagoBiDataSet.getFileName());
-
-			// jdbc dataset
-			toReturn.setJdbcQuery(spagoBiDataSet.getQuery());
-			toReturn.setJdbcQueryScript(spagoBiDataSet.getQueryScript());
-			toReturn.setJdbcQueryScriptLanguage(spagoBiDataSet.getQueryScriptLanguage());
-			if (spagoBiDataSet.getDataSource() != null) {
-				toReturn.setJdbcDataSourceId(spagoBiDataSet.getDataSource().getId());
-			}
-
-			// web service dataset
-			toReturn.setWebServiceAddress(spagoBiDataSet.getAdress());
-			toReturn.setWebServiceOperation(spagoBiDataSet.getOperation());
-
-			// script dataset
-			toReturn.setScriptText(spagoBiDataSet.getScript());
-			toReturn.setScriptLanguage(spagoBiDataSet.getLanguageScript());
-
-			// java dataset
-			toReturn.setJavaClassName(spagoBiDataSet.getJavaClassName());
-
-			toReturn.setJsonQuery(spagoBiDataSet.getJsonQuery());
-			toReturn.setDatamarts(spagoBiDataSet.getDatamarts());
-			toReturn.setCustomData(spagoBiDataSet.getCustomData());
-*/
+			 * // file dataset toReturn.setFileName(spagoBiDataSet.getFileName());
+			 *
+			 * // jdbc dataset toReturn.setJdbcQuery(spagoBiDataSet.getQuery()); toReturn.setJdbcQueryScript(spagoBiDataSet.getQueryScript());
+			 * toReturn.setJdbcQueryScriptLanguage(spagoBiDataSet.getQueryScriptLanguage()); if (spagoBiDataSet.getDataSource() != null) {
+			 * toReturn.setJdbcDataSourceId(spagoBiDataSet.getDataSource().getId()); }
+			 *
+			 * // web service dataset toReturn.setWebServiceAddress(spagoBiDataSet.getAdress()); toReturn.setWebServiceOperation(spagoBiDataSet.getOperation());
+			 *
+			 * // script dataset toReturn.setScriptText(spagoBiDataSet.getScript()); toReturn.setScriptLanguage(spagoBiDataSet.getLanguageScript());
+			 *
+			 * // java dataset toReturn.setJavaClassName(spagoBiDataSet.getJavaClassName());
+			 *
+			 * toReturn.setJsonQuery(spagoBiDataSet.getJsonQuery()); toReturn.setDatamarts(spagoBiDataSet.getDatamarts());
+			 * toReturn.setCustomData(spagoBiDataSet.getCustomData());
+			 */
 			/*
-			String type = null;
-
-			if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
-				type = "SCRIPT";
-			} else if (  JDBCDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
-				type = "JDBC_QUERY";
-			} else if ( JavaClassDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
-				type = "JAVA_CLASS";
-			} else if ( WebServiceDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
-				type = "WEB_SERVICE";
-			} else if ( FileDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
-				type = "FILE";
-			} else {
-				logger.error("Dataset type [" + spagoBiDataSet.getType() + "] unknown.");
-				type = "UNKNOWN";
-			}
-
-			toReturn.setType(type);
+			 * String type = null;
+			 *
+			 * if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "SCRIPT"; } else if ( JDBCDataSet.DS_TYPE.equals(
+			 * spagoBiDataSet.getType() ) ) { type = "JDBC_QUERY"; } else if ( JavaClassDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type =
+			 * "JAVA_CLASS"; } else if ( WebServiceDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "WEB_SERVICE"; } else if (
+			 * FileDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "FILE"; } else { logger.error("Dataset type [" + spagoBiDataSet.getType() +
+			 * "] unknown."); type = "UNKNOWN"; }
+			 *
+			 * toReturn.setType(type);
 			 */
 			toReturn.setType(spagoBiDataSet.getType());
-			
-			
+
 			// sets dataset's category domain
-			if (spagoBiDataSet.getCategoryId()!= null){
+			if (spagoBiDataSet.getCategoryId() != null) {
 				Domain category = DAOFactory.getDomainDAO().loadDomainById(spagoBiDataSet.getCategoryId());
 				toReturn.setCategory(category.getValueName());
 			}
-			
+
 			List dataSetParameterItemList = null;
-			String parametersXML=spagoBiDataSet.getParameters();
-			if(parametersXML!=null && !((parametersXML.trim()).equals(""))){
-				DataSetParametersList dsParam=new DataSetParametersList(parametersXML);
-				dataSetParameterItemList=dsParam.getItems();
+			String parametersXML = spagoBiDataSet.getParameters();
+			if (parametersXML != null && !((parametersXML.trim()).equals(""))) {
+				DataSetParametersList dsParam = new DataSetParametersList(parametersXML);
+				dataSetParameterItemList = dsParam.getItems();
 			}
 			SDKDataSetParameter[] parameters = null;
 			if (dataSetParameterItemList != null) {
@@ -494,9 +464,8 @@ public class SDKObjectsConverter {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
-	public String fromSDKDataSetParameterArrayToBIDataSetParameterList(SDKDataSetParameter[] dataSetParameterArray) 
-			throws  SourceBeanException{
+
+	public String fromSDKDataSetParameterArrayToBIDataSetParameterList(SDKDataSetParameter[] dataSetParameterArray) throws SourceBeanException {
 		logger.debug("IN");
 		if (dataSetParameterArray == null) {
 			logger.warn("dataSetParameterArray in input is null!!");
@@ -505,7 +474,7 @@ public class SDKObjectsConverter {
 		String toReturn = null;
 		List paramsList = new ArrayList<String>();
 		for (int i = 0; i < dataSetParameterArray.length; i++) {
-			SDKDataSetParameter aDataSetParameterItem = ((SDKDataSetParameter) dataSetParameterArray[i]);
+			SDKDataSetParameter aDataSetParameterItem = (dataSetParameterArray[i]);
 			DataSetParameterItem aBIDataSetParameter = this.fromSDKDataSetParameterItemToBIDataSetParameter(aDataSetParameterItem);
 			paramsList.add(aBIDataSetParameter);
 		}
@@ -515,12 +484,10 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-	
-	public SDKDataSetParameter fromDataSetParameterItemToSDKDataSetParameter(
-			DataSetParameterItem dataSetParameterItem) {
-		
+	public SDKDataSetParameter fromDataSetParameterItemToSDKDataSetParameter(DataSetParameterItem dataSetParameterItem) {
+
 		logger.debug("IN");
-		
+
 		if (dataSetParameterItem == null) {
 			logger.warn("DataSetParameterItem in input is null!!");
 			return null;
@@ -531,11 +498,11 @@ public class SDKObjectsConverter {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	public DataSetParameterItem fromSDKDataSetParameterItemToBIDataSetParameter(SDKDataSetParameter SDKDataSetParameterItem) {
-		
+
 		logger.debug("IN");
-		
+
 		if (SDKDataSetParameterItem == null) {
 			logger.warn("SDKDataSetParameterItem in input is null!!");
 			return null;
@@ -555,129 +522,128 @@ public class SDKObjectsConverter {
 		}
 		IDataSet ds = null;
 		try {
-		//	JSONObject jsonConf  = ObjectUtils.toJSONObject(dataset.getConfiguration());
-			String config = JSONUtils.escapeJsonString(dataset.getConfiguration());		
-			JSONObject jsonConf  = ObjectUtils.toJSONObject(config);
+			// JSONObject jsonConf = ObjectUtils.toJSONObject(dataset.getConfiguration());
+			String config = JSONUtils.escapeJsonString(dataset.getConfiguration());
+			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 
-			//defines correct dataset detail
-			if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)){
+			// defines correct dataset detail
+			if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
 				ds = new FileDataSet();
-				((FileDataSet)ds).setResourcePath(DAOConfig.getResourcePath());
+				((FileDataSet) ds).setResourcePath(DAOConfig.getResourcePath());
 				String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
-				if(fileName!=null && !fileName.equals("")){
-					((FileDataSet)ds).setFileName(fileName);
+				if (fileName != null && !fileName.equals("")) {
+					((FileDataSet) ds).setFileName(fileName);
 				}
-			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_JCLASS)){
+			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_JCLASS)) {
 				ds = new JavaClassDataSet();
 				String jclassName = jsonConf.getString(DataSetConstants.JCLASS_NAME);
-				if(jclassName!=null && !jclassName.equals("")){
-					((JavaClassDataSet)ds).setClassName(jclassName);
+				if (jclassName != null && !jclassName.equals("")) {
+					((JavaClassDataSet) ds).setClassName(jclassName);
 				}
-			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)){
+			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 				ds = new JDBCDataSet();
 				String query = jsonConf.getString(DataSetConstants.QUERY);
-				if(query!=null && !query.equals("")){
-					((JDBCDataSet)ds).setQuery(query);
+				if (query != null && !query.equals("")) {
+					((JDBCDataSet) ds).setQuery(query);
 				}
 				String queryScript = jsonConf.getString(DataSetConstants.QUERY_SCRIPT);
-				if(queryScript!=null && !queryScript.equals("")){
-					((JDBCDataSet)ds).setQueryScript(queryScript);
+				if (queryScript != null && !queryScript.equals("")) {
+					((JDBCDataSet) ds).setQueryScript(queryScript);
 				}
 				String queryScriptLanguage = jsonConf.getString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
-				if(queryScriptLanguage!=null && !queryScriptLanguage.equals("")){
-					((JDBCDataSet)ds).setQueryScriptLanguage(queryScriptLanguage);
+				if (queryScriptLanguage != null && !queryScriptLanguage.equals("")) {
+					((JDBCDataSet) ds).setQueryScriptLanguage(queryScriptLanguage);
 				}
-				
-				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
-				IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));				
-				((JDBCDataSet)ds).setDataSource(dataSource);	
-			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)){
+
+				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
+				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
+				((JDBCDataSet) ds).setDataSource(dataSource);
+			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)) {
 				ds = new QbeDataSet();
-				//String sqlQuery =  jsonConf.getString(DataSetConstants.QBE_SQL_QUERY);
+				// String sqlQuery = jsonConf.getString(DataSetConstants.QBE_SQL_QUERY);
 				String jsonQuery = jsonConf.getString(DataSetConstants.QBE_JSON_QUERY);
-				String datamarts = jsonConf.getString(DataSetConstants.QBE_DATAMARTS);			
-				//((QbeDataSet) ds).setSqlQuery(sqlQuery);
+				String datamarts = jsonConf.getString(DataSetConstants.QBE_DATAMARTS);
+				// ((QbeDataSet) ds).setSqlQuery(sqlQuery);
 				((QbeDataSet) ds).setJsonQuery(jsonQuery);
 				((QbeDataSet) ds).setDatamarts(datamarts);
-				DataSourceDAOHibImpl dataSourceDao=new DataSourceDAOHibImpl();
+				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 
-				if(!jsonConf.isNull(DataSetConstants.QBE_DATA_SOURCE)){
-					IDataSource dataSource= dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));				
-					((QbeDataSet)ds).setDataSource(dataSource);						
-					if (dataSource!=null){				
-						((QbeDataSet)ds).setDataSource(dataSource);				
+				if (!jsonConf.isNull(DataSetConstants.QBE_DATA_SOURCE)) {
+					IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					((QbeDataSet) ds).setDataSource(dataSource);
+					if (dataSource != null) {
+						((QbeDataSet) ds).setDataSource(dataSource);
 					}
+				} else {
+					logger.warn("Dataset " + ds.getLabel() + "has no associated datasource");
 				}
-				else{
-		        	logger.warn("Dataset "+ds.getLabel()+"has no associated datasource");
-				}
-			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)){
+			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 				ds = new ScriptDataSet();
 				String script = jsonConf.getString(DataSetConstants.SCRIPT);
 				String scriptLanguage = jsonConf.getString(DataSetConstants.SCRIPT_LANGUAGE);
-				if(scriptLanguage!=null && !scriptLanguage.equals("")){
-					((ScriptDataSet)ds).setScriptLanguage(scriptLanguage);
+				if (scriptLanguage != null && !scriptLanguage.equals("")) {
+					((ScriptDataSet) ds).setScriptLanguage(scriptLanguage);
 				}
-				if(script!=null && !script.equals("")){
-					((ScriptDataSet)ds).setScript(script);
+				if (script != null && !script.equals("")) {
+					((ScriptDataSet) ds).setScript(script);
 				}
-			}else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_WS)){
+			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) {
 				ds = new WebServiceDataSet();
 				String wsAddress = jsonConf.getString(DataSetConstants.WS_ADDRESS);
-				String wsOperation =jsonConf.getString(DataSetConstants.WS_OPERATION);
-				if(wsOperation!=null && !wsOperation.equals("")){
-					((WebServiceDataSet)ds).setOperation(wsOperation);
+				String wsOperation = jsonConf.getString(DataSetConstants.WS_OPERATION);
+				if (wsOperation != null && !wsOperation.equals("")) {
+					((WebServiceDataSet) ds).setOperation(wsOperation);
 				}
-				if(wsAddress!=null && !wsAddress.equals("")){
-					((WebServiceDataSet)ds).setAddress(wsAddress);
+				if (wsAddress != null && !wsAddress.equals("")) {
+					((WebServiceDataSet) ds).setAddress(wsAddress);
 				}
-			} else if(dataset.getType().equalsIgnoreCase(DataSetConstants.DS_CUSTOM)){
+			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) {
 				ds = new CustomDataSet();
 				String javaClassName = jsonConf.getString(DataSetConstants.JCLASS_NAME);
 				String customData = jsonConf.getString(DataSetConstants.CUSTOM_DATA);
-				if(javaClassName!=null && !javaClassName.equals("")){
-					((CustomDataSet)ds).setJavaClassName(javaClassName);
+				if (javaClassName != null && !javaClassName.equals("")) {
+					((CustomDataSet) ds).setJavaClassName(javaClassName);
 				}
-				if(customData!=null && !customData.equals("")){
-					((CustomDataSet)ds).setCustomData(customData);
+				if (customData != null && !customData.equals("")) {
+					((CustomDataSet) ds).setCustomData(customData);
 				}
 			}
-			if (dataset.getId() != null){
+			if (dataset.getId() != null) {
 				ds.setId(dataset.getId());
 			}
 			ds.setLabel(dataset.getLabel());
 			ds.setName(dataset.getName());
-			ds.setDescription(dataset.getDescription());	
+			ds.setDescription(dataset.getDescription());
 			ds.setDsType(dataset.getType());
 			ds.setConfiguration(dataset.getConfiguration());
 			ds.setOrganization(dataset.getOrganization());
-			
-			//sets other general object's fields
-			if(dataset.getPivotColumnName()!=null && !dataset.getPivotColumnName().equals("")){
+
+			// sets other general object's fields
+			if (dataset.getPivotColumnName() != null && !dataset.getPivotColumnName().equals("")) {
 				ds.setPivotColumnName(dataset.getPivotColumnName());
 			}
-			if(dataset.getPivotRowName()!=null && !dataset.getPivotRowName().equals("")){
+			if (dataset.getPivotRowName() != null && !dataset.getPivotRowName().equals("")) {
 				ds.setPivotRowName(dataset.getPivotRowName());
 			}
-			if(dataset.getPivotColumnValue()!=null && !dataset.getPivotColumnValue().equals("")){
+			if (dataset.getPivotColumnValue() != null && !dataset.getPivotColumnValue().equals("")) {
 				ds.setPivotColumnValue(dataset.getPivotColumnValue());
 			}
-			if(dataset.getNumberingRows()!=null){
+			if (dataset.getNumberingRows() != null) {
 				ds.setNumRows(dataset.getNumberingRows());
 			}
-			if(dataset.get_public()!=null){
+			if (dataset.get_public() != null) {
 				ds.setPublic(dataset.get_public());
 			}
 
-			//dsDetail.setDsMetadata(dataset.getXXX);
-			
-			//sets dataset's parameters			
+			// dsDetail.setDsMetadata(dataset.getXXX);
+
+			// sets dataset's parameters
 			String parameters = null;
-			if (dataset.getParameters() != null) {				
+			if (dataset.getParameters() != null) {
 				parameters = this.fromSDKDataSetParameterArrayToBIDataSetParameterList(dataset.getParameters());
-			} 
+			}
 			ds.setParameters(parameters);
-			
+
 			IDomainDAO domainDAO = DAOFactory.getDomainDAO();
 			// sets dataset's transformer type domain
 			if (dataset.getTransformer() != null) {
@@ -686,9 +652,9 @@ public class SDKObjectsConverter {
 				ds.setTransformerId(transformer.getValueId());
 			}
 			// sets dataset's category domain
-			if (dataset.getCategory() != null){
+			if (dataset.getCategory() != null) {
 				Domain category = domainDAO.loadDomainByCodeAndValue("CATEGORY_TYPE", dataset.getCategory());
-				//ds.setCategoryValueName(category.getValueCd());
+				// ds.setCategoryValueName(category.getValueCd());
 				ds.setCategoryId(category.getValueId());
 				ds.setCategoryCd(category.getValueCd());
 			}
@@ -701,7 +667,7 @@ public class SDKObjectsConverter {
 		logger.debug("OUT");
 		return ds;
 	}
-	
+
 	public SDKDataStoreMetadata fromDataStoreMetadataToSDKDataStoreMetadata(MetaData aDataStoreMetaData) {
 		logger.debug("IN");
 		if (aDataStoreMetaData == null) {
@@ -717,8 +683,7 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-	private SDKDataStoreFieldMetadata[] fromFieldMetadataListToSDKDataStoreFieldMetadataArray(
-			List fieldsMeta) {
+	private SDKDataStoreFieldMetadata[] fromFieldMetadataListToSDKDataStoreFieldMetadataArray(List fieldsMeta) {
 		logger.debug("IN");
 		if (fieldsMeta == null) {
 			logger.warn("List fieldsMeta in input is null!!");
@@ -734,8 +699,7 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-	private SDKDataStoreFieldMetadata fromFieldMetadataToSDKDataStoreFieldMetadata(
-			FieldMetadata fieldMetadata) {
+	private SDKDataStoreFieldMetadata fromFieldMetadataToSDKDataStoreFieldMetadata(FieldMetadata fieldMetadata) {
 		logger.debug("IN");
 		if (fieldMetadata == null) {
 			logger.warn("FieldMetadata in input is null!!");
@@ -752,25 +716,19 @@ public class SDKObjectsConverter {
 
 	public class MemoryOnlyDataSource extends ManagedMemoryDataSource {
 
-		public MemoryOnlyDataSource(byte[] in, String contentType)
-		throws java.io.IOException {
-			super(new java.io.ByteArrayInputStream(in), Integer.MAX_VALUE - 2,
-					contentType, true);
+		public MemoryOnlyDataSource(byte[] in, String contentType) throws java.io.IOException {
+			super(new java.io.ByteArrayInputStream(in), Integer.MAX_VALUE - 2, contentType, true);
 		}
 
-		public MemoryOnlyDataSource(InputStream in, String contentType)
-		throws java.io.IOException {
-			super(in, Integer.MAX_VALUE - 2,
-					contentType, true);
+		public MemoryOnlyDataSource(InputStream in, String contentType) throws java.io.IOException {
+			super(in, Integer.MAX_VALUE - 2, contentType, true);
 		}
 
-		public MemoryOnlyDataSource(String in, String contentType)
-		throws java.io.IOException {
+		public MemoryOnlyDataSource(String in, String contentType) throws java.io.IOException {
 			this(in.getBytes(), contentType);
 		}
 
 	}
-
 
 	public SbiGeoFeatures fromSDKFeatureToSbiGeoFeatures(SDKFeature feature) {
 		logger.debug("IN");
@@ -780,7 +738,7 @@ public class SDKObjectsConverter {
 		}
 		SbiGeoFeatures sbiFeature = null;
 		try {
-			sbiFeature=new SbiGeoFeatures();
+			sbiFeature = new SbiGeoFeatures();
 			sbiFeature.setFeatureId(feature.getFeatureId());
 			sbiFeature.setName(feature.getName());
 			sbiFeature.setDescr(feature.getDescr());
@@ -807,7 +765,7 @@ public class SDKObjectsConverter {
 			sdkFeature.setFeatureId(feature.getFeatureId());
 			sdkFeature.setName(feature.getName());
 			sdkFeature.setDescr(feature.getDescr());
-			sdkFeature.setType(feature.getType());			
+			sdkFeature.setType(feature.getType());
 		} catch (Exception e) {
 			logger.error("Error while converting Feature into SDKFeature.", e);
 			logger.debug("Returning null.");
@@ -818,12 +776,6 @@ public class SDKObjectsConverter {
 		return sdkFeature;
 	}
 
-
-
-
-
-
-
 	public SbiGeoMaps fromSDKMapsToSbiGeoMaps(SDKMap map) {
 		logger.debug("IN");
 		if (map == null) {
@@ -832,18 +784,18 @@ public class SDKObjectsConverter {
 		}
 		SbiGeoMaps sbiMap = null;
 		try {
-			sbiMap=new SbiGeoMaps();
+			sbiMap = new SbiGeoMaps();
 			sbiMap.setMapId(map.getMapId());
 			sbiMap.setName(map.getName());
 			sbiMap.setDescr(map.getDescr());
 			sbiMap.setFormat(map.getFormat());
 			sbiMap.setUrl(map.getUrl());
 
-			IBinContentDAO binContentDAO=DAOFactory.getBinContentDAO();
-			byte[] binContentsContent=binContentDAO.getBinContent(map.getBinId());
-			if(binContentsContent!=null){
-				Integer contentId=map.getBinId();
-				SbiBinContents sbiBinContents=new SbiBinContents();
+			IBinContentDAO binContentDAO = DAOFactory.getBinContentDAO();
+			byte[] binContentsContent = binContentDAO.getBinContent(map.getBinId());
+			if (binContentsContent != null) {
+				Integer contentId = map.getBinId();
+				SbiBinContents sbiBinContents = new SbiBinContents();
 				sbiBinContents.setId(contentId);
 				sbiBinContents.setContent(binContentsContent);
 				sbiMap.setBinContents(sbiBinContents);
@@ -870,10 +822,10 @@ public class SDKObjectsConverter {
 			sdkMap.setMapId(sbiMap.getMapId());
 			sdkMap.setName(sbiMap.getName());
 			sdkMap.setDescr(sbiMap.getDescr());
-			sdkMap.setFormat(sbiMap.getFormat());			
-			sdkMap.setUrl(sbiMap.getUrl());			
-			if(sbiMap.getBinContents()!=null){
-				sdkMap.setBinId(sbiMap.getBinContents().getId());			
+			sdkMap.setFormat(sbiMap.getFormat());
+			sdkMap.setUrl(sbiMap.getUrl());
+			if (sbiMap.getBinContents() != null) {
+				sdkMap.setBinId(sbiMap.getBinContents().getId());
 			}
 		} catch (Exception e) {
 			logger.error("Error while converting Feature into SDKFeature.", e);
@@ -885,27 +837,25 @@ public class SDKObjectsConverter {
 		return sdkMap;
 	}
 
-
-	private String deserializeSKDatasetParametersArray(List  parsArraySDK) throws  SourceBeanException{
+	private String deserializeSKDatasetParametersArray(List parsArraySDK) throws SourceBeanException {
 		String toReturn = "";
-		SourceBean sb = new SourceBean("PARAMETERSLIST");	
+		SourceBean sb = new SourceBean("PARAMETERSLIST");
 		SourceBean sb1 = new SourceBean("ROWS");
-		
-		for(int i=0; i< parsArraySDK.size(); i++){
-			DataSetParameterItem par = (DataSetParameterItem)parsArraySDK.get(i);
-			String name = par.getName();	
-			String type = par.getType();	
+
+		for (int i = 0; i < parsArraySDK.size(); i++) {
+			DataSetParameterItem par = (DataSetParameterItem) parsArraySDK.get(i);
+			String name = par.getName();
+			String type = par.getType();
 			SourceBean b = new SourceBean("ROW");
 			b.setAttribute("NAME", name);
 			b.setAttribute("TYPE", type);
-			sb1.setAttribute(b);	
-		}	
+			sb1.setAttribute(b);
+		}
 		sb.setAttribute(sb1);
 		toReturn = sb.toXML(false);
 		return toReturn;
 	}
-	
-	
+
 	public SDKDomain fromDomainToSDKDomain(Domain domain) {
 		logger.debug("IN");
 		if (domain == null) {
@@ -929,8 +879,5 @@ public class SDKObjectsConverter {
 		}
 		return sdkDomain;
 	}
-	
 
-	
-	
 }

@@ -9,9 +9,11 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.Date;
@@ -105,6 +107,8 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CKAN_URL = "ckanUrl";
 	public static final String CKAN_ID = "ckanId";
 
+	@SuppressWarnings("unchecked")
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
@@ -145,9 +149,11 @@ public class DataSetJSONSerializer implements Serializer {
 						SourceBean row = rows.get(i);
 						String name = (String) row.getAttribute("NAME");
 						String type = (String) row.getAttribute("TYPE");
+						String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
 						JSONObject jsonPar = new JSONObject();
 						jsonPar.put("name", name);
 						jsonPar.put("type", type);
+						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValue);
 						parsListJSON.put(jsonPar);
 					}
 				}

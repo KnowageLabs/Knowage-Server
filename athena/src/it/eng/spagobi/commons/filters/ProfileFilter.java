@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.filters;
 
@@ -22,8 +22,14 @@ import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Enumeration;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -38,18 +44,21 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  *         This filter tries to build the user profile object, using the user identifier
  */
 
 public class ProfileFilter implements Filter {
 
 	private static transient Logger logger = Logger.getLogger(ProfileFilter.class);
+	private boolean isTest;
 
+	@Override
 	public void destroy() {
 		// do nothing
 	}
 
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		// logger.debug("IN");
 		try {
@@ -116,6 +125,13 @@ public class ProfileFilter implements Filter {
 					manageTenant(profile);
 				}
 
+				if (isTest) {
+					try {
+						saveHttpSession(session, getSessionFileName());
+					} catch (Exception e) {
+						logger.error("Error in testing: http session can't be saved to file.");
+					}
+				}
 				chain.doFilter(request, response);
 			}
 		} catch (Exception e) {
@@ -125,6 +141,26 @@ public class ProfileFilter implements Filter {
 			// request processed in each case
 			TenantManager.unset();
 		}
+	}
+
+	private static String getSessionFileName() throws NamingException {
+		return (String) (new InitialContext().lookup("java:/comp/env/fileSessionTest"));
+	}
+
+	private static void saveHttpSession(HttpSession session, String fileSession) throws IOException {
+		FileOutputStream fout = new FileOutputStream(fileSession);
+		ObjectOutputStream oos = new ObjectOutputStream(fout);
+		Enumeration<String> attributeNames = session.getAttributeNames();
+		while (attributeNames.hasMoreElements()) {
+			String attributeName = attributeNames.nextElement();
+			oos.writeObject(attributeName);
+			Object attribute = session.getAttribute(attributeName);
+			if (!(attribute instanceof Serializable)) {
+				continue;
+			}
+			oos.writeObject(attribute);
+		}
+		oos.close();
 	}
 
 	private String getUserIdInWebModeWithoutSSO(HttpServletRequest httpRequest) {
@@ -205,8 +241,15 @@ public class ProfileFilter implements Filter {
 		Tenant tenant = new Tenant(tenantId);
 		TenantManager.setTenant(tenant);
 		logger.debug("Tenant [" + tenantId + "] set into TenantManager");
+
+		try {
+			this.isTest = (Boolean) (new InitialContext().lookup("java:/comp/env/isTest"));
+		} catch (Exception e) {
+			// nothing to do, it's testing
+		}
 	}
 
+	@Override
 	public void init(FilterConfig config) throws ServletException {
 		// do nothing
 	}
@@ -214,12 +257,12 @@ public class ProfileFilter implements Filter {
 	/**
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
-	 * 
+	 *
 	 * @param httpRequest
 	 *            The http request
-	 * 
+	 *
 	 * @return the current user unique identified
-	 * 
+	 *
 	 * @throws Exception
 	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */

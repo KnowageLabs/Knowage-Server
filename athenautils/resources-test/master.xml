@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MASTER>
+	<INTEGRATION_CLASS_JNDI>java://comp/env/spagobi_sso_class</INTEGRATION_CLASS_JNDI>
+</MASTER>

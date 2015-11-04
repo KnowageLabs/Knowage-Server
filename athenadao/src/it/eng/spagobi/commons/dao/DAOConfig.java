@@ -3,11 +3,11 @@
  * © 2005-2015 Engineering Group
  *
  * This file is part of SpagoBI. SpagoBI is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version. 
- * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * Lesser General Public License as published by the Free Software Foundation, either version 2.1 of the License, or any later version.
+ * SpagoBI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details. You should have received
  * a copy of the GNU Lesser General Public License along with SpagoBI. If not, see: http://www.gnu.org/licenses/.
- * The complete text of SpagoBI license is included in the COPYING.LESSER file. 
+ * The complete text of SpagoBI license is included in the COPYING.LESSER file.
  */
 package it.eng.spagobi.commons.dao;
 
@@ -17,6 +17,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +29,19 @@ import org.apache.log4j.Logger;
  *
  */
 public class DAOConfig {
-	
+
 	private static Map<String, String> mappings;
 	private static String hibernateConfigurationFile;
+	/**
+	 * For testing purpose
+	 */
+	private static File hibernateConfigurationFileFile;
 	private static String resourcePath;
-	
+
 	static private Logger logger = Logger.getLogger(DAOConfig.class);
-	
 
 	public static String getResourcePath() {
-		if(DAOConfig.resourcePath == null) {
+		if (DAOConfig.resourcePath == null) {
 			try {
 				String jndiName = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 				DAOConfig.resourcePath = SpagoBIUtilities.readJndiResource(jndiName);
@@ -56,23 +60,23 @@ public class DAOConfig {
 	public static void setMappings(Map<String, String> mappings) {
 		DAOConfig.mappings = mappings;
 	}
-	
+
 	public static Map<String, String> getMappings() {
-		if(DAOConfig.mappings == null) {
+		if (DAOConfig.mappings == null) {
 			DAOConfig.mappings = new HashMap<String, String>();
 			ConfigSingleton configSingleton = ConfigSingleton.getInstance();
-			List<SourceBean> daoConfigSourceBeans = (List<SourceBean>) configSingleton.getAttributeAsList("SPAGOBI.DAO-CONF.DAO");
-			for(SourceBean daoConfigSourceBean : daoConfigSourceBeans) {
-				String daoName = (String)daoConfigSourceBean.getAttribute("name");
-				String daoClass = (String)daoConfigSourceBean.getAttribute("implementation");
+			List<SourceBean> daoConfigSourceBeans = configSingleton.getAttributeAsList("SPAGOBI.DAO-CONF.DAO");
+			for (SourceBean daoConfigSourceBean : daoConfigSourceBeans) {
+				String daoName = (String) daoConfigSourceBean.getAttribute("name");
+				String daoClass = (String) daoConfigSourceBean.getAttribute("implementation");
 				DAOConfig.mappings.put(daoName, daoClass);
-			}			
+			}
 		}
 		return DAOConfig.mappings;
 	}
-	
+
 	public static String getHibernateConfigurationFile() {
-		if(DAOConfig.hibernateConfigurationFile == null) {
+		if (DAOConfig.hibernateConfigurationFile == null) {
 			DAOConfig.hibernateConfigurationFile = "hibernate.cfg.xml";
 		}
 		return DAOConfig.hibernateConfigurationFile;
@@ -80,5 +84,13 @@ public class DAOConfig {
 
 	public static void setHibernateConfigurationFile(String hibernateConfigurationFile) {
 		DAOConfig.hibernateConfigurationFile = hibernateConfigurationFile;
+	}
+
+	public static File getHibernateConfigurationFileFile() {
+		return hibernateConfigurationFileFile;
+	}
+
+	public static void setHibernateConfigurationFileFile(File hibernateConfigurationFileFile) {
+		DAOConfig.hibernateConfigurationFileFile = hibernateConfigurationFileFile;
 	}
 }

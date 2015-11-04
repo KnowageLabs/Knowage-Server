@@ -9,6 +9,8 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
+import java.io.InputStream;
+
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
@@ -22,6 +24,11 @@ public class EnginConf {
 	private String spagoBiServerUrl = null;
 	private String spagoBiSsoClass = null;
 	private String sessionExpiredUrl = null;
+
+	/**
+	 * For testing purpose
+	 */
+	private static InputStream testconfigInputstream;
 
 	private static transient Logger logger = Logger.getLogger(EnginConf.class);
 
@@ -166,8 +173,14 @@ public class EnginConf {
 		logger.debug("IN");
 		try {
 			logger.debug("Resource: " + getClass().getResource("/engine-config.xml"));
-			if (getClass().getResource("/engine-config.xml") != null) {
-				InputSource source = new InputSource(getClass().getResourceAsStream("/engine-config.xml"));
+			if (getClass().getResource("/engine-config.xml") != null || testconfigInputstream != null) {
+				InputSource source;
+				if (testconfigInputstream != null) {
+					source = new InputSource(testconfigInputstream);
+				} else {
+					InputStream configInputStream = getClass().getResourceAsStream("/engine-config.xml");
+					source = new InputSource(configInputStream);
+				}
 				config = SourceBean.fromXMLStream(source);
 
 				setResourcePath();
@@ -187,6 +200,14 @@ public class EnginConf {
 		} catch (SourceBeanException e) {
 			logger.error("Impossible to load configuration for report engine", e);
 		}
+	}
+
+	public static InputStream getTestconfigInputstream() {
+		return testconfigInputstream;
+	}
+
+	public static void setTestconfigInputstream(InputStream testconfigInputstream) {
+		EnginConf.testconfigInputstream = testconfigInputstream;
 	}
 
 }

@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
@@ -18,6 +18,7 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -111,18 +112,22 @@ public abstract class AbstractDataSet implements IDataSet {
 		behaviours = new HashMap();
 	}
 
+	@Override
 	public Integer getScopeId() {
 		return scopeId;
 	}
 
+	@Override
 	public void setScopeId(Integer scopeId) {
 		this.scopeId = scopeId;
 	}
 
+	@Override
 	public String getScopeCd() {
 		return scopeCd;
 	}
 
+	@Override
 	public void setScopeCd(String scopeCd) {
 		this.scopeCd = scopeCd;
 	}
@@ -161,6 +166,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		behaviours = new HashMap();
 	}
 
+	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = new SpagoBiDataSet();
 
@@ -200,50 +206,62 @@ public abstract class AbstractDataSet implements IDataSet {
 	// ===============================================
 	// Generic dataset's attributes accessor methods
 	// ===============================================
+	@Override
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public void setLabel(String label) {
 		this.label = label;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	@Override
 	public Integer getCategoryId() {
 		return categoryId;
 	}
 
+	@Override
 	public void setCategoryId(Integer categoryId) {
 		this.categoryId = categoryId;
 	}
 
+	@Override
 	public void setCategoryCd(String categoryCd) {
 		this.categoryCd = categoryCd;
 	}
 
+	@Override
 	public String getCategoryCd() {
 		return categoryCd;
 	}
@@ -252,14 +270,17 @@ public abstract class AbstractDataSet implements IDataSet {
 		return (getDsMetadata() != null && getDsMetadata().trim().equals("") == false);
 	}
 
+	@Override
 	public String getDsMetadata() {
 		return dsMetadata;
 	}
 
+	@Override
 	public void setDsMetadata(String dsMetadata) {
 		this.dsMetadata = dsMetadata;
 	}
 
+	@Override
 	public IMetaData getMetadata() {
 		IMetaData toReturn = null;
 		String xmlMetadata = this.getDsMetadata();
@@ -277,14 +298,17 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 
+	@Override
 	public void setMetadata(IMetaData metadata) {
 		// do nothings
 	}
 
+	@Override
 	public String getDsType() {
 		return dsType;
 	}
 
+	@Override
 	public void setDsType(String dsType) {
 		this.dsType = dsType;
 	}
@@ -293,24 +317,31 @@ public abstract class AbstractDataSet implements IDataSet {
 	// Parameters management
 	// -----------------------------------------------
 
+	@Override
 	public String getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public Map getParamsMap() {
+		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
 		return paramsMap;
 	}
 
+	@Override
 	public void setParamsMap(Map paramsMap) {
 		this.paramsMap = paramsMap;
+		DataSetUtilities.fillDefaultValues(this, this.paramsMap);
 	}
 
 	// these has to be implemented by the user creating a custom DataSet
+	@Override
 	public Map getProperties() {
 		// TODO Auto-generated method stub
 		return this.properties;
 	}
 
+	@Override
 	public void setProperties(Map map) {
 		this.properties = map;
 	}
@@ -326,70 +357,87 @@ public abstract class AbstractDataSet implements IDataSet {
 	// -----------------------------------------------
 	// Transformer management
 	// -----------------------------------------------
+	@Override
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
 
+	@Override
 	public Integer getTransformerId() {
 		return transformerId;
 	}
 
+	@Override
 	public void setTransformerId(Integer transformerId) {
 		this.transformerId = transformerId;
 	}
 
+	@Override
 	public String getTransformerCd() {
 		return transformerCd;
 	}
 
+	@Override
 	public void setTransformerCd(String transformerCd) {
 		this.transformerCd = transformerCd;
 	}
 
+	@Override
 	public String getPivotColumnName() {
 		return pivotColumnName;
 	}
 
+	@Override
 	public void setPivotColumnName(String pivotColumnName) {
 		this.pivotColumnName = pivotColumnName;
 	}
 
+	@Override
 	public String getPivotRowName() {
 		return pivotRowName;
 	}
 
+	@Override
 	public void setPivotRowName(String pivotRowName) {
 		this.pivotRowName = pivotRowName;
 	}
 
+	@Override
 	public String getPivotColumnValue() {
 		return pivotColumnValue;
 	}
 
+	@Override
 	public void setPivotColumnValue(String pivotColumnValue) {
 		this.pivotColumnValue = pivotColumnValue;
 	}
 
+	@Override
 	public boolean isNumRows() {
 		return numRows;
 	}
 
+	@Override
 	public void setNumRows(boolean numRows) {
 		this.numRows = numRows;
 	}
 
+	@Override
 	public boolean hasDataStoreTransformer() {
 		return getDataStoreTransformer() != null;
 	}
 
+	@Override
 	public void removeDataStoreTransformer() {
 		setDataStoreTransformer(null);
 	}
 
+	@Override
 	public void setDataStoreTransformer(IDataStoreTransformer dataSetTransformer) {
 		this.dataSetTransformer = dataSetTransformer;
 	}
 
+	@Override
 	public IDataStoreTransformer getDataStoreTransformer() {
 		return this.dataSetTransformer;
 	}
@@ -398,14 +446,17 @@ public abstract class AbstractDataSet implements IDataSet {
 	// Extension point hook
 	// -----------------------------------------------
 
+	@Override
 	public boolean hasBehaviour(String behaviourId) {
 		return behaviours.containsKey(behaviourId);
 	}
 
+	@Override
 	public Object getBehaviour(String behaviourId) {
 		return behaviours.get(behaviourId);
 	}
 
+	@Override
 	public void addBehaviour(IDataSetBehaviour behaviour) {
 		behaviours.put(behaviour.getId(), behaviour);
 	}
@@ -449,6 +500,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the persisted
 	 */
+	@Override
 	public boolean isPersisted() {
 		return persisted;
 	}
@@ -457,6 +509,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param persisted
 	 *            the persisted to set
 	 */
+	@Override
 	public void setPersisted(boolean persisted) {
 		this.persisted = persisted;
 	}
@@ -464,6 +517,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the scheduled
 	 */
+	@Override
 	public boolean isScheduled() {
 		return scheduled;
 	}
@@ -472,6 +526,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param scheduled
 	 *            the scheduled to set
 	 */
+	@Override
 	public void setScheduled(boolean scheduled) {
 		this.scheduled = scheduled;
 	}
@@ -479,6 +534,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the flatDataset
 	 */
+	@Override
 	public boolean isFlatDataset() {
 		return this instanceof FlatDataSet;
 	}
@@ -486,6 +542,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the flatTableName
 	 */
+	@Override
 	public String getFlatTableName() {
 		if (!this.isFlatDataset()) {
 			throw new SpagoBIRuntimeException("This dataset is not a flat dataset!!!");
@@ -497,6 +554,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the persistTableName
 	 */
+	@Override
 	public String getPersistTableName() {
 		return persistTableName;
 	}
@@ -505,6 +563,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param persistTableName
 	 *            the persistTableName to set
 	 */
+	@Override
 	public void setPersistTableName(String persistTableName) {
 		this.persistTableName = persistTableName;
 	}
@@ -512,6 +571,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the configuration
 	 */
+	@Override
 	public String getConfiguration() {
 		return configuration;
 	}
@@ -520,6 +580,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param configuration
 	 *            the configuration to set
 	 */
+	@Override
 	public void setConfiguration(String configuration) {
 		this.configuration = configuration;
 	}
@@ -527,6 +588,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the userIn
 	 */
+	@Override
 	public String getUserIn() {
 		return userIn;
 	}
@@ -535,6 +597,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param userIn
 	 *            the userIn to set
 	 */
+	@Override
 	public void setUserIn(String userIn) {
 		this.userIn = userIn;
 	}
@@ -542,6 +605,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the dateIn
 	 */
+	@Override
 	public Date getDateIn() {
 		return dateIn;
 	}
@@ -550,6 +614,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param dateIn
 	 *            the dateIn to set
 	 */
+	@Override
 	public void setDateIn(Date dateIn) {
 		this.dateIn = dateIn;
 	}
@@ -557,6 +622,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the oldVersions
 	 */
+	@Override
 	public List getNoActiveVersions() {
 		return noActiveVersions;
 	}
@@ -565,6 +631,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param oldVersions
 	 *            the oldVersions to set
 	 */
+	@Override
 	public void setNoActiveVersions(List noActiveVersions) {
 		this.noActiveVersions = noActiveVersions;
 	}
@@ -572,6 +639,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the owner
 	 */
+	@Override
 	public String getOwner() {
 		return owner;
 	}
@@ -580,6 +648,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param owner
 	 *            the owner to set
 	 */
+	@Override
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
@@ -587,6 +656,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	/**
 	 * @return the isPublic
 	 */
+	@Override
 	public boolean isPublic() {
 		return isPublic;
 	}
@@ -595,6 +665,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * @param isPublic
 	 *            the isPublic to set
 	 */
+	@Override
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
@@ -602,14 +673,17 @@ public abstract class AbstractDataSet implements IDataSet {
 	// ===============================================
 	// Core methods
 	// ===============================================
+	@Override
 	public void loadData() {
 		loadData(0, -1, -1);
 	}
 
+	@Override
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		throw new RuntimeException("Unsupported method");
 	}
 
+	@Override
 	public String getTableNameForReading() {
 		if (isPersisted()) {
 			return getPersistTableName();
@@ -621,6 +695,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		}
 	}
 
+	@Override
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		PersistedTableManager persister = new PersistedTableManager();
 		try {
@@ -653,7 +728,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 * persistence table. In case the dataset is neither persisted nor flat, it will look for a temporary table with the same signature using
 	 * TemporaryTableManager; in case there is no temporary table, the dataset will be persisted, therefore the datasource must be read and write or a
 	 * datasource for writing must be provided.
-	 * 
+	 *
 	 * @param fieldName
 	 *            The dataset's field
 	 * @param start
@@ -664,6 +739,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	 *            The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
+	@Override
 	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
 		if (this.isPersisted() || this.isFlatDataset()) {
 			return getDomainValuesFromPersistenceTable(fieldName, start, limit, filter);
@@ -778,80 +854,79 @@ public abstract class AbstractDataSet implements IDataSet {
 	// // }
 	// }
 
+	@Override
 	public String getOrganization() {
 		return organization;
 	}
 
+	@Override
 	public void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
+	@Override
 	public IDataSource getDataSourceForWriting() {
 		return this.datasourceForWriting;
 	}
 
+	@Override
 	public void setDataSourceForWriting(IDataSource dataSource) {
 		this.datasourceForWriting = dataSource;
 	}
 
+	@Override
 	public IDataSource getDataSourceForReading() {
 		return datasourceForReading;
 	}
 
+	@Override
 	public void setDataSourceForReading(IDataSource datasourceForReading) {
 		this.datasourceForReading = datasourceForReading;
 	}
 
+	@Override
 	public FederationDefinition getDatasetFederation() {
 		return datasetFederation;
 	}
 
+	@Override
 	public void setDatasetFederation(FederationDefinition datasetFederation) {
 		this.datasetFederation = datasetFederation;
 	}
 
+	@Override
 	public String getStartDateField() {
 		return startDateField;
 	}
 
+	@Override
 	public void setStartDateField(String startDateField) {
 		this.startDateField = startDateField;
 	}
 
+	@Override
 	public String getEndDateField() {
 		return endDateField;
 	}
 
+	@Override
 	public void setEndDateField(String endDateField) {
 		this.endDateField = endDateField;
 	}
 
+	@Override
 	public String getSchedulingCronLine() {
 		return schedulingCronLine;
 	}
 
+	@Override
 	public void setSchedulingCronLine(String schedulingCronLine) {
 		this.schedulingCronLine = schedulingCronLine;
 	}
 
-	// /**
-	// * Returns the datasource on whgich dataset can write
-	// * If the associated datasource is read and write takes that, otherwise takes the write default one
-	// */
-	// public IDataSource getDataSourceForWriting() {
-	// logger.debug("IN");
-	// IDataSource toReturn = null;
-	//
-	// if(getDataSource() != null && getDataSource().checkIsReadOnly() == false ){
-	// toReturn = getDataSource();
-	// }
-	// else{
-	// DAOFactory
-	//
-	// }
-
-	// logger.debug("OUT");
-	// return toReturn;
-	// }
+	@Override
+	public Map<String, ?> getDefaultValues() {
+		return DataSetUtilities.getParamsDefaultValues(this);
+	}
 
 }
