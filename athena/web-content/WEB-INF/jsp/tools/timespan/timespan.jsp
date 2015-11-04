@@ -10,13 +10,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html ng-app="timespanManager">
 <head>
-	
-	<meta http-equiv="x-ua-compatible" content="IE=EmulateIE9" >
-	
-	<link rel="stylesheet" href="/athena/themes/timespan/css/font-awesome-4.3.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/generalStyle.css">
-	
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/timespanStyle.css">
 	
 	<!-- time picker -->
 	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
