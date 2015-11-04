@@ -30,7 +30,4 @@
     <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
     -->
 
-	<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
-	<ResourceLink name="isTest" global="isTest" type="java.lang.Boolean"/>
-	<ResourceLink name="fileSessionTest" global="fileSessionTest" type="java.lang.String"/>
 </Context>
