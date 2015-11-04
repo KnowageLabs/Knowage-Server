@@ -1,17 +1,13 @@
 var app = angular.module('glossaryWordManager', [ 'ngMaterial', 'ui.tree',
 		'angularUtils.directives.dirPagination', 'ng-context-menu',
-		'angular_rest', 'glossary_tree', 'angular_list' ]);
+		'sbiModule', 'glossary_tree', 'angular_list' ]);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
 			'blue-grey');
 });
 
-app.service('translate', function() {
-	this.load = function(key) {
-		return messageResource.get(key, 'messages');
-	};
-});
+
 
 var EmptyWord = {
 	LINK : [],
@@ -46,18 +42,18 @@ var EmptyGloss = {
 // MI SERVE SOLO PER LA CREAZIONE DI UN NODO E POI LO RIMUOVO
 };
 
-app.controller('Controller', [ "translate", "restServices", "$q", "$scope",
+app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope",
 		"$mdDialog", "$filter", "$timeout", "$mdToast", funzione ]);
 
-function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
+function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,
 		$timeout, $mdToast) {
 	ctr = this;
-	$scope.translate = translate;
+	$scope.translate = sbiModule_translate;
 	ctr.showPreloader = false;
 	ctr.showSearchPreloader = false;
 	ctr.activeTab = 'Glossari';
 	ctr.filterSelected = true;
-	ctr.translate = translate;
+	ctr.translate = sbiModule_translate;
 	ctr.propertyList = [];
 	ctr.expanderNode; // when create vocable from contex-menu in tree i use
 						// this variable to store node object and then expand it
@@ -96,7 +92,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 			item += "&WORD=" + searchValue;
 		}
 		ctr.showSearchPreloader = true;
-		restServices.get("1.0/glossary", "listWords", item).success(
+		sbiModule_restServices.get("1.0/glossary", "listWords", item).success(
 				function(data, status, headers, config) {
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
@@ -121,13 +117,13 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		if (ctr.isEmptyNewWord()) {
 			var confirm = $mdDialog
 					.confirm()
-					.title(translate.load("sbi.glossary.word.modify.progress"))
+					.title(sbiModule_translate.load("sbi.glossary.word.modify.progress"))
 					.content(
-							translate
+							sbiModule_translate
 									.load("sbi.glossary.word.modify.progress.message.modify"))
 					.ariaLabel('Lucky day').ok(
-							translate.load("sbi.general.continue")).cancel(
-							translate.load("sbi.general.cancel"));
+							sbiModule_translate.load("sbi.general.continue")).cancel(
+							sbiModule_translate.load("sbi.general.cancel"));
 
 			$mdDialog.show(confirm).then(function() {
 
@@ -157,19 +153,17 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var text;
 		if (reset == true) {
 			text = {};
-			text.title = translate.load("sbi.glossary.word.modify.progress");
-			text.content = translate
-					.load("sbi.glossary.word.modify.progress.message.abort");
-			text.ok = translate.load("sbi.general.yes");
-			text.cancel = translate.load("sbi.general.No");
+			text.title = sbiModule_translate.load("sbi.glossary.word.modify.progress");
+			text.content = sbiModule_translate.load("sbi.glossary.word.modify.progress.message.abort");
+			text.ok = sbiModule_translate.load("sbi.general.yes");
+			text.cancel = sbiModule_translate.load("sbi.general.No");
 
 		} else {
 			text = {};
-			text.title = translate.load("sbi.glossary.word.modify.progress");
-			text.content = translate
-					.load("sbi.glossary.word.modify.progress.message.new");
-			text.ok = translate.load("sbi.general.yes");
-			text.cancel = translate.load("sbi.general.No");
+			text.title = sbiModule_translate.load("sbi.glossary.word.modify.progress");
+			text.content = sbiModule_translate.load("sbi.glossary.word.modify.progress.message.new");
+			text.ok = sbiModule_translate.load("sbi.general.yes");
+			text.cancel = sbiModule_translate.load("sbi.general.No");
 		}
 
 		if (ctr.isEmptyNewWord()) {
@@ -240,7 +234,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	ctr.loadProperty = function() {
 
-		restServices.get("1.0/udp", "loadUdp", "FAMILY=Glossary").success(
+		sbiModule_restServices.get("1.0/udp", "loadUdp", "FAMILY=Glossary").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						console.log("attributeLike non Ottenuti");
@@ -277,7 +271,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 		var def = $q.defer();
 
-		restServices.get("1.0/udp", "loadUdp",
+		sbiModule_restServices.get("1.0/udp", "loadUdp",
 				"LABEL=" + query + "&FAMILY=Glossary").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
@@ -388,7 +382,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			ctr.prevChipsSearch = chip;
 
-			restServices.get("1.0/glossary", "listWords", "WORD=" + chip)
+			sbiModule_restServices.get("1.0/glossary", "listWords", "WORD=" + chip)
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							console.log("Words non Ottenuti ");
@@ -457,14 +451,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		}
 
 		showPreloader();
-		restServices
+		sbiModule_restServices
 				.post("1.0/glossary/business", "addWord", ctr.newWord)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								showToast(data.errors[0].message)
 							} else if (data.Status == "NON OK") {
-								showToast(translate.load(data.Message), 3000);
+								showToast(sbiModule_translate.load(data.Message), 3000);
 								if (data.hasOwnProperty("Error_text")) {
 									console.log(data.Error_text);
 								}
@@ -492,7 +486,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 
 									showPreloader();
-									restServices
+									sbiModule_restServices
 											.post("1.0/glossary/business",
 													"addContents", elem)
 											.success(
@@ -502,16 +496,16 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																.hasOwnProperty("errors")) {
 															showErrorToast(data.errors[0].message)
 															showToast(
-																	translate
+																	sbiModule_translate
 																			.load("sbi.glossary.error.save"),
 																	3000);
 														} else if (data.Status == "NON OK") {
 															showToast(
-																	translate
+																	sbiModule_translate
 																			.load(data.Message),
 																	3000);
 														} else {
-															// showToast(translate.load("sbi.glossary.success.save"),3000);
+															// showToast(sbiModule_translate.load("sbi.glossary.success.save"),3000);
 
 															par.HAVE_WORD_CHILD = true;
 
@@ -536,7 +530,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																.parse(JSON
 																		.stringify(EmptyWord));
 														showToast(
-																translate
+																sbiModule_translate
 																		.load("sbi.glossary.word.save.success"),
 																3000);
 
@@ -548,7 +542,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 															headers, config) {
 														hidePreloader();
 														showToast(
-																translate
+																sbiModule_translate
 																		.load("sbi.glossary.error.save"),
 																3000);
 														ctr.newWord = JSON
@@ -563,7 +557,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									ctr.newWord = JSON.parse(JSON
 											.stringify(EmptyWord));
 									showToast(
-											translate
+											sbiModule_translate
 													.load("sbi.glossary.word.save.success"),
 											3000);
 									ctr.activeTab = 'Glossari';
@@ -575,7 +569,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				.error(
 						function(data, status, headers, config) {
 							showErrorToast("word non salvato " + status)
-							showToast(translate
+							showToast(sbiModule_translate
 									.load("sbi.glossary.word.save.error"), 3000);
 							hidePreloader();
 						})
@@ -631,10 +625,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
 		var confirm = $mdDialog.confirm().title(
-				translate.load("sbi.glossary.word.delete")).content(
-				translate.load("sbi.glossary.word.delete.message")).ariaLabel(
-				'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
-				translate.load("sbi.myanalysis.delete.cancel")).targetEvent(ev);
+				sbiModule_translate.load("sbi.glossary.word.delete")).content(
+				sbiModule_translate.load("sbi.glossary.word.delete.message")).ariaLabel(
+				'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
+				sbiModule_translate.load("sbi.myanalysis.delete.cancel")).targetEvent(ev);
 
 		var wds = ctr.words;
 		var nw = ctr.newWord;
@@ -643,7 +637,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				.then(
 						function() {
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.remove("1.0/glossary/business",
 											"deleteWord",
 											"WORD_ID=" + ev.WORD_ID)
@@ -655,7 +649,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.word.delete.error"),
 															3000);
 
@@ -671,7 +665,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													var index = wds.indexOf(ev);
 													wds.splice(index, 1);
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.word.delete.success"),
 															3000);
 
@@ -688,7 +682,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												showErrorToast("word non eliminato "
 														+ status);
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.word.delete.error"),
 														3000);
 												hidePreloader();
@@ -720,11 +714,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 						if (gl != undefined) {
 							// load glossary data
-							gctl.headerTitle = translate
+							gctl.headerTitle = sbiModule_translate
 									.load("sbi.glossary.clone");
 
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.get("1.0/glossary", "getGlossary",
 											"GLOSSARY_ID=" + gl.GLOSSARY_ID)
 									.success(
@@ -736,7 +730,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													showErrorToast(data.errors[0].message);
 													$mdDialog.hide();
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.load.error"),
 															3000);
 												} else {
@@ -752,7 +746,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												showErrorToast('Ci sono errori! \n status '
 														+ status);
 												hidePreloader();
-												translate
+												sbiModule_translate
 														.load("sbi.glossary.load.error");
 											})
 
@@ -760,7 +754,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							showErrorToast("Errore! glossario non puo essere nullo")
 							$mdDialog.hide();
 							showToast(
-									translate.load("sbi.glossary.load.error"),
+									sbiModule_translate.load("sbi.glossary.load.error"),
 									3000);
 							return false;
 						}
@@ -773,7 +767,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						gctl.submit = function() {
 
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.post("1.0/glossary/business",
 											"cloneGlossary", gctl.newGloss)
 									.success(
@@ -785,13 +779,13 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													showErrorToast(data.errors[0].message);
 
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.clone.error"),
 															3000);
 
 												} else {
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.clone.success"),
 															3000);
 													gctl.newGloss.GLOSSARY_ID = data.id;
@@ -809,7 +803,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												hidePreloader();
 												$mdDialog.hide();
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.clone.error"),
 														3000);
 											});
@@ -827,10 +821,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
 		var confirm = $mdDialog.confirm().title(
-				translate.load("sbi.glossary.delete")).content(
-				translate.load("sbi.glossary.delete.message")).ariaLabel(
-				'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
-				translate.load("sbi.ds.wizard.cancel")).targetEvent(ev);
+				sbiModule_translate.load("sbi.glossary.delete")).content(
+				sbiModule_translate.load("sbi.glossary.delete.message")).ariaLabel(
+				'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
+				sbiModule_translate.load("sbi.ds.wizard.cancel")).targetEvent(ev);
 
 		var wds = ctr.glossary;
 		$mdDialog
@@ -838,7 +832,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				.then(
 						function() {
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.remove("1.0/glossary/business",
 											"deleteGlossary",
 											"GLOSSARY_ID=" + ev.GLOSSARY_ID)
@@ -850,7 +844,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.delete.error"),
 															3000);
 
@@ -858,7 +852,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													var index = wds.indexOf(ev);
 													wds.splice(index, 1);
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.delete.success"),
 															3000);
 													if (ev.GLOSSARY_ID == ctr.selectedGloss.GLOSSARY_ID) {
@@ -877,7 +871,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												showErrorToast("word non eliminato "
 														+ status);
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.delete.error"),
 														3000);
 
@@ -899,10 +893,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 						var gctl = this;
 						if (gl != undefined) {
 							// load glossary data
-							gctl.headerTitle = translate
+							gctl.headerTitle = sbiModule_translate
 									.load("sbi.glossary.modify");
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.get("1.0/glossary", "getGlossary",
 											"GLOSSARY_ID=" + gl.GLOSSARY_ID)
 									.success(
@@ -914,7 +908,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													showErrorToast(data.errors[0].message)
 													$mdDialog.hide();
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.load.error"),
 															3000);
 													return false;
@@ -935,14 +929,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 												$mdDialog.hide();
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.load.error"),
 														3000);
 												hidePreloader();
 											})
 
 						} else {
-							gctl.headerTitle = translate
+							gctl.headerTitle = sbiModule_translate
 									.load("sbi.glossary.save");
 							gctl.newGloss = ctr.newGloss;
 						}
@@ -957,7 +951,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								gctl.newGloss.SaveOrUpdate = "Update";
 							}
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.post("1.0/glossary/business",
 											"addGlossary", gctl.newGloss)
 									.success(
@@ -969,12 +963,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 													showErrorToast(data.errors[0].message)
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.save.error"),
 															3000);
 												} else if (data.Status == "NON OK") {
 													showToast(
-															translate
+															sbiModule_translate
 																	.load(data.Message),
 															3000);
 												} else {
@@ -992,7 +986,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																		.stringify(EmptyGloss));
 														$mdDialog.hide();
 														showToast(
-																translate
+																sbiModule_translate
 																		.load("sbi.glossary.save.success"),
 																3000);
 													} else {
@@ -1003,7 +997,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 																		.stringify(EmptyGloss));
 														$mdDialog.hide();
 														showToast(
-																translate
+																sbiModule_translate
 																		.load("sbi.glossary.modify.success"),
 																3000);
 													}
@@ -1019,7 +1013,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														+ status);
 												hidePreloader();
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.save.error"),
 														3000);
 											})
@@ -1057,11 +1051,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			var confirm = $mdDialog.confirm().parent(
 					angular.element(document.body)).title(
-					translate.load("sbi.glossary.add.word")).content(
-					translate.load("sbi.glossary.message.save.database"))
+					sbiModule_translate.load("sbi.glossary.add.word")).content(
+					sbiModule_translate.load("sbi.glossary.message.save.database"))
 					.ariaLabel('Muovi')
-					.ok(translate.load("sbi.attributes.add")).cancel(
-							translate.load("sbi.ds.wizard.cancel"));
+					.ok(sbiModule_translate.load("sbi.attributes.add")).cancel(
+							sbiModule_translate.load("sbi.ds.wizard.cancel"));
 
 			var addContentFunc = function() {
 
@@ -1073,7 +1067,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 
 				showPreloader();
-				restServices
+				sbiModule_restServices
 						.post("1.0/glossary/business", "addContents", elem)
 						.success(
 								function(data, status, headers, config) {
@@ -1081,14 +1075,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									if (data.hasOwnProperty("errors")) {
 										showErrorToast(data.errors[0].message)
 										showToast(
-												translate
+												sbiModule_translate
 														.load("sbi.glossary.error.save"),
 												3000);
 									} else if (data.Status == "NON OK") {
-										showToast(translate.load(data.Message),
+										showToast(sbiModule_translate.load(data.Message),
 												3000);
 									} else {
-										// showToast(translate.load("sbi.glossary.success.save"),3000);
+										// showToast(sbiModule_translate.load("sbi.glossary.success.save"),3000);
 
 										elem.WORD = event.source.nodeScope.$modelValue.WORD;
 										if (elem.PARENT_ID != null) {
@@ -1112,7 +1106,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								}).error(
 								function(data, status, headers, config) {
 									hidePreloader();
-									showToast(translate
+									showToast(sbiModule_translate
 											.load("sbi.glossary.error.save"),
 											3000);
 								});
@@ -1272,10 +1266,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 			var confirm = $mdDialog.confirm().parent(
 					angular.element(document.body)).title(
-					translate.load("sbi.glossary.modify.answare")).content(
-					translate.load("sbi.glossary.message.save.database"))
-					.ariaLabel('Muovi').ok(translate.load("sbi.glossary.move"))
-					.cancel(translate.load("sbi.general.cancel"));
+					sbiModule_translate.load("sbi.glossary.modify.answare")).content(
+					sbiModule_translate.load("sbi.glossary.message.save.database"))
+					.ariaLabel('Muovi').ok(sbiModule_translate.load("sbi.glossary.move"))
+					.cancel(sbiModule_translate.load("sbi.general.cancel"));
 
 			var moveItem = function() {
 				var isRootS = false;
@@ -1297,7 +1291,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 				elem.GLOSSARY_ID = ctr.selectedGloss.GLOSSARY_ID;
 
 				showPreloader();
-				restServices
+				sbiModule_restServices
 						.post("1.0/glossary/business",
 								"modifyContentsGlossary", elem)
 						.success(
@@ -1305,7 +1299,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									if (data.hasOwnProperty("errors")) {
 										showErrorToast(data.errors[0].message);
 										showToast(
-												translate
+												sbiModule_translate
 														.load("sbi.glossary.error.save"),
 												3000);
 										event.source.nodesScope.insertNode(
@@ -1314,7 +1308,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 										event.dest.nodesScope.$modelValue
 												.splice(event.dest.index, 1);
 									} else if (data.Status == "NON OK") {
-										showToast(translate.load(data.Message),
+										showToast(sbiModule_translate.load(data.Message),
 												3000);
 										event.source.nodesScope.insertNode(
 												event.dest.index,
@@ -1323,7 +1317,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												.splice(event.dest.index, 1);
 									} else {
 
-										// showToast(translate.load("sbi.glossary.success.save"),3000);
+										// showToast(sbiModule_translate.load("sbi.glossary.success.save"),3000);
 
 										if (elem.hasOwnProperty("WORD_ID")) {
 											// confirm that there is a word and
@@ -1387,7 +1381,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 									hidePreloader();
 								}).error(
 								function(data, status, headers, config) {
-									showToast(translate
+									showToast(sbiModule_translate
 											.load("sbi.glossary.error.save"),
 											3000);
 									event.source.nodesScope.insertNode(
@@ -1486,11 +1480,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		console.log(ev)
 
 		var confirm = $mdDialog.confirm().title(
-				translate.load("sbi.glossary.content.delete")).content(
-				translate.load("sbi.glossary.content.delete.message"))
+				sbiModule_translate.load("sbi.glossary.content.delete")).content(
+				sbiModule_translate.load("sbi.glossary.content.delete.message"))
 				.ariaLabel('Lucky day')
-				.ok(translate.load("sbi.generic.delete")).cancel(
-						translate.load("sbi.general.cancel")).targetEvent(ev);
+				.ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
+						sbiModule_translate.load("sbi.general.cancel")).targetEvent(ev);
 
 		var req = "";
 		if (ev.$modelValue.hasOwnProperty("CONTENT_ID")) {
@@ -1503,7 +1497,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		}
 
 		var deleteAction = function() {
-			restServices
+			sbiModule_restServices
 					.remove("1.0/glossary/business", "deleteContents", req)
 					.success(
 							function(data, status, headers, config) {
@@ -1511,7 +1505,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								if (data.hasOwnProperty("errors")) {
 									showErrorToast(data.errors[0].message)
 									showToast(
-											translate
+											sbiModule_translate
 													.load("sbi.glossary.content.delete.error"),
 											3000);
 								} else {
@@ -1528,7 +1522,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 											.log(ev.$parentNodeScope.$modelValue)
 									ev.remove();
 									showToast(
-											translate
+											sbiModule_translate
 													.load("sbi.glossary.content.delete.success"),
 											3000);
 								}
@@ -1540,7 +1534,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 								showErrorToast("nodo non eliminato " + status);
 								showToast(
-										translate
+										sbiModule_translate
 												.load("sbi.glossary.content.delete.error"),
 										3000);
 								hidePreloader();
@@ -1574,13 +1568,13 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		if (ctr.isEmptyNewWord()) {
 			var confirm = $mdDialog
 					.confirm()
-					.title(translate.load("sbi.glossary.word.modify.progress"))
+					.title(sbiModule_translate.load("sbi.glossary.word.modify.progress"))
 					.content(
-							translate
+							sbiModule_translate
 									.load("sbi.glossary.word.modify.progress.message.showGloss"))
 					.ariaLabel('Lucky day').ok(
-							translate.load("sbi.general.continue")).cancel(
-							translate.load("sbi.general.cancel"));
+							sbiModule_translate.load("sbi.general.continue")).cancel(
+							sbiModule_translate.load("sbi.general.cancel"));
 
 			$mdDialog.show(confirm).then(function() {
 				resetForm();
@@ -1612,10 +1606,10 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 						if (modCont == true) {
 							// load content data
-							rn.headerTitle = translate
+							rn.headerTitle = sbiModule_translate
 									.load("sbi.glossary.content.modify");
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.get("1.0/glossary", "getContent",
 											"CONTENT_ID=" + parent.CONTENT_ID)
 									.success(
@@ -1627,7 +1621,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 													showErrorToast(data.errors[0].message)
 													$mdDialog.hide();
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.content.load.error"),
 															3000);
 												} else {
@@ -1645,14 +1639,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												showErrorToast('Ci sono errori! \n status '
 														+ status)
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.content.load.error"),
 														3000);
 												hidePreloader();
 											})
 
 						} else {
-							rn.headerTitle = translate
+							rn.headerTitle = sbiModule_translate
 									.load("sbi.glossary.content.new");
 							rn.tmpNW = JSON.parse(JSON
 									.stringify(EmptyLogicalNode));
@@ -1670,7 +1664,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 							}
 
 							showPreloader();
-							restServices
+							sbiModule_restServices
 									.post("1.0/glossary/business",
 											"addContents", rn.tmpNW)
 									.success(
@@ -1680,19 +1674,19 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														.hasOwnProperty("errors")) {
 													showErrorToast(data.errors[0].message)
 													showToast(
-															translate
+															sbiModule_translate
 																	.load("sbi.glossary.error.save"),
 															3000);
 												} else if (data.Status == "NON OK") {
 													showToast(
-															translate
+															sbiModule_translate
 																	.load(data.Message),
 															3000);
 												} else {
 
 													if (rn.tmpNW.SaveOrUpdate == "Save") {
 														showToast(
-																translate
+																sbiModule_translate
 																		.load("sbi.glossary.success.save"),
 																3000);
 
@@ -1728,7 +1722,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 														rn.tmpNW = JSON
 																.parse(JSON
 																		.stringify(EmptyLogicalNode));
-														// showToast(translate.load("sbi.glossary.success.modify"),3000);
+														// showToast(sbiModule_translate.load("sbi.glossary.success.modify"),3000);
 
 													}
 
@@ -1741,7 +1735,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 												showToast("Errore nel salvataggio del nuovo nodo logico "
 														+ status);
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.error.save"),
 														3000);
 												hidePreloader();
@@ -1774,14 +1768,14 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					preserveScope : true,
 					controller : function($mdDialog) {
 						var iwctrl = this;
-						restServices
+						sbiModule_restServices
 								.get("1.0/glossary", "getWord",
 										"WORD_ID=" + wordid)
 								.success(
 										function(data, status, headers, config) {
 											if (data.hasOwnProperty("errors")) {
 												showToast(
-														translate
+														sbiModule_translate
 																.load("sbi.glossary.load.error"),
 														3000);
 											} else {
@@ -1791,7 +1785,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								.error(
 										function(data, status, headers, config) {
 											showToast(
-													translate
+													sbiModule_translate
 															.load("sbi.glossary.load.error"),
 													3000);
 
@@ -1807,11 +1801,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	function getAllWords() {
 		showPreloader();
-		restServices.get("1.0/glossary", "listWords").success(
+		sbiModule_restServices.get("1.0/glossary", "listWords").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
-						showToast(translate.load("sbi.glossary.load.error"),
+						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 								3000);
 
 					} else {
@@ -1821,7 +1815,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
 			showErrorToast('Ci sono errori! \n status ' + status);
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 			hidePreloader();
 		})
@@ -1830,11 +1824,11 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	function getAllGloss() {
 		showPreloader();
-		restServices.get("1.0/glossary", "listGlossary").success(
+		sbiModule_restServices.get("1.0/glossary", "listGlossary").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
-						showToast(translate.load("sbi.glossary.load.error"),
+						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 								3000);
 
 					} else {
@@ -1844,7 +1838,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
 			showErrorToast('Ci sono errori! \n status ' + status);
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 			hidePreloader();
 		})
@@ -1855,12 +1849,12 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var item = "Page=1&ItemPerPage=" + itemsPerPage;
 		item += "&WORD=" + ele;
 		ctr.showSearchPreloader = true;
-		restServices.get("1.0/glossary", "listWords", item).success(
+		sbiModule_restServices.get("1.0/glossary", "listWords", item).success(
 				function(data, status, headers, config) {
 
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
-						showToast(translate.load("sbi.glossary.load.error"),
+						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 								3000);
 
 					} else {
@@ -1870,20 +1864,20 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 					}
 
 				}).error(function(data, status, headers, config) {
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 			ctr.showSearchPreloader = false;
 		})
 	}
 
 	function getWord(ele) {
 		showPreloader();
-		restServices
+		sbiModule_restServices
 				.get("1.0/glossary", "getWord", "WORD_ID=" + ele.WORD_ID)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
-								showToast(translate
+								showToast(sbiModule_translate
 										.load("sbi.glossary.load.error"), 3000);
 								ctr.newWord = JSON.parse(JSON
 										.stringify(EmptyWord));
@@ -1898,7 +1892,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 						}).error(function(data, status, headers, config) {
 					showErrorToast('Ci sono errori! \n status ' + status);
-					showToast(translate.load("sbi.glossary.load.error"), 3000);
+					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 					hidePreloader();
 				})
 
@@ -1908,7 +1902,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 		var PARENT_ID = (node == null ? null : node.CONTENT_ID);
 		var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 
-		restServices
+		sbiModule_restServices
 				.get(
 						"1.0/glossary",
 						"listContents",
@@ -1919,7 +1913,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
-								showToast(translate
+								showToast(sbiModule_translate
 										.load("sbi.glossary.load.error"), 3000);
 
 							} else {
@@ -1947,7 +1941,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 								}
 							}
 						}).error(function(data, status, headers, config) {
-					showToast(translate.load("sbi.glossary.load.error"), 3000);
+					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 					if (togg != undefined) {
 						togg.expand();
 						node.preloader = false;
@@ -1982,34 +1976,34 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	}
 
 	ctr.loadState = function() {
-		restServices.get("domains", "listValueDescriptionByType",
+		sbiModule_restServices.get("domains", "listValueDescriptionByType",
 				"DOMAIN_TYPE=GLS_STATE").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showToast(translate.load("sbi.glossary.load.error"),
+						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 								3000);
 					} else {
 						ctr.state = data;
 					}
 				}).error(function(data, status, headers, config) {
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 		})
 	}
 	ctr.loadState();
 
 	ctr.loadCategory = function() {
-		restServices.get("domains", "listValueDescriptionByType",
+		sbiModule_restServices.get("domains", "listValueDescriptionByType",
 				"DOMAIN_TYPE=GLS_CATEGORY").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						showToast(translate.load("sbi.glossary.load.error"),
+						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 								3000);
 					} else {
 						ctr.category = data;
 					}
 				}).error(function(data, status, headers, config) {
-			showToast(translate.load("sbi.glossary.load.error"), 3000);
+			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 		})
 	}
@@ -2017,21 +2011,21 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	// context menu options for angular list
 	ctr.menuOpt = [ {
-		label : translate.load('sbi.generic.modify'),
+		label : sbiModule_translate.load('sbi.generic.modify'),
 		action : function(item, event) {
 			ctr.modifyWord(item);
 		}
 	},
 
 	{
-		label : translate.load('sbi.generic.delete'),
+		label : sbiModule_translate.load('sbi.generic.delete'),
 		action : function(item, event) {
 			ctr.deleteWord(item);
 		}
 	},
 
 	{
-		label : translate.load('sbi.generic.details'),
+		label : sbiModule_translate.load('sbi.generic.details'),
 		action : function(item, event) {
 			ctr.showInfoWORD(event, item.WORD_ID);
 		}
@@ -2040,21 +2034,21 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	];
 
 	ctr.glossMenuOpt = [ {
-		label : translate.load('sbi.generic.modify'),
+		label : sbiModule_translate.load('sbi.generic.modify'),
 		action : function(item, event) {
 			ctr.createNewGlossary(event, item);
 		}
 	},
 
 	{
-		label : translate.load('sbi.generic.clone'),
+		label : sbiModule_translate.load('sbi.generic.clone'),
 		action : function(item, event) {
 			ctr.CloneGloss(event, item);
 		}
 	},
 
 	{
-		label : translate.load('sbi.generic.delete'),
+		label : sbiModule_translate.load('sbi.generic.delete'),
 		action : function(item, event) {
 			ctr.deleteGlossary(item);
 		}
@@ -2064,7 +2058,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 
 	// ctr.glossSpeedMenuOpt = [
 	// {
-	// label : translate.load('sbi.generic.modify'),
+	// label : sbiModule_translate.load('sbi.generic.modify'),
 	// icon :'fa fa-pencil' ,
 	// backgroundColor:'red',
 	// action : function(item,event) {
@@ -2073,7 +2067,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	// },
 	//		               	
 	// {
-	// label : translate.load('sbi.generic.clone'),
+	// label : sbiModule_translate.load('sbi.generic.clone'),
 	// icon:"fa fa-files-o",
 	// backgroundColor:'green',
 	// action : function(item,event) {
@@ -2082,7 +2076,7 @@ function funzione(translate, restServices, $q, $scope, $mdDialog, $filter,
 	// } ,
 	//		               	
 	// {
-	// label : translate.load('sbi.generic.delete'),
+	// label : sbiModule_translate.load('sbi.generic.delete'),
 	// icon:"fa fa-trash-o",
 	// backgroundColor:'blue',
 	// action : function(item,event) {

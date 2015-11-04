@@ -1,5 +1,6 @@
-<div ng-click="clickItem(row,row[key])" context-menu  data-target="{{id}}TableContextMenu-{{ $parent.$parent.$parent.$index}}-{{$index}}"  ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
-{{row[key]}}
+<div ng-click="clickItem(row,row[key])" context-menu  data-target="{{id}}TableContextMenu-{{ $parent.$parent.$parent.$index}}-{{$index}}" 
+ ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+<div dynamicHtml="row[key]" ></div>
 </div>
 
 <div class="dropdown_menu_list " style="z-index: 999; left: 10px !important" id="{{id}}TableContextMenu-{{ $parent.$parent.$parent.$index}}-{{$index}}" )>

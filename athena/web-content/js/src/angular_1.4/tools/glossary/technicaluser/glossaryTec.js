@@ -1,4 +1,4 @@
-var app = angular.module('glossaryTecnicalFunctionality', [ 'ngMaterial','ui.tree', 'angular_rest','angularUtils.directives.dirPagination','glossary_tree','angular_list']);
+var app = angular.module('glossaryTecnicalFunctionality', [ 'ngMaterial','ui.tree', 'sbiModule','angularUtils.directives.dirPagination','glossary_tree','angular_list']);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -6,16 +6,12 @@ app.config(function($mdThemingProvider) {
 });
 
 
-app.service('translate', function() {
-	this.load = function(key) {
-		return messageResource.get(key, 'messages');
-	};
-});
 
-app.controller('ControllerDataSet', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
-app.controller('Controller', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
-app.controller('Controller_navigation', [ "translate", "restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_navigazione ]);
-app.controller('Controller_tec', [ "$scope","translate","restServices","$mdToast","$timeout", funzione_tec ]);
+
+app.controller('ControllerDataSet', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_dataset ]);
+app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_associazione_documenti ]);
+app.controller('Controller_navigation', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope", "$mdDialog", "$filter", "$timeout", "$mdToast", funzione_navigazione ]);
+app.controller('Controller_tec', [ "$scope","sbiModule_translate","sbiModule_restServices","$mdToast","$timeout", funzione_tec ]);
 
 
 var global;
@@ -24,9 +20,9 @@ var docAss;
 var dsAss;
 
 //--------------------------------------------------------------------------globale------------------------------------------------------------
-function funzione_tec($scope,translate,restServices,$mdToast,$timeout) {
+function funzione_tec($scope,sbiModule_translate,sbiModule_restServices,$mdToast,$timeout) {
 	global=this;
-	$scope.translate=translate;
+	$scope.translate=sbiModule_translate;
 	global.glossary;
 	global.selectedTab="";
 
@@ -66,7 +62,7 @@ function funzione_tec($scope,translate,restServices,$mdToast,$timeout) {
 	}
 
 	global.getAllGloss=function() {
-		restServices.get("1.0/glossary", "listGlossary").success(
+		sbiModule_restServices.get("1.0/glossary", "listGlossary").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						console.log(data.errors[0].message);
@@ -94,7 +90,7 @@ function funzione_tec($scope,translate,restServices,$mdToast,$timeout) {
 
 
 //--------------------------------------------------------------------------assoc_doc----------------------------------------------------------
-function funzione_associazione_documenti(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+function funzione_associazione_documenti(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	docAss=this;
 	docAss.listDoc;
 	docAss.sizeDoc=0;
@@ -113,11 +109,11 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 	}
 
 	docAss.loadDocList=function(item){
-		restServices.get("2.0/documents", "listDocument", item+"&scope=GLOSSARY").success(
+		sbiModule_restServices.get("2.0/documents", "listDocument", item+"&scope=GLOSSARY").success(
 				function(data, status, headers, config) {
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
-						global.showToast(translate.load("sbi.glossary.load.error"),3000);
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 
 					} else {
 						console.log("list doc ottenute")
@@ -127,7 +123,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 					}
 
 				}).error(function(data, status, headers, config) {
-					global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+					global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 					docAss.showSearchDocPreloader = false;
 				})
 	}
@@ -165,7 +161,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 			console.log("cerco "+ele)
 			showPreloader("preloaderTree");
-			restServices.get("1.0/glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+docAss.selectedGloss.GLOSSARY_ID).success(
+			sbiModule_restServices.get("1.0/glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+docAss.selectedGloss.GLOSSARY_ID).success(
 					function(data, status, headers, config) {
 						console.log("glosstreeLike Ottenuti " + status)
 						console.log(data)
@@ -173,7 +169,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
 							global.showToast(
-									translate.load("sbi.glossary.load.error"),
+									sbiModule_translate.load("sbi.glossary.load.error"),
 									3000);
 
 						} else {
@@ -189,7 +185,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 					}).error(function(data, status, headers, config) {
 						console.log("glosstreeLike non Ottenuti " + status);
-						global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						hidePreloader("preloaderTree");
 					})
@@ -202,16 +198,16 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 		console.log(word);
 
 		var confirm = $mdDialog.confirm().title(
-				translate.load("sbi.glossary.word.delete")).content(
-						translate.load("sbi.glossary.word.delete.message")).ariaLabel(
-						'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
-								translate.load("sbi.myanalysis.delete.cancel")).targetEvent(event);
+				sbiModule_translate.load("sbi.glossary.word.delete")).content(
+						sbiModule_translate.load("sbi.glossary.word.delete.message")).ariaLabel(
+						'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
+								sbiModule_translate.load("sbi.myanalysis.delete.cancel")).targetEvent(event);
 
 		$mdDialog.show(confirm).then(
 				function() {
 
 					showPreloader();
-					restServices.remove("1.0/glossary", "deleteDocWlist",
+					sbiModule_restServices.remove("1.0/glossary", "deleteDocWlist",
 							"WORD_ID=" + word.WORD_ID+"&DOCUMENT_ID="+docAss.selectedDocument.DOCUMENT_ID)
 							.success(
 									function(data, status, headers,
@@ -220,11 +216,11 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 										console.log(data)
 										if (data.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message)
-											global.showToast(translate.load("sbi.glossary.word.delete.error"),3000);
+											global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
 
 										} else {
 											docAss.words.splice(docAss.words.indexOf(word), 1);
-											global.showToast(translate.load("sbi.glossary.word.delete.success"),3000);
+											global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.success"),3000);
 
 
 										}
@@ -236,7 +232,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 													config) {
 												console.log("WORD NON ELMINIATO "+ status);
 												showErrorToast("word non eliminato "+ status);
-												global.showToast(translate.load("sbi.glossary.word.delete.error"),3000);
+												global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
 												hidePreloader();
 											})
 
@@ -255,7 +251,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 		docAss.words=[];
 		docAss.searchDoc="";
 		showPreloader("preloader");
-		restServices
+		sbiModule_restServices
 		.get(
 				"1.0/glossary","getDocumentInfo","DOCUMENT_ID=" + item.DOCUMENT_ID )
 				.success(
@@ -265,7 +261,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
-								global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+								global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 							} else {
 								docAss.words=data.word;
@@ -277,7 +273,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 							hidePreloader("preloader");
 						}).error(function(data, status, headers, config) {
 							console.log("nodi non ottenuti " + status);
-							global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							if (togg != undefined) {
 								togg.expand();
 								hidePreloader("preloader");
@@ -302,7 +298,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 		var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 
 		showPreloader("preloaderTree");
-		restServices
+		sbiModule_restServices
 		.get(
 				"1.0/glossary",
 				"listContents",
@@ -315,7 +311,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
-								global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+								global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 							} else {
 
@@ -339,7 +335,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 							}
 						}).error(function(data, status, headers, config) {
 							console.log("nodi non ottenuti " + status);
-							global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							if (togg != undefined) {
 								togg.expand();
 								hidePreloader("preloaderTree");
@@ -369,13 +365,13 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 	function getAllDoc() {
 		console.log("getAllDoc")
 		showPreloader();
-		restServices.get("1.0/glossary", "listDocument").success(
+		sbiModule_restServices.get("1.0/glossary", "listDocument").success(
 				function(data, status, headers, config) {
 					console.log("doc Ottenuti " + status)
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message);
-						global.showToast(translate.load("sbi.glossary.load.error"),
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 								3000);
 
 					} else {
@@ -386,7 +382,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 				}).error(function(data, status, headers, config) {
 					console.log("Glossary non Ottenuti " + status);
 					showErrorToast('Ci sono errori! \n status ' + status);
-					global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+					global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 					hidePreloader();
 				})
@@ -399,7 +395,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 	docAss.docWordSpeedMenuOpt = [ 
 			               	{
-			               		label : translate.load('sbi.generic.delete'),
+			               		label : sbiModule_translate.load('sbi.generic.delete'),
 			               		icon	:'fa fa-times'	,
 			               		backgroundColor:'transparent',
 			               		color:'black',
@@ -459,7 +455,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 				console.log(elem)
 
 				showPreloader();
-				restServices
+				sbiModule_restServices
 				.post("1.0/glossary", "addDocWlist", elem)
 				.success(
 						function(data, status, headers,
@@ -469,17 +465,17 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 									.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message)
 								global.showToast(
-										translate
+										sbiModule_translate
 										.load("sbi.glossary.error.save"),
 										3000);
 							} else if (data.Status == "NON OK") {
 								global.showToast(
-										translate
+										sbiModule_translate
 										.load(data.Message),
 										3000);
 							} else {
 //								global.showToast(
-//								translate
+//								sbiModule_translate
 //								.load("sbi.glossary.success.save"),
 //								3000);
 
@@ -496,7 +492,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 										config) {
 									hidePreloader();
 									global.showToast(
-											translate
+											sbiModule_translate
 											.load("sbi.glossary.error.save"),
 											3000);
 								});
@@ -545,7 +541,7 @@ function funzione_associazione_documenti(translate, restServices, $q, $scope, $m
 
 
 //--------------------------------------------------------------------------assoc_dataset----------------------------------------------------------
-function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+function funzione_associazione_dataset(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	datasetAss=this;
 	datasetAss.listDataset;
 	datasetAss.sizeDataset=0;
@@ -565,11 +561,11 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 
 
 	datasetAss.loadDatasetList=function(item){
-		restServices.get("2.0/datasets", "listDataset", item).success(
+		sbiModule_restServices.get("2.0/datasets", "listDataset", item).success(
 				function(data, status, headers, config) {
 					console.log(data)
 					if (data.hasOwnProperty("errors")) {
-						global.showToast(translate.load("sbi.glossary.load.error"),3000);
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 
 					} else {
 						console.log("list Dataset ottenute")
@@ -579,7 +575,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 					}
 
 				}).error(function(data, status, headers, config) {
-					global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+					global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 					datasetAss.showSearchDatasetPreloader = false;
 				})
 	}
@@ -620,7 +616,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 
 			console.log("cerco "+ele)
 			showPreloader("preloaderTreeDS");
-			restServices.get("1.0/glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+datasetAss.selectedGloss.GLOSSARY_ID).success(
+			sbiModule_restServices.get("1.0/glossary", "glosstreeLike", "WORD=" + ele+"&GLOSSARY_ID="+datasetAss.selectedGloss.GLOSSARY_ID).success(
 					function(data, status, headers, config) {
 						console.log("glosstreeLike Ottenuti " + status)
 						console.log(data)
@@ -628,7 +624,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
 							global.showToast(
-									translate.load("sbi.glossary.load.error"),
+									sbiModule_translate.load("sbi.glossary.load.error"),
 									3000);
 
 						} else {
@@ -644,7 +640,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 
 					}).error(function(data, status, headers, config) {
 						console.log("glosstreeLike non Ottenuti " + status);
-						global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						hidePreloader("preloaderTreeDS");
 					})
@@ -657,10 +653,10 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 		console.log(item);
 
 		var confirm = $mdDialog.confirm().title(
-				translate.load("sbi.glossary.word.delete")).content(
-						translate.load("sbi.glossary.word.delete.message")).ariaLabel(
-						'Lucky day').ok(translate.load("sbi.generic.delete")).cancel(
-								translate.load("sbi.myanalysis.delete.cancel")).targetEvent(item);
+				sbiModule_translate.load("sbi.glossary.word.delete")).content(
+						sbiModule_translate.load("sbi.glossary.word.delete.message")).ariaLabel(
+						'Lucky day').ok(sbiModule_translate.load("sbi.generic.delete")).cancel(
+								sbiModule_translate.load("sbi.myanalysis.delete.cancel")).targetEvent(item);
 
 		$mdDialog.show(confirm).then(
 				function() {
@@ -671,7 +667,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 						req="WORD_ID=" +word.WORD_ID+"&DATASET_ID="+item.datasetId+"&ORGANIZATION="+item.organization+"&COLUMN="+item.alias;
 					}
 					showPreloader();
-					restServices.remove("1.0/glossary", "deleteDatasetWlist",req)
+					sbiModule_restServices.remove("1.0/glossary", "deleteDatasetWlist",req)
 							.success(
 									function(data, status, headers,
 											config) {
@@ -679,7 +675,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 										console.log(data)
 										if (data.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message)
-											global.showToast(translate.load("sbi.glossary.word.delete.error"),3000);
+											global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
 
 										} else {
 											if(item==null){
@@ -689,7 +685,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 												item.word.splice(item.word.indexOf(word), 1);
 												}
 											
-											global.showToast(translate.load("sbi.glossary.word.delete.success"),3000);
+											global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.success"),3000);
 										}
 										hidePreloader();
 									})
@@ -698,7 +694,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 													config) {
 												console.log("WORD NON ELMINIATO "+ status);
 												showErrorToast("word non eliminato "+ status);
-												global.showToast(translate.load("sbi.glossary.word.delete.error"),3000);
+												global.showToast(sbiModule_translate.load("sbi.glossary.word.delete.error"),3000);
 												hidePreloader();
 											})
 				}, function() {
@@ -712,7 +708,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 		datasetAss.searchDataset="";
 
 		showPreloader("preloader");
-		restServices
+		sbiModule_restServices
 		.get("1.0/glossary","getDataSetInfo?DATASET_ID="+item.id.dsId+"&ORGANIZATION="+item.id.organization)
 				.success(
 						function(data, status, headers, config) {
@@ -721,7 +717,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message);
-								global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+								global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 							} else {
 									datasetAss.infoSelectedDataSet=data.DataSet;
@@ -737,7 +733,7 @@ function funzione_associazione_dataset(translate, restServices, $q, $scope, $mdD
 						hidePreloader("preloader");
 	}).error(function(data, status, headers, config) {
 		console.log("nodi non ottenuti " + status);
-		global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+		global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 		if (togg != undefined) {
 			togg.expand();
 			hidePreloader("preloader");
@@ -760,7 +756,7 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 	var GLOSSARY_ID = (gloss == null ? null : gloss.GLOSSARY_ID);
 
 	showPreloader("preloaderTreeDS");
-	restServices
+	sbiModule_restServices
 	.get(
 			"1.0/glossary",
 			"listContents",
@@ -773,7 +769,7 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message);
-							global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						} else {
 
@@ -797,7 +793,7 @@ datasetAss.getGlossaryNode = function(gloss, node, togg) {
 						}
 					}).error(function(data, status, headers, config) {
 						console.log("nodi non ottenuti " + status);
-						global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 						if (togg != undefined) {
 							togg.expand();
 							hidePreloader("preloaderTreeDS");
@@ -829,13 +825,13 @@ datasetAss.toggle = function(scope, item, gloss) {
 function getAllDataset() {
 	console.log("getAllDataset")
 	showPreloader();
-	restServices.get("1.0/glossary", "listDataset").success(
+	sbiModule_restServices.get("1.0/glossary", "listDataset").success(
 			function(data, status, headers, config) {
 				console.log("Dataset Ottenuti " + status)
 				console.log(data)
 				if (data.hasOwnProperty("errors")) {
 					showErrorToast(data.errors[0].message);
-					global.showToast(translate.load("sbi.glossary.load.error"),
+					global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),
 							3000);
 
 				} else {
@@ -846,7 +842,7 @@ function getAllDataset() {
 			}).error(function(data, status, headers, config) {
 				console.log("Glossary non Ottenuti " + status);
 				showErrorToast('Ci sono errori! \n status ' + status);
-				global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+				global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 				hidePreloader();
 			})
@@ -858,7 +854,7 @@ function getAllDataset() {
 
 datasetAss.datasetWordSpeedMenuOpt = [ 
   			               	{
-  			               		label : translate.load('sbi.generic.delete'),
+  			               		label : sbiModule_translate.load('sbi.generic.delete'),
   			               		icon	:'fa fa-times'	,
   			               		backgroundColor:'transparent',
   			               		color:'black',
@@ -963,7 +959,7 @@ datasetAss.TreeOptions = {
 			
 			
 			showPreloader();
-			restServices
+			sbiModule_restServices
 			.post("1.0/glossary", "addDataSetWlist", elem)
 			.success(
 					function(data, status, headers,
@@ -973,17 +969,17 @@ datasetAss.TreeOptions = {
 								.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message)
 							global.showToast(
-									translate
+									sbiModule_translate
 									.load("sbi.glossary.error.save"),
 									3000);
 						} else if (data.Status == "NON OK") {
 							global.showToast(
-									translate
+									sbiModule_translate
 									.load(data.Message),
 									3000);
 						} else {
 //							global.showToast(
-//							translate
+//							sbiModule_translate
 //							.load("sbi.glossary.success.save"),
 //							3000);
 
@@ -1000,7 +996,7 @@ datasetAss.TreeOptions = {
 									config) {
 								hidePreloader();
 								global.showToast(
-										translate
+										sbiModule_translate
 										.load("sbi.glossary.error.save"),
 										3000);
 							});
@@ -1050,7 +1046,7 @@ function hidePreloader(pre) {
 
 //--------------------------------------------------------------------------navigazione--------------------------------------------------------
 
-function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
+function funzione_navigazione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDialog, $filter,$timeout, $mdToast) {
 	navi=this;
 	global.initializer.navigation={state:false,scope:navi};
 	navi.pagination={};
@@ -1113,15 +1109,15 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 		}
 
 		navi.showPreloader(item,type);
-		restServices
+		sbiModule_restServices
 		.post("1.0/glossary", "loadNavigationItem", elem)
 		.success(
 				function(data) {
 
 					if (data.hasOwnProperty("errors")) {
-						global.showToast(translate.load("sbi.glossary.load.error"),3000);
+						global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 					} else if (data.Status == "NON OK") {
-						global.showToast(translate.load(data.Message),3000);
+						global.showToast(sbiModule_translate.load(data.Message),3000);
 					} else {
 //						console.log("loadNavItem ottenuti")
 //						console.log(data)
@@ -1174,7 +1170,7 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 				.error(
 						function(data, status, headers,
 								config) {
-							global.showToast(translate.load("sbi.glossary.load.error"),3000);
+							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 							navi.hidePreloader(item,type);
 						});
 	}
@@ -1257,16 +1253,16 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var iwctrl = this;
-				restServices.get("1.0/glossary", "getWord", "WORD_ID=" + wordid)
+				sbiModule_restServices.get("1.0/glossary", "getWord", "WORD_ID=" + wordid)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
-								showToast(translate.load("sbi.glossary.load.error"), 3000);
+								showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							} else {
 								iwctrl.info = data;
 							}
 						}).error(function(data, status, headers, config) {
-							showToast(translate.load("sbi.glossary.load.error"), 3000);
+							showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						})
 			},
@@ -1286,27 +1282,27 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var idctrl = this;
-				restServices.get("1.0/documents", docLB)
+				sbiModule_restServices.get("1.0/documents", docLB)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
-								global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+								global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							} else {
 								idctrl.info = data;
-								restServices.get("2.0/documents", docID+"/roles")
+								sbiModule_restServices.get("2.0/documents", docID+"/roles")
 								.success(
 										function(data, status, headers, config) {
 											if (data.hasOwnProperty("errors")) {
-												global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+												global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 											} else {
 												idctrl.info.access = data;
 											}
 										}).error(function(data, status, headers, config) {
-											global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+											global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 										})
 							}
 						}).error(function(data, status, headers, config) {
-							global.showToast(translate.load("sbi.glossary.load.error"), 3000);
+							global.showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 						})
 			},
 			templateUrl : '/athena/js/src/angular_1.4/tools/glossary/commons/templates/info_document.html',
@@ -1323,16 +1319,16 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var idsctrl = this;
-				restServices.get("1.0/glossary", "getDataSetInfo?DATASET_ID="+dsId+"&ORGANIZATION="+dsOrg)
+				sbiModule_restServices.get("1.0/glossary", "getDataSetInfo?DATASET_ID="+dsId+"&ORGANIZATION="+dsOrg)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
-								showToast(translate.load("sbi.glossary.load.error"), 3000);
+								showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							} else {
 								idsctrl.info = data;
 							}
 						}).error(function(data, status, headers, config) {
-							showToast(translate.load("sbi.glossary.load.error"), 3000);
+							showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						})
 
@@ -1353,16 +1349,16 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var idsctrl = this;
-				restServices.get("1.0/glossary","getBnessCls", "BC_ID=" +bclab)
+				sbiModule_restServices.get("1.0/glossary","getBnessCls", "BC_ID=" +bclab)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
-								showToast(translate.load("sbi.glossary.load.error"), 3000);
+								showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							} else {
 								idsctrl.info = data;
 							}
 						}).error(function(data, status, headers, config) {
-							showToast(translate.load("sbi.glossary.load.error"), 3000);
+							showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						})
 
@@ -1381,16 +1377,16 @@ function funzione_navigazione(translate, restServices, $q, $scope, $mdDialog, $f
 			 scope: $scope,preserveScope: true,
 			controller : function($mdDialog) {
 				var idsctrl = this;
-				restServices.get("1.0/glossary","getTable", "TABLE_ID=" +tblab)
+				sbiModule_restServices.get("1.0/glossary","getTable", "TABLE_ID=" +tblab)
 				.success(
 						function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
-								showToast(translate.load("sbi.glossary.load.error"), 3000);
+								showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 							} else {
 								idsctrl.info = data;
 							}
 						}).error(function(data, status, headers, config) {
-							showToast(translate.load("sbi.glossary.load.error"), 3000);
+							showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 						})
 

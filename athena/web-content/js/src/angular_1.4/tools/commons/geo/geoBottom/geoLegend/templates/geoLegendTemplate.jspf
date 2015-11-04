@@ -39,7 +39,14 @@
   </md-toolbar>
   <md-dialog-content >
     <div class="md-dialog-content">
-      TODO
+ <input type="color" name="favcolor" value="#ff0000" ng-model="mycol1">
+
+
+<md-input-container>
+  <md-select ng-model="someModel" placeholder="Select a state">
+    <md-option ng-value="opt" ng-repeat="opt in neighborhoods2">{{ opt }}</md-option>
+  </md-select>
+</md-input-container>
     </div>
   </md-dialog-content>
   <div class="md-actions" layout="row">
