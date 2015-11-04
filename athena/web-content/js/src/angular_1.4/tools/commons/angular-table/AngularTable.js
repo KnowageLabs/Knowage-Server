@@ -3,13 +3,13 @@
  * 
  */
 
-angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagination','ng-context-menu','sbiModule' ])
-		.directive('dynamicHtml', function ($compile) {
+angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagination','ng-context-menu' ])
+		.directive('dynamichtml', function ($compile) {
 			return {
 				restrict: 'A',
 				replace: true,
 				link: function (scope, ele, attrs) {
-					scope.$watch(attrs.dynamic, function(html) {
+					scope.$watch(attrs.dynamichtml, function(html) {
 						ele.html(html);
 						$compile(ele.contents())(scope);
 					});
@@ -93,9 +93,8 @@ angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagin
 						return filtered;
 					  }});
 
-function TableControllerFunction($scope, sbiModule_translate,$timeout,$filter) {
+function TableControllerFunction($scope, $timeout,$filter) {
 	var $scope = $scope;
-	$scope.translate = sbiModule_translate;
 	$scope.currentPageNumber=1;
 	$scope.tmpWordSearch = "";
 	$scope.prevSearch = "";
