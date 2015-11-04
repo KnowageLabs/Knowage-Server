@@ -189,28 +189,39 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * @author atomic (ana.tomic@mht.net)
 			 */
 			var globalThis = this;
+						
+			var applyAxes = true;
+			var applySeries = true;
+			
+			var configApplyAxes = 
+			{
+				applyAxes: applyAxes,
+				applySeries: applySeries,
+			};
 			
 			/**
 			 * If we are creating completely new chart (new document) immediately on loading
 			 * the Designer page apply the default style.
 			 * 
-			 * @author atomic (ana.tomic@mht.net)
+			 * @author: atomic (ana.tomic@mht.net)
 			 * @commentBy: danristo (danilo.ristovski@mht.net)
 			 */
-			if (!jsonTemplate.CHART) {
+			if (!jsonTemplate.CHART) 
+			{
 			    var defaultStyleTemplate=this.getDefaultStyle();
-			    if(defaultStyleTemplate){
-			     jsonTemplate=Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplate.generic);
-			    }else{
-			     jsonTemplate=baseTemplate;
+			    
+			    if(defaultStyleTemplate)
+			    {
+			    	jsonTemplate=Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplate.generic);
 			    }
+			    else
+			    {
+			    	jsonTemplate=baseTemplate;
+			    }
+			    
 			    newChart = true; 
 			}		
-			
-			/**
-			 * Predefined style type for any chart is RED.
-			 * (danilo.ristovski@mht.net)
-			 */		
+					
 			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "";
 			console.log(jsonTemplate);
 			/**
@@ -240,41 +251,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * (danristo :: danilo.ristovski@mht.net) 
 				 */
 				if (jsonTemplate.CHART.AXES_LIST.AXIS.length == undefined) {
+					
 					var axisTemp = jsonTemplate.CHART.AXES_LIST.AXIS;
 					var axisArray = new Array();
 					
 					jsonTemplate.CHART.AXES_LIST.AXIS = axisArray;
 					jsonTemplate.CHART.AXES_LIST.AXIS.push(axisTemp);
-				}				
+				}		
 				
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);	
 				
-			}				
-			
-			/**
-			 * Set the predefined values for the generic parameters of the newly created chart 
-			 * (danristo :: danilo.ristovski@mht.net) 
-			 */			
-			var applyAxes = true;
-			var applySeries = true;
-			var configApplyAxes = {
-				applyAxes: applyAxes,
-				applySeries: applySeries,
-			};
-
-			/**
-			 * We will not provide default style, rather than user specifies the
-			 * one he want to use (specify) for the chart (document).
-			 * 
-			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
-			 */
-//			if (newChart == true) {
-//				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-//						jsonTemplate, 
-//						Designer.getConfigurationForStyle(jsonTemplate.CHART.styleName).generic,
-//						configApplyAxes);
-//			}
-			
+			}	
+						
 			/**
 			 * If the chart is already existing (not just created) and if it is of the 
 			 * GAUGE type, set the plotband store that keeps the data about the plots
@@ -318,6 +306,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			        text: "Pick chart type:",
 			        //margin: '5 3 3 0'
 			});
+			
 			
 			this.chartTypeSelector = Ext.create('Sbi.chart.designer.ChartTypeSelector_2', 
 			{ 				
@@ -860,6 +849,47 @@ Ext.define('Sbi.chart.designer.Designer', {
 //						 ]
 //			});
 //			
+			
+			/**
+			 * danristo
+			 */
+			var removeFlagsForMandatoryFields = function(chartType,jsonTemplate)
+			{
+				if (chartType=="PARALLEL")
+				{
+					var axesListStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style);
+					
+					console.log(this.chartConfiguration);
+					console.log(axesListStyle.axisColor);
+					console.log(axesListStyle.axisColor!="transparent");
+					
+					if (axesListStyle.axisColor && axesListStyle.axisColor!="" && axesListStyle.axisColor!="transparent")
+					{
+						var axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":";
+						
+						if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl)
+							Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);							
+					}
+					else
+					{
+						var axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;
+						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);
+					}	
+					
+						
+					if (axesListStyle.brushColor && axesListStyle.brushColor!="" && axesListStyle.brushColor!="transparent")
+					{
+						var brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":";
+						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
+					}
+					else
+					{
+						var brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;
+						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
+					}
+				}
+			};
+			
 			/**
 			 * GUI label element that will be placed immediatelly above the style combo box
 			 * (on the top of the left panel on the Designer page).
@@ -892,7 +922,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    listConfig: {
 			    	listeners: {
 				    	itemclick: function(combo,k) {
-				    					    			
+				    						    		
 				    		/**
 							 * Depending on the style that we choose for the document's generic
 							 * customizable parameters (Red, Green, Blue, ... style), take the
@@ -900,18 +930,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * style. This part is needed for later merging of the templates 
 							 */
 				    		var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();	
-				    						    		
-				    		/**
-				    		 * If current chart is of type PARALLEL, when changing the chart's style
-				    		 * it is needed for combobox (Limit panel on the Step 2 of the Designer) 
-				    		 * that containes serie items for filtering to be cleaned from previous 
-				    		 * content in order to contain up-to-date serie items available inside of 
-				    		 * the Y-axis panel on the Step 1.
-				    		 */
-				    		if (chartType == "PARALLEL")
-			    			{
-				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
-			    			}				    		
 			    		
 
 							/**
@@ -934,9 +952,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * This is JSON template that we take form the Advance editor (previously, Step 3)
 							 * so we can be up-to-date with current structure of the document inside the Designer.
 							 */
-							var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();
+							var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
 							
-							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(k.data.styleAbbr).generic,configApplyAxes);
+							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(k.data.styleAbbr).generic, configApplyAxes);
 							
 							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
 									localJsonTemplate, 
@@ -946,16 +964,27 @@ Ext.define('Sbi.chart.designer.Designer', {
 							jsonTemplate = localJsonTemplate;
 							
 							/**
+				    		 * If current chart is of type PARALLEL, when changing the chart's style
+				    		 * it is needed for combobox (Limit panel on the Step 2 of the Designer) 
+				    		 * that containes serie items for filtering to be cleaned from previous 
+				    		 * content in order to contain up-to-date serie items available inside of 
+				    		 * the Y-axis panel on the Step 1.
+				    		 */
+				    		if (chartType == "PARALLEL")
+			    			{
+				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
+				    			//removeFlagsForMandatoryFields(chartType,jsonTemplate);
+			    			}
+							
+							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
 							 * the Step 2 tab) after selecting the particular style.
 							 */
-				    		Sbi.chart.designer.Designer.update(jsonTemplate);
+				    		Sbi.chart.designer.Designer.update(jsonTemplate);				    		
 				    	}
 			    	}
 			    }
 			});
-			
-			
 			
 			this.chartTypeColumnSelector = Ext.create('Sbi.chart.designer.ChartTypeColumnSelector', {
 				styleLabel2: this.styleLabel2,
@@ -1447,8 +1476,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            		fn: function(){
   		            			
   		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
-  		            			if (activeTab.getId() == 'advancedEditor') {  		            				
-  		            				var json = activeTab.getChartData();  		            				
+  		            			if (activeTab.getId() == 'advancedEditor') {  	
+  		            				var json = activeTab.getChartData(); 
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
@@ -1469,7 +1498,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            							Ext.getBody().mask(LN('sbi.chartengine.designer.savetemplate.loading'), 'x-mask-loading');
   		            							  		 		            							
   		            							var exportedAsOriginalJson = Sbi.chart.designer.Designer.exportAsJson(true);
-  		            							  	  		            							
+  		            							//console.log(Sbi.chart.designer.Designer.exportAsJson());
+  		            							//console.log(exportedAsOriginalJson);
   		            								var parameters = {
   	  		            									jsonTemplate: Ext.JSON.encode(exportedAsOriginalJson),
   	  		            									docLabel: docLabel
@@ -1487,7 +1517,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   	  		            							 * 
   	  		            							 * @author: danristo (danilo.ristovski@mht.net)
   	  		            							 */
-  	  		            							jsonTemplate = exportedAsOriginalJson;
+  	  		            							jsonTemplate =  Sbi.chart.designer.Designer.exportAsJson();
   	  		            							Sbi.chart.designer.Designer.chartTypeChanged = false;
   		            							}
   		            					}
@@ -1522,7 +1552,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		            		fn: function(){
   		            			var activeTab = Sbi.chart.designer.Designer.stepsTabPanel.getActiveTab();
   		            			if (activeTab.getId() == 'advancedEditor') {
-  		            				var json = activeTab.getChartData();
+  		            				var json = activeTab.getChartData(); // original code
   		            				Sbi.chart.designer.Designer.update(json);
   		            			}
   		            			var errorMessages = Sbi.chart.designer.Designer.validateTemplate();
@@ -1668,6 +1698,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/* START LOADING CROSS NAVIGATION DATA>>>>>>>>>>>>>>>>>>>> */
 			this.crossNavigationPanel.setCrossNavigationData(jsonTemplate.CHART.DRILL);
 			/* END LOADING CROSS NAVIGATION DATA <<<<<<<<<<<<<<<<<<<< */
+						
 
 			/*  LOADED CONFIGURATION FROM TEMPLATE <<<<<<<<<<<<<<<<<<<< */
 		},
@@ -1764,11 +1795,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var leftYAxisesPanel = this.leftYAxisesPanel;
 			var rightYAxisesPanel = this.rightYAxisesPanel;
 			var bottomXAxisesPanel = this.bottomXAxisesPanel;
-			
+			//console.log("LOAD AXIS");
 			var globalScope = this;
 			Sbi.chart.designer.ChartColumnsContainerManager.resetContainers();
 			
 			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+			//console.log(theStorePool);
 						
 			var yCount = 1;
 			
@@ -2593,7 +2625,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/**
 				 * STEP 2 -> Axes lines panel
 				 */
-				(chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined) ?
+				(chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined || chartViewModelData.axisColor=="transparent") ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
@@ -2649,7 +2681,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				(chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined) ?
+				(chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined || chartViewModelData.brushColor=="transparent") ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
@@ -3910,6 +3942,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var leftColumnsContainerId = this.leftYAxisesPanel.items.keys[0];
 			var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
 			
+			// bened 
 			var emptyAxisData = Sbi.chart.designer.ChartUtils.createEmptyAxisData(false, true);
 			leftColumnsContainer.setAxisData(emptyAxisData);
 			

@@ -25,6 +25,15 @@
     chart: {
    		type: 'gauge',
 
+		#*
+			This parameter must be set to false, since if not defined
+			in the case where we have more than one Y-axis ticks on lines 
+			will have wrong values.
+			
+			@author: danristo (danilo.ristovski@mht.net)
+		*#
+		alignTicks: false,
+
    		#if($chart.style.backgroundColor != '')
    		backgroundColor: '$chart.style.backgroundColor', ##outer chart background
     	#end
@@ -101,7 +110,7 @@
 		}
     },
     #end
-    
+
     pane: {    
         
     	#if($chart.PANE.startAngle)
@@ -136,7 +145,7 @@
             borderWidth: 0,
             outerRadius: '105%',
             innerRadius: '103%'
-        }] 
+        }]
     },
     
     #set($axisList = {})
@@ -146,27 +155,29 @@
     	#set($axis = $axisList.put($axis.id , $chart.AXES_LIST.AXIS))
     #end
     
+ 	#set($counterYAxis = 0) 
+ 	#set($counterYAxisNames={})
+     
     yAxis:[
         ## Serie add
-       
+              
         #foreach ($yAxis in $axisList)   
+                
         	#if ($yAxis.position != "bottom")
-        	{    
-        		#if ($yAxis.min)		
-    				#if ($yAxis.min == "" || $yAxis.min == "0")
-    					min: 0,
-    				#else
-    					min: $yAxis.min,
-    				#end    				
+        	{            	        	
+        		#if ($yAxis.min && $yAxis.min!="")	
+					min: $yAxis.min,
+    			#elseif ($yAxis.min && $yAxis.min=="")
+    				min: 0,
+    			#end
+    			
+		        #if ($yAxis.max && $yAxis.max!="")   
+					max: $yAxis.max,	
+    			#elseif ($yAxis.max && $yAxis.max=="")
+    				max: 0,
     			#end
 		        
-		        #if ($yAxis.max)    			
-    				#if ($yAxis.max == "" || $yAxis.max == "0")
-    					max: 0,
-    				#else
-    					max: $yAxis.max,
-    				#end    				
-    			#end
+		        #set($counterYAxisNames["$yAxis.alias"] = $counterYAxis)
 		        
 	        	title: {
 		        	#if($yAxis.TITLE.enabled)
@@ -215,74 +226,48 @@
 		        	#end
 	        	},
 	        	
-	        	#if($yAxis.lineColor)
+	        	#if($yAxis.lineColor && $yAxis.lineColor!="")
 	        		lineColor: '$yAxis.lineColor', ##'#339',
 	            #end
 	            
-	        	#if($yAxis.tickPosition)
+	        	#if($yAxis.tickPosition && $yAxis.tickPosition!="")
 	        		tickPosition: '$yAxis.tickPosition',
 	        	#end
 	        	
-	            #if($yAxis.tickColor)
+	            #if($yAxis.tickColor && $yAxis.tickColor!="")
 	            	tickColor: '$yAxis.tickColor',
 	            #end
 	            
-	            #if($yAxis.minorTickColor)
+	            #if($yAxis.minorTickColor  && $yAxis.minorTickColor!="")
 	            	minorTickColor: '$yAxis.minorTickColor',
 	            #end
 	            	        	
-	        	 #if ($yAxis.offset)    			
-    				#if ($yAxis.offset == "" || $yAxis.offset == "0")
-    					offset: 0,
-    				#else
-    					offset: $yAxis.offset,
-    				#end    				
+	         	#*#if ($yAxis.offset && $yAxis.offset!="")    	
+					offset: $yAxis.offset,    			   				
+    			#end*#
+    			
+    			#set($offsetValue = $counterYAxis*(-30))
+    			
+    			offset: $offsetValue, 
+    			
+    			 #if ($yAxis.lineWidth && $yAxis.lineWidth!="")  
+    					lineWidth: $yAxis.lineWidth, 				
     			#end
     			
-    			 #if ($yAxis.lineWidth)    			
-    				#if ($yAxis.lineWidth == "" || $yAxis.lineWidth == "0")
-    					lineWidth: 0,
-    				#else
-    					lineWidth: $yAxis.lineWidth,
-    				#end    				
+    			 #if ($yAxis.minorTickLength && $yAxis.minorTickLength!="") 
+    					minorTickLength: $yAxis.minorTickLength,				
     			#end
     			
-    			 #if ($yAxis.minorTickLength)    			
-    				#if ($yAxis.minorTickLength == "" || $yAxis.minorTickLength == "0")
-    					minorTickLength: 0,
-    				#else
-    					minorTickLength: $yAxis.minorTickLength,
-    				#end    				
+    			 #if ($yAxis.minorTickWidth && $yAxis.minorTickWidth!="")
+    					minorTickWidth: $yAxis.minorTickWidth,    				
     			#end
     			
-    			 #if ($yAxis.minorTickWidth)
-    			
-    				#if ($yAxis.minorTickWidth == "" || $yAxis.minorTickWidth == "0")
-    					minorTickWidth: 0,
-    				#else
-    					minorTickWidth: $yAxis.minorTickWidth,
-    				#end
-    				
-    			#end
-    			
-    			 #if ($yAxis.tickWidth)
-    			
-    				#if ($yAxis.tickWidth == "" || $yAxis.tickWidth == "0")
-    					tickWidth: 0,
-    				#else
+    			 #if ($yAxis.tickWidth && $yAxis.tickWidth!="")
     					tickWidth: $yAxis.tickWidth,
-    				#end
-    				
     			#end
 	            
-			 	#if ($yAxis.tickLength)
-    			
-    				#if ($yAxis.tickLength == "" || $yAxis.tickLength == "0")
-    					tickLength: 0,
-    				#else
+			 	#if ($yAxis.tickLength && $yAxis.tickLength!="")
     					tickLength: $yAxis.tickLength,
-    				#end
-    				
     			#end
 	        	
 	            #if($yAxis.endOnTickGauge)
@@ -298,41 +283,20 @@
 	            #if($yAxis.minorTickPosition)
 	            	minorTickPosition: '$yAxis.minorTickPosition',
 	            #end
-	            
-	            #if($yAxis.minorTickColor)
-	            	minorTickColor: '$yAxis.minorTickColor',
-				#end
 				
 				#if($yAxis.tickPixelInterval && $yAxis.tickPixelInterval!="")
 	            	tickPixelInterval: $yAxis.tickPixelInterval,
 	            #end
-	            
-	            #if($yAxis.tickPosition)
-	            	tickPosition: '$yAxis.tickPosition',
-	            #end
-	            
-	            #if($yAxis.tickColor)
-	            	tickColor: '$yAxis.tickColor',
-	        	#end
 	        	
 	        	#if($yAxis.LABELS)
 	        	labels: {
 	        		
-	        			 #if ($yAxis.LABELS.distance == "" || $yAxis.LABELS.distance == "0")    			
-    						#if ($yAxis.LABELS.distance == "")
-    							distance: 0,
-    						#else
-    							distance: $yAxis.LABELS.distance,
-    						#end
-    				
-    					#end
+	        			#if ($yAxis.LABELS.distance && $yAxis.LABELS.distance!="")
+	    						distance: $yAxis.LABELS.distance,
+    					#end 
     			
-	    			 	#if ($yAxis.LABELS.rotation)    			
-	    					#if ($yAxis.LABELS.rotation == "" || $yAxis.LABELS.rotation == "0")
-	    						rotation: 0,
-	    					#else
+	    			 	#if ($yAxis.LABELS.rotation && $yAxis.LABELS.rotation!="")    	
 	    						rotation: $yAxis.LABELS.rotation,
-	    					#end    				
     					#end
 	                
 		    		#if($yAxis.style)
@@ -454,14 +418,20 @@
 		        	]
 		        #end
 		        },
-    		#end             
+    		#end       
+    		
+    		#set($counterYAxis = $counterYAxis+1)      
         #end
         ## END Serie add
         ],
 
     
     series: [
+    
+    	#set($counterYAxis = 0)
+    	
     	#foreach($valueKey in $seriesMap.keySet())
+    	
 	    	#set($relatedSerie = $seriesMap.get($valueKey))
 	    	{
 	    	name: '$relatedSerie.name',
@@ -469,6 +439,16 @@
 	    	#if($relatedSerie.color)
 	    	color: '$relatedSerie.color',
 	    	#end
+	    	
+	    	#*
+	    		This parameters links serie (data) and it's dials with the
+	    		appropriate Y-axis on the GAUGE chart.
+	    		
+	    		@author: danristo (danilo.ristovski@mht.net)
+	    	*#
+	    	yAxis: $counterYAxisNames.get($relatedSerie.axis),
+	    	
+	    	#set($counterYAxis = $counterYAxis + 1)
 	    	
 	        data: [
 	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
@@ -578,12 +558,24 @@
 				#if ($relatedSerie.TOOLTIP.style.fontSize != '')
 					ttFontSize: '$relatedSerie.TOOLTIP.style.fontSize' ,
 				#end		
-			},	
-			
+			},		
+						
 			#if ($relatedSerie.DIAL.backgroundColorDial)
-			dial: {
-                backgroundColor: '$relatedSerie.DIAL.backgroundColorDial'
-            },
+				
+				#*
+					Determining what should length of dial(s) be. This is important since
+					it is crucial that dial 
+				*#
+				#set($percentDialAxis = (100-$counterYAxisNames.get($relatedSerie.axis)*9)+"%")
+				
+				dial: 
+				{
+	                backgroundColor: '$relatedSerie.DIAL.backgroundColorDial',
+	                
+	                ## This one manages the length of the dial
+	                radius: "$percentDialAxis",
+	            },
+	            
             #end              
         },
 	    #end
