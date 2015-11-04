@@ -28,7 +28,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/rest/WebServiceManagerFactory.js" ></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/ChartTemplateContainer.js" ></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/HighchartsCrossNavigationHelper.js" ></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/CrossNavigationHelper.js" ></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/HighchartsDrilldownHelper.js" ></script>
 
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext5/sbi/chart/designer/ChartUtils.js' ></script>

@@ -7,7 +7,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/exporting.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/highcharts/4.1.4/modules/no-data-to-display.js"></script> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3.js"></script> 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/HighchartsCrossNavigationHelper.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/CrossNavigationHelper.js"></script>
 <script>
 
 	// TODO: check if ext was imported (don't care)
@@ -113,7 +113,7 @@
 			var groupingCategoryName=e.groupingCategoryName;
 			var groupingCategoryValue=e.groupingCategoryValue;
 			
-			Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateTo(
+			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					e.crossNavigationDocumentName, 
 					e.crossNavigationDocumentParams,
 					categoryName,
@@ -130,7 +130,7 @@
 	};
 	
 	function handleCrossNavigationFrom(){
-		Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateBackTo();
+		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
 	
 </script>

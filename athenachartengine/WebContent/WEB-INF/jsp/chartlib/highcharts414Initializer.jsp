@@ -119,14 +119,15 @@
 			chart.showLoading('Loading...');
 			
 			var categoryName = e.point.name;
-			var serieName = e.point.series.name;
-			
 			var categoryValue = null;
+			
+			var serieName = e.point.series.name;
 			var serieValue = null;
+
 			var groupingCategoryName=null;
 			var groupingCategoryValue=null;
 			
-			Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateTo(
+			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName, 
 					e.point.crossNavigationDocumentParams,
 					categoryName,
@@ -143,6 +144,6 @@
 	};
 	
 	function handleCrossNavigationFrom() {
-		Sbi.chart.viewer.HighchartsCrossNavigationHelper.navigateBackTo();
+		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
 </script>
