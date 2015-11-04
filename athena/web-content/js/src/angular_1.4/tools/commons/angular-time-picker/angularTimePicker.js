@@ -88,7 +88,7 @@ function angularTimePickerFunction($scope){
 				
 				if (newValue != oldValue) {
 					console.log("$watch elem",oldValue,newValue);
-					if(newValue>=59 || newValue<0){
+					if(newValue>59 || newValue<0){
 						angular.element(document.querySelector('angular-time-picker #minInput-'+$scope.id))[0].value=oldValue;
 					}else{
 						s.minutes=newValue;
@@ -105,7 +105,7 @@ function angularTimePickerFunction($scope){
 				
 				if (newValue != oldValue) {
 					console.log("$watch elem",oldValue,newValue);
-					if(newValue>=23 || newValue<0){
+					if(newValue>23 || newValue<0){
 						angular.element(document.querySelector('angular-time-picker #hoursInput-'+$scope.id))[0].value=oldValue;
 					}else{
 						s.hours=newValue;
