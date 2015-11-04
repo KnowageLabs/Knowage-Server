@@ -3910,7 +3910,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var leftColumnsContainerId = this.leftYAxisesPanel.items.keys[0];
 			var leftColumnsContainer = Ext.getCmp(leftColumnsContainerId);
 			
-			leftColumnsContainer.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(false, true));
+			var emptyAxisData = Sbi.chart.designer.ChartUtils.createEmptyAxisData(false, true);
+			leftColumnsContainer.setAxisData(emptyAxisData);
 			
 			//Since it remained only one serieStore let's update its data for it complies with the new leftColumnsContainer data
 			serieStorePool[0].axisAlias = leftColumnsContainer.axisData.alias;

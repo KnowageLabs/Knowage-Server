@@ -150,7 +150,24 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			    },
 			    setAxisData: function(axisData) {
   					this.axisData = axisData;
-  					this.fireEvent('updateAxisTitleValue', axisData.titleText);
+  					
+  					var isAxesTitleFieldAbsentFlag = true;
+  					var newlySelectedType = Sbi.chart.designer.ChartTypeSelector_2.chartType 
+  						|| Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+  					newlySelectedType = newlySelectedType.toLowerCase();
+  					
+  					isAxesTitleFieldAbsentFlag = (
+  							newlySelectedType == 'pie'
+  								|| newlySelectedType == 'treemap'
+  									|| newlySelectedType == 'wordcloud'
+  										|| newlySelectedType == 'parallel'
+  											|| newlySelectedType == 'sunburst'
+  												|| newlySelectedType == 'chord'
+  					);
+  					
+  					if(!isAxesTitleFieldAbsentFlag) {
+  						this.fireEvent('updateAxisTitleValue', axisData.titleText);
+  					}
   				},
   				getAxisData: function() {
   					return this.axisData;

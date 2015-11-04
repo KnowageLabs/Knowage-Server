@@ -272,12 +272,12 @@ Ext.define
 						{							
 							if (buttonValue == 'ok') 
 							{								
+								Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+								
 								/**
 								 * Cleaning of axis panels since previous and current chart types are not compatible.
 								 */
 								Sbi.chart.designer.Designer.cleanAxesSeriesAndCategories();	
-								
-								Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
 								
 								globalScope.fireEvent("chartTypeChanged");	
 								
