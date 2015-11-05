@@ -734,7 +734,8 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
         		 createButton += 
         		' 		<ul class="create" id="newDocument"> '+ '<span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span>' +
 //        		'	         <li id="WS"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createworksheet\')">'+ 'Ad Hoc Worksheet' +'</a> </li> '+
-         		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
+//Hidden for first version of knowage        		
+//         		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
          		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
          		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional SpagoBI') +'</a></li> '+
         		'	    </ul> ';
@@ -745,12 +746,14 @@ Ext.extend(Sbi.browser.FolderDetailPanel, Ext.Panel, {
             	createButton += 
              		' 		<ul class="create" id="newDocument"> '+ '<span class="highlighted">'+LN('sbi.generic.create')+'</span> '+LN('sbi.generic.document')+'<span class="plus">+</span>' +
 //             		'	         <li id="WS"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createworksheet\')">'+ 'Ad Hoc Worksheet' +'</a> </li> '+
-             		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
+//Hidden for first version of knowage:
+//             		'	         <li id="GEO"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'creategeoreport\')">'+ LN('sbi.generic.document.add.adhocGeoReport') +'</a></li> '+
              		'	         <li id="COCKPIT"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'createcockpit\')">'+ LN('sbi.generic.document.add.adhocCockpit')+'</a></li> '+
              		'	         <li id="STANDARD"><a href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'\')">'+ LN('sbi.generic.document.add.traditional SpagoBI') +'</a></li> '+
              		'	    </ul> ';
             }else  if (this.isAbleToCreateDocument()){
-            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">'+LN('sbi.generic.load')+'</span> '+LN('sbi.generic.map')+'<span class="plus">+</span></a> ';
+// Hidden for first version of knowage:
+//            	createButton += ' <a id="newDocument" href="#" onclick="javascript:Ext.getCmp(\'this\').addNewDocument(\'georeport\')"" class="btn-add"><span class="highlighted">'+LN('sbi.generic.load')+'</span> '+LN('sbi.generic.map')+'<span class="plus">+</span></a> ';
             } 
         }
 
