@@ -143,6 +143,17 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
 			    		
 			        	var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);
+			        	
+			        	
+			        	/** @comment benedetto.milazzo@eng.it */
+			        	// The "chartColumnsContainer" panel has defined a ViewController controller that acts
+			        	// also with "listener" functionalities. In this case the method "onTitleChange" is associated
+			        	// to the "change" event captured by the "textfieldAxisTitle" inside this said panel.
+			        	// The method setValue() of the "textfieldAxisTitle" fires also the "change" event, and,
+			        	// as it is defined, tries to call the "onTitleChange" associated to it, but, for some weird
+			        	// reasons in this case it is not captured by the ViewController component, and hence it
+			        	// throws an error (ATHENA-231). The workaround consists in the event suspension and reactivation
+			        	// in order to bypass this behavior.
 			    		textfieldAxisTitle.suspendEvents();
 			    		textfieldAxisTitle.setValue(textValue);
 			    		textfieldAxisTitle.resumeEvents(false);
@@ -431,19 +442,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						value: titleText,
 						listeners: {
 							change: 'onTitleChange'
-//							change: function(textField, newTextValue) {
-//								console.log('textField-> ', textField);
-//								console.log('newTextValue-> ', newTextValue);
-//							}
-//				            change: {
-//				            	fn: function(textField, newTextValue) {
-//					            	console.log('textField-> ', textField);
-//					            	console.log('newTextValue-> ', newTextValue);
-//					            },
-////					            scope: this
-//					            scope: Ext.getCmp(idChartColumnsContainer)
-//				            }
-				       }
+						}
 					}),
 					
 					// STYLE POPUP
