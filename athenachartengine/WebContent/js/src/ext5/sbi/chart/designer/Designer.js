@@ -636,18 +636,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 *   
 			 * @author: danristo (danilo.ristovski@mht.net)
 			 */			
-			this.seriesBeforeDropStore = Ext.create
-			(
-				"Ext.data.Store",
-				{
-					id:"storeForSeriesBeforeDrop", 
-					
-					fields: 
-					[
-			         	{name: 'seriesColumn'}
-		         	]
-				}
-			);
+			this.seriesBeforeDropStore = Ext.create("Ext.data.Store", {
+				id:"storeForSeriesBeforeDrop", 
+				
+				fields: [{
+					name: 'seriesColumn'
+				}]
+			});
 			
 			var columnsPickerStore = this.columnsPickerStore;
 			
@@ -1799,6 +1794,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var globalScope = this;
 			Sbi.chart.designer.ChartColumnsContainerManager.resetContainers();
 			
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
+			
 			var theStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
 			//console.log(theStorePool);
 						
@@ -1819,7 +1816,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 						 * the specified chart types.
 						 * (danilo.ristovski@mht.net)
 						 */
-						var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase();
 						var hideAxisTitleTextbox = false;
 						var hideGearTool = false;
 						var hidePlusGear = false;
@@ -1914,8 +1910,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 								tooltipFontFamily = jsonTooltipStyle.font;
 							}
 							
-							if (Sbi.chart.designer.Designer.chartTypeSelector.getChartType().toUpperCase() == "GAUGE") {									
-								
+							if (chartType == "GAUGE") {									
 								var newCol = Ext.create('Sbi.chart.designer.AxisesContainerModel', {
 									id: (serie.id && serie.id != '')? serie.id : 'serie' + ChartColumnsContainer.idseed++,
 									axisName: serie.name && serie.name != '' ? serie.name : serie.column,
@@ -1975,7 +1970,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 							}
 							
 							// *_* 
-							globalScope.seriesBeforeDropStore.add(newCol);
+							if(chartType == "PARALLEL") {
+								globalScope.seriesBeforeDropStore.add(newCol);
+							}
 							
 							store.add(newCol);
 						}

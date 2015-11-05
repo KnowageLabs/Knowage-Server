@@ -196,23 +196,17 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					},
 					listeners: {
 						beforeDrop: function(node, data, dropRec, dropPosition) {	
-//							console.log("aaa");
-//							console.log(node);
-//							console.log(data);
-//							console.log(dropRec);
-//							
-//							//data.copy = true;
-//							
-//							console.log(data);
-							
 							/**
 							 * Prevent user from defining multiple serie items; if this part is 
 							 * not provided, error appears
 							 * @author: danristo (danilo.ristovski@mht.net)
 							 */
 							var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
-							var enableAddAndSum = chartType != 'SUNBURST' && chartType != 'WORDCLOUD' && 
-													chartType != 'TREEMAP' && chartType != 'HEATMAP';													
+							var enableAddAndSum = 
+								(chartType != 'SUNBURST' 
+									&& chartType != 'WORDCLOUD' 
+										&& chartType != 'TREEMAP' 
+											&& chartType != 'HEATMAP' );													
 														
 							/**
   	  						 * Prevent taking more than one serie from the container when we have
@@ -227,28 +221,27 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							if (enableAddAndSum || (!enableAddAndSum && this.store.data.length == 0)) {
 								// *_* The original code
 								if(data.view.id != this.id) {
-									
 									data.records[0] = data.records[0].copy('droppedSerie_' + ChartColumnsContainer.idseed++);
+									var newRecordToDrop = data.records[0];
 									
-									if (!data.records[0].get('serieGroupingFunction'))
-									{
-										data.records[0].set('serieGroupingFunction', 'SUM');
+									if (!newRecordToDrop.get('serieGroupingFunction')) {
+										newRecordToDrop.set('serieGroupingFunction', 'SUM');
 									}
 									
 									/**
 									 * danristo (4) - serieColumn
 									 */
-									if( !data.records[0].get('axisName')) {
-										var serieColumn = data.records[0].get('serieColumn', 'SUM');
+									if( !newRecordToDrop.get('axisName')) {
+										var serieColumn = newRecordToDrop.get('serieColumn');
 										
-										data.records[0].set('axisName', serieColumn);
+										newRecordToDrop.set('axisName', serieColumn);
 										
-										// (danilo.ristovski@mht.net)								
-										if(Ext.getCmp("chartParallelLimit").hidden == false && 
-												Ext.getCmp("chartParallelLimit") != undefined && 
-													Ext.getCmp("chartParallelLimit") != null)
-										{
-											Ext.getCmp("chartParallelLimit").addItem(data.records[0]);
+										// (danilo.ristovski@mht.net)	
+										var chartParallelLimit = Ext.getCmp("chartParallelLimit");
+										if(chartParallelLimit && 
+												chartParallelLimit != null &&
+												chartParallelLimit.hidden == false ) {
+											chartParallelLimit.addItem(newRecordToDrop);
 										}										
 									}
 									
@@ -266,11 +259,11 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 									 * see the old (not existing) chart style, but when dropping serie items 
 									 * in the Y-axis panel it does not take serie parameterization of any
 									 * particular style (since the one set in the combo is not existing anymore). 
-									 */				
-									if (Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle) != null)
-									{
-										var genericJsonForStyle =  Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle).generic;
-										var specificJsonForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle)[chartType.toLowerCase()];
+									 */	
+									var configurationForStyle = Sbi.chart.designer.Designer.getConfigurationForStyle(chosenStyle);
+									if (configurationForStyle != null) {
+										var genericJsonForStyle =  configurationForStyle.generic;
+										var specificJsonForStyle = configurationForStyle[chartType.toLowerCase()];
 										
 										var combination = Sbi.chart.designer.ChartUtils.mergeObjects(genericJsonForStyle,specificJsonForStyle);
 										
@@ -289,107 +282,38 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										(serieTagExists) ? (serieTagParameters = combination.CHART.VALUES.SERIE) : null;									
 										(serieTooltipTagExists) ? (serieTooltipTagParameters = serieTagParameters.TOOLTIP) : null;
 																					
-										
-//										/**
-//										 * danristo (3) - serieGroupingFunction
-//										 */
-//										var storeForGroupingFunctions = this.grid.columns[1].editor.store;
-//										
-//										if (!data.records[0].get('serieGroupingFunction'))
-//										{
-//											for (i=0; i<storeForGroupingFunctions.length; i++)
-//											{											
-//												if (serieTagExists && serieTagParameters.groupingFunction)
-//												{												
-//													if (storeForGroupingFunctions[i][0] == serieTagParameters.groupingFunction.toUpperCase())
-//													{
-//														data.records[0].set('serieGroupingFunction', serieTagParameters.groupingFunction.toUpperCase());
-//														break;
-//													}
-//												}										
-//											}
-//											
-//											if (!data.records[0].get('serieGroupingFunction'))
-//											{
-//												data.records[0].set('serieGroupingFunction', 'SUM');
-//											}
-//										}										
-										
-//										/**
-//										 * danristo (5)
-//										 * Current serie types: "" (empty), "line", "bar", "area" (available in
-//										 * SerieStylePopup.js file.
-//										 */
-//										if (!data.records[0].get('serieType'))
-//										{										
-//											if (serieTagExists && serieTagParameters.type)
-//											{												
-//												if (serieTagParameters.type.toLowerCase()=="" || serieTagParameters.type.toLowerCase()=="line" || 
-//														serieTagParameters.type.toLowerCase()=="bar" || serieTagParameters.type.toLowerCase()=="area")
-//												{
-//													data.records[0].set('serieType', serieTagParameters.type.toLowerCase());
-//												}
-//												else
-//												{
-//													data.records[0].set('serieType', "");
-//												}
-//											}
-//										}
-										
-//										/**
-//										 * danristo (6)
-//										 * Current serie order types: "" (empty), "asc", "desc" (available in
-//										 * SerieStylePopup.js file.
-//										 */
-//										if (!data.records[0].get('serieOrderType'))
-//										{										
-//											if (serieTagExists && serieTagParameters.orderType)
-//											{												
-//												if (serieTagParameters.orderType.toLowerCase()=="" || 
-//														serieTagParameters.orderType.toLowerCase()=="asc" || 
-//															serieTagParameters.orderType.toLowerCase()=="desc")
-//												{
-//													data.records[0].set('serieOrderType', serieTagParameters.orderType.toLowerCase());
-//												}
-//												else
-//												{
-//													data.records[0].set('serieOrderType', "");
-//												}
-//											}
-//										}
-										
 										/**
 										 * danristo (7)
 										 */
-										(!data.records[0].get('serieColor')) ? data.records[0].set('serieColor', serieTagParameters.color) : null;									
-										(!data.records[0].get('serieShowValue')) ? data.records[0].set('serieShowValue', serieTagParameters.showValue) : null;
-										(!data.records[0].get('seriePrecision')) ? data.records[0].set('seriePrecision', serieTagParameters.precision) : null;
-										(!data.records[0].get('seriePrefixChar')) ? data.records[0].set('seriePrefixChar', serieTagParameters.prefixChar) : null;
-										(!data.records[0].get('seriePostfixChar')) ? data.records[0].set('seriePostfixChar', serieTagParameters.postfixChar) : null;
+										(!newRecordToDrop.get('serieColor')) ? newRecordToDrop.set('serieColor', serieTagParameters.color) : null;									
+										(!newRecordToDrop.get('serieShowValue')) ? newRecordToDrop.set('serieShowValue', serieTagParameters.showValue) : null;
+										(!newRecordToDrop.get('seriePrecision')) ? newRecordToDrop.set('seriePrecision', serieTagParameters.precision) : null;
+										(!newRecordToDrop.get('seriePrefixChar')) ? newRecordToDrop.set('seriePrefixChar', serieTagParameters.prefixChar) : null;
+										(!newRecordToDrop.get('seriePostfixChar')) ? newRecordToDrop.set('seriePostfixChar', serieTagParameters.postfixChar) : null;
 										
-										(!data.records[0].get('serieTooltipTemplateHtml')) ? 
-												data.records[0].set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
-										(!data.records[0].get('serieTooltipBackgroundColor')) ? 
-												data.records[0].set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
+										(!newRecordToDrop.get('serieTooltipTemplateHtml')) ? 
+												newRecordToDrop.set('serieTooltipTemplateHtml', serieTooltipTagParameters.templateHtml) : null;
+										(!newRecordToDrop.get('serieTooltipBackgroundColor')) ? 
+												newRecordToDrop.set('serieTooltipBackgroundColor', serieTooltipTagParameters.backgroundColor) : null;									
 												
 										var splitSerieTooltipStyle = serieTooltipTagParameters.style.split(";");
 										
 										for (j=0; j<splitSerieTooltipStyle.length; j++)
 										{
-											(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !data.records[0].get('serieTooltipColor')) ? 
-													(data.records[0].set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
+											(splitSerieTooltipStyle[j].indexOf("color:") >= 0 && !newRecordToDrop.get('serieTooltipColor')) ? 
+													(newRecordToDrop.set('serieTooltipColor', splitSerieTooltipStyle[j].substring("color:".length,splitSerieTooltipStyle[j].length))) : null;
 													
-											(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !data.records[0].get('serieTooltipFont')) ? 
-													(data.records[0].set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
+											(splitSerieTooltipStyle[j].indexOf("fontFamily:") >= 0 && !newRecordToDrop.get('serieTooltipFont')) ? 
+													(newRecordToDrop.set('serieTooltipFont', splitSerieTooltipStyle[j].substring("fontFamily:".length,splitSerieTooltipStyle[j].length))) : null;
 													
-											(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !data.records[0].get('serieTooltipFontWeight')) ? 
-													(data.records[0].set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
+											(splitSerieTooltipStyle[j].indexOf("fontWeight:") >= 0 && !newRecordToDrop.get('serieTooltipFontWeight')) ? 
+													(newRecordToDrop.set('serieTooltipFontWeight', splitSerieTooltipStyle[j].substring("fontWeight:".length,splitSerieTooltipStyle[j].length))) : null;
 													
-											(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !data.records[0].get('serieTooltipFontSize')) ? 
-													(data.records[0].set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
+											(splitSerieTooltipStyle[j].indexOf("fontSize:") >= 0 && !newRecordToDrop.get('serieTooltipFontSize')) ? 
+													(newRecordToDrop.set('serieTooltipFontSize', splitSerieTooltipStyle[j].substring("fontSize:".length,splitSerieTooltipStyle[j].length))) : null;
 													
-											(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !data.records[0].get('serieTooltipAlign')) ? 
-													(data.records[0].set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
+											(splitSerieTooltipStyle[j].indexOf("align:") >= 0 && !newRecordToDrop.get('serieTooltipAlign')) ? 
+													(newRecordToDrop.set('serieTooltipAlign', splitSerieTooltipStyle[j].substring("align:".length,splitSerieTooltipStyle[j].length))) : null;//
 										}	
 										
 										/**
@@ -406,13 +330,13 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 										(serieDataLabelsTagExists) ? (serieDataLabelsTagParameters = serieTagParameters.DATA_LABELS) : null;
 										
 										// DIAL properties
-										(!data.records[0].get('backgroundColorDial') && serieDialTagExists) ? data.records[0].set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
+										(!newRecordToDrop.get('backgroundColorDial') && serieDialTagExists) ? newRecordToDrop.set('backgroundColorDial',serieDialTagParameters.backgroundColorDial) : null;
 										
 										// DATA_LABELS properties
-										(!data.records[0].get('yPositionDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
-										(!data.records[0].get('formatDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
-										(!data.records[0].get('colorDataLabels') && serieDataLabelsTagExists) ? data.records[0].set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;							
-									}											
+										(!newRecordToDrop.get('yPositionDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('yPositionDataLabels',serieDataLabelsTagParameters.yPositionDataLabels) : null;
+										(!newRecordToDrop.get('formatDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('formatDataLabels',serieDataLabelsTagParameters.formatDataLabels) : null;
+										(!newRecordToDrop.get('colorDataLabels') && serieDataLabelsTagExists) ? newRecordToDrop.set('colorDataLabels',serieDataLabelsTagParameters.colorDataLabels) : null;							
+									}
 								}	
 								
 							} else  {								
@@ -521,15 +445,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 				},
 				
 				hideHeaders: true,
-				columns: {
-					items: [{
+				columns: [
+					Ext.create('Ext.grid.column.Column', {
 						dataIndex: 'serieColumn',
 						flex: 12,
 						layout: 'fit',
 						sortable: false,
-					}, {
-		                dataIndex: 'serieGroupingFunction',
-		                flex: 8,
+					}), 
+					Ext.create('Ext.grid.column.Column', {
+						dataIndex: 'serieGroupingFunction',
+						flex: 8,
 						layout: 'fit',
 						sortable: false,
 						editor: {
@@ -538,21 +463,21 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							displayField: 'label',
 							valueField: 'value',
 							store: [
-		                        ['AVG','AVG'],
-		                        ['COUNT','COUNT'],
-		                        ['MAX','MAX'],
-		                        ['MIN','MIN'],
-		                        ['SUM','SUM']
-		                    ],
+								['AVG','AVG'],
+								['COUNT','COUNT'],
+								['MAX','MAX'],
+								['MIN','MIN'],
+								['SUM','SUM']
+							],
 							fields: ['value', 'label']
 						}
-		            },
-					{
+					}),
+					Ext.create('Ext.grid.column.Action', {
 						menuDisabled: true,
 						sortable: false,
 						flex: 1,
-  						align : 'center',
-						xtype: 'actioncolumn',
+						align : 'center',
+						//xtype: 'actioncolumn',
 						id: "actionColumnLeftAxis_"+idChartColumnsContainer,
 						items: [{
 							icon: '/athena/themes/sbi_default/img/createTemplate.jpg',
@@ -574,55 +499,53 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								var serieName = item.get('axisName');
 								
 								Ext.Msg.show({
-	            					title : '',
-	            					message : Sbi.locale.sobstituteParams(
-	      								LN('sbi.chartengine.designer.removeserie'), 
-	      								[serieColumn, serieName]),
-	            					icon : Ext.Msg.QUESTION,
-	            					closable : false,
-	            					buttons : Ext.Msg.OKCANCEL,
-	            					buttonText : 
-	            					{
-	            						ok : LN('sbi.chartengine.generic.ok'),
-	            						cancel : LN('sbi.generic.cancel')
-	            					},
-	            					fn : function(buttonValue, inputText, showConfig){
-	            						if (buttonValue == 'ok') {
-	            							
-	            							// (danristo :: danilo.ristovski@mht.net) 
-	            							if(Ext.getCmp("chartParallelLimit").hidden == false && 
-	    											Ext.getCmp("chartParallelLimit") != undefined && 
-	    												Ext.getCmp("chartParallelLimit") != null)
-            								{
-	            								Ext.getCmp("chartParallelLimit").removeItem(store.getAt(rowIndex));
-	            								
-	            								/**
-	            								 * Send information about removed serie item towards combo that
-	            								 * holds the value for serie as filter column (Limit panel, Step 2)
-	            								 * so it can remove it if it is selected prior to this remove.
-	            								 * 
-	            								 * @author: danristo (danilo.ristovski@mht.net)
-	            								 */
-	            								Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo
-	            									.fireEvent("serieRemoved",store.getAt(rowIndex).data.serieColumn);
-            								}	 
-	            							
-	            							var rec = store.removeAt(rowIndex);
-	            							
-	            							// need to force reload for showing the emptyText message
-	            							if(store.getCount() == 0) {
-	            								store.reload();
-	            							}
-	            						}
-	            					}
-	            				});
+									title : '',
+									message : Sbi.locale.sobstituteParams(
+										LN('sbi.chartengine.designer.removeserie'), 
+										[serieColumn, serieName]),
+									icon : Ext.Msg.QUESTION,
+									closable : false,
+									buttons : Ext.Msg.OKCANCEL,
+									buttonText : 
+									{
+										ok : LN('sbi.chartengine.generic.ok'),
+										cancel : LN('sbi.generic.cancel')
+									},
+									fn : function(buttonValue, inputText, showConfig){
+										if (buttonValue == 'ok') {
+											
+											// (danristo :: danilo.ristovski@mht.net) 
+											var chartParallelLimit = Ext.getCmp("chartParallelLimit");
+											
+											if(chartParallelLimit && 
+													chartParallelLimit != null &&
+													chartParallelLimit.hidden == false ) {
+												chartParallelLimit.removeItem(store.getAt(rowIndex));
+												
+												/**
+												 * Send information about removed serie item towards combo that
+												 * holds the value for serie as filter column (Limit panel, Step 2)
+												 * so it can remove it if it is selected prior to this remove.
+												 * 
+												 * @author: danristo (danilo.ristovski@mht.net)
+												 */
+												chartParallelLimit.seriesColumnsOnYAxisCombo
+													.fireEvent("serieRemoved",store.getAt(rowIndex).data.serieColumn);
+											}	 
+											
+											var rec = store.removeAt(rowIndex);
+											
+											// need to force reload for showing the emptyText message
+											if(store.getCount() == 0) {
+												store.reload();
+											}
+										}
+									}
+								});
 							}
 						}]
-					}
-				]},
-				selModel: {
-					selType: 'cellmodel'
-				},
+					})
+				],
 				plugins: [{
 					ptype: 'cellediting',
 					clicksToEdit: 1
