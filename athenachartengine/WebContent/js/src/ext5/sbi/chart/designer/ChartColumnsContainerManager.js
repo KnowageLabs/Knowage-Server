@@ -135,19 +135,20 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			        	this.view.axisData.titleText = textValue;
 			        }
 			    }),
+			    
 			    listeners: {
 			    	updateAxisTitleValue: function(textValue) {
 			        	this.axisData.titleText = textValue;
-			        	//console.log("AAAAAAAAAAAAAAAAAAAAAAA");
-			        	//console.log(this.id);
+
 			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
-			        	//console.log(textfieldAxisTitleId);
-			    		var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);
-			    		//console.log(textfieldAxisTitle);
-			    		//console.log(textValue);
+			    		
+			        	var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);
+			    		textfieldAxisTitle.suspendEvents();
 			    		textfieldAxisTitle.setValue(textValue);
+			    		textfieldAxisTitle.resumeEvents(false);
 			    	}
 			    },
+			    
 			    setAxisData: function(axisData) {
   					this.axisData = axisData;
   					
@@ -169,6 +170,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   						this.fireEvent('updateAxisTitleValue', axisData.titleText);
   					}
   				},
+  				
   				getAxisData: function() {
   					return this.axisData;
   				},
@@ -413,8 +415,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					hidden: true 
 				}, 
 				tools:[
-				       Ext.create('Ext.form.TextField', {
-				    	   
+			       Ext.create('Ext.form.TextField', {
 				    	id: idChartColumnsContainer + '_TitleTextfield',
 				    	
 				    	/**
@@ -429,12 +430,24 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						emptyText: LN('sbi.chartengine.designer.emptytext.axistitle'),
 						value: titleText,
 						listeners: {
-				            change: 'onTitleChange'
-				        }
+							change: 'onTitleChange'
+//							change: function(textField, newTextValue) {
+//								console.log('textField-> ', textField);
+//								console.log('newTextValue-> ', newTextValue);
+//							}
+//				            change: {
+//				            	fn: function(textField, newTextValue) {
+//					            	console.log('textField-> ', textField);
+//					            	console.log('newTextValue-> ', newTextValue);
+//					            },
+////					            scope: this
+//					            scope: Ext.getCmp(idChartColumnsContainer)
+//				            }
+				       }
 					}),
 					
 					// STYLE POPUP
-					{
+					Ext.create('Ext.panel.Tool', {
 					    type:'gear',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
 					    id: "stylePopupLeftAxis_"+idChartColumnsContainer, // (danilo.ristovski@mht.net)
@@ -469,10 +482,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		axisStylePopup.show();
 					    	}					    	
 						}
-					},
+					}),
 					
 					// PLUS BUTTON
-					{
+					Ext.create('Ext.panel.Tool', {
 					    type:'plus',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
 					    id: "plusLeftAxis_"+idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
@@ -497,8 +510,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						
 						// *_* Old code included in: (hidden: plusHidden || (panelWhereAddSeries == null))
 					    //hidden: (panelWhereAddSeries == null)
-					}
-					
+					})
 				],
 				
 				closable : isDestructible,

@@ -115,7 +115,7 @@ Ext.define
 	          		'<img src="{icon}" width="30px"/>',
 	          		'&nbsp;&nbsp;&nbsp;<b style="display: inline-block;vertical-align: middle;line-height: 30px;">{style}</b>',
 	          	'</div>',
-	          	'</tpl>'],
+          	'</tpl>'],
 	   	    
 	    statics:
     	{
@@ -163,26 +163,20 @@ Ext.define
 			/* ---------- LEFT (Y) AXIS PANEL ---------- */
 			/* ----------------------------------------- */
 			
+			var leftContainerId = Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id;
+			
 			// Show the gear tool on the toolbar of the left (Y) axis panel
-			//console.log(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
-			this.stylePopupLeftAxis = Ext.getCmp("stylePopupLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
+			this.stylePopupLeftAxis = Ext.getCmp("stylePopupLeftAxis_" + leftContainerId);
 			
 			// Show the textfield dedicated for the title of the left (Y) axis
-			this.titleTextfield = Ext.getCmp(Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id + "_TitleTextfield");
+			this.titleTextfield = Ext.getCmp(leftContainerId + "_TitleTextfield");
 			
 			// Show the plus tool on the toolbar of the left (Y) axis panel		
-			this.plusLeftAxis = Ext.getCmp("plusLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
+			this.plusLeftAxis = Ext.getCmp("plusLeftAxis_" + leftContainerId);
 			
 			// Show the serie&tooltip icon for SERIE records inside the left (Y) panel
-			this.actionColumnLeftAxis = Ext.getCmp("actionColumnLeftAxis_"+Sbi.chart.designer.ChartColumnsContainerManager.yAxisPool[0].id);
+			this.actionColumnLeftAxis = Ext.getCmp("actionColumnLeftAxis_" + leftContainerId);
 				
-			//console.log(this.stylePopupBottomPanel);
-			//console.log(this.textfieldAxisTitle);
-			//console.log(this.stylePopupLeftAxis); 	//
-			//console.log(this.plusLeftAxis); 		//
-			//console.log(this.titleTextfield);
-			//console.log(this.titleTextfield);
-			
 			this.stylePopupBottomPanel.show();		
 			this.textfieldAxisTitle.show();			
 			this.stylePopupLeftAxis.show();						
