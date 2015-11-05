@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class implements a HMAC ( https://en.wikipedia.org/wiki/Hash-based_message_authentication_code ) filter. The shared {@link HMACFilter#key} is
- * initialized by filter configuration. It's used internally by the engines. The HMAC key is configured through JNDI : {@link HMACFilter#HMAC_JNDI_LOOKUP} .
+ * initialized by filter configuration. It's used internally by the engines. The HMAC key is configured through JNDI : {@link HMACFilter#HMAC_JNDI_LOOKUP}. See
+ * web.xml of athena project for configuring the Filter.
  *
  * @author fabrizio
  *
@@ -49,9 +50,9 @@ public class HMACFilter implements Filter {
 
 	public static final String DEFAULT_ENCODING = "UTF-8";
 
-	public static final String HMAC_TOKEN_HEADER = "SpagoBI_HMAC_Token";
+	public static final String HMAC_TOKEN_HEADER = "HMAC_Token";
 
-	public static final String HMAC_SIGNATURE_HEADER = "SpagoBI_HMAC_Signature";
+	public static final String HMAC_SIGNATURE_HEADER = "HMAC_Signature";
 
 	public static final String KEY_CONFIG_NAME = "hmacKey";
 

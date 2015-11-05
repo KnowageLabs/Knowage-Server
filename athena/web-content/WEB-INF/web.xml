@@ -142,6 +142,13 @@
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 	</filter-mapping>
 	
+	<!-- If you want to enable HMAC filter:
+		Add the hmac key into server.xml :
+	 		<Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="abc123"/>
+
+		Link the key to all engines :
+			<ResourceLink name="hmacKey" global="hmacKey" type="java.lang.String"/>
+		Enable the filter uncommenting the following lines -->
 	<!-- HMAC filter 
 	 <filter>
         <filter-name>HMACFilter</filter-name>
