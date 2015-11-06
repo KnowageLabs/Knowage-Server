@@ -105,17 +105,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * @commentBy: danristo (danilo.ristovski@mht.net)
 		 */
 		getDefaultStyle: function(){
-		   var styles=JSON.parse(Sbi.chart.designer.Styles);
-		   
-		   var retTemplate=null;
-		   
-		   for(i=0;i<styles.length;i++){
-		    if(styles[i].STYLE.isDefault===true){
-		     retTemplate=styles[i].TEMPLATE;
-		    }
-		   }
-		   
-		   return retTemplate;
+			var styles=JSON.parse(Sbi.chart.designer.Styles);
+
+			var retTemplate=null;
+
+			for(i=0;i<styles.length;i++){
+				if(styles[i].STYLE.isDefault===true){
+					retTemplate=styles[i].TEMPLATE;
+				}
+			}
+
+			return retTemplate;
 		},
 		
 		/**
@@ -146,7 +146,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 		},
 				
 		initialize: function(sbiExecutionId, userId, hostName, serverPort, docLabel, jsonTemplate, datasetLabel, chartLibNamesConfig, isCockpit, thisContextName, mainContextName, exporterContextName) {
-			
 			Sbi.chart.designer.ChartUtils.setCockpitEngine(isCockpit);	
 			
 			/**
@@ -193,8 +192,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			var applyAxes = true;
 			var applySeries = true;
 			
-			var configApplyAxes = 
-			{
+			var configApplyAxes = {
 				applyAxes: applyAxes,
 				applySeries: applySeries,
 			};
@@ -261,7 +259,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);	
 				
-			}	
+			}
+			
+			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );
 						
 			/**
 			 * If the chart is already existing (not just created) and if it is of the 

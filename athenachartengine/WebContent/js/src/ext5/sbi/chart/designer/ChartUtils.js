@@ -185,10 +185,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 			var result = {};
 
-			result['id'] = 'Axis_'
+			result['id'] = ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX
 				 + ChartColumnsContainerManager.instanceIdFeed;
-			result['alias'] = 'Axis_'
-				 + ChartColumnsContainerManager.instanceIdFeed++;
+			result['alias'] = ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX
+				 + ChartColumnsContainerManager.instanceIdFeed;
 			result['axisType'] = isCategory ? 'Category'
 				 : 'Serie';
 			result['position'] = isCategory ? 'bottom'
@@ -2457,6 +2457,13 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			}
 
 			return newTarget;
+		},
+		
+		stringStartsWith: function(string, prefix) {
+		    return string.slice(0, prefix.length) == prefix;
+		},
+		stringEndsWith: function(string, suffix) {
+		    return suffix == '' || string.slice(-suffix.length) == suffix;
 		}
 	}
 });

@@ -12,6 +12,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 	alternateClassName: ['ChartColumnsContainerManager'],
 	
     statics: {
+    	COLUMNS_CONTAINER_ID_PREFIX : 'Axis_',
+    	
     	instanceIdFeed: 0,
     	
     	instanceCounter: 0,
@@ -36,6 +38,33 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			this.instanceCounter = 0;
 			this.storePool = [];
 			this.yAxisPool = [];
+		},
+		
+		/**
+		 * Sets the lowest number value of the "instanceIdFeed" in order to
+		 * avoid container id conflicts.
+		 */
+		initInstanceIdFeed: function(axes) {
+			//the check is on each axis
+			for( var i = 0; i < axes.length; i++) {
+				var axis = axes[i];
+				
+				//gets the axis id or alias if "id" property doesn't exist
+				var tempIdOrAlias = axis.id || axis.alias;
+				
+				if(Sbi.chart.designer.ChartUtils.stringStartsWith(
+						tempIdOrAlias, ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX)) {
+					
+					var extractedNumberValueAsString = tempIdOrAlias.substring(
+							ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX.length );
+					
+					var extractedNumberValue = Number.parseInt(extractedNumberValueAsString);
+					if( !isNaN(extractedNumberValue) && 
+							(extractedNumberValue > ChartColumnsContainerManager.instanceIdFeed) ) {
+						ChartColumnsContainerManager.instanceIdFeed = extractedNumberValue;
+					}
+				}
+			}
 		},
 		
 		/**
@@ -103,7 +132,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			}
 	    	
 			ChartColumnsContainerManager.instanceIdFeed++;
-	    	var idChartColumnsContainer = (id && id != '')? id: 'Axis_' + ChartColumnsContainerManager.instanceIdFeed;
+			var idChartColumnsContainer = (id && id != '')? 
+	    			id: ChartColumnsContainerManager.COLUMNS_CONTAINER_ID_PREFIX + ChartColumnsContainerManager.instanceIdFeed;
 	    		    	
 	    	ChartColumnsContainerManager.instanceCounter++;
 	    	
@@ -411,7 +441,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					Ext.create('Ext.panel.Tool', {
 					    type:'plus',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
-					    id: "plusLeftAxis_"+idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
+					    id: "plusLeftAxis_" + idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
 					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    
