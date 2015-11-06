@@ -105,7 +105,7 @@
 				-->
 					<div flex=25>
 						<md-input-container  class="small counter"> <label>{{translate.load("sbi.glossary.category")}}</label>
-							<md-select ng-init="selectedLayer.category_id=-1" aria-label="aria-label" ng-model="selectedLayer.category_id" > 
+							<md-select  aria-label="aria-label" ng-model="selectedLayer.category_id" > 
 								<md-option ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
 							</md-select> 
 						</md-input-container>
@@ -174,7 +174,7 @@
 						</md-input-container>
 					</div>
 				</div>
-				<div style="margin-top: -25px;margin-left: 15px;">
+				<div style="margin-top: 0px;margin-left: 15px;">
 						<md-select-label  ng-show="!flagtype">{{selectedLayer.type}}</md-select-label>
 					</div>
 				<br><br>

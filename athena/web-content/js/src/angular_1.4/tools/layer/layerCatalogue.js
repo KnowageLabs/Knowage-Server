@@ -115,6 +115,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
+								$scope.closeForm();
 
 							} else {
 								$scope.flag=false;
@@ -128,6 +129,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							console.log("layer non Ottenuti " + status);
 							$scope.loadLayer();
 							$scope.showActionError();
+							$scope.closeForm();
 						})
 
 			} else {
@@ -144,6 +146,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
+								$scope.closeForm();
 
 							} else {
 								$scope.loadLayer();
@@ -156,6 +159,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							$scope.showActionError();
 							console.log("layer non Ottenuti " + status);
 							$scope.loadLayer();
+							$scope.closeForm();
 
 						})
 
@@ -177,6 +181,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
+								$scope.closeForm();
 
 							} else {
 								$scope.flag=false;
@@ -190,6 +195,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							$scope.showActionError();
 							console.log("layer non Ottenuti " + status);
 							$scope.loadLayer();
+							$scope.closeForm();
 						})
 
 			} else{
@@ -202,6 +208,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
+								$scope.closeForm();
 
 							} else {
 								$scope.loadLayer();
@@ -214,6 +221,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							$scope.showActionError();
 							console.log("layer non Ottenuti " + status);
 							$scope.loadLayer();
+							$scope.closeForm();
 						})
 
 			}
@@ -231,6 +239,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 			$scope.flag=false;
 			$scope.isRequired=false;
 			$scope.rolesItem=[];
+
 		}
 		$scope.object_temp = angular.copy(item);
 		if(item!= null){
@@ -519,7 +528,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 	$scope.showActionError = function() {
 		var toast = $mdToast.simple()
-		.content('Error...Reload the Object or the label is not unique...try again')
+		.content('Error...A problem occured.Retry it')
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)

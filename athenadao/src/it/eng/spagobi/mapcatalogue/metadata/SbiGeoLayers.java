@@ -175,11 +175,11 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.category = category;
 	}
 
-	public int getCategory_id() {
+	public Integer getCategory_id() {
 		return category_id;
 	}
 
-	public void setCategory_id(int category_id) {
+	public void setCategory_id(Integer category_id) {
 		this.category_id = category_id;
 	}
 

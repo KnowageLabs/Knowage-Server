@@ -269,12 +269,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setLayerOrder(aLayer.getLayerOrder());
 			hibLayer.setCategory_id(aLayer.getCategory_id());
 
-			// if (aLayer.getCategory_id() == 0) {
-			// hibLayer.setCategory(null);
-			//
-			// } else {
-			hibLayer.setCategory(aLayer.getCategory());
-			// }
+			if (aLayer.getCategory_id() == null) {
+				hibLayer.setCategory(null);
+				hibLayer.setCategory_id(null);
+
+			} else {
+				hibLayer.setCategory(aLayer.getCategory());
+			}
 			String path = null;
 			if (aLayer.getPathFile() != null) {
 
@@ -295,15 +296,15 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			id = (Integer) tmpSession.save(hibLayer);
 
 			// setto i ruoli utenti scelti
+			if (aLayer.getRoles() != null) {
+				for (SbiExtRoles r : aLayer.getRoles()) {
+					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(id, r.getExtRoleId().intValue());
 
-			for (SbiExtRoles r : aLayer.getRoles()) {
-				SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(id, r.getExtRoleId().intValue());
-
-				updateSbiCommonInfo4Insert(hibLayRol);
-				tmpSession.save(hibLayRol);
-				// insert(hibLayRol);
+					updateSbiCommonInfo4Insert(hibLayRol);
+					tmpSession.save(hibLayRol);
+					// insert(hibLayRol);
+				}
 			}
-
 			// hibLayer.setRoles(aLayer.getRoles());
 			tx.commit();
 
