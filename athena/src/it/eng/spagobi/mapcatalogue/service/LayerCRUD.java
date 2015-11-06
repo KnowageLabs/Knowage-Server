@@ -6,7 +6,9 @@
 
 package it.eng.spagobi.mapcatalogue.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -38,8 +40,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ZipUtils;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
@@ -94,7 +98,7 @@ public class LayerCRUD {
 	@GET
 	@Path("/getroles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getRoles(@Context HttpServletRequest req) {
+	public String getRoles(@Context HttpServletRequest req) throws JSONException, IOException {
 
 		// get roles from database
 		List roles = null;
@@ -104,6 +108,51 @@ public class LayerCRUD {
 		try {
 			roles = DAOFactory.getRoleDAO().loadAllRoles();
 			System.out.println(roles.toString());
+		} catch (EMFUserError e) {
+			logger.error(e.getMessage(), e);
+		}
+		logger.debug("OUT");
+
+		for (Iterator it = roles.iterator(); it.hasNext();) {
+			aRole = (Role) it.next();
+			JSONObject jo = new JSONObject();
+			try {
+				jo.put("id", aRole.getId());
+				jo.put("name", aRole.getName());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			roles_get.add(jo);
+
+		}
+		return roles_get.toString();
+
+	}
+
+	@POST
+	@Path("/postitem")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String postItem(@Context HttpServletRequest req) throws EMFUserError, JSONException {
+
+		JSONObject requestBodyJSON = null;
+		Integer id;
+		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
+		try {
+			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+		} catch (Exception e) {
+			logger.error("Error reading the body from the request", e);
+			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
+		}
+		// get roles for item selected from database
+		List roles = new ArrayList<>();
+		Role aRole = null;
+		// gets roles from database
+		try {
+			roles = DAOFactory.getRoleDAO().loadRolesItem(requestBodyJSON);
+			System.out.println(roles);
+
 		} catch (EMFUserError e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -160,7 +209,7 @@ public class LayerCRUD {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String saveLayer(@Context HttpServletRequest req) {
+	public String saveLayer(@Context HttpServletRequest req) throws JSONException, EMFUserError {
 		JSONObject requestBodyJSON = null;
 		Integer id;
 		try {
@@ -175,9 +224,13 @@ public class LayerCRUD {
 		logger.debug("Layer deserialized correctly");
 		logger.debug("Saving the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		// TODO check if profile is null
+		dao.setUserProfile(profile);
 
 		try {
 			id = dao.insertLayer(aLayer);
+
 		} catch (EMFUserError e) {
 			logger.error("Error saving the layer", e);
 			throw new SpagoBIRuntimeException("Error saving the layer", e);
@@ -204,15 +257,40 @@ public class LayerCRUD {
 			}
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-
+			Boolean bool = false;
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
 			// prendo i pacchetti del file
+
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			LayerServices layerServices = new LayerServices();
 			for (InputPart inputPart : inputParts) {
+
+				if (inputPart.getBodyAsString().contains("zip")) {
+					System.out.println("zip beccato");
+					bool = true;
+				}
+
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
+				byte[] data_out = new byte[1000];
 				data = layerServices.decode64(data);
+				FileOutputStream oo = new FileOutputStream("C:/Devel/SPAGOBI/pippo.zip");
+				oo.write(data);
+				oo.flush();
+				oo.close();
+				if (bool) {
+
+					// prova
+					// ZipUtils.unzipFile("C:/Devel/SPAGOBI/pippo.zip");
+
+					// fine
+					ZipUtils zip = new ZipUtils();
+					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					// ZipUtils.unzip(new ByteArrayInputStream(data), f);
+					ZipUtils.unzip(new File("C:/Devel/SPAGOBI/pippo.zip"), output);
+					data = output.toByteArray();
+				}
+
 				String path = layerServices.getResourcePath(data);
 				aLayer.setPathFile(path);
 				aLayer.setLayerDef(data);
@@ -220,7 +298,7 @@ public class LayerCRUD {
 				id = dao.insertLayer(aLayer);
 
 				logger.debug("Layer saved: layer label " + aLayer.getLabel());
-				// return "{id:"+id+"}";
+
 				return "{\"id\":" + id + "}";
 			}
 
@@ -230,6 +308,35 @@ public class LayerCRUD {
 		}
 
 		return null;
+	}
+
+	@POST
+	@Path("/deleterole")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String deleteRole(@Context HttpServletRequest req) throws JSONException {
+		JSONObject requestBodyJSON = null;
+		Integer id;
+		Integer id_role = null;
+		Integer layerid = null;
+
+		try {
+			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+		} catch (Exception e) {
+			logger.error("Error reading the body from the request", e);
+			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
+		}
+
+		id_role = requestBodyJSON.getInt("id");
+		layerid = requestBodyJSON.getInt("id_l");
+
+		logger.debug("Deleting the layer");
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		try {
+			dao.eraseRole(id_role, layerid);
+		} catch (EMFUserError e) {
+
+		}
+		return "{}";
 	}
 
 	@PUT
@@ -251,6 +358,9 @@ public class LayerCRUD {
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
 
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+			// TODO check if profile is null
+			dao.setUserProfile(profile);
 
 			// prendo i pacchetti del file
 			List<InputPart> inputParts = formDataMap.get("layerFile");
@@ -288,7 +398,7 @@ public class LayerCRUD {
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String modifyLayer(@Context HttpServletRequest req) {
+	public String modifyLayer(@Context HttpServletRequest req) throws EMFUserError {
 		JSONObject requestBodyJSON = null;
 		try {
 			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);

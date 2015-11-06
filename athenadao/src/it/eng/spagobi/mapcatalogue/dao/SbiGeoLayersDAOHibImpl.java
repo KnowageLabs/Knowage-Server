@@ -20,13 +20,16 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-//import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -177,6 +180,21 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				hibLayer.setPathFile(null);
 			}
 			updateSbiCommonInfo4Update(hibLayer);
+			// cancello tutti i roles associati al layer
+			// query hql
+			String hql = "DELETE from SbiGeoLayersRoles a WHERE a.layer.id =" + aLayer.getLayerId();
+			Query q = tmpSession.createQuery(hql);
+			q.executeUpdate();
+			// aggiorno i ruoli utenti scelti
+			for (SbiExtRoles r : aLayer.getRoles()) {
+
+				// riaggiungo ruoli
+				SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(aLayer.getLayerId(), r.getExtRoleId().intValue());
+				updateSbiCommonInfo4Update(hibLayRol);
+				tmpSession.save(hibLayRol);
+				// update(hibLayRol);
+			}
+
 			tx.commit();
 
 			// save file on server//
@@ -232,7 +250,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			SbiGeoLayers hibLayer = new SbiGeoLayers();
-			// SbiGeoLayersRolesId hibLayRol = new SbiGeoLayersRolesId();
+
 			hibLayer.setName(aLayer.getName());
 			if (aLayer.getDescr() == null) {
 				aLayer.setDescr("");
@@ -250,6 +268,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setLayerParams(aLayer.getLayerParams());
 			hibLayer.setLayerOrder(aLayer.getLayerOrder());
 			hibLayer.setCategory_id(aLayer.getCategory_id());
+
+			if (aLayer.getCategory_id() == -1) {
+				hibLayer.setCategory(null);
+			} else {
+				hibLayer.setCategory(aLayer.getCategory());
+			}
 			String path = null;
 			if (aLayer.getPathFile() != null) {
 
@@ -259,18 +283,27 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 
 				path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
-				aLayer.setPathFile(path);
+				aLayer.setPathFile(path + aLayer.getLabel());
+				hibLayer.setPathFile(path + aLayer.getLabel());
 			} else {
 				aLayer.setPathFile(null);
+				hibLayer.setPathFile(null);
 			}
-			hibLayer.setPathFile(path);
+
 			updateSbiCommonInfo4Insert(hibLayer);
 			id = (Integer) tmpSession.save(hibLayer);
 
 			// setto i ruoli utenti scelti
-			// hibLayRol.setLayer(aLayer.getRoles().getLayer());
-			// hibLayRol.setRole(aLayer.getRoles().getRole());
 
+			for (SbiExtRoles r : aLayer.getRoles()) {
+				SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(id, r.getExtRoleId().intValue());
+
+				updateSbiCommonInfo4Insert(hibLayRol);
+				tmpSession.save(hibLayRol);
+				// insert(hibLayRol);
+			}
+
+			// hibLayer.setRoles(aLayer.getRoles());
 			tx.commit();
 
 			// save file on server//
@@ -318,6 +351,20 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#eraseEngine(it.eng.spagobi.bo.Engine)
 	 */
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public List<SbiExtRoles> listRolesFromId(final Object[] arr) {
+		return list(new ICriterion() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiExtRoles.class);
+				c.add(Restrictions.in("extRoleId", arr));
+				return c;
+			}
+		});
+	}
+
 	@Override
 	public void eraseLayer(Integer layerId) throws EMFUserError {
 
@@ -334,6 +381,45 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 			tmpSession.delete(hibLayer);
 
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
+		}
+	}
+	/*
+	 *
+	 *
+	 *
+	 *
+	 *
+	 */
+
+	@Override
+	public void eraseRole(Integer roleId, Integer layerId) throws EMFUserError {
+
+		Session tmpSession = null;
+		Transaction tx = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(layerId, roleId);
+
+			// delete(SbiGeoLayersRoles.class, hibLayRol);
+			tmpSession.delete(hibLayRol);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
@@ -376,10 +462,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
+			SbiGeoLayers hibLayer;
 			while (it.hasNext()) {
-				SbiGeoLayers hibLayer = (SbiGeoLayers) it.next();
+				hibLayer = (SbiGeoLayers) it.next();
 				if (hibLayer != null) {
-					GeoLayer bilayer = hibLayer.toGeoLayer();
+					final GeoLayer bilayer = hibLayer.toGeoLayer();
 					realResult.add(bilayer);
 				}
 			}

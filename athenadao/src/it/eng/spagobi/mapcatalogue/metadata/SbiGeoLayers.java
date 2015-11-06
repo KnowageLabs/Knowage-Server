@@ -6,7 +6,10 @@
 
 package it.eng.spagobi.mapcatalogue.metadata;
 
+import java.util.List;
+
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 
@@ -30,7 +33,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private int layerOrder;
 	private int category_id;
 	private SbiDomains category;
-	//private SbiGeoLayersRolesId roles;
+	private List<SbiExtRoles> roles;
 
 	public SbiGeoLayers() {
 		super();
@@ -179,15 +182,15 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	public void setCategory_id(int category_id) {
 		this.category_id = category_id;
 	}
-/*
-	public SbiGeoLayersRolesId getRoles() {
+
+	public List<SbiExtRoles> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(SbiGeoLayersRolesId roles) {
+	public void setRoles(List<SbiExtRoles> roles) {
 		this.roles = roles;
 	}
-*/
+
 	public GeoLayer toGeoLayer() {
 		GeoLayer geo = new GeoLayer();
 		geo.setDescr(getDescr());
@@ -207,7 +210,9 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		geo.setLayerOrder(layerOrder);
 		geo.setCategory(category);
 		geo.setCategory_id(category_id);
-		//geo.setRoles(roles);
+
+		geo.setRoles(roles);
+
 		return geo;
 	}
 
