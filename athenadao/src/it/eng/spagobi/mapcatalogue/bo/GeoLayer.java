@@ -5,8 +5,10 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.bo;
 
+import java.util.List;
+
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 
 public class GeoLayer {
 
@@ -27,7 +29,7 @@ public class GeoLayer {
 	private int layerOrder;
 	private int category_id;
 	private SbiDomains category;
-	private SbiGeoLayersRolesId roles;
+	private List<SbiExtRoles> roles;
 
 	public GeoLayer() {
 		super();
@@ -177,11 +179,11 @@ public class GeoLayer {
 		this.category_id = category_id;
 	}
 
-	public SbiGeoLayersRolesId getRoles() {
+	public List<SbiExtRoles> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(SbiGeoLayersRolesId roles) {
+	public void setRoles(List<SbiExtRoles> roles) {
 		this.roles = roles;
 	}
 

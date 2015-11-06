@@ -1,6 +1,8 @@
 package it.eng.spagobi.mapcatalogue.metadata;
 
-public class SbiGeoLayersRolesId {
+public class SbiGeoLayersRolesId implements java.io.Serializable {
+
+	private static final long serialVersionUID = 3557389011111017484L;
 
 	private int layer;
 	private int role;
@@ -13,6 +15,12 @@ public class SbiGeoLayersRolesId {
 		super();
 		this.layer = layer;
 		this.role = role;
+	}
+
+	public SbiGeoLayersRolesId(int layer) {
+		super();
+		this.layer = layer;
+
 	}
 
 	public int getLayer() {

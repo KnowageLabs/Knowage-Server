@@ -11,16 +11,18 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.util.List;
+
+import org.hibernate.Session;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-
-import java.util.List;
-
-import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a role
@@ -67,6 +69,8 @@ public interface IRoleDAO extends ISpagoBIDao {
 	 *             If an Exception occurred
 	 */
 	public List loadAllRoles() throws EMFUserError;
+
+	public List loadRolesItem(JSONObject item) throws EMFUserError, JSONException;
 
 	/**
 	 * Implements the query to insert a role. All information needed is stored into the input <code>Role</code> object.

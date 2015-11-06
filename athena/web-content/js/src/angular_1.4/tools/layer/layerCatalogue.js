@@ -53,7 +53,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.isRequired=true;
 	$scope.flagtype=true;
 	$scope.flag=false;
-	
 	$scope.translate = sbiModule_translate;
 	$scope.layerList = [];
 	$scope.object_temp={};
@@ -433,11 +432,8 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					} else {
 
 						$scope.category = data;
-						console.log("caegory");
-						console.log($scope.category );
-						$scope.category.push(
-								{VALUE_ID:0, VALUE_NM:null}
-						);
+					
+					
 					}
 				}).error(function(data, status, headers, config) {
 			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);

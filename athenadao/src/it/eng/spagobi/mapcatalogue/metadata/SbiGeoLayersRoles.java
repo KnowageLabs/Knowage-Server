@@ -1,8 +1,12 @@
 package it.eng.spagobi.mapcatalogue.metadata;
 
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import java.util.List;
 
-public class SbiGeoLayersRoles {
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+
+public class SbiGeoLayersRoles extends SbiHibernateModel {
 	private static final long serialVersionUID = 8286177194393981144L;
 
 	private SbiGeoLayersRolesId id;
@@ -28,11 +32,24 @@ public class SbiGeoLayersRoles {
 		return id;
 	}
 
-	public SbiGeoLayersRoles(SbiGeoLayersRolesId id, SbiGeoLayers layer, SbiExtRoles role) {
+	public SbiGeoLayersRoles(SbiGeoLayersRolesId id, SbiGeoLayers layer, SbiExtRoles role, String org) {
 		super();
 		this.id = id;
 		this.layer = layer;
 		this.role = role;
+
+	}
+
+	public SbiGeoLayersRoles(int layer, int role) {
+		super();
+		this.id = new SbiGeoLayersRolesId(layer, role);
+
+	}
+
+	public SbiGeoLayersRoles(int layer) {
+		super();
+		this.id = new SbiGeoLayersRolesId(layer);
+
 	}
 
 	/**
@@ -57,6 +74,12 @@ public class SbiGeoLayersRoles {
 
 	public void setRole(SbiExtRoles role) {
 		this.role = role;
+	}
+
+	public GeoLayer toGeoLayer(List<SbiExtRoles> roles_list) {
+		GeoLayer geo = new GeoLayer();
+		geo.setRoles(roles_list);
+		return geo;
 	}
 
 }

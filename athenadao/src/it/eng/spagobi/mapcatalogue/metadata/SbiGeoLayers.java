@@ -31,7 +31,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private String layerOptions;
 	private String layerParams;
 	private int layerOrder;
-	private int category_id;
+	private Integer category_id;
 	private SbiDomains category;
 	private List<SbiExtRoles> roles;
 

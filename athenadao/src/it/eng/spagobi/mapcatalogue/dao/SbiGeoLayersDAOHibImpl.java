@@ -269,11 +269,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setLayerOrder(aLayer.getLayerOrder());
 			hibLayer.setCategory_id(aLayer.getCategory_id());
 
-			if (aLayer.getCategory_id() == -1) {
-				hibLayer.setCategory(null);
-			} else {
-				hibLayer.setCategory(aLayer.getCategory());
-			}
+			// if (aLayer.getCategory_id() == 0) {
+			// hibLayer.setCategory(null);
+			//
+			// } else {
+			hibLayer.setCategory(aLayer.getCategory());
+			// }
 			String path = null;
 			if (aLayer.getPathFile() != null) {
 
