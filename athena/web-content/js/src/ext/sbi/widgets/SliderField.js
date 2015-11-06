@@ -117,8 +117,8 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	this.storeLoaded = true;
     	
     	if(this.bufferedValues) {
-    		Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : set buffered value: [" + this.bufferedValues + "]");
-    		this.doSetValue(this.bufferedValues, false);
+    		Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : set buffered value: [" + this.bufferedValues + "]");   		
+    		this.doSetValue(this.bufferedValues, false);    		
     		delete this.bufferedValues;
     	} else {
     		Sbi.trace("[Sbi.SliderField.refreshOptions] : [" + this.name + "] : indexes (pre): " + this.getIndexes());
@@ -133,11 +133,12 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	Sbi.trace("[Sbi.SliderField.reset] : [" + this.name + "] :  IN");
     	if(this.bufferedValues) delete this.bufferedValues;
         this.setIndexes(this.originalIndex, false);
+//        this.setIndexes("", false, false);
         this.clearInvalid();
         this.reseted = true;
+        this.fireEvent('change', this, null);
         Sbi.trace("[Sbi.SliderField.reset] : [" + this.name + "] : OUT");
     },
-    
     
    
     
@@ -151,8 +152,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
     	Sbi.trace("[Sbi.SliderField.setIndexes] : [" + this.name + "] :  IN");
     	
     	Sbi.debug("[Sbi.SliderField.setIndex] : [" + this.name + "] :  set value to [" + v + "]");
-    	
-    	if(v === "" || v === undefined) { // it's a reset...
+    	if(v === "" || v === undefined) { // it's a reset...    		
         	v = [this.slider.minValue];
         	if(this.multiSelect == true){
         		v.push(this.slider.maxValue);
@@ -272,7 +272,7 @@ Ext.extend(Sbi.widgets.SliderField, Ext.form.SliderField , {
         	index = this.store.find(this.valueField, v[v.length-1]);
         	if(index === -1) {
         		Sbi.warn("[Sbi.SliderField.doSetValue] : [" + this.name + "] : value [" + v[v.length-1] + "] is not contained in the dataset (store loaded: " + this.storeLoaded + "; store size: " + (this.storeLoaded?this.store.getTotalCount(): "-")+ " )");
-        		        } else {
+        	} else {
             	Sbi.trace("[Sbi.SliderField.doSetValue] : [" + this.name + "] : index of value [" + v[v.length-1] + "] is equal to [" + index + "]");
             	this.slider.setValue(1, index, animate);
             }
