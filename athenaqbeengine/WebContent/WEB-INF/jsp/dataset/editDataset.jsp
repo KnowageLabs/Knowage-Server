@@ -156,7 +156,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	      	qbeConfig.isFromCross = <%= isFromCross %>;
 	      	<%
 	      	StringBuffer datamartNamesBuffer = new StringBuffer("[");
-	      	IModelStructure ms = ((JPADataSource)qbeEngineInstance.getDataSource()).getModelStructure(profile);
+	      	IModelStructure ms = qbeEngineInstance.getDataSource().getModelStructure(profile);
 	      	Iterator<String> it = ms.getModelNames().iterator();
 	      	while (it.hasNext()) {
 	      		datamartNamesBuffer.append("'" + it.next() + "'");

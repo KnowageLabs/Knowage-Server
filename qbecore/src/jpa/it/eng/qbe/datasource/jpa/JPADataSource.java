@@ -5,6 +5,20 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource.jpa;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
+import org.apache.log4j.Logger;
+
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
@@ -26,20 +40,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -88,6 +88,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	 *
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang .String)
 	 */
+	@Override
 	public EntityManagerFactory getEntityManagerFactory(String dmName) {
 		return getEntityManagerFactory();
 	}
@@ -97,6 +98,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	 *
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManagerFactory()
 	 */
+	@Override
 	public EntityManagerFactory getEntityManagerFactory() {
 		if (factory == null) {
 			open();
@@ -109,6 +111,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	 *
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManager()
 	 */
+	@Override
 	public EntityManager getEntityManager() {
 		if (factory == null) {
 			open();
@@ -117,6 +120,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		return entityManager;
 	}
 
+	@Override
 	public void open() {
 		File jarFile = null;
 
@@ -135,10 +139,12 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 	}
 
+	@Override
 	public boolean isOpen() {
 		return factory != null;
 	}
 
+	@Override
 	public void close() {
 		factory = null;
 	}
@@ -156,9 +162,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		return dataSource;
 	}
 
+	@Override
 	public IModelStructure getModelStructure(UserProfile profile) {
 		userProfile = profile;
-		System.out.println("getModelStructure(UserProfile profile) userprofile: " + (userProfile != null ? userProfile.getUserName() : " NULL") + "dataMartModelStructure: " + dataMartModelStructure);
 		IModelStructureBuilder structureBuilder;
 		if (dataMartModelStructure == null) {
 			structureBuilder = new JPAModelStructureBuilder(this);
@@ -175,10 +181,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		return dataMartModelStructure;
 	}
 
+	@Override
 	public IModelStructure getModelStructure() {
-
-		System.out.println("getModelStructure() userprofile: " + (userProfile != null ? userProfile.getUserName() : " NULL"));
-
 		return getModelStructure(userProfile);
 	}
 
@@ -216,6 +220,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		}
 		return toReturn;
 	}
+
 	private Map<String, List<String>> getFieldsFilteredByRole() {
 		Map<String, List<String>> toReturn = new HashMap<String, List<String>>();
 		Iterator<String> it = dataMartModelStructure.getModelNames().iterator();
@@ -276,6 +281,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		return cfg;
 	}
 
+	@Override
 	public ITransaction getTransaction() {
 		if (getEntityManager() instanceof org.eclipse.persistence.jpa.JpaEntityManager) {
 			return new JPAEclipseLinkTransaction(this);
@@ -284,6 +290,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		}
 	}
 
+	@Override
 	public IPersistenceManager getPersistenceManager() {
 		// TODO Auto-generated method stub
 		return new JPAPersistenceManager(this);

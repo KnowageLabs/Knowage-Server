@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.qbe.datasource;
 
+import java.util.Locale;
+
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.transaction.ITransaction;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
@@ -12,8 +14,7 @@ import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.IStatement;
-
-import java.util.Locale;
+import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
  * @author Andrea Gioia
@@ -21,18 +22,28 @@ import java.util.Locale;
 public interface IDataSource {
 
 	String getName();
+
 	IDataSourceConfiguration getConfiguration();
 
 	IModelStructure getModelStructure();
+
+	IModelStructure getModelStructure(UserProfile profile);
+
 	IModelAccessModality getModelAccessModality();
-	void setDataMartModelAccessModality(IModelAccessModality modelAccessModality) ;
+
+	void setDataMartModelAccessModality(IModelAccessModality modelAccessModality);
+
 	IModelProperties getModelI18NProperties(Locale locale);
 
 	void open();
+
 	boolean isOpen();
+
 	void close();
 
 	IStatement createStatement(Query query);
+
 	ITransaction getTransaction();
+
 	IPersistenceManager getPersistenceManager();
 }
