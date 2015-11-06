@@ -6,11 +6,18 @@
 
 package it.eng.spagobi.mapcatalogue.serializer;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class GeoLayerJSONDeserializer {
@@ -31,14 +38,16 @@ public class GeoLayerJSONDeserializer {
 	private static final String LAYERPARAMS = "layerParams";
 	private static final String LAYERORDER = "layerOrder";
 	private static final String GEOCATEGORY = "category_id";
+	private static final String ROLES = "roles";
 
-	public static GeoLayer deserialize(JSONObject serialized) {
+	public static GeoLayer deserialize(JSONObject serialized) throws EMFUserError {
 
 		if (serialized != null) {
 			String[] properties = JSONObject.getNames(serialized);
 			if (properties != null) {
 				GeoLayer layer = new GeoLayer();
 				JSONObject layerDef = new JSONObject();
+				JSONObject rolesJSON = new JSONObject();
 				for (int i = 0; i < properties.length; i++) {
 					try {
 						if (properties[i].equals(ID)) {
@@ -75,8 +84,26 @@ public class GeoLayerJSONDeserializer {
 							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
 						} else if (properties[i].equals(GEOCATEGORY)) {
 							layer.setCategory_id(new Integer(serialized.getString(properties[i])));
+						} else if (properties[i].equals(ROLES)) {
+
+							ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+							List<SbiExtRoles> objRoles = null;
+
+							JSONArray refe = serialized.getJSONArray(properties[i]);
+							Object[] link = new Object[refe.length()];
+							if (refe.length() != 0) {
+
+								for (int j = 0; j < refe.length(); j++) {
+									link[j] = refe.getJSONObject(j).get("id");
+								}
+								objRoles = dao.listRolesFromId(link);
+								layer.setRoles(objRoles);
+							}
+
 						} else {
+
 							layerDef.put(properties[i], serialized.get(properties[i]));
+							// rolesJSON.put(properties[i], serialized.get(properties[i]));
 						}
 					} catch (JSONException e) {
 						logger.error("Error deserializing the layer.", e);
@@ -86,6 +113,7 @@ public class GeoLayerJSONDeserializer {
 				}
 				logger.debug("Layer deserialized. Label: " + layer.getLabel());
 				layer.setLayerDef(layerDef.toString().getBytes());
+				// layer.setRoles(rolesJSON.toString());
 				return layer;
 			}
 		}

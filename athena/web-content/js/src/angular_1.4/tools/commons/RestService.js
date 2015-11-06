@@ -24,9 +24,13 @@ Restapp.service('restServices', function($http, ENDPOINT_URI) {
 		
 		item == undefined ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		console.log("GET: "+getBaseUrl(endP_path) + "" + req_Path + "" + item);
-		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" + item);
+		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "" +item);
 	};
-
+	service.get_item = function(endP_path, req_Path, item){
+		console.log("GET2");
+		console.log(item);
+		return $http.get(getBaseUrl(endP_path) + "" + req_Path + "", item);
+	}
 	service.remove = function(endP_path, req_Path, item) {
 		item == undefined ? item = "" : item = "?" + item;
 		console.log("REMOVE: "+getBaseUrl(endP_path) + "" + req_Path + "" + item);

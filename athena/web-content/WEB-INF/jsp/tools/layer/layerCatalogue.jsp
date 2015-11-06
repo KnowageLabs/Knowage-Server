@@ -41,7 +41,7 @@
 	<div ng-controller="Controller " layout="row" layout-wrap layout-fill>
 		<!-- left BOX -->
 
-		<div flex="20" layout-fill class="leftBox h100">
+		<div flex="40" layout-fill class="leftBox h100">
 
 			<md-toolbar class="md-blue minihead ">
 			<div class="md-toolbar-tools">
@@ -63,9 +63,10 @@
 					click-function="loadLayerList(item)" menu-option=menuLayer>
 				</angular-list> 
 				
-				--> <angular-table  ng-click="showme=true" layout-fill
+				--> <angular-table   layout-fill
 				id='layerlist' ng-model=layerList 
-				columns='["name","type"]'
+				columns='["name","type", "layerURL"]'
+				columnsSearch='["name","type", "layerURL"]'
 				show-search-bar=true highlights-selected-item=true
 				click-function="loadLayerList(item)" menu-option=menuLayer></angular-table>
 				
@@ -98,69 +99,76 @@
 					class="ToolbarBox miniToolbar noBorder">
 
 				<div layout="row" layout-wrap>
-					<div flex=3 style="margin-top: 30px;">
+				<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
 					</div>
+				-->
 					<div flex=25>
-						<md-input-container> <label>{{translate.load("sbi.glossary.category")}}</label>
-							<md-select ng-required="isRequired" ng-change="isRequired=true" aria-label="aria-label" ng-model="selectedLayer.category_id" ng-change=""> 
-								<md-option	ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
+						<md-input-container  class="small counter"> <label>{{translate.load("sbi.glossary.category")}}</label>
+							<md-select ng-init="selectedLayer.category_id=-1" aria-label="aria-label" ng-model="selectedLayer.category_id" > 
+								<md-option ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
 							</md-select> 
 						</md-input-container>
 					</div>
 				</div>
 				
 				<div layout="row" layout-wrap>
-					<div flex=3 style="margin-top: 30px;">
+				<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-bookmark"></md-icon>
 					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.behavioural.lov.details.label")}}</label>
-						<input ng-model="selectedLayer.label" ng-change="isRequired=true"
-							ng-required="isRequired" maxlength="100" ng-maxlength="100"
+					-->
+					<div flex=100>
+						<md-input-container class="small counter" class="small counter"> <label>{{translate.load("sbi.behavioural.lov.details.label")}}</label>
+						<input class="input_class" ng-model="selectedLayer.label"
+							required maxlength="100" ng-maxlength="100"
 							md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap>
-					<div flex=3 style="margin-top: 30px;">
+				<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
 					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
-						<input ng-model="selectedLayer.name" ng-change="isRequired=true"
-							ng-required="isRequired" maxlength="100" ng-maxlength="100"
+					  -->	
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
+						<input class="input_class" ng-model="selectedLayer.name"  
+							required maxlength="100" ng-maxlength="100"
 							md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap>
-					<div flex=3 style="margin-top: 30px;">
+				<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-file-text-o"></md-icon>
 					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.descprition")}}</label>
-						<input ng-model="selectedLayer.descr" maxlength="100"
+					  -->	
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.descprition")}}</label>
+						<input class="input_class" ng-model="selectedLayer.descr" maxlength="100"
 							ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 
 				<div layout="row" layout-wrap>
+				 
 					<div flex=3 style="line-height: 40px">
-						<md-icon md-font-icon="fa fa-flag"></md-icon>
+						<!-- <md-icon md-font-icon="fa fa-flag"></md-icon> -->
 						<label>{{translate.load("sbi.tools.layer.baseLayer")}}</label>
 					</div>
-
-					<md-input-container> <md-checkbox
+  
+					<md-input-container class="small counter"> <md-checkbox 
 						ng-model="selectedLayer.baseLayer" aria-label="BaseLayer">
 					</md-checkbox> </md-input-container>
 
 				</div>
 				<div layout="row" layout-wrap>
+				<!-- 
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-caret-square-o-down"></md-icon>
 					</div>
+					 -->
 					<div flex=25>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
-							<md-select ng-required="isRequired" ng-change="isRequired=true" ng-show="flagtype" aria-label="aria-label" ng-model="selectedLayer.type" ng-change=""> 
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
+							<md-select placeholder='{{translate.load("sbi.generic.select")}} {{translate.load("sbi.tools.layer.props.type")}}' ng-required="isRequired"  ng-mouseleave="isRequired=true" ng-show="flagtype" aria-label="aria-label" ng-model="selectedLayer.type" ng-change=""> 
 								<md-option	ng-repeat="type in listType" value="{{type.value}}">{{type.label}}</md-option>
 							</md-select> 
 						</md-input-container>
@@ -171,119 +179,160 @@
 					</div>
 				<br><br>
 				<div layout="row" layout-wrap>
+				<!-- 
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-bookmark"></md-icon>
 					</div>
+					 -->
 
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.label")}}</label>
-						<input ng-model="selectedLayer.layerLabel"
-							ng-change="isRequired=true" ng-required="isRequired"
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.label")}}</label>
+						<input class="input_class" ng-model="selectedLayer.layerLabel"
+							required
 							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap>
+				<!--  
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
 					</div>
-
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.name")}}</label>
-						<input ng-model="selectedLayer.layerName"
-							ng-change="isRequired=true" ng-required="isRequired"
-							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+					-->
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.name")}}</label>
+						<input class="input_class" ng-model="selectedLayer.layerName"
+							required maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap>
+				<!--
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-tag"></md-icon>
 					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.id")}}</label>
-						<input ng-model="selectedLayer.layerIdentify"
-							ng-change="isRequired=true" ng-required="isRequired"
-							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+					  -->
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.id")}}</label>
+						<input class="input_class" ng-model="selectedLayer.layerIdentify"
+							required maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 				
 				<div layout="row" layout-wrap>
+				<!-- 
 					<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-spinner"></md-icon>
-					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.order")}}</label>
-						<input ng-model="selectedLayer.layerOrder"
-							ng-change="isRequired=true" ng-required="isRequired"
-							type="number" min="0"> </md-input-container>
+					</div> -->
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.order")}}</label>
+						<input class="input_class" ng-model="selectedLayer.layerOrder"
+							required type="number" min="0"> </md-input-container>
 					</div>
 				</div>
 				
+				<div layout="row" layout-wrap ng-show="pathFileCheck"  style="margin-top:-15px;">
 				
+					<p>File location: <b>{{selectedLayer.pathFile}}{{selectedLayer.label}}</b></p>
+				<!--  <md-chips>
+					 <md-chip> <md-chip-template>
+					 	<strong> {{selectedLayer.label}}</strong>
+					 	<span><md-icon md-font-icon="fa fa-plus-square"></md-icon>
+					 	<md-tooltip md-visible="demo.showTooltip" md-direction="{{demo.tipDirection}}">
+					 	{{selectedLayer.pathFile}}
+     						</md-tooltip>
+						</span>
+				<!- -  <md-chip-remove ng-click="deleteRole($chip.id)"><md-icon md-font-icon="fa fa-times"></md-icon></md-chip-remove>- ->	
+				  		</md-chip-template> </md-chip>
+				  	</md-chips>
+				  	-->	
+				</div>
+								
 				<!-- inizio campi variabili -->
 				<div layout="row" layout-wrap ng-if="selectedLayer.type == 'File'">
-					<div flex=3 style="margin-top: 10px;">
+				<!--<div flex=3 style="margin-top: 10px;">
 						<md-icon md-font-icon="fa fa-upload"></md-icon>
 					</div>
-					<div>
-						<md-input-container> 
-							<input ng-model="selectedLayer.layerFile" type="file" fileread="selectedLayer.layerFile"> 
+					  -->	
+					<div flex=100 >
+						<md-input-container class="small counter"> 
+							<input  ng-model="selectedLayer.layerFile" type="file" fileread="selectedLayer.layerFile"> 
+							
 						</md-input-container>
+						
 					</div>
 				</div>
-
 
 				<div layout="row" layout-wrap
 					ng-if="selectedLayer.type == 'WFS' || selectedLayer.type == 'WMS' || selectedLayer.type == 'TMS' ">
-					<div flex=3 style="margin-top: 25px;">
+				<!--<div flex=3 style="margin-top: 25px;">
 						<md-icon md-font-icon="fa fa-link"></md-icon>
 					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.url")}}</label>
-						<input ng-model="selectedLayer.layerURL" required maxlength="100"
-							ng-maxlength="100" md-maxlength="100"> </md-input-container>
+					 -->	
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.url")}}</label>
+						<input class="input_class" placeholder="Es:http://www.google.it" type="url" ng-model="selectedLayer.layerURL" required maxlength="500"
+							ng-maxlength="500" md-maxlength="500"> </md-input-container>
+				
+      							
 					</div>
 				</div>
 				<div layout="row" layout-wrap
 					ng-if="selectedLayer.type == 'Google' || selectedLayer.type == 'WMS' || selectedLayer.type == 'TMS' ">
-					<div flex=3 style="margin-top: 25px;">
+				<!--<div flex=3 style="margin-top: 25px;">
 						<md-icon md-font-icon="fa fa-cogs"></md-icon>
-					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.options")}}</label>
-						<input ng-model="selectedLayer.layerOptions" required
+					</div>  -->	
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.options")}}</label>
+						<input class="input_class" ng-model="selectedLayer.layerOptions" required
 							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap ng-if="selectedLayer.type == 'WMS'">
-					<div flex=3 style="margin-top: 30px;">
+				<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
-					</div>
-					<div flex=90>
-						<md-input-container> <label>{{translate.load("sbi.tools.layer.props.params")}}</label>
-						<input ng-model="selectedLayer.layerParams" required
+					</div>  -->	
+					<div flex=100>
+						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.params")}}</label>
+						<input class="input_class" ng-model="selectedLayer.layerParams" required
 							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 					</div>
 				</div>
 
-				<!-- role selection work in progress.... -->
-			<!--    <div layout="row" layout-wrap>
-					<div flex=3 style="margin-top: 30px;">
+				
+			    <div layout="row" layout-wrap>
+				<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
-					</div>
+					</div> 
 					<div flex=45>
 						<md-input-container> <label>{{translate.load("sbi.execution.roleselection.title")}}</label>
-							<md-select ng-required="isRequired" ng-change="isRequired=true" multiple aria-label="aria-label" ng-model="selectedLayer.roles" ng-change=""> 
-								<md-option	ng-repeat="rs in roles" value="{{rs.id}}">{{rs.name}}</md-option>
+							<md-select ng-change="isRequired=true" multiple aria-label="aria-label" ng-model="selectedLayer.roles" ng-change=""> 
+								<md-option	ng-repeat="rs in roles"  value="{{rs.id}}">{{rs.name}}</md-option>
 							</md-select> 
 						</md-input-container>
 					</div>
 					
+					  <md-chips ng-model="rolesItem" readonly="true"> <md-chip-template>
+						<span> <strong> {{$chip.name}}</strong></span>
+						<md-chip-remove ng-click="deleteRole($chip.id)"><md-icon md-font-icon="fa fa-times"></md-icon></md-chip-remove>
+					  	</md-chip-template> </md-chips>
+					-->
+					<!-- role selection with checkbox -->
 					
+					</div>
+					
+					
+					
+					<div layout="row" layout-wrap flex>
+						<div flex="50" ng-repeat="rl in roles">
+							<md-checkbox ng-checked="exists(rl, rolesItem)"
+								ng-click="toggle(rl, rolesItem)"> {{ rl.name }}  </md-checkbox>
+								
+						</div>
 				</div>
-				-->	
+
 				
 				</md-content>
-
+				
+				
 			</form>
 		</div>
 
