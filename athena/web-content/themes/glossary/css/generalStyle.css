@@ -419,3 +419,12 @@ md-tabs.mini-tabs md-tab-item{
 md-tabs.mini-tabs  md-tabs-content-wrapper{
 	 top:24px !important;
 }
+
+
+md-input-container.small{
+	    padding-bottom: 0px;
+}
+
+md-input-container.small.counter textarea,md-input-container.small.counter input {
+	 margin-right: 50px;
+}

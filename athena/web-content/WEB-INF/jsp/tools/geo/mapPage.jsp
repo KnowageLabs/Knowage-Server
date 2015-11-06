@@ -367,10 +367,34 @@ margin: -7px 0 0 -3px;
     transition: all 0.5s ease-in-out !important;
     }
 
-.myAnim{
-transition: all .5s linear all;
-    overflow: hidden
-    }
+/* colorstyle */
+
+/* .COL000000{ */
+/*     background: #000000; */
+/* } */
+/* .993300{ */
+/*     background: #993300; */
+/* } */
+/* .333300{ */
+/*     background: #333300; */
+/* } */
+/* .003300{ */
+/*     background: #003300; */
+/* } */
+/* .003366{ */
+/*     background: #003366; */
+/* } */
+/* .000080{ */
+/*     background: #000080; */
+/* } */
+/* .333399{ */
+/*     background: #333399; */
+/* } */
+/* .333333{ */
+/*     background: #333333; */
+/* } */
+
+
 
       
  </style>

@@ -184,61 +184,58 @@
 								<div layout="row" layout-wrap>
 									<div flex="100">
 			
-										<md-input-container class="md-icon-float"> <!-- Use floating label instead of placeholder -->
-										<label>{{translate.load("sbi.glossary.word");}}</label> <md-icon md-font-icon="fa  fa-newspaper-o "
-											class="wo"></md-icon> <input ng-model="ctrl.newWord.WORD" maxlength="100"
-											type="text"> </md-input-container>
+										<md-input-container class="small" > <!-- Use floating label instead of placeholder -->
+										<label>{{translate.load("sbi.glossary.word");}}</label>
+<!-- 										 <md-icon md-font-icon="fa  fa-newspaper-o " class="wo">  </md-icon>  -->
+										 <input ng-model="ctrl.newWord.WORD" maxlength="100"type="text"> 
+										</md-input-container>
 									</div>
 								</div>
 
 
 								<div layout="row" layout-wrap>
 									<div flex="100">
-										<md-input-container class="md-icon-float textareaInputBox"
-											ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.DESCR.length === 0  }">
-										<!-- Use floating label instead of placeholder --> <label>{{translate.load("sbi.glossary.description");}}</label>
-										<md-icon md-font-icon="fa  fa-file-text-o " class="des"></md-icon>
-										<textarea id="descrText" ng-model="ctrl.newWord.DESCR" columns="1"
-											md-maxlength="500" maxlength="500"></textarea> </md-input-container>
+									 <md-input-container class="md-block small counter">
+								        <label>{{translate.load("sbi.glossary.description");}}</label>
+								        <textarea id="descrText" ng-model="ctrl.newWord.DESCR" columns="1" md-maxlength="500" maxlength="500"></textarea>
+								      </md-input-container>
 									</div>
 								</div>
 								
 								<div layout="row"  layout-wrap>
 									<div flex="50">
-								<md-input-container class="md-icon-float " > 
-									<label class="selectLabel" ng-hide="ctrl.newWord.STATE==-1 || ctrl.newWord.STATE.length==0 || ctrl.newWord.STATE==undefined" >State</label>
-											<md-icon md-font-icon="fa fa-spinner " class="stato"></md-icon> 
-											<md-select 	placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}' ng-model="ctrl.newWord.STATE">
-												 <md-option value="-1">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.status");}}</md-option>
-												 <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">{{translate.load(st.VALUE_NM)}}</md-option>
-											</md-select> </md-input-container>
+									 <md-input-container class="small">
+								       	 	<label>{{translate.load("sbi.glossary.status");}}</label>
+									        <md-select  ng-model="ctrl.newWord.STATE">
+									         <md-option value="-1"></md-option>
+									          <md-option ng-repeat="st in ctrl.state" value="{{st.VALUE_ID}}">
+									           {{translate.load(st.VALUE_NM)}}
+									          </md-option>
+									        </md-select>
+								      	</md-input-container>
 									</div>
 			
 									<div flex="50">
-										<md-input-container class="md-icon-float"> 
-									<label class="selectLabel" ng-hide="ctrl.newWord.CATEGORY==-1 || ctrl.newWord.CATEGORY.length==0 || ctrl.newWord.CATEGORY==undefined" >Category</label>
-									
-									<md-icon md-font-icon="fa fa-flag-o " class="categoria"> </md-icon>
-									<md-select
-											placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.category");}}' ng-model="ctrl.newWord.CATEGORY">
-											 <md-option value="-1">{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.category");}}</md-option>
-											 <md-option
-											ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}"> {{translate.load(ct.VALUE_NM)}}</md-option>
-										</md-select>
-									
-								
+										 <md-input-container class="small">
+								       	 	<label> {{translate.load("sbi.glossary.category");}}</label>
+									        <md-select  ng-model="ctrl.newWord.CATEGORY">
+									         <md-option value="-1"></md-option>
+									          <md-option ng-repeat="ct in ctrl.category" value="{{ct.VALUE_ID}}">
+									           {{translate.load(ct.VALUE_NM)}}
+									          </md-option>
+									        </md-select>
+								      	</md-input-container>
 									</div>
 								</div>
 
 
 								<div layout="row" layout-wrap>
 									<div flex="100">
-										<md-input-container class="md-icon-float textareaInputBox"
-											ng-class="{ 'md-input-hasnt-value' : ctrl.newWord.FORMULA.length === 0  }">
-										<!-- Use floating label instead of placeholder --> <label>{{translate.load("sbi.glossary.formula");}}</label>
-										<md-icon md-font-icon="fa fa-superscript " class="formu"></md-icon>
-										<textarea id="formulaText" ng-model="ctrl.newWord.FORMULA" columns="1"
-											md-maxlength="500" maxlength="500"></textarea> </md-input-container>
+									<md-input-container class="md-block small counter">
+								        <label>{{translate.load("sbi.glossary.formula");}}</label>
+								        <textarea id="formulaText" ng-model="ctrl.newWord.FORMULA" columns="1" md-maxlength="500" maxlength="500"></textarea>
+								      </md-input-container>
+								      
 									</div>
 								</div>
 
@@ -248,10 +245,11 @@
 
 								<div layout="row" layout-wrap>
 									<div flex="100">
-										<md-input-container class="md-icon-float"
-											ng-class="{ 'md-input-has-value-copy' : ctrl.newWord.LINK.length > 0  }">
-										<div>
-											<div  id="chipsTree" ui-tree="ctrl.TreeOptionsChips"
+									
+										<md-input-container class="input-chips-container md-block small" ng-class="{ 'md-input-has-value-copy' : ctrl.newWord.LINK.length > 0  }">
+								        <label>{{translate.load("sbi.glossary.link");}}</label>
+								        
+								        <div  id="chipsTree" ui-tree="ctrl.TreeOptionsChips" 
 												data-drag-enabled="true" data-drag-delay="500"
 												data-empty-placeholder-enabled="false" class="chipsTree">
 												<ol id="olchiproot" ui-tree-nodes ng-model="ctrl.newWord.LINK"
@@ -264,55 +262,57 @@
 			
 												</ol>
 											</div>
-										</div>
-			
-										<label>{{translate.load("sbi.glossary.link");}}</label> <md-icon md-font-icon="fa fa-link "
-											class="lin"></md-icon>
-			
-										<div class="linkChips">
+
+
+								        
+								        <div class="linkChips"> 
 											<md-contact-chips ng-model="ctrl.newWord.LINK"
 												md-contacts="ctrl.querySearch($query)" md-contact-name="WORD" 
 												md-require-match="" filter-selected="true">
-			<!-- 								<md-chip-template > <strong>{{$chip.WORD | uppercase}}</strong> </md-chip-template>  -->
 											
 											</md-contact-chips>
 										</div>
-			
-										</md-input-container>
+
+
+								      </md-input-container>
+								      
+								      
+
 									</div>
 								</div>
 
 								<div layout="row" layout-wrap>
 									
 									
-									<div flex="40" style="height: 40px;" layout="row">
-									<md-icon md-font-icon="fa fa-folder-o " class="stato"
-											style="  margin-top: 25px;"></md-icon>
-											
-											
-									 	<md-select placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.attributes");}}' ng-model="ctrl.tmpAttr.Prop" md-on-open="ctrl.loadProperty()" style="    width: 100%;    margin-left: 24px;">
-  									   		 <md-option ng-value="attr" ng-repeat="attr in ctrl.propertyList">
-  									   		 	{{attr.ATTRIBUTE_NM}}
-  									   		 </md-option>
-    								 	</md-select>
-	
+									<div flex="40" >
+									
+										<md-input-container class="small">
+									       	 	<label> {{translate.load("sbi.glossary.attributes");}}</label>
+										        <md-select  ng-model="ctrl.tmpAttr.Prop" md-on-open="ctrl.loadProperty()"  >
+										         <md-option value="-1"></md-option>
+										          <md-option ng-value="attr" ng-repeat="attr in ctrl.propertyList">
+										         {{attr.ATTRIBUTE_NM}}
+										          </md-option>
+										        </md-select>
+									      	</md-input-container>
 									</div>
 			
 
-										<div flex="40">
-										<md-input-container class=" attr_Value md-icon-float textareaInputBox" ng-class="{ 'md-input-hasnt-value' : ( ctrl.tmpAttr.Val.length === 0 ||ctrl.tmpAttr.Val == null)  }"> 
-										<label>{{translate.load("sbi.generic.value");}}</label> <textarea ng-model="ctrl.tmpAttr.Val" maxlength="500"
-											></textarea> </md-input-container>
-									
+										<div flex>
+											<md-input-container class="md-block small counter">
+										        <label>{{translate.load("sbi.generic.value");}}</label>
+										        <textarea  ng-model="ctrl.tmpAttr.Val" columns="1" md-maxlength="500" maxlength="500"></textarea>
+										     </md-input-container>
+								      
 										</div>
 			
-										<div flex="20" layout="row" layout-align="center center"	>
+										<div flex="initial" layout-align="top center">
 										<md-button
 											ng-click="ctrl.addProp(ctrl.tmpAttr)"
-											ng-disabled=" ctrl.tmpAttr.Prop.length==0 || ctrl.tmpAttr.Prop==null  || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
+											ng-disabled=" ctrl.tmpAttr.Prop.length==0 || ctrl.tmpAttr.Prop=='-1' || ctrl.tmpAttr.Prop==null  || ctrl.tmpAttr.Val.length==0 || ctrl.tmpAttr.Val == null "
 											class="md-fab   md-mini" aria-label="Aggiungi_Attributo">
-										<md-tooltip> {{translate.load("sbi.generic.add");}} {{translate.load("sbi.glossary.attributes");}} </md-tooltip> <md-icon
-											md-font-icon="fa fa-plus fa-2x" style="   margin-left: 2px;"></md-icon>
+										<md-tooltip> {{translate.load("sbi.generic.add");}}  </md-tooltip> 
+										<md-icon md-font-icon="fa fa-plus fa-2x" style="   margin-left: 2px;"></md-icon>
 										</md-button>
 										</div>
 			
@@ -324,22 +324,18 @@
 			
 									<div flex="100">
 			
-										<md-list> <md-list-item
-											class="md-2-line box-list-option"
-											ng-repeat="attr in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row"
-											layout-wrap>
-										<div class="md-item-text md-whiteframe-z1"
-											 flex>
+										<md-list> 
+											<md-list-item class="md-2-line box-list-option" ng-repeat="attr in ctrl.newWord.SBI_GL_WORD_ATTR" layout="row" layout-wrap>
+										<div class="md-item-text md-whiteframe-z1"  flex>
 											<p class="margin5 wrapText">
 												<span>{{attr.ATTRIBUTE_NM}}</span>
-												<!-- 									<input class="transparent_input smallFont"	ng-model="attr.ATTRIBUTE_NM" type="text">  -->
-			
 											</p>
 											
 											
-											<md-input-container class=" textareaInputBox"		>
-											<textarea  class="attText" style="   padding-top: 0px !important; "ng-model="attr.VALUE" columns="1"
-											 maxlength="500"></textarea></md-input-container>
+											<md-input-container class=" textareaInputBox">
+												<textarea  class="attText" style="   padding-top: 0px !important; "ng-model="attr.VALUE" columns="1" maxlength="500">
+												</textarea>
+											</md-input-container>
 			
 											<md-button ng-click="ctrl.removeProp(attr)"
 												class="md-fab   md-ExtraMini" aria-label="add word"

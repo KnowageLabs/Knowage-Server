@@ -56,14 +56,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
 								<md-datepicker ng-model="activityEventCtrl.event.startDate" name={{translate.load("scheduler.startdate","component_scheduler_messages")}} required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
 								<label style="margin: 0 20px;">{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
-								<angular-time-picker id="myTimePicker" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
+								<angular-time-picker id="myTimePicker1" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
 							</div>
 
 							<div layout="row" class="checkboxRow">
 								<label style="margin-right: 5px;">{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
 								<md-datepicker ng-model="activityEventCtrl.event.endDate" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
 								<label style="margin: 0 20px; margin-right: 26px;">{{translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
-								<angular-time-picker id="myTimePicker" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
+								<angular-time-picker id="myTimePicker2" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
 							</div>
 
 							<md-toolbar class="unselectedItem" 
@@ -166,14 +166,14 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 								</div>
 
 								<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'month'" layout="row" flex>
-									<div layout="column" layout-align="center center">
-										<div layout="row" flex style="margin: 0 15px;">
+									<div layout="column" layout-wrap layout-align="center center">
+										<div layout="row"  style="margin: 0 15px;">
 											<span>{{translate.load("sbi.generic.advanced")}}</span>
 											<md-switch style="margin: 0px 10px 17px 10px;" ng-change="activityEventCtrl.toggleMonthScheduler()"
 													class="greenSwitch" aria-label="Switch " ng-model="activityEventCtrl.typeMonth"
 													ng-init="activityEventCtrl.typeMonth=activityEventCtrl.typeMonth!=undefined? activityEventCtrl.typeMonth : true ;">
 											</md-switch>
-											<span>{{trabslate.load("sbi.behavioural.lov.type.simple")}}</span>
+											<span>{{translate.load("sbi.behavioural.lov.type.simple")}}</span>
 										</div>
 										<div layout="row" class="alignedCheckbox" ng-if="activityEventCtrl.typeMonth==true"
 												ng-init="activityEventCtrl.monthrep_n =activityEventCtrl.monthrep_n || 1;">
@@ -196,15 +196,15 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 										</div>
 									</div>
 
-									<div layout="column" layout-align="center center">
-										<div layout="row" flex style="margin: 0 15px;">
+									<div layout="column" layout-wrap layout-align="center center">
+										<div layout="row"  style="margin: 0 15px;">
 											<span>{{translate.load("sbi.generic.advanced")}}</span>
 											<md-switch style=" margin: 0px 10px 17px 10px;"
 													ng-change="activityEventCtrl.toggleMonthScheduler()" class="greenSwitch"
 													aria-label="Switch " ng-model="activityEventCtrl.typeMonthWeek"
 													ng-init="activityEventCtrl.typeMonthWeek = activityEventCtrl.typeMonthWeek!=undefined? activityEventCtrl.typeMonthWeek : true">
 											</md-switch>
-											<span>{{trabslate.load("sbi.behavioural.lov.type.simple")}}</span>
+											<span>{{translate.load("sbi.behavioural.lov.type.simple")}}</span>
 										</div>
 
 										<div layout="row" class="alignedCheckbox" ng-if="activityEventCtrl.typeMonthWeek==true"

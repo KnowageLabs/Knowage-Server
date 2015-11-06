@@ -1,83 +1,72 @@
-var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial', 'angular_rest', 'angular_list', 'angular_time_picker','angular_table']);
+var eventDefinitionApp = angular.module('EventDefinitionApp', ['ngMaterial','sbiModule',  'angular_list', 'angular_time_picker','angular_table']);
 
 eventDefinitionApp.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette('blue-grey');
 });
 	
-eventDefinitionApp.service('translate', function() {
-	this.addMessageFile = function(file){
-		messageResource.load([file,"messages"], function(){});
-	};
-	
-	this.load = function(key,sourceFile) {
-		var sf= sourceFile == undefined? 'messages' : sourceFile;
-		return messageResource.get(key, sf);
-	};
-});
-
 //this variable are global because i need to access at variable of one controller from another controller
 var activityEventCtrl;
 
 eventDefinitionApp.controller('ActivityEventController', 
-		['translate', '$scope', '$mdDialog', '$mdToast', 'restServices', '$timeout', 
-		 	function(translate, $scope, $mdDialog, $mdToast, restServices, $timeout) {
+		['sbiModule_translate', '$scope', '$mdDialog', '$mdToast', 'sbiModule_restServices', '$timeout', 
+		 	function(sbiModule_translate, $scope, $mdDialog, $mdToast, sbiModule_restServices, $timeout) {
 			
 	activityEventCtrl = this;
-	translate.addMessageFile("component_scheduler_messages");
-	$scope.translate = translate;
+	sbiModule_translate.addMessageFile("component_scheduler_messages");
+	$scope.translate = sbiModule_translate;
 
 	activityEventCtrl.SCHEDULER_TYPES = [
-        {value: 'single', label: translate.load("scheduler.singleExec", "component_scheduler_messages")},
-        {value: 'scheduler', label: translate.load("scheduler.schedulerExec", "component_scheduler_messages")},
-        {value: 'event', label: translate.load("scheduler.eventExec", "component_scheduler_messages")}
+        {value: 'single', label: sbiModule_translate.load("scheduler.singleExec", "component_scheduler_messages")},
+        {value: 'scheduler', label: sbiModule_translate.load("scheduler.schedulerExec", "component_scheduler_messages")},
+        {value: 'event', label: sbiModule_translate.load("scheduler.eventExec", "component_scheduler_messages")}
     ];
 	
 	activityEventCtrl.EVENT_TYPES = [
-        {value: 'rest', label: translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
-        {value: 'jms', label: translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
-	    {value: 'contextbroker', label: translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
-	    {value: 'dataset', label: translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
+        {value: 'rest', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.rest")},
+        {value: 'jms', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.jms")},
+	    {value: 'contextbroker', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.contextbroker")},
+	    {value: 'dataset', label: sbiModule_translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}
     ];
 	
 	activityEventCtrl.EVENT_INTERVALS = [
-		{value: 'minute', label: translate.load("scheduler.minuteExec", "component_scheduler_messages")},
-		{value: 'hour', label: translate.load("scheduler.hourExec", "component_scheduler_messages")},
-		{value: 'day', label: translate.load("scheduler.dayExec", "component_scheduler_messages")},
-		{value: 'week', label: translate.load("scheduler.weekExec", "component_scheduler_messages")},
-		{value: 'month', label: translate.load("scheduler.monthExec", "component_scheduler_messages")}
+		{value: 'minute', label: sbiModule_translate.load("scheduler.minuteExec", "component_scheduler_messages")},
+		{value: 'hour', label: sbiModule_translate.load("scheduler.hourExec", "component_scheduler_messages")},
+		{value: 'day', label: sbiModule_translate.load("scheduler.dayExec", "component_scheduler_messages")},
+		{value: 'week', label: sbiModule_translate.load("scheduler.weekExec", "component_scheduler_messages")},
+		{value: 'month', label: sbiModule_translate.load("scheduler.monthExec", "component_scheduler_messages")}
 	];
 	
 	activityEventCtrl.MONTHS = [
-	    {label: translate.load("scheduler.jan", "component_scheduler_messages"), value: '1'},
-	    {label: translate.load("scheduler.feb", "component_scheduler_messages"), value: '2'}, 
-	    {label: translate.load("scheduler.mar", "component_scheduler_messages"), value: '3'}, 
-	    {label: translate.load("scheduler.apr", "component_scheduler_messages"), value: '4'}, 
-	    {label: translate.load("scheduler.may", "component_scheduler_messages"), value: '5'}, 
-	    {label: translate.load("scheduler.jun", "component_scheduler_messages"), value: '6'}, 
-	    {label: translate.load("scheduler.jul", "component_scheduler_messages"), value: '7'}, 
-	    {label: translate.load("scheduler.aug", "component_scheduler_messages"), value: '8'}, 
-	    {label: translate.load("scheduler.sep", "component_scheduler_messages"), value: '9'}, 
-	    {label: translate.load("scheduler.oct", "component_scheduler_messages"), value: '10'}, 
-	    {label: translate.load("scheduler.nov", "component_scheduler_messages"), value: '11'}, 
-	    {label: translate.load("scheduler.dic", "component_scheduler_messages"), value: '12'}
+	    {label: sbiModule_translate.load("scheduler.jan", "component_scheduler_messages"), value: '1'},
+	    {label: sbiModule_translate.load("scheduler.feb", "component_scheduler_messages"), value: '2'}, 
+	    {label: sbiModule_translate.load("scheduler.mar", "component_scheduler_messages"), value: '3'}, 
+	    {label: sbiModule_translate.load("scheduler.apr", "component_scheduler_messages"), value: '4'}, 
+	    {label: sbiModule_translate.load("scheduler.may", "component_scheduler_messages"), value: '5'}, 
+	    {label: sbiModule_translate.load("scheduler.jun", "component_scheduler_messages"), value: '6'}, 
+	    {label: sbiModule_translate.load("scheduler.jul", "component_scheduler_messages"), value: '7'}, 
+	    {label: sbiModule_translate.load("scheduler.aug", "component_scheduler_messages"), value: '8'}, 
+	    {label: sbiModule_translate.load("scheduler.sep", "component_scheduler_messages"), value: '9'}, 
+	    {label: sbiModule_translate.load("scheduler.oct", "component_scheduler_messages"), value: '10'}, 
+	    {label: sbiModule_translate.load("scheduler.nov", "component_scheduler_messages"), value: '11'}, 
+	    {label: sbiModule_translate.load("scheduler.dic", "component_scheduler_messages"), value: '12'}
     ];
 	
 	activityEventCtrl.WEEKS = [
-        {label: translate.load("scheduler.sun", "component_scheduler_messages"), value: '1'}, 
-        {label: translate.load("scheduler.mon", "component_scheduler_messages"), value: '2'}, 
-        {label: translate.load("scheduler.tue", "component_scheduler_messages"), value: '3'}, 
-        {label: translate.load("scheduler.wed", "component_scheduler_messages"), value: '4'}, 
-        {label: translate.load("scheduler.thu", "component_scheduler_messages"), value: '5'}, 
-        {label: translate.load("scheduler.fri", "component_scheduler_messages"), value: '6'}, 
-        {label: translate.load("scheduler.sat", "component_scheduler_messages"), value: '7'}
+        {label: sbiModule_translate.load("scheduler.sun", "component_scheduler_messages"), value: '1'}, 
+        {label: sbiModule_translate.load("scheduler.mon", "component_scheduler_messages"), value: '2'}, 
+        {label: sbiModule_translate.load("scheduler.tue", "component_scheduler_messages"), value: '3'}, 
+        {label: sbiModule_translate.load("scheduler.wed", "component_scheduler_messages"), value: '4'}, 
+        {label: sbiModule_translate.load("scheduler.thu", "component_scheduler_messages"), value: '5'}, 
+        {label: sbiModule_translate.load("scheduler.fri", "component_scheduler_messages"), value: '6'}, 
+        {label: sbiModule_translate.load("scheduler.sat", "component_scheduler_messages"), value: '7'}
     ];
 	
 	activityEventCtrl.WEEKS_ORDER = [
-        {label: translate.load("scheduler.firstweek", "component_scheduler_messages"), value: '1'}, 
-        {label: translate.load("scheduler.secondweek", "component_scheduler_messages"), value: '2'}, 
-        {label: translate.load("scheduler.thirdweek", "component_scheduler_messages"), value: '3'}, 
-        {label: translate.load("scheduler.fourthweek", "component_scheduler_messages"), value: '4'}, 
-        {label: translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'}, 
+        {label: sbiModule_translate.load("scheduler.firstweek", "component_scheduler_messages"), value: '1'}, 
+        {label: sbiModule_translate.load("scheduler.secondweek", "component_scheduler_messages"), value: '2'}, 
+        {label: sbiModule_translate.load("scheduler.thirdweek", "component_scheduler_messages"), value: '3'}, 
+        {label: sbiModule_translate.load("scheduler.fourthweek", "component_scheduler_messages"), value: '4'}, 
+        {label: sbiModule_translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'}, 
     ];
 	
 	activityEventCtrl.event = {};
@@ -115,16 +104,16 @@ eventDefinitionApp.controller('ActivityEventController',
 	};
 
 	activityEventCtrl.loadDataset = function() {
-		restServices.get("2.0/datasets", "listDataset")
+		sbiModule_restServices.get("2.0/datasets", "listDataset")
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					console.error(translate.load("sbi.glossary.load.error"))
+					console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 				} else {
 					activityEventCtrl.datasets = data.item;
 				}
 			})
 			.error(function(data, status, headers, config) {
-				console.error(translate.load("sbi.glossary.load.error"))
+				console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 			});
 	};
 	
@@ -132,10 +121,10 @@ eventDefinitionApp.controller('ActivityEventController',
 		var parameters = 'jobName=' + activityEventCtrl.event.jobName 
 			+ '&jobGroup=' + activityEventCtrl.event.jobGroup;
 		
-		restServices.get("scheduler", "getJob", parameters)
+		sbiModule_restServices.get("scheduler", "getJob", parameters)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					console.error(translate.load("sbi.glossary.load.error"))
+					console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 				} else {
 					console.log("data", data);
 					
@@ -145,7 +134,7 @@ eventDefinitionApp.controller('ActivityEventController',
 				}
 			})
 			.error(function(data, status, headers, config) {
-				console.error(translate.load("sbi.glossary.load.error"));
+				console.error(sbiModule_translate.load("sbi.glossary.load.error"));
 			});
 	};
 	
@@ -200,10 +189,10 @@ eventDefinitionApp.controller('ActivityEventController',
 			+"&triggerGroup=" + activityEventCtrl.event.triggerGroup
 			+"&triggerName=" + activityEventCtrl.event.triggerName;
 		
-		restServices.get("scheduler", requestString	)
+		sbiModule_restServices.get("scheduler", requestString	)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					console.error(translate.load("sbi.glossary.load.error"));
+					console.error(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					console.log("evento scaricato", data);
 					activityEventCtrl.disableName=true;
@@ -284,7 +273,7 @@ eventDefinitionApp.controller('ActivityEventController',
 				}
 			})
 			.error(function(data, status, headers, config) {
-				console.error(translate.load("sbi.glossary.load.error"))
+				console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 			});
 	};
 
@@ -310,16 +299,16 @@ eventDefinitionApp.controller('ActivityEventController',
 	activityEventCtrl.triggerEvent = function() {
 		var requestTriggerEvent = "eventName=" + activityEventCtrl.event.triggerName
 		
-		restServices.get("scheduler", "triggerEvent", requestTriggerEvent)
+		sbiModule_restServices.get("scheduler", "triggerEvent", requestTriggerEvent)
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
-					console.error(translate.load("sbi.glossary.load.error"))
+					console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 				} else {
 					console.log("data", data);
 				}
 			})
 			.error(function(data, status, headers, config) {
-				console.error(translate.load("ERRORE triggerEvent"));
+				console.error(sbiModule_translate.load("ERRORE triggerEvent"));
 			});
 		
 	};
@@ -336,21 +325,21 @@ eventDefinitionApp.controller('ActivityEventController',
 			cloneData.endDate=(new Date(cloneData.endDate)).getTime();
 		}
 		
-		restServices.post("scheduler", "saveTrigger", cloneData)
+		sbiModule_restServices.post("scheduler", "saveTrigger", cloneData)
 			.success(function(data) {
 				if (data.hasOwnProperty("errors")) {
 					console.error(data.errors[0].message);
-					console.error(translate.load("sbi.glossary.error.save"));
+					console.error(sbiModule_translate.load("sbi.glossary.error.save"));
 				} else if (data.Status == "NON OK") {
 					console.error("errori salvataggio",data.Errors);
-					$mdToast.show($mdToast.simple().content(translate.load("sbi.glossary.error.save")+" "+data.Errors).position('top').action('OK').highlightAction(true));
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load("sbi.glossary.error.save")+" "+data.Errors).position('top').action('OK').highlightAction(true));
 				 } else {
 					 activityEventCtrl.disableName=true;
 					$mdToast.show($mdToast.simple().content("SALVATO").position('top').action('OK').highlightAction(false).hideDelay(3000));
 				}
 			})
 			.error(function(data, status, headers, config) {
-				console.error(translate.load("sbi.glossary.error.save"));
+				console.error(sbiModule_translate.load("sbi.glossary.error.save"));
 				
 				return false;
 			});
@@ -551,10 +540,14 @@ eventDefinitionApp.controller('ActivityEventController',
 		console.log("prova",item); 	
 	};
 	
-	activityEventCtrl.sampleModel=[{name:"name1",surname:"surname1",age:"18"},
-	                               {name:"name2",surname:"surname2",age:"18"},
-	                               {name:"name3",surname:"surname3",age:"20"},
-	                               {name:"name4",surname:"surname4",age:"18"},
+	activityEventCtrl.toggleEnabled = function(item,item2) {
+		console.log("toggleEnabled",item,item2); 	
+	};
+	
+	activityEventCtrl.sampleModel=[{name:"name1",surname:"surname1",enabled:'true',age:'<md-checkbox  ng-checked="row.enabled" ng-click="row.enabled=!row.enabled">{{row.enabled}}</md-checkbox>'},
+	                               {name:"name1",surname:"surname1",enabled:'true',age:'<md-checkbox  ng-checked="row.enabled" ng-click="row.enabled=!row.enabled">{{row.enabled}}</md-checkbox>'},
+	                               {name:"name1",surname:"surname1",enabled:'true',age:'<md-checkbox  ng-checked="row.enabled" ng-click="row.enabled=!row.enabled">{{row.enabled}}</md-checkbox>'},
+	                               {name:"name3",surname:"surname3",age:'<md-checkbox   ng-click="toggleEnabled(row, key)" ng-init="true"></md-checkbox>'},
 	                               {name:"name5",surname:"surname5",age:"18"},
 	                               {name:"name6",surname:"surname6",age:"32"},
 	                               {name:"name7",surname:"surname7",age:"18"},

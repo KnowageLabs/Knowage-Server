@@ -51,23 +51,7 @@ position: relative;
       border-bottom-width: 0px;
 }
 
-/* .wordForm textarea:not(:focus),.box-list-option md-input-container:not(:focus),.wordForm input:not(:focus) { */
-/*   height: 20px!important; */
-/*   min-height: 0px; */
-/* } */
 
-.wordForm md-select{
-	  margin: 0;
-  padding: 0;
-  margin-left: 35px;
-  margin-top: 14px;
-}
-
-/* .selectLabel { */
-/*   margin-top: -25px; */
-/*   color: rgba(0,0,0,0.54); */
-/*   font-size: 10px; */
-/* } */
 .wordForm md-select md-select-label{
 	width: 95%;
 	}
@@ -82,14 +66,6 @@ position: relative;
 	margin-top: -2px !important;
 }
 
-.wordForm textarea, .wordForm .linkChips {
-	margin-left: 35px !important;
-}
-
-.wordForm .md-input-focused textarea, .wordForm .md-input-has-value textarea,
-	.wordForm .md-input-has-value-copy .linkChips {
-	padding-top: 15px !important;
-}
 
 .wordForm  .linkChips {
 	box-shadow: none !important;
@@ -142,16 +118,6 @@ md-input-container.md-icon-float.md-input-focused label,
 }
 
 /* 	fine */
-.wordForm md-input-container {
-	/* 	height: 40px; */
-	min-height: 40px;
-	margin-top: 0;
-	    margin: 0px;
-}
-
-.wordForm md-input-container.md-input-has-value {
-	height: auto !important;
-}
 
 .list-right-word {
 	top: 0;
@@ -204,10 +170,10 @@ md-icon.sm-font-icon {
 .chipsTree .angular-ui-tree-placeholder{
 	background-color: rgba(232, 244, 250, 0.35) !important;
 	position: absolute;
-	width: 100%;
+	width: 100% !important;
 	height:50px !important;
-	margin-left: 18px;
-	margin-top:18px;
+/* 	margin-left: 18px; */
+	margin-top:-5px;
 	
 }
 
@@ -227,7 +193,7 @@ md-icon.sm-font-icon {
 	padding: 0px !important;
 	float: left;
 	margin-bottom: 10px;
-	min-height: 0px;
+	min-height: 0px !important;
 }
 
 
@@ -370,3 +336,18 @@ md-tabs.hideTabs md-tabs-wrapper {
 	     width: 200px;   
 	      z-index: 1;
 }
+
+.wordForm  .linkChips md-chips-wrap{
+	padding-bottom:  1px!important;
+}
+
+.wordForm md-input-container.input-chips-container label{
+    font-size: 18px;
+    top: -25px;
+    }
+.wordForm md-input-container.input-chips-container.md-input-focused label ,.wordForm md-input-container.input-chips-container.md-input-has-value-copy label  {
+	    -webkit-transform: translate3d(0,-25px,0) scale(.55);
+    transform: translate3d(0,-25px,0) scale(0.55);
+    color: #7F7F7F;
+}
+

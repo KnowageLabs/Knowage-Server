@@ -1,4 +1,4 @@
-var app = angular.module('geoManager', [ 'ngMaterial','geo_module' ]);
+var app = angular.module('geoManager', ['geo_module']);
  
 app.controller('mapCtrl', [ funzione ]);
 
