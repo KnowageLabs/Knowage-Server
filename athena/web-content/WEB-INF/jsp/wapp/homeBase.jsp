@@ -107,7 +107,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					border : false,
 					bodyBorder : false,
 					height : '100%',
-					src : '/athena/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+ getItem,
+					src : '<%=contextName %>/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?'+ getItem,
 				});
 
 			var dialogBox = new Ext.Window({

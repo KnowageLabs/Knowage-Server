@@ -860,15 +860,10 @@ function saveDocument(goBack) {
 				</div>	
 
         <script>
+        <% if(obj.getPreviewFile()!= null){ %>
             Ext.get('deletePreviewLink').on('click', function(){
-                
-            	
-            	<% if(obj.getPreviewFile()!= null){ %>
-            	
-
-                
                 Ext.MessageBox.confirm(
-                	       "<%=msgBuilder.getMessage("SBISet.devObjects.confirmDeletePreviewTitle", locale)%>"
+           	       		"<%=msgBuilder.getMessage("SBISet.devObjects.confirmDeletePreviewTitle", locale)%>"
                         , "<%=msgBuilder.getMessage("SBISet.devObjects.confirmDeletePreviewDescr", locale)%>"
                         , function(btn, text) {
                         	if ( btn == 'yes' ) {
@@ -904,12 +899,10 @@ function saveDocument(goBack) {
                         	    });
                         	}
                         }
-                        , this
-                    );
-
-                <% }%>
-            	}
-     );
+               		, this
+                );
+          	});
+        <% }%>
             
         </script>
 
