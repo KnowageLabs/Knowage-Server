@@ -117,7 +117,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 
 	, filterOptStore: new Ext.data.SimpleStore({
 	    fields: ['funzione', 'nome', 'descrizione'],
-	    data: Sbi.constants.qbe.WHERE_CLAUSE_COMPARISON_FUNCTIONS
+	    data: Sbi.constants.qbe.WHERE_CLAUSE_COMPARISON_FUNCTIONS,
 	    /*
 	    data : [
 	            ['NONE', LN('sbi.qbe.filtergridpanel.foperators.name.none'), LN()],
@@ -146,7 +146,6 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	})
 
 	// public methods
-	
 	, createFilter: function() {
 		var filter;
 		var filterName;
@@ -168,6 +167,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			, leftOperandLastValue: null
 			, leftOperandAlias: null
 			
+			, leftOperandDataType: ''
+				
 			, operator: ''
 				
 			, rightOperandValue: ''
@@ -178,6 +179,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 			, rightOperandLastValue: null
 			, rightOperandAlias: null
 			
+			, rightOperandDataType: ''
+				
 			, booleanConnector: 'AND'
 				
 			, deleteButton: false
@@ -528,6 +531,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		   {name: 'leftOperandLastValue', type: 'string'}, // RESERVED FOR FUTURE USE
 		   {name: 'leftOperandAlias', type: 'string'}, // The alias of the field
 		   
+		   {name: 'leftOperandDataType', type: 'string'}, // added to handle spatial fields
+		   
 		   {name: 'operator', type: 'string'},
 		   
 		   {name: 'rightOperandValue', type: 'auto'}, // operand
@@ -537,6 +542,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 		   {name: 'rightOperandDefaultValue', type: 'string'}, // defaultvalue
 		   {name: 'rightOperandLastValue', type: 'string'}, // lastvalue
 		   {name: 'rightOperandAlias', type: 'string'}, // The alias of the field
+		   
+		   {name: 'rightOperandDataType', type: 'string'}, // added to handle spatial fields
 		   
 		   {name: 'booleanConnector', type: 'string'},
 		   
@@ -696,6 +703,15 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				    , hidden: true		 
 				    , sortable: false
 				 }, this.columns['leftOperandType'] || {}),
+				// == LEFT OPERAND DATA TYPE ==========================
+				Ext.apply({
+					header: 'data type'
+				    , tooltip: 'data type'
+				    , dataIndex: 'leftOperandDataType'       
+				    , hideable: true
+				    , hidden: true		 
+				    , sortable: false
+				}, this.columns['leftOperandDataType'] || {}),
 				// == OPERATOR ========================================
 				Ext.apply({
 					header: LN('sbi.qbe.filtergridpanel.headers.operator')

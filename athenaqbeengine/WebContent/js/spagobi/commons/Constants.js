@@ -53,7 +53,24 @@ Sbi.constants.qbe = {
 	    ['IN', LN('sbi.qbe.filtergridpanel.foperators.name.in'),  LN('sbi.qbe.filtergridpanel.foperators.desc.in')],
 	    ['NOT IN', LN('sbi.qbe.filtergridpanel.foperators.name.notin'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notin')],
 	    ['NOT NULL', LN('sbi.qbe.filtergridpanel.foperators.name.notnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.notnull')],
-	    ['IS NULL', LN('sbi.qbe.filtergridpanel.foperators.name.isnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.isnull')]
+	    ['IS NULL', LN('sbi.qbe.filtergridpanel.foperators.name.isnull'),  LN('sbi.qbe.filtergridpanel.foperators.desc.isnull')],
+	    /* spatial operators (last value 'geometry' actually is not used) */
+	    ['SPATIAL_CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.contains'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.contains'), 'geometry']
+	    ,['SPATIAL_COVERED_BY', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.coveredby'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.coveredby'), 'geometry']
+	    ,['SPATIAL_COVERS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.covers'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.covers'), 'geometry']
+	    ,['SPATIAL_DISJOINT', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.disjoint'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.disjoint')]
+	    ,['SPATIAL_EQUALS_TO', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.equals'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.equals'), 'geometry']
+	    ,['SPATIAL_FILTER', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.filter'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.filter')]
+	    ,['SPATIAL_INTERSECTS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.intersects'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.intersects'), 'geometry']
+	    ,['SPATIAL_OVERLAPS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.overlaps'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.overlaps'), 'geometry']
+	    ,['SPATIAL_TOUCHES', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.touches'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.touches'), 'geometry']
+	    ,['SPATIAL_INSIDE', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.inside'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.inside'), 'geometry']
+//	    ,['SPATIAL_NOT_CONTAINS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notcontains'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notcontains'), 'geometry']
+//	    ,['SPATIAL_NOT_COVERED_BY', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notcoveredby'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notcoveredby'), 'geometry']
+//	    ,['SPATIAL_NOT_COVERS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notcovers'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notcovers'), 'geometry']
+//	    ,['SPATIAL_NOT_EQUALS_TO', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notequals'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notequals'), 'geometry']
+//	    ,['SPATIAL_NOT_OVERLAPS', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.notoverlaps'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.notoverlaps'), 'geometry']
+//	    ,['SPATIAL_NOT_TOUCHES', LN('sbi.qbe.filtergridpanel.foperators.spatial.name.nottouches'), LN('sbi.qbe.filtergridpanel.foperators.spatial.desc.nottouches'), 'geometry']
 	]
 
 	, HAVING_CLAUSE_COMPARISON_FUNCTIONS : [
@@ -97,6 +114,97 @@ Sbi.constants.qbe = {
         ['COUNT', LN('sbi.qbe.selectgridpanel.aggfunc.name.count'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.count')],
         ['COUNT_DISTINCT', LN('sbi.qbe.selectgridpanel.aggfunc.name.countdistinct'), LN('sbi.qbe.selectgridpanel.aggfunc.desc.countdistinct')]
     ] 
+
+	, SPATIAL_FUNCTIONS : [
+	    {
+	    	text: 'length'
+	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.length')
+            , type: 'function'
+            , value: 'length(op1, op2, \'unit=KM\')'
+            , alias: 'length(op1, op2, \'unit=KM\')'
+            , operands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpLength')}]
+	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}]
+	    }, {
+	    	text: 'difference'
+	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.diff')
+            , type: 'function'
+            , value: 'difference(op1, op2, op3)'
+            , alias: 'difference(op1, op2, op3)'
+            , operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Diff')},
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Diff')}
+            ]
+	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}]
+	    }, {
+	    	text: 'distance'
+	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.dist')
+    		, type: 'function'
+            , value: 'distance(op1, op2, op3, \'unit=KM\')'
+            , alias: 'distance(op1, op2, op3, \'unit=KM\')'
+            , operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Dist')}, 
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Dist')}
+            ]
+	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}]
+	    }, {
+	    	text: 'dwithin'
+	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.distw')
+    		, type: 'function'
+            , value: 'dwithin(op1, op2, op3)'
+            , alias: 'dwithin(op1, op2, op3)'
+            , operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Distw')}, 
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Distw')}
+            ]
+	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp3Distw')}]
+	    }, {
+	    	text: 'relate'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.relate')
+    		, type: 'function'
+            , value: 'relate(op1, \'mask=op3\', op2, op4)'
+            , alias: 'relate(op1, \'mask=op3\', op2, op4)'
+            , operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Rel')},
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Rel')}
+            ]
+	    	, freeOperands: [
+	    	  {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpMask')},
+	    	  {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}
+	    	]
+	    }, {
+	    	text: 'dimension'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.getDims')
+    		, type: 'function'
+            , value: 'dimension(op1)'
+            , alias: 'dimension(op1)'
+            , operands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpDim')}]
+	    }, {
+	    	text: 'centroid'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.centroid')
+    		, type: 'function'
+            , value: 'centroid(op1, op2)'
+            , alias: 'centroid(op1, op2)'
+            , operands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpCentroid')}]
+	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}]
+	    }, {
+	    	text: 'geometrytype'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.getType')
+    		, type: 'function'
+            , value: 'geometrytype(op1)'
+            , alias: 'geometrytype(op1)'
+            , operands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpGeometryType')}]
+	    }, {
+	    	text: 'union'
+    		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.union')
+    		, type: 'function'
+            , value: 'geomunion(op1, op2)'
+            , alias: 'geomunion(op1, op2)'
+        	, operands: [
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Union')}, 
+              {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Union')}
+            ]
+	    }
+	]
 
 	, ARITHMETIC_FUNCTIONS : [
         {
@@ -292,6 +400,8 @@ Sbi.constants.qbe = {
 	 ]
 };
 
+// spatial functions
+Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SPATIAL_FUNCTIONS = Sbi.constants.qbe.SPATIAL_FUNCTIONS;
 // arithmetic functions
 Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS = Sbi.constants.qbe.ARITHMETIC_FUNCTIONS;
 Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS = Sbi.constants.qbe.ARITHMETIC_FUNCTIONS;

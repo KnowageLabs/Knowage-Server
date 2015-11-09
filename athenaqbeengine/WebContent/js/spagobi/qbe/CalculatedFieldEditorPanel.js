@@ -601,9 +601,10 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	
 	, expItemsTreeClick: function(node, e) {
 		//checks if the wizard should ask some operands selection by the user
-		if (node.attributes.operands && this.expItemsTreeRootNode && this.expItemsTreeRootNode.childNodes){			
+		if ((node.attributes.operands || node.attributes.freeOperands) && this.expItemsTreeRootNode && this.expItemsTreeRootNode.childNodes){			
 			this.opWin = new Sbi.qbe.OperandsWindow({
-				operands: node.attributes.operands
+				operands: node.attributes.operands?node.attributes.operands:[]
+			,	freeOperands: node.attributes.freeOperands?node.attributes.freeOperands:[]
 			,   fields: this.expItemsTreeRootNode.childNodes[0]	
 			,   text: node.attributes.value
 			});

@@ -262,6 +262,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 					, rightOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, rightOperandAlias: node.attributes.attributes.field 
 					, rightOperandLongDescription: node.attributes.attributes.longDescription
+					, rightOperandDataType: node.attributes.attributes.fieldType
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
 			}else if(dropColDataIndex === 'leftOperandDescription') {			
@@ -271,6 +272,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandAlias: node.attributes.attributes.field 
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
+					, leftOperandDataType: node.attributes.attributes.fieldType
 				};
 				this.targetPanel.modifyFilter(filter, rowIndex);
 			} else {
@@ -280,6 +282,7 @@ Ext.extend(Sbi.qbe.FilterGridDropTarget, Ext.dd.DropTarget, {
 					, leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD
 					, leftOperandLongDescription: node.attributes.attributes.longDescription
 					, leftOperandAlias: node.attributes.attributes.field 
+					, leftOperandDataType: node.attributes.attributes.fieldType
 				};
 	  			this.targetPanel.insertFilter(filter, rowIndex);
 			}

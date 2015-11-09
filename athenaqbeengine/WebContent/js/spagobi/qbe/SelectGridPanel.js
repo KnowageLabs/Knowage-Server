@@ -708,12 +708,14 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
     		    {name:'fields', text: LN('sbi.qbe.calculatedFields.fields')}, 
     		    {name:'arithmeticFunctions', text:  LN('sbi.qbe.calculatedFields.functions.arithmentic')},
     		    {name:'aggregationFunctions', text:  LN('sbi.qbe.calculatedFields.aggrfunctions')},
-    		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')}
+    		    {name:'dateFunctions', text:  LN('sbi.qbe.calculatedFields.datefunctions')},
+    		    {name:'spatialFunctions', text: 'Spatial Functions'}
     		],
     		fields: fields,
     		arithmeticFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_ARITHMETIC_FUNCTIONS, // functionsForInline,
     		aggregationFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_AGGREGATION_FUNCTIONS, // aggregationFunctions,
     		dateFunctions: Sbi.constants.qbe.INLINE_CALCULATED_FIELD_EDITOR_DATE_FUNCTIONS, // dateFunctions,
+    		spatialFunctions: Sbi.constants.qbe.CALCULATED_FIELD_EDITOR_SPATIAL_FUNCTIONS,
     		expertMode: false,
         	scopeComboBoxData :[
         	     ['STRING','String', LN('sbi.qbe.calculatedFields.string.type')],

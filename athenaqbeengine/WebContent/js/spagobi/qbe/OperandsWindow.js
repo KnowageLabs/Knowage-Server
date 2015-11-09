@@ -114,8 +114,9 @@ Ext.extend(Sbi.qbe.OperandsWindow, Ext.Window, {
     , initFormPanel: function() {	
 		var fields = [];
 		this.fieldMap = {};
-		
-		for(var i = 1, l = this.operands.length; i <= l; i++) { 
+		var i = 0;
+		var numOperands = this.operands.length;
+		for(i = 1; i <= numOperands; i++) { 
 			var operand = this.operands[i-1];
 			var tmpLabel = operand.label || "Parameter " + i;
 			var tmpName = "op" + i;
@@ -126,6 +127,19 @@ Ext.extend(Sbi.qbe.OperandsWindow, Ext.Window, {
 			this.fieldMap[tmpName] = tmpField;			
         } //for
 	
+		// added to handle free values aka basic input fields
+		for(var j = 1, l = this.freeOperands.length; j <= l; j++) {
+			var opNum = numOperands + j;
+			var operand = this.freeOperands[j-1];
+			var tmpLabel = operand.label || "Parameter " + opNum;
+			var tmpName = "op" + opNum;
+			var tmpField = null;
+			
+			tmpField = this.createSimpleParameterField(tmpLabel, tmpName);
+    		fields.push(tmpField);
+			this.fieldMap[tmpName] = tmpField;			
+        }
+		
     	this.formPanel = new  Ext.FormPanel({
     		  //title:  LN('sbi.console.promptables.title'),
     		  margins: '50 50 50 50',
@@ -176,6 +190,16 @@ Ext.extend(Sbi.qbe.OperandsWindow, Ext.Window, {
 		return field;
 	}
 	
+	, createSimpleParameterField:  function (label, name){
+		
+		var field = new Ext.form.TextField({
+		    fieldLabel: label,
+		    name: name,
+            width: 250    	    
+		 });        		 
+		
+		return field;
+	}
 	
 	, createParameterField: function (label, name){
 		var tmpField = null;
@@ -207,10 +231,17 @@ Ext.extend(Sbi.qbe.OperandsWindow, Ext.Window, {
 	}
 	
 	, completeReturnedValue: function(values){
-		var returnValue = this.text;		
+		var returnValue = this.text;
+		if(values){
+			for (var i = 0, keys = Object.keys(values); i < keys.length; i++){
+				var key = keys[i];
+				returnValue = returnValue.replace(key,values[key]);
+			}
+		}
+		/*
 		for (var i=1, l=this.operands.length; i<=l; i++){
 			returnValue = returnValue.replace('op'+i,values['op'+i]);
-		}
+		}*/
 		return returnValue;
 	}
 	

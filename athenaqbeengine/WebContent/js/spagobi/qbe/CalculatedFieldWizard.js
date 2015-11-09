@@ -86,6 +86,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldWizard, Ext.Window, {
 			, functions: c.functions
 			, aggregationFunctions: c.aggregationFunctions
 			, arithmeticFunctions : c.arithmeticFunctions
+			, spatialFunctions : c.spatialFunctions
 			, groovyFunctions : c.groovyFunctions
 			, dateFunctions: c.dateFunctions
 			, expertMode: c.expertMode
