@@ -45,4 +45,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="lib/hibernate/required/jts-1.13.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-spatial-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-spatial-oracle-1.1.1.jar"/>
 </classpath>

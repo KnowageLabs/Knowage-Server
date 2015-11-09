@@ -203,5 +203,43 @@ public class JPQLStatementConditionalOperators {
 				return leftHandValue + " NOT IN (" +  rightHandValue + ")";
 			}
 		});
+		// handling spatial operators
+		conditionalOperators.put(CriteriaConstants.SPATIAL_EQUALS_TO, new SpatialOperator(CriteriaConstants.SPATIAL_EQUALS_TO, "equals"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_TOUCHES, new SpatialOperator(CriteriaConstants.SPATIAL_TOUCHES, "touches"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_OVERLAPS, new SpatialOperator(CriteriaConstants.SPATIAL_OVERLAPS, "overlaps"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_COVERS, new SpatialOperator(CriteriaConstants.SPATIAL_COVERS, "covers"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_CONTAINS, new SpatialOperator(CriteriaConstants.SPATIAL_CONTAINS, "contains"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_COVERED_BY, new SpatialOperator(CriteriaConstants.SPATIAL_COVERED_BY, "coveredby"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_INTERSECTS, new SpatialOperator(CriteriaConstants.SPATIAL_INTERSECTS, "intersects"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_INSIDE, new SpatialOperator(CriteriaConstants.SPATIAL_INSIDE, "inside"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_DISJOINT, new SpatialOperator(CriteriaConstants.SPATIAL_DISJOINT, "disjoint"));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_FILTER, new SpatialOperator(CriteriaConstants.SPATIAL_FILTER, "filter"));
+		
+		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_COVERED_BY, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_COVERED_BY, "coveredby", true));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_CONTAINS, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_CONTAINS, "contains", true));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_COVERS, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_COVERS, "covers", true));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_EQUALS_TO, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_EQUALS_TO, "equals", true));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_TOUCHES, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_TOUCHES,"touches", true));
+		conditionalOperators.put(CriteriaConstants.SPATIAL_NOT_OVERLAPS, new SpatialOperator(CriteriaConstants.SPATIAL_NOT_OVERLAPS,"overlaps",true));
 	}
+}
+
+class SpatialOperator implements IConditionalOperator{
+	String name;
+	String hqlname;
+	boolean negate;
+	public SpatialOperator(String name, String hqlname) {
+		this(name, hqlname, false);
+	}
+	public SpatialOperator(String name, String hqlname, boolean negate) {
+		this.name = name;
+		this.hqlname = hqlname;
+		this.negate = negate;
+	}
+	public String getName() {return name;}
+	public String apply(String leftHandValue, String[] rightHandValues) {
+		Assert.assertTrue(rightHandValues != null && rightHandValues[0] != null, "Operand cannot be null when the operator is " + getName());
+		return hqlname + "(" + leftHandValue + ", " + rightHandValues[0] + ")" + (negate?"!":"") + "='TRUE'";
+	}
+	
 }
