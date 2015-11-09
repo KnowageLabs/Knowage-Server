@@ -303,7 +303,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 */
 			this.styleLabel2 = Ext.create ('Ext.form.Label', {
 			        forId: 'chartTypeCombobox',
-			        text: "Pick chart type:",
+			        text: LN("sbi.chartengine.designer.chartTypePicker"),
 			        //margin: '5 3 3 0'
 			});
 			
@@ -340,10 +340,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 	 					this.inputEl.setStyle
 	 		            (
  		            		{
- 				                'background-image': 	'url('+iconPath+')',
+ 				                "height": "35px",
+ 		            			'background-image': 	'url('+iconPath+')',
  				                'background-repeat': 	'no-repeat',
- 				                'background-position': 	'left center',
- 				                'padding-left': 		'35px', 
+ 				                'background-position': 	'left 2px center',
+ 				                'padding-left': 		'40px', 
  				                'background-size': 		"30px 30px"	            
  		            		}
  		        		);	
@@ -360,7 +361,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * Listener for the 'rowclick' event that happens when we change the chart type
 			 * on the left part of the Designer page (from the chart type picker). 
 			 * (danristo :: danilo.ristovski@mht.net) 
-			 */
+			 */			
 			this.chartTypeSelector.on
 			(
 				"resetStep2",
@@ -580,7 +581,29 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						globalThis.bottomXAxisesPanel.show();
 						gaugePanePanel.hide();
-					}				
+					}
+
+					// TODO: uncomment this to apply chosen style to any chart type we select (choose) 
+//					/**
+//					 * This is JSON template that we take form the Advance editor (previously, Step 3)
+//					 * so we can be up-to-date with current structure of the document inside the Designer.
+//					 */
+//					var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
+//					
+//					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(Designer.styleName).generic, configApplyAxes);
+//					
+//					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+//							localJsonTemplate, 
+//							Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()], 
+//							configApplyAxes);							
+//					
+//					jsonTemplate = localJsonTemplate;
+//					
+//					/**
+//					 * Update (refresh) the main configuration panel (the one on the top of 
+//					 * the Step 2 tab) after selecting the particular style.
+//					 */
+//		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
 				}
 			);
 						
@@ -949,6 +972,34 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 */
 							var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
 							
+							/**
+							 * ------------------
+							 * For GAUGE chart:
+							 * ------------------
+							 * Remove PLOTBANDS tag from current JSON template (jsonTemplateAdvancedEditor) in
+							 * order to provide possibility for removal of it when newly picked chart style does
+							 * not have this tag defined in its  XML template. 
+							 * 
+							 * Example: (1) pick style with PLOTBANDS; (2) pick style without them; (3) when 
+							 * merging specific part of the XML template that does not have PLOTABANDS, with
+							 * the one that has, we will keep them in the final XML template. Hence, the best
+							 * way is to provide a workaround - removal of it.
+							 * 
+							 * @author: danristo (danilo.ristovski@mht.net)
+							 */ 
+							if (chartType == "GAUGE")
+							{
+								var numberOfYAxis = jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS.length;
+								
+								for (i=0; i<numberOfYAxis; i++)
+								{
+									if (jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS[i].PLOTBANDS)
+									{
+										jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS[i].PLOTBANDS = undefined;
+									}
+								}									
+							}
+							
 							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(k.data.styleAbbr).generic, configApplyAxes);
 							
 							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
@@ -968,7 +1019,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    		if (chartType == "PARALLEL")
 			    			{
 				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
-				    			//removeFlagsForMandatoryFields(chartType,jsonTemplate);
+				    			removeFlagsForMandatoryFields(chartType,jsonTemplate);
 			    			}
 							
 							/**
@@ -1001,7 +1052,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   				id: 'previewPanel',
   				minHeight: 300,
   				title: LN('sbi.chartengine.preview'),
-  				titleAlign: 'center',
+  				titleAlign: 'left',	// TODO: danristo: (old value: "center")
   				tools:[]
   				
   			});
@@ -1027,9 +1078,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}; 
 			
 			var previewTools = [{ xtype: 'tbfill' }, {
-	            xtype: 'image',
-	            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/refresh.png',
-	            cls: 'tool-icon',
+	            xtype: 'tool',	// TODO: danristo (old value: "image")
+	            type: "refresh",	// TODO: danristo (did not exist)
+	            padding: "3 0 0 0", // TODO: danristo (did not exist)
+	            height: 22,	// TODO: danristo (did not exist)
+	            // TODO: danristo (those two were uncommented)
+	            // src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/refresh.png',
+	            //cls: 'tool-icon',
 	            listeners: {
 	            	click: {
 	            		element: 'el',
@@ -1455,6 +1510,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			this.stepsTabPanel = Ext.create('Ext.tab.Panel', {
   				bodyBorder: false,
   				width: '100%',
+  				layout: "fit",
   				region: 'center',
 				title: {hidden: true },
 				previousTabId: '',
@@ -1672,13 +1728,13 @@ Ext.define('Sbi.chart.designer.Designer', {
   			});
 			
 			//Handle resize event for making the designer responsive
-//			Ext.on('resize', function(w, h){
-//				this.chartStructure.updateLayout();
-//				this.chartConfiguration.updateLayout();
-//				this.crossNavigationPanel.updateLayout();
-//				this.advancedEditor.updateLayout();
-//				this.designerMainPanel.updateLayout();
-//			}, this);
+			Ext.on('resize', function(w, h){
+				this.chartStructure.updateLayout();
+				this.chartConfiguration.updateLayout();
+				this.crossNavigationPanel.updateLayout();
+				this.advancedEditor.updateLayout();
+				this.designerMainPanel.updateLayout();
+			}, this);
 			
   			/*  LOADING CONFIGURATION FROM TEMPLATE >>>>>>>>>>>>>>>>>>>> */
   			/* START LOADING Y AXES, X AXIS AND SERIES >>>>>>>>>>>>>>>>>>>> */

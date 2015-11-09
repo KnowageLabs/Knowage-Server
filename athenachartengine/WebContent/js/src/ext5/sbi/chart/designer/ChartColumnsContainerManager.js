@@ -172,8 +172,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 
 			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
 			    		
-			        	var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);
-			        	
+			        	var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);			        	
 			        	
 			        	/** @comment benedetto.milazzo@eng.it */
 			        	// The "chartColumnsContainer" panel has defined a ViewController controller that acts
@@ -407,7 +406,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    // True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts (danilo.ristovski@mht.net)
 					    hidden: gearHidden,	
 					    
-					    flex: 1,
+					    //flex: 1, //TODO: danristo (was not commented)
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					    	if(chartType.toUpperCase() != 'PIE') {
@@ -445,7 +444,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    
-					    flex: 1,
+					   // flex: 1, //TODO: danristo (was not commented)
 					    handler: function(event, toolEl, panelHeader) {
 					    	
 					    	

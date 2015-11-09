@@ -156,6 +156,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 * (danilo.ristovski@mht.net)
 			 */
 			if (axis.PLOTBANDS) {
+				
 				var from = new Array();
 				var to = new Array();
 				var color = new Array();
@@ -480,32 +481,36 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						var PLOTBANDS = {};
 						var PLOT = new Array();
 
-						if (axisData.from && axisData.from.length) {
-							var numberOfPlots = axisData.from.length;
+						if (axisData.from && axisData.to && axisData.from!="" && axisData.to!="")
+						{
+							if (axisData.from && axisData.from.length) {
+								var numberOfPlots = axisData.from.length;
 
-							for (var i = 0; i < numberOfPlots; i++) {
+								for (var i = 0; i < numberOfPlots; i++) {
+									var object = {};
+
+									object['from'] = axisData.from[i];
+									object['to'] = axisData.to[i]; 
+									object['color'] = axisData.color[i] ? axisData.color[i] : '';
+
+									PLOT.push(object);
+								}
+
+							} else {
 								var object = {};
 
-								object['from'] = axisData.from[i];
-								object['to'] = axisData.to[i]; 
-								object['color'] = axisData.color[i] ? axisData.color[i] : '';
+								object['from'] = axisData.from; 
+								object['to'] = axisData.to; 
+								object['color'] = axisData.color ? axisData.color : '';
 
 								PLOT.push(object);
 							}
 
-						} else {
-							var object = {};
+							PLOTBANDS['PLOT'] = PLOT;
 
-							object['from'] = axisData.from; 
-							object['to'] = axisData.to; 
-							object['color'] = axisData.color ? axisData.color : '';
-
-							PLOT.push(object);
+							axisAsJson['PLOTBANDS'] = PLOTBANDS;
 						}
-
-						PLOTBANDS['PLOT'] = PLOT;
-
-						axisAsJson['PLOTBANDS'] = PLOTBANDS;
+						
 					}
 
 					result.push(axisAsJson);

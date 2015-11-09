@@ -104,18 +104,20 @@ Ext.define
 	    editable: false,
 	    padding: "5 0 10 0",
 	    width: 170,
-	    height: 35,
+	    height: 40,
 	    
 	    /**
 	     * Show icon that represents the chart type along with it's name.
 	     */
 	    tpl: [
-	          '<tpl for=".">',
-	          	'<div class="x-boundlist-item">',
-	          		'<img src="{icon}" width="30px"/>',
-	          		'&nbsp;&nbsp;&nbsp;<b style="display: inline-block;vertical-align: middle;line-height: 30px;">{style}</b>',
-	          	'</div>',
-          	'</tpl>'],
+	          	'<tpl for=".">',
+	          		'<div class="x-boundlist-item">',
+          				'<img src="{icon}" width="30px" style="display:inline-block; vertical-align:middle; line-height:35px;"/>',
+          				'&nbsp;&nbsp;&nbsp;',
+          				'<p style="display:inline-block; vertical-align:middle; line-height:35px;">{style}</p>',
+	          		'</div>',
+	          	'</tpl>'
+	          ],
 	   	    
 	    statics:
     	{
@@ -193,7 +195,7 @@ Ext.define
 		{			
 			var globalScope = this;	
 						
-			var iconsPath = this.getChartTypesIcons();	
+			var iconsPath = this.getChartTypesIcons();
 			
 			/**
 			 * Set the icon next to the text (the name of the selected
@@ -202,15 +204,15 @@ Ext.define
 			this.inputEl.setStyle
             (
         		{
-	                'background-image': 	'url('+iconsPath[previousChartType.toLowerCase()]+')',
+	                "height": "35px",
+        			'background-image': 	'url('+iconsPath[previousChartType.toLowerCase()]+')',
 	                'background-repeat': 	'no-repeat',
-	                'background-position': 	'left center',
-	                'padding-left': 		'35px', 
+	                'background-position': 	'left 2px center',
+	                'padding-left': 		'40px', 
 	                'background-size': 		"30px 30px",
 	                'display': 'none'
         		}
-    		);	
-							
+    		);							
 							
 			/**
 			 * Lookup for checking the compatibility of the chart types when we are determining
@@ -389,59 +391,59 @@ Ext.define
 			 * If previous and current chart types are compatible.
 			 */
 			else 
-			{								
-				/**
-				 * If the new chart type is GAUGE clean the X-axis panel, since we do not have categories 
-				 * for this chart type, but keep all series items and all X-axis panels (as many as there
-				 * are specified).
-				 * 
-				 * @author: danristo (danilo.ristovski@mht.net)
-				 */
-				if (newlySelectedType.toLowerCase() == "gauge")
-				{
-					Ext.Msg.show
-					(
-						{
-							title : '',
-							message : LN("sbi.chartengine.designer.charttype.changetypeCategories"), 
-							icon : Ext.Msg.QUESTION,
-							closable : false,
-							buttons : Ext.Msg.OKCANCEL,
-							
-							buttonText : 
-							{
-								ok : LN('sbi.chartengine.generic.ok'),
-								cancel : LN('sbi.generic.cancel')
-							},
-						
-							fn : function(buttonValue, inputText, showConfig) 
-							{
-								if (buttonValue == 'ok') 
-								{
-									Sbi.chart.designer.Designer.cleanCategoriesAxis();	
-									
-									Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
-									
-									globalScope.fireEvent("resetStep2");
-								}
-								else
-								{
-									globalScope.suspendEvents(false);
-									
-									// Set previous chart type
-									globalScope.setValue(previousChartType);
-									
-									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
-									
-									// Resume events
-									globalScope.resumeEvents();
-									
-									globalScope.fireEvent("cancel");
-								}
-							}
-						}
-					);
-				}
+			{						
+//				/**
+//				 * If the new chart type is GAUGE clean the X-axis panel, since we do not have categories 
+//				 * for this chart type, but keep all series items and all X-axis panels (as many as there
+//				 * are specified).
+//				 * 
+//				 * @author: danristo (danilo.ristovski@mht.net)
+//				 */
+//				if (newlySelectedType.toLowerCase() == "gauge")
+//				{
+//					Ext.Msg.show
+//					(
+//						{
+//							title : '',
+//							message : LN("sbi.chartengine.designer.charttype.changetypeCategories"), 
+//							icon : Ext.Msg.QUESTION,
+//							closable : false,
+//							buttons : Ext.Msg.OKCANCEL,
+//							
+//							buttonText : 
+//							{
+//								ok : LN('sbi.chartengine.generic.ok'),
+//								cancel : LN('sbi.generic.cancel')
+//							},
+//						
+//							fn : function(buttonValue, inputText, showConfig) 
+//							{
+//								if (buttonValue == 'ok') 
+//								{
+//									Sbi.chart.designer.Designer.cleanCategoriesAxis();	
+//									
+//									Sbi.chart.designer.ChartTypeSelector_2.chartType = newlySelectedType.toLowerCase();
+//									
+//									globalScope.fireEvent("resetStep2");
+//								}
+//								else
+//								{
+//									globalScope.suspendEvents(false);
+//									
+//									// Set previous chart type
+//									globalScope.setValue(previousChartType);
+//									
+//									Sbi.chart.designer.ChartTypeSelector_2.chartType = previousChartType.toLowerCase();
+//									
+//									// Resume events
+//									globalScope.resumeEvents();
+//									
+//									globalScope.fireEvent("cancel");
+//								}
+//							}
+//						}
+//					);
+//				}
 				
 				/**
 				 * If we come to RADAR chart from some chart type that is compatible with it 
@@ -451,9 +453,9 @@ Ext.define
 				 * can have only one Y-axis.
 				 * 
 				 * @author: danristo (danilo.ristovski@mht.net)
-				 */
+				 */				
 				
-				else if (newlySelectedType.toLowerCase() == "radar" || newlySelectedType.toLowerCase() == "scatter") {								
+				if (newlySelectedType.toLowerCase() == "radar" || newlySelectedType.toLowerCase() == "scatter") {								
 					
 					/**
 					 * We need confirmation from user for removing all the items (categories) from the
@@ -582,12 +584,13 @@ Ext.define
 				this.inputEl.setStyle
 	            (
             		{
-		                'background-image': 	'url('+iconsPath[chartType.toLowerCase()]+')',
+            			'height': "35px",
+            			'background-image': 	'url('+iconsPath[chartType.toLowerCase()]+')',
 		                'background-repeat': 	'no-repeat',
-		                'background-position': 	'left center',
-		                'padding-left': 		'35px', 
+		                'background-position': 	'left 2px center',
+		                'padding-left': 		'40px', 
 		                'background-size': 		"30px 30px",
-		                'display': 'inline'
+		                'display': 'inline' 
             		}
         		);	
 			},
@@ -605,19 +608,19 @@ Ext.define
 				this.inputEl.setStyle
 	            (
             		{
-		                'background-image': 	'url('+iconsPath[chartType.toLowerCase()]+')',
+		                'height': "35px",
+            			'background-image': 	'url('+iconsPath[chartType.toLowerCase()]+')',
 		                'background-repeat': 	'no-repeat',
-		                'background-position': 	'left center',
-		                'padding-left': 		'35px', 
+		                'background-position': 	'left 2px center',
+		                'padding-left': 		'40px', 
 		                'background-size': 		"30px 30px",
-		                'display': 'inline'
+		                'display': 'inline' 
             		}
         		);				
 			},
 				
 			change: function(comboBox,currentOrNewChartType,previousChartType)
 			{		
-				
 				/**
 				 * If currentOrNewChartType is not null - if user did not click-down on the
 				 * chart type and then move mouse on some other chart type and make a click-up
