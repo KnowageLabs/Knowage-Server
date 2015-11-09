@@ -92,8 +92,9 @@ author:
 		associations = env.get("ASSOCIATIONS")!=null?(String)env.get("ASSOCIATIONS"):"";
 		metaData = env.get("METADATA")!=null?(String)env.get("METADATA"):"";
 		widgetId = env.get("WIDGETID")!=null?(String)env.get("WIDGETID"):"";
-	}else{
-		datasetLabel = engineInstance.getDataSet().getLabel();
+	} else {
+		datasetLabel = (engineInstance.getDataSet() != null )?
+				engineInstance.getDataSet().getLabel() : "" ;
 	}
 	
 	docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
@@ -156,22 +157,25 @@ author:
 	var protocol = '<%=request.getScheme()%>';
 </script>
 
-<jsp:include
-	page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" >
-	<jsp:param name="template" value="<%=template%>" />
-</jsp:include>
-
-<%@include file="commons/includeAthenaChartEngineJS5.jspf"%>
+<% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
+	<jsp:include
+		page="<%=ChartEngineUtil.getLibraryInitializerPath(template)%>" >
+		<jsp:param name="template" value="<%=template%>" />
+	</jsp:include>
+	
+	<%@include file="commons/includeAthenaChartEngineJS5.jspf"%>
+<% } %>
 
 </head>
 
 <%-- == BODY ========================================================== --%>
 
 <body>
-   <%-- div with wait while loading message --%>
-   <div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
-   		<img src='/${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
-   </div>
+<% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
+	<%-- div with wait while loading message --%>
+   	<div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
+		<img src='/${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
+   	</div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
 	<script language="javascript" type="text/javascript">		
@@ -496,6 +500,20 @@ author:
  		  });
 
 	</script>
-
+<% } else {%>
+	<div>
+	<script language="javascript" type="text/javascript">
+	Ext.onReady(function(){
+		var mainPanel = Ext.create('Ext.panel.Panel', {
+			id: 'mainPanel',
+			width: '100%',
+		    height: '100%',
+		    renderTo: Ext.getBody(),
+		    html: '<p>' + LN('sbi.generic.error.notemplate') + '</p>'
+		});
+	});
+	</script>
+	</div>
+<% }%>
 </body>
 </html>

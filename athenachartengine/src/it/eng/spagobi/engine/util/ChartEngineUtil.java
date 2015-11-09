@@ -55,7 +55,7 @@ public class ChartEngineUtil {
 	public static String getLibraryInitializerPath(String jsonTemplateFromXML) {
 		String chartType = extractChartType(jsonTemplateFromXML);
 		ChartConfig chartConfig = ChartEngineConfig.getChartLibConf().get(chartType);
-		return chartConfig.getLibraryInitializerPath();
+		return chartConfig == null ? null : chartConfig.getLibraryInitializerPath();
 	}
 
 	public static String getChartLibNamesConfig() {
@@ -210,7 +210,7 @@ public class ChartEngineUtil {
 			while (it.hasNext()) {
 				String associationName = it.next();
 				List<String> valuesList = new ArrayList<String>();
-				//TODO to check why sometimes 'selectionsJSON.get(associationName)' is a json object
+				// TODO to check why sometimes 'selectionsJSON.get(associationName)' is a json object
 				if (selectionsJSON.get(associationName) instanceof JSONObject) {
 					JSONObject obj = selectionsJSON.getJSONObject(associationName);
 					for (Iterator<String> iterator = obj.keys(); iterator.hasNext();) {
