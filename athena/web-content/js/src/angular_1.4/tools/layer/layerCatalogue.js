@@ -593,7 +593,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	
 	
 	$scope.example = function(){
-		sbiModule_restServices.get("layers", 'getFileContent', "id="+$scope.selectedLayer.layerId).success(
+		sbiModule_restServices.get_item("layers", 'getFileContent', "id="+$scope.selectedLayer.layerId).success(
 				function(data, status, headers, config) {
 
 					console.log(data);

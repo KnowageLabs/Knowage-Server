@@ -21,7 +21,7 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public GeoLayer loadLayerByLabel(String label) throws EMFUserError;
 
-	public void modifyLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException;
+	public void modifyLayer(GeoLayer aLayer, Boolean modified) throws EMFUserError, JSONException, UnsupportedEncodingException;
 
 	public List<SbiExtRoles> listRolesFromId(final Object[] arr) throws EMFUserError;
 

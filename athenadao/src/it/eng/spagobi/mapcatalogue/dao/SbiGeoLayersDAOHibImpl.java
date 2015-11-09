@@ -147,7 +147,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#modifyEngine(it.eng.spagobi.bo.Engine)
 	 */
 	@Override
-	public void modifyLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException {
+	public void modifyLayer(GeoLayer aLayer, Boolean modified) throws EMFUserError, JSONException, UnsupportedEncodingException {
 
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -175,22 +175,24 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				hibLayer.setCategory(aLayer.getCategory());
 			}
 			String path = "";
+			if (modified) {
 
-			if (aLayer.getPathFile() != null) {
+				if (aLayer.getPathFile() != null) {
 
-				String separator = "";
-				if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
-					separator += File.separatorChar;
+					String separator = "";
+					if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
+						separator += File.separatorChar;
+					}
+
+					path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
+					aLayer.setPathFile(null);
+					aLayer.setPathFile(path + aLayer.getLabel());
+
+				} else {
+					aLayer.setPathFile(null);
+
 				}
-
-				path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
-				aLayer.setPathFile(path + aLayer.getLabel());
-
-			} else {
-				aLayer.setPathFile(null);
-
 			}
-
 			// preparo il jsonObject da memorizzare in LayerDefinition
 			layerDef.put("layerId", aLayer.getLayerIdentify());
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
@@ -245,18 +247,19 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 
 			// save file on server//
-			try {
-				if (aLayer.getPathFile() != null) {
-					new File(path).mkdirs();
-					OutputStreamWriter out;
-					String name = aLayer.getLabel();
-					out = new FileWriter(path + name);
-					out.write(new String(aLayer.getFilebody()));
-					out.close();
+			if (modified) {
+				try {
+					if (aLayer.getPathFile() != null) {
+						new File(path).mkdirs();
+						OutputStreamWriter out;
+						String name = aLayer.getLabel();
+						out = new FileWriter(aLayer.getPathFile());
+						out.write(new String(aLayer.getFilebody()));
+						out.close();
+					}
+				} catch (IOException e) { // TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		} catch (HibernateException he) {
 			logException(he);
@@ -451,7 +454,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			String c;
 			do {
 				c = br.readLine();
-				System.out.println(c);
+				System.out.println(c.split("properties"));
 			} while (c != null);
 			inputstream.close();
 

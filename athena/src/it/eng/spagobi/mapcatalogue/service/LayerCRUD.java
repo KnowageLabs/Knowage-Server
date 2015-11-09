@@ -396,7 +396,7 @@ public class LayerCRUD {
 				aLayer.setPathFile(path);
 				aLayer.setFilebody(data);
 
-				dao.modifyLayer(aLayer);
+				dao.modifyLayer(aLayer, true);
 
 				logger.debug("Layer saved: layer label " + aLayer.getLabel());
 				return "{}";
@@ -431,7 +431,7 @@ public class LayerCRUD {
 		logger.debug("Updating the layer");
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		try {
-			dao.modifyLayer(aLayer);
+			dao.modifyLayer(aLayer, false);
 		} catch (EMFUserError e) {
 			logger.error("Error updating the layer", e);
 			throw new SpagoBIRuntimeException("Error updating the layer", e);
