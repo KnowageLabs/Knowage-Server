@@ -45,7 +45,8 @@
     <Environment name="spagobi_service_url" type="java.lang.String" value="http://localhost:8080/athena"/>   
     <Environment name="spagobi_host_url" type="java.lang.String" value="http://localhost:8080"/>
     <Environment name="spagobi_sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
-    
+    <Environment description="HMAC key" name="hmacKey" type="java.lang.String" value="abc123"/> 
+     
    <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/spagobi" password="root" type="javax.sql.DataSource" url="jdbc:mysql://localhost/athena" username="root"/>   
  
    <!-- FOODMART -->
