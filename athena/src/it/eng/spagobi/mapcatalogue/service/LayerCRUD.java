@@ -6,11 +6,9 @@
 
 package it.eng.spagobi.mapcatalogue.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +26,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -43,7 +40,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ZipUtils;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
@@ -64,7 +60,7 @@ public class LayerCRUD {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String loadLayers(@Context HttpServletRequest req) {
+	public String loadLayers(@Context HttpServletRequest req) throws JSONException, UnsupportedEncodingException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		List<GeoLayer> layers = null;
 		try {
@@ -80,9 +76,6 @@ public class LayerCRUD {
 		System.out.println("Contengo " + layers.toString());
 		logger.debug("Serializing the layers");
 		ObjectMapper mapper = new ObjectMapper();
-		// SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1,0,0,null));
-		// simpleModule.addSerializer(GeoLayer.class, new GeoLayerJSONSerializer());
-		// mapper.registerModule(simpleModule);
 		String s = "[]";
 		try {
 			s = mapper.writeValueAsString(layers);
@@ -93,6 +86,32 @@ public class LayerCRUD {
 
 		logger.debug("Layers serialized");
 		return "{\"root\":" + s + "}";
+	}
+
+	@GET
+	@Path("/getFileContent")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String loadFileContent(@Context HttpServletRequest req) throws JSONException, UnsupportedEncodingException {
+		Object id = null;
+		Integer layerId = null;
+
+		try {
+
+			id = req.getParameter("id");
+			System.out.println(id);
+			if (id == null || id.equals("")) {
+				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
+			}
+			layerId = new Integer(id.toString());
+		} catch (Exception e) {
+			logger.error("error loading the layer to delete from the request", e);
+			throw new SpagoBIRuntimeException("error loading the layer to delete from the request", e);
+		}
+
+		logger.debug("Deleting the layer");
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		dao.getContentFile(layerId);
+		return "{}";
 	}
 
 	@GET
@@ -179,7 +198,7 @@ public class LayerCRUD {
 	@POST
 	@Path("/deleteLayer")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String deleteLayer(@Context HttpServletRequest req) {
+	public String deleteLayer(@Context HttpServletRequest req) throws JSONException {
 		Object id = null;
 		Integer layerId = null;
 
@@ -209,7 +228,7 @@ public class LayerCRUD {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String saveLayer(@Context HttpServletRequest req) throws JSONException, EMFUserError {
+	public String saveLayer(@Context HttpServletRequest req) throws JSONException, EMFUserError, UnsupportedEncodingException {
 		JSONObject requestBodyJSON = null;
 		Integer id;
 		try {
@@ -274,26 +293,25 @@ public class LayerCRUD {
 				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
 				byte[] data_out = new byte[1000];
 				data = layerServices.decode64(data);
-				FileOutputStream oo = new FileOutputStream("C:/Devel/SPAGOBI/pippo.zip");
-				oo.write(data);
-				oo.flush();
-				oo.close();
+				// FileOutputStream oo = new FileOutputStream("C:/Devel/SPAGOBI/pippo.zip");
+				// oo.write(data);
+				// oo.flush();
+				// oo.close();
 				if (bool) {
-
-					// prova
+					// unzip
 					// ZipUtils.unzipFile("C:/Devel/SPAGOBI/pippo.zip");
 
 					// fine
-					ZipUtils zip = new ZipUtils();
-					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					// ZipUtils zip = new ZipUtils();
+					// ByteArrayOutputStream output = new ByteArrayOutputStream();
 					// ZipUtils.unzip(new ByteArrayInputStream(data), f);
-					ZipUtils.unzip(new File("C:/Devel/SPAGOBI/pippo.zip"), output);
-					data = output.toByteArray();
+					// ZipUtils.unzip(new File("C:/Devel/SPAGOBI/pippo.zip"), output);
+					// data = output.toByteArray();
 				}
 
 				String path = layerServices.getResourcePath(data);
 				aLayer.setPathFile(path);
-				aLayer.setLayerDef(data);
+				aLayer.setFilebody(data);
 
 				id = dao.insertLayer(aLayer);
 
@@ -356,29 +374,27 @@ public class LayerCRUD {
 			}
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-
+			Boolean bool = false;
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
-			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-			// TODO check if profile is null
-			dao.setUserProfile(profile);
 
 			// prendo i pacchetti del file
+
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			LayerServices layerServices = new LayerServices();
 			for (InputPart inputPart : inputParts) {
 
-				InputStream inputStream = inputPart.getBody(InputStream.class, null);
-				byte[] data = IOUtils.toByteArray(inputStream);
+				if (inputPart.getBodyAsString().contains("zip")) {
+					System.out.println("zip beccato");
 
-				// decodifico i file dalla base64
+				}
+
+				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
+				byte[] data_out = new byte[1000];
 				data = layerServices.decode64(data);
-				// prendo il contenuto del file
-				// data = layerServices.getFile(data);
-				// salvo il file sul server e mi ritorno il path
+
 				String path = layerServices.getResourcePath(data);
-				// setPath in maniera temporanea per passarlo al dao che crea il vero path
 				aLayer.setPathFile(path);
-				aLayer.setLayerDef(data);
+				aLayer.setFilebody(data);
 
 				dao.modifyLayer(aLayer);
 
@@ -398,7 +414,7 @@ public class LayerCRUD {
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String modifyLayer(@Context HttpServletRequest req) throws EMFUserError {
+	public String modifyLayer(@Context HttpServletRequest req) throws EMFUserError, JSONException, UnsupportedEncodingException {
 		JSONObject requestBodyJSON = null;
 		try {
 			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
@@ -408,7 +424,7 @@ public class LayerCRUD {
 		}
 
 		GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
-		aLayer.setPathFile(null);
+		// aLayer.setPathFile(null);
 		Assert.assertNotNull(aLayer, "The layer is null");
 		logger.debug("Layer deserialized correctly");
 

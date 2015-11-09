@@ -228,22 +228,11 @@
 							required type="number" min="0"> </md-input-container>
 					</div>
 				</div>
-				
+				<br>
 				<div layout="row" layout-wrap ng-show="pathFileCheck"  style="margin-top:-15px;">
 				
-					<p>File location: <b>{{selectedLayer.pathFile}}{{selectedLayer.label}}</b></p>
-				<!--  <md-chips>
-					 <md-chip> <md-chip-template>
-					 	<strong> {{selectedLayer.label}}</strong>
-					 	<span><md-icon md-font-icon="fa fa-plus-square"></md-icon>
-					 	<md-tooltip md-visible="demo.showTooltip" md-direction="{{demo.tipDirection}}">
-					 	{{selectedLayer.pathFile}}
-     						</md-tooltip>
-						</span>
-				<!- -  <md-chip-remove ng-click="deleteRole($chip.id)"><md-icon md-font-icon="fa fa-times"></md-icon></md-chip-remove>- ->	
-				  		</md-chip-template> </md-chip>
-				  	</md-chips>
-				  	-->	
+					<p>File location: <b>{{selectedLayer.pathFile}}</b></p>
+
 				</div>
 								
 				<!-- inizio campi variabili -->
@@ -254,7 +243,7 @@
 					  -->	
 					<div flex=100 >
 						<md-input-container class="small counter"> 
-							<input  ng-model="selectedLayer.layerFile" type="file" fileread="selectedLayer.layerFile"> 
+							<input id="layerFile"  ng-model="selectedLayer.layerFile" type="file" fileread="selectedLayer.layerFile"  accept=".json"> 
 							
 						</md-input-container>
 						
@@ -323,7 +312,7 @@
 					
 					<div layout="row" layout-wrap flex>
 						<div flex="50" ng-repeat="rl in roles">
-							<md-checkbox ng-checked="exists(rl, rolesItem)"
+							<md-checkbox  ng-checked="exists(rl, rolesItem)"
 								ng-click="toggle(rl, rolesItem)"> {{ rl.name }}  </md-checkbox>
 								
 						</div>

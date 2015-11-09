@@ -19,6 +19,7 @@ public class GeoLayer {
 	private String label;
 	private boolean baseLayer;
 	private byte[] layerDef;
+	private byte[] Filebody;
 	private String pathFile;
 	private String layerLabel;
 	private String layerName;
@@ -26,7 +27,7 @@ public class GeoLayer {
 	private String layerURL;
 	private String layerOptions;
 	private String layerParams;
-	private int layerOrder;
+	private Integer layerOrder;
 	private Integer category_id;
 	private SbiDomains category;
 	private List<SbiExtRoles> roles;
@@ -97,6 +98,7 @@ public class GeoLayer {
 	public void setLayerDef(byte[] layerDef) {
 		this.layerDef = layerDef;
 	}
+
 	// Chiara add this functions
 
 	public String getPathFile() {
@@ -155,11 +157,11 @@ public class GeoLayer {
 		this.layerParams = layerParams;
 	}
 
-	public int getLayerOrder() {
+	public Integer getLayerOrder() {
 		return layerOrder;
 	}
 
-	public void setLayerOrder(int layerOrder) {
+	public void setLayerOrder(Integer layerOrder) {
 		this.layerOrder = layerOrder;
 	}
 
@@ -185,6 +187,14 @@ public class GeoLayer {
 
 	public void setRoles(List<SbiExtRoles> roles) {
 		this.roles = roles;
+	}
+
+	public byte[] getFilebody() {
+		return Filebody;
+	}
+
+	public void setFilebody(byte[] filebody) {
+		Filebody = filebody;
 	}
 
 }

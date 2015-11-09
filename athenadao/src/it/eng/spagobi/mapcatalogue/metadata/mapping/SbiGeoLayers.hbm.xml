@@ -62,13 +62,13 @@
 		<property name="baseLayer" type="boolean">
 			<column name="IS_BASE_LAYER" />
 		</property>
-		<property name="pathFile" type="string">
-			<column name="PATHFILE" />
-		</property>
 		<property name="layerDef" type="binary">
 			<column name="LAYER_DEFINITION" sql-type="longvarbinary" />
 		</property>
-		<property name="layerLabel" type="string">
+	<!-- <property name="pathFile" type="string">
+			<column name="PATHFILE" />
+		</property>
+	 	<property name="layerLabel" type="string">
 			<column name="LAYER_LABEL" />
 		</property>
 		<property name="layerName" type="string">
@@ -86,9 +86,11 @@
 		<property name="layerParams" type="string">
 			<column name="LAYER_PARAMS" />
 		</property>
+		
 		<property name="layerOrder" type="int">
 			<column name="LAYER_ORDER" />
 		</property>
+		-->	
 		<property name="category_id" type="integer">
             <column name="GEO_CATEGORY" not-null="false" />
         </property>

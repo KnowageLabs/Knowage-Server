@@ -63,6 +63,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
 		console.log("dentro loadLayer");
+		
 		sbiModule_restServices.get("layers", '').success(
 				function(data, status, headers, config) {
 
@@ -96,7 +97,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 
 	$scope.loadLayer();
-
+	
 
 
 	$scope.saveLayer = function(){
@@ -259,7 +260,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 										sbiModule_translate.load("sbi.general.cancel"));
 
 				$mdDialog.show(confirm).then(function() {
-					if(item.pathFile!=null){
+					if(item.pathFile!="null"){
 						//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
 						console.log("true");
 						$scope.pathFileCheck =true;
@@ -278,9 +279,10 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				});
 
 			}  else {
-				if(item.pathFile!=null){
+				if(item.pathFile!="null"){
 					//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
 					console.log("true");
+					console.log(item.pathFile);
 					$scope.pathFileCheck =true;
 				} else{
 					console.log("false");
@@ -375,6 +377,8 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 			$scope.rolesItem=[];
 			$scope.flag=false;
 			$scope.isRequired=false;
+		//	console.log(angular.element('<div class="md-char-counter">'));
+	
 		}
 		
 		$scope.contactForm.$setPristine();
@@ -477,7 +481,16 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.showRoles();
 	
-
+	/*$scope.checkFileType = function(element){
+		console.log("checkFileType");
+		console.log(element.files);
+		//0 perchè è permesso di caricare solo un file
+		$scope.selectedLayer.layerFile = element.files[0];
+		if(element.files[0].type != ""){
+			alert("Format file invalid... Please Load .json");
+		}
+		
+	}*/
 	$scope.toggle = function (item, list) {
 		var index = $scope.indexInList(item, list);
 		
@@ -508,7 +521,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
     		 return -1;
       };
       
-      
+ 
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
 		.content('Layer saved corretly...')
@@ -570,10 +583,32 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		    }
 		  })
 	$scope.closeForm = function(){
+		$scope.cancel();
 		$scope.flagtype=true;
 		$scope.showme=false;
 		$scope.flag=false;
 		$scope.selectedLayer=null;
+		
+	}
+	
+	
+	$scope.example = function(){
+		sbiModule_restServices.get("layers", 'getFileContent', "id="+$scope.selectedLayer.layerId).success(
+				function(data, status, headers, config) {
+
+					console.log(data);
+					if (data.hasOwnProperty("errors")) {
+						console.log("layer non Ottenuti");
+					} else {
+						//$scope.layerList = data.root;
+
+
+					}
+
+				}).error(function(data, status, headers, config) {
+					console.log("layer non Ottenuti " + status);
+
+				})
 	}
 };
 

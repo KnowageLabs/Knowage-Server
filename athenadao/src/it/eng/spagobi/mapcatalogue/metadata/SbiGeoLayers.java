@@ -23,13 +23,7 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private boolean baseLayer = false;
 	private String label;
 	private byte[] layerDef;
-	private String pathFile;
-	private String layerLabel;
-	private String layerName;
-	private String layerIdentify;
-	private String layerURL;
-	private String layerOptions;
-	private String layerParams;
+	private byte[] bodyFile;
 	private int layerOrder;
 	private Integer category_id;
 	private SbiDomains category;
@@ -87,15 +81,6 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.layerDef = layerDef;
 	}
 
-	public void setPathFile(String path) {
-		this.pathFile = path;
-
-	}
-
-	public String getPathFile() {
-		return pathFile;
-	}
-
 	/**
 	 * @return the isBaseLayer
 	 */
@@ -109,54 +94,6 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	 */
 	public void setBaseLayer(boolean baseLayer) {
 		this.baseLayer = baseLayer;
-	}
-
-	public String getLayerLabel() {
-		return layerLabel;
-	}
-
-	public void setLayerLabel(String layerLabel) {
-		this.layerLabel = layerLabel;
-	}
-
-	public String getLayerName() {
-		return layerName;
-	}
-
-	public void setLayerName(String layerName) {
-		this.layerName = layerName;
-	}
-
-	public String getLayerIdentify() {
-		return layerIdentify;
-	}
-
-	public void setLayerIdentify(String layerIdentify) {
-		this.layerIdentify = layerIdentify;
-	}
-
-	public String getLayerURL() {
-		return layerURL;
-	}
-
-	public void setLayerURL(String layerURL) {
-		this.layerURL = layerURL;
-	}
-
-	public String getLayerOptions() {
-		return layerOptions;
-	}
-
-	public void setLayerOptions(String layerOptions) {
-		this.layerOptions = layerOptions;
-	}
-
-	public String getLayerParams() {
-		return layerParams;
-	}
-
-	public void setLayerParams(String layerParams) {
-		this.layerParams = layerParams;
 	}
 
 	public int getLayerOrder() {
@@ -191,22 +128,24 @@ public class SbiGeoLayers extends SbiHibernateModel {
 		this.roles = roles;
 	}
 
+	public byte[] getBodyFile() {
+		return bodyFile;
+	}
+
+	public void setBodyFile(byte[] bodyFile) {
+		this.bodyFile = bodyFile;
+	}
+
 	public GeoLayer toGeoLayer() {
 		GeoLayer geo = new GeoLayer();
 		geo.setDescr(getDescr());
 		geo.setLabel(label);
-		geo.setLayerDef(layerDef);
+		geo.setFilebody(bodyFile);
 		geo.setName(name);
 		geo.setType(type);
+		geo.setLayerDef(layerDef);
 		geo.setLayerId(layerId);
 		geo.setBaseLayer(baseLayer);
-		geo.setPathFile(pathFile);
-		geo.setLayerLabel(layerLabel);
-		geo.setLayerName(layerName);
-		geo.setLayerIdentify(layerIdentify);
-		geo.setLayerURL(layerURL);
-		geo.setLayerOptions(layerOptions);
-		geo.setLayerParams(layerParams);
 		geo.setLayerOrder(layerOrder);
 		geo.setCategory(category);
 		geo.setCategory_id(category_id);

@@ -30,6 +30,7 @@ public class GeoLayerJSONDeserializer {
 	private static final String TYPE = "type";
 	private static final String IS_BASE_LAYER = "baseLayer";
 	private static final String PATHFILE = "pathFile";
+	private static final String LAYERDEF = "layerDef";
 	private static final String LAYERLABEL = "layerLabel";
 	private static final String LAYERNAME = "layerName";
 	private static final String LAYERIDENTIFY = "layerIdentify";
@@ -46,7 +47,7 @@ public class GeoLayerJSONDeserializer {
 			String[] properties = JSONObject.getNames(serialized);
 			if (properties != null) {
 				GeoLayer layer = new GeoLayer();
-				JSONObject layerDef = new JSONObject();
+				JSONObject filebody = new JSONObject();
 				JSONObject rolesJSON = new JSONObject();
 				for (int i = 0; i < properties.length; i++) {
 					try {
@@ -83,7 +84,12 @@ public class GeoLayerJSONDeserializer {
 						} else if (properties[i].equals(LAYERORDER)) {
 							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
 						} else if (properties[i].equals(GEOCATEGORY)) {
-							layer.setCategory_id(new Integer(serialized.getString(properties[i])));
+							if (serialized.getString(properties[i]) == "null") {
+								layer.setCategory_id(null);
+							} else {
+								layer.setCategory_id(new Integer(serialized.getString(properties[i])));
+							}
+
 						} else if (properties[i].equals(ROLES)) {
 
 							ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
@@ -102,7 +108,7 @@ public class GeoLayerJSONDeserializer {
 
 						} else {
 
-							layerDef.put(properties[i], serialized.get(properties[i]));
+							filebody.put(properties[i], serialized.get(properties[i]));
 							// rolesJSON.put(properties[i], serialized.get(properties[i]));
 						}
 					} catch (JSONException e) {
@@ -112,7 +118,7 @@ public class GeoLayerJSONDeserializer {
 
 				}
 				logger.debug("Layer deserialized. Label: " + layer.getLabel());
-				layer.setLayerDef(layerDef.toString().getBytes());
+				layer.setFilebody(filebody.toString().getBytes());
 				// layer.setRoles(rolesJSON.toString());
 				return layer;
 			}
