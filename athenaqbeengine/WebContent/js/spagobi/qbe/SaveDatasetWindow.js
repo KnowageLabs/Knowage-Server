@@ -240,7 +240,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	,
 	saveDatasetHandler: function () {
 
-		this.persistPanel.setSchedulingCronLine();
+//		this.persistPanel.setSchedulingCronLine();
 		
 		var params = this.getInfoToBeSentToServer();
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
