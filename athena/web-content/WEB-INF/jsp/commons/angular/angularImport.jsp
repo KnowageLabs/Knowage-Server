@@ -38,7 +38,10 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 	<!-- 	angular time picker -->
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+
+<!-- 	angular 2 column template -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-2-col/angular2Col.js"></script>
 
 
 <%-- 	<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%> --%>

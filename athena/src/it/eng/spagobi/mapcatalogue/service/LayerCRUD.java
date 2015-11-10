@@ -32,9 +32,12 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -505,6 +508,57 @@ public class LayerCRUD {
 			}
 		}
 		return "unknown";
+	}
+
+	@POST
+	@Path("/getLayerFromList")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// {items:["layername1","layername2",....]}
+	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
+			IOException {
+		ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		// TODO check if profile is null
+		dao.setUserProfile(profile);
+
+		JSONObject requestBodyJSON = null;
+		try {
+			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+		} catch (Exception e) {
+			logger.error("Error reading the body from the request", e);
+			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
+		}
+
+		List<SbiGeoLayers> geoLayer = new ArrayList<SbiGeoLayers>();
+		String[] layList;
+
+		if (requestBodyJSON.has("items")) {
+			layList = new String[requestBodyJSON.getJSONArray("items").length()];
+			for (int i = 0; i < requestBodyJSON.getJSONArray("items").length(); i++) {
+				layList[i] = requestBodyJSON.getJSONArray("items").getString(i);
+
+			}
+
+			if (layList != null && layList.length > 0) {
+				geoLayer = geoLayersDAO.listLayersByList(layList);
+			}
+		}
+
+		if (geoLayer != null && geoLayer.size() != 0) {
+			ObjectMapper mapper = new ObjectMapper();
+
+			String s = "[";
+			for (SbiGeoLayers geo : geoLayer) {
+				s += mapper.writeValueAsString(geo.toGeoLayer()) + ",";
+			}
+			s = s.substring(0, s.length() - 1);
+			s += "]";
+			return "{\"root\":" + s + "}";
+
+		}
+
+		return "{\"root\":[]}";
 	}
 
 }
