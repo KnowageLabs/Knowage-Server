@@ -31,6 +31,7 @@ public class GeoLayer {
 	private Integer category_id;
 	private SbiDomains category;
 	private List<SbiExtRoles> roles;
+	private List<String> properties;
 
 	public GeoLayer() {
 		super();
@@ -195,6 +196,14 @@ public class GeoLayer {
 
 	public void setFilebody(byte[] filebody) {
 		Filebody = filebody;
+	}
+
+	public List<String> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<String> properties) {
+		this.properties = properties;
 	}
 
 }
