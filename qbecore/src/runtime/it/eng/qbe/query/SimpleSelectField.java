@@ -59,6 +59,7 @@ public class SimpleSelectField extends AbstractSelectField {
 		this.uniqueName = uniqueName;
 	}
 
+	@Override
 	public ISelectField copy() {
 		return new SimpleSelectField(this);
 	}
@@ -71,10 +72,12 @@ public class SimpleSelectField extends AbstractSelectField {
 		this.pattern = pattern;
 	}
 
+	@Override
 	public String getName() {
 		return getUniqueName();
 	}
 
+	@Override
 	public void setName(String name) {
 		setUniqueName(name);
 	}
@@ -115,6 +118,26 @@ public class SimpleSelectField extends AbstractSelectField {
 			}
 		}
 		return nature;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && obj instanceof SimpleSelectField) {
+			SimpleSelectField ssObj = (SimpleSelectField) obj;
+			if (getIdForEquals().equals(ssObj.getIdForEquals())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getIdForEquals().hashCode() * 34;
+	}
+
+	private String getIdForEquals() {
+		return this.getAlias() + '|' + this.getName();
 	}
 
 }

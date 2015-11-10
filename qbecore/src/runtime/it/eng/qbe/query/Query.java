@@ -230,6 +230,7 @@ public class Query implements IQuery {
 		return (selectedFieldsCount == 0);
 	}
 
+	@Override
 	public void addSelectFiled(String fieldUniqueName, String function, String fieldAlias, boolean include, boolean visible, boolean groupByField,
 			String orderType, String pattern) {
 		selectFields.add(new SimpleSelectField(fieldUniqueName, function, fieldAlias, include, visible, groupByField, orderType, pattern, null, null));
@@ -265,6 +266,7 @@ public class Query implements IQuery {
 		return whereField;
 	}
 
+	@Override
 	public void addWhereField(String name, String description, boolean promptable, String[] leftOperatorValues, String leftOperatorDescription,
 			String leftOperatorType, String[] leftOperatorDefaulttValues, String[] leftOperatorLastValues, String leftOperatorAlias, String operator,
 			String[] rightOperatorValues, String rightOperatorDescription, String rightOperatorType, String[] rightOperatorDefaulttValues,
@@ -352,6 +354,15 @@ public class Query implements IQuery {
 		Assert.assertTrue(fieldIndex >= 0 && fieldIndex < selectFields.size(),
 				"Index [" + fieldIndex + "] out of bound for select fields list (0 - " + selectFields.size() + ")");
 		selectFields.remove(fieldIndex);
+	}
+
+	public void removeSelectField(ISelectField toRemove) {
+		for (ISelectField iSelectField : this.selectFields) {
+			if (iSelectField.getAlias().equals(toRemove.getAlias())) {
+				selectFields.remove(iSelectField);
+				break;
+			}
+		}
 	}
 
 	public void removeWhereField(int fieldIndex) {
@@ -470,10 +481,12 @@ public class Query implements IQuery {
 		return havingClause;
 	}
 
+	@Override
 	public boolean isDistinctClauseEnabled() {
 		return distinctClauseEnabled;
 	}
 
+	@Override
 	public void setDistinctClauseEnabled(boolean distinctClauseEnabled) {
 		this.distinctClauseEnabled = distinctClauseEnabled;
 	}
@@ -748,6 +761,7 @@ public class Query implements IQuery {
 		return me;
 	}
 
+	@Override
 	public String toSql(String schema, String table) {
 
 		final String whereStart = "WHERE ( ";
