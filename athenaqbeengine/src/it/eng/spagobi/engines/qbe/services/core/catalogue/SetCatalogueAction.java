@@ -454,20 +454,19 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		final String GREATER_EQUALS = " >= ";
 		final String LESS_EQUALS = " <= ";
 
-		List<Integer> selectFieldsIndexesToRemove = new LinkedList<Integer>();
+		List<ISelectField> selectFieldsToRemove = new LinkedList<ISelectField>();
 		List<ISelectField> selectFieldsToAdd = new LinkedList<ISelectField>();
 
 		List<ISelectField> selectFields = query.getSelectFields(true);
-		int i = 0;
 		for (ISelectField iSelectField : selectFields) {
 			if (((AbstractSelectField) iSelectField).isSimpleField()) {
 				SimpleSelectField sField = (SimpleSelectField) iSelectField;
 				String temporalOperand = sField.getTemporalOperand();
 				String temporalOperandParameter = sField.getTemporalOperandParameter();
 				if (StringUtilities.isNotEmpty(temporalOperand)) {
-
 					// SIAMO IN PRESENZA DI FILTRO TEMPORALE INLINE
-					selectFieldsIndexesToRemove.add(i);
+
+					selectFieldsToRemove.add(iSelectField);
 
 					String entity = temporalDimension.getType();
 					String temporalCondition = " 1 = 1 ";
@@ -528,7 +527,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					}
 
 					TemporalRecord actualPeriod = getCurrentPeriod(temporalDimension, defaultHierarchy, TEMPORAL_FIELD_DAY, temporalDimensionId, actualTime);
-					if (actualPeriod != null || isLASTOperand || isParallelOperand) {
+					if (actualPeriod != null /* || isLASTOperand || isParallelOperand */) {
 
 						String beforeOrActualPeriod = " " + id + LESS_EQUALS + actualPeriod.getId();
 						if (isSIMPLEOperand) {
@@ -637,7 +636,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 		}
 
-		for (Integer toRemove : selectFieldsIndexesToRemove) {
+		for (ISelectField toRemove : selectFieldsToRemove) {
 			query.removeSelectField(toRemove);
 		}
 
