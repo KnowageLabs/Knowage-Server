@@ -6,7 +6,6 @@
 package it.eng.spagobi.engines.qbe.tree;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.jpa.JPADataSource;
 import it.eng.qbe.model.properties.IModelProperties;
 import it.eng.qbe.model.properties.SimpleModelProperties;
 import it.eng.qbe.model.structure.FilteredModelStructure;
@@ -65,7 +64,7 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
-	
+
 	// the value that will be seen as a geometry field
 	// TODO change this when the metamodel will report the correct value
 	public static final String GEOMETRY_MAPPING_TYPE = "com.vividsolutions.jts.geom";
@@ -157,7 +156,7 @@ public class ExtJsQbeTreeBuilder {
 	 *            the datamart name
 	 */
 	public void addEntityNodes(JSONArray nodes, String datamartName, UserProfile userProfile) {
-		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(((JPADataSource)dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
+		FilteredModelStructure filteredModelStructure = new FilteredModelStructure((dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
 		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
 
 		Iterator<IModelEntity> it = entities.iterator();
