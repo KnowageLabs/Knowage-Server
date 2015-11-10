@@ -78,7 +78,6 @@ Ext.define
 				    	
 				    	change: function(thisEl, newValue, oldValue)
 				    	{			
-				    		console.log(newValue);
 				    		if (newValue)
 				    		{
 				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + ":"); 
@@ -154,12 +153,9 @@ Ext.define
 	         		listeners:
          			{
 	         			change: function(thisEl, newValue, oldValue)
-				    	{			
-	         				console.log(newValue);
-	         				
-				    		if (newValue)
+				    	{		
+				    		if (newValue && newValue!=null)
 				    		{
-				    			console.log("NEEE");
 				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax") + ":"); 
 				    		}	
 				    	}

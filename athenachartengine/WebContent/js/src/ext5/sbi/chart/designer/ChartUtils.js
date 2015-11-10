@@ -21,7 +21,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			result['axisType'] = axis.type && axis.type != '' ? axis.type : '';
 			result['position'] = axis.position && axis.position != '' ? axis.position : '';
 
-			// This is excessive
+			// This is excessive (danristo)
 //			result['id'] = axis.alias && axis.alias != '' ? axis.alias
 //				 : '';
 //			result['alias'] = axis.alias && axis.alias != '' ? axis.alias
@@ -480,7 +480,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						 */
 						var PLOTBANDS = {};
 						var PLOT = new Array();
-
+						
 						if (axisData.from && axisData.to && axisData.from!="" && axisData.to!="")
 						{
 							if (axisData.from && axisData.from.length) {
@@ -2228,8 +2228,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 //				if (applyAxes && prop == 'AXIS') {
 				if (applyAxes && prop == 'AXES_LIST') {
 
-					if (source[prop]['AXIS']!=undefined)
-						newTarget[prop]['AXIS'] = ChartUtils.applyAxes(target[prop]['AXIS'], source[prop]['AXIS']);
+					var axisTagSource = source[prop]['AXIS'];
+					var axisTagTarget = target[prop]['AXIS'];
+					
+					if (axisTagSource!=undefined)
+						newTarget[prop]['AXIS'] = ChartUtils.applyAxes(axisTagTarget, axisTagSource);
 					
 					/**
 					 * Characteristic for PARALLEL chart
@@ -2237,6 +2240,31 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					// TODO: Can i do something like this (just associating the property of the same level from right to left side)????
 					if (source[prop]['style'] != undefined)
 						newTarget[prop]['style'] = source[prop]['style'];
+					
+					/**
+					 * If the chart type is GAUGE and we have PLOTBANDS defined inside of the XML styles
+					 * apply it to all Y-axis panels, so every single of them can have the same plotbands,
+					 * even though is not advised to define some non-empty values for PLOTs inside of the
+					 * PLOTBANDS tag of the chart style XML template.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					if (axisTagSource.length > 1)
+					{
+						for (i=0; i<axisTagSource.length; i++)
+						{
+							if (axisTagSource[i].type=="Serie" && axisTagSource[i]["PLOTBANDS"]!=undefined)
+							{
+								/**
+								 * Apply PLTOBANDS tag on all Y-axis panel that the GAUGE chart (document) has.
+								 */
+								for (j=0; j<axisTagTarget.length; j++)
+								{
+									newTarget[prop]['AXIS'][j]["PLOTBANDS"] = axisTagSource[i]["PLOTBANDS"];
+								}	
+							}														
+						}
+					}
 					
 					// Daniele (commented part)
 //					newTarget['AXES_LIST'][prop] = ChartUtils.applyAxes(target['AXES_LIST'][prop], source[prop]);

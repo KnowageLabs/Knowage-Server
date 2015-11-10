@@ -398,13 +398,39 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						}
 					}),
 					
+//					/**
+//					 * Provide a button that will let user remove all serie items from the 
+//					 * appropriate Y-axis panel (according to its ID).
+//					 * 
+//					 * @author: danristo (danilo.ristovski@mht.net)
+//					 */
+//					Ext.create
+//					(
+//						"Ext.panel.Tool",
+//						
+//						{
+//							type: "refresh",
+//							padding: "3 0 0 0",// TODO: danristo (10.11)
+//							height: 22,// TODO: danristo (10.11)
+//							handler: function(a,b,c,d)
+//							{
+//								var indexOfHeader = c.id.indexOf("_header");
+//								var axisId = c.id.substring(0,indexOfHeader);
+//								
+//								Sbi.chart.designer.Designer.cleanSerieAxis(axisId);
+//							}								
+//						}
+//					),
+					
 					// STYLE POPUP
 					Ext.create('Ext.panel.Tool', {
 					    type:'gear',
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.setaxisstyle'),
 					    id: "stylePopupLeftAxis_"+idChartColumnsContainer, // (danilo.ristovski@mht.net)
 					    // True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts (danilo.ristovski@mht.net)
-					    hidden: gearHidden,	
+					    hidden: gearHidden,
+					    padding: "3 0 0 0",// TODO: danristo (10.11)
+					    height: 22,// TODO: danristo (10.11)
 					    
 					    //flex: 1, //TODO: danristo (was not commented)
 					    handler: function(event, toolEl, panelHeader) {
@@ -439,15 +465,16 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					// PLUS BUTTON
 					Ext.create('Ext.panel.Tool', {
 					    type:'plus',
+					    padding: "3 0 0 0",	// TODO: danristo (10.11)
+					    height: 22,	// TODO: danristo (10.11)
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
 					    id: "plusLeftAxis_" + idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
 					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    
-					   // flex: 1, //TODO: danristo (was not commented)
+					    /// flex: 1, //TODO: danristo (was not commented)
 					    handler: function(event, toolEl, panelHeader) {
-					    	
-					    	
+					    						    	
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					    						    	
 					    	if(chartType.toUpperCase() != 'PIE') {
@@ -458,6 +485,34 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
 					    	}
 					    	
+					    	// TODO: danristo (10.11)
+					    	/**
+					    	 * Added for applying current style for every new Y-axis panel that we 
+					    	 * create for the document (chart).
+					    	 * 
+					    	 * @author: danristo (danilo.ristovski@mht.net)
+					    	 */
+					    	configApplyAxesStyles = 
+					    	{
+								applyAxes: true,
+								applySeries: true,
+							};
+					    	
+					    	var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+					    	(
+				    			Sbi.chart.designer.Designer.exportAsJson(),
+				    			Designer.getConfigurationForStyle(Designer.styleName).generic, 
+				    			configApplyAxesStyles
+			    			);
+							
+							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+							(
+								localJsonTemplate, 
+								Designer.getConfigurationForStyle(Designer.styleName)[chartType.toLowerCase()], 
+								configApplyAxesStyles
+							);
+							
+							Sbi.chart.designer.Designer.update(localJsonTemplate);
 					    }
 						
 						// *_* Old code included in: (hidden: plusHidden || (panelWhereAddSeries == null))

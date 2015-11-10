@@ -261,8 +261,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 				
 			}
 			
-			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );
-						
+			Sbi.chart.designer.ChartColumnsContainerManager.initInstanceIdFeed( jsonTemplate.CHART.AXES_LIST.AXIS );				
+			
 			/**
 			 * If the chart is already existing (not just created) and if it is of the 
 			 * GAUGE type, set the plotband store that keeps the data about the plots
@@ -987,18 +987,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 							 * 
 							 * @author: danristo (danilo.ristovski@mht.net)
 							 */ 
-							if (chartType == "GAUGE")
-							{
-								var numberOfYAxis = jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS.length;
-								
-								for (i=0; i<numberOfYAxis; i++)
-								{
-									if (jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS[i].PLOTBANDS)
-									{
-										jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS[i].PLOTBANDS = undefined;
-									}
-								}									
-							}
+//							if (chartType == "GAUGE")
+//							{
+//								var numberOfYAxis = jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS.length;
+//								
+//								for (i=0; i<numberOfYAxis; i++)
+//								{
+//									if (jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS[i].PLOTBANDS)
+//									{
+//										jsonTemplateAdvancedEditor.CHART.AXES_LIST.AXIS[i].PLOTBANDS = undefined;
+//									}
+//								}									
+//							}
 							
 							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(k.data.styleAbbr).generic, configApplyAxes);
 							
@@ -1337,15 +1337,41 @@ Ext.define('Sbi.chart.designer.Designer', {
 						listeners: {
 				            change: 'onTitleChange',
 				        }
-					},
+					},					
+
+//					/**
+//					 * Provide a button that will let user remove all category items from the 
+//					 * X-axis panel.
+//					 * 
+//					 * @author: danristo (danilo.ristovski@mht.net)
+//					 */
+//					Ext.create
+//					(
+//						"Ext.panel.Tool",
+//						
+//						{
+//							type: "refresh",
+//							//baseCls: "x-tool-img delete",
+//							//cls: 'delete',
+//							padding: "3 0 0 0",// TODO: danristo (10.11)
+//							height: 22,// TODO: danristo (10.11)
+//							
+//							handler: function()
+//							{
+//								Sbi.chart.designer.Designer.cleanCategoriesAxis();
+//							}
+//						}
+//					),
 					
 					// STYLE POPUP
 					{
 					    type:'gear',
+					    padding: "3 0 0 0",// TODO: danristo (10.11)
+						height: 22,// TODO: danristo (10.11)
 					    tooltip: LN('sbi.chartengine.designer.tooltip.setaxisstyle'),
 					    id: "stylePopupBottomPanel", // (danilo.ristovski@mht.net)
 					    hidden: false, // *_*
-					    flex: 1,
+					    //flex: 1,
 					    handler: function(event, toolEl, panelHeader) {
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
 					    	if(chartType.toUpperCase() != 'PIE') {
@@ -4014,6 +4040,17 @@ Ext.define('Sbi.chart.designer.Designer', {
 		cleanCategoriesAxis: function() {
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));			
 			this.categoriesStore.removeAll();
+		},
+		
+		cleanSerieAxis: function(yAxisId)
+		{
+			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
+			
+			for(i in serieStorePool) 
+			{				
+				if (serieStorePool[i].idAxisesContainer == yAxisId)
+					serieStorePool[i].removeAll();
+			}	
 		},
 		
 		tabChangeChecksMessages: function(oldJson, newJson) {

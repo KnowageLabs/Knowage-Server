@@ -1164,24 +1164,42 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 //					},
 					
 					tools:
-					[						
-						// PLUS BUTTON
-						{
-						    type:'plus',
-						    //flex: 1,
-							
-							// IMPLEMENT YOUR HANDLER
-						    handler: function(event, toolEl, panelHeader) 
-						    {									    							    	
-						    	var r = Ext.create('Sbi.chart.designer.PlotbandsModel', {
-				                    from: 0,
-				                    to: 0,
-				                    color: ''
-				                });
-						    	
-						    	plotbandsStore.insert(plotbandsStore.data.length, r);
-						    }							
-						}						
+					[		
+					 	//CLEAR BUTTON
+					 	Ext.create
+					 	(
+				 			"Ext.panel.Tool",
+				 			
+				 			{
+				 				type: "refresh",
+				 				
+				 				handler: function()
+				 				{
+				 					this.ownerCt.ownerCt.getStore().removeAll();
+				 				}
+				 			}
+			 			),
+						
+			 			// PLUS BUTTON
+			 			Ext.create
+					 	(
+				 			"Ext.panel.Tool",
+				 			
+				 			{
+				 				type: "plus",
+				 				
+				 				handler: function()
+				 				{
+				 					var r = Ext.create('Sbi.chart.designer.PlotbandsModel', {
+					                    from: 0,
+					                    to: 0,
+					                    color: ''
+					                });
+							    	
+							    	plotbandsStore.insert(plotbandsStore.data.length, r);
+				 				}
+				 			}
+			 			)						
 					],
 					
 					hideHeaders: false, // ????
