@@ -703,6 +703,9 @@ Ext.extend(
 			setSchedulingCronLine : function() {
 				var second, minute, hour, day, month, weekday;
 
+				// check if tab has been drawed
+				if(!Ext.get('minute' + "-every")) return;
+				
 				second = '0';
 				minute = this.getSelection('minute');
 				hour = this.getSelection('hour');
