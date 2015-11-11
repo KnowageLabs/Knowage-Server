@@ -19,6 +19,7 @@ var EmptyLayer = {
 		layerLabel: "",
 		layerName: "",
 		layerId2: "",	
+		roles:[],
 
 };
 
@@ -103,8 +104,9 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 
 	$scope.saveLayer = function(){
-		$scope.selectedLayer.roles=$scope.rolesItem;
-		console.log($scope.selectedLayer);
+		
+		$scope.selectedLayer.roles = $scope.rolesItem;
+		
 		if($scope.flag){
 
 			//siamo nel caso di modifica dati già precedentemente inseriti
@@ -317,7 +319,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				});
 
 			} else if($scope.selectedLayer == null ) {
-				$scope.newLayer = JSON.parse(JSON.stringify(EmptyLayer));
+				$scope.selectedLayer = JSON.parse(JSON.stringify(EmptyLayer));
 				$scope.flag=false;
 				
 			}
@@ -336,6 +338,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 						
 					} else {
 						$scope.rolesItem = data;
+						console.log($scope.rolesItem);
 					}
 				}).error(function(data, status, headers, config) {
 					console.log("error");
@@ -485,28 +488,18 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.showRoles();
 	
-	/*$scope.checkFileType = function(element){
-		console.log("checkFileType");
-		console.log(element.files);
-		//0 perchè è permesso di caricare solo un file
-		$scope.selectedLayer.layerFile = element.files[0];
-		if(element.files[0].type != ""){
-			alert("Format file invalid... Please Load .json");
-		}
-		
-	}*/
+
 	$scope.toggle = function (item, list) {
 		var index = $scope.indexInList(item, list);
 		
-		if(index!=-1){
-		      $scope.rolesItem.splice(index,1);
+		if(index != -1){
+			$scope.rolesItem.splice(index,1);
 		}else{
 			$scope.rolesItem.push(item);
 		}
 
-	
-		
       };
+      
       $scope.exists = function (item, list) {
     	  
     	return  $scope.indexInList(item, list)>-1;
