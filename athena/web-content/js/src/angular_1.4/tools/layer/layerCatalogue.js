@@ -1,6 +1,6 @@
 var app = angular.module('layerWordManager', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                               'angular_list', 'angular_table' ,'sbiModule']);
+                                               'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
 
 app.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('grey').accentPalette(
@@ -48,6 +48,7 @@ app.directive("fileread", [function () {
 }]);
 
 function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast) {
+	//variables
 	$scope.showme=false;
 	$scope.pathFileCheck = false;
 	$scope.isRequired=true;
@@ -58,6 +59,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.object_temp={};
 	$scope.roles = [];
 	$scope.rolesItem=[];
+	$scope.filter_set=[];
 	
 	
 	$scope.loadLayer = function(){
@@ -371,12 +373,14 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 			$scope.isRequired=false;
 			$scope.selectedLayer = angular.copy($scope.object_temp);
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
+			//add per i filtri la stessa cosa di su $scope.filter_set=vecchioset
 		} else{
 			console.log("Reset");
 			$scope.selectedLayer = angular.copy({});
 			$scope.rolesItem=[];
 			$scope.flag=false;
 			$scope.isRequired=false;
+			$scope.filter_set=[];
 		//	console.log(angular.element('<div class="md-char-counter">'));
 	
 		}
@@ -504,6 +508,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		
       };
       $scope.exists = function (item, list) {
+    	  
     	return  $scope.indexInList(item, list)>-1;
     	
       };
@@ -591,25 +596,40 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		
 	}
 	
+	$scope.showAdvanced = function(ev) {
+	    $mdDialog.show({
+	      templateUrl: 'dialog1.tmpl.html',
+	      scope:$scope,
+	      preserveScope: true,
+	      parent: angular.element(document.body),
+	      targetEvent: ev,
+	      clickOutsideToClose:true
+	    })
+	    .then(function(answer) {
+	      $scope.status = 'You said the information was "' + answer + '".';
+	    }, function() {
+	      $scope.status = 'You cancelled the dialog.';
+	    });
+	  };
+	  $scope.closeFilter = function(){
+		  $mdDialog.cancel();
+	  }
+	  $scope.addFilter = function(item){
+		  console.log("Dentro addFilter");
+		  console.log($scope.filter_set.indexOf(item));
+		  if( $scope.filter_set.indexOf(item)>-1){
+		//se presente non fare nulla
+		  } else{
+			  $scope.filter_set.push(item);
+		 }
+		  console.log($scope.filter_set);
+	  }
+	  $scope.removeFilter = function(item){
+		  var index = $scope.filter_set.indexOf(item);
+		  
+		  $scope.filter_set.splice(index,1);
+	  }
 	
-	$scope.example = function(){
-		sbiModule_restServices.get_item("layers", 'getFileContent', "id="+$scope.selectedLayer.layerId).success(
-				function(data, status, headers, config) {
-
-					console.log(data);
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
-					} else {
-						//$scope.layerList = data.root;
-
-
-					}
-
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
-
-				})
-	}
 };
 
 

@@ -5,15 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -35,8 +26,18 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -192,15 +193,37 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					aLayer.setPathFile(null);
 
 				}
+
+				// save file on server//
+
+				try {
+					if (aLayer.getPathFile() != null) {
+						new File(path).mkdirs();
+						OutputStreamWriter out;
+						String name = aLayer.getLabel();
+						out = new FileWriter(path + name);
+						out.write(new String(aLayer.getFilebody()));
+						out.close();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
+			// prendo la lista d properties da inserire poi nel campo keys di LayerDef
+			ArrayList<String> properties = getPropertiesFile(aLayer.getPathFile());
+
 			// preparo il jsonObject da memorizzare in LayerDefinition
 			layerDef.put("layerId", aLayer.getLayerIdentify());
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
 			layerDef.put("layerName", aLayer.getLayerName());
 			if (aLayer.getPathFile() != null) {
 				layerDef.put("layer_file", aLayer.getPathFile());
+				layerDef.put("properties", properties);
 			} else {
 				layerDef.put("layer_file", JSONObject.NULL);
+				layerDef.put("properties", "");
 			}
 			if (aLayer.getLayerURL() != null) {
 				layerDef.put("layer_url", aLayer.getLayerURL());
@@ -246,21 +269,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 			tx.commit();
 
-			// save file on server//
-			if (modified) {
-				try {
-					if (aLayer.getPathFile() != null) {
-						new File(path).mkdirs();
-						OutputStreamWriter out;
-						String name = aLayer.getLabel();
-						out = new FileWriter(aLayer.getPathFile());
-						out.write(new String(aLayer.getFilebody()));
-						out.close();
-					}
-				} catch (IOException e) { // TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -335,6 +343,24 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				aLayer.setPathFile(null);
 
 			}
+			// save file on server//
+
+			try {
+				if (aLayer.getPathFile() != null) {
+					new File(path).mkdirs();
+					OutputStreamWriter out;
+					String name = aLayer.getLabel();
+					out = new FileWriter(path + name);
+					out.write(new String(aLayer.getFilebody()));
+					out.close();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// prendo la lista d properties da inserire poi nel campo keys di LayerDef
+
+			ArrayList<String> properties = getPropertiesFile(aLayer.getPathFile());
 
 			// preparo il jsonObject da memorizzare in LayerDefinition
 			layerDef.put("layerId", aLayer.getLayerIdentify());
@@ -342,8 +368,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			layerDef.put("layerName", aLayer.getLayerName());
 			if (aLayer.getPathFile() != null) {
 				layerDef.put("layer_file", aLayer.getPathFile());
+				layerDef.put("properties", properties);
 			} else {
 				layerDef.put("layer_file", JSONObject.NULL);
+				layerDef.put("properties", "");
 			}
 			if (aLayer.getLayerURL() != null) {
 				layerDef.put("layer_url", aLayer.getLayerURL());
@@ -368,6 +396,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			} else {
 				layerDef.put("layer_order", JSONObject.NULL);
 			}
+
 			hibLayer.setLayerDef(layerDef.toString().getBytes("utf-8"));
 
 			updateSbiCommonInfo4Insert(hibLayer);
@@ -385,22 +414,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 
 			tx.commit();
-
-			// save file on server//
-
-			try {
-				if (aLayer.getPathFile() != null) {
-					new File(path).mkdirs();
-					OutputStreamWriter out;
-					String name = aLayer.getLabel();
-					out = new FileWriter(path + name);
-					out.write(new String(aLayer.getFilebody()));
-					out.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		} catch (HibernateException he) {
 			logException(he);
 
@@ -434,17 +447,18 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	@Override
-	public void getContentFile(int layerId) {
+	public ArrayList<String> getPropertiesFile(String pathFile) {
 		Session tmpSession = null;
 		Transaction tx = null;
+		ArrayList<String> keys = new ArrayList<String>();
 		try {
-			tmpSession = getSession();
-			tx = tmpSession.beginTransaction();
-			int i;
-
-			GeoLayer aLayer = loadLayerByID(layerId);
-			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
-			File doc = new File(layerDef.getString("layer_file"));
+			/*
+			 * tmpSession = getSession(); tx = tmpSession.beginTransaction(); int i;
+			 *
+			 * GeoLayer aLayer = loadLayerByID(layerId); JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef())); File doc = new
+			 * File(layerDef.getString("layer_file"));
+			 */
+			File doc = new File(pathFile);
 			URL path = doc.toURI().toURL();
 
 			InputStream inputstream = path.openStream();
@@ -452,15 +466,33 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			// avvio lettura file
 			String c;
+			JSONArray content = new JSONArray();
+
 			do {
 				c = br.readLine();
-				System.out.println(c.split("properties"));
+				JSONObject obj = new JSONObject(c);
+				content = obj.getJSONArray("features");
+				for (int j = 0; j < content.length(); j++) {
+					obj = content.getJSONObject(j).getJSONObject("properties");
+					Iterator it = obj.keys();
+					while (it.hasNext()) {
+						String key = (String) it.next();
+						if (!keys.contains(key)) {
+							keys.add(key);
+						}
+					}
+
+				}
+
+				// System.out.println(content);
 			} while (c != null);
-			inputstream.close();
+
+			// inputstream.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return keys;
 	}
 
 	/**
@@ -597,9 +629,22 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 					if (!layerDef.getString("layer_file").isEmpty()) {
 						bilayer.setPathFile(layerDef.getString("layer_file"));
+						if (!layerDef.getString("properties").isEmpty()) {
+							List<String> prop = new ArrayList<>();
+							JSONArray obj = layerDef.getJSONArray("properties");
+
+							for (int j = 0; j < obj.length(); j++) {
+
+								prop.add(obj.getString(j));
+							}
+
+							bilayer.setProperties(prop);
+						}
+
 					}
 					if (!layerDef.getString("layer_url").isEmpty()) {
 						bilayer.setLayerURL(layerDef.getString("layer_url"));
+
 					}
 					if (!layerDef.getString("layer_params").isEmpty()) {
 						bilayer.setLayerParams(layerDef.getString("layer_params"));

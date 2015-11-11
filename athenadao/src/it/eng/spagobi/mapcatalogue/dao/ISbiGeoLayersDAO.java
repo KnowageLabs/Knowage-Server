@@ -8,10 +8,11 @@ package it.eng.spagobi.mapcatalogue.dao;
 import java.io.UnsupportedEncodingException;
 import java.io.UnsupportedEncodingException;
 import java.io.UnsupportedEncodingException;
-import org.json.JSONException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
-
+import org.json.JSONException;
 import org.json.JSONException;
 
 import it.eng.spago.error.EMFUserError;
@@ -19,8 +20,6 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-
-import java.util.List;
 
 public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
@@ -34,7 +33,7 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException;
 
-	public void getContentFile(int idLayer);
+	public ArrayList<String> getPropertiesFile(String pathFile);
 
 	public void eraseLayer(Integer layerId) throws EMFUserError, JSONException;
 
@@ -43,5 +42,5 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 	public List<GeoLayer> loadAllLayers() throws EMFUserError, JSONException, UnsupportedEncodingException;
 
 	public List<SbiGeoLayers> listLayersByList(String[] listLabel) throws EMFUserError;
-	
+
 }

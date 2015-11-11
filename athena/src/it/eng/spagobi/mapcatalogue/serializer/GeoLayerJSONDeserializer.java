@@ -6,6 +6,7 @@
 
 package it.eng.spagobi.mapcatalogue.serializer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -40,6 +41,7 @@ public class GeoLayerJSONDeserializer {
 	private static final String LAYERORDER = "layerOrder";
 	private static final String GEOCATEGORY = "category_id";
 	private static final String ROLES = "roles";
+	private static final String PROPERTIES = "properties";
 
 	public static GeoLayer deserialize(JSONObject serialized) throws EMFUserError {
 
@@ -83,6 +85,14 @@ public class GeoLayerJSONDeserializer {
 							layer.setLayerParams(serialized.getString(properties[i]));
 						} else if (properties[i].equals(LAYERORDER)) {
 							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
+						} else if (properties[i].equals(PROPERTIES)) {
+							List<String> prop = new ArrayList<>();
+							JSONArray arr = serialized.getJSONArray(properties[i]);
+							;
+							for (int j = 0; j < arr.length(); j++) {
+								prop.add(arr.getString(j));
+							}
+							layer.setProperties(prop);
 						} else if (properties[i].equals(GEOCATEGORY)) {
 							if (serialized.getString(properties[i]) == "null") {
 								layer.setCategory_id(null);
