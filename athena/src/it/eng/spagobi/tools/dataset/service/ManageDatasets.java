@@ -299,7 +299,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			// will drop and create the destination table!
 			logger.debug("Start persistence...");
 			// gets the dataset object informations
-			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(ds.getLabel());
+
+			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
+			iDatasetDao.setUserProfile(profile);
+			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			// checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
