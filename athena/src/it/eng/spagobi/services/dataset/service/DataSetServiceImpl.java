@@ -34,13 +34,14 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements DataSetSe
 		super();
 	}
 
+	@Override
 	public SpagoBiDataSet getDataSet(String token, String user, String documentId) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.service.dataset.getDataSet");
 		try {
 			validateTicket(token, user);
-			this.setTenantByUserId(user);
-			return supplier.getDataSet(documentId);
+			IEngUserProfile profile = this.setTenantByUserId(user);
+			return supplier.getDataSet(documentId, (UserProfile)profile);
 		} catch (Exception e) {
 			logger.error("Error while getting dataset for document with id " + documentId, e);
 			return null;
@@ -51,6 +52,7 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements DataSetSe
 		}
 	}
 
+	@Override
 	public SpagoBiDataSet getDataSetByLabel(String token, String user, String label) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.service.dataset.getDataSetByLabel");
@@ -76,6 +78,7 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements DataSetSe
 	 *            String
 	 * @return SpagoBiDataSet[]
 	 */
+	@Override
 	public SpagoBiDataSet[] getAllDataSet(String token, String user) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.service.dataset.getAllDataSet");
@@ -93,6 +96,7 @@ public class DataSetServiceImpl extends AbstractServiceImpl implements DataSetSe
 		}
 	}
 
+	@Override
 	public SpagoBiDataSet saveDataSet(String token, String user, SpagoBiDataSet dataset) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.service.dataset.saveDataSet");

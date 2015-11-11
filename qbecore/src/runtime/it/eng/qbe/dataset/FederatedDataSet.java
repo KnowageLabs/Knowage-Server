@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.qbe.dataset;
@@ -50,7 +50,7 @@ public class FederatedDataSet extends QbeDataSet {
 
 	public FederatedDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
-		
+
 		federation = new FederationDefinition();
 		setDependentDataSets((SpagoBiDataSet[])dataSetConfig.getDependentDataSets());
 
@@ -73,6 +73,7 @@ public class FederatedDataSet extends QbeDataSet {
 		this.federation = federation;
 	}
 
+	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = super.toSpagoBiDataSet();
 
@@ -91,7 +92,7 @@ public class FederatedDataSet extends QbeDataSet {
 		sbd.setFederationRelations(federation.getRelationships());
 		sbd.setFederationId(federation.getFederation_id());
 
-		sbd.setType(DS_TYPE);	
+		sbd.setType(DS_TYPE);
 
 		return sbd;
 	}
@@ -122,6 +123,7 @@ public class FederatedDataSet extends QbeDataSet {
 	}
 
 
+	@Override
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
 
 		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
@@ -135,20 +137,22 @@ public class FederatedDataSet extends QbeDataSet {
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
-	
+
 		JSONObject relations = federation.getRelationshipsAsJSONObject();
 		dataSourceProperties.put(EngineConstants.ENV_RELATIONS, relations);
-		
+
 		dataSourceProperties.put(EngineConstants.ENV_USER_ID, getUserId());
-		
+
 		return getDataSourceFromDataSet(dataSourceProperties, useCache);
 	}
-	
 
+
+	@Override
 	public String getDsType() {
 		return DS_TYPE;
 	}
 
+	@Override
 	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
 
 		it.eng.qbe.datasource.IDataSource dataSource;
@@ -156,23 +160,23 @@ public class FederatedDataSet extends QbeDataSet {
 
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
-		
+
 		while(it.hasNext()) {
 			String propertyName = it.next();
 			compositeConfiguration.loadDataSourceProperties().put(propertyName, dataSourceProperties.get(propertyName));
 		}
-		
+
 		//refresh the datasets on cache
 		for (Iterator iterator = federation.getSourceDatasets().iterator(); iterator.hasNext();) {
 			IDataSet dataSets = (IDataSet) iterator.next();
 			datasetNames.add(dataSets.getLabel());
 		}
-		
+
 		String userId = (String) dataSourceProperties.get(EngineConstants.ENV_USER_ID);
 		JSONObject datasetLabels = FederationUtils.createDatasetsOnCache(datasetNames, userId);
 		setDataset2CacheTableName(datasetLabels);
-		
-		
+
+
 		//create the jdbc datasets linked to the tables on cache
 		for (Iterator iterator = federation.getSourceDatasets().iterator(); iterator.hasNext();) {
 			IDataSet dataSets = (IDataSet) iterator.next();
@@ -183,7 +187,7 @@ public class FederatedDataSet extends QbeDataSet {
 				logger.error("Error getting the name of the cached table linked to the dataset "+dataSets.getLabel(),e);
 				throw new SpagoBIRuntimeException("Error getting the name of the cached table linked to the dataset "+dataSets.getLabel(),e);
 			}
-			
+
 			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((cachedDataSet).getLabel(), cachedDataSet);
 			compositeConfiguration.addSubConfiguration(c);
 			//compositeConfiguration.loadDataSourceProperties().put(DataSetDataSource.DATA_SOURCE_TYPE, DS_TYPE);
@@ -194,12 +198,13 @@ public class FederatedDataSet extends QbeDataSet {
 		return dataSource;
 	}
 
+	@Override
 	public FederationDefinition getDatasetFederation() {
 		return federation;
 	}
 	public void setDataset2CacheTableName(JSONObject dataset2CacheTableName) {
 		this.dataset2CacheTableName = dataset2CacheTableName;
-	}   
+	}
 	public JSONObject getDataset2CacheTableName() {
 		return this.dataset2CacheTableName;
 	}
@@ -208,7 +213,11 @@ public class FederatedDataSet extends QbeDataSet {
 		String userIdFromParam = (String)getParamsMap().get(SpagoBIConstants.USER_ID);
 		if(userIdFromParam!=null && userIdFromParam.length()>0){
 			userId = userIdFromParam;
+		}else{
+			userId = (String)getParamsMap().get("DOCUMENT_USER");
 		}
+
+
 		return userId;
 	}
 

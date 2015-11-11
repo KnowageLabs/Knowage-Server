@@ -1,16 +1,18 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.services.datasource.service;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 import java.util.ArrayList;
@@ -22,15 +24,16 @@ import org.apache.log4j.Logger;
 public class DataSourceSupplier {
 	static private Logger logger = Logger.getLogger(DataSourceSupplier.class);
 
+
 	/**
 	 * Gets the data source.
-	 * 
+	 *
 	 * @param documentId
 	 *            the document id
-	 * 
+	 *
 	 * @return the data source
 	 */
-	public SpagoBiDataSource getDataSource(String documentId) {
+	public SpagoBiDataSource getDataSource(String documentId, UserProfile profile) {
 		logger.debug("IN.documentId:" + documentId);
 
 		SpagoBiDataSource toReturn = null;
@@ -56,7 +59,9 @@ public class DataSourceSupplier {
 				Integer datasetId = obj.getDataSetId();
 				if (datasetId != null) {
 					logger.debug("Document has a dataset. Looking for its datasource ...");
-					IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+					IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
+					datasetDao.setUserProfile(profile);
+					IDataSet dataset = datasetDao.loadDataSetById(datasetId);
 					IDataSource datasource = dataset.getDataSource();
 					if (datasource != null) {
 						logger.debug("Document's dataset has a datasource. Returning this one, that is " + datasource.getLabel());
@@ -92,10 +97,10 @@ public class DataSourceSupplier {
 
 	/**
 	 * Gets the data source by label.
-	 * 
+	 *
 	 * @param dsLabel
 	 *            the ds label
-	 * 
+	 *
 	 * @return the data source by label
 	 */
 	public SpagoBiDataSource getDataSourceByLabel(String dsLabel) {
@@ -122,10 +127,10 @@ public class DataSourceSupplier {
 
 	/**
 	 * Gets the data source by label.
-	 * 
+	 *
 	 * @param dsLabel
 	 *            the ds label
-	 * 
+	 *
 	 * @return the data source by label
 	 */
 	public SpagoBiDataSource getDataSourceById(int id) {
@@ -174,7 +179,7 @@ public class DataSourceSupplier {
 
 	/**
 	 * Gets the all data source.
-	 * 
+	 *
 	 * @return the all data source
 	 */
 	public SpagoBiDataSource[] getAllDataSource() {

@@ -8,6 +8,7 @@ package it.eng.spagobi.services.dataset.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -37,7 +38,7 @@ public class DataSetSupplier {
 	 *
 	 * @return the data set
 	 */
-	public SpagoBiDataSet getDataSet(String documentId) {
+	public SpagoBiDataSet getDataSet(String documentId, UserProfile profile) {
 
 		SpagoBiDataSet datasetConfig = null;
 		BIObject obj;
@@ -64,7 +65,9 @@ public class DataSetSupplier {
 				return null;
 			}
 
-			dataSet = DAOFactory.getDataSetDAO().loadDataSetById(obj.getDataSetId());
+			IDataSetDAO dao = DAOFactory.getDataSetDAO();
+			dao.setUserProfile(profile);
+			dataSet = dao.loadDataSetById(obj.getDataSetId());
 			if (dataSet == null) {
 				logger.warn("The dataSet with id " + obj.getDataSetId() + " deoes not exist on database.");
 				return null;

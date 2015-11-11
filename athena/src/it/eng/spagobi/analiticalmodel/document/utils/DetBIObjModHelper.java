@@ -200,7 +200,9 @@ public class DetBIObjModHelper {
 		IDataSet dataset = null;
 		if (datasetIdStr != null && !datasetIdStr.equals("")) {
 			Integer datasetIdInt = new Integer(datasetIdStr);
-			dataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetIdInt);
+			IDataSetDAO dsFactory = DAOFactory.getDataSetDAO();
+			dsFactory.setUserProfile(profile);
+			dataset = dsFactory.loadDataSetById(datasetIdInt);
 		}
 
 		// TRY TO LOAD ALL THE FUNCTIONALITIES ASSOCIATED (into request) TO THE BIOBEJCT

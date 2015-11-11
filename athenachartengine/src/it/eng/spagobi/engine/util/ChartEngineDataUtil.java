@@ -74,7 +74,7 @@ public class ChartEngineDataUtil {
 
 		monitorLD.stop();
 
-		IDataStore dataStore = dataSet.getDataStore().aggregateAndFilterRecords(query);
+		IDataStore dataStore = dataSet.getDataStore();//.aggregateAndFilterRecords(query);
 		return dataStore;
 	}
 

@@ -7,6 +7,8 @@ package it.eng.spagobi.engine.chart;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.proxy.EventServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.association.AssociationManager;
@@ -165,7 +167,18 @@ public class ChartEngineInstance extends AbstractEngineInstance {
 			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)) {
 				toReturn.put(parameterName, parameterValue);
 			}
+
+
 		}
+
+		UserProfile prfile = (UserProfile)this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+		if(prfile!=null){
+			toReturn.put(SpagoBIConstants.USER_ID, prfile.getUserId());
+		}
+
+
+
+
 		return toReturn;
 	}
 
