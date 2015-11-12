@@ -1289,7 +1289,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			}
 
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
-
+			dao.setUserProfile(getUserProfile());
 			dataSet = dao.loadDataSetById(id);
 			jsonDsConfig = new JSONObject(dataSet.getConfiguration());
 
