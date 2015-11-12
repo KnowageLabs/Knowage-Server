@@ -3,7 +3,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationParallelLegend", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartParallelLegend",
 		
 		/**
@@ -16,8 +16,8 @@ Ext.define
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-//		columnWidth: 0.2,
-		width: 200,
+		columnWidth: 1,
+//		width: 200,
 		height: 110,
 		
 		title: LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),

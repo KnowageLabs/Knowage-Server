@@ -3,7 +3,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartHeatmapLegendAndTooltip",
 		requires: [
 		           'Sbi.chart.designer.StylePopup',
@@ -19,8 +19,9 @@ Ext.define
 	   	 * height will be defined as the fixed value.
 	   	 * 
 	   	 * @author: danristo (danilo.ristovski@mht.net)
-	   	 */         
-        width: 200,
+	   	 */        
+       columnWidth: 1,
+//        width: 200,
         height: 110,
         
 		title: LN("sbi.chartengine.configuration.heatmap.panelTitle"),

@@ -869,6 +869,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 //			
 			
 			/**
+			 * Manage text of labels for color elements of PARALLEL chart on the Step 2
 			 * danristo
 			 */
 			var removeFlagsForMandatoryFields = function(chartType,jsonTemplate)
@@ -876,35 +877,38 @@ Ext.define('Sbi.chart.designer.Designer', {
 				if (chartType=="PARALLEL")
 				{
 					var axesListStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style);
-					
-					console.log(this.chartConfiguration);
-					console.log(axesListStyle.axisColor);
-					console.log(axesListStyle.axisColor!="transparent");
+							
+					var axisColorLabel = "";
+					var brushColorLabel = "";
 					
 					if (axesListStyle.axisColor && axesListStyle.axisColor!="" && axesListStyle.axisColor!="transparent")
 					{
-						var axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":";
-						
-						if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl)
-							Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);							
+						axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":";
 					}
 					else
 					{
-						var axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;
-						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);
+						axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;						
 					}	
 					
+					if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl)
+						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl.update(axisColorLabel);	
+					else if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].fieldLabel)
+						Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].fieldLabel = axisColorLabel;
 						
 					if (axesListStyle.brushColor && axesListStyle.brushColor!="" && axesListStyle.brushColor!="transparent")
 					{
-						var brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":";
-						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
+						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":";						
 					}
 					else
 					{
-						var brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;
-						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
+						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;
+							Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
 					}
+					
+					if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl)
+						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
+					else if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel)
+						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
 				}
 			};
 			
@@ -1339,29 +1343,27 @@ Ext.define('Sbi.chart.designer.Designer', {
 				        }
 					},					
 
-//					/**
-//					 * Provide a button that will let user remove all category items from the 
-//					 * X-axis panel.
-//					 * 
-//					 * @author: danristo (danilo.ristovski@mht.net)
-//					 */
-//					Ext.create
-//					(
-//						"Ext.panel.Tool",
-//						
-//						{
-//							type: "refresh",
-//							//baseCls: "x-tool-img delete",
-//							//cls: 'delete',
-//							padding: "3 0 0 0",// TODO: danristo (10.11)
-//							height: 22,// TODO: danristo (10.11)
-//							
-//							handler: function()
-//							{
-//								Sbi.chart.designer.Designer.cleanCategoriesAxis();
-//							}
-//						}
-//					),
+					/**
+					 * Provide a button that will let user remove all category items from the 
+					 * X-axis panel.
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					Ext.create
+					(
+						"Ext.panel.Tool",
+						
+						{
+							type: "deleteAllItemsFromAxisPanel",
+							padding: "3 0 0 0",
+							height: 22,
+							
+							handler: function()
+							{
+								Sbi.chart.designer.Designer.cleanCategoriesAxis();
+							}
+						}
+					),
 					
 					// STYLE POPUP
 					{
@@ -4035,20 +4037,28 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * if we move from BAR or LINE to SCATTER or RADAR, because for the last to we 
 		 * can have ONLY ONE CATEGORY, while we can have more than one for the first pair 
 		 * (BAR/LINE).
-		 * (danilo.ristovski@mht.net)
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
 		 */ 
 		cleanCategoriesAxis: function() {
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));			
 			this.categoriesStore.removeAll();
 		},
 		
+		/**
+		 * Responsible for removing all serie items inside of the corresponding 
+		 * Y-axis panel when clicking on button for deleting all serie items that
+		 * is inside of the panel's header.
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		cleanSerieAxis: function(yAxisId)
 		{
 			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
 			
 			for(i in serieStorePool) 
 			{				
-				if (serieStorePool[i].idAxisesContainer == yAxisId)
+				if (serieStorePool[i].config.idAxisesContainer == yAxisId)
 					serieStorePool[i].removeAll();
 			}	
 		},

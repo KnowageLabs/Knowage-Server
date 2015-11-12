@@ -112,9 +112,9 @@ Ext.define
 	    tpl: [
 	          	'<tpl for=".">',
 	          		'<div class="x-boundlist-item">',
-          				'<img src="{icon}" width="30px" style="display:inline-block; vertical-align:middle; line-height:35px;"/>',
+          				'<img src="{icon}" width="30px" style="display:inline-block; vertical-align:middle; line-height:20px;"/>',
           				'&nbsp;&nbsp;&nbsp;',
-          				'<p style="display:inline-block; vertical-align:middle; line-height:35px;">{style}</p>',
+          				'<p style="display:inline-block; vertical-align:middle; line-height:20px;">{style}</p>',
 	          		'</div>',
 	          	'</tpl>'
 	          ],

@@ -3,10 +3,11 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationGauge",
 
 	{
-		extend : 'Ext.panel.Panel',
+		extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 		id : "gaugePaneConfiguration",
 		
-		width : 245,
+		columnWidth: 1,
+//		width : 245,
 		title : LN("sbi.chartengine.configuration.gauge.panelTitle"),
 		bodyPadding : 10,
 		items : [],

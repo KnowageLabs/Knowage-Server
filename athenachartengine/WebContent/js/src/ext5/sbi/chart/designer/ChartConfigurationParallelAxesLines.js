@@ -3,7 +3,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationParallelAxesLines", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartParallelAxesLines",
 		
 		/**
@@ -16,8 +16,8 @@ Ext.define
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-//		columnWidth: 0.3,
-		width: 250,
+		columnWidth: 1,
+//		width: 250,
 		height: 170,
 		
 		title: LN("sbi.chartengine.configuration.parallel.axesLines.title"), 

@@ -8,7 +8,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartToolbarAndTip",
 		
 		/**
@@ -21,8 +21,8 @@ Ext.define
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		//columnWidth: 0.2,
-		width: 210, // fixed value: current solution for the ATHENA-154 bug
+		columnWidth: 1,
+//		width: 210, // fixed value: current solution for the ATHENA-154 bug
 		height: 110,
 		
 		title: LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),

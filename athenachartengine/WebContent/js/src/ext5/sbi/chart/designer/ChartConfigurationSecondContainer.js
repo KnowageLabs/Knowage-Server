@@ -1,6 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
-    extend: 'Ext.panel.Panel',
-    xtype: 'layout-column',
+//    extend: 'Ext.tab.Panel',	// version 2
+	extend: 'Ext.panel.Panel',	// version 1
+    xtype: 'layout-column',		// version 1	
     requires: [
                'Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip',
                'Sbi.chart.designer.ChartConfigurationLegend',
@@ -10,10 +11,11 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
                'Sbi.chart.designer.ChartConfigurationParallelTooltip',
                'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
                'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
-               'Sbi.chart.designer.ChartConfigurationWordcloud',
+               'Sbi.chart.designer.ChartConfigurationWordcloud'
            ],
     border:false,
-    layout: 'column',
+    layout: 'column',	// version 1
+//    layout: 'tab',	// version 2
     defaults:{
         height: 200,
     },
@@ -39,15 +41,18 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
         this.viewModel = config.viewModel;
         
         var legend = Ext.create('Sbi.chart.designer.ChartConfigurationLegend',{
+        	margin: config.margin,
 			viewModel: this.viewModel
 		});
 		var palette = Ext.create('Sbi.chart.designer.ChartConfigurationPalette',{
+			margin: config.margin,
 			colorPalette: this.viewModel.data.configModel.data.colorPalette
 		});
 		
 		/**
 		 * This panel is needed for the SUNBURST chart
-		 * (danilo.ristovski@mht.net)
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		var toolbarAndTip = Ext.create
 		(
@@ -60,7 +65,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		
 		/**
 		 * This panel is needed for the WORDCLOUD chart
-		 * (danilo.ristovski@mht.net)
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		var wordCloudParameters = Ext.create
 		(
@@ -73,7 +79,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		
 		/**
 		 * These three panels are needed for the PARALLEL chart
-		 * (danilo.ristovski@mht.net)
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		var parallelChartLimit = Ext.create
 		(

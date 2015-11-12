@@ -1,7 +1,7 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
     alternateClassName: ['ChartConfigurationPalette'],
     id: "chartColorPallete",
-	extend : 'Ext.panel.Panel',
+	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 	
 	/**
 	 * NOTE: 
@@ -12,8 +12,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	//columnWidth: 0.3,
-	width: 270,
+//	columnWidth: 0.3,
+	columnWidth: 1,
+//	width: 270,
 	
 	title : LN('sbi.chartengine.configuration.palette'),
 	bodyPadding : 10,
@@ -27,7 +28,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationPalette', {
 	
 	constructor: function(config) {
         this.callParent(config);
-        
+
         var colorPalette = config.colorPalette;
         
         this.paletteGrid = Ext.create('Ext.grid.Panel', {

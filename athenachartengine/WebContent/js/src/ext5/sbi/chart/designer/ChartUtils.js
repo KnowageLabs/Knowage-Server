@@ -41,7 +41,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				result['tickPosition'] = axis.tickPosition ? axis.tickPosition : '';
 				result['tickColor'] = axis.tickColor ? axis.tickColor : '';
 				result['minorTickLength'] = axis.minorTickLength ? axis.minorTickLength : '';
-				result['offset'] = (axis.offset != undefined && axis.offset != null) ? axis.offset : 0;
+				//result['offset'] = (axis.offset != undefined && axis.offset != null) ? axis.offset : 0;
 				result['lineWidth'] = axis.lineWidth ? axis.lineWidth : '';
 				result['endOnTickGauge'] = axis.endOnTickGauge;
 				result['minorTickInterval'] = axis.minorTickInterval ? axis.minorTickInterval : '';
@@ -365,7 +365,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 //						axisAsJson['rotation'] = Number(axisData.rotation) ? Number(axisData.rotation) : '';
 //						axisAsJson['distance'] = Number(axisData.distance) ? Number(axisData.distance) : '';
 						axisAsJson['minorTickLength'] = Number(axisData.minorTickLength) ? Number(axisData.minorTickLength) : '';
-						axisAsJson['offset'] = Number(axisData.offset) ? Number(axisData.offset) : '';
+						//axisAsJson['offset'] = Number(axisData.offset) ? Number(axisData.offset) : '';
 						axisAsJson['lineWidth'] = Number(axisData.lineWidth) ? Number(axisData.lineWidth) : '';
 						axisAsJson['endOnTickGauge'] = axisData.endOnTickGauge;
 						axisAsJson['minorTickInterval'] = Number(axisData.minorTickInterval) ? Number(axisData.minorTickInterval) : '';
@@ -1977,7 +1977,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					gaugeMin : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.min : null,
 					gaugeMax : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.max : null,
 					gaugeLineColor : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineColor : null,
-					gaugeOffset : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.offset : null,
+					//gaugeOffset : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.offset : null,
 					gaugeLineWidth : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.lineWidth : null,
 					gaugeEndOnTick : (jsonGaugeAxesListData != null) ? jsonGaugeAxesListData.endOnTickGauge : null,
 
@@ -2010,6 +2010,9 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			 : 0;
 			var treeData = [];
 			
+			// TODO: danristo (for GAUGE: Step 1 -> Step 4 error of undefined)
+			if (data)
+			{			
 			var keys = Object.keys(data);
 
 			for (index in keys) {
@@ -2054,6 +2057,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					});
 				}
 			}
+		}
 
 			if (nivel == 0) {
 				var treeFormattedJson = {

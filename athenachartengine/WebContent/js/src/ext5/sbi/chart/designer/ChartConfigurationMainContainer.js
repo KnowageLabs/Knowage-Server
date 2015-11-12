@@ -1,5 +1,5 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
-	extend : 'Ext.panel.Panel',
+	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 	requires : [
 	            'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
 	            'Sbi.chart.designer.ChartOrientationCombo',
@@ -21,6 +21,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	
 	height: null,
 	width: null,
+	margin: "0 0 5 0",	// overrides the margin set in the ChartConfigurationRoot.js
 	
 	/**
 	 * NOTE: 

@@ -3,7 +3,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationScatterConfiguration", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartScatterConfiguration",
 		requires: [
 		           'Sbi.chart.designer.ChartConfigurationScatterZoomType'
@@ -19,11 +19,11 @@ Ext.define
        	 * 
        	 * @author: danristo (danilo.ristovski@mht.net)
        	 */
-       //columnWidth: 0.3,     		          
-        width: 290,
-        height: 230,
+       columnWidth: 1,     		          
+//        width: 290,
+       height: 230,
         
-        title: LN("sbi.chartengine.configuration.scatter.panelTitle"),
+	    title: LN("sbi.chartengine.configuration.scatter.panelTitle"),
 		bodyPadding: 10,
 		items: [],
 		

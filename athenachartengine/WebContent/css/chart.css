@@ -8,3 +8,11 @@
 	height: 20px;
 	cursor: pointer;
 }
+
+.x-tool {
+background-image:none;
+}
+
+.x-tool-deleteAllItemsFromAxisPanel {
+ background: url(../img/icon_deleteAll.png);
+}

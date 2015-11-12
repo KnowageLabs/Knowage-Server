@@ -627,17 +627,17 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 * 			If positive, the line will be outside the speedometer. If negative the axes will be 
 			 * 			closer to the center
 			 */
-			this.offsetBorderFromYAxis = Ext.create
-	    	(
-				{
-			        xtype: 'numberfield',
-			        id: 'offsetBorderFromYAxis',
-			        value: this.axisData.offset,
-			        maxValue: 60,
-			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.offset") 
-			    }	
-	    	);
+//			this.offsetBorderFromYAxis = Ext.create
+//	    	(
+//				{
+//			        xtype: 'numberfield',
+//			        id: 'offsetBorderFromYAxis',
+//			        value: this.axisData.offset,
+//			        maxValue: 60,
+//			        labelSeparator: '',
+//			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.offset") 
+//			    }	
+//	    	);
 			
 			/**
 			 * LINE WIDTH
@@ -677,7 +677,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			this.axisAdditionalParamsFieldSet.add(this.minValueYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.maxValueYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.lineColor);
-			this.axisAdditionalParamsFieldSet.add(this.offsetBorderFromYAxis);
+			//this.axisAdditionalParamsFieldSet.add(this.offsetBorderFromYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.lineWidthYAxis);
 			this.axisAdditionalParamsFieldSet.add(this.endOnTick);
 			
@@ -1157,7 +1157,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					id: "plotsContainer",
 					store: plotbandsStore, // IMPLEMENT YOUR STORE
 					
-					title: "Add plots",
+					title: LN("sbi.chartengine.configuration.gauge.axisStylePopup.plotbands.title"),
 //					title:
 //					{
 //						hidden: true //???
@@ -1171,7 +1171,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				 			"Ext.panel.Tool",
 				 			
 				 			{
-				 				type: "refresh",
+				 				type: "deleteAllItemsFromAxisPanel",
 				 				
 				 				handler: function()
 				 				{
@@ -1238,19 +1238,24 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				            },
 				            
 				            {
-				            	dataIndex: 'color',		            	
+				            	dataIndex: 'color',	
+				            	
 				                flex: 1,
 								layout: 'fit',
 								sortable: false,
 								align : 'center',
 								text: LN("sbi.chartengine.axisstylepopup.plotbandParams.columnColor"),
-								
+																
 								listeners:  
-								{									
+								{
+									//beforerender:
 									click: 
 									{
 										fn: function(ad, gg, index)
-										{ 											
+										{ 		
+											var localScope = this;
+											localScope.gg = gg;
+											
 											Ext.create
 											(
 												'Ext.window.Window', 
@@ -1282,10 +1287,27 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 													        		
 													        		console.log(plotsContainer);
 													        		
-													        		plotsContainer.store.commitChanges();
-													        		plotsContainer.reconfigure();
+													        		console.log(localScope);
+//													        		localScope.gg.bgColor = "#FF0000";
+//													        		localScope.gg.style.backgroundColor = "#FF0000";
+//													        		localScope.gg.style.color = "#FF0000";
+													        		
+													        		//localScope.setConfig("backgroundColor");
+//													        		localScope.gg.doLayout();+
+													        		console.log("AAA");
+													        		var aaa = "width: 116px; background-color: " + plotsContainer.store.data.items[index].data.color;
+													        		localScope.gg.setAttribute("style",aaa);
+													        		
+													        		console.log("BBB");
+													        		console.log(localScope);
+//													        		plotsContainer.store.commitChanges();
+//													        		plotsContainer.reconfigure();
 													        		
 													        		this.ownerCt.close();
+													        		console.log(localScope);
+													        		//localScope.ownerCt.ownerCt.update();
+													        		console.log(localScope);
+													        		//a.updateLayout();
 													        	}
 											        		}
 											        	}
@@ -1300,7 +1322,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 								editor: 
 								{
 									xtype: 'textfield',
-									readOnly: true									
+									readOnly: true
 								}							              
 			                },			                
 			                
@@ -1520,7 +1542,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			var minValueYAxis = this.minValueYAxis.getValue();
 			var maxValueYAxis = this.maxValueYAxis.getValue();			
 			var lineColorYAxis = this.lineColor.getColor();			
-			var offsetBorderFromYAxis = this.offsetBorderFromYAxis.getValue();
+			//var offsetBorderFromYAxis = this.offsetBorderFromYAxis.getValue();
 			
 			var lineWidthYAxis = this.lineWidthYAxis.getValue();
 			var endOnTick = this.endOnTick.getValue();
@@ -1861,7 +1883,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				this.axisData.max = maxValueYAxis;			
 				
 				this.axisData.lineColor = lineColorYAxis;				
-				this.axisData.offset = offsetBorderFromYAxis;				
+				//this.axisData.offset = offsetBorderFromYAxis;				
 				this.axisData.lineWidth = lineWidthYAxis;			
 				this.axisData.endOnTickGauge = endOnTick;		
 			

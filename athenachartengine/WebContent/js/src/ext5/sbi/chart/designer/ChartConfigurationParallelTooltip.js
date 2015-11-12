@@ -3,7 +3,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationParallelTooltip", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartParallelTooltip",
 		
 		/**
@@ -16,8 +16,8 @@ Ext.define
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-//		columnWidth: 0.5,
-		width: 500,
+		columnWidth: 1,
+//		width: 500,
 		height: 230,
 		
 		title: LN("sbi.chartengine.configuration.parallel.tooltip.title"), 

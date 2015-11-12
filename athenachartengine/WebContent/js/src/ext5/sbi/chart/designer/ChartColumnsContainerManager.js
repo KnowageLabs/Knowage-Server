@@ -398,29 +398,38 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						}
 					}),
 					
-//					/**
-//					 * Provide a button that will let user remove all serie items from the 
-//					 * appropriate Y-axis panel (according to its ID).
-//					 * 
-//					 * @author: danristo (danilo.ristovski@mht.net)
-//					 */
-//					Ext.create
-//					(
-//						"Ext.panel.Tool",
-//						
-//						{
-//							type: "refresh",
-//							padding: "3 0 0 0",// TODO: danristo (10.11)
-//							height: 22,// TODO: danristo (10.11)
-//							handler: function(a,b,c,d)
-//							{
-//								var indexOfHeader = c.id.indexOf("_header");
-//								var axisId = c.id.substring(0,indexOfHeader);
-//								
-//								Sbi.chart.designer.Designer.cleanSerieAxis(axisId);
-//							}								
-//						}
-//					),
+					/**
+					 * Provide a button that will let user remove all serie items from the 
+					 * appropriate Y-axis panel (according to its ID).
+					 * 
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					Ext.create
+					(
+						"Ext.panel.Tool",
+						
+						{
+							type: 'deleteAllItemsFromAxisPanel',
+							
+							padding: "3 0 0 0",
+							height: 22,
+							
+							handler: function(a,b,c)
+							{
+								var indexOfHeader = c.id.indexOf("_header");
+								var axisId = c.id.substring(0,indexOfHeader);
+								Sbi.chart.designer.Designer.cleanSerieAxis(axisId);
+
+								var chartParallelLimit = Ext.getCmp("chartParallelLimit");
+																
+								if(chartParallelLimit && chartParallelLimit != null && chartParallelLimit.hidden == false) 
+								{	
+									chartParallelLimit.seriesColumnsOnYAxisCombo.getStore().removeAll();
+									chartParallelLimit.seriesColumnsOnYAxisCombo.setValue("");										
+								}
+							}
+						}
+					),
 					
 					// STYLE POPUP
 					Ext.create('Ext.panel.Tool', {
@@ -450,6 +459,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    		 * 
 					    		 * @author: danristo (danilo.ristovski@mht.net)
 					    		 */
+					    		// TODO: see if some other chart type satisfies this statement
 						    	if (chartType.toUpperCase() == 'HEATMAP' || chartType.toUpperCase() == 'GAUGE'
 						    		 || chartType.toUpperCase() == 'CHORD' || chartType.toUpperCase() == 'PARALLEL')
 					    		{

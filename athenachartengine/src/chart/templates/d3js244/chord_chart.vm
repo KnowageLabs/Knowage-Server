@@ -278,6 +278,7 @@
 						],
 						#end
 	},
+	
 	data:
 	[
 		$datasettransformer.toMatrix($results,$columnsNeeded,$serie,$dataColumnsMapper)

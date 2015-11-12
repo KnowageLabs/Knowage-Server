@@ -3,7 +3,7 @@ Ext.define
 	"Sbi.chart.designer.ChartConfigurationParallelLimit", 
 	
 	{
-		extend: 'Ext.panel.Panel',
+		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartParallelLimit",
 		
 		/**
@@ -16,8 +16,8 @@ Ext.define
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-//		columnWidth: 0.3,
-		width: 290,
+		columnWidth: 1,
+//		width: 290,
 		height: 150,
 		
 		title: LN("sbi.chartengine.configuration.parallel.limit.title"),

@@ -1,5 +1,5 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
-	extend : 'Ext.panel.Panel',
+	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 	
 	/**
 	 * NOTE: 
@@ -11,8 +11,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	//columnWidth : 0.7, 
-	width: 500, 
+//	columnWidth : 0.7,
+	columnWidth: 1,
+	//width: "100%", 
 	height: 120,
 	
 	id: "chartLegend",
