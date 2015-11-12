@@ -1,6 +1,7 @@
-var app = angular.module('FEDERATIONDEFINITION', ['ngMaterial','angular_list','sbiModule']);
+var app = angular.module('federationDefinitionModule', ['ngMaterial','angular_list','sbiModule']);
 
-app.controller('FederationDefinitionCTRL', ["$scope",
+
+app.controller('federationDefinitionCTRL', ["$scope",
                    		"$mdDialog", "$timeout", "sbiModule_translate","sbiModule_restServices",funkcija]);
 
 function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_restServices) {

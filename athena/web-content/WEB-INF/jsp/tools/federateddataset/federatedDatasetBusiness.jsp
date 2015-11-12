@@ -13,7 +13,7 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-		<title>{{sbiModule_translate.load("sbi.federationdefinition.title");}}</title>
+		<title>{{translate.load("sbi.federationdefinition.title");}}</title>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/federateddataset/federatedDataset.js"></script>
 		<link rel="stylesheet" type="text/css" href="/athena/themes/federateddataset/css/federateddatasetStyle.css">
@@ -48,14 +48,14 @@
 	 
 	</head>
 
-	<body class="bodyStyle" ng-app="FEDERATIONDEFINITION" id="ng-app">
+	<body class="bodyStyle" ng-app="federationDefinitionModule" id="ng-app">
 		
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
-		<div ng-controller="FederationDefinitionCTRL as ctrl" layout="column" style="width: 100%; height: 100%;" class="contentdemoBasicUsage" >		
+		<div ng-controller="federationDefinitionCTRL as ctrl" layout="column" style="width: 100%; height: 100%;" class="contentdemoBasicUsage" >		
 		
 			<md-toolbar class="miniheadfederation" style="height:4%">
 				<div class="md-toolbar-tools">
-					<i class="fa fa-bar-chart fa-2x"></i>
+					<i class="fa fa-connectdevelop fa-2x"></i>
 					<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.title");}}</h2>
 				</div>
 			</md-toolbar>
@@ -70,13 +70,13 @@
 					
 						<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
 							<div class="md-toolbar-tools">
-								<i class="fa fa-list-alt fa-2x"></i>
+								<i class="fa fa-bars "></i>
 								<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.datasets.avaliable");}}</h2>
 								<span flex=""></span>					
 							</div>
 						</md-toolbar>
 					
-						<md-content  layout-padding style="height:80%">
+						<md-content  layout-padding >
 							<angular-list
 							layout-fill 
 							id="availableDatasets" 
@@ -96,13 +96,13 @@
 				
 					<md-toolbar class="miniheadfedsmall" style="border-bottom: 2px solid grey;" >
 						<div class="md-toolbar-tools">
-							<i class="fa fa-list-alt fa-2x"></i>
+							<i class="fa fa-bars"></i>
 							<h2 class="md-flex" style="padding-left: 14px">{{translate.load("sbi.federationdefinition.datasets.selected");}}</h2>
 							<span flex=""></span>					
 						</div>
 					</md-toolbar>
 				
-					<md-content layout-padding style="height:80%" >
+					<md-content layout-padding>
 						<angular-list  
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 

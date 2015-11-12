@@ -25,19 +25,19 @@
 }
 .miniheadfederation  {
 /*  position: absolute !important; */
-  background-color: rgb(176, 190, 197) !important;
-	color: black !important;
+  background-color: #3B668C !important;
+	color: white !important;
 }
 md-toolbar.miniheadfedsmall {
-	background-color: rgb(176, 190, 197);
+	background-color: #3B668C;
 	color: #000000255255255;
 	height: 35px;
 	min-height: 0px;
 }
 
 .miniheadfedsmall{
-	background-color: rgb(176, 190, 197) !important;
-	color: black !important;
+	background-color: #3B668C !important;
+	color: white !important;
 	height: 35px;
 }
 
