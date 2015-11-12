@@ -236,7 +236,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 				if(isTechnicalUser){
 					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";	
 				}else{
-					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
+					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.jsp";
 				}
 				isFirstUrlToCallEqualsToDefaultPage = true;	
 			}
@@ -244,7 +244,7 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 			if(isTechnicalUser){
 				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.html";	
 			}else{
-				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.html";
+				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.jsp";
 			}
 			isFirstUrlToCallEqualsToDefaultPage = true;
 		}

@@ -30,6 +30,11 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
         		$scope.links = data.userMenu;
         		$scope.fixed = data.fixedMenu;
         		$scope.userName = data.userName;
+        		if (data.customMenu != undefined && data.customMenu != null && data.customMenu.length > 0){
+            		$scope.customs = data.customMenu[0].menu;
+        		} else {
+        			$scope.customs = {};
+        		}
         	}).
         	error(function(error){
         		$scope.showAlert('Attention, ' + $scope.userName,"Error Calling REST service for Menu. Please check if the server or connection is working.")

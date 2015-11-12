@@ -100,9 +100,11 @@ Ext.onReady(function () {
 
 <script>
 $(document).ready(function() {
-     $(function() { $('#divContainer').draggable(); });
+     $(function() { $('#divContainer').draggable( {containment: 'window'}); });
+		
 });
 </script>
+
 
 
 

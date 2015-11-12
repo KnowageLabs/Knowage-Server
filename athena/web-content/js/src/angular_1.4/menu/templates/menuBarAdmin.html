@@ -2,13 +2,42 @@
    <div class="sidebar-overlay" data-ng-click="toggleMenu()" data-ng-class="{'active' : openAside}"></div>
    <aside id="sidebar" class="sidebar  sidebar-fixed-left sidebar-inverse" role="navigation" data-ng-class="{'open' : openAside}">
       <div class="sidebar-header header-cover" >
-         <i class="sidebar-icon material-icons md-32">account_circle</i> {{userName}}
+         <a data-toggle="dropdown" class="sidebar-brand" role="link" href="#settings-dropdown" aria-expanded="false"><i aria-hidden="true" class="sidebar-icon material-icons md-32">account_circle</i> {{userName}} <b class="caret"></b> </a> 
       </div>
       <ul class="nav sidebar-nav">
-         <li data-ng-repeat="fix in fixed"><a href="#" tabindex=-1 title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
-      </ul>
-               <div class="top-bar"><button type="button" class="sidebar-toggle" data-ng-click="toggleMenu()"> <i class="material-icons">chevron_left</i> </button></div>
-      
+      	  <li class="dropdown">
+	            <ul id=settings-dropdown class=dropdown-menu >
+	            	<li data-ng-repeat="fix in fixed"><a href="#" title="{{fix.tooltip}}" data-ng-click="menuCall(fix.firstUrl,fix.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">{{fix.iconCls}}</i>  {{fix.tooltip}}</a> </li>
+	            </ul>
+	       </li>
+	  </ul>  
+      <div class="container-fluid">
+      <!-- User Menu -->
+	      <ul class="row iconBarAdmin" >
+	         <li class="col-xs-6" data-ng-repeat="link in links"><a href="#" title="{{link.tooltip}}" data-ng-click="menuCall(link.firstUrl,link.linkType)"> <i aria-hidden="true" class="navbar-icon material-icons-row md-32">{{link.iconCls}}</i></a> </li>
+	      </ul>
+      <!-- End User Menu -->   
+      <!-- Custom Menu -->
+        
+      <div id="customMenu">
+	      <ul id="customMenu" class="nav sidebar-nav">
+	      	<li data-ng-repeat="custom in customs"> 
+	      	<a data-ng-if="!custom.menu" href="#" title="{{custom.text}}" data-ng-click="menuCall(custom.src,custom.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label</i>  {{custom.text}}</a> 
+	      	<a data-toggle="dropdown" data-ng-if="custom.menu" href="#custom-dropdown" title="{{custom.text}}"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">menu</i>  {{custom.text}} <b class="caret caretPosition"></b></a> 
+	      		<ul data-ng-if="custom.menu" class="nav sidebar-nav">
+	      		<li class="dropdown">
+	      		 <ul  id=custom-dropdown class=dropdown-menu >
+	            	<li data-ng-repeat="menu in custom.menu"><a href="#" title="{{menu.text}}" data-ng-click="menuCall(menu.src,menu.linkType)"> <i aria-hidden="true" class="sidebar-icon material-icons md-32">label_outline</i>  {{menu.text}}</a> </li>
+	       		 </ul>
+	       		</li> 
+	       		</ul>
+	      	</li>
+	      </ul>
+      </div>
+     
+      <!-- End Custom Menu -->    
+      </div>
+         
    </aside>
    <div id="contieniLinkAdmin" data-ng-class="{'open' : openAside}">
       <div class="row">

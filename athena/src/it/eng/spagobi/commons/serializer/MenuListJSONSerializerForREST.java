@@ -130,7 +130,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				personal.put(PATH, userMenuMessage);
 				personal.put(TARGET, "_self");
 
-				tempFirstLevelMenuList.put(home);
+				// TODO: commented to hide home
+				// tempFirstLevelMenuList.put(home);
 				tempFirstLevelMenuList.put(personal);
 				boolean isAdmin = false;
 				for (int i = 0; i < filteredMenuList.size(); i++) {
@@ -315,6 +316,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			hierarchiesManagement.put(TARGET, "_self");
 			hierarchiesManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_HIERARCHIES_MANAGEMENT + "');");
 			hierarchiesManagement.put(LINK_TYPE, "execDirectUrl");
+			hierarchiesManagement.put(FIRST_URL, contextName + HREF_HIERARCHIES_MANAGEMENT);
 			tempMenuList.put(hierarchiesManagement);
 		}
 
@@ -370,6 +372,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		if (idDirectLink) {
 			menuItem.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + href + "', '" + tooltip + "')");
 			menuItem.put(LINK_TYPE, "execDirectUrl");
+			menuItem.put(FIRST_URL, contextName + href);
 		} else {
 			if (label != null && label.equals(INFO)) {
 				menuItem.put(HREF, "javascript:info()");
@@ -491,19 +494,22 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
 						+ childElem.getMenuId() + "', '" + path + "' )");
 				temp2.put(LINK_TYPE, "execDirectUrl");
-
+				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
 			} else if (childElem.getStaticPage() != null) {
 				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
 						+ "', '" + path + "' )");
 				temp2.put(LINK_TYPE, "execDirectUrl");
+				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
 			} else if (childElem.getFunctionality() != null) {
 				String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
 				temp2.put(HREF, finalUrl);
 				temp2.put(LINK_TYPE, "execDirectUrl");
+				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
 			} else if (childElem.getExternalApplicationUrl() != null) {
-				temp2.put(HREF,
-						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
+				temp2.put(HREF, "javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path
+						+ "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
+				temp2.put(SRC, StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()));
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
 				String url = "javascript:execDirectUrl('" + childElem.getUrl() + "'";
 				url = url.replace("${SPAGOBI_CONTEXT}", contextName);
