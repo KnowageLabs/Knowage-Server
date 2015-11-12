@@ -75,11 +75,13 @@ angular.module('angular_2_col', [ 'ngMaterial' ])
 								x-=4;
 								x-=offs;
 								
-								var maxw=(element[0].parentElement.clientWidth-50);
-								var minw=5;
-								if(x>maxw){
-									x=maxw;
+								if(element[0].parentElement.children[0].clientWidth!=0 && element[0].parentElement.children[1].clientWidth!=0 && element[0].parentElement.children[2].clientWidth!=0){
+									var maxw=(element[0].parentElement.clientWidth-50);
+									if(x>maxw){
+										x=maxw;
+									}
 								}
+								var minw=5;
 								if(x<minw){
 									x=minw;
 								}
