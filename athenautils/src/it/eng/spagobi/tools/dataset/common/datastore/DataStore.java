@@ -61,35 +61,43 @@ public class DataStore implements IDataStore {
 		this.metaData = new MetaData();
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return records.isEmpty();
 	}
 
+	@Override
 	public long getRecordsCount() {
 		return records.size();
 	}
 
+	@Override
 	public Iterator iterator() {
 		return records.iterator();
 	}
 
+	@Override
 	public void appendRecord(IRecord record) {
 		records.add(record);
 	}
 
+	@Override
 	public void prependRecord(IRecord record) {
 		insertRecord(0, record);
 	}
 
+	@Override
 	public void insertRecord(int position, IRecord record) {
 		records.add(position, record);
 	}
 
+	@Override
 	public IRecord getRecordAt(int i) {
 		IRecord r = (IRecord) records.get(i);
 		return r;
 	}
 
+	@Override
 	public IRecord getRecordByID(Object value) {
 		List result;
 		final int idFieldIndex;
@@ -108,6 +116,7 @@ public class DataStore implements IDataStore {
 		return result.size() == 1 ? (IRecord) result.get(0) : null;
 	}
 
+	@Override
 	public List findRecords(int fieldIndex, Object fieldValue) {
 		List fieldIndexes = new ArrayList();
 		List fieldValues = new ArrayList();
@@ -118,12 +127,14 @@ public class DataStore implements IDataStore {
 		return findRecords(fieldIndexes, fieldValues);
 	}
 
+	@Override
 	public List findRecords(final List fieldIndexes, final List fieldValues) {
 		List results;
 
 		results = new ArrayList();
 
 		results = findRecords(new IRecordMatcher() {
+			@Override
 			public boolean match(IRecord record) {
 				boolean match = true;
 				for (int i = 0; i < fieldIndexes.size(); i++) {
@@ -142,6 +153,7 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
+	@Override
 	public List findRecords(IRecordMatcher matcher) {
 		List results;
 		Iterator it;
@@ -159,6 +171,7 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
+	@Override
 	public IMetaData getMetaData() {
 		return this.metaData;
 	}
@@ -167,6 +180,7 @@ public class DataStore implements IDataStore {
 		this.metaData = metaData;
 	}
 
+	@Override
 	public List getFieldValues(int fieldIndex) {
 		List results;
 		Iterator it;
@@ -185,6 +199,7 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
+	@Override
 	public Set getFieldDistinctValues(int fieldIndex) {
 		Set results;
 		Iterator it;
@@ -203,6 +218,7 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
+	@Override
 	public Set<String> getFieldDistinctValuesAsString(int fieldIndex) {
 		Set<String> results;
 		Iterator it;
@@ -236,6 +252,7 @@ public class DataStore implements IDataStore {
 		return results;
 	}
 
+	@Override
 	public void sortRecords(int fieldIndex) {
 		final int fIndex = fieldIndex;
 
@@ -246,6 +263,7 @@ public class DataStore implements IDataStore {
 		 */
 
 		sortRecords(new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				IRecord record1 = (IRecord) o1;
 				IRecord record2 = (IRecord) o2;
@@ -266,10 +284,12 @@ public class DataStore implements IDataStore {
 		});
 	}
 
+	@Override
 	public void sortRecords(int fieldIndex, Comparator filedComparator) {
 		final int fIndex = fieldIndex;
 		final Comparator fComaparator = filedComparator;
 		sortRecords(new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				IRecord record1 = (IRecord) o1;
 				IRecord record2 = (IRecord) o2;
@@ -280,6 +300,7 @@ public class DataStore implements IDataStore {
 		});
 	}
 
+	@Override
 	public void sortRecords(Comparator recordComparator) {
 		Collections.sort(records, recordComparator);
 	}
@@ -292,6 +313,7 @@ public class DataStore implements IDataStore {
 		this.records = records;
 	}
 
+	@Override
 	public SourceBean toSourceBean() throws SourceBeanException {
 		SourceBean sb1 = new SourceBean("ROWS");
 		Iterator it = iterator();
@@ -313,6 +335,7 @@ public class DataStore implements IDataStore {
 		return sb1;
 	}
 
+	@Override
 	public String toXml() {
 		String xml;
 
@@ -357,18 +380,22 @@ public class DataStore implements IDataStore {
 		return buffer.toString();
 	}
 
+	@Override
 	public Date getCacheDate() {
 		return cacheDate;
 	}
 
+	@Override
 	public void setCacheDate(Date cacheDate) {
 		this.cacheDate = cacheDate;
 	}
 
+	@Override
 	public IDataStore aggregateAndFilterRecords(IQuery query) {
 		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME));
 	}
 
+	@Override
 	public IDataStore aggregateAndFilterRecords(String sqlQuery) {
 
 		// **************************************************************************************************************
@@ -384,7 +411,12 @@ public class DataStore implements IDataStore {
 
 		for (int i = 0; i < fieldCount; i++) {
 			String columnName = this.metaData.getFieldName(i);
-			columnNames[i] = columnName;
+
+			if(columnName.contains(":")){
+				columnNames[i] = this.metaData.getFieldAlias(i);
+			}else{
+				columnNames[i] = columnName;
+			}
 			Class type = this.metaData.getFieldType(i);
 			if (type == Integer.class) {
 				columnTypes[i] = ColumnType.INTEGER;
