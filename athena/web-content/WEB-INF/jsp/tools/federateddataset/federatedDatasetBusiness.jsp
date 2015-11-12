@@ -102,7 +102,7 @@
 						</div>
 					</md-toolbar>
 				
-					<md-content layout-padding>
+					<md-content layout-padding >
 						<angular-list  
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
@@ -147,8 +147,7 @@
 										item-name="name"
 										highlights-selected-item=true
 										selected-item="ctrl.myselectedvariable[dataset.label]"
-										click-function="ctrl.selektuj(item, listId)"
-										
+										click-function="ctrl.selektuj(item, listId)"										
 									>
 									</angular-list>
 									
@@ -190,8 +189,8 @@
 											</div>
 											<span flex=""></span>
 											 
-											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background">
-														 <i class="fa fa-trash" ng-click="ctrl.deleteFromMultiArray(k)"></i>
+											 		<md-button aria-label="trash" class="md-fab md-ExtraMini trashcan-background" ng-click="ctrl.deleteFromMultiArray(k)">
+														 <i class="fa fa-trash" ></i>
 													</md-button>
 										
 									</md-list-item>
