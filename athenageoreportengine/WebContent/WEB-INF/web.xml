@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="SpagoBIGeoReportEngine" version="2.4">
+  <description>SpagoBI - SpagoBIGeoReportEngine</description>
   <display-name>athenageoreportengine</display-name>
-  <description>
-		SpagoBI - SpagoBIGeoReportEngine
-	</description>
+  <context-param>
+    <param-name>resteasy.scan</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.servlet.mapping.prefix</param-name>
+    <param-value>/api</param-value>
+  </context-param>
   <filter>
     <filter-name>EncodingFilter</filter-name>
     <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -12,28 +18,21 @@
       <param-value>UTF-8</param-value>
     </init-param>
   </filter>
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
-    <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
-  </filter-mapping>
   <filter>
     <filter-name>SpagoBIAccessFilter</filter-name>
-    <filter-class>
-			it.eng.spagobi.utilities.filters.SpagoBIAccessFilter
-		</filter-class>
+    <filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>SpagoBIAccessFilter</filter-name>
-    <url-pattern>/GeoReportEngineStartAction/*</url-pattern>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>SpagoBIAccessFilter</filter-name>
-    <url-pattern>/GeoReportEngineStartEditAction/*</url-pattern>
+    <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
+  <listener>
+    <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+  </listener>
   <servlet>
     <servlet-name>ConfigServlet</servlet-name>
     <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
@@ -54,120 +53,16 @@
   </servlet>
   <!-- END ProxyTicketReceptor -->
   <servlet>
-    <servlet-name>GeoReportEngineStartAction</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.GeoReportEngineStartAction
-		</servlet-class>
+    <servlet-name>Resteasy</servlet-name>
+    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>GeoReportEngineStartEditAction</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.GeoReportEngineStartEditAction
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>GetLayersFromWMS</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.GetLayersFormWMSAction
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>GetTargetDataset</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.GetTargetDatasetAction
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>GetTargetLayer</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.GetTargetLayerAction
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>MapOl</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.MapOlAction
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>GetHierarchyLevelMeta</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.engines.georeport.services.GetHierachyLevelMetaAction
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>EngineTestServlet</servlet-name>
-    <servlet-class>
-			it.eng.spagobi.utilities.engines.EngineTestServlet
-		</servlet-class>
-  </servlet>
-  <servlet>
-    <servlet-name>LayerWms</servlet-name>
-    <jsp-file>/WEB-INF/LayerWms.jsp</jsp-file>
-  </servlet>
-  <servlet>
-    <servlet-name>Sandbox</servlet-name>
-    <jsp-file>/WEB-INF/jsp/sandbox.jsp</jsp-file>
-  </servlet>
-  <!-- START ProxyTicketReceptor -->
   <servlet-mapping>
-    <servlet-name>ProxyTicketReceptor</servlet-name>
-    <url-pattern>/proxyReceptor</url-pattern>
+    <servlet-name>Resteasy</servlet-name>
+    <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
-  <!-- END ProxyTicketReceptor -->
-  <servlet-mapping>
-    <servlet-name>GeoReportEngineStartAction</servlet-name>
-    <url-pattern>/GeoReportEngineStartAction</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>GeoReportEngineStartEditAction</servlet-name>
-    <url-pattern>/GeoReportEngineStartEditAction</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>GetLayersFromWMS</servlet-name>
-    <url-pattern>/GetLayersFromWMS</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>GetTargetDataset</servlet-name>
-    <url-pattern>/GetTargetDataset</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>GetTargetLayer</servlet-name>
-    <url-pattern>/GetTargetLayer</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>MapOl</servlet-name>
-    <url-pattern>/MapOl</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>GetHierarchyLevelMeta</servlet-name>
-    <url-pattern>/GetHierarchyLevelMeta</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>EngineTestServlet</servlet-name>
-    <url-pattern>/GeoReportEngineStartActionTest</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>LayerWms</servlet-name>
-    <url-pattern>/LayerWms</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>Sandbox</servlet-name>
-    <url-pattern>/Sandbox</url-pattern>
-  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>/html/index.jsp</welcome-file>
   </welcome-file-list>
-  <error-page>
-    <exception-type>java.lang.Throwable</exception-type>
-    <location>/html/error.html</location>
-  </error-page>
-  <error-page>
-    <error-code>404</error-code>
-    <location>/html/error.html</location>
-  </error-page>
-  <error-page>
-    <error-code>500</error-code>
-    <location>/html/error.html</location>
-  </error-page>
+ 
 </web-app>

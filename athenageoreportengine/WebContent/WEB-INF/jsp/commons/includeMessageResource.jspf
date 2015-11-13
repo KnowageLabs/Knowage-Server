@@ -5,7 +5,7 @@
  If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 
 <script type="text/javascript"
-	src="./js/lib/messageResource/messageResource.min.js"></script>
+	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.min.js"></script>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
@@ -27,7 +27,7 @@
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : './js/src/ext/sbi/messages/'
+  		filePath : "${pageContext.request.contextPath}/js/src/ext/sbi/messages/"
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});

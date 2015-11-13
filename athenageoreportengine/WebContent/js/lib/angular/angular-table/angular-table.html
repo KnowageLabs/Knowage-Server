@@ -1,0 +1,304 @@
+<div layout="column" layout-fill id="angularTableTemplate" class="{{id}}ItemBox">
+
+
+	<md-input-container  md-no-float class="searchBarList"  >
+		<md-icon md-font-icon="fa fa-search"></md-icon> 
+		<input  ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
+			
+		<md-icon md-font-icon="fa fa-filter" ng-click="searchVal='';searchItem(searchVal);" class="filter-icon" 
+			ng-class="{ 'not_empty' : (searchVal.length !== 0 && searchVal!=undefined)  }"></md-icon> 
+	</md-input-container>
+
+	<table  flex>
+		<th ng-if="multiSelect==true" width="26px"></th>
+
+		
+		<th class="thButton" ng-if="(columns==undefined || columns.length==0)"  ng-repeat="(key,val) in ngModel[0]">
+			<md-button class="md-raised" ng-click="orderBy(key)" >
+			{{val}}<md-icon ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}"></md-icon>
+			</md-button>
+		</th>
+		
+		<th class="thButton" ng-if="!(columns==undefined || columns.length==0)" ng-repeat="val in columns">
+			<md-button class="md-raised" ng-click="orderBy(val)" >
+			{{val}}<md-icon ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}"></md-icon>
+			</md-button>
+		</th>
+		
+		<th  ng-if="speedMenuOption!=undefined && speedMenuOption.length>0" width="{{speedMenuOption.length*30}} px"></th>	
+		
+		<tr ng-if='SyncPagination && paginate' class="rowItem" dir-paginate="row in ngModel | filterBySpecificColumns:columnsSearch:searchFastVal | orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
+		pagination-id='id+"PaginationTable"'  total-items='totalItemCount' current-page=currentPageNumber ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
+				</tr>
+		
+		<tr width="100" ng-if='!SyncPagination && paginate' class="rowItem" dir-paginate="row in ngModel | filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
+		pagination-id='id+"PaginationTable"' current-page=currentPageNumber ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
+			
+		</tr>
+		
+		<tr ng-if='!paginate' class="rowItem" ng-repeat="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord" ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
+		</tr>
+	</table>
+	
+
+	
+
+		<div  class="box_pagination_list" layout="row" layout-align="center end">
+			<dir-pagination-controls ng-if='SyncPagination && paginate ' max-size="5" pagination-id='id+"PaginationTable"' on-page-change="pageCangedFunction({newPageNumber:newPageNumber,itemsPerPage:itemsPerPage,searchValue:prevSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})" ></dir-pagination-controls>
+			<dir-pagination-controls ng-if='!SyncPagination && paginate' max-size="5" pagination-id='id+"PaginationTable"' ></dir-pagination-controls>
+				
+		</div>
+
+
+
+</div>
+
+
+
+
+<style>
+
+/* rimuovo il focus da tutto */
+*:focus {
+	outline: none;
+}
+
+#angularTableTemplate {
+	padding: 0 5px;
+    height: 100%;
+}
+
+#angularTableTemplate table {
+	width: 100%;
+	table-layout: fixed;
+	
+	color:#005080;
+ 	border-bottom-left-radius: 10;
+    border-bottom-right-radius: 10;
+}
+
+#angularTableTemplate tr:nth-child(2n+0){
+ background: #CCC
+}
+
+#angularTableTemplate tr:nth-child(2n+1){
+ background:tansparent;
+}
+
+
+#angularTableTemplate table td div{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	line-height: 26px;
+	}
+
+#angularTableTemplate table th button {
+	width: 100%;
+	margin: 0px;
+	min-height: 20px;
+    line-height: 20px;
+    padding: 5px;
+    background-color: #005080;
+    color:#DDDDDD;
+    font-family: Verdana;
+    border-radius: 0;
+}
+
+#angularTableTemplate table th button md-icon{
+    line-height: 20px;
+    color: #DDDDDD;
+    }
+
+#angularTableTemplate table, #angularTableTemplate td {
+	border-collapse: collapse;
+	 padding: 0 4px;
+	 border : 1px solid #ddd;
+/*     border-bottom: 1px solid #ddd; */
+}
+#angularTableTemplate th{
+padding: 0px;}
+
+
+#angularTableTemplate td.selectedRowItem {
+ background-color:#9CC3DA;
+/*  color:#DDDDDD; */
+}
+
+#angularTableTemplate tr.rowItem:hover {
+    background-color: #CCCCFF;
+}
+
+
+#angularTableTemplate table {
+	-webkit-box-shadow:  0px 21px 138px -49px rgba(0, 0, 0, 0.21);
+	-moz-box-shadow:  0px 21px 138px -49px rgba(0, 0, 0, 0.21);
+	box-shadow:  0px 21px 138px -49px rgba(0, 0, 0, 0.21);
+/* 	border-color: transparent; */
+/* 	    background-color: transparent; */
+}
+
+/* pagination */
+#angularTableTemplate .box_pagination_list {
+margin-top: 10px;
+}
+
+#angularTableTemplate [layout-padding] .box_pagination_list {
+	margin-left: -8px !important;
+}
+
+#angularTableTemplate .pagination>li, #angularTableTemplate .pagination>li>span
+	{
+	position: relative;
+	float: left;
+	margin-left: -1px;
+	text-decoration: none !important;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	display: block;
+	width: 20px;
+	height: 16px;
+	text-align: center;
+	line-height: 16px;
+}
+
+#angularTableTemplate .pagination {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+#angularTableTemplate .pagination>li>a {
+	text-decoration: none !important;
+	width: 100%;
+    display: block;
+}
+
+#angularTableTemplate .pagination>.active, #angularTableTemplate .pagination>.active>a,
+	#angularTableTemplate .pagination>.active>a:focus, #angularTableTemplate .pagination>.active>a:hover,
+	#angularTableTemplate .pagination>.active>span, #angularTableTemplate .pagination>.active>span:focus,
+	#angularTableTemplate .pagination>.active>span:hover {
+	z-index: 2;
+	color: #000;
+	cursor: default;
+	background-color: rgb(232, 232, 232);
+	border-color: rgb(232, 232, 232);
+}
+
+#angularTableTemplate .pagination>.disabled>a, #angularTableTemplate .pagination>.disabled>a:focus,
+	#angularTableTemplate .pagination>.disabled>a:hover,
+	#angularTableTemplate .pagination>.disabled>span, #angularTableTemplate .pagination>.disabled>span:focus,
+	#angularTableTemplate .pagination>.disabled>span:hover {
+	color: #777;
+	cursor: not-allowed;
+	background-color: #fff;
+	border-color: #ddd;
+}
+
+#angularTableTemplate .searchBarList {
+	padding: 0;
+	background-color: transparent;
+	margin-bottom: 5px;
+	height: 22px;
+}
+
+#angularTableTemplate .searchBarList md-icon {
+	color: rgb(177, 169, 174);
+	height: 100%;
+	top: 50%;
+	margin-top: -5px;
+}
+
+#angularTableTemplate .searchBarList md-icon.filter-icon {
+	left: 100%;
+	margin-left: -10px;
+	display: none;
+}
+
+#angularTableTemplate .searchBarList md-icon.filter-icon.not_empty {
+	color: red;
+	display: block;
+}
+
+#angularTableTemplate .searchBarList input {
+	margin: 0px;
+	margin-left: 15px;
+	height: 22px;
+}
+
+#angularTableTemplate .actionButton{
+    height: 20px;
+    width: 20px;
+    min-height: 0;
+    margin: 0 ;
+        padding: 0;
+    }
+    
+#angularTableTemplate .actionButton md-icon{
+line-height: 20px;
+}
+
+/* dropdown */
+#angularTableTemplate .dropdown_menu_list {
+ 	margin-top: -25px; 
+/* 	    margin-left: -210px; */
+	position: fixed !important;
+	
+}
+#angularTableTemplate .position-fixed{
+position: fixed !important;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list {
+	position: relative;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	    background-color: #ECECEC;
+}
+
+#angularTableTemplate .dropdown_menu_list.open md-list {
+	display: block;
+}
+
+#angularTableTemplate md-list-item, #angularTableTemplate md-list-item button,
+	#angularTableTemplate md-list-item .md-list-item-inner {
+/* 	min-height: 15px !important; */
+min-height: 22px !important;
+}
+
+#angularTableTemplate md-list-item p ,.p_small_button{
+	line-height: 20px;
+	margin: 3px;
+	color: black;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button {
+	border-bottom: 1px solid rgb(176, 190, 197);
+	padding: 0;
+	margin-left: 8px;
+	margin-right: 8px;
+	border-radius: 0;
+}
+
+#angularTableTemplate .multiSelectBox  md-checkbox{
+margin : 0px ;
+}
+
+#angularTableTemplate .multiSelectBox {
+    background-color: white;
+}
+</style>
