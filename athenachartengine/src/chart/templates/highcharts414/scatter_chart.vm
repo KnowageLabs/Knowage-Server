@@ -28,6 +28,9 @@
 	#end
 #end
 
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)
+
 {
     chart: {
         type: 'scatter',
@@ -482,11 +485,34 @@
 							#end
 		                    
 		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}'
-		                }
+		                },
 						#end
+						 #if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end 
 					},
 				#end
+				       
 	    	],
+	    	events :{ #if($crossNavigation != '')
+				      click: function(event){
+						  handleCrossNavigationTo(event);
+						  }
+						#end  
+					},
 	    	
 	    	tooltip: { 
 			#set($seriePrefix = $relatedSerie.prefixChar)
@@ -625,22 +651,22 @@
     
     plotOptions: 
     {
-        scatter: {
-            marker: {
-                radius: 5,
+            scatter: {
+                marker: {
+                    radius: 5,
+                    states: {
+                        hover: {
+                            enabled: true,
+                            lineColor: 'rgb(100,100,100)'
+                        }
+                    }
+                },
                 states: {
                     hover: {
-                        enabled: true,
-                        lineColor: 'rgb(100,100,100)'
+                        marker: {
+                            enabled: false
+                        }
                     }
-                }
-            },
-            states: {
-                hover: {
-                    marker: {
-                        enabled: false
-                    }
-                }
             },
             
             #* 
@@ -655,10 +681,10 @@
             	We will increase this value in order to display series that contain a data array bigger
             	than 1000 (default), because it is most likely that we will have this situation very 
             	often.
-            	
+                
             	@author: danristo (danilo.ristovski@mht.net)
             *#
             turboThreshold: 5000            
+            }
         }
-    }
 }
