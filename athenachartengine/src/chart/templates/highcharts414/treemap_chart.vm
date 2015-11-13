@@ -28,6 +28,10 @@
 
 #set($result = $datasettransformer.createTreeChart($columnsNeeded,$serie,$dataColumnsMapper,$dataRows, $groupingFunction))
 
+#set($crossNavigation = '')
+#set($crossNavigation = $chart.DRILL)	
+
+
 {
  	chart: {
   	type: '$chartType',
@@ -142,6 +146,25 @@
 	{ 
     	enabled: false
     },
+      crossNavigation:
+    {
+    #if($crossNavigation != '') 
+						crossNavigationDocumentName: '$crossNavigation.document',
+						crossNavigationDocumentParams: [
+							## if single PARAM node, not array
+							#if($crossNavigation.PARAM_LIST.PARAM.class.name == "java.util.LinkedHashMap")
+								#set($param = $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' }
+							#else
+								##Array of parameters
+								
+								#foreach($param in $crossNavigation.PARAM_LIST.PARAM)
+								{ name: '$param.name', urlName:'$param.parameterUrlName', type: '$param.type', value: '$param.value' },
+								#end
+							#end
+						],
+						#end
+    },
 	
 	plotOptions:
 	{
@@ -168,6 +191,6 @@
 	
 	data: 
 	[
-		$result
-	]
+     $result
+    ]
 }
