@@ -6,6 +6,18 @@
 
 package it.eng.spagobi.mapcatalogue.service;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -38,19 +50,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 @Path("/layers")
 public class LayerCRUD {
 
@@ -67,7 +66,7 @@ public class LayerCRUD {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		List<GeoLayer> layers = null;
 		try {
-			layers = dao.loadAllLayers();
+			layers = dao.loadAllLayers(null);
 		} catch (EMFUserError e) {
 			logger.error("Error loading the layers", e);
 			throw new SpagoBIRuntimeException("Error loading the layers", e);
@@ -488,8 +487,8 @@ public class LayerCRUD {
 	@Path("/getLayerFromList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	// {items:["layername1","layername2",....]}
-	public String getLayerFromList(@Context HttpServletRequest req)
-			throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException, IOException {
+	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
+			IOException {
 		ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -504,9 +503,8 @@ public class LayerCRUD {
 			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
 		}
 
-		List<SbiGeoLayers> geoLayer = new ArrayList<SbiGeoLayers>();
 		String[] layList;
-
+		List<GeoLayer> layers = null;
 		if (requestBodyJSON.has("items")) {
 			layList = new String[requestBodyJSON.getJSONArray("items").length()];
 			for (int i = 0; i < requestBodyJSON.getJSONArray("items").length(); i++) {
@@ -515,24 +513,33 @@ public class LayerCRUD {
 			}
 
 			if (layList != null && layList.length > 0) {
-				geoLayer = geoLayersDAO.listLayersByList(layList);
+				try {
+					layers = dao.loadAllLayers(layList);
+				} catch (EMFUserError e) {
+					logger.error("Error loading the layers", e);
+					throw new SpagoBIRuntimeException("Error loading the layers", e);
+				}
+
 			}
 		}
 
-		if (geoLayer != null && geoLayer.size() != 0) {
-			ObjectMapper mapper = new ObjectMapper();
-
-			String s = "[";
-			for (SbiGeoLayers geo : geoLayer) {
-				s += mapper.writeValueAsString(geo.toGeoLayer()) + ",";
-			}
-			s = s.substring(0, s.length() - 1);
-			s += "]";
-			return "{\"root\":" + s + "}";
-
+		if (layers == null) {
+			logger.debug("No layer found");
+			return "{root:[]}";
+		}
+		System.out.println("Contengo " + layers.toString());
+		logger.debug("Serializing the layers");
+		ObjectMapper mapper = new ObjectMapper();
+		String s = "[]";
+		try {
+			s = mapper.writeValueAsString(layers);
+		} catch (Exception e) {
+			logger.error("Error serializing the layers", e);
+			throw new SpagoBIRuntimeException("Error serializing the layers", e);
 		}
 
-		return "{\"root\":[]}";
+		logger.debug("Layers serialized");
+		return "{\"root\":" + s + "}";
 	}
 
 }

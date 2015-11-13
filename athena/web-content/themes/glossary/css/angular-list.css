@@ -64,10 +64,12 @@ i.dragged-item-icon {
 	margin-top: 4px;
 }
 
-#angularListTemplate .dropdown_menu_list md-list-item, #angularListTemplate .dropdown_menu_list md-list-item button,
-	#angularListTemplate .dropdown_menu_list md-list-item .md-list-item-inner {
-/* 	min-height: 15px !important; */
-min-height: 22px !important;
+#angularListTemplate .dropdown_menu_list md-list-item,
+	#angularListTemplate .dropdown_menu_list md-list-item button,
+	#angularListTemplate .dropdown_menu_list md-list-item .md-list-item-inner
+	{
+	/* 	min-height: 15px !important; */
+	min-height: 22px !important;
 }
 
 #angularListTemplate .dropdown_menu_list md-list-item p {
@@ -76,14 +78,13 @@ min-height: 22px !important;
 }
 
 #angularListTemplate button {
-	    height: 22px !important;
+	height: 22px !important;
 	padding: 0px;
 }
 
 #angularListTemplate md-list {
 	padding: 0;
 }
-
 
 #angularListTemplate  button p {
 	line-height: 25px;
@@ -92,12 +93,14 @@ min-height: 22px !important;
 	border-bottom: 1px solid rgb(176, 190, 197);
 }
 
-#angularListTemplate md-list md-list-item button.md-button:not ([disabled]):hover {
+#angularListTemplate md-list md-list-item button.md-button:not ([disabled]
+	):hover {
 	background-color: transparent;
 }
 
-#angularListTemplate md-list md-list-item button.md-button:not([disabled]):hover {
-    background-color: transparent;
+#angularListTemplate md-list md-list-item button.md-button:not ([disabled]
+	):hover {
+	background-color: transparent;
 }
 
 #angularListTemplate .angular-ui-tree-handle, #angularListTemplate .angular-ui-tree-handle:hover
@@ -140,7 +143,7 @@ min-height: 22px !important;
 #angularListTemplate .pagination>li>a {
 	text-decoration: none !important;
 	width: 100%;
-    display: block;
+	display: block;
 }
 
 #angularListTemplate .pagination>.active, #angularListTemplate .pagination>.active>a,
@@ -196,7 +199,8 @@ min-height: 22px !important;
 	display: block;
 }
 
-#angularListTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button {
+#angularListTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button
+	{
 	border-bottom: 1px solid rgb(176, 190, 197);
 	padding: 0;
 	margin-left: 8px;
@@ -204,8 +208,7 @@ min-height: 22px !important;
 	border-radius: 0;
 }
 
-
- /*tree */
+/*tree */
 .angular-ui-tree-node p, .angular-ui-tree-node md-list-item,
 	.angular-ui-tree-node md-list-item button, .angular-ui-tree-node md-list-item button .md-list-item-inner,
 	.angular-ui-tree-node .md-ripple-container {
@@ -226,7 +229,6 @@ ol.angular-ui-tree-nodes li {
 .angular-ui-tree-empty {
 	background-color: white !important;
 	min-height: 30px;
-	
 }
 
 .angular-ui-tree-handle {
@@ -234,55 +236,53 @@ ol.angular-ui-tree-nodes li {
 	padding: 4px 0px;
 	height: 27px !important;
 	min-height: 27px !important;
-	    cursor: pointer;
+	cursor: pointer;
 }
 
- .angular-ui-tree-placeholder {
+.angular-ui-tree-placeholder {
 	background: #f0f9ff;
 	border: 2px dashed #bed2db;
 	box-sizing: border-box;
 }
 
-  .selectedRow{
-    font-weight: bold;
-    }
-    
-    
-    p.wrapText {
+.selectedRow {
+	font-weight: bold;
+}
+
+p.wrapText {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-#angularListTemplate md-fab-speed-dial md-fab-trigger button, #angularListTemplate button.singleActionButton {
-    height: 15px!important;
-    width: 15px !important;
-  min-height: 0;
- 
+#angularListTemplate md-fab-speed-dial md-fab-trigger button,
+	#angularListTemplate button.singleActionButton {
+	height: 15px !important;
+	width: 15px !important;
+	min-height: 0;
 }
 
- #angularListTemplate button.singleActionButton {
+#angularListTemplate button.singleActionButton {
 	position: absolute;
 	right: -5px;
 	top: 0;
-	}
-
-#angularListTemplate md-fab-speed-dial md-fab-actions button{
-  height: 20px;
-  width: 20px;
-  min-height: 0;
-  top: 2px;
-  background-color: #0094FF;
 }
 
-#angularListTemplate md-fab-speed-dial md-fab-actions button md-icon{
-  margin-top: 2px;
+#angularListTemplate md-fab-speed-dial md-fab-actions button {
+	height: 20px;
+	width: 20px;
+	min-height: 0;
+	top: 2px;
+	background-color: #0094FF;
 }
 
+#angularListTemplate md-fab-speed-dial md-fab-actions button md-icon {
+	margin-top: 2px;
+}
 
-#angularListTemplate md-fab-speed-dial{
-    position: absolute;
-    right: -5px;
-    height: 100%;
-    top: -3px;}
-    
+#angularListTemplate md-fab-speed-dial {
+	position: absolute;
+	right: -5px;
+	height: 100%;
+	top: -3px;
+}

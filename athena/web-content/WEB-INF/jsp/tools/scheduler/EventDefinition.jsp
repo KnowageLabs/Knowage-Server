@@ -28,6 +28,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/scheduler/EventDefinitionApp.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/scheduler/css/scheduler_style.css">
+
 </head>
 
 <body ng-app="EventDefinitionApp">
@@ -244,30 +245,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 					</md-tab-body> 
 				</md-tab>
 				
-<!-- 				<md-tab id="json">  -->
-<!-- 					<md-tab-label>json</md-tab-label>  -->
-<!-- 					<md-tab-body layout="column">  -->
-<!-- <!-- 						<pre>activityEventCtrl.event: {{activityEventCtrl.event | json}}</pre> --> -->
-<!-- 				<pre>{{contactForm.$error | json }}</pre> -->
-<!-- 					</md-tab-body>  -->
-<!-- 				</md-tab> -->
-<!-- 			</md-tabs> -->
-				<md-tab id="table"> 
-					<md-tab-label>Table</md-tab-label> 
-					<md-tab-body > 
-						
-						<angular-table
-						 id="mytab"
-						 ng-model=activityEventCtrl.sampleModel
-						 columns='["name","age","surname"]'
-						 columns-search='["name","age"]'
-						 highlights-selected-item=true
-						 show-search-bar=true
-						 menu-option=activityEventCtrl.MenuOpt
-						 speed-menu-option=activityEventCtrl.SpeedMenuOpt
-						 ></angular-table>
-					</md-tab-body> 
-				</md-tab>
+				
 			</md-tabs>
 
 			

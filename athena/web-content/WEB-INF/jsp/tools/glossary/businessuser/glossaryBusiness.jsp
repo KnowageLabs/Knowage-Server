@@ -372,5 +372,5 @@
 </html>
 
 <%}else{ %>
-<%@include file="/WEB-INF/jsp/tools/geo/mapPage.jsp"%>
+NOT AUTHORIZED
 <%} %>
