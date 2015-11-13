@@ -30,57 +30,6 @@
 
 <script type="text/javascript"
 	src="/athena/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-
-
-
-<script type="text/ng-template" id="dialog1.tmpl.html"><md-dialog style="width:100%;max-height:80%; " ng-cloak  >
-
-  <form >
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        <h2>Filter Select</h2>
-        <span flex></span>
-        <md-button class="md-icon-button" ng-click="closeFilter()">
-          <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
-        </md-button>
-      </div>
-    </md-toolbar>
-
-    <md-dialog-content  >
-      <span class="md-dialog-content">
-		<div layout="row" layout-wrap layout-fill >
-		
-    	<md-list flex="30">
-			<md-list-item  ng-repeat="pr in selectedLayer.properties">
-				
-				<h3  style="margin-left:25px;">{{pr}}</h3>
-				<md-button ng-click="addFilter(pr)" aria-label="new Label"
-					class="md-fab md-ExtraMini addButton"> <md-icon
-					md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;">
-				</md-icon> </md-button>
-			</md-list-item>
-		</md-list>
-		</span>
-		<span flex="50" >
-			<h2 style="margin-left:75px;">Filter Added</h2>
-			<md-list-item  ng-repeat="ps in filter_set">
-				
-				<h3 style="margin-left:75px;">{{ps}}</h3>
-				<md-button ng-click="removeFilter(ps)" aria-label="new Label"
-					class="md-fab md-ExtraMini addButton"> <md-icon
-					md-font-icon="fa fa-minus-circle" style=" margin-top: 6px ; color: white;">
-				</md-icon> </md-button>
-			</md-list-item>
-		</span>
-      </div>
-    </md-dialog-content>
-
-   
-  </form>
-
-</md-dialog>
-</script>
-
 </head>
 
 
@@ -103,27 +52,22 @@
 
 			<md-content layout-padding
 				style="background-color: rgb(236, 236, 236);"
-				class="ToolbarBox miniToolbar noBorder leftListbox"> <!--  		<angular-list 
-					
-					ng-click="showme=true" layout-fill id='layerlist' ng-model=layerList
-					item-name='name' show-search-bar=true highlights-selected-item=true
-					click-function="loadLayerList(item)" menu-option=menuLayer>
-				</angular-list> 
-				
-				--> <angular-table layout-fill id='layerlist' ng-model=layerList
+				class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table
+				layout-fill id='layerlist' ng-model=layerList
 				columns='["name","type", "layerURL"]'
 				columnsSearch='["name","type", "layerURL"]' show-search-bar=true
-				highlights-selected-item=true click-function="loadLayerList(item)"
+				highlights-selected-item=true click-function="loadLayerList(item);"
 				menu-option=menuLayer></angular-table> </md-content>
 
 		</div>
-		</left-col> 
-		<right-col> <!-- 
+		</left-col> <right-col> <!-- 
 					RIGHT 
 					-->
+
 		<div ng-show="showme">
-			<form name="contactForm" layout-fill id="layerform"
-				ng-submit="contactForm.$valid && saveLayer()"
+
+			<form name="forms.contactForm" layout-fill id="layerform"
+				ng-submit="forms.contactForm.$valid && saveLayer()"
 				class="detailBody md-whiteframe-z1" novalidate>
 
 				<md-toolbar class="md-blue minihead">
@@ -132,9 +76,9 @@
 					<div style="position: absolute; right: 0px" class="h100">
 						<md-button type="button" tabindex="-1" aria-label="cancel"
 							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
+							ng-click="cancel();activeTab='Layer';">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
-						<md-button ng-disabled="!contactForm.$valid" type="submit"
+						<md-button ng-disabled="!forms.contactForm.$valid" type="submit"
 							aria-label="save layer" class="md-raised md-ExtraMini "
 							style=" margin-top: 2px;"
 							ng-disabled=" selectedItem.name.length === 0 ||  selectedItem.type.length === 0">
@@ -142,11 +86,12 @@
 					</div>
 				</div>
 				</md-toolbar>
+				<md-tabs md-dynamic-height="" md-border-bottom=""> <md-tab
+					label="Layer" md-on-select="activeTab='Layer'"
+					md-active="activeTab=='Layer'"> <md-content flex
+					style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
 
-				<md-content flex style="margin-left:20px;"
-					class="ToolbarBox miniToolbar noBorder">
-
-				<div layout="row" layout-wrap>
+					<div layout="row" layout-wrap>
 					<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
 					</div>
@@ -375,25 +320,44 @@
 
 					</div>
 				</div>
-
-
 				</md-content>
-
-
 			</form>
-			<md-button class="md-primary md-raised"
-				ng-click="showAdvanced($event)" flex-sm="100" flex-md="100"
-				flex-gt-md="auto"> Filter temp </md-button>
+
+			</md-tab>
+			<md-tab label="Filter" md-on-select="activeTab='Filter'"
+				md-active="activeTab=='Filter'" ng-click="loadFilter();"> <md-toolbar
+				class="md-blue minihead " style="border-bottom: 2px solid grey;">
+
+			<div class="md-toolbar-tools" layout="row" layout-wrap layout-fill>
+				<div flex=50 style="font-size: 16px;">
+					<h2>{{translate.load("sbi.layerfilter");}}</h2>
+				</div>
+				<div flex=50 style="font-size: 16px;">
+					<h2>{{translate.load("sbi.layerfilteradded");}}</h2>
+				</div>
+			</div>
+			</md-toolbar> <md-content layout-padding style="background-color: #F1F1F1;"
+				class="ToolbarBox miniToolbar noBorder leftListbox">
+			<div layout="row" layout-wrap layout-fill>
+				<div flex=50>
+					<angular-list style="margin-left: 55px;" flex="25" layout-fill
+						id='sx' ng-model=filter item-name='property'
+						click-function="addFilter(item)" show-search-bar=true />
+				</div>
+				<div flex=50>
+					<angular-list style="margin-left: 55px;" flex="35" layout-fill
+						id='right' ng-model=filter_set item-name='property'
+						click-function="removeFilter(item)" show-search-bar=true
+						speed-menu-option="removeIcon" />
+
+				</div>
+			</div>
+			</md-content> </md-tab>
+			</md-tabs>
 		</div>
+		
+		
 		</right-col> </angular-2-col>
 	</div>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -166,27 +169,23 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			hibLayer.setType(aLayer.getType());
 			hibLayer.setLabel(aLayer.getLabel());
 			hibLayer.setBaseLayer(aLayer.isBaseLayer());
-			// hibLayer.setLayerDef(null);
-			hibLayer.setCategory_id(aLayer.getCategory_id());
 			if (aLayer.getCategory_id() == null) {
 				hibLayer.setCategory(null);
 				hibLayer.setCategory_id(null);
 
 			} else {
 				hibLayer.setCategory(aLayer.getCategory());
+				hibLayer.setCategory_id(aLayer.getCategory_id());
 			}
-			String path = "";
+			String path = null;
 			if (modified) {
-
 				if (aLayer.getPathFile() != null) {
-
 					String separator = "";
 					if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
 						separator += File.separatorChar;
 					}
 
 					path = aLayer.getPathFile() + separator + getTenant() + File.separator + "Layer" + File.separator;
-					aLayer.setPathFile(null);
 					aLayer.setPathFile(path + aLayer.getLabel());
 
 				} else {
@@ -212,50 +211,50 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			}
 			// prendo la lista d properties da inserire poi nel campo keys di LayerDef
-			ArrayList<String> properties = getPropertiesFile(aLayer.getPathFile());
+			layerDef.put("properties", aLayer.getProperties());
 
 			// preparo il jsonObject da memorizzare in LayerDefinition
 			layerDef.put("layerId", aLayer.getLayerIdentify());
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
 			layerDef.put("layerName", aLayer.getLayerName());
-			if (aLayer.getPathFile() != null) {
-				layerDef.put("layer_file", aLayer.getPathFile());
-				layerDef.put("properties", properties);
-			} else {
-				layerDef.put("layer_file", JSONObject.NULL);
-				layerDef.put("properties", "");
-			}
+			layerDef.put("layer_file", aLayer.getPathFile());
+			/*
+			 * if (aLayer.getPathFile() != null) { layerDef.put("layer_file", aLayer.getPathFile()); // layerDef.put("properties", properties); } else {
+			 * layerDef.put("layer_file", JSONObject.NULL); // layerDef.put("properties", ""); }
+			 */
 			if (aLayer.getLayerURL() != null) {
 				layerDef.put("layer_url", aLayer.getLayerURL());
 			} else {
-				layerDef.put("layer_url", JSONObject.NULL);
+				layerDef.put("layer_url", "null");
 			}
 
-			layerDef.put("layer_zoom", JSONObject.NULL);
-			layerDef.put("layer_cetral_point", JSONObject.NULL);
+			layerDef.put("layer_zoom", "null");
+			layerDef.put("layer_cetral_point", "null");
 			if (aLayer.getLayerParams() != null) {
 				layerDef.put("layer_params", aLayer.getLayerParams());
 			} else {
-				layerDef.put("layer_params", JSONObject.NULL);
+				layerDef.put("layer_params", "null");
 			}
 			if (aLayer.getLayerOptions() != null) {
-				layerDef.put("layer_options", aLayer.getLayerParams());
+				layerDef.put("layer_options", aLayer.getLayerOptions());
 			} else {
-				layerDef.put("layer_options", JSONObject.NULL);
+				layerDef.put("layer_options", "null");
 			}
 			if (aLayer.getLayerOrder() != null) {
 				layerDef.put("layer_order", aLayer.getLayerOrder());
 			} else {
-				layerDef.put("layer_order", JSONObject.NULL);
+				layerDef.put("layer_order", "null");
 			}
 
 			hibLayer.setLayerDef(layerDef.toString().getBytes("utf-8"));
 			updateSbiCommonInfo4Update(hibLayer);
+
 			// cancello tutti i roles associati al layer
 			// query hql
 			String hql = "DELETE from SbiGeoLayersRoles a WHERE a.layer.id =" + aLayer.getLayerId();
 			Query q = tmpSession.createQuery(hql);
 			q.executeUpdate();
+
 			// aggiorno i ruoli utenti scelti
 			if (aLayer.getRoles() != null) {
 				for (SbiExtRoles r : aLayer.getRoles()) {
@@ -264,7 +263,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(aLayer.getLayerId(), r.getExtRoleId().intValue());
 					updateSbiCommonInfo4Update(hibLayRol);
 					tmpSession.save(hibLayRol);
-					// update(hibLayRol);
+
 				}
 			}
 			tx.commit();
@@ -296,16 +295,16 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 * @throws JSONException
-	 * @throws UnsupportedEncodingException
-	 *
+	 * @throws IOException
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#insertEngine(it.eng.spagobi.bo.Engine)
 	 */
 	@Override
-	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException {
+	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, IOException {
 		Session tmpSession = null;
 		Transaction tx = null;
 		Integer id;
 		JSONObject layerDef = new JSONObject();
+		ArrayList<String> properties = null;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -343,6 +342,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				aLayer.setPathFile(null);
 
 			}
+
 			// save file on server//
 
 			try {
@@ -358,47 +358,51 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// prendo la lista d properties da inserire poi nel campo keys di LayerDef
-
-			ArrayList<String> properties = getPropertiesFile(aLayer.getPathFile());
 
 			// preparo il jsonObject da memorizzare in LayerDefinition
+
 			layerDef.put("layerId", aLayer.getLayerIdentify());
 			layerDef.put("layerLabel", aLayer.getLayerLabel());
 			layerDef.put("layerName", aLayer.getLayerName());
+			layerDef.put("properties", "");
+
 			if (aLayer.getPathFile() != null) {
 				layerDef.put("layer_file", aLayer.getPathFile());
-				layerDef.put("properties", properties);
+
 			} else {
-				layerDef.put("layer_file", JSONObject.NULL);
-				layerDef.put("properties", "");
-			}
-			if (aLayer.getLayerURL() != null) {
-				layerDef.put("layer_url", aLayer.getLayerURL());
-			} else {
-				layerDef.put("layer_url", JSONObject.NULL);
+				layerDef.put("layer_file", "null");
+
 			}
 
-			layerDef.put("layer_zoom", JSONObject.NULL);
-			layerDef.put("layer_cetral_point", JSONObject.NULL);
+			if (aLayer.getLayerURL() != null) {
+
+				layerDef.put("layer_url", aLayer.getLayerURL());
+
+			} else {
+				layerDef.put("layer_url", "null");
+
+			}
+
+			layerDef.put("layer_zoom", "null");
+			layerDef.put("layer_cetral_point", "null");
 			if (aLayer.getLayerParams() != null) {
 				layerDef.put("layer_params", aLayer.getLayerParams());
 			} else {
-				layerDef.put("layer_params", JSONObject.NULL);
+				layerDef.put("layer_params", "null");
 			}
 			if (aLayer.getLayerOptions() != null) {
-				layerDef.put("layer_options", aLayer.getLayerParams());
+				layerDef.put("layer_options", aLayer.getLayerOptions());
 			} else {
-				layerDef.put("layer_options", JSONObject.NULL);
+				layerDef.put("layer_options", "null");
 			}
 			if (aLayer.getLayerOrder() != null) {
 				layerDef.put("layer_order", aLayer.getLayerOrder());
 			} else {
-				layerDef.put("layer_order", JSONObject.NULL);
+				layerDef.put("layer_order", "null");
 			}
 
 			hibLayer.setLayerDef(layerDef.toString().getBytes("utf-8"));
-
+			// save on db
 			updateSbiCommonInfo4Insert(hibLayer);
 			id = (Integer) tmpSession.save(hibLayer);
 
@@ -447,47 +451,126 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	@Override
-	public ArrayList<String> getPropertiesFile(String pathFile) {
+	public ArrayList<String> getPropertiesURL(String urlInput) throws IOException, JSONException {
+		URL url = new URL(urlInput);
+
+		Proxy proxy = null;
+		String proxyHost = System.getProperty("http.proxyHost");
+		String proxyPort = System.getProperty("http.proxyPort");
+		if (proxyHost != null && proxyPort != null) {
+			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, new Integer(proxyPort)));
+		}
+
+		HttpURLConnection httpcon = (HttpURLConnection) url.openConnection(proxy);
+
+		// httpcon.setRequestMethod("GET");
+		httpcon.setConnectTimeout(600000);
+		BufferedReader in = new BufferedReader(new InputStreamReader(httpcon.getInputStream()));
+		String inputLine;
+		ArrayList<String> keys = new ArrayList<String>();
+		while ((inputLine = in.readLine()) != null) {
+			JSONObject obj = new JSONObject(inputLine);
+			JSONArray content = (JSONArray) obj.get("featureTypes");
+			for (int j = 0; j < content.length(); j++) {
+				obj = content.getJSONObject(j).getJSONObject("properties");
+				Iterator it = obj.keys();
+				while (it.hasNext()) {
+					String key = (String) it.next();
+					if (!keys.contains(key)) {
+						keys.add(key);
+					}
+				}
+			}
+
+		}
+		in.close();
+		return keys;
+	}
+
+	@Override
+	public ArrayList<String> getProperties(int layerId) {
 		Session tmpSession = null;
 		Transaction tx = null;
 		ArrayList<String> keys = new ArrayList<String>();
 		try {
-			/*
-			 * tmpSession = getSession(); tx = tmpSession.beginTransaction(); int i;
-			 *
-			 * GeoLayer aLayer = loadLayerByID(layerId); JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef())); File doc = new
-			 * File(layerDef.getString("layer_file"));
-			 */
-			File doc = new File(pathFile);
-			URL path = doc.toURI().toURL();
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			int i;
 
-			InputStream inputstream = path.openStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
+			GeoLayer aLayer = loadLayerByID(layerId);
+			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
 
-			// avvio lettura file
-			String c;
-			JSONArray content = new JSONArray();
+			// se dobbiamo prendere le properties di un file
+			if (!layerDef.get("layer_file").equals("null")) {
+				File doc = new File(layerDef.getString("layer_file"));
+				URL path = doc.toURI().toURL();
+				InputStream inputstream = path.openStream();
+				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
+				String c;
+				JSONArray content = new JSONArray();
 
-			do {
-				c = br.readLine();
-				JSONObject obj = new JSONObject(c);
-				content = obj.getJSONArray("features");
-				for (int j = 0; j < content.length(); j++) {
-					obj = content.getJSONObject(j).getJSONObject("properties");
-					Iterator it = obj.keys();
-					while (it.hasNext()) {
-						String key = (String) it.next();
-						if (!keys.contains(key)) {
-							keys.add(key);
+				do {
+					c = br.readLine();
+					JSONObject obj = new JSONObject(c);
+					content = obj.getJSONArray("features");
+					for (int j = 0; j < content.length(); j++) {
+						obj = content.getJSONObject(j).getJSONObject("properties");
+						Iterator it = obj.keys();
+						while (it.hasNext()) {
+							String key = (String) it.next();
+							if (!keys.contains(key)) {
+								keys.add(key);
+							}
 						}
 					}
+				} while (c != null);
+			}
+			// se dobbiamo prendere le properties di un wfs
+			if (!layerDef.get("layer_url").equals(null)) {
+				String urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
+				URL url = new URL(urlDescribeFeature);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
+				connection.setRequestMethod("GET");
+				connection.setDoOutput(true);
+				connection.setDoInput(true);
+				connection.setRequestProperty("CetRequestProperty(ontent-Type", "application/json");
+				connection.setRequestProperty("Accept", "application/json");
+				// connection.setReadTimeout(30 * 1000);
+				connection.connect();
+				int HttpResult = connection.getResponseCode();
+				StringBuilder sb = new StringBuilder();
+				if (HttpResult == HttpURLConnection.HTTP_OK) {
+
+					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
+					String inputLine;
+					while ((inputLine = br.readLine()) != null) {
+						JSONObject obj = new JSONObject(inputLine);
+						JSONArray content = (JSONArray) obj.get("featureTypes");
+						content.getJSONObject(0);
+						for (int j = 0; j < content.length(); j++) {
+							JSONArray arr = content.getJSONObject(j).getJSONArray("properties");
+							for (int k = 0; k < arr.length(); k++) {
+								JSONObject val = arr.getJSONObject(k);
+								Iterator it = val.keys();
+								while (it.hasNext()) {
+									String key = (String) it.next();
+									if (!keys.contains(key)) {
+										keys.add(key);
+									}
+								}
+							}
+
+						}
+
+					}
+					br.close();
+				} else {
+					System.out.println("http non ok");
+					System.out.println(connection.getResponseMessage());
 				}
 
-				// System.out.println(content);
-			} while (c != null);
-
-			// inputstream.close();
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -547,14 +630,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		}
 	}
-
-	/*
-	 *
-	 *
-	 *
-	 *
-	 *
-	 */
 
 	@Override
 	public void eraseRole(Integer roleId, Integer layerId) throws EMFUserError {
@@ -633,34 +708,33 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					bilayer.setLayerIdentify(layerDef.getString("layerId"));
 					bilayer.setLayerLabel(layerDef.getString("layerLabel"));
 					bilayer.setLayerName(layerDef.getString("layerName"));
+					if (!layerDef.getString("properties").isEmpty()) {
+						List<String> prop = new ArrayList<>();
+						JSONArray obj = layerDef.getJSONArray("properties");
 
-					if (!layerDef.getString("layer_file").isEmpty()) {
-						bilayer.setPathFile(layerDef.getString("layer_file"));
-						if (!layerDef.getString("properties").isEmpty()) {
-							List<String> prop = new ArrayList<>();
-							JSONArray obj = layerDef.getJSONArray("properties");
+						for (int j = 0; j < obj.length(); j++) {
 
-							for (int j = 0; j < obj.length(); j++) {
-
-								prop.add(obj.getString(j));
-							}
-
-							bilayer.setProperties(prop);
+							prop.add(obj.getString(j));
 						}
 
+						bilayer.setProperties(prop);
 					}
-					if (!layerDef.getString("layer_url").isEmpty()) {
+					if (!layerDef.getString("layer_file").equals("null")) {
+						bilayer.setPathFile(layerDef.getString("layer_file"));
+
+					}
+					if (!layerDef.getString("layer_url").equals("null")) {
 						bilayer.setLayerURL(layerDef.getString("layer_url"));
 
 					}
-					if (!layerDef.getString("layer_params").isEmpty()) {
+					if (!layerDef.getString("layer_params").equals("null")) {
 						bilayer.setLayerParams(layerDef.getString("layer_params"));
 					}
-					if (!layerDef.getString("layer_options").isEmpty()) {
+					if (!layerDef.getString("layer_options").equals("null")) {
 						bilayer.setLayerOptions(layerDef.getString("layer_options"));
 
 					}
-					if (!layerDef.getString("layer_order").isEmpty()) {
+					if (!layerDef.getString("layer_order").equals("null")) {
 						bilayer.setLayerOrder(new Integer(layerDef.getString("layer_order")));
 
 					}
@@ -688,4 +762,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		return realResult;
 	}
 
+
+	@Override
+	public String getDescribeFeatureTypeURL(String url) {
+		int indexOfRequest = url.indexOf("request=GetFeature");
+		if (indexOfRequest > 0) {
+			url = url.replaceAll("request=GetFeature", "request=DescribeFeatureType");
+		}
+		return url;
+	}
 }

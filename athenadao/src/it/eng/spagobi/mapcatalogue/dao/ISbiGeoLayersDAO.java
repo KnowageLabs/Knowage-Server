@@ -5,6 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.dao;
 
+import java.io.IOException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -26,9 +27,11 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public List<SbiExtRoles> listRolesFromId(final Object[] arr) throws EMFUserError;
 
-	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException;
+	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException, IOException;
 
-	public ArrayList<String> getPropertiesFile(String pathFile);
+	public ArrayList<String> getProperties(int layerId);
+
+	public ArrayList<String> getPropertiesURL(String url) throws IOException, JSONException;
 
 	public void eraseLayer(Integer layerId) throws EMFUserError, JSONException;
 
@@ -36,4 +39,5 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public List<GeoLayer> loadAllLayers(String[] listLabel) throws EMFUserError, JSONException, UnsupportedEncodingException;
 
+	public String getDescribeFeatureTypeURL(String url);
 }

@@ -60,9 +60,10 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.object_temp={};
 	$scope.roles = [];
 	$scope.rolesItem=[];
+	$scope.filter=[];
 	$scope.filter_set=[];
-	
-	
+	$scope.forms = {};
+	$scope.activeTab='Layer';
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
 		console.log("dentro loadLayer");
@@ -83,8 +84,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					console.log("layer non Ottenuti " + status);
 
 				})
-		//fare una getRole
-
 
 	}
 
@@ -101,12 +100,13 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 	$scope.loadLayer();
 	
-
+	
 
 	$scope.saveLayer = function(){
 		
 		$scope.selectedLayer.roles = $scope.rolesItem;
-		
+		$scope.selectedLayer.properties = $scope.filter_set;
+		console.log($scope.selectedLayer.properties);
 		if($scope.flag){
 
 			//siamo nel caso di modifica dati già precedentemente inseriti
@@ -157,6 +157,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 								$scope.loadLayer();
 								$scope.closeForm();
 								$scope.showActionOK();
+								$scope.flag=false;
 								
 							}
 
@@ -186,6 +187,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							if (data.hasOwnProperty("errors")) {
 								console.log("layer non Ottenuti");
 								$scope.showActionError();
+								
 								$scope.closeForm();
 
 							} else {
@@ -200,6 +202,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							$scope.showActionError();
 							console.log("layer non Ottenuti " + status);
 							$scope.loadLayer();
+							
 							$scope.closeForm();
 						})
 
@@ -218,6 +221,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							} else {
 								$scope.loadLayer();
 								$scope.closeForm();
+								$scope.flag=false;
 								$scope.showActionOK();
 								
 							}
@@ -236,16 +240,18 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 	$scope.loadLayerList = function(item){
 	
-		
+		$scope.activeTab='Layer';
 		//function calls when you clic on the list of layers
 		$scope.showme=true;
+		
 		if(item==null){
 			$scope.flagtype=true;
 			$scope.flag=false;
 			$scope.isRequired=false;
 			$scope.rolesItem=[];
-
+			$scope.filter_set=[];
 		}
+		
 		$scope.object_temp = angular.copy(item);
 		if(item!= null){
 			
@@ -273,8 +279,21 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 						$scope.pathFileCheck = false;
 					}
 					$scope.flag=true;
+					$scope.filter_set=[];
 					$scope.loadRolesItem(item);
 					$scope.selectedLayer = angular.copy(item);
+					$scope.filter= $scope.loadFilter();
+					for(var i=0;i<$scope.selectedLayer.properties.length;i++){
+						
+						console.log($scope.selectedLayer.properties[i]);
+						var prop = $scope.selectedLayer.properties[i];
+						var obj={"property":prop};
+						$scope.filter_set.push(obj );
+						
+					}
+					
+					console.log("hello");
+					console.log($scope.filter_set);
 					$scope.object_temp = angular.copy(item);
 					
 
@@ -295,6 +314,17 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				$scope.flag = true;
 				$scope.loadRolesItem(item);
 				$scope.selectedLayer = angular.copy(item);
+				$scope.filter_set=[];
+				$scope.filter= $scope.loadFilter();
+				for(var i=0;i<$scope.selectedLayer.properties.length;i++){
+					console.log($scope.selectedLayer.properties[i]);
+					var prop = $scope.selectedLayer.properties[i];
+					var obj={"property":prop};
+					$scope.filter_set.push(obj );
+					console.log(obj);
+				}
+				console.log("hello");
+				console.log($scope.filter_set);
 				$scope.object_temp = angular.copy($scope.selectedLayer);
 		
 				
@@ -327,7 +357,29 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 
 	}
+	$scope.loadFilter = function(){
+		//funzione che carica i Filtri per ogni layer
+		console.log("carico filtri per");
+		console.log($scope.selectedLayer);
+		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).success(
+				function(data, status, headers, config) {
 
+					console.log(data);
+					if (data.hasOwnProperty("errors")) {
+						console.log("layer non Ottenuti");
+					} else {
+						
+						$scope.filter = data;
+						console.log($scope.filter);
+						
+
+					}
+
+				}).error(function(data, status, headers, config) {
+					console.log("layer non Ottenuti " + status);
+
+				})
+	}
 	$scope.loadRolesItem = function(item){
 		console.log("chiamata loadRolesItem");
 		console.log(item);
@@ -346,37 +398,17 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				})
 		
 	}
-/*	
-	$scope.deleteRole = function(id){
-		//cancella ruolo associato a layer 
-		console.log("Ruolo cancellato"+id);
-		var obj = {id: id, id_l : $scope.selectedLayer.layerId};
-		sbiModule_restServices.post("layers", 'deleterole',obj).success(
-
-				function(data, status, headers, config) {
-					console.log(data)
-					if (data.hasOwnProperty("errors")) {
-						console.log("layer non Ottenuti");
-					} else {
-						$scope.loadRolesItem($scope.selectedLayer);
-						$scope.showActionDelete();
-					}
-
-				}).error(function(data, status, headers, config) {
-					console.log("layer non Ottenuti " + status);
-
-				})
-		
-	}*/
-
 	$scope.cancel = function(){
 		console.log("CANCEL");
-
+		$scope.activeTab='Layer';
 		if($scope.flag==true){
+			//c'è un layer caricato
 			$scope.isRequired=false;
 			$scope.selectedLayer = angular.copy($scope.object_temp);
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
-			//add per i filtri la stessa cosa di su $scope.filter_set=vecchioset
+			//$scope.filter= $scope.loadFilter();
+			
+			
 		} else{
 			console.log("Reset");
 			$scope.selectedLayer = angular.copy({});
@@ -384,12 +416,12 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 			$scope.flag=false;
 			$scope.isRequired=false;
 			$scope.filter_set=[];
-		//	console.log(angular.element('<div class="md-char-counter">'));
+			$scope.filter =[];
 	
 		}
 		
-		$scope.contactForm.$setPristine();
-		$scope.contactForm.$setUntouched();
+		$scope.forms.contactForm.$setPristine();
+		$scope.forms.contactForm.$setUntouched();
 		
 	}
 
@@ -501,7 +533,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
       };
       
       $scope.exists = function (item, list) {
-    	  
+    	
     	return  $scope.indexInList(item, list)>-1;
     	
       };
@@ -581,11 +613,15 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		    }
 		  })
 	$scope.closeForm = function(){
-		$scope.cancel();
+	
 		$scope.flagtype=true;
 		$scope.showme=false;
 		$scope.flag=false;
 		$scope.selectedLayer=null;
+		$scope.rolesItem=[];
+		$scope.filter_set=[];
+		$scope.filter =[];
+		$scope.activeTab='Layer';
 		
 	}
 	
@@ -614,6 +650,10 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		//se presente non fare nulla
 		  } else{
 			  $scope.filter_set.push(item);
+			  var index = $scope.filter.indexOf(item);
+			  
+			  $scope.filter.splice(index,1);
+			  
 		 }
 		  console.log($scope.filter_set);
 	  }
@@ -621,8 +661,17 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		  var index = $scope.filter_set.indexOf(item);
 		  
 		  $scope.filter_set.splice(index,1);
+		  $scope.filter.push(item);
 	  }
-	
+	  $scope.removeIcon = [{
+			label: sbiModule_translate.load("sbi.federationdefinition.delete"),
+			icon:"fa fa-trash-o",
+			backgroundColor:'red',
+			action : function(ev) {
+				 $scope.removeFilter(ev);
+				}
+		}];
+		
 };
 
 

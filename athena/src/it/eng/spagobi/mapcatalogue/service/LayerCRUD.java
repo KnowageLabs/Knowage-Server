@@ -91,6 +91,41 @@ public class LayerCRUD {
 	}
 
 	@GET
+	@Path("/getFilter")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getFiler(@Context HttpServletRequest req) throws JSONException {
+		Object id = null;
+		Integer layerId = null;
+
+		try {
+
+			id = req.getParameter("id");
+			System.out.println(id);
+			if (id == null || id.equals("")) {
+				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
+			}
+			layerId = new Integer(id.toString());
+		} catch (Exception e) {
+			logger.error("error loading filter", e);
+			throw new SpagoBIRuntimeException("error request", e);
+		}
+
+		logger.debug("Deleting the layer");
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		ArrayList<String> properties = dao.getProperties(layerId);
+		ArrayList<JSONObject> prop = new ArrayList<>();
+
+		for (int i = 0; i < properties.size(); i++) {
+			JSONObject obj = new JSONObject();
+			obj.put("property", properties.get(i));
+			prop.add(obj);
+		}
+
+		// obj.put("result", properties.toString());
+		return prop.toString();
+	}
+
+	@GET
 	@Path("/getroles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getRoles(@Context HttpServletRequest req) throws JSONException, IOException {
@@ -204,7 +239,7 @@ public class LayerCRUD {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String saveLayer(@Context HttpServletRequest req) throws JSONException, EMFUserError, UnsupportedEncodingException {
+	public String saveLayer(@Context HttpServletRequest req) throws JSONException, EMFUserError, IOException {
 		JSONObject requestBodyJSON = null;
 		Integer id;
 		try {

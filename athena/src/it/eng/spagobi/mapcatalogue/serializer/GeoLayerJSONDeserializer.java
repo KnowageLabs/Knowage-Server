@@ -86,15 +86,17 @@ public class GeoLayerJSONDeserializer {
 						} else if (properties[i].equals(LAYERORDER)) {
 							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
 						} else if (properties[i].equals(PROPERTIES)) {
-							List<String> prop = new ArrayList<>();
+							List<String> prop = new ArrayList<String>();
 							JSONArray arr = serialized.getJSONArray(properties[i]);
-							;
 							for (int j = 0; j < arr.length(); j++) {
-								prop.add(arr.getString(j));
+								JSONObject obj = new JSONObject(arr.get(j).toString());
+
+								prop.add(obj.getString("property"));
 							}
 							layer.setProperties(prop);
 						} else if (properties[i].equals(GEOCATEGORY)) {
-							if (serialized.getString(properties[i]) == "null") {
+							if (serialized.getString(properties[i]) == "" || serialized.getString(properties[i]).equals("null")
+									|| serialized.getString(properties[i]).isEmpty()) {
 								layer.setCategory_id(null);
 							} else {
 								layer.setCategory_id(new Integer(serialized.getString(properties[i])));
