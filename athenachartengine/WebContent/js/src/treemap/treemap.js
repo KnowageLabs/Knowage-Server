@@ -1,5 +1,5 @@
 function renderTreemap(chartConf) {
-
+	
 	var points = [];
 
 	var counter=0;
@@ -111,7 +111,18 @@ function renderTreemap(chartConf) {
 				},
 				borderWidth: 3
 			}],
-			data: points
+			data: points,
+			events:{
+				click: function(event){
+			        
+					if(event.point.node.children.length==0){
+						if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+		            		var params=getCrossParams(event.point);
+		            	    handleCrossNavigationTo(params);
+		            	}
+					}
+				}
+			}
 		}],
 		subtitle: {
 			text: chartConf.subtitle.text,
@@ -162,9 +173,40 @@ function renderTreemap(chartConf) {
         {
     		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
 		}
+		
+	
 
 	});
-
+     
+      var getCrossParams= function(point){
+    	  var params={
+    	    		point:{
+    	    			name: null, // category name
+    	    	        value: null, // category  value
+    	    	        crossNavigationDocumentName:null,
+    	    	        crossNavigationDocumentParams:null,
+    	    		
+    	    		series:{ // serie name and value
+    	    			name:null,
+    	    			value: null	
+    	    		},
+    	    		group:{ // grouping category name and value
+    	    			name:null,
+    	    			value: null
+    	    		}
+    	    		}
+    	    	};
+    	    	
+    	    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+    	    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+    	    	
+    	    	params.point.value=point.name;
+    	    	
+    	    	params.point.series.value=point.value;
+    	    	
+    	        
+    	    	return params;
+      }
 }
 
 function renderHeatmap(chartConf){
@@ -463,8 +505,17 @@ function renderHeatmap(chartConf){
             nullColor: '#EFEFEF',
             colsize: 24 * 36e5, // one day    
             data:points,
+            events: {
+            click: function(event){
+            	if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+            		var params=getCrossParams(event.point);
+            	    handleCrossNavigationTo(params);
+            	}
+            }
+            },
             turboThreshold: Number.MAX_VALUE// #3404, remove after 4.0.5 release
         }],
+        
 
         /**
 		 * Credits option disabled/enabled for the HEATMAP chart. This option (boolean value)
@@ -477,5 +528,36 @@ function renderHeatmap(chartConf){
     		enabled: (chartConf.credits.enabled!=undefined) ? chartConf.credits.enabled : false
 		}
     });
+    
+    var getCrossParams= function(point){
+    	var params={
+    		point:{
+    			name: null, // category name
+    	        value: null, // category  value
+    	        crossNavigationDocumentName:null,
+    	        crossNavigationDocumentParams:null,
+    		
+    		series:{ // serie name and value
+    			name:null,
+    			value: null	
+    		},
+    		group:{ // grouping category name and value
+    			name:null,
+    			value: null
+    		}
+    		}
+    	};
+    	
+    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
+    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+    	params.point.name=chartConf.additionalData.columns[0].value;
+    	params.point.value= new Date(point.x);
+    	params.point.series.name=chartConf.additionalData.serie.value;
+    	params.point.series.value=point.value;
+    	params.point.group.name=chartConf.additionalData.columns[1].value;
+    	params.point.group.value=point.label;
+        
+    	return params;
+    };
 	
 }
