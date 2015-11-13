@@ -87,7 +87,23 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 			    						leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 			    						operator : 'BETWEEN',
 			    						rightOperandValue : [span.from+' 00:00:00',span.to+' 00:00:00'],
-			    						rightOperandDescription: span.from+' 00:00:00 ---- '+span.to+' 00:00:00'
+			    						rightOperandDescription: span.from+' 00:00:00 ---- '+span.to+' 00:00:00',
+			    						rightOperandDefaultValue: ['']
+			    				};
+			    				caller.addFilter(filter);
+			    			}
+			    			if (timeStore.getAt(rowIndex).get('type') == 'time'){
+			    				var f = span.from;
+			    				var t = span.to;
+			    				filter = {
+			    						leftOperandValue: 'it.eng.spagobi.meta.Time_by_minute:ID',
+			    						leftOperandDescription: 'Time by minute : ID',
+			    						leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
+			    						operator : 'BETWEEN',
+			    						rightOperandValue : [f.replace(':',''),t.replace(':','')],
+			    						rightOperandDescription: span.from+' ---- '+span.to,
+			    						rightOperandLongDescription: span.from+' ---- '+span.to,
+			    						rightOperandDefaultValue: ['']
 			    				};
 			    				caller.addFilter(filter);
 			    			}

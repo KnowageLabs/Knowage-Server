@@ -28,31 +28,29 @@
 		<div flex="20" layout-fill class="leftBox">
 			
 			<md-toolbar class="md-blue minihead ">
-					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.timespan");}}</div>
-						<md-button ng-click="ctrl.newTs()" aria-label="new ts"
-							class="md-fab md-ExtraMini addButton" 
-							style="position:absolute; right:11px; top:0px;"> 
-							<md-icon md-font-icon="fa fa-plus"
-								style=" margin-top: 6px ; color: white;">
-							</md-icon> 
-						</md-button>
-					</div>
-					</md-toolbar>
-					
-					<md-content layout-padding class="ToolbarBox miniToolbar noBorder leftListbox">
-						<angular-list layout-fill 
-							id='ts' 
-	                		ng-model=ctrl.tsList
-	                		item-name='name'
-	                		show-search-bar=true
-	                		highlights-selected-item=true
-	                		click-function="ctrl.loadTimespan(item)"
-	                		menu-option=ctrl.menuTs
-                		>
-                		</angular-list>
-					</md-content>
-		
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.timespan");}}</div>
+					<md-button ng-click="ctrl.newTs()" aria-label="new ts"
+						class="md-fab md-ExtraMini addButton" 
+						style="position:absolute; right:11px; top:0px;"> 
+						<md-icon md-font-icon="fa fa-plus"
+							style=" margin-top: 6px ; color: white;">
+						</md-icon> 
+					</md-button>
+				</div>
+			</md-toolbar>
+			
+			<md-content layout-padding class="ToolbarBox miniToolbar noBorder leftListbox">
+				<angular-list layout-fill 
+					id='ts' 
+               		ng-model=ctrl.tsList
+               		item-name='name'
+               		show-search-bar=true
+               		highlights-selected-item=true
+               		click-function="ctrl.loadTimespan(item)"
+               		menu-option=ctrl.menuTs>
+              	</angular-list>
+			</md-content>
 		</div>
 		
 		
@@ -87,96 +85,91 @@
 		
 					<md-content flex style="margin-left:20px;">
 		
-					<form name="tsForm" novalidate >
-		
-						<div layout="row" layout-wrap>
-							<div flex="50">
-								<md-input-container > <label>{{translate.load("sbi.generic.name");}}</label>
-								<input maxlength="100" type="text" ng-model="ctrl.selectedItem.name"> </md-input-container>
+						<form name="tsForm" novalidate >
+			
+							<div layout="row" layout-wrap>
+								<div flex="50">
+									<md-input-container > <label>{{translate.load("sbi.generic.name");}}</label>
+									<input maxlength="100" type="text" ng-model="ctrl.selectedItem.name"> </md-input-container>
+								</div>
+			
+								<div flex="50">
+									<md-input-container > <label>{{translate.load("sbi.generic.type");}}</label> 
+									<md-select ng-model="ctrl.selectedItem.type" ng-change="ctrl.changeType()"> 
+										<md-option ng-repeat="type in ctrl.tsType" value="{{type.value}}" >
+											{{type.label}} 
+										</md-option> 
+									</md-select> 
+									
+									</md-input-container>
+								</div>
 							</div>
-		
-							<div flex="50">
-								<md-input-container > <label>{{translate.load("sbi.generic.type");}}</label> 
-								<md-select ng-model="ctrl.selectedItem.type" ng-change="ctrl.changeType()"> 
-									<md-option ng-repeat="type in ctrl.tsType" value="{{type.value}}" >
-										{{type.label}} 
-									</md-option> 
-								</md-select> 
-								
-								</md-input-container>
-							</div>
-						</div>
-						
-						<div layout="row" >
-							<div flex="50">
-								<md-input-container > <label>{{translate.load("sbi.generic.category");}}</label> 
-								<md-select ng-model="ctrl.selectedItem.category"> 
-									<md-option
-										ng-repeat="cat in ctrl.tsCategory" value="{{cat.VALUE_ID}}">
-										{{cat.VALUE_NM}} 
-									</md-option> 
-								</md-select> 
-								
-								</md-input-container>
-							</div>
-						</div>
-						
-						<md-divider ></md-divider>
-						
-						<div ng-if="ctrl.selectedItem.type" layout="row" layout-align="center center" >
-							<table style="width: 70%; font-size: 10pt; table-layout: fixed; text-align: center;">
-								<tr>
-									<th>
-										<label >{{translate.load("sbi.timespan.from");}}</label>
-										<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.from" md-placeholder="Enter date" style="display: block;"></md-datepicker>
-										<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
-											<angular-time-picker ng-model="ctrl.from" />
-										</div>
-									</th>
-									<th>
-										<label >{{translate.load("sbi.timespan.to");}}</label>
-										<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.to" md-placeholder="Enter date" style="display: block;"></md-datepicker>
-										<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
-											<angular-time-picker  ng-model="ctrl.to" />
-										</div>
-									</th>
-									<th style="width:15%;">
-										<md-button ng-click="ctrl.addInterval(ctrl.from,ctrl.to)" class="md-fab md-MiniList blue" aria-label="add interval"> 
-											<md-icon md-font-icon="fa fa-plus" ></md-icon> 
-										</md-button>
-									</th>
-									<th style="width:20%">
-										<md-input-container ng-if="ctrl.selectedItem.type=='temporal'" style="padding-bottom:0px;">
-											<label>{{translate.load("sbi.timespan.delay");}}</label>
-											<input type="number" ng-model="ctrl.delay" >
-										</md-input-container>
-									</th>
-								</tr>
-								<tr ng-repeat="span in ctrl.selectedItem.definition">
-									<td>{{span.from}}</td>
-									<td>{{span.to}}</td>
-									<td>
-										<md-button ng-click="ctrl.removeInterval(span)" class="md-fab md-MiniList" aria-label="remove interval">
-											<md-icon md-font-icon="fa fa-times"></md-icon>
-										</md-button>
-									</td>
-								</tr>
-							</table>
 							
-						</div>
-						<div ng-if="ctrl.selectedItem.definition.length==0" class="divNoData">
-							<label>{{translate.load("sbi.timespan.nointerval.message");}}</label>
-						</div>
-						<md-divider ></md-divider>
-					</form>
+							<div layout="row" >
+								<div flex="50">
+									<md-input-container > <label>{{translate.load("sbi.generic.category");}}</label> 
+										<md-select ng-model="ctrl.selectedItem.category"> 
+											<md-option
+												ng-repeat="cat in ctrl.tsCategory" value="{{cat.VALUE_ID}}">
+												{{cat.VALUE_NM}} 
+											</md-option> 
+										</md-select> 
+									</md-input-container>
+								</div>
+							</div>
+							
+							<md-divider ></md-divider>
+							
+							<div ng-if="ctrl.selectedItem.type" layout="row" layout-align="center center" >
+								<table style="width: 70%; font-size: 10pt; table-layout: fixed; text-align: center;">
+									<tr>
+										<th>
+											<label >{{translate.load("sbi.timespan.from");}}</label>
+											<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.from" md-placeholder="Enter date" style="display: block;"></md-datepicker>
+											<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
+												<angular-time-picker ng-model="ctrl.from" />
+											</div>
+										</th>
+										<th>
+											<label >{{translate.load("sbi.timespan.to");}}</label>
+											<md-datepicker ng-if="ctrl.selectedItem.type=='temporal'" ng-model="ctrl.to" md-placeholder="Enter date" style="display: block;"></md-datepicker>
+											<div ng-if="ctrl.selectedItem.type=='time'" style="width: 65px; margin: auto;">
+												<angular-time-picker  ng-model="ctrl.to" />
+											</div>
+										</th>
+										<th style="width:15%;">
+											<md-button ng-click="ctrl.addInterval(ctrl.from,ctrl.to)" class="md-fab md-MiniList blue" aria-label="add interval"> 
+												<md-icon md-font-icon="fa fa-plus" ></md-icon> 
+											</md-button>
+										</th>
+										<th style="width:20%">
+											<md-input-container ng-if="ctrl.selectedItem.type=='temporal'" style="padding-bottom:0px;">
+												<label>{{translate.load("sbi.timespan.delay");}}</label>
+												<input type="number" ng-model="ctrl.delay" >
+											</md-input-container>
+										</th>
+									</tr>
+									<tr ng-repeat="span in ctrl.selectedItem.definition">
+										<td>{{span.from}}</td>
+										<td>{{span.to}}</td>
+										<td>
+											<md-button ng-click="ctrl.removeInterval(span)" class="md-fab md-MiniList" aria-label="remove interval">
+												<md-icon md-font-icon="fa fa-times"></md-icon>
+											</md-button>
+										</td>
+									</tr>
+								</table>
+								
+							</div>
+							<div ng-if="ctrl.selectedItem.definition.length==0" class="divNoData">
+								<label>{{translate.load("sbi.timespan.nointerval.message");}}</label>
+							</div>
+							<md-divider ></md-divider>
+						</form>
 					</md-content>
-		
-		
 				</div>
 			</md-tab>
 		</md-tabs>
-		
 	</div>
-
 </body>
 </html>

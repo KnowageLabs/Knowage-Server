@@ -93,8 +93,8 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 				}
 				
 				for(var i in ctrl.selectedItem.definition){
-					var start = new Date(ctrl.selectedItem.definition[i].from.replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3") );
-					var end = new Date(ctrl.selectedItem.definition[i].to.replace( /(\d{2})\/(\d{2})\/(\d{4})/, "$2/$1/$3") );
+					var start = new Date(ctrl.selectedItem.definition[i].from.replace( /(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3') );
+					var end = new Date(ctrl.selectedItem.definition[i].to.replace( /(\d{2})\/(\d{2})\/(\d{4})/, '$2/$1/$3') );
 					
 					if( f_date <= end && t_date >= start ){
 						var alert = $mdDialog.alert()
@@ -107,9 +107,9 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 				}
 				
 				
-				var f = ("0" + f_date.getDate()).slice(-2) + "/" + ("0" + (f_date.getMonth()+1)).slice(-2) + "/" + f_date.getFullYear(); 
-				var t = ("0" + t_date.getDate()).slice(-2) + "/" + ("0" + (t_date.getMonth()+1)).slice(-2) + "/" + t_date.getFullYear(); 
-				var interval = { "from": f, "to": t };
+				var f = ('0' + f_date.getDate()).slice(-2) + '/' + ('0' + (f_date.getMonth()+1)).slice(-2) + '/' + f_date.getFullYear(); 
+				var t = ('0' + t_date.getDate()).slice(-2) + '/' + ('0' + (t_date.getMonth()+1)).slice(-2) + '/' + t_date.getFullYear(); 
+				var interval = { from: f, to: t };
 				
 				
 				
@@ -140,7 +140,7 @@ function behavior(translate, restServices, $scope, $mdDialog, $mdToast) {
 					}
 				}
 				
-				var interval = { "from": from, "to": to };
+				var interval = { from: from, to: to };
 			}
 			ctrl.selectedItem.definition.push(interval);
 		}
