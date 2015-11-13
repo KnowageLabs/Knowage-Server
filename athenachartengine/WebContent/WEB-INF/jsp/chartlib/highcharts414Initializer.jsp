@@ -116,16 +116,28 @@
 	function handleCrossNavigationTo(e) {
 		if (!e.seriesOptions) {
 			var chart = this;
-			chart.showLoading('Loading...');
+			//chart.showLoading('Loading...');
 			
 			var categoryName = e.point.name;
 			var categoryValue = null;
 			
+			if(e.point.hasOwnProperty('value')){
+				categoryValue=e.point.value;
+			}
 			var serieName = e.point.series.name;
 			var serieValue = null;
-
+			if(e.point.series.hasOwnProperty('value')){
+				serieValue=e.point.series.value;
+			}
+			
 			var groupingCategoryName=null;
 			var groupingCategoryValue=null;
+			
+			if(e.point.hasOwnProperty('group')){
+				groupingCategoryName=e.point.group.name;
+				groupingCategoryValue=e.point.group.value;
+			}
+			
 			
 			Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 					e.point.crossNavigationDocumentName, 
@@ -146,4 +158,6 @@
 	function handleCrossNavigationFrom() {
 		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
+	
+	
 </script>
