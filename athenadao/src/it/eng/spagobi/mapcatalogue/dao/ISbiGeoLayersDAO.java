@@ -5,21 +5,16 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import java.io.UnsupportedEncodingException;
-import java.io.UnsupportedEncodingException;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONException;
-import org.json.JSONException;
-import org.json.JSONException;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
 
 public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
@@ -39,8 +34,6 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public void eraseRole(Integer roleId, Integer layerId) throws EMFUserError;
 
-	public List<GeoLayer> loadAllLayers() throws EMFUserError, JSONException, UnsupportedEncodingException;
-
-	public List<SbiGeoLayers> listLayersByList(String[] listLabel) throws EMFUserError;
+	public List<GeoLayer> loadAllLayers(String[] listLabel) throws EMFUserError, JSONException, UnsupportedEncodingException;
 
 }

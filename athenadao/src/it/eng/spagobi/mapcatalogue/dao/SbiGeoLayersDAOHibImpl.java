@@ -5,6 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -29,15 +38,6 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -601,7 +601,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#loadAllEngines()
 	 */
 	@Override
-	public List<GeoLayer> loadAllLayers() throws EMFUserError, JSONException, UnsupportedEncodingException {
+	public List<GeoLayer> loadAllLayers(String[] listLabel) throws EMFUserError, JSONException, UnsupportedEncodingException {
 		Session tmpSession = null;
 		Transaction tx = null;
 		List<GeoLayer> realResult = new ArrayList<GeoLayer>();
@@ -609,8 +609,15 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Query hibQuery = tmpSession.createQuery(" from SbiGeoLayers");
+			String inList = "";
+			if (listLabel != null) {
+				inList += " where label in (:listLabel)";
+			}
+			Query hibQuery = tmpSession.createQuery(" from SbiGeoLayers" + inList);
 
+			if (listLabel != null) {
+				hibQuery.setParameterList("listLabel", listLabel);
+			}
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 			SbiGeoLayers hibLayer;
@@ -681,16 +688,4 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		return realResult;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public List<SbiGeoLayers> listLayersByList(final String[] listLabel) throws EMFUserError {
-		return list(new ICriterion() {
-			@Override
-			public Criteria evaluate(Session session) {
-				Criteria c = session.createCriteria(SbiGeoLayers.class);
-				c.add(Restrictions.in("label", listLabel));
-				return c;
-			}
-		});
-	}
 }
