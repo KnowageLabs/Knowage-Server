@@ -1,4 +1,4 @@
-<Context   path="/athenaqbeengine" privileged="true" reloadable="false">
+<Context   path="/knowageqbeengine" privileged="true" reloadable="false">
 
 		<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
 		<ResourceLink global="jdbc/spagobi" name="jdbc/spagobi" type="javax.sql.DataSource"/>
