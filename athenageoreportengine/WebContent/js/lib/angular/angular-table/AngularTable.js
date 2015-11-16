@@ -19,7 +19,7 @@ angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagin
 		.directive('angularTable',
 				function() {
 					return {
-						templateUrl : '/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table.html',
+						templateUrl : '/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table.html',
 						controller : TableControllerFunction,
 						scope : {
 							ngModel : '=',

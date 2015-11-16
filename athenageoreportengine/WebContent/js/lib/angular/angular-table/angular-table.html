@@ -28,15 +28,15 @@
 		<th  ng-if="speedMenuOption!=undefined && speedMenuOption.length>0" width="{{speedMenuOption.length*30}} px"></th>	
 		
 		<tr ng-if='SyncPagination && paginate' class="rowItem" dir-paginate="row in ngModel | filterBySpecificColumns:columnsSearch:searchFastVal | orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
-		pagination-id='id+"PaginationTable"'  total-items='totalItemCount' current-page=currentPageNumber ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
+		pagination-id='id+"PaginationTable"'  total-items='totalItemCount' current-page=currentPageNumber ng-include="'/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
 				</tr>
 		
 		<tr width="100" ng-if='!SyncPagination && paginate' class="rowItem" dir-paginate="row in ngModel | filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
-		pagination-id='id+"PaginationTable"' current-page=currentPageNumber ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
+		pagination-id='id+"PaginationTable"' current-page=currentPageNumber ng-include="'/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
 			
 		</tr>
 		
-		<tr ng-if='!paginate' class="rowItem" ng-repeat="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord" ng-include="'/athena/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
+		<tr ng-if='!paginate' class="rowItem" ng-repeat="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord" ng-include="'/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table-row.html'" >
 		</tr>
 	</table>
 	

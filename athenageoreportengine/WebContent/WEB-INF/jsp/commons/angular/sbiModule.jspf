@@ -30,7 +30,7 @@ sbiM.factory('sbiModule_config',function(){
 		 docDatasetLabel: "<%=docDatasetLabel%>",
 		 docDatasetName: "<%=docDatasetName%>",
 		 visibleDataSet: "<%=visibleDataSet%>",
-		 externalBasePath:"/athena/"
+		 externalBasePath:"/knowage/"
 	};
 });
 
