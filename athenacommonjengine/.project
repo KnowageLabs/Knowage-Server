@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>athenacommonjengine</name>
+	<name>knowagecommonjengine</name>
 	<comment></comment>
 	<projects>
-		<project>athenautils</project>
-		<project>athenautilsjson</project>
+		<project>knowageutils</project>
+		<project>knowageutilsjson</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

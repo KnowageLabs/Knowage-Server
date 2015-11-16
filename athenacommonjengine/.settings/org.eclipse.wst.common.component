@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="athenacommonjengine">
+<wb-module deploy-name="knowagecommonjengine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautils/athenautils">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutils/knowageutils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautilsjson/athenautilsjson">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutilsjson/knowageutilsjson">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path" value="build/classes"/>
-        <property name="context-root" value="athenacommonjengine"/>
+        <property name="context-root" value="knowagecommonjengine"/>
 </wb-module>
 </project-modules>
