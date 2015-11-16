@@ -191,7 +191,7 @@ Ext.extend(Sbi.execution.ParametersPanel, Ext.FormPanel, {
     
 	/* ATTENTION: patch for bug 1594 --> firstLoadCounter counter over firstLoadTotParams: every time a store calling the getParametersValuesForExecution has loaded
 	 * the counter is updated (for all the parameters that need the load = firstLoadTotParams) . When the counter matches the total then the 'ready' event is thrown.
-	 * DocumentExecutionPanel is listening on ParametersPnel on 'synchronize' AND on 'ready'. */
+	 * DocumentExecutionPage is listening on ParametersPnel on 'synchronize' AND on 'ready'. */
     , firstLoadCounter: 0
     , firstLoadTotParams: 0
     
