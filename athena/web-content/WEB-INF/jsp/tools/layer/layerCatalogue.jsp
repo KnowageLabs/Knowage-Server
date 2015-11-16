@@ -56,7 +56,7 @@
 				layout-fill id='layerlist' ng-model=layerList
 				columns='["name","type", "layerURL"]'
 				columnsSearch='["name","type", "layerURL"]' show-search-bar=true
-				highlights-selected-item=true click-function="loadLayerList(item);"
+				highlights-selected-item=true click-function="loadLayerList(item);activeTab='Layer';"
 				menu-option=menuLayer></angular-table> </md-content>
 
 		</div>
@@ -76,7 +76,7 @@
 					<div style="position: absolute; right: 0px" class="h100">
 						<md-button type="button" tabindex="-1" aria-label="cancel"
 							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-							ng-click="cancel();activeTab='Layer';">{{translate.load("sbi.browser.defaultRole.cancel");}}
+							ng-click="cancel();">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
 						<md-button ng-disabled="!forms.contactForm.$valid" type="submit"
 							aria-label="save layer" class="md-raised md-ExtraMini "
@@ -86,11 +86,11 @@
 					</div>
 				</div>
 				</md-toolbar>
-				<md-tabs md-dynamic-height="" md-border-bottom=""> <md-tab
-					label="Layer" md-on-select="activeTab='Layer'"
-					md-active="activeTab=='Layer'"> <md-content flex
-					style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
-
+				
+				<md-tabs md-select="Layer" md-dynamic-height  class="hideTabs h100" md-border-bottom > 
+				<md-tab label="Layer"  md-on-select="setTab('Layer')" md-active="isSelectedTab('Layer')"> 
+				<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
+	
 					<div layout="row" layout-wrap>
 					<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
@@ -324,8 +324,7 @@
 			</form>
 
 			</md-tab>
-			<md-tab label="Filter" md-on-select="activeTab='Filter'"
-				md-active="activeTab=='Filter'" ng-click="loadFilter();"> <md-toolbar
+			<md-tab label="Filter" md-on-select="setTab('Filter')" md-active="isSelectedTab('Filter')" ng-click="loadFilter();"> <md-toolbar
 				class="md-blue minihead " style="border-bottom: 2px solid grey;">
 
 			<div class="md-toolbar-tools" layout="row" layout-wrap layout-fill>

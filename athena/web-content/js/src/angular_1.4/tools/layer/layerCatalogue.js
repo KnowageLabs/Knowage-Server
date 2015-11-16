@@ -63,11 +63,12 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.filter=[];
 	$scope.filter_set=[];
 	$scope.forms = {};
-	$scope.activeTab='Layer';
+	$scope.selectedTab = 0;
+	
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
 		console.log("dentro loadLayer");
-		
+		$scope.selectedTab = 0;
 		sbiModule_restServices.get("layers", '').success(
 				function(data, status, headers, config) {
 
@@ -239,11 +240,11 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 
 	$scope.loadLayerList = function(item){
-	
-		$scope.activeTab='Layer';
+		
+		
 		//function calls when you clic on the list of layers
 		$scope.showme=true;
-		
+		$scope.setTab('Layer');
 		if(item==null){
 			$scope.flagtype=true;
 			$scope.flag=false;
@@ -279,21 +280,23 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 						$scope.pathFileCheck = false;
 					}
 					$scope.flag=true;
-					$scope.filter_set=[];
+					//$scope.filter_set=[];
 					$scope.loadRolesItem(item);
 					$scope.selectedLayer = angular.copy(item);
-					$scope.filter= $scope.loadFilter();
-					for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-						
-						console.log($scope.selectedLayer.properties[i]);
-						var prop = $scope.selectedLayer.properties[i];
-						var obj={"property":prop};
-						$scope.filter_set.push(obj );
-						
+				/*	$scope.filter= $scope.loadFilter();
+					if($scope.selectedLayer.properties){
+						for(var i=0;i<$scope.selectedLayer.properties.length;i++){
+							
+							console.log($scope.selectedLayer.properties[i]);
+							var prop = $scope.selectedLayer.properties[i];
+							var obj={"property":prop};
+							$scope.filter_set.push(obj );
+							
+						}
 					}
 					
-					console.log("hello");
 					console.log($scope.filter_set);
+					*/
 					$scope.object_temp = angular.copy(item);
 					
 
@@ -314,17 +317,19 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				$scope.flag = true;
 				$scope.loadRolesItem(item);
 				$scope.selectedLayer = angular.copy(item);
-				$scope.filter_set=[];
+				/*$scope.filter_set=[];
 				$scope.filter= $scope.loadFilter();
-				for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-					console.log($scope.selectedLayer.properties[i]);
-					var prop = $scope.selectedLayer.properties[i];
-					var obj={"property":prop};
-					$scope.filter_set.push(obj );
-					console.log(obj);
+				if($scope.selectedLayer.properties){
+					for(var i=0;i<$scope.selectedLayer.properties.length;i++){
+						console.log($scope.selectedLayer.properties[i]);
+						var prop = $scope.selectedLayer.properties[i];
+						var obj={"property":prop};
+						$scope.filter_set.push(obj );
+						console.log(obj);
+					}
 				}
-				console.log("hello");
 				console.log($scope.filter_set);
+				*/
 				$scope.object_temp = angular.copy($scope.selectedLayer);
 		
 				
@@ -359,8 +364,12 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.loadFilter = function(){
 		//funzione che carica i Filtri per ogni layer
+		$scope.loadFilterAdded();
 		console.log("carico filtri per");
 		console.log($scope.selectedLayer);
+		console.log("possiede già");
+		console.log($scope.filter_set);
+		
 		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).success(
 				function(data, status, headers, config) {
 
@@ -370,8 +379,25 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					} else {
 						
 						$scope.filter = data;
-						console.log($scope.filter);
+						//console.log("filtri ");
+						//console.log($scope.filter);
+						for(var i=0;i<$scope.filter_set.length;i++){
+							//scorro tutti i filtri 
 						
+							
+							//  console.log("entro per");
+							//  console.log($scope.filter_set[i]);
+							  //prendo l'index del filter tot
+							 var index = $scope.filterInList($scope.filter_set[i],$scope.filter);
+							 //e lo rimuovo per non mostrarlo
+							 if(index > -1){
+								 $scope.filter.splice(index,1);
+							//	 console.log("aggiornato");
+							//	 console.log($scope.filter);  
+							 }
+							 
+							 
+						}
 
 					}
 
@@ -379,6 +405,23 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					console.log("layer non Ottenuti " + status);
 
 				})
+	}
+	
+	$scope.loadFilterAdded = function(){
+		console.log("de ntro loadFilterAdded");
+		$scope.filter_set = [];
+		
+		if($scope.selectedLayer.properties){
+			for(var i=0;i<$scope.selectedLayer.properties.length;i++){
+				console.log($scope.selectedLayer.properties[i]);
+				var prop = $scope.selectedLayer.properties[i];
+				var obj={"property":prop};
+				$scope.filter_set.push(obj );
+				console.log(obj);
+			}
+		}
+		console.log("esco loadFilterAdded");
+		console.log($scope.filter_set);
 	}
 	$scope.loadRolesItem = function(item){
 		console.log("chiamata loadRolesItem");
@@ -400,13 +443,21 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.cancel = function(){
 		console.log("CANCEL");
-		$scope.activeTab='Layer';
+		$scope.setTab('Layer');
+		
 		if($scope.flag==true){
 			//c'è un layer caricato
 			$scope.isRequired=false;
 			$scope.selectedLayer = angular.copy($scope.object_temp);
 			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
-			//$scope.filter= $scope.loadFilter();
+			$scope.filter_set = [];
+			for(var i=0;i<$scope.selectedLayer.properties.length;i++){
+				console.log($scope.selectedLayer.properties[i]);
+				var prop = $scope.selectedLayer.properties[i];
+				var obj={"property":prop};
+				$scope.filter_set.push(obj );
+				console.log(obj);
+			}
 			
 			
 		} else{
@@ -550,6 +601,18 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
     	
     		 return -1;
       };
+      $scope.filterInList=function(item, list) {
+      	
+    	  for (var i = 0; i < list.length; i++) {
+    		    var object = list[i];
+    		       if(object.property==item.property){
+    		    	   //se nella lista è presente l'item è checked
+    		    	   return i;
+    		      }
+    		}
+    	
+    		 return -1;
+      };
       
  
 	$scope.showActionOK = function() {
@@ -621,7 +684,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		$scope.rolesItem=[];
 		$scope.filter_set=[];
 		$scope.filter =[];
-		$scope.activeTab='Layer';
+		
 		
 	}
 	
@@ -671,6 +734,14 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				 $scope.removeFilter(ev);
 				}
 		}];
+	  
+	  
+	  $scope.setTab = function(Tab){
+		  $scope.selectedTab = Tab;
+	  }
+	  $scope.isSelectedTab = function(Tab){
+		  return (Tab == $scope.selectedTab) ;
+	  }
 		
 };
 
