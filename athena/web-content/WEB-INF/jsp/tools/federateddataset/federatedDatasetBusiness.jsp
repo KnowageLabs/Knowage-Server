@@ -163,7 +163,7 @@
 						style="">
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
-						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{sbiModule_translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus" style="position:absolute; left:5px; top:5px; right:5px; color:white"
+						<span flex=""></span><md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.fillTheArray()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus" style="position:absolute; left:5px; top:5px; right:5px; color:white"
 							></md-icon></md-button> 
 					</div>
 		
