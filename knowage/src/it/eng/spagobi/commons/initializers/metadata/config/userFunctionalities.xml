@@ -1,284 +1,284 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <USER_FUNCTIONALITIES>
-	<!-- Athena BD Functionalities -->
-	<USER_FUNCTIONALITY productType="AthenaBD" name="EnginesManagement"
+	<!-- Knowage BD Functionalities -->
+	<USER_FUNCTIONALITY productType="KnowageBD" name="EnginesManagement"
 		description="EnginesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ReadEnginesManagement" description="ReadEnginesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="LovsManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsManagement"
 		description="LovsManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ConstraintManagement" description="ConstraintManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ParameterManagement" description="ParameterManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentAdministration" description="DocumentAdministration" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentDevManagement" description="DocumentDevManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentTestManagement" description="DocumentTestManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentAdminManagement" description="DocumentAdminManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ImportExportManagement" description="ImportExportManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="SchedulerManagement" description="SchedulerManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="EventsManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="EventsManagement"
 		description="EventsManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="WorkspaceManagement" description="WorkspaceManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="WorklistManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="WorklistManagement"
 		description="WorklistManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="DocumentManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentManagement"
 		description="DocumentManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DataSourceManagement" description="DataSourceManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentUserManagement" description="DocumentUserManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentStateManagement" description="DocumentStateManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentDetailManagement" description="DocumentDetailManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="ViewMyFolderAdmin"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ViewMyFolderAdmin"
 		description="ViewMyFolderAdmin" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="LovsView"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="LovsView"
 		description="LovsView" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="ConstraintView"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ConstraintView"
 		description="ConstraintView" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="ParameterView"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ParameterView"
 		description="ParameterView" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="DatasetManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DatasetManagement"
 		description="DatasetManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentMoveDownState" description="DocumentMoveDownState" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="DocumentMoveUpState" description="DocumentMoveUpState" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="ModifyRefresh"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ModifyRefresh"
 		description="ModifyRefresh" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="MenuManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="MenuManagement"
 		description="MenuManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="HotLinkManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="HotLinkManagement"
 		description="HotLinkManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ObjMetadataManagement" description="ObjMetadataManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="ProfileManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ProfileManagement"
 		description="ProfileManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="DomainManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainManagement"
 		description="DomainManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" name="ConfigManagement"
+	<USER_FUNCTIONALITY productType="KnowageBD" name="ConfigManagement"
 		description="ConfigManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="CreateChartFunctionality" description="CreateChartFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="GeoLayersManagement" description="GeoLayersManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
-	<USER_FUNCTIONALITY productType="AthenaBD" 
+	<USER_FUNCTIONALITY productType="KnowageBD" 
 		name="Glossary" description="Glossary" />
-	<USER_FUNCTIONALITY productType="AthenaBD" 
+	<USER_FUNCTIONALITY productType="KnowageBD" 
 		name="Timespan" description="Timespan" />
-	<USER_FUNCTIONALITY productType="AthenaBD"
+	<USER_FUNCTIONALITY productType="KnowageBD"
 		name="ImagesManagement" description="ImagesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaBD" 
+	<USER_FUNCTIONALITY productType="KnowageBD" 
 		name="FederationDefinition" description="FederationDefinition" />
 		
 
-	<!-- Athena Social Functionalities -->
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="EnginesManagement"
+	<!-- Knowage Social Functionalities -->
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="EnginesManagement"
 		description="EnginesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ReadEnginesManagement" description="ReadEnginesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="LovsManagement"
 		description="LovsManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ConstraintManagement" description="ConstraintManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ParameterManagement" description="ParameterManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentAdministration" description="DocumentAdministration" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentDevManagement" description="DocumentDevManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentTestManagement" description="DocumentTestManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentAdminManagement" description="DocumentAdminManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ImportExportManagement" description="ImportExportManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="SchedulerManagement" description="SchedulerManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="EventsManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="EventsManagement"
 		description="EventsManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="WorkspaceManagement" description="WorkspaceManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="WorklistManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="WorklistManagement"
 		description="WorklistManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="MapCatalogueManagement" description="MapCatalogueManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="MapFeaturesManagement" description="MapFeaturesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="DocumentManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="DocumentManagement"
 		description="DocumentManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ProfileAttributeManagement" description="ProfileAttributeManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DataSourceManagement" description="DataSourceManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentUserManagement" description="DocumentUserManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentDeleteManagement" description="DocumentDeleteManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentStateManagement" description="DocumentStateManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentDetailManagement" description="DocumentDetailManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ViewMyFolderAdmin"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ViewMyFolderAdmin"
 		description="ViewMyFolderAdmin" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentMetadataManagement" description="DocumentMetadataManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="LovsView"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="LovsView"
 		description="LovsView" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ConstraintView"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ConstraintView"
 		description="ConstraintView" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ParameterView"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ParameterView"
 		description="ParameterView" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="DatasetManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="DatasetManagement"
 		description="DatasetManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentMoveDownState" description="DocumentMoveDownState" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="DocumentMoveUpState" description="DocumentMoveUpState" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ModifyRefresh"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ModifyRefresh"
 		description="ModifyRefresh" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="MenuManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="MenuManagement"
 		description="MenuManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="HotLinkManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="HotLinkManagement"
 		description="HotLinkManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="KpiManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="KpiManagement"
 		description="KpiManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ObjMetadataManagement" description="ObjMetadataManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ProfileManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ProfileManagement"
 		description="ProfileManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="DomainManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="DomainManagement"
 		description="DomainManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ConfigManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ConfigManagement"
 		description="ConfigManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="GeoLayersManagement" description="GeoLayersManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial"
+	<USER_FUNCTIONALITY productType="KnowageSocial"
 		name="CreateCockpitFunctionality" description="CreateCockpitFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="ImagesManagement"
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="ImagesManagement"
 		description="ImagesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="Glossary" description="Glossary" />
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="Timespan" description="Timespan" />
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="Glossary" description="Glossary" />
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="Timespan" description="Timespan" />
 	
 	
-	<USER_FUNCTIONALITY productType="AthenaSocial" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
+	<USER_FUNCTIONALITY productType="KnowageSocial" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
 		
-	<!-- Authorizations for AthenaFake -->
-	<USER_FUNCTIONALITY productType="AthenaFake" name="EnginesManagement" description="EnginesManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="LovsManagement" description="LovsManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ConstraintManagement" description="ConstraintManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ParameterManagement" description="ParameterManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentAdministration" description="DocumentAdministration"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentDevManagement" description="DocumentDevManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentTestManagement" description="DocumentTestManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ImportExportManagement" description="ImportExportManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="SchedulerManagement" description="SchedulerManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="EventsManagement" description="EventsManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="WorkspaceManagement" description="WorkspaceManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="WorklistManagement" description="WorklistManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentManagement" description="DocumentManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DataSourceManagement" description="DataSourceManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentUserManagement" description="DocumentUserManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentStateManagement" description="DocumentStateManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DistributionListUser" description="DistributionListUser"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DistributionListManagement" description="DistributionListManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="LovsView" description="LovsView"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ConstraintView" description="ConstraintView"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ParameterView" description="ParameterView"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DatasetManagement" description="DatasetManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ModifyRefresh" description="ModifyRefresh"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="MenuManagement" description="MenuManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="HotLinkManagement" description="HotLinkManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="KpiManagement" description="KpiManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ProfileManagement" description="ProfileManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="DomainManagement" description="DomainManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ConfigManagement" description="ConfigManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="GeoLayersManagement" description="GeoLayersManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="HierarchiesManagement" description="HierarchiesManagement"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
-	<USER_FUNCTIONALITY productType="AthenaFake" name="ImagesManagement" description="ImagesManagement" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="Glossary" description="Glossary" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="Timespan" description="Timespan" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateChartFunctionality" description="CreateChartFunctionality" />
-	<USER_FUNCTIONALITY productType="AthenaFake" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
+	<!-- Authorizations for KnowageFake -->
+	<USER_FUNCTIONALITY productType="KnowageFake" name="EnginesManagement" description="EnginesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="LovsManagement" description="LovsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ConstraintManagement" description="ConstraintManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ParameterManagement" description="ParameterManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentAdministration" description="DocumentAdministration"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentDevManagement" description="DocumentDevManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentTestManagement" description="DocumentTestManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ImportExportManagement" description="ImportExportManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="SchedulerManagement" description="SchedulerManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="EventsManagement" description="EventsManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="WorkspaceManagement" description="WorkspaceManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="WorklistManagement" description="WorklistManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="MapCatalogueManagement" description="MapCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="MapFeaturesManagement" description="MapFeaturesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentManagement" description="DocumentManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ProfileAttributeManagement" description="ProfileAttributeManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DataSourceManagement" description="DataSourceManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentUserManagement" description="DocumentUserManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentDeleteManagement" description="DocumentDeleteManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentStateManagement" description="DocumentStateManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentDetailManagement" description="DocumentDetailManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DistributionListUser" description="DistributionListUser"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DistributionListManagement" description="DistributionListManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentMetadataManagement" description="DocumentMetadataManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="LovsView" description="LovsView"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ConstraintView" description="ConstraintView"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ParameterView" description="ParameterView"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DatasetManagement" description="DatasetManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentMoveDownState" description="DocumentMoveDownState"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DocumentMoveUpState" description="DocumentMoveUpState"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ModifyRefresh" description="ModifyRefresh"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="MenuManagement" description="MenuManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="HotLinkManagement" description="HotLinkManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="KpiManagement" description="KpiManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ObjMetadataManagement" description="ObjMetadataManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ProfileManagement" description="ProfileManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="DomainManagement" description="DomainManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ConfigManagement" description="ConfigManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateWorksheetFromDatasetUserFunctionality" description="CreateWorksheetFromDatasetUserFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="MeasuresCatalogueManagement" description="MeasuresCatalogueManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="GeoLayersManagement" description="GeoLayersManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="HierarchiesManagement" description="HierarchiesManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateSocialAnalysis" description="CreateSocialAnalysis"/>
+	<USER_FUNCTIONALITY productType="KnowageFake" name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="Glossary" description="Glossary" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="Timespan" description="Timespan" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CkanIntegrationFunctionality" description="CkanIntegrationFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="UserDefinedPropertyRest" description="UserDefinedPropertyRest" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateChartFunctionality" description="CreateChartFunctionality" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 </USER_FUNCTIONALITIES>
