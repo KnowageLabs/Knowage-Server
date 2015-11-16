@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * This class implements a HMAC ( https://en.wikipedia.org/wiki/Hash-based_message_authentication_code ) filter. The shared {@link HMACFilter#key} is
  * initialized by filter configuration. It's used internally by the engines. The HMAC key is configured through JNDI : {@link HMACFilter#HMAC_JNDI_LOOKUP}. See
- * web.xml of athena project for configuring the Filter.
+ * web.xml of knowage project for configuring the Filter.
  *
  * @author fabrizio
  *

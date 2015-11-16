@@ -31,7 +31,7 @@ public class UtilitiesForTest {
 
 	/**
 	 * <pre>
-	 *  <Environment name="spagobi_service_url" type="java.lang.String" value="http://localhost:8080/athena"/>
+	 *  <Environment name="spagobi_service_url" type="java.lang.String" value="http://localhost:8080/knowage"/>
 	 *     <Environment name="spagobi_host_url" type="java.lang.String" value="http://localhost:8080"/>
 	 *     <Environment name="spagobi_sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
 	 * </pre>
@@ -45,24 +45,24 @@ public class UtilitiesForTest {
 
 		Context ic = new MockContext();
 		MockFactory.context = ic;
-		ic.bind("java:/comp/env/spagobi_service_url", "http://localhost:8080/athena");
+		ic.bind("java:/comp/env/spagobi_service_url", "http://localhost:8080/knowage");
 		ic.bind("java:/comp/env/spagobi_host_url", "http://localhost:8080");
 		ic.bind("java:/comp/env/spagobi_sso_class", "it.eng.spagobi.services.common.FakeSsoService");
 
-		ic.bind("java://comp/env/spagobi_service_url", "http://localhost:8080/athena");
+		ic.bind("java://comp/env/spagobi_service_url", "http://localhost:8080/knowage");
 		ic.bind("java://comp/env/spagobi_host_url", "http://localhost:8080");
 		ic.bind("java://comp/env/spagobi_sso_class", "it.eng.spagobi.services.common.FakeSsoService");
 	}
 
 	public static void writeSessionOfWebApp() throws IOException, InterruptedException {
 		Runtime runtime = Runtime.getRuntime();
-		// call login page of athena to write JSESSION COOKIE
+		// call login page of knowage to write JSESSION COOKIE
 		Process exec = runtime
-				.exec("curl http://localhost:8080/athena/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
+				.exec("curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
 		exec.waitFor();
 		String jsessionId = getJSessionId();
 		exec = runtime
-				.exec("curl http://localhost:8080/athena/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -H 'Cookie: JSESSIONID=%J' --data 'isInternalSecurity=true&userID=biadmin&password=biadmin'"
+				.exec("curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -H 'Cookie: JSESSIONID=%J' --data 'isInternalSecurity=true&userID=biadmin&password=biadmin'"
 						.replace("%J", jsessionId));
 		exec.waitFor();
 	}
@@ -85,7 +85,7 @@ public class UtilitiesForTest {
 	}
 
 	public static HttpSession getSession() throws FileNotFoundException, IOException {
-		String filename = getAthenaTrunk() + "/athena/resources-test/session.jbin";
+		String filename = getAthenaTrunk() + "/knowage/resources-test/session.jbin";
 		FileInputStream inputFileStream = new FileInputStream(filename);
 		ObjectInputStream objectInputStream = new ObjectInputStream(inputFileStream);
 		HttpSession session = new MockHttpSession();
@@ -96,7 +96,7 @@ public class UtilitiesForTest {
 				session.setAttribute(name, value);
 			} catch (Exception e) {
 				if (e instanceof ClassNotFoundException) {
-					// ignore classes not in athena utils, not necessary for tests
+					// ignore classes not in knowage utils, not necessary for tests
 					continue;
 				}
 				break;

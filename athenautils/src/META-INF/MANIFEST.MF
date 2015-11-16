@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: athenautilsjson.jar
+Class-Path: knowageutilsjson.jar
 
 Name: sbi.utils-3.0.0.jar
 Implementation-Title: SpagoBIUtils

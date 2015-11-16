@@ -207,7 +207,7 @@ public class DataSetUtilities {
 	}
 
 	/**
-	 * Check if it's a empty value already filled by the type (see ManageDataSets from athena project)
+	 * Check if it's a empty value already filled by the type (see ManageDataSets from knowage project)
 	 *
 	 * @param oldValue
 	 * @param paramDefaultValue

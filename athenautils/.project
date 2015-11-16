@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>athenautils</name>
+	<name>knowageutils</name>
 	<comment></comment>
 	<projects>
-		<project>athenautilsjson</project>
+		<project>knowageutilsjson</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
