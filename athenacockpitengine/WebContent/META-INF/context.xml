@@ -1,4 +1,4 @@
-<Context path="/athenacockpitengine" privileged="true"
+<Context path="/knowagecockpitengine" privileged="true"
 	reloadable="false">
 	<Manager className="org.apache.catalina.session.PersistentManager"
 		saveOnRestart="false" />

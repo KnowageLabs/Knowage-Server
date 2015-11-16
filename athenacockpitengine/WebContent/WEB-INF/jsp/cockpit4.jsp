@@ -106,7 +106,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     String param2="?"+SpagoBIConstants.SBI_CONTEXT+"="+contextName;
 	String host=request.getServerName();
 	String param3="&"+SpagoBIConstants.SBI_HOST+"="+host;
-	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("AthenaChartEngineContextName"));
+// 	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("AthenaChartEngineContextName"));
+	SourceBean sb = ((SourceBean) EnginConf.getInstance().getConfig().getAttribute("ChartEngineContextName"));
 	String chartEngineContextName = sb.getCharacters();
     
     StringBuffer chartDesignerUrlTemp = new StringBuffer("/"+chartEngineContextName+"/api/1.0/pages/edit_cockpit");
@@ -140,7 +141,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <html>
 	<%-- == HEAD ========================================================== --%>
 	<head>
-	   <title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
+	   <title><%=docName.trim().length() > 0? docName: "KnowageCockpitEngine"%></title>
        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
        
         <%@include file="commons/includeExtJS4.jspf" %>
@@ -364,10 +365,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		*/
 		
 		// test
-		
-		
-		
-		
 		
 		Sbi.storeManager = new Sbi.data.StoreManager({storesConf: template.storesConf, template: template});
 		//Sbi.storeManager.setConfiguration(template.storesConf);

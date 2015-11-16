@@ -21,11 +21,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src"
-		path="/athenadao" />
+		path="/knowagedao" />
 	<classpathentry combineaccessrules="false" kind="src"
-		path="/athenautils" />
+		path="/knowageutils" />
 	<classpathentry combineaccessrules="false" kind="src"
-		path="/athenautilsjson" />
+		path="/knowageutilsjson" />
 	<classpathentry combineaccessrules="false" kind="src"
 		path="/qbecore" />
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes" />

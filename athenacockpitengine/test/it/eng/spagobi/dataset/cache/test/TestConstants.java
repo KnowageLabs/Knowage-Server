@@ -33,8 +33,8 @@ public class TestConstants {
 	//public static String workspaceFolder = "D:/Documenti/Sviluppo/workspaces/helios/spagobi/server";
 	public static String workspaceFolder = "C:/Users/cortella/workspaceJEE";
 
-	public static String RESOURCE_PATH = workspaceFolder+"/SpagoBICockpitEngine/test/resources/";
-	public static String WEBCONTENT_PATH = workspaceFolder+"/SpagoBICockpitEngine/WebContent";
+	public static String RESOURCE_PATH = workspaceFolder+"/knowagecockpitengine/test/resources/";
+	public static String WEBCONTENT_PATH = workspaceFolder+"/knowagecockpitengine/WebContent";
 	public static String AF_CONFIG_FILE = "/WEB-INF/conf/master.xml";
 	
 	public static String CACHE_CONFIG_TABLE_PREFIX = "sbicache";

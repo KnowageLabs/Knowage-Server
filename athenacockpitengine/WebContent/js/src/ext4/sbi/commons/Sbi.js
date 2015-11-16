@@ -6,7 +6,7 @@
 
 Ext.ns("Sbi");
 
-Sbi.mainContextName = "athena";
+Sbi.mainContextName = "knowage";
 
 Sbi.isValorized = function(o, subProperties) {
 	var isValorized = Ext.isDefined(o) && Sbi.isNotNull(o);

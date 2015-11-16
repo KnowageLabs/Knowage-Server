@@ -96,7 +96,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <html>
 	<%-- == HEAD ========================================================== --%>
 	<head>
-		<title><%=docName.trim().length() > 0? docName: "SpagoBICockpitEngine"%></title>
+		<title><%=docName.trim().length() > 0? docName: "KnowageCockpitEngine"%></title>
        
         <%@include file="commons/includeExtJS4.jspf" %>
 		<%@include file="commons/includeMessageResource.jspf" %>
