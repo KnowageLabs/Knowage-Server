@@ -73,121 +73,121 @@
 
 	</DEFAULT_ROLES>
 	<DEFAULT_AUTHORIZATIONS>
-		<!-- Authorizations for AthenaBD -->
+		<!-- Authorizations for KnowageBD -->
 		<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_SUBOBJECTS"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_VIEWPOINTS"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_SNAPSHOTS"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_NOTES"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEND_MAIL"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_METADATA"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SAVE_METADATA"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="BUILD_QBE_QUERY"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="MANAGE_USERS"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_FAVOURITES"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_TODO_LIST"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="CREATE_DOCUMENTS"
-			productType="AthenaBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
-			productType="AthenaBD" organization="SPAGOBI" />
-		<AUTHORIZATION productType="AthenaBD" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
+			productType="KnowageBD" organization="SPAGOBI" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
 			
-		<!-- Authorizations for AthenaSocial -->
+		<!-- Authorizations for KnowageSocial -->
 		<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_SUBOBJECTS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_VIEWPOINTS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_SNAPSHOTS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_NOTES"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEND_MAIL"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_METADATA"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SAVE_METADATA"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="BUILD_QBE_QUERY"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="DO_MASSIVE_EXPORT"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="EDIT_WORKSHEET"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="MANAGE_USERS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_FAVOURITES"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_SUBSCRIPTIONS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="SEE_TODO_LIST"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="CREATE_SOCIAL_ANALYSIS" 
-			productType="AthenaSocial"  organization="SPAGOBI"/>
+			productType="KnowageSocial"  organization="SPAGOBI"/>
 		<AUTHORIZATION authorizationName="VIEW_SOCIAL_ANALYSIS" 
-			productType="AthenaSocial"  organization="SPAGOBI"/>
+			productType="KnowageSocial"  organization="SPAGOBI"/>
 		<AUTHORIZATION authorizationName="CREATE_DOCUMENTS"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
-			productType="AthenaSocial" organization="SPAGOBI" />
+			productType="KnowageSocial" organization="SPAGOBI" />
 			
-		<AUTHORIZATION productType="AthenaSocial" authorizationName="GLOSSARY" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaSocial" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaSocial" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
+		<AUTHORIZATION productType="KnowageSocial" authorizationName="GLOSSARY" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageSocial" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageSocial" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
 		
-		<!-- Authorizations for AthenaFake -->
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_SUBOBJECTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_VIEWPOINTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_SNAPSHOTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_NOTES" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEND_MAIL" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_INTO_FOLDER" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_REMEMBER_ME" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_METADATA" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SAVE_METADATA" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="BUILD_QBE_QUERY" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="DO_MASSIVE_EXPORT" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="EDIT_WORKSHEET" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="MANAGE_USERS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_DOCUMENT_BROWSER" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_FAVOURITES" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_SUBSCRIPTIONS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
+		<!-- Authorizations for KnowageFake -->
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SUBOBJECTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_VIEWPOINTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SNAPSHOTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_NOTES" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEND_MAIL" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_INTO_FOLDER" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_REMEMBER_ME" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_METADATA" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_METADATA" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="BUILD_QBE_QUERY" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="DO_MASSIVE_EXPORT" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="EDIT_WORKSHEET" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_USERS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_DOCUMENT_BROWSER" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_FAVOURITES" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SUBSCRIPTIONS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
 		
-		<AUTHORIZATION productType="AthenaFake" authorizationName="GLOSSARY" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="AthenaFake" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
+		<AUTHORIZATION productType="KnowageFake" authorizationName="GLOSSARY" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
 		
 	</DEFAULT_AUTHORIZATIONS>
 
