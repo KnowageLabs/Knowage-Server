@@ -475,18 +475,34 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					// PLUS BUTTON
 					Ext.create('Ext.panel.Tool', {
 					    type:'plus',
-					    padding: "3 0 0 0",	// TODO: danristo (10.11)
-					    height: 22,	// TODO: danristo (10.11)
+					    
+					    padding: "3 0 0 0",	
+					    height: 22,	
+					    
 					    tooltip: LN('sbi.chartengine.columnscontainer.tooltip.addaxis'),
+					    
 					    id: "plusLeftAxis_" + idChartColumnsContainer, // (added by: danilo.ristovski@mht.net)
-					    // *_* True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+					   
+					    /** 
+					     * True for the SUNBURST, WORDCLOUD, TREEMAP and PARALLEL charts
+					     * 
+					     * @author: danristo (danilo.ristovski@mht.net)
+					     */
 					    hidden: plusHidden || (panelWhereAddSeries == null),
 					    
 					    /// flex: 1, //TODO: danristo (was not commented)
 					    handler: function(event, toolEl, panelHeader) {
 					    						    	
 					    	var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
-					    						    	
+					    	
+					    	/**
+					    	 * JSON template of current document (current structure of
+					    	 * the document).
+					    	 * 
+					    	 * @author: danristo (danilo.ristovski@mht.net)
+					    	 */
+					    	var tempFinal = Sbi.chart.designer.Designer.exportAsJson();
+					    	
 					    	if(chartType.toUpperCase() != 'PIE') {
 					    		if (!panelWhereAddSeries.isVisible()) {
 					    			panelWhereAddSeries.setVisible(true);
@@ -494,11 +510,15 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	
 					    		ChartAxisesContainer.addToAxisesContainer(panelWhereAddSeries);
 					    	}
-					    	
-					    	// TODO: danristo (10.11)
+					    						    	
 					    	/**
-					    	 * Added for applying current style for every new Y-axis panel that we 
-					    	 * create for the document (chart).
+					    	 * We will do a merging of current JSON template (current document
+					    	 * structure) with the XML template of the chosen style for our
+					    	 * chart type, so to take just the newly created AXIS tag for the
+					    	 * newly added Y-axis panel. Afterwards we will take this one in
+					    	 * order to append it to the already existing JSON template, so to
+					    	 * skip applying current chart style to all axes (we need to apply
+					    	 * it only to the one we are adding).
 					    	 * 
 					    	 * @author: danristo (danilo.ristovski@mht.net)
 					    	 */
@@ -506,7 +526,8 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	{
 								applyAxes: true,
 								applySeries: true,
-							};
+							};					    	
+					    	
 					    	
 					    	var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					    	(
@@ -522,7 +543,19 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								configApplyAxesStyles
 							);
 							
-							Sbi.chart.designer.Designer.update(localJsonTemplate);
+							localJsonTemplateAxisTag = localJsonTemplate.CHART.AXES_LIST.AXIS;
+							
+							/**
+							 * Take just the newly added Y-axis panel configuration and append it
+							 * to the current JSON template. This way we will apply current style 
+							 * only to that newly created Y-axis panel, instead of resetting the
+							 * axis configuration of already existing Y-axis panels.
+							 * 
+							 * @author: danristo (danilo.ristovski@mht.net)
+							 */
+							tempFinal.CHART.AXES_LIST.AXIS.push(localJsonTemplateAxisTag[localJsonTemplateAxisTag.length-1]);
+							
+							Sbi.chart.designer.Designer.update(tempFinal);
 					    }
 						
 						// *_* Old code included in: (hidden: plusHidden || (panelWhereAddSeries == null))

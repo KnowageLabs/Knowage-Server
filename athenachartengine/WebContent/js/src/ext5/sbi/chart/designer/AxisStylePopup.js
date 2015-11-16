@@ -366,7 +366,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        id: 'oppositeAxis',
 			        value: this.axisData.styleOpposite,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.opposite"), 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.opposite")+":", 
 			    }	
 	    	);
 			
@@ -531,7 +531,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        id: 'minValueYAxis',
 			        value: this.axisData.min,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis")+":" 
 			    }	
 	    	);
 			
@@ -548,7 +548,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        id: 'maxValueYAxis',
 			        value: this.axisData.max,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis")+":"
 			    }	
 	    	);
 			
@@ -653,7 +653,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.lineWidth,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.lineWidth") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.lineWidth")+":"
 			    }	
 	    	);
 			
@@ -670,7 +670,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        id: 'endOnTickYAxis',
 			        value: this.axisData.endOnTickGauge,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.endOnTick")
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.endOnTick")+":"
 			    }	
 	    	);
 			
@@ -818,7 +818,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.tickPixelInterval,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval")
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval")+":"
 			    }
 			);
 			
@@ -836,7 +836,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.tickWidth,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth")+":" 
 			    }
 			);
 			
@@ -854,7 +854,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.tickLength,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickLength") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickLength")+":" 
 			    }
 			);
 			
@@ -1002,7 +1002,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.minorTickInterval,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")+":" 
 			    }
 			);
 			
@@ -1020,7 +1020,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.minorTickWidth,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")+":" 
 			    }
 			);
 			
@@ -1038,7 +1038,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.minorTickLength,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength")
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength")+":" 
 			    }
 			);
 			
@@ -1077,7 +1077,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        minValue: -60,
 			        value: this.axisData.distance,
 			        labelSeparator: '',			        
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis")+":"  
 			    }
 			);
 			
@@ -1096,7 +1096,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 //			        maxValue: 359,
 			        value: this.axisData.rotation,
 			        labelSeparator: '',			        
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis") 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis")+":"  
 			    }
 			);
 			
@@ -1155,14 +1155,10 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 					flex: 1,
 									
 					id: "plotsContainer",
-					store: plotbandsStore, // IMPLEMENT YOUR STORE
+					store: plotbandsStore, 
 					
 					title: LN("sbi.chartengine.configuration.gauge.axisStylePopup.plotbands.title"),
-//					title:
-//					{
-//						hidden: true //???
-//					},
-					
+									
 					tools:
 					[		
 					 	//CLEAR BUTTON
@@ -1202,9 +1198,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			 			)						
 					],
 					
-					hideHeaders: false, // ????
+					hideHeaders: false, 
 					
-					//  USE YOUR COLUMNS
 					columns: 
 					{
 						items: 
@@ -1245,17 +1240,27 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 								sortable: false,
 								align : 'center',
 								text: LN("sbi.chartengine.axisstylepopup.plotbandParams.columnColor"),
-																
-								listeners:  
+									
+								/**
+								 * What happens inside of this grid cell (textfield for color value)
+								 * when we render (open) Axis style configuration popup. Property
+								 * "style" of this element will set CSS 'background-color' property
+								 * value to the value of color that user choose for the particular 
+								 * cell when he saved it last time. This way we will take the string 
+								 * value of chosen color and assign it to the background color of the
+								 * cell element.
+								 */
+								renderer: function(colorPicked,thisField)
 								{
-									//beforerender:
+									thisField.style = "background-color: " + colorPicked;
+								},
+								
+								listeners:  
+								{									
 									click: 
 									{
-										fn: function(ad, gg, index)
-										{ 		
-											var localScope = this;
-											localScope.gg = gg;
-											
+										fn: function(a,b,index)
+										{ 													
 											Ext.create
 											(
 												'Ext.window.Window', 
@@ -1264,7 +1269,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 												    height: 110,
 												    width: 200,
 												    resizable: false,
-												    ownerCt : this, 	// bring the color picker in front
+												    ownerCt: this, 	// bring the color picker in front
 												    modal: true,		// prevent user from clicking outside this 
 												    layout: 'fit',
 												    
@@ -1278,43 +1283,26 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 											        	{
 												        	select: 
 											        		{
-												        		fn: function(a, b, cc)
+												        		fn: function(a,b)
 													        	{													        		
 													        		var plotbandsParamsFieldSet = axisStylePopupScope.getComponent("axisPlotbandsParamsFieldSet");
 													        		var plotsContainer = plotbandsParamsFieldSet.getComponent("plotsContainer");
 													        		
 													        		plotsContainer.store.data.items[index].data.color = "#" + b;
 													        		
-													        		console.log(plotsContainer);
-													        		
-													        		console.log(localScope);
-//													        		localScope.gg.bgColor = "#FF0000";
-//													        		localScope.gg.style.backgroundColor = "#FF0000";
-//													        		localScope.gg.style.color = "#FF0000";
-													        		
-													        		//localScope.setConfig("backgroundColor");
-//													        		localScope.gg.doLayout();+
-													        		console.log("AAA");
-													        		var aaa = "width: 116px; background-color: " + plotsContainer.store.data.items[index].data.color;
-													        		localScope.gg.setAttribute("style",aaa);
-													        		
-													        		console.log("BBB");
-													        		console.log(localScope);
-//													        		plotsContainer.store.commitChanges();
-//													        		plotsContainer.reconfigure();
-													        		
 													        		this.ownerCt.close();
-													        		console.log(localScope);
-													        		//localScope.ownerCt.ownerCt.update();
-													        		console.log(localScope);
-													        		//a.updateLayout();
+													        		
+													        		/**
+													        		 * After changing/setting the color value for the field,
+													        		 * update the grid which contains it so we can see changes.
+													        		 */
+													        		plotsContainer.getView().refresh();
 													        	}
 											        		}
 											        	}
 												    }
 												}
 											).show();
-											
 										}
 									}
 								},
