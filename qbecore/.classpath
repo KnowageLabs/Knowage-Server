@@ -35,8 +35,7 @@
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
 	<classpathentry kind="lib" path="lib/resteasy-jaxrs-2.3.5.Final.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrs-api-2.3.5.Final.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
@@ -44,8 +43,9 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="bin"/>
 	<classpathentry kind="lib" path="lib/hibernate/required/jts-1.13.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-spatial-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-spatial-oracle-1.1.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
