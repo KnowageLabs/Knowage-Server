@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.birt;
 
@@ -85,9 +85,8 @@ import sun.misc.BASE64Decoder;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
- * 
- *         DATE CONTRIBUTOR/DEVELOPER NOTE 02-10-2008 Zerbetto Davide/Julien
- *         Decreuse (Smile) Upgrade to Birt 2.3.0 API
+ *
+ *         DATE CONTRIBUTOR/DEVELOPER NOTE 02-10-2008 Zerbetto Davide/Julien Decreuse (Smile) Upgrade to Birt 2.3.0 API
  **/
 public class BirtReportServlet extends HttpServlet {
 
@@ -102,7 +101,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	@Override
@@ -115,7 +114,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	@Override
@@ -127,9 +126,7 @@ public class BirtReportServlet extends HttpServlet {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest
-	 * , javax.servlet.http.HttpServletResponse)
+	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest , javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -361,10 +358,8 @@ public class BirtReportServlet extends HttpServlet {
 
 			int paramType = param.getDataType();
 			/*
-			 * The ParameterConverter converts a single value. Multi-value
-			 * parameters are assumed to contains values that are String type.
-			 * If they are not Strings (list of dates, list of numbers, ...) the
-			 * converter will not work.
+			 * The ParameterConverter converts a single value. Multi-value parameters are assumed to contains values that are String type. If they are not
+			 * Strings (list of dates, list of numbers, ...) the converter will not work.
 			 */
 			Object paramValue = ParameterConverter.convertParameter(paramType, paramValueString, dateformat);
 			if (paramValue == null)
@@ -424,7 +419,7 @@ public class BirtReportServlet extends HttpServlet {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param documentId
 	 * @return jndi connection
 	 * @throws ConnectionDefinitionException
@@ -674,8 +669,7 @@ public class BirtReportServlet extends HttpServlet {
 		// commented by Davide Zerbetto on 12/10/2009: there are problems with
 		// MIF (Ext ManagedIFrame library) library
 		/*
-		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT))
-		 * { ((HTMLRenderOption) renderOption).setEmbeddable(true);
+		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) { ((HTMLRenderOption) renderOption).setEmbeddable(true);
 		 * injectHTMLHeader(response); }
 		 */
 
@@ -690,8 +684,7 @@ public class BirtReportServlet extends HttpServlet {
 		// commented by Davide Zerbetto on 12/10/2009: there are problems with
 		// MIF (Ext ManagedIFrame library) library
 		/*
-		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT))
-		 * { injectHTMLFooter(response); }
+		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) { injectHTMLFooter(response); }
 		 */
 
 		logger.debug("OUT");
@@ -739,61 +732,38 @@ public class BirtReportServlet extends HttpServlet {
 		context.put("SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS", userProfileAttrs);
 		context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", predefinedGroovyScriptFileName);
 		context.put("SBI_BIRT_RUNTIME_JS_SCRIPT_FILE_NAME", predefinedJsScriptFileName);
+		context.put("SESSION", session);
 
 		return context;
 	}
 
 	/**
-	 * This method injects the HTML header into the report HTML output. This is
-	 * necessary in order to inject the document.domain javascript directive
+	 * This method injects the HTML header into the report HTML output. This is necessary in order to inject the document.domain javascript directive
 	 */
 	/*
-	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF
-	 * (Ext ManagedIFrame library) library protected void
-	 * injectHTMLHeader(HttpServletResponse response) throws IOException {
-	 * logger.debug("IN"); String header = null; try { SourceBean config =
-	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb =
-	 * (SourceBean) config.getAttribute("HTML_HEADER"); header =
-	 * htmlHeaderSb.getCharacters(); if (header == null ||
-	 * header.trim().equals("")) { throw new
-	 * Exception("HTML_HEADER not configured"); } header =
-	 * header.replaceAll("\\$\\{SBI_DOMAIN\\}",
-	 * EnginConf.getInstance().getSpagoBiDomain()); } catch (Exception e) {
-	 * logger
-	 * .error("Error while retrieving HTML_HEADER from engine configuration.",
-	 * e); logger.info("Using default HTML header", e); StringBuffer buffer =
-	 * new StringBuffer(); buffer.append(
-	 * "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">"
-	 * ); buffer.append(
-	 * "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta>"
-	 * ); buffer.append("  <script type=\"text/javascript\">");
-	 * buffer.append("    document.domain='" +
-	 * EnginConf.getInstance().getSpagoBiDomain() + "';");
-	 * buffer.append("  </script>"); buffer.append("</head><body>"); header =
-	 * buffer.toString(); } response.getOutputStream().write(header.getBytes());
-	 * logger.debug("OUT"); }
+	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library protected void
+	 * injectHTMLHeader(HttpServletResponse response) throws IOException { logger.debug("IN"); String header = null; try { SourceBean config =
+	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_HEADER"); header = htmlHeaderSb.getCharacters(); if
+	 * (header == null || header.trim().equals("")) { throw new Exception("HTML_HEADER not configured"); } header = header.replaceAll("\\$\\{SBI_DOMAIN\\}",
+	 * EnginConf.getInstance().getSpagoBiDomain()); } catch (Exception e) { logger .error("Error while retrieving HTML_HEADER from engine configuration.", e);
+	 * logger.info("Using default HTML header", e); StringBuffer buffer = new StringBuffer(); buffer.append(
+	 * "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">" ); buffer.append(
+	 * "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta>" ); buffer.append("  <script type=\"text/javascript\">");
+	 * buffer.append("    document.domain='" + EnginConf.getInstance().getSpagoBiDomain() + "';"); buffer.append("  </script>"); buffer.append("</head><body>");
+	 * header = buffer.toString(); } response.getOutputStream().write(header.getBytes()); logger.debug("OUT"); }
 	 */
 
 	/**
-	 * This method injects the HTML footer into the report HTML output. See
-	 * injectHTMLHeader method
+	 * This method injects the HTML footer into the report HTML output. See injectHTMLHeader method
 	 */
 	/*
-	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF
-	 * (Ext ManagedIFrame library) library protected void
-	 * injectHTMLFooter(HttpServletResponse response) throws IOException {
-	 * logger.debug("IN"); String footer = null; try { SourceBean config =
-	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb =
-	 * (SourceBean) config.getAttribute("HTML_FOOTER"); footer =
-	 * htmlHeaderSb.getCharacters(); if (footer == null ||
-	 * footer.trim().equals("")) { throw new
-	 * Exception("HTML_FOOTER not configured"); } } catch (Exception e) {
-	 * logger.
-	 * error("Error while retrieving HTML_FOOTER from engine configuration.",
-	 * e); logger.info("Using default HTML footer", e); StringBuffer buffer =
-	 * new StringBuffer(); buffer.append("</body></html>"); footer =
-	 * buffer.toString(); } response.getOutputStream().write(footer.getBytes());
-	 * logger.debug("OUT"); }
+	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library protected void
+	 * injectHTMLFooter(HttpServletResponse response) throws IOException { logger.debug("IN"); String footer = null; try { SourceBean config =
+	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_FOOTER"); footer = htmlHeaderSb.getCharacters(); if
+	 * (footer == null || footer.trim().equals("")) { throw new Exception("HTML_FOOTER not configured"); } } catch (Exception e) { logger.
+	 * error("Error while retrieving HTML_FOOTER from engine configuration.", e); logger.info("Using default HTML footer", e); StringBuffer buffer = new
+	 * StringBuffer(); buffer.append("</body></html>"); footer = buffer.toString(); } response.getOutputStream().write(footer.getBytes()); logger.debug("OUT");
+	 * }
 	 */
 
 	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId,
