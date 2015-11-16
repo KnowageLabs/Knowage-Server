@@ -72,6 +72,13 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 
 	}
 
+	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token, String pass,
+			MetamodelServiceProxy metamodelServiceProxy, HttpSession session) {
+		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
+		this.metamodelServiceProxy = metamodelServiceProxy;
+		this.session = session;
+	}
+
 	private it.eng.spagobi.services.dataset.stub.DataSetService lookUp() throws SecurityException {
 		try {
 			DataSetServiceServiceLocator locator = new DataSetServiceServiceLocator();
