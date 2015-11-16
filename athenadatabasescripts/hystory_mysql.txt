@@ -2790,10 +2790,10 @@ commit;
 
 
 -- ---------------------------------------
--- - Database updates related to Athena --
+-- - Database updates related to Knowage --
 -- ---------------------------------------
 
--- tables for different athena product types
+-- tables for different knowage product types
 CREATE TABLE `SBI_PRODUCT_TYPE` (
 	`PRODUCT_TYPE_ID` INT(11) NOT NULL,
 	`LABEL` VARCHAR(40) NOT NULL,
@@ -2851,7 +2851,7 @@ ALTER TABLE `SBI_AUTHORIZATIONS`
 	ADD CONSTRAINT `FK2_PRODUCT_TYPE` FOREIGN KEY (`PRODUCT_TYPE_ID`) REFERENCES `SBI_PRODUCT_TYPE` (`PRODUCT_TYPE_ID`);
 
 -- ---------------------------------------
--- 09/07/2015- Database updates related to Athena --
+-- 09/07/2015- Database updates related to Knowage --
 -- ---------------------------------------
 
 -- mapping table between product types and engines

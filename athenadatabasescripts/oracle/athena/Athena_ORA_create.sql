@@ -1,10 +1,10 @@
 -- -----------------------------------
--- Athena Database script
+-- Knowage Database script
 -- Important: Execute this script after creating the SpagoBI Tables
 -- ------------------------------------
 
 
--- tables for different athena product types
+-- tables for different knowage product types
 CREATE TABLE SBI_PRODUCT_TYPE (
 	PRODUCT_TYPE_ID INTEGER NOT NULL,
 	LABEL VARCHAR2(40) NOT NULL,
