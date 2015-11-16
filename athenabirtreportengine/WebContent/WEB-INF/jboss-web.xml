@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee      
 		http://www.jboss.org/j2ee/schema/jboss-web_5_1.xsd">
 
-	<context-root>/athenabirtreportengine</context-root>
+	<context-root>/knowagebirtreportengine</context-root>
 
 
 </jboss-web>
