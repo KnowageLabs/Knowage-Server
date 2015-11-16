@@ -103,6 +103,8 @@
 		name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="AthenaBD"
 		name="ImagesManagement" description="ImagesManagement" />
+	<USER_FUNCTIONALITY productType="AthenaBD" 
+		name="FederationDefinition" description="FederationDefinition" />
 		
 
 	<!-- Athena Social Functionalities -->

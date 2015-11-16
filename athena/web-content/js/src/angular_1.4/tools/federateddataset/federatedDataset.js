@@ -243,7 +243,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 				$scope.dsdescription = dataset.description;
 			}
 		});
-		
+					
 		$mdDialog
 			.show({
 				scope: $scope,
@@ -467,31 +467,33 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 	}
 	
 	ctr.deleteFromMultiArray = function(param) {
-		/*console.log(param)
-		console.log(ctr.multiArray)
-		var confirm = $mdDialog.confirm()
+				
+		var confirm = $mdDialog
+		.confirm()
 		.title(sbiModule_translate.load("sbi.federationdefinition.confirm.delete"))
-		.content(sbiModule_translate.load("sbi.federationdefinition.confirm.delete.content"))
-		.targetEvent(param)
-		.ok(sbiModule_translate.load("sbi.federationdefinition.yes"))
-		.cancel(sbiModule_translate.load("sbi.federationdefinition.no"))
-		
-		$mdDialog.show(confirm).then(function(){
+		.content(
+				sbiModule_translate
+				.load("sbi.federationdefinition.confirm.delete.content"))
+				.ariaLabel('Lucky day').ok(
+						sbiModule_translate.load("sbi.general.continue")).cancel(
+								sbiModule_translate.load("sbi.general.cancel"));
+
+		$mdDialog.show(confirm).then(function() {
 			var index = ctr.multiArray.indexOf(param);
 			if(index !=-1){
 				ctr.multiArray.splice(index, 1);
-			}
-		})*/
-		var index = ctr.multiArray.indexOf(param);
-		if(index !=-1){
-			ctr.multiArray.splice(index, 1);
-		}
-		
+			}	
+
+		}, function() {
+			console.log('Canceled');
+		});
+				
 	}
 	
 	ctr.hide = function(){
-		$mdDialog.cancel();
+		$mdDialog.hide();
 	}
+	
 	
 	ctr.showAlert = function(ev){ //premesti u saveFedDataSet
 		$mdDialog.show(
