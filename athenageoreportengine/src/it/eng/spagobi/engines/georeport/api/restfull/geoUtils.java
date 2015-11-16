@@ -1,11 +1,14 @@
 package it.eng.spagobi.engines.georeport.api.restfull;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.georeport.api.page.PageResource;
 import it.eng.spagobi.engines.georeport.features.provider.FeaturesProviderDAOFactory;
 import it.eng.spagobi.engines.georeport.features.provider.IFeaturesProviderDAO;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
 import it.eng.spagobi.engines.georeport.utils.Monitor;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -41,6 +44,8 @@ public class geoUtils {
 	public static final String FEATURE_IDS = "featureIds";
 	public static final String LAYER_ID = "geoId";
 	public static final String LAYER_NAME = "layer";
+	public static final String LAYER_JOIN_COLUMNS = "layer_join_columns";
+
 	static private Logger logger = Logger.getLogger(PageResource.class);
 
 	public static FieldType getDsFieldType(String xml, String fieldName) throws Exception {
@@ -69,37 +74,41 @@ public class geoUtils {
 	}
 
 	public static String targetLayerAction(JSONObject req) throws JSONException {
-		String featureSourceType = req.getString(FEATURE_SOURCE_TYPE);
-		String featureSource = req.getString(FEATURE_SOURCE);
 		String layerName = req.getString(LAYER_NAME);
-		String layerId = req.getString(LAYER_ID);
+		String layerCol = req.getString(LAYER_JOIN_COLUMNS);
 		String featureIds = req.getString(FEATURE_IDS);
 
 		try {
 			Monitor.start("GetTargetLayerAction.doService");
-
+			// TODO remove this line to enable cache
+			LayerCache.cache.clear();
 			FeatureCollection outputFeatureCollection = LayerCache.cache.get(layerName);
 
 			if (outputFeatureCollection == null) {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is not in cache");
 				try {
 					Monitor.start("GetTargetLayerAction.getFeature");
-					IFeaturesProviderDAO featuresProvider = FeaturesProviderDAOFactory.getFeaturesProviderDAO(featureSourceType);
-					outputFeatureCollection = featuresProvider.getAllFeatures(featureSource, layerName);
+					// load layer from catalogue
+					ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
+					GeoLayer geoLayer = geoLayersDAO.loadLayerByLabel(layerName);
+					// TODO check if geolayer is not null
+					IFeaturesProviderDAO featuresProvider = FeaturesProviderDAOFactory.getFeaturesProviderDAO(geoLayer.getType());
+					JSONObject layerDef = new JSONObject(new String(geoLayer.getLayerDef()));
+					String source = geoLayer.getType().equals("File") ? layerDef.getString("layer_file") : layerDef.getString("layer_url");
+					outputFeatureCollection = featuresProvider.getAllFeatures(source);
 					Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
 					logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeature"));
 
 					LayerCache.cache.put(layerName, outputFeatureCollection);
 				} catch (Throwable t2) {
-					logger.error("Impossible to load layer [" + layerName + "] " + "from source of type [" + featureSourceType + "] " + "whose endpoint is ["
-							+ featureSource + "]", t2);
+					logger.error("Impossible to load layer [" + layerName + "] " + "from source of type [] " + "whose endpoint is [ ]", t2);
 
 					Throwable root = t2;
 					while (root.getCause() != null)
 						root = root.getCause();
 
-					String message = "Impossible to load layer [" + layerName + "] " + "from source of type [" + featureSourceType + "] "
-							+ "whose endpoint is [" + featureSource + "]: " + root.getMessage();
+					String message = "Impossible to load layer [" + layerName + "] " + "from source of type [ ] " + "whose endpoint is [ ]: "
+							+ root.getMessage();
 
 					// servletIOManager.writeBackToClient(500, message,
 					// true ,"service-response", "text/plain");
@@ -114,22 +123,19 @@ public class geoUtils {
 			for (int i = 0; i < featuresIdJSON.length(); i++) {
 				String s = featuresIdJSON.getString(i);
 				idIndex.put(s, s);
-				// TODO: remove this. Now it is useful because the layer contains the name in upper case while the geo dimension id contains the names
-				// in camel case. Once ethe two will be synchronizer remve this dirty fix
-				// idIndex.put(s.toUpperCase(),s);
 			}
 			FeatureIterator it = outputFeatureCollection.features();
 			List<SimpleFeature> list = new ArrayList<SimpleFeature>();
 			while (it.hasNext()) {
 				SimpleFeature f = (SimpleFeature) it.next();
-				Property property = f.getProperty(layerId);
+				Property property = f.getProperty(layerCol);
 				if (property != null) {
-					String id = "" + f.getProperty(layerId).getValue();
+					String id = "" + property.getValue();
 					if (idIndex.containsKey(id)) {
 						list.add(f);
 					}
 				} else {
-					logger.warn("Impossible to read attribute [" + layerId + "] from feature [" + f + "]");
+					logger.warn("Impossible to read attribute [" + layerCol + "] from feature [" + f + "]");
 				}
 
 			}

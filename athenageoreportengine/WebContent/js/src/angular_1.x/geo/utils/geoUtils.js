@@ -79,7 +79,7 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 				 var storeIdFiledName;
 				 var fields=geo_dataset.metaData.fields;
 				 for( var i=0;i<fields.length;i++){
-					 if(fields[i].hasOwnProperty("header") && fields[i].header==geo_template.targetLayerConf.name){
+					 if(fields[i].hasOwnProperty("header") && fields[i].header==geo_template.dataset_join_columns){
 						 storeIdFiledName = fields[i].name; 
 						 break;
 					 }
@@ -100,11 +100,8 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 	 
 	this.GetTargetLayer=function(){
 		var params = {
-	     		layer: geo_template.targetLayerConf.name
-	     		, businessId: geo_template.dataset_join_columns
-	     		, geoId: geo_template.layer_join_columns
-	     		, featureSourceType: geo_template.targetLayerConf.hasOwnProperty("url")? "wfs":"file"
-	     		, featureSource: geo_template.targetLayerConf.data
+	     		layer: geo_template.targetLayerConf.label
+	     		, layer_join_columns: geo_template.layer_join_columns
 	     	};
 		
 		params.featureIds=getFeatureIdsFromStore();

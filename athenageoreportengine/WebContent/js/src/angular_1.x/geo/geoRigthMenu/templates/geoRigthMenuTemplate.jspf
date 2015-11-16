@@ -4,8 +4,12 @@
 <!--  <md-icon md-font-icon="fa fa-chevron-left fa-2x"></md-icon> -->
 <!--  </md-button> -->
  
- 	<md-button id="showMenu" class="md-fab md-mini zoomAnimation" ng-class="{'toolbarBotton': openRigthMenu}" ng-click="toggleMenu($event)" aria-label="toggle menu">
-		<md-icon  md-font-icon="" class=" zoomAnimation " ng-class="{' fa fa-chevron-left fa-2x' :!openRigthMenu ,'fa fa-times fa-2x' : openRigthMenu}"></md-icon> 
+<!--  	<md-button id="showMenu" class="md-fab md-mini zoomAnimation" ng-class="{'toolbarBotton': openRigthMenu}" ng-click="toggleMenu($event)" aria-label="toggle menu"> -->
+<!-- 		<md-icon  md-font-icon="" class=" zoomAnimation " ng-class="{' fa fa-chevron-left fa-2x' :!openRigthMenu ,'fa fa-times fa-2x' : openRigthMenu}"></md-icon>  -->
+<!-- 	</md-button> -->
+	
+	<md-button id="showMenu" class="md-fab  zoomAnimation" ng-class="{'hidden': openRigthMenu}" ng-click="toggleMenu($event)" aria-label="toggle menu">
+		<i class="material-icons">more_vert</i>
 	</md-button>
 	
  

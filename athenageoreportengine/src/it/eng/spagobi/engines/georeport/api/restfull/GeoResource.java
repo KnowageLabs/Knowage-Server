@@ -105,13 +105,13 @@ public class GeoResource extends AbstractChartEngineResource {
 	public String GetTargetLayer(@Context HttpServletRequest req) throws IOException, JSONException {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-		Boolean featureSourceType = requestVal.has(geoUtils.FEATURE_SOURCE_TYPE);
-		Boolean featureSource = requestVal.has(geoUtils.FEATURE_SOURCE);
+		// Boolean featureSourceType = requestVal.has(geoUtils.FEATURE_SOURCE_TYPE);
+		// Boolean featureSource = requestVal.has(geoUtils.FEATURE_SOURCE);
 		Boolean layerName = requestVal.has(geoUtils.LAYER_NAME);
-		Boolean layerId = requestVal.has(geoUtils.LAYER_ID);
+		Boolean layerjoinCol = requestVal.has(geoUtils.LAYER_JOIN_COLUMNS);
 		Boolean featureIds = requestVal.has(geoUtils.FEATURE_IDS);
 
-		if (featureSourceType && featureSource && layerName && layerId && featureIds) {
+		if (layerName && layerjoinCol && featureIds) {
 			return targetLayerAction(requestVal);
 		} else {
 			return "{status: 'missing value'}";

@@ -1,3 +1,11 @@
+.fa{
+	    font-family: FontAwesome !important;
+}
+
+.hidden {
+	display	: none;
+}
+
 geo-layers #showLayers {
 	position: absolute;
 	top: 0px;

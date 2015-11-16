@@ -26,8 +26,6 @@ function geoRigthMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSide
 	$scope.dataset=geo_dataset;
 	$scope.filters=geo_filters;
 	$scope.indicators=geo_indicators;
-	console.log("indicators",$scope.indicators);
-	console.log("template",$scope.template);
 	$scope.openRigthMenu=false;
 	$scope.analysisTypeList=[{label:"Map point",type:"ProportionalSymbol",img:"fa fa-circle"},{label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "}];
 	

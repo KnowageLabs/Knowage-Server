@@ -124,7 +124,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 			if(geo_template.hasOwnProperty('selectedBaseLayer')){
 				alert("selectedBaseLayer="+geo_template.selectedBaseLayer+" non trovato. verrà caricato il layer di base")
 			}else{
-				alert("selectedBaseLayer non settato. verrà caricato il layer di base")
+				console.log("selectedBaseLayer non settato. verrà caricato il layer di base")
 			}
 			
 			layerServices.alterBaseLayer(baseLayer.Default.OpenStreetMap); 
