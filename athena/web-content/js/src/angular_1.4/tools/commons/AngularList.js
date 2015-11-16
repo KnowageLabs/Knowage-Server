@@ -6,7 +6,7 @@
 angular.module('angular_list', ['ng-context-menu','ngMaterial','ui.tree','angularUtils.directives.dirPagination','sbiModule'])
 .directive('angularList', function() {
 	return {
-		templateUrl: '/athena/js/src/angular_1.4/tools/commons/templates/angular-list.html',
+		templateUrl: '/knowage/js/src/angular_1.4/tools/commons/templates/angular-list.html',
 		controller: ListControllerFunction,
 		scope: {
 			ngModel:'=',

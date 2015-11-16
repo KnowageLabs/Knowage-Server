@@ -13,7 +13,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionJasper'
                  name='invalidSessionJasper'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%>/athenajasperreportengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%>/knowagejasperreportengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -21,7 +21,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionJPivot'
                  name='invalidSessionJPivot'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%>/athenajpivotengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%>/knowagejpivotengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -29,7 +29,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionQbe'
                  name='invalidSessionQbe'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%>/athenaqbeengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%>/knowageqbeengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -37,7 +37,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionGeo'
                  name='invalidSessionGeo'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%>/athenageoengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%>/knowagegeoengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -45,7 +45,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionBirt'
                  name='invalidSessionBirt'
-                 src='<%=GeneralUtilities.getSpagoBiHost()%>/athenabirtreportengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()%>/knowagebirtreportengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -53,7 +53,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionTalend'
                  name='invalidSessionTalend'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/athenatalendengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/knowagetalendengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -61,7 +61,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionChart'
                  name='invalidSessionChart'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/athenachartengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/knowagechartengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -69,7 +69,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionCockpit'
                  name='invalidSessionCockpit'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/athenacockpitengine/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/knowagecockpitengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -77,7 +77,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 
 <iframe id='invalidSessionSocialAnalysis'
                  name='invalidSessionSocialAnalysis'
-                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/athenasocialanalysis/invalidateSession.jsp'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%>/knowagesocialanalysis/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >

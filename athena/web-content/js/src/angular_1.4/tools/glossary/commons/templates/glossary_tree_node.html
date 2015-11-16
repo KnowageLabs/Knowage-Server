@@ -1,85 +1,84 @@
-
-<div context-menu data-target="{{treeId}}MC-{{item.$$hashKey}}" ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
+<div context-menu data-target="{{treeId}}MC-{{item.$$hashKey}}"
+		ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico" data-nodrag="{{dragLogicalNode!=true}}">
 		<div ui-tree-handle class="smallTree">
-		<div class="indicator-child"></div>
-		<md-icon ng-disabled="true"
-						class=" sm-font-icon expandericon_ext" aria-label="Chat2"
-						md-font-icon="fa fa-angle-right " ng-show="collapsed">
-		</md-icon> 
-		<md-icon ng-disabled="true"
-						class=" sm-font-icon expandericon_ext" aria-label="Chat2"
-						md-font-icon="fa fa-angle-down " ng-show="!collapsed">
-		</md-icon> 
-			<i ng-if="dragLogicalNode==true"  class="dragged-icon-tree fa fa-bars fa-2x"></i>
-			
-			<md-button ng-if="showInfo==true" class="md-icon-button treeInfoIcon" aria-label="More"  ng-click="showInfoNode($event,item.CONTENT_ID)">
-				<md-icon  aria-label="info" md-font-icon="fa fa-info"></md-icon>
-			</md-button>
-			
-			<md-list>
-				<md-list-item   ng-click="toggleNode(this,item,glossary)" ng-init="item.preloader=false"> 
-			 		
-	
-			 		<p class="text_item">{{item.CONTENT_NM}}</p>
-			 		
+			<div class="indicator-child"></div>
+			<md-icon ng-disabled="true" class=" sm-font-icon expandericon_ext"
+					aria-label="Chat2" md-font-icon="fa fa-angle-right "
+					ng-show="collapsed"> </md-icon>
+			<md-icon ng-disabled="true" class=" sm-font-icon expandericon_ext"
+					aria-label="Chat2" md-font-icon="fa fa-angle-down "
+					ng-show="!collapsed"> </md-icon>
+			<i ng-if="dragLogicalNode==true"
+					class="dragged-icon-tree fa fa-bars fa-2x"></i>
 
-					<md-progress-circular
-						md-diameter="20" ng-show="item.preloader" class="md-hue-2"
-						style="  left: 50%;   margin-top: -14px; margin-left: -25px; position:absolute "
-						md-mode="indeterminate">
-					</md-progress-circular>
-					
-				 </md-list-item>
+			<md-button ng-if="showInfo==true" class="md-icon-button treeInfoIcon"
+					aria-label="More" ng-click="showInfoNode($event,item.CONTENT_ID)">
+				<md-icon aria-label="info" md-font-icon="fa fa-info"></md-icon> 
+			</md-button>
+
+			<md-list>
+				<md-list-item ng-click="toggleNode(this,item,glossary)"	ng-init="item.preloader=false">
+					<p class="text_item">{{item.CONTENT_NM}}</p>
+					<md-progress-circular md-diameter="20" ng-show="item.preloader"
+						class="md-hue-2" style="  left: 50%;   margin-top: -14px; margin-left: -25px; position:absolute "
+						md-mode="indeterminate"> 
+					</md-progress-circular> 
+				</md-list-item> 
 			</md-list>
 		</div>
 	</div>
 
-	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo  " data-nodrag="{{dragWordNode!=true}}">
-		<div class="indicator-child" ></div>
-		<md-icon ng-disabled="true" style="    margin-top: -4px;""
-						class=" sm-font-icon expandericon_ext" aria-label="Chat2"
-						md-font-icon="fa fa-angle-right " ng-show="collapsed">
-		</md-icon> 
-		<i ng-if="dragWordNode==true"  class="dragged-icon-tree fa fa-bars fa-2x" ></i>
-		
-		<md-button ng-if="showInfo==true" class="md-icon-button treeInfoIcon" aria-label="More" ng-click="showInfoWORD($event,item.WORD_ID)">
-				<md-icon  aria-label="info" md-font-icon="fa fa-info"></md-icon>
+	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo  "
+			data-nodrag="{{dragWordNode!=true}}">
+		<div class="indicator-child"></div>
+		<md-icon ng-disabled="true" style="margin-top: -4px;" class=" sm-font-icon expandericon_ext" aria-label="Chat2"
+				md-font-icon="fa fa-angle-right " ng-show="collapsed"></md-icon>
+		<i ng-if="dragWordNode==true" class="dragged-icon-tree fa fa-bars fa-2x"></i>
+
+		<md-button ng-if="showInfo==true" class="md-icon-button treeInfoIcon"
+				aria-label="More" ng-click="showInfoWORD($event,item.WORD_ID)">
+			<md-icon aria-label="info" md-font-icon="fa fa-info"></md-icon> 
 		</md-button>
-		
+
 		<md-list class="noPadding"> 
-		<md-list-item >
-		
-		<p class="text_item" style="margin-left: 10px;">{{item.WORD}}</p>
-		</md-list-item> 
+			<md-list-item>
+				<p class="text_item" style="margin-left: 10px;">{{item.WORD}}</p>
+			</md-list-item> 
 		</md-list>
 	</div>
 </div>
 <!-- 					menu contestuale albero -->
-<div ng-show="nodeContextMenu" class="dropdown position-fixed" style="z-index: 999; width: 200px;" id="{{treeId}}MC-{{ item.$$hashKey }}">
-	<md-list class="dropdown-menu bottomBorder" role="menu">
-		<md-list-item ng-click='addChild({scope:this,parent:item})' role="menuitem" tabindex="1" ng-if=" isDefined('addChild') && !item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined   ">
- 		<p>{{translate.load("sbi.glossary.messages.add.child");}}</p>
-    	</md-list-item>
-
- 		<md-list-item ng-click='addWord({reset:false,parent:this})' role="menuitem" tabindex="2" ng-if="isDefined('addWord') && item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
-		<p>{{translate.load("sbi.glossary.messages.add.word");}}</p>
+<div ng-show="nodeContextMenu" class="dropdown position-fixed" style="z-index: 999; width: 200px;"
+		id="{{treeId}}MC-{{ item.$$hashKey }}">
+	<md-list class="dropdown-menu bottomBorder" role="menu"> 
+		<md-list-item ng-click='addChild({scope:this,parent:item})' role="menuitem"
+				tabindex="1" ng-if=" isDefined('addChild') && !item.HAVE_WORD_CHILD && item.CONTENT_NM != undefined   ">
+			<p>{{translate.load("sbi.glossary.messages.add.child");}}</p>
+		</md-list-item> 
+		<md-list-item ng-click='addWord({reset:false,parent:this})'	role="menuitem" tabindex="2"
+				ng-if="isDefined('addWord') && item.CONTENT_NM != undefined && !item.HAVE_CONTENTS_CHILD">
+			<p>{{translate.load("sbi.glossary.messages.add.word");}}</p>
 		</md-list-item>
-
 		<md-list-item ng-click="removeChild({item: this})" role="menuitem" tabindex="3" ng-if="isDefined('removeChild')">
-		<p>{{translate.load("sbi.generic.delete");}}</p>
+			<p>{{translate.load("sbi.generic.delete");}}</p>
 		</md-list-item>
-	
-		<md-list-item ng-click='modifyChild({scope:this,parent:item,modCont:true})' role="menuitem" ng-if=" isDefined('modifyChild') && item.CONTENT_NM != undefined" tabindex="4">
-		<p>{{translate.load("sbi.generic.modify");}}</p>
+		<md-list-item ng-click='modifyChild({scope:this,parent:item,modCont:true})'
+				role="menuitem" ng-if=" isDefined('modifyChild') && item.CONTENT_NM != undefined"
+				tabindex="4">
+			<p>{{translate.load("sbi.generic.modify");}}</p>
 		</md-list-item> 
-		
-		<md-list-item ng-click='showInfoNode($event,item.CONTENT_ID)' role="menuitem" ng-if=" isDefined('showInfoMenu') && item.CONTENT_NM != undefined" tabindex="4">
-		<p>{{translate.load("sbi.generic.info");}}</p>
+		<md-list-item ng-click='showInfoNode($event,item.CONTENT_ID)'
+				role="menuitem"
+				ng-if=" isDefined('showInfoMenu') && item.CONTENT_NM != undefined"
+				tabindex="4">
+			<p>{{translate.load("sbi.generic.info");}}</p>
 		</md-list-item> 
-		
-		<md-list-item ng-click='showInfoWORD($event,item.WORD_ID)' role="menuitem" ng-if=" isDefined('showInfoMenu') && item.WORD_ID != undefined" tabindex="4">
-		<p>{{translate.load("sbi.generic.info");}}</p>
+		<md-list-item ng-click='showInfoWORD($event,item.WORD_ID)'
+				role="menuitem"
+				ng-if=" isDefined('showInfoMenu') && item.WORD_ID != undefined"
+				tabindex="4">
+			<p>{{translate.load("sbi.generic.info");}}</p>
 		</md-list-item> 
 	</md-list>
 </div>
@@ -89,8 +88,8 @@
 	ui-tree-nodes="options" ng-model="item.CHILD"
 	ng-class="{hideChildren: collapsed}">
 	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
-		ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"
-		 class="figlioVisibile"></li>
-	<li ng-repeat="n in [1]"   ui-tree-node class="addFiglioBox"></li>
+		ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"
+		class="figlioVisibile"></li>
+	<li ng-repeat="n in [1]" ui-tree-node class="addFiglioBox"></li>
 </ol>
 

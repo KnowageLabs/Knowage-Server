@@ -26,7 +26,7 @@ Sbi.service.ServiceRegistry = function(config) {
 		protocol: 'http'     
 		, host: 'localhost'
 	    , port: '8081'
-	    , contextPath: 'athena'
+	    , contextPath: 'knowage'
 	    , controllerPath: 'servlet/AdapterHTTP' 
 	    , restServicesPath: 'restful-services' 
 	});

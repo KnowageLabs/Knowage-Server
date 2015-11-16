@@ -66,7 +66,7 @@
 		description="TEMPLATE MAX SIZE" isActive="true" valueCheck="5242880"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="SPAGOBI.SPAGOBI_CONTEXT" name="SPAGOBI CONTEXT"
-		description="SPAGOBI CONTEXT" isActive="true" valueCheck="/athena"
+		description="SPAGOBI CONTEXT" isActive="true" valueCheck="/knowage"
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="SPAGOBI.SESSION_EXPIRED_URL" name="SESSION EXPIRED URL"
 		description="SESSION EXPIRED URL" isActive="true"

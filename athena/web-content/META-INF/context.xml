@@ -1,6 +1,6 @@
 
-<Context docBase="athena" path="/athena" reloadable="true"
-	source="org.eclipse.jst.j2ee.server:athena">
+<Context docBase="knowage" path="/knowage" reloadable="true"
+	source="org.eclipse.jst.j2ee.server:knowage">
 	<ResourceLink global="jdbc/spagobi" name="jdbc/spagobi"
 		type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart"

@@ -1,60 +1,50 @@
 
-<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico expander-icon" data-nodrag>
-		
-	<div ui-tree-handle class="smallTree" style="  cursor: pointer;">
-	
-									
-		<md-list>
-			<md-list-item  class="SecondaryOnLeft"
-				ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
-				ng-init="item.preloader=false"> 
-			
-			<div class="indicator-child"></div>
+<div ng-if=" item.CONTENT_NM != undefined"
+		class="nodo_logico expander-icon" data-nodrag>
+	<div ui-tree-handle class="smallTree" style="cursor: pointer;">
+		<md-list> 
+			<md-list-item class="SecondaryOnLeft"
+					ng-click="ctrl.toggle(this,item,ctrl.selectedGloss)"
+					ng-init="item.preloader=false">
 
-			<p >{{item.CONTENT_NM}}</p>
-
-			<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
-				aria-label="Chat" md-font-icon="fa fa-angle-down "
-				style=" left: 0px;  margin: 5px 0px 0 17px!important; "
-				ng-show="!collapsed">
-			</md-icon>
-				
-			<md-icon ng-disabled="true"
-				class=" sm-font-icon expandericon" aria-label="Chat2"
-				md-font-icon="fa fa-angle-right " ng-show="collapsed">
-			</md-icon> 
-			
-			<md-progress-circular
-				md-diameter="20" ng-show="item.preloader" class="md-hue-2"
-				style="  left: 50%;  margin-left: -25px;   margin-top: -14px; position:absolute "
-				md-mode="indeterminate">
-			</md-progress-circular>
-			
-			</md-list-item>
+				<div class="indicator-child"></div>
 		
+				<p>{{item.CONTENT_NM}}</p>
+		
+				<md-icon ng-disabled="true" class="md-secondary sm-font-icon "
+					aria-label="Chat" md-font-icon="fa fa-angle-down "
+					style=" left: 0px;  margin: 5px 0px 0 17px!important; "
+					ng-show="!collapsed"> 
+				</md-icon> 
+				<md-icon ng-disabled="true"
+					class=" sm-font-icon expandericon" aria-label="Chat2"
+					md-font-icon="fa fa-angle-right " ng-show="collapsed"> 
+				</md-icon> 
+				<md-progress-circular
+					md-diameter="20" ng-show="item.preloader" class="md-hue-2"
+					style="  left: 50%;  margin-left: -25px;   margin-top: -14px; position:absolute "
+					md-mode="indeterminate"></md-progress-circular> 
+			</md-list-item> 
 		</md-list>
 	</div>
 </div>
 
-	<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo dragged-icon smallTree">
-		<md-list class="noPadding"> 
+<div ng-if="item.WORD_ID!= undefined " class="figlio_vocabolo dragged-icon smallTree">
+	<md-list class="noPadding">
 		<md-list-item>
-	<i class=" fa fa-bars fa-2x" ></i>
-		<p style="margin-left: 30px;">{{item.WORD}}</p>
+			<i	class=" fa fa-bars fa-2x"></i>
+			<p style="margin-left: 30px;">{{item.WORD}}</p>
 		</md-list-item> 
-		</md-list>
-	</div>
-
-
-
-
+	</md-list>
+</div>
 
 <ol ng-if=" item.CONTENT_NM != undefined"
-	ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]"
-	ui-tree-nodes="options" ng-model="item.CHILD"
-	ng-class="{hideChildren: collapsed}">
+		ng-init="item.CHILD=item.CHILD!=undefined?item.CHILD:[]"
+		ui-tree-nodes="options" ng-model="item.CHILD"
+		ng-class="{hideChildren: collapsed}">
 	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
-		ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'" class="figlioVisibile"></li>
+			ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tec_tree_items_renderer.html'"
+			class="figlioVisibile"></li>
 </ol>
 
 

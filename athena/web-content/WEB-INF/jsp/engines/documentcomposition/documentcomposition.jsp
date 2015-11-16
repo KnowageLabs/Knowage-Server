@@ -5,8 +5,7 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. --%>
  
   
-<%@ page
-	import="it.eng.spagobi.engines.documentcomposition.utils.DocumentCompositionUtils,
+<%@ page import="it.eng.spagobi.engines.documentcomposition.utils.DocumentCompositionUtils,
                  it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration,
                  it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document,
                  it.eng.spago.error.EMFErrorHandler,
@@ -16,8 +15,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
                  java.util.ArrayList,
                  java.util.Collection"%>
 <%@page import="org.apache.log4j.Logger"%>
-<%@page
-	import="it.eng.spagobi.engines.documentcomposition.SpagoBIDocumentCompositionInternalEngine"%>
+<%@page	import="it.eng.spagobi.engines.documentcomposition.SpagoBIDocumentCompositionInternalEngine"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.List"%>

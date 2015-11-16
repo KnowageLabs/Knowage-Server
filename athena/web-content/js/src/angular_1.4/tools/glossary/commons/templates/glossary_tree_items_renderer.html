@@ -1,4 +1,3 @@
-
 <div context-menu data-target="WordTree-{{item.$$hashKey}}" ng-class="{ 'highlight': highlight, 'expanded' : expanded }">
 	<div ng-if=" item.CONTENT_NM != undefined" class="nodo_logico dragged-icon">
 		<div ui-tree-handle>
@@ -60,7 +59,7 @@
 	ui-tree-nodes="options" ng-model="item.CHILD"
 	ng-class="{hideChildren: collapsed}">
 	<li ng-repeat="item in item.CHILD" ui-tree-node data-collapsed="true"
-		ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_items_renderer.html'"
+		ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_items_renderer.html'"
 		 class="figlioVisibile"></li>
 	<li ng-repeat="n in [1]"   ui-tree-node class="addFiglioBox"></li>
 </ol>

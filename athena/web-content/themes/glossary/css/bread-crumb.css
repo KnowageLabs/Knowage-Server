@@ -11,7 +11,7 @@ bread-crumb md-tabs md-tabs-canvas, bread-crumb md-tabs md-pagination-wrapper,br
 
 bread-crumb md-tabs md-tab-item {
 	padding: 0 24px !important; 
-	background-image: url("/athena/themes/glossary/css/backgroundArrow.png");
+	background-image: url("/knowage/themes/glossary/css/backgroundArrow.png");
 	background-position: right;
 }
 bread-crumb md-tabs  md-tabs-content-wrapper {

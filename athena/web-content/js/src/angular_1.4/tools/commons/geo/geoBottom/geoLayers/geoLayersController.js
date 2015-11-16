@@ -7,7 +7,7 @@ angular.module('geo_module')
 .directive('geoLayers',function(){
 	return{
 		 restrict: "E",
-		templateUrl:'/athena/js/src/angular_1.4/tools/commons/geo/geoBottom/geoLayers/templates/geoLayersTemplate.jspf',
+		templateUrl:'/knowage/js/src/angular_1.4/tools/commons/geo/geoBottom/geoLayers/templates/geoLayersTemplate.jspf',
 //		template: '<md-button  id="showLayers" class="md-fab md-mini" ng-click="showBottomSheet($event)" aria-label="toggle menu"><md-icon md-font-icon="fa fa-wifi fa-2x"></md-icon> </md-button>',
 		 controller: geoLayersControllerFunction,
 		require: "^geoMap",

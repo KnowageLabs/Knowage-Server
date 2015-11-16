@@ -23,15 +23,15 @@
 
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		
-	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/gestione_glossario.css">
-	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/generalStyle.css">
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/gestione_glossario.css">
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css">
 	
 
 	<!-- glossary tree -->
-	<link rel="stylesheet" type="text/css" href="/athena/themes/glossary/css/tree-style.css">
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/tree-style.css">
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/GlossaryTree.js"></script>
 	
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/businessuser/glossary.js"></script>
 	
 	
 </head>

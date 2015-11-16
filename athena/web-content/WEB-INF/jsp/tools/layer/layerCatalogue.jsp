@@ -15,21 +15,21 @@
 <head>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<!-- non c'entra	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
+<!-- non c'entra	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
 <link rel="stylesheet" type="text/css"
-	href="/athena/themes/glossary/css/tree-style.css">
+	href="/knowage/themes/glossary/css/tree-style.css">
 <link rel="stylesheet" type="text/css"
-	href="/athena/themes/glossary/css/generalStyle.css">
+	href="/knowage/themes/glossary/css/generalStyle.css">
 <link rel="stylesheet" type="text/css"
-	href="/athena/themes/layer/css/layerStyle.css">
+	href="/knowage/themes/layer/css/layerStyle.css">
 <!--  <link rel="stylesheet" type="text/css"
-	href="/athena/themes/glossary/css/gestione_glossario.css">-->
+	href="/knowage/themes/glossary/css/gestione_glossario.css">-->
 <!-- controller -->
 <script type="text/javascript"
-	src="/athena/js/src/angular_1.4/tools/layer/layerCatalogue.js"></script>
+	src="/knowage/js/src/angular_1.4/tools/layer/layerCatalogue.js"></script>
 
 <script type="text/javascript"
-	src="/athena/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+	src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 </head>
 
 

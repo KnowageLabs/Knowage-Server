@@ -11,12 +11,12 @@
 <html ng-app="timespanManager">
 <head>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-	<link rel="stylesheet" type="text/css" href="/athena/themes/timespan/css/timespanStyle.css">
+	<link rel="stylesheet" type="text/css" href="/knowage/themes/timespan/css/timespanStyle.css">
 	
 	<!-- time picker -->
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
 
-	<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/timespan/timespan.js"></script>
+	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/timespan/timespan.js"></script>
 	
 </head>
 

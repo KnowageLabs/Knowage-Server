@@ -1,95 +1,80 @@
-<div class="default_tree" style="    position: relative; height: 100%">
+<div class="default_tree" style="position: relative; height: 100%">
+	<div class="preloaderTree" ng-show="preloaderTree">
+		<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
+	</div>
 
-<div class="preloaderTree" ng-show="preloaderTree"> <md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular> </div>
-		
-<!--  Search bar and select glossary -->
-<div layout="row" style="padding: 5px; height: 30px;">
-			<p  ng-if=" isDefined('showSelectGlossary')"  style="  margin: 0 10px 0 0;" >{{translate.load("sbi.glossary.glossary");}}:</p>
-			 <md-select ng-if=" isDefined('showSelectGlossary')" ng-disabled=" showSelectGlossary " style="    margin-top: -8px;    margin-right: 15px;    height: 100%;" 
-			 placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}' ng-model="ctrl.selGlo">
-       		 <md-option ng-repeat="gloss in Allglossary" value="{{gloss.GLOSSARY_ID}}" ng-click="showSelectedGlossary(gloss);" >{{gloss.GLOSSARY_NM}}</md-option>
-       		 </md-select>
-      	<md-input-container ng-if=" isDefined('showSearchBar') && glossary.GLOSSARY_NM!=undefined"
-				md-no-float style="     padding: 0;   "> 
-				<md-icon	md-font-icon="fa fa-search " style="   color: black;      height: 100%;    top: 0;"></md-icon> 
-				<input	ng-model="searchNode" style="    margin-left: 15px;    line-height: 12px;    margin-top: 3px;"
-				ng-keyup="SearchWordInSelectedGloss(searchNode)" type="text"
-				placeholder="Search ">
-		</md-input-container>
+	<!--  Search bar and select glossary -->
+	<div layout="row" style="padding: 5px; height: 30px;">
+		<p ng-if=" isDefined('showSelectGlossary')"
+				style="margin: 0 10px 0 0;">{{translate.load("sbi.glossary.glossary");}}:</p>
+		<md-select ng-if=" isDefined('showSelectGlossary')"
+				ng-disabled=" showSelectGlossary " style="margin-top: -8px; margin-right: 15px; height: 100%;"
+				placeholder='{{translate.load("sbi.generic.select");}} {{translate.load("sbi.glossary.glossary");}}'
+				ng-model="ctrl.selGlo"> 
 			
+			<md-option ng-repeat="gloss in Allglossary" value="{{gloss.GLOSSARY_ID}}"
+					ng-click="showSelectedGlossary(gloss);">{{gloss.GLOSSARY_NM}}</md-option>
+		</md-select>
+		<md-input-container ng-if=" isDefined('showSearchBar') && glossary.GLOSSARY_NM!=undefined"
+				md-no-float style=" padding: 0;"> 
+			<md-icon md-font-icon="fa fa-search "
+					style="   color: black;      height: 100%;    top: 0;">
+			</md-icon> 
+			<input ng-model="searchNode" style="margin-left: 15px; line-height: 12px; margin-top: 3px;"
+					ng-keyup="SearchWordInSelectedGloss(searchNode)" type="text"
+					placeholder="Search ">
+		</md-input-container>
+	</div>
+
+	<!--  root node with name of glossary -->
+	<div ng-if="glossary.GLOSSARY_NM!=undefined && showRoot!='false'">
+		<div context-menu data-target="WordTreeRoot-{{glossary.GLOSSARY_NM}}">
+			<p style="margin: 0px;">{{glossary.GLOSSARY_NM | uppercase}}</p>
+		</div>
+
+		<div class="dropdown position-fixed" style="z-index: 999; width: 200px;"
+				id="WordTreeRoot-{{ glossary.GLOSSARY_NM }}">
+			<md-list class="dropdown-menu bottomBorder" role="menu"> 
+				<md-list-item ng-if=" isDefined('addChild')"
+						ng-click='addChild({scope:this,parent:glossary})' role="menuitem"
+						tabindex="1">
+					<p>{{translate.load("sbi.glossary.messages.add.child");}}</p>
+				</md-list-item> 
+				<md-list-item ng-if=" isDefined('modifyGlossary')"
+						ng-click='modifyGlossary({event:$event,glossary:glossary})'
+						role="menuitem" tabindex="1">
+					<p>{{translate.load("sbi.generic.modify");}}</p>
+				</md-list-item> 
+				<md-list-item ng-if=" isDefined('cloneGlossary')"
+						ng-click='cloneGlossary({event:$event,glossary:glossary})'
+						role="menuitem" tabindex="2">
+					<p>{{translate.load("sbi.generic.clone");}}</p>
+				</md-list-item> 
+				<md-list-item ng-if=" isDefined('deleteGlossary')"
+						ng-click='deleteGlossary({glossary:glossary})' role="menuitem"
+						tabindex="3">
+					<p>{{translate.load("sbi.generic.delete");}}</p>
+				</md-list-item> 
+			</md-list>
+		</div>
+
+		<!-- 						fine menu contestuale albero -->
+	</div>
+
+	<!--  glossary tree -->
+	<div id={{treeId}} ng-if="glossary.GLOSSARY_NM!=undefined "
+			style="margin-left: 2px;" ui-tree=treeOptions
+			data-drag-enabled="{{enableDrag!=false}}"
+			data-clone-enabled="{{cloneItem==true}}" data-drag-delay="500">
+
+		<ol ui-tree-nodes="options" ng-model="glossary.SBI_GL_CONTENTS"
+				ng-class="{hideChildren: collapsed}">
+
+			<li ng-repeat="item in glossary.SBI_GL_CONTENTS" ui-tree-node
+					data-collapsed="true"
+					ng-include="'/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"></li>
+			<li ng-if="glossary.SBI_GL_CONTENTS.length == 0 "
+					ng-repeat="n in [1]" data-nodrag ui-tree-node class="addFiglioBox"></li>
+		</ol>
+	</div>
 </div>
-
-
-
-
-<!--  root node with name of glossary -->
-<div ng-if="glossary.GLOSSARY_NM!=undefined && showRoot!='false'">
-				<div context-menu data-target="WordTreeRoot-{{glossary.GLOSSARY_NM}}"	>
-					<p style="margin:0px;">{{glossary.GLOSSARY_NM | uppercase}}</p>
-				</div>
-								
-								
-								
-								<div class="dropdown position-fixed"
-									style="z-index: 999;  width: 200px;"
-									id="WordTreeRoot-{{ glossary.GLOSSARY_NM }}">
-									<md-list class="dropdown-menu bottomBorder" role="menu"> <md-list-item
-									ng-if=" isDefined('addChild')"	ng-click='addChild({scope:this,parent:glossary})'
-										role="menuitem" tabindex="1">
-									<p>{{translate.load("sbi.glossary.messages.add.child");}}</p>
-									</md-list-item> <md-list-item
-										ng-if=" isDefined('modifyGlossary')" ng-click='modifyGlossary({event:$event,glossary:glossary})'
-										role="menuitem" tabindex="1">
-									<p>{{translate.load("sbi.generic.modify");}}</p>
-									</md-list-item> <md-list-item
-										ng-if=" isDefined('cloneGlossary')"  ng-click='cloneGlossary({event:$event,glossary:glossary})'
-										role="menuitem" tabindex="2">
-									<p>{{translate.load("sbi.generic.clone");}}</p>
-									</md-list-item> <md-list-item
-										ng-if=" isDefined('deleteGlossary')"  ng-click='deleteGlossary({glossary:glossary})'
-										role="menuitem" tabindex="3">
-									<p>{{translate.load("sbi.generic.delete");}}</p>
-									</md-list-item> </md-list>
-								</div>
-
-								<!-- 						fine menu contestuale albero -->
-
-							</div>
-
-
-
-
-
-
-
-
-
-
-
-<!--  glossary tree -->
-					<div id={{treeId}} ng-if="glossary.GLOSSARY_NM!=undefined " 
-							style="margin-left:2px;"
-							ui-tree=treeOptions 
-							data-drag-enabled="{{enableDrag!=false}}"
-							data-clone-enabled="{{cloneItem==true}}"
-							data-drag-delay="500"  >
-							
-
-								<ol ui-tree-nodes="options"
-									ng-model="glossary.SBI_GL_CONTENTS"
-									ng-class="{hideChildren: collapsed}">
-									
-									<li ng-repeat="item in glossary.SBI_GL_CONTENTS"
-										ui-tree-node data-collapsed="true"
-										ng-include="'/athena/js/src/angular_1.4/tools/glossary/commons/templates/glossary_tree_node.html'"></li>
-											
-									<li ng-if="glossary.SBI_GL_CONTENTS.length == 0 "
-										ng-repeat="n in [1]" data-nodrag ui-tree-node
-										class="addFiglioBox"></li>
-								</ol>
-							
-						</div>
-
-
-</div>
-						

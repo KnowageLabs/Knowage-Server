@@ -17,11 +17,11 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <!-- Styles -->
-<link rel="stylesheet" type="text/css"	href="/athena/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
 
-<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/datasource/datasource.js"></script>
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/datasource/datasource.js"></script>
 	
-<script type="text/javascript" src="/athena/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 </head>
 <body class="bodyStyle" ng-controller="dataSourceController as ctrl">

@@ -1,74 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EXPORTERS>
-	<EXPORTER domain="PDF" engine="athenakpiengine" defaultValue="true" />
-	<EXPORTER domain="PDF" engine="athenajasperreporte"
+	<EXPORTER domain="PDF" engine="knowagekpiengine" defaultValue="true" />
+	<EXPORTER domain="PDF" engine="knowagejasperreporte"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="athenajasperreporte"
+	<EXPORTER domain="XLS" engine="knowagejasperreporte"
 		defaultValue="false" />
-	<EXPORTER domain="RTF" engine="athenajasperreporte"
+	<EXPORTER domain="RTF" engine="knowagejasperreporte"
 		defaultValue="false" />
-	<EXPORTER domain="JPG" engine="athenajasperreporte"
+	<EXPORTER domain="JPG" engine="knowagejasperreporte"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="athenabirtreporteng"
+	<EXPORTER domain="PDF" engine="knowagebirtreporteng"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="athenabirtreporteng"
+	<EXPORTER domain="XLS" engine="knowagebirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="RTF" engine="athenabirtreporteng"
+	<EXPORTER domain="RTF" engine="knowagebirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="JPG" engine="athenabirtreporteng"
+	<EXPORTER domain="JPG" engine="knowagebirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="CSV" engine="athenabirtreporteng"
+	<EXPORTER domain="CSV" engine="knowagebirtreporteng"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="athenajpivotengine"
+	<EXPORTER domain="PDF" engine="knowagejpivotengine"
 		defaultValue="false" />
-	<EXPORTER domain="XLS" engine="athenajpivotengine"
+	<EXPORTER domain="XLS" engine="knowagejpivotengine"
 		defaultValue="true" />
 	<!-- <EXPORTER domain="PDF" engine="SpagoBIJFreeChartEng"
 		defaultValue="true" />  -->
-	<EXPORTER domain="PDF" engine="athenaqbeengine" defaultValue="true" />
-	<EXPORTER domain="XLS" engine="athenaqbeengine" defaultValue="false" />
-	<EXPORTER domain="XLSX" engine="athenaqbeengine"
+	<EXPORTER domain="PDF" engine="knowageqbeengine" defaultValue="true" />
+	<EXPORTER domain="XLS" engine="knowageqbeengine" defaultValue="false" />
+	<EXPORTER domain="XLSX" engine="knowageqbeengine"
 		defaultValue="false" />
-	<EXPORTER domain="CSV" engine="athenaqbeengine" defaultValue="false" />
-	<EXPORTER domain="RTF" engine="athenaqbeengine" defaultValue="false" />
-	<EXPORTER domain="JRXML" engine="athenaqbeengine"
+	<EXPORTER domain="CSV" engine="knowageqbeengine" defaultValue="false" />
+	<EXPORTER domain="RTF" engine="knowageqbeengine" defaultValue="false" />
+	<EXPORTER domain="JRXML" engine="knowageqbeengine"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="athenageoengine" defaultValue="true" />
-	<EXPORTER domain="JPG" engine="athenageoengine" defaultValue="true" />
-	<EXPORTER domain="PDF" engine="athenasmartfilteren"
+	<EXPORTER domain="PDF" engine="knowagegeoengine" defaultValue="true" />
+	<EXPORTER domain="JPG" engine="knowagegeoengine" defaultValue="true" />
+	<EXPORTER domain="PDF" engine="knowagesmartfilteren"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="athenasmartfilteren"
+	<EXPORTER domain="XLS" engine="knowagesmartfilteren"
 		defaultValue="false" />
-	<EXPORTER domain="CSV" engine="athenasmartfilteren"
+	<EXPORTER domain="CSV" engine="knowagesmartfilteren"
 		defaultValue="false" />
-	<EXPORTER domain="RTF" engine="athenasmartfilteren"
+	<EXPORTER domain="RTF" engine="knowagesmartfilteren"
 		defaultValue="false" />
-	<EXPORTER domain="XLS" engine="athenaworksheeteng"
+	<EXPORTER domain="XLS" engine="knowageworksheeteng"
 		defaultValue="true" />
-	<EXPORTER domain="XLSX" engine="athenaworksheeteng"
+	<EXPORTER domain="XLSX" engine="knowageworksheeteng"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="athenaworksheeteng"
+	<EXPORTER domain="PDF" engine="knowageworksheeteng"
 		defaultValue="false" />
 	<!-- <EXPORTER domain="PDF" engine="SpagoBIDashboardEng"
 		defaultValue="true" /> -->
-	<EXPORTER domain="PDF" engine="athenaconsoleengine"
+	<EXPORTER domain="PDF" engine="knowageconsoleengine"
 		defaultValue="true" />
-	<EXPORTER domain="JPG" engine="athenachartengine"
+	<EXPORTER domain="JPG" engine="knowagechartengine"
 		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="athenachartengine"
+	<EXPORTER domain="PDF" engine="knowagechartengine"
 		defaultValue="false" />
-	<EXPORTER domain="GRAPHML" engine="athenanetworkengine"
+	<EXPORTER domain="GRAPHML" engine="knowagenetworkengine"
 		defaultValue="true" />
-	<EXPORTER domain="PNG" engine="athenanetworkengine"
+	<EXPORTER domain="PNG" engine="knowagenetworkengine"
 		defaultValue="true" />
-	<EXPORTER domain="PDF" engine="athenanetworkengine"
+	<EXPORTER domain="PDF" engine="knowagenetworkengine"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="athenacompositedoce"
+	<EXPORTER domain="PDF" engine="knowagecompositedoce"
 		defaultValue="true" />
-	<EXPORTER domain="XLS" engine="athenacockpitengine"
+	<EXPORTER domain="XLS" engine="knowagecockpitengine"
 		defaultValue="false" />
-	<EXPORTER domain="XLSX" engine="athenacockpitengine"
+	<EXPORTER domain="XLSX" engine="knowagecockpitengine"
 		defaultValue="false" />
-	<EXPORTER domain="PDF" engine="athenacockpitengine"
+	<EXPORTER domain="PDF" engine="knowagecockpitengine"
 		defaultValue="true" />
 </EXPORTERS>
