@@ -40,7 +40,8 @@ Ext.define('Sbi.service.ServiceRegistry', {
     		protocol: 'http'     
     		, host: 'localhost'
     	    , port: '8080'
-    	    , contextPath: 'athenachartengine'
+//    	    	, contextPath: 'knowagechartengine'
+    	    , contextPath: 'knowagenetworkengine'
     	    , controllerPath: 'servlet/AdapterHTTP'    
     	});
     	

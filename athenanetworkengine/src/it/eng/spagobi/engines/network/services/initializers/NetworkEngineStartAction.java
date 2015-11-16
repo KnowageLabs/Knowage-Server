@@ -41,7 +41,7 @@ public class NetworkEngineStartAction extends AbstractEngineStartAction {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(NetworkEngineStartAction.class);
 
-	private static final String ENGINE_NAME = "athenanetworkengine";
+	private static final String ENGINE_NAME = "knowagenetworkengine";
 
 	// private static final String REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/network.jsp";
 
