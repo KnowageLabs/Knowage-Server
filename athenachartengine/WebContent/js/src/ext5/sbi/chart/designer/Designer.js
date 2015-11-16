@@ -285,7 +285,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * List of names of the libraries that we use for rendering the charts. 
 			 * (comment by: danristo :: danilo.ristovski@mht.net) 
 			 */
-			this.chartLibNamesConfig = chartLibNamesConfig;	
+			this.chartLibNamesConfig = chartLibNamesConfig;
+			
+			this.mainContextName = mainContextName;
+			this.chartEngineContextName = thisContextName;
 			
 			this.chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager('http', hostName, serverPort, thisContextName, sbiExecutionId, userId);
 			this.coreServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getCoreWebServiceManager('http', hostName, serverPort, mainContextName, sbiExecutionId, userId);
@@ -1412,7 +1415,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					align : 'center',
 					flex: 1,
 					items: [{
-						icon: '/athena/themes/sbi_default/img/delete.gif',
+						icon: '/' + globalThis.mainContextName + '/themes/sbi_default/img/delete.gif',
 						tooltip: LN('sbi.generic.remove'),
 						handler: function(grid, rowIndex, colIndex) {
 							var store = grid.getStore();

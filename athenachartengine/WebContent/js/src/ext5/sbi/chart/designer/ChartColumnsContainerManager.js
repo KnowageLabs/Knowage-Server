@@ -607,7 +607,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 						//xtype: 'actioncolumn',
 						id: "actionColumnLeftAxis_"+idChartColumnsContainer,
 						items: [{
-							icon: '/athena/themes/sbi_default/img/createTemplate.jpg',
+							icon: '/' + Sbi.chart.designer.Designer.mainContextName + '/themes/sbi_default/img/createTemplate.jpg',
 							
 							tooltip: LN('sbi.chartengine.columnscontainer.tooltip.style'),
 							handler: function(grid, rowIndex, colIndex) {
@@ -616,7 +616,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 								ChartColumnsContainerManager.promptChangeSerieStyle(store, rowIndex);
 							}
 						},{
-							icon: '/athena/themes/sbi_default/img/delete.gif',
+							icon: '/' + Sbi.chart.designer.Designer.mainContextName + '/themes/sbi_default/img/delete.gif',
 							tooltip: LN('sbi.chartengine.columnscontainer.tooltip.removecolumn'),
 							handler: function(grid, rowIndex, colIndex) {
 								var store = grid.getStore();

@@ -170,9 +170,9 @@ author:
  			
  			var isCockpit = <%=isCockpit%>;
  			
-			var thisContextName			= '${pageContext.request.contextPath}';  //'athenachartengine';
+			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
 			thisContextName = thisContextName.replace('/','');
-			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  // 'athena';
+			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  // 'knowage';
 			var exporterContextName 	= 'highcharts-export-web';
  			
 			

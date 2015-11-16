@@ -174,7 +174,7 @@ author:
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
 	<%-- div with wait while loading message --%>
    	<div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
-		<img src='/${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
+		<img src='${pageContext.request.contextPath}/img/icon-info15.png' />  Downloading...
    	</div>
 
 	<%-- == JAVASCRIPTS  ===================================================== --%>
@@ -198,7 +198,7 @@ author:
 		function exportChart(exportType) {		
 			document.getElementById('divLoadingMessage<%=uuidO%>').style.display = 'inline';
 			
-			var thisContextName			= '${pageContext.request.contextPath}';  //'athenachartengine';
+			var thisContextName			= '${pageContext.request.contextPath}';  //'knowagechartengine';
 			thisContextName.replace('/','');
 			var exporterContextName 	= 'highcharts-export-web';
 			
@@ -380,7 +380,11 @@ author:
  			Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate = '<%=template%>';
  			Sbi.chart.viewer.ChartTemplateContainer.datasetLabel = '<%=datasetLabel%>';
  			
- 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(protocol, hostName, serverPort, 'athenachartengine', sbiExecutionId, userId);
+ 			var thisContextName	= '${pageContext.request.contextPath}';  //'knowagechartengine';
+ 			var thisContextNameParam = thisContextName.replace('/', '');
+			
+ 			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager(
+ 					protocol, hostName, serverPort, thisContextNameParam, sbiExecutionId, userId);
  			
  			if(<%=isCockpit%>) {
  				
@@ -390,15 +394,15 @@ author:
  	 			Sbi.chart.viewer.ChartTemplateContainer.widgetId = '<%=widgetId%>';
  	 			Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
  				
- 							var parameters = {
- 									jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
- 									driverParams: '<%=driverParams%>',
-							jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
- 							};
- 							chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 								var chartConf = Ext.JSON.decode(response.responseText, true);
- 								renderChart(chartConf);
- 							});
+				var parameters = {
+						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
+						driverParams: '<%=driverParams%>',
+						jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
+				};
+				chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
+					var chartConf = Ext.JSON.decode(response.responseText, true);
+					renderChart(chartConf);
+				});
  				
  			}else { 				
  				

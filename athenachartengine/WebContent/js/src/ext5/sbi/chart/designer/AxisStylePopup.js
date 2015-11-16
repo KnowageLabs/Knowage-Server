@@ -1324,7 +1324,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 								items: 
 								[
 								 	{
-										icon: '/athena/themes/sbi_default/img/delete.gif',										
+										icon: '/' + Sbi.chart.designer.Designer.mainContextName + '/themes/sbi_default/img/delete.gif',										
 										
 										handler: function(grid, rowIndex, colIndex) 
 										{

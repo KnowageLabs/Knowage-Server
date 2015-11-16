@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-<wb-module deploy-name="athenachartengine">
+<wb-module deploy-name="knowagechartengine">
 <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenadao/athenadao">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowagedao/knowagedao">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautils/athenautils">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutils/knowageutils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/athenautilsjson/athenautilsjson">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutilsjson/knowageutilsjson">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/qbecore/qbecore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
 <property name="java-output-path"/>
-        <property name="context-root" value="athenachartengine"/>
+        <property name="context-root" value="knowagechartengine"/>
 </wb-module>
 </project-modules>
