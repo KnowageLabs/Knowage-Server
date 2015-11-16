@@ -14,8 +14,8 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenadao"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenautils"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/athenautilsjson"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowagedao"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
