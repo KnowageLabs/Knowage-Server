@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TENANTS>
 	<TENANT name="SPAGOBI">
-		<PRODUCT name="AthenaFake"/>	
+		<PRODUCT name="KnowageFake"/>	
 	</TENANT>
 </TENANTS>
