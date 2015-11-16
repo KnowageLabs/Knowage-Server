@@ -13,7 +13,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 public class UtilitiesDAOForTest {
 
 	public static void setUpDatabaseTestJNDI() throws Exception {
-		DAOConfig.setHibernateConfigurationFileFile(new File("../athena/src/hibernate.cfg.xml"));
+		DAOConfig.setHibernateConfigurationFileFile(new File("../knowage/src/hibernate.cfg.xml"));
 
 		// Create initial context
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockFactory.class.getName());
