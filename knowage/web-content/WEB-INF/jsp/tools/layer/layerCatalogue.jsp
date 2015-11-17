@@ -52,7 +52,7 @@
 
 			<md-content layout-padding
 				style="background-color: rgb(236, 236, 236);"
-				class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table
+				class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table  class="mozTable"
 				layout-fill id='layerlist' ng-model=layerList
 				columns='["name","type", "layerURL"]'
 				columnsSearch='["name","type", "layerURL"]' show-search-bar=true
@@ -60,7 +60,8 @@
 				menu-option=menuLayer></angular-table> </md-content>
 
 		</div>
-		</left-col> <right-col> <!-- 
+		</left-col> 
+		<right-col> <!-- 
 					RIGHT 
 					-->
 
@@ -71,15 +72,15 @@
 				class="detailBody md-whiteframe-z1" novalidate>
 
 				<md-toolbar class="md-blue minihead">
-				<div class="md-toolbar-tools h100">
+				<div class="md-toolbar-tools h100 ">
 					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.layer");}}</div>
 					<div style="position: absolute; right: 0px" class="h100">
 						<md-button type="button" tabindex="-1" aria-label="cancel"
-							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
+							class="md-raised md-ExtraMini mozilla " style=" margin-top: 2px;"
 							ng-click="cancel();">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
 						<md-button ng-disabled="!forms.contactForm.$valid" type="submit"
-							aria-label="save layer" class="md-raised md-ExtraMini "
+							aria-label="save layer" class="md-raised md-ExtraMini mozilla"
 							style=" margin-top: 2px;"
 							ng-disabled=" selectedItem.name.length === 0 ||  selectedItem.type.length === 0">
 						{{translate.load("sbi.browser.defaultRole.save");}} </md-button>
@@ -87,9 +88,9 @@
 				</div>
 				</md-toolbar>
 				
-				<md-tabs md-select="Layer" md-dynamic-height  class="hideTabs h100" md-border-bottom > 
+				<md-tabs md-select="Layer" md-dynamic-height  class="mozScroll hideTabs h100" md-border-bottom > 
 				<md-tab label="Layer"  md-on-select="setTab('Layer')" md-active="isSelectedTab('Layer')"> 
-				<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
+				<md-content flex style="margin-left:20px;" class=" ToolbarBox miniToolbar noBorder mozTable ">
 	
 					<div layout="row" layout-wrap>
 					<!--<div flex=3 style="margin-top: 30px;">
@@ -328,7 +329,7 @@
 				class="md-blue minihead " style="border-bottom: 2px solid grey;">
 
 			<div class="md-toolbar-tools" layout="row" layout-wrap layout-fill>
-				<div flex=50 style="font-size: 16px;">
+				<div flex=50  style="font-size: 16px;">
 					<h2>{{translate.load("sbi.layerfilter");}}</h2>
 				</div>
 				<div flex=50 style="font-size: 16px;">
@@ -338,13 +339,13 @@
 			</md-toolbar> <md-content layout-padding style="background-color: #F1F1F1;"
 				class="ToolbarBox miniToolbar noBorder leftListbox">
 			<div layout="row" layout-wrap layout-fill>
-				<div flex=50>
-					<angular-list style="margin-left: 55px;" flex="25" layout-fill
+				<div flex=50 >
+					<angular-list class="mozSelect" style="margin-left: 55px;" flex="25" layout-fill
 						id='sx' ng-model=filter item-name='property'
 						click-function="addFilter(item)" show-search-bar=true />
 				</div>
-				<div flex=50>
-					<angular-list style="margin-left: 55px;" flex="35" layout-fill
+				<div flex=50 >
+					<angular-list class="mozSelect" style="margin-left: 55px;" flex="35" layout-fill
 						id='right' ng-model=filter_set item-name='property'
 						click-function="removeFilter(item)" show-search-bar=true
 						speed-menu-option="removeIcon" />
@@ -356,7 +357,8 @@
 		</div>
 		
 		
-		</right-col> </angular-2-col>
+		</right-col> 
+		</angular-2-col>
 	</div>
 </body>
 </html>

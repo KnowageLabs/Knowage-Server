@@ -1,3 +1,4 @@
+
 var app = angular.module('layerWordManager', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
@@ -271,32 +272,20 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 										sbiModule_translate.load("sbi.general.cancel"));
 
 				$mdDialog.show(confirm).then(function() {
-					if(item.pathFile!="null"){
-						//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
-						console.log("true");
-						$scope.pathFileCheck =true;
-					} else{
+					if(item.pathFile == null){
 						console.log("false");
 						$scope.pathFileCheck = false;
+						
+					} else{
+						//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
+						console.log("true pathFile!=null");
+						$scope.pathFileCheck =true;
 					}
 					$scope.flag=true;
 					//$scope.filter_set=[];
 					$scope.loadRolesItem(item);
 					$scope.selectedLayer = angular.copy(item);
-				/*	$scope.filter= $scope.loadFilter();
-					if($scope.selectedLayer.properties){
-						for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-							
-							console.log($scope.selectedLayer.properties[i]);
-							var prop = $scope.selectedLayer.properties[i];
-							var obj={"property":prop};
-							$scope.filter_set.push(obj );
-							
-						}
-					}
-					
-					console.log($scope.filter_set);
-					*/
+			
 					$scope.object_temp = angular.copy(item);
 					
 
@@ -305,9 +294,9 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				});
 
 			}  else {
-				if(item.pathFile!="null"){
+				if(item.pathFile!=null){
 					//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
-					console.log("true");
+					console.log("true pathFile!=null");
 					console.log(item.pathFile);
 					$scope.pathFileCheck =true;
 				} else{
@@ -317,19 +306,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				$scope.flag = true;
 				$scope.loadRolesItem(item);
 				$scope.selectedLayer = angular.copy(item);
-				/*$scope.filter_set=[];
-				$scope.filter= $scope.loadFilter();
-				if($scope.selectedLayer.properties){
-					for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-						console.log($scope.selectedLayer.properties[i]);
-						var prop = $scope.selectedLayer.properties[i];
-						var obj={"property":prop};
-						$scope.filter_set.push(obj );
-						console.log(obj);
-					}
-				}
-				console.log($scope.filter_set);
-				*/
+				
 				$scope.object_temp = angular.copy($scope.selectedLayer);
 		
 				
@@ -684,7 +661,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		$scope.rolesItem=[];
 		$scope.filter_set=[];
 		$scope.filter =[];
-		
+		$scope.setTab('Layer');
 		
 	}
 	
