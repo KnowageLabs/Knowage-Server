@@ -5,23 +5,23 @@
 
 angular.module('geo_module')
 
-.directive('geoRigthMenu',function(sbiModule_config){
+.directive('geoMapMenu',function(sbiModule_config){
 	return{
 		 restrict: "E",
-		templateUrl:sbiModule_config.contextName+'/js/src/angular_1.x/geo/geoRigthMenu/templates/geoRigthMenuTemplate.jspf',
-		controller: geoRigthMenuControllerFunction,
+		templateUrl:sbiModule_config.contextName+'/js/src/angular_1.x/geo/geoMapMenu/templates/geoMapMenuTemplate.jspf',
+		controller: geoMapMenuControllerFunction,
 //		require: "^geoMap",
 		scope: {
 			id:"@"
 		},
 		link: function(scope,elm,attrs){
-			console.log("inizializzo geo-rigth-menu con id= "+scope.id);
+			console.log("inizializzo geo-map-menu con id= "+scope.id);
 			
 		}
 	}
 });
 
-function geoRigthMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSidenav,$timeout,$mdDialog,$map,geo_template,geo_dataset,geo_filters,geo_indicators){	
+function geoMapMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSidenav,$timeout,$mdDialog,$map,geo_template,geo_dataset,geo_filters,geo_indicators){	
 	$scope.template=geo_template;
 	$scope.dataset=geo_dataset;
 	$scope.filters=geo_filters;
@@ -37,17 +37,11 @@ function geoRigthMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSide
 	
 //	$scope.selectedIndicator={};
 	
-	$scope.toggleMenu=function(){
-		$scope.openRigthMenu=!$scope.openRigthMenu;
-		$timeout(function() {
-			$map.updateSize();
-		}, 500);
-		
-	}
-    $scope.changeIndicator=function(item){
-    	geo_template.selectedIndicator=item;
-    	layerServices.updateTemplateLayer();
-    }
+	
+//    $scope.changeIndicator=function(item){
+////    	geo_template.selectedIndicator=item;
+//    	layerServices.updateTemplateLayer();
+//    }
     
     $scope.updateMap=function(){
     	console.log("updateMap",geo_template)

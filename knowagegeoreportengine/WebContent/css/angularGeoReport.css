@@ -48,12 +48,16 @@ geo-distance-calculator {
 	font-size: large;
 }
 
-#geoRigthMenu  .md-sidenav-right md-content.contentStyle, #geoLayerMenu  .md-sidenav-left md-content.contentStyle
-	{
-	background-color: #EBEBEB;
+#geoRigthMenu  .md-sidenav-right md-content.contentStyle{
+/* 	background-color: #EBEBEB; */
 	height: calc(100% - 30px);
 	padding: 0 5;
+	min-width: 300px;
 }
+#geoRigthMenu  .md-sidenav-right md-content.contentStyle md-tabs{
+	height: 100%;
+
+	}
 
 #geoRigthMenu .whiteBG {
 	background-color: white;
@@ -72,15 +76,17 @@ geo-distance-calculator {
 	height: 30px;
 }
 
+md-list-item {
+	border-bottom: 2px solid #F9F9F9;
+}
+
 .itemboxGU md-list-item, .itemboxGU md-list-item button, .itemboxGU md-list-item .md-list-item-inner
 	{
 	/* 	min-height: 15px !important; */
 	min-height: 22px !important;
 }
 
-md-list-item {
-	border-bottom: 2px solid #F9F9F9;
-}
+
 
 .itemboxGU .checkedIndicator {
 	position: absolute;
@@ -109,34 +115,38 @@ md-list-item {
 	height: 30px;
 	width: 30px;
 }
-
-.itemboxGU md-toolbar.titleToolbar {
-	background-color: rgb(218, 209, 209);
+.itemboxGU .categoryToolbar .expanderIcon md-icon{
+	color:black;
 }
 
-.itemboxGU md-toolbar.titleToolbar:after {
-	border-top: 10px solid #9E9E9E;
-	border-right: 0px solid transparent;
-	border-left: 10px solid transparent;
-	content: "";
-	position: absolute;
-	left: 0px;
-}
+/* .itemboxGU md-toolbar.titleToolbar { */
+/* 	background-color: rgb(218, 209, 209); */
+/* } */
 
-.itemboxGU md-toolbar.titleToolbar:before {
-	border-top: 10px solid #9E9E9E;
-	border-right: 10px solid transparent;
-	border-left: 0px solid transparent;
-	content: "";
-	position: absolute;
-	right: 0px;
-	bottom: -10px;
-}
+/* .itemboxGU md-toolbar.titleToolbar:after { */
+/* 	border-top: 10px solid #9E9E9E; */
+/* 	border-right: 0px solid transparent; */
+/* 	border-left: 10px solid transparent; */
+/* 	content: ""; */
+/* 	position: absolute; */
+/* 	left: 0px; */
+/* } */
+
+/* .itemboxGU md-toolbar.titleToolbar:before { */
+/* 	border-top: 10px solid #9E9E9E; */
+/* 	border-right: 10px solid transparent; */
+/* 	border-left: 0px solid transparent; */
+/* 	content: ""; */
+/* 	position: absolute; */
+/* 	right: 0px; */
+/* 	bottom: -10px; */
+/* } */
 
 .itemboxGU md-toolbar.categoryToolbar {
-	background-color: rgb(59, 102, 140);
-	width: calc(100% - 20px);
-	color: white;
+	background-color: white;
+	color: black;
+/* 	width: calc(100% - 20px); */
+/* 	color: white; */
 }
 
 .itemboxGU md-toolbar.categoryToolbar .md-toolbar-tools  {
@@ -156,10 +166,11 @@ md-list-item {
 /*     top: 0; */
 /* } */
 .itemboxGU md-content {
-	background-color: rgb(251, 251, 251);;
-	margin-left: 10px;
-	margin-right: 10px;
-	min-height: 10px;
+/* 	background-color: rgb(251, 251, 251);; */
+/* 	margin-left: 10px; */
+/* 	margin-right: 10px; */
+/* 	min-height: 10px; */
+	border: 1px solid rgb(63,81,181);
 }
 
 geo-legend .legendBox .colorbox {
