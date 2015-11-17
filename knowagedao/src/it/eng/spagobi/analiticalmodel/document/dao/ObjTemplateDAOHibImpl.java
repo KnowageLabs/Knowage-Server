@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 /*
  * Created on 21-giu-2005
@@ -41,7 +41,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#loadBIObjectTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -71,7 +71,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectActiveTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -110,7 +110,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectActiveTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectTemplateList(java.lang.Integer)
 	 */
 	@Override
@@ -195,7 +195,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getNextProgForTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -238,10 +238,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/**
 	 * To obj template.
-	 * 
+	 *
 	 * @param hibObjTemp
 	 *            the hib obj temp
-	 * 
+	 *
 	 * @return the obj template
 	 */
 	public ObjTemplate toObjTemplate(SbiObjTemplates hibObjTemp) {
@@ -261,7 +261,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#deleteBIObjectTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -370,7 +370,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			// save associations among dataset and documents
 			if (biObject != null) {
 				String driverName = biObject.getEngine().getDriverName();
-				if (driverName != null) {
+				if (driverName != null && !"".equals(driverName)) {
 					try {
 						IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
 						ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(templateContent);
