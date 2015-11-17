@@ -71,7 +71,7 @@
 		engineTypeCd="EXT" classNm="" biobjTypeCd="SMART_FILTER" useDataSet="false"
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagegisengine" name="Gis Engine" descr="Gis Engine"
-		mainUrl="/knowagegeoreportengine/GeoReportEngineStartAction" driverNm="it.eng.spagobi.engines.drivers.gis.GisDriver"
+		mainUrl="/knowagegeoreportengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.gis.GisDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="true"
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowageconsoleengine" name="Console Engine" descr="Console Engine"
