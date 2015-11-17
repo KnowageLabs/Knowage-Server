@@ -114,7 +114,17 @@ public class GeoResource extends AbstractChartEngineResource {
 		if (layerName && layerjoinCol && featureIds) {
 			return targetLayerAction(requestVal);
 		} else {
-			return "{status: 'missing value'}";
+			JSONObject err = new JSONObject();
+			JSONArray ja = new JSONArray();
+			err.put("status", "non ok");
+			if (!layerName)
+				ja.put(geoUtils.LAYER_NAME);
+			if (!layerjoinCol)
+				ja.put(geoUtils.LAYER_JOIN_COLUMNS);
+			if (!featureIds)
+				ja.put(geoUtils.FEATURE_IDS);
+			err.put("errors", ja);
+			return err.toString();
 		}
 
 	}

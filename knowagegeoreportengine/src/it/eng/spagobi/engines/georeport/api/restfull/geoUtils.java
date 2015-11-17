@@ -112,7 +112,7 @@ public class geoUtils {
 
 					// servletIOManager.writeBackToClient(500, message,
 					// true ,"service-response", "text/plain");
-					return "{status:'non ok', error:" + message + "}";
+					return "{status:'non ok', errors:" + message + "}";
 				}
 			} else {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is in cache");
@@ -154,7 +154,7 @@ public class geoUtils {
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while loading target layer", t);
 
-			return "{status:'non ok', error:'An unexpected error occured while loading target layer'}";
+			return "{status:'non ok', errors:'An unexpected error occured while loading target layer'}";
 			// servletIOManager.writeBackToClient(500, "An unexpected error occured while loading target layer" ,true, "service-response", "text/plain");
 
 		} finally {
