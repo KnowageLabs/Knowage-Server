@@ -37,7 +37,8 @@ angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagin
 						 	speedMenuOption:"=?", //speed menu to open with  button at the end of item
 						 	selectedItem:"=?", //optional to get the selected  item value
 						 	highlightsSelectedItem:"=?",
-						 	multiSelect:"=?"
+						 	multiSelect:"=?",
+						 	scopeFunctions:"=?"
 						
 						},
 						link : function(scope, elm, attrs) {

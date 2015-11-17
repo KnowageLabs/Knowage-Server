@@ -10,7 +10,7 @@
 			ng-class="{ 'not_empty' : (searchVal.length !== 0 && searchVal!=undefined)  }"></md-icon>
 	</md-input-container>
 
-	<table flex>
+	<table class="flex mozTable">
 		<th ng-if="multiSelect==true" width="26px"></th>
 
 		<th class="thButton" ng-if="(columns==undefined || columns.length==0)"
@@ -23,7 +23,7 @@
 
 		<th class="thButton thMoz" ng-if="!(columns==undefined || columns.length==0)"
 				ng-repeat="val in columns">
-			<md-button class="md-raised" ng-click="orderBy(val)">{{val}}
+			<md-button class="thMoz md-raised" ng-click="orderBy(val)">{{val}}
 				<md-icon ng-class="{ 'fa fa-sort': val!=column_ordering ,'fa fa-sort-desc' : (val==column_ordering && reverse_col_ord) ,'fa fa-sort-asc' : (val==column_ordering && !reverse_col_ord)}"></md-icon>
 			</md-button>
 		</th>
