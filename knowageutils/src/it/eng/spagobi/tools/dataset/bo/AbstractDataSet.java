@@ -191,6 +191,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		sbd.setDataSourceForReading(dataSourceForReading != null ? dataSourceForReading.toSpagoBiDataSource() : null);
 		sbd.set_public(isPublic());
 
+		sbd.setDsMetadata(getDsMetadata());
+
 		sbd.setOrganization(getOrganization());
 		sbd.setScopeId(getScopeId());
 		sbd.setScopeCd(getScopeCd());
