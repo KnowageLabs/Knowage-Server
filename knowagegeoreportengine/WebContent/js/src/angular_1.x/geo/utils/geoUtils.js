@@ -246,3 +246,10 @@ geoM.filter('unique', function () {
 	    return items;
 	  };
 	})
+	
+geoM.factory('geo_interaction',function(){
+	var interact={
+			type:"identify",
+			distance_calculator:false};
+	return interact;
+})

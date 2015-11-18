@@ -21,13 +21,16 @@ angular.module('geo_module')
 	}
 });
 
-function geoMapMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSidenav,$timeout,$mdDialog,$map,geo_template,geo_dataset,geo_filters,geo_indicators){	
+function geoMapMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSidenav,$timeout,$mdDialog,$map,geo_template,geo_dataset,geo_filters,geo_indicators,geo_interaction){	
 	$scope.template=geo_template;
 	$scope.dataset=geo_dataset;
 	$scope.filters=geo_filters;
 	$scope.indicators=geo_indicators;
+	$scope.selectModeInteraction=geo_interaction;
 	$scope.openRigthMenu=false;
 	$scope.analysisTypeList=[{label:"Map point",type:"ProportionalSymbol",img:"fa fa-circle"},{label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "}];
+	$scope.selectModeTypeList=[{label:"Identify",type:"identify"},{label:"Cross navigation",type:"cross"}];
+	
 	
 	if(!$scope.template.hasOwnProperty('analysisType')){
 		$scope.template.analysisType=$scope.analysisTypeList[1].type;

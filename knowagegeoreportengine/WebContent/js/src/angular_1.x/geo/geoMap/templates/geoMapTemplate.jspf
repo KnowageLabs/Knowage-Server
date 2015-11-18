@@ -1,13 +1,12 @@
 <div layout="row" layout-wrap ng-cloak>
 
-	
-
 	<div flex id='map'>
 		<div id="popup" class="ol-popup">
-<!-- 			<a href="#" id="popup-closer" class="ol-popup-closer"></a> -->
+			<!-- 			<a href="#" id="popup-closer" class="ol-popup-closer"></a> -->
 			<div id="popup-content"></div>
 		</div>
-		<div layout="row" layout-wrap layout-align="end end" style="bottom: 0;  right: 0;  position: absolute;">
+		<div layout="row" layout-wrap layout-align="end end"
+			style="bottom: 0; right: 0; position: absolute;">
 			<geo-legend id="legend"></geo-legend>
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 		</div>
@@ -16,10 +15,6 @@
 
 
 	<geo-rigth-menu id="menu"></geo-rigth-menu>
-	
-
-
-
 
 	<!-- this is to include child directive -->
 	<div ng-transclude></div>

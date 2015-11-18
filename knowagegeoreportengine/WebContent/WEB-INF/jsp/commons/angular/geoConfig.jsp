@@ -11,7 +11,6 @@ geoM.factory('geo_template',function(geoReportCompatibility){
 	
 	var t=<%= template %>;
 	
-	
 	if(t.hasOwnProperty('role')) {
 		t.role = t.role.charAt(0) == '/'? t.role.charAt(0): 	'/' + t.role.charAt(0);
 	}
@@ -123,7 +122,7 @@ geoM.factory('baseLayer', function() {
 });
 
 
-geoM.service('layerServices', function(baseLayer, $map,$http,thematizer) {
+geoM.service('layerServices', function(baseLayer, $map,$http,thematizer,geo_interaction,crossNavigation) {
 	this.selectedBaseLayer;  //the selected base layer
 	this.selectedBaseLayerOBJ;
 	this.loadedLayer={};
@@ -184,23 +183,27 @@ geoM.service('layerServices', function(baseLayer, $map,$http,thematizer) {
 		
 		 select.on('select', function(evt) {
 			 console.log("asewleocasokasd");
-			 if(evt.selected[0]==undefined){
+			 if(evt.selected[0]==undefined || geo_interaction.distance_calculator){
 				 overlay.setPosition(undefined);
 				 return;
 			 }
-			 var coordinate = evt.mapBrowserEvent.coordinate;
-			 var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
 			 
-			 var prop= evt.selected[0].getProperties();
-			 var txt="";
-			 txt+="<p>STATE_NAME:"+prop['STATE_NAME']+"</p>";
-			 txt+="<p>SUB_REGION:"+prop['SUB_REGION']+"</p>";
-			 txt+="<p>LAND_KM:"+prop['LAND_KM']+"</p>";
-			 txt+="<p>PERSONS:"+prop['PERSONS']+"</p>";
+			 if(geo_interaction.type=="identify"){
+				 var coordinate = evt.mapBrowserEvent.coordinate;
+				 var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
+				 
+				 var prop= evt.selected[0].getProperties();
+				 var txt="";
+				 txt+="<p>STATE_NAME:"+prop['STATE_NAME']+"</p>";
+				 txt+="<p>SUB_REGION:"+prop['SUB_REGION']+"</p>";
+				 txt+="<p>LAND_KM:"+prop['LAND_KM']+"</p>";
+				 txt+="<p>PERSONS:"+prop['PERSONS']+"</p>";
+				 angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
+			 	 $map.getOverlays().getArray()[0].setPosition(coordinate);
+			 }else if(geo_interaction.type=="cross"){
+				 crossNavigation.navigateTo(evt.selected[0].getProperties());
+			 }
 			
-			 
-			 angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
-		 	 $map.getOverlays().getArray()[0].setPosition(coordinate);
 			 
 		    });
 		 
@@ -339,12 +342,17 @@ geoM.service('layerServices', function(baseLayer, $map,$http,thematizer) {
 
 
 
-
 geoM.factory('geoConstant',function(){
 	var cont= {
 			templateLayer:"Document templates"
 	}
 	return cont;
+});
+
+geoM.service('crossNavigation', function(geo_template) {
+	this.navigateTo=function(data){
+		alert(data);
+	}
 });
 
 
