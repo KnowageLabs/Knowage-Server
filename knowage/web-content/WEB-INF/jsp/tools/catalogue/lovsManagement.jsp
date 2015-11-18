@@ -24,7 +24,7 @@
 		
 		<!-- Javascript -->
 		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/LovsManagement.js"></script>
+		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/lovsManagement.js"></script>
 		
 		
 		<title>Insert title here</title>
