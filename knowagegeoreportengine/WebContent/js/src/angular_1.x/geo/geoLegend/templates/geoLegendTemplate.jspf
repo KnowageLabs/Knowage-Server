@@ -12,11 +12,11 @@
 
  
 <md-button  id="showLegend" class="md-fab md-mini" ng-click="toggleLegend($event)" aria-label="toggle legend" >
-<md-icon md-font-icon="fa fa-wifi fa-2x"></md-icon> 
+<i class="material-icons">format_list_bulleted</i>
 </md-button>
 
   <md-button ng-click="changeLegendStyle()" class="md-fab  changeStyleButton" aria-label="More" ng-if="showLegend" >
-       			 <md-icon md-font-icon="fa fa-cog"></md-icon>
+  	<md-icon md-font-icon="fa fa-cog"></md-icon>
  </md-button>
 
 <!-- <md-bottom-sheet class=" md-has-header" ng-cloak> -->

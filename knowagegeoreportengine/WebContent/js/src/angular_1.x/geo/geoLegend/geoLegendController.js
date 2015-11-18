@@ -7,6 +7,7 @@ angular.module('geo_module')
 .directive('geoLegend',function(sbiModule_config ){
 	return{
 		 restrict: "E",
+//		 replace: true,
 		 templateUrl:sbiModule_config.contextName+'/js/src/angular_1.x/geo/geoLegend/templates/geoLegendTemplate.jspf',
 		 controller: geoLegendControllerFunction,
 		require: "^geoMap",

@@ -80,8 +80,7 @@ public class geoUtils {
 
 		try {
 			Monitor.start("GetTargetLayerAction.doService");
-			// TODO remove this line to enable cache
-			LayerCache.cache.clear();
+
 			FeatureCollection outputFeatureCollection = LayerCache.cache.get(layerName);
 
 			if (outputFeatureCollection == null) {

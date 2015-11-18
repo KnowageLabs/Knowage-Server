@@ -232,7 +232,9 @@ geoM.service('layerServices', function(baseLayer, $map,$http,thematizer) {
 		if(layer!=undefined){
 			$map.removeLayer(this.selectedBaseLayer);
 			this.selectedBaseLayer=layer;
-			this.selectedBaseLayerOBJ=layerConf;
+			if(this.selectedBaseLayerOBJ==undefined){
+				this.selectedBaseLayerOBJ=layerConf;
+			}
 			$map.addLayer(this.selectedBaseLayer);
 			$map.render();
 		}

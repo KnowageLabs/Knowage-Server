@@ -157,9 +157,11 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 				 
 				//search if in template are present filters and just load them, else load all
 				 var templ_filters=[];
+				 var templ_filters_obj={};
 				 if(geo_template.hasOwnProperty("filters")){
 					 for(var j=0;j<geo_template.filters.length;j++){
 						 templ_filters.push(geo_template.filters[j].name);
+						 templ_filters_obj[geo_template.filters[j].name]=geo_template.filters[j];
 					 }
 				 }
 				 
@@ -172,6 +174,8 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 							
 						 }else if(fields[i].role=="ATTRIBUTE"){
 							 if(templ_filters.length==0 || templ_filters.indexOf(fields[i].header)>-1){
+								 
+								 	fields[i].label=templ_filters_obj[fields[i].header]!=undefined ? templ_filters_obj[fields[i].header].label : fields[i].header;
 									geo_filters.push(fields[i]);
 									if(!geo_template.selectedFilters.hasOwnProperty(fields[i].name)){
 										geo_template.selectedFilters[fields[i].name]="-1";

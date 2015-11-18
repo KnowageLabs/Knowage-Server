@@ -9,27 +9,26 @@
 			<md-toolbar class="titleToolbar">
 				<h1 class="md-toolbar-tools">Base Layer</h1>
 				<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click="baselayerExpander=!baselayerExpander">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-minus-square-o' : baselayerExpander , 'fa-plus-square-o' : !baselayerExpander}"></md-icon>
+			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' : baselayerExpander , 'fa-angle-down' : !baselayerExpander}"></md-icon>
 			    </md-button>
 			</md-toolbar>
 			<md-content >
-			
-			<div  ng-show="baselayerExpander"  ng-repeat="(CatKey,CatVal) in baseLayers" >
-				<md-toolbar class="categoryToolbar" >
-					<span class="md-toolbar-tools"> {{CatKey}} </span>
-					<md-button ng-init="baseLayerCategoryExpander[CatKey]=true;" class="md-icon-button expanderIcon" aria-label="expand" ng-click="baseLayerCategoryExpander[CatKey]=!baseLayerCategoryExpander[CatKey]">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-minus-square-o' : baseLayerCategoryExpander[CatKey] , 'fa-plus-square-o' : !baseLayerCategoryExpander[CatKey]}"></md-icon>
-			   		</md-button>
-			    </md-toolbar>
-			
-				<md-list class="indicatorList whiteBG" ng-show="baseLayerCategoryExpander[CatKey]">
-					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)" >  
-						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="layerServices.isSelectedBaseLayer(val)"></md-icon > 
-						{{val.label}}
-					</md-list-item>
-				</md-list>
-			</div>
-			
+			  <md-radio-group ng-model="layerServices.selectedBaseLayerOBJ">
+				<div  ng-show="baselayerExpander"  ng-repeat="(CatKey,CatVal) in baseLayers" >
+					<md-toolbar class="categoryToolbar" >
+						<span class="md-toolbar-tools"> {{CatKey}} </span>
+						<md-button ng-init="baseLayerCategoryExpander[CatKey]=true;" class="md-icon-button expanderIcon" aria-label="expand" ng-click="baseLayerCategoryExpander[CatKey]=!baseLayerCategoryExpander[CatKey]">
+				        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' : baseLayerCategoryExpander[CatKey] , 'fa-angle-down' : !baseLayerCategoryExpander[CatKey]}"></md-icon>
+				   		</md-button>
+				    </md-toolbar>
+				
+					<md-radio-button ng-show="baseLayerCategoryExpander[CatKey]" 
+					ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
+		      	 	 {{val.label}}
+			         </md-radio-button>
+			         
+				</div>
+			</md-radio-group>
 			</md-content>
 		</div>
 
@@ -37,7 +36,7 @@
 			<md-toolbar class="titleToolbar">
 				<span class="md-toolbar-tools">Layer</span>
 				<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" layerExpander=! layerExpander">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-minus-square-o' :  layerExpander , 'fa-plus-square-o' : ! layerExpander}"></md-icon>
+			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  layerExpander , 'fa-angle-down' : ! layerExpander}"></md-icon>
 			    </md-button>
 			</md-toolbar>
 			<md-content >
@@ -46,16 +45,23 @@
 				<md-toolbar class="categoryToolbar" >
 					<h1 class="md-toolbar-tools"> {{CatKey}} </h1>
 					<md-button ng-init=" LayerCategoryExpander[CatKey]=true;" class="md-icon-button expanderIcon" aria-label="expand" ng-click=" LayerCategoryExpander[CatKey]=! LayerCategoryExpander[CatKey]">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-minus-square-o' :  LayerCategoryExpander[CatKey] , 'fa-plus-square-o' : ! LayerCategoryExpander[CatKey]}"></md-icon>
+			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  LayerCategoryExpander[CatKey] , 'fa-angle-down' : ! LayerCategoryExpander[CatKey]}"></md-icon>
 			   		</md-button>
 			    </md-toolbar>
 			
-				<md-list class="indicatorList whiteBG" ng-show=" LayerCategoryExpander[CatKey]">
-					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" >  
-						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="layerServices.layerIsLoaded(val)"></md-icon > 
-						{{val.label}}
-					</md-list-item>
-				</md-list>
+			<div layout="row" layout-wrap flex  ng-show=" LayerCategoryExpander[CatKey]">
+	            <md-checkbox ng-checked="layerServices.layerIsLoaded(val)" ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" class="md-primary" >
+	             {{val.label}}
+	            </md-checkbox>
+	          
+	        </div>
+			
+<!-- 				<md-list class="indicatorList whiteBG" ng-show=" LayerCategoryExpander[CatKey]"> -->
+<!-- 					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" >   -->
+<!-- 						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="layerServices.layerIsLoaded(val)"></md-icon >  -->
+<!-- 						{{val.label}} -->
+<!-- 					</md-list-item> -->
+<!-- 				</md-list> -->
 			</div>
 			
 			</md-content>

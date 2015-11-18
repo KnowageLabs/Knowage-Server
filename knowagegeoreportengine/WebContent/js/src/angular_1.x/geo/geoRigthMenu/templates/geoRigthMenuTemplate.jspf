@@ -27,7 +27,7 @@
 				</div>
 			</div>
 		</md-toolbar> 
-		<md-content class="contentStyle"  > 
+		<md-content class="contentStyle no-padding"   > 
 			<md-tabs>
 				<md-tab id="GEOMAP"> 
 					<md-tab-label>GEOMAP</md-tab-label> 

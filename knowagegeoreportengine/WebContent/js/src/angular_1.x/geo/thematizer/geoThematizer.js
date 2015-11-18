@@ -2,6 +2,7 @@ var geoM=angular.module('geo_module');
 
 geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns_item){
 	var tmtz=this;
+	var cacheProportionalSymbolMinMax={};
 	
 	
 	this.getStyle = function(feature, resolution) {
@@ -17,7 +18,7 @@ geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns
 				dsValue=geo_dataset.rows[i][geo_template.selectedIndicator.name];
 				//search if there is a filter enabled
 				for(var key in geo_template.selectedFilters){
-					if(geo_template.selectedFilters[key]!="-1" && geo_template.selectedFilters[key]!= geo_dataset.rows[i][key]){
+					if(geo_template.selectedFilters[key]!="-1" &&  geo_template.selectedFilters[key].length!=0 && geo_template.selectedFilters[key].indexOf(geo_dataset.rows[i][key])==-1){
 						console.log("filtrato");
 						return null;
 					}
@@ -58,12 +59,36 @@ geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns
 	}
 	
 	this.proportionalSymbol=function(dsValue){
-		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-		
-		var rad= dsValue%(radius.maxRadiusSize+1);
-		if(rad<radius.minRadiusSize){
-			rad=radius.minRadiusSize;
+		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
+		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geo_template.selectedIndicator.name)){
+			var minV;
+			var maxV;
+			for(var i=0;i<geo_dataset.rows.length;i++){
+					var tmpV= parseInt(geo_dataset.rows[i][geo_template.selectedIndicator.name]);
+					if(minV==undefined || tmpV<minV){
+						minV=tmpV;
+					}
+					if(maxV==undefined || tmpV>maxV){
+						maxV=tmpV;
+					
+				}
+			}
+			cacheProportionalSymbolMinMax[geo_template.selectedIndicator.name]={minValue:minV, maxValue:maxV};
 		}
+		
+		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
+		 var minValue = cacheProportionalSymbolMinMax[geo_template.selectedIndicator.name].minValue;
+         var maxValue = cacheProportionalSymbolMinMax[geo_template.selectedIndicator.name].maxValue;
+         var size;
+		
+		if(minValue == maxValue) { // we have only one point in the distribution
+       	 size = (radius.maxRadiusSize + radius.minRadiusSize)/2;
+        } else {
+       	 size = ( parseInt(dsValue) - minValue) / ( maxValue - minValue) *
+            (radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
+        }
+		
+		
 		
 		return  [new ol.style.Style({
 		    stroke: new ol.style.Stroke({
@@ -74,7 +99,7 @@ geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns
 			  }),
 			  new ol.style.Style({
 			    image: new ol.style.Circle({
-			        radius: rad,
+			        radius: size,
 			        stroke: new ol.style.Stroke({
 					      color: "#000000",
 					      width: 1

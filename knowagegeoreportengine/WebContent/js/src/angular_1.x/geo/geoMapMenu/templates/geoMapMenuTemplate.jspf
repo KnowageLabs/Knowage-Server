@@ -1,93 +1,61 @@
 
-      <md-content >
-       
-       <div class="itemboxGU">
-	        <md-toolbar class="titleToolbar" class="md-theme-light">
-		        <h1 class="md-toolbar-tools">
-		      		MapType
-		        </h1>
-		      </md-toolbar>
-		      <md-content layout-padding>
-		      	
-		      	 <md-radio-group ng-model="template.analysisType">
-		      	 	<md-radio-button ng-repeat="item in analysisTypeList"  class="md-primary" ng-value="item.type" ng-click="updateMap()" style="margin: 4px;">
-		      	 	<md-icon md-font-icon="{{item.img}}"></md-icon>
-			         {{item.label}}
-			         </md-radio-button>
-		      	 </md-radio-group>
-		      	
-<!-- 		      	<md-input-container> -->
-<!-- 			        <label>MapType</label> -->
-<!-- 			        <md-select  ng-model="template.analysisType"> -->
-<!-- 			          <md-option ng-repeat="item in analysisTypeList" ng-value="item.type" aria-label="{{item.label}}" ng-click="updateMap()"> -->
-<!-- 			           <md-icon md-font-icon="{{item.img}}"></md-icon> -->
-<!-- 			         {{item.label}} -->
-<!-- 			          </md-option> -->
-<!-- 			        </md-select> -->
-<!-- 		      </md-input-container> -->
-		      
-		      </md-content>
-       </div>
-       
-       
-        
-       
-        
-         
-          <div class="itemboxGU">
-	        <md-toolbar class="titleToolbar" >
-		        <h1 class="md-toolbar-tools">
-		      		Indicators
-		        </h1>
-		      </md-toolbar>
-		      <md-content layout-padding>
-		      	
-		      	<md-radio-group ng-model="template.selectedIndicator">
-		      	 	<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()"  class="md-primary" ng-value="ind"  style="margin: 4px;">
-			         {{ind.header}}
-			         </md-radio-button>
-		      	 </md-radio-group>
-		      	 
-<!-- 		      	<md-list class="indicatorList whiteBG"> -->
-<!-- 			    	<md-list-item ng-repeat="ind in indicators"    ng-click="changeIndicator(ind);" >   -->
-<!-- 			    		<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="indicatorIsSelected(ind)"></md-icon >  -->
-<!-- 			    		{{ind.header}} -->
-<!-- 			    	</md-list-item> -->
-<!--     			</md-list> -->
-    
-    		 <md-button id="indicatorCatalogue" class="md-raised " style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">Select from catalogue</md-button>
-		      
-		      </md-content>
-       </div>
-       
-        <div class="itemboxGU">
-	        <md-toolbar class="titleToolbar" >
-		        <h1 class="md-toolbar-tools">
-		      		Filter
-		        </h1>
-		      </md-toolbar>
-		      <md-content layout-padding>
-		      	
-		      	<md-input-container ng-repeat="filter in filters">
-		        <label>{{filter.header}}</label>
-		        <md-select ng-model="template.selectedFilters[filter.name]" >
-<!-- 		        <md-option  ng-value="-1" aria-label="noselect" ng-click="updateMap()"> -->
-		          <md-option ng-repeat="item in dataset.rows | unique: filter.name" ng-value="item[filter.name]" aria-label="{{item[filter.name]}}" ng-click="updateMap()">
-		        {{item[filter.name]}}
-		          </md-option>
-		        </md-select>
-	      </md-input-container>
-      
-		      </md-content>
-       </div>
-       
-    
-    
-       
-    
-      </md-content>
+<md-content>
+	<div class="itemboxGU" ng-init=" mapTypeExpander=true;">
+		<md-toolbar class="titleToolbar" class="md-theme-light">
+			<span class="md-toolbar-tools">Map Type</span>
+			<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" mapTypeExpander=! mapTypeExpander">
+		        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  mapTypeExpander , 'fa-angle-down' : ! mapTypeExpander}"></md-icon>
+		    </md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="mapTypeExpander">
+			<md-radio-group ng-model="template.analysisType">
+				<md-radio-button ng-repeat="item in analysisTypeList"  class="md-primary" ng-value="item.type" ng-click="updateMap()" >
+					<md-icon md-font-icon="{{item.img}}"></md-icon>
+					 {{item.label}}
+			  </md-radio-button>
+			</md-radio-group>
+		</md-content>
+	</div>
+ 
+ 
+	<div class="itemboxGU" ng-init=" indicatorsExpander=true;">
+		<md-toolbar class="titleToolbar" >
+			<span class="md-toolbar-tools">Indicators</span>
+			<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" indicatorsExpander =! indicatorsExpander">
+		        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  indicatorsExpander , 'fa-angle-down' : ! indicatorsExpander}"></md-icon>
+		    </md-button>
+		</md-toolbar>
+			<md-content layout-padding ng-show="indicatorsExpander">
+				<md-radio-group ng-model="template.selectedIndicator">
+				 	<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()"  class="md-primary" ng-value="ind"  >
+				   {{ind.header}}
+				   </md-radio-button>
+				</md-radio-group>
+				 <md-button id="indicatorCatalogue" class="md-raised " style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">Select from catalogue</md-button>
+			</md-content>
+	</div>
+ 
+  <div class="itemboxGU" ng-init=" filterExpander=true;">
+   <md-toolbar class="titleToolbar" >
+   <span class="md-toolbar-tools">Filter</span>
+			<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" filterExpander=! filterExpander">
+		        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  filterExpander , 'fa-angle-down' : ! filterExpander}"></md-icon>
+		    </md-button>
+  </md-toolbar>
+  <md-content layout-padding ng-show="filterExpander">
+  	
+  	<md-input-container ng-repeat="filter in filters">
+    <label>{{filter.label}}</label>
+    <md-select ng-model="template.selectedFilters[filter.name]"  multiple=true>
+      <md-option ng-repeat="item in dataset.rows | unique: filter.name" ng-value="item[filter.name]" aria-label="{{item[filter.name]}}" ng-click="updateMap()">
+    {{item[filter.name]}}
+      </md-option>
+    </md-select>
+ </md-input-container>
 
-
+  </md-content>
+ </div>
+</md-content>
 
 
 <!-- template -->

@@ -1,30 +1,46 @@
+md-select-menu.md-default-theme md-option[selected], md-select-menu md-option[selected] {
+    color: rgb(255, 255, 255) !important;
+    background-color: #3F51B5;
+}
+
 .fa{
 	    font-family: FontAwesome !important;
+}
+
+.no-padding{
+	padding: 0px!important;
 }
 
 .hidden {
 	display	: none;
 }
 
-geo-layers #showLayers {
-	position: absolute;
-	top: 0px;
-	left: -5px;
-}
+
 
 geo-legend {
 	z-index: 1;
-	position: absolute;
-	bottom: 0px;
-	left: 5px;
+/* 	position: absolute; */
+/* 	bottom: 0px; */
+/* 	left: 5px; */
 }
 
 geo-distance-calculator {
 	z-index: 1;
-	position: absolute;
-	bottom: 0px;
-	left: 55px;
+/* 	position: absolute; */
+/* 	bottom: 0px; */
+/* 	left: 55px; */
 }
+
+
+
+
+#geoRigthMenu button#showMenu {
+	top: 0px;
+	right: 0px;
+	position: absolute;
+	/*        background-color: rgb(158,158,158); */
+}
+
 
 .mapBodyStyle {
 	overflow: hidden;
@@ -34,19 +50,7 @@ geo-distance-calculator {
 	position: relative;
 }
 
-#map .ol-zoom {
-	top: 3.5em;
-	left: .5em;
-}
 
-#geoRigthMenu md-divider {
-	margin: 8px 0;
-}
-
-#geoRigthMenu p.titleStyle {
-	margin: 0;
-	font-size: large;
-}
 
 #geoRigthMenu  .md-sidenav-right md-content.contentStyle{
 /* 	background-color: #EBEBEB; */
@@ -59,49 +63,15 @@ geo-distance-calculator {
 
 	}
 
-#geoRigthMenu .whiteBG {
-	background-color: white;
-}
 
-#geoRigthMenu button#showMenu {
-	top: 0px;
-	right: 0px;
-	position: absolute;
-	/*        background-color: rgb(158,158,158); */
-}
-
-#geoRigthMenu .md-sidenav-right md-toolbar, #geoLayerMenu .md-sidenav-left md-toolbar
+#geoRigthMenu .md-sidenav-right md-toolbar
 	{
 	min-height: 30;
 	height: 30px;
 }
 
-md-list-item {
-	border-bottom: 2px solid #F9F9F9;
-}
-
-.itemboxGU md-list-item, .itemboxGU md-list-item button, .itemboxGU md-list-item .md-list-item-inner
-	{
-	/* 	min-height: 15px !important; */
-	min-height: 22px !important;
-}
-
-
-
-.itemboxGU .checkedIndicator {
-	position: absolute;
-	left: 0;
-	color: #39C739;
-	margin: 0 !important;
-}
-
-.itemboxGU  .indicatorList md-list-item button {
-	padding-left: 30px;
-}
-
-.itemboxGU  .indicatorList md-list-item button:hover {
-	background-color: rgba(66, 132, 166, 0.49);
-}
+#geoRigthMenu .md-sidenav-right{
+    max-height: 100%;}
 
 .itemboxGU {
 	margin-top: 10px;
@@ -115,61 +85,24 @@ md-list-item {
 	height: 30px;
 	width: 30px;
 }
-.itemboxGU .categoryToolbar .expanderIcon md-icon{
-	color:black;
-}
-
-/* .itemboxGU md-toolbar.titleToolbar { */
-/* 	background-color: rgb(218, 209, 209); */
-/* } */
-
-/* .itemboxGU md-toolbar.titleToolbar:after { */
-/* 	border-top: 10px solid #9E9E9E; */
-/* 	border-right: 0px solid transparent; */
-/* 	border-left: 10px solid transparent; */
-/* 	content: ""; */
-/* 	position: absolute; */
-/* 	left: 0px; */
-/* } */
-
-/* .itemboxGU md-toolbar.titleToolbar:before { */
-/* 	border-top: 10px solid #9E9E9E; */
-/* 	border-right: 10px solid transparent; */
-/* 	border-left: 0px solid transparent; */
-/* 	content: ""; */
-/* 	position: absolute; */
-/* 	right: 0px; */
-/* 	bottom: -10px; */
-/* } */
 
 .itemboxGU md-toolbar.categoryToolbar {
 	background-color: white;
 	color: black;
-/* 	width: calc(100% - 20px); */
-/* 	color: white; */
+}
+
+.itemboxGU md-toolbar.categoryToolbar button md-icon{
+	color: black;
 }
 
 .itemboxGU md-toolbar.categoryToolbar .md-toolbar-tools  {
     height: 100%;
 }
 
-    
-
-/* freccia sulla categoria */
-/* .itemboxGU md-toolbar.categoryToolbar:after { */
-/* 	border-top: 15px solid transparent; */
-/*     border-bottom: 15px solid transparent; */
-/*     border-left: 20px solid rgb(59, 102, 140); */
-/*     content: ""; */
-/*     position: absolute; */
-/*     right: -20px; */
-/*     top: 0; */
-/* } */
+.itemBoxGU md-content md-radio-button,.itemBoxGU md-content md-checkbox{
+	    margin: 6px 4px 6px 16px;
+}
 .itemboxGU md-content {
-/* 	background-color: rgb(251, 251, 251);; */
-/* 	margin-left: 10px; */
-/* 	margin-right: 10px; */
-/* 	min-height: 10px; */
 	border: 1px solid rgb(63,81,181);
 }
 
@@ -244,8 +177,8 @@ geo-distance-calculator .calcBox:before {
 	content: "";
 	position: absolute;
 	bottom: 45px;
-	margin-left: -25px;
-	left: 50%;
+	margin-left: 20px;
+	
 }
 
 geo-distance-calculator .calcBox .measureDisplay {
