@@ -103,7 +103,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
- *
  */
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD {
@@ -267,7 +266,11 @@ public class SelfServiceDataSetCRUD {
 		try {
 			String id = req.getParameter("id");
 			Assert.assertNotNull(id, deleteNullIdDataSetError);
-			IDataSet ds = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(id));
+			IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+			dsDAO.setUserProfile(profile);
+			dsDAO.setUserID(profile.getUserUniqueIdentifier().toString());
+			IDataSet ds = dsDAO.loadDataSetById(new Integer(id));
+
 			// Create DatasetNotificationEvent but wait to notify
 			DatasetNotificationEvent datasetEvent = null;
 			try {
@@ -281,7 +284,7 @@ public class SelfServiceDataSetCRUD {
 
 				// ATTENTION! This Delete Dataset Also if there are documents
 				// using it, this could lead to missing link in documents
-				DAOFactory.getDataSetDAO().deleteDataSetNoChecks(ds.getId());
+				dsDAO.deleteDataSetNoChecks(ds.getId()); 
 				deleteDatasetFile(ds);
 
 				// notify that dataset has been deleted
