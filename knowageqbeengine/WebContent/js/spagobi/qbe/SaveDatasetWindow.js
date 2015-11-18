@@ -60,6 +60,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	, queries : null
 	, services: null
 	, persistPanel : null
+	, metadataPanel : null
 	,
 	initServices: function() {
 		this.services = new Array();
@@ -106,26 +107,32 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 			fieldLabel: LN('sbi.generic.descr') 
 		});
 		this.scopeField = new Ext.form.ComboBox({
-		    //fieldLabel: LN('sbi.generic.scope') ,
+			id: 'scopeCombo',
+		    fieldLabel: LN('sbi.generic.scope') ,
+		    selectOnFocus:true,
 		    mode : 'local',
+		    triggerAction: 'all',
+		    queryMode:'local',
 		    store: this.scopesStore,
 		    displayField: 'description',
 		    valueField: 'value',
 		    allowBlank: false,
     	   	editable: false,
-    	   	forceSelection : true,
-    	   	hidden: true
+    	   	forceSelection : true
 		});
 		
 		
 		this.initPersistPanel();
 		
+		this.initMetadataPanel();
+		
 		//default value
-		this.scopeField.setValue(this.scopesStore.getAt(1).get('value'));
+		this.scopeField.setValue(this.scopesStore.getAt(0).get('value'));
 	    
 	    var  genericForm = new Ext.Panel({
 	        columnWidth: 0.6
-	    	//, frame : true
+	        , height : 300
+	        //, frame : true
 	    	, autoScroll : true
 	    	, title : LN('sbi.qbe.savedatasetwindow.generic')
 	        , items: {
@@ -175,6 +182,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	    	columnWidth: 0.6
 	    	//, frame : true
 	    	, autoScroll : true
+	    	, height: 400
 	    	, title : LN('sbi.qbe.savedatasetwindow.metadata')
 	        , items: {
 	 		   	 columnWidth : 0.4
@@ -190,7 +198,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	                 //"margin-left": "4px",
 	                 //"margin-top": "10px"
 	             }
-	             , items :  [ ]
+	             , items :  [this.metadataPanel ]
 	        }
 	    });
 	    
@@ -234,13 +242,17 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
       	formState.endDateField = this.persistPanel.endDateField.getValue();
       	formState.schedulingCronLine = this.persistPanel.schedulingCronLine.getValue();
       	
+    	var meta = this.metadataPanel.getValues()
+      	
+    	formState.meta = Ext.util.JSON.encode(meta);
+    	
       	return formState;
     }
 	
 	,
 	saveDatasetHandler: function () {
 
-//		this.persistPanel.setSchedulingCronLine();
+		this.persistPanel.setSchedulingCronLine();
 		
 		var params = this.getInfoToBeSentToServer();
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
@@ -309,28 +321,24 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		this.persistPanel = new Sbi.qbe.PersistOptions({});
 	}
 	,
-	setSchedulingCronLine : function() {
-		var second, minute, hour, day, month, weekday;
-
-		second = '0';
-		minute = this.getSelection('minute');
-		hour = this.getSelection('hour');
-		day = this.getSelection('day');
-		month = this.getSelection('month');
-		weekday = this.getSelection('weekday');
-		// Support for specifying both a day-of-week and a
-		// day-of-month value is not complete
-		// (you must currently use the '?' character in one of
-		// these fields).
-		if (day == '*' && weekday != '*') {
-			day = '?';
-		} else {
-			weekday = '?';
+	initMetadataPanel : function () {
+		var c = {};
+		this.metadataPanel = new Sbi.qbe.ManageDatasetFieldMetadata(c);
+		var query = this.queries.catalogue.queries[0];
+		var fields = query.fields;
+		
+		// create object in order to reuse code
+		var metadata = new Array();
+		for (var i = 0; i < fields.length; i++) {
+			metadata[i]={};
+			metadata[i].column = fields[i].field;
+			metadata[i].pname = '';
+			
 		}
 
-		Ext.get('schedulingCronLine').dom.value = second + " "
-				+ minute + " " + hour + " " + day + " " + month
-				+ " " + weekday;
+		this.metadataPanel.loadItems({columns: metadata});
+
+	
 	}
 	,
 	getSelection : function(name) {

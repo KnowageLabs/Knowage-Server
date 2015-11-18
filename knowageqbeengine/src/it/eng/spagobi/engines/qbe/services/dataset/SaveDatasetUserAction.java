@@ -36,6 +36,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
@@ -47,6 +48,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -232,6 +234,40 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 		if (getAttributeAsString("schedulingCronLine") != null) {
 			String schedulingCronLine = getAttributeAsString("schedulingCronLine").toString();
 			newDataset.setSchedulingCronLine(schedulingCronLine);
+		}
+
+		String meta = getAttributeAsString("meta");
+
+		try {
+
+			JSONArray metadataArray = JSONUtils.toJSONArray(meta);
+
+			IMetaData metaData = dataset.getMetadata();
+			for (int i = 0; i < metaData.getFieldCount(); i++) {
+				IFieldMetaData ifmd = metaData.getFieldMeta(i);
+				for (int j = 0; j < metadataArray.length(); j++) {
+					// remove dataset source
+					String fieldName = ifmd.getName().substring(ifmd.getName().indexOf(':') + 1);
+
+					if (fieldName.equals((metadataArray.getJSONObject(j)).getString("name"))) {
+						if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+						} else {
+							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+						}
+						break;
+					}
+				}
+			}
+
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			String dsMetadata = dsp.metadataToXML(metaData);
+
+			newDataset.setDsMetadata(dsMetadata);
+
+		} catch (Exception e) {
+			logger.error("Error in calculating metadata");
+			throw new SpagoBIRuntimeException("Error in calculating metadata", e);
 		}
 
 		return newDataset;

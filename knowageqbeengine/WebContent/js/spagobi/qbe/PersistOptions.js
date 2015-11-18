@@ -36,7 +36,7 @@ Sbi.qbe.PersistOptions = function(config) {
 	var defaultSettings = {
 			title : LN('sbi.ds.persist'),
 			itemId : 'persistPanel',
-			width : '100%' // 500,			
+			width : '100%' // 500,		
 	};
 	
 	if (Sbi.settings && Sbi.settings.tools && Sbi.settings.qbe && Sbi.settings.qbe.persistOptions) {
@@ -166,7 +166,7 @@ Ext.extend(
 							bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
 									: 'padding:10px 15px;',
 							xtype : 'checkbox',
-							hidden : true,
+							//hidden : true,
 							style : {
 								"margin-left" : "10px",
 								"margin-top" : "10px",
@@ -409,6 +409,54 @@ Ext.extend(
 							} ]
 				// }
 				} ];
+			
+
+		    	
+				var activateCombo  = new Ext.form.ComboBox({
+					id : 'activateCombo',
+				    fieldLabel :   LN('sbi.ds.persist.cron.chooseDayMode'), //"Choose day mode: ",
+					selectOnFocus:true,
+				    mode : 'local',
+				    triggerAction: 'all',
+				    queryMode:'local',
+					store:[
+					        ['day',LN('sbi.ds.persist.cron.dayMonth')],
+					        ['dayWeek',LN('sbi.ds.persist.cron.dayWeek')]
+					    ],
+					value: 'day',    
+					listeners: {
+					   		'select': {
+					        	fn: function(e){
+					        		var dColumn = Ext.getCmp('dayColumn');
+									var wdColumn = Ext.getCmp('weekDayColumn');
+					        		var dEvery = Ext.getCmp('day-every');
+									var wdEvery = Ext.getCmp('weekday-every');
+
+					        		if(e.value== 'dayWeek'){
+										if (dColumn) {
+											dColumn.setVisible(false);
+										} 
+										if (wdColumn) {
+											wdColumn.setVisible(true);
+										} 	
+										//dEvery.setValue(true);
+					        		}
+					        		else{
+										if (dColumn) {
+											dColumn.setVisible(true);
+										} 
+										if (wdColumn) {
+											wdColumn.setVisible(false);
+										} 					        		
+										//wdEvery.setValue(true);
+					        		}
+					        	}
+					           , scope: this
+							}
+					    }
+					
+				});
+		    	
 				var hourColumn = [ {
 					bodyStyle : 'padding-right:5px;',
 					// items: {
@@ -464,14 +512,15 @@ Ext.extend(
 				// }
 				} ];
 				var dayColumn = [ {
+					id: 'dayColumn',
 					bodyStyle : 'padding-right:5px;',
+					enable : true,
 					// items: {
 					xtype : 'fieldset',
 					title : 'Day',
-					defaultType : 'radio', // each item will be a radio
-											// button
+					defaultType : 'radio', 
 					items : [
-							{
+					         {
 								checked : true,
 								hideLabel : true,
 								boxLabel : LN('sbi.ds.persist.cron.everyday'),
@@ -517,6 +566,64 @@ Ext.extend(
 							} ]
 				// }
 				} ];
+
+				
+				var weekdayColumn = [ {
+					id: 'weekDayColumn',
+					bodyStyle : 'padding-right:5px;',
+					// items: {
+					xtype : 'fieldset',
+					title : 'Weekday',
+					defaultType : 'radio', // each item will be a radio
+					hidden : true,
+					items : [
+							{
+								checked : true,
+								hideLabel : true,
+								boxLabel : LN('sbi.ds.persist.cron.everyweekday'),
+								name : 'weekday-choose',
+								id : 'weekday-every',
+								inputValue : 'every',
+								scope : this,
+								handler : function(ctl, val) {
+									var multiselect = Ext
+											.getCmp('weekdaysMultiselect');
+									if (val) {
+										multiselect.disable();
+										// this.setSchedulingCronLine();
+									} else {
+										multiselect.enable();
+										// this.setSchedulingCronLine();
+									}
+								}
+							},
+							{
+								hideLabel : true,
+								boxLabel : LN('sbi.ds.persist.cron.choose'),
+								name : 'weekday-choose',
+								id : 'weekday-choose',
+								inputValue : 'choose'
+							}, {
+								hideLabel : true,
+								xtype : "multiselect",
+								id : "weekdaysMultiselect",
+								dataFields : [ "value", "text" ],
+								valueField : "value",
+								displayField : "text",
+								width : 75,
+								height : 150,
+								disabled : true,
+								allowBlank : false,
+								store : weekdaysDs,
+								listeners : {
+									// change:
+									// this.setSchedulingCronLine,
+									scope : this
+								}
+							} ]
+				// }
+				} ];
+								
 				var monthColumn = [ {
 					bodyStyle : 'padding-right:5px;',
 					// items: {
@@ -571,60 +678,6 @@ Ext.extend(
 							} ]
 				// }
 				} ];
-				var weekdayColumn = [ {
-					bodyStyle : 'padding-right:5px;',
-					// items: {
-					xtype : 'fieldset',
-					title : 'Weekday',
-					defaultType : 'radio', // each item will be a radio
-											// button
-					items : [
-							{
-								checked : true,
-								hideLabel : true,
-								boxLabel : LN('sbi.ds.persist.cron.everyweekday'),
-								name : 'weekday-choose',
-								id : 'weekday-every',
-								inputValue : 'every',
-								scope : this,
-								handler : function(ctl, val) {
-									var multiselect = Ext
-											.getCmp('weekdaysMultiselect');
-									if (val) {
-										multiselect.disable();
-										// this.setSchedulingCronLine();
-									} else {
-										multiselect.enable();
-										// this.setSchedulingCronLine();
-									}
-								}
-							},
-							{
-								hideLabel : true,
-								boxLabel : LN('sbi.ds.persist.cron.choose'),
-								name : 'weekday-choose',
-								id : 'weekday-choose',
-								inputValue : 'choose'
-							}, {
-								hideLabel : true,
-								xtype : "multiselect",
-								id : "weekdaysMultiselect",
-								dataFields : [ "value", "text" ],
-								valueField : "value",
-								displayField : "text",
-								width : 75,
-								height : 150,
-								disabled : true,
-								allowBlank : false,
-								store : weekdaysDs,
-								listeners : {
-									// change:
-									// this.setSchedulingCronLine,
-									scope : this
-								}
-							} ]
-				// }
-				} ];
 
 				this.schedulingCronLine = new Ext.form.TextField(
 						{
@@ -642,7 +695,8 @@ Ext.extend(
 				var cronPanel = new Ext.form.FieldSet(
 						{
 							autoHeight : true,
-							hidden : true,
+							//hidden : true,
+							disabled : true,
 							title : 'Update: scheduling detail',
 							bodyStyle : Ext.isIE ? 'padding:0 0 5px 15px;'
 									: 'padding:10px 15px;',
@@ -658,6 +712,8 @@ Ext.extend(
 									//datefield,
 									this.startDateField,
 									this.endDateField,
+									activateCombo
+									, 
 									{
 										layout : 'column',
 										border : false,
@@ -671,8 +727,9 @@ Ext.extend(
 										},
 										items : [ minuteColumn,
 												hourColumn, dayColumn,
-												monthColumn,
-												weekdayColumn ]
+												weekdayColumn, 
+												monthColumn
+												]
 									}, this.schedulingCronLine ]
 						});
 				return cronPanel;
@@ -683,20 +740,20 @@ Ext.extend(
 				// var persistSelected = newValue;
 				var persistSelected = checked;
 				if (persistSelected != null && persistSelected == true) {
-					this.persistDetail.setVisible(true);
-					this.isScheduled.setVisible(true);
+					this.persistDetail.setDisabled(false);
+					this.isScheduled.setDisabled(false);
 				} else {
-					this.persistDetail.setVisible(false);
-					this.isScheduled.setVisible(false);
-					this.isScheduled.setValue(false);
+					this.persistDetail.setDisabled(true);
+					this.isScheduled.setDisabled(true);
+					this.schedulingDetail.setDisabled(true);
 				}
 			}
 			,
 			showScheduleForm : function(check, checked) {
 				if (checked) {
-					this.schedulingDetail.setVisible(true);
+					this.schedulingDetail.setDisabled(false);
 				} else {
-					this.schedulingDetail.setVisible(false);
+					this.schedulingDetail.setDisabled(true);
 				}
 			}
 			,
@@ -709,18 +766,33 @@ Ext.extend(
 				second = '0';
 				minute = this.getSelection('minute');
 				hour = this.getSelection('hour');
-				day = this.getSelection('day');
 				month = this.getSelection('month');
-				weekday = this.getSelection('weekday');
+				weekday = this.getSelection('weekday');					
+				day = this.getSelection('day');
+				
+				var isDay = true;
+				var comboChosen = Ext.getCmp('activateCombo').getValue();
+				if(comboChosen == 'dayWeek'){
+					isDay = false;
+				}
+				
 				// Support for specifying both a day-of-week and a
 				// day-of-month value is not complete
 				// (you must currently use the '?' character in one of
 				// these fields).
-				if (day == '*' && weekday != '*') {
-					day = '?';
-				} else {
+				
+				if(isDay == true){
 					weekday = '?';
 				}
+				else{
+					day = '?';
+				}
+				
+//				if (day == '*' && weekday != '*') {
+//					day = '?';
+//				} else {
+//					weekday = '?';
+//				}
 
 				Ext.get('schedulingCronLine').dom.value = second + " "
 						+ minute + " " + hour + " " + day + " " + month

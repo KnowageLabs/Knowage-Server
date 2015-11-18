@@ -46,6 +46,7 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript" src='../js/spagobi/qbe/FilterGridPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/QbeCardsPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/PersistOptions.js'></script>
+<script type="text/javascript" src='../js/spagobi/qbe/ManageDatasetFieldMetadata.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/HavingGridPanel.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/HavingGridDropTarget.js'></script>
 <script type="text/javascript" src='../js/spagobi/qbe/SaveWindow.js'></script>
