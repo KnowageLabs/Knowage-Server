@@ -30,10 +30,10 @@
 
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-	
-	
-	
-	
+
+
+
+
 <script type="text/ng-template" id="dialog1.tmpl.html">
 <md-dialog aria-label="Select type of download"  ng-cloak>
   <form>
@@ -46,23 +46,18 @@
         </md-button>
       </div>
     </md-toolbar>
-	
     <md-dialog-content style="max-width:800px;max-height:810px; ">
-		
      <div class="md-dialog-content">
 		 <md-radio-group ng-show="isWFS" ng-model="typeWFS">
      		 <md-radio-button  value="geojson" >GeoJSON</md-radio-button>
      		 <md-radio-button  value="kml"> KML </md-radio-button>
       		<md-radio-button  value="shp">SHAPEFILE</md-radio-button>
-	
    		 </md-radio-group>
-
 		<md-radio-group ng-show="!isWFS" ng-model="typeWFS">
      		 <md-radio-button value="geojson" class="md-primary">GeoJSON</md-radio-button>
    		 </md-radio-group>
      </div>
     
-	
 	<div class="footer">
 	<md-button style="margin-left:60%;" ng-click="getDownload(selectedLayer)"><md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon></md-button>
 	</div>
@@ -90,29 +85,26 @@
 			</div>
 			</md-toolbar>
 
-			<md-content layout-padding style="background-color: rgb(236, 236, 236);"
-				class="ToolbarBox miniToolbar noBorder leftListbox"> 
-				<angular-table  class="mozTable"
-				layout-fill id='layerlist' ng-model=layerList
+			<md-content layout-padding
+				style="background-color: rgb(236, 236, 236);"
+				class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table
+				class="mozTable" layout-fill id='layerlist' ng-model=layerList
 				columns='["name","type", "layerURL","icon"]'
 				columnsSearch='["name","type", "layerURL"]' show-search-bar=true
 				highlights-selected-item=true click-function="loadLayerList(item);"
-				menu-option=menuLayer
-				scope-functions=tableFunction > 
-				</angular-table> 
-			</md-content>
+				menu-option=menuLayer scope-functions=tableFunction>
+			</angular-table> </md-content>
 
 		</div>
-		</left-col> 
-		<right-col> <!-- 
+		</left-col> <right-col> <!-- 
 					RIGHT 
 					-->
 
-		<div ng-show="showme">
+		<div  ng-show="showme">
 
 			<form name="forms.contactForm" layout-fill id="layerform"
 				ng-submit="forms.contactForm.$valid && saveLayer()"
-				class="detailBody md-whiteframe-z1" novalidate>
+				class="detailBody mozSize md-whiteframe-z1" novalidate>
 
 				<md-toolbar class="md-blue minihead">
 				<div class="md-toolbar-tools h100 ">
@@ -130,22 +122,26 @@
 					</div>
 				</div>
 				</md-toolbar>
-				
-				<md-tabs md-select="Layer" md-dynamic-height  class="mozScroll hideTabs h100" md-border-bottom > 
-				<md-tab label="Layer"  md-on-select="setTab('Layer')" md-active="isSelectedTab('Layer')"> 
-				<md-content flex style="margin-left:20px;" class=" ToolbarBox miniToolbar noBorder mozTable ">
-	
-					<div layout="row" layout-wrap>
+
+				<md-tabs md-select="Layer" md-dynamic-height
+					class="mozScroll hideTabs h100" md-border-bottom> <md-tab
+					label="Layer" md-on-select="setTab('Layer')"
+					md-active="isSelectedTab('Layer')"> <md-content flex
+					style="margin-left:20px;"
+					class=" ToolbarBox miniToolbar noBorder mozTable ">
+
+				<div layout="row" layout-wrap>
 					<!--<div flex=3 style="margin-top: 30px;">
 						<md-icon md-font-icon="fa fa-flag-o"></md-icon>
 					</div>
 				-->
 					<div flex=25>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.glossary.category")}}</label>
-						<md-select aria-label="aria-label"
-							ng-model="selectedLayer.category_id"> <md-option
-							ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
-						</md-select> </md-input-container>
+							<md-select aria-label="aria-label"
+								ng-model="selectedLayer.category_id"> <md-option
+								ng-repeat="ct in category" value="{{ct.VALUE_ID}}">{{ct.VALUE_NM}}</md-option>
+							</md-select> 
+						</md-input-container>
 					</div>
 				</div>
 
@@ -156,9 +152,10 @@
 					-->
 					<div flex=100>
 						<md-input-container class="small counter" class="small counter">
-						<label>{{translate.load("sbi.behavioural.lov.details.label")}}</label>
-						<input class="input_class" ng-model="selectedLayer.label" required
-							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+							<label>{{translate.load("sbi.behavioural.lov.details.label")}}</label>
+							<input class="input_class" ng-model="selectedLayer.label" required
+								maxlength="100" ng-maxlength="100" md-maxlength="100"> 
+						</md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap>
@@ -168,8 +165,9 @@
 					  -->
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
-						<input class="input_class" ng-model="selectedLayer.name" required
-							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+							<input class="input_class" ng-model="selectedLayer.name" required
+								maxlength="100" ng-maxlength="100" md-maxlength="100"> 
+						</md-input-container>
 					</div>
 				</div>
 				<div layout="row" layout-wrap>
@@ -204,13 +202,14 @@
 					 -->
 					<div flex=25>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.type")}}</label>
-						<md-select
-							placeholder='{{translate.load("sbi.generic.select")}} {{translate.load("sbi.tools.layer.props.type")}}'
-							ng-required="isRequired" ng-mouseleave="isRequired=true"
-							ng-show="flagtype" aria-label="aria-label"
-							ng-model="selectedLayer.type" ng-change=""> <md-option
-							ng-repeat="type in listType" value="{{type.value}}">{{type.label}}</md-option>
-						</md-select> </md-input-container>
+							<md-select
+								placeholder='{{translate.load("sbi.generic.select")}} {{translate.load("sbi.tools.layer.props.type")}}'
+								ng-required="isRequired" ng-mouseleave="isRequired=true"
+								ng-show="flagtype" aria-label="aria-label"
+								ng-model="selectedLayer.type" ng-change=""> <md-option
+								ng-repeat="type in listType" value="{{type.value}}">{{type.label}}</md-option>
+							</md-select> 
+						</md-input-container>
 					</div>
 				</div>
 				<div style="margin-top: 0px; margin-left: 15px;">
@@ -227,8 +226,8 @@
 
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.label")}}</label>
-						<input class="input_class" ng-model="selectedLayer.layerLabel"
-							required maxlength="100" ng-maxlength="100" md-maxlength="100">
+							<input class="input_class" ng-model="selectedLayer.layerLabel"
+								required maxlength="100" ng-maxlength="100" md-maxlength="100">
 						</md-input-container>
 					</div>
 				</div>
@@ -240,8 +239,8 @@
 					-->
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.name")}}</label>
-						<input class="input_class" ng-model="selectedLayer.layerName"
-							required maxlength="100" ng-maxlength="100" md-maxlength="100">
+							<input class="input_class" ng-model="selectedLayer.layerName"
+								required maxlength="100" ng-maxlength="100" md-maxlength="100">
 						</md-input-container>
 					</div>
 				</div>
@@ -253,8 +252,8 @@
 					  -->
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.id")}}</label>
-						<input class="input_class" ng-model="selectedLayer.layerIdentify"
-							required maxlength="100" ng-maxlength="100" md-maxlength="100">
+							<input class="input_class" ng-model="selectedLayer.layerIdentify"
+								required maxlength="100" ng-maxlength="100" md-maxlength="100">
 						</md-input-container>
 					</div>
 				</div>
@@ -265,19 +264,16 @@
 						<md-icon md-font-icon="fa fa-spinner"></md-icon>
 					</div> -->
 					<div flex=100>
-						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.order")}}</label>
-						<input class="input_class" ng-model="selectedLayer.layerOrder"
-							required type="number" min="0"> </md-input-container>
+						<md-input-container class="small counter"> 
+							<label>{{translate.load("sbi.tools.layer.props.order")}}</label>
+							<input class="input_class" ng-model="selectedLayer.layerOrder" required type="number" min="0"> 
+						</md-input-container>
 					</div>
 				</div>
 				<br>
 				<div layout="row" layout-wrap ng-show="pathFileCheck"
 					style="margin-top: -15px;">
-
-					<p>
-						File location: <b>{{selectedLayer.pathFile}}</b>
-					</p>
-
+					<p>{{translate.load("sbi.layer.pathfile")}}: <b>{{selectedLayer.pathFile}}</b></p>
 				</div>
 
 				<!-- inizio campi variabili -->
@@ -287,9 +283,10 @@
 					</div>
 					  -->
 					<div flex=100>
-						<md-input-container class="small counter"> <input
-							id="layerFile" ng-model="selectedLayer.layerFile" type="file"
-							fileread="selectedLayer.layerFile" accept=".json"> </md-input-container>
+						<md-input-container class="small counter"> 
+							<input id="layerFile" ng-model="selectedLayer.layerFile" type="file"
+							fileread="selectedLayer.layerFile" accept=".json"> 
+						</md-input-container>
 
 					</div>
 				</div>
@@ -302,9 +299,10 @@
 					 -->
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.url")}}</label>
-						<input class="input_class" placeholder="Es:http://www.google.it"
+							<input class="input_class" placeholder="Es:http://www.google.it"
 							type="url" ng-model="selectedLayer.layerURL" required
-							maxlength="500" ng-maxlength="500" md-maxlength="500"> </md-input-container>
+							maxlength="500" ng-maxlength="500" md-maxlength="500"> 
+						</md-input-container>
 
 
 					</div>
@@ -316,8 +314,8 @@
 					</div>  -->
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.options")}}</label>
-						<input class="input_class" ng-model="selectedLayer.layerOptions"
-							required maxlength="100" ng-maxlength="100" md-maxlength="100">
+							<input class="input_class" ng-model="selectedLayer.layerOptions"
+								required maxlength="100" ng-maxlength="100" md-maxlength="100">
 						</md-input-container>
 					</div>
 				</div>
@@ -327,8 +325,8 @@
 					</div>  -->
 					<div flex=100>
 						<md-input-container class="small counter"> <label>{{translate.load("sbi.tools.layer.props.params")}}</label>
-						<input class="input_class" ng-model="selectedLayer.layerParams"
-							required maxlength="100" ng-maxlength="100" md-maxlength="100">
+							<input class="input_class" ng-model="selectedLayer.layerParams"
+								required maxlength="100" ng-maxlength="100" md-maxlength="100">
 						</md-input-container>
 					</div>
 				</div>
@@ -368,11 +366,13 @@
 			</form>
 
 			</md-tab>
-			<md-tab label="Filter" md-on-select="setTab('Filter')" md-active="isSelectedTab('Filter')" ng-click="loadFilter();"> <md-toolbar
-				class="md-blue minihead " style="border-bottom: 2px solid grey;">
+			<md-tab label="Filter" md-on-select="setTab('Filter')"
+				md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
+			<md-toolbar class="md-blue minihead "
+				style="border-bottom: 2px solid grey;">
 
 			<div class="md-toolbar-tools" layout="row" layout-wrap layout-fill>
-				<div flex=50  style="font-size: 16px;">
+				<div flex=50 style="font-size: 16px;">
 					<h2>{{translate.load("sbi.layerfilter");}}</h2>
 				</div>
 				<div flex=50 style="font-size: 16px;">
@@ -382,27 +382,25 @@
 			</md-toolbar> <md-content layout-padding style="background-color: #F1F1F1;"
 				class="ToolbarBox miniToolbar noBorder leftListbox">
 			<div layout="row" layout-wrap layout-fill>
-				<div flex=50 >
-					<angular-list class="mozSelect" style="margin-left: 55px;" flex="25" layout-fill
-						id='sx' ng-model=filter item-name='property'
+				<div flex=50>
+					<angular-list class="mozSelect" style="margin-left: 55px;"
+						flex="25" layout-fill id='sx' ng-model=filter item-name='property'
 						click-function="addFilter(item)" show-search-bar=true />
 				</div>
-				<div flex=50 >
-					<angular-list class="mozSelect" style="margin-left: 55px;" flex="35" layout-fill
-						id='right' ng-model=filter_set item-name='property'
-						click-function="removeFilter(item)" show-search-bar=true
-						speed-menu-option="removeIcon" />
+				<div flex=50>
+					<angular-list class="mozSelect" style="margin-left: 55px;"
+						flex="35" layout-fill id='right' ng-model=filter_set
+						item-name='property' click-function="removeFilter(item)"
+						show-search-bar=true speed-menu-option="removeIcon" />
 
 				</div>
 			</div>
 			</md-content> </md-tab>
-		
 			</md-tabs>
 		</div>
-		
-		
-		</right-col> 
-		</angular-2-col>
+
+
+		</right-col> </angular-2-col>
 	</div>
 </body>
 </html>
