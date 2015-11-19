@@ -30,6 +30,46 @@
 
 <script type="text/javascript"
 	src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+	
+	
+	
+	
+<script type="text/ng-template" id="dialog1.tmpl.html">
+<md-dialog aria-label="Select type of download"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Select type of download</h1>
+        <span flex></span>
+        <md-button  ng-click="closeFilter()">
+          <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+	
+    <md-dialog-content style="max-width:800px;max-height:810px; ">
+		
+     <div class="md-dialog-content">
+		 <md-radio-group ng-show="isWFS" ng-model="typeWFS">
+     		 <md-radio-button  value="geojson" >GeoJSON</md-radio-button>
+     		 <md-radio-button  value="kml"> KML </md-radio-button>
+      		<md-radio-button  value="shp">SHAPEFILE</md-radio-button>
+	
+   		 </md-radio-group>
+
+		<md-radio-group ng-show="!isWFS" ng-model="typeWFS">
+     		 <md-radio-button value="geojson" class="md-primary">GeoJSON</md-radio-button>
+   		 </md-radio-group>
+     </div>
+    
+	
+	<div class="footer">
+	<md-button style="margin-left:60%;" ng-click="getDownload(selectedLayer)"><md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon></md-button>
+	</div>
+   	 </md-dialog-content>
+  </form>
+</md-dialog>
+</script>
 </head>
 
 
@@ -50,14 +90,17 @@
 			</div>
 			</md-toolbar>
 
-			<md-content layout-padding
-				style="background-color: rgb(236, 236, 236);"
-				class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table  class="mozTable"
+			<md-content layout-padding style="background-color: rgb(236, 236, 236);"
+				class="ToolbarBox miniToolbar noBorder leftListbox"> 
+				<angular-table  class="mozTable"
 				layout-fill id='layerlist' ng-model=layerList
-				columns='["name","type", "layerURL"]'
+				columns='["name","type", "layerURL","icon"]'
 				columnsSearch='["name","type", "layerURL"]' show-search-bar=true
-				highlights-selected-item=true click-function="loadLayerList(item);activeTab='Layer';"
-				menu-option=menuLayer></angular-table> </md-content>
+				highlights-selected-item=true click-function="loadLayerList(item);"
+				menu-option=menuLayer
+				scope-functions=tableFunction > 
+				</angular-table> 
+			</md-content>
 
 		</div>
 		</left-col> 
@@ -353,6 +396,7 @@
 				</div>
 			</div>
 			</md-content> </md-tab>
+		
 			</md-tabs>
 		</div>
 		

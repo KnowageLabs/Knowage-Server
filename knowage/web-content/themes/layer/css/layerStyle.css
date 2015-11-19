@@ -57,6 +57,9 @@ li:hover {
 	color:blue !important;
 }
 
+md-content.ToolbarBox.miniToolbar {
+    height: calc(100% - 71px) !important;
+}
 
 
 

@@ -6,18 +6,6 @@
 
 package it.eng.spagobi.mapcatalogue.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
-import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +37,18 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
+import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/layers")
 public class LayerCRUD {
@@ -123,6 +123,38 @@ public class LayerCRUD {
 
 		// obj.put("result", properties.toString());
 		return prop.toString();
+	}
+
+	@GET
+	@Path("/getDownload")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDownload(@Context HttpServletRequest req) throws JSONException {
+		Object id = null;
+		Integer layerId = null;
+		String typeWFS = null;
+		String request;
+		String[] requestSplit;
+		try {
+
+			// id = req.getParameter("id");
+			request = req.getParameter("id");
+			requestSplit = request.split(",");
+			id = requestSplit[0];
+			requestSplit[1] = requestSplit[1].replaceAll("typeWFS=", "");
+			typeWFS = requestSplit[1];
+			if (id == null || id.equals("")) {
+				throw new SpagoBIRuntimeException("The layer id passed in the request is null or empty");
+			}
+			layerId = new Integer(id.toString());
+		} catch (Exception e) {
+			logger.error("error loading filter", e);
+			throw new SpagoBIRuntimeException("error request", e);
+		}
+
+		logger.debug("Deleting the layer");
+		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
+		JSONObject content = dao.getContentforDownload(layerId, typeWFS);
+		return "" + content + "";
 	}
 
 	@GET
@@ -522,8 +554,8 @@ public class LayerCRUD {
 	@Path("/getLayerFromList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	// {items:["layername1","layername2",....]}
-	public String getLayerFromList(@Context HttpServletRequest req) throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException,
-			IOException {
+	public String getLayerFromList(@Context HttpServletRequest req)
+			throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException, IOException {
 		ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);

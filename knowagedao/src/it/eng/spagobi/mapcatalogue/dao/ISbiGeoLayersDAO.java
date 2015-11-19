@@ -6,16 +6,17 @@
 package it.eng.spagobi.mapcatalogue.dao;
 
 import java.io.IOException;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 
 public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
@@ -31,8 +32,6 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public ArrayList<String> getProperties(int layerId);
 
-	public ArrayList<String> getPropertiesURL(String url) throws IOException, JSONException;
-
 	public void eraseLayer(Integer layerId) throws EMFUserError, JSONException;
 
 	public void eraseRole(Integer roleId, Integer layerId) throws EMFUserError;
@@ -40,4 +39,10 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 	public List<GeoLayer> loadAllLayers(String[] listLabel) throws EMFUserError, JSONException, UnsupportedEncodingException;
 
 	public String getDescribeFeatureTypeURL(String url);
+
+	public String getOutputFormatKML(String url);
+
+	public String getOutputFormatSHP(String url);
+
+	public JSONObject getContentforDownload(int layerId, String typeWFS);
 }

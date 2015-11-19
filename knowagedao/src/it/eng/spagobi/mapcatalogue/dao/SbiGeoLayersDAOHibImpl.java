@@ -5,15 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,8 +14,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,6 +30,15 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -451,43 +449,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	}
 
 	@Override
-	public ArrayList<String> getPropertiesURL(String urlInput) throws IOException, JSONException {
-		URL url = new URL(urlInput);
-
-		Proxy proxy = null;
-		String proxyHost = System.getProperty("http.proxyHost");
-		String proxyPort = System.getProperty("http.proxyPort");
-		if (proxyHost != null && proxyPort != null) {
-			proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, new Integer(proxyPort)));
-		}
-
-		HttpURLConnection httpcon = (HttpURLConnection) url.openConnection(proxy);
-
-		// httpcon.setRequestMethod("GET");
-		httpcon.setConnectTimeout(600000);
-		BufferedReader in = new BufferedReader(new InputStreamReader(httpcon.getInputStream()));
-		String inputLine;
-		ArrayList<String> keys = new ArrayList<String>();
-		while ((inputLine = in.readLine()) != null) {
-			JSONObject obj = new JSONObject(inputLine);
-			JSONArray content = (JSONArray) obj.get("featureTypes");
-			for (int j = 0; j < content.length(); j++) {
-				obj = content.getJSONObject(j).getJSONObject("properties");
-				Iterator it = obj.keys();
-				while (it.hasNext()) {
-					String key = (String) it.next();
-					if (!keys.contains(key)) {
-						keys.add(key);
-					}
-				}
-			}
-
-		}
-		in.close();
-		return keys;
-	}
-
-	@Override
 	public ArrayList<String> getProperties(int layerId) {
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -663,6 +624,79 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		}
 	}
 
+	@Override
+	public JSONObject getContentforDownload(int layerId, String typeWFS) {
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		JSONObject obj = null;
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+			int i;
+
+			GeoLayer aLayer = loadLayerByID(layerId);
+			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
+
+			if (!layerDef.get("layer_file").equals("null")) {
+				File doc = new File(layerDef.getString("layer_file"));
+				URL path = doc.toURI().toURL();
+				InputStream inputstream = path.openStream();
+				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
+				String c;
+
+				do {
+					c = br.readLine();
+					obj = new JSONObject(c);
+					System.out.println(obj);
+				} while (c != null);
+			}
+			// se dobbiamo prendere le properties di un wfs
+			if (!layerDef.get("layer_url").equals(null)) {
+				if (typeWFS.equals("kml")) {
+					URL url = new URL(getOutputFormatKML(layerDef.getString("layer_url")));
+					obj = new JSONObject();
+					obj.put("url", url.toString());
+					return obj;
+				} else if (typeWFS.equals("shp")) {
+					URL url = new URL(getOutputFormatSHP(layerDef.getString("layer_url")));
+					obj = new JSONObject();
+					obj.put("url", url.toString());
+					return obj;
+				}
+				URL url = new URL(layerDef.getString("layer_url"));
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+				connection.setRequestMethod("GET");
+				connection.setDoOutput(true);
+				connection.setDoInput(true);
+				connection.setRequestProperty("CetRequestProperty(ontent-Type", "application/json");
+				connection.setRequestProperty("Accept", "application/json");
+				// connection.setReadTimeout(30 * 1000);
+				connection.connect();
+				int HttpResult = connection.getResponseCode();
+				StringBuilder sb = new StringBuilder();
+				if (HttpResult == HttpURLConnection.HTTP_OK) {
+
+					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
+					String inputLine;
+					while ((inputLine = br.readLine()) != null) {
+						obj = new JSONObject(inputLine);
+
+					}
+					br.close();
+				} else {
+					System.out.println("http non ok");
+					System.out.println(connection.getResponseMessage());
+				}
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+
 	/**
 	 * Load all layers.
 	 *
@@ -762,12 +796,29 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		return realResult;
 	}
 
-
 	@Override
 	public String getDescribeFeatureTypeURL(String url) {
 		int indexOfRequest = url.indexOf("request=GetFeature");
 		if (indexOfRequest > 0) {
 			url = url.replaceAll("request=GetFeature", "request=DescribeFeatureType");
+		}
+		return url;
+	}
+
+	@Override
+	public String getOutputFormatKML(String url) {
+		int indexOfRequest = url.indexOf("&outputFormat=application%2Fjson");
+		if (indexOfRequest > 0) {
+			url = url.replaceAll("&outputFormat=application%2Fjson", "&outputFormat=application%2Fvnd.google-earth.kml%2Bxml");
+		}
+		return url;
+	}
+
+	@Override
+	public String getOutputFormatSHP(String url) {
+		int indexOfRequest = url.indexOf("&outputFormat=application%2Fjson");
+		if (indexOfRequest > 0) {
+			url = url.replaceAll("&outputFormat=application%2Fjson", "&outputFormat=SHAPE-ZIP");
 		}
 		return url;
 	}

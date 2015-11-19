@@ -1,4 +1,3 @@
-
 var app = angular.module('layerWordManager', [ 'ngMaterial', 'ui.tree',
                                                'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
@@ -20,6 +19,7 @@ var EmptyLayer = {
 		layerLabel: "",
 		layerName: "",
 		layerId2: "",	
+		icon:"",
 		roles:[],
 
 };
@@ -65,6 +65,19 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.filter_set=[];
 	$scope.forms = {};
 	$scope.selectedTab = 0;
+	$scope.typeWFS='geojson';
+	
+	$scope.tableFunction={
+			
+			download: function(item,evt){
+				evt.stopPropagation();
+				console.log("Download .....");
+				console.log(item);
+				$scope.showDetails(item);
+			//	$scope.getDownload(item);
+			}
+	}
+	
 	
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
@@ -78,7 +91,15 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 						console.log("layer non Ottenuti");
 					} else {
 						$scope.layerList = data.root;
-
+						for(var i=0; i<$scope.layerList.length;i++){
+							console.log($scope.layerList[i]);
+							if($scope.layerList[i].type == "WFS" || $scope.layerList[i].type == "File" ){
+								console.log("setto icon");
+								$scope.layerList[i].icon = '<md-button ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
+							} else{
+								$scope.layerList[i].icon = '';
+							}
+						}
 
 					}
 
@@ -88,7 +109,9 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				})
 
 	}
-
+	
+	
+	
 	$scope.listType = [
 	                   {value : 'File', label : sbiModule_translate.load("sbi.tools.layer.props.type.file")},
 	                   {value : 'WFS', label: sbiModule_translate.load("sbi.tools.layer.props.type.wfs")},
@@ -272,20 +295,20 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 										sbiModule_translate.load("sbi.general.cancel"));
 
 				$mdDialog.show(confirm).then(function() {
-					if(item.pathFile == null){
+					if(item.pathFile!=null){
+						//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
+						console.log("true");
+						$scope.pathFileCheck =true;
+					} else{
 						console.log("false");
 						$scope.pathFileCheck = false;
-						
-					} else{
-						//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
-						console.log("true pathFile!=null");
-						$scope.pathFileCheck =true;
 					}
 					$scope.flag=true;
 					//$scope.filter_set=[];
 					$scope.loadRolesItem(item);
 					$scope.selectedLayer = angular.copy(item);
-			
+					
+				
 					$scope.object_temp = angular.copy(item);
 					
 
@@ -296,7 +319,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 			}  else {
 				if(item.pathFile!=null){
 					//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
-					console.log("true pathFile!=null");
+					console.log("true");
 					console.log(item.pathFile);
 					$scope.pathFileCheck =true;
 				} else{
@@ -306,6 +329,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				$scope.flag = true;
 				$scope.loadRolesItem(item);
 				$scope.selectedLayer = angular.copy(item);
+				
 				
 				$scope.object_temp = angular.copy($scope.selectedLayer);
 		
@@ -385,7 +409,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	
 	$scope.loadFilterAdded = function(){
-		console.log("de ntro loadFilterAdded");
+		
 		$scope.filter_set = [];
 		
 		if($scope.selectedLayer.properties){
@@ -394,15 +418,15 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				var prop = $scope.selectedLayer.properties[i];
 				var obj={"property":prop};
 				$scope.filter_set.push(obj );
-				console.log(obj);
 			}
 		}
-		console.log("esco loadFilterAdded");
-		console.log($scope.filter_set);
+		
 	}
+	
+	
+	 
 	$scope.loadRolesItem = function(item){
-		console.log("chiamata loadRolesItem");
-		console.log(item);
+	
 		sbiModule_restServices.post("layers", "postitem", item).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
@@ -661,10 +685,79 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		$scope.rolesItem=[];
 		$scope.filter_set=[];
 		$scope.filter =[];
-		$scope.setTab('Layer');
+		
 		
 	}
-	
+	 $scope.getDownload=function(item){
+		 
+		 if($scope.typeWFS == 'geojson'){
+				console.log($scope.typeWFS);
+			}else if($scope.typeWFS == 'kml'){
+				console.log($scope.typeWFS);
+				
+			}else if($scope.typeWFS == 'shp'){
+				console.log($scope.typeWFS);
+			}
+		 sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log("layer non Ottenuti");
+						} else {
+							var text ;						
+								
+							if($scope.typeWFS == 'geojson'){
+								text = JSON.stringify(data);		
+								var anchor = angular.element('<a/>');
+							     anchor.attr({
+							         href: 'data:text/json;charset=utf-8,' + encodeURI(text),
+							         target: '_blank',
+							         download: item.label+".json"
+							     })[0].click();
+							     
+							} else if($scope.typeWFS == 'kml'){
+								window.open(data.url,'_blank');
+							} else if($scope.typeWFS == 'shp'){
+								window.open(data.url,'_blank');
+							}
+							$scope.closeFilter();
+						}
+					}).error(function(data, status, headers, config) {
+						console.log("layer non Ottenuti " + status);
+
+					});
+					
+	 }
+	 
+	 $scope.showDetails = function(item){
+		 $scope.selectedLayer=item;	
+		 
+		 if(item.type=='WFS'){
+			 $scope.isWFS=true; 
+		 } else{
+			 $scope.isWFS=false;
+			 $scope.typeWFS='geojson';
+		 }
+		 
+		  $mdDialog.show({
+		      templateUrl: 'dialog1.tmpl.html',
+		      scope:$scope,
+		      preserveScope: true,
+		      targetEvent:item,
+		      parent: angular.element(document.body),
+		      clickOutsideToClose:true
+		    })
+		    
+		    .then(function(answer) {
+		      $scope.status = 'You said the information was "' + answer + '".';
+		    }, function() {
+		      $scope.status = 'You cancelled the dialog.';
+		    });
+	  }
+	 $scope.setTypeWFS = function(val){
+		 $scope.typeWFS = val;
+		 console.log($scope.typeWFS);
+	 }
 	$scope.showAdvanced = function(ev) {
 	    $mdDialog.show({
 	      templateUrl: 'dialog1.tmpl.html',
@@ -699,20 +792,34 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	  }
 	  $scope.removeFilter = function(item){
 		  var index = $scope.filter_set.indexOf(item);
-		  
 		  $scope.filter_set.splice(index,1);
 		  $scope.filter.push(item);
 	  }
 	  $scope.removeIcon = [{
+		 
 			label: sbiModule_translate.load("sbi.federationdefinition.delete"),
 			icon:"fa fa-trash-o",
 			backgroundColor:'red',
 			action : function(ev) {
+				console.log("ciaooooo");
+				console.log(ev);
 				 $scope.removeFilter(ev);
 				}
 		}];
 	  
-	  
+/*	  $scope.info = [{
+           		label: sbiModule_translate.load("sbi.federationdefinition.info"),
+           		icon:"fa fa-info-circle",
+           		backgroundColor:'green',
+           		action : function(ev) {
+           			console.log("hola");
+    				console.log(ev);
+           				$scope.showDetails(ev);
+           			}  
+	  }]
+	 */ 
+	 
+	 
 	  $scope.setTab = function(Tab){
 		  $scope.selectedTab = Tab;
 	  }
