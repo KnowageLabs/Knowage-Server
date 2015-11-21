@@ -38,9 +38,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Path("/LOV")
-public class ListOfValues {
+public class LovCRUD {
 
-	static private Logger logger = Logger.getLogger(ListOfValues.class);
+	static private Logger logger = Logger.getLogger(LovCRUD.class);
 
 	@SuppressWarnings("unchecked")
 	@GET
@@ -128,6 +128,35 @@ public class ListOfValues {
 
 			// return Response.ok().build();
 			return Integer.toString(newID);
+
+		} catch (Exception exception) {
+
+			logger.error("Error while posting LOV", exception);
+			throw new SpagoBIServiceException("Error while posting LOV", exception);
+
+		}
+	}
+
+	@POST
+	@Path("/deleteSmth")
+	// @Produces(MediaType.APPLICATION_JSON)
+	public void remove(@Context HttpServletRequest servletRequest) {
+
+		try {
+
+			JSONObject requestJSONObject = RestUtilities.readBodyAsJSONObject(servletRequest);
+			ModalitiesValue modVal = recoverModalitiesValueDetails(requestJSONObject);
+			IModalitiesValueDAO modalitiesDAO = DAOFactory.getModalitiesValueDAO();
+
+			modalitiesDAO.eraseModalitiesValue(modVal);
+
+			logger.debug("OUT: Posting the LOV - done successfully");
+
+			// int newID = modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getId();
+
+			// return Response.ok().build();
+			System.out.println(modalitiesDAO.loadAllModalitiesValue().toString());
+			// return modalitiesDAO.loadAllModalitiesValue().toString();
 
 		} catch (Exception exception) {
 
@@ -249,11 +278,18 @@ public class ListOfValues {
 
 		Integer id = -1;
 
-		String idString = (String) requestBodyJSON.opt("LOV_ID");
+		String idString = "";
 
-		if (idString != null && idString != "") {
-			id = new Integer(idString);
+		if (requestBodyJSON.opt("LOV_ID").getClass() == Integer.class) {
+			// idString = Integer.toString((int) requestBodyJSON.opt("LOV_ID"));
+			id = (Integer) requestBodyJSON.opt("LOV_ID");
+		} else {
+			id = new Integer((String) requestBodyJSON.opt("LOV_ID"));
 		}
+
+		// if (idString != null && idString != "") {
+		// id = new Integer(idString);
+		// }
 
 		String lovName = (String) requestBodyJSON.opt("LOV_NAME");
 		String lovDecription = (String) requestBodyJSON.opt("LOV_DESCRIPTION");
