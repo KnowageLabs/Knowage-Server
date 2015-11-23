@@ -74,8 +74,7 @@ public final class DataSetServiceProxy extends AbstractServiceProxy {
 
 	public DataSetServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token, String pass,
 			MetamodelServiceProxy metamodelServiceProxy, HttpSession session) {
-		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass);
-		this.metamodelServiceProxy = metamodelServiceProxy;
+		this(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token, pass, metamodelServiceProxy);
 		this.session = session;
 	}
 
