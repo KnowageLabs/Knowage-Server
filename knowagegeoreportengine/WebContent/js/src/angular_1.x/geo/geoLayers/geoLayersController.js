@@ -3,7 +3,7 @@
  *
  */
 
-angular.module('geo_module')
+angular.module('geoModule')
 .directive('geoLayers',function(sbiModule_config){
 	return{
 		 restrict: "E",
@@ -21,41 +21,41 @@ angular.module('geo_module')
 		}
 	}
 })
-function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$mdDialog,$timeout,baseLayer,layerServices,sbiModule_restServices,sbiModule_logger,geo_template,geoConstant){
-	$scope.layerServices=layerServices;
+function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$mdDialog,$timeout,baseLayer,geoModule_layerServices,sbiModule_restServices,sbiModule_logger,geoModule_template,geoModule_constant){
+	$scope.geoModule_layerServices=geoModule_layerServices;
 	$scope.layers={};
 	$scope.openLayersMenu=false;
 	$scope.baseLayers=baseLayer;
 	$scope.loadLayerFromTemplate=function(){
-		//if geo_template has baseLayersConf, add them to layerlist
-		if(geo_template.hasOwnProperty("baseLayersConf") && geo_template.baseLayersConf.length!=0 ){
-			$scope.baseLayers[geoConstant.templateLayer]={};
-			$scope.layers[geoConstant.templateLayer]={};
-			for(var i=0;i<geo_template.baseLayersConf.length;i++){
-				geo_template.baseLayersConf[i].category={valueNm: geoConstant.templateLayer};
+		//if geoModule_template has baseLayersConf, add them to layerlist
+		if(geoModule_template.hasOwnProperty("baseLayersConf") && geoModule_template.baseLayersConf.length!=0 ){
+			$scope.baseLayers[geoModule_constant.templateLayer]={};
+			$scope.layers[geoModule_constant.templateLayer]={};
+			for(var i=0;i<geoModule_template.baseLayersConf.length;i++){
+				geoModule_template.baseLayersConf[i].category={valueNm: geoModule_constant.templateLayer};
 				
-				if(geo_template.baseLayersConf[i].hasOwnProperty("baseLayer") && geo_template.baseLayersConf[i].baseLayer==true){
-					$scope.baseLayers[geoConstant.templateLayer][geo_template.baseLayersConf[i].label]=geo_template.baseLayersConf[i];
+				if(geoModule_template.baseLayersConf[i].hasOwnProperty("baseLayer") && geoModule_template.baseLayersConf[i].baseLayer==true){
+					$scope.baseLayers[geoModule_constant.templateLayer][geoModule_template.baseLayersConf[i].label]=geoModule_template.baseLayersConf[i];
 				}else{
-					$scope.layers[geoConstant.templateLayer][geo_template.baseLayersConf[i].label]=geo_template.baseLayersConf[i];
+					$scope.layers[geoModule_constant.templateLayer][geoModule_template.baseLayersConf[i].label]=geoModule_template.baseLayersConf[i];
 				}
 			}
 			
-			if(Object.keys($scope.baseLayers[geoConstant.templateLayer]).length==0){
+			if(Object.keys($scope.baseLayers[geoModule_constant.templateLayer]).length==0){
 				// delete category in baseLayers if empty
-				delete $scope.baseLayers[geoConstant.templateLayer];
+				delete $scope.baseLayers[geoModule_constant.templateLayer];
 			}
-			if(Object.keys($scope.layers[geoConstant.templateLayer]).length==0){
+			if(Object.keys($scope.layers[geoModule_constant.templateLayer]).length==0){
 				// delete category in layers if empty
-				delete $scope.layers[geoConstant.templateLayer];
+				delete $scope.layers[geoModule_constant.templateLayer];
 			}
 		}
 		
 		
-		if(geo_template.hasOwnProperty("layersLoaded") && geo_template.layersLoaded.length!=0){
+		if(geoModule_template.hasOwnProperty("layersLoaded") && geoModule_template.layersLoaded.length!=0){
 			//load from catalogue
 			sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
-	    	sbiModule_restServices.post("layers", 'getLayerFromList',{items: geo_template.layersLoaded}).success(
+	    	sbiModule_restServices.post("layers", 'getLayerFromList',{items: geoModule_template.layersLoaded}).success(
 			function(data, status, headers, config) {
 	
 				sbiModule_logger.trace("layer caricati",data);
@@ -99,18 +99,18 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 	
 	$scope.initBaseLayer=function(){
 		var finded=false;
-		if(geo_template.hasOwnProperty('selectedBaseLayer')){
-			if($scope.baseLayers[geoConstant.templateLayer].hasOwnProperty(geo_template.selectedBaseLayer)){
+		if(geoModule_template.hasOwnProperty('selectedBaseLayer')){
+			if($scope.baseLayers[geoModule_constant.templateLayer].hasOwnProperty(geoModule_template.selectedBaseLayer)){
 				//search if the selectedBaseLayer is in template layers prev loaded
-				layerServices.alterBaseLayer($scope.baseLayers[geoConstant.templateLayer][geo_template.selectedBaseLayer]); 
+				geoModule_layerServices.alterBaseLayer($scope.baseLayers[geoModule_constant.templateLayer][geoModule_template.selectedBaseLayer]); 
 				finded=true;
 			}else{
 				//search in baseLayers
 				for(cat in $scope.baseLayers){
-					if(cat!=geoConstant.templateLayer){
+					if(cat!=geoModule_constant.templateLayer){
 		    			for(lay in $scope.baseLayers[cat] ){
-		    				if(lay==geo_template.selectedBaseLayer){
-		    					layerServices.alterBaseLayer($scope.baseLayers[cat][lay]); 
+		    				if(lay==geoModule_template.selectedBaseLayer){
+		    					geoModule_layerServices.alterBaseLayer($scope.baseLayers[cat][lay]); 
 		    					finded=true;
 		    				}
 		    			}
@@ -121,13 +121,13 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 		
 		if(!finded){
 			//selectedBaseLayer not find
-			if(geo_template.hasOwnProperty('selectedBaseLayer')){
-				alert("selectedBaseLayer="+geo_template.selectedBaseLayer+" non trovato. verrà caricato il layer di base")
+			if(geoModule_template.hasOwnProperty('selectedBaseLayer')){
+				alert("selectedBaseLayer="+geoModule_template.selectedBaseLayer+" non trovato. verrà caricato il layer di base")
 			}else{
 				console.log("selectedBaseLayer non settato. verrà caricato il layer di base")
 			}
 			
-			layerServices.alterBaseLayer(baseLayer.Default.OpenStreetMap); 
+			geoModule_layerServices.alterBaseLayer(baseLayer.Default.OpenStreetMap); 
 		}
 	}
 
@@ -143,12 +143,12 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 
 	$scope.showBaseLayer=function(layerConf){
 		sbiModule_logger.log("show base layer")
-		layerServices.alterBaseLayer(layerConf)
+		geoModule_layerServices.alterBaseLayer(layerConf)
 	}
 	
 	$scope.toggleLayer=function(layerConf){
 		sbiModule_logger.log("toggleLayer");
-		layerServices.toggleLayer(layerConf)
+		geoModule_layerServices.toggleLayer(layerConf)
 	}
 	
 	
@@ -166,7 +166,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 	    	    });
 	    }
 	    
-	    $scope.layerFromCatalogueController=function($scope, $mdDialog,geo_template) {	    	
+	    $scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template) {	    	
 	    	$scope.layerCatalogueList=[];
 	    	$scope.selectedLayerList=[];
 	    	$scope.loadSelectedLayerList=function(){

@@ -1,4 +1,4 @@
-var geoM=angular.module('geo_module');
+var geoM=angular.module('geoModule');
 
 
 /**
@@ -6,52 +6,52 @@ var geoM=angular.module('geo_module');
  * with the new name is not found we look for the old name.
  */
 geoM.service('geoReportCompatibility',function($map){
-	 this.resolveCompatibility=function(geo_template){
+	 this.resolveCompatibility=function(geoModule_template){
 			//     transform indicators in array of json if they arent
-		    if(geo_template.hasOwnProperty('indicators') && geo_template.indicators.length>0){
+		    if(geoModule_template.hasOwnProperty('indicators') && geoModule_template.indicators.length>0){
 		    	var tmp=[];
-		    	if(Object.prototype.toString.call(geo_template.indicators[0])=="[object Array]"){
-		    		for(var i=0;i<geo_template.indicators.length;i++){
-		    			tmp.push({name:geo_template.indicators[i][0],label:geo_template.indicators[i][1]});
+		    	if(Object.prototype.toString.call(geoModule_template.indicators[0])=="[object Array]"){
+		    		for(var i=0;i<geoModule_template.indicators.length;i++){
+		    			tmp.push({name:geoModule_template.indicators[i][0],label:geoModule_template.indicators[i][1]});
 		    		}
-		    		geo_template.indicators=tmp;
+		    		geoModule_template.indicators=tmp;
 		    	}
 		    }
 		    
-		    if(geo_template.hasOwnProperty("geoId")){
-				geo_template.layer_join_columns=geo_template.geoId;
-				delete geo_template.geoId;
+		    if(geoModule_template.hasOwnProperty("geoId")){
+				geoModule_template.layerJoinColumns=geoModule_template.geoId;
+				delete geoModule_template.geoId;
 			} 
 		    
-		    if(geo_template.hasOwnProperty("businessId")){
-				geo_template.dataset_join_columns=geo_template.businessId;
-				delete geo_template.businessId;
+		    if(geoModule_template.hasOwnProperty("businessId")){
+				geoModule_template.datasetJoinColumns=geoModule_template.businessId;
+				delete geoModule_template.businessId;
 			} 
 		    
 		    
 			
 		  //compatibility of baseLayersConf with old template
-		    if(geo_template.hasOwnProperty("baseLayersConf") && geo_template.baseLayersConf.length!=0 ){
-				for(var i=0;i<geo_template.baseLayersConf.length;i++){
+		    if(geoModule_template.hasOwnProperty("baseLayersConf") && geoModule_template.baseLayersConf.length!=0 ){
+				for(var i=0;i<geoModule_template.baseLayersConf.length;i++){
 					
-					if(geo_template.baseLayersConf[i].hasOwnProperty("name")){
-						geo_template.baseLayersConf[i].label=geo_template.baseLayersConf[i].name;
-						delete geo_template.baseLayersConf[i].name;
+					if(geoModule_template.baseLayersConf[i].hasOwnProperty("name")){
+						geoModule_template.baseLayersConf[i].label=geoModule_template.baseLayersConf[i].name;
+						delete geoModule_template.baseLayersConf[i].name;
 					} 
 					
-					if(geo_template.baseLayersConf[i].hasOwnProperty("options")){
-						geo_template.baseLayersConf[i].layerOptions=geo_template.baseLayersConf[i].options;
-						delete geo_template.baseLayersConf[i].options;
+					if(geoModule_template.baseLayersConf[i].hasOwnProperty("options")){
+						geoModule_template.baseLayersConf[i].layerOptions=geoModule_template.baseLayersConf[i].options;
+						delete geoModule_template.baseLayersConf[i].options;
 					} 
 					
-					if(geo_template.baseLayersConf[i].hasOwnProperty("url")){
-						geo_template.baseLayersConf[i].layerURL=geo_template.baseLayersConf[i].url;
-						delete geo_template.baseLayersConf[i].url;
+					if(geoModule_template.baseLayersConf[i].hasOwnProperty("url")){
+						geoModule_template.baseLayersConf[i].layerURL=geoModule_template.baseLayersConf[i].url;
+						delete geoModule_template.baseLayersConf[i].url;
 					} 
 					
-					if(geo_template.baseLayersConf[i].hasOwnProperty("isBaseLayer")){
-						geo_template.baseLayersConf[i].baseLayer=geo_template.baseLayersConf[i].isBaseLayer;
-						delete geo_template.baseLayersConf[i].isBaseLayer;
+					if(geoModule_template.baseLayersConf[i].hasOwnProperty("isBaseLayer")){
+						geoModule_template.baseLayersConf[i].baseLayer=geoModule_template.baseLayersConf[i].isBaseLayer;
+						delete geoModule_template.baseLayersConf[i].isBaseLayer;
 					} 
 				}
 			}
@@ -63,7 +63,7 @@ geoM.service('geoReportCompatibility',function($map){
  * Set of method to manage 
  * 
  * */
-geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,sbiModule_logger,geo_template,geo_indicators,geo_filters,geo_dataset,geo_dataset,dataset_join_columns_item,layerServices){
+geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices){
 	var gru=this;
 	 this.osm_getTileURL= function(bounds) {
 			var res = $map.getResolution();
@@ -83,20 +83,20 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 	 
 	 function getFeatureIdsFromStore(){
 		 var elem=[];
-		 if(geo_dataset.hasOwnProperty("metaData")){
-			 if(geo_dataset.metaData.hasOwnProperty("fields")){
+		 if(geoModule_dataset.hasOwnProperty("metaData")){
+			 if(geoModule_dataset.metaData.hasOwnProperty("fields")){
 				 var storeIdFiledName;
-				 var fields=geo_dataset.metaData.fields;
+				 var fields=geoModule_dataset.metaData.fields;
 				 for( var i=0;i<fields.length;i++){
-					 if(fields[i].hasOwnProperty("header") && fields[i].header==geo_template.dataset_join_columns){
+					 if(fields[i].hasOwnProperty("header") && fields[i].header==geoModule_template.datasetJoinColumns){
 						 storeIdFiledName = fields[i].name; 
 						 break;
 					 }
 				 }
 				 
-				 for(var i=0;i<geo_dataset.rows.length;i++){
-					 if(geo_dataset.rows[i].hasOwnProperty(storeIdFiledName) && elem.indexOf(geo_dataset.rows[i][storeIdFiledName])==-1){
-						 elem.push(geo_dataset.rows[i][storeIdFiledName])
+				 for(var i=0;i<geoModule_dataset.rows.length;i++){
+					 if(geoModule_dataset.rows[i].hasOwnProperty(storeIdFiledName) && elem.indexOf(geoModule_dataset.rows[i][storeIdFiledName])==-1){
+						 elem.push(geoModule_dataset.rows[i][storeIdFiledName])
 					 }
 					 
 				 }
@@ -113,8 +113,8 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 	  * */
 	this.GetTargetLayer=function(){
 		var params = {
-	     		layer: geo_template.targetLayerConf.label
-	     		, layer_join_columns: geo_template.layer_join_columns
+	     		layer: geoModule_template.targetLayerConf.label
+	     		, layerJoinColumns: geoModule_template.layerJoinColumns
 	     	};
 		
 		params.featureIds=getFeatureIdsFromStore();
@@ -126,7 +126,7 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 					} else {
 					sbiModule_logger.trace("GetTargetLayer caricato",data);
 				
-						layerServices.setTemplateLayer(data); 
+						geoModule_layerServices.setTemplateLayer(data); 
 						
 					}
 					
@@ -146,7 +146,7 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 							sbiModule_logger.log("dataset non Ottenuto");
 							alert("Errore nel recupero del dataset"+data);
 						} else {
-							Object.assign(geo_dataset, data); 
+							Object.assign(geoModule_dataset, data); 
 						sbiModule_logger.trace("dataset caricato",data);		
 						gru.initRigthMenuVariable();
 						gru.GetTargetLayer();
@@ -161,25 +161,25 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 	  * Initialization for Indicators and Filters
 	  * */
 	 this.initRigthMenuVariable=function(){
-		 if(geo_dataset.hasOwnProperty("metaData")){
-			 if(geo_dataset.metaData.hasOwnProperty("fields")){
-				 var fields=geo_dataset.metaData.fields;
+		 if(geoModule_dataset.hasOwnProperty("metaData")){
+			 if(geoModule_dataset.metaData.hasOwnProperty("fields")){
+				 var fields=geoModule_dataset.metaData.fields;
 				 
 				 //search if in template are present indicator and just load them, else load all
 				 var templ_indic=[];
-				 if(geo_template.hasOwnProperty("indicators")){
-					 for(var j=0;j<geo_template.indicators.length;j++){
-						 templ_indic.push(geo_template.indicators[j].name);
+				 if(geoModule_template.hasOwnProperty("indicators")){
+					 for(var j=0;j<geoModule_template.indicators.length;j++){
+						 templ_indic.push(geoModule_template.indicators[j].name);
 					 }
 				 }
 				 
 				//search if in template are present filters and just load them, else load all
 				 var templ_filters=[];
 				 var templ_filters_obj={};
-				 if(geo_template.hasOwnProperty("filters")){
-					 for(var j=0;j<geo_template.filters.length;j++){
-						 templ_filters.push(geo_template.filters[j].name);
-						 templ_filters_obj[geo_template.filters[j].name]=geo_template.filters[j];
+				 if(geoModule_template.hasOwnProperty("filters")){
+					 for(var j=0;j<geoModule_template.filters.length;j++){
+						 templ_filters.push(geoModule_template.filters[j].name);
+						 templ_filters_obj[geoModule_template.filters[j].name]=geoModule_template.filters[j];
 					 }
 				 }
 				 
@@ -187,22 +187,22 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 					 if(fields[i].hasOwnProperty("role")){
 						 if(fields[i].role=="MEASURE"){
 							 if(templ_indic.length==0 || templ_indic.indexOf(fields[i].header)>-1){
-								 geo_indicators.push(fields[i]);
+								 geoModule_indicators.push(fields[i]);
 							 }
 							
 						 }else if(fields[i].role=="ATTRIBUTE"){
 							 if(templ_filters.length==0 || templ_filters.indexOf(fields[i].header)>-1){
 								 
 								 	fields[i].label=templ_filters_obj[fields[i].header]!=undefined ? templ_filters_obj[fields[i].header].label : fields[i].header;
-									geo_filters.push(fields[i]);
-									if(!geo_template.selectedFilters.hasOwnProperty(fields[i].name)){
-										geo_template.selectedFilters[fields[i].name]="-1";
+									geoModule_filters.push(fields[i]);
+									if(!geoModule_template.selectedFilters.hasOwnProperty(fields[i].name)){
+										geoModule_template.selectedFilters[fields[i].name]="-1";
 									}
 							 }
 							 
-							 //if this measure is the dataset_join_columns load the variable
-							 if(fields[i].header==geo_template.dataset_join_columns){
-								 Object.assign(dataset_join_columns_item, fields[i]); 
+							 //if this measure is the datasetJoinColumns load the variable
+							 if(fields[i].header==geoModule_template.datasetJoinColumns){
+								 Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
 							 }
 						 }else{
 							 console.error("dataset->metaData->fields->role="+fields[i].role+"    not managed ") 
@@ -211,8 +211,8 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 				 }
 				 
 				 //select first indicator if not selected in template
-				 if(geo_template.selectedIndicator==undefined && geo_indicators.length!=0){
-					 geo_template.selectedIndicator=geo_indicators[0];
+				 if(geoModule_template.selectedIndicator==undefined && geoModule_indicators.length!=0){
+					 geoModule_template.selectedIndicator=geoModule_indicators[0];
 				 }
 				 
 			 }else{

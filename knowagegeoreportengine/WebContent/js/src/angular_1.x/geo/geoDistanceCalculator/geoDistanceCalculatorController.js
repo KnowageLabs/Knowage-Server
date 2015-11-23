@@ -3,7 +3,7 @@
  *
  */
 
-angular.module('geo_module')
+angular.module('geoModule')
 .directive('geoDistanceCalculator',function(sbiModule_config){
 	return{
 		restrict: "E",

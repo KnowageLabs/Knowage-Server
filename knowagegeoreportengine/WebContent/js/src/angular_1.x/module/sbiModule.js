@@ -1,11 +1,7 @@
-
-
-<script>
 var sbiM=angular.module('sbiModule',[]);
 sbiM.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
 });
-
 
 sbiM.factory('sbiModule_user',function(){
 	
@@ -13,7 +9,6 @@ sbiM.factory('sbiModule_user',function(){
 
 	return user;
 });
-
 
 sbiM.service('sbiModule_logger',function(){
 	this.exec=true;
@@ -31,7 +26,6 @@ sbiM.service('sbiModule_logger',function(){
 	
 });
 
-
 sbiM.service('sbiModule_translate', function() {
 	this.addMessageFile = function(file){
 		messageResource.load([file,"messages"], function(){});
@@ -42,7 +36,6 @@ sbiM.service('sbiModule_translate', function() {
 		return messageResource.get(key, sf);
 	};
 });
-
 
 sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModule_logger) {
 	var alteredContextPath=null;
@@ -74,16 +67,15 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 		return $http.post(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
-	this.put = function(endP_path, req_Path, item, conf) {
-		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
-		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
-	};
-	
 	this.delete = function(endP_path, req_Path, item, conf) {
 		(item == undefined || item==null) ? item = "" : item = "?" + encodeURIComponent(item).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 		sbiModule_logger.trace("PUT:" +endP_path+"/"+req_Path+ "" + item,conf);
 		return $http.delete(getBaseUrl(endP_path) + "" + req_Path, conf);
 	};
+	
+	this.put = function(endP_path, req_Path, item, conf) {
+		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
+		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
 });
-
-</script>

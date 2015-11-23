@@ -1,24 +1,24 @@
-var geoM=angular.module('geo_module');
+var geoM=angular.module('geoModule');
 
-geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns_item){
+geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem){
 	var tmtz=this;
 	var cacheProportionalSymbolMinMax={};
 	
 	
 	this.getStyle = function(feature, resolution) {
 		//if no indicator has been selected
-		if(geo_template.selectedIndicator==undefined){
+		if(geoModule_template.selectedIndicator==undefined){
 			return null;
 		}
 		
 		var dsValue;
-		var layerCol=feature.getProperties()[geo_template.layer_join_columns];
-		for(var i=0;i<geo_dataset.rows.length;i++){
-			if(geo_dataset.rows[i][dataset_join_columns_item.name]==layerCol){
-				dsValue=geo_dataset.rows[i][geo_template.selectedIndicator.name];
+		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
+		for(var i=0;i<geoModule_dataset.rows.length;i++){
+			if(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]==layerCol){
+				dsValue=geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name];
 				//search if there is a filter enabled
-				for(var key in geo_template.selectedFilters){
-					if(geo_template.selectedFilters[key]!="-1" &&  geo_template.selectedFilters[key].length!=0 && geo_template.selectedFilters[key].indexOf(geo_dataset.rows[i][key])==-1){
+				for(var key in geoModule_template.selectedFilters){
+					if(geoModule_template.selectedFilters[key]!="-1" &&  geoModule_template.selectedFilters[key].length!=0 && geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
 						console.log("filtrato");
 						return null;
 					}
@@ -27,7 +27,7 @@ geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns
 			}
 		}
 	
-		if(geo_template.analysisType=="choropleth"){
+		if(geoModule_template.analysisType=="choropleth"){
 			return tmtz.choropleth(dsValue);
 		}else{
 			return tmtz.proportionalSymbol(dsValue);
@@ -60,11 +60,11 @@ geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns
 	
 	this.proportionalSymbol=function(dsValue){
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
-		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geo_template.selectedIndicator.name)){
+		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geoModule_template.selectedIndicator.name)){
 			var minV;
 			var maxV;
-			for(var i=0;i<geo_dataset.rows.length;i++){
-					var tmpV= parseInt(geo_dataset.rows[i][geo_template.selectedIndicator.name]);
+			for(var i=0;i<geoModule_dataset.rows.length;i++){
+					var tmpV= parseInt(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]);
 					if(minV==undefined || tmpV<minV){
 						minV=tmpV;
 					}
@@ -73,12 +73,12 @@ geoM.service('thematizer',function(geo_template,geo_dataset,dataset_join_columns
 					
 				}
 			}
-			cacheProportionalSymbolMinMax[geo_template.selectedIndicator.name]={minValue:minV, maxValue:maxV};
+			cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name]={minValue:minV, maxValue:maxV};
 		}
 		
 		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-		 var minValue = cacheProportionalSymbolMinMax[geo_template.selectedIndicator.name].minValue;
-         var maxValue = cacheProportionalSymbolMinMax[geo_template.selectedIndicator.name].maxValue;
+		 var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
+         var maxValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].maxValue;
          var size;
 		
 		if(minValue == maxValue) { // we have only one point in the distribution

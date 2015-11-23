@@ -3,7 +3,7 @@
  *
  */
 
-angular.module('geo_module')
+angular.module('geoModule')
 
 .directive('geoRigthMenu',function(sbiModule_config){
 	return{
@@ -21,11 +21,11 @@ angular.module('geo_module')
 	}
 });
 
-function geoRigthMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSidenav,$timeout,$mdDialog,$map,geo_template,geo_dataset,geo_filters,geo_indicators){	
-	$scope.template=geo_template;
-	$scope.dataset=geo_dataset;
-	$scope.filters=geo_filters;
-	$scope.indicators=geo_indicators;
+function geoRigthMenuControllerFunction(geoModule_layerServices,geoModule_dataset,$scope,$mdSidenav,$timeout,$mdDialog,$map,geoModule_template,geoModule_dataset,geoModule_filters,geoModule_indicators){	
+	$scope.template=geoModule_template;
+	$scope.dataset=geoModule_dataset;
+	$scope.filters=geoModule_filters;
+	$scope.indicators=geoModule_indicators;
 	$scope.openRigthMenu=false;
 	$scope.analysisTypeList=[{label:"Map point",type:"ProportionalSymbol",img:"fa fa-circle"},{label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "}];
 	
@@ -45,18 +45,18 @@ function geoRigthMenuControllerFunction(layerServices,geo_dataset,$scope,$mdSide
 		
 	}
     $scope.changeIndicator=function(item){
-    	geo_template.selectedIndicator=item;
-    	layerServices.updateTemplateLayer();
+    	geoModule_template.selectedIndicator=item;
+    	geoModule_layerServices.updateTemplateLayer();
     }
     
     $scope.updateMap=function(){
-    	console.log("updateMap",geo_template)
-    	layerServices.updateTemplateLayer();
+    	console.log("updateMap",geoModule_template)
+    	geoModule_layerServices.updateTemplateLayer();
     }
     
 	    
     $scope.indicatorIsSelected=function(item){
-    	return angular.equals(geo_template.selectedIndicator, item);
+    	return angular.equals(geoModule_template.selectedIndicator, item);
     }
     
     $scope.openIndicatorFromCatalogue=function(ev){

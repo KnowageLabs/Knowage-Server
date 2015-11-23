@@ -13,7 +13,7 @@
 			    </md-button>
 			</md-toolbar>
 			<md-content >
-			  <md-radio-group ng-model="layerServices.selectedBaseLayerOBJ">
+			  <md-radio-group ng-model="geoModule_layerServices.selectedBaseLayerOBJ">
 				<div  ng-show="baselayerExpander"  ng-repeat="(CatKey,CatVal) in baseLayers" >
 					<md-toolbar class="categoryToolbar" >
 						<span class="md-toolbar-tools"> {{CatKey}} </span>
@@ -50,7 +50,7 @@
 			    </md-toolbar>
 			
 			<div layout="row" layout-wrap flex  ng-show=" LayerCategoryExpander[CatKey]">
-	            <md-checkbox ng-checked="layerServices.layerIsLoaded(val)" ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" class="md-primary" >
+	            <md-checkbox ng-checked="geoModule_layerServices.layerIsLoaded(val)" ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" class="md-primary" >
 	             {{val.label}}
 	            </md-checkbox>
 	          
@@ -58,7 +58,7 @@
 			
 <!-- 				<md-list class="indicatorList whiteBG" ng-show=" LayerCategoryExpander[CatKey]"> -->
 <!-- 					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" >   -->
-<!-- 						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="layerServices.layerIsLoaded(val)"></md-icon >  -->
+<!-- 						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="geoModule_layerServices.layerIsLoaded(val)"></md-icon >  -->
 <!-- 						{{val.label}} -->
 <!-- 					</md-list-item> -->
 <!-- 				</md-list> -->
@@ -74,19 +74,20 @@
 <!-- template -->
 
 <script type="text/ng-template" id="layerFromCatalogueTemplate.html">
-   <md-dialog aria-label="Mango (Fruit)"  ng-cloak  style="max-height: 70%;height: 70%;  " layout="column" layout-wrap>
+   <md-dialog aria-label="layer"  style="height:80%;" ng-cloak  >
 
   <md-toolbar >
     <div class="md-toolbar-tools">
       Select from Catalogue
-<md-button ng-click="updateChange()" style="margin-right:20px;" >
-      Close
+<md-button ng-click="updateChange()" style="right:0;position:absolute;" >
+     X
     </md-button>
     </div>
  
   </md-toolbar>
-     
- 	  <angular-table style="height: calc(100% - 64px);"
+       <md-dialog-content  style="height:80%;">
+     	 <div class="md-dialog-content" style="padding:0px">
+ 	  <angular-table 
 						 id="layerCatalogue"
 						 ng-model=layerCatalogueList
  						 columns='["layerLabel","type","layerURL","baseLayer"]'
@@ -99,7 +100,8 @@
 						menu-option=menuItem
 		></angular-table>
   
-
+  </div>
+    </md-dialog-content>
 </md-dialog>
 </script>
 

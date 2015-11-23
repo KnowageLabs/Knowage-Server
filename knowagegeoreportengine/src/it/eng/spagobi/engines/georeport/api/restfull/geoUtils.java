@@ -44,7 +44,7 @@ public class geoUtils {
 	public static final String FEATURE_IDS = "featureIds";
 	public static final String LAYER_ID = "geoId";
 	public static final String LAYER_NAME = "layer";
-	public static final String LAYER_JOIN_COLUMNS = "layer_join_columns";
+	public static final String LAYER_JOIN_COLUMNS = "layerJoinColumns";
 
 	static private Logger logger = Logger.getLogger(PageResource.class);
 

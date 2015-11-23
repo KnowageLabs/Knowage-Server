@@ -3,7 +3,7 @@
  *
  */
 
-angular.module('geo_module')
+angular.module('geoModule')
 .directive('geoMap',function(sbiModule_config){
 	return{
 		restrict: "E",
@@ -20,7 +20,7 @@ angular.module('geo_module')
 	}
 });
 
-function geoMapControllerFunction($scope,geoReportUtils){
-	geoReportUtils.GetTargetDataset();
+function geoMapControllerFunction($scope,geoModule_reportUtils){
+	geoModule_reportUtils.GetTargetDataset();
 	
 }
