@@ -32,7 +32,7 @@
 						<md-button aria-label="create_button"
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
-							ng-click="createConstraints()"> 
+							ng-click="createConstraints()" > 
 							<md-icon
 								md-font-icon="fa fa-plus" 
 								style=" margin-top: 6px ; color: white;">
@@ -46,13 +46,19 @@
 						layout-fill
 						id="TestItemList_id"
 						ng-model="TestItemList"
-						columns='["LABEL","NAME","DESCRIPTION","CHECK_TYPE"]'
+						columns ='[
+							{"label":"LABEL","name":"LABEL","size":"60px"},
+							{"label":"NAME","name":"NAME","size":"60px"},
+							{"label":"DESCRIPTION","name":"DESCRIPTION","size":"60px"},
+							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"60px"},
+							{"label":" ","name":"icon","size":"30px"}
+							]'
+
 						columns-search='["LABEL","NAME","DESCRIPTION","CHECK_TYPE"]'
 						show-search-bar=true
 						highlights-selected-item=true
-						speed-menu-option="mcSpeedMenu"
 						click-function="loadConstraints(item)"
-						selected-item = "SelectedConstraint"
+						scope-functions="tableFunction()"
 							>					
 						 					
 					</angular-table>
@@ -72,7 +78,12 @@
 						layout-fill
 						id="predefined"
 						ng-model="predefined"
-						columns='["LABEL","NAME","DESCRIPTION","CHECK_TYPE"]'
+						columns ='[
+							{"label":"LABEL","name":"LABEL","size":"60px"},
+							{"label":"NAME","name":"NAME","size":"60px"},
+							{"label":"DESCRIPTION","name":"DESCRIPTION","size":"60px"},
+							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"60px"}
+							]'
 						columns-search='["LABEL","NAME","DESCRIPTION","CHECK_TYPE"]'
 						highlights-selected-item=true
 						show-search-bar = false
@@ -89,7 +100,7 @@
 		<right-col>
 		
 		<form layout-fill ng-submit="saveConstraints()"
-		class="detailBody md-whiteframe-z1" novalidate>
+		class="detailBody md-whiteframe-z1">
 		
 			<div ng-show="showme">
 				<md-toolbar class="md-blue minihead"> 
@@ -101,10 +112,11 @@
 							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
 						<md-button  type="submit"
-							aria-label="save layer" class="md-raised md-ExtraMini "
+							aria-label="save_constraint" class="md-raised md-ExtraMini "
 							style=" margin-top: 2px;">
 							
-						{{translate.load("sbi.browser.defaultRole.save");}} </md-button>
+						{{translate.load("sbi.browser.defaultRole.save")}} </md-button>
+<!-- 						{{button_flag ? translate.load("sbi.browser.defaultRole.save") : translate.load("sbi.generic.update2")}} update button-->
 					</div>
 				</div>
 				</md-toolbar>
@@ -141,9 +153,9 @@
       				<div flex=100>
 				       <md-input-container class="small counter"> 
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
-				       <md-select  aria-label="aria-label"
-				        ng-model="SelectedConstraint.CHECK_TYPE"> <md-option
-				        ng-repeat="l in listType track by $index"{{l.label}}">{{l.value}} </md-option>
+				       <md-select  aria-label="aria-label" 
+				        ng-model="SelectedConstraint.CHECK_TYPE"> <md-option 
+				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" >{{l.label}} </md-option>
 				       </md-select> </md-input-container>
 				   </div>
 			</div>
@@ -151,11 +163,20 @@
      			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
-							<label>{{translate.load("sbi.modalities.check.details.date_value_format")}}</label>
-							<input ng-model="selectedDataSource.DateFormat" 
+							<label>{{label}}</label>
+							<input ng-model="selectedDataSource.Type" 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
+					
+				<div layout="row" layout-wrap ng-show ="additionalField">
+						<div flex=100>
+							<md-input-container class="small counter">
+							<label>Higher Range Value</label>
+							<input ng-model="selectedDataSource.RangeMax" 
+								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+						</div>
+					</div>	
 					
 				</md-content>
 			</form>
