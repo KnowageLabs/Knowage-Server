@@ -10,14 +10,21 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import java.io.Serializable;
 import java.util.Locale;
 
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Defines a Domain object.
  */
-
+@JsonInclude(Include.NON_NULL)
 public class Domain implements Serializable {
 
 	private Integer valueId;
+	@NotNull
 	private String valueCd = "";
+	@NotNull
 	private String valueName = "";
 	private String valueDescription = "";
 	private String domainCode = "";
@@ -28,6 +35,10 @@ public class Domain implements Serializable {
 	 *
 	 * @return Returns the valueCd.
 	 */
+
+	public Domain() {
+	}
+
 	public String getValueCd() {
 		return valueCd;
 	}
