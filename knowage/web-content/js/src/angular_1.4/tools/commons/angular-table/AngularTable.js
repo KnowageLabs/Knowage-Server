@@ -277,13 +277,22 @@ function TableControllerFunction($scope,$timeout){
 		if(angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0]==undefined){
 			return;
 		}
-		var boxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0].offsetHeight;
-		var tableAction=  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0].offsetHeight || 0;
-		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0].offsetHeight || 0;
-		var headButtonHeight =  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table thead'))[0].offsetHeight || 0;
-		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table tbody tr'))[0].offsetHeight;
 		
-		var nit = parseInt((boxHeight - tableAction - footerTab-headButtonHeight) / listItemTemplBoxHeight);
+		var box=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0]
+		if(box==undefined){return;}
+		
+		var tableAction=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0];
+		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0];
+		var headButton =  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table thead'))[0];
+		var listItemTemplBox = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table tbody tr'))[0];
+		
+		var boxHeight = box.offsetHeight;
+		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
+		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
+		var headButtonHeight= headButton==undefined? 0 : headButton.offsetHeight ;
+		var listItemTemplBoxHeight = listItemTemplBox==undefined? 0 : listItemTemplBox.offsetHeight;
+		
+		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
 		$scope.itemsPerPage = nit <= 0 ? 1 : nit;
 		if(firstLoad){
 			$scope.pageCangedFunction({itemsPerPage:$scope.itemsPerPage,newPageNumber:1,searchValue:''});
