@@ -9,13 +9,13 @@ var geoM=angular.module('geo_module',['ngMaterial','ngAnimate','angular_table','
 	
 geoM.factory('geo_template',function(geoReportCompatibility){
 	
-	var t=<%= template %>;
+	var t = <%= template %>;
 	
 	if(t.hasOwnProperty('role')) {
-		t.role = t.role.charAt(0) == '/'? t.role.charAt(0): 	'/' + t.role.charAt(0);
+		t.role = t.role.charAt(0) == '/'? t.role.charAt(0): '/' + t.role.charAt(0);
 	}
 	
-	var executionRole = '<%= executionRole%>';
+	var executionRole = '<%= executionRole %>';
 	t.role = executionRole || t.role;
 	
 	var executionContext = {};
@@ -23,9 +23,9 @@ geoM.factory('geo_template',function(geoReportCompatibility){
     Iterator it = analyticalDrivers.keySet().iterator();
 	while(it.hasNext()) {
 		String parameterName = (String)it.next();
-		String parameterValue = (String)analyticalDrivers.get(parameterName);		
+		String parameterValue = (String)analyticalDrivers.get(parameterName);
 	 	String quote = (parameterValue.startsWith("'"))? "" : "'";
-		if ( parameterValue.indexOf(",") >= 0){					
+		if ( parameterValue.indexOf(",") >= 0){
 	 %>
 			executionContext ['<%=parameterName%>'] = [<%=quote%><%=parameterValue%><%=quote%>];
 	<%	}else{
@@ -98,7 +98,7 @@ geoM.factory('$map',function(){
 });
 
 geoM.factory('baseLayer', function() {
-	
+	// todo thr following configuration should be loaded from a rest service (from LayerCatalogue) 
 	var baseLayersConf={
 					    "Default": {
 					        "OpenStreetMap": {
@@ -193,11 +193,14 @@ geoM.service('layerServices', function(baseLayer, $map,$http,thematizer,geo_inte
 				 var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
 				 
 				 var prop= evt.selected[0].getProperties();
+				 
 				 var txt="";
-				 txt+="<p>STATE_NAME:"+prop['STATE_NAME']+"</p>";
-				 txt+="<p>SUB_REGION:"+prop['SUB_REGION']+"</p>";
-				 txt+="<p>LAND_KM:"+prop['LAND_KM']+"</p>";
-				 txt+="<p>PERSONS:"+prop['PERSONS']+"</p>";
+				 for(var key in prop){
+					 if(key!="geometry"){
+					 txt+="<p>"+key+":"+prop[key]+"</p>";
+					 }
+				 }
+			
 				 angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
 			 	 $map.getOverlays().getArray()[0].setPosition(coordinate);
 			 }else if(geo_interaction.type=="cross"){

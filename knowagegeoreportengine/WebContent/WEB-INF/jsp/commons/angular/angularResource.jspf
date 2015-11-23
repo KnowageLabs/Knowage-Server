@@ -19,6 +19,7 @@
 <%@page import="it.eng.spagobi.engines.georeport.GeoReportEngineInstance"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>

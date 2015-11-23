@@ -1,5 +1,10 @@
 var geoM=angular.module('geo_module');
 
+
+/**
+ * Allows user to load old templates: in a property 
+ * with the new name is not found we look for the old name.
+ */
 geoM.service('geoReportCompatibility',function($map){
 	 this.resolveCompatibility=function(geo_template){
 			//     transform indicators in array of json if they arent
@@ -54,6 +59,10 @@ geoM.service('geoReportCompatibility',function($map){
 		}
 });
 
+/**
+ * Set of method to manage 
+ * 
+ * */
 geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,sbiModule_logger,geo_template,geo_indicators,geo_filters,geo_dataset,geo_dataset,dataset_join_columns_item,layerServices){
 	var gru=this;
 	 this.osm_getTileURL= function(bounds) {
@@ -98,6 +107,10 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 		 
 	 }
 	 
+	 
+	 /**
+	  * Loads the target layer using a REST service
+	  * */
 	this.GetTargetLayer=function(){
 		var params = {
 	     		layer: geo_template.targetLayerConf.label
@@ -122,7 +135,9 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 				});
  }
 	
-	 
+	 /**
+	  * Loads the dataset using a REST service
+	  * */
 	 this.GetTargetDataset=function(){
 		
 		 sbiModule_restServices.get("1.0/geo", 'GetTargetDataset').success(
@@ -142,6 +157,9 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 					});
 	 }
 	 
+	 /**
+	  * Initialization for Indicators and Filters
+	  * */
 	 this.initRigthMenuVariable=function(){
 		 if(geo_dataset.hasOwnProperty("metaData")){
 			 if(geo_dataset.metaData.hasOwnProperty("fields")){
@@ -208,6 +226,10 @@ geoM.service('geoReportUtils',function(baseLayer,$map,sbiModule_restServices,$q,
 	 }	
 });
 
+/**
+ * Used for TODO
+ * 
+ * */
 geoM.filter('unique', function () {
 
 	  return function (items, filterOn) {
@@ -246,7 +268,10 @@ geoM.filter('unique', function () {
 	    return items;
 	  };
 	})
-	
+
+	/**
+	 * TODO add comment here
+	 * */
 geoM.factory('geo_interaction',function(){
 	var interact={
 			type:"identify",

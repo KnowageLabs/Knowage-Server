@@ -23,6 +23,32 @@
 <div ng-controller="mapCtrl" ng-cloak>
 
 	<geo-map map-id='myMap'></geo-map>
+	
+	<%--
+
+<!--  						 columns='["layerLabel","type","layerURL","baseLayer"]' -->
+<!-- 						columns='[{"label":"layerLb","name":"layerLabel"},{"label":"type","name":"type","size":"100px"},{"label":"layerURL","name":"layerURL"}]' -->
+	
+<!-- 	<div layout="column"> -->
+	
+<!-- 	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=false;"  > -->
+<!-- 		<input  ng-model="itemc"  type="text" placeholder="Search "> -->
+<!-- 	</md-input-container> -->
+	
+	
+<!-- 	<angular-table  id="layerCatalogue" -->
+<!-- 						 ng-model=mydata.root -->
+<!-- 						 columns='[{"label":"Name","name":"layerLabel"},{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"100px"},{"label":"URL","name":"layerURL"}]' -->
+<!-- 						 columns-search='["layerLabel","type"]' -->
+<!-- 						 highlights-selected-item=true -->
+<!-- 						click-function=toggleLayerFromCatalogue(item) -->
+<!-- 						menu-option=menuOpt -->
+<!-- 						page-canged-function = "pageChanged(newPageNumber,itemsPerPage,searchValue, columnOrdering, reverseOrdering)" -->
+<!-- 						speed-menu-option=SpeedMenuOpt   -->
+<!-- 		></angular-table> -->
+<!-- 	</div> -->
+	
+   --%>
 
 </div>
 

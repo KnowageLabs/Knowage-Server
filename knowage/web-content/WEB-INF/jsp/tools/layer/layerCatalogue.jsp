@@ -87,13 +87,18 @@
 
 			<md-content layout-padding
 				style="background-color: rgb(236, 236, 236);"
-				class="ToolbarBox miniToolbar noBorder leftListbox"> <angular-table
-				class="mozTable" layout-fill id='layerlist' ng-model=layerList
-				columns='["name","type", "layerURL","icon"]'
-				columnsSearch='["name","type", "layerURL"]' show-search-bar=true
-				highlights-selected-item=true click-function="loadLayerList(item);"
-				menu-option=menuLayer scope-functions=tableFunction>
-			</angular-table> </md-content>
+				class="ToolbarBox miniToolbar noBorder leftListbox"> 
+				<angular-table  layout-fill id='layerlist' 
+				ng-model=layerList
+				columns='[{"label":"Name","name":"name"},{"label":"Type","name":"type","size":"60px"},{"label":" ","name":"icon","size":"30px"}]'
+				columnsSearch='["name","type", "layerURL"]' 
+				show-search-bar=true
+				highlights-selected-item=true 
+				click-function="loadLayerList(item);"
+				menu-option=menuLayer 
+				scope-functions=tableFunction>
+				</angular-table> 
+			</md-content>
 
 		</div>
 		</left-col> <right-col> <!-- 

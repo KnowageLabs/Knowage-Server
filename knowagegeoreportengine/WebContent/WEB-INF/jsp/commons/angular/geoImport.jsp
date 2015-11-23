@@ -5,7 +5,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/utils/Ellipsoid.js"></script>
 
 <!-- geo-map import -->
-<%@include file="/WEB-INF/jsp/commons/angular/geoConfig.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/angular/geoModule.jsp"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/utils/geoUtils.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/thematizer/geoThematizer.js"></script>
 

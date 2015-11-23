@@ -1,0 +1,330 @@
+<div layout="column" layout-fill  id="angularTableTemplate" class="{{id}}ItemBox">
+
+<angular-table-actions layout="row" layout-align="end center">
+	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=false;"  >
+		<md-icon md-font-icon="fa fa-search" ng-click="showSearch=true;"></md-icon> 
+		<input  ng-show="showSearch" ng-model="searchVal" ng-keyup="searchItem(searchVal)" type="text" placeholder="Search ">
+		<md-icon ng-show="showSearch" md-font-icon="fa fa-trash" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 
+	</md-input-container>
+</angular-table-actions>
+
+
+
+
+<table flex>
+	<thead></thead>
+	<tbody></tbody>
+</table>
+
+
+<angular-table-footer>
+<div  class="box_pagination_list" layout="row" layout-align="end end">
+	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageCangedFunction({newPageNumber:newPageNumber,itemsPerPage:itemsPerPage,searchValue:prevSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls>
+</div>
+</angular-table-footer>
+
+
+
+<script type="text/ng-template" id="headThTemplate.html">
+<th ng-repeat="val in tableColumns" width="{{val.size}}">
+
+	<div ng-if="val.name !='--MULTISELECT--'" ng-click="orderBy(val.name)"  ng-class="{ 'black': val.name==column_ordering}">
+		
+		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering ,'fa fa-arrow-down' : (val.name==column_ordering && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering && !reverse_col_ord)}"></md-icon>
+		{{val.label}}
+	</div>
+
+	<md-checkbox ng-if="val.name=='--MULTISELECT--'"  ng-click="selectAll()" aria-label="selected item checked"> </md-checkbox>
+</th>
+</script>
+
+<script type="text/ng-template" id="bodyTemplate.html">
+
+<tr dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber>
+	<td ng-repeat="column in tableColumns" ng-click="clickItem(row,row[column.name],$event)"  context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
+		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'" dynamichtml="row[column.name]" ></span>
+		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="toggleMultiSelect(row,$event)" aria-label="selected item checked"> </md-checkbox>
+		
+		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length==1"  ng-click='speedMenuOption[0].action(item,$event); $event.stopPropagation();' class="md-icon-button actionButton" aria-label="More" 
+		action-background-color={{speedMenuOption[0].backgroundColor}}>
+ 			<md-tooltip md-direction="top">{{speedMenuOption[0].label}}</md-tooltip>	
+       	 <md-icon md-font-icon="{{speedMenuOption[0].icon}}" aria-label="{{speedMenuOption[0].label}}" action-color={{speedMenuOption[0].color}}></md-icon>
+      	</md-button>
+
+		<md-fab-speed-dial ng-if="column.name=='--SPEEDMENU--' &&  speedMenuOption.length>1 " md-direction="left" ng-class="'md-fling'" style="    position: absolute;  right: 0;   margin-top: -20px;" >
+		        <md-fab-trigger >
+		          <md-button aria-label="menu" class="md-fab actionButton " ng-click="$event.stopPropagation();">
+		            <md-icon md-font-icon="fa fa-bullseye" ></md-icon>
+		          </md-button>
+		        </md-fab-trigger>
+		        <md-fab-actions>
+		          <div class="md-fab-action-item" ng-repeat=" menuItem in speedMenuOption" >
+				        <md-button ng-click='menuItem.action(item,$event);$event.stopPropagation();' aria-label="{{menuItem.label}}" class="md-fab md-raised actionButton" action-background-color={{menuItem.backgroundColor}}>
+							 <md-tooltip md-direction="top">{{menuItem.label}}</md-tooltip>										           
+							 <md-icon action-color={{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
+				         </md-button>
+			        </div>
+		       	</md-fab-actions>
+		</md-fab-speed-dial>
+
+		<div class="dropdown_menu_list " style="z-index: 999; " id='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' )>
+			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined && column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'"> 
+				<md-list-item ng-repeat=" menuItem in menuOption" role="menuitem"	ng-click='menuItem.action(row,row[column.name],$event);$event.stopPropagation();' tabindex='{{$index}}' >
+					<p >{{menuItem.label}}</p>
+				</md-list-item>
+			</md-list>
+		</div>	
+	</td>
+</tr>
+
+	
+</script>
+
+
+<style>
+
+/* rimuovo il focus da tutto */
+*:focus {
+	outline: none;
+}
+.hidden{
+display:none!important;}
+
+.black{
+color:black;
+}
+angular-table  #angularTableTemplate {
+	padding: 0 5px;
+    height: 100%;
+}
+
+angular-table  table {
+	width: 100%;
+	table-layout: fixed;
+/* 	color:#005080; */
+	border-spacing: 0;
+}
+
+
+
+angular-table[multi-select] table>thead>tr>th:nth-child(n+3):nth-last-child(n+2),
+angular-table[multi-select] table>tbody>tr>td:nth-child(n+3):nth-last-child(n+2),
+angular-table:not(multi-select) table>thead>tr>th:nth-child(n+1):nth-last-child(n+2),
+angular-table:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2){
+	padding: 0 28px;
+}
+
+angular-table[multi-select] table>thead>tr>th:nth-child(2),angular-table:not(multi-select) table>thead>tr>th:nth-child(1),
+angular-table[multi-select]  table>tbody>tr>td:nth-child(2),angular-table:not(multi-select) table>tbody>tr>td:nth-child(1){
+	padding: 0 28px 0 0 !important;
+}
+
+angular-table table>thead>tr>th:last-child,
+angular-table table>tbody>tr>td:last-child{
+padding: 0 24px 0 28px;
+}
+
+angular-table table thead th {
+    text-align: left;
+    font-size: 12px;
+    color: rgba(0,0,0,.54);
+}
+
+angular-table table thead th div {
+	align-items: center;
+    height: 56px;
+    line-height: 56px;
+}
+
+angular-table table thead th div md-icon{
+margin-top: 9px;
+    width: 7px;
+}
+angular-table table>tbody>tr {
+    height: 48px;
+    transition: background-color .2s;
+}
+
+
+
+
+/* angular-table  tr:nth-child(2n+0){ */
+/*  background: #CCC */
+/* } */
+
+/* angular-table  tr:nth-child(2n+1){ */
+/*  background:tansparent; */
+/* } */
+
+
+angular-table table>tbody>tr>td {
+    font-size: 13px;
+    color: rgba(0,0,0,.87);
+    border-top: 1px rgba(0,0,0,.12) solid;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    overflow: hidden;
+}
+
+angular-table table>thead>tr>th>div {
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    overflow: hidden;
+}
+
+angular-table table>tbody>tr>td button.actionButton{	
+height: 25px !important;
+    width: 25px!important;
+    min-height: 25px!important;
+    }
+    
+    angular-table table>tbody>tr>td button.actionButton md-icon{	
+   line-height: 25px!important;
+    }
+
+@-moz-document url-prefix() {
+	angular-table table>tbody>tr>td{
+	  text-overflow: inherit;
+	}
+}
+
+angular-table table td div{
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	line-height: 26px;
+	}
+
+
+angular-table angular-table-actions md-input-container.tableSearchBar {
+    padding-bottom: 0px;
+   
+    height: 25px;
+}
+
+angular-table angular-table-actions{
+    padding: 0 24px 0 10px;
+    height: 30px;
+    }
+    
+angular-table angular-table-actions md-input-container.tableSearchBar .closeSearchBar{
+    left: 100%;
+    margin-left: -15px;
+}
+
+
+
+
+
+/* pagination */
+
+
+#angularTableTemplate .pagination>li, #angularTableTemplate .pagination>li>span
+	{
+	position: relative;
+	float: left;
+	margin-left: -1px;
+	text-decoration: none !important;
+	background-color: #fff;
+/* 	border: 1px solid #ddd; */
+	display: block;
+	width: 20px;
+	height: 16px;
+	text-align: center;
+	line-height: 16px;
+}
+
+#angularTableTemplate .pagination {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+#angularTableTemplate .pagination>li>a {
+	text-decoration: none !important;
+	width: 100%;
+    display: block;
+}
+
+#angularTableTemplate .pagination>.active, #angularTableTemplate .pagination>.active>a,
+	#angularTableTemplate .pagination>.active>a:focus, #angularTableTemplate .pagination>.active>a:hover,
+	#angularTableTemplate .pagination>.active>span, #angularTableTemplate .pagination>.active>span:focus,
+	#angularTableTemplate .pagination>.active>span:hover {
+	z-index: 2;
+	color: #000;
+	cursor: default;
+	background-color: rgb(232, 232, 232);
+	border-color: rgb(232, 232, 232);
+}
+
+#angularTableTemplate .pagination>.disabled>a, #angularTableTemplate .pagination>.disabled>a:focus,
+	#angularTableTemplate .pagination>.disabled>a:hover,
+	#angularTableTemplate .pagination>.disabled>span, #angularTableTemplate .pagination>.disabled>span:focus,
+	#angularTableTemplate .pagination>.disabled>span:hover {
+	color: #777;
+	cursor: not-allowed;
+	background-color: #fff;
+	border-color: #ddd;
+}
+
+
+#angularTableTemplate .dropdown_menu_list {
+	position: fixed !important;
+}
+#angularTableTemplate .position-fixed{
+position: fixed !important;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list {
+	position: relative;
+	top: 100%;
+	left: 0;
+	z-index: 1000;
+	display: none;
+	float: left;
+	min-width: 160px;
+	padding: 5px 0;
+	margin: 2px 0 0;
+	font-size: 14px;
+	text-align: left;
+	list-style: none;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #ccc;
+	border: 1px solid rgba(0, 0, 0, .15);
+	border-radius: 4px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+	    background-color: #ECECEC;
+}
+
+#angularTableTemplate .dropdown_menu_list.open md-list {
+	display: block;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list-item, #angularTableTemplate .dropdown_menu_list md-list-item button,
+	#angularTableTemplate .dropdown_menu_list md-list-item .md-list-item-inner {
+/* 	min-height: 15px !important; */
+min-height: 22px !important;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list-item p {
+	line-height: 20px;
+	margin: 3px;
+	color: black;
+}
+
+#angularTableTemplate .dropdown_menu_list md-list.bottomBorder md-list-item button {
+	border-bottom: 1px solid rgb(176, 190, 197);
+	padding: 0;
+	margin-left: 8px;
+	margin-right: 8px;
+	border-radius: 0;
+}
+</style>
+
+
+
+</div>
+
+
+
+

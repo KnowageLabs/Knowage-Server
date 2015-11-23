@@ -2,9 +2,207 @@
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * 
  */
+var scripts = document.getElementsByTagName("script")
+var currentScriptPath = scripts[scripts.length-1].src;
 
-angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagination','ng-context-menu' ])
-		.directive('dynamichtml', function ($compile) {
+angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagination','ng-context-menu'])
+.directive('angularTable',
+		function($compile) {
+	return {
+		templateUrl: currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'template/angular-table.html',
+		transclude : true,
+		controller : TableControllerFunction,
+		scope : {
+			ngModel : '=',
+			id : "@",
+			columns:"=?",//items to display. if not defined list all element ordering by name
+			columnsSearch : "=?", // columns where search
+			showSearchBar : '=', //default false
+			searchFunction : '&',
+			pageCangedFunction : "&",
+			totalItemCount : "=?", //if not present, create a non sync pagination and page change function is not necessary
+			currentPageNumber : "=?",
+			noPagination : "=?", //not create pagination and  totalItemCount and pageCangedFunction are not necessary
+			clickFunction : "&", //function to call when click into element list
+			menuOption : "=?", //menu to open with right click
+			speedMenuOption : "=?", //speed menu to open with  button at the end of item
+			selectedItem : "=?", //optional to get the selected  item value
+			highlightsSelectedItem : "=?",
+			multiSelect : "=?",
+			scopeFunctions : "=?"
+		},
+		link: function(scope, element, attrs, ctrl, transclude) {
+			//TODO ngModel obbligatorio
+
+
+			var id="at";
+			if(attrs.id){
+				id=attrs.id;
+			}
+			var template=angular.element(element[0].querySelector("#angularTableTemplate"))
+			template.addClass(id+"ItemBox");
+
+
+			var table= angular.element(template[0].querySelector("table"));
+			var thead= angular.element(table[0].querySelector("thead"));
+			var tbody= angular.element(table[0].querySelector("tbody"));
+			var footerBox= angular.element(template[0].querySelector("angular-table-footer"));
+
+			//create the head
+			thead.attr('angular-table-head',"");
+			//create tbody
+			tbody.attr('angular-table-body',"");
+
+			//create the column of the table. If attrs.column is present load only this column, else load all the columns
+			scope.tableColumns=[];
+			if(attrs.multiSelect && (attrs.multiSelect=true || attrs.multiSelect=="true")){
+				scope.tableColumns.push({label:"--MULTISELECT--",name:"--MULTISELECT--",size:"30px"});
+				thead.attr('multi-select',true);
+				tbody.attr('multi-select',true);
+			}
+			
+
+			if(attrs.columns){
+				var col=JSON.parse(attrs.columns);
+				for(var i=0;i<col.length;i++){
+					var tmpColData={};
+					if(Object.prototype.toString.call(col[i])=="[object Object]"){
+						//json of parameter like name, label,size
+						tmpColData.name=col[i].name || "---";
+						tmpColData.label=col[i].label || tmpColData.name;
+						tmpColData.size=col[i].size || "";
+					}else{
+						//only the col name
+						tmpColData.label=col[i];
+						tmpColData.name=col[i];
+						tmpColData.size="";
+					}
+
+					scope.tableColumns.push(tmpColData);
+				}
+			}else{
+				//load all
+				var firstValue=scope.ngModel[0];
+				if(firstValue!=undefined){
+					for(var key in firstValue){
+						var tmpColData={};
+						tmpColData.label=key;
+						tmpColData.name=key;
+						tmpColData.size="";
+						scope.tableColumns.push(tmpColData);
+					}
+				}
+			}
+			//add speed menu column at the end of the table
+			if(attrs.speedMenuOption ){
+				scope.tableColumns.push({label:"",name:"--SPEEDMENU--",size:"30px"});
+				thead.attr('speed-menu-option',true);
+				tbody.attr('speed-menu-option',true);
+			}
+
+			//check for pagination
+			if(!attrs.totalItemCount){
+				scope.currentPageNumber=undefined;
+				scope.totalItemCount=undefined;
+				var paginBox= angular.element(footerBox[0].querySelector("dir-pagination-controls")); 
+				paginBox.removeAttr("on-page-change");
+				tbody.attr('local-pagination',true);
+			}
+			if(attrs.noPagination){
+				scope.itemsPerPage=999;
+			}else{
+				scope.itemsPerPage=3;
+			}
+			
+			
+			
+			$compile(thead)(scope);
+			$compile(tbody)(scope);
+
+			//add search tab
+			if(!attrs.showSearchBar || attrs.showSearchBar==false || attrs.showSearchBar=="false"){
+				angular.element(template[0].querySelector(".tableSearchBar")).css("display","none");
+			}
+			
+			var showAngularTableActions=false;
+			if (attrs.showSearchBar && (attrs.showSearchBar==true || attrs.showSearchBar=="true")) {
+				showAngularTableActions=true;
+				if (!attrs.searchFunction) {
+					scope.localSearch = true;
+				}
+			}
+			
+			if (attrs.multiSelect) {
+				if (!attrs.selectedItem) {
+					scope.selectedItem = [];
+				}
+			}
+			
+			if(!showAngularTableActions){
+				angular.element(template[0].querySelector("angular-table-actions")).css("display","none");
+			}
+			
+
+		}
+	}
+})
+.directive('angularTableHead',
+		function($compile) {
+	return {
+		templateUrl: 'headThTemplate.html',
+		transclude : true,
+		controller : TableHeaderControllerFunction,
+		link: function(scope, element, attrs, ctrl, transclude) {
+
+
+		}
+
+	}
+})
+.directive('angularTableBody',
+		function($compile) {
+	return {
+		templateUrl: 'bodyTemplate.html',
+		transclude : true,
+		controller : TableBodyControllerFunction,
+		priority:100,
+		compile: function (tElement, tAttrs, transclude) {
+				if( tAttrs.localPagination=="true" || tAttrs.localPagination==true){
+					angular.element(tElement.children()[0]).removeAttr('total-items');
+					angular.element(tElement.children()[0]).removeAttr('current-page');
+				}
+			},
+		link: function(scope, element, attrs, ctrl, transclude) {
+		}
+	}
+})
+.directive('angularTableFooter',
+		function($compile) {
+	return {
+		template:"<div ng-transclude></div>",
+		transclude : true,
+		link: function(scope, element, attrs, ctrl, transclude) {
+console.log("inity footrer")
+		}
+	}
+})
+.directive('actionBackgroundColor',
+		function($compile) {
+	return {
+		link: function(scope, element, attrs, ctrl, transclude) {
+			element.css("background-color",attrs.actionBackgroundColor);
+		}
+	}
+})
+.directive('actionColor',
+		function($compile) {
+	return {
+		link: function(scope, element, attrs, ctrl, transclude) {
+			element.css("color",attrs.actionColor);
+		}
+	}
+})
+.directive('dynamichtml', function ($compile) {
 			return {
 				restrict: 'A',
 				replace: true,
@@ -16,141 +214,62 @@ angular.module('angular_table',[ 'ngMaterial', 'angularUtils.directives.dirPagin
 				}
 			};
 		})
-		.directive('angularTable',
-				function() {
-					return {
-						templateUrl : '/knowage/js/src/angular_1.4/tools/commons/angular-table/angular-table.html',
-						controller : TableControllerFunction,
-						scope : {
-							ngModel : '=',
-							id : "@",
-							columns:"=?",//items to display. if not defined list all element ordering by name
-							columnsSearch:"=?",// columns where search
-						 	showSearchBar:'=', //default false
-						 	searchFunction:'&',
-						 	pageCangedFunction:"&",
-						 	totalItemCount:"=?", //if not present, create a non sync pagination and page change function is not necessary
-						 	currentPageNumber:"=?",
-						 	noPagination:"=?", //not create pagination and  totalItemCount and pageCangedFunction are not necessary
-						 	clickFunction:"&", //function to call when click into element list
-						 	menuOption:"=?", //menu to open with right click
-						 	speedMenuOption:"=?", //speed menu to open with  button at the end of item
-						 	selectedItem:"=?", //optional to get the selected  item value
-						 	highlightsSelectedItem:"=?",
-						 	multiSelect:"=?"
-						
-						},
-						link : function(scope, elm, attrs) {
-
-							console.log("Inizializzo AngularTable con id " + attrs.id);
-							
-							 if(!attrs.totalItemCount){
-					    		  scope.SyncPagination=false;
-					    	  }else{
-					    		  scope.SyncPagination=true;
-					    	  }
-							 
-					    	  if(attrs.noPagination){
-					    		  scope.paginate=false;
-					    	  }else{
-					    		  scope.paginate=!attrs.noPagination;
-					    	  }
-					    	  
-					    	  if(attrs.showSearchBar){
-					     		 if(!attrs.searchFunction){
-					     			 scope.localSearch=true;
-					     		 }    		 
-					     	  }
-					    	  if(attrs.multiSelect){
-					    		  if(!attrs.selectedItem){
-					    			  scope.selectedItem=[];
-					    		  }
-					    	  }
-
-						}
+.filter('filterBySpecificColumns', function(){
+	return function(items,columnsSearch,searchTerm,localSearch) { 
+		if(searchTerm==undefined || searchTerm==""){
+			return items;
+		}
+		var filtered = [];
+		for(var item in items){
+			if(columnsSearch!=undefined && columnsSearch.length!=0){
+				for( var cols in columnsSearch){
+					if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
+						filtered.push(items[item]);
+						break;
 					}
-				}).filter('filterBySpecificColumns', function(){
-					 return function(items,columnsSearch,searchTerm,localSearch) { 
-						 if(searchTerm==undefined || searchTerm==""){
-							 return items;
-						 }
-						  var filtered = [];
-						  for(var item in items){
-							if(columnsSearch!=undefined && columnsSearch.length!=0){
-								for( var cols in columnsSearch){
-									if (items[item][columnsSearch[cols]].toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
-										filtered.push(items[item]);
-										break;
-									}
-								};
-							}else{
-								if (JSON.stringify(items[item]).toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
-									filtered.push(items[item]);
-								}
-							}
-						};
+				};
+			}else{
+				if (JSON.stringify(items[item]).toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
+					filtered.push(items[item]);
+				}
+			}
+		};
+		return filtered;
+	}});
 
-						return filtered;
-					  }});
 
-function TableControllerFunction($scope, $timeout,$filter) {
-	var $scope = $scope;
-	$scope.currentPageNumber=1;
+function TableControllerFunction($scope,$timeout){
+	$scope.currentPageNumber = 1;
 	$scope.tmpWordSearch = "";
 	$scope.prevSearch = "";
-	$scope.localSearch=false;
-	$scope.searchFastVal="";
+	$scope.localSearch = false;
+	$scope.searchFastVal = "";
 	$scope.column_ordering;
-	$scope.reverse_col_ord=false;
+	$scope.reverse_col_ord = false;
 	$scope.internal_column_ordering;
-	$scope.internal_reverse_col_ord=false;
+	$scope.internal_reverse_col_ord = false;
 	
 	
-	
-	$scope.searchItem=function(searchVal){ 
-		if($scope.searchItem){
-			$scope.searchFastVal=searchVal;
-		}else{
-		$scope.tmpWordSearch = searchVal;
-		$timeout(function() {
-			if ($scope.tmpWordSearch != searchVal || $scope.prevSearch == searchVal) {
-				return;
-			}
-			$scope.prevSearch = searchVal;
-			$scope.searchFunction({searchValue:searchVal,itemsPerPage:$scope.itemsPerPage,columnsSearch:$scope.columnsSearch,columnOrdering:$scope.column_ordering,reverseOrdering:$scope.reverse_col_ord});
-			
-		}, 1000);
-	}
-	}
-	
-$scope.indexInList=function(list,item){
-	for( var i=0;i<list.length;i++){
-		if(angular.equals(list[i], item)){
-			return i;
+	$scope.searchItem = function (searchVal) {
+		if ($scope.localSearch) {
+			$scope.searchFastVal = searchVal;
+		} else {
+			$scope.tmpWordSearch = searchVal;
+			$timeout(function () {
+				if ($scope.tmpWordSearch != searchVal || $scope.prevSearch == searchVal) {
+					return;
+				}
+				$scope.prevSearch = searchVal;
+				$scope.searchFunction({
+					searchValue : searchVal,
+					itemsPerPage : $scope.itemsPerPage,
+					columnsSearch : $scope.columnsSearch,
+					columnOrdering : $scope.column_ordering,
+					reverseOrdering : $scope.reverse_col_ord
+				});
+
+			}, 1000);
 		}
-	}
-	 return -1;
-}
-	
-	$scope.isSelected=function(item){
-		if($scope.multiSelect){
-			return $scope.indexInList($scope.selectedItem,item) >-1;
-			
-		}else{
-			return angular.equals($scope.selectedItem, item) ;
-		}
-		
-	}
-	
-	$scope.clickItem=function(row,cell){
-		if($scope.multiSelect){
-			$scope.toggleMultiSelect(row);
-		}else{
-			$scope.selectedItem=row;	
-		}
-		
-		$scope.clickFunction({item:row,cell:cell,listId:$scope.id});
-		
 	}
 	
 	// pagination item
@@ -159,20 +278,13 @@ $scope.indexInList=function(list,item){
 			return;
 		}
 		var boxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0].offsetHeight;
-		var searchBoxHeight= $scope.showSearchBar==true? angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .searchBarList'))[0].offsetHeight : 0;
-		var paginBoxHeight= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .box_pagination_list'))[0] == undefined ? 18 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .box_pagination_list'))[0].offsetHeight;
-		paginBoxHeight=paginBoxHeight==0? 18:paginBoxHeight;
-		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .rowItem'))[0]==undefined? 29 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .rowItem'))[0].offsetHeight;
-		var headButtonHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .thButton'))[0]==undefined? 21 : angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox .thButton'))[0].offsetHeight;
+		var tableAction=  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0].offsetHeight || 0;
+		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0].offsetHeight || 0;
+		var headButtonHeight =  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table thead'))[0].offsetHeight || 0;
+		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table tbody tr'))[0].offsetHeight;
 		
-		var nit = parseInt((boxHeight - searchBoxHeight - paginBoxHeight-headButtonHeight-16) / listItemTemplBoxHeight);
+		var nit = parseInt((boxHeight - tableAction - footerTab-headButtonHeight) / listItemTemplBoxHeight);
 		$scope.itemsPerPage = nit <= 0 ? 1 : nit;
-//		console.log("boxHeight",boxHeight)
-//		console.log("searchBoxHeight",searchBoxHeight)
-//		console.log("paginBoxHeight",paginBoxHeight)
-//		console.log("listItemTemplBoxHeight",listItemTemplBoxHeight)
-//		console.log("headButtonHeight",headButtonHeight)
-//		console.log("changeWordItemPP",nit)
 		if(firstLoad){
 			$scope.pageCangedFunction({itemsPerPage:$scope.itemsPerPage,newPageNumber:1,searchValue:''});
 			 firstLoad=false;
@@ -184,9 +296,8 @@ $scope.indexInList=function(list,item){
 		 $scope.changeWordItemPP();
        },0)
 	
-	$scope.$watch(
-					function() {
-						var elem=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0]
+       $scope.$watch(function() {
+						var elem=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0];
 						return elem==undefined? null:  elem.offsetHeight;
 					}, function(newValue, oldValue) {
 						
@@ -195,34 +306,76 @@ $scope.indexInList=function(list,item){
 						}
 					}, true);
 	
+}
+
+function TableBodyControllerFunction($scope){
+	$scope.clickItem = function (row, cell,evt) {
+		if ($scope.multiSelect) {
+			$scope.toggleMultiSelect(row,evt);
+		} else {
+			$scope.selectedItem = row;
+		}
+
+		$scope.clickFunction({
+			item : row,
+			cell : cell,
+			listId : $scope.id
+		});
+	}
 	
-	 
-	 $scope.orderBy=function(column){
-		 if( $scope.column_ordering == column){
-			 $scope.reverse_col_ord=!$scope.reverse_col_ord;
-		 }else{
-			 $scope.column_ordering = column;
-			 $scope.reverse_col_ord=false;
-		 }
-		 
-		 if($scope.localSearch){
-				$scope.internal_column_ordering=$scope.column_ordering;
-				$scope.internal_reverse_col_ord=$scope.reverse_col_ord;
-		 }else{
-			 $scope.searchFunction({searchValue:$scope.prevSearch,itemsPerPage:$scope.itemsPerPage,columnsSearch:$scope.columnsSearch,columnOrdering:$scope.column_ordering,reverseOrdering:$scope.reverse_col_ord});
-				 }
-		 
-		
-	 }
+	$scope.toggleMultiSelect = function (row,evt) {
+		evt.stopPropagation();
+		var index = $scope.indexInList($scope.selectedItem, row);
+		if (index > -1) {
+			$scope.selectedItem.splice(index, 1)
+		} else {
+			$scope.selectedItem.push(row);
+		}
+	}
 	
-	 
-	 $scope.toggleMultiSelect=function(row){
-		 var index=$scope.indexInList($scope.selectedItem,row) ;
-		 if(index>-1){
-			 $scope.selectedItem.splice(index, 1)
-		 }else{
-			 $scope.selectedItem.push(row);
-		 }
-	 }
-	 
+	$scope.indexInList = function (list, item) {
+		for (var i = 0; i < list.length; i++) {
+			if (angular.equals(list[i], item)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	$scope.isSelected = function (item) {
+		if ($scope.multiSelect) {
+			return $scope.indexInList($scope.selectedItem, item) > -1;
+
+		} else {
+			return angular.equals($scope.selectedItem, item);
+		}
+
+	}
+	
+
+
+}
+
+function TableHeaderControllerFunction($scope){
+	$scope.orderBy = function (column) {
+		if ($scope.column_ordering == column) {
+			$scope.reverse_col_ord = !$scope.reverse_col_ord;
+		} else {
+			$scope.column_ordering = column;
+			$scope.reverse_col_ord = false;
+		}
+
+		if ($scope.localSearch) {
+			$scope.internal_column_ordering = $scope.column_ordering;
+			$scope.internal_reverse_col_ord = $scope.reverse_col_ord;
+		} else {
+			$scope.searchFunction({
+				searchValue : $scope.prevSearch,
+				itemsPerPage : $scope.itemsPerPage,
+				columnsSearch : $scope.columnsSearch,
+				columnOrdering : $scope.column_ordering,
+				reverseOrdering : $scope.reverse_col_ord
+			});
+		}
+	}
 }

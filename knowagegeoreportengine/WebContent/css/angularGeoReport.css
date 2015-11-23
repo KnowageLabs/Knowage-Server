@@ -100,7 +100,8 @@ geo-distance-calculator {
 }
 
 .itemBoxGU md-content md-radio-button,.itemBoxGU md-content md-checkbox{
-	    margin: 6px 4px 6px 16px;
+/* 	    margin: 6px 4px 6px 16px; */
+	        margin: 0px 4px 11px 16px;
 }
 .itemboxGU md-content {
 	border: 1px solid rgb(63,81,181);
@@ -288,4 +289,8 @@ geo-distance-calculator .calcBox .measureDisplay {
   content: "✖";
 }
 
+.ol-popup-content{
+    height: 200px;
+    overflow: auto;
+}
 

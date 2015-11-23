@@ -95,7 +95,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 							console.log($scope.layerList[i]);
 							if($scope.layerList[i].type == "WFS" || $scope.layerList[i].type == "File" ){
 								console.log("setto icon");
-								$scope.layerList[i].icon = '<md-button ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
+								$scope.layerList[i].icon = '<md-button class="md-icon-button" ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
 							} else{
 								$scope.layerList[i].icon = '';
 							}

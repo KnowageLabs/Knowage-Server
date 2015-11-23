@@ -3,7 +3,7 @@
 	<div flex id='map'>
 		<div id="popup" class="ol-popup">
 			<!-- 			<a href="#" id="popup-closer" class="ol-popup-closer"></a> -->
-			<div id="popup-content"></div>
+			<div id="popup-content" class="ol-popup-content"></div>
 		</div>
 		<div layout="row" layout-wrap layout-align="end end"
 			style="bottom: 0; right: 0; position: absolute;">

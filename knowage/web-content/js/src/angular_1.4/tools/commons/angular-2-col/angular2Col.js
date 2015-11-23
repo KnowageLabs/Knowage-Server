@@ -11,6 +11,7 @@ angular.module('angular_2_col', [ 'ngMaterial' ])
 		controller : templatesControllerFunction,
 		transclude : true,
 		link: function(scope, element, attrs, ctrl, transclude) {
+			element.css("width","100%");
 			var id="a2c";
 			if(attrs.id){
 				id=attrs.id;

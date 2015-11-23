@@ -74,16 +74,19 @@
 <!-- template -->
 
 <script type="text/ng-template" id="layerFromCatalogueTemplate.html">
-   <md-dialog aria-label="Mango (Fruit)"  ng-cloak style="width: 70%;">
-  <form>
-  <md-toolbar>
+   <md-dialog aria-label="Mango (Fruit)"  ng-cloak  style="max-height: 70%;height: 70%;  " layout="column" layout-wrap>
+
+  <md-toolbar >
     <div class="md-toolbar-tools">
       Select from Catalogue
+<md-button ng-click="updateChange()" style="margin-right:20px;" >
+      Close
+    </md-button>
     </div>
+ 
   </md-toolbar>
-  <md-dialog-content style="position:relative;    height: 100%;"	>
-    <div class="md-dialog-content" style="position: absolute;   width: 100%;   height: 100%;   padding: 0;" layout="column" layout-wrap>
- 	  <angular-table flex
+     
+ 	  <angular-table style="height: calc(100% - 64px);"
 						 id="layerCatalogue"
 						 ng-model=layerCatalogueList
  						 columns='["layerLabel","type","layerURL","baseLayer"]'
@@ -95,14 +98,8 @@
 						click-function=toggleLayerFromCatalogue(item)
 						menu-option=menuItem
 		></angular-table>
-    </div>
-  </md-dialog-content>
-  <div class="md-actions" layout="row">
-        <md-button ng-click="updateChange()" style="margin-right:20px;" >
-      Apply Change
-    </md-button>
-  </div>
-  </form>
+  
+
 </md-dialog>
 </script>
 
