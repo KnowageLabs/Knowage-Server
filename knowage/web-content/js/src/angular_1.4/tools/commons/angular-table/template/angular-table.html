@@ -40,7 +40,9 @@
 
 <script type="text/ng-template" id="bodyTemplate.html">
 
-<tr dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber>
+<tr dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| orderBy:internal_column_ordering:internal_reverse_col_ord | itemsPerPage:	itemsPerPage" 
+	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page=currentPageNumber
+	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}">
 	<td ng-repeat="column in tableColumns" ng-click="clickItem(row,row[column.name],$event)"  context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
 		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'" dynamichtml="row[column.name]" ></span>
 		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="toggleMultiSelect(row,$event)" aria-label="selected item checked"> </md-checkbox>
@@ -165,6 +167,15 @@ angular-table table>tbody>tr>td {
     white-space: nowrap; 
     overflow: hidden;
 }
+
+angular-table table>tbody>tr.selectedRowItem{
+    background-color: #F5F5F5;
+    }
+
+angular-table table>tbody>tr:hover{
+    background-color: #EEEEEE;
+    }
+
 
 angular-table table>thead>tr>th>div {
     text-overflow: ellipsis;
