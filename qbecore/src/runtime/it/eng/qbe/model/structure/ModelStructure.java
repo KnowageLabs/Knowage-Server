@@ -378,7 +378,7 @@ public class ModelStructure extends AbstractModelObject implements IModelStructu
 		}
 	}
 
-	public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() {
+	public Map<String, HierarchicalDimensionField> getHierarchicalDimensions() {
 		return this.hierarchicalDimensions;
 	}
 

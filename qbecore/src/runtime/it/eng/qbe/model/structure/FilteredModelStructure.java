@@ -240,7 +240,7 @@ public class FilteredModelStructure extends AbstractModelObject implements IMode
 
 	}
 
-	public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() {
+	public Map<String, HierarchicalDimensionField> getHierarchicalDimensions() {
 		return null;
 	}
 

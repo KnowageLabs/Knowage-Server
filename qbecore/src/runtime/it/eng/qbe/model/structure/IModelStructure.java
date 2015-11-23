@@ -184,7 +184,7 @@ public interface IModelStructure extends IModelObject {
 
 		public void removeCalculatedField(String entityName, ModelCalculatedField calculatedFiled) ;
 
-		public Map<String, HierarchicalDimensionField> getHiearchicalDimensions() ;
+		public Map<String, HierarchicalDimensionField> getHierarchicalDimensions() ;
 
 		public void addHierarchicalDimensionField(String entityName, HierarchicalDimensionField hierarchicalDimensionField) ;
 

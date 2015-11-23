@@ -339,7 +339,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				String[] rValues = whereField.getRightOperand().values;
 
 				if (lValues != null && lValues.length > 0 && rValues != null && rValues.length > 0) {
-					if ("TEMPORAL".equals(lValues[0])) {
+					if (QuerySerializationConstants.TEMPORAL.equals(lValues[0])) {
+
+						whereField.setDescription(QuerySerializationConstants.TEMPORAL);
+
 						String temporalLevelColumn = null;
 						String temporalLevel = whereField.getLeftOperand().description;
 						temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);

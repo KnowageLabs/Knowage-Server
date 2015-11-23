@@ -93,4 +93,6 @@ public class QuerySerializationConstants {
 	public static final String TEMPORAL_OPERAND = "temporalOperand";
 	public static final String TEMPORAL_OPERAND_PARAMETER = "temporalOperandParameter";
 
+	public static final String TEMPORAL = "TEMPORAL";
+
 }

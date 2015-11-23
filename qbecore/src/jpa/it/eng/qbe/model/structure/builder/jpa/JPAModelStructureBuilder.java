@@ -446,7 +446,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	private void addHierarchies(IModelEntity dataMartEntity) {
 		logger.debug("Adding hierarchies "+dataMartEntity.getName());
 
-		HierarchicalDimensionField dimension = dataMartEntity.getStructure().getHiearchicalDimensions().get(dataMartEntity.getUniqueType());
+		HierarchicalDimensionField dimension = dataMartEntity.getStructure().getHierarchicalDimensions().get(dataMartEntity.getUniqueType());
 		if (dimension!=null){
 			dimension.getProperties().put("visible", "true");
 			dataMartEntity.addHierarchicalDimension(dimension);
