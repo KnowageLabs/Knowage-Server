@@ -195,7 +195,25 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							}
 						}
 					}
+					// Check if dataset is used by objects or by federations
+					ArrayList<BIObject> objectsUsing = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(items.get(i).getId());
+					String documentsNames = "";
+					if (objectsUsing != null && objectsUsing.size() > 1) {
+						for (int o = 0; o < objectsUsing.size(); o++) {
+							BIObject obj = objectsUsing.get(o);
+							documentsNames += obj.getName();
+							if (o < objectsUsing.size() - 1)
+								documentsNames += ", ";
+						}
+						itemsJSON.getJSONObject(i).put("hasDocumentsAssociated", documentsNames);
+					}
+
+					List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(items.get(i).getId());
+					if (federationsAssociated != null && federationsAssociated.size() > 0)
+						itemsJSON.getJSONObject(i).put("hasFederationsAssociated", "true");
+
 				}
+
 				JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
 				writeBackToClient(new JSONSuccess(responseJSON));
 
@@ -686,11 +704,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(
 												previousIdInteger);
 
-										if (!objectsUsing.isEmpty() || !federationsAssociated.isEmpty()) {
+										// if (!objectsUsing.isEmpty() || !federationsAssociated.isEmpty()) {
+										// block save action ONLY for federations (if metadata are changed)
+										if (!federationsAssociated.isEmpty()) {
 											logger.debug("dataset " + ds.getLabel() + " is used by some " + objectsUsing.size() + "objects or some "
 													+ federationsAssociated.size() + " federations");
 											// get the previous dataset
-
 											IDataSet dataSet = null;
 											try {
 												dataSet = DAOFactory.getDataSetDAO().loadDataSetById(previousIdInteger);

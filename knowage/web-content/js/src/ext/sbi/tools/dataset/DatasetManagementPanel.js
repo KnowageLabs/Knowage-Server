@@ -109,8 +109,10 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 	Sbi.tools.dataset.DatasetManagementPanel.superclass.constructor.call(this,
 			c);
 
-	this.fileUploaded = false; // used to warn that a new Dataset File is
-								// uploaded
+	this.hasDocumentsAssociated = '';
+	this.hasFederationsAssociated = '';
+	
+	this.fileUploaded = false; // used to warn that a new Dataset File is uploaded
 	this.initSchedulingCronLine = true;
 
 	this.rowselModel.addListener('rowselect', function(sm, row, rec) {
@@ -129,7 +131,8 @@ Sbi.tools.dataset.DatasetManagementPanel = function(config) {
 		}
 		this.manageFormsEnabling();
 		this.fileUploaded = false; // reset to default
-
+		this.hasDocumentsAssociated = rec.get("hasDocumentsAssociated");
+		this.hasFederationsAssociated = rec.get("hasFederationsAssociated");
 	}, this);
 
 	this.tabs.addListener('tabchange', this.modifyToolbar, this);
@@ -656,7 +659,8 @@ Ext
 								'ckanCsvDelimiter', 'ckanCsvQuote',
 								'ckanCsvEncoding', 'ckanSkipRows',
 								'ckanLimitRows', 'ckanXslSheetNumber',
-								'ckanId', 'ckanUrl' ];
+								'ckanId', 'ckanUrl',
+								'hasDocumentsAssociated', 'hasFederationsAssociated'];
 
 						this.configurationObject.emptyRecToAdd = new Ext.data.Record(
 								{
@@ -719,7 +723,9 @@ Ext
 									ckanLimitRows : '',
 									ckanXslSheetNumber : '',
 									ckanId : '',
-									ckanUrl : ''
+									ckanUrl : '',
+									hasDocumentsAssociated : '',
+									hasFederationsAssociated : ''
 								});
 
 						this.configurationObject.gridColItems = [ {
@@ -2991,7 +2997,7 @@ Ext
 						record.set('label', values['label']);
 						record.set('name', values['name']);
 						record.set('description', values['description']);
-						record.set('usedByNDocs', 0);
+//						record.set('usedByNDocs', 0); ?? why it was forced to 0 ?? It causes issue KNOWAGE-67
 						record.set('dsTypeCd', values['dsTypeCd']);
 						record.set('catTypeVn', values['catTypeVn']);
 						record.set('isPublic', values['isPublic']);
@@ -3150,6 +3156,9 @@ Ext
 						this.queryDetail.setFormState(record.data);
 						// ----------------------------------------------------------
 						this.fileUploadFormPanel.setFormState(record.data);
+						this.hasDocumentsAssociated = record.hasDocumentsAssociated || false;
+						this.hasFederationsAssociated = record.hasFederationsAssociated || false;
+						
 					}
 
 					// OVERRIDING save method
@@ -3167,8 +3176,24 @@ Ext
 						if (idRec == 0 || idRec == null || idRec === '') {
 							this.doSave("yes");
 						} else {
-							
-							this.doSave();
+							//checks if the dataset has some documents associated: if yes asks confirm to continue.
+							//if it has some federations associated it will be checked by server side and eventually blocked 
+							//(it depends by the changes' type)
+							if (this.hasDocumentsAssociated !== "" && this.hasFederationsAssociated == ""){
+								var msg = String.format(LN('sbi.ds.saveconfirm.msg'), this.hasDocumentsAssociated);
+								Ext.MessageBox
+								.confirm(
+										LN('sbi.ds.saveconfirm.title'),
+										msg,
+										function(btn, text) {
+				    		                if ( btn == 'yes' ) {
+				    		                	this.doSave();
+				    		                }
+				    					}, 
+				    					this);
+							}else{
+								this.doSave();
+							}
 							
 //							Ext.MessageBox
 //									.confirm(
