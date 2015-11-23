@@ -83,7 +83,7 @@
 							ng-model="ctrl.list" 
 							item-name="label"
 							show-search-bar=true
-							speed-menu-option=ctrl.glossSpeedMenuOptAD
+							speed-menu-option=ctrl.fdsSpeedMenuOptAD
 							click-function="ctrl.moveToListNew(item)"
 							>					
 							</angular-list>
@@ -107,7 +107,7 @@
 						id="selectedDatasets" 
 						ng-model="ctrl.listaNew" 
 						item-name="label" 
-						speed-menu-option=ctrl.glossSpeedMenuOpt
+						speed-menu-option=ctrl.fdsSpeedMenuOpt
 						>					
 						</angular-list>
 					</md-content>
