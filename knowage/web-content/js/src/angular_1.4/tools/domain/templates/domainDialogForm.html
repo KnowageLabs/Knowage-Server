@@ -1,0 +1,42 @@
+<md-dialog aria-label="Mango (Fruit)" ng-cloak style="max-width:900px;max-height:1000px;"> 
+	<md-toolbar class="md-blue minihead">
+		<div class="md-toolbar-tools">
+			  <h2 class="md-flex">Insert Domain Values</h2>
+		</div>
+	</md-toolbar> 
+	<md-dialog-content layout="column">
+		<form name="domainForm">
+			<div flex layout-margin>
+				<md-input-container> 
+					<label>{{translate.load("sbi.domain.managedomains.fields.valuecd")}}</label> 
+					<input ng-model="domain.valueCd" required type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<label>{{translate.load("sbi.domain.managedomains.fields.valuenm")}}</label> 
+					<input	ng-model="domain.valueName" required type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<label>{{translate.load("sbi.domain.managedomains.fields.domaincd")}}</label> 
+					<input ng-model="domain.domainCode" required type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<label>{{translate.load("sbi.domain.managedomains.fields.domainnm")}}</label> 
+					<input ng-model="domain.domainName" required type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<label>{{translate.load("sbi.domain.managedomains.fields.valueds")}}</label> 
+					<input ng-model="domain.valueDescription" required type="text"> 
+				</md-input-container>
+		
+				<div layout="row" layout-align="space-around center">
+					<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveDomain(domain)" ng-disabled="domainForm.$invalid"> {{ translate.load("sbi.generic.update")}} </md-button>
+					<md-button type="button" class="md-raised md-ExtraMini"	ng-click="cancel()">{{translate.load("sbi.generic.cancel")}} </md-button>
+				</div>
+		</form>
+	</md-dialog-content> 
+</md-dialog>
+

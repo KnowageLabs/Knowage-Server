@@ -9,9 +9,15 @@
 				title="#menu.DataProviders"
 				groupingMenu="true"
 				iconCls="storage">			
+			<!-- OLD PAGE 
 			<ITEM	title="#menu.TenantMan"
 					functionality="TenantManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagement.jsp" 
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+		     -->
+		    <ITEM	title="#menu.TenantMan"
+					functionality="TenantManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp" 
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
 		    <ITEM	title="#menu.EngMan"
 					functionality="TenantManagement"
@@ -54,7 +60,6 @@
 					functionality="GeoLayersManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
 		
-		
 		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary.business"
 					functionality="Glossary"
@@ -78,20 +83,32 @@
 				title="#menu.ServerSettings"
 				groupingMenu="true"
 				iconCls="settings">
+			<!-- OLD PAGE
 			<ITEM	title="#menu.UdpMan"
 					functionality="UserDefinedPropertyManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_UDP_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
-
+			-->
+			<ITEM	title="#menu.UdpMan"
+					functionality="UserDefinedPropertyManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/udp/manageUdpAngular.jsp"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/rolesynch16.png" />
 
 			<ITEM	title="#menu.Config"
 					functionality="ConfigManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=CONFIG_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
+
+			<ITEM	title="#menu.Domain"
+					functionality="DomainManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp"
+					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />			
+		<!-- OLD PAGE
 			<ITEM	title="#menu.Domain"
 					functionality="DomainManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
+		 -->
 			<ITEM	title="#menu.MetadataMan"
 					functionality="ObjMetadataManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"

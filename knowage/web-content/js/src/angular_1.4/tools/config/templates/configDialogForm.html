@@ -1,0 +1,63 @@
+
+
+<md-dialog aria-label="Mango (Fruit)" ng-cloak style="max-width:900px;max-height:900px;"> 
+	<md-toolbar class="md-blue minihead">
+		 <div class="md-toolbar-tools">
+			  <h2 class="md-flex">Insert Config Values</h2>
+		</div>
+	</md-toolbar> 
+	<md-dialog-content layout="column">
+		<form name="configForm" data-ng-submit="saveconfig()">
+			<div flex layout-margin>
+				<md-input-container> 
+					<label>{{translate.load("sbi.config.manageconfig.fields.label")}}</label> 
+					<input ng-model="config.label" required type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<label>{{translate.load("sbi.config.manageconfig.fields.name")}}</label> 
+					<input ng-model="config.name" required type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<label>{{translate.load("sbi.config.manageconfig.fields.description")}}</label> 
+					<input ng-model="config.description" type="text"> 
+				</md-input-container>
+	
+				<md-input-container> 
+				<md-select	placeholder="{{translate.load('sbi.config.manageconfig.fields.isactive')}}" ng-model="config.active" required> 
+					<md-option value="true">True</md-option> 
+					<md-option value="false">False</md-option>
+				</md-select> </md-input-container>
+		
+				<md-input-container>
+					<label>{{translate.load("sbi.config.manageconfig.fields.valuecheck")}}</label> 
+					<input ng-model="config.valueCheck" type="text"> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.valuetype')}}" ng-model="config.valueTypeId"> 
+						<md-option value="407">NUM</md-option> 
+						<md-option value="408">STRING</md-option>
+					</md-select> 
+				</md-input-container>
+		
+				<md-input-container> 
+					<md-select placeholder="{{translate.load('sbi.config.manageconfig.fields.category')}}" ng-model="config.category" required>
+						<md-option ng-value="cnf.value" ng-repeat="cnf in filterCategory">
+						{{cnf.value }}
+						</md-option> 
+					</md-select> 
+				</md-input-container>
+				<div layout="row" layout-align="space-around center">
+					<md-button type="submit" class="md-raised md-ExtraMini" ng-click="saveConfig(config)" ng-disabled="configForm.$invalid">
+						{{translate.load("sbi.generic.update")}} 
+					</md-button>
+					<md-button type="button" class="md-raised md-ExtraMini"	ng-click="cancel()"> 
+						{{translate.load("sbi.general.cancel")}}
+					</md-button>
+				</div>
+		</form>
+	</md-dialog-content> 
+</md-dialog>
+
