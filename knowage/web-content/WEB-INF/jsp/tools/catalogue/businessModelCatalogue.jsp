@@ -48,7 +48,7 @@
 						layout-fill
 						id="arsenije"
 						ng-model="businessModelList"
-						columns='["NAME","DESCRIPTION"]'
+						columns='[{"label":"Name","name":"NAME"},{"label":"Description","name":"DESCRIPTION"}]' 
 						columns-search='["NAME","DESCRIPTION"]'
 						show-search-bar=true
 						highlights-selected-item=true						
@@ -65,7 +65,7 @@
 		<right-col>
 			
 			<form layout-fill ng-submit="saveBusinessModel()"
-				class="detailBody md-whiteframe-z1" novalidate>
+				class="detailBody md-whiteframe-z1">
 				<div ng-show = "showMe">
 					<md-toolbar class="md-blue minihead">
 						<div class="md-toolbar-tools h100">
@@ -134,7 +134,13 @@
      						<div flex=3 style="line-height: 40px">
        							<label>{{translate.load("sbi.ds.file.upload.button")}}:</label>
       						</div>
-     					</div>
+      						
+      						<md-input-container class="small counter"> 
+       							<input id="mondarianSchemaFile" ng-model="selectedmondarianSchema.mondarianSchemaFile" type="file"
+       									fileread="selectedmondarianSchema.mondarianSchemaFile" accept=""/> 
+      						</md-input-container>
+      					</div>
+     						
      					
      					<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
@@ -143,7 +149,7 @@
  
       						<md-input-container class="small counter"> 
       							<md-checkbox
-       								ng-model="selectedBusinessModel.LOCKED" aria-label="Locked">
+       								ng-model="selectedBusinessModel.LOCKED" aria-label="Locked" disabled>
       							</md-checkbox> 
       						</md-input-container>
      					</div>
@@ -157,7 +163,7 @@
      					
      					<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised ">
+       							<md-button type="button" class="md-raised " ng-disabled="selectedBusinessModel.LOCKED" ng-click="lockBusinessModel()">
        								{{translate.load("sbi.bm.lockModel")}}
        							</md-button>
       						</div>
@@ -165,7 +171,7 @@
      					
      					<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised ">
+       							<md-button type="button" class="md-raised " ng-disabled="!selectedBusinessModel.LOCKED" ng-click="unlockBusinessModel()">
        								{{translate.load("sbi.bm.unlockModel")}}
        							</md-button>
       						</div>
@@ -175,15 +181,17 @@
      				<div style="height:40%; padding-top:20px">
      				<md-content flex style="background-color: rgb(236, 236, 236); height:95%; overflow:hidden;" >
      					<md-toolbar class="md-blue minihead md-toolbar-tools">
-     						{{translate.load("gets.catalogueversionsgridpanel.title")}}
+     						{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}
      					</md-toolbar>
      						<angular-table
 	     						style="background-color:red" 
 								layout-fill
 								id="arsenije1"
-								ng-model="businessModelList"
-								columns='["CREATOR","CREATION_DATE","FILE_NAME"]'
+								ng-model="businessModelHistory"
+								columns='[{"label":"Creator","name":"CREATOR"},{"label":"Creation Date","name":"CREATION_DATE"},{"label":"File name","name":"FILE_NAME"}]'
+								columns-search='["CREATOR","CREATION_DATE"]'
 								show-search-bar=false
+								speed-menu-option="bmSpeedMenu2"
 								highlights-selected-item=true										
 							>						
 							</angular-table>
