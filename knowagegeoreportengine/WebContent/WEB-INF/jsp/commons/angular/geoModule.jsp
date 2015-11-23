@@ -336,16 +336,21 @@ geoM.factory('geoConstant',function(){
 	return cont;
 });
 
-geoM.service('crossNavigation', function(geo_template, sbiModule_translate) {
+geoM.factory('geoModule_driverParameters',function(geoReportCompatibility){
+	var driverParamsAsString = '<%=driverParams%>';
+	
+	var driverParamsToReturn = JSON.parse(driverParamsAsString);
+	
+	return driverParamsToReturn;
+});
+
+geoM.service('crossNavigation', function(geo_template, geoModule_driverParameters, sbiModule_translate) {	
 	this.navigateTo = function(selectedElementData){
 		if(!geo_template.crossnav ) {
 			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
 			return;
 			
 		} else {
-			console.log("geo_template data", geo_template);
-			console.log("selectedElementData", selectedElementData);
-			
 			var parametersAsString = '';
 			
 			// Cross Navigation Static parameters
@@ -374,16 +379,26 @@ geoM.service('crossNavigation', function(geo_template, sbiModule_translate) {
 					if(param.scope.toLowerCase() == 'feature') {
 						parametersAsString += param.state + '=' + selectedElementData[param.state] + '&';
 					} else if(param.scope.toLowerCase() == 'env') {
+						var paramInputName = param.inputpar;
+						var paramOutputName = param.outputpar;
 						
+						//If the "paramInputName" is not set in the parameter mask (on the right side)
+						if(!geoModule_driverParameters[paramInputName]) {
+							continue;
+						} else {
+							parametersAsString += 
+								(paramOutputName ? paramOutputName : paramInputName)
+								 + '=' + geoModule_driverParameters[paramInputName] + '&';
+						}
 					}
 				}
 			}
 			
 			var frameName = "iframe_crossNavigation";
+			
 			parent.execCrossNavigation(frameName, geo_template.crossnav.label, parametersAsString);
 		}
 	}
 });
-
 
 </script>
