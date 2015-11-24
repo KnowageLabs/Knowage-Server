@@ -12,15 +12,6 @@
 		<ENGINE label="knowagenetworkengine" />
 		<ENGINE label="knowagetalendengine" />
 	</PRODUCT_TYPE>
-	<PRODUCT_TYPE label="KnowageSocial">
-		<ENGINE label="knowagebirtreporteng" />
-		<ENGINE label="knowagechartengine" />
-		<ENGINE label="knowagecockpitengine" />
-		<ENGINE label="knowageqbeengine" />
-		<ENGINE label="knowageworksheeteng" />
-		<ENGINE label="knowagedataminingengine" />
-		<ENGINE label="knowagenetworkengine" />
-	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageFake">
 		<ENGINE label="knowageofficeengine" />
 		<ENGINE label="knowagecompositedoce" />

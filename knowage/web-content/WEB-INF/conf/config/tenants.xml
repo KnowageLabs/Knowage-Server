@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <TENANTS>
-	<TENANT name="SPAGOBI">
+	<TENANT name="DEFAULT_TENANT">
+		<PRODUCT name="KnowageBD"/>
 		<PRODUCT name="KnowageFake"/>	
 	</TENANT>
 </TENANTS>

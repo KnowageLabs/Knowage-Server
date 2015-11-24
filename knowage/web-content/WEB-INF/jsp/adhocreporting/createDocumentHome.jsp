@@ -28,6 +28,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     String georeportEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL);
     String cockpitEditActionUrl = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL);
     String fromMyAnalysis = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_FROM_MYANALYSIS);
+	String isWorksheetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_WORKSHEET_ENABLED);
     String contextName = ChannelUtilities.getSpagoBIContextName(request);
     
     boolean checkCache = false;
@@ -49,6 +50,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 <% }else{ %>
 
     Ext.onReady(function(){
+    	Sbi.settings.mydata.isWorksheetEnabled = <%= isWorksheetEnabled %>;
 		var selfService = Ext.create('Sbi.adhocreporting.AdhocreportingContainer',{
         	worksheetEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(worksheetEditActionUrl) %>'
             , qbeFromBMBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditFromBMActionUrl) %>'

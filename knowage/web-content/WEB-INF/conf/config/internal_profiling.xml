@@ -1,193 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <INTERNAL_PROFILING_INITIALIZER>
 	<DEFAULT_USERS>
-		<USER userId="biadmin" password="biadmin" fullName="SpagoBI Administrator"
-			organization="SPAGOBI" isSuperadmin="true">
+		<USER userId="biadmin" password="biadmin" fullName="Knowage Administrator"
+			organization="DEFAULT_TENANT">
 			<ATTRIBUTE name="email" value="admin@eng.it" />
-			<ATTRIBUTE name="name" value="SpagoBI Administrator" />
-			<ROLE name="/spagobi/admin" />
+			<ATTRIBUTE name="name" value="Knowage Administrator" />
+			<ROLE name="admin" />
 		</USER>
-		<USER userId="biuser" password="biuser" fullName="SpagoBI User"
-			organization="SPAGOBI">
-			<ATTRIBUTE name="name" value="SpagoBI User" />
-			<ROLE name="/spagobi/user" />
+		<USER userId="biuser" password="biuser" fullName="Knowage User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Knowage User" />
+			<ROLE name="user" />
 		</USER>
-		<USER userId="bidemo" password="bidemo" fullName="SpagoBI Demo User"
-			organization="SPAGOBI">
-			<ATTRIBUTE name="name" value="SpagoBI Demo User" />
-			<ROLE name="/spagobi/user/demo" />
+		<USER userId="bidemo" password="bidemo" fullName="Knowage Demo User"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Knowage Demo User" />
+			<ROLE name="demo" />
 		</USER>
-		<USER userId="bitest" password="bitest" fullName="SpagoBI Test User"
-			organization="SPAGOBI">
+		<USER userId="bitest" password="bitest" fullName="Knowage Test User"
+			organization="DEFAULT_TENANT">
 			<ATTRIBUTE name="name" value="SpagoBI TestUser" />
-			<ROLE name="/spagobi/test" />
+			<ROLE name="test" />
 		</USER>
-		<USER userId="bidev" password="bidev" fullName="SpagoBI Developer"
-			organization="SPAGOBI">
-			<ATTRIBUTE name="name" value="SpagoBI Developer" />
-			<ROLE name="/spagobi/dev" />
+		<USER userId="bidev" password="bidev" fullName="Knowage Developer"
+			organization="DEFAULT_TENANT">
+			<ATTRIBUTE name="name" value="Knowage Developer" />
+			<ROLE name="dev" />
 		</USER>
 		<USER userId="bam" password="bam" fullName="Bam User"
-			organization="SPAGOBI">
+			organization="DEFAULT_TENANT">
 			<ATTRIBUTE name="name" value="Bam User" />
-			<ROLE name="/spagobi/bam" />
+			<ROLE name="bam" />
 		</USER>
-		<USER userId="public_user" password="public_user" fullName="Public User"
-			organization="SPAGOBI">
+		<USER userId="public_user" password="public_user" fullName="Knowage Public User"
+			organization="DEFAULT_TENANT">
 			<ATTRIBUTE name="name" value="Public User" />
 		</USER>
 
 	</DEFAULT_USERS>
 	<DEFAULT_ATTRIBUTES>
-		<ATTRIBUTE name="name" description="name" organization="SPAGOBI" />
+		<ATTRIBUTE name="name" description="name" organization="DEFAULT_TENANT" />
 		<ATTRIBUTE name="surname" description="surname"
-			organization="SPAGOBI" />
+			organization="DEFAULT_TENANT" />
 		<ATTRIBUTE name="address" description="address"
-			organization="SPAGOBI" />
+			organization="DEFAULT_TENANT" />
 		<ATTRIBUTE name="birth_date" description="birth date"
-			organization="SPAGOBI" />
-		<ATTRIBUTE name="email" description="email" organization="SPAGOBI" />
+			organization="DEFAULT_TENANT" />
+		<ATTRIBUTE name="email" description="email" organization="DEFAULT_TENANT" />
 
 	</DEFAULT_ATTRIBUTES>
 	<DEFAULT_ROLES>
-		<ROLE roleName="/spagobi/dev" description="/spagobi/dev"
-			roleTypeCD="DEV_ROLE" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/test" description="/spagobi/test"
-			roleTypeCD="TEST_ROLE" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/user" description="/spagobi/user"
-			roleTypeCD="USER" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/userb" description="/spagobi/userb"
-			roleTypeCD="USER" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/admin" description="/spagobi/admin"
-			roleTypeCD="ADMIN" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/modeladmin" description="/spagobi/modeladmin"
-			roleTypeCD="MODEL_ADMIN" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/op_reva" description="/spagobi/op_reva"
-			roleTypeCD="USER" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/an_reva" description="/spagobi/an_reva"
-			roleTypeCD="USER" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/bam" description="/spagobi/bam"
-			roleTypeCD="USER" organization="SPAGOBI" />
-		<ROLE roleName="/spagobi/user/demo" description="/spagobi/user/demo"
-			roleTypeCD="USER" organization="SPAGOBI" />
+		<ROLE roleName="dev" description="dev"
+			roleTypeCD="DEV_ROLE" organization="DEFAULT_TENANT" />
+		<ROLE roleName="test" description="test"
+			roleTypeCD="TEST_ROLE" organization="DEFAULT_TENANT" />
+		<ROLE roleName="user" description="user"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="userb" description="userb"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="admin" description="admin"
+			roleTypeCD="ADMIN" organization="DEFAULT_TENANT" />
+		<ROLE roleName="modeladmin" description="modeladmin"
+			roleTypeCD="MODEL_ADMIN" organization="DEFAULT_TENANT" />
+		<ROLE roleName="op_reva" description="op_reva"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="an_reva" description="an_reva"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="bam" description="bam"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
+		<ROLE roleName="demo" description="demo"
+			roleTypeCD="USER" organization="DEFAULT_TENANT" />
 
 	</DEFAULT_ROLES>
 	<DEFAULT_AUTHORIZATIONS>
 		<!-- Authorizations for KnowageBD -->
 		<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_SUBOBJECTS"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_VIEWPOINTS"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_SNAPSHOTS"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_NOTES"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEND_MAIL"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_METADATA"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SAVE_METADATA"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="BUILD_QBE_QUERY"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="MANAGE_USERS"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="SEE_FAVOURITES"
-			productType="KnowageBD" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_TODO_LIST"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="CREATE_DOCUMENTS"
-			productType="KnowageBD" organization="SPAGOBI" />
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
-			productType="KnowageBD" organization="SPAGOBI" />
-		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
-			
-		<!-- Authorizations for KnowageSocial -->
-		<AUTHORIZATION authorizationName="SAVE_SUBOBJECTS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_SUBOBJECTS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_VIEWPOINTS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_SNAPSHOTS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_NOTES"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEND_MAIL"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SAVE_INTO_FOLDER"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SAVE_REMEMBER_ME"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_METADATA"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SAVE_METADATA"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="BUILD_QBE_QUERY"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="DO_MASSIVE_EXPORT"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="EDIT_WORKSHEET"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="MANAGE_USERS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_DOCUMENT_BROWSER"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_FAVOURITES"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_SUBSCRIPTIONS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="SEE_TODO_LIST"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="CREATE_SOCIAL_ANALYSIS" 
-			productType="KnowageSocial"  organization="SPAGOBI"/>
-		<AUTHORIZATION authorizationName="VIEW_SOCIAL_ANALYSIS" 
-			productType="KnowageSocial"  organization="SPAGOBI"/>
-		<AUTHORIZATION authorizationName="CREATE_DOCUMENTS"
-			productType="KnowageSocial" organization="SPAGOBI" />
-		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
-			productType="KnowageSocial" organization="SPAGOBI" />
-			
-		<AUTHORIZATION productType="KnowageSocial" authorizationName="GLOSSARY" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageSocial" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageSocial" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
+			productType="KnowageBD" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>	
 		
 		<!-- Authorizations for KnowageFake -->
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_SUBOBJECTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SUBOBJECTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_VIEWPOINTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SNAPSHOTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_NOTES" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEND_MAIL" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_INTO_FOLDER" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_REMEMBER_ME" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_METADATA" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_METADATA" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="BUILD_QBE_QUERY" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="DO_MASSIVE_EXPORT" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="EDIT_WORKSHEET" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_USERS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_DOCUMENT_BROWSER" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_FAVOURITES" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SUBSCRIPTIONS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_MY_DATA" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_TODO_LIST" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="CREATE_DOCUMENTS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="HIERARCHIES_MANAGEMENT" organization="SPAGOBI"/>		
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_VIEWPOINTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SNAPSHOTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_NOTES" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEND_MAIL" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_REMEMBER_ME" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="BUILD_QBE_QUERY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="DO_MASSIVE_EXPORT" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="EDIT_WORKSHEET" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_DOCUMENT_BROWSER" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_FAVOURITES" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_SUBSCRIPTIONS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="SEE_TODO_LIST" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="CREATE_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="VIEW_SOCIAL_ANALYSIS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="HIERARCHIES_MANAGEMENT" organization="DEFAULT_TENANT"/>		
 		
-		<AUTHORIZATION productType="KnowageFake" authorizationName="GLOSSARY" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="SPAGOBI"/>
-		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="SPAGOBI"/>	
+		<AUTHORIZATION productType="KnowageFake" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
+		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
 		
 	</DEFAULT_AUTHORIZATIONS>
 
