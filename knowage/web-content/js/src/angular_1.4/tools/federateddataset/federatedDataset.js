@@ -505,7 +505,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 		);
 	}
 	
-e	ctr.fdsSpeedMenuOpt = [ 			 		               	
+	ctr.fdsSpeedMenuOpt = [ 			 		               	
 		 		               	{
 		 		               		label: sbiModule_translate.load("sbi.federationdefinition.delete"),
 		 		               		icon:"fa fa-trash-o",
