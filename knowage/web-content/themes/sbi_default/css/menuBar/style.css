@@ -307,7 +307,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ECEFF1', end
 }
 .gruppoLinkAdmin{
   margin-bottom: 5px;
-  min-height: 100px;
+  min-height: 200px;
 }
 #contieniLinkAdmin {
   width: 0;
