@@ -174,6 +174,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 // 20100505, added fromDOcTreeOrList parameter	
     var config = {
     	document: object
+   		, forceSelectedRole : <%= request.getParameter("SELECTED_ROLE")!=null?"'" + request.getParameter("SELECTED_ROLE") +"'": "null" %>
     	, preferences: {
 			parameters: parameters
 			, subobject: subobject

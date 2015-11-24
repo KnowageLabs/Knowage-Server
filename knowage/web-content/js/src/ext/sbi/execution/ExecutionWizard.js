@@ -391,7 +391,22 @@ Ext.extend(Sbi.execution.ExecutionWizard, Ext.Panel, {
 			this.executionInstance.isPossibleToComeBackToRolePage = false;
 			this.moveToNextPage();
 		} else {
-			this.roleSelectionPage.loadingMask.hide();
+			var forced = false;
+			if(rolesNo && this.forceSelectedRole){
+				for(var i=0,l=store.getRange().length; i<l; i++){
+					var s = store.getRange()[i];
+					if(s && s.data && s.data.name && s.data.name == this.forceSelectedRole){
+						form.roleComboBox.setValue(this.forceSelectedRole); 
+						this.executionInstance.isPossibleToComeBackToRolePage = false;
+						this.moveToNextPage();
+						forced = true;
+						break;
+					}
+				}
+			}
+			if(!forced){
+				this.roleSelectionPage.loadingMask.hide();
+			}
 		}
 	}
 	

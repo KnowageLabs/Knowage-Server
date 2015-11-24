@@ -788,6 +788,10 @@ Ext.extend(Sbi.execution.toolbar.ExportersMenu, Ext.menu.Menu, {
     	if(format != 'pdf'){
     		dh.append(form, {tag: 'input', type: 'hidden', name: 'csvData', value: csvData}, true);
     	}
+    	var currentRole = this.executionInstance.ROLE?this.executionInstance.ROLE:'';
+    	if(currentRole){
+    		dh.append(form, {tag: 'input', type: 'hidden', name: 'role', value: currentRole}, true);
+    	}
     	form.submit();
 	    
 	}
