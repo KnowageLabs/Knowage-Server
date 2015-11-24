@@ -149,6 +149,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.environment = "<%=environment%>";
 		Sbi.config.contextName =  '<%= contextName %>';
 		Sbi.config.documentMode = "<%=documentMode%>";
+		Sbi.config.currentRole = "<%=executionRole%>";
 		
 		var cockpitPanel = null;
 		    

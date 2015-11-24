@@ -387,7 +387,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.contextName =  '<%= contextName %>';
 		Sbi.config.documentMode = "<%=documentMode%>";
 		Sbi.config.chartDesignerUrl = "<%=chartDesignerUrl%>";
-		Sbi.config.chartRuntimeUrl = "<%=chartRuntimeUrl%>"
+		Sbi.config.chartRuntimeUrl = "<%=chartRuntimeUrl%>";
+		Sbi.config.currentRole = "<%=executionRole%>";
 		
 		var cockpitPanel = null;
 		    

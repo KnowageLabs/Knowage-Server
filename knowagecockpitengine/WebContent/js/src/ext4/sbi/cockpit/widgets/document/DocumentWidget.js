@@ -93,7 +93,7 @@ Ext.extend(Sbi.cockpit.widgets.document.DocumentWidget, Sbi.cockpit.core.WidgetR
     		},this);
     		parametersString = "&PARAMETERS="+encodeURIComponent(parametersString);
     	}
-    	var url = Sbi.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&TOOLBAR_VISIBLE=FALSE&OBJECT_LABEL='+this.wconf.documentLabel+parametersString;
+    	var url = Sbi.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&NEW_SESSION=TRUE&TOOLBAR_VISIBLE=FALSE&OBJECT_LABEL='+this.wconf.documentLabel+parametersString+"&SELECTED_ROLE="+Sbi.config.currentRole;
     	
     	this.widgetContent = new Ext.ux.IFrame({xtype:'uxiframe',src: url,style: {height: '100%', width: '100%'}});
 
