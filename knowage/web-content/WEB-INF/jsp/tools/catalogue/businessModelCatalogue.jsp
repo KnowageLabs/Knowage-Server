@@ -34,7 +34,7 @@
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
-							ng-click="createArsenije()"> 
+							ng-click="createBusinessModel()"> 
 							<md-icon
 								md-font-icon="fa fa-plus" 
 								style=" margin-top: 6px ; color: white;">
@@ -188,11 +188,16 @@
 								layout-fill
 								id="arsenije1"
 								ng-model="businessModelHistory"
-								columns='[{"label":"Creator","name":"CREATOR"},{"label":"Creation Date","name":"CREATION_DATE"},{"label":"File name","name":"FILE_NAME"}]'
+								columns='[
+									{"label":"Creator","name":"CREATOR"},
+									{"label":"Creation Date","name":"CREATION_DATE"},
+									{"label":"File name","name":"FILE_NAME"}
+									]'
 								columns-search='["CREATOR","CREATION_DATE"]'
 								show-search-bar=false
 								speed-menu-option="bmSpeedMenu2"
-								highlights-selected-item=true										
+								highlights-selected-item=true
+								multi-select=true										
 							>						
 							</angular-table>
      				</md-content>

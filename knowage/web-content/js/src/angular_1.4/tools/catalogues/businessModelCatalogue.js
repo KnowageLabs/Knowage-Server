@@ -9,7 +9,7 @@ app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiMo
 
 function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast){
 	
-	$scope.showMe = false;
+	$scope.showMe = false;	
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];
 	
@@ -23,11 +23,15 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                             {mid:0,CREATOR:"biadmin",CREATION_DATE:"20.09.2001"}
 	                             ];
 	$scope.businessModelHistory=[];
+
 	
-	$scope.createArsenije = function(){
+	
+	$scope.createBusinessModel = function(){
 		$scope.selectedBusinessModel = {};
 		$scope.showMe = true;
 		$scope.businessModelHistory=[];
+		
+		
 	}
 	
 	$scope.saveBusinessModel = function(){
@@ -72,9 +76,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		}
 	}
 	
-	$scope.deleteItem=function(){
+	$scope.deleteItem=function(item){
 		  console.log("delete");
 		  //test
+		  console.log(item.id);
 		  $scope.businessModelList=[];
 		 }
 	
@@ -104,4 +109,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		                       }
 	                       }
 	                       ];
+	 
+
 };
