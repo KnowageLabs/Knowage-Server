@@ -20,6 +20,8 @@ import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 
 public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
+	public GeoLayer loadLayer(Integer layerID) throws EMFUserError, UnsupportedEncodingException, JSONException;
+
 	public GeoLayer loadLayerByID(Integer layerID) throws EMFUserError;
 
 	public GeoLayer loadLayerByLabel(String label) throws EMFUserError;

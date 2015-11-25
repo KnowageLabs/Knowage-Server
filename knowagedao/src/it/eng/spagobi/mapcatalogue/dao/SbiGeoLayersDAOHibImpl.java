@@ -52,9 +52,55 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
+	 * @throws UnsupportedEncodingException
+	 * @throws JSONException
 	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoLayersDAO#loadLayerByID(integer)
 	 */
+
+	@Override
+	public GeoLayer loadLayer(Integer layerID) throws EMFUserError, UnsupportedEncodingException, JSONException {
+		GeoLayer hibLayer = loadLayerByID(layerID);
+		String str = new String(hibLayer.getLayerDef(), "UTF-8");
+		JSONObject layerDef = new JSONObject(str);
+
+		hibLayer.setLayerIdentify(layerDef.getString("layerId"));
+		hibLayer.setLayerLabel(layerDef.getString("layerLabel"));
+		hibLayer.setLayerName(layerDef.getString("layerName"));
+		if (!layerDef.getString("properties").isEmpty()) {
+			List<String> prop = new ArrayList<>();
+			JSONArray obj = layerDef.getJSONArray("properties");
+
+			for (int j = 0; j < obj.length(); j++) {
+
+				prop.add(obj.getString(j));
+			}
+
+			hibLayer.setProperties(prop);
+		}
+		if (!layerDef.getString("layer_file").equals("null")) {
+			hibLayer.setPathFile(layerDef.getString("layer_file"));
+
+		}
+		if (!layerDef.getString("layer_url").equals("null")) {
+			hibLayer.setLayerURL(layerDef.getString("layer_url"));
+
+		}
+		if (!layerDef.getString("layer_params").equals("null")) {
+			hibLayer.setLayerParams(layerDef.getString("layer_params"));
+		}
+		if (!layerDef.getString("layer_options").equals("null")) {
+			hibLayer.setLayerOptions(layerDef.getString("layer_options"));
+
+		}
+		if (!layerDef.getString("layer_order").equals("null")) {
+			hibLayer.setLayerOrder(new Integer(layerDef.getString("layer_order")));
+
+		}
+		return hibLayer;
+
+	}
+
 	@Override
 	public GeoLayer loadLayerByID(Integer layerID) throws EMFUserError {
 		GeoLayer toReturn = null;
