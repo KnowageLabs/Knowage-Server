@@ -265,7 +265,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 	$scope.loadLayerList = function(item){
 
-
+		
 		//function calls when you clic on the list of layers
 		$scope.showme=true;
 		$scope.setTab('Layer');
@@ -279,8 +279,8 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		}
 
 		$scope.object_temp = angular.copy(item);
-		if(item!= null){
-
+		if(item!= null){		
+			
 			$scope.flagtype=false;
 
 			//siamo in una condizione di caricamento dati dalla lista
@@ -537,6 +537,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					} else {
 
 						$scope.category = data;
+						$scope.category.push({});
 
 
 					}
