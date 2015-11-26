@@ -25,15 +25,7 @@
     /**
      * Module
      */
-    var module;
-    try {
-        module = angular.module(moduleName);
-    } catch(err) {
-        // named module does not exist, so create one
-        module = angular.module(moduleName, []);
-    }
-
-    module
+    angular.module(moduleName, [])
         .directive('dirPaginate', ['$compile', '$parse', 'paginationService', dirPaginateDirective])
         .directive('dirPaginateNoCompile', noCompileDirective)
         .directive('dirPaginationControls', ['paginationService', 'paginationTemplate', dirPaginationControlsDirective])
@@ -47,16 +39,17 @@
         return  {
             terminal: true,
             multiElement: true,
+            priority: 100,
             compile: dirPaginationCompileFn
         };
 
         function dirPaginationCompileFn(tElement, tAttrs){
 
             var expression = tAttrs.dirPaginate;
-            // regex taken directly from https://github.com/angular/angular.js/blob/master/src/ng/directive/ngRepeat.js#L211
-            var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
+            // regex taken directly from https://github.com/angular/angular.js/blob/v1.4.x/src/ng/directive/ngRepeat.js#L339
+            var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+as\s+([\s\S]+?))?(?:\s+track\s+by\s+([\s\S]+?))?\s*$/);
 
-            var filterPattern = /\|\s*itemsPerPage\s*:[^|\)]*/;
+            var filterPattern = /\|\s*itemsPerPage\s*:\s*(.*\(\s*\w*\)|([^\)]*?(?=\s+as\s+))|[^\)]*)/;
             if (match[2].match(filterPattern) === null) {
                 throw 'pagination directive: the \'itemsPerPage\' filter must be set.';
             }
@@ -123,7 +116,7 @@
                 idDefinedInFilter = !!expression.match(/(\|\s*itemsPerPage\s*:[^|]*:[^|]*)/);
 
             if (paginationId !== DEFAULT_ID && !idDefinedInFilter) {
-                repeatExpression = expression.replace(/(\|\s*itemsPerPage\s*:[^|]*)/, "$1 : '" + paginationId + "'");
+                repeatExpression = expression.replace(/(\|\s*itemsPerPage\s*:\s*[^|\s]*)/, "$1 : '" + paginationId + "'");
             } else {
                 repeatExpression = expression;
             }
@@ -188,8 +181,11 @@
             if (attrs.currentPage) {
                 currentPageGetter = $parse(attrs.currentPage);
             } else {
-                // if the current-page attribute was not set, we'll make our own
-                var defaultCurrentPage = paginationId + '__currentPage';
+                // If the current-page attribute was not set, we'll make our own.
+                // Replace any non-alphanumeric characters which might confuse
+                // the $parse service and give unexpected results.
+                // See https://github.com/michaelbromley/angularUtils/issues/233
+                var defaultCurrentPage = (paginationId + '__currentPage').replace(/\W/g, '_');
                 scope[defaultCurrentPage] = 1;
                 currentPageGetter = $parse(defaultCurrentPage);
             }
@@ -443,7 +439,7 @@
             }
             var end;
             var start;
-            if (collection instanceof Array) {
+            if (angular.isObject(collection)) {
                 itemsPerPage = parseInt(itemsPerPage) || 9999999999;
                 if (paginationService.isAsyncMode(paginationId)) {
                     start = 0;
@@ -453,11 +449,41 @@
                 end = start + itemsPerPage;
                 paginationService.setItemsPerPage(paginationId, itemsPerPage);
 
-                return collection.slice(start, end);
+                if (collection instanceof Array) {
+                    // the array just needs to be sliced
+                    return collection.slice(start, end);
+                } else {
+                    // in the case of an object, we need to get an array of keys, slice that, then map back to
+                    // the original object.
+                    var slicedObject = {};
+                    angular.forEach(keys(collection).slice(start, end), function(key) {
+                        slicedObject[key] = collection[key];
+                    });
+                    return slicedObject;
+                }
             } else {
                 return collection;
             }
         };
+    }
+
+    /**
+     * Shim for the Object.keys() method which does not exist in IE < 9
+     * @param obj
+     * @returns {Array}
+     */
+    function keys(obj) {
+        if (!Object.keys) {
+            var objKeys = [];
+            for (var i in obj) {
+                if (obj.hasOwnProperty(i)) {
+                    objKeys.push(i);
+                }
+            }
+            return objKeys;
+        } else {
+            return Object.keys(obj);
+        }
     }
 
     /**

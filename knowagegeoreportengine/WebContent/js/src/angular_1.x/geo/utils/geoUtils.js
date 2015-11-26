@@ -25,7 +25,9 @@ geoM.service('geoReportCompatibility',function($map){
 		if(geoModule_template.hasOwnProperty("businessId")){
 			geoModule_template.datasetJoinColumns=geoModule_template.businessId;
 			delete geoModule_template.businessId;
-		}
+		} 
+
+
 
 		//compatibility of baseLayersConf with old template
 		if(geoModule_template.hasOwnProperty("baseLayersConf") && geoModule_template.baseLayersConf.length!=0 ){
@@ -52,14 +54,15 @@ geoM.service('geoReportCompatibility',function($map){
 				} 
 			}
 		}
-	};
+
+	}
 });
 
 /**
  * Set of method to manage 
  * 
  * */
-geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices){
+geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices){
 	var gru=this;
 	this.osm_getTileURL= function(bounds) {
 		var res = $map.getResolution();
@@ -100,13 +103,46 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
 
 		}
 		return elem;
-	};
+
+	}
 
 
 	/**
 	 * Loads the target layer using a REST service
 	 * */
 	this.GetTargetLayer=function(){
+		//load Layer object from layer catalogue
+		sbiModule_restServices.alterContextPath( sbiModule_config.externalBasePath+'restful-services/');
+		sbiModule_restServices.post("layers", 'getLayerFromList',{items: [geoModule_template.targetLayerConf.label]}).success(
+				function(data, status, headers, config) {
+
+					sbiModule_logger.trace("TargetLayer caricato",data);
+					if (data.hasOwnProperty("errors")) {
+						sbiModule_logger.log("TargetLayer non Ottenuti",data.errors);
+					} else {
+
+						data=data.root[0];
+
+						if(data.type=='WMS'){
+							//if is a WMS
+
+							geoModule_layerServices.setTemplateLayer(data,true); 
+
+						}else{
+							//if is a WFS or file 
+							gru.getGEOJsonFromFileOrWfs();
+						}
+					}
+
+				}).error(function(data, status, headers, config) {
+					console.log("TargetLayer non Ottenuto " + status);
+				});
+	}
+
+	/**
+	 * Loads the GEOJson from wfs or file  layer using a REST service
+	 * */
+	this.getGEOJsonFromFileOrWfs=function(){
 		var params = {
 				layer: geoModule_template.targetLayerConf.label
 				, layerJoinColumns: geoModule_template.layerJoinColumns
@@ -114,14 +150,14 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
 
 		params.featureIds=getFeatureIdsFromStore();
 
-		sbiModule_restServices.post("1.0/geo", 'GetTargetLayer',params).success(
+		sbiModule_restServices.post("1.0/geo", 'getTargetLayer',params).success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						sbiModule_logger.log("GetTargetLayer non Ottenuto");
 					} else {
 						sbiModule_logger.trace("GetTargetLayer caricato",data);
 
-						geoModule_layerServices.setTemplateLayer(data); 
+						geoModule_layerServices.setTemplateLayer(data,false); 
 
 					}
 
@@ -130,11 +166,13 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
 				});
 	}
 
+
 	/**
 	 * Loads the dataset using a REST service
 	 * */
 	this.GetTargetDataset=function(){
-		sbiModule_restServices.get("1.0/geo", 'GetTargetDataset').success(
+
+		sbiModule_restServices.get("1.0/geo", 'getTargetDataset').success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						sbiModule_logger.log("dataset non Ottenuto");
@@ -149,7 +187,7 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
 				}).error(function(data, status, headers, config) {
 					sbiModule_logger.log("dataset non Ottenuto");
 				});
-	};
+	}
 
 	/**
 	 * Initialization for Indicators and Filters
@@ -199,7 +237,7 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
 								Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
 							}
 						}else{
-							console.error("dataset->metaData->fields->role="+fields[i].role+"    not managed ") 
+							console.error("dataset->metaData->fields->role="+fields[i].role+"not managed ") 
 						}
 					}
 				}
@@ -225,6 +263,7 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
  * 
  * */
 geoM.filter('unique', function () {
+
 	return function (items, filterOn) {
 
 		if (filterOn === false) {
@@ -271,18 +310,18 @@ geoM.factory('geo_interaction',function(){
 			distance_calculator: false,
 			selectedFeatures: []
 	};
-	
+
 	interact.setSelectedFeatures = function(newSelectedFeatures) {
 		interact.selectedFeatures = newSelectedFeatures;
-		
+
 		if (interact.selectedFeaturesCallbackFunction) {
 			interact.selectedFeaturesCallbackFunction();
 		}
 	};
-	
+
 	interact.setSelectedFeaturesCallbackFunction = function(callbackFunction) {
 		interact.selectedFeaturesCallbackFunction = callbackFunction;
 	};
-	
+
 	return interact;
 })

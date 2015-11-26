@@ -41,7 +41,7 @@ function geoLegendControllerFunction($scope,$mdDialog){
   	      templateUrl: 'changeLegendTemplate.html',
   	      parent: angular.element(document.body),
   	      targetEvent: ev,
-  	      clickOutsideToClose:true,
+  	      clickOutsideToClose:false,
   	      openFrom: '.changeStyleButton',
   	      closeTo: '.changeStyleButton'
   	    })

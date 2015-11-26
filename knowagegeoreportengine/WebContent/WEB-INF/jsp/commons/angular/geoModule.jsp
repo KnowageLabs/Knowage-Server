@@ -1,27 +1,11 @@
-<%@page import="java.util.HashMap"%>
-<%@page import="it.eng.spagobi.engines.georeport.GeoReportEngineInstance"%>
-<%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
-<%@page import="org.json.JSONObject"%>
-<%
-    Map driverParamsMap = new HashMap();
-	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
-		if(key instanceof String && !key.equals("widgetData")){
-			String value = request.getParameter((String)key);
-			if(value!=null){
-				driverParamsMap.put(key, value);
-			}
-		}
-	}
-	String driverParams = new JSONObject(driverParamsMap).toString(0);
-%>
-
 <script>
-	
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  *
  */
-
+ 
+<%-- the JSP variable are present in angularResources.jsp--%>
+	
 geoM.factory('geoModule_template',function(geoReportCompatibility){
 	
 	var t= <%= template %>;
@@ -59,6 +43,10 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     
     if(!t.hasOwnProperty("selectedFilters")){
     	t.selectedFilters={};
+    }
+    
+    if(!t.hasOwnProperty("currentView")){
+    	t.currentView={center:[0, 0], zoom: 2 };
     }
 
     return t;

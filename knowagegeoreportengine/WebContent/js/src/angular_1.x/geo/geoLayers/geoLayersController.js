@@ -66,6 +66,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 	
 					for(var i=0;i<data.root.length;i++){
 						var tmp=data.root[i];
+						if(tmp.category== null){
+							tmp.category={valueNm: geoModule_constant.noCategory};
+						}
 						var categ=tmp.category.valueNm;
 						if(tmp.hasOwnProperty("baseLayer") && tmp.baseLayer==true){
 							//insert category if not present
@@ -220,16 +223,16 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 					$scope.baseLayers[categ]={};
 				}
 				
-				if(	$scope.baseLayers[categ].hasOwnProperty(item.layerId)){
+				if(	$scope.baseLayers[categ].hasOwnProperty(item.label)){
 					//remove
-					delete $scope.baseLayers[categ][item.layerId];
+					delete $scope.baseLayers[categ][item.label];
 				}else{
 					//add
-					$scope.baseLayers[categ][item.layerId]=item;
+					$scope.baseLayers[categ][item.label]=item;
 				}
 				
 				//remove category if empty
-				if($scope.baseLayers[categ].length==0){
+				if(Object.keys($scope.baseLayers[categ]).length==0){
 					delete $scope.baseLayers[categ];
 				}
 			}else{
@@ -239,16 +242,16 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 					$scope.layers[categ]={};
 				}
 				
-				if(	$scope.layers[categ].hasOwnProperty(item.layerId)){
+				if(	$scope.layers[categ].hasOwnProperty(item.label)){
 					//remove
-					delete $scope.layers[categ][item.layerId];
+					delete $scope.layers[categ][item.label];
 				}else{
 					//add
-					$scope.layers[categ][item.layerId]=item;
+					$scope.layers[categ][item.label]=item;
 				}
 				
 				//remove category if empty
-				if($scope.layers[categ].length==0){
+				if(Object.keys($scope.layers[categ]).length==0){
 					delete $scope.layers[categ];
 				}
 				

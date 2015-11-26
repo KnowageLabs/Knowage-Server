@@ -30,6 +30,10 @@
 <!-- angular table -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>
 
+<!-- angular-foundation-colorpicker -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-foundation-colorpicker/foundation-colorpicker-module.js"></script>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-foundation-colorpicker/colorpicker.css">
+	
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jsp"%>

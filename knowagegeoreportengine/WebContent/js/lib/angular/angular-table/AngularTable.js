@@ -60,7 +60,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 				thead.attr('multi-select',true);
 				tbody.attr('multi-select',true);
 			}
-			
+
 
 			if(attrs.columns){
 				var col=JSON.parse(attrs.columns);
@@ -113,9 +113,9 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			}else{
 				scope.itemsPerPage=3;
 			}
-			
-			
-			
+
+
+
 			$compile(thead)(scope);
 			$compile(tbody)(scope);
 
@@ -123,7 +123,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 			if(!attrs.showSearchBar || attrs.showSearchBar==false || attrs.showSearchBar=="false"){
 				angular.element(template[0].querySelector(".tableSearchBar")).css("display","none");
 			}
-			
+
 			var showAngularTableActions=false;
 			if (attrs.showSearchBar && (attrs.showSearchBar==true || attrs.showSearchBar=="true")) {
 				showAngularTableActions=true;
@@ -131,17 +131,17 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 					scope.localSearch = true;
 				}
 			}
-			
+
 			if (attrs.multiSelect) {
 				if (!attrs.selectedItem) {
 					scope.selectedItem = [];
 				}
 			}
-			
+
 			if(!showAngularTableActions){
 				angular.element(template[0].querySelector("angular-table-actions")).css("display","none");
 			}
-			
+
 
 		}
 	}
@@ -167,11 +167,11 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 		controller : TableBodyControllerFunction,
 		priority:100,
 		compile: function (tElement, tAttrs, transclude) {
-				if( tAttrs.localPagination=="true" || tAttrs.localPagination==true){
-					angular.element(tElement.children()[0]).removeAttr('total-items');
-					angular.element(tElement.children()[0]).removeAttr('current-page');
-				}
-			},
+			if( tAttrs.localPagination=="true" || tAttrs.localPagination==true){
+				angular.element(tElement.children()[0]).removeAttr('total-items');
+				angular.element(tElement.children()[0]).removeAttr('current-page');
+			}
+		},
 		link: function(scope, element, attrs, ctrl, transclude) {
 		}
 	}
@@ -182,7 +182,7 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 		template:"<div ng-transclude></div>",
 		transclude : true,
 		link: function(scope, element, attrs, ctrl, transclude) {
-console.log("inity footrer")
+			console.log("inity footrer")
 		}
 	}
 })
@@ -203,17 +203,17 @@ console.log("inity footrer")
 	}
 })
 .directive('dynamichtml', function ($compile) {
-			return {
-				restrict: 'A',
-				replace: true,
-				link: function (scope, ele, attrs) {
-					scope.$watch(attrs.dynamichtml, function(html) {
-						ele.html(html);
-						$compile(ele.contents())(scope);
-					});
-				}
-			};
-		})
+	return {
+		restrict: 'A',
+		replace: true,
+		link: function (scope, ele, attrs) {
+			scope.$watch(attrs.dynamichtml, function(html) {
+				ele.html(html);
+				$compile(ele.contents())(scope);
+			});
+		}
+	};
+})
 .filter('filterBySpecificColumns', function(){
 	return function(items,columnsSearch,searchTerm,localSearch) { 
 		if(searchTerm==undefined || searchTerm==""){
@@ -248,8 +248,8 @@ function TableControllerFunction($scope,$timeout){
 	$scope.reverse_col_ord = false;
 	$scope.internal_column_ordering;
 	$scope.internal_reverse_col_ord = false;
-	
-	
+
+
 	$scope.searchItem = function (searchVal) {
 		if ($scope.localSearch) {
 			$scope.searchFastVal = searchVal;
@@ -271,41 +271,50 @@ function TableControllerFunction($scope,$timeout){
 			}, 1000);
 		}
 	}
-	
+
 	// pagination item
 	$scope.changeWordItemPP=function(){
 		if(angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0]==undefined){
 			return;
 		}
-		var boxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0].offsetHeight;
-		var tableAction=  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0].offsetHeight || 0;
-		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0].offsetHeight || 0;
-		var headButtonHeight =  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table thead'))[0].offsetHeight || 0;
-		var listItemTemplBoxHeight = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table tbody tr'))[0].offsetHeight;
-		
-		var nit = parseInt((boxHeight - tableAction - footerTab-headButtonHeight) / listItemTemplBoxHeight);
+
+		var box=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0]
+		if(box==undefined){return;}
+
+		var tableAction=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-actions'))[0];
+		var footerTab= angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox angular-table-footer'))[0];
+		var headButton =  angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table thead'))[0];
+		var listItemTemplBox = angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox table tbody tr'))[0];
+
+		var boxHeight = box.offsetHeight;
+		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
+		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
+		var headButtonHeight= headButton==undefined? 0 : headButton.offsetHeight ;
+		var listItemTemplBoxHeight = listItemTemplBox==undefined? 0 : listItemTemplBox.offsetHeight;
+
+		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
 		$scope.itemsPerPage = nit <= 0 ? 1 : nit;
 		if(firstLoad){
 			$scope.pageCangedFunction({itemsPerPage:$scope.itemsPerPage,newPageNumber:1,searchValue:''});
-			 firstLoad=false;
+			firstLoad=false;
 		}
-	
+
 	}
 	var firstLoad=true;
-	 $timeout(function() {
-		 $scope.changeWordItemPP();
-       },0)
-	
-       $scope.$watch(function() {
-						var elem=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0];
-						return elem==undefined? null:  elem.offsetHeight;
-					}, function(newValue, oldValue) {
-						
-						if (newValue != oldValue) {
-							$scope.changeWordItemPP();
-						}
-					}, true);
-	
+	$timeout(function() {
+		$scope.changeWordItemPP();
+	},0)
+
+	$scope.$watch(function() {
+		var elem=angular.element(document.querySelector('#angularTableTemplate.'+$scope.id+'ItemBox'))[0];
+		return elem==undefined? null:  elem.offsetHeight;
+	}, function(newValue, oldValue) {
+
+		if (newValue != oldValue) {
+			$scope.changeWordItemPP();
+		}
+	}, true);
+
 }
 
 function TableBodyControllerFunction($scope){
@@ -319,10 +328,12 @@ function TableBodyControllerFunction($scope){
 		$scope.clickFunction({
 			item : row,
 			cell : cell,
-			listId : $scope.id
+			listId : $scope.id,
+			row : row,
+			column : cell
 		});
 	}
-	
+
 	$scope.toggleMultiSelect = function (row,evt) {
 		evt.stopPropagation();
 		var index = $scope.indexInList($scope.selectedItem, row);
@@ -332,7 +343,7 @@ function TableBodyControllerFunction($scope){
 			$scope.selectedItem.push(row);
 		}
 	}
-	
+
 	$scope.indexInList = function (list, item) {
 		for (var i = 0; i < list.length; i++) {
 			if (angular.equals(list[i], item)) {
@@ -351,12 +362,34 @@ function TableBodyControllerFunction($scope){
 		}
 
 	}
-	
+
 
 
 }
 
-function TableHeaderControllerFunction($scope){
+function TableHeaderControllerFunction($scope,$timeout){
+	$scope.multiSelectVal=false;
+	$scope.selectAll=function(){
+		$scope.multiSelectVal=!$scope.multiSelectVal;
+		console.log("select all;")
+		var template=angular.element(document.querySelector("#angularTableTemplate."+$scope.id+"ItemBox"));
+		var table= angular.element(template[0].querySelector("table"));
+		var tbody= angular.element(table[0].querySelector("tbody"));
+		var rows=tbody[0].children;
+
+		var j=0;
+		for(var i=0;i<rows.length;i++){
+			$timeout(function() {
+				var checkCol=angular.element(rows[j].querySelector('td'));
+				j++;
+				if(checkCol[0].querySelector('md-checkbox').checked!=$scope.multiSelectVal){
+					checkCol.triggerHandler('click');
+				}
+			}, 0);
+
+		}
+	}
+
 	$scope.orderBy = function (column) {
 		if ($scope.column_ordering == column) {
 			$scope.reverse_col_ord = !$scope.reverse_col_ord;

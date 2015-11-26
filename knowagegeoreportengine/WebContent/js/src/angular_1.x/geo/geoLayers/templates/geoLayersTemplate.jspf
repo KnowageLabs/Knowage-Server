@@ -79,7 +79,7 @@
   <md-toolbar >
     <div class="md-toolbar-tools">
       Select from Catalogue
-<md-button ng-click="updateChange()" style="right:0;position:absolute;" >
+<md-button ng-click="updateChange()" style="right:8px;position:absolute;top:0;" >
      X
     </md-button>
     </div>
