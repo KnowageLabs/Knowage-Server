@@ -1,6 +1,15 @@
 <!-- openlayer import -->
+
 <link rel="stylesheet" href="http://openlayers.org/en/v3.10.1/css/ol.css" type="text/css">
 <script src="http://openlayers.org/en/v3.10.1/build/ol.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+   google.load('visualization', '1.0', {'packages':['corechart']});
+</script>
+	    
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/utils/Ellipsoid.js"></script>
 
@@ -22,3 +31,4 @@
 
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css">
+

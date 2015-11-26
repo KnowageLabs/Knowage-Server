@@ -145,6 +145,18 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 			extent:this.templateLayer.getProperties().source.getExtent(),
 	  	});
 		
+		var duration = 2000;
+		  var start = +new Date();
+		  var pan = ol.animation.pan({
+		    duration: duration,
+		    source: /** @type {ol.Coordinate} */ ($map.getView().getCenter())
+		  });
+		  var bounce = ol.animation.bounce({
+		    duration: duration,
+		    resolution: 4*$map.getView().getResolution()
+		  });
+		
+		$map.beforeRender(pan, bounce);
 		$map.getView().fit(this.templateLayer.getProperties().source.getExtent(),$map.getSize());
 	};
 	

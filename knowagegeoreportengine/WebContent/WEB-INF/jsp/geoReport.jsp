@@ -23,6 +23,7 @@
 <div ng-controller="mapCtrl" ng-cloak>
 
 	<geo-map map-id='myMap'></geo-map>
+	 
 	
 	<%--
 

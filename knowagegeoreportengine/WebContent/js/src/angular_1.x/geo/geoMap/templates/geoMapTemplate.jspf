@@ -11,7 +11,7 @@
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 		</div>
 	</div>
-
+<!-- <div id="chart_div"></div> -->
 
 
 	<geo-rigth-menu id="menu"></geo-rigth-menu>

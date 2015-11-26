@@ -205,7 +205,7 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_restServi
 								 Object.assign(geModule_datasetJoinColumnsItem, fields[i]); 
 							 }
 						 }else{
-							 console.error("dataset->metaData->fields->role="+fields[i].role+"    not managed ") 
+							 console.error("dataset->metaData->fields->role="+fields[i].role+"not managed ") 
 							}
 					 }
 				 }
