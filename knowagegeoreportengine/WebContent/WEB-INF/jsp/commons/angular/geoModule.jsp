@@ -14,20 +14,20 @@
 	}
 	String driverParams = new JSONObject(driverParamsMap).toString(0);
 %>
+
 <script>
+	
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  *
  */
- 
 
-	
 geoM.factory('geoModule_template',function(geoReportCompatibility){
 	
 	var t= <%= template %>;
 	
 	if(t.hasOwnProperty('role')) {
-		t.role = t.role.charAt(0) == '/'? t.role.charAt(0): 	'/' + t.role.charAt(0);
+		t.role = t.role.charAt(0) == '/'? t.role.charAt(0): '/' + t.role.charAt(0);
 	}
 	
 	var executionRole = '<%= executionRole %>';

@@ -19,16 +19,12 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/utils/geoUtils.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/thematizer/geoThematizer.js"></script>
 
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoMap/geoMapController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoRigthMenu/geoRigthMenuController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoMapMenu/geoMapMenuController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoLayers/geoLayersController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDistanceCalculator/geoDistanceCalculatorController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoLegend/geoLegendController.js"></script>	
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoCrossNavMultiselect/geoCrossNavMultiselectController.js"></script>	
 	
-
-
-
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css">
-

@@ -11,10 +11,10 @@
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 		</div>
 	</div>
-<!-- <div id="chart_div"></div> -->
-
 
 	<geo-rigth-menu id="menu"></geo-rigth-menu>
+	
+	<geo-cross-nav-multiselect></geo-cross-nav-multiselect>
 
 	<!-- this is to include child directive -->
 	<div ng-transclude></div>

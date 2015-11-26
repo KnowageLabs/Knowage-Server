@@ -1,0 +1,21 @@
+<div class="md-whiteframe-z2 itemboxGU" 
+		ng-show="showPanelFlag()">
+<!-- 
+	<md-toolbar class="md-theme-light"> 
+-->
+		<md-content class="md-toolbar-tools">
+			{{sbiModule_translate.load('gisengine.crossnavigation.multiselect.label')}}
+		</md-content> 
+<!-- 
+	</md-toolbar>
+-->
+	
+	<md-content class="md-toolbar-tools" md-layout="row" flex>
+		<span flex>
+			{{sbiModule_translate.load('gisengine.crossnavigation.multiselect.featuresselected')}}: {{geo_interaction.selectedFeatures.length}}
+		</span>
+		<md-button class="md-fab md-mini md-ink-ripple" ng-click="multiSelectNavigateTo()">
+          	<i class="material-icons">forward</i>
+        </md-button>
+	</md-content>
+</div>

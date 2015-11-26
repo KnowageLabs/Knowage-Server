@@ -23,4 +23,5 @@ angular.module('geoModule')
 function geoMapControllerFunction($scope,geoModule_reportUtils){
 	geoModule_reportUtils.GetTargetDataset();
 	
+	$scope.openCrossNavMultiSelectFlag = false;
 }

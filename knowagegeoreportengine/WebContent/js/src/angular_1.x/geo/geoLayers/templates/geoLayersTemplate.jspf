@@ -23,7 +23,7 @@
 				    </md-toolbar>
 				
 					<md-radio-button ng-show="baseLayerCategoryExpander[CatKey]" 
-					ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
+							ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
 		      	 	 {{val.label}}
 			         </md-radio-button>
 			         

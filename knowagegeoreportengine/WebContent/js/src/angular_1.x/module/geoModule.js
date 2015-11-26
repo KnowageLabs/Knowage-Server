@@ -59,7 +59,10 @@ geoM.factory('baseLayer', function() {
   	return baseLayersConf;
 });
 
-geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule_thematizer,geo_interaction,crossNavigation) {
+geoM.service('geoModule_layerServices', function(
+		baseLayer, $map, $http, geoModule_template, 
+		geoModule_thematizer, geo_interaction, crossNavigation) {
+	
 	this.selectedBaseLayer;  //the selected base layer
 	this.selectedBaseLayerOBJ;
 	this.loadedLayer={};
@@ -85,26 +88,27 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 		
 		
 		$map.addLayer(this.templateLayer);
-		 var selectStyle = new ol.style.Style({
-	          stroke: new ol.style.Stroke({
-	            color: '#000000',
+		var selectStyle = new ol.style.Style({
+			stroke: new ol.style.Stroke({
+				color: '#000000',
 	            width: 2
 	        }),
 	        fill: new ol.style.Fill({
 		          color: "rgba(174, 206, 230, 0.78)"
 		        })
-	      });
+		});
 
 		 
-		var select =new ol.interaction.Select({
-			  condition: ol.events.condition.click,
-			  style:[selectStyle]
-			});
-		 $map.addInteraction(select);
+		var select = new ol.interaction.Select({
+			condition: ol.events.condition.singleClick,
+			style:[selectStyle]
+		});
 		 
-		 var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
-		   	element: angular.element((document.querySelector('#popup')))[0],
-		 }));
+		$map.addInteraction(select);
+		 
+		var overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ {
+			element: angular.element((document.querySelector('#popup')))[0],
+		});
 		 
 // 		 angular.element((document.querySelector('#popup-closer')))[0].onclick = function() {
 // 			  overlay.setPosition(undefined);
@@ -112,33 +116,51 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 // 			  return false;
 // 			};
 			
-		 $map.addOverlay(overlay);
+		$map.addOverlay(overlay);
 		
-		 select.on('select', function(evt) {
-			 console.log("asewleocasokasd");
-			 if(evt.selected[0]==undefined || geo_interaction.distance_calculator){
-				 overlay.setPosition(undefined);
-				 return;
-			 }
-			 
-			 var prop= evt.selected[0].getProperties();
-			 
-			 if(geo_interaction.type=="identify"){
-				 var coordinate = evt.mapBrowserEvent.coordinate;
-				 var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
-				 
-				 var txt="";
-				 for(var key in prop){
-					 if(key!="geometry"){
-					 txt+="<p>"+key+":"+prop[key]+"</p>";
-					 }
-				 }
+		select.on('select', function(evt) {
+			if(geo_interaction.type == "identify" 
+					&& (evt.selected[0]==undefined || geo_interaction.distance_calculator)){
+				overlay.setPosition(undefined);
+				return;
+			}
 			
-				 angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
-			 	 $map.getOverlays().getArray()[0].setPosition(coordinate);
-			 }else if(geo_interaction.type=="cross"){
-				 crossNavigation.navigateTo(prop);
-			 }
+			var prop = evt.selected.length ? 
+					evt.selected[0].getProperties(): null;
+					
+			var selectedFeatures = evt.target.getFeatures().getArray();
+			geo_interaction.setSelectedFeatures(selectedFeatures);
+			 
+			if(geo_interaction.type == "identify"){
+				var coordinate = evt.mapBrowserEvent.coordinate;
+				var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
+				 
+				var txt="";
+				for(var key in prop){
+					if(key!="geometry"){
+						txt+="<p>"+key+":"+prop[key]+"</p>";
+					}
+				}
+			
+				angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
+			 	$map.getOverlays().getArray()[0].setPosition(coordinate);
+			 	
+			} else if(geo_interaction.type == "cross"){
+				overlay.setPosition(undefined); // hide eventual messages present on the map
+				
+				var multiSelect = geoModule_template.crossnav.multiSelect;
+				switch (multiSelect) {
+				case (multiSelect !== undefined && true):
+					/* Cross navigation with multiple selected features is handled 
+					 * in "geoCrossNavMultiselect" controller */
+					break;
+				default:
+					if(prop != null) {
+						crossNavigation.navigateTo(prop);
+					}
+					break;
+				}
+			}
 	    });
 		 
 		var tmp = new ol.View({
@@ -146,16 +168,16 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 	  	});
 		
 		var duration = 2000;
-		  var start = +new Date();
-		  var pan = ol.animation.pan({
-		    duration: duration,
-		    source: /** @type {ol.Coordinate} */ ($map.getView().getCenter())
-		  });
-		  var bounce = ol.animation.bounce({
-		    duration: duration,
-		    resolution: 4*$map.getView().getResolution()
-		  });
-		
+		var start = +new Date();
+		var pan = ol.animation.pan({
+			duration: duration,
+			source: /** @type {ol.Coordinate} */ ($map.getView().getCenter())
+		});
+		var bounce = ol.animation.bounce({
+			duration: duration,
+			resolution: 4*$map.getView().getResolution()
+		});
+
 		$map.beforeRender(pan, bounce);
 		$map.getView().fit(this.templateLayer.getProperties().source.getExtent(),$map.getSize());
 	};
@@ -187,7 +209,7 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 	};
 
 	this.toggleLayer = function(layerConf) {
-		console.log("addLayer");
+		console.log("toggleLayer");
 		if(this.loadedLayer[layerConf.layerId]!=undefined){
 			$map.removeLayer(this.loadedLayer[layerConf.layerId]);
 			delete this.loadedLayer[layerConf.layerId];
@@ -224,7 +246,6 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 				  format: new ol.format.GeoJSON(),
 //				  options : JSON.parse(layerConf.layerOptions)
 				});
-			
 		
 			tmpLayer = new ol.layer.Vector({
 				  source: vectorSource,
@@ -274,8 +295,15 @@ geoM.service('geoModule_layerServices', function(baseLayer, $map,$http,geoModule
 
 
 geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
-	this.navigateTo = function(selectedElementData){
-		if(!geoModule_template.crossnav ) {
+	this.navigateTo = function(selectedElements){
+		
+		if (Array.isArray(selectedElements) && selectedElements.length > 1) {
+			selectedElements = selectedElements[0];
+		}
+		
+		var crossnav = geoModule_template.crossnav;
+		
+		if(!crossnav ) {
 			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
 			return;
 			
@@ -283,10 +311,10 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 			var parametersAsString = '';
 			
 			// Cross Navigation Static parameters
-			if(geoModule_template.crossnav.staticParams 
-					&& (typeof (geoModule_template.crossnav.staticParams) == 'object')) {
+			if(crossnav.staticParams 
+					&& (typeof (crossnav.staticParams) == 'object')) {
 				
-				var staticParams = geoModule_template.crossnav.staticParams;
+				var staticParams = crossnav.staticParams;
 				var staticParamsKeys = Object.keys(staticParams);
 				
 				for(var i = 0; i < staticParamsKeys.length; i++) {
@@ -298,15 +326,15 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 			}
 			
 			// Cross Navigation Dynamic parameters
-			if(geoModule_template.crossnav.dynamicParams 
-					&& Array.isArray(geoModule_template.crossnav.dynamicParams)) {
+			if(crossnav.dynamicParams 
+					&& Array.isArray(crossnav.dynamicParams)) {
 				
-				var dynamicParams = geoModule_template.crossnav.dynamicParams;
+				var dynamicParams = crossnav.dynamicParams;
 				for(var i = 0; i < dynamicParams.length; i++) {
 					var param = dynamicParams[i];
 					
 					if(param.scope.toLowerCase() == 'feature') {
-						parametersAsString += param.state + '=' + selectedElementData[param.state] + '&';
+						parametersAsString += param.state + '=' + selectedElements[param.state] + '&';
 					} else if(param.scope.toLowerCase() == 'env') {
 						var paramInputName = param.inputpar;
 						var paramOutputName = param.outputpar;
@@ -325,7 +353,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 			
 			var frameName = "iframe_crossNavigation";
 			
-			parent.execCrossNavigation(frameName, geoModule_template.crossnav.label, parametersAsString);
+			parent.execCrossNavigation(frameName, crossnav.label, parametersAsString);
 		}
 	}
 });

@@ -32,7 +32,7 @@ sbiM.service('sbiModule_translate', function() {
 	};
 	
 	this.load = function(key,sourceFile) {
-		var sf= sourceFile == undefined? 'messages' : sourceFile;
+		var sf = sourceFile == undefined? 'messages' : sourceFile;
 		return messageResource.get(key, sf);
 	};
 });

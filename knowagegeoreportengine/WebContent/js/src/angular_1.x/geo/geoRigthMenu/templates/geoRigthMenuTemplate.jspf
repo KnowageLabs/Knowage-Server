@@ -9,21 +9,21 @@
 	<!-- 		<md-icon  md-font-icon="" class=" zoomAnimation " ng-class="{' fa fa-chevron-left fa-2x' :!openRigthMenu ,'fa fa-times fa-2x' : openRigthMenu}"></md-icon>  -->
 	<!-- 	</md-button> -->
 
-	<md-button id="showMenu" class="md-fab  zoomAnimation"
-		ng-class="{'hidden': openRigthMenu}" ng-click="toggleMenu($event)"
-		aria-label="toggle menu"> <i class="material-icons">more_vert</i>
+	<md-button id="showMenu" class="md-fab zoomAnimation"
+			ng-class="{'hidden': openRigthMenu}" ng-click="toggleMenu($event)"
+			aria-label="toggle menu"> 
+		<i class="material-icons">more_vert</i>
 	</md-button>
 
-
-	<md-sidenav class="md-sidenav-right md-whiteframe-z2"		md-component-id='menu' md-is-locked-open="openRigthMenu">
+	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu">
 		<md-toolbar class="md-theme-light" layout="row" layout-wrap
 			layout-align="center center">
 			<div class="md-toolbar-tools">
 				<i class="material-icons" style="margin-left: -14px;"
-					ng-click="toggleMenu($event)">arrow_forward</i>
+						ng-click="toggleMenu($event)">arrow_forward</i>
 				<div style="width: 100%; text-align: center;">
-					<i class="material-icons">my_location</i><span>Location
-						Intelligence</span>
+					<i class="material-icons">my_location</i>
+					<span>Location Intelligence</span>
 				</div>
 			</div>
 		</md-toolbar> 
@@ -44,6 +44,4 @@
 			</md-tabs>
 		</md-content>
 	</md-sidenav>
-
 </div>
-
