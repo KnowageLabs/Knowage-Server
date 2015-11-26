@@ -59,7 +59,11 @@ geoM.factory('baseLayer', function() {
 	return baseLayersConf;
 });
 
-geoM.service('geoModule_layerServices', function($http,baseLayer,sbiModule_logger, $map,$http,geoModule_thematizer,geo_interaction,crossNavigation,sbiModule_config,geoModule_template,sbiModule_restServices ) {
+geoM.service('geoModule_layerServices', function(
+		$http, baseLayer, sbiModule_logger, 
+		$map, $http, geoModule_thematizer, geo_interaction, 
+		crossNavigation, sbiModule_config, geoModule_template, sbiModule_restServices ) {
+	
 	var layerServ=this;
 	this.selectedBaseLayer;  //the selected base layer
 	this.selectedBaseLayerOBJ;
@@ -189,6 +193,9 @@ geoM.service('geoModule_layerServices', function($http,baseLayer,sbiModule_logge
 	}
 
 	this.doClickAction=function(evt,prop){
+
+		var selectedFeatures = evt.target.getFeatures().getArray();
+		geo_interaction.setSelectedFeatures(selectedFeatures);
 
 		if(geo_interaction.type=="identify"){
 			var coordinate = evt.mapBrowserEvent.coordinate;
