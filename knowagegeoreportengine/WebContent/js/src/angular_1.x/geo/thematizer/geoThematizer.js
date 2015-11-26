@@ -12,27 +12,51 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}
 
 		var dsValue;
+		var multiDsValue = {};
 		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
-		for(var i=0;i<geoModule_dataset.rows.length;i++){
-			if(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]==layerCol){
-				dsValue=geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name];
-				//search if there is a filter enabled
-				for(var key in geoModule_template.selectedFilters){
-					if(geoModule_template.selectedFilters[key]!="-1" &&  geoModule_template.selectedFilters[key].length!=0 && geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
-						console.log("filtrato");
-						return null;
+		if(geoModule_template.analysisType=="chartChiara"){
+			for(var j=0;j<geoModule_template.selectedMultiIndicator.length;j++){
+				//scorro i selectedIndicator
+				for(var i=0;i<geoModule_dataset.rows.length;i++){
+					if(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]==layerCol){
+						multiDsValue[geoModule_template.selectedMultiIndicator[j].header]={
+								value:geoModule_dataset.rows[i][geoModule_template.selectedMultiIndicator[j].name],
+								column:geoModule_template.selectedMultiIndicator[j].name
+						}
+						//dsValue.push(geoModule_template.selectedIndicator[j].name+":"+geoModule_dataset.rows[i][geoModule_template.selectedIndicator[j].name]);
+						//search if there is a filter enabled
+						for(var key in geoModule_template.selectedFilters){
+							if(geoModule_template.selectedFilters[key]!="-1" &&  geoModule_template.selectedFilters[key].length!=0 && geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
+								console.log("filtrato");
+								return null;
+							}
+						}
+						break;
 					}
 				}
-				break;
+				
+			}
+		} else{
+			for(var i=0;i<geoModule_dataset.rows.length;i++){
+				if(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]==layerCol){
+					dsValue=geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name];
+					//search if there is a filter enabled
+					for(var key in geoModule_template.selectedFilters){
+						if(geoModule_template.selectedFilters[key]!="-1" &&  geoModule_template.selectedFilters[key].length!=0 && geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
+							console.log("filtrato");
+							return null;
+						}
+					}
+					break;
+				}
 			}
 		}
-
 		if(geoModule_template.analysisType=="choropleth"){
 			return tmtz.choropleth(dsValue);
 		}else if(geoModule_template.analysisType=="proportionalSymbol"){
 			return tmtz.proportionalSymbol(dsValue);
 		}else if(geoModule_template.analysisType=="chartChiara"){
-			return tmtz.chartChiara(dsValue);
+			return tmtz.chartChiara(multiDsValue);
 		}
 	}
 
@@ -120,33 +144,48 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	}
 
 	this.chartChiara=function(dsValue){
+		var tempMin =0;
+		var tempMax=0;
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
-		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geoModule_template.selectedIndicator.name)){
-			var minV;
-			var maxV;
-			for(var i=0;i<geoModule_dataset.rows.length;i++){
-				var tmpV= parseInt(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]);
-				if(minV==undefined || tmpV<minV){
-					minV=tmpV;
-				}
-				if(maxV==undefined || tmpV>maxV){
-					maxV=tmpV;
+		for(var key in dsValue){
+			console.log("chartChiara start");
+			if(!cacheProportionalSymbolMinMax.hasOwnProperty(key)){
+				var minV;
+				var maxV;
+				for(var i=0;i<geoModule_dataset.rows.length;i++){
+					var tmpV= parseInt(geoModule_dataset.rows[i][dsValue[key].column]);
+					if(minV==undefined || tmpV<minV){
+						minV=tmpV;
+					}
+					if(maxV==undefined || tmpV>maxV){
+						maxV=tmpV;
 
+					}
 				}
+				cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
 			}
-			cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name]={minValue:minV, maxValue:maxV};
-		}
+		
+		
+		
+		
+			var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
+	
+			var minValue = cacheProportionalSymbolMinMax[key].minValue;
+			var maxValue = cacheProportionalSymbolMinMax[key].maxValue;
+			if(tempMin > minValue){
+				tempMin = Math.round(minValue);
+			}
+			if(tempMax<maxValue){
+				tempMax=Math.round(maxValue);
+			}
+			var size;
 
-		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-		var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
-		var maxValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].maxValue;
-		var size;
-
-		if(minValue == maxValue) { // we have only one point in the distribution
-			size = (radius.maxRadiusSize + radius.minRadiusSize)/2;
-		} else {
-			size = ( parseInt(dsValue) - minValue) / ( maxValue - minValue) *
-			(radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
+			if(minValue == maxValue) { // we have only one point in the distribution
+				size = (radius.maxRadiusSize + radius.minRadiusSize)/2;
+			} else {
+				size = ( parseInt(dsValue[key]) - minValue) / ( maxValue - minValue) *
+				(radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
+			}
 		}
 
 		//inizio creazione istogramma
@@ -159,8 +198,10 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		data.addColumn('string', 'Topping');
 		data.addColumn('number', 'Population');
 		
-		console.log(Math.round(size));
-		data.addRows([['N',Math.round(size)]]);
+		for(var key in dsValue){
+			data.addRows([['N',Math.round(dsValue[key].value)]]);
+		}
+		//data.addRows([['N',Math.round(size)]]);
 		
 		var view = new google.visualization.DataView(data);
 	    view.setColumns([0, 1, { calc: "stringify",
@@ -170,11 +211,11 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		// Set chart options 
 	    console.log($map.getView().getZoom());
 	    var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
-	  
+	  //setta minvalue come min del min e max come max del max di 
 		var options = {
 				'width':size_img,
 				'height':size_img,
-				'vAxis': {'minValue': 0, 'maxValue': 100,'textPosition': 'none', 'gridlines': {'color': 'transparent'  }},
+				'vAxis': {'minValue': tempMin, 'maxValue': tempMax,'textPosition': 'none', 'gridlines': {'color': 'transparent'  }},
 				'legend': {'position': 'none'},
 				'backgroundColor': { 'fill':'transparent' },
 				 'hAxis': { 'textPosition': 'none' },
@@ -197,11 +238,11 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			image: new ol.style.Icon ({
 				/*anchor: [0.5, 46],
 				anchorXUnits: 'fraction',
-				anchorYUnits: 'pixels',*/
+				anchorYUnits: 'pixels',
 				fill: new ol.style.Fill({
 					color: radius.color
 				}),
-
+*/
 				src:chart.getImageURI()
 			}),		  
 			geometry: function(feature) {
@@ -216,4 +257,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 
 	}
+		
+
+	
 });

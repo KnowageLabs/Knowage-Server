@@ -38,9 +38,13 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     geoReportCompatibility.resolveCompatibility(t);
   
     if(!t.hasOwnProperty("selectedIndicator")){
+    	
     	t.selectedIndicator = null;
     }
-    
+    if(!t.hasOwnProperty("selectedMultiIndicator")){
+    	//era = null
+    	t.selectedMultiIndicator = [];
+    }
     if(!t.hasOwnProperty("selectedFilters")){
     	t.selectedFilters={};
     }

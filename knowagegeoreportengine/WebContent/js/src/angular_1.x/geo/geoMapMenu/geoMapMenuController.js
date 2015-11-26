@@ -32,8 +32,9 @@ function geoMapMenuControllerFunction(
 	$scope.selectModeInteraction = geo_interaction;
 	$scope.openRigthMenu = false;
 	$scope.analysisTypeList = [
-	                         {label:"Map point",type:"ProportionalSymbol",img:"fa fa-circle"},
-	                         {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "}
+	                         {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
+	                         {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
+	                         {label:"Map Chiara",type:"chartChiara",img:"fa fa-icon"}
 	                         ];
 	$scope.selectModeTypeList = [
 	                           {label:"Identify", type:"identify"},
@@ -88,4 +89,31 @@ function geoMapMenuControllerFunction(
 			$mdDialog.hide(answer);
 		};
 	};
+	
+	$scope.toggleIndicator = function (item){
+		var index = $scope.indexInList(item, geoModule_template.selectedMultiIndicator);
+
+		if(index == -1){
+			geoModule_template.selectedMultiIndicator.push(item);
+		}else{
+			geoModule_template.selectedMultiIndicator.splice(index,1);
+		}
+		$scope.updateMap();
+	}
+	$scope.exist= function(item){
+		return  $scope.indexInList(item, geoModule_template.selectedMultiIndicator)>-1;
+	}   
+	$scope.indexInList=function(item, list) {
+
+		for (var i = 0; i < list.length; i++) {
+			var object = list[i];
+			if(object.name==item.name){
+				//se nella lista è presente l'item è checked
+
+				return i;
+			}
+		}
+
+		return -1;
+	};    
 }
