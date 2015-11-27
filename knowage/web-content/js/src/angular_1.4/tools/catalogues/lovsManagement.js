@@ -47,6 +47,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.listOfDatasources = [];
 	$scope.listOfDatasets = [];
 	$scope.listForFixLov = [];
+	$scope.selectedLov = {};
 	
 //	$scope.lovsManagementSpeedMenu = 
 //	[
@@ -92,6 +93,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 //	     }
 //    ];
 	
+	/**
+	 * Speed menu for handling the deleting action on one 
+	 * particular LOV item.
+	 */
 	$scope.lovsManagementSpeedMenu = 
 	[
 	 	{
@@ -190,16 +195,44 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.showMe = false;
 	}
 	
+	/**
+	 * Action that will happen when user clicks on the "Add" button that
+	 * adds new pair (label, description) for current Fixed LOV item 
+	 * (second panel on the right side of the page).
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
 	$scope.addFixLovItemIntoGrid = function()
 	{
 		console.log("-- add Fix LOV item into the Fix LOV grid list --");
-	}	
+	}
 	
 	/**
-	 * Call all necessary services
+	 * Function that handles what should be done when user clicks on the
+	 * LOV item on the left side of the page (the one from the catalog).
+	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	$scope.getLovs = function()
+	$scope.itemOnClick = function(item)
+	{
+		console.log("-- LOV item with ID: " + item.id + " is clicked --");
+		console.log(item);		
+		/**
+		 * 
+		 */
+		$scope.selectedLov = angular.copy(item);
+		$scope.showMe = true;
+	}
+	
+	/**
+	 * Call all necessary services when getting all LOV items (all items
+	 * in the LOV catalog for our page).
+	 * @author: danristo (danilo.ristovski@mht.net)
+	 */
+	$scope.getAllLovs = function()
 	{		
+		/**
+		 * Get all LOV items from the DB for the LOV catalog.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		sbiModule_restServices
 			.get("2.0", "lovs")
 			.success
@@ -227,6 +260,13 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				}
 			);	
 		
+		/**
+		 * Get all input types for populating the GUI item that
+		 * holds them when specifying the LOV item. This is used
+		 * for specifying what kind (type) of LOV item user wants
+		 * to define.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		sbiModule_restServices
 			.get("domains", "listValueDescriptionByType", "DOMAIN_TYPE=INPUT_TYPE")
 			.success
@@ -254,6 +294,12 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				}
 			);
 		
+		/**
+		 * Get all script types from the DB in order to populate
+		 * its GUI element so user can pick the script type he 
+		 * wants for the Script input type.
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
 		sbiModule_restServices
 			.get("domains", "listValueDescriptionByType", "DOMAIN_TYPE=SCRIPT_TYPE")
 			.success
@@ -348,5 +394,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			);	
 	}
 	
-	$scope.getLovs();
+	$scope.getAllLovs();
+	
+	$scope.parseProviderXml = function(item)
+	{
+		
+	}
 };

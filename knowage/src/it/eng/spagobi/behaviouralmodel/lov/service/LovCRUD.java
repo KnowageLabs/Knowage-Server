@@ -90,19 +90,22 @@ public class LovCRUD extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public String getOnlyOneListOfValue(@PathParam("id") Integer idLOV) {
+	public ModalitiesValue getOnlyOneListOfValue(@PathParam("id") Integer idLOV) {
 
 		logger.debug("IN: input id = " + idLOV);
-		String toReturn = null;
+
 		IModalitiesValueDAO modalitiesValueDAO;
+		ModalitiesValue listOfValues = null;
+
 		try {
+
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
-			ModalitiesValue listOfValues = modalitiesValueDAO.loadModalitiesValueByID(idLOV);
+			listOfValues = modalitiesValueDAO.loadModalitiesValueByID(idLOV);
 
 			// JSONObject lovJSONObject = serializeModalitiesValues(listOfValues);
 
-			toReturn = JsonConverter.objectToJson(listOfValues, null);
+			// toReturn = JsonConverter.objectToJson(listOfValues, null);
 
 			// toReturn = lovJSONObject.toString();
 			logger.debug(String.format("Getting the LOV with ID=%d - done successfully", idLOV));
@@ -115,11 +118,11 @@ public class LovCRUD extends AbstractSpagoBIResource {
 
 		} finally {
 
-			LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+			LogMF.debug(logger, "OUT: returning [{0}]", listOfValues.toString());
 
 		}
 
-		return toReturn;
+		return listOfValues;
 
 	}
 
