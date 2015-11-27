@@ -12,19 +12,12 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.showMe = false;	
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];
+	$scope.listOfDatasources = [];
+	$scope.listOfCategories=[];
+	$scope.bmVersions=[];
 	
 	//for testing
 	$scope.selectedBusinessModel = {};
-	$scope.businessModelList=[{id:0,NAME:"Ime1",DESCRIPTION:"Description1",LOCKED:true},{id:1,NAME:"Ime2",DESCRIPTION:"Description2",LOCKED:false}];
-	$scope.businessModelHistoryAll=[
-	                             {mid:0,CREATOR:"biadmin",CREATION_DATE:"21.12.1968"},
-	                             {mid:0,CREATOR:"aiadmin",CREATION_DATE:"09.07.1968"},
-	                             {mid:1,CREATOR:"biadmin",CREATION_DATE:"31.12.1995"},
-	                             {mid:0,CREATOR:"biadmin",CREATION_DATE:"20.09.2001"}
-	                             ];
-	$scope.businessModelHistory=[];
-
-	
 	
 	$scope.createBusinessModel = function(){
 		$scope.selectedBusinessModel = {};
@@ -37,12 +30,37 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.saveBusinessModel = function(){
 		console.log("aj em in sejv biznis model");
 		
-		if(typeof $scope.selectedBusinessModel.id === "undefined")
-			$scope.selectedBusinessModel.id = $scope.businessModelList.length;
-		
-		$scope.businessModelList.push($scope.selectedBusinessModel);
-		$scope.selectedBusinessModel = {};
-		
+		if(typeof $scope.selectedBusinessModel.id === "undefined"){
+			console.log("Novi se cuva");
+
+			sbiModule_restServices
+				.post("2.0/businessmodels","",$scope.selectedBusinessModel)
+				.success(
+						function(){
+							$scope.businessModelList=[];
+							$scope.getBusinessModels();
+							//$scope.businessModelList.push($scope.selectedBusinessModel);
+							console.log("Uspjesno sacuvan");
+						}
+						
+					);
+		}
+			
+		else{
+			console.log("Cuva se postojeci:id="+$scope.selectedBusinessModel.id);
+			sbiModule_restServices
+				.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
+				.success(
+						function(){
+							$scope.businessModelList=[];
+							$scope.getBusinessModels();
+							//$scope.businessModelList.push($scope.selectedBusinessModel);
+							console.log("Uspjesno sacuvan");
+						}
+						
+					);
+		}	
+
 	}
 	
 	$scope.cancel = function(){
@@ -53,27 +71,20 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	
 	$scope.unlockBusinessModel = function(){
 		//should also check if user is allowed to do this
-		$scope.selectedBusinessModel.LOCKED = false;
+		$scope.selectedBusinessModel.modelLocked = false;
 		console.log($scope.selectedBusinessModel);
 	}
 	
 	$scope.lockBusinessModel = function(){
 		//should also check if user is allowed to do this
-		$scope.selectedBusinessModel.LOCKED = true;
+		$scope.selectedBusinessModel.modelLocked = true;
 		console.log($scope.selectedBusinessModel);
 	}
 	
-	$scope.testClickFunction = function(item){
-		$scope.businessModelHistory=[];
-		console.log(item.id);
-		
-		$scope.showMe = true;
-		$scope.selectedBusinessModel = item;
-		for(var i = 0 ; i < $scope.businessModelHistoryAll.length;i++){
-			if($scope.businessModelHistoryAll[i].mid == item.id)				
-				$scope.businessModelHistory.push($scope.businessModelHistoryAll[i]);
-
-		}
+	$scope.leftTableClick = function(item){
+		$scope.selectedBusinessModel = angular.copy(item);
+		$scope.getVersions(item.id);
+		$scope.showMe = true;	
 	}
 	
 	$scope.deleteItem=function(item){
@@ -84,6 +95,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 }
 	
 	$scope.downloadFile = function(item){
+		//$scope.selectedBusinessModel = angular.copy(item);
+		console.log('ovo je item koji proslijedjuje speed menu')
 		console.log(item);
 	}
 	
@@ -110,5 +123,136 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                       }
 	                       ];
 	 
-
+	 //calling service for getting Business Models
+	 $scope.getBusinessModels = function(){
+			  sbiModule_restServices
+			  	.get("2.0", 'businessmodels')
+			  	.success(
+			  			function(data, status, headers, config) {
+			  				if (data.hasOwnProperty("errors")) {
+			  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+			  				} else {
+			  					for(var i = 0; i < data.length; i++){
+			  						$scope.businessModelList.push(data[i]);
+					  			}
+			  				}
+			  			})
+			  		
+			  		.error(function(data, status, headers, config) {
+			  			console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+			  		});
+	 }
+	 
+	 //calling service for getting data sources
+	 $scope.getDataSources = function(){
+		  sbiModule_restServices
+			.get("datasources","")
+			.success
+			(
+				function(data, status, headers, config) 
+				{
+					if (data.hasOwnProperty("errors")) 
+					{
+						//change sbi.glossary.load.error
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+					} 
+					else 
+					{
+						console.log("datasources:");
+						console.log(data);
+						$scope.listOfDatasources = data.root;					
+					}
+				}
+			)
+			.error
+			(
+				function(data, status, headers, config) 
+				{
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+				}
+			);	
+	 }
+	 
+	 //Calling service for getting Categories
+	 $scope.getCategories = function(){
+		 sbiModule_restServices
+			.get("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
+			.success
+			(
+				function(data, status, headers, config) 
+				{
+					if (data.hasOwnProperty("errors")) 
+					{
+						//change sbi.glossary.load.error
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+					} 
+					else 
+					{
+						console.log("categories:");
+						console.log(data);
+						$scope.listOfCategories = data;
+						for(var i=0; i<data.length;i++){
+							console.log($scope.listOfCategories[i].VALUE_ID);
+						}
+						
+					}
+				}
+			)
+			.error
+			(
+				function(data, status, headers, config) 
+				{
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+				}
+			);
+	 }
+	 
+	 //Calling service for file versions
+	 $scope.getVersions = function (id){
+		 sbiModule_restServices
+		  	.get("2.0/businessmodels",id)
+		  	.success(
+		  			function(data, status, headers, config) {
+		  				if (data.hasOwnProperty("errors")) {
+		  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+		  				} else {
+		  					$scope.bmVersions = data;
+		  					millisToDate($scope.bmVersions);
+		  				}
+		  			})
+		  		
+		  		.error(function(data, status, headers, config) {
+		  			console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+		  		});
+		 
+	 }
+	 
+	 $scope.getData = function(){
+		 $scope.getBusinessModels();
+		 $scope.getDataSources();
+		 $scope.getCategories();
+	 }
+	 
+	 $scope.getData();
+	 
+	 millisToDate = function(data){
+		 for(var i=0; i<data.length;i++){
+			 var date = new Date(data[i].creationDate);
+			 
+			 var dd = date.getDate().toString();
+			 var mm = (date.getMonth()+1).toString();
+			 
+			 var h = date.getHours().toString();
+			 var m = date.getMinutes().toString();
+			 var s = date.getSeconds().toString();
+				 
+			 data[i].creationDate = 
+				 (dd[1]?dd:"0"+dd)+"/"
+				 +(mm[1]?mm:"0"+mm)+"/"
+				 +date.getFullYear()+" "
+				 +(h[1]?h:"0"+h)+":"
+				 +(m[1]?m:"0"+m)+":"
+				 +(s[1]?s:"0"+s);
+		 }
+	 }
 };
