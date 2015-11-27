@@ -38,10 +38,7 @@ function geoMapMenuControllerFunction(
 	                         ];
 	$scope.selectModeTypeList = [
 	                           {label:"Identify", type:"identify"},
-	                           {label:"Cross navigation", type:"cross"},
-	                           {label:"Rect Selection",type:"rectselect"},
-	                           {label:"Circle Selection",type:"circleselect"},
-	                           {label:"Selection",type:"select"}
+	                           {label:"Cross navigation", type:"cross"},	                           
 	                           ];
 	
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
