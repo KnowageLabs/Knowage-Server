@@ -2,13 +2,13 @@
 var app = angular.module('tenantManagementApp',['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
                                                 'sbiModule', 'angular_list']);
 		
-app.controller('Controller', ['sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
+app.controller('Controller', ['sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
 
 
-function manageTenantFunction(sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
+function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_restServices, $scope, $q, $log,  $mdDialog) {
 	
 	var path = "multitenant";
-	
+	$scope.log = sbiModule_logger;
 	$scope.translate=sbiModule_translate;
 	$scope.tenants=[];
 	$scope.tenantSelected = {};
@@ -116,6 +116,16 @@ function manageTenantFunction(sbiModule_translate, sbiModule_restServices, $scop
 		}
 	}
 	
+	$scope.solveMissingId = function (tenant){
+		sbiModule_restServices.get(path, tenant.MULTITENANT_NAME)
+			.success(function(data){
+				if (data.root.MULTITENANT_ID !== undefined){
+					tenant.MULTITENANT_ID = data.root.MULTITENANT_ID ;
+					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(tenant)));
+				}
+			})
+	}
+	
 	$scope.deleteTenant = function() {
 		//get the tenant selected, JSON creation for the body request
 		if ($scope.tenantSelected !== undefined ){
@@ -166,14 +176,19 @@ function manageTenantFunction(sbiModule_translate, sbiModule_restServices, $scop
 			newTenant.MULTITENANT_ID = tenantReceived.MULTITENANT_ID;
 			newTenant.MULTITENANT_NAME = ""+$scope.newTenant.MULTITENANT_NAME;
 			newTenant.MULTITENANT_THEME = ""+$scope.newTenant.MULTITENANT_THEME;
+			
 			if ($scope.typeSave == "INSERT"){
 				//add element to the table
-				$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
+				if ( newTenant.MULTITENANT_ID === undefined ){
+					$scope.solveMissingId(newTenant);
+				}else{
+					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
+				}
 			}else{
 				//updating the table
 				var idx = $scope.indexOf($scope.tenants,newTenant);
 				$scope.tenants[idx]=angular.fromJson(angular.toJson(newTenant));
-			}
+				}
 			$scope.resetForm();
 		});
 	}

@@ -45,6 +45,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -83,6 +84,31 @@ public class MultitenantCRUD {
 			if (tenants != null) {
 				tenantJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(tenants, null);
 				tenantJSON.put("root", tenantJSONArray);
+			}
+
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException("An unexpected error occured while istantiating the dao", t);
+		}
+
+		return tenantJSON.toString();
+	}
+
+	@GET
+	@Path("/{name}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getTenantByName(@Context HttpServletRequest req, @PathParam("name") String name) {
+
+		TenantManager.unset();
+		ITenantsDAO tenantDao = null;
+		SbiTenant tenant;
+		JSONObject tenantJSON = new JSONObject();
+		try {
+			tenantDao = DAOFactory.getTenantsDAO();
+			tenant = tenantDao.loadTenantByName(name);
+			JSONObject tenantJSONObject = new JSONObject();
+			if (tenant != null) {
+				tenantJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(tenant, null);
+				tenantJSON.put("root", tenantJSONObject);
 			}
 
 		} catch (Throwable t) {
