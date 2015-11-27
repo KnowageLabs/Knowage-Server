@@ -12,10 +12,12 @@
 
 
 <md-button id="showLegend" class="md-fab md-mini"
-	ng-click="toggleLegend($event)" aria-label="toggle legend">
-<i class="material-icons">format_list_bulleted</i> </md-button>
+		ng-click="toggleLegend($event)" aria-label="toggle legend">
+	<i class="material-icons">format_list_bulleted</i> 
+</md-button>
 
-<md-button ng-click="changeLegendStyle()" class="md-fab  changeStyleButton" aria-label="More" ng-if="showLegend" >
+<md-button ng-click="changeLegendStyle()" class="md-fab changeStyleButton" 
+		aria-label="More" ng-if="showLegend" >
   	<md-icon md-font-icon="fa fa-cog"></md-icon>
 </md-button>
 
@@ -30,24 +32,21 @@
 <!-- template -->
 
 <script type="text/ng-template" id="changeLegendTemplate.html">
-   <md-dialog aria-label="Mango (Fruit)"  ng-cloak>
-  <form>
-  <md-toolbar>
-    <div class="md-toolbar-tools">
-      changeLegend
-    </div>
-  </md-toolbar>
-  <md-dialog-content >
-    <div class="md-dialog-content">
-
-<span colorpicker="rgba" ng-model="startColor" ng-init="startColor='#ffffff'" style="background-color: {{your.model}}" class="small button">Change color</span>
-
-
-    </div>
-  </md-dialog-content>
-  <div class="md-actions" layout="row">
-    
-  </div>
-  </form>
+<md-dialog aria-label="Mango (Fruit)"  ng-cloak>
+	<form>
+  		<md-toolbar>
+    		<div class="md-toolbar-tools"> changeLegend </div>
+  		</md-toolbar>
+  		<md-dialog-content >
+    		<div class="md-dialog-content">
+				<span colorpicker="rgba" ng-model="startColor" ng-init="startColor='#ffffff'" 
+						style="background-color: {{your.model}}" class="small button">
+					Change color
+				</span>
+    		</div>
+  		</md-dialog-content>
+  		<div class="md-actions" layout="row">
+  		</div>
+  	</form>
 </md-dialog>
 </script>
