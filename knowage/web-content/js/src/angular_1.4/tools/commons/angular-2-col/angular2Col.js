@@ -36,7 +36,11 @@ angular.module('angular_2_col', [ 'ngMaterial' ])
 			transclude(function(clone) {
 				angular.element(element[0].querySelector("#leftColBody")).append(clone);
 			});
-			element.css("width", "30%");
+			var startW="30%";
+			if(attrs.width){
+				startW=attrs.width;
+			}
+			element.css("width", startW);
 			element.after("<resizer style='background-color: #BFBCBC; width: 4px; cursor: e-resize;'> </resizer>")
 			$compile(element[0].parentElement.querySelector('resizer'))(scope);
 
