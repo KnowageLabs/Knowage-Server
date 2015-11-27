@@ -193,11 +193,10 @@ geoM.service('geoModule_layerServices', function(
 	}
 
 	this.doClickAction=function(evt,prop){
-
 		var selectedFeatures = evt.target.getFeatures().getArray();
 		geo_interaction.setSelectedFeatures(selectedFeatures);
 
-		if(geo_interaction.type=="identify"){
+		if(geo_interaction.type == "identify"){
 			var coordinate = evt.mapBrowserEvent.coordinate;
 			var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
 
@@ -210,9 +209,10 @@ geoM.service('geoModule_layerServices', function(
 
 			angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
 			$map.getOverlays().getArray()[0].setPosition(coordinate);
+			
 		}else if(geo_interaction.type == "cross"){
-			layerServ.overlay.setPosition(undefined); // hide eventual messages present on the map
-
+			layerServ.overlay.setPosition(undefined); // hides eventual messages present on the map
+			
 			var multiSelect = geoModule_template.crossnav && geoModule_template.crossnav.multiSelect? 
 					geoModule_template.crossnav.multiSelect : null;
 			switch (multiSelect) {
@@ -222,7 +222,7 @@ geoM.service('geoModule_layerServices', function(
 				break;
 			default:
 				if(prop != null) {
-					crossNavigation.navigateTo(prop);
+					crossNavigation.navigateTo(selectedFeatures[0]);
 				}
 			break;
 			}
@@ -345,12 +345,11 @@ geoM.service('geoModule_layerServices', function(
 geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
 	this.navigateTo = function(selectedElements){
 
-		if (Array.isArray(selectedElements) && selectedElements.length > 1) {
-			selectedElements = selectedElements[0];
-		}
-
 		var crossnav = geoModule_template.crossnav;
 
+		var multiSelect = crossnav && crossnav.multiSelect? 
+				crossnav.multiSelect : null;
+		
 		if(!crossnav ) {
 			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
 			return;
@@ -372,7 +371,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 					parametersAsString += staticParameterKey + '=' + staticParameterValue + '&';
 				}
 			}
-
+			
 			// Cross Navigation Dynamic parameters
 			if(crossnav.dynamicParams 
 					&& Array.isArray(crossnav.dynamicParams)) {
@@ -382,7 +381,27 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 					var param = dynamicParams[i];
 
 					if(param.scope.toLowerCase() == 'feature') {
-						parametersAsString += param.state + '=' + selectedElements[param.state] + '&';
+						if(Array.isArray(selectedElements) && multiSelect) {
+							parametersAsString += param.state + '=';
+							
+							for(var elementIndex = 0; elementIndex < selectedElements.length; elementIndex++) {
+								var element = selectedElements[elementIndex];
+								var elementProperties = element.getProperties();
+
+								if (elementIndex > 0) {
+									parametersAsString += ',';
+								}
+								parametersAsString += "'" + elementProperties[param.state] + "'";
+							}
+						}
+						// else selectedElements is a single feature
+						else{
+							var selectedElementProperties = selectedElements.getProperties();
+							parametersAsString += param.state + '=' + selectedElementProperties[param.state];
+						}
+						
+						parametersAsString += '&';
+						
 					} else if(param.scope.toLowerCase() == 'env') {
 						var paramInputName = param.inputpar;
 						var paramOutputName = param.outputpar;
