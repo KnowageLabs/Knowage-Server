@@ -14,6 +14,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var dsValue;
 		var multiDsValue = {};
 		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
+
 		if(geoModule_template.analysisType=="chartChiara"){
 			for(var j=0;j<geoModule_template.selectedMultiIndicator.length;j++){
 				//scorro i selectedIndicator
@@ -34,7 +35,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 						break;
 					}
 				}
-				
+
 			}
 		} else{
 			for(var i=0;i<geoModule_dataset.rows.length;i++){
@@ -164,12 +165,12 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				}
 				cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
 			}
-		
-		
-		
-		
+
+
+
+
 			var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-	
+
 			var minValue = cacheProportionalSymbolMinMax[key].minValue;
 			var maxValue = cacheProportionalSymbolMinMax[key].maxValue;
 			if(tempMin > minValue){
@@ -188,42 +189,38 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}
 		}
 
-		//inizio creazione istogramma
-		var iDiv = document.createElement('div');
-		iDiv.id = 'chart_div';
-		var chartElement=angular.element(document.querySelector('#map'))[0].appendChild(iDiv);
-
+	
 		// Create the data table.
 		var data = new google.visualization.DataTable();
 		data.addColumn('string', 'Topping');
 		data.addColumn('number', 'Population');
-		
+
 		for(var key in dsValue){
 			data.addRows([['N',Math.round(dsValue[key].value)]]);
 		}
 		//data.addRows([['N',Math.round(size)]]);
-		
+
 		var view = new google.visualization.DataView(data);
-	    view.setColumns([0, 1, { calc: "stringify",
-	                         sourceColumn: 1,
-	                         type: "string",
-	                         role: "annotation" }]);
+		view.setColumns([0, 1, { calc: "stringify",
+			sourceColumn: 1,
+			type: "string",
+			role: "annotation" }]);
 		// Set chart options 
-	    console.log($map.getView().getZoom());
-	    var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
-	  //setta minvalue come min del min e max come max del max di 
+		console.log($map.getView().getZoom());
+		var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
+		//setta minvalue come min del min e max come max del max di 
 		var options = {
 				'width':size_img,
 				'height':size_img,
 				'vAxis': {'minValue': tempMin, 'maxValue': tempMax,'textPosition': 'none', 'gridlines': {'color': 'transparent'  }},
 				'legend': {'position': 'none'},
 				'backgroundColor': { 'fill':'transparent' },
-				 'hAxis': { 'textPosition': 'none' },
+				'hAxis': { 'textPosition': 'none' },
 		};
 
 		// Instantiate and draw our chart, passing in some options.
 		//var chart=new google.visualization.PieChart(chartElement);
-		var chart=new google.visualization.ColumnChart(chartElement);
+		var chart=new google.visualization.ColumnChart(document.createElement('div'));
 		chart.draw(view, options);
 		console.log(chart.getImageURI());
 		var x=  [new ol.style.Style({
@@ -233,7 +230,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}),
 
 		}),
-		
+
 		new ol.style.Style({
 			image: new ol.style.Icon ({
 				/*anchor: [0.5, 46],
@@ -242,7 +239,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				fill: new ol.style.Fill({
 					color: radius.color
 				}),
-*/
+				 */
 				src:chart.getImageURI()
 			}),		  
 			geometry: function(feature) {
@@ -257,7 +254,4 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 
 	}
-		
-
-	
 });

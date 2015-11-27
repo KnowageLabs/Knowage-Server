@@ -1,6 +1,5 @@
 
 <md-content>
-
 <div class="itemboxGU" ng-init=" selectModeExpander=true;">
 		<md-toolbar class="titleToolbar" class="md-theme-light">
 			<span class="md-toolbar-tools">Select Mode</span>
