@@ -47,7 +47,7 @@
     
 		<MAP_REST_SERVICE serviceUrl="/publish" businessProcess="publicFunctionality" />
 		
-		<MAP_REST_SERVICE serviceUrl="/LOV.*" businessProcess="publicFunctionality" />
+		<MAP_REST_SERVICE serviceUrl="/2.0/lovs.*" businessProcess="publicFunctionality" />
 		<MAP_REST_SERVICE serviceUrl="/AD" businessProcess="publicFunctionality" />
 		<MAP_REST_SERVICE serviceUrl="/ADUse" businessProcess="publicFunctionality" />	
 		

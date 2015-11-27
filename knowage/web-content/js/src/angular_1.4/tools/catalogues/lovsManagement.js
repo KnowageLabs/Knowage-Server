@@ -201,7 +201,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.getLovs = function()
 	{		
 		sbiModule_restServices
-			.get("LOV", '')
+			.get("2.0", "lovs")
 			.success
 			(
 				function(data, status, headers, config) 

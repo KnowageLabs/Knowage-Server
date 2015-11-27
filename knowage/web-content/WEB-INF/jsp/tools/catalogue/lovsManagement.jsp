@@ -341,7 +341,7 @@
 												Toolbar and content for Fix LOV grid panel sub-element in the
 												second panel's first tab panel.
 											-->
-											<div style="margin-top:15px;margin-right:20px;margin-left:20px;">
+											<div style="margin-top:15px;margin-right:20px;margin-left:20px">
 												<md-toolbar class="md-blue minihead md-toolbar-tools" style="margin-top:15px;">
 													{{translate.load("sbi.behavioural.lov.details.fixLovGridPanel");}}
 												</md-toolbar>
@@ -350,11 +350,10 @@
 													<angular-table 
 														layout-fill
 														id="listForFixLov"
-														ng-model=listForFixLov
+														ng-model="listForFixLov"
 														show-search-bar=false
 														columns='["LOV_LABEL","LOV_DESCRIPTION"]'
 														highlights-selected-item=true
-														style="height:;"
 													>						
 													</angular-table>
 												</md-content>

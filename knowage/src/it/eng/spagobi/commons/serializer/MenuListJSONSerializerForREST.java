@@ -84,6 +84,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 
+	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
+
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
 
@@ -389,6 +391,16 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			udpManagementTechnical.put(TARGET, "_self");
 			udpManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_UDP + "');");
 			tempMenuList.put(udpManagementTechnical);
+		}
+
+		if (isAbleTo(SpagoBIConstants.LOVS_MANAGEMENT, funcs)) {
+			JSONObject lovsManagementTechnical = new JSONObject();
+			lovsManagementTechnical.put(ICON_CLS, "glossary_management"); // TODO: change icon
+			lovsManagementTechnical.put(ICON_ALIGN, "top");
+			lovsManagementTechnical.put(SCALE, "large");
+			lovsManagementTechnical.put(TARGET, "_self");
+			lovsManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_LOVS + "');");
+			tempMenuList.put(lovsManagementTechnical);
 		}
 
 		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
