@@ -123,7 +123,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input ng-model="SelectedConstraint.LABEL" required 
+							<input ng-model="SelectedConstraint.label" required 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -132,7 +132,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input ng-model="SelectedConstraint.NAME" required 
+							<input ng-model="SelectedConstraint.name" required 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -141,7 +141,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.description")}}</label>
-							<input ng-model="SelectedConstraint.DESCRIPTION"  
+							<input ng-model="SelectedConstraint.description"  
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -151,8 +151,8 @@
 				       <md-input-container class="small counter"> 
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
 				       <md-select  aria-label="aria-label" 
-				        ng-model="SelectedConstraint.CHECK_TYPE"> <md-option 
-				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" >{{l.label}} </md-option>
+				        ng-model="SelectedConstraint.valueTypeCd"> <md-option 
+				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" >{{l.VALUE_NM}} </md-option>
 				       </md-select> </md-input-container>
 				   </div>
 			</div>
@@ -161,7 +161,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{label}}</label>
-							<input ng-model="selectedDataSource.Type" 
+							<input ng-model="selectedDataSource.firstValue" 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -170,7 +170,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
-							<input ng-model="selectedDataSource.RangeMax" 
+							<input ng-model="selectedDataSource.secondValue" 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>	

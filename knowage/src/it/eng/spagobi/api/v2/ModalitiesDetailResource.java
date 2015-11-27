@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response.Status;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -91,6 +90,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 		ICheckDAO checksDao = null;
 		Check check = body;
+		System.out.println(check);
 		if (check == null) {
 			return Response.status(Status.BAD_REQUEST).entity("Error JSON parsing").build();
 		}
@@ -102,7 +102,6 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		try {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
-			List<Check> checkList = checksDao.loadAllChecks();
 			checksDao.insertCheck(check);
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.created(new URI("2.0/detailmodalities/" + encodedCheck)).build();
@@ -133,7 +132,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		try {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
-			List<Domain> domainsList = checksDao.loadAllChecks();
+			List<Check> ChecksList = checksDao.loadAllChecks();
 			checksDao.modifyCheck(check);
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.created(new URI("2.0/detailmodalities/" + encodedCheck)).entity(encodedCheck).build();

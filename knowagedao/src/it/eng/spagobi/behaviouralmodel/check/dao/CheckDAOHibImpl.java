@@ -193,7 +193,6 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiChecks hibCheck = new SbiChecks();
-
 			Criterion aCriterion = Expression.and(Expression.eq("valueId", check.getValueTypeId()), Expression.eq("valueCd", check.getValueTypeCd()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);

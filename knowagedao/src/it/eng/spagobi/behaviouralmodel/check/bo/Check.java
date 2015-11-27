@@ -124,15 +124,15 @@ public class Check implements Serializable {
 	 * public static Check load(SourceBean sb) throws EMFUserError {
 	 * CheckDAOImpl repChecksDAO = new CheckDAOImpl(); return
 	 * (Check)repChecksDAO.load(sb);
-	 * 
+	 *
 	 * }
-	 * 
+	 *
 	 * public void modify() throws EMFUserError { CheckDAOImpl repChecksDAO =
 	 * new CheckDAOImpl(); repChecksDAO.modify(this); }
-	 * 
+	 *
 	 * public void erase() throws EMFUserError { CheckDAOImpl repChecksDAO = new
 	 * CheckDAOImpl(); repChecksDAO.erase(this); }
-	 * 
+	 *
 	 * public void insert() throws EMFUserError { CheckDAOImpl repChecksDAO =
 	 * new CheckDAOImpl(); repChecksDAO.insert(this); }
 	 */
@@ -160,6 +160,7 @@ public class Check implements Serializable {
 	 *
 	 * @return Returns the ValueTypeId.
 	 */
+
 	public Integer getValueTypeId() {
 		return valueTypeId;
 	}
