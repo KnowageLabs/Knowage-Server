@@ -108,7 +108,8 @@
 			<ITEM	title="#menu.LayersCatalogue"
 					functionality="GeoLayersManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/layer/layerCatalogue.jsp" />		
-			
+		
+		
 		<!--  TODO: fix permissions!!! -->
 			<ITEM	title="#menu.glossary.business"
 					functionality="Glossary"
@@ -118,12 +119,16 @@
 			<ITEM	title="#menu.glossary.technical"
 					functionality="Glossary"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/technicaluser/glossaryTechnical.jsp" />
-
+					
 			<ITEM	title="#menu.timespan"
 					functionality="Timespan"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/timespan/timespan.jsp" />
+			
+			<ITEM	title="Lovs Management NEW"
+					functionality="LovsManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp" />
 								
-		</ITEM>
+		</ITEM>		
 		<ITEM	code="menu_tools" 
 			title="#menu.ToolsMenu"
 			groupingMenu="true"
@@ -143,7 +148,7 @@
 			<ITEM	title="#menu.SocialAnalysis"
 					functionality="CreateSocialAnalysis"
 					url="${SPAGOBI_SOCIAL_ANALYSIS_URL}" />
-	  	</ITEM>		
+	  	</ITEM>	  	
 		<ITEM	code="server_settings" 
 				title="#menu.ServerSettings"
 				groupingMenu="true"
@@ -164,7 +169,6 @@
 					functionality="ConfigManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/config/configManagement.jsp"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/bidocuments16.png" />
-
 			<ITEM	title="#menu.Domain"
 					functionality="DomainManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/domain/domainManagement.jsp"
@@ -256,9 +260,9 @@
 	<!-- ITEM	code="repo_mng" 
 			title="#menu.RepositoryMng"
 			iconCls="repo">
-
 					
 
+ 
 	</ITEM-->
  
 	<APPLICATION code="DocumentAdmin" 
