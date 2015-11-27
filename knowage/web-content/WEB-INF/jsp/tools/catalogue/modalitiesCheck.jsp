@@ -45,20 +45,18 @@
 					<angular-table 
 						layout-fill
 						id="TestItemList_id"
-						ng-model="TestItemList"
+						ng-model="ItemList"
 						columns ='[
-							{"label":"LABEL","name":"LABEL","size":"60px"},
-							{"label":"NAME","name":"NAME","size":"60px"},
-							{"label":"DESCRIPTION","name":"DESCRIPTION","size":"60px"},
-							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"60px"},
-							{"label":" ","name":"icon","size":"30px"}
-							]'
-
-						columns-search='["LABEL","NAME","DESCRIPTION","CHECK_TYPE"]'
+							{"label":"LABEL","name":"label","size":"30px"},
+							{"label":"NAME","name":"name","size":"30px"},
+							{"label":"DESCRIPTION","name":"description","size":"50px"},
+							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"30px"}
+							 ]'
 						show-search-bar=true
 						highlights-selected-item=true
 						click-function="loadConstraints(item)"
-						scope-functions="tableFunction()"
+						multi-select=true
+						
 							>					
 						 					
 					</angular-table>
@@ -76,16 +74,15 @@
 						<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
 					<angular-table 
 						layout-fill
-						id="predefined"
+						id="predefined_id"
 						ng-model="predefined"
 						columns ='[
-							{"label":"LABEL","name":"LABEL","size":"60px"},
-							{"label":"NAME","name":"NAME","size":"60px"},
-							{"label":"DESCRIPTION","name":"DESCRIPTION","size":"60px"},
-							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"60px"}
-							]'
-						columns-search='["LABEL","NAME","DESCRIPTION","CHECK_TYPE"]'
-						highlights-selected-item=true
+							{"label":"LABEL","name":"label","size":"30px"},
+							{"label":"NAME","name":"name","size":"30px"},
+							{"label":"DESCRIPTION","name":"description","size":"50px"},
+							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"30px"}
+							 ]'
+							 
 						show-search-bar = false
 												
 					>	 					
@@ -172,7 +169,7 @@
 				<div layout="row" layout-wrap ng-show ="additionalField">
 						<div flex=100>
 							<md-input-container class="small counter">
-							<label>Higher Range Value</label>
+							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
 							<input ng-model="selectedDataSource.RangeMax" 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>

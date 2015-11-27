@@ -6,9 +6,10 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.additionalField= false;
 	$scope.translate=sbiModule_translate;
 	$scope.SelectedConstraint={};
+	$scope.predefined =[];
 	$scope.label="";
-	
-	$scope.TestItemList=[];
+	$scope.counter =0;
+	$scope.ItemList=[];
 	                     
 	
 	$scope.listType = [
@@ -29,25 +30,24 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		
 		switch (l.value) {
 		case "Date":
-			$scope.label="Date Value Format";	
+			$scope.label=sbiModule_translate.load("sbi.modalities.check.details.date");	
 			break;
 		case "Regexp":
-			$scope.label="Regular Expression";	
+			$scope.label=sbiModule_translate.load("sbi.modalities.check.details.regexp");	
 			break;
 		case "Max Length":
-			$scope.label="Max Length Value";	
+			$scope.label=sbiModule_translate.load("sbi.modalities.check.details.max");	
 			break;
 		case "Range":
-			$scope.label="Lower Range Value";
+			$scope.label=sbiModule_translate.load("sbi.modalities.check.details.rangeMin");
 			break;
 		case "Decimal":
-			$scope.label="Decimal Places";
+			$scope.label=sbiModule_translate.load("sbi.modalities.check.details.decimal");
 			break;
 		case "Min Length":
-			$scope.label="Min Length Value";	
+			$scope.label=sbiModule_translate.load("sbi.modalities.check.details.min");	
 			break;	
 		default:
-			$scope.label="Date Value Format";
 			break;
 		}
 		
@@ -63,14 +63,36 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	
 	$scope.createConstraints =function(){
 		console.log("radi");
+		$scope.SelectedConstraint={};
 		$scope.showme=true;
+		
 		//$scope.button_flag = true;
 		
 	
 	}
 	$scope.saveConstraints= function(){
 		
-		$scope.TestItemList.push($scope.SelectedConstraint);
+		console.log("saving Constraint...");
+		  console.log($scope.SelectedConstraint.ID);
+		  if(!isNaN($scope.SelectedConstraint.ID)){
+		   console.log("updating...");
+		    for(var i=0;i<$scope.TestItemList.length;i++){
+		     console.log($scope.TestItemList[i].NAME);
+		    if($scope.TestItemList[i].ID === $scope.SelectedConstraint.ID){
+		     
+		     $scope.TestItemList[i] =angular.copy($scope.SelectedConstraint);
+		     }
+		    }
+		  }else{
+		   console.log("adding new...");
+		   $scope.SelectedConstraint.ID=$scope.counter;
+		   $scope.TestItemList.push($scope.SelectedConstraint);
+		   $scope.counter++;
+		   
+		  }
+		  
+		  
+		  console.log("saved!!!");
 		
 	
 	}
@@ -79,18 +101,35 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.SelectedConstraint={};
 		
 	}
-	
-	$scope.tableFunction=function(){
-		
-		
-		
-	for (var int = 0; int < $scope.TestItemList.length; int++) {
-		
-		$scope.TestItemList[int].icon =
-			'<md-button class="md-icon-button" ng-click="tableFunction.deleteConstraint()"> <md-icon md-font-icon="fa fa-trash-o fa-lg" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
-			
-	}
-	
+	$scope.getPredefined = function(){
+		sbiModule_restServices.get("2.0", 'modalities').success(
+				function(data, status, headers, config) {
+					console.log(data);
+					if (data.hasOwnProperty("errors")) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+					} else {
+						$scope.predefined = data;
+					}
+				}).error(function(data, status, headers, config) {
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
+				})	
 	}
+	$scope.getPredefined();
+	
+	$scope.getCustom = function(){
+		sbiModule_restServices.get("2.0", 'detailmodalities').success(
+				function(data, status, headers, config) {
+					console.log(data);
+					if (data.hasOwnProperty("errors")) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+					} else {
+						$scope.ItemList = data;
+					}
+				}).error(function(data, status, headers, config) {
+					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+
+				})	
+	}
+	$scope.getCustom();			
 };
