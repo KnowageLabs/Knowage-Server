@@ -41,6 +41,15 @@ function geoMapMenuControllerFunction(
 	                           {label:"Cross navigation", type:"cross"}
 	                           ];
 	
+	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
+		var isCross = (selectModeType.toLowerCase() == "cross");
+		var isCrossNavigationInTemplate = (geoModule_template.crossnav !== undefined);
+		
+		var isCrossRadioButtonOptionDisabled = (isCross && !isCrossNavigationInTemplate);
+		
+		return isCrossRadioButtonOptionDisabled;
+	};
+	
 	if(!$scope.template.hasOwnProperty('analysisType')){
 		$scope.template.analysisType = $scope.analysisTypeList[1].type;
 	}

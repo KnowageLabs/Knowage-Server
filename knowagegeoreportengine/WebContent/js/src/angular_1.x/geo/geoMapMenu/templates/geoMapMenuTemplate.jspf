@@ -9,7 +9,8 @@
 		</md-toolbar>
 		<md-content layout-padding ng-show="selectModeExpander">
 			<md-radio-group ng-model="selectModeInteraction.type">
-				<md-radio-button ng-repeat="item in selectModeTypeList"  class="md-primary" ng-value="item.type"  >
+				<md-radio-button ng-repeat="item in selectModeTypeList" class="md-primary" 
+						ng-value="item.type" ng-disabled="isCrossRadioButtonDisabled(item.type)">
 					 {{item.label}}
 			  </md-radio-button>
 			</md-radio-group>
