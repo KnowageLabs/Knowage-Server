@@ -8,7 +8,6 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.SelectedConstraint={};
 	$scope.predefined =[];
 	$scope.label={};
-	$scope.counter =0;
 	$scope.ItemList=[];
 	$scope.listType=[];
 	
@@ -16,13 +15,12 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.loadConstraints=function(item){
 		$scope.SelectedConstraint=angular.copy(item);
 		$scope.showme=true;
-		//$scope.button_flag = false;
+		$scope.label = "";
 	} 	                
 	
 	
 	
 	$scope.createConstraints =function(){
-		console.log("radi");
 		$scope.SelectedConstraint={};
 		$scope.showme=true;
 		

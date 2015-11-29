@@ -50,7 +50,7 @@
 							{"label":"LABEL","name":"label","size":"30px"},
 							{"label":"NAME","name":"name","size":"30px"},
 							{"label":"DESCRIPTION","name":"description","size":"50px"},
-							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"30px"}
+							{"label":"CHECK TYPE","name":"valueTypeCd","size":"30px"}
 							 ]'
 						show-search-bar=true
 						highlights-selected-item=true
@@ -80,7 +80,7 @@
 							{"label":"LABEL","name":"label","size":"30px"},
 							{"label":"NAME","name":"name","size":"30px"},
 							{"label":"DESCRIPTION","name":"description","size":"50px"},
-							{"label":"CHECK TYPE","name":"CHECK_TYPE","size":"30px"}
+							{"label":"CHECK TYPE","name":"valueTypeCd","size":"30px"}
 							 ]'
 							 
 						show-search-bar = false
@@ -161,7 +161,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{label}}</label>
-							<input ng-model="selectedDataSource.firstValue" 
+							<input ng-model="SelectedConstraint.firstValue" 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -170,7 +170,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
-							<input ng-model="selectedDataSource.secondValue" 
+							<input ng-model="SelectedConstraint.secondValue" 
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>	

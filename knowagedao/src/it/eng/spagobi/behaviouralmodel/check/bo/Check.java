@@ -7,6 +7,8 @@ package it.eng.spagobi.behaviouralmodel.check.bo;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Defines a value constraint object.
  *
@@ -15,12 +17,16 @@ import java.io.Serializable;
  */
 
 public class Check implements Serializable {
-
+	@NotNull
 	private Integer checkId;
+	@NotNull
 	private Integer valueTypeId;
+	@NotNull
 	private String Name;
+	@NotNull
 	private String label;
 	private String Description;
+	@NotNull
 	private String valueTypeCd;
 	private String firstValue;
 	private String secondValue;

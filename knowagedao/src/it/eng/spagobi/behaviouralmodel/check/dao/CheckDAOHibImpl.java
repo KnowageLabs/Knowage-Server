@@ -21,7 +21,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -193,8 +193,10 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			SbiChecks hibCheck = new SbiChecks();
-			Criterion aCriterion = Expression.and(Expression.eq("valueId", check.getValueTypeId()), Expression.eq("valueCd", check.getValueTypeCd()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
+			Criterion aCriterion = Restrictions.and(Restrictions.eq("valueId", check.getValueTypeId()),
+					Restrictions.eq("valueCd", check.getValueTypeCd()).ignoreCase());
+
 			criteria.add(aCriterion);
 
 			SbiDomains checkType = (SbiDomains) criteria.uniqueResult();
@@ -256,8 +258,10 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 
 			SbiChecks hibCheck = (SbiChecks) aSession.load(SbiChecks.class, check.getCheckId());
 
-			Criterion aCriterion = Expression.and(Expression.eq("valueId", check.getValueTypeId()), Expression.eq("valueCd", check.getValueTypeCd()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
+			Criterion aCriterion = Restrictions.and(Restrictions.eq("valueId", check.getValueTypeId()),
+					Restrictions.eq("valueCd", check.getValueTypeCd()).ignoreCase());
+
 			criteria.add(aCriterion);
 
 			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();

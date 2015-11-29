@@ -2,7 +2,6 @@ package it.eng.spagobi.api.v2;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,8 +20,10 @@ import javax.ws.rs.core.Response.Status;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/detailmodalities")
@@ -30,7 +31,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 	@GET
-	// @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public List<Check> getPredefined() {
@@ -50,12 +51,12 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			System.out.println(e);
 		}
 
-		return new ArrayList<Check>();
+		return fullList;
 	}
 
 	@GET
 	@Path("/{id}")
-	// @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Check getSingleCheck(@PathParam("id") Integer id) {
 		ICheckDAO checksDao = null;
@@ -64,13 +65,15 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		try {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
-			fullList = checksDao.loadAllChecks();
+			fullList = checksDao.loadCustomChecks();
 
 			if (fullList != null && !fullList.isEmpty()) {
-				for (Check c : fullList) {
-					if (c.getCheckId() == id) {
-						return c;
+				for (int i = 0; i < fullList.size(); i++) {
+					System.out.println(fullList.get(i).getCheckId());
+					if (fullList.get(i).getCheckId() == id.intValue()) {
+						return fullList.get(i);
 					}
+
 				}
 			}
 		} catch (Exception e) {
@@ -84,7 +87,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	// @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Consumes("application/json")
 	public Response insertCheck(@Valid Check body) {
 
@@ -114,7 +117,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	// @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateDomain(@PathParam("id") Integer id, @Valid Check body) {
 
@@ -132,7 +135,6 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		try {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
-			List<Check> ChecksList = checksDao.loadAllChecks();
 			checksDao.modifyCheck(check);
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.created(new URI("2.0/detailmodalities/" + encodedCheck)).entity(encodedCheck).build();
@@ -144,7 +146,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	// @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	public Response deleteCheck(@PathParam("id") Integer id) {
 
 		ICheckDAO checksDao = null;
