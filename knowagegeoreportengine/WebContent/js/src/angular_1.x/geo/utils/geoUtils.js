@@ -150,28 +150,28 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sb
 
 		params.featureIds=getFeatureIdsFromStore();
 
-		sbiModule_restServices.post("1.0/geo", 'getTargetLayer',params).success(
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						sbiModule_logger.log("GetTargetLayer non Ottenuto");
-					} else {
-						sbiModule_logger.trace("GetTargetLayer caricato",data);
-
-						geoModule_layerServices.setTemplateLayer(data,false); 
-
-					}
-
-				}).error(function(data, status, headers, config) {
+		sbiModule_restServices
+		.post("1.0/geo", 'getTargetLayer',params)
+		.success(
+			function(data, status, headers, config) {
+				if (data.hasOwnProperty("errors")) {
 					sbiModule_logger.log("GetTargetLayer non Ottenuto");
-				});
+				} else {
+					sbiModule_logger.trace("GetTargetLayer caricato",data);
+	
+					geoModule_layerServices.setTemplateLayer(data,false); 
+				}
+		})
+		.error(function(data, status, headers, config) {
+			sbiModule_logger.log("GetTargetLayer non Ottenuto");
+		});
 	}
 
 
 	/**
 	 * Loads the dataset using a REST service
 	 * */
-	this.GetTargetDataset=function(){
-
+	this.getTargetDataset=function(){
 		sbiModule_restServices.get("1.0/geo", 'getTargetDataset').success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
@@ -182,12 +182,11 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sb
 						sbiModule_logger.trace("dataset caricato",data);		
 						gru.initRigthMenuVariable();
 						gru.GetTargetLayer();
-
 					}
 				}).error(function(data, status, headers, config) {
 					sbiModule_logger.log("dataset non Ottenuto");
 				});
-	}
+	};
 
 	/**
 	 * Initialization for Indicators and Filters
@@ -308,20 +307,148 @@ geoM.factory('geo_interaction',function(){
 	var interact={
 			type: "identify",
 			distance_calculator: false,
-			selectedFeatures: []
+			selectedFeatures: [],
+			selectedFeaturesCallbackFunctions: []
 	};
 
 	interact.setSelectedFeatures = function(newSelectedFeatures) {
 		interact.selectedFeatures = newSelectedFeatures;
 
-		if (interact.selectedFeaturesCallbackFunction) {
-			interact.selectedFeaturesCallbackFunction();
+		if (interact.selectedFeaturesCallbackFunctions.length > 0) {
+			for(var funcIndex = 0; funcIndex < interact.selectedFeaturesCallbackFunctions.length; funcIndex++) {
+				var func = interact.selectedFeaturesCallbackFunctions[funcIndex];
+				func();
+			}
 		}
 	};
 
-	interact.setSelectedFeaturesCallbackFunction = function(callbackFunction) {
-		interact.selectedFeaturesCallbackFunction = callbackFunction;
+	interact.addSelectedFeaturesCallbackFunction = function(callbackFunction) {
+		interact.selectedFeaturesCallbackFunctions.push(callbackFunction);
+	};
+	
+	interact.clearSelectedFeaturesCallbackFunction = function() {
+		while (interact.selectedFeaturesCallbackFunctions.length > 0) {
+			delete interact.selectedFeaturesCallbackFunctions[0];
+		}
 	};
 
 	return interact;
-})
+});
+
+geoM.factory('geo_intersectFunctions', function() {
+	var toReturn = {};
+	
+	toReturn.getFeaturesExtraction = function(newSet, oldSet) {
+		var includedFeatures = [];
+		var excludedFeatures = [];
+		
+		for(var oldSetIndex = 0; oldSetIndex < oldSet.length; oldSetIndex++) {
+			var oldItem = oldSet[oldSetIndex];
+			
+			var hasToBeIncluded = false; 
+			
+			for(var newSetIndex = 0; newSetIndex < newSet.length && !hasToBeIncluded; newSetIndex++) {
+				var newItem = newSet[newSetIndex];
+				
+				if(newItem.getId() == oldItem.getId()) {
+					hasToBeIncluded = true;
+				}
+			}
+			if(hasToBeIncluded) {
+				includedFeatures.push(oldItem);
+			} else {
+				excludedFeatures.push(oldItem);
+			}
+		}
+		
+		return {
+			'includedFeatures': includedFeatures,
+			'excludedFeatures': excludedFeatures
+		}
+	};
+	
+	return toReturn;
+});
+
+geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
+	this.navigateTo = function(selectedElements){
+
+		var crossnav = geoModule_template.crossnav;
+
+		var multiSelect = crossnav && crossnav.multiSelect? 
+				crossnav.multiSelect : null;
+
+		if(!crossnav ) {
+			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
+			return;
+
+		} else {
+			var parametersAsString = '';
+
+			// Cross Navigation Static parameters
+			if(crossnav.staticParams 
+					&& (typeof (crossnav.staticParams) == 'object')) {
+
+				var staticParams = crossnav.staticParams;
+				var staticParamsKeys = Object.keys(staticParams);
+
+				for(var i = 0; i < staticParamsKeys.length; i++) {
+					var staticParameterKey = staticParamsKeys[i];
+					var staticParameterValue = staticParams[staticParameterKey];
+
+					parametersAsString += staticParameterKey + '=' + staticParameterValue + '&';
+				}
+			}
+
+			// Cross Navigation Dynamic parameters
+			if(crossnav.dynamicParams 
+					&& Array.isArray(crossnav.dynamicParams)) {
+
+				var dynamicParams = crossnav.dynamicParams;
+				for(var i = 0; i < dynamicParams.length; i++) {
+					var param = dynamicParams[i];
+
+					if(param.scope.toLowerCase() == 'feature') {
+						if(Array.isArray(selectedElements) && multiSelect) {
+							parametersAsString += param.state + '=';
+
+							for(var elementIndex = 0; elementIndex < selectedElements.length; elementIndex++) {
+								var element = selectedElements[elementIndex];
+								var elementProperties = element.getProperties();
+
+								if (elementIndex > 0) {
+									parametersAsString += ',';
+								}
+								parametersAsString += "'" + elementProperties[param.state] + "'";
+							}
+						}
+						// else selectedElements is a single feature
+						else{
+							var selectedElementProperties = selectedElements.getProperties();
+							parametersAsString += param.state + '=' + selectedElementProperties[param.state];
+						}
+
+						parametersAsString += '&';
+
+					} else if(param.scope.toLowerCase() == 'env') {
+						var paramInputName = param.inputpar;
+						var paramOutputName = param.outputpar;
+
+						//If the "paramInputName" is not set in the parameter mask (on the right side)
+						if(!geoModule_driverParameters[paramInputName]) {
+							continue;
+						} else {
+							parametersAsString += 
+								(paramOutputName ? paramOutputName : paramInputName)
+								+ '=' + geoModule_driverParameters[paramInputName] + '&';
+						}
+					}
+				}
+			}
+
+			var frameName = "iframe_crossNavigation";
+
+			parent.execCrossNavigation(frameName, crossnav.label, parametersAsString);
+		}
+	}
+});

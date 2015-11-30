@@ -63,24 +63,28 @@ geoM.service('geoModule_layerServices', function(
 		$http, baseLayer, sbiModule_logger, 
 		$map, $http, geoModule_thematizer, geo_interaction, 
 		crossNavigation, sbiModule_config, geoModule_template, sbiModule_restServices ) {
-	
+
 	var layerServ=this;
+
 	this.selectedBaseLayer;  //the selected base layer
 	this.selectedBaseLayerOBJ;
 	this.loadedLayer={};
 	this.loadedLayerOBJ={};
 	this.templateLayer={};
 
-	this.setTemplateLayer = function(data,isWMS){
+	this.selectedFeatures = [];
+//	
+//	this.cachedFeatureStyles = {};
 
+	this.setTemplateLayer = function(data,isWMS){
 		if(isWMS){
 			layerServ.templateLayer = new ol.layer.Tile({
 				source : new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */
-						({
+						{
 							url : sbiModule_config.contextName+"/api/1.0/geo/getWMSlayer?layerURL="+data.layerURL,
 							params : JSON.parse(data.layerParams),
 							options :JSON.parse(data.layerOptions)
-						}))
+						})
 			});
 
 		}else{
@@ -100,7 +104,8 @@ geoM.service('geoModule_layerServices', function(
 		}
 
 		layerServ.templateLayer.setZIndex(1000);
-		$map.addLayer(this.templateLayer);
+//		$map.addLayer(this.templateLayer);
+		$map.addLayer(layerServ.templateLayer);
 		var duration = 2000;
 		var start = +new Date();
 		var pan = ol.animation.pan({
@@ -128,33 +133,28 @@ geoM.service('geoModule_layerServices', function(
 	this.addClickEvent=function(isWMS){
 		var selectStyle = new ol.style.Style({
 			stroke: new ol.style.Stroke({
-				color: '#000000',
+//				color: '#000000',
+				color: [0, 0, 0, 1],
 				width: 2
 			}),
 			fill: new ol.style.Fill({
 				color: "rgba(174, 206, 230, 0.78)"
 			})
 		});
-
-
-		var select =new ol.interaction.Select({
-			condition: ol.events.condition.singleClick,
-			style:[selectStyle]
-		});
-		$map.addInteraction(select);
-
+		
 		layerServ.overlay = new ol.Overlay(/** @type {olx.OverlayOptions} */ ({
 			element: angular.element((document.querySelector('#popup')))[0],
 		}));
-
-//		angular.element((document.querySelector('#popup-closer')))[0].onclick = function() {
-//		overlay.setPosition(undefined);
-//		angular.element((document.querySelector('#popup-closer')))[0].blur();
-//		return false;
-//		};
-
 		$map.addOverlay(layerServ.overlay);
 
+		var select = new ol.interaction.Select({
+			condition: ol.events.condition.singleClick,
+			style: selectStyle
+		});
+		$map.addInteraction(select);
+		
+		var sFeatures = select.getFeatures();
+		
 		select.on('select', function(evt) {
 			console.log("select");
 			if(geo_interaction.type == "identify" && (evt.selected[0]==undefined || geo_interaction.distance_calculator) && !isWMS){
@@ -188,31 +188,60 @@ geoM.service('geoModule_layerServices', function(
 				var prop = evt.selected.length ? evt.selected[0].getProperties(): null;
 				layerServ.doClickAction(evt,prop)
 			}
+		});
 
+		var dragBox = new ol.interaction.DragBox({
+//			condition: ol.events.condition.shiftKeyOnly,
+			condition: ol.events.condition.platformModifierKeyOnly,
+			style: selectStyle
+		});
+		$map.addInteraction(dragBox);
+		
+		dragBox.on('boxend', function(e) {
+			var selection = [];
+			var extent = dragBox.getGeometry().getExtent();
+			
+			var vectorSource = layerServ.templateLayer.getSource();
+			vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+				sFeatures.push(feature);				
+				selection.push(feature);
+			});
+			
+			layerServ.selectedFeatures = selection;
+			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+			
+			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
+		});
+
+		// clear selection when drawing a new box and when clicking on the map
+		dragBox.on('boxstart', function(e) {
+			layerServ.overlay.setPosition(undefined);
+			sFeatures.clear();
 		});
 	}
 
-	this.doClickAction=function(evt,prop){
-		var selectedFeatures = evt.target.getFeatures().getArray();
-		geo_interaction.setSelectedFeatures(selectedFeatures);
-
+	this.doClickAction = function(evt, prop){
+		layerServ.selectedFeatures = evt.target.getFeatures().getArray();
+		console.log("layerServ.selectedFeatures (select)-> ", layerServ.selectedFeatures);
+		geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+		
 		if(geo_interaction.type == "identify"){
 			var coordinate = evt.mapBrowserEvent.coordinate;
 			var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326'));
 
 			var txt="";
 			for(var key in prop){
-				if(key!="geometry"){
-					txt+="<p>"+key+":"+prop[key]+"</p>";
+				if(key != "geometry"){
+					txt += "<p>" + key + " : " + prop[key]+ "</p>";
 				}
 			}
 
 			angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
 			$map.getOverlays().getArray()[0].setPosition(coordinate);
-			
+
 		}else if(geo_interaction.type == "cross"){
 			layerServ.overlay.setPosition(undefined); // hides eventual messages present on the map
-			
+
 			var multiSelect = geoModule_template.crossnav && geoModule_template.crossnav.multiSelect? 
 					geoModule_template.crossnav.multiSelect : null;
 			switch (multiSelect) {
@@ -222,7 +251,7 @@ geoM.service('geoModule_layerServices', function(
 				break;
 			default:
 				if(prop != null) {
-					crossNavigation.navigateTo(selectedFeatures[0]);
+					crossNavigation.navigateTo(layerServ.selectedFeatures[0]);
 				}
 			break;
 			}
@@ -272,7 +301,6 @@ geoM.service('geoModule_layerServices', function(
 		}
 	};
 
-
 	this.createLayer = function(layerConf,isBase){
 		var tmpLayer;
 
@@ -287,6 +315,7 @@ geoM.service('geoModule_layerServices', function(
 						}))
 			});
 			break;
+			
 		case 'WFS':
 			var vectorSource = new ol.source.Vector({
 				url: layerConf.layerURL,
@@ -294,14 +323,12 @@ geoM.service('geoModule_layerServices', function(
 //				options : JSON.parse(layerConf.layerOptions)
 			});
 
-
 			tmpLayer = new ol.layer.Vector({
 				source: vectorSource,
 			});
-
 			break;
-		case 'TMS': // TODO check if work
 
+		case 'TMS': // TODO check if work
 			var options=(layerConf.layerOptions instanceof Object)? layerConf.layerOptions : JSON.parse(layerConf.layerOptions);
 			tmpLayer = new ol.layer.Tile({
 				source : new ol.source.XYZ({
@@ -319,6 +346,7 @@ geoM.service('geoModule_layerServices', function(
 				})
 			});
 			break;
+			
 		case 'OSM':
 			tmpLayer = new ol.layer.Tile({
 				source : new ol.source.MapQuest({
@@ -326,9 +354,11 @@ geoM.service('geoModule_layerServices', function(
 				})
 			});
 			break;
+			
 		default:
 			console.error('Layer type [' + layerConf.type + '] not supported');
-		break;
+			break;
+		
 		}
 
 		if(isBase){
@@ -341,95 +371,10 @@ geoM.service('geoModule_layerServices', function(
 	};
 });
 
-
-geoM.service('crossNavigation', function(geoModule_template, geoModule_driverParameters, sbiModule_translate) {	
-	this.navigateTo = function(selectedElements){
-
-		var crossnav = geoModule_template.crossnav;
-
-		var multiSelect = crossnav && crossnav.multiSelect? 
-				crossnav.multiSelect : null;
-		
-		if(!crossnav ) {
-			alert(sbiModule_translate.load('gisengine.crossnavigation.error.wrongtemplatedata'));
-			return;
-
-		} else {
-			var parametersAsString = '';
-
-			// Cross Navigation Static parameters
-			if(crossnav.staticParams 
-					&& (typeof (crossnav.staticParams) == 'object')) {
-
-				var staticParams = crossnav.staticParams;
-				var staticParamsKeys = Object.keys(staticParams);
-
-				for(var i = 0; i < staticParamsKeys.length; i++) {
-					var staticParameterKey = staticParamsKeys[i];
-					var staticParameterValue = staticParams[staticParameterKey];
-
-					parametersAsString += staticParameterKey + '=' + staticParameterValue + '&';
-				}
-			}
-			
-			// Cross Navigation Dynamic parameters
-			if(crossnav.dynamicParams 
-					&& Array.isArray(crossnav.dynamicParams)) {
-
-				var dynamicParams = crossnav.dynamicParams;
-				for(var i = 0; i < dynamicParams.length; i++) {
-					var param = dynamicParams[i];
-
-					if(param.scope.toLowerCase() == 'feature') {
-						if(Array.isArray(selectedElements) && multiSelect) {
-							parametersAsString += param.state + '=';
-							
-							for(var elementIndex = 0; elementIndex < selectedElements.length; elementIndex++) {
-								var element = selectedElements[elementIndex];
-								var elementProperties = element.getProperties();
-
-								if (elementIndex > 0) {
-									parametersAsString += ',';
-								}
-								parametersAsString += "'" + elementProperties[param.state] + "'";
-							}
-						}
-						// else selectedElements is a single feature
-						else{
-							var selectedElementProperties = selectedElements.getProperties();
-							parametersAsString += param.state + '=' + selectedElementProperties[param.state];
-						}
-						
-						parametersAsString += '&';
-						
-					} else if(param.scope.toLowerCase() == 'env') {
-						var paramInputName = param.inputpar;
-						var paramOutputName = param.outputpar;
-
-						//If the "paramInputName" is not set in the parameter mask (on the right side)
-						if(!geoModule_driverParameters[paramInputName]) {
-							continue;
-						} else {
-							parametersAsString += 
-								(paramOutputName ? paramOutputName : paramInputName)
-								+ '=' + geoModule_driverParameters[paramInputName] + '&';
-						}
-					}
-				}
-			}
-
-			var frameName = "iframe_crossNavigation";
-
-			parent.execCrossNavigation(frameName, crossnav.label, parametersAsString);
-		}
-	}
-});
-
 geoM.factory('geoModule_constant',function(){
 	var cont= {
 			templateLayer:"Document templates",
 			noCategory:"No Category"
-
 	}
 	return cont;
 });
