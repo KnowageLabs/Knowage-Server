@@ -24,38 +24,38 @@ function geoMapMenuControllerFunction(
 		geoModule_layerServices, geoModule_dataset, $scope, $mdSidenav, $timeout, 
 		$mdDialog, $map, geoModule_template, geoModule_dataset, geoModule_filters, 
 		geoModule_indicators, geo_interaction ) {
-	
+
 	$scope.template = geoModule_template;
 	$scope.dataset = geoModule_dataset;
 	$scope.filters = geoModule_filters;
 	$scope.indicators = geoModule_indicators;
 	$scope.selectModeInteraction = geo_interaction;
 	$scope.openRigthMenu = false;
-	$scope.selectFilterType='singleClick';
+	$scope.selectFilterType='box';
 	$scope.analysisTypeList = [
-	                         {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
-	                         {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
-	                         {label:"Map Chiara",type:"chartChiara",img:"fa fa-icon"}
-	                         ];
-	$scope.selectModeTypeList = [
-	                           {label:"Identify", type:"identify"},
-	                           {label:"Cross navigation", type:"cross"},	                           
+	                           {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
+	                           {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
+	                           {label:"Map Chart",type:"chart",img:"fa fa-icon"}
 	                           ];
+	$scope.selectModeTypeList = [
+	                             {label:"Identify", type:"identify"},
+	                             {label:"Cross navigation", type:"cross"},	                           
+	                             ];
 	$scope.filterType=[
-					{label:"Click Selection", type:"singleClick"},
-					{label:"Circle Selection", type:"circle"},	
-					{label:"Box Selection", type:"box"},	
+	                   {label:"Click Selection", type:"singleClick"},
+	                   {label:"Circle Selection", type:"circle"},	
+	                   {label:"Box Selection", type:"box"},	
 	                   ];
-	
+
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
 		var isCrossNavigationInTemplate = (geoModule_template.crossnav !== undefined);
-		
+
 		var isCrossRadioButtonOptionDisabled = (isCross && !isCrossNavigationInTemplate);
-		
+
 		return isCrossRadioButtonOptionDisabled;
 	};
-	
+
 	if(!$scope.template.hasOwnProperty('analysisType')){
 		$scope.template.analysisType = $scope.analysisTypeList[1].type;
 	}
@@ -104,7 +104,7 @@ function geoMapMenuControllerFunction(
 			$mdDialog.hide(answer);
 		};
 	};
-	
+
 	$scope.toggleIndicator = function (item){
 		var index = $scope.indexInList(item, geoModule_template.selectedMultiIndicator);
 

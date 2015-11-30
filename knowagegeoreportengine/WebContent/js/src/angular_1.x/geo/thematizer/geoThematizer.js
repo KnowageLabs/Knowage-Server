@@ -15,7 +15,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var multiDsValue = {};
 		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
 
-		if(geoModule_template.analysisType=="chartChiara"){
+		if(geoModule_template.analysisType=="chart"){
 			for(var j=0;j<geoModule_template.selectedMultiIndicator.length;j++){
 				//scorro i selectedIndicator
 				for(var i=0;i<geoModule_dataset.rows.length;i++){
@@ -56,8 +56,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			return tmtz.choropleth(dsValue);
 		}else if(geoModule_template.analysisType=="proportionalSymbol"){
 			return tmtz.proportionalSymbol(dsValue);
-		}else if(geoModule_template.analysisType=="chartChiara" && Object.keys(multiDsValue).length!= 0){
-			return tmtz.chartChiara(multiDsValue);
+		}else if(geoModule_template.analysisType=="chart" && Object.keys(multiDsValue).length!= 0){
+			return tmtz.chart(multiDsValue);
 		}
 	}
 
@@ -144,7 +144,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		})];
 	}
 
-	this.chartChiara=function(dsValue){
+	this.chart=function(dsValue){
 		var tempMin =0;
 		var tempMax=0;
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
@@ -185,13 +185,13 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		console.log("Voi siete");
 		console.log(cacheProportionalSymbolMinMax);
 
-	
+
 		// Create the data table.
 		var data = new google.visualization.DataTable();
 		var string=[] ;
 		var asseV ={};
 		var maxV=[];
-		
+
 		var objContent=[];
 		var vAxes={};
 		var i=0;
@@ -202,7 +202,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			data.addColumn({type: 'number', role: 'annotation'});
 			string.push(Math.round(dsValue[key].value));
 			string.push(Math.round(dsValue[key].value))
-			
+
 			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
 			if(i==0){
 				var obj={};
@@ -212,7 +212,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				obj.gridlines.color = 'transparent';
 				obj.textPosition= 'none';
 				vAxes[i] = obj;
-				
+
 			}else{
 				var obj={};
 				obj.viewWindow={};
@@ -222,16 +222,16 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				obj.textPosition= 'none';
 				vAxes[i] = obj;
 			}
-			
+
 			i=i+1;
-			
-			}
+
+		}
 
 		data.addRows([string]);
 		console.log("Hello");
 		console.log(vAxes);
 		var view = new google.visualization.DataView(data);
-		
+
 		// Set chart options 
 		var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
 		//setta minvalue come min del min e max come max del max di 
@@ -241,22 +241,22 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				'legend': {'position': 'none'},
 				'backgroundColor': { 'fill':'transparent' },
 				'hAxis': { 'textPosition': 'none'},
-				
+
 				annotations: {
-			          alwaysOutside: true,
-			          textStyle: {
-			            fontSize: 14,
-			            color: '#000',
-			            auraColor: 'none'
-			          }
+					alwaysOutside: true,
+					textStyle: {
+						fontSize: 14,
+						color: '#000',
+						auraColor: 'none'
+					}
 				},
 				vAxes:vAxes,
-		         series: {0: {targetAxisIndex:0},
-		                  1:{targetAxisIndex:1},
-		                  2:{targetAxisIndex:2}
-		                 },
-		                 colors: ["red", "green", "orange", "blue"],
-				};
+				series: {0: {targetAxisIndex:0},
+					1:{targetAxisIndex:1},
+					2:{targetAxisIndex:2}
+				},
+				colors: ["red", "green", "orange", "blue"],
+		};
 
 		// Instantiate and draw our chart, passing in some options.
 		//var chart=new google.visualization.PieChart(chartElement);
