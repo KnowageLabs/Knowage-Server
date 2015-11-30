@@ -217,6 +217,7 @@ geoM.service('geoModule_layerServices', function(
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 			
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
+			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
 		});
 
 		// clear selection when drawing a new box and when clicking on the map
@@ -228,8 +229,9 @@ geoM.service('geoModule_layerServices', function(
 
 	this.doClickAction = function(evt, prop){
 		layerServ.selectedFeatures = evt.target.getFeatures().getArray();
-		console.log("layerServ.selectedFeatures (select)-> ", layerServ.selectedFeatures);
 		geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+		console.log("layerServ.selectedFeatures (select)-> ", layerServ.selectedFeatures);
+		console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
 		
 		if(geo_interaction.type == "identify"){
 			var coordinate = evt.mapBrowserEvent.coordinate;

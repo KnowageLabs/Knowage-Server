@@ -1,115 +1,128 @@
 
 <md-content>
-<div class="itemboxGU" ng-init=" selectModeExpander=true;">
-	<md-toolbar class="titleToolbar" class="md-theme-light"> <span
-		class="md-toolbar-tools">Select Mode</span> <md-button
-		class="md-icon-button expanderIcon" aria-label="expand"
-		ng-click=" selectModeExpander=!selectModeExpander"> <md-icon
-		md-font-icon="fa  fa-2x"
-		ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
-	</md-button> </md-toolbar>
-	<md-content layout-padding ng-show="selectModeExpander"> <md-radio-group
-		ng-model="selectModeInteraction.type"> <md-radio-button
-		ng-repeat="item in selectModeTypeList" class="md-primary"
-		ng-value="item.type"
-		ng-disabled="isCrossRadioButtonDisabled(item.type)">
-	{{item.label}} </md-radio-button> </md-radio-group> </md-content>
-</div>
-
-<div class="itemboxGU" ng-init=" filterTypeExpander=true;">
-	<md-toolbar class="titleToolbar" class="md-theme-light"> <span
-		class="md-toolbar-tools">Filter Spatial</span> <md-button
-		class="md-icon-button expanderIcon" aria-label="expand"
-		ng-click=" filterTypeExpander=!filterTypeExpander"> <md-icon
-		md-font-icon="fa  fa-2x"
-		ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
-	</md-button> </md-toolbar>
-	<md-content layout-padding ng-show="filterTypeExpander"> <md-radio-group
-		ng-model="selectFilterType"> <md-radio-button
-		ng-repeat="item in filterType" class="md-primary" ng-value="item.type">
-	{{item.label}} </md-radio-button> </md-radio-group> </md-content>
-</div>
-
-<div class="itemboxGU" ng-init=" mapTypeExpander=true;">
-	<md-toolbar class="titleToolbar" class="md-theme-light"> <span
-		class="md-toolbar-tools">Map Type</span> <md-button
-		class="md-icon-button expanderIcon" aria-label="expand"
-		ng-click=" mapTypeExpander=! mapTypeExpander"> <md-icon
-		md-font-icon="fa  fa-2x"
-		ng-class="{'fa-angle-up' :  mapTypeExpander , 'fa-angle-down' : ! mapTypeExpander}"></md-icon>
-	</md-button> </md-toolbar>
-	<md-content layout-padding ng-show="mapTypeExpander"> <md-radio-group
-		ng-model="template.analysisType"> <md-radio-button
-		ng-repeat="item in analysisTypeList" class="md-primary"
-		ng-value="item.type" ng-click="updateMap()"> <md-icon
-		md-font-icon="{{item.img}}"></md-icon> {{item.label}} </md-radio-button> </md-radio-group> </md-content>
-</div>
-
-
-<div class="itemboxGU" ng-init=" indicatorsExpander=true;">
-	<md-toolbar class="titleToolbar"> <span
-		class="md-toolbar-tools">Indicators</span> <md-button
-		class="md-icon-button expanderIcon" aria-label="expand"
-		ng-click=" indicatorsExpander =! indicatorsExpander"> <md-icon
-		md-font-icon="fa  fa-2x"
-		ng-class="{'fa-angle-up' :  indicatorsExpander , 'fa-angle-down' : ! indicatorsExpander}"></md-icon>
-	</md-button> </md-toolbar>
-	<md-content layout-padding ng-show="indicatorsExpander" ng-switch
-		on="template.analysisType=='chart'"> <md-radio-group
-		ng-model="template.selectedIndicator" ng-switch-when="false">
-	<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()"
-		class="md-primary" ng-value="ind"> {{ind.header}}
-	</md-radio-button> </md-radio-group>
-
-	<div ng-switch-when="true">
-		<md-checkbox ng-repeat="ind in indicators"
-			ng-click="toggleIndicator(ind)" class="md-primary"
-			ng-checked="exist(ind)"> {{ind.header}} </md-checkbox>
+	<div class="itemboxGU" ng-init=" selectModeExpander=true;">
+		<md-toolbar class="titleToolbar" class="md-theme-light">
+			<span class="md-toolbar-tools">Select Mode</span>
+			<md-button class="md-icon-button expanderIcon" aria-label="expand"
+				ng-click=" selectModeExpander=!selectModeExpander"> 
+				<md-icon md-font-icon="fa  fa-2x"
+						ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
+			</md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="selectModeExpander">
+			<md-radio-group ng-model="selectModeInteraction.type">
+				<md-radio-button ng-repeat="item in selectModeTypeList" class="md-primary"
+						ng-value="item.type" ng-hide="isCrossRadioButtonDisabled(item.type)">
+					{{item.label}}
+				</md-radio-button>
+			</md-radio-group>
+		</md-content>
 	</div>
-	<md-button id="indicatorCatalogue" class="md-raised "
-		style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">Select
-	from catalogue</md-button> </md-content>
-</div>
-
-<div class="itemboxGU" ng-init=" filterExpander=true;">
-	<md-toolbar class="titleToolbar"> <span
-		class="md-toolbar-tools">Filter</span> <md-button
-		class="md-icon-button expanderIcon" aria-label="expand"
-		ng-click=" filterExpander=! filterExpander"> <md-icon
-		md-font-icon="fa  fa-2x"
-		ng-class="{'fa-angle-up' :  filterExpander , 'fa-angle-down' : ! filterExpander}"></md-icon>
-	</md-button> </md-toolbar>
-	<md-content layout-padding ng-show="filterExpander"> <md-input-container
-		ng-repeat="filter in filters"> <label>{{filter.label}}</label>
-	<md-select ng-model="template.selectedFilters[filter.name]"
-		multiple=true> <md-option
-		ng-repeat="item in dataset.rows | unique: filter.name"
-		ng-value="item[filter.name]" aria-label="{{item[filter.name]}}"
-		ng-click="updateMap()"> {{item[filter.name]}} </md-option> </md-select> </md-input-container> </md-content>
-</div>
+	
+	<div class="itemboxGU" ng-init=" filterTypeExpander=true;">
+		<md-toolbar class="titleToolbar" class="md-theme-light"> 
+			<span class="md-toolbar-tools">Filter Spatial</span>
+			<md-button class="md-icon-button expanderIcon" aria-label="expand"
+					ng-click=" filterTypeExpander=!filterTypeExpander">
+				<md-icon md-font-icon="fa fa-2x" ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
+			</md-button> 
+		</md-toolbar>
+		<md-content layout-padding ng-show="filterTypeExpander"> 
+			<md-radio-group ng-model="selectFilterType">
+				<md-radio-button ng-repeat="item in filterTypes" class="md-primary" 
+						ng-value="item.type" ng-click="setSelectedFilterType(item.type)">{{item.label}}</md-radio-button> 
+			</md-radio-group>
+		</md-content>
+	</div>
+	
+	<div class="itemboxGU" ng-init=" mapTypeExpander=true;">
+		<md-toolbar class="titleToolbar" class="md-theme-light">
+			<span class="md-toolbar-tools">Map Type</span>
+			<md-button class="md-icon-button expanderIcon" aria-label="expand"
+					ng-click=" mapTypeExpander=! mapTypeExpander"> 
+				<md-icon md-font-icon="fa  fa-2x"
+						ng-class="{'fa-angle-up' :  mapTypeExpander , 'fa-angle-down' : ! mapTypeExpander}"></md-icon>
+			</md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="mapTypeExpander"> 
+			<md-radio-group ng-model="template.analysisType"> 
+				<md-radio-button ng-repeat="item in analysisTypeList" class="md-primary"
+						ng-value="item.type" ng-click="updateMap()"> 
+					<md-icon md-font-icon="{{item.img}}"></md-icon>
+					{{item.label}}
+				</md-radio-button>
+			</md-radio-group>
+		</md-content>
+	</div>
+	
+	
+	<div class="itemboxGU" ng-init=" indicatorsExpander=true;">
+		<md-toolbar class="titleToolbar"> 
+			<span class="md-toolbar-tools">Indicators</span>
+			<md-button class="md-icon-button expanderIcon" aria-label="expand"
+					ng-click=" indicatorsExpander =! indicatorsExpander">
+				<md-icon md-font-icon="fa  fa-2x"
+					ng-class="{'fa-angle-up' :  indicatorsExpander , 'fa-angle-down' : ! indicatorsExpander}"></md-icon>
+			</md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="indicatorsExpander" ng-switch on="template.analysisType=='chart'">
+			<md-radio-group ng-model="template.selectedIndicator" ng-switch-when="false">
+				<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()" class="md-primary" ng-value="ind">
+					{{ind.header}}
+				</md-radio-button>
+			</md-radio-group>
+	
+			<div ng-switch-when="true">
+				<md-checkbox ng-repeat="ind in indicators"
+					ng-click="toggleIndicator(ind)" class="md-primary"
+					ng-checked="exist(ind)"> {{ind.header}} </md-checkbox>
+			</div>
+			<md-button id="indicatorCatalogue" class="md-raised "
+					style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">
+				Select from catalogue
+			</md-button> 
+		</md-content>
+	</div>
+	
+	<div class="itemboxGU" ng-init=" filterExpander=true;">
+		<md-toolbar class="titleToolbar">
+			<span class="md-toolbar-tools">Filter</span>
+			<md-button class="md-icon-button expanderIcon" aria-label="expand"
+					ng-click=" filterExpander = !filterExpander"> 
+				<md-icon md-font-icon="fa  fa-2x"
+						ng-class="{'fa-angle-up' :  filterExpander , 'fa-angle-down' : ! filterExpander}"></md-icon>
+			</md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="filterExpander"> 
+			<md-input-container ng-repeat="filter in filters"> 
+				<label>{{filter.label}}</label>
+				<md-select ng-model="template.selectedFilters[filter.name]" multiple=true>
+					<md-option ng-repeat="item in dataset.rows | unique: filter.name"
+							ng-value="item[filter.name]" aria-label="{{item[filter.name]}}"
+							ng-click="updateMap()">{{item[filter.name]}}</md-option>
+				</md-select>
+			</md-input-container>
+		</md-content>
+	</div>
 </md-content>
 
 
 <!-- template -->
 
 <script type="text/ng-template" id="indicatorFromCatalogueTemplate.html">
-   <md-dialog aria-label="Mango (Fruit)"  ng-cloak>
-  <form>
-  <md-toolbar>
-    <div class="md-toolbar-tools">
-      Select from Catalogue
-    </div>
-  </md-toolbar>
-  <md-dialog-content >
-    <div class="md-dialog-content">
-      TODO
-    </div>
-  </md-dialog-content>
-  <div class="md-actions" layout="row">
-    
-  </div>
-  </form>
+<md-dialog aria-label="Mango (Fruit)" ng-cloak>
+	<form>
+  		<md-toolbar>
+    		<div class="md-toolbar-tools">
+      			Select from Catalogue
+   			</div>
+  		</md-toolbar>
+  		<md-dialog-content >
+    		<div class="md-dialog-content">
+      			TODO
+    		</div>
+  		</md-dialog-content>
+  		<div class="md-actions" layout="row"></div>
+  	</form>
 </md-dialog>
 </script>
-
-

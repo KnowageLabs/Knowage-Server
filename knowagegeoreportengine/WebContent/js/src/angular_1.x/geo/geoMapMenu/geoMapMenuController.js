@@ -31,7 +31,6 @@ function geoMapMenuControllerFunction(
 	$scope.indicators = geoModule_indicators;
 	$scope.selectModeInteraction = geo_interaction;
 	$scope.openRigthMenu = false;
-	$scope.selectFilterType='box';
 	$scope.analysisTypeList = [
 	                           {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
 	                           {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
@@ -41,11 +40,16 @@ function geoMapMenuControllerFunction(
 	                             {label:"Identify", type:"identify"},
 	                             {label:"Cross navigation", type:"cross"},	                           
 	                             ];
-	$scope.filterType=[
-	                   {label:"Click Selection", type:"singleClick"},
-	                   {label:"Circle Selection", type:"circle"},	
-	                   {label:"Box Selection", type:"box"},	
+	
+	$scope.selectFilterType = 'box';
+	$scope.filterTypes = [
+	                      {label: "Box Selection", type:"box"},	
+	                      {label: "Circle Selection", type:"circle"},	
 	                   ];
+	$scope.setSelectedFilterType = function(type) {
+		geo_interaction.selectefFilterType = type;
+		console.log("<geo-map-menu> $scope.selectFilterType -> ", type);
+	};
 
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
@@ -114,11 +118,13 @@ function geoMapMenuControllerFunction(
 			geoModule_template.selectedMultiIndicator.splice(index,1);
 		}
 		$scope.updateMap();
-	}
+	};
+	
 	$scope.exist= function(item){
 		return  $scope.indexInList(item, geoModule_template.selectedMultiIndicator)>-1;
-	}   
-	$scope.indexInList=function(item, list) {
+	};
+	
+	$scope.indexInList = function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
