@@ -47,7 +47,7 @@ function geoMapMenuControllerFunction(
 	                      {label: "Circle Selection", type:"circle"},	
 	                   ];
 	$scope.setSelectedFilterType = function(type) {
-		geo_interaction.selectefFilterType = type;
+		geo_interaction.selectedFilterType = type;
 		console.log("<geo-map-menu> $scope.selectFilterType -> ", type);
 	};
 

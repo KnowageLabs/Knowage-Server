@@ -1,10 +1,9 @@
-
 <md-content>
 	<div class="itemboxGU" ng-init=" selectModeExpander=true;">
 		<md-toolbar class="titleToolbar" class="md-theme-light">
 			<span class="md-toolbar-tools">Select Mode</span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-				ng-click=" selectModeExpander=!selectModeExpander"> 
+					ng-click=" selectModeExpander=!selectModeExpander"> 
 				<md-icon md-font-icon="fa  fa-2x"
 						ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
 			</md-button>
