@@ -31,6 +31,19 @@
 				<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
+						
+						<md-button 
+    						ng-disabled=false
+    						class="md-fab md-ExtraMini"
+    						style="position:absolute; right:26px; top:0px; background-color:#E91E63"
+    						ng-click="deleteBusinessModels()"> 
+    						
+    						<md-icon
+        						md-font-icon="fa fa-trash" 
+        						style=" margin-top: 6px ; color: white;" >
+       						</md-icon> 
+						</md-button>
+						
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -51,9 +64,10 @@
 						columns='[{"label":"Name","name":"name"},{"label":"Description","name":"description"}]' 
 						columns-search='["name","description"]'
 						show-search-bar=true
-						highlights-selected-item=true						
-						speed-menu-option="bmSpeedMenu"
+						highlights-selected-item=true
 						click-function ="leftTableClick(item)"
+						multi-select=true
+						selected-item="selectedBusinessModels"
 												
 					>						
 					</angular-table>
@@ -182,6 +196,17 @@
      					<div style="height:40%; padding-top:20px">
      						<md-content flex style="background-color: rgb(236, 236, 236); height:95%; overflow:hidden;" >
      							<md-toolbar class="md-blue minihead md-toolbar-tools">
+     								<md-button 
+    									ng-disabled=false
+    									class="md-fab md-ExtraMini"
+    									style="position:absolute; right:26px; top:0px; background-color:#E91E63"
+    									ng-click="deleteBusinessModelVersions()"> 
+    						
+    									<md-icon
+        									md-font-icon="fa fa-trash" 
+        									style=" margin-top: 6px ; color: white;" >
+       									</md-icon> 
+									</md-button>
      								{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}
      							</md-toolbar>
      							
@@ -198,6 +223,7 @@
 									columns-search='["creationUser","creationDate"]'
 									show-search-bar=false
 									speed-menu-option="bmSpeedMenu2"
+									selected-item="selectedVersions"
 									highlights-selected-item=true
 									multi-select=true										
 								>						

@@ -9,59 +9,39 @@ app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiMo
 
 function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast){
 	
+	//variables
+	///////////////////////////////////////////////////////////
 	$scope.showMe = false;	
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];
 	$scope.listOfDatasources = [];
 	$scope.listOfCategories=[];
 	$scope.bmVersions=[];
-	
-	//for testing
+	$scope.selectedBusinessModels=[];
+	$scope.selectedVersions=[];
+	$scope.selectedBusinessModels1=[1,2,3];
 	$scope.selectedBusinessModel = {};
+	 
+
+	
+	//methods
+	//////////////////////////////////////////////////////////
+	   
+	 $scope.getData = function(){
+		 $scope.getBusinessModels();
+		 $scope.getDataSources();
+		 $scope.getCategories();
+	 }
+
 	
 	$scope.createBusinessModel = function(){
 		$scope.selectedBusinessModel = {};
 		$scope.showMe = true;
-		$scope.businessModelHistory=[];
-		
+		$scope.businessModelHistory=[];	
 		
 	}
 	
-	$scope.saveBusinessModel = function(){
-		console.log("aj em in sejv biznis model");
-		
-		if(typeof $scope.selectedBusinessModel.id === "undefined"){
-			console.log("Novi se cuva");
-
-			sbiModule_restServices
-				.post("2.0/businessmodels","",$scope.selectedBusinessModel)
-				.success(
-						function(){
-							$scope.businessModelList=[];
-							$scope.getBusinessModels();
-							//$scope.businessModelList.push($scope.selectedBusinessModel);
-							console.log("Uspjesno sacuvan");
-						}
-						
-					);
-		}
-			
-		else{
-			console.log("Cuva se postojeci:id="+$scope.selectedBusinessModel.id);
-			sbiModule_restServices
-				.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
-				.success(
-						function(){
-							$scope.businessModelList=[];
-							$scope.getBusinessModels();
-							//$scope.businessModelList.push($scope.selectedBusinessModel);
-							console.log("Uspjesno sacuvan");
-						}
-						
-					);
-		}	
-
-	}
+	
 	
 	$scope.cancel = function(){
 		$scope.showMe = false;
@@ -123,7 +103,11 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	                       }
 	                       ];
 	 
-	 //calling service for getting Business Models
+	 
+	 //functions that use services
+	 //////////////////////////////////////////////////////////////////
+	 
+	 //calling service for getting Business Models @GET
 	 $scope.getBusinessModels = function(){
 			  sbiModule_restServices
 			  	.get("2.0", 'businessmodels')
@@ -143,7 +127,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			  		});
 	 }
 	 
-	 //calling service for getting data sources
+	 //calling service for getting data sources @GET
 	 $scope.getDataSources = function(){
 		  sbiModule_restServices
 			.get("datasources","")
@@ -173,7 +157,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			);	
 	 }
 	 
-	 //Calling service for getting Categories
+	 //Calling service for getting Categories  @GET
 	 $scope.getCategories = function(){
 		 sbiModule_restServices
 			.get("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
@@ -207,7 +191,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			);
 	 }
 	 
-	 //Calling service for file versions
+	 //Calling service for file versions @GET
 	 $scope.getVersions = function (id){
 		 sbiModule_restServices
 		  	.get("2.0/businessmodels",id)
@@ -227,14 +211,95 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 
 	 }
 	 
-	 $scope.getData = function(){
-		 $scope.getBusinessModels();
-		 $scope.getDataSources();
-		 $scope.getCategories();
+	 
+	 //calling service for saving BM @POST and @PUT
+	 $scope.saveBusinessModel = function(){
+			console.log("aj em in sejv biznis model");
+			
+			if(typeof $scope.selectedBusinessModel.id === "undefined"){
+				console.log("Novi se cuva");
+
+				sbiModule_restServices
+					.post("2.0/businessmodels","",$scope.selectedBusinessModel)
+					.success(
+							function(data, status, headers, config){
+								$scope.selectedBusinessModel.id = data.id;
+								$scope.businessModelList.push(data);
+								$scope.selectedVersions=[];
+								$scope.showActionOK("New Business Model saved successfully");
+							}
+							
+						);
+			}
+				
+			else{
+				console.log("Cuva se postojeci:id="+$scope.selectedBusinessModel.id);
+				sbiModule_restServices
+					.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
+					.success(
+							function(){
+								$scope.businessModelList=[];
+								$scope.getBusinessModels();
+								//$scope.businessModelList.push($scope.selectedBusinessModel);
+								$scope.showActionOK("Business Model edited successfully");
+								console.log("Uspjesno sacuvan");
+							}
+							
+						);
+			}	
+
+		}
+		
+	 	//calling service for deleting BM @DELETE
+		$scope.deleteBusinessModels = function(){
+			if($scope.selectedBusinessModels.length == 1){
+				var id = $scope.selectedBusinessModels[0].id;
+				sbiModule_restServices
+					.delete("2.0/businessmodels",id)
+					.success(
+							function(){
+								removeFromBMs(id);
+								if($scope.selectedBusinessModel.id == id){
+									$scope.selectedBusinessModel={};
+									
+								}
+								$scope.selectedBusinessModels=[];
+								$scope.showActionOK("Business Model deleted successfully");
+							});
+			}
+			
+			else{
+				sbiModule_restServices
+				.delete("2.0/businessmodels/deletemany",$scope.selectedBusinessModels1)
+				.success(
+						function(){
+							console.log("yeah weee didddd");
+							
+						});
+			}
+			
+		}
+	 	 
+	 //my util functions
+	 //////////////////////////////////////////////////
+	 
+	 //list updating
+	 removeFromBMs = function(id){
+		 console.log("prije slice");
+		 console.log($scope.businessModelList);
+		 for(var i=0;i<$scope.businessModelList.length;i++){
+			 if($scope.businessModelList[i].id == id){
+				 $scope.businessModelList.splice(i,1);
+				 
+				 console.log("poslije slice");
+				 console.log($scope.businessModelList);
+				 break;
+			 }
+				 
+		 }
 	 }
 	 
-	 $scope.getData();
-	 
+	 //date/time format
 	 millisToDate = function(data){
 		 for(var i=0; i<data.length;i++){
 			 var date = new Date(data[i].creationDate);
@@ -255,4 +320,22 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				 +(s[1]?s:"0"+s);
 		 }
 	 }
+	 
+	 //toast
+	 $scope.showActionOK = function(msg) {
+		    var toast = $mdToast.simple()
+		    .content(msg)
+		    .action('OK')
+		    .highlightAction(false)
+		    .hideDelay(3000)
+		    .position('top')
+
+		    $mdToast.show(toast).then(
+		    		function(response) {
+		    			if ( response == 'ok' ) {
+		    			}
+		    		});
+		   };
+		   
+			 $scope.getData();
 };

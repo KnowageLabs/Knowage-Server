@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -86,24 +88,36 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		return new ArrayList<Content>();
 	}
 
+	@GET
+	@Path("versions/{vId}")
+	@Produces("application/epub")
+	public void downloadFile(@PathParam("vId") Integer vId) {
+
+	}
+
 	@POST
 	@Path("/")
 	@Consumes("application/json")
-	public Response insertNewBusinessModel(MetaModel body) {
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public MetaModel insertNewBusinessModel(MetaModel body) {
 
 		MetaModel bm = body;
 
 		if (bm == null) {
-			return Response.status(Status.BAD_REQUEST).entity("Error JSON parsing").build();
+			logger.error("Error no data recived for POST method");
+			return null;
 		}
 
 		if (bm.getId() != null) {
-			return Response.status(Status.BAD_REQUEST).entity("Error paramters. New business model should not have ID value").build();
+			logger.error("New business model should not have id");
+			return null;
 		}
 
 		try {
 			DAOFactory.getMetaModelsDAO().insertMetaModel(bm);
-			return Response.ok().build();
+			MetaModel insertedBM = DAOFactory.getMetaModelsDAO().loadMetaModelByName(bm.getName());
+			// return Response.ok().build();
+			return insertedBM;
 
 		} catch (Exception e) {
 			logger.error("Error while creating url of the new resource", e);
@@ -137,6 +151,50 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		}
 
+		return null;
+	}
+
+	@DELETE
+	@Path("/{bmId}")
+	public Response deleteBusinessModel(@PathParam("bmId") Integer bmId) {
+
+		if (bmId == null) {
+			return Response.status(Status.BAD_REQUEST).entity("Error, Business model with id:" + bmId + " does not exist.").build();
+		}
+
+		try {
+			DAOFactory.getMetaModelsDAO().eraseMetaModel(bmId);
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			logger.error("Error while deleting business model", e);
+		}
+		return null;
+	}
+
+	@DELETE
+	@Path("/deletemany")
+	// @Consumes(MediaType.APPLICATION_JSON)
+	public void deleteBusinessModels(@QueryParam("id") int[] ids) {
+		System.out.println(ids[0]);
+
+	}
+
+	@DELETE
+	@Path("versions/{vId}")
+	public Response deleteBusinessModelVersion(@PathParam("vId") Integer vId) {
+
+		if (vId == null) {
+			return Response.status(Status.BAD_REQUEST).entity("Error, Business model with id:" + vId + " does not exist.").build();
+		}
+
+		try {
+			DAOFactory.getMetaModelsDAO().eraseMetaModelContent(vId);
+			return Response.ok().build();
+
+		} catch (Exception e) {
+			logger.error("Error while deleting business model", e);
+		}
 		return null;
 	}
 }
