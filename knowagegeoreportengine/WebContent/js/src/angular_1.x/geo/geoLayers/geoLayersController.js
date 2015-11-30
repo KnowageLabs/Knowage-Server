@@ -166,6 +166,8 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template) {	    	
 		$scope.layerCatalogueList=[];
 		$scope.selectedLayerList=[];
+	  	$scope.columnList=["layerLabel","type","layerURL","baseLayer"];
+    	$scope.columnSearch=["layerLabel","type","baseLayer"];
 		$scope.loadSelectedLayerList=function(){
 			for(cat in $scope.layers){
 				for(lay in $scope.layers[cat] ){

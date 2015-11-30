@@ -90,8 +90,8 @@
  	  <angular-table 
 						 id="layerCatalogue"
 						 ng-model=layerCatalogueList
- 						 columns='["layerLabel","type","layerURL","baseLayer"]'
-						 columns-search='["layerLabel","type","baseLayer"]'
+ 						 columns=columnList
+						 columns-search=columnSearch
 						 highlights-selected-item=true
 						 show-search-bar=true
 						 multi-select=true

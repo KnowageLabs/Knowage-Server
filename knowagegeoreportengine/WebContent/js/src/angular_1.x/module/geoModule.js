@@ -78,11 +78,17 @@ geoM.service('geoModule_layerServices', function(
 
 	this.setTemplateLayer = function(data,isWMS){
 		if(isWMS){
+			var sldBody = '<StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>SLD test</Title><FeatureTypeStyle><Rule><PolygonSymbolizer><Fill><CssParameter name="fill"><ogc:Function name="Recode"><ogc:Function name="strTrim"><ogc:PropertyName>STATE_ABBR</ogc:PropertyName></ogc:Function><ogc:Literal>CA</ogc:Literal><ogc:Literal>#6495ED</ogc:Literal><ogc:Literal>WA</ogc:Literal><ogc:Literal>#B0C4DE</ogc:Literal><ogc:Literal>OR</ogc:Literal><ogc:Literal>#00FFFF</ogc:Literal></ogc:Function></CssParameter></Fill></PolygonSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>';
+		var params=JSON.parse(data.layerParams);
+		params.LAYERS=data.layerName;
+//			var params={};
+			params.SLD_BODY =sldBody;
+			
 			layerServ.templateLayer = new ol.layer.Tile({
 				source : new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */
 						{
 							url : sbiModule_config.contextName+"/api/1.0/geo/getWMSlayer?layerURL="+data.layerURL,
-							params : JSON.parse(data.layerParams),
+							params : params,
 							options :JSON.parse(data.layerOptions)
 						})
 			});

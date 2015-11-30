@@ -15,7 +15,7 @@
 		<i class="material-icons">more_vert</i>
 	</md-button>
 
-	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu">
+	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout-fill>
 		<md-toolbar class="md-theme-light" layout="row" layout-wrap
 			layout-align="center center">
 			<div class="md-toolbar-tools">

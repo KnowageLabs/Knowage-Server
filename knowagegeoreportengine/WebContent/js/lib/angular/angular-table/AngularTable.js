@@ -61,9 +61,21 @@ angular.module('angular_table', [ 'ngMaterial','angularUtils.directives.dirPagin
 				tbody.attr('multi-select',true);
 			}
 
-
+			if(attrs.columnsSearch){
+				var colSearch=scope.columnsSearch;
+				if(Object.prototype.toString.call(colSearch)=="[object String]"){
+					//if is a string, convert it to object
+					scope.columnsSearch=JSON.parse(colSearch);
+				}
+			}
+			
 			if(attrs.columns){
-				var col=JSON.parse(attrs.columns);
+				var col=scope.columns;
+				if(Object.prototype.toString.call(col)=="[object String]"){
+					//if is a string, convert it to object
+					col=JSON.parse(col);
+				}
+				 
 				for(var i=0;i<col.length;i++){
 					var tmpColData={};
 					if(Object.prototype.toString.call(col[i])=="[object Object]"){
