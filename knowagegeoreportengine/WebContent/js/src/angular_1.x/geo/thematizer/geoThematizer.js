@@ -88,20 +88,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	this.proportionalSymbol=function(dsValue){
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
 		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geoModule_template.selectedIndicator.name)){
-			var minV;
-			var maxV;
-			for(var i=0;i<geoModule_dataset.rows.length;i++){
-				var tmpV= parseInt(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]);
-				if(minV==undefined || tmpV<minV){
-					minV=tmpV;
-				}
-				if(maxV==undefined || tmpV>maxV){
-					maxV=tmpV;
-
-				}
+			tmtz.loadIndicatorMaxMinVal(geoModule_template.selectedIndicator.name);
 			}
-			cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name]={minValue:minV, maxValue:maxV};
-		}
 
 		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
 		var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
@@ -149,42 +137,19 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var tempMax=0;
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
 		for(var key in dsValue){
-			if(!cacheProportionalSymbolMinMax.hasOwnProperty(key)){
-				var minV;
-				var maxV;
-				for(var i=0;i<geoModule_dataset.rows.length;i++){
-					var tmpV= parseInt(geoModule_dataset.rows[i][dsValue[key].column]);
-					if(minV==undefined || tmpV<minV){
-						minV=tmpV;
-					}
-					if(maxV==undefined || tmpV>maxV){
-						maxV=tmpV;
-
-					}
-				}
-				cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
+			if(!cacheProportionalSymbolMinMax.hasOwnProperty(dsValue[key].column)){
+				tmtz.loadIndicatorMaxMinVal(dsValue[key].column);
 			}
-			var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-			var minValue = cacheProportionalSymbolMinMax[key].minValue;
-			var maxValue = cacheProportionalSymbolMinMax[key].maxValue;
+			var minValue = cacheProportionalSymbolMinMax[dsValue[key].column].minValue;
+			var maxValue = cacheProportionalSymbolMinMax[dsValue[key].column].maxValue;
 			if(tempMin > minValue){
 				tempMin = Math.round(minValue);
 			}
 			if(tempMax<maxValue){
 				tempMax=Math.round(maxValue);
 			}
-			var size;
-
-			if(minValue == maxValue) { // we have only one point in the distribution
-				size = (radius.maxRadiusSize + radius.minRadiusSize)/2;
-			} else {
-				size = ( parseInt(dsValue[key]) - minValue) / ( maxValue - minValue) *
-				(radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
-			}
+			
 		}
-		console.log("Voi siete");
-		console.log(cacheProportionalSymbolMinMax);
-
 
 		// Create the data table.
 		var data = new google.visualization.DataTable();
@@ -203,7 +168,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			string.push(Math.round(dsValue[key].value));
 			string.push(Math.round(dsValue[key].value))
 
-			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
+			maxV.push(Math.round(cacheProportionalSymbolMinMax[dsValue[key].column].maxValue));
 			if(i==0){
 				var obj={};
 				obj.viewWindowMode='explicit';
@@ -294,4 +259,21 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 
 	}
+	
+	this.loadIndicatorMaxMinVal=function(key){
+		var minV;
+		var maxV;
+		for(var i=0;i<geoModule_dataset.rows.length;i++){
+			var tmpV= parseInt(geoModule_dataset.rows[i][key]);
+			if(minV==undefined || tmpV<minV){
+				minV=tmpV;
+			}
+			if(maxV==undefined || tmpV>maxV){
+				maxV=tmpV;
+
+			}
+		}
+		cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
+	}
+	
 });
