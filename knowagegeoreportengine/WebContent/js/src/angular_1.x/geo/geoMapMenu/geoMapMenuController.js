@@ -31,6 +31,7 @@ function geoMapMenuControllerFunction(
 	$scope.indicators = geoModule_indicators;
 	$scope.selectModeInteraction = geo_interaction;
 	$scope.openRigthMenu = false;
+	$scope.selectFilterType='singleClick';
 	$scope.analysisTypeList = [
 	                         {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
 	                         {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
@@ -40,6 +41,11 @@ function geoMapMenuControllerFunction(
 	                           {label:"Identify", type:"identify"},
 	                           {label:"Cross navigation", type:"cross"},	                           
 	                           ];
+	$scope.filterType=[
+					{label:"Click Selection", type:"singleClick"},
+					{label:"Circle Selection", type:"circle"},	
+					{label:"Box Selection", type:"box"},	
+	                   ];
 	
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");

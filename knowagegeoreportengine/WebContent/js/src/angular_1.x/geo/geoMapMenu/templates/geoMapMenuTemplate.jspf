@@ -17,6 +17,22 @@
 		</md-content>
 	</div>
 	
+	<div class="itemboxGU" ng-init=" filterTypeExpander=true;">
+		<md-toolbar class="titleToolbar" class="md-theme-light">
+			<span class="md-toolbar-tools">Filter Spatial</span>
+			<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" filterTypeExpander=!filterTypeExpander">
+		        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
+		    </md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="filterTypeExpander">
+			<md-radio-group ng-model="selectFilterType">
+				<md-radio-button ng-repeat="item in filterType" class="md-primary" 
+						ng-value="item.type" >
+					 {{item.label}}
+			  </md-radio-button>
+			</md-radio-group>
+		</md-content>
+	</div>
 	
 	<div class="itemboxGU" ng-init=" mapTypeExpander=true;">
 		<md-toolbar class="titleToolbar" class="md-theme-light">

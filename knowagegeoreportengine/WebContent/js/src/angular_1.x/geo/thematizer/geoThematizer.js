@@ -56,7 +56,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			return tmtz.choropleth(dsValue);
 		}else if(geoModule_template.analysisType=="proportionalSymbol"){
 			return tmtz.proportionalSymbol(dsValue);
-		}else if(geoModule_template.analysisType=="chartChiara"){
+		}else if(geoModule_template.analysisType=="chartChiara" && Object.keys(multiDsValue).length!= 0){
 			return tmtz.chartChiara(multiDsValue);
 		}
 	}
@@ -149,7 +149,6 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var tempMax=0;
 		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
 		for(var key in dsValue){
-			console.log("chartChiara start");
 			if(!cacheProportionalSymbolMinMax.hasOwnProperty(key)){
 				var minV;
 				var maxV;
@@ -165,12 +164,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				}
 				cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
 			}
-
-
-
-
 			var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-
 			var minValue = cacheProportionalSymbolMinMax[key].minValue;
 			var maxValue = cacheProportionalSymbolMinMax[key].maxValue;
 			if(tempMin > minValue){
@@ -188,35 +182,81 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				(radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
 			}
 		}
+		console.log("Voi siete");
+		console.log(cacheProportionalSymbolMinMax);
 
 	
 		// Create the data table.
 		var data = new google.visualization.DataTable();
+		var string=[] ;
+		var asseV ={};
+		var maxV=[];
+		
+		var objContent=[];
+		var vAxes={};
+		var i=0;
 		data.addColumn('string', 'Topping');
-		data.addColumn('number', 'Population');
-
+		string.push('N');
 		for(var key in dsValue){
-			data.addRows([['N',Math.round(dsValue[key].value)]]);
-		}
-		//data.addRows([['N',Math.round(size)]]);
+			data.addColumn('number', 'Population');
+			data.addColumn({type: 'number', role: 'annotation'});
+			string.push(Math.round(dsValue[key].value));
+			string.push(Math.round(dsValue[key].value))
+			
+			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
+			if(i==0){
+				var obj={};
+				obj.viewWindowMode='explicit';
+				obj.viewWindow={max:maxV[i],min:0};
+				obj.gridlines={};
+				obj.gridlines.color = 'transparent';
+				obj.textPosition= 'none';
+				vAxes[i] = obj;
+				
+			}else{
+				var obj={};
+				obj.viewWindow={};
+				obj.viewWindow={max:maxV[i],min:0};
+				obj.gridlines={};
+				obj.gridlines.color = 'transparent';
+				obj.textPosition= 'none';
+				vAxes[i] = obj;
+			}
+			
+			i=i+1;
+			
+			}
 
+		data.addRows([string]);
+		console.log("Hello");
+		console.log(vAxes);
 		var view = new google.visualization.DataView(data);
-		view.setColumns([0, 1, { calc: "stringify",
-			sourceColumn: 1,
-			type: "string",
-			role: "annotation" }]);
+		
 		// Set chart options 
-		console.log($map.getView().getZoom());
 		var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
 		//setta minvalue come min del min e max come max del max di 
 		var options = {
 				'width':size_img,
 				'height':size_img,
-				'vAxis': {'minValue': tempMin, 'maxValue': tempMax,'textPosition': 'none', 'gridlines': {'color': 'transparent'  }},
 				'legend': {'position': 'none'},
 				'backgroundColor': { 'fill':'transparent' },
-				'hAxis': { 'textPosition': 'none' },
-		};
+				'hAxis': { 'textPosition': 'none'},
+				
+				annotations: {
+			          alwaysOutside: true,
+			          textStyle: {
+			            fontSize: 14,
+			            color: '#000',
+			            auraColor: 'none'
+			          }
+				},
+				vAxes:vAxes,
+		         series: {0: {targetAxisIndex:0},
+		                  1:{targetAxisIndex:1},
+		                  2:{targetAxisIndex:2}
+		                 },
+		                 colors: ["red", "green", "orange", "blue"],
+				};
 
 		// Instantiate and draw our chart, passing in some options.
 		//var chart=new google.visualization.PieChart(chartElement);
