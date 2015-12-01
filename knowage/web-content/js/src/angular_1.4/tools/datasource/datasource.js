@@ -30,7 +30,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.dialects = [];
 	$scope.selectedDataSource = {};
 	$scope.selectedDataSourceItems = [];
-	
+
 	//REST
 	$scope.getDataSources = function(){
 		
@@ -135,6 +135,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 							$timeout(function(){								
 								$scope.getDataSources();
 							}, 500);
+							$scope.showActionOK();
 							$scope.closeForm();
 						}
 					})	
@@ -152,30 +153,68 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//REST
 	$scope.deleteDataSource = function() {
 		
-		//DELETE DATA SOURCE
-		sbiModule_restServices.delete("2.0/datasources", $scope.selectedDataSource.dsId).success(
+		//DELETE SEVERAL DATA SORUCES
+		if($scope.selectedDataSourceItems.length > 1) {
+			
+			sbiModule_restServices.delete("2.0/datasources",queryParamDataSourceIdsToDelete()).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log("[DELETE MULTIPLE]: PROPERTY HAS ERRORS!");
+						} else {
+							console.log("[DELETE MULTIPLE]: SUCCESS!")
+							$scope.showActionDelete();
+							$timeout(function(){								
+								$scope.dataSourceList = data;
+							}, 500);
+							$scope.closeForm();
+							$scope.selectedDataSourceItems = [];
+						}
+					}).error(function(data, status, headers, config) {
+						console.log("[DELETE MULTIPLE]: FAIL!")
+					})
+			
+		} else {
+			
+			//DELETE  ONE DATA SOURCE
+			sbiModule_restServices.delete("2.0/datasources", $scope.selectedDataSource.dsId).success(
 
-				function(data, status, headers, config) {
-					if (data.hasOwnProperty("errors")) {
-						console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
-					} else {
-						console.log("[DELETE]: SUCCESS!")
-						$scope.dataSourceList = [];
-						$timeout(function(){								
-							$scope.dataSourceList = data;
-						}, 500);
-						$scope.closeForm();
-						$scope.showActionDelete();
-					}
-				}).error(function(data, status, headers, config) {
-					console.log("[DELETE]: FAIL!"+status);
-				});
+					function(data, status, headers, config) {
+						if (data.hasOwnProperty("errors")) {
+							console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
+						} else {
+							console.log("[DELETE]: SUCCESS!");
+							$scope.dataSourceList = [];
+							$timeout(function(){								
+								$scope.dataSourceList = data;
+							}, 500);
+							$scope.closeForm();
+							$scope.showActionDelete();
+						}
+					}).error(function(data, status, headers, config) {
+						console.log("[DELETE]: FAIL!"+status);
+					});
+			
+		}
+		
+		
 	}
 	
 	//SHOW RIGHT-COLUMN
 	$scope.createNew = function () {
 		$scope.showme=true;
-		$scope.selectedDataSource = {};
+		$scope.selectedDataSource = {
+				label : "",
+				descr : "",
+				dialectId: "",
+				multiSchema: false,
+				readOnly: false,
+				writeDefault: false,
+				urlConnection: "",
+				user: "",
+				pwd: "",
+				driver: ""				
+		};
 		console.log($scope.selectedDataSource)
 	}
 	
@@ -231,6 +270,16 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			}
 		});
 	};
+	
+	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES
+	queryParamDataSourceIdsToDelete = function(){
+		   var q="?";
+		   
+		   for(var i=0; i<$scope.selectedDataSourceItems.length;i++){
+		    q+="id="+$scope.selectedDataSourceItems[i].dsId+"&";
+		   }
+		   return q;
+		  }
 
 	
 };

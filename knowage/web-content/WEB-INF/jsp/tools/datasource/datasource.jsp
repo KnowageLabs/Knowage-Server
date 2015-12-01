@@ -33,7 +33,7 @@
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 						
 						<md-button 
-							ng-disabled="selectedDataSource.dsId==null"
+							
 							class="md-fab md-ExtraMini"
 							style="position:absolute; right:26px; top:0px; background-color:#E91E63"
 							ng-click="deleteDataSource()"> 
@@ -152,9 +152,9 @@
 					</div>
 					
 					<div layout="row" layout-wrap>
-						<md-radio-group ng-model="selectedDataSource.readOnly "> Read only:
-	      					<md-radio-button value="Read only" ng-disabled="selectedDataSource.writeDefault == true ">Read only</md-radio-button>
-	      					<md-radio-button value="Read and write"> Read and write </md-radio-button>
+						<md-radio-group  ng-model="selectedDataSource.readOnly"> Read only:
+	      					<md-radio-button  value="1" ng-disabled="selectedDataSource.writeDefault">Read only</md-radio-button>
+	      					<md-radio-button  value="0"> Read and write </md-radio-button>
 	    				</md-radio-group>
 					</div>
 					
@@ -163,9 +163,12 @@
 							<label>{{translate.load("sbi.datasource.writedefault")}}:</label>
 						</div>
 	
-						<md-input-container ng-model="selectedDataSource.writeDefault" class="small counter"> <md-checkbox ng-disabled="selectedDataSource.readOnly == 'Read only'"
-							 aria-label="WriteDefault">
-						</md-checkbox> </md-input-container>
+						<md-input-container> 
+							<md-checkbox 
+								ng-model="selectedDataSource.writeDefault" ng-disabled="selectedDataSource.readOnly == 1" aria-label="Write Default">
+							</md-checkbox> 
+						</md-input-container>
+						
 					</div>
 					
 					<div layout="row" layout-wrap>

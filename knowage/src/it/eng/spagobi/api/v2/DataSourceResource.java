@@ -23,6 +23,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -49,7 +50,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
-			// dataSourceDAO.setUserProfile(getUserProfile());
+			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSource = dataSourceDAO.loadAllDataSources();
 
 			logger.debug("Getting the list of all DS - done successfully");
@@ -172,6 +173,27 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		}
 		return DAOFactory.getDataSourceDAO().loadAllDataSources();
 
+	}
+
+	@DELETE
+	@Path("/")
+	public List<DataSource> deleteMultiple(@QueryParam("id") int[] ids) {
+
+		IDataSourceDAO dataSourceDAO = null;
+		try {
+
+			dataSourceDAO = DAOFactory.getDataSourceDAO();
+			dataSourceDAO.setUserProfile(getUserProfile());
+			for (int i = 0; i < ids.length; i++) {
+				DataSource ds = new DataSource();
+				ds.setDsId(ids[i]);
+				dataSourceDAO.eraseDataSource(ds);
+			}
+			return dataSourceDAO.loadAllDataSources();
+		} catch (Exception e) {
+			logger.error("Error while deleting url of the new resource", e);
+			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
+		}
 	}
 
 }
