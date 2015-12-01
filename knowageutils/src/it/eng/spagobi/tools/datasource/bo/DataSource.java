@@ -6,6 +6,7 @@
 package it.eng.spagobi.tools.datasource.bo;
 
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
+import it.eng.spagobi.services.validation.Xss;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
@@ -20,6 +21,8 @@ import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
 import org.apache.log4j.Logger;
 
@@ -36,19 +39,33 @@ public class DataSource implements Serializable, IDataSource {
 
 	private static transient Logger logger = Logger.getLogger(DataSource.class);
 
+	@NotNull
 	private int dsId;
+	@Xss
+	@Max(160)
 	private String descr;
+	@NotNull
+	@Xss
+	@Max(50)
 	private String label;
+	@Max(50)
 	private String jndi;
+	@Max(500)
 	private String urlConnection;
+	@Max(50)
 	private String user;
+	@Max(50)
 	private String pwd;
+	@Max(160)
 	private String driver;
+	@NotNull
+	@Max(11)
 	private Integer dialectId;
 	private String hibDialectClass;
 	private String hibDialectName;
 	private Set engines = null;
 	private Set objects = null;
+	@Max(45)
 	private String schemaAttribute = null;
 	private Boolean multiSchema = null;
 	private Boolean readOnly;
