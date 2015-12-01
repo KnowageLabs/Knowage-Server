@@ -29,6 +29,18 @@
 				<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.modalities.check.title.configurable");}}</div>
+						
+						<md-button aria-label="dellete_button"
+					       ng-disabled="SelectedConstraint.checkId==null"
+					       class="md-fab md-ExtraMini"
+					       style="position:absolute; right:26px; top:0px; background-color:#E91E63"
+					       ng-click="deleteConstraints()"> 
+					       <md-icon
+					        md-font-icon="fa fa-trash" 
+					        style=" margin-top: 6px ; color: white;" >
+					       </md-icon> 
+                       </md-button>
+						
 						<md-button aria-label="create_button"
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -56,6 +68,7 @@
 						highlights-selected-item=true
 						click-function="loadConstraints(item)"
 						multi-select=true
+						selected-item ="forDelete"  
 						
 							>					
 						 					
@@ -152,7 +165,7 @@
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
 				       <md-select  aria-label="aria-label" 
 				        ng-model="SelectedConstraint.valueTypeCd"> <md-option 
-				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" >{{l.VALUE_NM}} </md-option>
+				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select> </md-input-container>
 				   </div>
 			</div>

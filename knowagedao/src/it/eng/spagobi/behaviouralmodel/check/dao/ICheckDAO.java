@@ -102,8 +102,22 @@ public interface ICheckDAO extends ISpagoBIDao {
 	 */
 	public boolean isReferenced(String checkId) throws EMFUserError;
 
+	/**
+	 * Implements the query to get list of predefined checks. All information
+	 * needed is stored into the input <code>Check</code> object.
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
 	public List loadPredefinedChecks() throws EMFUserError;
 
+	/**
+	 * Implements the query to get list of user created checks. All information
+	 * needed is stored into the input <code>Check</code> object.
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
 	public List loadCustomChecks() throws EMFUserError;
 
 }

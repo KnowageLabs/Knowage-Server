@@ -10,6 +10,23 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.label={};
 	$scope.ItemList=[];
 	$scope.listType=[];
+	$scope.forDelete=[];
+	$scope.showActionOK = function() {
+		  var toast = $mdToast.simple()
+		  .content('Operation completed successfully')
+		  .action('OK')
+		  .highlightAction(false)
+		  .hideDelay(3000)
+		  .position('top')
+
+		  $mdToast.show(toast).then(function(response) {
+
+		   if ( response == 'ok' ) {
+
+
+		   }
+		  });
+		 };	
 	
 
 	$scope.loadConstraints=function(item){
@@ -23,15 +40,53 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.createConstraints =function(){
 		$scope.SelectedConstraint={};
 		$scope.showme=true;
-		
-		//$scope.button_flag = true;
-		
-	
 	}
+	
 	$scope.saveConstraints= function(){
-		console.log(angular.toJson($scope.SelectedConstraint));
-		sbiModule_restServices
-	    .post("2.0/detailmodalities","",angular.toJson($scope.SelectedConstraint));
+		
+		if($scope.SelectedConstraint.hasOwnProperty("checkId")){ 
+			
+			sbiModule_restServices
+		    .put("2.0/detailmodalities",$scope.SelectedConstraint.checkId,$scope.SelectedConstraint).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						} else {
+							$scope.ItemList=data;
+							$scope.showActionOK();
+							$scope.showme = false;
+							
+							
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+
+					})	
+			
+		}else{
+			console.log($scope.SelectedConstraint);
+			sbiModule_restServices
+		    .post("2.0/detailmodalities","",angular.toJson($scope.SelectedConstraint)).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						} else {
+							$scope.ItemList=data;
+							$scope.showActionOK();
+							$scope.showme = false;
+							
+							
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+
+					})	
+			
+			
+		}
+		
 	}
 	$scope.cancel = function() {
 		$scope.showme = false;
@@ -39,10 +94,20 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 
 	}
 	
+	DeletePath = function(){
+		   var s="?";
+		   
+		   for(var i=0; i<$scope.forDelete.length;i++){
+		    s+="id="+$scope.forDelete[i].checkId+"&";
+		   }
+		   return s;
+		  }
+	
 	$scope.FieldsCheck = function(l){
 		
 		$scope.label = l.VALUE_DS;
 		$scope.SelectedConstraint.valueTypeId=l.VALUE_ID;
+	 $scope.SelectedConstraint.valueTypeCd=l.VALUE_CD;
 		if(l.VALUE_NM == "Range"){
 			$scope.additionalField= true;
 		}else{
@@ -88,6 +153,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 					} else {
+						console.log(data);
 						$scope.listType = data;
 					}
 				}).error(function(data, status, headers, config) {
@@ -96,4 +162,42 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 				})	
 	}
 	$scope.getDomainType();
+	
+	$scope.deleteConstraints = function(){
+		
+		if($scope.forDelete.length >1){
+			$scope.showme = false;
+			sbiModule_restServices.delete("2.0/detailmodalities",DeletePath()).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						} else {
+							$scope.ItemList=data;
+							$scope.showActionOK();
+							$scope.showme = false;
+							$scope.forDelete = [];
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+					})	
+		}else{
+			
+			sbiModule_restServices.delete("2.0/detailmodalities",$scope.SelectedConstraint.checkId).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						if (data.hasOwnProperty("errors")) {
+							console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						} else {
+							$scope.ItemList=data;
+							$scope.showActionOK();
+							$scope.showme = false;
+						}
+					}).error(function(data, status, headers, config) {
+						console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+
+					})	
+			
+		}
+	}
 };
