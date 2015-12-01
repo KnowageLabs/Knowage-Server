@@ -157,21 +157,4 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 
 	public List loadDataSourcesForSuperAdmin() throws EMFUserError;
 
-	public void deleteDataSourceById(Integer dataSourceId) throws EMFUserError;
-
-	/**
-	 * Loads all detail information for data source whose label is equal to
-	 * <code>label</code>.
-	 *
-	 * @param label
-	 *            The label for the data source to load
-	 *
-	 * @return An <code>datasource</code> object containing all loaded
-	 *         information
-	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
-	 */
-	public IDataSource loadDataSourceByLabelNew(String label) throws EMFUserError;
-
 }

@@ -12,12 +12,9 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,14 +23,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @Path("/2.0/datasources")
 @ManageAuthorization
@@ -119,10 +113,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 			logger.debug("OUT: Posting the DS - done successfully");
 
-			DataSource newID = (DataSource) dataSourceDAO.loadDataSourceByLabelNew(dataSource.getLabel());
-			int bla = newID.getDsId();
+			DataSource newLabel = (DataSource) dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
+			int newId = newLabel.getDsId();
 
-			return Integer.toString(bla);
+			return Integer.toString(newId);
 
 		} catch (Exception exception) {
 
@@ -130,40 +124,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("Error while posting DS", exception);
 
 		}
-	}
-
-	@POST
-	@Path("/deleteDataSource")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String deleteOneDataSource(@Context HttpServletRequest req) throws JSONException, EMFUserError, IOException {
-		Object id = null;
-		Integer dataSourceId = null;
-		JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
-		System.out.println(requestBodyJSON);
-		try {
-
-			id = requestBodyJSON.opt("DATASOURCE_ID");
-			System.out.println(id);
-			if (id == null || id.equals("")) {
-				throw new SpagoBIRuntimeException("The DS id passed in the request is null or empty");
-			}
-			dataSourceId = new Integer(id.toString());
-		} catch (Exception e) {
-			logger.error("error loading the DS to delete from the request", e);
-			throw new SpagoBIRuntimeException("error loading the DS to delete from the request", e);
-		}
-
-		logger.debug("Deleting the DS");
-		IDataSourceDAO dao = DAOFactory.getDataSourceDAO();
-
-		try {
-			dao.deleteDataSourceById(dataSourceId);
-		} catch (EMFUserError e) {
-			logger.error("Error delationg the DS with id " + id, e);
-			throw new SpagoBIRuntimeException("Error delationg the DS with id " + id, e);
-		}
-		return "{}";
 	}
 
 	@PUT
@@ -195,12 +155,15 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		logger.debug("IN");
 
+		IDataSourceDAO dataSourceDAO = null;
+
 		try {
 
-			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-
+			DataSource dataSource = new DataSource();
+			dataSource.setDsId(dsId);
+			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-			dataSourceDAO.deleteDataSourceById(dsId);
+			dataSourceDAO.eraseDataSource(dataSource);
 
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);
