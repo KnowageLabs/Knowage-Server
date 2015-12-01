@@ -6,24 +6,6 @@
 
 package it.eng.spagobi.tools.datasource.service.rest;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -46,6 +28,24 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
@@ -102,11 +102,13 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		try {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			String id = ((Integer) requestBodyJSON.opt("DATASOURCE_ID")).toString();
+
 			Assert.assertNotNull(id, deleteNullIdDataSourceError);
 			// if the ds is associated with any BIEngine or BIObjects, creates
 			// an error
 			boolean bObjects = DAOFactory.getDataSourceDAO().hasBIObjAssociated(id);
-			// boolean bEngines = DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
+			// boolean bEngines =
+			// DAOFactory.getDataSourceDAO().hasBIEngineAssociated(id);
 			if (bObjects) { // || bEngines) {
 				HashMap params = new HashMap();
 				logger.debug(deleteInUseDSError);
@@ -116,7 +118,8 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 			IDataSource ds = DAOFactory.getDataSourceDAO().loadDataSourceByID(new Integer(id));
 
-			// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
+			// it is necessary to clean the cache otherwise SpagoBI will look
+			// for dataset that are
 			// not in cache anymore since the caching db is changed
 			if (ds.checkIsWriteDefault()) {
 				ICache cache = SpagoBICacheManager.getCache();
@@ -173,7 +176,8 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				}
 				Integer id = dao.insertDataSource(dsNew, profile.getOrganization());
 				dsNew.setDsId(id);
-				// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
+				// it is necessary to clean the cache otherwise SpagoBI will
+				// look for dataset that are
 				// not in cache yet since the caching db is changed
 				if (dsNew.checkIsWriteDefault()) {
 					ICache cache = SpagoBICacheManager.getCache();
@@ -186,10 +190,12 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 				// update ds
 				dao.modifyDataSource(dsNew);
 
-				// logical XOR operator -> it is true only if one has true value, but not both
+				// logical XOR operator -> it is true only if one has true
+				// value, but not both
 				boolean isWriteDefaultChanged = dsNew.checkIsWriteDefault() ^ dsOld.checkIsWriteDefault();
 
-				// it is necessary to clean the cache otherwise SpagoBI will look for dataset that are
+				// it is necessary to clean the cache otherwise SpagoBI will
+				// look for dataset that are
 				// not in cache yet since the caching db is changed
 				if (isWriteDefaultChanged) {
 					ICache cache = SpagoBICacheManager.getCache();
@@ -257,7 +263,15 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		Integer dialectId = (Integer) requestBodyJSON.opt("DIALECT_ID");
+		// Integer dialectId = (Integer) requestBodyJSON.opt("DIALECT_ID");
+		Object dialect = requestBodyJSON.opt("DIALECT_ID");
+
+		Integer dialectId;
+		if (dialect != null && dialect instanceof String) {
+			dialectId = new Integer((String) dialect);
+		} else {
+			dialectId = (Integer) dialect;
+		}
 		String description = (String) requestBodyJSON.opt("DESCRIPTION");
 		String label = (String) requestBodyJSON.opt("DATASOURCE_LABEL");
 		String jndi = (String) requestBodyJSON.opt("JNDI_URL");
@@ -266,9 +280,36 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		String pwd = (String) requestBodyJSON.opt("PASSWORD");
 		String driver = (String) requestBodyJSON.opt("DRIVER");
 		String schemaAttr = (String) requestBodyJSON.opt("SCHEMA");
-		String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
-		Boolean readOnly = (Boolean) requestBodyJSON.opt("READ_ONLY");
-		Boolean writeDefault = (Boolean) requestBodyJSON.opt("WRITE_DEFAULT");
+		// String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
+
+		Object ms = requestBodyJSON.opt("MULTISCHEMA");
+
+		Boolean multiSchema;
+		if (ms != null && ms instanceof String) {
+			multiSchema = new Boolean((String) ms);
+		} else {
+			multiSchema = (Boolean) ms;
+		}
+		// Boolean readOnly = (Boolean) requestBodyJSON.opt("READ_ONLY");
+
+		Object ro = requestBodyJSON.opt("READ_ONLY");
+
+		Boolean readOnly;
+		if (ro != null && ro instanceof String) {
+			readOnly = new Boolean((String) ro);
+		} else {
+			readOnly = (Boolean) ro;
+		}
+
+		// Boolean writeDefault = (Boolean)
+		// requestBodyJSON.opt("WRITE_DEFAULT");
+		Object wd = requestBodyJSON.opt("WRITE_DEFAULT");
+		Boolean writeDefault;
+		if (wd != null && ms instanceof String) {
+			writeDefault = new Boolean((String) wd);
+		} else {
+			writeDefault = (Boolean) wd;
+		}
 
 		Boolean isMultiSchema = false;
 		if (multiSchema != null && (multiSchema.equals("on") || multiSchema.equals("true"))) {

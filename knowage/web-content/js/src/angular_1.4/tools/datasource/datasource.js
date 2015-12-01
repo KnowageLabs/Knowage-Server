@@ -1,6 +1,5 @@
 /**
- * @author Simovic Nikola 
- * e-mail: nikola.simovic@mht.net
+ * @author Simović Nikola (nikola.simovic@mht.net)
  */
 var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
 
