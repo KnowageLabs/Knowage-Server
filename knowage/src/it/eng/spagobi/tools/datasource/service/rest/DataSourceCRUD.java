@@ -263,15 +263,8 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		// Integer dialectId = (Integer) requestBodyJSON.opt("DIALECT_ID");
-		Object dialect = requestBodyJSON.opt("DIALECT_ID");
+		Integer dialectId = (Integer) requestBodyJSON.opt("DIALECT_ID");
 
-		Integer dialectId;
-		if (dialect != null && dialect instanceof String) {
-			dialectId = new Integer((String) dialect);
-		} else {
-			dialectId = (Integer) dialect;
-		}
 		String description = (String) requestBodyJSON.opt("DESCRIPTION");
 		String label = (String) requestBodyJSON.opt("DATASOURCE_LABEL");
 		String jndi = (String) requestBodyJSON.opt("JNDI_URL");
@@ -280,36 +273,40 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 		String pwd = (String) requestBodyJSON.opt("PASSWORD");
 		String driver = (String) requestBodyJSON.opt("DRIVER");
 		String schemaAttr = (String) requestBodyJSON.opt("SCHEMA");
-		// String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
+		String multiSchema = (String) requestBodyJSON.opt("MULTISCHEMA");
 
-		Object ms = requestBodyJSON.opt("MULTISCHEMA");
+		Boolean readOnly = (Boolean) requestBodyJSON.opt("READ_ONLY");
 
-		Boolean multiSchema;
-		if (ms != null && ms instanceof String) {
-			multiSchema = new Boolean((String) ms);
-		} else {
-			multiSchema = (Boolean) ms;
-		}
-		// Boolean readOnly = (Boolean) requestBodyJSON.opt("READ_ONLY");
+		Boolean writeDefault = (Boolean) requestBodyJSON.opt("WRITE_DEFAULT");
 
-		Object ro = requestBodyJSON.opt("READ_ONLY");
+		/*
+		 * Object dialect = requestBodyJSON.opt("DIALECT_ID");
+		 * 
+		 * Integer dialectId; if (dialect != null && dialect instanceof String)
+		 * { dialectId = new Integer((String) dialect); } else { dialectId =
+		 * (Integer) dialect; }
+		 */
 
-		Boolean readOnly;
-		if (ro != null && ro instanceof String) {
-			readOnly = new Boolean((String) ro);
-		} else {
-			readOnly = (Boolean) ro;
-		}
+		/*
+		 * Object ms = requestBodyJSON.opt("MULTISCHEMA");
+		 *
+		 * Boolean multiSchema; if (ms != null && ms instanceof String) {
+		 * multiSchema = new Boolean((String) ms); } else { multiSchema =
+		 * (Boolean) ms; }
+		 */
 
-		// Boolean writeDefault = (Boolean)
-		// requestBodyJSON.opt("WRITE_DEFAULT");
-		Object wd = requestBodyJSON.opt("WRITE_DEFAULT");
-		Boolean writeDefault;
-		if (wd != null && ms instanceof String) {
-			writeDefault = new Boolean((String) wd);
-		} else {
-			writeDefault = (Boolean) wd;
-		}
+		/*
+		 * Object ro = requestBodyJSON.opt("READ_ONLY");
+		 *
+		 * Boolean readOnly; if (ro != null && ro instanceof String) { readOnly
+		 * = new Boolean((String) ro); } else { readOnly = (Boolean) ro; }
+		 */
+
+		/*
+		 * Object wd = requestBodyJSON.opt("WRITE_DEFAULT"); Boolean
+		 * writeDefault; if (wd != null && ms instanceof String) { writeDefault
+		 * = new Boolean((String) wd); } else { writeDefault = (Boolean) wd; }
+		 */
 
 		Boolean isMultiSchema = false;
 		if (multiSchema != null && (multiSchema.equals("on") || multiSchema.equals("true"))) {
