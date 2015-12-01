@@ -49,7 +49,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						
 						for(var i = 0; i < data.length; i++){
 					          $scope.dataSourceList.push(data[i]);
-					          console.log(data[i]);
+					          console.log(angular.toJson(data[i]));
 					    }
 						
 					}
@@ -163,7 +163,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 							console.log("[DELETE MULTIPLE]: PROPERTY HAS ERRORS!");
 						} else {
 							console.log("[DELETE MULTIPLE]: SUCCESS!")
-							$scope.showActionDelete();
+							$scope.showActionMultiDelete();
 							$timeout(function(){								
 								$scope.dataSourceList = data;
 							}, 500);
@@ -243,7 +243,22 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//CONFIRM DELETE
 	$scope.showActionDelete = function() {
 		var toast = $mdToast.simple()
-		.content('Data Source Deleted')
+		.content('Successfully deleted data source!')
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	};
+	
+	//CONFIRM MULTIPLE DELETE
+	$scope.showActionMultiDelete = function() {
+		var toast = $mdToast.simple()
+		.content('Successfully deleted multiple data sources!')
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)
@@ -258,7 +273,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//CONFIRM OK
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
-		.content('Data Source saved correctly!')
+		.content('Successfully saved data source!!')
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)
@@ -273,13 +288,16 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	
 	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES
 	queryParamDataSourceIdsToDelete = function(){
+		
 		   var q="?";
 		   
 		   for(var i=0; i<$scope.selectedDataSourceItems.length;i++){
-		    q+="id="+$scope.selectedDataSourceItems[i].dsId+"&";
+			   q+="id="+$scope.selectedDataSourceItems[i].dsId+"&";
 		   }
+		   
 		   return q;
-		  }
+		   
+	}
 
 	
 };

@@ -54,6 +54,14 @@ public class DataSource implements Serializable, IDataSource {
 	private Boolean readOnly;
 	private Boolean writeDefault;
 
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+
+	public Boolean getWriteDefault() {
+		return writeDefault;
+	}
+
 	@Override
 	public String getSchemaAttribute() {
 		return schemaAttribute;
@@ -76,7 +84,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#toSpagoBiDataSource()
 	 */
 	@Override
@@ -180,7 +188,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDsId()
 	 */
 	@Override
@@ -190,7 +198,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDsId(int)
 	 */
 	@Override
@@ -200,7 +208,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDescr()
 	 */
 	@Override
@@ -210,7 +218,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setDescr(java.lang.String)
 	 */
@@ -221,7 +229,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getLabel()
 	 */
 	@Override
@@ -231,7 +239,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setLabel(java.lang.String)
 	 */
@@ -242,7 +250,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getJndi()
 	 */
 	@Override
@@ -252,7 +260,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setJndi(java.lang.String)
 	 */
@@ -263,7 +271,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUrlConnection()
 	 */
 	@Override
@@ -273,7 +281,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setUrlConnection(java.
 	 * lang.String)
@@ -285,7 +293,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUser()
 	 */
 	@Override
@@ -295,7 +303,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setUser(java.lang.String)
 	 */
@@ -306,7 +314,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getPwd()
 	 */
 	@Override
@@ -316,7 +324,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setPwd(java.lang.String)
 	 */
@@ -327,7 +335,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDriver()
 	 */
 	@Override
@@ -337,7 +345,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setDriver(java.lang.String
 	 * )
@@ -349,7 +357,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDialectId()
 	 */
 	@Override
@@ -359,7 +367,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectId(java.lang
 	 * .Integer)
@@ -371,7 +379,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getEngines()
 	 */
 	@Override
@@ -382,7 +390,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setEngines(java.util.Set)
 	 */
@@ -393,7 +401,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getObjects()
 	 */
 	@Override
@@ -404,7 +412,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setObjects(java.util.Set)
 	 */
