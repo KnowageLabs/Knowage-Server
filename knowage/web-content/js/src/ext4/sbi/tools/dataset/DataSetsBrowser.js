@@ -1067,13 +1067,14 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	    		'		<div id="url-actions" style="display:none" class="list-actions"> '+
 	    		'	        <form id="urlForm" action="#" method="get" class="url-form"> '+
 	    		'	            <fieldset> '+
-	    		'	                <div class="field"> '+
+//									combobox with an extra editable field taken from -> http://jsfiddle.net/qymer2Lp/2/
+	    		'	                <div class="field dropdown"> '+
+	    		'						<input name="url" value placeholder="Please select a CKAN repo" id="search-url" onfocus="this.select()" type="text" readonly> ' +
+				'			    		<input name="idValue" id="idValue" type="hidden"> ' +
 				'				    	<select onchange="document.getElementById(\'search-url\').value=this.options[this.selectedIndex].value; document.getElementById(\'idValue\').value=this.options[this.selectedIndex].value;"> '+
 										this.createCkanUrls() +
 				'			    		</select> ' +
-	    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-				'			    		<input name="url" placeholder="Please select a CKAN repo" id="search-url" onfocus="this.select()" type="text" readonly> ' +
-				'			    		<input name="idValue" id="idValue" type="hidden"> ' +
+//	    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
 //	    		'	                    <input type="text" name="url" id="search-url" onclick="this.value=\'\'" value="'+LN('sbi.browser.document.insertCkanUrl')+'" /> '+
 //	    		'	                </div> '+
 //	    		'	                <div class="field"> '+

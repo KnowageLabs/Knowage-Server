@@ -149,6 +149,22 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .main.main-list{padding-top:29px}
 .map-body .main.main-map{position:absolute;top:142px;left:0;right:0;bottom:71px;overflow:hidden} /* ATTENTION! ADDED */
 
+.field.dropdown {
+    position: relative;
+}
+.field.dropdown select
+{
+    width: 100%;
+}
+.field.dropdown > * {
+    box-sizing: border-box;
+    height: 1.5em;
+}
+
+.field.dropdown input {
+    position: absolute;
+    width: calc(100% - 20px);
+}
 
 
 /* ----------- LISTING MAPS - LISTING DATASETS --------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
