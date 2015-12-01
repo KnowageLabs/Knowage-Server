@@ -50,6 +50,7 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
     String userCanPersist = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.USER_CAN_PERSIST);
 	String tablePrefix = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.TABLE_NAME_PREFIX);
 	String isCkanEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_CKAN_ENABLED);
+	String ckanUrls = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CKAN_URLS);
 	String isSmartFilterEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.IS_SMARTFILTER_ENABLED);
 	String createDatasetsAsFinalUser = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_CREATE_DATASET_AS_FINAL_USER);
     String isFederatedDatasetEnabled = (String) aResponseContainer.getServiceResponse().getAttribute(SelfServiceDatasetStartAction.CAN_USE_FEDERATED_DATASET_AS_FINAL_USER);
@@ -91,7 +92,8 @@ if (isMyData.equalsIgnoreCase("FALSE")) {%>
             , qbeEditDatasetUrl : '<%= StringEscapeUtils.escapeJavaScript(qbeEditDatasetActionUrl) %>'
             , georeportEngineBaseUrl : '<%= StringEscapeUtils.escapeJavaScript(georeportEditActionUrl) %>'
             , user: Sbi.user.userUniqueIdentifier
-            , tablePrefix: '<%=tablePrefix%>'            
+            , tablePrefix: '<%=tablePrefix%>'
+            , ckanUrls: '<%=ckanUrls%>'
             , typeDoc: '<%=typeDoc%>'
             , fromMyAnalysis: '<%=fromMyAnalysis%>'
             , userCanPersist: '<%=userCanPersist%>'

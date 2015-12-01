@@ -25,6 +25,7 @@ import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.ckan.CKANConfig;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -79,6 +81,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	public static final String IS_WORKSHEET_ENABLED = "IS_WORKSHEET_ENABLED";
 	public static final String IS_SMARTFILTER_ENABLED = "IS_SMARTFILTER_ENABLED";
 	public static final String IS_CKAN_ENABLED = "IS_CKAN_ENABLED";
+	public static final String CKAN_URLS = "CKAN_URLS";
 	public static final String CAN_CREATE_DATASET_AS_FINAL_USER = "CAN_CREATE_DATASET_AS_FINAL_USER";
 	public static final String CAN_USE_FEDERATED_DATASET_AS_FINAL_USER = "CAN_USE_FEDERATED_DATASET_AS_FINAL_USER";
 
@@ -113,6 +116,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String isWorksheetEnabled = isWorksheetEnabled();
 			String isSmartFilterEnabled = isSmartFilterEnabled();
 			String isCkanEnabled = isCkanEnabled();
+			String ckanUrls = getCkanUrls();
 			String canCreateDatasetAsFinalUser = canCreateDatasetAsFinalUser();
 			String canUseFederatedDataset = canUseFederatedDatasetAsFinalUser();
 
@@ -138,6 +142,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 				setAttribute(IS_WORKSHEET_ENABLED, isWorksheetEnabled);
 				setAttribute(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
 				setAttribute(IS_CKAN_ENABLED, isCkanEnabled);
+				setAttribute(CKAN_URLS, ckanUrls);
 				setAttribute(CAN_CREATE_DATASET_AS_FINAL_USER, canCreateDatasetAsFinalUser);
 				setAttribute(CAN_USE_FEDERATED_DATASET_AS_FINAL_USER, canUseFederatedDataset);
 			} catch (Throwable t) {
@@ -535,7 +540,36 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 
 	}
 
-	// Check if user can user CKAN
+	// Get the list of CKAN repository
+	protected String getCkanUrls() {
+		List funcs;
+		try {
+			profile = getUserProfile();
+			funcs = (List) profile.getFunctionalities();
+			// Check if user can user CKAN
+			if (!isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
+				return "";
+			} else {
+				Properties ckanUrls = CKANConfig.getInstance().getUrl();
+				StringBuilder sb = new StringBuilder();
+				sb.append("");
+				for (Object objKey : ckanUrls.keySet()) {
+					String key = (String) objKey;
+					String value = (String) ckanUrls.get(objKey);
+					sb.append(value);
+					sb.append("|");
+					sb.append(key);
+					sb.append("|");
+				}
+				return sb.toString();
+			}
+		} catch (EMFInternalError e) {
+			throw new SpagoBIRuntimeException("Error while loading role functionalities of user", e);
+		}
+
+	}
+
+	// Check if user can create dataset as final user
 	protected String canCreateDatasetAsFinalUser() {
 		List funcs;
 		try {

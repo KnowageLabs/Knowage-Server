@@ -58,9 +58,9 @@ public class CkanHelper {
 			IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			UserProfile userProfile = (UserProfile) profile;
 			String ckanApiKey = null;
-			if (userProfile != null) {
-				ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
-			}
+			// if (userProfile != null) {
+			// ckanApiKey = userProfile.getUserUniqueIdentifier().toString();
+			// }
 
 			String fileURL = request.getParameter("url");
 			String fileName = request.getParameter("id");

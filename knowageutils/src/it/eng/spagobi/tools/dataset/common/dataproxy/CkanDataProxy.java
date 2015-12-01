@@ -45,6 +45,7 @@ public class CkanDataProxy extends AbstractDataProxy {
 		throw new UnsupportedOperationException("method CkanDataProxy not yet implemented");
 	}
 
+	@Override
 	public IDataStore load(IDataReader dataReader) {
 
 		IDataStore dataStore = null;
@@ -54,8 +55,9 @@ public class CkanDataProxy extends AbstractDataProxy {
 			Map profileAttributes = this.getProfile();
 			Assert.assertNotNull(profileAttributes, "User profile attributes not found!!");
 			// the ckan api key is the user unique identifier: see it.eng.spagobi.security.OAuth2SecurityServiceSupplier
-			String ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
+			// String ckanApiKey = (String) profileAttributes.get("userUniqueIdentifier");
 			// Assert.assertNotNull(ckanApiKey, "User unique identifier not found!!");
+			String ckanApiKey = null;
 
 			// recover the file from resources!
 			String filePath = this.resPath;

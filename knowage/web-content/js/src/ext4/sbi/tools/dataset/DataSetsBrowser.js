@@ -22,6 +22,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	    qbeEditDatasetUrl : '',
 	    userCanPersist: '',
 		tablePrefix:'',
+		ckanUrls: '',
 	}
 
 	,
@@ -917,7 +918,7 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	}
 		
 	, storeMoreDataset: function(records, operation, success) {
-	    if(records.length > 0) {
+	    if(records != null && records.length > 0) {
 		    this.store.loadRecords(records, {addRecords: true})
 		    this.ckanCounter += this.CKAN_COUNTER_STEP;
 			this.viewPanel.refresh();
@@ -948,6 +949,22 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 				}				
 			}
 		}
+	}
+	
+	, createCkanUrls: function() {
+		var ckanSearchString = '';
+		var ckanUrls = this.config.ckanUrls.split("|");
+		ckanUrls.pop();
+		if( (ckanUrls.length % 2) == 0) {
+			for (i = 0; i < ckanUrls.length; i++) { 
+				if( (i % 2) == 0) {
+					ckanSearchString += ' <option value=\"' + ckanUrls[i] + '\"> ';
+				} else {
+					ckanSearchString += ckanUrls[i] + '</option>';
+				}
+			}
+		}
+		return ckanSearchString;
 	}
 
 	, createBannerHtml: function(communities){
@@ -1051,9 +1068,18 @@ Ext.define('Sbi.tools.dataset.DataSetsBrowser', {
 	    		'	        <form id="urlForm" action="#" method="get" class="url-form"> '+
 	    		'	            <fieldset> '+
 	    		'	                <div class="field"> '+
+				'				    	<select onchange="document.getElementById(\'search-url\').value=this.options[this.selectedIndex].value; document.getElementById(\'idValue\').value=this.options[this.selectedIndex].value;"> '+
+										this.createCkanUrls() +
+				'			    		</select> ' +
 	    		'	                    <label for="search">'+LN('sbi.browser.document.searchDatasets')+'</label> '+
-	    		'	                    <input type="text" name="url" id="search-url" onclick="this.value=\'\'" value="'+LN('sbi.browser.document.insertCkanUrl')+'" /> '+
-	    		'	                </div> '+
+				'			    		<input name="url" placeholder="Please select a CKAN repo" id="search-url" onfocus="this.select()" type="text" readonly> ' +
+				'			    		<input name="idValue" id="idValue" type="hidden"> ' +
+//	    		'	                    <input type="text" name="url" id="search-url" onclick="this.value=\'\'" value="'+LN('sbi.browser.document.insertCkanUrl')+'" /> '+
+//	    		'	                </div> '+
+//	    		'	                <div class="field"> '+
+
+				
+				'	                </div> '+
 	    		'	                <div class="submit"> '+
 	    		'	                    <input id="urlButton" type="text" value="Cerca" onclick="javascript:Ext.getCmp(\'this\').showDataset( \'CkanDataSet\', \'NOFILTER\', Ext.get(\'search-url\').dom.value)" /> '+
 	    		'	                </div> '+

@@ -25,7 +25,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
         qbeEditDatasetUrl : '',
         typeDoc: '',
         userCanPersist: '',
-        tablePrefix:''
+        tablePrefix:'',
+        ckanUrls:''
 	},
 
 	/**
@@ -82,7 +83,8 @@ Ext.define('Sbi.selfservice.ManageSelfServiceContainer', {
 			, isWorksheetEnabled : config.isWorksheetEnabled
 			, typeDoc : config.typeDoc
 			, userCanPersist: config.userCanPersist
-			, tablePrefix: config.tablePrefix			
+			, tablePrefix: config.tablePrefix
+			, ckanUrls: config.ckanUrls
 		});	
 					
 		this.items = [ this.manageSelfService, this.documentexecution]

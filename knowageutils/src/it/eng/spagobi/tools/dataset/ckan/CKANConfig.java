@@ -14,11 +14,14 @@ import java.util.Properties;
 public class CKANConfig {
 
 	static final String CONFIG_FILE_PATH = "ckan.config.properties";
+	static final String URL_FILE_PATH = "ckan.url.properties";
 	private static CKANConfig instance = null;
 	private static Properties configs = null;
+	private static Properties urls = null;
 
 	private CKANConfig() {
 		configs = loadConfigs();
+		urls = loadUrls();
 	}
 
 	private static Properties loadConfigs() {
@@ -32,6 +35,17 @@ public class CKANConfig {
 		return p;
 	}
 
+	private static Properties loadUrls() {
+		InputStream source = CKANConfig.class.getResourceAsStream("/" + URL_FILE_PATH);
+		Properties p = new Properties();
+		try {
+			p.load(source);
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Cannot load URLs from " + URL_FILE_PATH + " file", e);
+		}
+		return p;
+	}
+
 	public static CKANConfig getInstance() {
 		if (instance == null) {
 			instance = new CKANConfig();
@@ -41,5 +55,9 @@ public class CKANConfig {
 
 	public Properties getConfig() {
 		return configs;
+	}
+
+	public Properties getUrl() {
+		return urls;
 	}
 }
