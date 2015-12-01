@@ -32,8 +32,8 @@ function geoMapMenuControllerFunction(
 	$scope.selectModeInteraction = geo_interaction;
 	$scope.openRigthMenu = false;
 	$scope.analysisTypeList = [
-	                           {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
 	                           {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
+	                           {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
 	                           {label:"Map Chart",type:"chart",img:"fa fa-icon"}
 	                           ];
 	$scope.selectModeTypeList = [

@@ -20,6 +20,7 @@ geoM.factory('geoModule_filters',function(){
 	return gi;
 });
 
+
 geoM.factory('$map',function(){
 	var map= new ol.Map({
 		target: 'map',
@@ -71,31 +72,34 @@ geoM.service('geoModule_layerServices', function(
 	this.loadedLayer={};
 	this.loadedLayerOBJ={};
 	this.templateLayer={};
+	this.templateLayerData={};
 
 	this.selectedFeatures = [];
 //	
 //	this.cachedFeatureStyles = {};
 
-	this.setTemplateLayer = function(data,isWMS){
-		if(isWMS){
-			var sldBody = '<StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>SLD test</Title><FeatureTypeStyle><Rule><PolygonSymbolizer><Fill><CssParameter name="fill"><ogc:Function name="Recode"><ogc:Function name="strTrim"><ogc:PropertyName>STATE_ABBR</ogc:PropertyName></ogc:Function><ogc:Literal>CA</ogc:Literal><ogc:Literal>#6495ED</ogc:Literal><ogc:Literal>WA</ogc:Literal><ogc:Literal>#B0C4DE</ogc:Literal><ogc:Literal>OR</ogc:Literal><ogc:Literal>#00FFFF</ogc:Literal></ogc:Function></CssParameter></Fill></PolygonSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>';
-		var params=JSON.parse(data.layerParams);
-		params.LAYERS=data.layerName;
+	this.setTemplateLayer = function(data){
+		Object.assign(layerServ.templateLayerData,data);
+		if(layerServ.templateLayerData.type=="WMS"){
+			var sldBody=geoModule_thematizer.getWMSSlBody(layerServ.templateLayerData);
+			console.log(sldBody)
+			var params=JSON.parse(layerServ.templateLayerData.layerParams);
+		params.LAYERS=layerServ.templateLayerData.layerName;
 //			var params={};
 			params.SLD_BODY =sldBody;
 			
 			layerServ.templateLayer = new ol.layer.Tile({
 				source : new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */
 						{
-							url : sbiModule_config.contextName+"/api/1.0/geo/getWMSlayer?layerURL="+data.layerURL,
+							url : sbiModule_config.contextName+"/api/1.0/geo/getWMSlayer?layerURL="+layerServ.templateLayerData.layerURL,
 							params : params,
-							options :JSON.parse(data.layerOptions)
+							options :JSON.parse(layerServ.templateLayerData.layerOptions)
 						})
 			});
 
 		}else{
 			var vectorSource = new ol.source.Vector({
-				features: (new ol.format.GeoJSON()).readFeatures(data, {
+				features: (new ol.format.GeoJSON()).readFeatures(layerServ.templateLayerData, {
 //					dataProjection: 'EPSG:4326',
 					featureProjection: 'EPSG:3857'
 				})
@@ -130,13 +134,13 @@ geoM.service('geoModule_layerServices', function(
 
 //		$map.getView().fit(layerServ.templateLayer.getProperties().source.getExtent(),$map.getSize());
 
-		layerServ.addClickEvent(isWMS);
+		layerServ.addClickEvent();
 	};
 
 
 	this.overlay;
 
-	this.addClickEvent=function(isWMS){
+	this.addClickEvent=function(){
 		var selectStyle = new ol.style.Style({
 			stroke: new ol.style.Stroke({
 //				color: '#000000',
@@ -163,13 +167,13 @@ geoM.service('geoModule_layerServices', function(
 		
 		select.on('select', function(evt) {
 			console.log("select");
-			if(geo_interaction.type == "identify" && (evt.selected[0]==undefined || geo_interaction.distance_calculator) && !isWMS){
+			if(geo_interaction.type == "identify" && (evt.selected[0]==undefined || geo_interaction.distance_calculator) && layerServ.templateLayerData.type!="WMS"){
 				layerServ.overlay.setPosition(undefined);
 				return;
 			}
 
 			//if is a WMS i must load the properties from server
-			if(isWMS){
+			if(layerServ.templateLayerData.type=="WMS"){
 				var urlInfo= layerServ.templateLayer.getSource().getGetFeatureInfoUrl(
 						evt.mapBrowserEvent.coordinate, $map.getView().getResolution(), 'EPSG:3857',
 						{'INFO_FORMAT': 'application/json'});
@@ -267,7 +271,13 @@ geoM.service('geoModule_layerServices', function(
 	}
 
 	this.updateTemplateLayer = function(){
-		layerServ.templateLayer.changed();
+		if(layerServ.templateLayerData.type=="WMS"){
+			var sldBody=geoModule_thematizer.getWMSSlBody(layerServ.templateLayerData);
+			console.log(sldBody)
+			layerServ.templateLayer.getSource().updateParams({SLD_BODY:sldBody})
+		}else{
+			layerServ.templateLayer.changed();
+		}
 	};
 
 	this.isSelectedBaseLayer = function(layer){
@@ -381,6 +391,7 @@ geoM.service('geoModule_layerServices', function(
 
 geoM.factory('geoModule_constant',function(){
 	var cont= {
+			analysisLayer:"Analysis layer",
 			templateLayer:"Document templates",
 			noCategory:"No Category"
 	}

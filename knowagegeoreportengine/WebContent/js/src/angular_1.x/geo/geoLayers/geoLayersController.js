@@ -93,7 +93,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 					});
 
 		}
-		console.log("$scope.baseLayers",$scope.baseLayers)
 	};
 
 	$scope.loadLayerFromTemplate();
@@ -207,9 +206,6 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 		};
 
 		$scope.toggleLayerFromCatalogue=function(item){
-			console.log("toggleitem",item);
-			console.log("$scope.selectedLayerList",$scope.selectedLayerList)
-
 			var categ=item.hasOwnProperty("category")? item.category.valueNm : "Default";
 
 			if(item.baseLayer){

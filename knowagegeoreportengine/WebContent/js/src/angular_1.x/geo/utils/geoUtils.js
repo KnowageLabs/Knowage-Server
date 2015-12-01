@@ -126,7 +126,7 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sb
 						if(data.type=='WMS'){
 							//if is a WMS
 
-							geoModule_layerServices.setTemplateLayer(data,true); 
+							geoModule_layerServices.setTemplateLayer(data); 
 
 						}else{
 							//if is a WFS or file 
@@ -159,7 +159,7 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sb
 				} else {
 					sbiModule_logger.trace("GetTargetLayer caricato",data);
 	
-					geoModule_layerServices.setTemplateLayer(data,false); 
+					geoModule_layerServices.setTemplateLayer(data); 
 				}
 		})
 		.error(function(data, status, headers, config) {

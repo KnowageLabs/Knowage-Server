@@ -96,7 +96,7 @@
 						 show-search-bar=true
 						 multi-select=true
 						selected-item=selectedLayerList
-						click-function=toggleLayerFromCatalogue(item)
+						click-function="toggleLayerFromCatalogue(row)"
 						menu-option=menuItem
 		></angular-table>
   
