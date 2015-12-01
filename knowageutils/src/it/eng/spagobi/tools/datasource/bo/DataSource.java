@@ -40,34 +40,53 @@ public class DataSource implements Serializable, IDataSource {
 	private static transient Logger logger = Logger.getLogger(DataSource.class);
 
 	@NotNull
+	@Max(11)
 	private int dsId;
+	
 	@Xss
 	@Max(160)
 	private String descr;
+	
 	@NotNull
 	@Xss
 	@Max(50)
 	private String label;
+	
+	@Xss
 	@Max(50)
 	private String jndi;
+	
+	@Xss
 	@Max(500)
 	private String urlConnection;
+	
+	@Xss
 	@Max(50)
 	private String user;
+	
+	@Xss
 	@Max(50)
 	private String pwd;
+	
+	@Xss
 	@Max(160)
 	private String driver;
+	
 	@NotNull
 	@Max(11)
 	private Integer dialectId;
+	
 	private String hibDialectClass;
 	private String hibDialectName;
 	private Set engines = null;
 	private Set objects = null;
+	
 	@Max(45)
 	private String schemaAttribute = null;
+	
+	@NotNull
 	private Boolean multiSchema = null;
+	
 	private Boolean readOnly;
 	private Boolean writeDefault;
 

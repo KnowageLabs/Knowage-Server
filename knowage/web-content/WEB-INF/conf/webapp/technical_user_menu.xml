@@ -27,13 +27,14 @@
 					functionality="DataSourceManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/datasource/listDataSource.jsp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+			<ITEM	title="Data Source New"
+					functionality="DataSourceManagement"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/datasource/datasource.jsp" />
 			<ITEM	title="#menu.DataSetMan"
 					functionality="DatasetManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=MANAGE_DATASETS_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/dataset/dataset16.png" />
-			<ITEM	title="#menu.federationdefinition"
-					functionality="FederationDefinition"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp" />	
+					
 			
 		</ITEM>
 		<ITEM	code="profile_mng" 

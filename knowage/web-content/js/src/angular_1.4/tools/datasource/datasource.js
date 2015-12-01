@@ -30,6 +30,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.dialects = [];
 	$scope.selectedDataSource = {};
 	$scope.selectedDataSourceItems = [];
+	$scope.noDSSelected = true;
+	$scope.forms = {};
 
 	//REST
 	$scope.getDataSources = function(){
@@ -87,7 +89,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 		});
-	}
+	};
 	
 	//REST
 	$scope.saveOrUpdateDataSource = function(){
@@ -148,7 +150,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			);
 		}
 		
-	}
+	};
 	
 	//REST
 	$scope.deleteDataSource = function() {
@@ -198,10 +200,13 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		}
 		
 		
-	}
+	};
 	
 	//SHOW RIGHT-COLUMN
 	$scope.createNew = function () {
+		$scope.forms.dataSourceForm.$setPristine();
+		$scope.forms.dataSourceForm.$setValidity();
+	    $scope.forms.dataSourceForm.$setUntouched();
 		$scope.showme=true;
 		$scope.selectedDataSource = {
 				label : "",
@@ -215,28 +220,52 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				pwd: "",
 				driver: ""				
 		};
-		console.log($scope.selectedDataSource)
-	}
+		console.log($scope.selectedDataSource);
+		$scope.noDSSelected = false;
+	};
 	
 	//LOAD SELECTED SOURCE
 	$scope.loadSelectedDataSource = function(item) {
-		$scope.showme=true;
-		$scope.selectedDataSource = angular.copy(item);
-		console.log($scope.selectedDataSourceItems)
-	}
-	
-	//CANCEL RIGHT-COLUMN
-	$scope.cancel = function(){
-		console.log("CANCEL");
-		$scope.showme=false;
 		
-	}
+		$scope.showme=true;
+		
+		if(item!=null) {
+			
+			if($scope.noDSSelected==true) {
+				
+				$scope.selectedDataSource = angular.copy(item);
+				$scope.noDSSelected = false;
+				
+			} else {
+				
+				var confirm = $mdDialog
+				.confirm()
+				.title(sbiModule_translate.load("sbi.layer.modify.progress"))
+				.content(
+						sbiModule_translate
+						.load("sbi.layer.modify.progress.message.modify"))
+						.ariaLabel('Lucky day').ok(
+								sbiModule_translate.load("sbi.general.continue")).cancel(
+										sbiModule_translate.load("sbi.general.cancel"));
+
+				$mdDialog.show(confirm).then(function() {
+					
+					
+					$scope.selectedDataSource = angular.copy(item);
+
+
+				}, function() {
+					console.log('Cancel');
+				});
+			}
+		}
+	};
 	
 	//CLOSE RIGHT-COLUMN AND SET SELECTED DATA SORUCE TO AN EMPTY OBJECT
 	$scope.closeForm = function(){
 		$scope.showme=false;
-		$scope.selectedDataSource = {};
-	}
+		$scope.selectedDataSource = angular.copy({});
+	};
 	
 	$scope.getDataSources();
 	
@@ -297,7 +326,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		   
 		   return q;
 		   
-	}
+	};
 
 	
 };

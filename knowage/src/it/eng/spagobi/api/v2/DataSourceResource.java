@@ -15,6 +15,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -101,7 +102,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String saveDataSource(DataSource dataSource) {
+	public String saveDataSource(@Valid DataSource dataSource) {
 
 		IDataSourceDAO dataSourceDAO;
 

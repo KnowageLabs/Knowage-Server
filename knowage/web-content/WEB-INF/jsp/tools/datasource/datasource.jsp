@@ -76,8 +76,8 @@
 			
 		<right-col>
 		
-			<form name="contactForm" layout-fill id="datasourceform"
-				ng-submit="contactForm.$valid && saveOrUpdateDataSource()"
+			<form name="forms.dataSourceForm" layout-fill id="datasourceform"
+				ng-submit="forms.dataSourceForm.$valid && saveOrUpdateDataSource()"
 				class="detailBody md-whiteframe-z1" novalidate>
 				
 			<div ng-show="showme">
@@ -90,7 +90,7 @@
 							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
 							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
-						<md-button ng-disabled="!contactForm.$valid" type="submit"
+						<md-button ng-disabled="!forms.dataSourceForm.$valid" type="submit"
 							aria-label="save datasource" class="md-raised md-ExtraMini "
 							style=" margin-top: 2px;"
 							ng-disabled=" selectedItem.name.length === 0 ||  selectedItem.type.length === 0">
@@ -106,7 +106,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input ng-model="selectedDataSource.label" required
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+								maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
 						</div>
 					</div>
 					
@@ -115,7 +115,7 @@
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedDataSource.descr"
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+								maxlength="160" ng-maxlength="1160" md-maxlength="160"> </md-input-container>
 						</div>
 					</div>
 					
@@ -147,7 +147,7 @@
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.multischema.attribute")}}</label>
 							<input ng-model="selectedDataSource.schemaAttribute"
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+								maxlength="45" ng-maxlength="45" md-maxlength="45"> </md-input-container>
 						</div>
 					</div>
 					
@@ -185,7 +185,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
 								<input ng-model="selectedDataSource.urlConnection" required
-									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+									maxlength="500" ng-maxlength="500" md-maxlength="500"> </md-input-container>
 							</div>
 						</div>
 						
@@ -194,7 +194,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
 								<input ng-model="selectedDataSource.user" required
-									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+									maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
 							</div>
 						</div>
 						
@@ -203,7 +203,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 								<input type="password" name="password" ng-model="selectedDataSource.pwd" required
-									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+									maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
 							</div>
 						</div>						
 						
@@ -212,7 +212,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.driver")}}</label>
 								<input ng-model="selectedDataSource.driver" required
-									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+									maxlength="160" ng-maxlength="160" md-maxlength="160"> </md-input-container>
 							</div>
 						</div>
 					</div>
