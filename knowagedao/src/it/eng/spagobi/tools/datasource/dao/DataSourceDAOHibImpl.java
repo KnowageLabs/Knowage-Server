@@ -315,7 +315,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1035);
 			}
 
-			// If DataSource Label has changed all LOVS with that DS need to be changed
+			// If DataSource Label has changed all LOVS with that DS need to be
+			// changed
 			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
 			if (aDataSource.getLabel() != null && hibDataSource.getLabel() != null) {
 				if (!aDataSource.getLabel().equals(hibDataSource.getLabel())) {
@@ -345,7 +346,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						}
 					}
 
-					// If DataSource Label has changed update all dataset referring to it
+					// If DataSource Label has changed update all dataset
+					// referring to it
 
 					String previousDataSourceLabel = hibDataSource.getLabel();
 					String newDataSOurceLabel = aDataSource.getLabel();
@@ -438,7 +440,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	private void disableOtherWriteDefault(IDataSource aDataSource, SbiDataSource hibDataSource, Session aSession) {
-		// if writeDefault is going to be set to true than must be disabled in others
+		// if writeDefault is going to be set to true than must be disabled in
+		// others
 		logger.debug("IN");
 		if (aDataSource.checkIsWriteDefault() == true) {
 			logger.debug("searching for write default datasource to delete flag");
@@ -597,7 +600,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	/**
-	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
+	 * From the hibernate DataSource at input, gives the corrispondent
+	 * <code>DataSource</code> object.
 	 *
 	 * @param hibDataSource
 	 *            The hybernate data source
@@ -653,7 +657,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			tx = aSession.beginTransaction();
 			Integer dsIdInt = Integer.valueOf(dsId);
 
-			// String hql = " from SbiObjects s where s.dataSource.dsId = "+ dsIdInt;
+			// String hql = " from SbiObjects s where s.dataSource.dsId = "+
+			// dsIdInt;
 			String hql = " from SbiObjects s where s.dataSource.dsId = ?";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, dsIdInt.intValue());
@@ -724,6 +729,80 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	}
 
+	@Override
+	public void deleteDataSourceById(Integer dataSourceId) throws EMFUserError {
+		Session tmpSession = null;
+		Transaction tx = null;
+
+		try {
+			tmpSession = getSession();
+			tx = tmpSession.beginTransaction();
+
+			SbiDataSource hibDataSource = (SbiDataSource) tmpSession.load(SbiDataSource.class, dataSourceId);
+
+			tmpSession.delete(hibDataSource);
+
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
+		}
+
+	}
+
+	/**
+	 * Load data source by label.
+	 *
+	 * @param label
+	 *            the label
+	 *
+	 * @return the data source
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByLabel(string)
+	 */
+	@Override
+	public IDataSource loadDataSourceByLabelNew(String label) throws EMFUserError {
+		logger.debug("IN");
+		DataSource dataSource = null;
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			// String hql = "from SbiLov s where s.label = '" + label + "'";
+			String hql = "from SbiDataSource s where s.label = ?";
+			Query hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setString(0, label);
+			SbiDataSource hibDataSource = (SbiDataSource) hqlQuery.uniqueResult();
+			dataSource = toDataSource(hibDataSource);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			aSession.close();
+			logger.debug("OUT");
+		}
+		return dataSource;
+	}
+
 	// /**
 	// * Checks for bi engine associated.
 	// *
@@ -733,7 +812,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	// *
 	// * @throws EMFUserError the EMF user error
 	// *
-	// * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasEngineAssociated(java.lang.String)
+	// * @see
+	// it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasEngineAssociated(java.lang.String)
 	// */
 	// public boolean hasBIEngineAssociated (String dsId) throws EMFUserError{
 	// logger.debug("IN");
@@ -758,7 +838,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	// bool = false;
 	// tx.commit();
 	// } catch (HibernateException he) {
-	// logger.error("Error while getting the engines associated with the data source with id " + dsId, he);
+	// logger.error("Error while getting the engines associated with the data source with id "
+	// + dsId, he);
 	//
 	// if (tx != null)
 	// tx.rollback();

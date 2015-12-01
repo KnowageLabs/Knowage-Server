@@ -31,15 +31,28 @@
 				<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
+						
+						<md-button 
+							ng-disabled="selectedDataSource.dsId==null"
+							class="md-fab md-ExtraMini"
+							style="position:absolute; right:26px; top:0px; background-color:#E91E63"
+							ng-click="deleteDataSource()"> 
+							<md-icon
+								md-font-icon="fa fa-trash" 
+								style=" margin-top: 6px ; color: white;" >
+							</md-icon> 
+						</md-button>
+						
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
-							ng-click="loadDataSourceList(null)"> 
+							ng-click="createNew()"> 
 							<md-icon
 								md-font-icon="fa fa-plus" 
 								style=" margin-top: 6px ; color: white;">
 							</md-icon> 
 						</md-button>
+						
 					</div>
 				</md-toolbar>
 				
@@ -48,12 +61,13 @@
 						layout-fill
 						id="dataSourceList"
 						ng-model="dataSourceList"
-						columns='["DATASOURCE_LABEL","DESCRIPTION"]'
-						columns-search='["DATASOURCE_LABEL","DESCRIPTION"]'
+						columns='[{"label":"Label","name":"label","size":"50px"},{"label":"Description","name":"descr","size":"70px"}]'
+						columns-search='["label","descr"]'
 						show-search-bar=true
 						highlights-selected-item=true
-						click-function="loadDataSourceList(item);"
-						menu-option=menuDataSource					
+						click-function="loadSelectedDataSource(item)"
+						selected-item="selectedDataSourceItems"	
+						multi-select=true						
 					>						
 					</angular-table>
 				</md-content>
@@ -63,7 +77,7 @@
 		<right-col>
 		
 			<form name="contactForm" layout-fill id="datasourceform"
-				ng-submit="contactForm.$valid && saveDataSource()"
+				ng-submit="contactForm.$valid && saveOrUpdateDataSource()"
 				class="detailBody md-whiteframe-z1" novalidate>
 				
 			<div ng-show="showme">
@@ -91,7 +105,7 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input ng-model="selectedDataSource.DATASOURCE_LABEL" required
+							<input ng-model="selectedDataSource.label" required
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -100,7 +114,7 @@
 						<div flex=100>
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.ds.description")}}</label>
-							<input ng-model="selectedDataSource.DESCRIPTION"
+							<input ng-model="selectedDataSource.descr"
 								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 						</div>
 					</div>
@@ -110,7 +124,7 @@
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.dialect")}}</label>
 							<md-select  aria-label="aria-label"
-								ng-model="selectedDataSource.DIALECT_ID"> <md-option
+								ng-model="selectedDataSource.dialectId"> <md-option
 								ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_NM}} </md-option>
 							</md-select> </md-input-container>
 						</div>
@@ -122,14 +136,24 @@
 						</div>
 	
 						<md-input-container class="small counter"> 
-						<md-checkbox
-							ng-model="selectedDataSource.MULTISCHEMA" aria-label="Multischema">
-						</md-checkbox> </md-input-container>
+							<md-checkbox
+								ng-model="selectedDataSource.multiSchema" aria-label="Multischema">
+							</md-checkbox> 
+						</md-input-container>
+					</div>
+					
+					<div ng-show= "selectedDataSource.multiSchema == true " layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="small counter"> 
+							<label>{{translate.load("sbi.datasource.multischema.attribute")}}</label>
+							<input ng-model="selectedDataSource.schemaAttribute"
+								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+						</div>
 					</div>
 					
 					<div layout="row" layout-wrap>
-						<md-radio-group ng-model="selectedDataSource.READ_ONLY "> Read only:
-	      					<md-radio-button value="Read only" class="md-primary">Read only</md-radio-button>
+						<md-radio-group ng-model="selectedDataSource.readOnly "> Read only:
+	      					<md-radio-button value="Read only" ng-disabled="selectedDataSource.writeDefault == true ">Read only</md-radio-button>
 	      					<md-radio-button value="Read and write"> Read and write </md-radio-button>
 	    				</md-radio-group>
 					</div>
@@ -139,25 +163,25 @@
 							<label>{{translate.load("sbi.datasource.writedefault")}}:</label>
 						</div>
 	
-						<md-input-container class="small counter"> <md-checkbox
-							ng-model="selectedDataSource.WRITE_DEFAULT" aria-label="WriteDefault">
+						<md-input-container ng-model="selectedDataSource.writeDefault" class="small counter"> <md-checkbox ng-disabled="selectedDataSource.readOnly == 'Read only'"
+							 aria-label="WriteDefault">
 						</md-checkbox> </md-input-container>
 					</div>
 					
 					<div layout="row" layout-wrap>
-						<md-radio-group ng-model="selectedDataSource.type"> Type:
-	      					<md-radio-button value="Read only" class="md-primary">JDBC</md-radio-button>
-	      					<md-radio-button value="Read and write">JNDI</md-radio-button>
+						<md-radio-group ng-model="jdbcJndiType"> Type:
+	      					<md-radio-button value="JDBC">JDBC</md-radio-button>
+	      					<md-radio-button value="JNDI">JNDI</md-radio-button>
 	    				</md-radio-group>
 					</div>
 					
-					<div ng-hide= "selectedDataSource.type == 'Read and write' ">
+					<div ng-hide= "jdbcJndiType == 'JNDI' ">
 										
 						<div layout="row" layout-wrap>
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
-								<input ng-model="selectedDataSource.CONNECTION_URL" required
+								<input ng-model="selectedDataSource.urlConnection" required
 									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 							</div>
 						</div>
@@ -166,7 +190,7 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
-								<input ng-model="selectedDataSource.USER" required
+								<input ng-model="selectedDataSource.user" required
 									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 							</div>
 						</div>
@@ -175,29 +199,27 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
-								<input type="password" name="password" ng-model="selectedDataSource.PASSWORD" required
+								<input type="password" name="password" ng-model="selectedDataSource.pwd" required
 									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 							</div>
-						</div>
-						
+						</div>						
 						
 						<div layout="row" layout-wrap>
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.driver")}}</label>
-								<input ng-model="selectedDataSource.DRIVER" required
+								<input ng-model="selectedDataSource.driver" required
 									maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
 							</div>
 						</div>
 					</div>
 					
-
-					<div ng-show= "selectedDataSource.type == 'Read and write' " layout="row" layout-wrap>
+					<div ng-show= "jdbcJndiType == 'JNDI' " layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
 							<md-select aria-label="aria-label"
-								ng-model="selectedDataSource.JNDI_URL"> <md-option
+								ng-model="selectedDataSource.jndi"> <md-option
 								ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_NM}} </md-option>
 							</md-select> </md-input-container>
 						</div>

@@ -1,63 +1,77 @@
 /**
- * 
+ * @author Simovic Nikola 
+ * e-mail: nikola.simovic@mht.net
  */
 var app = angular.module('dataSourceModule', ['ngMaterial', 'angular_list', 'angular_table' ,'sbiModule', 'angular_2_col']);
 
-app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", dataSourceFunction]);
+app.controller('dataSourceController', ["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast", "$timeout", dataSourceFunction]);
 
-var EmptyDataSource = {
-		
-		label:"",
-		descr : "",
-		dialect_id: "",
-		multishcema:"",
-		readOnly:"",
-		writeDefault:"",
-		type:"",
-		url:"",
-		user:"",
-		password:"",
-		driver:""
-			
+var emptyDataSource = {
+	label : "",
+	descr : "",
+	urlConnection: "",
+	user: "",
+	pwd: "",
+	driver: "",
+	dialectId: "",
+	hibDialectClass: "",
+	hibDialectName: "",
+	schemaSttribute: "",
+	multiSchema: false,
+	readOnly: false,
+	writeDefault: false	
 };
 
-function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast){
+function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout){
 	
-	$scope.showme=false;
-	
+	//DECLARING VARIABLES
+	$scope.showMe=false;
 	$scope.translate = sbiModule_translate;
 	$scope.dataSourceList = [];
 	$scope.dialects = [];
 	$scope.selectedDataSource = {};
-		
+	$scope.selectedDataSourceItems = [];
+	
+	//REST
 	$scope.getDataSources = function(){
-		console.log("Get DSRC");
-		sbiModule_restServices.get("datasources", '').success(
+		
+		//GET DATA SOURCES
+		sbiModule_restServices.get("2.0/datasources", "")
+		
+		.success(
+				
 				function(data, status, headers, config) {
+					
 					if (data.hasOwnProperty("errors")) {
-						//change sbi.glossary.load.error
+		
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						
 					} else {
-						$scope.dataSourceList = data.root;
-						console.log($scope.dataSourceList);
+						
+						for(var i = 0; i < data.length; i++){
+					          $scope.dataSourceList.push(data[i]);
+					          console.log(data[i]);
+					    }
 						
 					}
-				}).error(function(data, status, headers, config) {
+				})
+				
+		.error(
+				
+				function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-
-				})	
-	}
-	
-	$scope.getDataSources();
-	
-	$scope.loadDialects = function() {
-		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=DIALECT_HIB").success(
+				});
+		
+		//GET DIALECT TYPES
+		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=DIALECT_HIB")
+		
+		.success(
+				
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
-						//change sbi.glossary.load.error
-						/*showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-								3000);*/
+						
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+					
 					} else {
 
 						$scope.dialects = data;
@@ -66,146 +80,158 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					
 					
 					}
-				}).error(function(data, status, headers, config) {
-			showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-
-		})
-	}
-	$scope.loadDialects();
-	
-	$scope.loadDataSourceList = function(item) {
-		
-		$scope.showme=true;
-		console.log(item)
-		$scope.selectedDataSource = item;
-		console.log(item)
-		
-		
-	}
-	
-	$scope.fdsSpeedMenuOptAD = [ 			 		               	
-		 		               	{
-		 		               		label: sbiModule_translate.load("sbi.federationdefinition.info"),
-		 		               		icon:"fa fa-info-circle",
-		 		               		backgroundColor:'green',
-		 		               		action : function(ev) {
-		 		               				ctr.showDSDetails(ev);
-		 		               			}
-		 		               	},
-		 		               {
-		 		               		label: sbiModule_translate.load("sbi.federationdefinition.info"),
-		 		               		icon:"fa fa-info-circle",
-		 		               		backgroundColor:'green',
-		 		               		action : function(ev) {
-		 		               				ctr.showDSDetails(ev);
-		 		               			}
-		 		               	}
-		 		             ];
-	
-	$scope.menuDataSource= [{
-		label : sbiModule_translate.load('sbi.generic.delete'),
-		action : function(item,event) {
-			$scope.selectedDataSource = item;
-
-			var confirm = $mdDialog
-			.confirm()
-			.title(sbiModule_translate.load("sbi.layer.delete.action"))
-			.content(
-					sbiModule_translate
-					.load("sbi.layer.modify.progress.message.modify"))
-					.ariaLabel('Lucky day').ok(
-							sbiModule_translate.load("sbi.general.continue")).cancel(
-									sbiModule_translate.load("sbi.general.cancel"));
-
-			$mdDialog.show(confirm).then(function() {
-				//$scope.deleteLayer();	
-
-			}, function() {
-				console.log('Annulla');
-			});
-
-
-		}
-	}];
-	
-	$scope.saveDataSource = function(){
-				
-		console.log("***********************")
-		console.log($scope.selectedDataSource);
-		console.log("***********************")
-		//$scope.item = JSON.Parse($scope.selectedDataSource);
-		
-		sbiModule_restServices.post("datasources",'',$scope.selectedDataSource).success(
-				function(data, status, headers, config) {
-					console.log(data)
-
-					/*if (data.hasOwnProperty("errors")) {
-						console.log("has errors property");
-						
-
-					} else {
-						console.log("sacuvao!")
-					
-					}*/
-
-				}).error(function(data, status, headers, config) {
-					console.log("nije sacuvao")
 				})
 				
-		$scope.showme = false;
-		$scope.loadDialects();
+		.error(
+				
+				function(data, status, headers, config) {
+					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+
+		});
 	}
 	
+	//REST
+	$scope.saveOrUpdateDataSource = function(){
+		
+		if($scope.selectedDataSource.hasOwnProperty("dsId")){
+			
+			//MODIFY DATA SOURCE
+			sbiModule_restServices.put('2.0/datasources','',$scope.selectedDataSource)
+			
+			.success(
+			
+					function(data, status, header, config) {
+						if(data.hasOwnProperty("errors")) {
+							console.log("[PUT]: DATA HAS ERRORS PROPERTY!");
+						} else {
+							console.log("[PUT]: SUCCESS!");
+							$scope.dataSourceList = [];
+							$timeout(function(){								
+								$scope.getDataSources();
+							}, 500);
+							$scope.closeForm();
+						}
+					}
+					
+			).error(
+					
+					function(data, status, header, config) {
+						console.log("[PUT]: FAIL!"+status);
+					}
+			
+			);
+		} else {
+			
+			//CREATE NEW DATA SOURCE
+			sbiModule_restServices.post('2.0/datasources','', angular.toJson($scope.selectedDataSource))
+			
+			.success(
+					
+					function(data, status, headers, config) {
+						if(data.hasOwnProperty("errors")) {
+							console.log("[POST]: DATA HAS ERRORS PROPERTY!");
+						} else {
+							console.log("[POST]: SUCCESS!");
+							$scope.dataSourceList = [];
+							$timeout(function(){								
+								$scope.getDataSources();
+							}, 500);
+							$scope.closeForm();
+						}
+					})	
+					
+			.error(
+					
+					function(data, status, headers, config) {
+						console.log("[POST]: FAIL!"+status);
+					}					
+			);
+		}
+		
+	}
+	
+	//REST
+	$scope.deleteDataSource = function() {
+		
+		//DELETE DATA SOURCE
+		sbiModule_restServices.delete("2.0/datasources", $scope.selectedDataSource.dsId).success(
+
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
+					} else {
+						console.log("[DELETE]: SUCCESS!")
+						$scope.dataSourceList = [];
+						$timeout(function(){								
+							$scope.dataSourceList = data;
+						}, 500);
+						$scope.closeForm();
+						$scope.showActionDelete();
+					}
+				}).error(function(data, status, headers, config) {
+					console.log("[DELETE]: FAIL!"+status);
+				});
+	}
+	
+	//SHOW RIGHT-COLUMN
+	$scope.createNew = function () {
+		$scope.showme=true;
+		$scope.selectedDataSource = {};
+		console.log($scope.selectedDataSource)
+	}
+	
+	//LOAD SELECTED SOURCE
+	$scope.loadSelectedDataSource = function(item) {
+		$scope.showme=true;
+		$scope.selectedDataSource = angular.copy(item);
+		console.log($scope.selectedDataSourceItems)
+	}
+	
+	//CANCEL RIGHT-COLUMN
 	$scope.cancel = function(){
 		console.log("CANCEL");
 		$scope.showme=false;
 		
-		/*if($scope.flag==true){
-			//c'è un layer caricato
-			$scope.isRequired=false;
-			$scope.selectedLayer = angular.copy($scope.object_temp);
-			$scope.rolesItem=$scope.loadRolesItem($scope.selectedLayer);
-			$scope.filter_set = [];
-			for(var i=0;i<$scope.selectedLayer.properties.length;i++){
-				console.log($scope.selectedLayer.properties[i]);
-				var prop = $scope.selectedLayer.properties[i];
-				var obj={"property":prop};
-				$scope.filter_set.push(obj );
-				console.log(obj);
-			}
-			
-			
-		} else{
-			console.log("Reset");
-			$scope.selectedLayer = angular.copy({});
-			$scope.rolesItem=[];
-			$scope.flag=false;
-			$scope.isRequired=false;
-			$scope.filter_set=[];
-			$scope.filter =[];
-	
-		}*/
-		
-		//$scope.forms.contactForm.$setPristine();
-		//$scope.forms.contactForm.$setUntouched();
-		
 	}
 	
-	$scope.deleteItem=function(){
-		  console.log("delete");
-		 }
+	//CLOSE RIGHT-COLUMN AND SET SELECTED DATA SORUCE TO AN EMPTY OBJECT
+	$scope.closeForm = function(){
+		$scope.showme=false;
+		$scope.selectedDataSource = {};
+	}
 	
-	$scope.paSpeedMenu= [
-	                      {
-	                      label:'delete',
-	                      icon:'fa fa-minus',
-	                      backgroundColor:'red',
-	                      color:'white',
-	                      action:function(item){
-	                       $scope.deleteItem(item);
-	                      }
-	                      }
-	                     ];
+	$scope.getDataSources();
+	
+	//CONFIRM DELETE
+	$scope.showActionDelete = function() {
+		var toast = $mdToast.simple()
+		.content('Data Source Deleted')
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+			if ( response == 'ok' ) {
+			}
+		});
+	};
+	
+	//CONFIRM OK
+	$scope.showActionOK = function() {
+		var toast = $mdToast.simple()
+		.content('Data Source saved correctly!')
+		.action('OK')
+		.highlightAction(false)
+		.hideDelay(3000)
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+			}
+		});
+	};
 
 	
 };
