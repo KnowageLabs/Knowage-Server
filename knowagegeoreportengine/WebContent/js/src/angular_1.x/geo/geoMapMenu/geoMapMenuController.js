@@ -73,7 +73,9 @@ function geoMapMenuControllerFunction(
 
 	$scope.updateMap = function(){
 		console.log("updateMap",geoModule_template)
-		geoModule_layerServices.updateTemplateLayer();
+		$timeout(function() {
+			geoModule_layerServices.updateTemplateLayer();
+		}, 0);
 	};
 
 	$scope.indicatorIsSelected = function(item){

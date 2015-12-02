@@ -73,6 +73,26 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		if(color==undefined){color=legend[legend-1].color;}
 		return color;
 	}
+	
+	function getProportionalSymbolSize(val){
+		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geoModule_template.selectedIndicator.name)){
+			tmtz.loadIndicatorMaxMinVal(geoModule_template.selectedIndicator.name);
+		}
+
+		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
+		var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
+		var maxValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].maxValue;
+		var size;
+
+		if(minValue == maxValue) { // we have only one point in the distribution
+			size = (radius.maxRadiusSize + radius.minRadiusSize)/2;
+		} else {
+			size = ( parseInt(val) - minValue) / ( maxValue - minValue) *
+			(radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
+		}
+		return size;
+	}
+	
 
 	this.choropleth=function(dsValue){
 
@@ -90,25 +110,6 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	}
 
 	this.proportionalSymbol=function(dsValue){
-		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
-		if(!cacheProportionalSymbolMinMax.hasOwnProperty(geoModule_template.selectedIndicator.name)){
-			tmtz.loadIndicatorMaxMinVal(geoModule_template.selectedIndicator.name);
-		}
-
-		var radius={"minRadiusSize":2,"maxRadiusSize":50,color:"red"};
-		var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
-		var maxValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].maxValue;
-		var size;
-
-		if(minValue == maxValue) { // we have only one point in the distribution
-			size = (radius.maxRadiusSize + radius.minRadiusSize)/2;
-		} else {
-			size = ( parseInt(dsValue) - minValue) / ( maxValue - minValue) *
-			(radius.maxRadiusSize - radius.minRadiusSize) + radius.minRadiusSize;
-		}
-
-
-
 		return  [new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: "#000000",
@@ -118,14 +119,14 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}),
 		new ol.style.Style({
 			image: new ol.style.Circle({
-				radius: size,
+				radius: getProportionalSymbolSize(dsValue),
 				stroke: new ol.style.Stroke({
 					color: "#000000",
 					width: 1
 				}),
 
 				fill: new ol.style.Fill({
-					color: radius.color
+					color: "red"
 				})
 			}),
 			geometry: function(feature) {
@@ -280,7 +281,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		cacheProportionalSymbolMinMax[key]={minValue:minV, maxValue:maxV};
 	}
 
-this.getWMSSlBody=function(layer){
+this.getWMSSlBodyOLD=function(layer){
 	if(geoModule_template.analysisType=="choropleth"){
 		return tmtz.WMSChoropleth(layer);
 	}else if(geoModule_template.analysisType=="proportionalSymbol"){
@@ -290,30 +291,45 @@ this.getWMSSlBody=function(layer){
 		return;
 	}
 }
+this.getWMSSlBody=function(layer){
+	var docSld = document.implementation.createDocument("", "", null);
+	var sld = docSld.createElement("StyledLayerDescriptor");
+	sld.setAttribute("xmlns","http://www.opengis.net/sld");
+	sld.setAttribute("xmlns:ogc","http://www.opengis.net/ogc");
+	sld.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink");
+	sld.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
+	sld.setAttribute("version","1.0.0");
+	sld.setAttribute("xsi:schemaLocation","http://www.opengis.net/sld StyledLayerDescriptor.xsd");
+
+	var namedLayer = docSld.createElement("NamedLayer");
+	sld.appendChild(namedLayer);
+
+	var name = docSld.createElement("Name");
+	name.innerHTML=layer.layerName;
+	namedLayer.appendChild(name);
+
+	var userStyle=docSld.createElement("UserStyle");
+
+	var title = docSld.createElement("Title");
+	title.innerHTML="LayerStyle";
+	userStyle.appendChild(title);
 	
-	this.WMSChoropleth=function(layer){
-		var docSld = document.implementation.createDocument("", "", null);
-		var sld = docSld.createElement("StyledLayerDescriptor");
-		sld.setAttribute("xmlns","http://www.opengis.net/sld");
-		sld.setAttribute("xmlns:ogc","http://www.opengis.net/ogc");
-		sld.setAttribute("xmlns:xlink","http://www.w3.org/1999/xlink");
-		sld.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
-		sld.setAttribute("version","1.0.0");
-		sld.setAttribute("xsi:schemaLocation","http://www.opengis.net/sld StyledLayerDescriptor.xsd");
+	if(geoModule_template.analysisType=="choropleth"){
+		 tmtz.WMSChoropleth(docSld,userStyle);
+	}else if(geoModule_template.analysisType=="proportionalSymbol"){
+		 tmtz.WMSproportionalSymbol(docSld,userStyle);
+	}else{
+		//TODO
+	}
+	
+	namedLayer.appendChild(userStyle);
 
-		var namedLayer = docSld.createElement("NamedLayer");
-		sld.appendChild(namedLayer);
+	var oSerializer = new XMLSerializer();
+	return  oSerializer.serializeToString(sld);
+}
 
-		var name = docSld.createElement("Name");
-		name.innerHTML=layer.layerName;
-		namedLayer.appendChild(name);
 
-		var userStyle=docSld.createElement("UserStyle");
-
-		var title = docSld.createElement("Title");
-		title.innerHTML="LayerStyle";
-		userStyle.appendChild(title);
-		
+	this.WMSChoropleth=function(docSld,userStyle){
 		var addedItem=[];
 		for(var i=0;i<geoModule_dataset.rows.length;i++){
 			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1){
@@ -367,14 +383,101 @@ this.getWMSSlBody=function(layer){
 				addedItem.push(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
 			}
 		}	
-
-		namedLayer.appendChild(userStyle);
-
-		var oSerializer = new XMLSerializer();
-		return  oSerializer.serializeToString(sld);
 	}
 	
-	this.WMSproportionalSymbol=function(layer){
-		return'<StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>LayerStyle</Title><FeatureTypeStyle><Rule><PolygonSymbolizer><Fill><CssParameter name="fill"><ogc:Function name="Recode"><ogc:Function name="strTrim"><ogc:PropertyName>STATE_ABBR</ogc:PropertyName></ogc:Function><ogc:Literal>CA</ogc:Literal><ogc:Literal>#F7AE03</ogc:Literal><ogc:Literal>CA</ogc:Literal><ogc:Literal>#F70303</ogc:Literal><ogc:Literal>CA</ogc:Literal><ogc:Literal>#F70303</ogc:Literal></ogc:Function></CssParameter></Fill><Stroke><CssParameter name="stroke">#FFFFFF</CssParameter><CssParameter name="stroke-width">2</CssParameter></Stroke></PolygonSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>'
+	this.WMSproportionalSymbol=function(docSld ,userStyle ){
+		var addedItem=[];
+		for(var i=0;i<geoModule_dataset.rows.length;i++){
+			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1){
+				var featureTypeStyle= docSld.createElement("FeatureTypeStyle");
+				var rule= docSld.createElement("Rule");
+				
+				var filter= docSld.createElement("ogc:Filter");
+					var propertyIsEqualTo= docSld.createElement("ogc:PropertyIsEqualTo");
+						var propertyName= docSld.createElement("ogc:PropertyName");
+						//Specify the attribute of geometry to apply the style
+						propertyName.innerHTML=geoModule_template.layerJoinColumns;
+						propertyIsEqualTo.appendChild(propertyName);
+						
+						var literalParam= docSld.createElement("ogc:Literal");
+						literalParam.innerHTML=geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name];
+						propertyIsEqualTo.appendChild(literalParam);
+					filter.appendChild(propertyIsEqualTo)
+				rule.appendChild(filter);
+				
+				var polygonSymbolizer= docSld.createElement("PolygonSymbolizer");
+					var stroke= docSld.createElement("Stroke");
+						var strokecssParameter= docSld.createElement("CssParameter");
+						strokecssParameter.setAttribute("name","stroke");
+						strokecssParameter.innerHTML="#000000";
+						stroke.appendChild(strokecssParameter);
+						
+						var strokewidthcssParameter= docSld.createElement("CssParameter");
+						strokewidthcssParameter.setAttribute("name","stroke-width");
+						strokewidthcssParameter.innerHTML="1";
+						stroke.appendChild(strokewidthcssParameter);
+					
+					polygonSymbolizer.appendChild(stroke);
+				rule.appendChild(polygonSymbolizer);
+				
+				var pointSymbolizer= docSld.createElement("PointSymbolizer");
+					var geometry= docSld.createElement("Geometry");
+						var centroidFunc= docSld.createElement("ogc:Function");
+						centroidFunc.setAttribute("name","centroid");
+							var CFPropName= docSld.createElement("ogc:PropertyName");
+							CFPropName.innerHTML="the_geom";
+							centroidFunc.appendChild(CFPropName);
+						geometry.appendChild(centroidFunc);
+					pointSymbolizer.appendChild(geometry);
+					
+					var graphic= docSld.createElement("Graphic");
+						var mark= docSld.createElement("Mark");
+							var wellKnownName= docSld.createElement("WellKnownName");
+							wellKnownName.innerHTML="circle";
+							mark.appendChild(wellKnownName);
+						
+						var fill= docSld.createElement("Fill");
+							var fillCssParameter= docSld.createElement("CssParameter");
+							fillCssParameter.setAttribute("name","fill");
+							//TODO recuperare il colore dalla leggenda
+							fillCssParameter.innerHTML="#FF0000";
+							fill.appendChild(fillCssParameter);
+						mark.appendChild(fill);
+							
+						var stroke= docSld.createElement("Stroke");
+						var strokecssParameter= docSld.createElement("CssParameter");
+						strokecssParameter.setAttribute("name","stroke");
+						strokecssParameter.innerHTML="#000000";
+						stroke.appendChild(strokecssParameter);
+						
+						var strokewidthcssParameter= docSld.createElement("CssParameter");
+						strokewidthcssParameter.setAttribute("name","stroke-width");
+						strokewidthcssParameter.innerHTML="1";
+						stroke.appendChild(strokewidthcssParameter);
+					
+					mark.appendChild(stroke);
+					
+						graphic.appendChild(mark);
+						
+						var size= docSld.createElement("Size");
+						size.innerHTML=getProportionalSymbolSize(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name])
+						graphic.appendChild(size);
+						
+					pointSymbolizer.appendChild(graphic);
+					
+				rule.appendChild(pointSymbolizer);
+				
+				featureTypeStyle.appendChild(rule);
+				userStyle.appendChild(featureTypeStyle);
+				
+				addedItem.push(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
+			}
+		}	
+		
+		
+		
+//		return '  <StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>LayerStyle</Title><FeatureTypeStyle><Rule><ogc:Filter><ogc:PropertyIsEqualTo><ogc:PropertyName>STATE_ABBR</ogc:PropertyName><ogc:Literal>CA</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter><PolygonSymbolizer><Fill><CssParameter name="fill">#009933</CssParameter><CssParameter name="fill-opacity">0.5</CssParameter></Fill><Stroke><CssParameter name="stroke">#009933</CssParameter><CssParameter name="stroke-width">2</CssParameter></Stroke></PolygonSymbolizer><PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#FF0000</CssParameter></Fill></Mark><Size>60</Size></Graphic></PointSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>';
+//		return ' <StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>LayerStyle</Title><FeatureTypeStyle><Rule><ogc:Filter><ogc:PropertyIsEqualTo><ogc:PropertyName>STATE_ABBR</ogc:PropertyName><ogc:Literal>CA</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter><PolygonSymbolizer><Stroke><CssParameter name="stroke">#000000</CssParameter><CssParameter name="stroke-width">1</CssParameter></Stroke></PolygonSymbolizer><PointSymbolizer><Geometry><ogc:Function name="centroid"><ogc:PropertyName>the_geom</ogc:PropertyName></ogc:Function></Geometry><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#FF0000</CssParameter></Fill></Mark><Size>60</Size></Graphic></PointSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>';
+
 	}
 });

@@ -38,7 +38,7 @@ function geoCrossNavMultiselectControllerFunction(
 	// Workaround for forcing the angular bind, since the click event 
 	// on the selected features depends by a non-angular component
 	$scope.geo_interaction.addSelectedFeaturesCallbackFunction(function(){
-		if ($scope.$root.$$phase != '$apply') {
+		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase!='$digest') {
 			$scope.$apply();
 		}
 	});
