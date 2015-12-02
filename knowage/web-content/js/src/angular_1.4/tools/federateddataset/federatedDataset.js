@@ -73,6 +73,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 		} else{
 			if(ctr.multiArray.length==0){
 				ctr.multiArray.push(ctr.createAssociations());
+				ctr.clearSelections();
 			} else {
 				angular.forEach(ctr.multiArray, function(obj2){
 					if(JSON.stringify(obj1) === JSON.stringify(obj2)){
