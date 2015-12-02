@@ -23,21 +23,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*******************************************************************************************************
  * Actions
  ********************************************************************************************************/
-        
-/*   
-.add {
-    background-image:url(../img/actions/add.gif) !important;
+  
+ 
+md-dialog.upload-dialog {
+    opacity: 1;
+    min-width: 70%;
+    min-height: 15%;
+    max-width: 80%;
+    max-height: 25%;
+    width: 75%;
+    height: 20%;
+    position: relative;
+    overflow: auto;
 }
-*/
-.run {
-    background-image:url(../img/run.png) !important;
+
+div .border-container {
+	 border-radius: 25px;
+     border: 2px solid #B0BEC5;
 }
-.upload {
-    background-image:url(../img/upload2.png) !important;
+
+md-toolbar .minihead .element-border {
+	border-radius: 20px 20px 0px 0px;
+	background-color: rgb(176, 190, 197);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
+	margin-top : -1px;
 }
-.file_import {
-    background-image:url(../img/file_import.png) !important;
+
+.element-border {
+	border-radius: 20px 20px 0px 0px;
+	background-color: rgb(176, 190, 197);
+	color: rgb(255, 255, 255);
+	height: 50px;
+	min-height: 0px;
 }
-.variables_ok {
-    background-image:url(../img/check.png) !important;
+
+svg {
+	width: 15px; 
+	height: 15px;	
 }
+ 

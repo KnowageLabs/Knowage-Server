@@ -83,80 +83,137 @@ author:...
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
-<html>
+<!doctype html>
+<html ng-app="dataMiningApp">
 	
 	<head>
-		<%@include file="commons/includeExtJS.jspf" %>
-		<%@include file="commons/includeMessageResource.jspf" %>
-		<%@include file="commons/includeSbiDataMiningJS.jspf"%>
-		
-		<%-- START SCRIPT FOR DOMAIN DEFINITION (MUST BE EQUAL BETWEEN SPAGOBI AND EXTERNAL ENGINES) -->
-		<script type="text/javascript">
-		document.domain='<%= EnginConf.getInstance().getSpagoBiDomain() %>';
-		</script>
-		<-- END SCRIPT FOR DOMAIN DEFINITION --%>
-	
+		<%@include file="commons/angular/angularImport.jsp"%>
+		<%@include file="commons/angular/dataminingModule.jsp"%>
+		<script type="text/javascript" src="/knowagedataminingengine/js/src/angular_1.4/datamining/dataminingController.js"></script>
+		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/generalStyle.css">
+		<link rel="stylesheet" type="text/css" href="/knowagedataminingengine/css/datamining.css">	
 	</head>
-	
-	<body>
-	
-    	<script type="text/javascript">  
-	    	Sbi.config = {};
-	    	var config= {};
-	
-
-			var urlSettings = {
-			    sbihost:  '<%=spagobiServerHost%>'    
-			    , protocol: '<%= request.getScheme()%>'
-		    	, host: '<%= request.getServerName()%>'
-		    	, port: '<%= request.getServerPort()%>'
-		    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-		    		  spagobiContext.substring(1) :
-		    			spagobiContext%>'	    	   				  
-		    };
+<body>
+	<div div ng-controller="Controller as ctrl" ng-cloak>
 		
-	        var externalUrl =  urlSettings.sbihost+"/"+ urlSettings.contextPath+"/restful-services/";
-			
-	        Sbi.config.urlSettings = urlSettings;
-	        Sbi.config.externalUrl = externalUrl;
-	         
-	        var params = {
-		    	SBI_EXECUTION_ID: <%= request.getParameter("SBI_EXECUTION_ID")!=null?"'" + request.getParameter("SBI_EXECUTION_ID") +"'": "null" %>
-		    };
-	    	
+		<md-tabs md-selected="idx_command" layout="column"  md-dynamic-height> 
+			<md-tab  ng-repeat="cmd in commands" label={{cmd.label}} md-on-select="calculateResult()">
+				<md-content layout="column" layout-padding>
+					<md-content ng-if = "visibleUploadButton" layout='row' layout-margin>
+						<div ng-if="visibilityRerunButton">
+							<md-button class="md-button md-raised md-ExtraMini md-larger" arial-label="Rerun Script" ng-click="rerunScript()">
+								 Run Script
+							</md-button>
+						</div>
+						<!-- Simulate button and link the click event with the input type='file' -->
+						<label class="md-button md-raised md-ExtraMini" md-ink-ripple for="fileInput">
+							<span >File</span>
+						</label>
+						<input id="fileInput" type="file" class="ng-hide" onchange='angular.element(this).scope().setFileName(this)'>
+						<md-input-container flex='40'>
+							<input type='text' disabled ng-model="fileName"/>
+						</md-input-container>
+						<md-button class="md-fab md-raised" arial-label="Upload File" ng-click="uploadFile()">
+							<md-icon md-svg-src="/knowagedataminingengine/img/upload3.svg"></md-icon>
+							<md-tooltip md-direction="bottom">
+	          					Upload File
+	        				</md-tooltip>
+						</md-button>
+					</md-content>
+				
+					<md-content>
+						<md-tabs class="mini-tabs" md-selected="idx_output" layout="column"> 
+							<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}">
+								<md-content layout="column" layout-padding>
+									<md-content>
+										<md-content layout = 'row' layout-margin>
+											<div ng-if = "out.variables !== 'null' && out.variables !== undefined && out.variables.length > 0">
+												<md-button class="md-button md-raised md-ExtraMini md-larger" ng-click = "toogleOuputVariables()" arial-label = "button output variable" >
+													<span style="font-size: 65%;">Outputs Variables</span>
+												</md-button>
+											</div>
+										</md-content>
+										
+										<div class = "border-container" ng-if = "visibleOuputVariables && out.variables !== undefined && out.variables.length > 0" >
+											<md-toolbar class="md-blue minihead element-border">
+											    <div class="md-toolbar-tools">
+											 		Update variables of output '<b>{{out.ouputLabel}}</b>'
+											 	</div>
+											 </md-toolbar>
+											 <div ng-repeat = "variable in out.variables">
+												 <md-content layout='row' layout-margin layout-align="center center">
+													 <md-input-container flex='70'>
+													    <label><b>{{ variable.name }}</b></label>
+													 	<input type='text' ng-model="variable.currentVal" aria-label = "variable value"/>
+													 </md-input-container>
+												 	<md-button class="md-button md-raised md-ExtraMini" arial-label="Update" ng-click="setVariable(cmd, out, variable, 'set','output')" ng-disabled="variable.currentVal.length <= 0">
+									 				 Set
+													</md-button>
+													<md-button class="md-button md-raised md-ExtraMini" arial-label="Reset" ng-click="setVariable(cmd, out, variable, 'reset','output')" ng-disabled="variable.currentVal == variable.defaultVal">
+									 				 Reset
+													</md-button>
+												 </md-content>
+											 </div>
+										</div>
+										<br>
+										<div class = "border-container">
+											<md-toolbar class="md-blue minihead element-border">
+												    <div class="md-toolbar-tools">
+												 		Results 
+												 	</div>
+										 	</md-toolbar>
+										 	<md-content layout-margin layout-align="stretch center">
+												<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' " ng-bind-html="results[cmd.name][out.outputName].html"></div>
+												<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'text' ">
+													<h3 class="md-subhead">	
+														{{results[cmd.name][out.outputName].variablename}} = {{results[cmd.name][out.outputName].result}}
+													</h3>
+												</div>
+											</md-content>
+										</div>
+										
+									</md-content>
+								</md-content>
+								<md-content style="height : 20px;">
+								<!-- This content avoids to cut the previous contents, so the results are well formatted -->
+								</md-content>
+							</md-tab>
+							<md-tab layout="column" class="mini-tabs" ng-if = "cmd.variables !== null && cmd.variables !== 'null' && cmd.variables !== undefined && cmd.variables.length > 0" label= "Command Variable">
+								<md-content  layout-padding>
+									<div class = "border-container" >
+										<md-toolbar class="md-blue minihead element-border">
+										    <div class="md-toolbar-tools">
+										 		Update variables of command '<b>{{cmd.label}}</b>' 
+										 	</div>
+										 </md-toolbar>
+									 	<div ng-repeat = "variable in cmd.variables">
+											 <md-content layout='row' layout-margin layout-align="center center">
+												 <md-input-container flex='70'>
+												 		<label>
+												 		 <b>{{ variable.name }}</b> 
+												 		</label>
+													 	<input type='text' ng-model="variable.currentVal" aria-label = "variable value"/>
+												 </md-input-container>
+											 	<md-button class="md-button md-raised md-ExtraMini" arial-label="Update" ng-click="setVariable(cmd, out, variable, 'set', 'command')" ng-disabled="variable.currentVal.length <= 0">
+								 				 	Set
+												</md-button>
+												<md-button class="md-button md-raised md-ExtraMini" arial-label="Reset" ng-click="setVariable(cmd, out, variable, 'reset','command')" ng-disabled="variable.currentVal == variable.defaultVal">
+								 				 	Reset
+												</md-button>
+											 </md-content>
+										</div>
+									</div>
+								</md-content>
+								<md-content style="height : 20px;">
+									<!-- This content avoids to cut the previous contents, so the results are well formatted -->
+								</md-content>
+							</md-tab>
+						</md-tabs>
+					</md-content>
+				</md-content>
+			</md-tab>
+		</md-tabs>
+	</div>
+</body>	
 	
-		    Sbi.config.ajaxBaseParams = params;
-
-	        Ext.onReady(function(){
-
- 	        	var dmPanel = Ext.create('Sbi.datamining.DataMiningPanel',{}); 
-
-	    		var dataMiningPanelViewport = Ext.create('Ext.container.Viewport', {
-	    			layout:'fit',
-	    			items: [dmPanel]
-	    	    });
-	        });
-	    </script>
-	
-	</body>
-
 </html>
-
-
-
-
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    
