@@ -1,6 +1,7 @@
 package it.eng.spagobi.profiling.bo;
 
 import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.services.validation.Xss;
 
 import java.io.Serializable;
 
@@ -10,7 +11,9 @@ public class ProfileAttribute implements Serializable {
 
 	private Integer attributeId;
 	@NotNull
+	@Xss
 	private String attributeName = "";
+	@Xss
 	private String attributeDescription = "";
 
 	public ProfileAttribute() {

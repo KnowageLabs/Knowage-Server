@@ -9,12 +9,8 @@ import it.eng.spagobi.profiling.bo.ProfileAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +23,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -64,7 +61,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 		} catch (EMFUserError e) {
 			// TODO Auto-generated catch block
 			logger.error("Error while loading profile attributes", e);
-			throw new SpagoBIRuntimeException("Error loading profile attributes");
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
 	}
@@ -89,21 +86,13 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
 			SbiAttribute sa = new SbiAttribute(attribute.getAttributeId(), attribute.getAttributeName(), attribute.getAttributeDescription());
-
 			objDao.saveOrUpdateSbiAttribute(sa);
-			String encodedAttribute = URLEncoder.encode("" + attribute.getAttributeId(), "UTF-8");
-			return Response.created(new URI("2.0/attributes/" + encodedAttribute)).entity(encodedAttribute).build();
+
+			return Response.ok().build();
 
 		} catch (EMFUserError e) {
 			logger.error("Error while updating profile attribute", e);
-			throw new SpagoBIRuntimeException("Error updating profile attribute");
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
-
-		} catch (URISyntaxException e) {
-			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
 	}
@@ -117,16 +106,6 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 		ISbiAttributeDAO objDao = null;
 		ProfileAttribute attribute = attr;
 
-		/*
-		 * if (attribute == null) { return
-		 * Response.status(Status.BAD_REQUEST).entity
-		 * ("Error JSON parsing").build(); }
-		 *
-		 * if (attribute.getAttributeId() != null) { return
-		 * Response.status(Status.BAD_REQUEST).entity(
-		 * "Error paramters. New attribute should not have ID value").build(); }
-		 */
-
 		try {
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
@@ -136,25 +115,12 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			Integer id = objDao.saveSbiAttribute(sa);
 			attribute.setAttributeId(id);
 
-			String encodedAttribute = URLEncoder.encode("" + attribute.getAttributeId(), "UTF-8");
-			// return Response.created(new URI("2.0/attributes/" +
-			// encodedAttribute)).entity(attribute).build();
 			return attribute;
 		} catch (EMFUserError e) {
 			logger.error("Error while saving profile attribute", e);
-			throw new SpagoBIRuntimeException("Error saving profile attribute");
+			throw new SpagoBIRestServiceException(getLocale(), e);
 
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Error while saving profile attribute", e);
-			throw new SpagoBIRuntimeException("Error saving profile attribute");
-
-		} /*
-		 * catch (URISyntaxException e) {
-		 * logger.error("Error while saving profile attribute", e); throw new
-		 * SpagoBIRuntimeException("Error saving profile attribute");
-		 * 
-		 * }
-		 */
+		}
 	}
 
 	@DELETE
@@ -169,9 +135,32 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (EMFUserError e) {
 			logger.error("Error while deleting resource", e);
-			throw new SpagoBIRuntimeException("Error while deleting resource", e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
 
 		}
+	}
+
+	@DELETE
+	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	public Response deleteMultiple(@QueryParam("id") int[] ids) {
+		ISbiAttributeDAO objDao = null;
+
+		try {
+			objDao = DAOFactory.getSbiAttributeDAO();
+			objDao.setUserProfile(getUserProfile());
+
+			for (int i = 0; i < ids.length; i++) {
+				objDao.deleteSbiAttributeById(ids[i]);
+			}
+
+			return Response.ok().build();
+		} catch (EMFUserError e) {
+			logger.error("Error while deleting resource", e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
+
+		}
+
 	}
 
 }

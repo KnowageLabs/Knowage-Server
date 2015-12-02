@@ -31,6 +31,16 @@
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.profileattributes.title");}}</div>
 						<md-button 
+						 ng-disabled="tempObj.length==0"
+       					 class="md-fab md-ExtraMini"
+      					 style="position:absolute; right:26px; top:0px; background-color:#E91E63"
+      				     ng-click="deleteAttributes()"> 
+       <md-icon
+        md-font-icon="fa fa-trash" 
+        style=" margin-top: 6px ; color: white;" >
+       </md-icon> 
+      </md-button>
+						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
 							ng-click="createProfileAttribute()"> 
@@ -50,8 +60,9 @@
 						columns-search='["attributeName","attributeDescription"]'
 						show-search-bar=true
 						highlights-selected-item=true
-						selected-item="selectedAttribute"
-						click-function="loadAttribute(item)"					
+						selected-item="tempObj"
+						click-function="loadAttribute(item)"
+						multi-select=true					
 					>						
 					</angular-table>
 				</md-content>
@@ -93,7 +104,7 @@
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.ds.name")}}</label>
        								<input ng-model="selectedAttribute.attributeName" required
-        							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+        							ng-change="setDirty()" maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
       						</div>
     					</div>
     					<div layout="row" layout-wrap>
@@ -101,7 +112,7 @@
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.ds.description")}}</label>
        								<input ng-model="selectedAttribute.attributeDescription"
-        							maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+        							ng-change="setDirty()" maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
       						</div>
     					</div>			
 					</md-content>
