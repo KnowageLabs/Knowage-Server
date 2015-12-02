@@ -1586,9 +1586,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	// <!-- fine tree -->
 
 	ctr.showInfoWORD = function(ev, wordid) {
-		console.log("showInfo");
-		console.log(event)
-		console.log(wordid)
 		$mdDialog
 		.show({
 			controllerAs : 'infCtrl',
