@@ -1,4 +1,4 @@
-/* SpagoBI, the Open Source Business Intelligence suite
+/* SpagoBI, the Open Source Business  Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
@@ -34,19 +34,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 @Path("/federateddataset")
-public class RestFederationDefinition  {
+public class RestFederationDefinition {
 
 	@Context
 	protected HttpServletRequest request;
-	
+
 	static private Logger logger = Logger.getLogger(RestFederationDefinition.class);
 	public static final String DATASET_ID = "id";
 	public static final String VERSION_NUM = "versionNum";
 
 	/**
 	 * Saves the federation definition in the db. Gets the definition from the body of the request
+	 * 
 	 * @param req
 	 * @return
 	 */
@@ -57,21 +57,22 @@ public class RestFederationDefinition  {
 			logger.debug("Saving the federation");
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
-			logger.debug("The federation definition label is "+fdsNew.getLabel());
+			logger.debug("The federation definition label is " + fdsNew.getLabel());
 
 			insertFederationDefinition(fdsNew, true);
-			
+
 			logger.debug("Saving OK");
 			logger.debug("OUT");
-			return fdsNew.getFederation_id()+"";
+			return fdsNew.getFederation_id() + "";
 		} catch (Exception e) {
-			logger.error("Error saving federation",e);
-			throw new SpagoBIRuntimeException("Error saving federation",e);
+			logger.error("Error saving federation", e);
+			throw new SpagoBIRuntimeException("Error saving federation", e);
 		}
 	}
-	
+
 	/**
 	 * Saves the federation definition in the db. Gets the definition from the body of the request
+	 * 
 	 * @param req
 	 * @return
 	 */
@@ -82,102 +83,103 @@ public class RestFederationDefinition  {
 			logger.debug("Saving the federation");
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
-			logger.debug("The federation definition label is "+fdsNew.getLabel());
+			logger.debug("The federation definition label is " + fdsNew.getLabel());
 
 			insertFederationDefinition(fdsNew, false);
-			
+
 			logger.debug("Saving OK");
 			logger.debug("OUT");
-			return fdsNew.getFederation_id()+"";
+			return fdsNew.getFederation_id() + "";
 		} catch (Exception e) {
-			logger.error("Error saving federation",e);
-			throw new SpagoBIRuntimeException("Error saving federation",e);
+			logger.error("Error saving federation", e);
+			throw new SpagoBIRuntimeException("Error saving federation", e);
 		}
 	}
 
+	//
+	// /**
+	// * Saves the federation definition in the db. Gets the definition from the body of the request
+	// * @param req
+	// * @return
+	// */
+	// @POST
+	// @Path("/post2")
+	// public String insertFederation2(@Context HttpServletRequest req) {
+	// try {
+	// logger.debug("Saving the federation");
+	// JSONObject requestBodyJSON = new JSONObject();
+	// requestBodyJSON.put("label", "dataset"+System.currentTimeMillis());
+	// requestBodyJSON.put("name", "dataset"+System.currentTimeMillis());
+	//
+	// JSONArray ja = new JSONArray();
+	// JSONObject jo = new JSONObject();
+	// jo.put("id", 2);
+	// jo.put(VERSION_NUM, 1);
+	// ja.put(jo);
+	//
+	// requestBodyJSON.put("sourcesDataset", ja);
+	//
+	// FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
+	// logger.debug("The federation definition label is "+fdsNew.getLabel());
+	//
+	// insertFederationDefinition(fdsNew);
+	//
+	// logger.debug("Saving OK");
+	// logger.debug("OUT");
+	// return fdsNew.getFederation_id()+"";
+	// } catch (Exception e) {
+	// logger.error("Error saving federation",e);
+	// throw new SpagoBIRuntimeException("Error saving federation",e);
+	// }
+	// }
 
-//	
-//	/**
-//	 * Saves the federation definition in the db. Gets the definition from the body of the request
-//	 * @param req
-//	 * @return
-//	 */
-//	@POST
-//	@Path("/post2")
-//	public String insertFederation2(@Context HttpServletRequest req) {
-//		try {
-//			logger.debug("Saving the federation");
-//			JSONObject requestBodyJSON = new JSONObject();
-//			requestBodyJSON.put("label", "dataset"+System.currentTimeMillis());
-//			requestBodyJSON.put("name", "dataset"+System.currentTimeMillis());
-//			
-//			JSONArray ja = new JSONArray();
-//			JSONObject jo = new JSONObject();
-//			jo.put("id", 2);
-//			jo.put(VERSION_NUM, 1);
-//			ja.put(jo);
-//			
-//			requestBodyJSON.put("sourcesDataset", ja);
-//
-//			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
-//			logger.debug("The federation definition label is "+fdsNew.getLabel());
-//
-//			insertFederationDefinition(fdsNew);
-//			
-//			logger.debug("Saving OK");
-//			logger.debug("OUT");
-//			return fdsNew.getFederation_id()+"";
-//		} catch (Exception e) {
-//			logger.error("Error saving federation",e);
-//			throw new SpagoBIRuntimeException("Error saving federation",e);
-//		}
-//	}
-	
 	/**
 	 * Saves the federation definition on db
+	 * 
 	 * @param federation
 	 * @throws EMFUserError
 	 */
-	public void insertFederationDefinition(FederationDefinition federation, boolean duplicated) throws EMFUserError{
-		logger.debug("The federation definition label is "+federation.getLabel());
+	public void insertFederationDefinition(FederationDefinition federation, boolean duplicated) throws EMFUserError {
+		logger.debug("The federation definition label is " + federation.getLabel());
 
 		ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
-		if(duplicated){
+		if (duplicated) {
 			federatedDatasetDao.saveSbiFederationDefinition(federation);
-		}else{
+		} else {
 			federatedDatasetDao.saveSbiFederationDefinitionNoDuplicated(federation);
 		}
-		
-		
-		logger.debug("Seved federation with label "+federation.getLabel()  +" the id is "+federation.getFederation_id());
+
+		logger.debug("Seved federation with label " + federation.getLabel() + " the id is " + federation.getFederation_id());
 	}
-	
+
 	/**
 	 * Gets a specific federation definition
+	 * 
 	 * @param req
-	 * @param federationId {int} the id of the federation definition
+	 * @param federationId
+	 *            {int} the id of the federation definition
 	 * @return the serialization of the federation definition
 	 */
 	@POST
 	@Path("/federation")
-	public String getFederation(@QueryParam("federationId") String federationId ) {
+	public String getFederation(@QueryParam("federationId") String federationId) {
 		try {
-			logger.debug("Loading the federation with id "+federationId);
+			logger.debug("Loading the federation with id " + federationId);
 			ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
 			FederationDefinition federation = federatedDatasetDao.loadFederationDefinition(new Integer(federationId));
-			logger.debug("retrived federaion. the label is "+federation.getLabel());
-			
+			logger.debug("retrived federaion. the label is " + federation.getLabel());
+
 			JSONObject federationSerialized = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(federation, request.getLocale());
-			
-			logger.debug("Sending serialization of federation definition "+federation.getLabel());
+
+			logger.debug("Sending serialization of federation definition " + federation.getLabel());
 			return federationSerialized.toString();
 		} catch (Exception e) {
-			logger.error("Error retriving federation with id "+federationId,e);
-			throw new SpagoBIRuntimeException("Error retriving federation with id "+federationId,e);
+			logger.error("Error retriving federation with id " + federationId, e);
+			throw new SpagoBIRuntimeException("Error retriving federation with id " + federationId, e);
 		}
 	}
 
-	private FederationDefinition recoverFederatedDatasetDetails (JSONObject requestBodyJSON) {
+	private FederationDefinition recoverFederatedDatasetDetails(JSONObject requestBodyJSON) {
 
 		FederationDefinition fds = new FederationDefinition();
 		Integer id = -1;
@@ -191,71 +193,65 @@ public class RestFederationDefinition  {
 		String description = (String) requestBodyJSON.opt("description");
 		JSONArray relationsJa = requestBodyJSON.optJSONArray("relationships");
 		String relationships = null;
-		if(relationsJa!=null){
+		if (relationsJa != null) {
 			relationships = requestBodyJSON.optJSONArray("relationships").toString();
 		}
-		
+
 		JSONArray sourcesDataset = requestBodyJSON.optJSONArray("sourcesDataset");
-		
 
 		fds.setFederation_id(id.intValue());
 		fds.setLabel(label);
 		fds.setName(name);
 		fds.setDescription(description);
-		
-		if(relationships!=null && relationships.length()>0){
+
+		if (relationships != null && relationships.length() > 0) {
 			fds.setRelationships(relationships);
 			fds.setSourceDatasets(deserializeDatasets(relationships));
 		}
 
-		if(sourcesDataset!=null){
+		if (sourcesDataset != null) {
 			fds.setSourceDatasets(deserializeDatasets(sourcesDataset));
 		}
-		
-			
-
 
 		return fds;
 	}
 
-	private Set<IDataSet> deserializeDatasets(JSONArray datasets){
+	private Set<IDataSet> deserializeDatasets(JSONArray datasets) {
 		Set<IDataSet> iDataSet = new HashSet<IDataSet>();
-		
+
 		try {
-			for(int i=0; i<datasets.length(); i++){
+			for (int i = 0; i < datasets.length(); i++) {
 				JSONObject jo = datasets.getJSONObject(i);
-				
+
 				JDBCDataSet ds = new JDBCDataSet();
 				ds.setId(jo.getInt(DATASET_ID));
-				//VersionedDataSet vd = new VersionedDataSet(ds,jo.getInt(VERSION_NUM),true);
+				// VersionedDataSet vd = new VersionedDataSet(ds,jo.getInt(VERSION_NUM),true);
 				ds.setOrganization(TenantManager.getTenant().getName());
 				iDataSet.add(ds);
-				
+
 			}
 
 		} catch (Exception e) {
-			logger.error("Error deserializing datasets for new federaion",e);
-			throw new SpagoBIEngineRuntimeException("Error deserializing datasets for new federaion",e);
+			logger.error("Error deserializing datasets for new federaion", e);
+			throw new SpagoBIEngineRuntimeException("Error deserializing datasets for new federaion", e);
 		}
 
 		return iDataSet;
-		
-	}
-	
 
-	private Set<IDataSet> deserializeDatasets(String relationships){
+	}
+
+	private Set<IDataSet> deserializeDatasets(String relationships) {
 
 		Set<String> datasetNames = new HashSet<String>();
 		Set<IDataSet> datasets = new HashSet<IDataSet>();
 
-		//loading the datsets
+		// loading the datsets
 		try {
 			JSONArray array = new JSONArray(relationships);
-			
-			
-			for(int j=0; j<array.length(); j++){
+
+			for (int j = 0; j < array.length(); j++) {
 				JSONArray innerArray = array.getJSONArray(j);
-				for(int i=0; i<innerArray.length(); i++){
+				for (int i = 0; i < innerArray.length(); i++) {
 					JSONObject relation = innerArray.getJSONObject(i);
 					JSONObject startRel = relation.getJSONObject("sourceTable");
 					JSONObject destinationRel = relation.getJSONObject("destinationTable");
@@ -267,7 +263,7 @@ public class RestFederationDefinition  {
 
 		} catch (JSONException e) {
 			logger.error("Error loading the datset");
-			throw new SpagoBIRuntimeException("Error loading linked datasets",e);
+			throw new SpagoBIRuntimeException("Error loading linked datasets", e);
 		}
 
 		IDataSetDAO dsDao;
@@ -276,19 +272,17 @@ public class RestFederationDefinition  {
 
 			Iterator<String> iter = datasetNames.iterator();
 			while (iter.hasNext()) {
-				String string = (String) iter.next();
+				String string = iter.next();
 				datasets.add(dsDao.loadDataSetByLabel(string));
 			}
 
 		} catch (EMFUserError e) {
 			logger.error("Error loading the datset");
-			throw new SpagoBIRuntimeException("Error loading linked datasets",e);
+			throw new SpagoBIRuntimeException("Error loading linked datasets", e);
 		}
-		
+
 		return datasets;
 
 	}
-
-
 
 }
