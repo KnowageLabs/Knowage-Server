@@ -10,7 +10,6 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.List;
@@ -26,9 +25,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 @Path("/2.0/datasources")
@@ -54,7 +51,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSource = dataSourceDAO.loadAllDataSources();
 
-			logger.debug("Getting the list of all DS - done successfully");
+			return dataSource;
 
 		} catch (Exception exception) {
 
@@ -63,18 +60,15 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} finally {
 
-			LogMF.debug(logger, "OUT: returning [{0}]", dataSource.toString());
+			logger.debug("OUT");
 
 		}
-
-		return dataSource;
-
 	}
 
 	@GET
 	@Path("/{dsId}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String getDataSourceById(@PathParam("dsId") Integer dsId) {
 
 		logger.debug("IN");
@@ -85,17 +79,21 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
-
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSource = dataSourceDAO.loadDataSourceByID(dsId);
 
+			return JsonConverter.objectToJson(dataSource, null);
+
 		} catch (Exception e) {
+
 			logger.error("Error while loading a single data set", e);
-			throw new SpagoBIRuntimeException("Error while loading a single data set", e);
+			throw new SpagoBIServiceException("Error while loading a single data set", e);
+
+		} finally {
+
+			logger.debug("OUT");
 
 		}
-		return JsonConverter.objectToJson(dataSource, null);
-
 	}
 
 	@POST
@@ -104,16 +102,15 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String saveDataSource(@Valid DataSource dataSource) {
 
+		logger.debug("IN");
+
 		IDataSourceDAO dataSourceDAO;
 
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-
 			dataSourceDAO.insertDataSource(dataSource, getUserProfile().getOrganization());
-
-			logger.debug("OUT: Posting the DS - done successfully");
 
 			DataSource newLabel = (DataSource) dataSourceDAO.loadDataSourceByLabel(dataSource.getLabel());
 			int newId = newLabel.getDsId();
@@ -125,29 +122,41 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			logger.error("Error while posting DS", exception);
 			throw new SpagoBIServiceException("Error while posting DS", exception);
 
+		} finally {
+
+			logger.debug("OUT");
+
 		}
 	}
 
 	@PUT
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateDataSource(DataSourceModel dataSource) {
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	public String updateDataSource(DataSourceModel dataSource) {
 
 		logger.debug("IN");
 
+		IDataSourceDAO dataSourceDAO;
+
 		try {
 
-			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-
+			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSourceDAO.modifyDataSource(dataSource);
 
+			return "[PUT]: SUCCESS!" + dataSource.getDsId();
+
 		} catch (Exception e) {
+
 			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
+			throw new SpagoBIServiceException("Error while updating url of the new resource", e);
+
+		} finally {
+
+			logger.debug("OUT");
+
 		}
-		return null;
 	}
 
 	@DELETE
@@ -167,33 +176,51 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSourceDAO.eraseDataSource(dataSource);
 
+			return DAOFactory.getDataSourceDAO().loadAllDataSources();
+
 		} catch (Exception e) {
+
 			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
+			throw new SpagoBIServiceException("Error while updating url of the new resource", e);
+
+		} finally {
+
+			logger.debug("OUT");
 
 		}
-		return DAOFactory.getDataSourceDAO().loadAllDataSources();
-
 	}
 
 	@DELETE
 	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public List<DataSource> deleteMultiple(@QueryParam("id") int[] ids) {
 
+		logger.debug("IN");
+
 		IDataSourceDAO dataSourceDAO = null;
+
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
+
 			for (int i = 0; i < ids.length; i++) {
 				DataSource ds = new DataSource();
 				ds.setDsId(ids[i]);
 				dataSourceDAO.eraseDataSource(ds);
 			}
+
 			return dataSourceDAO.loadAllDataSources();
+
 		} catch (Exception e) {
+
 			logger.error("Error while deleting url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
+			throw new SpagoBIServiceException("Error while deleting url of the new resource", e);
+
+		} finally {
+
+			logger.debug("OUT");
+
 		}
 	}
 
