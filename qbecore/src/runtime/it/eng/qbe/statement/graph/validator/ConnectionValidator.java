@@ -8,6 +8,7 @@ package it.eng.qbe.statement.graph.validator;
 
 
 import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
 
 import java.util.Set;
 
@@ -31,11 +32,19 @@ public class ConnectionValidator extends AbstractGraphValidator {
 	 * Check if the graph is connected
 	 */
 	public boolean validate(Graph G,  Set<IModelEntity> unjoinedEntities) {
-
 		if(unjoinedEntities==null || unjoinedEntities.size()<2){
 			return true;
 		}
-		
+		/**
+		 * Temporary fix to avoid validation of entities handling spatial data
+		 * TODO Find a better way to check this
+		 */
+		for (IModelEntity iModelEntity : unjoinedEntities) {
+			for (IModelField iModelField : iModelEntity.getAllFields()) {
+				if(iModelField.getType().toLowerCase().indexOf("geometry")!=-1)
+					return true;
+			}
+		}
 		if(G==null){
 			return false;
 		}
