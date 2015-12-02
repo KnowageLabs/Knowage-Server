@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -197,7 +198,7 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 				}
 				logger.debug("Left just une file per dataset");
 				// // constructs upload file path
-				fileName = dirToSaveDS.getPath() + "/" + fileName;
+				fileName = dirToSaveDS.getPath() + "/" + Paths.get(fileName).getFileName().toString();
 
 				logger.debug("Constructs upload file path " + fileName);
 				writeFile(bytes, fileName);
@@ -236,6 +237,10 @@ public class DatasetResource extends AbstractDataMiningEngineService {
 		FileOutputStream fop = null;
 		try {
 			File file = new File(filename);
+
+			if (!file.getParentFile().exists()) {
+				file.getParentFile().mkdirs();
+			}
 
 			if (!file.exists()) {
 				file.createNewFile();
