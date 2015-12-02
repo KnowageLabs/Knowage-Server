@@ -10,7 +10,7 @@ import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
 import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception exception) {
 
 			logger.error("Error while getting the list of DS", exception);
-			throw new SpagoBIServiceException("Error while getting the list of DS", exception);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), exception);
 
 		} finally {
 
@@ -87,7 +87,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			logger.error("Error while loading a single data set", e);
-			throw new SpagoBIServiceException("Error while loading a single data set", e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -120,7 +120,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception exception) {
 
 			logger.error("Error while posting DS", exception);
-			throw new SpagoBIServiceException("Error while posting DS", exception);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), exception);
 
 		} finally {
 
@@ -150,7 +150,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIServiceException("Error while updating url of the new resource", e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -181,7 +181,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIServiceException("Error while updating url of the new resource", e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -215,7 +215,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			logger.error("Error while deleting url of the new resource", e);
-			throw new SpagoBIServiceException("Error while deleting url of the new resource", e);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
 
 		} finally {
 

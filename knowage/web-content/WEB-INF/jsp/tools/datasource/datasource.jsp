@@ -66,8 +66,8 @@
 						show-search-bar=true
 						highlights-selected-item=true
 						click-function="loadSelectedDataSource(item)"
-						selected-item="selectedDataSourceItems"	
-						multi-select=true						
+						selected-item="selectedDataSourceItems"
+						speed-menu-option="dsSpeedMenu"					
 					>						
 					</angular-table>
 				</md-content>
@@ -106,7 +106,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input ng-model="selectedDataSource.label" required
-								maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
+								ng-change="setDirty()" maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
 						</div>
 					</div>
 					
@@ -115,7 +115,7 @@
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedDataSource.descr"
-								maxlength="160" ng-maxlength="1160" md-maxlength="160"> </md-input-container>
+								ng-change="setDirty()"  maxlength="160" ng-maxlength="1160" md-maxlength="160"> </md-input-container>
 						</div>
 					</div>
 					
@@ -123,7 +123,7 @@
 						<div flex=100>
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.dialect")}}</label>
-							<md-select  aria-label="aria-label"
+							<md-select  ng-change="setDirty()"  aria-label="aria-label"
 								ng-model="selectedDataSource.dialectId"> <md-option
 								ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_NM}} </md-option>
 							</md-select> </md-input-container>
@@ -137,7 +137,7 @@
 	
 						<md-input-container class="small counter"> 
 							<md-checkbox
-								ng-model="selectedDataSource.multiSchema" aria-label="Multischema">
+								ng-change="setDirty()"  ng-model="selectedDataSource.multiSchema" aria-label="Multischema">
 							</md-checkbox> 
 						</md-input-container>
 					</div>
@@ -146,13 +146,13 @@
 						<div flex=100>
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.multischema.attribute")}}</label>
-							<input ng-model="selectedDataSource.schemaAttribute"
+							<input ng-change="setDirty()"  ng-model="selectedDataSource.schemaAttribute"
 								maxlength="45" ng-maxlength="45" md-maxlength="45"> </md-input-container>
 						</div>
 					</div>
 					
 					<div layout="row" layout-wrap>
-						<md-radio-group  ng-model="selectedDataSource.readOnly"> Read only:
+						<md-radio-group  ng-change="setDirty()"  ng-model="selectedDataSource.readOnly"> Read only:
 	      					<md-radio-button  value="1" ng-disabled="selectedDataSource.writeDefault">Read only</md-radio-button>
 	      					<md-radio-button  value="0"> Read and write </md-radio-button>
 	    				</md-radio-group>
@@ -164,7 +164,7 @@
 						</div>
 	
 						<md-input-container> 
-							<md-checkbox 
+							<md-checkbox ng-change="setDirty()" 
 								ng-model="selectedDataSource.writeDefault" ng-disabled="selectedDataSource.readOnly == 1" aria-label="Write Default">
 							</md-checkbox> 
 						</md-input-container>
@@ -184,7 +184,7 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
-								<input ng-model="selectedDataSource.urlConnection" required
+								<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" required
 									maxlength="500" ng-maxlength="500" md-maxlength="500"> </md-input-container>
 							</div>
 						</div>
@@ -193,7 +193,7 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
-								<input ng-model="selectedDataSource.user" required
+								<input ng-change="setDirty()"  ng-model="selectedDataSource.user" required
 									maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
 							</div>
 						</div>
@@ -202,7 +202,7 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
-								<input type="password" name="password" ng-model="selectedDataSource.pwd" required
+								<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd" required
 									maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
 							</div>
 						</div>						
@@ -211,7 +211,7 @@
 							<div flex=100>
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.driver")}}</label>
-								<input ng-model="selectedDataSource.driver" required
+								<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" required
 									maxlength="160" ng-maxlength="160" md-maxlength="160"> </md-input-container>
 							</div>
 						</div>
@@ -221,7 +221,7 @@
 						<div flex=100>
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
-							<md-select aria-label="aria-label"
+							<md-select ng-change="setDirty()"  aria-label="aria-label"
 								ng-model="selectedDataSource.jndi"> <md-option
 								ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_NM}} </md-option>
 							</md-select> </md-input-container>

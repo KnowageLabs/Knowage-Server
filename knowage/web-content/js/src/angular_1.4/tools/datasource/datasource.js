@@ -30,8 +30,16 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.dialects = [];
 	$scope.selectedDataSource = {};
 	$scope.selectedDataSourceItems = [];
-	$scope.noDSSelected = true;
+	$scope.isDirty = false;
 	$scope.forms = {};
+	
+	angular.element(document).ready(function () {
+        $scope.getDataSources();
+    });
+	
+	$scope.setDirty = function () {
+		$scope.isDirty = true;
+	}
 
 	//REST
 	$scope.getDataSources = function(){
@@ -45,9 +53,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					
 					if (data.hasOwnProperty("errors")) {
 		
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						console.log("[GET]: DATA HAS ERRORS PROPERTY!");
 						
 					} else {
+						
+						console.log("[GET]: SUCCESS!");
 						
 						for(var i = 0; i < data.length; i++){
 					          $scope.dataSourceList.push(data[i]);
@@ -60,7 +70,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		.error(
 				
 				function(data, status, headers, config) {
-					console.log(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+					console.log("[GET]: FAIL!"+status);
 				});
 		
 		//GET DIALECT TYPES
@@ -71,12 +81,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						
-						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
+						console.log("[GET/DIALECT]: DATA HAS ERRORS PROPERTY!");
 					
 					} else {
-
+						console.log("[GET/DIALECT]: SUCCESS!");
 						$scope.dialects = data;
-						console.log("took the domains")
 						console.log($scope.dialects);
 					
 					
@@ -86,7 +95,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		.error(
 				
 				function(data, status, headers, config) {
-					showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
+					console.log("[GET/DIALECT]: FAIL!"+status);
 
 		});
 	};
@@ -173,7 +182,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 							$scope.selectedDataSourceItems = [];
 						}
 					}).error(function(data, status, headers, config) {
-						console.log("[DELETE MULTIPLE]: FAIL!")
+						console.log("[DELETE MULTIPLE]: FAIL!"+status)
 					})
 			
 		} else {
@@ -228,37 +237,27 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.loadSelectedDataSource = function(item) {
 		
 		$scope.showme=true;
-		
-		if(item!=null) {
 			
-			if($scope.noDSSelected==true) {
+			if($scope.isDirty==false) {
 				
 				$scope.selectedDataSource = angular.copy(item);
-				$scope.noDSSelected = false;
 				
 			} else {
 				
-				var confirm = $mdDialog
-				.confirm()
-				.title(sbiModule_translate.load("sbi.layer.modify.progress"))
-				.content(
-						sbiModule_translate
-						.load("sbi.layer.modify.progress.message.modify"))
-						.ariaLabel('Lucky day').ok(
-								sbiModule_translate.load("sbi.general.continue")).cancel(
-										sbiModule_translate.load("sbi.general.cancel"));
+				
 
-				$mdDialog.show(confirm).then(function() {
+				$mdDialog.show($scope.confirm).then(function() {
 					
 					
 					$scope.selectedDataSource = angular.copy(item);
+					$scope.isDirty = false;
 
 
 				}, function() {
-					console.log('Cancel');
+					$scope.showMe = true;
 				});
 			}
-		}
+		
 	};
 	
 	//CLOSE RIGHT-COLUMN AND SET SELECTED DATA SORUCE TO AN EMPTY OBJECT
@@ -266,8 +265,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		$scope.showme=false;
 		$scope.selectedDataSource = angular.copy({});
 	};
-	
-	$scope.getDataSources();
 	
 	//CONFIRM DELETE
 	$scope.showActionDelete = function() {
@@ -327,6 +324,49 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		   return q;
 		   
 	};
+	
+	$scope.deleteItem = function (item) {
+		console.log(item)
+		sbiModule_restServices.delete("2.0/datasources", item.dsId).success(
 
+				function(data, status, headers, config) {
+					if (data.hasOwnProperty("errors")) {
+						console.log("[DELETE]: DATA HAS ERRORS PROPERTY!");
+					} else {
+						console.log("[DELETE]: SUCCESS!");
+						$scope.dataSourceList = [];
+						$timeout(function(){								
+							$scope.dataSourceList = data;
+						}, 500);
+						$scope.closeForm();
+						$scope.showActionDelete();
+					}
+				}).error(function(data, status, headers, config) {
+					console.log("[DELETE]: FAIL!"+status);
+				});
+	}
+	
+	//SPEED MENU TRASH ITEM
+	$scope.dsSpeedMenu= [
+	                     {
+	                    	label:'delete',
+	                    	icon:'fa fa-trash-o fa-lg',
+	                    	color:'#153E7E',
+	                    	action:function(item,event){
+	                    		
+	                    		$scope.deleteItem(item);
+	                    	}
+	                     }
+	                    ];
+
+	$scope.confirm = $mdDialog
+	.confirm()
+	.title(sbiModule_translate.load("sbi.layer.modify.progress"))
+	.content(
+			sbiModule_translate
+			.load("sbi.layer.modify.progress.message.modify"))
+			.ariaLabel('Lucky day').ok(
+					sbiModule_translate.load("sbi.general.continue")).cancel(
+							sbiModule_translate.load("sbi.general.cancel"));
 	
 };
