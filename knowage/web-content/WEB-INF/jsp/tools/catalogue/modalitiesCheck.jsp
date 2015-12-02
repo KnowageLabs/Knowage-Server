@@ -18,7 +18,7 @@
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/modalitiesCheck.js"></script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+<title>Constraints Management</title>
 </head>
 <body class="bodyStyle" ng-controller="ModalitiesCheckController as ctrl" >
 
@@ -29,18 +29,6 @@
 				<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.modalities.check.title.configurable");}}</div>
-						
-						<md-button aria-label="dellete_button"
-					       ng-disabled="SelectedConstraint.checkId==null"
-					       class="md-fab md-ExtraMini"
-					       style="position:absolute; right:26px; top:0px; background-color:#E91E63"
-					       ng-click="deleteConstraints()"> 
-					       <md-icon
-					        md-font-icon="fa fa-trash" 
-					        style=" margin-top: 6px ; color: white;" >
-					       </md-icon> 
-                       </md-button>
-						
 						<md-button aria-label="create_button"
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -67,8 +55,7 @@
 						show-search-bar=true
 						highlights-selected-item=true
 						click-function="loadConstraints(item)"
-						multi-select=true
-						selected-item ="forDelete"  
+						speed-menu-option="ccSpeedMenu"
 						
 							>					
 						 					
@@ -109,7 +96,7 @@
 		</left-col>
 		<right-col>
 		
-		<form layout-fill ng-submit="saveConstraints()"
+		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveConstraints()"
 		class="detailBody md-whiteframe-z1">
 		
 			<div ng-show="showme">
@@ -122,11 +109,12 @@
 							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
 						<md-button  type="submit"
-							aria-label="save_constraint" class="md-raised md-ExtraMini "
-							style=" margin-top: 2px;">
-							
-						{{translate.load("sbi.browser.defaultRole.save")}} </md-button>
-<!-- 						{{button_flag ? translate.load("sbi.browser.defaultRole.save") : translate.load("sbi.generic.update2")}} update button-->
+							aria-label="save_constraint" class="md-raised md-ExtraMini"
+							style=" margin-top: 2px;"
+							ng-disabled="!attributeForm.$valid"
+							>
+						{{translate.load("sbi.browser.defaultRole.save")}}
+						</md-button>
 					</div>
 				</div>
 				</md-toolbar>
@@ -136,8 +124,8 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input ng-model="SelectedConstraint.label" required 
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+							<input ng-model="SelectedConstraint.label" required
+							ng-maxlength="20"> </md-input-container>
 						</div>
 					</div>
 					
@@ -145,8 +133,8 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input ng-model="SelectedConstraint.name" required 
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+							<input ng-model="SelectedConstraint.name"  required
+						    ng-maxlength="40"> </md-input-container>
 						</div>
 					</div>
 					
@@ -154,28 +142,33 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.description")}}</label>
-							<input ng-model="SelectedConstraint.description"  
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+							<input ng-model="SelectedConstraint.description"
+					        ng-maxlength="160"> </md-input-container>
 						</div>
 					</div>
 				
 				<div layout="row" layout-wrap>
       				<div flex=100>
-				       <md-input-container class="small counter"> 
+				       <md-input-container class="small counter" > 
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
-				       <md-select  aria-label="aria-label" 
+				       <md-select  aria-label="dropdown" placeholder ="Check Type"
+				       	name ="dropdown" 
+				        required
 				        ng-model="SelectedConstraint.valueTypeCd"> <md-option 
 				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
-				       </md-select> </md-input-container>
+				       </md-select>
+				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="SelectedConstraint.valueTypeCd== null">
+				        <div ng-message="required">Check Type is required</div>
+				      </div>   
+				        </md-input-container>
 				   </div>
 			</div>
-     
      			<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{label}}</label>
 							<input ng-model="SelectedConstraint.firstValue" 
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+						    ng-maxlength="160"> </md-input-container>
 						</div>
 					</div>
 					
@@ -184,7 +177,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
 							<input ng-model="SelectedConstraint.secondValue" 
-								maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+						    ng-maxlength="160"> </md-input-container>
 						</div>
 					</div>	
 					

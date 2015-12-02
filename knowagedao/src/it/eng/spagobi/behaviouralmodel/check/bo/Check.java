@@ -7,7 +7,10 @@ package it.eng.spagobi.behaviouralmodel.check.bo;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+
+import it.eng.spagobi.services.validation.Xss;
 
 /**
  * Defines a value constraint object.
@@ -17,18 +20,34 @@ import javax.validation.constraints.NotNull;
  */
 
 public class Check implements Serializable {
+	@Xss
 	@NotNull
+	@Max(value = 11)
 	private Integer checkId;
+	@Xss
 	@NotNull
+	@Max(value = 11)
 	private Integer valueTypeId;
+	@Xss
 	@NotNull
+	@Max(value = 40)
 	private String Name;
+	@Xss
 	@NotNull
+	@Max(value = 11)
 	private String label;
+	@Xss
+	@Max(value = 160)
 	private String Description;
+	@Xss
 	@NotNull
+	@Max(value = 20)
 	private String valueTypeCd;
+	@Xss
+	@Max(value = 400)
 	private String firstValue;
+	@Xss
+	@Max(value = 400)
 	private String secondValue;
 
 	/**
