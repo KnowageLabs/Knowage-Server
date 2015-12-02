@@ -120,10 +120,12 @@ Sbi.constants.qbe = {
 	    	text: 'length'
 	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.length')
             , type: 'function'
-            , value: 'length(op1, op2, \'unit=KM\')'
-            , alias: 'length(op1, op2, \'unit=KM\')'
+            , value: 'length(op1, op2, \'unit=op3\')'
+            , alias: 'length(op1, op2, \'unit=op3\')'
             , operands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpLength')}]
-	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}]
+	    	, freeOperands: [
+	    	  {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}
+	    	 ,{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelUnit')}]
 	    }, {
 	    	text: 'difference'
 	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.diff')
@@ -139,24 +141,28 @@ Sbi.constants.qbe = {
 	    	text: 'distance'
 	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.dist')
     		, type: 'function'
-            , value: 'distance(op1, op2, op3, \'unit=KM\')'
-            , alias: 'distance(op1, op2, op3, \'unit=KM\')'
+            , value: 'distance(op1, op2, op3, \'unit=op4\')'
+            , alias: 'distance(op1, op2, op3, \'unit=op4\')'
             , operands: [
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Dist')}, 
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Dist')}
             ]
-	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}]
+	    	, freeOperands: [
+	    	  {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOpTolerance')}
+	    	 ,{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelUnit')}]
 	    }, {
 	    	text: 'dwithin'
 	    	, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.distw')
     		, type: 'function'
-            , value: 'dwithin(op1, op2, op3)'
-            , alias: 'dwithin(op1, op2, op3)'
+            , value: 'dwithin(op1, op2, \'distance=op3,unit=op4\')'
+            , alias: 'dwithin(op1, op2, \'distance=op3,unit=op4\')'
             , operands: [
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp1Distw')}, 
               {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp2Distw')}
             ]
-	    	, freeOperands: [{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp3Distw')}]
+	    	, freeOperands: [
+	    	  {label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelOp3Distw')}
+	    	 ,{label: LN('sbi.qbe.selectgridpanel.spatial.desc.labelUnit')}]
 	    }, {
 	    	text: 'relate'
     		, qtip: LN('sbi.qbe.selectgridpanel.spatial.desc.relate')
