@@ -34,8 +34,10 @@ public class SpagoBIConstants {
 	public static final String RUN_ANYWAY = "RUN_ANYWAY";
 
 	/*
-	 * public static final String ACTOR = "ACTOR"; public static final String TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
-	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR"; public static final String DEV_ACTOR = "DEV_ACTOR";
+	 * public static final String ACTOR = "ACTOR"; public static final String
+	 * TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
+	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR";
+	 * public static final String DEV_ACTOR = "DEV_ACTOR";
 	 */
 	public static final String USE_PUBLIC_USER = "SPAGOBI.SECURITY.USE_PUBLIC_USER";
 	public static final String PUBLIC_USER_ID = "public_user";
@@ -446,6 +448,7 @@ public class SpagoBIConstants {
 
 	public static final String ENABLE_DATASET_PERSISTENCE = "EnableDatasetPersistence";
 	public static final String ENABLE_FEDERATED_DATASET = "EnableFederatedDataset";
+	public static final String FEDERATED_DATASET_MANAGEMENT = "FederationDefinition";
 
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
