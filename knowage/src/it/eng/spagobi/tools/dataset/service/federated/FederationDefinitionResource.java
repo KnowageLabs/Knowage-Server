@@ -52,7 +52,7 @@ public class FederationDefinitionResource {
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
 	public Response update(FederatedDataSet fds) {
 		logger.debug("IN");
 		try {
