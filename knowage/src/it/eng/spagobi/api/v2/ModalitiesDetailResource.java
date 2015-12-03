@@ -102,8 +102,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return checksDao.loadCustomChecks();
 		} catch (Exception e) {
-			logger.error("Error while creating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while creating url of the new resource", e);
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
 		}
 	}
 
@@ -133,8 +133,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return checksDao.loadCustomChecks();
 		} catch (Exception e) {
-			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
+			logger.error("Error with loading resource" + id, e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
 
@@ -153,8 +153,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao.eraseCheck(check);
 			return checksDao.loadCustomChecks();
 		} catch (Exception e) {
-			logger.error("Error while deleting url of the new resource", e);
-			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
+			logger.error("Error with loading resource" + id, e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
 }

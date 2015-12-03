@@ -32,7 +32,9 @@
 						<md-button aria-label="create_button"
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
-							ng-click="createConstraints()" > 
+							ng-click="createConstraints()"
+							>
+							 
 							<md-icon
 								md-font-icon="fa fa-plus" 
 								style=" margin-top: 6px ; color: white;">
@@ -125,7 +127,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input ng-model="SelectedConstraint.label" required
-							ng-maxlength="20"> </md-input-container>
+							ng-maxlength="20" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>
 					
@@ -134,7 +136,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input ng-model="SelectedConstraint.name"  required
-						    ng-maxlength="40"> </md-input-container>
+						    ng-maxlength="40" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>
 					
@@ -143,7 +145,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="SelectedConstraint.description"
-					        ng-maxlength="160"> </md-input-container>
+					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>
 				
@@ -168,7 +170,7 @@
 							<md-input-container class="small counter">
 							<label>{{label}}</label>
 							<input ng-model="SelectedConstraint.firstValue" 
-						    ng-maxlength="160"> </md-input-container>
+						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>
 					
@@ -177,7 +179,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.modalities.check.details.rangeMax")}}</label>
 							<input ng-model="SelectedConstraint.secondValue" 
-						    ng-maxlength="160"> </md-input-container>
+						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>	
 					

@@ -41,9 +41,21 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		                            }
 		                         }
 		                        ];
-		$scope.setDirty=function(){
-			  $scope.dirtyForm=true;
-			 }
+		 
+		 
+		 $scope.confirm = $mdDialog
+		    .confirm()
+		    .title(sbiModule_translate.load("sbi.layer.modify.progress"))
+		    .content(
+		            sbiModule_translate
+		            .load("sbi.layer.modify.progress.message.modify"))
+		            .ariaLabel('Lucky day').ok(
+		                    sbiModule_translate.load("sbi.general.continue")).cancel(
+		                            sbiModule_translate.load("sbi.general.cancel"));
+ 
+		 
+		 
+		
 	 
 	//FUNCTIONS	
 		 
@@ -52,26 +64,61 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 				$scope.getCustom();
 				$scope.getDomainType();
 		    });
-	 
+	$scope.setDirty=function(){
+		  $scope.dirtyForm=true;
+	}
 
 	$scope.loadConstraints=function(item){  // this function is called when item is loaded on right side
-		$scope.SelectedConstraint=angular.copy(item);
-		$scope.showme=true;
-		$scope.label = "";
+		
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.SelectedConstraint=angular.copy(item);
+				$scope.showme=true;
+			    $scope.label = "";
+			           
+			   },function(){
+			    
+				$scope.showme = true;
+			   });
+			   
+			  }else{
+			 
+			  $scope.SelectedConstraint=angular.copy(item);
+			  $scope.showme=true;
+			  }
 	} 	                
 	
-	
+	$scope.cancel = function() { // on cancel button
+		$scope.SelectedConstraint={};
+		$scope.showme = false;
+		$scope.dirtyForm=false;
+		
+
+	}
 	
 	$scope.createConstraints =function(){ // this function is called when clicking on plus button
-		$scope.SelectedConstraint={};
-		$scope.showme=true;
+		
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.SelectedConstraint={};
+				$scope.showme=true;
+			    $scope.label = "";
+			           
+			   },function(){
+			    
+				$scope.showme = true;
+			   });
+			   
+			  }else{
+			 
+			$scope.SelectedConstraint={};
+			  $scope.showme=true;
+			  }
 	}
 	
-	$scope.checkRequired = function(){
-		if($scope.SelectedConstraint.label.length>0){
-			return true;
-		}
-	}
+	
 	
 	$scope.saveConstraints= function(){  // this function is called when clicking on save button
 		
@@ -87,6 +134,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.ItemList=data;
 							$scope.showActionOK("Item updated successfully");
 							$scope.showme = false;
+							$scope.dirtyForm=false;
 							
 							
 						}
@@ -107,7 +155,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 							$scope.ItemList=data;
 							$scope.showActionOK("Item created successfully");
 							$scope.showme = false;
-							
+							$scope.dirtyForm=false;
 							
 						}
 					}).error(function(data, status, headers, config) {
@@ -119,15 +167,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		}
 		
 	}
-	$scope.cancel = function() { // on cancel button
-		$scope.showme = false;
-		$scope.SelectedConstraint={};
-		
 
-	}
-	
-
-	
 	$scope.FieldsCheck = function(l){ // function that checks if field is necessary and assigns few values to main item on click
 		
 		$scope.label = l.VALUE_DS;
@@ -187,7 +227,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 				})	
 	}
 	
-	$scope.deleteConstraint = function(item){ // service that gets domain types for dropdown GET
+	$scope.deleteConstraint = function(item){ // this function is called when clicking on delete button
 		sbiModule_restServices.delete("2.0/customChecks",item.checkId).success(
 				function(data, status, headers, config) {
 					console.log(data);
