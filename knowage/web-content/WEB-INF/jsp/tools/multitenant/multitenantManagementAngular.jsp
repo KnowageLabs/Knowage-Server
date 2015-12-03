@@ -106,7 +106,7 @@
 							 		<angular-table 
 										id="datasource" ng-model="datasources" 
 										columns='["LABEL","DESCRIPTION","checkbox"]'
-										columns-search='["NAME"]'
+										columns-search='["LABEL"]'
 										highlights-selected-item = "true"
 										show-search-bar="true"
 										no-pagination="true"

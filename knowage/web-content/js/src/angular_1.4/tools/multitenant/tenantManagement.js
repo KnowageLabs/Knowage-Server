@@ -166,7 +166,7 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		newTenant.DS_LIST= [];
 		for ( var i =0;i<$scope.datasources.length;i++){
 			if ($scope.datasources[i].CHECKED == true){
-				newTenant.DS_LIST.push({ "ID" : ""+$scope.datasources[i].ID, "NAME" : ""+$scope.datasources[i].NAME, "DESCRIPTION" : ""+$scope.datasources[i].DESCRIPTION });
+				newTenant.DS_LIST.push({ "ID" : ""+$scope.datasources[i].ID, "LABEL" : ""+$scope.datasources[i].LABEL, "DESCRIPTION" : ""+$scope.datasources[i].DESCRIPTION });
 			}
 		}
 		$scope.newTenant = newTenant;
