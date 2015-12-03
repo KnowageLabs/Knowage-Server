@@ -36,7 +36,8 @@ Ext.define('Sbi.adhocreporting.AdhocreportingTabsPanel', {
 				, useCockpitEngine: (config.adhocreportingContainer.cockpitEngineBaseUrl != 'null')?true:false
 				, useWSEngine: ((config.adhocreportingContainer.worksheetEngineBaseUrl != 'null') && Sbi.settings.mydata.isWorksheetEnabled)?true:false
 				, useQbeEngine: (config.adhocreportingContainer.qbeFromDataSetBaseUrl != 'null')?true:false
-				, useGeoEngine: (config.adhocreportingContainer.georeportEngineBaseUrl != 'null')?true:false
+				, useGeoEngine: (config.adhocreportingContainer.georeportEngineBaseUrl != 'null' &&
+								 Sbi.settings.myanalysis.showMapFilter)?true:false
 		};
 		
 		this.myAnalysisBrowser = Ext.create('Sbi.adhocreporting.MyAnalysisBrowser',myAnalysisBrowserConf);
