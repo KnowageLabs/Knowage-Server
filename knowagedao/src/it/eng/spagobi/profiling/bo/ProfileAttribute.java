@@ -8,7 +8,7 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 
 public class ProfileAttribute implements Serializable {
-
+	@NotNull
 	private Integer attributeId;
 	@NotNull
 	@Xss

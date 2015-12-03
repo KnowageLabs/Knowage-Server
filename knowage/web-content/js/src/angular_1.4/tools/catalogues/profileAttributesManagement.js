@@ -15,6 +15,10 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	$scope.attributeList=[];
 	$scope.tempObj = [];
 	
+	angular.element(document).ready(function () {
+        $scope.getProfileAttributes();
+    });
+	
 	
 	$scope.setDirty=function(){
 		$scope.dirtyForm=true;
@@ -33,11 +37,30 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 		
 	}
 	
-	$scope.getProfileAttributes();
+	
+
+	
 	
 	$scope.createProfileAttribute=function(){
-		$scope.showMe=true;
-		$scope.selectedAttribute={};
+		
+		if($scope.dirtyForm){
+			$mdDialog.show($scope.confirm).then(function(){
+				
+     		    $scope.dirtyForm=false;
+     		   $scope.selectedAttribute={};
+				$scope.showMe=true;
+     		    
+			},function(){
+				
+				$scope.showMe=true;
+			});
+			
+		}else{
+	
+			$scope.showMe=true;
+			$scope.selectedAttribute={};
+		}
+		
 	}
 	
 	$scope.saveProfileAttribute=function(){
@@ -75,7 +98,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	
 	$scope.showActionOK = function() {
 		var toast = $mdToast.simple()
-		.content('Opperation completed successfully')
+		.content(sbiModule_translate.load("sbi.attributes.ok.msg"))
 		.action('OK')
 		.highlightAction(false)
 		.hideDelay(3000)
@@ -100,7 +123,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 				$scope.showMe=true;
      		    
 			},function(){
-				$scope.dirtyForm=false;
+				
 				$scope.showMe=true;
 			});
 			
@@ -117,14 +140,18 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 		$scope.dirtyForm=false;
 	}
 	
-	$scope.deleteItem=function(){
+	$scope.deleteItem=function(item){
 		
-		sbiModule_restServices.delete('2.0/attributes',$scope.selectedAttribute.attributeId).success(
+		sbiModule_restServices.delete('2.0/attributes',item.attributeId).success(
 				function(data, status, headers, config){
 					
 					$scope.showActionOK();
 					$scope.attributeList=[];
-					$scope.getProfileAttributes();
+					$timeout(function(){								
+						$scope.getProfileAttributes();
+					}, 1000);
+					$scope.selectedAttribute={};
+					$scope.showMe=false;
 				}).error(function(data,status,headers,config){
 					
 				})
@@ -160,7 +187,7 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	               {
 	            	  label:'delete',
 	            	  action:function(item,event){
-	            		  $scope.deleteItem(item,event);
+	            		  console.log(item);
 	            	  }
 	               }
 	               ];
@@ -168,22 +195,24 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	$scope.paSpeedMenu= [
 	                     {
 	                    	label:'delete',
-	                    	icon:'fa fa-minus',
-	                    	backgroundColor:'red',
-	                    	color:'white',
+	                    	icon:'fa fa-trash-o fa-lg',
+	                    	color:'#153E7E',
 	                    	action:function(item,event){
-	                    		$scope.deleteItem(item,event);
+	                    		
+	                    		$scope.deleteItem(item);
 	                    	}
 	                     }
 	                    ];
+	
 	 $scope.confirm = $mdDialog
 	.confirm()
-	.title("Warrning")
+	.title(sbiModule_translate.load("sbi.layer.modify.progress"))
 	.content(
-			"Form has been modified. Continue without saving")
-			.ariaLabel('Lucky day').cancel(
-						   "CANCEL").ok(
-							"CONTINUE");
+			sbiModule_translate
+			.load("sbi.layer.modify.progress.message.modify"))
+			.ariaLabel('Lucky day').ok(
+					sbiModule_translate.load("sbi.general.continue")).cancel(
+							sbiModule_translate.load("sbi.general.cancel"));
 	
 	
 }

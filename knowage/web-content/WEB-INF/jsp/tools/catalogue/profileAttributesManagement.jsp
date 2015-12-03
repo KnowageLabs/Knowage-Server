@@ -29,17 +29,8 @@
 			<div class="leftBox">
 				<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.profileattributes.title");}}</div>
-						<md-button 
-						 ng-disabled="tempObj.length==0"
-       					 class="md-fab md-ExtraMini"
-      					 style="position:absolute; right:26px; top:0px; background-color:#E91E63"
-      				     ng-click="deleteAttributes()"> 
-       <md-icon
-        md-font-icon="fa fa-trash" 
-        style=" margin-top: 6px ; color: white;" >
-       </md-icon> 
-      </md-button>
+						<div>{{translate.load("sbi.attributes.title");}}</div>
+                       
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -56,13 +47,17 @@
 						layout-fill
 						id="profileAttributesList"
 						ng-model="attributeList"
-						columns='["attributeName","attributeDescription"]'
+						columns='[
+						         {"label":"Name","name":"attributeName"},
+						         {"label":"Description","name":"attributeDescription"}
+						         ]'
 						columns-search='["attributeName","attributeDescription"]'
 						show-search-bar=true
 						highlights-selected-item=true
-						selected-item="tempObj"
+						speed-menu-option="paSpeedMenu"
+						
 						click-function="loadAttribute(item)"
-						multi-select=true					
+										
 					>						
 					</angular-table>
 				</md-content>
@@ -73,7 +68,7 @@
 				<div ng-show="showMe">
 					<md-toolbar class="md-blue minihead">
 						<div class="md-toolbar-tools h100">
-							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.profileattributes.title");}}</div>
+							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.attributes.title");}}</div>
 							<div style="position: absolute; right: 0px" class="h100">
 								
 								<md-button type="submit"
@@ -81,18 +76,11 @@
 								style=" margin-top: 2px;"
 								ng-disabled="!attributeForm.$valid"
 								>
-								{{translate.load("sbi.browser.defaultRole.save");}} </md-button>
-								<md-button 
-								type="button"
-								aria-label="delete atrribute" class="md-raised md-ExtraMini"
-								ng-click="deleteItem()"
-								style=" margin-top: 2px;"
-								ng-disabled="!selectedAttribute.attributeId"
-								>
-								DELETE</md-button>
+								{{translate.load("sbi.attributes.update");}} </md-button>
+
 								<md-button type="button" tabindex="-1" aria-label="cancel"
 								class="md-raised md-ExtraMini" style=" margin-top: 2px;"
-								ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
+								ng-click="cancel()">{{translate.load("sbi.generic.cancel");}}
 								</md-button>
 								
 							</div>
@@ -102,17 +90,17 @@
 						<div layout="row" layout-wrap>
       						<div flex=100>
        							<md-input-container class="small counter">
-       								<label>{{translate.load("sbi.ds.name")}}</label>
+       								<label>{{translate.load("sbi.attributes.headerName")}}</label>
        								<input ng-model="selectedAttribute.attributeName" required
-        							ng-change="setDirty()" maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+        							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container>
       						</div>
     					</div>
     					<div layout="row" layout-wrap>
       						<div flex=100>
        							<md-input-container class="small counter">
-       								<label>{{translate.load("sbi.ds.description")}}</label>
+       								<label>{{translate.load("sbi.attributes.headerDescr")}}</label>
        								<input ng-model="selectedAttribute.attributeDescription"
-        							ng-change="setDirty()" maxlength="100" ng-maxlength="100" md-maxlength="100"> </md-input-container>
+        							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container>
       						</div>
     					</div>			
 					</md-content>
