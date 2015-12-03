@@ -93,9 +93,13 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 
 			var buttonShowQbe ='<li class="qbe"><a id="showQbe" href="#" title="Show Qbe"></a></li>';
 			var buttonEditFederated = '<li class="editFederated"><a id="editFederated" href="#" title="Edit federated"></a></li>';
+			var buttonDeleteFederated = '<li class="deleteFederated"><a id="deleteFederated" href="#" title="Delete federated"></a></li>';
 			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
 			
 			this.tpl = new Ext.XTemplate(
+					'<button href=',
+					Sbi.config.contextName,
+					'"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp">CREATE</button>',
 					'<div id="list-container" class="main-datasets-list">', 	            
 		 	            	'<tpl if="root.length == 0">',
 		 	            		'<div id="empty-group-message">',
@@ -113,6 +117,7 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 									            '    <ul class="box-actions">',	    
 									    		buttonShowQbe,
 									    		buttonEditFederated,
+									    		buttonDeleteFederated,
 									    		'    </ul>',
 												'</div>',
 											'</div>',										
@@ -147,5 +152,26 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 				else {
 						this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
 				}
+				
+				if(e.target.id == 'deleteFederated')
+				{
+					var id = record.data.id;
+					
+					Ext.Ajax.request
+					(
+						{ 
+							url: Sbi.config.contextName+"/restful-services/2.0/federateddataset/"+id, 
+							method: 'DELETE', 
+							headers: { 'Content-Type': 'application/json' }, 
+							
+						}
+					);
+										
+					/*var urlToCall =  Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";
+					window.location.href = urlToCall;*/
+				}
+				else {
+					this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
+			}
 	    }
 	});

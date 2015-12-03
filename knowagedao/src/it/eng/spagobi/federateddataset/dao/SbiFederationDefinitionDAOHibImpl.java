@@ -37,7 +37,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	/**
 	 * Saves the FederationDefinition. If already exist returns that one
-	 * 
+	 *
 	 * @param dataset
 	 */
 	@Override
@@ -46,8 +46,9 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 	}
 
 	/**
-	 * Saves the FederationDefinition. If already exist one with same label thrown an exception
-	 * 
+	 * Saves the FederationDefinition. If already exist one with same label
+	 * thrown an exception
+	 *
 	 * @param dataset
 	 */
 	@Override
@@ -138,7 +139,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			hibQuery.setInteger(0, id);
 			SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
 
-			toReturn = SbiFederationUtils.toDatasetFederationWithDataset(sbiResult,	loadDatasetsUsedByFederation(sbiResult.getFederation_id(), aSession));
+			toReturn = SbiFederationUtils.toDatasetFederationWithDataset(sbiResult, loadDatasetsUsedByFederation(sbiResult.getFederation_id(), aSession));
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -235,7 +236,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	/**
 	 * Counts number of BIObj associated.
-	 * 
+	 *
 	 * @param dsId
 	 *            the ds id
 	 * @return Integer, number of BIObj associated
@@ -297,7 +298,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	/**
 	 * Loads the datsets linked to a federation
-	 * 
+	 *
 	 * @param federationID
 	 * @param currSession
 	 * @param profile
@@ -367,6 +368,33 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		logger.debug("Loaded " + dataSets.size() + " dataset for federation " + federationID);
 		logger.debug("OUT");
 		return dataSets;
+	}
+
+	@Override
+	public void deleteFederatedDatasetById(Integer id) throws EMFUserError {
+
+		logger.debug("IN");
+
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiFederationDefinition federationToDelete = (SbiFederationDefinition) aSession.load(SbiFederationDefinition.class, id);
+			aSession.delete(federationToDelete);
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
 	}
 
 }
