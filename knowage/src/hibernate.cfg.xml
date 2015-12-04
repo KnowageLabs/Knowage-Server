@@ -26,9 +26,9 @@
         <property name="hibernate.cache.use_query_cache">false</property>
 		<!-- <property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>  -->
         
- <property name="hibernate.show_sql">true</property>
+ 
         <!--
-       
+        <property name="hibernate.show_sql">true</property>
 		<property name="hibernate.cache.use_minimal_puts">true</property>                
         <property name="hibernate.generate_statistics">true</property>       
         <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
