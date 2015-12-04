@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ROLE_TYPE_USER_FUNCTIONALITIES>
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="CommunityManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ConstraintManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY

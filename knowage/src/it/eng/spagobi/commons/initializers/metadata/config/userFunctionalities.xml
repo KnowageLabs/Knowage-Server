@@ -167,4 +167,5 @@
 	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageFake" name="FederationDefinition" description="FederationDefinition" />
+	<USER_FUNCTIONALITY productType="KnowageFake" name="CommunityManagement" description="CommunityManagement" />
 </USER_FUNCTIONALITIES>
