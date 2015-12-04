@@ -92,7 +92,12 @@
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.attributes.headerName")}}</label>
        								<input ng-model="selectedAttribute.attributeName" required
-        							ng-change="setDirty()"  ng-maxlength="100"> </md-input-container>
+        							ng-change="setDirty()"  ng-maxlength="100">
+        							
+        							<div ng-messages="attributeForm.Name.$error" ng-show="!selectedAttribute.attributeName">
+          <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+        </div>
+        							 </md-input-container>
       						</div>
     					</div>
     					<div layout="row" layout-wrap>

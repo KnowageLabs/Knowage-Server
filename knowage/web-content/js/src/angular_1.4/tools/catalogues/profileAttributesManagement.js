@@ -206,13 +206,13 @@ function profileAttributesManagementFunction(sbiModule_translate,sbiModule_restS
 	
 	 $scope.confirm = $mdDialog
 	.confirm()
-	.title(sbiModule_translate.load("sbi.layer.modify.progress"))
+	.title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
 	.content(
 			sbiModule_translate
-			.load("sbi.layer.modify.progress.message.modify"))
+			.load("sbi.catalogues.generic.modify.msg"))
 			.ariaLabel('Lucky day').ok(
-					sbiModule_translate.load("sbi.general.continue")).cancel(
-							sbiModule_translate.load("sbi.general.cancel"));
+					sbiModule_translate.load("sbi.general.yes")).cancel(
+							sbiModule_translate.load("sbi.general.No"));
 	
 	
 }
