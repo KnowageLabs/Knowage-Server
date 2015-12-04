@@ -121,8 +121,8 @@ author:...
 						</md-button>
 					</md-content>
 				
-					<md-content>
-						<md-tabs class="mini-tabs" md-selected="idx_output" layout="column"> 
+					<md-content layout="column" layout-align="start stretch">
+						<md-tabs class="mini-tabs" md-selected="idx_output"> 
 							<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}">
 								<md-content layout="column" layout-padding>
 									<md-content>
