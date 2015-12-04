@@ -674,6 +674,7 @@
 
 				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
 				
+				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />		
 				
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
@@ -720,8 +721,6 @@
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantModel.js" />
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js" />
-				
-				<file name="./src/ext4/sbi/tools/dataset/FileDatasetPanel.js" />
 				
 				<file name="./src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js" />
 				<file name="./src/ext4/sbi/tools/dataset/ValidateDataset.js" />
