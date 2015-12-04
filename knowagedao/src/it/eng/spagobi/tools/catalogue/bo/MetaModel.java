@@ -5,20 +5,36 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.catalogue.bo;
 
-public class MetaModel {
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 
+import it.eng.spagobi.services.validation.Xss;
+
+public class MetaModel {
+	@Xss
+	@NotNull
+	@Max(value = 11)
 	private Integer id;
 
+	@Xss
+	@NotNull
+	@Max(value = 100)
 	private String name;
 
+	@Xss
+	@Max(value = 500)
 	private String description;
 
+	@Xss
 	private Integer category;
 
+	@Xss
 	private String dataSourceLabel;
 
 	private Boolean modelLocked;
 
+	@Xss
+	@Max(value = 100)
 	private String modelLocker;
 
 	public Integer getId() {

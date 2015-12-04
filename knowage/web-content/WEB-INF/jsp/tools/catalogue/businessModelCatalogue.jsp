@@ -32,7 +32,7 @@
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.tools.catalogue.metaModelsCatalogue");}}</div>
 						
-						<md-button 
+						<!--<md-button 
     						ng-disabled=false
     						class="md-fab md-ExtraMini"
     						style="position:absolute; right:26px; top:0px; background-color:#E91E63"
@@ -42,7 +42,7 @@
         						md-font-icon="fa fa-trash" 
         						style=" margin-top: 6px ; color: white;" >
        						</md-icon> 
-						</md-button>
+						</md-button>-->
 						
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
@@ -66,9 +66,8 @@
 						show-search-bar=true
 						highlights-selected-item=true
 						click-function ="leftTableClick(item)"
-						multi-select=true
 						selected-item="selectedBusinessModels"
-												
+						speed-menu-option="bmSpeedMenu"					
 					>						
 					</angular-table>
 
@@ -108,7 +107,7 @@
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.ds.name")}}</label>
        								<input ng-model="selectedBusinessModel.name" required
-        								maxlength="100" ng-maxlength="100" md-maxlength="100"> 
+        								 ng-maxlength="100"> 
         						</md-input-container>
       						</div>
      					</div>
@@ -118,7 +117,7 @@
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.ds.description")}}</label>
        								<input ng-model="selectedBusinessModel.description"
-        								maxlength="100" ng-maxlength="100" md-maxlength="100"> 
+        								ng-maxlength="100"> 
         						</md-input-container>
       						</div>
      					</div>
@@ -153,8 +152,8 @@
       						</div>
       						
       						<md-input-container class="small counter"> 
-       							<input id="mondarianSchemaFile" ng-model="selectedmondarianSchema.mondarianSchemaFile" type="file"
-       									fileread="selectedmondarianSchema.mondarianSchemaFile" accept=""/> 
+       							<input id="businessModelFile" ng-model="businessModelFile" type="file"
+       									fileread="businessModelFile" accept=""/> 
       						</md-input-container>
       					</div>
      					     					
@@ -196,17 +195,17 @@
      					<div style="height:40%; padding-top:20px">
      						<md-content flex style="background-color: rgb(236, 236, 236); height:95%; overflow:hidden;" >
      							<md-toolbar class="md-blue minihead md-toolbar-tools">
-     								<md-button 
+     								<!-- <md-button 
     									ng-disabled=false
     									class="md-fab md-ExtraMini"
     									style="position:absolute; right:26px; top:0px; background-color:#E91E63"
-    									ng-click="deleteBusinessModelVersions()"> 
+    									ng-click="deleteBusinessModelVersions()">
     						
     									<md-icon
         									md-font-icon="fa fa-trash" 
         									style=" margin-top: 6px ; color: white;" >
        									</md-icon> 
-									</md-button>
+									</md-button>  -->
      								{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}
      							</md-toolbar>
      							
@@ -222,10 +221,10 @@
 										]'
 									columns-search='["creationUser","creationDate"]'
 									show-search-bar=false
-									speed-menu-option="bmSpeedMenu2"
 									selected-item="selectedVersions"
 									highlights-selected-item=true
-									multi-select=true										
+									selected-item="bmVersions"
+									speed-menu-option="bmSpeedMenu2"										
 								>						
 								</angular-table>
      						</md-content>
