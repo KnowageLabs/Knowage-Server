@@ -41,7 +41,7 @@ public class ConnectionValidator extends AbstractGraphValidator {
 		 */
 		for (IModelEntity iModelEntity : unjoinedEntities) {
 			for (IModelField iModelField : iModelEntity.getAllFields()) {
-				if(iModelField.getType().toLowerCase().indexOf("geometry")!=-1)
+				if(iModelEntity!=null && iModelField.getType()!=null && iModelField.getType().toLowerCase().indexOf("geometry")!=-1)
 					return true;
 			}
 		}
