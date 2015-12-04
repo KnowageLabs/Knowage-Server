@@ -3,17 +3,44 @@ var geoM=angular.module('geoModule');
 geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem,$map){
 	var tmtz=this;
 	var cacheProportionalSymbolMinMax={};
+	var cacheDatasetValue={};
+	this.legendItem={choroplet:[]};
 
-
+	function checkForDatasetValueOfIndicator(){
+		//if the values of the selected indicator are not present in the cache , load them
+		var indicator=geoModule_template.selectedIndicator.name;
+		if(!cacheDatasetValue.hasOwnProperty(indicator)){
+			cacheDatasetValue[indicator]={};
+			for(var i=0;i<geoModule_dataset.rows.length;i++){
+				if(!cacheDatasetValue[indicator].hasOwnProperty(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])){
+					cacheDatasetValue[indicator][geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]]={value:geoModule_dataset.rows[i][indicator],row:i};
+				}else{
+					console.info("Multi item for dataset join column ",geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name],geModule_datasetJoinColumnsItem.header,geoModule_dataset.rows[i][indicator]);
+				}
+				
+				
+			}
+		}
+	}
 	this.getStyle = function(feature, resolution) {
 		//if no indicator has been selected
 		if(geoModule_template.selectedIndicator==undefined){
 			return null;
 		}
-
+		checkForDatasetValueOfIndicator();
+		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
+		var dsItem=cacheDatasetValue[geoModule_template.selectedIndicator.name][layerCol];
+		console.log(layerCol,geoModule_template.selectedIndicator.header,dsItem.value);
+		//continue only if this features in not filtered
+		for(var key in geoModule_template.selectedFilters){
+			if(geoModule_template.selectedFilters[key]!="-1" &&  geoModule_template.selectedFilters[key].length!=0 && geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[dsItem.row][key])==-1){
+				console.log("filtrato");
+				return null;
+			}
+		}
 		var dsValue;
 		var multiDsValue = {};
-		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
+	
 
 		if(geoModule_template.analysisType=="chart"){
 			for(var j=0;j<geoModule_template.selectedMultiIndicator.length;j++){
@@ -38,20 +65,9 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 			}
 		} else{
-			for(var i=0;i<geoModule_dataset.rows.length;i++){
-				if(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]==layerCol){
-					dsValue=geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name];
-					//search if there is a filter enabled
-					for(var key in geoModule_template.selectedFilters){
-						if(geoModule_template.selectedFilters[key]!="-1" &&  geoModule_template.selectedFilters[key].length!=0 && geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
-							console.log("filtrato");
-							return null;
-						}
-					}
-					break;
-				}
-			}
+			dsValue= dsItem.value;
 		}
+		
 		if(geoModule_template.analysisType=="choropleth"){
 			return tmtz.choropleth(dsValue);
 		}else if(geoModule_template.analysisType=="proportionalSymbol"){
@@ -62,15 +78,15 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	}
 
 	function getChoroplethColor(val){
-		var legend=[{start:0,end:100,color:"#8CF703"},{start:100,end:1000,color:"#F1F703"},{start:1000,end:10000,color:"#F7AE03"},{start:10000,end:100000,color:"#F70303"}];
+//		var legend=[{start:0,end:100,color:"#8CF703"},{start:100,end:1000,color:"#F1F703"},{start:1000,end:10000,color:"#F7AE03"},{start:10000,end:100000,color:"#F70303"}];
 		var color;
-		for(var i=0;i<legend.length;i++){
-			if(val>=legend[i].start && val<legend[i].end){
-				color=legend[i].color;
+		for(var i=0;i<tmtz.legendItem.choroplet.length;i++){
+			if(val>=tmtz.legendItem.choroplet[i].from && val<tmtz.legendItem.choroplet[i].to){
+				color=tmtz.legendItem.choroplet[i].color;
 				break;
 			}
 		}
-		if(color==undefined){color=legend[legend-1].color;}
+		if(color==undefined){color=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].color;}
 		return color;
 	}
 	
@@ -473,11 +489,63 @@ this.getWMSSlBody=function(layer){
 				addedItem.push(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
 			}
 		}	
+	}
+	
+	
+	this.updateLegend=function(type){
+		if(!geoModule_template.selectedIndicator.hasOwnProperty("name")){
+			return;
+		}
+		if(type==undefined){
+			type=geoModule_template.analysisType;
+		}
 		
+		if(type=='choropleth'){
+			if(!cacheProportionalSymbolMinMax.hasOwnProperty(geoModule_template.selectedIndicator.name)){
+				tmtz.loadIndicatorMaxMinVal(geoModule_template.selectedIndicator.name);
+			}
+			
+			
+			
+			var grad = tinygradient([geoModule_template.analysisConf.choropleth.fromColor, geoModule_template.analysisConf.choropleth.toColor]);
+			var gradienti= grad.rgb(geoModule_template.analysisConf.choropleth.classes);
+			tmtz.legendItem.choroplet.length=0;
+			for(var i=0;i<gradienti.length;i++){
+				var  tmpGrad={};
+				tmpGrad.color=gradienti[i].toRgbString();
+				tmtz.legendItem.choroplet.push(tmpGrad);
+			}
+			
+			if(geoModule_template.analysisConf.choropleth.method=="CLASSIFY_BY_EQUAL_INTERVALS"){
+				var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
+				var maxValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].maxValue;
+				var split=(maxValue-minValue)/(geoModule_template.analysisConf.choropleth.classes);
+				for(var i=0;i<geoModule_template.analysisConf.choropleth.classes;i++){
+					tmtz.legendItem.choroplet[i].from=(minValue+(split*i)).toFixed(2);
+					tmtz.legendItem.choroplet[i].to=(minValue+(split*(i+1))).toFixed(2);
+				}
+			}else{
+				//classify by quantils
+				var selectedIndicatorValue=cacheDatasetValue[geoModule_template.selectedIndicator.name]
+				var values=[];
+				for(var key in selectedIndicatorValue){
+					if(values.indexOf(selectedIndicatorValue[key].value)==-1){
+						values.push(selectedIndicatorValue[key].value)
+					}
+				}
+				values.sort();
+				
+				var intervals=values.length<geoModule_template.analysisConf.choropleth.classes ?values.length : geoModule_template.analysisConf.choropleth.classes ;
+				var binSize = Math.round(values.length  / intervals);
+				var k=0;
+				for(var i=0;i<values.length;i+=binSize){
+					tmtz.legendItem.choroplet[k].from=values[i];
+					tmtz.legendItem.choroplet[k].to=values[i+binSize]||values[values.length-1];
+					k++;
+				}
+			}
+			
 		
-		
-//		return '  <StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>LayerStyle</Title><FeatureTypeStyle><Rule><ogc:Filter><ogc:PropertyIsEqualTo><ogc:PropertyName>STATE_ABBR</ogc:PropertyName><ogc:Literal>CA</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter><PolygonSymbolizer><Fill><CssParameter name="fill">#009933</CssParameter><CssParameter name="fill-opacity">0.5</CssParameter></Fill><Stroke><CssParameter name="stroke">#009933</CssParameter><CssParameter name="stroke-width">2</CssParameter></Stroke></PolygonSymbolizer><PointSymbolizer><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#FF0000</CssParameter></Fill></Mark><Size>60</Size></Graphic></PointSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>';
-//		return ' <StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld StyledLayerDescriptor.xsd"><NamedLayer><Name>topp:states</Name><UserStyle><Title>LayerStyle</Title><FeatureTypeStyle><Rule><ogc:Filter><ogc:PropertyIsEqualTo><ogc:PropertyName>STATE_ABBR</ogc:PropertyName><ogc:Literal>CA</ogc:Literal></ogc:PropertyIsEqualTo></ogc:Filter><PolygonSymbolizer><Stroke><CssParameter name="stroke">#000000</CssParameter><CssParameter name="stroke-width">1</CssParameter></Stroke></PolygonSymbolizer><PointSymbolizer><Geometry><ogc:Function name="centroid"><ogc:PropertyName>the_geom</ogc:PropertyName></ogc:Function></Geometry><Graphic><Mark><WellKnownName>circle</WellKnownName><Fill><CssParameter name="fill">#FF0000</CssParameter></Fill></Mark><Size>60</Size></Graphic></PointSymbolizer></Rule></FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>';
-
+		}
 	}
 });

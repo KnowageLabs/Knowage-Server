@@ -30,9 +30,15 @@
 <!-- angular table -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>
 
-<!-- angular-foundation-colorpicker -->
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-foundation-colorpicker/foundation-colorpicker-module.js"></script>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-foundation-colorpicker/colorpicker.css">
+<!-- colorpicker -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.min.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+
+
 	
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>

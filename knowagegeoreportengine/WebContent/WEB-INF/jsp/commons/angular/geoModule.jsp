@@ -51,6 +51,18 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     if(!t.hasOwnProperty("currentView")){
     	t.currentView={center:[0, 0], zoom: 2 };
     }
+    
+    if(!t.hasOwnProperty("analysisConf")){
+    	t.analysisConf={};
+    }
+    
+    if(!t.analysisConf.hasOwnProperty("choropleth")){
+    	t.analysisConf.choropleth={"method":"CLASSIFY_BY_EQUAL_INTERVALS","classes":3,"fromColor":"#FFFF00","toColor":"#008000"};
+    }
+    
+    if(!t.analysisConf.hasOwnProperty("proportionalSymbol")){
+    	t.analysisConf.proportionalSymbol={"minRadiusSize":2,"maxRadiusSize":20,color:"#FFFF00"};
+    }
 
     return t;
 });

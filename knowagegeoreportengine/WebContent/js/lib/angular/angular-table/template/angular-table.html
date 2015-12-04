@@ -48,7 +48,7 @@
 		<span ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'" dynamichtml="row[column.name]" ></span>
 		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,row[column.name],$event)" aria-label="selected item checked"> </md-checkbox>
 		
-		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length==1"  ng-click='speedMenuOption[0].action(item,$event); $event.stopPropagation();' class="md-icon-button actionButton" aria-label="More" 
+		<md-button ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length==1"  ng-click='$event.stopPropagation();speedMenuOption[0].action(row,$event); ' class="md-icon-button actionButton" aria-label="More" 
 		action-background-color={{speedMenuOption[0].backgroundColor}}>
  			<md-tooltip md-direction="top">{{speedMenuOption[0].label}}</md-tooltip>	
        	 <md-icon md-font-icon="{{speedMenuOption[0].icon}}" aria-label="{{speedMenuOption[0].label}}" action-color={{speedMenuOption[0].color}}></md-icon>
@@ -62,7 +62,7 @@
 		        </md-fab-trigger>
 		        <md-fab-actions>
 		          <div class="md-fab-action-item" ng-repeat=" menuItem in speedMenuOption" >
-				        <md-button ng-click='menuItem.action(item,$event);$event.stopPropagation();' aria-label="{{menuItem.label}}" class="md-fab md-raised actionButton" action-background-color={{menuItem.backgroundColor}}>
+				        <md-button ng-click='$event.stopPropagation();menuItem.action(row,$event);' aria-label="{{menuItem.label}}" class="md-fab md-raised actionButton" action-background-color={{menuItem.backgroundColor}}>
 							 <md-tooltip md-direction="top">{{menuItem.label}}</md-tooltip>										           
 							 <md-icon action-color={{menuItem.color}}" md-font-icon="{{menuItem.icon}}" aria-label="{{menuItem.label}}" ></md-icon>
 				         </md-button>

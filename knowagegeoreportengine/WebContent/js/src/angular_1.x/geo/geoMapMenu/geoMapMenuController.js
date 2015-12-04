@@ -41,6 +41,12 @@ function geoMapMenuControllerFunction(
 	                             {label:"Cross navigation", type:"cross"},	                           
 	                             ];
 	
+	$scope.choroplethMethodTypeList = [
+	                           {label:"Qantils",value:"CLASSIFY_BY_QUANTILS"},
+	                           {label:"Equals intervals ",value:"CLASSIFY_BY_EQUAL_INTERVALS"}
+	                           ];
+	
+	
 	$scope.selectFilterType = 'box';
 	$scope.filterTypes = [
 	                      {label: "Box Selection", type:"box"},	
@@ -72,7 +78,6 @@ function geoMapMenuControllerFunction(
 //	}
 
 	$scope.updateMap = function(){
-		console.log("updateMap",geoModule_template)
 		$timeout(function() {
 			geoModule_layerServices.updateTemplateLayer();
 		}, 0);
@@ -138,5 +143,6 @@ function geoMapMenuControllerFunction(
 		}
 
 		return -1;
-	};    
-}
+	};   
+};
+

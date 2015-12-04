@@ -28,6 +28,8 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 	$scope.openLayersMenu=false;
 	$scope.baseLayers=baseLayer;
 	
+	
+	
 	$scope.loadLayerFromTemplate=function(){
 		//if geoModule_template has baseLayersConf, add them to layerlist
 		if(geoModule_template.hasOwnProperty("baseLayersConf") && geoModule_template.baseLayersConf.length!=0 ){
@@ -162,7 +164,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdSidenav,$md
 		});
 	};
 
-	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template) {	    	
+	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template) {	
 		$scope.layerCatalogueList=[];
 		$scope.selectedLayerList=[];
 	  	$scope.columnList=["layerLabel","type","layerURL","baseLayer"];

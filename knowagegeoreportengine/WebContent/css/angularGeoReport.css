@@ -52,7 +52,7 @@ geo-distance-calculator {
 	min-width: 300px;
 }
 
-#geoRigthMenu  .md-sidenav-right md-content.contentStyle md-tabs {
+#geoRigthMenu  .md-sidenav-right>md-content.contentStyle>md-tabs {
 	height: 100%;
 }
 
@@ -97,14 +97,15 @@ geo-distance-calculator {
 	margin: 0px 4px 11px 16px;
 }
 
-.itemboxGU md-content {
+.itemboxGU>md-content {
 	border: 1px solid rgb(63, 81, 181);
 }
 
 geo-legend .legendBox .colorbox {
 	height: 18px;
-	width: 18px;
-	border-radius: 50%;
+    width: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    margin: 1px;
 }
 
 geo-legend .legendBox {
@@ -123,24 +124,7 @@ geo-legend  .legendBox:before {
 	left: 23px;
 }
 
-geo-legend  .changeStyleButton {
-	position: absolute;
-	/* top: -8px; */
-	z-index: 21 !important;
-	width: 20px !important;
-	height: 20px !important;
-	min-height: 20px;
-	margin: 0;
-	/* right: -8px; */
-	background-color: green !important;
-	left: 3px;
-	bottom: 28px;
-}
 
-geo-legend  .changeStyleButton md-icon {
-	line-height: 20px;
-	margin-left: -2px;
-}
 
 geo-distance-calculator .clearMeasure {
 	position: absolute;
@@ -312,3 +296,10 @@ geo-cross-nav-multiselect .itemboxGU .md-toolbar-tools {
 	height: 40px;
 	*/
 }
+
+
+
+[md-color-picker] .md-color-picker-input-container .md-color-picker-clear {
+	display:none;
+}
+	

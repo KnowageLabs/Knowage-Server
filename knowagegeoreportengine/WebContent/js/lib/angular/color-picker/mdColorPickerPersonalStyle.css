@@ -1,0 +1,13 @@
+.md-color-picker-container .md-color-picker-tabs md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+    min-height: 248px;
+}
+
+.md-color-picker-sliders>div{
+	width: 100%;
+}
+
+.md-color-picker-container .md-color-picker-history button {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}

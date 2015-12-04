@@ -62,7 +62,7 @@ geoM.service('geoReportCompatibility',function($map){
  * Set of method to manage 
  * 
  * */
-geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices){
+geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$map,sbiModule_config,sbiModule_restServices,$q,sbiModule_logger,geoModule_template,geoModule_indicators,geoModule_filters,geoModule_dataset,geModule_datasetJoinColumnsItem,geoModule_layerServices){
 	var gru=this;
 	this.osm_getTileURL= function(bounds) {
 		var res = $map.getResolution();
@@ -181,7 +181,10 @@ geoM.service('geoModule_reportUtils',function(baseLayer,$map,sbiModule_config,sb
 						Object.assign(geoModule_dataset, data); 
 						sbiModule_logger.trace("dataset caricato",data);		
 						gru.initRigthMenuVariable();
+						geoModule_thematizer.updateLegend('choropleth');
 						gru.GetTargetLayer();
+						
+
 					}
 				}).error(function(data, status, headers, config) {
 					sbiModule_logger.log("dataset non Ottenuto");

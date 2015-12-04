@@ -1,4 +1,4 @@
-var geoM=angular.module('geoModule',['ngMaterial','ngAnimate','angular_table','sbiModule','colorpicker.module']);
+var geoM=angular.module('geoModule',['ngMaterial','ngAnimate','angular_table','sbiModule','mdColorPicker']);
 
 geoM.factory('geoModule_dataset',function(){
 	var ds={};
@@ -270,7 +270,9 @@ geoM.service('geoModule_layerServices', function(
 		}
 	}
 
-	this.updateTemplateLayer = function(){
+	this.updateTemplateLayer = function(legendType){
+		geoModule_thematizer.updateLegend(legendType);
+		
 		if(layerServ.templateLayerData.type=="WMS"){
 			var sldBody=geoModule_thematizer.getWMSSlBody(layerServ.templateLayerData);
 			console.log(sldBody)

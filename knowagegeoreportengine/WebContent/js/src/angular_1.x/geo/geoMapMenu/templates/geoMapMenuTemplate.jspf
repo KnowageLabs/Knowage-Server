@@ -1,5 +1,5 @@
 <md-content>
-	<div class="itemboxGU" ng-init=" selectModeExpander=true;">
+	<div class="itemboxGU" ng-init=" selectModeExpander=false;">
 		<md-toolbar class="titleToolbar" class="md-theme-light">
 			<span class="md-toolbar-tools">Select Mode</span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
@@ -18,7 +18,7 @@
 		</md-content>
 	</div>
 	
-	<div class="itemboxGU" ng-init=" filterTypeExpander=true;">
+	<div class="itemboxGU" ng-init=" filterTypeExpander=false;">
 		<md-toolbar class="titleToolbar" class="md-theme-light"> 
 			<span class="md-toolbar-tools">Filter Spatial</span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
@@ -83,7 +83,7 @@
 		</md-content>
 	</div>
 	
-	<div class="itemboxGU" ng-init=" filterExpander=true;">
+	<div class="itemboxGU" ng-init=" filterExpander=false;">
 		<md-toolbar class="titleToolbar">
 			<span class="md-toolbar-tools">Filter</span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
@@ -101,6 +101,57 @@
 							ng-click="updateMap()">{{item[filter.name]}}</md-option>
 				</md-select>
 			</md-input-container>
+		</md-content>
+	</div>
+	
+	<div class="itemboxGU" ng-init=" legendExpander=false;" >
+		<md-toolbar class="titleToolbar">
+			<span class="md-toolbar-tools">Legend Options</span>
+			<md-button class="md-icon-button expanderIcon" aria-label="expand"
+					ng-click=" legendExpander = !legendExpander"> 
+				<md-icon md-font-icon="fa  fa-2x"
+						ng-class="{'fa-angle-up' :  legendExpander , 'fa-angle-down' : ! legendExpander}"></md-icon>
+			</md-button>
+		</md-toolbar>
+		<md-content layout-padding ng-show="legendExpander"> 
+		<md-tabs md-dynamic-height="" >
+      <md-tab label="Choroplet">
+        <md-content class="md-padding">
+          <md-input-container>
+			   <label>Method</label>
+			    <md-select ng-model="template.analysisConf.choropleth.method">
+			      <md-option ng-repeat="meth in choroplethMethodTypeList" value="{{meth.value}}">
+			        {{meth.label}}
+			      </md-option>
+			    </md-select>
+			</md-input-container>
+        
+			<md-input-container>
+				<label>Number of classes</label>
+				 <md-select ng-model="template.analysisConf.choropleth.classes">
+				   <md-option ng-repeat="n in [2,3,4,5,6,7]" value="{{n}}">
+				     {{n}}
+				   </md-option>
+				 </md-select>
+		    </md-input-container>
+		    
+			<div md-color-picker value="template.analysisConf.choropleth.fromColor"  label="From Color" open-on-input="true" style="width: 100%;" ></div>
+			<div md-color-picker value="template.analysisConf.choropleth.toColor"  label="To Color" open-on-input="true" style="width: 100%;"></div>
+        </md-content>
+      </md-tab>
+      <md-tab label="two">
+        <md-content class="md-padding">
+          
+        </md-content>
+      </md-tab>
+      <md-tab label="three">
+        <md-content class="md-padding">
+          
+        </md-content>
+      </md-tab>
+    </md-tabs>
+			
+			
 		</md-content>
 	</div>
 </md-content>
