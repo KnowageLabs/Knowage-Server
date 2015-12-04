@@ -131,7 +131,7 @@ public class SelfServiceDataSetCRUD {
 
 			boolean isTechDsMngr = UserUtilities.isTechDsManager(profile);
 			String showOnlyOwner = req.getParameter("showOnlyOwner");
-			String showDerivedDatasetsStr = "true";//req.getParameter("showDerivedDataset");
+			String showDerivedDatasetsStr = "true";// req.getParameter("showDerivedDataset");
 			boolean showDerivedDatasets = showDerivedDatasetsStr != null && showDerivedDatasetsStr.equalsIgnoreCase("true") ? true : false;
 
 			if (!isTechDsMngr) {
@@ -225,7 +225,7 @@ public class SelfServiceDataSetCRUD {
 			boolean isGeoDataset = false;
 			// all execution action are added ONLY if the relative engine
 			// (getted throught the driver) exists.
-			if (geoEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO")) {
+			if (geoEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("GEO"))) {
 				try {
 					String meta = datasetJSON.getString("meta");
 					isGeoDataset = ExecuteAdHocUtility.hasGeoHierarchy(meta);
@@ -236,10 +236,12 @@ public class SelfServiceDataSetCRUD {
 					actions.put(georeportAction); // Annotated view map action
 													// to release SpagoBI 4
 			}
-			if (wsEngine != null && typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT")) {
+			if (wsEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
 				actions.put(worksheetAction);
+			}
 
-				if (qbeEngine != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+			if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
+				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 					actions.put(qbeAction);
 				}
 			}
@@ -284,7 +286,7 @@ public class SelfServiceDataSetCRUD {
 
 				// ATTENTION! This Delete Dataset Also if there are documents
 				// using it, this could lead to missing link in documents
-				dsDAO.deleteDataSetNoChecks(ds.getId()); 
+				dsDAO.deleteDataSetNoChecks(ds.getId());
 				deleteDatasetFile(ds);
 
 				// notify that dataset has been deleted

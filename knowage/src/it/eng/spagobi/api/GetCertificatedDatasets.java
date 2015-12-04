@@ -48,9 +48,7 @@ import org.json.JSONObject;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- *
  * @deprecated Use specific services exposed by DataSetResource
- *
  */
 @Deprecated
 @Path("/certificateddatasets")
@@ -212,8 +210,10 @@ public class GetCertificatedDatasets {
 			}
 			if ((wsEngine != null && typeDocWizard == null) || (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("REPORT"))) {
 				actions.put(worksheetAction);
+			}
 
-				if (qbeEngine != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+			if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
+				if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 					actions.put(qbeAction);
 				}
 			}
