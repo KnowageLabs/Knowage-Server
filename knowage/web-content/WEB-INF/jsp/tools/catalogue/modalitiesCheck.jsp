@@ -24,11 +24,10 @@
 
 	<angular_2_col>
 		<left-col>
-			<div class="leftBox">
-			<div style="height:40%;" >
-				<md-toolbar class="md-blue minihead">
+		<div class="leftBox">
+	<md-toolbar class="md-blue minihead" >
 					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.modalities.check.title.configurable");}}</div>
+						<div>{{translate.load("sbi.modalities.check.title.constraints");}}</div>
 						<md-button aria-label="create_button"
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -42,17 +41,22 @@
 						</md-button>
 					</div>
 				
-						</md-toolbar>
-						<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
-					<angular-table 
+						</md-toolbar>	
+		
+	<md-content style="display:inline !important;">
+    <md-tabs md-dynamic-height>
+      <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}'>
+        <md-content class="md-padding" style="background-color: rgb(236, 236, 236); height:80%;" class="ToolbarBox miniToolbar noBorder">
+          
+        <angular-table 
 						layout-fill
 						id="TestItemList_id"
 						ng-model="ItemList"
 						columns ='[
-							{"label":"LABEL","name":"label","size":"30px"},
-							{"label":"NAME","name":"name","size":"30px"},
-							{"label":"DESCRIPTION","name":"description","size":"50px"},
-							{"label":"CHECK TYPE","name":"valueTypeCd","size":"30px"}
+							{"label":"LABEL","name":"label","size":"50px"},
+							{"label":"NAME","name":"name","size":"50px"},
+							{"label":"DESCRIPTION","name":"description","size":"100px"},
+							{"label":"CHECK TYPE","name":"valueTypeCd","size":"85px"}
 							 ]'
 						show-search-bar=true
 						highlights-selected-item=true
@@ -61,43 +65,37 @@
 						
 							>					
 						 					
-					</angular-table>
-				</md-content>
-				</div>
-				
-				<div style="height:60%;">
-				<md-toolbar class="md-blue minihead">
-					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.modalities.check.title.predefined");}}</div>
-						
-					</div>
-				
-						</md-toolbar>
-						<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox">
-					<angular-table 
+					</angular-table>  
+          
+        </md-content>
+      </md-tab>
+      <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}'>
+        <md-content class="md-padding" style="background-color: rgb(236, 236, 236);height:80%;" class="ToolbarBox miniToolbar noBorder leftListbox">
+         
+         <angular-table 
 						layout-fill
 						id="predefined_id"
-						ng-model="predefined"
+						ng-model="PredefinedList"
 						columns ='[
 							{"label":"LABEL","name":"label","size":"30px"},
 							{"label":"NAME","name":"name","size":"30px"},
-							{"label":"DESCRIPTION","name":"description","size":"50px"},
 							{"label":"CHECK TYPE","name":"valueTypeCd","size":"30px"}
 							 ]'
 							 
 						show-search-bar = false
-												
+						highlights-selected-item=true
+						click-function="loadPredefined(item)"						
 					>	 					
 					</angular-table>
-				</md-content>
-				</div>
-					</div>
-					
-				
-					
+         
+         
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+  </div>
 		</left-col>
 		<right-col>
-		
 		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveConstraints()"
 		class="detailBody md-whiteframe-z1">
 		
@@ -126,8 +124,14 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
-							<input ng-model="SelectedConstraint.label" required
-							ng-maxlength="20" ng-change="setDirty()"> </md-input-container>
+							<input name="lbl" ng-model="SelectedConstraint.label" ng-required="true"
+							ng-maxlength="20" ng-change="setDirty()">
+							
+							<div  ng-messages="attributeForm.lbl.$error" ng-show="SelectedConstraint.label== null">
+				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+				      </div>
+							
+							 </md-input-container>
 						</div>
 					</div>
 					
@@ -135,8 +139,15 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.name")}}</label>
-							<input ng-model="SelectedConstraint.name"  required
-						    ng-maxlength="40" ng-change="setDirty()"> </md-input-container>
+							<input name="name" ng-model="SelectedConstraint.name"  ng-required = "true"
+						    ng-maxlength="40" ng-change="setDirty()">
+						    
+						    <div  ng-messages="attributeForm.name.$error" ng-show="SelectedConstraint.name== null">
+				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+				      </div>
+						    
+						    
+						     </md-input-container>
 						</div>
 					</div>
 					
@@ -155,12 +166,12 @@
 				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="Check Type"
 				       	name ="dropdown" 
-				        required
+				        ng-required = "true"
 				        ng-model="SelectedConstraint.valueTypeCd"> <md-option 
 				        ng-repeat="l in listType track by $index" ng-click="FieldsCheck(l)" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
 				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="SelectedConstraint.valueTypeCd== null">
-				        <div ng-message="required">Check Type is required</div>
+				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>   
 				        </md-input-container>
 				   </div>
@@ -182,9 +193,68 @@
 						    ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>	
-					
+
 				</md-content>
+				</div>
+				
+				<div ng-show="showpred">
+				
+				<md-toolbar class="md-blue minihead"> 
+					<div class="md-toolbar-tools h100">
+					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div>
+					<div style="position: absolute; right: 0px" class="h100">
+						<md-button type="button" tabindex="-1" aria-label="cancel"
+							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
+							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
+						</md-button>
+						
+					</div>
+				</div>
+				</md-toolbar>
+				
+			<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
+					<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="small counter">
+							<label>{{translate.load("sbi.ds.label")}}</label>
+							<input ng-model="PredefinedItem.label" ng-readonly="true">
+							 </md-input-container>
+						</div>
+					</div>
+					
+					<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="small counter">
+							<label>{{translate.load("sbi.ds.name")}}</label>
+							<input ng-model="PredefinedItem.name"  ng-readonly="true">
+						     </md-input-container>
+						</div>
+					</div>
+					
+					<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="small counter">
+							<label>{{translate.load("sbi.ds.description")}}</label>
+							<textarea ng-model="PredefinedItem.description" ng-readonly="true"></textarea>
+					         </md-input-container>
+						</div>
+					</div>
+				
+				
+					
+				<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="small counter">
+							<label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
+							<input ng-model="PredefinedItem.valueTypeCd" ng-readonly="true">
+						     </md-input-container>
+						</div>
+					</div>	
+				</md-content>
+			</div>
+				
 			</form>
+
 		</right-col>
 	</angular_2_col>
 </body>

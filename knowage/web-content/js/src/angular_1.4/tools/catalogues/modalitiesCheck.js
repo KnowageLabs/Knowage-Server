@@ -5,11 +5,13 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	//VARIABLES
 	
 	$scope.showme = false; // flag for showing right side 
+	$scope.showpred = false;
 	$scope.additionalField= false;
 	$scope.dirtyForm=false; // flag to check for modification
 	$scope.translate=sbiModule_translate;
 	$scope.SelectedConstraint={}; // main item
-	$scope.predefined =[]; // array that hold predefined list
+	$scope.PredefinedItem={};
+	$scope.PredefinedList =[]; // array that hold predefined list
 	$scope.label="";
 	$scope.ItemList=[]; // array that hold custom list
 	$scope.listType=[]; // array that hold dropdown list from domain
@@ -45,11 +47,11 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		 
 		 $scope.confirm = $mdDialog
 		    .confirm()
-		    .title(sbiModule_translate.load("sbi.layer.modify.progress"))
+		    .title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
 		    .content(
 		            sbiModule_translate
-		            .load("sbi.layer.modify.progress.message.modify"))
-		            .ariaLabel('Lucky day').ok(
+		            .load("sbi.catalogues.generic.modify.msg"))
+		            .ariaLabel('toast').ok(
 		                    sbiModule_translate.load("sbi.general.continue")).cancel(
 		                            sbiModule_translate.load("sbi.general.cancel"));
  
@@ -75,17 +77,20 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 				$scope.dirtyForm=false;   
 				$scope.SelectedConstraint=angular.copy(item);
 				$scope.showme=true;
+				$scope.showpred = false;
 			    $scope.label = "";
 			           
 			   },function(){
 			    
 				$scope.showme = true;
+				$scope.showpred = false;
 			   });
 			   
 			  }else{
 			 
 			  $scope.SelectedConstraint=angular.copy(item);
 			  $scope.showme=true;
+			  $scope.showpred = false;
 			  }
 	} 	                
 	
@@ -93,9 +98,19 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.SelectedConstraint={};
 		$scope.showme = false;
 		$scope.dirtyForm=false;
+		$scope.showpred = false;
 		
 
 	}
+	
+	
+	$scope.loadPredefined=function(item){  // this function is called when item is loaded on right side
+		console.log($scope.showpred);
+		$scope.showme = false;
+		$scope.PredefinedItem=item;
+		$scope.showpred=true;
+		console.log($scope.showpred);
+	} 	                
 	
 	$scope.createConstraints =function(){ // this function is called when clicking on plus button
 		
@@ -186,7 +201,7 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						$scope.predefined = data;
+						$scope.PredefinedList = data;
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
