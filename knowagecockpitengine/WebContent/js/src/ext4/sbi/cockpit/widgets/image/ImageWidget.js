@@ -24,10 +24,10 @@ Sbi.cockpit.widgets.image.ImageWidget = function(config) {
 	
 	this.createContent();
 	
-	this.on("afterrender", function(){
-		this.textTitle.html = this.wgeneric.title;
-		Sbi.trace("[ImageWidget]: afterrender - refresh title");
-	}, this);
+//	this.on("afterrender", function(){
+//		this.textTitle.html = this.wgeneric.title;
+//		Sbi.trace("[ImageWidget]: afterrender - refresh title");
+//	}, this);
 	
 	Sbi.trace("[ImageWidget.constructor]: OUT");
 };
@@ -43,7 +43,9 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 	// =================================================================================================================
 
 	widgetContent: null,
-	textTitle: null,
+	
+	//the title panel is handled by the WidgetContainerComponent
+//	textTitle: null,
 
     // =================================================================================================================
 	// METHODS
@@ -69,14 +71,15 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 		this.widgetContent = new Ext.create('Ext.Img',{
 			src: this.wconf.itemSelected.url
 		});
-		this.textTitle = new Ext.Panel({
-			border: false
-			, bodyBorder: false
-			, hideBorders: true
-			, frame: false
-			, height: '100%'
-			, html: this.wgeneric.title
-		});
+		
+//		this.textTitle = new Ext.Panel({
+//			border: false
+//			, bodyBorder: false
+//			, hideBorders: true
+//			, frame: false
+//			, height: '100%'
+//			, html: this.wgeneric.title
+//		});
 
 		if(this.items){
 			this.items.each( function(item) {
@@ -86,7 +89,7 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		
 		if(this.widgetContent !== null) {
-			this.add(this.textTitle);
+//			this.add(this.textTitle);
 	    	this.add(this.widgetContent);
 	    }
 		

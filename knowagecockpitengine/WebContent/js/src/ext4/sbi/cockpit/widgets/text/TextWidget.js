@@ -25,12 +25,12 @@ Sbi.cockpit.widgets.text.TextWidget = function(config) {
 	
 	this.createContent();
 	
-	this.on("afterrender", function(){
-		this.textTitle.html = this.wgeneric.title;
-//		this.doLayout();
-//		this.getParentComponent().setTitle('');
-		Sbi.trace("[TextWidget]: afterrender - refresh title");
-	}, this);
+//	this.on("afterrender", function(){
+//		this.textTitle.html = this.wgeneric.title;
+////		this.doLayout();
+////		this.getParentComponent().setTitle('');
+//		Sbi.trace("[TextWidget]: afterrender - refresh title");
+//	}, this);
 	
 	Sbi.trace("[TextWidget.constructor]: OUT");
 };
@@ -46,7 +46,9 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 	// =================================================================================================================
 
 	widgetContent: null,
-	textTitle: null,
+	
+	//the title panel is handled by the WidgetContainerComponent
+//	textTitle: null,
 
     // =================================================================================================================
 	// METHODS
@@ -77,14 +79,14 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 			, height: '100%'
 			, html: this.wconf.textValue
 		});
-		this.textTitle = new Ext.Panel({
-			border: false
-			, bodyBorder: false
-			, hideBorders: true
-			, frame: false
-			, height: '100%'
-			, html: this.wgeneric.title
-		});
+//		this.textTitle = new Ext.Panel({
+//			border: false
+//			, bodyBorder: false
+//			, hideBorders: true
+//			, frame: false
+//			, height: '100%'
+//			, html: this.wgeneric.title
+//		});
 
 		if(this.items){
 			this.items.each( function(item) {
@@ -94,7 +96,7 @@ Ext.extend(Sbi.cockpit.widgets.text.TextWidget, Sbi.cockpit.core.WidgetRuntime, 
 		}
 		
 		if(this.widgetContent !== null) {
-			this.add(this.textTitle);
+//			this.add(this.textTitle);
 	    	this.add(this.widgetContent);
 	    }
 		

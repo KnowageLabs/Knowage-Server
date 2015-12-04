@@ -175,40 +175,18 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			return;
 		}
 		
+		this.setTitleAndTitlePerc();
+		
 		var buildTitle = config.wgeneric.title;
-
+		// Updates (and shows) the frame title only if the widget has an associated dataset 
 		if(this.cacheDate != null){
-			if(buildTitle != undefined && buildTitle != null && buildTitle != ''){
-				this.northPanel.setVisible(true);
-				this.northPanel.update(buildTitle);
-				
-				var widgetTitlePerc = this.getWidgetConfiguration().wgeneric.titlePerc;
-				
-				if(widgetTitlePerc !== undefined && widgetTitlePerc !== null && widgetTitlePerc !== ''){
-					
-					this.northPanel.flex = (widgetTitlePerc/100);
-				} else{
-					this.northPanel.flex = 0.1;
-				}
-				
-//				buildTitle += ' - '+LN('sbi.cockpit.window.toolbar.cacheDate');				
-			}
-			else{
-//				buildTitle += LN('sbi.cockpit.window.toolbar.cacheDate');
-				this.northPanel.setVisible(false);
-			}
-			buildTitle = LN('sbi.cockpit.window.toolbar.cacheDate');
-
-//			var dateObjF =  Sbi.locale.formats['timestamp'].dateFormat;
-//			var dateTs =Sbi.commons.Format.date(this.cacheDate, dateObjF);
-//			buildTitle += dateTs;
-			buildTitle += this.cacheDate;
-
+			buildTitle = LN('sbi.cockpit.window.toolbar.cacheDate') + this.cacheDate;
 		}
+		
 		if(config.wtype == 'document' && config.wconf.documentId){
 			buildTitle += ' (' + config.wconf.documentId + ')';
 		}
-		this.setTitle(buildTitle);
+		this.setTitle((buildTitle == config.wgeneric.title) ? "" : buildTitle);
 		
 		this.doLayout();
 	}
@@ -343,88 +321,78 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
     , onWidgetClone: function() {
     	this.fireEvent('performaction', this, 'cloneWidget');
     }
+    	
     , onHelpOnLine:function(){
-    	
-    	
-    	 if(this.getWidget()==null || this.getWidget().storeId==null){
-    			Ext.Msg.alert('Message', 'Help onLine not enabled for this component.');
-    		 return;
-    	 }
-    	 
-		  var panel=new Ext.ux.IFrame({
-	              border: false,
-	              bodyBorder: false,
-	              height:'100%',
-	              src: '/'+ Sbi.mainContextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET_LABEL='+this.getWidget().storeId,
-		    });
-	    	  
-	    	var dialogBox = new Ext.Window({
-	              title: LN('sbi.generic.helpOnLine'),
-	              modal:true,
-	              width:'90%',
-	              height:Ext.getBody().getViewSize().height*0.9 ,
-	              closable:true,
-	              items:[panel],
-	          });
-	    	  
-	    	  dialogBox.show();
-    	
-    	
-    	
-    	
-    	
-    	
+    	if(this.getWidget()==null || this.getWidget().storeId==null){
+    		Ext.Msg.alert('Message', 'Help onLine not enabled for this component.');
+    		return;
+    	}
+
+    	var panel=new Ext.ux.IFrame({
+    		border: false,
+    		bodyBorder: false,
+    		height:'100%',
+    		src: '/'+ Sbi.mainContextName+'/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/glossary/finaluser/glossaryHelpOnline.jsp?DATASET_LABEL='+this.getWidget().storeId,
+    	});
+
+    	var dialogBox = new Ext.Window({
+    		title: LN('sbi.generic.helpOnLine'),
+    		modal:true,
+    		width:'90%',
+    		height:Ext.getBody().getViewSize().height*0.9 ,
+    		closable:true,
+    		items:[panel],
+    	});
+
+    	dialogBox.show();
     }
     
-    ,adjustLayoutVisualizationMode: function()
-    {     	
-    	
+    ,adjustLayoutVisualizationMode: function() {     	
+
     	var visualizationSettings = 
-		{
-			frame: false
-		    , shadow: false
-		    , resizable: false
-		};
-    	
+    	{
+    			frame: false
+    			, shadow: false
+    			, resizable: false
+    	};
+
     	var viewModeTabLayout = Sbi.storeManager.getLayout("viewModeLayouts");
-    	
+
     	if(Sbi.isValorized(viewModeTabLayout)){
     		if(viewModeTabLayout.showHeader !== undefined && viewModeTabLayout !== null && viewModeTabLayout.showHeader){
     			visualizationSettings.header = {xtype: 'header', height: 1};
     			visualizationSettings.tools = 
-    			[
-//    			 	{ type:'maximize', hidden:true, scope:this }
-    			]
+    				[
+					//{ type:'maximize', hidden:true, scope:this }
+					];
     		}else{
     			visualizationSettings.header = false;
     			visualizationSettings.border = false;
-    			visualizationSettings.style = 
-    			{
-    					borderColor: 'transparent', 
-    					borderStyle:'solid', 
-    					borderWidth:'0px', 
-    					backgroundColor: 'transparent', 
-    					borderRadius:'0px'
+    			visualizationSettings.style = {
+					borderColor: 'transparent', 
+					borderStyle:'solid', 
+					borderWidth:'0px', 
+					backgroundColor: 'transparent', 
+					borderRadius:'0px'
     			};
     			visualizationSettings.padding = 0;
     			visualizationSettings.maximizable = false;
 
     		}
     	} else {
-			visualizationSettings.header = false;
-			visualizationSettings.border = false;
-			visualizationSettings.style = 
-			{
-					borderColor: 'transparent', 
-					borderStyle:'solid', 
-					borderWidth:'0px', 
-					backgroundColor: 'transparent', 
-					borderRadius:'0px'
-			};
-			visualizationSettings.padding = 0;
-			visualizationSettings.maximizable = false;
+    		visualizationSettings.header = false;
+    		visualizationSettings.border = false;
+    		visualizationSettings.style = {
+				borderColor: 'transparent', 
+				borderStyle:'solid', 
+				borderWidth:'0px', 
+				backgroundColor: 'transparent', 
+				borderRadius:'0px'
+    		};
+    		visualizationSettings.padding = 0;
+    		visualizationSettings.maximizable = false;
     	}
-    	
+
     	return visualizationSettings;
     }
 	// -----------------------------------------------------------------------------------------------------------------
@@ -478,7 +446,6 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	}
 	
 	, initRegionPanels: function(){
-		
 		this.centerPanel = Ext.create('Ext.panel.Panel', {
 			xtype: 'panel', 
 			layout: 'fit', 
@@ -498,23 +465,28 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			border:false
 		});
 		
+		this.setTitleAndTitlePerc();
+	}
+	
+	, setTitleAndTitlePerc : function() {
 		var widgetTitle = this.getWidgetConfiguration().wgeneric.title;
 		var widgetTitlePerc = this.getWidgetConfiguration().wgeneric.titlePerc;
 		
-		if(widgetTitle !== undefined && widgetTitle !== null && widgetTitle !== ''){
+		if(widgetTitle !== undefined && widgetTitle !== null && widgetTitle.trim() !== ''){
+			this.northPanel.update(widgetTitle);	
 			
-			this.northPanel.hidden = false;				
+			this.northPanel.hidden = false;	
 		} else{
+			this.northPanel.update("");
+			
 			this.northPanel.hidden = true;
 		}
 		
 		if(widgetTitlePerc !== undefined && widgetTitlePerc !== null && widgetTitlePerc !== ''){
-			
 			this.northPanel.flex = (widgetTitlePerc/100);
 		} else{
 			this.northPanel.flex = 0.1;
 		}
-		
 	}
 
 	// =================================================================================================================
