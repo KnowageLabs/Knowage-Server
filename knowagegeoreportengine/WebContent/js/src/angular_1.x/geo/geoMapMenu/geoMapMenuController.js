@@ -34,11 +34,12 @@ function geoMapMenuControllerFunction(
 	$scope.analysisTypeList = [
 	                           {label:"Map zone",type:"choropleth",img:"fa  fa-area-chart "},
 	                           {label:"Map point",type:"proportionalSymbol",img:"fa fa-circle"},
-	                           {label:"Map Chart",type:"chart",img:"fa fa-icon"}
+	                           {label:"Map Chart",type:"chart",img:"fa fa-bar-chart"}
 	                           ];
 	$scope.selectModeTypeList = [
 	                             {label:"Identify", type:"identify"},
-	                             {label:"Cross navigation", type:"cross"},	                           
+	                             {label:"Cross navigation", type:"cross"},	   
+	                             {label:"Spatial Filter", type:"filter"}
 	                             ];
 	
 	$scope.choroplethMethodTypeList = [
@@ -47,16 +48,22 @@ function geoMapMenuControllerFunction(
 	                           ];
 	
 	
-	$scope.selectFilterType = 'box';
+	$scope.selectFilterType = 'near';
 	$scope.filterTypes = [
-	                      {label: "Box Selection", type:"box"},	
-	                      {label: "Circle Selection", type:"circle"},	
+	                      {label: "Near", type:"near"},	
+	                      {label: "Intersect", type:"intersect"},	
+	                      {label: "Inside", type:"inside"}
 	                   ];
 	$scope.setSelectedFilterType = function(type) {
-		geo_interaction.selectedFilterType = type;
+		//cambio geo_interaction con layer service
+		//geo_interaction.selectedFilterType = type;
+		geoModule_layerServices.setInteraction(type);
 		console.log("<geo-map-menu> $scope.selectFilterType -> ", type);
+		if ($scope.$root.$$phase != '$apply') {
+			$scope.$apply();
+		}
 	};
-
+	
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
 		var isCrossNavigationInTemplate = (geoModule_template.crossnav !== undefined);
@@ -70,12 +77,6 @@ function geoMapMenuControllerFunction(
 		$scope.template.analysisType = $scope.analysisTypeList[1].type;
 	}
 
-//	$scope.selectedIndicator = {};
-
-//	$scope.changeIndicator = function(item){
-////	geoModule_template.selectedIndicator = item;
-//	geoModule_layerServices.updateTemplateLayer();
-//	}
 
 	$scope.updateMap = function(){
 		$timeout(function() {
@@ -86,6 +87,7 @@ function geoMapMenuControllerFunction(
 	$scope.indicatorIsSelected = function(item){
 		return angular.equals(geoModule_template.selectedIndicator, item);
 	};
+
 
 	$scope.openIndicatorFromCatalogue = function(ev){
 		$mdDialog.show({

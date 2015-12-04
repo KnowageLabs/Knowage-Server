@@ -26,5 +26,6 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDistanceCalculator/geoDistanceCalculatorController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoLegend/geoLegendController.js"></script>	
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoCrossNavMultiselect/geoCrossNavMultiselectController.js"></script>	
-	
+
+<script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>	
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css">

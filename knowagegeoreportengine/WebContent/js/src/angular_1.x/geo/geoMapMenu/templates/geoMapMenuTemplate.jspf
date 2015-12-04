@@ -1,5 +1,5 @@
 <md-content>
-	<div class="itemboxGU" ng-init=" selectModeExpander=false;">
+	<div class="itemboxGU" ng-init=" selectModeExpander=true;">
 		<md-toolbar class="titleToolbar" class="md-theme-light">
 			<span class="md-toolbar-tools">Select Mode</span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
@@ -18,14 +18,15 @@
 		</md-content>
 	</div>
 	
-	<div class="itemboxGU" ng-init=" filterTypeExpander=false;">
+	<div class="itemboxGU" ng-init=" filterTypeExpander=false;" ng-if="selectModeInteraction.type=='filter'">
 		<md-toolbar class="titleToolbar" class="md-theme-light"> 
-			<span class="md-toolbar-tools">Filter Spatial</span>
+			<span class="md-toolbar-tools">Spatial Filter </span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
 					ng-click=" filterTypeExpander=!filterTypeExpander">
 				<md-icon md-font-icon="fa fa-2x" ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
 			</md-button> 
 		</md-toolbar>
+	
 		<md-content layout-padding ng-show="filterTypeExpander"> 
 			<md-radio-group ng-model="selectFilterType">
 				<md-radio-button ng-repeat="item in filterTypes" class="md-primary" 
@@ -83,7 +84,7 @@
 		</md-content>
 	</div>
 	
-	<div class="itemboxGU" ng-init=" filterExpander=false;">
+	<div class="itemboxGU" ng-init=" filterExpander=true;">
 		<md-toolbar class="titleToolbar">
 			<span class="md-toolbar-tools">Filter</span>
 			<md-button class="md-icon-button expanderIcon" aria-label="expand"
