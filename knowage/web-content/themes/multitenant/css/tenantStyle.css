@@ -1,0 +1,70 @@
+#listItemTemplate:hover {
+	color: #0099CC;
+	background-color: #FFFFFF;
+	opacity: 0.6;
+}
+
+#listItemTemplate:click {
+	background-color: #0099CC;
+	opacity: 0.6;
+}
+
+.input_class {
+	display: block !important;
+	width: 100% !important;
+	height: 34px !important;
+	padding: 6px 12px !important;
+	font-size: 14px !important;
+	line-height: 1.428571429 !important;
+	color: #555555 !important;
+	background-color: white !important;
+	background-image: none !important;
+	border: 1px solid #cccccc !important;
+	border-radius: 4px !important;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075) !important;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
+		!important;
+	-webkit-writing-mode: horizontal-tb !important;
+	-moz-writing-mode: horizontal-tb !important;
+}
+
+.input_class:focus {
+	border-color: #66afe9 !important;
+	outline: 0 !important;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px
+		rgba(102, 175, 233, 0.6) !important;
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px
+		rgba(102, 175, 233, 0.6) !important;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px
+		rgba(102, 175, 233, 0.6) !important;
+}
+
+input:required:focus:invalid, md-input-container.md-input-invalid .md-input
+	{
+	border-color: #66afe9 !important;
+	outline: 0 !important;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px red
+		!important;
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px red
+		!important;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px red !important;
+}
+
+li:hover {
+	background-color: transparent;
+	color: blue !important;
+}
+
+md-content.ToolbarBox.miniToolbar {
+	height: calc(100% - 71px) !important;
+}
+
+
+@-moz-document url-prefix() {
+  .mozilla{ margin-top: -32px !important;}
+  .mozTable{ width:initial !important;  }
+  .mozScroll{overflow:scroll  !important;}
+  .mozSelect{margin-left: 5px !important;}
+  .thMoz{text-align:left !important;}
+  .mozSize{width:100% !important; }
+}

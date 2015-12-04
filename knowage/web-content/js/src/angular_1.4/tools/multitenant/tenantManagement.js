@@ -1,6 +1,6 @@
 
 var app = angular.module('tenantManagementApp',['angular_table','ngMaterial', 'ui.tree', 'angularUtils.directives.dirPagination', 'ng-context-menu',
-                                                'sbiModule', 'angular_list']);
+                                                'sbiModule', 'angular_list','angular_2_col']);
 		
 app.controller('Controller', ['sbiModule_logger','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$log', '$mdDialog', manageTenantFunction ])
 
@@ -11,13 +11,15 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	$scope.log = sbiModule_logger;
 	$scope.translate=sbiModule_translate;
 	$scope.tenants=[];
+	$scope.tenant = {};
 	$scope.tenantSelected = {};
 	$scope.themes = [];
 	$scope.productTypesDefault = [];
 	$scope.engines = [];
 	$scope.datasources = [];
 	$scope.datasourcesDefault = [];
-	
+	$scope.idx_tab = 0;
+	$scope.showme = false;
 	$scope.indexOf = function(myArray, myElement) {
 		for (var i = 0; i < myArray.length; i++) {
 			if (myArray[i].MULTITENANT_ID == myElement.MULTITENANT_ID) {
@@ -68,7 +70,8 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		var result = !this.CHECKED;
 		return result;
 		
-	}
+	};
+	
 	$scope.copyRowInForm = function(item,cell,listId) {
 		//not productTypes for this tenant? Get them!
 		if (item.productTypes === undefined){
@@ -96,25 +99,29 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		} else{
 			$scope.datasources = item.datasources;
 		}
-		
 		$scope.tenant = angular.fromJson(angular.toJson(item));
-	}
+		$scope.tenantSelected = item; 
+		$scope.showme = true;
+	};
 	
-	$scope.resetForm = function(){
+	$scope.resetForm = function(form){
 		$scope.productTypes = $scope.productTypesDefault;
 		$scope.datasources = $scope.datasourcesDefault;
 		$scope.tenant = undefined;
 		$scope.tenantSelected = undefined;
-		$scope.tenantForm.$setUntouched();
-		$scope.tenantForm.$setPristine();
-	}
+		if (form !== undefined){
+			form.$setUntouched();
+			form.$setPristine();
+		}
+		$scope.idx_tab = 0;
+	};
 	
 	//toogle the tenant.CHECKED value if the checkbox is clicked
 	$scope.toogleCheckBox = function(item,cell,listId){
 		if (cell.indexOf("<md-checkbox") >= 0 ){
 			item.CHECKED = !item.CHECKED;
 		}
-	}
+	};
 	
 	$scope.solveMissingId = function (tenant){
 		sbiModule_restServices.get(path, tenant.MULTITENANT_NAME)
@@ -122,28 +129,61 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 				if (data.root.MULTITENANT_ID !== undefined){
 					tenant.MULTITENANT_ID = data.root.MULTITENANT_ID ;
 					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(tenant)));
+					$scope.showAlert('INFO', 'Tenant '+ tenant.MULTITENANT_NAME + '_admin save successful');
 				}
 			})
+	};
+	
+	//SPEED MENU TRASH ITEM
+	$scope.tenantSpeedMenu= [{
+		                    	label:'delete',
+		                    	icon:'fa fa-trash-o fa-lg',
+		                    	color:'#153E7E',
+		                    	action:function(item,event){
+		                    		$scope.deleteItem(item);
+		                    	}
+	                     	}];
+	
+	$scope.deleteItem = function(item){
+		$scope.tenantSelected = item;
+		$scope.deleteTenant();
 	}
 	
-	$scope.deleteTenant = function() {
+	$scope.deleteTenant = function(form) {
 		//get the tenant selected, JSON creation for the body request
-		if ($scope.tenantSelected !== undefined ){
+		if ($scope.tenantSelected !== undefined && $scope.tenantSelected.MULTITENANT_ID !== undefined){
 			config = {};
 			var toDelete = {};
 			toDelete.MULTITENANT_ID = $scope.tenantSelected.MULTITENANT_ID; //convert to string
 			toDelete.MULTITENANT_NAME = ""+ $scope.tenantSelected.MULTITENANT_NAME;
 			toDelete.MULTITENANT_THEME = ""+ $scope.tenantSelected.MULTITENANT_THEME;
 			config.data = angular.toJson(toDelete); 
-			sbiModule_restServices.delete(path, "", undefined, config );
-			//remove tenant from the tenants list
-			var idx = $scope.indexOf($scope.tenants,$scope.tenantSelected)
-			$scope.tenants.splice(idx, 1);
-			$scope.resetForm();
+			sbiModule_restServices.delete(path, "", undefined, config ).success(function(data){
+				if (data.errors === undefined){
+				//remove tenant from the tenants list
+					var idx = $scope.indexOf($scope.tenants,$scope.tenantSelected)
+					$scope.tenants.splice(idx, 1);
+					$scope.resetForm(form);
+					$scope.showAlert('INFO', 'Tenant '+ toDelete.MULTITENANT_NAME + '_admin delete successful');
+				}else{
+					$scope.showAlert('ERROR', ' Impossible to delete Tenant '+ toDelete.MULTITENANT_NAME + '_admin');
+				}
+			})
+			.error(function(){
+				$scope.showAlert('ERROR', ' Impossible to delete Tenant '+ toDelete.MULTITENANT_NAME + '_admin');
+			});
+		} else {
+			$scope.showAlert('INFO', 'No Tenant selected');
 		}
+	};
+	
+	$scope.newTenant = function(form){
+		$scope.resetForm(form);
+		$scope.tenant = {};
+		$scope.showme=true;
 	}
 	
-	$scope.addTenant = function(){
+	$scope.saveTenant = function(form){
 		var newTenant = {};
 		$scope.typeSave =""; //UPDATE or INSERT
 		if ($scope.tenantSelected === undefined || $scope.tenantSelected.MULTITENANT_ID === undefined ){
@@ -171,26 +211,57 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		}
 		$scope.newTenant = newTenant;
 		sbiModule_restServices.post(path,"save",angular.toJson(newTenant)).success(function(data){
-			var tenantReceived = angular.fromJson(data);
-			var newTenant ={};
-			newTenant.MULTITENANT_ID = tenantReceived.MULTITENANT_ID;
-			newTenant.MULTITENANT_NAME = ""+$scope.newTenant.MULTITENANT_NAME;
-			newTenant.MULTITENANT_THEME = ""+$scope.newTenant.MULTITENANT_THEME;
-			
-			if ($scope.typeSave == "INSERT"){
-				//add element to the table
-				if ( newTenant.MULTITENANT_ID === undefined ){
-					$scope.solveMissingId(newTenant);
+			if (data.errors === undefined){
+				var tenantReceived = angular.fromJson(data);
+				var newTenant ={};
+				newTenant.MULTITENANT_ID = tenantReceived.MULTITENANT_ID;
+				newTenant.MULTITENANT_NAME = ""+$scope.newTenant.MULTITENANT_NAME;
+				newTenant.MULTITENANT_THEME = ""+$scope.newTenant.MULTITENANT_THEME;
+				
+				if ($scope.typeSave == "INSERT"){
+					//add element to the table
+					if ( newTenant.MULTITENANT_ID === undefined ){
+						$scope.solveMissingId(newTenant);
+					}else{
+						$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
+						$scope.showAlert('INFO', 'Tenant '+ newTenant.MULTITENANT_NAME + '_admin save successful');
+					}
 				}else{
-					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(newTenant)));
-				}
+					//updating the table
+					var idx = $scope.indexOf($scope.tenants,newTenant);
+					$scope.tenants[idx]=angular.fromJson(angular.toJson(newTenant));
+					$scope.showAlert('INFO', 'Tenant '+ newTenant.MULTITENANT_NAME + '_admin save successful');
+					}
 			}else{
-				//updating the table
-				var idx = $scope.indexOf($scope.tenants,newTenant);
-				$scope.tenants[idx]=angular.fromJson(angular.toJson(newTenant));
-				}
-			$scope.resetForm();
+				$scope.showAlert('ERROR', 'Impossible to save tenant');
+			}
+			
+			$scope.resetForm(form);
+			
 		});
-	}
+	};
+	
+	//Create an alert dialog with a message
+	$scope.showAlert = function (title, message){
+		//if angular material version < 1.0.0_rc5 not has textContent function
+		if (typeof $mdDialog.alert().textContent == 'function'){
+			$mdDialog.show( 
+				$mdDialog.alert()
+			        .parent(angular.element(document.body))
+			        .clickOutsideToClose(false)
+			        .title(title)
+			        .textContent(message) //FROM angular material 1.0 
+			        .ok('Ok')
+				);
+		}else {
+			$mdDialog.show( 
+				$mdDialog.alert()
+			        .parent(angular.element(document.body))
+			        .clickOutsideToClose(false)
+			        .title(message)
+			        .ok('Ok')
+		        );
+		}
+	};
 };
 
