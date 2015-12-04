@@ -181,7 +181,6 @@ geoM.service('geoModule_reportUtils',function(geoModule_thematizer,baseLayer,$ma
 						Object.assign(geoModule_dataset, data); 
 						sbiModule_logger.trace("dataset caricato",data);		
 						gru.initRigthMenuVariable();
-						geoModule_thematizer.updateLegend('choropleth');
 						gru.GetTargetLayer();
 						
 

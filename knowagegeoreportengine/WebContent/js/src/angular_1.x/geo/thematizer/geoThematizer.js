@@ -1,6 +1,6 @@
 var geoM=angular.module('geoModule');
 
-geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem,$map){
+geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem,$map,geoModule_templateLayerData){
 	var tmtz=this;
 	var cacheProportionalSymbolMinMax={};
 	var cacheDatasetValue={};
@@ -78,16 +78,22 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	}
 
 	function getChoroplethColor(val){
-//		var legend=[{start:0,end:100,color:"#8CF703"},{start:100,end:1000,color:"#F1F703"},{start:1000,end:10000,color:"#F7AE03"},{start:10000,end:100000,color:"#F70303"}];
-		var color;
+	var color;
+	var alpha;
 		for(var i=0;i<tmtz.legendItem.choroplet.length;i++){
-			if(val>=tmtz.legendItem.choroplet[i].from && val<tmtz.legendItem.choroplet[i].to){
+			if(parseInt(val)>=parseInt(tmtz.legendItem.choroplet[i].from) && parseInt(val)<parseInt(tmtz.legendItem.choroplet[i].to)){
 				color=tmtz.legendItem.choroplet[i].color;
+				alpha=tmtz.legendItem.choroplet[i].alpha;
+				tmtz.legendItem.choroplet[i].item++;
 				break;
 			}
 		}
-		if(color==undefined){color=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].color;}
-		return color;
+		if(color==undefined){
+			color=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].color;
+			alpha=tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].alpha;
+			tmtz.legendItem.choroplet[tmtz.legendItem.choroplet.length-1].item++;
+			}
+		return {color:color,alpha:alpha};
 	}
 	
 	function getProportionalSymbolSize(val){
@@ -119,7 +125,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				width: 1
 			}),
 			fill: new ol.style.Fill({
-				color: getChoroplethColor(dsValue)
+				color: getChoroplethColor(dsValue).color
 			})
 		})];
 
@@ -366,15 +372,16 @@ this.getWMSSlBody=function(layer){
 				rule.appendChild(filter);
 				
 				var polygonSymbolizer= docSld.createElement("PolygonSymbolizer");
+				var geometryColor=getChoroplethColor(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]);
 					var fill= docSld.createElement("Fill");
 					var fillcssParameter= docSld.createElement("CssParameter");
 					fillcssParameter.setAttribute("name","fill");
-					fillcssParameter.innerHTML=getChoroplethColor(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]);
+					fillcssParameter.innerHTML=geometryColor.color;
 					fill.appendChild(fillcssParameter);
 					
 					var fillopacitycssParameter= docSld.createElement("CssParameter");
 					fillopacitycssParameter.setAttribute("name","fill-opacity");
-					fillopacitycssParameter.innerHTML="0.5";
+					fillopacitycssParameter.innerHTML=geometryColor.alpha;
 					fill.appendChild(fillopacitycssParameter);
 					
 					polygonSymbolizer.appendChild(fill);
@@ -491,7 +498,22 @@ this.getWMSSlBody=function(layer){
 		}	
 	}
 	
-	
+	function updateChoroplethLegendGradient(numberGradient){
+		var grad = tinygradient([geoModule_template.analysisConf.choropleth.fromColor, geoModule_template.analysisConf.choropleth.toColor]);
+		var gradienti= grad.rgb(numberGradient);
+		tmtz.legendItem.choroplet.length=0;
+		for(var i=0;i<gradienti.length;i++){
+			var  tmpGrad={};
+			if(geoModule_templateLayerData.type=="WMS"){
+				tmpGrad.color=gradienti[i].toHexString();
+				tmpGrad.alpha=gradienti[i].getAlpha();
+			}else{
+				tmpGrad.color=gradienti[i].toRgbString();
+			}
+			tmpGrad.item=0; //number of features in this range
+			tmtz.legendItem.choroplet.push(tmpGrad);
+		}
+	}
 	this.updateLegend=function(type){
 		if(!geoModule_template.selectedIndicator.hasOwnProperty("name")){
 			return;
@@ -505,18 +527,9 @@ this.getWMSSlBody=function(layer){
 				tmtz.loadIndicatorMaxMinVal(geoModule_template.selectedIndicator.name);
 			}
 			
-			
-			
-			var grad = tinygradient([geoModule_template.analysisConf.choropleth.fromColor, geoModule_template.analysisConf.choropleth.toColor]);
-			var gradienti= grad.rgb(geoModule_template.analysisConf.choropleth.classes);
-			tmtz.legendItem.choroplet.length=0;
-			for(var i=0;i<gradienti.length;i++){
-				var  tmpGrad={};
-				tmpGrad.color=gradienti[i].toRgbString();
-				tmtz.legendItem.choroplet.push(tmpGrad);
-			}
-			
 			if(geoModule_template.analysisConf.choropleth.method=="CLASSIFY_BY_EQUAL_INTERVALS"){
+				updateChoroplethLegendGradient(geoModule_template.analysisConf.choropleth.classes);
+				
 				var minValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].minValue;
 				var maxValue = cacheProportionalSymbolMinMax[geoModule_template.selectedIndicator.name].maxValue;
 				var split=(maxValue-minValue)/(geoModule_template.analysisConf.choropleth.classes);
@@ -526,6 +539,7 @@ this.getWMSSlBody=function(layer){
 				}
 			}else{
 				//classify by quantils
+				checkForDatasetValueOfIndicator()
 				var selectedIndicatorValue=cacheDatasetValue[geoModule_template.selectedIndicator.name]
 				var values=[];
 				for(var key in selectedIndicatorValue){
@@ -536,6 +550,8 @@ this.getWMSSlBody=function(layer){
 				values.sort();
 				
 				var intervals=values.length<geoModule_template.analysisConf.choropleth.classes ?values.length : geoModule_template.analysisConf.choropleth.classes ;
+				updateChoroplethLegendGradient(intervals);
+				
 				var binSize = Math.round(values.length  / intervals);
 				var k=0;
 				for(var i=0;i<values.length;i+=binSize){

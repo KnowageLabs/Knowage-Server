@@ -20,6 +20,11 @@ geoM.factory('geoModule_filters',function(){
 	return gi;
 });
 
+geoM.factory('geoModule_templateLayerData',function(){
+	var tld={};
+	return tld;
+});
+
 geoM.factory('$map',function(){
 	var map= new ol.Map({
 		target: 'map',
@@ -62,7 +67,7 @@ geoM.factory('baseLayer', function() {
 geoM.service('geoModule_layerServices', function(
 		$http, baseLayer, sbiModule_logger, 
 		$map, geoModule_thematizer, geo_interaction, 
-		crossNavigation, sbiModule_config, geoModule_template, sbiModule_restServices ) {
+		crossNavigation, sbiModule_config, geoModule_template, sbiModule_restServices,geoModule_templateLayerData ) {
 
 	var layerServ=this;
 	var sFeatures;
@@ -74,32 +79,32 @@ geoM.service('geoModule_layerServices', function(
 	this.loadedLayerOBJ={};
 	this.templateLayer={};
 	this.selectedFeatures = [];
-	this.templateLayerData={};
 
 //	this.cachedFeatureStyles = {};
 
 	this.setTemplateLayer = function(data){
-		Object.assign(layerServ.templateLayerData,data);
-		if(layerServ.templateLayerData.type=="WMS"){
-			var sldBody=geoModule_thematizer.getWMSSlBody(layerServ.templateLayerData);
+		Object.assign(geoModule_templateLayerData,data);
+		geoModule_thematizer.updateLegend('choropleth');
+		if(geoModule_templateLayerData.type=="WMS"){
+			var sldBody=geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
 			console.log(sldBody)
-			var params=JSON.parse(layerServ.templateLayerData.layerParams);
-		params.LAYERS=layerServ.templateLayerData.layerName;
+			var params=JSON.parse(geoModule_templateLayerData.layerParams);
+		params.LAYERS=geoModule_templateLayerData.layerName;
 //			var params={};
 			params.SLD_BODY =sldBody;
 			
 			layerServ.templateLayer = new ol.layer.Tile({
 				source : new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */
 						{
-							url : sbiModule_config.contextName+"/api/1.0/geo/getWMSlayer?layerURL="+layerServ.templateLayerData.layerURL,
+							url : sbiModule_config.contextName+"/api/1.0/geo/getWMSlayer?layerURL="+geoModule_templateLayerData.layerURL,
 							params : params,
-							options :JSON.parse(layerServ.templateLayerData.layerOptions)
+							options :JSON.parse(geoModule_templateLayerData.layerOptions)
 						})
 			});
 
 		}else{
 			var vectorSource = new ol.source.Vector({
-				features: (new ol.format.GeoJSON()).readFeatures(layerServ.templateLayerData, {
+				features: (new ol.format.GeoJSON()).readFeatures(geoModule_templateLayerData, {
 //					dataProjection: 'EPSG:4326',
 					featureProjection: 'EPSG:3857'
 				})
@@ -163,13 +168,13 @@ geoM.service('geoModule_layerServices', function(
 		//	layerServ.setInteraction('box');
 		select.on('select', function(evt) {
 			console.log("select");
-			if(geo_interaction.type == "identify" && (evt.selected[0]==undefined || geo_interaction.distance_calculator) && layerServ.templateLayerData.type!="WMS"){
+			if(geo_interaction.type == "identify" && (evt.selected[0]==undefined || geo_interaction.distance_calculator) && geoModule_templateLayerData.type!="WMS"){
 				layerServ.overlay.setPosition(undefined);
 				return;
 			}
 
 			//if is a WMS i must load the properties from server
-			if(layerServ.templateLayerData.type=="WMS"){
+			if(geoModule_templateLayerData.type=="WMS"){
 				var urlInfo= layerServ.templateLayer.getSource().getGetFeatureInfoUrl(
 						evt.mapBrowserEvent.coordinate, $map.getView().getResolution(), 'EPSG:3857',
 						{'INFO_FORMAT': 'application/json'});
@@ -588,8 +593,8 @@ geoM.service('geoModule_layerServices', function(
 	this.updateTemplateLayer = function(legendType){
 		geoModule_thematizer.updateLegend(legendType);
 		
-		if(layerServ.templateLayerData.type=="WMS"){
-			var sldBody=geoModule_thematizer.getWMSSlBody(layerServ.templateLayerData);
+		if(geoModule_templateLayerData.type=="WMS"){
+			var sldBody=geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
 			console.log(sldBody)
 			layerServ.templateLayer.getSource().updateParams({SLD_BODY:sldBody})
 		}else{

@@ -1,8 +1,8 @@
 <md-whiteframe class="md-whiteframe-3dp legendBox"   layout layout-align="center center" ng-if="showLegend" >
     <div layout="column" layout-wrap> 
-	    <div layout="row" layout-wrap ng-repeat="item in thematizer.legendItem.choroplet" >
-	    	<div class="colorbox" style="background-color: {{item.color}}"></div>
-	    	<span>{{item.from}}-{{item.to}} ({{item.number}})</span>
+	    <div layout="row" layout-wrap ng-repeat="items in thematizer.legendItem.choroplet" >
+	    	<div class="colorbox" style="background-color: {{items.color}}"></div>
+	    	<span>{{items.from}}-{{items.to}} ({{items.item}})</span>
 	    </div>
 			
 	    </div>
