@@ -58,11 +58,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					} else {
 						
 						console.log("[GET]: SUCCESS!");
-						
-						for(var i = 0; i < data.length; i++){
-					          $scope.dataSourceList.push(data[i]);
-					          console.log(angular.toJson(data[i]));
-					    }
+													
+							$scope.dataSourceList = data;
 						
 					}
 				})
@@ -86,9 +83,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					} else {
 						console.log("[GET/DIALECT]: SUCCESS!");
 						$scope.dialects = data;
-						console.log($scope.dialects);
-					
-					
 					}
 				})
 				
@@ -116,10 +110,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						} else {
 							console.log("[PUT]: SUCCESS!");
 							$scope.dataSourceList = [];
-							$timeout(function(){								
-								$scope.dataSourceList = data;
-							}, 500);
-							$scope.isDirty = false;
+							$scope.getDataSources();
+							$scope.closeForm();
+							$scope.showActionOK();
 						}
 					}
 					
@@ -143,11 +136,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						} else {
 							console.log("[POST]: SUCCESS!");
 							$scope.dataSourceList = [];
-							$timeout(function(){								
-								$scope.getDataSources();
-							}, 500);
-							$scope.showActionOK();
+							$scope.getDataSources();
 							$scope.closeForm();
+							$scope.showActionOK();
 						}
 					})	
 					
@@ -175,11 +166,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						} else {
 							console.log("[DELETE MULTIPLE]: SUCCESS!")
 							$scope.showActionMultiDelete();
-							$timeout(function(){								
-								$scope.dataSourceList = data;
-							}, 500);
 							$scope.closeForm();
+							$scope.showActionDelete();
 							$scope.selectedDataSourceItems = [];
+							$scope.getDataSources();
 						}
 					}).error(function(data, status, headers, config) {
 						console.log("[DELETE MULTIPLE]: FAIL!"+status)
@@ -196,9 +186,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 						} else {
 							console.log("[DELETE]: SUCCESS!");
 							$scope.dataSourceList = [];
-							$timeout(function(){								
-								$scope.dataSourceList = data;
-							}, 500);
+							$scope.getDataSources();
 							$scope.closeForm();
 							$scope.showActionDelete();
 						}
@@ -212,10 +200,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	};
 	
 	//SHOW RIGHT-COLUMN
-	$scope.createNew = function () {
+	$scope.createNewForm = function () {
+		
 		$scope.forms.dataSourceForm.$setPristine();
-		$scope.forms.dataSourceForm.$setValidity();
-	    $scope.forms.dataSourceForm.$setUntouched();
+		$scope.forms.dataSourceForm.$setUntouched();
 		$scope.showme=true;
 		$scope.selectedDataSource = {
 				label : "",
@@ -229,8 +217,6 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				pwd: "",
 				driver: ""				
 		};
-		console.log($scope.selectedDataSource);
-		$scope.noDSSelected = false;
 	};
 	
 	//LOAD SELECTED SOURCE
@@ -262,8 +248,11 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	
 	//CLOSE RIGHT-COLUMN AND SET SELECTED DATA SORUCE TO AN EMPTY OBJECT
 	$scope.closeForm = function(){
+		$scope.forms.dataSourceForm.$setPristine();
+		$scope.forms.dataSourceForm.$setUntouched();
 		$scope.showme=false;
-		$scope.selectedDataSource = angular.copy({});
+		$scope.isDirty = false;
+		$scope.selectedDataSource = {};
 	};
 	
 	//CONFIRM DELETE
@@ -335,11 +324,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 					} else {
 						console.log("[DELETE]: SUCCESS!");
 						$scope.dataSourceList = [];
-						$timeout(function(){								
-							$scope.dataSourceList = data;
-						}, 500);
 						$scope.closeForm();
 						$scope.showActionDelete();
+						$scope.getDataSources();
 					}
 				}).error(function(data, status, headers, config) {
 					console.log("[DELETE]: FAIL!"+status);
