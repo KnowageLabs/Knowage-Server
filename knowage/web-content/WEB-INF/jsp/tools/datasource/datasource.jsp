@@ -31,18 +31,7 @@
 				<md-toolbar class="md-blue minihead">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
-						
-						<md-button 
-							
-							class="md-fab md-ExtraMini"
-							style="position:absolute; right:26px; top:0px; background-color:#E91E63"
-							ng-click="deleteDataSource()"> 
-							<md-icon
-								md-font-icon="fa fa-trash" 
-								style=" margin-top: 6px ; color: white;" >
-							</md-icon> 
-						</md-button>
-						
+											
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -88,12 +77,12 @@
 					<div style="position: absolute; right: 0px" class="h100">
 						<md-button type="button" tabindex="-1" aria-label="cancel"
 							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
+							ng-click="closeForm()">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
-						<md-button ng-disabled="!forms.dataSourceForm.$valid" type="submit"
+						<md-button type="submit" ng-click="saveOrUpdateDataSource()"
 							aria-label="save datasource" class="md-raised md-ExtraMini "
 							style=" margin-top: 2px;"
-							ng-disabled=" selectedItem.name.length === 0 ||  selectedItem.type.length === 0">
+							ng-disabled=" selectedItem.label.length === 0 ||  selectedItem.driver.length === 0">
 						{{translate.load("sbi.browser.defaultRole.save");}} </md-button>
 					</div>
 				</div>
@@ -106,7 +95,7 @@
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input ng-model="selectedDataSource.label" required
-								ng-change="setDirty()" maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
+								ng-change="setDirty()" ng-maxlength="50"> </md-input-container>
 						</div>
 					</div>
 					
@@ -115,7 +104,7 @@
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedDataSource.descr"
-								ng-change="setDirty()"  maxlength="160" ng-maxlength="1160" md-maxlength="160"> </md-input-container>
+								ng-change="setDirty()" ng-maxlength="160"> </md-input-container>
 						</div>
 					</div>
 					
@@ -147,7 +136,7 @@
 							<md-input-container class="small counter"> 
 							<label>{{translate.load("sbi.datasource.multischema.attribute")}}</label>
 							<input ng-change="setDirty()"  ng-model="selectedDataSource.schemaAttribute"
-								maxlength="45" ng-maxlength="45" md-maxlength="45"> </md-input-container>
+								ng-maxlength="45"> </md-input-container>
 						</div>
 					</div>
 					
@@ -185,7 +174,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.url")}}</label>
 								<input ng-change="setDirty()"  ng-model="selectedDataSource.urlConnection" required
-									maxlength="500" ng-maxlength="500" md-maxlength="500"> </md-input-container>
+									ng-maxlength="500"> </md-input-container>
 							</div>
 						</div>
 						
@@ -194,7 +183,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.user")}}</label>
 								<input ng-change="setDirty()"  ng-model="selectedDataSource.user" required
-									maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
+									ng-maxlength="50"> </md-input-container>
 							</div>
 						</div>
 						
@@ -203,7 +192,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.type.jdbc.password")}}</label>
 								<input ng-change="setDirty()"  type="password" name="password" ng-model="selectedDataSource.pwd" required
-									maxlength="50" ng-maxlength="50" md-maxlength="50"> </md-input-container>
+									ng-maxlength="50"> </md-input-container>
 							</div>
 						</div>						
 						
@@ -212,7 +201,7 @@
 								<md-input-container class="small counter">
 								<label>{{translate.load("sbi.datasource.driver")}}</label>
 								<input ng-change="setDirty()"  ng-model="selectedDataSource.driver" required
-									maxlength="160" ng-maxlength="160" md-maxlength="160"> </md-input-container>
+									ng-maxlength="160"> </md-input-container>
 							</div>
 						</div>
 					</div>

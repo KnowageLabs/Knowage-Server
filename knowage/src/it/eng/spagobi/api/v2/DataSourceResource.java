@@ -34,6 +34,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSourceResource.class);
 
+	IDataSourceDAO dataSourceDAO;
+	DataSource dataSource;
+	List<DataSource> dataSourceList;
+
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -42,16 +46,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		logger.debug("IN");
 
-		List<DataSource> dataSource = null;
-		IDataSourceDAO dataSourceDAO = null;
-
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
-			dataSource = dataSourceDAO.loadAllDataSources();
+			dataSourceList = dataSourceDAO.loadAllDataSources();
 
-			return dataSource;
+			return dataSourceList;
 
 		} catch (Exception exception) {
 
@@ -72,9 +73,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public String getDataSourceById(@PathParam("dsId") Integer dsId) {
 
 		logger.debug("IN");
-
-		IDataSourceDAO dataSourceDAO = null;
-		DataSource dataSource = null;
 
 		try {
 
@@ -104,8 +102,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		logger.debug("IN");
 
-		IDataSourceDAO dataSourceDAO;
-
 		try {
 
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
@@ -133,11 +129,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String updateDataSource(DataSourceModel dataSource) {
+	public List<DataSource> updateDataSource(DataSourceModel dataSource) {
 
 		logger.debug("IN");
-
-		IDataSourceDAO dataSourceDAO;
 
 		try {
 
@@ -145,7 +139,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSourceDAO.modifyDataSource(dataSource);
 
-			return "[PUT]: SUCCESS!" + dataSource.getDsId();
+			return DAOFactory.getDataSourceDAO().loadAllDataSources();
 
 		} catch (Exception e) {
 
@@ -165,8 +159,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public List<DataSource> deleteDataSource(@PathParam("dsId") Integer dsId) throws EMFUserError {
 
 		logger.debug("IN");
-
-		IDataSourceDAO dataSourceDAO = null;
 
 		try {
 
@@ -196,8 +188,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public List<DataSource> deleteMultiple(@QueryParam("id") int[] ids) {
 
 		logger.debug("IN");
-
-		IDataSourceDAO dataSourceDAO = null;
 
 		try {
 

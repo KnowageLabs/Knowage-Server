@@ -106,7 +106,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
 			
 			//MODIFY DATA SOURCE
-			sbiModule_restServices.put('2.0/datasources','',$scope.selectedDataSource)
+			sbiModule_restServices.put('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 			
 			.success(
 			
@@ -117,9 +117,9 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 							console.log("[PUT]: SUCCESS!");
 							$scope.dataSourceList = [];
 							$timeout(function(){								
-								$scope.getDataSources();
+								$scope.dataSourceList = data;
 							}, 500);
-							$scope.closeForm();
+							$scope.isDirty = false;
 						}
 					}
 					
@@ -361,12 +361,12 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 	$scope.confirm = $mdDialog
 	.confirm()
-	.title(sbiModule_translate.load("sbi.layer.modify.progress"))
+	.title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
 	.content(
 			sbiModule_translate
-			.load("sbi.layer.modify.progress.message.modify"))
+			.load("sbi.catalogues.generic.modify.msg"))
 			.ariaLabel('Lucky day').ok(
-					sbiModule_translate.load("sbi.general.continue")).cancel(
-							sbiModule_translate.load("sbi.general.cancel"));
+					sbiModule_translate.load("sbi.general.yes")).cancel(
+							sbiModule_translate.load("sbi.general.No"));
 	
 };
