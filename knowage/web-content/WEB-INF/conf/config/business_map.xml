@@ -66,6 +66,7 @@
 
 		<MAP_REST_SERVICE serviceUrl="/datasources/test" businessProcess="DataSourceManagement" />			
 		<MAP_REST_SERVICE serviceUrl="/datasources" businessProcess="DataSourceManagement" />
+		<MAP_REST_SERVICE serviceUrl="/2.0/datasources" businessProcess="publicFunctionality" />
 		<MAP_REST_SERVICE serviceUrl="/datasourcespublic" businessProcess="publicFunctionality" />				
 
 		<MAP_REST_SERVICE serviceUrl="/measures" businessProcess="MeasuresCatalogueManagement" />
