@@ -63,6 +63,7 @@ Ext.define
 	            	         		bind : '{configModel.toolbarPosition}',
 	            	         		displayField : 'name',
 	            	         		valueField : 'value',
+	            	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipPosition.emptyText"),
 	                        		 
 	                        		 store: 
 	                        		 {
@@ -115,7 +116,7 @@ Ext.define
 	       	         			maxWidth: '120',
 	       	         			maxValue: '50',
 	       	         			minValue: '1',
-//	       	         			value: "1"
+	       	         			emptyText: LN("sbi.chartengine.configuration.sunburstTooltipSpacing.emptyText")
 	       	         		},
 	       	         		
 	       	         		{
@@ -126,7 +127,7 @@ Ext.define
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '100',
 	   	                		 minValue: '10',
-//	   	                		 value: "10"
+	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipTail.emptyText")
 	   	                	}
 	   	         		]		                     
                     }
@@ -160,7 +161,7 @@ Ext.define
 	           	         		maxWidth: '120',
 	           	         		maxValue: '100',
 	           	         		minValue: '10',
-//	           	         		value: "10"
+	           	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipHeight.emptyText")
 	       	         		},
 	       	         		
 	       	         		{
@@ -171,7 +172,7 @@ Ext.define
 	   	                		 maxWidth: '120',
 	   	                		 maxValue: '200',
 	   	                		 minValue: '10',
-//	   	                		 value: "10"
+	   	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTooltipWidth.emptyText")
 	   	                	}
 	   	         		]		                     
                     }	

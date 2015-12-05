@@ -103,12 +103,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipMinWidth}',
 					 id: "parallelTooltipMinWidth",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "20",
 					 maxValue: '100',
 					 minValue: '10',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipMinWidth.emptyText"),
 					 
 					 listeners:
 					 {
@@ -135,12 +136,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipMaxWidth}',
 					 id: "parallelTooltipMaxWidth",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
-					 width: "200",
+					 width: 280,
 //					 value: "300",
 					 maxValue: '500',
 					 minValue: '50',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipMaxWidth.emptyText"),
 					 
 					 listeners:
 					 {
@@ -188,12 +190,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipMinHeight}',	
 					 id: "parallelTooltipMinHeight",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMinHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "20",
 					 maxValue: '50',
 					 minValue: '5',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipMinHeight.emptyText"),
 					 
 					 listeners:
 					 {
@@ -220,12 +223,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipMaxHeight}',
 					 id: "parallelTooltipMaxHeight",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipMaxHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "300",
 					 maxValue: '500',
 					 minValue: '50',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipMaxHeight.emptyText"),
 					 
 					 listeners:
 					 {
@@ -274,12 +278,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipPadding}',	
 					 id: "parallelTooltipPadding",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipPadding") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "2",
 					 maxValue: '20',
 					 minValue: '0',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipTextPadd.emptyText"),
 					 
 					 listeners:
 					 {
@@ -306,12 +311,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipBorder}',
 					 id: "parallelTooltipBorder",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "0",
 					 maxValue: '10',
 					 minValue: '0',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipBorderWidth.emptyText"),
 					 
 					 listeners:
 					 {
@@ -338,12 +344,13 @@ Ext.define
 					 bind : '{configModel.parallelTooltipBorderRadius}',
 					 id: "parallelTooltipBorderRadius",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "5",
 					 maxValue: '20',
 					 minValue: '0',
 					 labelWidth: 120,
 					 labelPad: 10,
+					 emptyText: LN("sbi.chartengine.configuration.parallelTooltipBorderRadius.emptyText"),
 					 
 					 listeners:
 					 {

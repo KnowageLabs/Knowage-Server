@@ -80,6 +80,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 				fieldLabel : LN('sbi.chartengine.configuration.borderwidth'),
 				viewModel: this.viewModel,
 				bind:  this.config.bindBorderWidth,
+				emptyText: LN("sbi.chartengine.configuration.legendBorderWith.emptyText"),
 	        	fieldLabel : (globalScope.config.isBorderWidthMandatory) ?  
 	        			LN('sbi.chartengine.configuration.borderwidth') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 	    				: LN('sbi.chartengine.configuration.borderwidth')

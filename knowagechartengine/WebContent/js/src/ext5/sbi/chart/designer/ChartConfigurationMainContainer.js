@@ -68,12 +68,16 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         this.height = {
     		xtype : 'numberfield',
+    		width: 280,
+    		emptyText: LN("sbi.chartengine.configuration.height.emptyText"),
     		bind : '{configModel.height}',
     		fieldLabel : LN('sbi.chartengine.configuration.height')
     	};
         
         this.width = {
     		xtype : 'numberfield',
+    		width: 280,
+    		emptyText: LN("sbi.chartengine.configuration.width.emptyText"),
     		id: "chartWidthNumberfield",
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
@@ -165,6 +169,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			},
 			items : [ {
 	            xtype : 'textfield',
+	            width: 280,
+	            emptyText : LN("sbi.chartengine.configuration.title.emptyText"),
 	            bind : '{configModel.title}',
 	            fieldLabel : LN('sbi.chartengine.configuration.title')
 	        },{
@@ -184,6 +190,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        },
 	        items : [ {
 	            xtype : 'textfield',
+	            width: 280,
+	            emptyText: LN("sbi.chartengine.configuration.subtitle.emptyText"),
 	            bind : '{configModel.subtitle}',
 	            fieldLabel : LN('sbi.chartengine.configuration.subtitle'),
 	            maxWidth:'500'
@@ -202,6 +210,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	        items : [{
 	        	id: 'nodata',
 	            xtype : 'textfield',
+	            width: 280,
+	            emptyText: LN("sbi.chartengine.configuration.noData.emptyText"),
 	            bind : '{configModel.nodata}',
 	            fieldLabel : LN('sbi.chartengine.configuration.nodata') ,
 	            labelWidth : '100%'
@@ -236,6 +246,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 
 			items: [{
 				xtype: 'numberfield',
+				width: 280,
+				emptyText: LN("sbi.chartengine.configuration.opacityOnMouseOver.emptyText"),
 				bind: '{configModel.opacMouseOver}',		
 				fieldLabel: LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
 				width: "200",

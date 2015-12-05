@@ -11,6 +11,7 @@ Ext.define('Sbi.chart.designer.ChartOrientationCombo',{
 	fieldLabel : LN('sbi.chartengine.configuration.orientation'),
 	displayField : 'name',
 	valueField : 'value',
+	emptyText: LN("sbi.chartengine.configuration.orientation.emptyText"),
 	store : {
 		fields : [ 'name', 'value' ],
 		data : [ {

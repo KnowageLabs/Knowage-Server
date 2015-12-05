@@ -18,4 +18,5 @@ Ext.define('Sbi.chart.designer.TypeLineCombo', {
     valueField: 'value',
     fieldLabel : LN('sbi.chartengine.axisstylepopup.typeline'),
     queryMode : 'local',
+    emptyText: LN("sbi.chartengine.structure.axisStyleConfig.grid.lineType.emptyText")
 });

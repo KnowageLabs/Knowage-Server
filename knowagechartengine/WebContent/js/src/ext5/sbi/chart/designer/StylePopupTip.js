@@ -104,9 +104,9 @@ Ext.define
 	                		 id: "sunburstTipWidth",
 	                		 fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.width") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 	                		 width: "200",
-//	                		 value: "10",
 	                		 maxValue: '200',
-	                		 minValue: '10'
+	                		 minValue: '10',
+	                		 emptyText: LN("sbi.chartengine.configuration.sunburstTipWidth.emptyText")
 	                	}
 	         		]		                     
                  }	
@@ -137,7 +137,7 @@ Ext.define
             		        fieldLabel: LN("sbi.chartengine.configuration.sunburst.tip.text") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
             		        anchor: '100%',
             		  		bind: '{configModel.tipText}',
-            		  		emptyText: "... empty text ..."
+            		  		emptyText: LN("sbi.chartengine.configuration.sunburstTipText.emptyText")
             		  	}
         		  	]
  	         		

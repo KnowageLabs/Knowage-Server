@@ -52,11 +52,13 @@ Ext.define
 				{
 				    fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 				    bind : '{configModel.serieFilterColumn}',
+				    width: 280,
 				    store: this.storeForSeriesBeforeDrop,
 				    editable : false,
 				    queryMode: 'local',
 				    displayField: 'serieColumn',
 				    valueField: 'serieColumn',
+				    emptyText: LN("sbi.chartengine.configuration.parallelLimitSerAsFiltCol.emptyText"),
 				    
 				    /**
 				     * Listen if currently selected serie is removed from the serie (Y-axis) panel. If it is,
@@ -94,10 +96,11 @@ Ext.define
 					 bind : '{configModel.maxNumberOfLines}',
 					 id: "parallelLimitMaxNumbOfRec",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 					 //value: "100",
 					 maxValue: '1000',
 					 minValue: '5',
+					 emptyText: LN("sbi.chartengine.configuration.parallelLimitMaxNumOfRec.emptyText"),
 					 
 					 listeners:
 					 {
@@ -124,6 +127,7 @@ Ext.define
 	         		xtype : 'combo',
 	         		queryMode : 'local',
 	         		//value : 'bottom',
+	         		width: 280,
 	         		triggerAction : 'all',
 	         		forceSelection : true,
 	         		editable : false,
@@ -131,6 +135,7 @@ Ext.define
 	         		bind : '{configModel.orderTopMinBottomMax}',
 	         		displayField : 'name',
 	         		valueField : 'value',
+	         		emptyText: LN("sbi.chartengine.configuration.parallelLimitOrder.emptyText"), 
             		 
 	         		store: 
 	         		{

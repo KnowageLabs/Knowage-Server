@@ -10,4 +10,6 @@ Ext.define('Sbi.chart.designer.SeriesOrderCombo', {
 	valueField: 'value',
 	displayField: 'name',
 	fieldLabel : LN('sbi.chartengine.designer.seriesordertype'),
+	editable: false,
+	emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.orderType.emptyText")
 });

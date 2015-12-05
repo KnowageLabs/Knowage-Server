@@ -19,4 +19,5 @@ Ext.define('Sbi.chart.designer.FontVerticalAlignCombo', {
     valueField: 'value',
     fieldLabel : LN('sbi.chartengine.configuration.alignment'),
     queryMode : 'local',
+    emptyText: LN("sbi.chartengine.configuration.alignment.emptyText")
 });

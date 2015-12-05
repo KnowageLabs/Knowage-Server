@@ -20,5 +20,5 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainer', {
     columns: [],
     hideHeaders: true,
     enableColumnHide:false,
-    margin: '0 0 0 0'	
+    margin: '0 0 0 0'
 });

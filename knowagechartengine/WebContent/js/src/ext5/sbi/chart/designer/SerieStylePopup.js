@@ -206,7 +206,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			        xtype: 'numberfield',
 			        id: 'yPositionDataLabels',
 			        value: dataAtRow.get('yPositionDataLabels'),
-			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.yPosition") 
+			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.yPosition"),
+			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.yPosition.emptyText")
 			    }	
 	    	);
 			
@@ -263,7 +264,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			        xtype: 'textfield',
 			        id: 'formatDataLabels',
 			        value: dataAtRow.get('formatDataLabels'),
-			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.format") 
+			        fieldLabel: LN("sbi.chartengine.configuration.serieStyleConf.gauge.dataLabels.format"),
+			        emptyText: LN("sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText")
 			    }	
 	    	);
 			
@@ -279,7 +281,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (serieName && serieName.trim() != '') ? serieName.trim() : '',
 			fieldLabel: LN('sbi.generic.name'),
 			selectOnFocus: true,
-			allowBlank: true 
+			allowBlank: true,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.name.emptyText")
 		});
 		this.serieFieldSet.add(this.serieNameTextField);
 	
@@ -312,6 +315,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			valueField: 'value',
 			displayField: 'name',
 			fieldLabel : LN('sbi.chartengine.designer.seriestype'),
+			editable: false,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.type.emptyText")
 		});				
 		
 		/**
@@ -422,7 +427,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			selectOnFocus: true,
 			value: seriePrecision ? seriePrecision : '',
 			maxValue: 10,
-			minValue: 0
+			minValue: 0,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.precision.emptyText")
 		});
 		this.serieFieldSet.add(this.seriePrecisionNumberField);
 		
@@ -432,7 +438,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (prefixChar && prefixChar.trim() != '') ? prefixChar.trim() : '',
 			fieldLabel: LN('sbi.chartengine.designer.prefixtext'),
 			selectOnFocus: true,
-			allowBlank: true 
+			allowBlank: true,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.prefixText.emptyText")
 		});
 		this.serieFieldSet.add(this.seriePrefixCharTextField);
 		
@@ -442,7 +449,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			value: (postfixChar && postfixChar.trim() != '') ? postfixChar.trim() : '',
 			fieldLabel: LN('sbi.chartengine.designer.postfixtext'),
 			selectOnFocus: true,
-			allowBlank: true 
+			allowBlank: true,
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.serie.postfixText.emptyText")
 		});
 		this.serieFieldSet.add(this.seriePostfixCharTextField);
 				
@@ -453,7 +461,8 @@ Ext.define('Sbi.chart.designer.SerieStylePopup', {
 			name      : 'tooltipTemplateHtml',
 			value: (templateHtml && templateHtml.trim() != '') ? templateHtml.trim() : '',
 			fieldLabel: LN('sbi.chartengine.designer.templatehtml'),
-			anchor    : '100%'
+			anchor    : '100%',
+			emptyText: LN("sbi.chartengine.structure.serieStyleConfig.tooltip.templateHtml.emptyText")
 		});
 		this.tooltipFieldSet.add(this.tooltipTemplateHtml);
 		

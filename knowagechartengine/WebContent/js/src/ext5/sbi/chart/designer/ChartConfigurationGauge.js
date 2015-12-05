@@ -33,10 +33,10 @@ Ext.define
 					bind : '{configModel.startAnglePane}',
 					id: "gaugeStartAnglePane",
 					fieldLabel : LN("sbi.chartengine.configuration.gauge.startAnglePane"),
-					width : "200",
-					//value : "0",
+					width : 280,
 					maxValue : '360',
-					minValue : '-270'
+					minValue : '-270',
+					emptyText: LN("sbi.chartengine.configuration.gaugeStartAngle.emptyText")
 				},
 
 				{
@@ -44,10 +44,10 @@ Ext.define
 					bind : '{configModel.endAnglePane}',
 					id: "gaugeEndAnglePane",
 					fieldLabel : LN("sbi.chartengine.configuration.gauge.endAnglePane"),
-					width : "200",
-					//value : "90",
+					width : 280,
 					maxValue : '360',
-					minValue : '-270'
+					minValue : '-270',
+					emptyText: LN("sbi.chartengine.configuration.gaugeEndAngle.emptyText")
 				}
 			];
 

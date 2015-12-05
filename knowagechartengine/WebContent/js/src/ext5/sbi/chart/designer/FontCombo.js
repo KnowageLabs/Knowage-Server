@@ -17,8 +17,11 @@ Ext.define('Sbi.chart.designer.FontCombo',{
     fieldLabel : LN('sbi.chartengine.configuration.font'),
     tdCls : '',
     editable : false,
+    emptyText: LN("sbi.chartengine.configuration.fontFamily.emptyText"),
+    
     listeners : {
         change: function(sender, newValue, oldValue, opts) {
+        	
             this.inputEl.setStyle('font-family', newValue);
             
             /**

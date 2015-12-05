@@ -77,10 +77,11 @@ Ext.define
 					 bind : '{configModel.axisColNamePadd}',	
 					 id: "parallelAxisColNamePadd",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "15",
 					 maxValue: '30',
 					 minValue: '0',
+					 emptyText: LN("sbi.chartengine.configuration.parallelAxesLinesAxisColNamePadd.emptyText"),
 					 
 					 listeners:
 					 {
@@ -107,10 +108,11 @@ Ext.define
 					 bind : '{configModel.brushWidth}',	
 					 id: "parallelBrushWidth",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushWidth") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
-					 width: "200",
+					 width: 280,
 //					 value: "20",
 					 maxValue: '100',
 					 minValue: '5',
+					 emptyText: LN("sbi.chartengine.configuration.parallelAxesLinesBrushWidth.emptyText"),
 					 
 					 listeners:
 					 {

@@ -248,6 +248,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 		var styleRotate = this.axisData.styleRotate;
 		this.styleRotateNumberField = Ext.create('Ext.form.field.Number', {
 			fieldLabel: LN('sbi.chartengine.axisstylepopup.rotate'),
+			emptyText: LN("sbi.chartengine.structure.axisStyleConfig.axis.labelRotate.emptyText"),
 			selectOnFocus: true,
 			value: styleRotate ? '' + styleRotate : '',
 			maxValue: 180,
@@ -380,6 +381,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				selectOnFocus: true,
 				value: (majorgridInterval && majorgridInterval.trim() != '') ? majorgridInterval.trim() : '',
 				minValue: 0,
+				emptyText: LN("sbi.chartengine.structure.axisStyleConfig.grid.lineInterval.emptyText")
 			});
 			this.majorgridFieldSet.add(this.majorgridIntervalNumberField);
 			
@@ -437,6 +439,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 				selectOnFocus: true,
 				value: (minorgridInterval && minorgridInterval.trim() != '') ? minorgridInterval.trim() : '',
 				minValue: 0,
+				emptyText: LN("sbi.chartengine.structure.axisStyleConfig.grid.lineInterval.emptyText")
 			});
 			this.minorgridFieldSet.add(this.minorgridIntervalNumberField);
 			
@@ -531,7 +534,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        id: 'minValueYAxis',
 			        value: this.axisData.min,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis")+":" 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.minValueYAxis")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.addParams.min.emptyText")
 			    }	
 	    	);
 			
@@ -548,7 +552,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        id: 'maxValueYAxis',
 			        value: this.axisData.max,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis")+":"
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.maxValueYAxis")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.addParams.max.emptyText")
 			    }	
 	    	);
 			
@@ -653,7 +658,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.lineWidth,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.lineWidth")+":"
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.additionalParams.lineWidth")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.addParams.lineWidth.emptyText")
 			    }	
 	    	);
 			
@@ -713,6 +719,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
            		 	fieldLabel : LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPosition"),
            		 	displayField : 'name',
            		 	valueField : 'value',
+           		 	emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.position.emptyText"),
            		
            		 	store : 
            		 	{
@@ -818,7 +825,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.tickPixelInterval,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval")+":"
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickPixelInterval")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.pixelInterval.emptyText")
 			    }
 			);
 			
@@ -836,7 +844,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.tickWidth,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth")+":" 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickWidth")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.width.emptyText")
 			    }
 			);
 			
@@ -854,7 +863,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.tickLength,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickLength")+":" 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.mainTickParams.tickLength")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.length.emptyText")
 			    }
 			);
 			
@@ -896,6 +906,7 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
            		 	fieldLabel : LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickPosition"),
            		 	displayField : 'name',
            		 	valueField : 'value',
+           		 	emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.position.emptyText"),
            		
            		 	store : 
            		 	{
@@ -1002,7 +1013,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.minorTickInterval,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")+":" 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickInterval")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.pixelInterval.emptyText")
 			    }
 			);
 			
@@ -1020,7 +1032,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.minorTickWidth,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")+":" 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickWidth")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.width.emptyText")
 			    }
 			);
 			
@@ -1038,7 +1051,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        value: this.axisData.minorTickLength,
 			        minValue: 0,
 			        labelSeparator: '',
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength")+":" 
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.minorTickParams.minorTickLength")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.tick.length.emptyText")
 			    }
 			);
 			
@@ -1077,7 +1091,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 			        minValue: -60,
 			        value: this.axisData.distance,
 			        labelSeparator: '',			        
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis")+":"  
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.distanceLabelFromYAxis")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.labels.distance.emptyText")
 			    }
 			);
 			
@@ -1096,7 +1111,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 //			        maxValue: 359,
 			        value: this.axisData.rotation,
 			        labelSeparator: '',			        
-			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis")+":"  
+			        fieldLabel: LN("sbi.chartengine.axisstylepopup.labelParams.rotationOfLabelYAxis")+":",
+			        emptyText: LN("sbi.chartengine.structure.axisStyleConfig.labels.rotation.emptyText")
 			    }
 			);
 			
@@ -1156,6 +1172,8 @@ Ext.define('Sbi.chart.designer.AxisStylePopup', {
 									
 					id: "plotsContainer",
 					store: plotbandsStore, 
+					
+					emptyText: "ASDASDASD",
 					
 					title: LN("sbi.chartengine.configuration.gauge.axisStylePopup.plotbands.title"),
 									

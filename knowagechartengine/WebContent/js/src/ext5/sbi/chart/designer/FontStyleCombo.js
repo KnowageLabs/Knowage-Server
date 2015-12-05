@@ -24,6 +24,7 @@ Ext.define('Sbi.chart.designer.FontStyleCombo', {
     valueField: 'value',
     fieldLabel : LN('sbi.chartengine.configuration.fontstyle'),
     queryMode : 'local',
+    emptyText: LN("sbi.chartengine.configuration.fontStyle.emptyText"),
     
     /**
      * danristo
