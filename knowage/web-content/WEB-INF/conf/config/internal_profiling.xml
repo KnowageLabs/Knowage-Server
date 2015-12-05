@@ -107,6 +107,7 @@
 		<AUTHORIZATION authorizationName="ENABLE_DATASET_PERSISTENCE"
 			productType="KnowageBD" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageBD" authorizationName="SEE_MY_DATA" organization="DEFAULT_TENANT"/>	
+		<AUTHORIZATION productType="KnowageBD" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>	
 		
 		<!-- Authorizations for KnowageFake -->
 		<AUTHORIZATION productType="KnowageFake" authorizationName="SAVE_SUBOBJECTS" organization="DEFAULT_TENANT"/>
@@ -136,7 +137,7 @@
 		<AUTHORIZATION productType="KnowageFake" authorizationName="GLOSSARY" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_BUSINESS" organization="DEFAULT_TENANT"/>
 		<AUTHORIZATION productType="KnowageFake" authorizationName="MANAGE_GLOSSARY_TECHNICAL" organization="DEFAULT_TENANT"/>	
-		
+		<AUTHORIZATION productType="KnowageFake" authorizationName="ENABLE_FEDERATED_DATASET" organization="DEFAULT_TENANT"/>
 	</DEFAULT_AUTHORIZATIONS>
 
 
