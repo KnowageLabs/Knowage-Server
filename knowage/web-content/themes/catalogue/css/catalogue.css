@@ -1,0 +1,13 @@
+@CHARSET "ISO-8859-1";
+
+.header {
+	min-height: 0px;
+  	height: 29px !important;
+  	background-color: #3b668c !important;
+  	color: #ffffff !important;
+}
+
+.rightHeaderButtonBackground {
+	background-color: #ffffff !important;
+	color:#000000 !important;
+}

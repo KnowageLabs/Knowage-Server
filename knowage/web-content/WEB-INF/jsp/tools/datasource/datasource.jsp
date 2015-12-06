@@ -18,6 +18,9 @@
 
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
+
+
 	
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
@@ -28,7 +31,7 @@
 	<angular_2_col>
 		<left-col>
 			<div class="leftBox">
-				<md-toolbar class="md-blue minihead">
+				<md-toolbar class="header">
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 											
@@ -69,25 +72,20 @@
 				
 			<div ng-show="showme">
 			
-				<md-toolbar class="md-blue minihead">
-					<div class="md-toolbar-tools h100">
-						<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.ds.dataSource");}}</div>
+				<md-toolbar class="header">
+					<div class="md-toolbar-tools">
+						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 						<div style="position: absolute; right: 0px" class="h100">
-						
-							<md-button type="button" tabindex="-1" aria-label="cancel"
-								class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-								ng-click="closeForm()">{{translate.load("sbi.browser.defaultRole.cancel");}}
-							</md-button>
 							
 							<md-button type="button"
-								aria-label="test datasource" class="md-raised md-ExtraMini "
+								aria-label="test datasource" class="md-raised md-ExtraMini"
 								style=" margin-top: 2px;"
 								ng-disabled="!forms.dataSourceForm.$valid">
 							{{translate.load("sbi.datasource.test");}} 
 							</md-button>
 							
 							<md-button type="submit"
-								aria-label="save datasource" class="md-raised md-ExtraMini "
+								aria-label="save datasource" class="md-raised md-ExtraMini"
 								style=" margin-top: 2px;"
 								ng-disabled="!forms.dataSourceForm.$valid">
 							{{translate.load("sbi.browser.defaultRole.save");}} 
