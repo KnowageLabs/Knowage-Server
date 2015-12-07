@@ -183,8 +183,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			buildTitle = LN('sbi.cockpit.window.toolbar.cacheDate') + this.cacheDate;
 		}
 		
-		if(config.wtype == 'document' && config.wconf.documentId){
-			buildTitle += ' (' + config.wconf.documentId + ')';
+		if(config.wtype == 'document' && config.wconf.documentName){
+			buildTitle += ' (' + config.wconf.documentName + ')';
 		}
 		this.setTitle((buildTitle == config.wgeneric.title) ? "" : buildTitle);
 		
@@ -233,9 +233,8 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		} else {
 			this.widget = widget;
 		}
+		
 		this.doLayout();
-
-		this.refreshTitle();
 
 		Sbi.trace("[WidgetContainerComponent.setWidget]: layout refreshed");
 
@@ -276,6 +275,9 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			widget = this.getWidget();
 			widget.setConfiguration(widgetConf);
 		}
+		
+		this.refreshTitle();
+		
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: widgetConf is equal to [" + Sbi.toSource(widgetConf) + "]");
 
 		Sbi.trace("[WidgetContainerComponent.setWidgetConfiguration]: OUT");
