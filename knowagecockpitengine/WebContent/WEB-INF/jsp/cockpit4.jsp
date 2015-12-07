@@ -375,7 +375,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 		Sbi.config.isTechnicalUser = "<%=isTechnicalUser%>";
 		Sbi.config.docAuthor = "<%=docAuthor%>";
 		Sbi.config.docName = "<%=docName.replace('\n', ' ')%>";
-		Sbi.config.docDescription = "<%=docDescription.replace('\n', ' ')%>";
+		Sbi.config.docDescription = "<%=docDescription.replace("\n", " ").replace("\"", "\\\"").replace("\'", "\\\'")%>";
 		Sbi.config.docIsPublic= "<%=docIsPublic%>";
 		Sbi.config.docIsVisible= "<%=docIsVisible%>";
 		Sbi.config.docPreviewFile= "<%=docPreviewFile%>";
