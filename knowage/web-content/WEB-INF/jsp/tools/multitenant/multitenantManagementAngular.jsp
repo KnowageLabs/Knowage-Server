@@ -72,7 +72,7 @@
 							</div>	
 						</md-toolbar>
 					    <md-content layout="column" layout-align="space-around stretch">  
-							<md-tabs md-dynamic-height md-selected="idx_tab">
+							<md-tabs md-dynamic-height md-selected="idx_tab" layout-fill>
 								<md-tab>
 									<md-tab-label>
 										{{translate.load("sbi.generic.details")}}
