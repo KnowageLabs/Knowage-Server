@@ -1,8 +1,5 @@
 package it.eng.spagobi.utilities.engines.rest;
 
-import it.eng.spagobi.security.hmacfilter.DummyServlet;
-import it.eng.spagobi.security.hmacfilter.HMACFilterTest;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +12,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.eng.spagobi.security.hmacfilter.DummyServlet;
+import it.eng.spagobi.security.hmacfilter.HMACFilterTest;
 
 public class SimpleRestClientTest {
 
@@ -42,7 +42,7 @@ public class SimpleRestClientTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
-		ClientResponse<?> resp = client.executeGetService(parameters, "http://localhost:8080/hmac","biadmin");
+		ClientResponse<?> resp = client.executeGetService(parameters, "http://localhost:8080/hmac", "biadmin");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
 	}
@@ -56,7 +56,7 @@ public class SimpleRestClientTest {
 		boolean done = false;
 
 		try {
-			client.executeGetService(parameters, "http://localhost:8080/hmac","biadmin");
+			client.executeGetService(parameters, "http://localhost:8080/hmac", "biadmin");
 		} catch (Exception e) {
 			done = true;
 		}
@@ -90,7 +90,7 @@ public class SimpleRestClientTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
-		ClientResponse<?> resp = client.executePostService(parameters, "http://localhost:8080/hmac","biadmin", MediaType.TEXT_PLAIN_TYPE, "etc.17");
+		ClientResponse<?> resp = client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE, "etc.17");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
 	}

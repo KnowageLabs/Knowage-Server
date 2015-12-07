@@ -48,6 +48,34 @@
 	<classpathentry kind="lib" path="lib-test/axis-jaxrpc-1.4.jar"/>
 	<classpathentry kind="lib" path="lib-test/axis-saaj-1.4.jar"/>
 	<classpathentry kind="lib" path="lib-test/axis-wsdl4j-1.5.1.jar"/>
+	<classpathentry kind="lib" path="lib-test/grizzly-framework-2.3.17.jar"/>
+	<classpathentry kind="lib" path="lib-test/grizzly-http-2.3.17.jar"/>
+	<classpathentry kind="lib" path="lib-test/grizzly-http-server-2.3.17.jar"/>
+	<classpathentry kind="lib" path="lib-test/jersey-core-1.18.3.jar"/>
+	<classpathentry kind="lib" path="lib-test/jersey-grizzly2-1.18.3.jar"/>
+	<classpathentry kind="lib" path="lib-test/jersey-server-1.18.3.jar"/>
+	<classpathentry kind="lib" path="lib-test/mina-core-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib-test/mockito-core-1.10.17.jar"/>
+	<classpathentry kind="lib" path="lib-test/objenesis-2.1.jar"/>
+	<classpathentry kind="lib" path="lib-test/restito-0.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/asm-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/asm-3.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/bayeux-api-3.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/cometd-java-common-3.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/cometd-java-server-3.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/cometd-java-websocket-common-server-3.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/cometd-java-websocket-javax-server-3.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-continuation-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-http-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-io-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-jmx-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-servlets-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-ajax-9.2.12.v20150709.jar"/>
+	<classpathentry kind="lib" path="lib/json-path-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/json-smart-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.10.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.12.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>

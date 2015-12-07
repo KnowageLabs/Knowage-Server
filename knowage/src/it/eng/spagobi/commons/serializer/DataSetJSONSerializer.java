@@ -5,17 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.service.ManageDatasets;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +14,18 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.service.ManageDatasets;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class DataSetJSONSerializer implements Serializer {
 
@@ -343,6 +344,8 @@ public class DataSetJSONSerializer implements Serializer {
 				} else if (type.equalsIgnoreCase(DataSetConstants.FLAT)) {
 					result.put(DATA_SOURCE_FLAT, jsonConf.getString(DataSetConstants.DATA_SOURCE));
 					result.put(FLAT_TABLE_NAME, jsonConf.getString(DataSetConstants.FLAT_TABLE_NAME));
+				} else if (DataSetConstants.DS_REST_NAME.equalsIgnoreCase(type)) {
+					manageRESTDataSet(jsonConf, result);
 				}
 			} catch (Exception e) {
 				logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
@@ -370,6 +373,19 @@ public class DataSetJSONSerializer implements Serializer {
 
 		}
 		return result;
+	}
+
+	private static void manageRESTDataSet(JSONObject conf, JSONObject result) throws JSONException {
+		for (String attr : DataSetConstants.REST_ALL_ATTRIBUTES) {
+			if (!conf.has(attr)) {
+				// optional attribute
+				continue;
+			}
+			Object value = conf.get(attr);
+			Assert.assertNotNull(value, "json value");
+			result.put(attr, value.toString());
+		}
+
 	}
 
 	public static Object metadataSerializerChooser(String meta) throws SourceBeanException, JSONException {

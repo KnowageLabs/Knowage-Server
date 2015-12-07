@@ -5,12 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.commons.utilities;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,11 +26,20 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class StringUtilities {
+	public static final String START_PARAMETER = "$P{";
+
+	public static final String START_USER_PROFILE_ATTRIBUTE = "${";
 
 	public static final String DEFAULT_CHARSET = "UTF-8";
 
@@ -154,7 +157,8 @@ public class StringUtilities {
 		} else {
 			if (attributeValue.startsWith("{")) {
 				// the profile attribute is multi-value
-				logger.warn("The attribute value seems to be a multi value attribute; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				logger.warn(
+						"The attribute value seems to be a multi value attribute; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 				try {
 					// checks the sintax
 					String[] values = findAttributeValues(attributeValue);
@@ -404,7 +408,8 @@ public class StringUtilities {
 			} else {
 				if (value.startsWith("{")) {
 					// the profile attribute is multi-value
-					logger.warn("The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+					logger.warn(
+							"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 					try {
 						// checks the sintax
 						String[] values = findAttributeValues(value);
@@ -591,7 +596,8 @@ public class StringUtilities {
 		} else {
 			if (value.startsWith("{")) {
 				// the profile attribute is multi-value
-				logger.warn("The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
+				logger.warn(
+						"The attribute value seems to be a multi value parameter; trying considering it as a multi value using its own splitter and no prefix and suffix.");
 				try {
 					// checks the sintax
 					String[] values = findAttributeValues(value);

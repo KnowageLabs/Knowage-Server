@@ -5,6 +5,15 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
@@ -28,14 +37,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -104,6 +105,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	protected String scopeCd;
 
 	private FederationDefinition datasetFederation;
+	private UserProfile userProfile;
 
 	private static transient Logger logger = Logger.getLogger(AbstractDataSet.class);
 
@@ -755,7 +757,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		try {
 			String tableName = this.getTableNameForReading();
 			IDataSource dataSource = this.getDataSourceForReading();
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(fieldName, dataSource) + " FROM " + tableName);
+			StringBuffer buffer = new StringBuffer(
+					"Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(fieldName, dataSource) + " FROM " + tableName);
 			IDataSetTableDescriptor tableDescriptor = new DataSetTableDescriptor(this);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
@@ -799,8 +802,8 @@ public abstract class AbstractDataSet implements IDataSet {
 			}
 			IDataSource dataSource = tableDescriptor.getDataSource();
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM "
-					+ tableName);
+			StringBuffer buffer = new StringBuffer(
+					"Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
@@ -931,4 +934,11 @@ public abstract class AbstractDataSet implements IDataSet {
 		return DataSetUtilities.getParamsDefaultValues(this);
 	}
 
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
 }

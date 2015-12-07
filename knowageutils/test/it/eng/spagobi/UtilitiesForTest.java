@@ -1,11 +1,5 @@
 package it.eng.spagobi;
 
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.configuration.FileCreatorConfiguration;
-import it.eng.spagobi.utilities.MockContext;
-import it.eng.spagobi.utilities.MockFactory;
-import it.eng.spagobi.utilities.MockHttpSession;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,11 +16,20 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.configuration.FileCreatorConfiguration;
+import it.eng.spagobi.commons.SimpleSingletonConfigCache;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.utilities.MockContext;
+import it.eng.spagobi.utilities.MockFactory;
+import it.eng.spagobi.utilities.MockHttpSession;
+
 public class UtilitiesForTest {
 
 	public static void setUpMasterConfiguration() {
 		System.setProperty("AF_CONFIG_FILE", "resources-test/master.xml");
 		ConfigSingleton.setConfigurationCreation(new FileCreatorConfiguration("./"));
+
 	}
 
 	/**
@@ -52,13 +55,17 @@ public class UtilitiesForTest {
 		ic.bind("java://comp/env/spagobi_service_url", "http://localhost:8080/knowage");
 		ic.bind("java://comp/env/spagobi_host_url", "http://localhost:8080");
 		ic.bind("java://comp/env/spagobi_sso_class", "it.eng.spagobi.services.common.FakeSsoService");
+
+		SimpleSingletonConfigCache cache = new SimpleSingletonConfigCache();
+		cache.setProperty("SPAGOBI_SSO.INTEGRATION_CLASS_JNDI", "java:/comp/env/spagobi_sso_class");
+		SingletonConfig.getInstance().setCache(cache);
 	}
 
 	public static void writeSessionOfWebApp() throws IOException, InterruptedException {
 		Runtime runtime = Runtime.getRuntime();
 		// call login page of knowage to write JSESSION COOKIE
-		Process exec = runtime
-				.exec("curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
+		Process exec = runtime.exec(
+				"curl http://localhost:8080/knowage/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE -H 'Host: localhost:8080' -c ./resources-test/cookies.txt");
 		exec.waitFor();
 		String jsessionId = getJSessionId();
 		exec = runtime

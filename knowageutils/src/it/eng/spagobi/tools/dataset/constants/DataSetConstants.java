@@ -5,6 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.constants;
 
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +70,8 @@ public class DataSetConstants {
 	public static final String WEB_SERVICE = "Web Service";
 	public static final String QBE = "Qbe";
 	public static final String FLAT = "Flat";
-	
+	public static final String DS_REST_NAME = "REST";
+
 	public static final String TRASFORMER_TYPE_CD = "trasfTypeCd";
 	public static final String PIVOT_COL_NAME = "pivotColName";
 	public static final String PIVOT_COL_VALUE = "pivotColValue";
@@ -87,7 +90,8 @@ public class DataSetConstants {
 	public static final String DS_FEDERATED = "SbiFederatedDataSet";
 	public static final String DS_CUSTOM = "SbiCustomDataSet";
 	public static final String DS_FLAT = "SbiFlatDataSet";
-	
+	public static final String DS_REST_TYPE = RESTDataSet.DATASET_TYPE;
+
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 	public static final String QBE_DATAMARTS = "qbeDatamarts";
 	public static final String QBE_JSON_QUERY = "qbeJSONQuery";
@@ -134,6 +138,27 @@ public class DataSetConstants {
 	public static final String CKAN_ID = "ckanId";
 	public static final String CKAN_URL = "ckanUrl";
 
+	// REST dataset constants
+	public static final String REST_JSON_PATH_ATTRIBUTES = "restJsonPathAttributes";
+	public static final String REST_REQUEST_HEADERS = "restRequestHeaders";
+	public static final String REST_REQUEST_BODY = "restRequestBody";
+	public static final String REST_JSON_PATH_ITEMS = "restJsonPathItems";
+
+	public static final String REST_HTTP_METHOD = "restHttpMethod";
+	public static final String REST_ADDRESS = "restAddress";
+	public static final String REST_JSON_DIRECTLY_ATTRIBUTES = "restDirectlyJSONAttributes";
+	public static final String REST_NGSI="restNGSI";
+
+	public static final String REST_OFFSET = "restOffset";
+	public static final String REST_FETCH_SIZE = "restFetchSize";
+	public static final String REST_MAX_RESULTS = "restMaxResults";
+	public static final String[] REST_STRING_ATTRIBUTES = { REST_ADDRESS, REST_REQUEST_BODY, REST_HTTP_METHOD, REST_JSON_PATH_ITEMS,
+			REST_JSON_DIRECTLY_ATTRIBUTES,REST_NGSI, REST_OFFSET, REST_FETCH_SIZE, REST_MAX_RESULTS };
+	public static final String[] REST_JSON_OBJECT_ATTRIBUTES = { REST_REQUEST_HEADERS };
+	public static final String[] REST_JSON_ARRAY_ATTRIBUTES = { REST_JSON_PATH_ATTRIBUTES };
+	public static final String[] REST_ALL_ATTRIBUTES = new String[REST_STRING_ATTRIBUTES.length + REST_JSON_OBJECT_ATTRIBUTES.length
+			+ REST_JSON_ARRAY_ATTRIBUTES.length];
+
 	public static final Map<String, String> name2Code;
 	
 	static {
@@ -147,9 +172,16 @@ public class DataSetConstants {
 		name2Code.put("Qbe", DataSetConstants.DS_QBE);
 		name2Code.put("Custom", DataSetConstants.DS_CUSTOM);
 		name2Code.put("Flat", DataSetConstants.DS_FLAT);
-		name2Code.put("Federated", DataSetConstants.DS_FEDERATED);
+		name2Code.put(DS_REST_NAME, DS_REST_TYPE);
+
+		// add all REST attributes
+		int curr = 0;
+		for (String[] a : new String[][] { REST_STRING_ATTRIBUTES, REST_JSON_OBJECT_ATTRIBUTES, REST_JSON_ARRAY_ATTRIBUTES }) {
+			System.arraycopy(a, 0, REST_ALL_ATTRIBUTES, curr, a.length);
+			curr += a.length;
+		}
 	}
-	
+
 	public static final Map<String, String> code2name;
 	
 	static {
@@ -163,7 +195,7 @@ public class DataSetConstants {
 		code2name.put(DataSetConstants.DS_QBE, "Qbe");
 		code2name.put(DataSetConstants.DS_CUSTOM, "Custom");
 		code2name.put(DataSetConstants.DS_FLAT, "Flat");
-		code2name.put( DataSetConstants.DS_FEDERATED,"Federated");
+		code2name.put(DS_REST_TYPE, DS_REST_NAME);
 	}
 	
 }

@@ -5,6 +5,17 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -31,6 +42,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCHiveDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCOrientDbDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
@@ -40,25 +52,13 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class DataSetFactory {
 
@@ -107,6 +107,10 @@ public class DataSetFactory {
 			toReturn.setDsType(CKAN_DS_TYPE);
 		}
 
+		if (dataSet instanceof RESTDataSet) {
+			toReturn.setDsType(DataSetConstants.DS_REST_NAME);
+		}
+
 		if (dataSet instanceof JDBCDataSet) {
 			toReturn.setDsType(JDBC_DS_TYPE);
 		}
@@ -142,6 +146,10 @@ public class DataSetFactory {
 
 		if (dataSet instanceof FlatDataSet) {
 			toReturn.setDsType(FLAT_DS_TYPE);
+		}
+
+		if (dataSet instanceof RESTDataSet) {
+			toReturn.setDsType(DataSetConstants.DS_REST_NAME);
 		}
 
 		toReturn.setId(dataSet.getId());
@@ -183,7 +191,6 @@ public class DataSetFactory {
 		return toReturn;
 	}
 
-	
 	public static Set<IDataSet> toDataSet(List<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
 
 		Set<IDataSet> toReturn = new HashSet<IDataSet>();
@@ -195,7 +202,7 @@ public class DataSetFactory {
 
 		return toReturn;
 	}
-	
+
 	public static IDataSet toDataSet(SbiDataSet sbiDataSet, IEngUserProfile userProfile) {
 		IDataSet ds = null;
 		VersionedDataSet versionDS = null;
@@ -221,6 +228,10 @@ public class DataSetFactory {
 				}
 				fds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
 				fds.setDsType(FILE_DS_TYPE);
+			}
+
+			if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
+				ds = manageRESTDataSet(jsonConf);
 			}
 
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
@@ -340,12 +351,12 @@ public class DataSetFactory {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 
 				SbiFederationDefinition sbiFederation = sbiDataSet.getFederation();
-				
+
 				ISbiFederationDefinitionDAO dao = DAOFactory.getFedetatedDatasetDAO();
-				Set<IDataSet> sourcesDatasets =  dao.loadAllFederatedDataSets(sbiFederation.getFederation_id());
+				Set<IDataSet> sourcesDatasets = dao.loadAllFederatedDataSets(sbiFederation.getFederation_id());
 
 				UserProfile profile = (UserProfile) userProfile;
-				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation,sourcesDatasets), (String)profile.getUserId());
+				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, sourcesDatasets), (String) profile.getUserId());
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 
@@ -356,8 +367,7 @@ public class DataSetFactory {
 					parameters = new HashMap();
 					ds.setParamsMap(parameters);
 				}
-	
-				
+
 				// END
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
@@ -448,8 +458,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -708,8 +718,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistTableName(sbiDataSet.getPersistTableName());
@@ -756,4 +766,9 @@ public class DataSetFactory {
 		return ds;
 	}
 
+	private static RESTDataSet manageRESTDataSet(JSONObject jsonConf) {
+		RESTDataSet res = new RESTDataSet(jsonConf);
+		res.setDsType(DataSetConstants.DS_REST_NAME);
+		return res;
+	}
 }

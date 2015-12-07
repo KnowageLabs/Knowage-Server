@@ -5,6 +5,23 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -39,6 +56,7 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
+import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.bo.ScriptDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
@@ -68,23 +86,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @SuppressWarnings("serial")
 public class ManageDatasets extends AbstractSpagoBIAction {
@@ -701,8 +702,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 											throw e;
 										}
 										// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
-										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(
-												previousIdInteger);
+										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
+												.loadFederationsUsingDataset(previousIdInteger);
 
 										// if (!objectsUsing.isEmpty() || !federationsAssociated.isEmpty()) {
 										// block save action ONLY for federations (if metadata are changed)
@@ -843,8 +844,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * dsActiveDetail.setFlatTableName(flatTableName); } }else{ dsActiveDetail.setDataSourceFlat(""); dsActiveDetail.setFlatTableName(""); } IDataSet ds = null;
 	 * try { if (dsType != null && !dsType.equals("")) { ds = getDataSet(dsType); if (ds != null) { if (trasfTypeCd != null && !trasfTypeCd.equals("")) { ds =
 	 * setTransformer(ds, trasfTypeCd); } String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA); String dsMetadata =
-	 * null; if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) { // recalculate metadata logger
-	 * .debug("Recalculating dataset's metadata: executing the dataset..."); HashMap parametersMap = new HashMap(); parametersMap = getDataSetParametersAsMap();
+	 * null; if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) { // recalculate metadata logger .debug(
+	 * "Recalculating dataset's metadata: executing the dataset..."); HashMap parametersMap = new HashMap(); parametersMap = getDataSetParametersAsMap();
 	 *
 	 * IEngUserProfile profile = getUserProfile(); dsMetadata = getDatasetTestMetadata(ds, parametersMap, profile, meta); LogMF.debug(logger,
 	 * "Dataset executed, metadata are [{0}]", dsMetadata); } else { // load existing metadata logger.debug("Loading existing dataset..."); String id =
@@ -1172,6 +1173,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		}
 
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_REST_TYPE)) {
+			dataSet = manageRESTDataSet(savingDataset, jsonDsConfig);
+		}
+
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 			String query = getAttributeAsString(DataSetConstants.QUERY);
 			String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT);
@@ -1328,6 +1333,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		dataSet.setConfiguration(jsonDsConfig.toString());
 		return dataSet;
+	}
+
+	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config) throws JSONException {
+		for (String sa : DataSetConstants.REST_STRING_ATTRIBUTES) {
+			config.put(sa, getAttributeAsString(sa));
+		}
+		for (String ja : DataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
+			config.put(ja, getAttributeAsJSONObject(ja));
+		}
+		for (String ja : DataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
+			config.put(ja, getAttributeAsJSONArray(ja));
+		}
+		RESTDataSet res = new RESTDataSet(config);
+		return res;
 	}
 
 	// This method rename a file and move it from resources\dataset\files\temp

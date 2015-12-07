@@ -1,8 +1,5 @@
 package it.eng.spagobi.security.hmacfilter;
 
-import it.eng.spagobi.RestUtilitiesTest;
-import it.eng.spagobi.RestUtilitiesTest.HttpMethod;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -18,6 +15,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 public class MultiReadHttpServletRequestTest {
 
@@ -48,8 +48,8 @@ public class MultiReadHttpServletRequestTest {
 
 		String b = "c=d";
 		HashMap<String, String> requestHeaders = new HashMap<String, String>();
-		requestHeaders.put(RestUtilitiesTest.CONTENT_TYPE, "application/x-www-form-urlencoded");
-		RestUtilitiesTest.makeRequest(HttpMethod.Post, "http://localhost:8080/multi?g=h&y=i", requestHeaders, b);
+		requestHeaders.put(RestUtilities.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		RestUtilities.makeRequest(HttpMethod.Post, "http://localhost:8080/multi?g=h&y=i", requestHeaders, b);
 		Assert.assertTrue(arrived);
 		Assert.assertEquals(b, body);
 		Assert.assertEquals(b, body2);
@@ -68,9 +68,9 @@ public class MultiReadHttpServletRequestTest {
 		protected void doPost(HttpServletRequest r, HttpServletResponse resp) throws ServletException, IOException {
 			arrived = true;
 			MultiReadHttpServletRequest req = new MultiReadHttpServletRequest(r);
-			body = RestUtilitiesTest.readBody(req);
+			body = RestUtilities.readBody(req);
 			// read twice
-			body2 = RestUtilitiesTest.readBody(req);
+			body2 = RestUtilities.readBody(req);
 		}
 
 	}

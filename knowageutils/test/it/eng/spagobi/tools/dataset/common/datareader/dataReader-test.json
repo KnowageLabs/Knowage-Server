@@ -1,0 +1,232 @@
+{
+  "contextResponses": [
+    {
+      "contextElement": {
+        "id": "pros6_Meter",
+        "type": "Meter",
+        "isPattern": "false",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "4.8"
+          },
+          {
+            "name": "prosumerId",
+            "type": "string",
+            "value": "pros6"
+          },
+          {
+            "name": "unitOfMeasurement",
+            "type": "string",
+            "value": "kW"
+          },
+          {
+            "name": "upstreamActivePower",
+            "type": "double",
+            "value": "0"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    },
+    {
+      "contextElement": {
+        "id": "pros1_Meter",
+        "type": "Meter",
+        "isPattern": "false",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "3.5"
+          },
+          {
+            "name": "prosumerId",
+            "type": "string",
+            "value": "pros1"
+          },
+          {
+            "name": "unitOfMeasurement",
+            "type": "string",
+            "value": "kW"
+          },
+          {
+            "name": "upstreamActivePower",
+            "type": "double",
+            "value": "0"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    },
+    {
+      "contextElement": {
+        "id": "pros2_Meter",
+        "type": "Meter",
+        "isPattern": "false",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "0"
+          },
+          {
+            "name": "prosumerId",
+            "type": "string",
+            "value": "pros2"
+          },
+          {
+            "name": "unitOfMeasurement",
+            "type": "string",
+            "value": "kW"
+          },
+          {
+            "name": "upstreamActivePower",
+            "type": "double",
+            "value": "5.5"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    },
+    {
+      "contextElement": {
+        "id": "pros3_Meter",
+        "type": "Meter",
+        "isPattern": "false",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "1.88"
+          },
+          {
+            "name": "prosumerId",
+            "type": "string",
+            "value": "pros3"
+          },
+          {
+            "name": "unitOfMeasurement",
+            "type": "string",
+            "value": "kW"
+          },
+          {
+            "name": "upstreamActivePower",
+            "type": "double",
+            "value": "2.04"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    },
+    {
+      "contextElement": {
+        "id": "pros4_Meter",
+        "type": "Meter",
+        "isPattern": "false",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "1.6"
+          },
+          {
+            "name": "prosumerId",
+            "type": "string",
+            "value": "pros4"
+          },
+          {
+            "name": "unitOfMeasurement",
+            "type": "string",
+            "value": "kW"
+          },
+          {
+            "name": "upstreamActivePower",
+            "type": "double",
+            "value": "2.66"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    },
+    {
+      "contextElement": {
+        "id": "pros5_Meter",
+        "type": "Meter",
+        "isPattern": "false",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "0.5"
+          },
+          {
+            "name": "prosumerId",
+            "type": "string",
+            "value": "pros5"
+          },
+          {
+            "name": "unitOfMeasurement",
+            "type": "string",
+            "value": "kW"
+          },
+          {
+            "name": "upstreamActivePower",
+            "type": "double",
+            "value": "0"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    }
+  ]
+}

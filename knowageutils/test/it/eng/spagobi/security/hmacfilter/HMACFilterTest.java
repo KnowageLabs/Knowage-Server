@@ -1,9 +1,5 @@
 package it.eng.spagobi.security.hmacfilter;
 
-import it.eng.spagobi.RestUtilitiesTest;
-import it.eng.spagobi.RestUtilitiesTest.HttpMethod;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.EnumSet;
@@ -22,6 +18,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
 public class HMACFilterTest {
 
@@ -78,35 +78,35 @@ public class HMACFilterTest {
 		String token = "" + System.currentTimeMillis();
 		headers.put(HMACFilter.HMAC_TOKEN_HEADER, token);
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, getSignature("/hmac", "a=b", "", token));
-		RestUtilitiesTest.makeRequest(HttpMethod.Get, "http://localhost:8080/hmac?a=b", headers, null);
+		RestUtilities.makeRequest(HttpMethod.Get, "http://localhost:8080/hmac?a=b", headers, null);
 		Assert.assertTrue(DummyServlet.arrived);
 		DummyServlet.arrived = false;
 
 		// test success post
 		headers.put(HMACFilter.HMAC_TOKEN_HEADER, token);
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, getSignature("/hmac", "", body, token));
-		RestUtilitiesTest.makeRequest(HttpMethod.Post, "http://localhost:8080/hmac", headers, body);
+		RestUtilities.makeRequest(HttpMethod.Post, "http://localhost:8080/hmac", headers, body);
 		Assert.assertTrue(DummyServlet.arrived);
 		DummyServlet.arrived = false;
 
 		// test success post with params in URL
 		headers.put(HMACFilter.HMAC_TOKEN_HEADER, token);
-		headers.put(RestUtilitiesTest.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		headers.put(RestUtilities.CONTENT_TYPE, "application/x-www-form-urlencoded");
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, getSignature("/hmac", "g=h&y=i", body, token));
-		RestUtilitiesTest.makeRequest(HttpMethod.Post, "http://localhost:8080/hmac?g=h&y=i", headers, body);
+		RestUtilities.makeRequest(HttpMethod.Post, "http://localhost:8080/hmac?g=h&y=i", headers, body);
 		Assert.assertTrue(DummyServlet.arrived);
 		DummyServlet.arrived = false;
 
 		// test fail post
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, "i0pe5");
-		RestUtilitiesTest.makeRequest(HttpMethod.Post, "http://localhost:8080/hmac?g=h&y=i", headers, body);
+		RestUtilities.makeRequest(HttpMethod.Post, "http://localhost:8080/hmac?g=h&y=i", headers, body);
 		Assert.assertFalse(DummyServlet.arrived);
 
 		// test success put with params in URL
 		headers.put(HMACFilter.HMAC_TOKEN_HEADER, token);
-		headers.put(RestUtilitiesTest.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		headers.put(RestUtilities.CONTENT_TYPE, "application/x-www-form-urlencoded");
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, getSignature("/hmac", "g=h&y=i", body, token));
-		RestUtilitiesTest.makeRequest(HttpMethod.Put, "http://localhost:8080/hmac?g=h&y=i", headers, body);
+		RestUtilities.makeRequest(HttpMethod.Put, "http://localhost:8080/hmac?g=h&y=i", headers, body);
 		Assert.assertTrue(DummyServlet.arrived);
 	}
 
@@ -117,10 +117,10 @@ public class HMACFilterTest {
 		headers.put(HMACFilter.HMAC_TOKEN_HEADER, token);
 
 		// test success delete with params in URL
-		headers.put(RestUtilitiesTest.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		headers.put(RestUtilities.CONTENT_TYPE, "application/x-www-form-urlencoded");
 		// delete: body completely ignored
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, getSignature("/hmac", "g=h&y=i", "", token));
-		RestUtilitiesTest.makeRequest(HttpMethod.Delete, "http://localhost:8080/hmac?g=h&y=i", headers, body);
+		RestUtilities.makeRequest(HttpMethod.Delete, "http://localhost:8080/hmac?g=h&y=i", headers, body);
 		Assert.assertTrue(DummyServlet.arrived);
 	}
 
@@ -132,10 +132,10 @@ public class HMACFilterTest {
 		headers.put(HMACFilter.HMAC_TOKEN_HEADER, token);
 
 		// test success delete with params in URL
-		headers.put(RestUtilitiesTest.CONTENT_TYPE, "application/x-www-form-urlencoded");
+		headers.put(RestUtilities.CONTENT_TYPE, "application/x-www-form-urlencoded");
 		// delete: body completely ignored
 		headers.put(HMACFilter.HMAC_SIGNATURE_HEADER, getSignature("/hmac", "g=h&y=i", "", token));
-		RestUtilitiesTest.makeRequest(HttpMethod.Delete, "http://localhost:8080/hmac?g=h&y=i", headers, body);
+		RestUtilities.makeRequest(HttpMethod.Delete, "http://localhost:8080/hmac?g=h&y=i", headers, body);
 		Assert.assertFalse(DummyServlet.arrived);
 	}
 

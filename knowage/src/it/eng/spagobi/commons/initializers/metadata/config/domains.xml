@@ -447,5 +447,6 @@
 		
 	<DOMAIN valueCd="DAY_OF_WEEK" valueNm="Day of the week"
 		domainCd="TEMPORAL_LEVEL" domainNm="TemporalLevel" valueDs="Temporal hierarchy level" />
+<DOMAIN valueCd="REST" valueNm="SbiRESTDataSet" domainCd="DATA_SET_TYPE" domainNm="Data Set Type" valueDs="SbiRESTDataSet"/>
 
 </DOMAINS>

@@ -1,18 +1,9 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.dataset.common.datawriter;
-
-import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -25,7 +16,17 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.tools.dataset.bo.DataSetVariable;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -43,6 +44,7 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean writeDataOnly = false;
 	private JSONArray fieldsOptions;
 	private Locale locale;
+	private boolean useIdProperty;
 
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -54,6 +56,8 @@ public class JSONDataWriter implements IDataWriter {
 	public static final String PROPERTY_FIELD_OPTION = "PROPERTY_FIELD_OPTION";
 	public static final String PROPERTY_ADJUST = "PROPERTY_ADJUST";
 	public static final String PROPERTY_WRITE_DATA_ONLY = "PROPERTY_WRITE_DATA_ONLY";
+	private static final String ID_PROPERTY = "id";
+	private static final Object USE_ID_PROPERTY = "USE_ID_PROPERTY";
 
 	public JSONDataWriter() {
 	}
@@ -77,12 +81,26 @@ public class JSONDataWriter implements IDataWriter {
 				this.writeDataOnly = Boolean.parseBoolean(o.toString());
 			}
 
+			o = properties.get(USE_ID_PROPERTY);
+			if (o != null) {
+				this.useIdProperty = Boolean.parseBoolean(o.toString());
+			}
+
 		}
 	}
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(JSONDataWriter.class);
 
+	/**
+	 *
+	 * @param dataStore
+	 * @param useIdProperty
+	 *            added for configuration of Ext.data.JsonReader: it defined the id field in the Record
+	 * @return
+	 * @throws RuntimeException
+	 */
+	@Override
 	public Object write(IDataStore dataStore) throws RuntimeException {
 		if (writeDataOnly) {
 			return writeOnlyData(dataStore);
@@ -91,14 +109,13 @@ public class JSONDataWriter implements IDataWriter {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object writeOnlyData(IDataStore dataStore) throws RuntimeException {
-		JSONArray results = null;
+
 		JSONObject metadata;
-		IField field;
-		IRecord record;
-		JSONObject recordJSON;
+
 		int recNo;
-		JSONArray recordsJSON;
+
 		int resultNumber;
 		Object propertyRawValue;
 
@@ -107,7 +124,7 @@ public class JSONDataWriter implements IDataWriter {
 		metadata = (JSONObject) write(dataStore.getMetaData());
 
 		try {
-			results = new JSONArray();
+			JSONArray results = new JSONArray();
 
 			propertyRawValue = dataStore.getMetaData().getProperty("resultNumber");
 			if (propertyRawValue == null) {
@@ -116,67 +133,71 @@ public class JSONDataWriter implements IDataWriter {
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
 			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
 			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber
-					+ "]. It must be greater or equal to zero");
-
-			recordsJSON = new JSONArray();
+			Assert.assertTrue(resultNumber >= 0,
+					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
 
 			// records
 			recNo = 0;
 			Iterator records = dataStore.iterator();
 			while (records.hasNext()) {
-				record = (IRecord) records.next();
-				recordJSON = new JSONObject();
+				IRecord record = (IRecord) records.next();
+				JSONObject recordJSON = writeRecord(dataStore, record);
+
 				if (this.putIDs) {
 					recordJSON.put("id", ++recNo);
-				}
-
-				for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
-					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
-
-					propertyRawValue = fieldMetaData.getProperty("visible");
-					if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && ((Boolean) propertyRawValue).booleanValue() == false) {
-						continue;
-					}
-
-					field = new Field();
-					try {
-						field = record.getFieldAt(dataStore.getMetaData().getFieldIndex(fieldMetaData));
-					} catch (IndexOutOfBoundsException idxEx) {
-						logger.info("Unavailable field " + fieldMetaData.getName());
-						field.setValue(null);
-						continue;
-					}
-					String fieldValue = "";
-					if (field.getValue() != null) {
-						if (Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
-							fieldValue = TIMESTAMP_FORMATTER.format(field.getValue());
-						} else if (Date.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
-							fieldValue = DATE_FORMATTER.format(field.getValue());
-						} else {
-							fieldValue = field.getValue().toString();
-						}
-					}
-					String fieldName;
-
-					if (adjust) {
-						fieldName = fieldMetaData.getName();
-					} else {
-						fieldName = getFieldName(fieldMetaData, i);
-					}
-					recordJSON.put(fieldName, fieldValue);
 				}
 
 				results.put(recordJSON);
 			}
 
+			return results;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unpredicted error occurred while serializing dataStore", t);
-		} finally {
-
 		}
 
-		return results;
+	}
+
+	public JSONObject writeRecord(IDataStore dataStore, IRecord record) throws JSONException {
+
+		JSONObject recordJSON = new JSONObject();
+		IMetaData metaData = dataStore.getMetaData();
+
+		for (int i = 0; i < metaData.getFieldCount(); i++) {
+			IFieldMetaData fieldMetaData = metaData.getFieldMeta(i);
+
+			Object propertyRawValue = fieldMetaData.getProperty("visible");
+			if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && ((Boolean) propertyRawValue).booleanValue() == false) {
+				continue;
+			}
+
+			IField field = new Field();
+			try {
+				field = record.getFieldAt(metaData.getFieldIndex(fieldMetaData));
+			} catch (IndexOutOfBoundsException idxEx) {
+				logger.info("Unavailable field " + fieldMetaData.getName());
+				field.setValue(null);
+				continue;
+			}
+			String fieldValue = "";
+			if (field.getValue() != null) {
+				if (Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
+					fieldValue = TIMESTAMP_FORMATTER.format(field.getValue());
+				} else if (Date.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
+					fieldValue = DATE_FORMATTER.format(field.getValue());
+				} else {
+					fieldValue = field.getValue().toString();
+				}
+			}
+			String fieldName;
+
+			if (adjust) {
+				fieldName = fieldMetaData.getName();
+			} else {
+				fieldName = getFieldName(fieldMetaData, i);
+			}
+			recordJSON.put(fieldName, fieldValue);
+		}
+		return recordJSON;
 	}
 
 	public Object writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
@@ -220,8 +241,8 @@ public class JSONDataWriter implements IDataWriter {
 			Assert.assertNotNull(propertyRawValue, "DataStore property [resultNumber] cannot be null");
 			Assert.assertTrue(propertyRawValue instanceof Integer, "DataStore property [resultNumber] must be of type [Integer]");
 			resultNumber = ((Integer) propertyRawValue).intValue();
-			Assert.assertTrue(resultNumber >= 0, "DataStore property [resultNumber] cannot be equal to [" + resultNumber
-					+ "]. It must be greater or equal to zero");
+			Assert.assertTrue(resultNumber >= 0,
+					"DataStore property [resultNumber] cannot be equal to [" + resultNumber + "]. It must be greater or equal to zero");
 			result.put(TOTAL_PROPERTY, resultNumber);
 
 			recordsJSON = new JSONArray();
@@ -303,7 +324,7 @@ public class JSONDataWriter implements IDataWriter {
 		return fieldName;
 	}
 
-	public Object write(IMetaData metadata) {
+	private Object write(IMetaData metadata) {
 
 		try {
 
@@ -337,6 +358,13 @@ public class JSONDataWriter implements IDataWriter {
 					fieldMetaDataJSON.put("name", fieldHeader);
 				} else {
 					fieldMetaDataJSON.put("name", fieldName);
+
+					/**
+					 * Id field is recognized as column_x
+					 */
+					if (useIdProperty && "id".equals(fieldHeader)) {
+						toReturn.put("idProperty", fieldName);
+					}
 				}
 				fieldMetaDataJSON.put("header", fieldHeader);
 				fieldMetaDataJSON.put("dataIndex", fieldName);
@@ -467,6 +495,22 @@ public class JSONDataWriter implements IDataWriter {
 
 	public void setLocale(Locale locale) {
 		this.locale = locale;
+	}
+
+	public boolean isAdjust() {
+		return adjust;
+	}
+
+	public void setAdjust(boolean adjust) {
+		this.adjust = adjust;
+	}
+
+	public boolean isUseIdProperty() {
+		return useIdProperty;
+	}
+
+	public void setUseIdProperty(boolean useIdProperty) {
+		this.useIdProperty = useIdProperty;
 	}
 
 }

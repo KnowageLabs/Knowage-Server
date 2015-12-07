@@ -1,0 +1,41 @@
+{
+    "restAddress": "http://localhost:8090/c?q=p",
+    "restRequestBody": "{\"id\":\"z\"}",
+    "restHttpMethod": "post",
+    "restRequestBodyCharset": "UTF-8",
+    "restRequestHeaders": {
+        "d": "e"
+    },
+    "restOffset":"offset1",
+    "restFetchSize":"fetch1",
+    "restMaxResults":"max1",
+    "restDirectlyJSONAttributes":"true",
+    "restJsonPathItems": "$.contextResponses[*].contextElement",
+    "restJsonPathAttributes": [
+        {
+            "name": "downstreamActivePower",
+            "jsonPathValue": "$.attributes[?(@.name==downstreamActivePower)].value",
+            "jsonPathType": "$.attributes[?(@.name==downstreamActivePower)].type"
+        },
+        {
+            "name": "atTime",
+            "jsonPathValue": "$.attributes[?(@.name==atTime)].value",
+            "jsonPathType": "timestamp yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        },
+        {
+            "name": "upstreamActivePower",
+            "jsonPathValue": "$.attributes[?(@.name==upstreamActivePower)].value",
+            "jsonPathType": "double"
+        },
+        {
+            "name": "id",
+            "jsonPathValue": "$.id",
+            "jsonPathType": "string"
+        },
+        {
+            "name": "isPattern",
+            "jsonPathValue": "$.isPattern",
+            "jsonPathType": "boolean"
+        }
+    ]
+}
