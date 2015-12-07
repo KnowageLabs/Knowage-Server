@@ -63,6 +63,10 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     if(!t.analysisConf.hasOwnProperty("proportionalSymbol")){
     	t.analysisConf.proportionalSymbol={"minRadiusSize":2,"maxRadiusSize":20,color:"#FFFF00"};
     }
+    
+    if(!t.analysisConf.hasOwnProperty("chart")){
+    	t.analysisConf.chart={indicator_1:"red",indicator_2:"green",indicator_3:"blue"};
+    }
 
     return t;
 });

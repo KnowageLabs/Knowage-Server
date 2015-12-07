@@ -13,10 +13,6 @@ angular.module('geoModule')
 		require: "^geoMap",
 		scope: {
 			id:"@"
-		},
-		link: function(scope,elm,attrs){
-			console.log("inizializzo geo-legend con id= "+scope.id);
-
 		}
 	}
 })
@@ -33,24 +29,26 @@ function geoLegendControllerFunction($scope,$mdDialog,geoModule_template,geoModu
 			geoModule_layerServices.updateTemplateLayer('choropleth');
 	}
 	}, true);
-
 	
+	$scope.$watch(function() {
+		return  geoModule_template.analysisConf.proportionalSymbol;
+	}, function(newValue, oldValue) {
+		if (newValue != oldValue) {
+			geoModule_layerServices.updateTemplateLayer('proportionalSymbol');
+	}
+	}, true);
+	
+	$scope.$watch(function() {
+		return  geoModule_template.analysisConf.chart;
+	}, function(newValue, oldValue) {
+		if (newValue != oldValue) {
+			geoModule_layerServices.updateTemplateLayer('chart');
+	}
+	}, true);
 
 	$scope.toggleLegend=function(ev){
 		$scope.showLegend=!$scope.showLegend;
 	}
 
-
-	
-
-	$scope.IndicatorFromCatalogueController=function($scope){
-//		$scope.colorList=[{label:"000000" ,  class:"COL000000"},
-//		{label:"993300" ,  class:"993300"},
-//		{label:"333300" ,  class:"333300"},
-//		{label:"003300" ,  class:"003300"},
-//		{label:"003366" ,  class:"003366"},
-//		{label:"000080" ,  class:"000080"},
-//		]
-	}
 
 }

@@ -1,15 +1,6 @@
 
 <div id="geoRigthMenu">
-
-	<!--  <md-button  id="showMenu" class="md-icon-button  mapButton md-mini " ng-click="toggleMenu()" aria-label="toggle menu" > -->
-	<!--  <md-icon md-font-icon="fa fa-chevron-left fa-2x"></md-icon> -->
-	<!--  </md-button> -->
-
-	<!--  	<md-button id="showMenu" class="md-fab md-mini zoomAnimation" ng-class="{'toolbarBotton': openRigthMenu}" ng-click="toggleMenu($event)" aria-label="toggle menu"> -->
-	<!-- 		<md-icon  md-font-icon="" class=" zoomAnimation " ng-class="{' fa fa-chevron-left fa-2x' :!openRigthMenu ,'fa fa-times fa-2x' : openRigthMenu}"></md-icon>  -->
-	<!-- 	</md-button> -->
-
-	<md-button id="showMenu" class="md-fab zoomAnimation"
+<md-button id="showMenu" class="md-fab zoomAnimation"
 			ng-class="{'hidden': openRigthMenu}" ng-click="toggleMenu($event)"
 			aria-label="toggle menu"> 
 		<i class="material-icons">more_vert</i>
@@ -23,20 +14,20 @@
 						ng-click="toggleMenu($event)">arrow_forward</i>
 				<div style="width: 100%; text-align: center;">
 					<i class="material-icons">my_location</i>
-					<span>Location Intelligence</span>
+					<span>{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
 				</div>
 			</div>
 		</md-toolbar> 
 		<md-content class="contentStyle no-padding"   > 
 			<md-tabs>
 				<md-tab id="GEOMAP"> 
-					<md-tab-label>GEOMAP</md-tab-label> 
+					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.geomap")}} </md-tab-label> 
 					<md-tab-body>
 						<geo-map-menu id="map"></geo-layers>
 					</md-tab-body>
 				</md-tab>
 				<md-tab id="LAYER"> 
-					<md-tab-label>LAYER</md-tab-label> 
+					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.layer")}}</md-tab-label> 
 					<md-tab-body>
 						<geo-layers id="layer"></geo-layers>
 					</md-tab-body>

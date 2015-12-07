@@ -2,12 +2,12 @@
 
       <md-content layout-padding  >
       
-      <md-button style="     width: calc( 100% - 20px);    margin-bottom: 0; " class="md-raised" id="addLayer" ng-click="addLayerFromCatalogue($event)">Add from catalogue</md-button>
+      <md-button style="     width: calc( 100% - 20px);    margin-bottom: 0; " class="md-raised" id="addLayer" ng-click="addLayerFromCatalogue($event)">{{translate.load("gisengine.info.message.selectFromCatalogue")}}</md-button>
       
       	
 		<div class="itemboxGU" ng-init="baselayerExpander=true; baseLayerCategoryExpander={};">
 			<md-toolbar class="titleToolbar">
-				<h1 class="md-toolbar-tools">Base Layer</h1>
+				<h1 class="md-toolbar-tools">{{translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer")}}</h1>
 				<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click="baselayerExpander=!baselayerExpander">
 			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' : baselayerExpander , 'fa-angle-down' : !baselayerExpander}"></md-icon>
 			    </md-button>
@@ -34,7 +34,7 @@
 
 		<div class="itemboxGU" ng-init=" layerExpander=true; LayerCategoryExpander={};">
 			<md-toolbar class="titleToolbar">
-				<span class="md-toolbar-tools">Layer</span>
+				<span class="md-toolbar-tools">{{translate.load("gisengine.rigthMenu.tabs.layer")}}</span>
 				<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" layerExpander=! layerExpander">
 			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  layerExpander , 'fa-angle-down' : ! layerExpander}"></md-icon>
 			    </md-button>
@@ -78,7 +78,7 @@
 
   <md-toolbar >
     <div class="md-toolbar-tools">
-      Select from Catalogue
+     {{title}}
 <md-button ng-click="updateChange()" style="right:8px;position:absolute;top:0;" >
      X
     </md-button>

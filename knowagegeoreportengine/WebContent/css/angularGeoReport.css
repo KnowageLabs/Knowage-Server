@@ -1,3 +1,13 @@
+md-slider.margintop{
+	margin-top: 18px;
+}
+
+md-slider.visibleValue .md-sign,md-slider.visibleValue .md-sign:after{
+	opacity: 1 !important;
+    -webkit-transform: translate3d(0,0,0) scale(1) !important;
+    transform: translate3d(0,0,0) scale(1) !important;
+}
+
 md-select-menu.md-default-theme md-option[selected], md-select-menu md-option[selected]
 	{
 	color: rgb(255, 255, 255) !important;
@@ -302,4 +312,5 @@ geo-cross-nav-multiselect .itemboxGU .md-toolbar-tools {
 [md-color-picker] .md-color-picker-input-container .md-color-picker-clear {
 	display:none;
 }
+
 	

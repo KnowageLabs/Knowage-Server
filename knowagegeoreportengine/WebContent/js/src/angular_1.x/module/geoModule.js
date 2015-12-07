@@ -40,27 +40,28 @@ geoM.factory('$map',function(){
 	return map;
 });
 
-geoM.factory('baseLayer', function() {
+geoM.factory('baseLayer', function(geoModule_constant) {
 	// todo thr following configuration should be loaded from a rest service (from LayerCatalogue) 
-	var baseLayersConf={
-			"Default": {
-				"OpenStreetMap": {
-					"type": "TMS",
-					"category":"Default",
-					"label": "OpenStreetMap",
-					"layerURL": "http://tile.openstreetmap.org/",
-					"layerOptions": {
-						"type": "png",
-						"displayOutsideMaxExtent": true
-					}
-				},
-				"OSM": {
-					"type": "OSM",
-					"category":"Default",
-					"label":"OSM"
+	var baseLayersConf={};
+	baseLayersConf[geoModule_constant.defaultBaseLayer]={
+			"OpenStreetMap": {
+				"type": "TMS",
+				"category":"Default",
+				"label": "OpenStreetMap",
+				"layerURL": "http://tile.openstreetmap.org/",
+				"layerOptions": {
+					"type": "png",
+					"displayOutsideMaxExtent": true
 				}
+			},
+			"OSM": {
+				"type": "OSM",
+				"category":"Default",
+				"label":"OSM"
 			}
 	};
+
+
 	return baseLayersConf;
 });
 
@@ -89,10 +90,10 @@ geoM.service('geoModule_layerServices', function(
 			var sldBody=geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
 			console.log(sldBody)
 			var params=JSON.parse(geoModule_templateLayerData.layerParams);
-		params.LAYERS=geoModule_templateLayerData.layerName;
+			params.LAYERS=geoModule_templateLayerData.layerName;
 //			var params={};
 			params.SLD_BODY =sldBody;
-			
+
 			layerServ.templateLayer = new ol.layer.Tile({
 				source : new ol.source.TileWMS(/** @type {olx.source.TileWMSOptions} */
 						{
@@ -258,7 +259,7 @@ geoM.service('geoModule_layerServices', function(
 
 	}
 
-	
+
 	this.insideFeature = function(){
 		console.log("this.inside");
 		var sFeatures = select.getFeatures();
@@ -302,17 +303,17 @@ geoM.service('geoModule_layerServices', function(
 						}
 					}
 				}
-				
+
 			});
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-		//	layerServ.Render(selection);
+			//	layerServ.Render(selection);
 
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
-		
-			
+
+
 		});
 
 		// clear selection when drawing a new box and when clicking on the map
@@ -331,8 +332,8 @@ geoM.service('geoModule_layerServices', function(
 		raster.setZindex=1000;
 		$map.addLayer(raster);
 
-	/*	var osm=this.createLayer(baseLayer.Default.OSM,false);
-	
+		/*	var osm=this.createLayer(baseLayer.Default.OSM,false);
+
 		osm.setZindex=1000001;
 		$map.addLayer(osm);*/
 
@@ -348,7 +349,7 @@ geoM.service('geoModule_layerServices', function(
 			for(var j=0;j<features[i].getGeometry().getCoordinates().length;j++){
 
 				for (var k = 0; k < features[i].getGeometry().getCoordinates()[j].length; k++) {
-					
+
 					for (var m = 0; m < features[i].getGeometry().getCoordinates()[j][k].length; m++) {
 						newArray[0][0].push(features[i].getGeometry().getCoordinates()[j][k][m]);
 						//array.push(features[i].getGeometry().getCoordinates()[j][k][m]);
@@ -365,9 +366,9 @@ geoM.service('geoModule_layerServices', function(
 		//coordinates= new Array(array3);
 		coordinates.push(array3);
 		console.log("hello");*/
-		
+
 		console.log(newArray,features[0].getGeometry().getCoordinates());
-		
+
 		$map.on('precompose', function(event) {
 			var ctx = event.context;
 			var vecCtx = event.vectorContext;
@@ -380,7 +381,7 @@ geoM.service('geoModule_layerServices', function(
 
 			//	var clipGeometry = new ol.geom.MultiPolygon(features[0].getGeometry().getCoordinates());
 			var clipGeometry = new ol.geom.MultiPolygon(newArray);
-			
+
 			vecCtx.drawMultiPolygonGeometry(clipGeometry);
 
 			/*vecCtx.drawFeature(features[0],new ol.style.Style({
@@ -404,7 +405,7 @@ geoM.service('geoModule_layerServices', function(
 			ctx.restore();
 		});
 	}
-	
+
 	this.serp=function(){
 
 
@@ -592,7 +593,7 @@ geoM.service('geoModule_layerServices', function(
 
 	this.updateTemplateLayer = function(legendType){
 		geoModule_thematizer.updateLegend(legendType);
-		
+
 		if(geoModule_templateLayerData.type=="WMS"){
 			var sldBody=geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
 			console.log(sldBody)
@@ -711,11 +712,12 @@ geoM.service('geoModule_layerServices', function(
 	};
 });
 
-geoM.factory('geoModule_constant',function(){
+geoM.factory('geoModule_constant',function(sbiModule_translate){
 	var cont= {
-			analysisLayer:"Analysis layer",
-			templateLayer:"Document templates",
-			noCategory:"No Category"
+			analysisLayer:sbiModule_translate.load("gisengine.constant.analysisLayer"),
+			templateLayer:sbiModule_translate.load("gisengine.constant.templateLayer"),
+			noCategory:sbiModule_translate.load("gisengine.constant.noCategory"),
+			defaultBaseLayer:sbiModule_translate.load("gisengine.constant.defaultBaseLayer")
 	}
 	return cont;
 });

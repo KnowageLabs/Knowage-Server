@@ -8,28 +8,24 @@ angular.module('geoModule')
 	return{
 		restrict: "E",
 		templateUrl: sbiModule_config.contextName+'/js/src/angular_1.x/geo/geoDistanceCalculator/templates/geoDistanceCalculatorTemplate.jspf',
-//		template: '<md-button  id="showDistanceCalculator" class="md-fab md-mini" ng-click="showBottomSheet($event)" aria-label="toggle menu"><md-icon md-font-icon="fa fa-wifi fa-2x"></md-icon> </md-button>',
 		controller: geoDistanceCalculatorControllerFunction,
 		require: "^geoMap",
 		scope: {
 			id:"@"
 		},
 		disableParentScroll:true,
-		link: function(scope,elm,attrs){
-			console.log("inizializzo geo-distance-calculator con id= "+scope.id);
-
-		}
 	}
 })
 
 
-function geoDistanceCalculatorControllerFunction($scope,$map,geo_interaction){	
+function geoDistanceCalculatorControllerFunction($scope,$map,geo_interaction,sbiModule_translate){	
 	$scope.showDC=false;
-	$scope.measureList=[{label:"Line",value:"LineString"},{label:"Polygon",value:"Polygon"}];
+	$scope.measureList=[{label:sbiModule_translate.load("gisengine.geometry.line"),value:"LineString"},{label:sbiModule_translate.load("gisengine.geometry.polygon"),value:"Polygon"}];
 	$scope.measureType="LineString";
 	$scope.TypeM="LineString";
 	$scope.disableButtons=false;
 	$scope.mouseMoveListener;
+	$scope.translate= sbiModule_translate;
 
 
 	$scope.listOverlay=[];
@@ -41,8 +37,8 @@ function geoDistanceCalculatorControllerFunction($scope,$map,geo_interaction){
 	$scope.helpTooltip;
 	$scope.measureTooltipElement;
 	$scope.measureTooltip;
-	$scope.continuePolygonMsg = 'Click to continue drawing the polygon';
-	$scope.continueLineMsg = 'Click to continue drawing the line';
+	$scope.continuePolygonMsg = sbiModule_translate.load("gisengine.geoDistanceCalculator.continueDrawPoligon");
+	$scope.continueLineMsg = sbiModule_translate.load("gisengine.geoDistanceCalculator.continueDrawLine");
 	$scope.draw;
 
 	$scope.source = new ol.source.Vector();
@@ -73,7 +69,7 @@ function geoDistanceCalculatorControllerFunction($scope,$map,geo_interaction){
 			return;
 		}
 
-		var helpMsg = 'Click to start drawing';
+		var helpMsg =  sbiModule_translate.load("gisengine.geoDistanceCalculator.startDrawing");
 		var tooltipCoord = evt.coordinate;
 
 		if ($scope.sketch) {

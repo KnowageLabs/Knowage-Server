@@ -12,16 +12,11 @@ angular.module('geoModule')
 		transclude: true,
 		scope: {
 			mapId:"@"
-		},
-		link: function(scope,elm,attrs){
-			console.log("inizializzo geo-map con id= "+scope.mapId);
-			
 		}
 	}
 });
 
 function geoMapControllerFunction($scope,geoModule_reportUtils){
 	geoModule_reportUtils.getTargetDataset();
-	
 	$scope.openCrossNavMultiSelectFlag = false;
 }
