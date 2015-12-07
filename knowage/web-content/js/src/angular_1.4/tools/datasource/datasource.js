@@ -202,21 +202,55 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//SHOW RIGHT-COLUMN
 	$scope.createNewForm = function () {
 		
-		$scope.forms.dataSourceForm.$setPristine();
-		$scope.forms.dataSourceForm.$setUntouched();
-		$scope.showme=true;
-		$scope.selectedDataSource = {
-				label : "",
-				descr : "",
-				dialectId: "",
-				multiSchema: false,
-				readOnly: false,
-				writeDefault: false,
-				urlConnection: "",
-				user: "",
-				pwd: "",
-				driver: ""				
-		};
+		if($scope.isDirty==false) {
+			
+			$scope.forms.dataSourceForm.$setPristine();
+			$scope.forms.dataSourceForm.$setUntouched();
+			$scope.showme=true;
+			$scope.selectedDataSource = {
+					label : "",
+					descr : "",
+					dialectId: "",
+					multiSchema: false,
+					schemaAttribute: "",
+					readOnly: false,
+					writeDefault: false,
+					urlConnection: "",
+					user: "",
+					pwd: "",
+					driver: "",
+					jndi: ""
+			};
+			
+		} else {
+			
+			$mdDialog.show($scope.confirm).then(function() {
+				
+				
+				$scope.forms.dataSourceForm.$setPristine();
+				$scope.forms.dataSourceForm.$setUntouched();
+				$scope.showme=true;
+				$scope.selectedDataSource = {
+						label : "",
+						descr : "",
+						dialectId: "",
+						multiSchema: false,
+						readOnly: false,
+						writeDefault: false,
+						urlConnection: "",
+						user: "",
+						pwd: "",
+						driver: ""				
+				};
+				
+				$scope.isDirty = false;
+
+
+			}, function() {
+				$scope.showMe = true;
+			});
+		}
+		
 	};
 	
 	//LOAD SELECTED SOURCE
@@ -301,6 +335,34 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 		});
 	};
 	
+	//TEST SUCCEEDED
+	$scope.showActionTestOK = function() {
+		var toast = $mdToast.simple()
+		.content('Data Source correctly tested!')
+		.action('OK')
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+			}
+		});
+	};
+	
+	//TEST FAILED
+	$scope.showActionTestKO = function() {
+		var toast = $mdToast.simple()
+		.content('Data Source is not correct!')
+		.action('OK')
+		.position('top')
+
+		$mdToast.show(toast).then(function(response) {
+
+			if ( response == 'ok' ) {
+			}
+		});
+	};
+	
 	//CREATING PATH FOR DELETING MULTIPLE DATA SOURCES
 	queryParamDataSourceIdsToDelete = function(){
 		
@@ -331,6 +393,33 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 				}).error(function(data, status, headers, config) {
 					console.log("[DELETE]: FAIL!"+status);
 				});
+	}
+	
+	//REST
+	$scope.testDataSource = function () {
+		//TEST DATA SOURCE
+		sbiModule_restServices.post('datasources/2.0/test','', angular.toJson($scope.selectedDataSource))
+		
+		.success(
+				
+				function(data, status, headers, config) {
+					if(data.hasOwnProperty("errors")) {
+						console.log("[TEST]: DATA HAS ERRORS PROPERTY!");
+						$scope.showActionTestKO();
+					} else {
+						console.log("[TEST]: SUCCESS!");
+						$scope.showActionTestOK();
+						
+					}
+				})	
+				
+		.error(
+				
+				function(data, status, headers, config) {
+					console.log("[TEST]: FAIL!"+status);
+					$scope.showActionTestKO();
+				}					
+		);
 	}
 	
 	//SPEED MENU TRASH ITEM

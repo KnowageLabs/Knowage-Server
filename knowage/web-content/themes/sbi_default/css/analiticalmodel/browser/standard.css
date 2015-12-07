@@ -401,6 +401,8 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .hover .box-actions .MyDataHelpOnLine a:hover{background-position:9px 6px;background-repeat: no-repeat;}
 .box .hover .box-actions .editFederated a{background-image:url('../../../img/wapp/40/edit32.png');background-repeat: no-repeat;background-position: 9px 6px;}
 .box .hover .box-actions .editFederated a:hover{background-position:9px 6px;background-repeat: no-repeat;}
+.box .hover .box-actions .deleteFederated a{background-image:url('../../../img/wapp/40/delete.png');background-repeat: no-repeat;background-position: 9px 6px;}
+.box .hover .box-actions .deleteFederated a:hover{background-position:9px 6px;background-repeat: no-repeat;}
 
 
 .box .hover .helpOnLine{position:absolute;left:16px;top:11px;width:35px;height:32px;display:block;background:#ffffff url(../../../img/wapp/40/glossary.png) 2px 0px no-repeat;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}

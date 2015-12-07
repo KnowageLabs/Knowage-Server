@@ -76,11 +76,19 @@
 					<div class="md-toolbar-tools">
 						<div>{{translate.load("sbi.ds.dataSource");}}</div>
 						<div style="position: absolute; right: 0px" class="h100">
+						
+							<md-button type="submit"
+								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
+								style=" margin-top: 2px;"
+								ng-click="closeForm()">
+							{{translate.load("sbi.generic.cancel");}} 
+							</md-button>
 							
 							<md-button type="button"
 								aria-label="test datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
-								ng-disabled="!forms.dataSourceForm.$valid">
+								ng-disabled="!forms.dataSourceForm.$valid"
+								ng-click="testDataSource()">
 							{{translate.load("sbi.datasource.testing");}} 
 							</md-button>
 							

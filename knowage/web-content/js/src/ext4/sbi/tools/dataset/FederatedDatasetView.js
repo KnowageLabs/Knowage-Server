@@ -94,12 +94,12 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 			var buttonShowQbe ='<li class="qbe"><a id="showQbe" href="#" title="Show Qbe"></a></li>';
 			var buttonEditFederated = '<li class="editFederated"><a id="editFederated" href="#" title="Edit federated"></a></li>';
 			var buttonDeleteFederated = '<li class="deleteFederated"><a id="deleteFederated" href="#" title="Delete federated"></a></li>';
+			var createFederation = '<button href="Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp">CREATE FEDERATION</button>';
 			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
+
 			
 			this.tpl = new Ext.XTemplate(
-					'<button href=',
-					Sbi.config.contextName,
-					'"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp">CREATE</button>',
+					createFederation,
 					'<div id="list-container" class="main-datasets-list">', 	            
 		 	            	'<tpl if="root.length == 0">',
 		 	            		'<div id="empty-group-message">',
@@ -167,8 +167,8 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 						}
 					);
 										
-					/*var urlToCall =  Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";
-					window.location.href = urlToCall;*/
+					var urlToCall =  Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";
+					window.location.href = urlToCall;
 				}
 				else {
 					this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
