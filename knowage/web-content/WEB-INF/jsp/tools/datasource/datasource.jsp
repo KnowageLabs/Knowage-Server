@@ -78,14 +78,14 @@
 						<div style="position: absolute; right: 0px" class="h100">
 							
 							<md-button type="button"
-								aria-label="test datasource" class="md-raised md-ExtraMini"
+								aria-label="test datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
 								ng-disabled="!forms.dataSourceForm.$valid">
-							{{translate.load("sbi.datasource.test");}} 
+							{{translate.load("sbi.datasource.testing");}} 
 							</md-button>
 							
 							<md-button type="submit"
-								aria-label="save datasource" class="md-raised md-ExtraMini"
+								aria-label="save datasource" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
 								ng-disabled="!forms.dataSourceForm.$valid">
 							{{translate.load("sbi.browser.defaultRole.save");}} 
