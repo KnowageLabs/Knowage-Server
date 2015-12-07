@@ -446,6 +446,15 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 	}
 	
 	, initRegionPanels: function(){
+		this.northPanel = Ext.create('Ext.panel.Panel', {
+			xtype: 'panel',
+			maxHeight: 65,
+			flex: 0.1, 
+			region:'center', 
+			header:false,
+			border:false
+		});
+		
 		this.centerPanel = Ext.create('Ext.panel.Panel', {
 			xtype: 'panel', 
 			layout: 'fit', 
@@ -456,13 +465,14 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 			items:[this.widget]
 		});
 		
-		this.northPanel = Ext.create('Ext.panel.Panel', {
-			xtype: 'panel',
-			maxHeight: 65,
-			flex: 0.1, 
-			region:'center', 
-			header:false,
-			border:false
+		var centralPanelInnerWidget = this.widget;
+		this.centerPanel.on('resize', function( panel, width, height, oldWidth, oldHeight, eOpts ) {
+			centralPanelInnerWidget.fireEvent('forceResize', {
+				width: width,
+				height: height,
+				oldWidth: oldWidth,
+				oldHeight: oldHeight
+			})
 		});
 		
 		this.setTitleAndTitlePerc();
@@ -472,20 +482,24 @@ Ext.extend(Sbi.cockpit.core.WidgetContainerComponent, Ext.Window, {
 		var widgetTitle = this.getWidgetConfiguration().wgeneric.title;
 		var widgetTitlePerc = this.getWidgetConfiguration().wgeneric.titlePerc;
 		
-		if(widgetTitle !== undefined && widgetTitle !== null && widgetTitle.trim() !== ''){
+		if(widgetTitle !== undefined && widgetTitle !== null && Ext.util.Format.stripTags(widgetTitle) !== ''){
 			this.northPanel.update(widgetTitle);	
 			
 			this.northPanel.hidden = false;	
+			
+			if(widgetTitlePerc !== undefined && widgetTitlePerc !== null && widgetTitlePerc !== ''){
+				this.northPanel.flex = (widgetTitlePerc / 100);
+				this.centerPanel.flex = ((100 - widgetTitlePerc) / 100);
+			} else{
+				this.northPanel.flex = 0.1;
+				this.centerPanel.flex = 0.9;
+			}
 		} else{
 			this.northPanel.update("");
 			
 			this.northPanel.hidden = true;
-		}
-		
-		if(widgetTitlePerc !== undefined && widgetTitlePerc !== null && widgetTitlePerc !== ''){
-			this.northPanel.flex = (widgetTitlePerc/100);
-		} else{
-			this.northPanel.flex = 0.1;
+			
+			this.centerPanel.flex = 1;
 		}
 	}
 

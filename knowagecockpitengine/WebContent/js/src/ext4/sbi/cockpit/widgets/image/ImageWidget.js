@@ -11,23 +11,24 @@ Sbi.cockpit.widgets.image.ImageWidget = function(config) {
 	Sbi.trace("[ImageWidget.constructor]: IN");
 	// init properties...
 	var defaultSettings = {
+		listeners: {
+			'forceResize': function(args) {
+				this.applyAspectRatioCss(args);
+			}
+		}
 	};
 
 	var settings = Sbi.getObjectSettings('Sbi.cockpit.widgets.image.ImageWidget', defaultSettings);
 	var c = Ext.apply(settings, config || {});
 	Ext.apply(this, c);
 
-	
-	
 	// constructor
 	Sbi.cockpit.widgets.image.ImageWidget.superclass.constructor.call(this, c);
 	
 	this.createContent();
+	this.applyAspectRatioCss();
 	
-//	this.on("afterrender", function(){
-//		this.textTitle.html = this.wgeneric.title;
-//		Sbi.trace("[ImageWidget]: afterrender - refresh title");
-//	}, this);
+	this.addEvents('forceResize');
 	
 	Sbi.trace("[ImageWidget.constructor]: OUT");
 };
@@ -41,7 +42,8 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 	// =================================================================================================================
 	// PROPERTIES
 	// =================================================================================================================
-
+	imageWidgetCSSClass : 'imageWidgetCSSClass',
+	
 	widgetContent: null,
 	
 	//the title panel is handled by the WidgetContainerComponent
@@ -58,29 +60,22 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 	refresh:  function() {
     	Sbi.trace("[ImageWidget.refresh]: IN");
     	Sbi.cockpit.widgets.image.ImageWidget.superclass.refresh.call(this);
-		this.createContent();
+    	this.createContent();
+    	this.applyAspectRatioCss();
 		this.doLayout();
 		Sbi.trace("[ImageWidget.refresh]: OUT");
 	},
+	
 	// -----------------------------------------------------------------------------------------------------------------
     // private methods
 	// -----------------------------------------------------------------------------------------------------------------
-
 	createContent: function() {
     	Sbi.trace("[ImageWidget.createContent]: IN");
-		this.widgetContent = new Ext.create('Ext.Img',{
-			src: this.wconf.itemSelected.url
+		this.widgetContent = Ext.create('Ext.Img',{
+			src: this.wconf.itemSelected.url,
+			cls: this.imageWidgetCSSClass,
 		});
 		
-//		this.textTitle = new Ext.Panel({
-//			border: false
-//			, bodyBorder: false
-//			, hideBorders: true
-//			, frame: false
-//			, height: '100%'
-//			, html: this.wgeneric.title
-//		});
-
 		if(this.items){
 			this.items.each( function(item) {
 				this.items.remove(item);
@@ -89,13 +84,31 @@ Ext.extend(Sbi.cockpit.widgets.image.ImageWidget, Sbi.cockpit.core.WidgetRuntime
 		}
 		
 		if(this.widgetContent !== null) {
-//			this.add(this.textTitle);
 	    	this.add(this.widgetContent);
 	    }
-		
-		Sbi.trace("[ImageWidget.createContent]: OUT");
-	}
+ 		Sbi.trace("[ImageWidget.createContent]: OUT");
+	},
 
+	applyAspectRatioCss: function(newCssValues) {
+		newCssValues = newCssValues || {};
+		
+		var clsClass = this.imageWidgetCSSClass;
+		var clsClassId = this.imageWidgetCSSClass + "_" + this.id;
+		
+		var clsClassCSS = "#" + this.id + " ." + clsClass	+ " {";
+		
+		clsClassCSS += " max-height: ";
+		clsClassCSS += ((newCssValues.height != undefined)? (newCssValues.height + "px;") : "100%;");
+		
+		clsClassCSS += " max-width: "; 
+		clsClassCSS += ((newCssValues.width != undefined)? (newCssValues.width + "px;") : "100%;" );
+		
+		clsClassCSS += "}";
+		
+		Ext.util.CSS.removeStyleSheet(clsClassId);
+		Ext.util.CSS.createStyleSheet(clsClassCSS, clsClassId);
+	},
+	
 	// =================================================================================================================
 	// EVENTS
 	// =================================================================================================================
