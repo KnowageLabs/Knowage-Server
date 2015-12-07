@@ -102,8 +102,8 @@ Ext.define
 	    valueField: 'styleAbbr',
 	    //value: "bar",
 	    editable: false,
-	    padding: "5 0 10 0",
-	    width: 170,
+	    padding: "5 0 0 0",
+	    width: 200,
 	    height: 40,
 	    
 	    /**

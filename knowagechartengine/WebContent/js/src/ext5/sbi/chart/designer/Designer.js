@@ -931,9 +931,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * of the chart.
 			 * (danilo.ristovski@mht.net)
 			 * (lazar.kostic@mht.net)
-			 */			
-			this.stylePickerCombo = Ext.create ( "Ext.form.ComboBox", {
-//				fieldLabel: 'Choose style',
+			 */		
+			this.stylePickerCombo = Ext.create ("Ext.form.ComboBox", {
 			    store: styleStore,
 			    id: "stylePickerComboId",
 			    queryMode: 'local',
@@ -941,8 +940,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    valueField: 'styleAbbr',
 			    value:  jsonTemplate.CHART.styleName,
 			    editable: false,
-			    padding: "5 0 10 0",
-			    width: 170,
+			    // top,right,bottom,left
+			    padding: "5 0 5 0",
+			    width: 200,
 			    
 			    listConfig: {
 			    	listeners: {
@@ -2709,7 +2709,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				/**
 				 * STEP 2 -> Axes lines panel
 				 */
-				(chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined || chartViewModelData.axisColor=="transparent") ?
+				(chartViewModelData.axisColor=="transparent" || chartViewModelData.axisColor=="" || chartViewModelData.axisColor==null || chartViewModelData.axisColor==undefined || chartViewModelData.axisColor=="transparent") ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
@@ -2765,7 +2765,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				(chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined || chartViewModelData.brushColor=="transparent") ?
+				(chartViewModelData.brushColor=="transparent" || chartViewModelData.brushColor=="" || chartViewModelData.brushColor==null || chartViewModelData.brushColor==undefined || chartViewModelData.brushColor=="transparent") ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
@@ -3464,7 +3464,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 				}
 				
-				(chartViewModelData.toolbarPercFontColor=="" || chartViewModelData.toolbarPercFontColor==null || chartViewModelData.toolbarPercFontColor==undefined) ?
+				(chartViewModelData.toolbarPercFontColor=="transparent" || chartViewModelData.toolbarPercFontColor=="" || chartViewModelData.toolbarPercFontColor==null || chartViewModelData.toolbarPercFontColor==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
@@ -3506,7 +3506,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				 * STEP 2 -> Toolbar and tip configuration (Tip style button)
 				 */					
 
-				(sunburstTipColorCModel=="" || sunburstTipColorCModel==null || sunburstTipColorCModel==undefined) ?
+				(sunburstTipColorCModel=="transparent" || sunburstTipColorCModel=="" || sunburstTipColorCModel==null || sunburstTipColorCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
@@ -3878,10 +3878,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 				// HEATMAP fields (parameters) values from the chart model
 				var heatmapLegendVertAlignCModel = chartViewModelData.legendAlign;
 				var heatmapLegendSymbolHeightCModel = chartViewModelData.symbolHeight;
+				
 				var heatmapTooltipFontFamilyCModel = chartViewModelData.tipFontFamily;
 				var heatmapTooltipFontSizeCModel = chartViewModelData.tipFontSize;
+				var heatmapTooltipFontStyleCModel = chartViewModelData.tipFontWeight;
 				var heatmapTooltipFontColorCModel = chartViewModelData.tipColor;
-				
+								
 				(heatmapLegendVertAlignCModel=="" || heatmapLegendVertAlignCModel==null || heatmapLegendVertAlignCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
@@ -3952,11 +3954,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.font'),
 								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
 							]
 						) : errorMsg;
 				
-				( heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
+				(heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
@@ -3964,11 +3966,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
 								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
 							]
 						) : errorMsg;
-							
-				(heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
+				
+				(heatmapTooltipFontColorCModel=="transparent" || heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
 							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
@@ -3976,7 +3978,19 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.color'),
 								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
+							]
+						) : errorMsg;
+							
+				(heatmapTooltipFontStyleCModel=="" ||  heatmapTooltipFontStyleCModel==null ||  heatmapTooltipFontStyleCModel==undefined) ? 
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontstyle'),
+								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
+								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
 							]
 						) : errorMsg;
 			}

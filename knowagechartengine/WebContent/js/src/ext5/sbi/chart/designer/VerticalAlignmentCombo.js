@@ -46,5 +46,25 @@ Ext.define
 	    valueField: 'value',
 	    fieldLabel : LN("sbi.chartengine.configuration.title.verticalAlignCombo"), 
 	    queryMode : 'local',
+	    
+	    listeners:
+    	{
+	    	change: function(a,currentValue)
+	    	{	    		
+	    		if (currentValue!="top" && currentValue!="middle" && currentValue!="bottom")
+    			{
+	    			this.setValue("");
+	    			currentValue = "";
+    			}
+	    		
+	    		/**
+	             * @author: danristo (danilo.ristovski@mht.net)
+	             */
+	            if (currentValue=="")	// empty by style
+	            	this.fireEvent("verticAlignEmpty");
+	            else
+	            	this.fireEvent("verticAlignPicked");
+	    	}
+    	}
 	}
 );

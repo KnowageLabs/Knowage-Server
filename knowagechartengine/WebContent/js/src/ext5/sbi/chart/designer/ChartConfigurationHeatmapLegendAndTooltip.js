@@ -63,7 +63,7 @@ Ext.define
 			
 			this.heatmapChartTooltip = Ext.create
 			(
-				'Sbi.chart.designer.StylePopup',
+				'Sbi.chart.designer.StylePopupTooltipHeatmap',
 				
 				{
 		        	title: LN("sbi.chartengine.configuration.heatmap.tooltipPopupTitle"), 
@@ -71,10 +71,11 @@ Ext.define
 		        	bindFont:'{configModel.tipFontFamily}',
 		        	bindFontDim:'{configModel.tipFontSize}',
 		        	bindColor:'{configModel.tipColor}', 
-		        	isFontFamilyMandatory: true,
-		        	isFontSizeMandatory: true,
-		        	isFontColorMandatory: true
-//	        		bindFontStyle:'{configModel.tipFontWeight}' // (does not work)
+		        	bindFontStyle:'{configModel.tipFontWeight}', // (does not work)
+//		        	isFontFamilyMandatory: true,
+//		        	isFontSizeMandatory: true,
+//		        	isFontColorMandatory: true
+	        		
 				}
 			);	
 			

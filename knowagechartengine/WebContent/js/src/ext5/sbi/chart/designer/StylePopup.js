@@ -39,6 +39,8 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         		fieldLabel : (globalScope.config.isFontAlignMandatory) ?  
         				LN('sbi.chartengine.configuration.title.alignment') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
         				: LN('sbi.chartengine.configuration.title.alignment'),
+        				
+        		
         	});
         	this.add(align);
         }
@@ -48,7 +50,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			bind : this.config.bindFont,
 			fieldLabel : (globalScope.config.isFontFamilyMandatory) ?  
 					LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
-    				: LN('sbi.chartengine.configuration.font')
+    				: LN('sbi.chartengine.configuration.font'),
 		});
 		this.add(font);
 
@@ -80,7 +82,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 				fieldLabel : LN('sbi.chartengine.configuration.borderwidth'),
 				viewModel: this.viewModel,
 				bind:  this.config.bindBorderWidth,
-				emptyText: LN("sbi.chartengine.configuration.legendBorderWith.emptyText"),
+				emptyText: LN("sbi.chartengine.configuration.legend.borderWith.emptyText"),
 	        	fieldLabel : (globalScope.config.isBorderWidthMandatory) ?  
 	        			LN('sbi.chartengine.configuration.borderwidth') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 	    				: LN('sbi.chartengine.configuration.borderwidth')

@@ -1,3 +1,7 @@
+/**
+ * @author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+
 Ext.define
 (
 	'Sbi.chart.designer.StylePopupLegendHeatmap',
@@ -35,7 +39,20 @@ Ext.define
         			id: "heatmapLegendVertAlign",
         			fieldLabel: LN("sbi.chartengine.configuration.title.verticalAlignCombo") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,
         			bind : this.config.bindFontAlign,
-        			emptyText: LN("sbi.chartengine.configuration.heatmapLegendVertAlign.emptyText")
+        			emptyText: LN("sbi.chartengine.configuration.heatmapLegendVertAlign.emptyText"),
+        			
+        			listeners:
+					{
+        				verticAlignPicked: function()
+						{
+							this.labelEl.update(LN('sbi.chartengine.configuration.title.verticalAlignCombo') + ":"); 
+						},
+				
+						verticAlignEmpty: function()
+						{
+							this.labelEl.update(LN('sbi.chartengine.configuration.title.verticalAlignCombo') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+						}
+					}
         		}
     		);
 	        
@@ -50,7 +67,23 @@ Ext.define
            		 	width: 200,
            		 	maxValue: '800',
            		 	minValue: '50',
-           		 	emptyText: LN("sbi.chartengine.configuration.heatmapSymbolHeight.emptyText")
+           		 	emptyText: LN("sbi.chartengine.configuration.heatmapSymbolHeight.emptyText"),
+           		 	
+           		 	listeners:
+           		 	{
+           		 		change: function(thisEl, newValue, oldValue)
+           		 		{							 
+           		 			if (newValue || parseInt(newValue)==0)
+           		 			{
+           		 				this.labelEl.update(LN("sbi.chartengine.configuration.heatmap.symbolHeight")+":"); 
+           		 			}								 
+           		 			else
+           		 			{
+           		 				this.labelEl.update
+           		 				(LN("sbi.chartengine.configuration.heatmap.symbolHeight") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+           		 			}								 								 				 
+           		 		}
+           		 	}
 	        	}
 	        );
 	        

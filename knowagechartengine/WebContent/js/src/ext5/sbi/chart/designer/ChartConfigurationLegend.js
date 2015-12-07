@@ -61,6 +61,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 bind : '{configModel.legendPosition}',
                     		 displayField : 'name',
                     		 valueField : 'value',
+                    		 emptyText: LN("sbi.chartengine.configuration.legend.position.emptyText"),
                     		 store : {
                     			 fields : ['name', 'value'],
                     			 data : [ {
@@ -85,6 +86,7 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 bind : '{configModel.legendLayout}',
                     		 displayField : 'name',
                     		 valueField : 'value',
+                    		 emptyText: LN("sbi.chartengine.configuration.legend.layout.emptyText"),
                     		 store : {
                     			 fields : [ 'name', 'value' ],
                     			 data : [ {
@@ -114,12 +116,14 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
                     		 xtype : 'numberfield',
                     		 bind : '{configModel.legendX}',
                     		 fieldLabel : LN('sbi.chartengine.configuration.x'),
-                    		 maxWidth:'120'
+                    		 maxWidth: 280,
+                    		 emptyText: LN("sbi.chartengine.configuration.legend.xOffset.emptyText")
                     	 },{
                     		 xtype : 'numberfield',
                     		 bind : '{configModel.legendY}',
                     		 fieldLabel : LN('sbi.chartengine.configuration.y'),
-                    		 maxWidth:'120'
+                    		 maxWidth: 280,
+                    		 emptyText: LN("sbi.chartengine.configuration.legend.yOffset.emptyText")
                     	 },{
                     		 xtype : 'button',
                     		 text: LN('sbi.chartengine.configuration.stylebutton'),
@@ -132,7 +136,5 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 
         this.add(item);
 	}
-
-
 
 });

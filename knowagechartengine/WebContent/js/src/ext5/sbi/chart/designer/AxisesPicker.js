@@ -8,6 +8,8 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
      *  @author: danristo (danilo.ristovski@mht.net)
      */
     collapsible: true, 
+//    padding: "15 15 15 15",
+    width: 200,
     
     //layout: "fit", // danristo (for IE problem)
     
@@ -17,7 +19,8 @@ Ext.define('Sbi.chart.designer.AxisesPicker', {
     ],        
     config:{
 //        flex: 1,
-//		margin: '5 0 5 0',
+    	// top,right,bottom,left
+//		margin: '0 0 10 0',
 		minHeight: 50
     },	
     model: Sbi.chart.designer.AxisesContainerModel,    
