@@ -1777,11 +1777,7 @@ function renderWordCloud(chartConf){
 		
 		var svgHeight=Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+8+gr.length*(Number(removePixelsFromFontSize(data.legend.element.style.fontSize))+8)+30;
 	
-        console.log(Number(gr.length));
-        console.log(Number(removePixelsFromFontSize(data.legend.element.style.fontSize)));
-        console.log(Number(removePixelsFromFontSize(data.legend.title.style.fontSize)));
-        console.log(Number(removePixelsFromFontSize(data.title.style.fontSize)));
-        console.log(Number(removePixelsFromFontSize(data.subtitle.style.fontSize)));
+   
 		var legend=d3.select("#chart").append("div")
 		         .style("float","right")
 		         .style("width",legendWidth)
@@ -2089,14 +2085,15 @@ function renderWordCloud(chartConf){
 					.style("font-style", data.legend.element.style.fontStyle)
 					.style("font-weight", data.legend.element.style.fontWeight)
 					.style("text-decoration", data.legend.element.style.textDecoration)
-					
+					.style("padding-right",m[1])
 					.style("padding-left",m[3]);
 	
 	var paginationBar = tableDiv.append("div").attr("id","pBar")
 	                        .attr("align","center")
 							//.style("padding-left",w/2+m[3]/2-150)
 							.style("padding-top",10)
-	                        .style("padding-left",m[3]);
+	                        .style("padding-left",m[3])
+	                        .style("padding-right",m[1]);
 	
 	var prevButton = paginationBar.append("button")
 						.text("<< Prev")
