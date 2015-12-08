@@ -288,8 +288,9 @@ Ext.define
         		{
         			viewModel: this.viewModel,
         			isColorMandatory: true,
-        			label: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
-        			fieldBind: '{configModel.toolbarPercFontColor}'
+        			customLabel: LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
+        			fieldBind: '{configModel.toolbarPercFontColor}',
+        			initiator: "sunburstPercentageColor"
         		}
     		);		 
 	        
@@ -299,7 +300,7 @@ Ext.define
         		
         		function(actualColorField)
         		{        		
-        			if (actualColorField == LN("sbi.chartengine.configuration.sunburst.toolbar.percentageColor"))
+        			if (actualColorField == "sunburstPercentageColor")
     				{
         				var percentageColor = globalScope.viewModel.data.configModel.data.toolbarPercFontColor;
         				

@@ -79,11 +79,16 @@ Ext.define
 				    	},
 				    	
 				    	change: function(thisEl, newValue, oldValue)
-				    	{			
-				    		if (newValue)
+				    	{		
+				    		if (newValue && newValue!="")
 				    		{
 				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") + ":"); 
 				    		}	
+				    		else
+			    			{
+				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.serieFilterColumn") 
+				    					+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+			    			}
 				    	}
 				    }
 				}
@@ -158,11 +163,16 @@ Ext.define
 	         		listeners:
          			{
 	         			change: function(thisEl, newValue, oldValue)
-				    	{		
+				    	{	
 				    		if (newValue && newValue!=null)
 				    		{
 				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax") + ":"); 
-				    		}	
+				    		}
+				    		else 
+				    		{
+				    			this.labelEl.update(LN("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax") 
+				    					+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":"); 
+				    		}
 				    	}
          			}
 	         	}

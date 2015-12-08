@@ -8,7 +8,8 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		customLabel : null,
 		fieldBind: null,
 		isColorMandatory: false,
-		label: LN('sbi.chartengine.configuration.backgroundcolor')
+		label: LN('sbi.chartengine.configuration.color'),
+		initiator: null
 	},
 	constructor : function(config) {
 		this.callParent(config);
@@ -18,6 +19,8 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		
 		this.viewModel = config.viewModel;
 		
+		var label = this.config.customLabel ? this.config.customLabel : this.config.label;
+		
 		var picker = Ext.create('Sbi.chart.designer.ColorPicker',{
 			viewModel : this.viewModel,
 			fieldBind: this.config.fieldBind
@@ -26,11 +29,11 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		var field = Ext.create('Ext.form.Field',{
 			readOnly : true,
 			//fieldLabel : this.config.customLabel ? this.config.customLabel : LN('sbi.chartengine.configuration.color'),
-			fieldLabel: this.config.isColorMandatory ?  
-					this.config.label + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
-    				: this.config.label,
+			fieldLabel: this.config.isColorMandatory ? 
+					label + Sbi.settings.chart.configurationStep.htmlForMandatoryFields : 
+						label,
 			bind: {
-				fieldStyle : 'background-image: none; background-color: '+this.config.fieldBind,
+				fieldStyle : 'background-image: none; background-color: ' + this.config.fieldBind,
 			},
 			
 			width:275,
@@ -38,8 +41,8 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 			listeners:
 			{				
 				render: function()
-				{
-					globalScope.fireEvent("colorRendered", globalScope.config.label);
+				{					
+					globalScope.fireEvent("colorRendered", globalScope.config.initiator);
 				}
 			}
 		});
@@ -59,7 +62,7 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 			{
 				if (globalScope.config.isColorMandatory)
 				{					
-					field.labelEl.update(globalScope.config.label + ":"); 
+					field.labelEl.update(label + ":"); 
 				}					
 			}
 		);	

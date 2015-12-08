@@ -1,3 +1,7 @@
+/**
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+
 Ext.define
 (
 	"Sbi.chart.designer.ChartConfigurationWordcloud",
@@ -18,7 +22,6 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-//		width : 230,
 		height : 260,
 		
 		title : LN("sbi.chartengine.configuration.wordcloud.configPanelTitle"),
@@ -45,7 +48,6 @@ Ext.define
 					{
 						xtype : 'combo',
 						queryMode : 'local',
-						//value : 'serie', 
 						forceSelection : true,
 						editable : false,
 						width: 280,
@@ -54,19 +56,40 @@ Ext.define
 						displayField : 'name',
 						valueField : 'value',					
 						emptyText: LN("sbi.chartengine.configuration.wordcloudSizeCriteria.emptyText"),
-						store : {
+						
+						store : 
+						{
 							fields : [ 'name', 'value' ],
-							data : [
-									{
-										name : LN('sbi.chartengine.configuration.wordcloud.sizeCriteria.serie'),
-										value : 'serie'
-									},
-									{
-										name : LN('sbi.chartengine.configuration.wordcloud.sizeCriteria.occurrences'),
-										value : 'occurrences'
-									}]
+							
+							data : 
+							[
+								{
+									name : LN('sbi.chartengine.configuration.wordcloud.sizeCriteria.serie'),
+									value : 'serie'
+								},
+								{
+									name : LN('sbi.chartengine.configuration.wordcloud.sizeCriteria.occurrences'),
+									value : 'occurrences'
+								}
+							]
+						},
+						
+						listeners:
+						{
+							change: function(a,currentValue)
+							{
+								if (currentValue)
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.sizeCriteria") + ":");
+								}
+								else
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.sizeCriteria") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+								}
+							}
 						}
 					},
+					
 					{
 						xtype : 'numberfield',
 						bind : '{configModel.maxWords}',
@@ -75,7 +98,22 @@ Ext.define
 						width : 280,
 						maxValue : '100',
 						minValue : '10',
-						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxNumWords.emptyText")
+						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxNumWords.emptyText"),
+						
+						listeners:
+						{
+							change: function(a,currentValue)
+							{
+								if (currentValue || parseInt(currentValue)==0)
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxWords") + ":");
+								}
+								else
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxWords") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+								}
+							}
+						}
 					},
 
 					{
@@ -86,7 +124,22 @@ Ext.define
 						width : 280,
 						maxValue : '360',
 						minValue : '60',
-						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxWordAngle.emptyText")
+						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxWordAngle.emptyText"),
+						
+						listeners:
+						{
+							change: function(a,currentValue)
+							{
+								if (currentValue || parseInt(currentValue)==0)
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxAngle") + ":");
+								}
+								else
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxAngle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+								}
+							}
+						}
 					},
 
 					{
@@ -97,7 +150,22 @@ Ext.define
 						width : 280,
 						maxValue : '270',
 						minValue : '0',
-						emptyText: LN("sbi.chartengine.configuration.wordcloudMinWordAngle.emptyText")
+						emptyText: LN("sbi.chartengine.configuration.wordcloudMinWordAngle.emptyText"),
+						
+						listeners:
+						{
+							change: function(a,currentValue)
+							{
+								if (currentValue || parseInt(currentValue)==0)
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.minAngle") + ":");
+								}
+								else
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.minAngle") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+								}
+							}
+						}
 					},
 
 					{
@@ -108,7 +176,22 @@ Ext.define
 						width : 280,
 						maxValue : '200',
 						minValue : '50',
-						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxFontSize.emptyText")
+						emptyText: LN("sbi.chartengine.configuration.wordcloudMaxFontSize.emptyText"),
+						
+						listeners:
+						{
+							change: function(a,currentValue)
+							{								
+								if (currentValue || parseInt(currentValue)==0)
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + ":");
+								}
+								else
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.maxFontSize") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+								}
+							}
+						}
 					},
 
 					{
@@ -119,7 +202,22 @@ Ext.define
 						width : 280,
 						maxValue : '20',
 						minValue : '2',
-						emptyText: LN("sbi.chartengine.configuration.wordcloudWordPadd.emptyText")
+						emptyText: LN("sbi.chartengine.configuration.wordcloudWordPadd.emptyText"),
+						
+						listeners:
+						{
+							change: function(a,currentValue)
+							{
+								if (currentValue || parseInt(currentValue)==0)
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.wordPadding") + ":");
+								}
+								else
+								{
+									this.labelEl.update(LN("sbi.chartengine.configuration.wordcloud.wordPadding") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+								}
+							}
+						}
 					} ];
 
 			this.add(item);

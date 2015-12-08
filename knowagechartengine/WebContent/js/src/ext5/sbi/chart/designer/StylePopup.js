@@ -97,13 +97,13 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			isColorMandatory: this.config.isFontColorMandatory
 		});
 		this.add(color);
-		
+				
 		if(this.config.bindBackgroundColor){
 			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 				viewModel: this.viewModel,
 				fieldBind : this.config.bindBackgroundColor,
 				//customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
-	        	fieldLabel : (globalScope.config.isBackgroundColorMandatory) ?  
+	        	customLabel : (globalScope.config.isBackgroundColorMandatory) ?  
 	        			LN('sbi.chartengine.configuration.backgroundcolor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 	    				: LN('sbi.chartengine.configuration.backgroundcolor')
 			});

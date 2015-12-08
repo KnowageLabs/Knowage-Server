@@ -1,23 +1,39 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
+	
 //    extend: 'Ext.tab.Panel',	// version 2
-	extend: 'Ext.panel.Panel',	// version 1
-    xtype: 'layout-column',		// version 1	
-    requires: [
-               'Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip',
-               'Sbi.chart.designer.ChartConfigurationLegend',
-               'Sbi.chart.designer.ChartConfigurationPalette',
-               'Sbi.chart.designer.ChartConfigurationParallelAxesLines',
-               'Sbi.chart.designer.ChartConfigurationParallelLimit',
-               'Sbi.chart.designer.ChartConfigurationParallelTooltip',
-               'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
-//               'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
-               'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
-               'Sbi.chart.designer.ChartConfigurationSunburstTip',
-               'Sbi.chart.designer.ChartConfigurationWordcloud'
-           ],
+	extend: 'Ext.panel.Panel',	// version 1    
+	xtype: 'layout-column',		// version 1	
+    
+    requires: 
+	[
+	//               'Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip',
+		'Sbi.chart.designer.ChartConfigurationHeatmapLegend',
+		'Sbi.chart.designer.ChartConfigurationHeatmapTooltip',
+		
+		'Sbi.chart.designer.ChartConfigurationLegend',
+		'Sbi.chart.designer.ChartConfigurationPalette',
+		
+		'Sbi.chart.designer.ChartConfigurationParallelAxesLines',
+		'Sbi.chart.designer.ChartConfigurationParallelLimit',
+		'Sbi.chart.designer.ChartConfigurationParallelTooltip',
+		'Sbi.chart.designer.ChartConfigurationParallelLegendTitle',
+		'Sbi.chart.designer.ChartConfigurationParallelLegendElement',
+		
+		
+		'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
+		
+	//               'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',		
+		'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
+		'Sbi.chart.designer.ChartConfigurationSunburstTip',
+		
+		'Sbi.chart.designer.ChartConfigurationWordcloud'
+   ],
+           
     border:false,
+    
     layout: 'column',	// version 1
 //    layout: 'tab',	// version 2
+    
     defaults:{
         height: 200,
     },
@@ -125,9 +141,18 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			}
 		);
 		
-		var parallelChartLegend = Ext.create
+		var parallelChartLegendTitle = Ext.create
 		(
-				"Sbi.chart.designer.ChartConfigurationParallelLegend",
+				"Sbi.chart.designer.ChartConfigurationParallelLegendTitle",
+				
+				{
+					viewModel: this.viewModel
+				}
+		);
+		
+		var parallelChartLegendElement = Ext.create
+		(
+				"Sbi.chart.designer.ChartConfigurationParallelLegendElement",
 				
 				{
 					viewModel: this.viewModel
@@ -149,9 +174,22 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * These three panels are needed for the HEATMAP chart
 		 * (danilo.ristovski@mht.net)
 		 */
-		var heatmapChartLegendAndTooltip = Ext.create
+		var heatmapChartLegend = Ext.create
 		(
-			"Sbi.chart.designer.ChartConfigurationHeatmapLegendAndTooltip",
+			"Sbi.chart.designer.ChartConfigurationHeatmapLegend",
+			
+			{
+				viewModel: this.viewModel
+			}	
+		);
+		
+		/**
+		 * These three panels are needed for the HEATMAP chart
+		 * (danilo.ristovski@mht.net)
+		 */
+		var heatmapChartTooltip = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationHeatmapTooltip",
 			
 			{
 				viewModel: this.viewModel
@@ -173,15 +211,41 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		
 		this.add(legend);
 		this.add(palette);
-		this.add(heatmapChartLegendAndTooltip);
+		
+		/**
+		 * HEATMAP panels for specific parameters
+		 */
+		this.add(heatmapChartLegend);
+		this.add(heatmapChartTooltip);
+		
+		/**
+		 * SUNBURST panels for specific parameters
+		 */
 		this.add(sunburstToolbar);	
 		this.add(sunburstTip);
+		
+		/**
+		 * WORDCLOUD panel for specific parameters
+		 */
 		this.add(wordCloudParameters);
+		
+		/**
+		 * PARALLEL panels for specific parameters
+		 */
 		this.add(parallelChartLimit);	
 		this.add(parallelChartAxesLines);
 		this.add(parallelChartTooltip);
-		this.add(parallelChartLegend);
+		this.add(parallelChartLegendTitle);
+		this.add(parallelChartLegendElement);
+		
+		/**
+		 * SCATTER panel for specific parameters
+		 */
 		this.add(scatterConfiguration);
+		
+		/**
+		 * GAUGE panel for specific parameters
+		 */
 		this.add(gaugePaneParameters);
 		
 		if (ChartUtils.enableLegend())
@@ -229,23 +293,29 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 			this.getComponent("chartParallelLimit").show();
 			this.getComponent("chartParallelAxesLines").show();
 			this.getComponent("chartParallelTooltip").show();
-			this.getComponent("chartParallelLegend").show();			
+			this.getComponent("chartParallelLegendTitle").show();	
+			this.getComponent("chartParallelLegendElement").show();	
 		}
 		else 
 		{
 			this.getComponent("chartParallelLimit").hide();
 			this.getComponent("chartParallelAxesLines").hide();
 			this.getComponent("chartParallelTooltip").hide();
-			this.getComponent("chartParallelLegend").hide();
+			this.getComponent("chartParallelLegendTitle").hide();	
+			this.getComponent("chartParallelLegendElement").hide();	
 		}
 		
 		if (ChartUtils.enableHeatmapLegendAndTooltip())
 		{
-			this.getComponent("chartHeatmapLegendAndTooltip").show();
+//			this.getComponent("chartHeatmapLegendAndTooltip").show();
+			this.getComponent("chartHeatmapLegend").show();
+			this.getComponent("chartHeatmapTooltip").show();
 		}
 		else
 		{
-			this.getComponent("chartHeatmapLegendAndTooltip").hide();
+//			this.getComponent("chartHeatmapLegendAndTooltip").hide();
+			this.getComponent("chartHeatmapLegend").hide();
+			this.getComponent("chartHeatmapTooltip").hide();
 		}
 		
 		if (ChartUtils.enableScatterElements())

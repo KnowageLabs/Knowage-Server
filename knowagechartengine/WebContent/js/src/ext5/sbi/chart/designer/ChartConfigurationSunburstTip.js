@@ -87,7 +87,9 @@ Ext.define
         			width: 280,
         			fieldBind: '{configModel.tipColor}',
         			isColorMandatory: true,
-        			label: LN("sbi.chartengine.configuration.sunburst.tip.fontColor")
+        			customLabel: LN("sbi.chartengine.configuration.sunburst.tip.fontColor"),
+					initiator: "sunburstTooltipColor"
+        			//label: LN("sbi.chartengine.configuration.sunburst.tip.fontColor")
         		}
     		);
 	        
@@ -97,7 +99,7 @@ Ext.define
         		
         		function(actualColorField)
         		{            			
-        			if (actualColorField == LN("sbi.chartengine.configuration.sunburst.tip.fontColor"))
+        			if (actualColorField == "sunburstTooltipColor")
     				{
         				var fontColor = globalScope.viewModel.data.configModel.data.tipColor;
         				        				

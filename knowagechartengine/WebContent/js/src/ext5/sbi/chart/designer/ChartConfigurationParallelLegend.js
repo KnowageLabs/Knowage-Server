@@ -6,29 +6,13 @@ Ext.define
 		extend: 'Sbi.chart.designer.ChartConfigurationRoot',
 		id: "chartParallelLegend",
 		
-		/**
-		 * NOTE: 
-		 * This is a temporal solution (for bugs ATHENA-154 and ATHENA-157):
-		 * Instead of using dynamic width for this panel that relies
-		 * on the width of the width of the window of the browser, fix this
-		 * value so it can be entirely visible to the end user. Also the
-		 * height will be defined as the fixed value.
-		 * 
-		 * @author: danristo (danilo.ristovski@mht.net)
-		 */
 		columnWidth: 1,
-//		width: 200,
 		height: 110,
 		
 		title: LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
 		bodyPadding: 10,
 		items: [],
 		height: 110,
-		
-		requires : [
-			            'Sbi.chart.designer.StylePopupTip',
-			            'Sbi.chart.designer.StylePopupToolbar'
-			            ],
 	
 	    fieldDefaults: 
 	    {

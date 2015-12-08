@@ -17,7 +17,6 @@ Ext.define
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
 		columnWidth: 1,
-//		width: 250,
 		height: 170,
 		
 		title: LN("sbi.chartengine.configuration.parallel.axesLines.title"), 
@@ -54,8 +53,9 @@ Ext.define
         		{
         			viewModel: this.viewModel,
         			isColorMandatory: true, 
-        			label: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
-        			fieldBind: '{configModel.axisColor}'
+        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"),
+        			fieldBind: '{configModel.axisColor}',
+        			initiator: "colorPickerAxisColor"
         		}
     		);
 	        
@@ -65,7 +65,7 @@ Ext.define
         		
         		function(actualColorField)
         		{        
-        			if (actualColorField == LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"))
+        			if (actualColorField == "colorPickerAxisColor")
     				{
         				var axisColor = globalScope.viewModel.data.configModel.data.axisColor;
         				
@@ -92,8 +92,9 @@ Ext.define
         		{
         			viewModel: this.viewModel,
         			isColorMandatory: true, 
-        			label: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
+        			customLabel: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
         			fieldBind: '{configModel.brushColor}',	
+        			initiator: "colorPickerBrushColor"
         		}
     		);
 	        
@@ -103,7 +104,7 @@ Ext.define
         		
         		function(actualColorField)
         		{        
-        			if (actualColorField == LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"))
+        			if (actualColorField == "colorPickerBrushColor")
     				{
         				var brushColor = globalScope.viewModel.data.configModel.data.brushColor;
         				
@@ -130,7 +131,6 @@ Ext.define
 					 id: "parallelAxisColNamePadd",
 					 fieldLabel: LN("sbi.chartengine.configuration.parallel.axesLines.axisColNamePadd") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields,	
 					 width: 280,
-//					 value: "15",
 					 maxValue: '30',
 					 minValue: '0',
 					 emptyText: LN("sbi.chartengine.configuration.parallelAxesLinesAxisColNamePadd.emptyText"),

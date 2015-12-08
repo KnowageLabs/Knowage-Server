@@ -408,7 +408,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var parallelLimitPanel = secondConfigurationPanel.getComponent("chartParallelLimit");
 					var parallelAxesLinesPanel = secondConfigurationPanel.getComponent("chartParallelAxesLines");					
 					var parallelTooltipPanel = secondConfigurationPanel.getComponent("chartParallelTooltip");
-					var parallelLegendPanel = secondConfigurationPanel.getComponent("chartParallelLegend");
+					var parallelLegendTitlePanel = secondConfigurationPanel.getComponent("chartParallelLegendTitle");
+					var parallelLegendElementPanel = secondConfigurationPanel.getComponent("chartParallelLegendElement");
 					
 					/**
 					 * The second configuration panel element for hiding/showing when the SCATTER is selected.
@@ -418,7 +419,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					/**
 					 * The additional second configuration panel element to show when the HEATMAP is selected.
 					 */
-					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
+//					var showLegendAndTooltip = secondConfigurationPanel.getComponent("chartHeatmapLegendAndTooltip");
+					var showHeatmapLegend = secondConfigurationPanel.getComponent("chartHeatmapLegend");
+					var showHeatmapTooltip = secondConfigurationPanel.getComponent("chartHeatmapTooltip");
 					
 					/**
 					 * The additional second configuration panel element to show when the GAUGE is selected.
@@ -510,10 +513,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * Step 2 tab of the Designer page.
 					 */					
 					if (isChartWordCloud || isChartGauge) {	
-						//console.log(colorPallete);
 						colorPallete.hide();
 					} else {
-						//console.log(colorPallete);
 						colorPallete.show();
 					}
 					
@@ -522,11 +523,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * on the Step 2 tab of the Designer page.
 					 */
 					if (isChartSunburst) {
-//						toolbarAndTip.show();
 						sunburstToolbar.show();
 						sunburstTip.show();
 					} else  {
-//						toolbarAndTip.hide();
 						sunburstToolbar.hide();
 						sunburstTip.hide();
 					}
@@ -549,12 +548,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 						parallelLimitPanel.show();
 						parallelAxesLinesPanel.show();
 						parallelTooltipPanel.show();
-						parallelLegendPanel.show();
+						parallelLegendTitlePanel.show();
+						parallelLegendElementPanel.show();
 					} else {
 						parallelLimitPanel.hide();
 						parallelAxesLinesPanel.hide();
 						parallelTooltipPanel.hide();
-						parallelLegendPanel.hide();
+						parallelLegendTitlePanel.hide();
+						parallelLegendElementPanel.hide();
 					}
 					
 					/**
@@ -572,9 +573,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * configuration panel on the Step 2 tab of the Designer page.
 					 */
 					if (isChartHeatmap) {
-						showLegendAndTooltip.show();
+						showHeatmapLegend.show();
+						showHeatmapTooltip.show();
 					} else {
-						showLegendAndTooltip.hide();
+						showHeatmapLegend.hide();
+						showHeatmapTooltip.hide();
 					}
 					
 					/**
@@ -593,26 +596,33 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 
 					// TODO: uncomment this to apply chosen style to any chart type we select (choose) 
-//					/**
-//					 * This is JSON template that we take form the Advance editor (previously, Step 3)
-//					 * so we can be up-to-date with current structure of the document inside the Designer.
-//					 */
-//					var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
-//					
-//					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(Designer.styleName).generic, configApplyAxes);
-//					
-//					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-//							localJsonTemplate, 
-//							Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()], 
-//							configApplyAxes);							
-//					
-//					jsonTemplate = localJsonTemplate;
-//					
-//					/**
-//					 * Update (refresh) the main configuration panel (the one on the top of 
-//					 * the Step 2 tab) after selecting the particular style.
-//					 */
-//		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
+					/**
+					 * This is JSON template that we take form the Advance editor (previously, Step 3)
+					 * so we can be up-to-date with current structure of the document inside the Designer.
+					 */
+					var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
+					
+					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(Designer.styleName).generic, configApplyAxes);
+					
+					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+							localJsonTemplate, 
+							Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()], 
+							configApplyAxes);							
+					
+					jsonTemplate = localJsonTemplate;				
+					
+					/**
+					 * Update (refresh) the main configuration panel (the one on the top of 
+					 * the Step 2 tab) after selecting the particular style.
+					 */
+		    		Sbi.chart.designer.Designer.update(jsonTemplate);	
+					
+					/**
+					 * When user selects (changes) chart type we should check if there are 
+					 * labels for color fields/pickers to update (show/hide) flags for 
+					 * mandatory fields.
+					 */
+					removeFlagsForMandatoryFields(currentChartType,jsonTemplate);
 				}
 			);
 						
@@ -842,38 +852,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 			};
 			
 			var allStyles = allStyleNames();
+			
 			var styleStore = Ext.create("Ext.data.Store", {
 				fields : [ "styleAbbr", "style" ],
 
 				data : allStyles
-				/*
-				 * [{
-				 * 	style: LN('sbi.chartengine.designer.stylecolor.red'),
-				 * 	styleAbbr : "red"
-				 * }, {
-				 * 	style: LN('sbi.chartengine.designer.stylecolor.blue'),
-				 * 	styleAbbr: "blue"
-				 * }, //{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"} 
-				 * ]
-				 */
-			});
-			
-			/**
-			 * Static store for styles for the generic parameters of the document (chart)
-			 * with combo items that have predefined names (Red, Green, Blue, ...).
-			 * 
-			 * @author: danristo (danilo.ristovski@mht.net)
-			 */
-//			var styleStore = Ext.create ( "Ext.data.Store", {
-//				fields: ["style", "styleAbbr"],
-//				
-//				data: [
-//				 	{style: LN('sbi.chartengine.designer.stylecolor.red'), styleAbbr: "red"},
-//				 	{style: LN('sbi.chartengine.designer.stylecolor.blue'), styleAbbr: "blue"},
-//				 	//{style: LN('sbi.chartengine.designer.stylecolor.green'), styleAbbr: "green"}
-//						 ]
-//			});
-//			
+			});					
 			
 			/**
 			 * Manage text of labels for color elements of PARALLEL chart on the Step 2
@@ -917,8 +901,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					else if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel)
 						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
 				}
+				
 				else if (chartType=="SUNBURST")
-				{
+				{					
 					var sunburstToolbarStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLBAR.style);
 					
 					var percFontColorLabel = "";
@@ -937,7 +922,6 @@ Ext.define('Sbi.chart.designer.Designer', {
 					else if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel)
 						Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel = percFontColorLabel;
 					
-					
 					var sunburstTipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TIP.style);
 					
 					var tipFontColorLabel = "";
@@ -955,6 +939,27 @@ Ext.define('Sbi.chart.designer.Designer', {
 						Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl.update(tipFontColorLabel);	
 					else if (Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel)
 						Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel = tipFontColorLabel;
+				}
+				
+				else if (chartType=="HEATMAP")
+				{
+					var heatmapTooltipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLTIP.style);
+					
+					var fontColorHeatmapTooltipLabel = "";
+					
+					if (heatmapTooltipStyle.color && heatmapTooltipStyle.color!="" && heatmapTooltipStyle.color!="transparent")
+					{
+						fontColorHeatmapTooltipLabel = LN('sbi.chartengine.configuration.color') + ":";
+					}
+					else
+					{
+						fontColorHeatmapTooltipLabel = LN('sbi.chartengine.configuration.color') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
+					}
+					
+					if (Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].labelEl)
+						Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].labelEl.update(fontColorHeatmapTooltipLabel);	
+					else if (Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].fieldLabel)
+						Ext.getCmp("chartHeatmapTooltip").colorPicker.items.items[0].fieldLabel = fontColorHeatmapTooltipLabel;
 				}
 			};
 			
@@ -1066,13 +1071,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    		 * content in order to contain up-to-date serie items available inside of 
 				    		 * the Y-axis panel on the Step 1.
 				    		 */
-				    		if (chartType == "PARALLEL")
+				    		if (chartType == "PARALLEL" || chartType == "SUNBURST" || chartType == "HEATMAP")
 			    			{
-				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
-				    			removeFlagsForMandatoryFields(chartType,jsonTemplate);
-			    			}
-				    		else if (chartType == "SUNBURST")
-			    			{
+				    			if (chartType == "PARALLEL")
+				    			{
+				    				Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
+				    			}
+				    			
 				    			removeFlagsForMandatoryFields(chartType,jsonTemplate);
 			    			}
 							
@@ -3937,8 +3942,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			else if (chartType == "HEATMAP") {
 //				
-				var heatmapLegend = Ext.getCmp("chartHeatmapLegendAndTooltip").heatmapChartLegend;
-				var heatmapTooltip = Ext.getCmp("chartHeatmapLegendAndTooltip").heatmapChartTooltip;
+//				var heatmapLegend = Ext.getCmp("chartHeatmapLegendAndTooltip").heatmapChartLegend;
+//				var heatmapTooltip = Ext.getCmp("chartHeatmapLegendAndTooltip").heatmapChartTooltip;
+				
+				var heatmapLegend = Ext.getCmp("chartHeatmapLegend");
+				var heatmapTooltip = Ext.getCmp("chartHeatmapTooltip");
 				
 				// HEATMAP fields (parameters) values from the GUI 	
 //				var heatmapLegendVertAlignGUI = heatmapLegend.items.items[0].value;
