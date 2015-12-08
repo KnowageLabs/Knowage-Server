@@ -167,8 +167,8 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 						}
 					);
 										
-					var urlToCall =  Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";
-					window.location.href = urlToCall;
+					/*var urlToCall =  Sbi.config.contextName+"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/federateddataset/federatedDatasetBusiness.jsp";
+					window.location.href = urlToCall;*/
 				}
 				else {
 					this.fireEvent('executeDocument','QBE','FEDERATED_DATASET',record);
