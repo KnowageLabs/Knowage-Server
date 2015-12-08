@@ -16,7 +16,7 @@
 
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
-
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/profileAttributesManagement.js"></script>
@@ -27,9 +27,9 @@
 	<angular_2_col>
 		<left-col>
 			<div class="leftBox">
-				<md-toolbar class="md-blue minihead">
-					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.attributes.title");}}</div>
+				<md-toolbar class="header" >
+					<div class="md-toolbar-tools" >
+						<div style="font-size : 24px;">{{translate.load("sbi.attributes.title");}}</div>
                        
 						<md-button 
 							class="md-fab md-ExtraMini addButton"
@@ -66,13 +66,13 @@
 		<right-col>
 			<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveProfileAttribute()" class="detailBody md-whiteframe-z1">
 				<div ng-show="showMe">
-					<md-toolbar class="md-blue minihead">
+					<md-toolbar class="header">
 						<div class="md-toolbar-tools h100">
 							<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.attributes.title");}}</div>
 							<div style="position: absolute; right: 0px" class="h100">
 								
 								<md-button type="submit"
-								aria-label="save atrribute" class="md-raised md-ExtraMini"
+								aria-label="save atrribute" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 								style=" margin-top: 2px;"
 								ng-disabled="!attributeForm.$valid"
 								>
