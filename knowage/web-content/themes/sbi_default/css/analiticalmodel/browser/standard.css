@@ -399,9 +399,9 @@ li:hover .login-panel .not-registered a:hover,.login-panel .not-registered a:hov
 .box .hover .box-actions .qbe a:hover{background-position:9px -26px;background-repeat: no-repeat;}
 .box .hover .box-actions .MyDataHelpOnLine a{background-image:url('../../../img/wapp/40/glossary.png');background-repeat: no-repeat;background-position: 9px 6px;}
 .box .hover .box-actions .MyDataHelpOnLine a:hover{background-position:9px 6px;background-repeat: no-repeat;}
-.box .hover .box-actions .editFederated a{background-image:url('../../../img/wapp/40/edit32.png');background-repeat: no-repeat;background-position: 9px 6px;}
+.box .hover .box-actions .editFederated a{background-image:url('../../../img/wapp/40/edit32fa.png');background-repeat: no-repeat;background-position: 9px 6px;}
 .box .hover .box-actions .editFederated a:hover{background-position:9px 6px;background-repeat: no-repeat;}
-.box .hover .box-actions .deleteFederated a{background-image:url('../../../img/wapp/40/delete.png');background-repeat: no-repeat;background-position: 9px 6px;}
+.box .hover .box-actions .deleteFederated a{background-image:url('../../../img/wapp/40/deletefa.png');background-repeat: no-repeat;background-position: 9px 6px;}
 .box .hover .box-actions .deleteFederated a:hover{background-position:9px 6px;background-repeat: no-repeat;}
 
 

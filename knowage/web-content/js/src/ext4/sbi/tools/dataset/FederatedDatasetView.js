@@ -121,7 +121,7 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 								'<dd class="box">',
 									'<div class="box-container">',
 										'<div class="box-figure">',
-													'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/federatedDataset.png" alt=" " />',
+													'<img  align="center" src="'+Sbi.config.contextName+'/themes/sbi_default/img/metamodel/federation.png" alt=" " />',
 											'<span class="shadow"></span>',
 											'<div class="hover">',
 												'<div class="box-actions-container">',
