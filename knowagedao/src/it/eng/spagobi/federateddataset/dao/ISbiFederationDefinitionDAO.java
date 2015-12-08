@@ -18,9 +18,9 @@ import org.hibernate.Session;
 
 public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 
-	public void saveSbiFederationDefinition(FederationDefinition dataset);
+	public int saveSbiFederationDefinition(FederationDefinition dataset);
 
-	public void saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition);
+	public int saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition);
 
 	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError;
 

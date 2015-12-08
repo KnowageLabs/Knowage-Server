@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business  Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.tools.dataset.service.federated;
@@ -45,25 +45,26 @@ public class RestFederationDefinition {
 	public static final String VERSION_NUM = "versionNum";
 
 	/**
-	 * Saves the federation definition in the db. Gets the definition from the body of the request
-	 * 
+	 * Saves the federation definition in the db. Gets the definition from the
+	 * body of the request
+	 *
 	 * @param req
 	 * @return
 	 */
 	@POST
 	@Path("/post")
-	public String insertFederation(@Context HttpServletRequest req) {
+	public Integer insertFederation(@Context HttpServletRequest req) {
 		try {
 			logger.debug("Saving the federation");
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
 			logger.debug("The federation definition label is " + fdsNew.getLabel());
 
-			insertFederationDefinition(fdsNew, true);
+			Integer id = insertFederationDefinition(fdsNew, true);
 
 			logger.debug("Saving OK");
 			logger.debug("OUT");
-			return fdsNew.getFederation_id() + "";
+			return id;
 		} catch (Exception e) {
 			logger.error("Error saving federation", e);
 			throw new SpagoBIRuntimeException("Error saving federation", e);
@@ -71,8 +72,9 @@ public class RestFederationDefinition {
 	}
 
 	/**
-	 * Saves the federation definition in the db. Gets the definition from the body of the request
-	 * 
+	 * Saves the federation definition in the db. Gets the definition from the
+	 * body of the request
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -98,7 +100,8 @@ public class RestFederationDefinition {
 
 	//
 	// /**
-	// * Saves the federation definition in the db. Gets the definition from the body of the request
+	// * Saves the federation definition in the db. Gets the definition from the
+	// body of the request
 	// * @param req
 	// * @return
 	// */
@@ -119,7 +122,8 @@ public class RestFederationDefinition {
 	//
 	// requestBodyJSON.put("sourcesDataset", ja);
 	//
-	// FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestBodyJSON);
+	// FederationDefinition fdsNew =
+	// recoverFederatedDatasetDetails(requestBodyJSON);
 	// logger.debug("The federation definition label is "+fdsNew.getLabel());
 	//
 	// insertFederationDefinition(fdsNew);
@@ -135,26 +139,25 @@ public class RestFederationDefinition {
 
 	/**
 	 * Saves the federation definition on db
-	 * 
+	 *
 	 * @param federation
 	 * @throws EMFUserError
 	 */
-	public void insertFederationDefinition(FederationDefinition federation, boolean duplicated) throws EMFUserError {
+	public int insertFederationDefinition(FederationDefinition federation, boolean duplicated) throws EMFUserError {
 		logger.debug("The federation definition label is " + federation.getLabel());
 
 		ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
 		if (duplicated) {
-			federatedDatasetDao.saveSbiFederationDefinition(federation);
+			return federatedDatasetDao.saveSbiFederationDefinition(federation);
 		} else {
-			federatedDatasetDao.saveSbiFederationDefinitionNoDuplicated(federation);
+			return federatedDatasetDao.saveSbiFederationDefinitionNoDuplicated(federation);
 		}
 
-		logger.debug("Seved federation with label " + federation.getLabel() + " the id is " + federation.getFederation_id());
 	}
 
 	/**
 	 * Gets a specific federation definition
-	 * 
+	 *
 	 * @param req
 	 * @param federationId
 	 *            {int} the id of the federation definition
@@ -225,7 +228,8 @@ public class RestFederationDefinition {
 
 				JDBCDataSet ds = new JDBCDataSet();
 				ds.setId(jo.getInt(DATASET_ID));
-				// VersionedDataSet vd = new VersionedDataSet(ds,jo.getInt(VERSION_NUM),true);
+				// VersionedDataSet vd = new
+				// VersionedDataSet(ds,jo.getInt(VERSION_NUM),true);
 				ds.setOrganization(TenantManager.getTenant().getName());
 				iDataSet.add(ds);
 

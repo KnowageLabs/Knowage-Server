@@ -1,7 +1,7 @@
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
- * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice. 
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package it.eng.spagobi.tools.dataset.federation;
@@ -16,7 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FederationDefinition {
-
 
 	private int federation_id;
 
@@ -34,8 +33,8 @@ public class FederationDefinition {
 		return federation_id;
 	}
 
-	public void setFederation_id(int federation_id) {
-		this.federation_id = federation_id;
+	public int setFederation_id(int federation_id) {
+		return this.federation_id = federation_id;
 	}
 
 	public String getName() {
@@ -65,34 +64,36 @@ public class FederationDefinition {
 	public String getRelationships() {
 		return relationships;
 	}
-	
-	public JSONObject getRelationshipsAsJSONObject(){
+
+	public JSONObject getRelationshipsAsJSONObject() {
 		JSONObject relations = null;
-		if(getRelationships()!=null && getRelationships().length()>0){
+		if (getRelationships() != null && getRelationships().length() > 0) {
 			try {
 				JSONArray array = getFlatReslationsShips();
 				relations = new JSONObject();
 				relations.put("relationships", array);
 			} catch (JSONException e) {
-				throw new SpagoBIEngineRuntimeException("Error building the relations object" ,e);
+				throw new SpagoBIEngineRuntimeException("Error building the relations object", e);
 			}
 		}
 		return relations;
 	}
 
 	/**
-	 * Flats the relationships and return the single relations between couple tables
+	 * Flats the relationships and return the single relations between couple
+	 * tables
+	 * 
 	 * @return
 	 * @throws JSONException
 	 */
-	public JSONArray getFlatReslationsShips() throws JSONException{
+	public JSONArray getFlatReslationsShips() throws JSONException {
 
 		JSONArray flatJSONArray = new JSONArray();
 		JSONArray array = new JSONArray(getRelationships());
-		if(array!=null && array.length()>0){
-			for(int i=0; i<array.length();i++){
+		if (array != null && array.length() > 0) {
+			for (int i = 0; i < array.length(); i++) {
 				JSONArray temp = array.getJSONArray(i);
-				for(int j=0; j<temp.length(); j++){
+				for (int j = 0; j < temp.length(); j++) {
 					flatJSONArray.put(temp.get(j));
 				}
 			}
@@ -112,7 +113,5 @@ public class FederationDefinition {
 	public void setSourceDatasets(Set<IDataSet> sourceDatasets) {
 		this.sourceDatasets = sourceDatasets;
 	}
-
-
 
 }

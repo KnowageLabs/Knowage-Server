@@ -41,8 +41,8 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 	 * @param dataset
 	 */
 	@Override
-	public void saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition) {
-		saveSbiFederationDefinition(federationDefinition, false);
+	public int saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition) {
+		return saveSbiFederationDefinition(federationDefinition, false);
 	}
 
 	/**
@@ -52,11 +52,11 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 	 * @param dataset
 	 */
 	@Override
-	public void saveSbiFederationDefinition(FederationDefinition federationDefinition) {
-		saveSbiFederationDefinition(federationDefinition, true);
+	public int saveSbiFederationDefinition(FederationDefinition federationDefinition) {
+		return saveSbiFederationDefinition(federationDefinition, true);
 	}
 
-	private void saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated) {
+	private int saveSbiFederationDefinition(FederationDefinition dataset, boolean duplicated) {
 		LogMF.debug(logger, "IN:  model = [{0}]", dataset);
 
 		Session session = null;
@@ -86,7 +86,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 					logger.debug("The federation already exisists and the id is " + sbiResult.getFederation_id());
 					dataset.setFederation_id(sbiResult.getFederation_id());
 					transaction.commit();
-					return;
+					return sbiResult.getFederation_id();
 				}
 				logger.debug("The federation doesn't exist");
 			}
@@ -105,7 +105,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 			transaction.commit();
 
-			dataset.setFederation_id(hibFederatedDataset.getFederation_id());
+			return dataset.setFederation_id(hibFederatedDataset.getFederation_id());
 
 		} catch (Throwable t) {
 			logException(t);
@@ -118,8 +118,6 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 				session.close();
 			}
 		}
-
-		logger.debug("OUT");
 
 	}
 
