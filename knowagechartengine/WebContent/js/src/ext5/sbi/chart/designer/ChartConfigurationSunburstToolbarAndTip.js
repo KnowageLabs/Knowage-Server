@@ -2,6 +2,9 @@
  * Customization panel for the SUNBURST chart type (Step 2).
  * 
  * @author: danristo (danilo.ristovski@mht.net)
+ * 
+ * TODO: This file is not used anymore since Toolbar and Tip are separated for SUNBURST chart !!! 
+ * 
  */
 Ext.define
 (

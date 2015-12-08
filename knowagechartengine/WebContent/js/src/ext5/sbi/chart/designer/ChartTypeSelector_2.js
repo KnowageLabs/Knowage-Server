@@ -16,73 +16,73 @@ var chartTypesStore = Ext.create
 		 	{
 		 		style: LN("sbi.chartengine.designer.charttype.bar"), 
 		 		styleAbbr: "bar",
-		 		icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png'
+		 		icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/barchart/img/barchart_icon_new_1.png'
  			},	
 		 	
  			{
  				style: LN("sbi.chartengine.designer.charttype.line"), 
  				styleAbbr: "line",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/linechart/img/linechart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.pie"), 
 				styleAbbr: "pie",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_icon_new_1.png',
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/piechart/img/piechart_icon_new_1.png',
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.radar"), 
 				styleAbbr: "radar",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/radarchart/img/radarchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/radarchart/img/radarchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.scatter"), 
 				styleAbbr: "scatter",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/scatterchart/img/scatterchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/scatterchart/img/scatterchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.treemap"), 
 				styleAbbr: "treemap",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/treemapchart/img/treemapchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/treemapchart/img/treemapchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.heatmap"), 
 				styleAbbr: "heatmap",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/heatmapchart/img/heatmapchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/heatmapchart/img/heatmapchart_icon_new_1.png'
 			},	
 			
 			{
 				style: LN("sbi.chartengine.designer.charttype.gauge"), 
 				styleAbbr: "gauge",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/gaugechart/img/gaugechart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/gaugechart/img/gaugechart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.wordcloud"), 
 				styleAbbr: "wordcloud",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/wordcloudchart/img/wordcloudchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/wordcloudchart/img/wordcloudchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.parallel"),
 				styleAbbr: "parallel",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/parallelchart/img/parallelchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/parallelchart/img/parallelchart_icon_new_1.png'
 			},	
 		 	
  			{
 				style: LN("sbi.chartengine.designer.charttype.sunburst"),
 				styleAbbr: "sunburst",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/sunburstchart/img/sunburstchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/sunburstchart/img/sunburstchart_icon_new_1.png'
 			},
 			
 			{
 				style: LN("sbi.chartengine.designer.charttype.chord"),
 				styleAbbr: "chord",
-				icon: Sbi.chart.designer.Designer.realtivePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/chordchart/img/chordchart_icon_new_1.png'
+				icon: Sbi.chart.designer.Designer.relativePathReturn + '/js/src/ext4/sbi/cockpit/widgets/extjs/chordchart/img/chordchart_icon_new_1.png'
 			}
 		]
 	}

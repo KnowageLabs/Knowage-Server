@@ -44,6 +44,8 @@ Ext.define
 			this.axisColNamePadd = null;
 			this.brushWidth = null;
 			
+			var globalScope = this;
+			
 			/* Color picker drop-down matrix (table) */
 	        this.colorPickerAxisColor = Ext.create
 	        (
@@ -57,6 +59,31 @@ Ext.define
         		}
     		);
 	        
+	        this.colorPickerAxisColor.on
+	        (
+        		"colorRendered", 
+        		
+        		function(actualColorField)
+        		{        
+        			if (actualColorField == LN("sbi.chartengine.configuration.parallel.axesLines.axisColor"))
+    				{
+        				var axisColor = globalScope.viewModel.data.configModel.data.axisColor;
+        				
+        				if (axisColor && axisColor!="" && axisColor!="transparent")
+    					{
+        					globalScope.colorPickerAxisColor.items.items[0]
+        						.labelEl.update( LN("sbi.chartengine.configuration.parallel.axesLines.axisColor")+":");
+    					}
+        				else
+    					{
+        					globalScope.colorPickerAxisColor.items.items[0]
+    							.labelEl.update( LN("sbi.chartengine.configuration.parallel.axesLines.axisColor")
+    												+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+    					}
+    				}        			
+    			}
+    		);
+	        
 	        /* Color picker drop-down matrix (table) */
 	        this.colorPickerBrushColor= Ext.create
 	        (
@@ -68,6 +95,31 @@ Ext.define
         			label: LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"),
         			fieldBind: '{configModel.brushColor}',	
         		}
+    		);
+	        
+	        this.colorPickerBrushColor.on
+	        (
+        		"colorRendered", 
+        		
+        		function(actualColorField)
+        		{        
+        			if (actualColorField == LN("sbi.chartengine.configuration.parallel.axesLines.brushColor"))
+    				{
+        				var brushColor = globalScope.viewModel.data.configModel.data.brushColor;
+        				
+        				if (brushColor && brushColor!="" && brushColor!="transparent")
+    					{
+        					globalScope.colorPickerBrushColor.items.items[0]
+        						.labelEl.update( LN("sbi.chartengine.configuration.parallel.axesLines.brushColor")+":");
+    					}
+        				else
+    					{
+        					globalScope.colorPickerBrushColor.items.items[0]
+    							.labelEl.update( LN("sbi.chartengine.configuration.parallel.axesLines.brushColor")
+    												+ Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":");
+    					}
+    				}        			
+    			}
     		);
 			
 			this.axisColNamePadd = Ext.create

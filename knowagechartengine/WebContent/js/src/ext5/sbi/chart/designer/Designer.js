@@ -38,7 +38,7 @@ Ext.define('Sbi.chart.designer.Designer', {
     	 * 
     	 * @author: danristo (danilo.ristovski@mht.net)
     	 */
-    	realtivePathReturn: '../../..',
+    	relativePathReturn: '../../..',
     	
     	chartTypeChanged: null,
     	
@@ -221,7 +221,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}		
 					
 			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "";
-			console.log(jsonTemplate);
+			//console.log(jsonTemplate);
 			/**
 			 * Merging JSON templates of specified chart types with the base JSON template
 			 * (of type BAR) in order to make the union of all of the JSON elements within
@@ -393,7 +393,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var colorPallete = secondConfigurationPanel.getComponent("chartColorPallete");
 					var chartLegend = secondConfigurationPanel.getComponent("chartLegend");	
-					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
+//					var toolbarAndTip = secondConfigurationPanel.getComponent("chartToolbarAndTip");
+					var sunburstToolbar = secondConfigurationPanel.getComponent("chartToolbar");
+					var sunburstTip = secondConfigurationPanel.getComponent("chartTip");
 					//console.log(colorPallete);
 					/**
 					 * The additional second configuration panel element to show when the WORDCLOUD is selected.
@@ -520,9 +522,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 * on the Step 2 tab of the Designer page.
 					 */
 					if (isChartSunburst) {
-						toolbarAndTip.show();
+//						toolbarAndTip.show();
+						sunburstToolbar.show();
+						sunburstTip.show();
 					} else  {
-						toolbarAndTip.hide();
+//						toolbarAndTip.hide();
+						sunburstToolbar.hide();
+						sunburstTip.hide();
 					}
 					
 					/**
@@ -743,10 +749,8 @@ Ext.define('Sbi.chart.designer.Designer', {
   						enableDrop: false
   					},
   					listeners: {
-  						drop: function(node, data, dropRec, dropPosition) {  
-  							console.log("AAA");
+  						drop: function(node, data, dropRec, dropPosition) {    						
   							var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('serieColumn') : ' on empty view';
-  							console.log("BBB");
   						}
   					}
   				},
@@ -876,7 +880,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * danristo
 			 */
 			var removeFlagsForMandatoryFields = function(chartType,jsonTemplate)
-			{
+			{				
 				if (chartType=="PARALLEL")
 				{
 					var axesListStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.AXES_LIST.style);
@@ -890,7 +894,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 					else
 					{
-						axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;						
+						axisColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.axisColor") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";						
 					}	
 					
 					if (Ext.getCmp("chartParallelAxesLines").colorPickerAxisColor.items.items[0].labelEl)
@@ -904,7 +908,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					}
 					else
 					{
-						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + ":" + Sbi.settings.chart.configurationStep.htmlForMandatoryFields;
+						brushColorLabel = LN("sbi.chartengine.configuration.parallel.axesLines.brushColor") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
 							Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
 					}
 					
@@ -912,6 +916,45 @@ Ext.define('Sbi.chart.designer.Designer', {
 						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].labelEl.update(brushColorLabel);
 					else if (Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel)
 						Ext.getCmp("chartParallelAxesLines").colorPickerBrushColor.items.items[0].fieldLabel = brushColorLabel;
+				}
+				else if (chartType=="SUNBURST")
+				{
+					var sunburstToolbarStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TOOLBAR.style);
+					
+					var percFontColorLabel = "";
+					
+					if (sunburstToolbarStyle.percFontColor && sunburstToolbarStyle.percFontColor!="" && sunburstToolbarStyle.percFontColor!="transparent")
+					{
+						percFontColorLabel = LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor') + ":";
+					}
+					else
+					{
+						percFontColorLabel = LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
+					}
+					
+					if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].labelEl)
+						Ext.getCmp("chartToolbar").colorPicker.items.items[0].labelEl.update(percFontColorLabel);	
+					else if (Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel)
+						Ext.getCmp("chartToolbar").colorPicker.items.items[0].fieldLabel = percFontColorLabel;
+					
+					
+					var sunburstTipStyle = Sbi.chart.designer.ChartUtils.jsonizeStyle(jsonTemplate.CHART.TIP.style);
+					
+					var tipFontColorLabel = "";
+					
+					if (sunburstTipStyle.color && sunburstTipStyle.color!="" && sunburstTipStyle.color!="transparent")
+					{
+						tipFontColorLabel = LN('sbi.chartengine.configuration.sunburst.tip.fontColor') + ":";
+					}
+					else
+					{
+						tipFontColorLabel = LN('sbi.chartengine.configuration.sunburst.tip.fontColor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":";
+					}
+					
+					if (Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl)
+						Ext.getCmp("chartTip").colorPicker.items.items[0].labelEl.update(tipFontColorLabel);	
+					else if (Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel)
+						Ext.getCmp("chartTip").colorPicker.items.items[0].fieldLabel = tipFontColorLabel;
 				}
 			};
 			
@@ -1028,6 +1071,10 @@ Ext.define('Sbi.chart.designer.Designer', {
 				    			Ext.getCmp("chartParallelLimit").seriesColumnsOnYAxisCombo.getStore().removeAll();
 				    			removeFlagsForMandatoryFields(chartType,jsonTemplate);
 			    			}
+				    		else if (chartType == "SUNBURST")
+			    			{
+				    			removeFlagsForMandatoryFields(chartType,jsonTemplate);
+			    			}
 							
 							/**
 							 * Update (refresh) the main configuration panel (the one on the top of 
@@ -1090,7 +1137,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	            padding: "3 0 0 0", // TODO: danristo (did not exist)
 	            height: 22,	// TODO: danristo (did not exist)
 	            // TODO: danristo (those two were uncommented)
-	            // src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/refresh.png',
+	            // src: Sbi.chart.designer.Designer.relativePathReturn + '/img/refresh.png',
 	            //cls: 'tool-icon',
 	            listeners: {
 	            	click: {
@@ -1123,7 +1170,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 	      								setPreviewImage(src);
 	      							},
 	      							function (response) {
-	      								var src = Sbi.chart.designer.Designer.realtivePathReturn + '/img/preview-not-available.png';
+	      								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
 	      								setPreviewImage(src);
 	      							}
       							);
@@ -1132,7 +1179,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							}
 							,
   							function (response) {
-  								var src = Sbi.chart.designer.Designer.realtivePathReturn + '/img/preview-not-available.png';
+  								var src = Sbi.chart.designer.Designer.relativePathReturn + '/img/preview-not-available.png';
   								setPreviewImage(src);
   							});
   							
@@ -1549,7 +1596,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   					xtype: 'tbfill' 
   				}, {
   		            xtype: 'image',
-  		            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/save.png',
+  		            src: Sbi.chart.designer.Designer.relativePathReturn + '/img/save.png',
   		            cls: 'tool-icon',
   		            hidden: isCockpit,
   		            listeners: {
@@ -1625,7 +1672,7 @@ Ext.define('Sbi.chart.designer.Designer', {
   		        }, 
   		        {
   		            xtype: 'image',
-  		            src: Sbi.chart.designer.Designer.realtivePathReturn + '/img/saveAndGoBack.png',
+  		            src: Sbi.chart.designer.Designer.relativePathReturn + '/img/saveAndGoBack.png',
   		            cls: 'tool-icon',
   		            hidden: isCockpit,
   		            listeners: {
@@ -3224,8 +3271,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 			
 			else if (chartType == "SUNBURST") {
 				
-				var sunburstToolbar = Ext.getCmp("chartToolbarAndTip").stylePopupToolbar;
-				var sunburstTip = Ext.getCmp("chartToolbarAndTip").stylePopupTip;
+//				var sunburstToolbar = Ext.getCmp("chartToolbarAndTip").stylePopupToolbar;
+//				var sunburstTip = Ext.getCmp("chartToolbarAndTip").stylePopupTip;				
+				
+				var sunburstToolbar = Ext.getCmp("chartToolbar");
+				var sunburstTip = Ext.getCmp("chartTip");
 				
 				/* =================================================================== */
 				/* SUNBURST fields (parameters) values from the GUI - NUMERICAL VALUES */
@@ -3252,13 +3302,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var sunburstTipFontSizeCModel = chartViewModelData.tipFontSize;
 				var sunburstTipFontFamilyCModel = chartViewModelData.tipFontFamily;
 				var sunburstTipWidthCModel = chartViewModelData.tipWidth;
-				var sunburstTipTextCModel = chartViewModelData.tipText;				
+				var sunburstTipTextCModel = chartViewModelData.tipText;	
 				
 				/**
-				 * STEP 2 -> Toolbar and tip configuration (Toolbar style button)
-				 */
-				
-				
+				 * STEP 2 -> Toolbar configuration
+				 */			
 				
 				(chartViewModelData.toolbarPosition=="" || chartViewModelData.toolbarPosition==null || chartViewModelData.toolbarPosition==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
@@ -3267,8 +3315,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.position'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						)  : errorMsg;	
 				
@@ -3282,8 +3330,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}						
@@ -3294,13 +3342,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{						
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
 								checkParamValuesForCharts.sunburst.toolbar.spacing.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3308,13 +3356,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
 								checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3330,8 +3378,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}						
@@ -3342,13 +3390,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
 								checkParamValuesForCharts.sunburst.toolbar.tail.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3356,13 +3404,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
 								checkParamValuesForCharts.sunburst.toolbar.tail.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3378,8 +3426,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}						
@@ -3390,13 +3438,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
 								checkParamValuesForCharts.sunburst.toolbar.height.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3404,13 +3452,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
 								checkParamValuesForCharts.sunburst.toolbar.height.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3426,8 +3474,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}										
@@ -3438,13 +3486,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
 								checkParamValuesForCharts.sunburst.toolbar.width.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3452,13 +3500,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
 								checkParamValuesForCharts.sunburst.toolbar.width.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3471,8 +3519,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
 							
@@ -3485,8 +3533,20 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						) : errorMsg;
+							
+				(chartViewModelData.toolbarFontWeight=="" || chartViewModelData.toolbarFontWeight==null || chartViewModelData.toolbarFontWeight==undefined) ?
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontstyle'),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//											LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
 							
@@ -3497,14 +3557,26 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
 				
 				/**
-				 * STEP 2 -> Toolbar and tip configuration (Tip style button)
-				 */					
+				 * STEP 2 -> Tip configuration
+				 */		
+							
+				(chartViewModelData.tipFontWeight=="" || chartViewModelData.tipFontWeight==null || chartViewModelData.tipFontWeight==undefined) ?
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.sunburst.toolbarAndTip.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontstyle'),
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//														LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+							]
+						) : errorMsg;
 
 				(sunburstTipColorCModel=="transparent" || sunburstTipColorCModel=="" || sunburstTipColorCModel==null || sunburstTipColorCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
@@ -3513,8 +3585,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.fontColor'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;
 							
@@ -3525,8 +3597,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;
 							
@@ -3537,8 +3609,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;
 								
@@ -3552,8 +3624,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.width'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						);
 					}						
@@ -3564,13 +3636,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.minValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.width'),
 								checkParamValuesForCharts.sunburst.tip.width.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3578,13 +3650,13 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							LN("sbi.chartengine.validation.configuration.sunburst.maxValueExtended"),
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.width'),
 								checkParamValuesForCharts.sunburst.tip.width.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
 					}
@@ -3597,8 +3669,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.text'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.title"),
-								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
+								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+//								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;			
 			}

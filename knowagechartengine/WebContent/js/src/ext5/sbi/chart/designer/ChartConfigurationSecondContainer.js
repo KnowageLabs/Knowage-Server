@@ -10,7 +10,9 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
                'Sbi.chart.designer.ChartConfigurationParallelLimit',
                'Sbi.chart.designer.ChartConfigurationParallelTooltip',
                'Sbi.chart.designer.ChartConfigurationScatterConfiguration',
-               'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
+//               'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
+               'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
+               'Sbi.chart.designer.ChartConfigurationSunburstTip',
                'Sbi.chart.designer.ChartConfigurationWordcloud'
            ],
     border:false,
@@ -54,9 +56,23 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		 * 
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		var toolbarAndTip = Ext.create
+		var sunburstToolbar = Ext.create
 		(
-			"Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip",
+			"Sbi.chart.designer.ChartConfigurationSunburstToolbar",
+			
+			{
+				viewModel: this.viewModel
+			}
+		); 
+		
+		/**
+		 * This panel is needed for the SUNBURST chart
+		 * 
+		 * @author: danristo (danilo.ristovski@mht.net)
+		 */
+		var sunburstTip = Ext.create
+		(
+			"Sbi.chart.designer.ChartConfigurationSunburstTip",
 			
 			{
 				viewModel: this.viewModel
@@ -158,7 +174,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		this.add(legend);
 		this.add(palette);
 		this.add(heatmapChartLegendAndTooltip);
-		this.add(toolbarAndTip);	
+		this.add(sunburstToolbar);	
+		this.add(sunburstTip);
 		this.add(wordCloudParameters);
 		this.add(parallelChartLimit);	
 		this.add(parallelChartAxesLines);
@@ -187,11 +204,15 @@ Ext.define('Sbi.chart.designer.ChartConfigurationSecondContainer', {
 		
 		if (ChartUtils.enableToolbarAndTip())
 		{
-			this.getComponent("chartToolbarAndTip").show();
+//			this.getComponent("chartToolbarAndTip").show();
+			this.getComponent("chartToolbar").show();
+			this.getComponent("chartTip").show();
 		}
 		else 
 		{
-			this.getComponent("chartToolbarAndTip").hide();
+//			this.getComponent("chartToolbarAndTip").hide();
+			this.getComponent("chartToolbar").hide();
+			this.getComponent("chartTip").hide();
 		}
 		
 		if (ChartUtils.enableWordcloudPanel())

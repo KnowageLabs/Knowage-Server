@@ -8,7 +8,7 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
 		customLabel : null,
 		fieldBind: null,
 		isColorMandatory: false,
-		label: LN('sbi.chartengine.configuration.color')
+		label: LN('sbi.chartengine.configuration.backgroundcolor')
 	},
 	constructor : function(config) {
 		this.callParent(config);
@@ -31,6 +31,16 @@ Ext.define('Sbi.chart.designer.ColorPickerContainer', {
     				: this.config.label,
 			bind: {
 				fieldStyle : 'background-image: none; background-color: '+this.config.fieldBind,
+			},
+			
+			width:275,
+			
+			listeners:
+			{				
+				render: function()
+				{
+					globalScope.fireEvent("colorRendered", globalScope.config.label);
+				}
 			}
 		});
 		

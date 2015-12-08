@@ -11,10 +11,30 @@ Ext.define('Sbi.chart.designer.ChartConfigurationLegend', {
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-//	columnWidth : 0.7,
 	columnWidth: 1,
-	//width: "100%", 
 	height: 120,
+	
+//	header:
+//	{
+//		xtype: "header",
+//		
+//		items:
+//		[
+//		 	{
+//		 		xtype: "checkboxfield",
+//		 		
+//		 		listeners:
+//	 			{
+//		 			change: function(checkbox,currentValue)
+//		 			{
+//		 				this.ownerCt.ownerCt.disable();
+//		 				console.log(this.ownerCt.ownerCt);
+//		 				this.enable();
+//		 			}
+//	 			}
+//		 	}
+//		 ]
+//	},
 	
 	id: "chartLegend",
 	title : LN('sbi.chartengine.configuration.legend'),

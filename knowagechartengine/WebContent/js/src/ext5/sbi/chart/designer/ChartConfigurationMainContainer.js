@@ -1,7 +1,9 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 	requires : [
-	            'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
+//	            'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
+	            'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
+	            'Sbi.chart.designer.ChartConfigurationSunburstTip',
 	            'Sbi.chart.designer.ChartOrientationCombo',
 	            'Sbi.chart.designer.ColorPickerContainer',
 	            'Sbi.chart.designer.FontCombo',

@@ -65,23 +65,23 @@ Ext.define
 	            	         		valueField : 'value',
 	            	         		emptyText: LN("sbi.chartengine.configuration.sunburstTooltipPosition.emptyText"),
 	                        		 
-	                        		 store: 
-	                        		 {
-	                        			 fields : ['name', 'value'],
-	                        			 
-	                        			 data : 
-	                    				 [ 
-	                        				   {
-	                        					   name : LN('sbi.chartengine.configuration.position.b'),
-	                        					   value : 'bottom'
-	                        				   }, 
-	                        				   
-	                        				   {
-	                        					   name : LN('sbi.chartengine.configuration.position.t'),
-	                        					   value : 'top'
-	                        				   }
-	                    				   ]
-	                        		 }
+	            	         		store: 
+	            	         		{
+	            	         			fields : ['name', 'value'],
+                        			 
+	            	         			data : 
+            	         				[ 
+	            	         				 {
+	            	         					 name : LN('sbi.chartengine.configuration.position.b'),
+	            	         					 value : 'bottom'
+	            	         				 }, 
+                        				   
+	            	         				 {
+	            	         					 name : LN('sbi.chartengine.configuration.position.t'),
+	            	         					 value : 'top'
+	            	         				 }
+            	         				 ]
+	            	         		}
 	            	         	}
 	        	         	]		
 	                     }
