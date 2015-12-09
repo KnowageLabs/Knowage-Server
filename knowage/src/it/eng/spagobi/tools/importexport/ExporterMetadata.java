@@ -5,7 +5,7 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
-import it.eng.qbe.dataset.QbeDataSet;
+iimport it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -192,7 +192,6 @@ public class ExporterMetadata {
 	 *            Domain object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -228,7 +227,6 @@ public class ExporterMetadata {
 	 *            Authorizations object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -269,7 +267,6 @@ public class ExporterMetadata {
 	 *            ObjMetadata object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -311,7 +308,6 @@ public class ExporterMetadata {
 	 *            ObjMetadataContent object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -378,7 +374,6 @@ public class ExporterMetadata {
 	 *            the ds
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -579,7 +574,6 @@ public class ExporterMetadata {
 	 * @param artifact
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
 	 */
 	public boolean insertArtifact(Artifact artifact, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -629,7 +623,6 @@ public class ExporterMetadata {
 	 * @param artifact
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
 	 */
 	public void insertArtifactContent(Artifact artifact, Content content, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -685,7 +678,6 @@ public class ExporterMetadata {
 	 * @param metaModel
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
 	 */
 	public boolean insertMetaModel(MetaModel metaModel, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -749,7 +741,6 @@ public class ExporterMetadata {
 	 * @param metaModel
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 * 
 	 */
 	public void insertMetaModelContent(MetaModel metaModel, Content content, Session session) throws EMFUserError {
 		logger.debug("IN");
@@ -806,7 +797,6 @@ public class ExporterMetadata {
 	 *            the dataset
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -846,7 +836,6 @@ public class ExporterMetadata {
 	 *            Engine Object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -895,7 +884,6 @@ public class ExporterMetadata {
 	 *            the snapshot lis
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -965,7 +953,6 @@ public class ExporterMetadata {
 	 *            the sub object lis
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1086,7 +1073,6 @@ public class ExporterMetadata {
 	 *            BIObject to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1225,7 +1211,6 @@ public class ExporterMetadata {
 	 *            BIObject parameter to insert
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1286,7 +1271,6 @@ public class ExporterMetadata {
 	 *            The param object to insert
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1329,7 +1313,6 @@ public class ExporterMetadata {
 	 *            The Parameter use object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1382,7 +1365,6 @@ public class ExporterMetadata {
 	 *            the biparams
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1443,7 +1425,6 @@ public class ExporterMetadata {
 	 *            the biparams
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1500,7 +1481,6 @@ public class ExporterMetadata {
 	 *            The list of values object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1553,7 +1533,6 @@ public class ExporterMetadata {
 	 *            The check object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1594,7 +1573,6 @@ public class ExporterMetadata {
 	 *            The check object which is an element of the association
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1637,7 +1615,6 @@ public class ExporterMetadata {
 	 *            The role object which is an element of the association
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1677,7 +1654,6 @@ public class ExporterMetadata {
 	 *            The subreport
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1719,7 +1695,6 @@ public class ExporterMetadata {
 	 *            Functionality Object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1811,7 +1786,6 @@ public class ExporterMetadata {
 	 *            The role object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1868,7 +1842,6 @@ public class ExporterMetadata {
 	 *            The role object to export
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1928,7 +1901,6 @@ public class ExporterMetadata {
 	 *            The code of the permission associated to the couple role / functionality
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1974,7 +1946,6 @@ public class ExporterMetadata {
 	 *            The functionality object which is an element of the association
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2169,7 +2140,6 @@ public class ExporterMetadata {
 	 *            the Model Instance
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2206,7 +2176,6 @@ public class ExporterMetadata {
 	 *            the Model Instance
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2307,7 +2276,6 @@ public class ExporterMetadata {
 	 *            the Model
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2402,7 +2370,6 @@ public class ExporterMetadata {
 	 *            the Kpi
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2547,7 +2514,6 @@ public class ExporterMetadata {
 	 *            the Kpi child id
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2685,7 +2651,6 @@ public class ExporterMetadata {
 	 *            the Kpi Instance
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2779,7 +2744,6 @@ public class ExporterMetadata {
 	 *            the Threshold
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2833,7 +2797,6 @@ public class ExporterMetadata {
 	 *            the Threshold Value
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2887,7 +2850,6 @@ public class ExporterMetadata {
 	 *            the Measure Unit
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2929,7 +2891,6 @@ public class ExporterMetadata {
 	 *            kpiInstancePeriodicity
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2988,7 +2949,6 @@ public class ExporterMetadata {
 	 *            the Measure Unit
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3029,7 +2989,6 @@ public class ExporterMetadata {
 	 *            the modelResource
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3088,7 +3047,6 @@ public class ExporterMetadata {
 	 *            the resource
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3143,7 +3101,6 @@ public class ExporterMetadata {
 	 *            the Alarm
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3217,7 +3174,6 @@ public class ExporterMetadata {
 	 *            the Alarm Contact
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3257,7 +3213,6 @@ public class ExporterMetadata {
 	 *            and content
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3292,7 +3247,6 @@ public class ExporterMetadata {
 	 *            the KpiRel
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3344,7 +3298,6 @@ public class ExporterMetadata {
 	 *            the Udp
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3389,7 +3342,6 @@ public class ExporterMetadata {
 	 *            the Udp Value
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3435,7 +3387,6 @@ public class ExporterMetadata {
 	 *            the OU
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3473,7 +3424,6 @@ public class ExporterMetadata {
 	 *            the Hierarchy
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3513,7 +3463,6 @@ public class ExporterMetadata {
 	 *            the ou node
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3558,7 +3507,6 @@ public class ExporterMetadata {
 	 *            the OrganizationalUnitGrant
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3604,7 +3552,6 @@ public class ExporterMetadata {
 	 *            the OrganizationalUnitGrantNode
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3694,7 +3641,6 @@ public class ExporterMetadata {
 	 *            the biObjects
 	 * @param session
 	 *            the session
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
