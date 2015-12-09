@@ -17,6 +17,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -38,14 +39,16 @@ public class FolderResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getFolders(@QueryParam("permission") String permissionOnFolder){
+	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects,
+			@QueryParam("perm") String permissionOnFolder){
 		logger.debug("IN");
 		
 		try {
 			UserProfile profile = getUserProfile();
 			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();
 			dao.setUserProfile(profile);
-			List<LowFunctionality> allFolders = dao.loadAllLowFunctionalities(false);
+
+			List<LowFunctionality> allFolders = dao.loadAllLowFunctionalities(recoverBIObjects);
 			List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
 			
 			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
