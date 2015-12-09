@@ -125,7 +125,6 @@ public class ImportUtilities {
 	 *            The path of the import directory
 	 * @param pathArchiveFile
 	 *            The path of the exported archive
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -193,9 +192,7 @@ public class ImportUtilities {
 	 * 
 	 * @param pathDBFolder
 	 *            The path of the folder which contains the exported database
-	 * 
 	 * @return The Hibernate session factory
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -216,7 +213,6 @@ public class ImportUtilities {
 	 * 
 	 * @param role
 	 *            old hibernate role object
-	 * 
 	 * @return the new hibernate role object
 	 */
 	public SbiExtRoles makeNew(SbiExtRoles role) {
@@ -252,7 +248,6 @@ public class ImportUtilities {
 	 *            old hibernate role object
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate role object
 	 */
 	public SbiExtRoles makeNew(SbiExtRoles role, Integer id) {
@@ -268,7 +263,6 @@ public class ImportUtilities {
 	 * 
 	 * @param engine
 	 *            old hibernate engine object
-	 * 
 	 * @return the new hibernate engine object
 	 */
 	public SbiEngines makeNew(SbiEngines engine) {
@@ -295,7 +289,6 @@ public class ImportUtilities {
 	 * 
 	 * @param ds
 	 *            the ds
-	 * 
 	 * @return the sbi data source
 	 */
 	public SbiDataSource makeNew(SbiDataSource ds) {
@@ -349,7 +342,6 @@ public class ImportUtilities {
 	 *            old hibernate engine object
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate engine object
 	 */
 	public SbiEngines makeNew(SbiEngines engine, Integer id) {
@@ -365,7 +357,6 @@ public class ImportUtilities {
 	 * 
 	 * @param funct
 	 *            the funct
-	 * 
 	 * @return the new hibernate functionality object
 	 */
 	public SbiFunctions makeNew(SbiFunctions funct) {
@@ -389,7 +380,6 @@ public class ImportUtilities {
 	 *            the funct
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate functionality object
 	 */
 	public SbiFunctions makeNew(SbiFunctions funct, Integer id) {
@@ -418,7 +408,6 @@ public class ImportUtilities {
 	 * 
 	 * @param lov
 	 *            old hibernate lov object
-	 * 
 	 * @return the new hibernate lov object
 	 */
 	public SbiLov makeNew(SbiLov lov, Session sessionCurrDB, HashMap<String, String> dsExportUser) {
@@ -492,7 +481,6 @@ public class ImportUtilities {
 	 *            old hibernate lov object
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate lov object
 	 */
 	public SbiLov makeNew(SbiLov lov, Session sessionCurrDB, Integer id, Map user) {
@@ -508,7 +496,6 @@ public class ImportUtilities {
 	 * 
 	 * @param check
 	 *            old hibernate check object
-	 * 
 	 * @return the new hibernate check object
 	 */
 	public SbiChecks makeNew(SbiChecks check) {
@@ -532,7 +519,6 @@ public class ImportUtilities {
 	 *            old hibernate check object
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate check object
 	 */
 	public SbiChecks makeNew(SbiChecks check, Integer id) {
@@ -548,7 +534,6 @@ public class ImportUtilities {
 	 * 
 	 * @param param
 	 *            the param
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiParameters makeNew(SbiParameters param) {
@@ -576,7 +561,6 @@ public class ImportUtilities {
 	 *            the param
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiParameters makeNew(SbiParameters param, Integer id) {
@@ -592,7 +576,6 @@ public class ImportUtilities {
 	 * 
 	 * @param paruse
 	 *            the paruse
-	 * 
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError
 	 */
@@ -640,7 +623,6 @@ public class ImportUtilities {
 	 * 
 	 * @param paruse
 	 *            the paruse
-	 * 
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError
 	 */
@@ -727,7 +709,6 @@ public class ImportUtilities {
 	 * 
 	 * @param paruse
 	 *            the paruse
-	 * 
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError
 	 */
@@ -835,7 +816,6 @@ public class ImportUtilities {
 	 * 
 	 * @param paruse
 	 *            the paruse
-	 * 
 	 * @return the new hibernate parameter use object
 	 * @throws EMFUserError
 	 */
@@ -953,7 +933,6 @@ public class ImportUtilities {
 	 *            the paruse
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate parameter use object
 	 */
 	// public SbiParuse makeNewSbiParuse(SbiParuse paruse, Integer id){
@@ -969,7 +948,6 @@ public class ImportUtilities {
 	 * 
 	 * @param obj
 	 *            old hibernate biobject
-	 * 
 	 * @return the new hibernate biobject
 	 */
 	public SbiObjects makeNew(SbiObjects obj) {
@@ -1012,7 +990,6 @@ public class ImportUtilities {
 	 * 
 	 * @param obj
 	 *            the obj
-	 * 
 	 * @return the sbi snapshots
 	 */
 	public SbiSnapshots makeNew(SbiSnapshots obj) {
@@ -1031,7 +1008,6 @@ public class ImportUtilities {
 	 * 
 	 * @param obj
 	 *            the obj
-	 * 
 	 * @return the sbi sub objects
 	 */
 	public SbiSubObjects makeNew(SbiSubObjects obj) {
@@ -1052,7 +1028,6 @@ public class ImportUtilities {
 	 * 
 	 * @param obj
 	 *            the obj
-	 * 
 	 * @return the sbi obj templates
 	 */
 	public SbiObjTemplates makeNew(SbiObjTemplates obj) {
@@ -1073,7 +1048,6 @@ public class ImportUtilities {
 	 * 
 	 * @param obj
 	 *            the obj
-	 * 
 	 * @return the sbi bin contents
 	 */
 	public SbiBinContents makeNew(SbiBinContents obj) {
@@ -1091,7 +1065,6 @@ public class ImportUtilities {
 	 *            old hibernate biobject
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the new hibernate biobject
 	 */
 	public SbiObjects makeNew(SbiObjects obj, Integer id) {
@@ -1112,9 +1085,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing biobject modified as per the exported biobject in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1182,9 +1153,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing parameter modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1218,7 +1187,6 @@ public class ImportUtilities {
 	 * 
 	 * @param objDs
 	 *            the objDs
-	 * 
 	 * @return the sbi obj dataset
 	 * @throws EMFUserError
 	 */
@@ -1285,7 +1253,6 @@ public class ImportUtilities {
 	 * 
 	 * @param objpar
 	 *            the objpar
-	 * 
 	 * @return the sbi obj par
 	 * @throws EMFUserError
 	 */
@@ -1323,7 +1290,6 @@ public class ImportUtilities {
 	 *            the objpar
 	 * @param id
 	 *            the id
-	 * 
 	 * @return the sbi obj par
 	 * @throws EMFUserError
 	 */
@@ -1411,7 +1377,6 @@ public class ImportUtilities {
 	 *            the importer
 	 * @param metaAss
 	 *            the meta ass
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1636,7 +1601,6 @@ public class ImportUtilities {
 	 *            the importer
 	 * @param metaAss
 	 *            the meta ass
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -1660,18 +1624,11 @@ public class ImportUtilities {
 	 * 
 	 * @param dataProxy
 	 *            the ds
-	 * 
-	 * @return the sbi data set
-	 * 
-	 *         public SbiDataSet makeNew(SbiDataSet dataset, IEngUserProfile profile){ logger.debug("IN");
-	 * 
-	 *         SbiDataSet newDsConfig = new SbiDataSet();
-	 * 
-	 *         newDsConfig.setLabel(dataset.getLabel()); newDsConfig.setName(dataset.getName()); newDsConfig.setDescription(dataset.getDescription());
-	 *         SbiCommonInfo i = new SbiCommonInfo(); String userid = "biadmin"; if(profile!=null){ userid =(String) profile.getUserUniqueIdentifier(); }
-	 *         i.setTimeIn(new Date()); i.setUserIn(userid); i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION); newDsConfig.setCommonInfo(i);
-	 * 
-	 *         logger.debug("OUT"); return newDsConfig; }
+	 * @return the sbi data set public SbiDataSet makeNew(SbiDataSet dataset, IEngUserProfile profile){ logger.debug("IN"); SbiDataSet newDsConfig = new
+	 *         SbiDataSet(); newDsConfig.setLabel(dataset.getLabel()); newDsConfig.setName(dataset.getName());
+	 *         newDsConfig.setDescription(dataset.getDescription()); SbiCommonInfo i = new SbiCommonInfo(); String userid = "biadmin"; if(profile!=null){ userid
+	 *         =(String) profile.getUserUniqueIdentifier(); } i.setTimeIn(new Date()); i.setUserIn(userid); i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+	 *         newDsConfig.setCommonInfo(i); logger.debug("OUT"); return newDsConfig; }
 	 */
 
 	/**
@@ -1679,7 +1636,6 @@ public class ImportUtilities {
 	 * 
 	 * @param dataProxy
 	 *            the ds
-	 * 
 	 * @return the sbi Artifact
 	 */
 	public SbiArtifact makeNew(SbiArtifact exportedArtifact, Session sessionCurrDB, IEngUserProfile profile) {
@@ -1716,9 +1672,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing metamodel modified as per the exported dataset in input
-	 * 
 	 * @throws EMFUserError
 	 */
 	public SbiArtifact modifyExisting(SbiArtifact exportedArtifact, Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile)
@@ -1802,7 +1756,6 @@ public class ImportUtilities {
 	 * 
 	 * @param dataProxy
 	 *            the ds
-	 * 
 	 * @return the Meta Model
 	 */
 	public SbiMetaModel makeNew(SbiMetaModel exportedMetaModel, Session sessionCurrDB, IEngUserProfile profile) {
@@ -1839,9 +1792,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing metamodel modified as per the exported dataset in input
-	 * 
 	 * @throws EMFUserError
 	 */
 	public SbiMetaModel modifyExisting(SbiMetaModel exportedMeta, Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile)
@@ -1962,7 +1913,6 @@ public class ImportUtilities {
 	 * 
 	 * @param dataProxy
 	 *            the ds
-	 * 
 	 * @return the sbi data set
 	 */
 	public SbiDataSet makeNew(SbiDataSet exportedDataset, Session sessionCurrDB, IEngUserProfile profile) {
@@ -2139,9 +2089,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing dataset modified as per the exported dataset in input
-	 * 
 	 * @throws EMFUserError
 	 */
 	public SbiDataSet modifyExisting(SbiDataSet exportedDataset, Session sessionCurrDB, Integer existingId, Session sessionExpDB, IEngUserProfile profile)
@@ -2223,7 +2171,6 @@ public class ImportUtilities {
 	 *            the importer
 	 * @param metaAss
 	 *            the meta ass
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2301,9 +2248,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing lov modified as per the exported lov in input
-	 * 
 	 * @throws EMFUserError
 	 */
 	public SbiLov modifyExisting(SbiLov exportedLov, Session sessionCurrDB, Integer existingId, HashMap<String, String> dsExportUser) {
@@ -2387,7 +2332,6 @@ public class ImportUtilities {
 	 *            the importer
 	 * @param metaAss
 	 *            the meta ass
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2419,7 +2363,6 @@ public class ImportUtilities {
 	 *            the importer
 	 * @param metaAss
 	 *            the meta ass
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2775,7 +2718,6 @@ public class ImportUtilities {
 	 * 
 	 * @param kpi
 	 *            kpi
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpi makeNew(SbiKpi kpi, Session sessionCurrDB, MetadataAssociations metaAss) {
@@ -2815,9 +2757,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2856,9 +2796,7 @@ public class ImportUtilities {
 	 *            the exported Kpi
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -2964,7 +2902,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiKpiInstance
 	 *            kpiInst
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiInstance makeNew(SbiKpiInstance kpiInst, Session sessionCurrDB, MetadataAssociations metaAss) {
@@ -2996,9 +2933,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3031,9 +2966,7 @@ public class ImportUtilities {
 	 *            the exported Kpi Instance
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi Instance modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3097,7 +3030,6 @@ public class ImportUtilities {
 	 * 
 	 * @param ThreasholdValue
 	 *            thValue
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiThresholdValue makeNew(SbiThresholdValue thresholdValue, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -3134,9 +3066,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Threshold Value modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3173,9 +3103,7 @@ public class ImportUtilities {
 	 *            the exported Kpi
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3223,7 +3151,6 @@ public class ImportUtilities {
 	 * 
 	 * @param Threashold
 	 *            thresdold
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiThreshold makeNew(SbiThreshold threshold, Session sessionCurrDB, MetadataAssociations metaAss) {
@@ -3255,9 +3182,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Threshold modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3287,9 +3212,7 @@ public class ImportUtilities {
 	 *            the exported Kpi
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3318,7 +3241,6 @@ public class ImportUtilities {
 	 * 
 	 * @param Model
 	 *            model
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiModel makeNew(SbiKpiModel model, Session sessionCurrDB, MetadataAssociations metaAss) {
@@ -3358,9 +3280,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Model modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3393,9 +3313,7 @@ public class ImportUtilities {
 	 *            the exported Model
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Model modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3455,7 +3373,6 @@ public class ImportUtilities {
 	 * 
 	 * @param ModelInst
 	 *            model instance
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiModelInst makeNew(SbiKpiModelInst modelInst, Session sessionCurrDB, MetadataAssociations metaAss) {
@@ -3490,9 +3407,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Model INSTANCE modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3527,9 +3442,7 @@ public class ImportUtilities {
 	 *            the exported Model Instance
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Model Instance modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3595,7 +3508,6 @@ public class ImportUtilities {
 	 * 
 	 * @param Resource
 	 *            resource
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiResources makeNew(SbiResources resource, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -3629,9 +3541,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Threshold Value modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3665,9 +3575,7 @@ public class ImportUtilities {
 	 *            the exported Resource
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Resource modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3696,7 +3604,6 @@ public class ImportUtilities {
 	 * 
 	 * @param Model
 	 *            Resource modRes
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiModelResources makeNew(SbiKpiModelResources modRes, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -3724,9 +3631,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Threshold Value modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3755,9 +3660,7 @@ public class ImportUtilities {
 	 *            Model Res the exported Resource
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Model Resource modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3800,7 +3703,6 @@ public class ImportUtilities {
 	 * 
 	 * @param Periodicity
 	 *            per
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiPeriodicity makeNew(SbiKpiPeriodicity periodicity, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -3835,9 +3737,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Periodicity modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3872,9 +3772,7 @@ public class ImportUtilities {
 	 *            the exported Periodicity
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Periodicity modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3891,7 +3789,6 @@ public class ImportUtilities {
 	 * 
 	 * @param KpiInstPeriod
 	 *            kpiInstPeriod
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiInstPeriod makeNew(SbiKpiInstPeriod kpiInstPeriod, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -3921,9 +3818,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing KpiInstPeriod modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3953,9 +3848,7 @@ public class ImportUtilities {
 	 *            KpiInstPeriod the exported KpiInstPeriod
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing KpiInstPeriod modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -3999,7 +3892,6 @@ public class ImportUtilities {
 	 * 
 	 * @param Alarm
 	 *            alarm
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiAlarm makeNew(SbiAlarm alarm, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -4035,9 +3927,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Alarm modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4073,9 +3963,7 @@ public class ImportUtilities {
 	 *            the exported Alarm
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Alarm modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4166,7 +4054,6 @@ public class ImportUtilities {
 	 * 
 	 * @param AlarmContact
 	 *            alarmContact
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiAlarmContact makeNew(SbiAlarmContact alarmContact, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -4199,9 +4086,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Alarm Contactmodified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4234,9 +4119,7 @@ public class ImportUtilities {
 	 *            the exported Alarm Contacts
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Alarm Contacts modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4251,7 +4134,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiKpiModelAttr
 	 *            kpiModelAttr
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	// TODO cambiare con i nuovi UDP VAlues
@@ -4277,9 +4159,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4307,9 +4187,7 @@ public class ImportUtilities {
 	 *            the exported Kpi
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4330,7 +4208,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiKpiModelAttr
 	 *            kpiModelAttrVal
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	// TODO cambiare con i nuovi UDP VAlues
@@ -4357,7 +4234,6 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4384,9 +4260,7 @@ public class ImportUtilities {
 	 *            the exported KpiModelATtrVal
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4419,7 +4293,6 @@ public class ImportUtilities {
 	 * 
 	 * @param ObjMetadata
 	 *            objMetadata
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiObjMetadata makeNew(SbiObjMetadata objMetadata, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -4452,9 +4325,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing ObjMetadata modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4487,9 +4358,7 @@ public class ImportUtilities {
 	 *            metadata ObjMetadata
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing Kpi modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4519,10 +4388,8 @@ public class ImportUtilities {
 	 * Creates a new hibernate SbiObjMetacontent object.
 	 * 
 	 * @param iEngUserProfile
-	 * 
 	 * @param SbiObjectMetacontent
 	 *            metcontent
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiObjMetacontents makeNew(SbiObjMetacontents metacontents, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer,
@@ -4554,9 +4421,7 @@ public class ImportUtilities {
 	 * @param existingId
 	 *            the existing id
 	 * @param userProfile
-	 * 
 	 * @return the existing ObjMetacontents modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4589,9 +4454,7 @@ public class ImportUtilities {
 	 * @param sessionCurrDB
 	 *            the session curr db
 	 * @param iEngUserProfile
-	 * 
 	 * @return the existing ObjMetacontent modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4665,7 +4528,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiKpiRel
 	 *            relation
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiKpiRel makeNew(SbiKpiRel kpirel, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -4691,9 +4553,7 @@ public class ImportUtilities {
 	 *            the exported SbiKpiRel
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing KPIREL modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4738,7 +4598,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiUdp
 	 *            udp
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiUdp makeNew(SbiUdp udp, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -4767,9 +4626,7 @@ public class ImportUtilities {
 	 *            the exported SbiUdp
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing SbiUdp modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4815,9 +4672,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingUdpid
 	 *            the existing id
-	 * 
 	 * @return the existing Udp modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4849,9 +4704,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingKpiRelId
 	 *            the existing id
-	 * 
 	 * @return the existing SbiKpiRel modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4875,7 +4728,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiUdpValue
 	 *            udp value
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiUdpValue makeNew(SbiUdpValue udpValue, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -4907,9 +4759,7 @@ public class ImportUtilities {
 	 *            the exported SbiUdpValue
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing SbiUdpValue modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -4974,9 +4824,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingUdpid
 	 *            the existing id
-	 * 
 	 * @return the existing SbiUdpValue modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -5006,7 +4854,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiOrgUnitGrant
 	 *            grant
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiOrgUnitGrant makeNew(SbiOrgUnitGrant grant, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -5036,9 +4883,7 @@ public class ImportUtilities {
 	 *            the exported SbiOrgUnitGrant
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing SbiOrgUnitGrant modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -5084,9 +4929,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing grant modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -5115,7 +4958,6 @@ public class ImportUtilities {
 	 * 
 	 * @param SbiOrgUnitGrantNodes
 	 *            grant node
-	 * 
 	 * @return the new hibernate parameter object
 	 */
 	public SbiOrgUnitGrantNodes makeNew(SbiOrgUnitGrantNodes grantNode, Session sessionCurrDB, MetadataAssociations metaAss, ImporterMetadata importer) {
@@ -5140,9 +4982,7 @@ public class ImportUtilities {
 	 *            the exported SbiOrgUnitGrantNodes
 	 * @param sessionCurrDB
 	 *            the session curr db
-	 * 
 	 * @return the existing SbiOrgUnitGrantNodes modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -5205,9 +5045,7 @@ public class ImportUtilities {
 	 *            the session curr db
 	 * @param existingId
 	 *            the existing id
-	 * 
 	 * @return the existing grant modified as per the exported parameter in input
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -5232,7 +5070,6 @@ public class ImportUtilities {
 	 * 
 	 * @param role
 	 *            old hibernate authorizations object
-	 * 
 	 * @return the new hibernate authorizations object
 	 */
 	public SbiAuthorizations makeNew(SbiAuthorizations func) {
