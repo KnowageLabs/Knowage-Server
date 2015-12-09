@@ -1,11 +1,11 @@
-md-slider.margintop{
+md-slider.margintop {
 	margin-top: 18px;
 }
 
-md-slider.visibleValue .md-sign,md-slider.visibleValue .md-sign:after{
+md-slider.visibleValue .md-sign, md-slider.visibleValue .md-sign:after {
 	opacity: 1 !important;
-    -webkit-transform: translate3d(0,0,0) scale(1) !important;
-    transform: translate3d(0,0,0) scale(1) !important;
+	-webkit-transform: translate3d(0, 0, 0) scale(1) !important;
+	transform: translate3d(0, 0, 0) scale(1) !important;
 }
 
 md-select-menu.md-default-theme md-option[selected], md-select-menu md-option[selected]
@@ -41,10 +41,14 @@ geo-distance-calculator {
 }
 
 #geoRigthMenu button#showMenu {
-	top: 0px;
-	right: 0px;
+	border-radius: 0;
+	width: 31px;
 	position: absolute;
-	/*        background-color: rgb(158,158,158); */
+	background-color: rgba(255, 255, 255, 0.9); margin-left : -31px;
+	color: black;
+	padding: 0;
+	margin-left: -31px;
+	margin-top: 30px;
 }
 
 .mapBodyStyle {
@@ -62,6 +66,12 @@ geo-distance-calculator {
 	min-width: 300px;
 }
 
+#geoRigthMenu md-sidenav.md-locked-open {
+	width: 400px;
+	min-width: 304px;
+	max-width: 400px;
+}
+
 #geoRigthMenu  .md-sidenav-right>md-content.contentStyle>md-tabs {
 	height: 100%;
 }
@@ -75,53 +85,55 @@ geo-distance-calculator {
 	max-height: 100%;
 }
 
-.itemboxGU {
+
+
+/* .itemboxGU .expanderIcon { */
+/* 	min-height: 30px; */
+/* 	position: absolute; */
+/* 	top: 0; */
+/* 	right: 0; */
+/* 	height: 30px; */
+/* 	width: 30px; */
+/* } */
+
+/* .itemboxGU md-toolbar.categoryToolbar { */
+/* 	background-color: white; */
+/* 	color: black; */
+/* } */
+
+/* .itemboxGU md-toolbar.categoryToolbar button md-icon { */
+/* 	color: black; */
+/* } */
+
+/* .itemboxGU md-toolbar.categoryToolbar .md-toolbar-tools { */
+/* 	height: 100%; */
+/* } */
+
+expander-box md-toolbar {
 	margin-top: 10px;
 }
-
-.itemboxGU .expanderIcon {
-	min-height: 30px;
-	position: absolute;
-	top: 0;
-	right: 0;
-	height: 30px;
-	width: 30px;
-}
-
-.itemboxGU md-toolbar.categoryToolbar {
-	background-color: white;
-	color: black;
-}
-
-.itemboxGU md-toolbar.categoryToolbar button md-icon {
-	color: black;
-}
-
-.itemboxGU md-toolbar.categoryToolbar .md-toolbar-tools {
-	height: 100%;
-}
-
-.itemBoxGU md-content md-radio-button, .itemBoxGU md-content md-checkbox
+expander-box md-content md-radio-button, expander-box md-content md-checkbox
 	{
 	/* 	    margin: 6px 4px 6px 16px; */
 	margin: 0px 4px 11px 16px;
 }
 
-.itemboxGU>md-content {
-	border: 1px solid rgb(63, 81, 181);
-}
+/* .itemboxGU>md-content { */
+/* 	border: 1px solid rgb(63, 81, 181); */
+/* } */
 
 geo-legend .legendBox .colorbox {
 	height: 18px;
-    width: 18px;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    margin: 1px;
+	width: 18px;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	margin: 1px;
 }
 
 geo-legend .legendBox {
 	background-color: white;
 	border-radius: 5px;
 	padding: 5px;
+	max-width: 350px;
 }
 
 geo-legend  .legendBox:before {
@@ -133,8 +145,6 @@ geo-legend  .legendBox:before {
 	bottom: 45px;
 	left: 23px;
 }
-
-
 
 geo-distance-calculator .clearMeasure {
 	position: absolute;
@@ -288,7 +298,7 @@ geo-cross-nav-multiselect .itemboxGU {
 	position: absolute;
 	top: 100px;
 	left: 10px;
-	
+
 	/*
 	-webkit-transition: all 0.5s ease-in-out !important;
 	-moz-transition: all 0.5s ease-in-out !important;
@@ -297,7 +307,7 @@ geo-cross-nav-multiselect .itemboxGU {
 	*/
 }
 
-geo-cross-nav-multiselect .itemboxGU .md-toolbar-tools { 
+geo-cross-nav-multiselect .itemboxGU .md-toolbar-tools {
 	background-color: #FFF;
 	font-size: 15px;
 	opacity: 0.5;
@@ -307,10 +317,7 @@ geo-cross-nav-multiselect .itemboxGU .md-toolbar-tools {
 	*/
 }
 
-
-
-[md-color-picker] .md-color-picker-input-container .md-color-picker-clear {
-	display:none;
+[md-color-picker] .md-color-picker-input-container .md-color-picker-clear
+	{
+	display: none;
 }
-
-	

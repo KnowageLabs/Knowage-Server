@@ -1,17 +1,16 @@
 
 <div id="geoRigthMenu">
 <md-button id="showMenu" class="md-fab zoomAnimation"
-			ng-class="{'hidden': openRigthMenu}" ng-click="toggleMenu($event)"
+			ng-click="toggleMenu($event)"
 			aria-label="toggle menu"> 
-		<i class="material-icons">more_vert</i>
+		<i ng-if="!openRigthMenu" class="material-icons">chevron_left</i>
+		<i ng-if="openRigthMenu" class="material-icons">chevron_right</i>
 	</md-button>
 
 	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout-fill>
 		<md-toolbar class="md-theme-light" layout="row" layout-wrap
 			layout-align="center center">
 			<div class="md-toolbar-tools">
-				<i class="material-icons" style="margin-left: -14px;"
-						ng-click="toggleMenu($event)">arrow_forward</i>
 				<div style="width: 100%; text-align: center;">
 					<i class="material-icons">my_location</i>
 					<span>{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
@@ -30,6 +29,12 @@
 					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.layer")}}</md-tab-label> 
 					<md-tab-body>
 						<geo-layers id="layer"></geo-layers>
+					</md-tab-body>
+				</md-tab>
+				<md-tab id="CONFIG"> 
+					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.config")}}</md-tab-label> 
+					<md-tab-body>
+						<geo-config id="config"></geo-config>
 					</md-tab-body>
 				</md-tab>
 			</md-tabs>

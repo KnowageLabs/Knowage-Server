@@ -5,69 +5,41 @@
       <md-button style="     width: calc( 100% - 20px);    margin-bottom: 0; " class="md-raised" id="addLayer" ng-click="addLayerFromCatalogue($event)">{{translate.load("gisengine.info.message.selectFromCatalogue")}}</md-button>
       
       	
-		<div class="itemboxGU" ng-init="baselayerExpander=true; baseLayerCategoryExpander={};">
-			<md-toolbar class="titleToolbar">
-				<h1 class="md-toolbar-tools">{{translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer")}}</h1>
-				<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click="baselayerExpander=!baselayerExpander">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' : baselayerExpander , 'fa-angle-down' : !baselayerExpander}"></md-icon>
-			    </md-button>
-			</md-toolbar>
-			<md-content >
-			  <md-radio-group ng-model="geoModule_layerServices.selectedBaseLayerOBJ">
-				<div  ng-show="baselayerExpander"  ng-repeat="(CatKey,CatVal) in baseLayers" >
-					<md-toolbar class="categoryToolbar" >
-						<span class="md-toolbar-tools"> {{CatKey}} </span>
-						<md-button ng-init="baseLayerCategoryExpander[CatKey]=true;" class="md-icon-button expanderIcon" aria-label="expand" ng-click="baseLayerCategoryExpander[CatKey]=!baseLayerCategoryExpander[CatKey]">
-				        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' : baseLayerCategoryExpander[CatKey] , 'fa-angle-down' : !baseLayerCategoryExpander[CatKey]}"></md-icon>
-				   		</md-button>
-				    </md-toolbar>
-				
-					<md-radio-button ng-show="baseLayerCategoryExpander[CatKey]" 
-							ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
-		      	 	 {{val.label}}
-			         </md-radio-button>
-			         
-				</div>
-			</md-radio-group>
-			</md-content>
-		</div>
+	
+	<expander-box id="baseLayer" color="white" background-color="rgb(63,81,181)"   expanded='true' title='translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer")'> 
+	
+	  <md-radio-group ng-model="geoModule_layerServices.selectedBaseLayerOBJ">
+		 
+			<expander-box id="catBaseLayer" color="black" background-color="white" expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in baseLayers">
+			
+			<md-radio-button ng-repeat="(key,val) in CatVal"   ng-click="showBaseLayer(val)"  class="md-primary" ng-value="val"  >
+	     	 	 {{val.label}}
+	         </md-radio-button>
+	         </expander-box>
+		 
+		</md-radio-group>
+	</expander-box>
+			
 
-		<div class="itemboxGU" ng-init=" layerExpander=true; LayerCategoryExpander={};">
-			<md-toolbar class="titleToolbar">
-				<span class="md-toolbar-tools">{{translate.load("gisengine.rigthMenu.tabs.layer")}}</span>
-				<md-button  class="md-icon-button expanderIcon" aria-label="expand" ng-click=" layerExpander=! layerExpander">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  layerExpander , 'fa-angle-down' : ! layerExpander}"></md-icon>
-			    </md-button>
-			</md-toolbar>
-			<md-content >
-			
-			<div  ng-show=" layerExpander"  ng-repeat="(CatKey,CatVal) in layers" >
-				<md-toolbar class="categoryToolbar" >
-					<h1 class="md-toolbar-tools"> {{CatKey}} </h1>
-					<md-button ng-init=" LayerCategoryExpander[CatKey]=true;" class="md-icon-button expanderIcon" aria-label="expand" ng-click=" LayerCategoryExpander[CatKey]=! LayerCategoryExpander[CatKey]">
-			        <md-icon  md-font-icon="fa  fa-2x" ng-class="{'fa-angle-up' :  LayerCategoryExpander[CatKey] , 'fa-angle-down' : ! LayerCategoryExpander[CatKey]}"></md-icon>
-			   		</md-button>
-			    </md-toolbar>
-			
-			<div layout="row" layout-wrap flex  ng-show=" LayerCategoryExpander[CatKey]">
+	
+		
+		<expander-box id="layer" color="white" background-color="rgb(63,81,181)"   expanded='true' title='translate.load("gisengine.rigthMenu.tabs.layer")'> 
+			<expander-box id="categoryLayer" color="black" background-color="white" expanded='true' title='CatKey'  ng-repeat="(CatKey,CatVal) in layers">
+				<div layout="row" layout-wrap flex >
 	            <md-checkbox ng-checked="geoModule_layerServices.layerIsLoaded(val)" ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" class="md-primary" >
 	             {{val.label}}
 	            </md-checkbox>
 	          
 	        </div>
+			</expander-box>
+		</expander-box>
 			
-<!-- 				<md-list class="indicatorList whiteBG" ng-show=" LayerCategoryExpander[CatKey]"> -->
-<!-- 					<md-list-item ng-repeat="(key,val) in CatVal"   ng-click="toggleLayer(val)" >   -->
-<!-- 						<md-icon md-font-icon="fa fa-check fa-2x" class="checkedIndicator" ng-if="geoModule_layerServices.layerIsLoaded(val)"></md-icon >  -->
-<!-- 						{{val.label}} -->
-<!-- 					</md-list-item> -->
-<!-- 				</md-list> -->
-			</div>
 			
-			</md-content>
+			
+			
+	</md-content>
 		</div>
 
-	</md-content>
 
  
 

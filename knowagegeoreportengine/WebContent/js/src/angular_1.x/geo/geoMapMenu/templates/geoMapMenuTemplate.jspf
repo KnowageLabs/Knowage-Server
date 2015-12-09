@@ -1,168 +1,68 @@
 <md-content>
 
-	<div class="itemboxGU" ng-init=" mapTypeExpander=true;">
-		<md-toolbar class="titleToolbar" class="md-theme-light">
-			<span class="md-toolbar-tools">{{translate.load("gisengine.info.message.mapType")}}</span>
-			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-					ng-click=" mapTypeExpander=! mapTypeExpander"> 
-				<md-icon md-font-icon="fa  fa-2x"
-						ng-class="{'fa-angle-up' :  mapTypeExpander , 'fa-angle-down' : ! mapTypeExpander}"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<md-content layout-padding ng-show="mapTypeExpander"> 
-			<md-radio-group ng-model="template.analysisType"> 
-				<md-radio-button ng-repeat="item in analysisTypeList" class="md-primary"
-						ng-value="item.type" ng-click="updateMap()"> 
-					<md-icon md-font-icon="{{item.img}}"></md-icon>
-					{{item.label}}
-				</md-radio-button>
-			</md-radio-group>
-		</md-content>
-	</div>
+	<expander-box id="mapType" color="white" background-color="rgb(63,81,181)" expanded='true' title='translate.load("gisengine.info.message.mapType")'> 
+		<md-radio-group ng-model="template.analysisType"> 
+			<md-radio-button ng-repeat="item in analysisTypeList" class="md-primary"
+					ng-value="item.type" ng-click="updateMap()"> 
+				<md-icon md-font-icon="{{item.img}}"></md-icon>
+				{{item.label}}
+			</md-radio-button>
+		</md-radio-group>
+	</expander-box>
 	
-	<div class="itemboxGU" ng-init=" indicatorsExpander=true;">
-		<md-toolbar class="titleToolbar"> 
-			<span class="md-toolbar-tools">{{translate.load("gisengine.info.message.indicator")}}</span>
-			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-					ng-click=" indicatorsExpander =! indicatorsExpander">
-				<md-icon md-font-icon="fa  fa-2x"
-					ng-class="{'fa-angle-up' :  indicatorsExpander , 'fa-angle-down' : ! indicatorsExpander}"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<md-content layout-padding ng-show="indicatorsExpander" ng-switch on="template.analysisType=='chart'">
-			<md-radio-group ng-model="template.selectedIndicator" ng-switch-when="false">
-				<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()" class="md-primary" ng-value="ind">
-					{{ind.header}}
-				</md-radio-button>
-			</md-radio-group>
-	
-			<div ng-switch-when="true">
-				<md-checkbox ng-repeat="ind in indicators"
-					ng-click="toggleIndicator(ind)" class="md-primary"
-					ng-checked="exist(ind)"> {{ind.header}} </md-checkbox>
-			</div>
-			<md-button id="indicatorCatalogue" class="md-raised "
-					style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">
-				{{translate.load("gisengine.info.message.selectFromCatalogue")}}
-			</md-button> 
-		</md-content>
-	</div>
 
-	<div class="itemboxGU" ng-init=" selectModeExpander=false;">
-		<md-toolbar class="titleToolbar" class="md-theme-light">
-			<span class="md-toolbar-tools">{{translate.load("gisengine.info.message.selectMode")}}</span>
-			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-					ng-click=" selectModeExpander=!selectModeExpander"> 
-				<md-icon md-font-icon="fa  fa-2x"
-						ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<md-content layout-padding ng-show="selectModeExpander">
-			<md-radio-group ng-model="selectModeInteraction.type">
-				<md-radio-button ng-repeat="item in selectModeTypeList" class="md-primary"
-						ng-value="item.type" ng-hide="isCrossRadioButtonDisabled(item.type)">
-					{{item.label}}
-				</md-radio-button>
-			</md-radio-group>
-		</md-content>
-	</div>
+	<expander-box id="indicator" color="white" background-color="rgb(63,81,181)" expanded='true' title='translate.load("gisengine.info.message.indicator")' ng-switch on="template.analysisType=='chart'">
+		<md-radio-group ng-model="template.selectedIndicator" ng-switch-when="false">
+			<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()" class="md-primary" ng-value="ind">
+				{{ind.header}}
+			</md-radio-button>
+		</md-radio-group>
+		
+		<div ng-switch-when="true">
+			<md-checkbox ng-repeat="ind in indicators"
+				ng-click="toggleIndicator(ind)" class="md-primary"
+				ng-checked="exist(ind)"> {{ind.header}} </md-checkbox>
+		</div>
+		<md-button id="indicatorCatalogue" class="md-raised "
+				style="font-size: 12px;" ng-click="openIndicatorFromCatalogue($event)">
+			{{translate.load("gisengine.info.message.selectFromCatalogue")}}
+		</md-button> 
+	</expander-box>
+
+
 	
-	<div class="itemboxGU" ng-init=" filterTypeExpander=false;" ng-if="selectModeInteraction.type=='filter'">
-		<md-toolbar class="titleToolbar" class="md-theme-light"> 
-			<span class="md-toolbar-tools">{{translate.load("gisengine.info.message.spatialFilter")}} </span>
-			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-					ng-click=" filterTypeExpander=!filterTypeExpander">
-				<md-icon md-font-icon="fa fa-2x" ng-class="{'fa-angle-up' :selectModeExpander , 'fa-angle-down' : !selectModeExpander}"></md-icon>
-			</md-button> 
-		</md-toolbar>
+	<expander-box id="selectMode" color="white" background-color="rgb(63,81,181)" expanded='false' title='translate.load("gisengine.info.message.selectMode")' >
+		<md-radio-group ng-model="selectModeInteraction.type">
+			<md-radio-button ng-repeat="item in selectModeTypeList" class="md-primary"
+					ng-value="item.type" ng-hide="isCrossRadioButtonDisabled(item.type)">
+				{{item.label}}
+			</md-radio-button>
+		</md-radio-group>
+	</expander-box>
+		
 	
-		<md-content layout-padding ng-show="filterTypeExpander"> 
-			<md-radio-group ng-model="selectFilterType">
-				<md-radio-button ng-repeat="item in filterTypes" class="md-primary" 
-						ng-value="item.type" ng-click="setSelectedFilterType(item.type)">{{item.label}}</md-radio-button> 
-			</md-radio-group>
-		</md-content>
-	</div>
-	 
-	<div class="itemboxGU" ng-init=" filterExpander=false;">
-		<md-toolbar class="titleToolbar">
-			<span class="md-toolbar-tools">{{translate.load("gisengine.info.message.filter")}}</span>
-			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-					ng-click=" filterExpander = !filterExpander"> 
-				<md-icon md-font-icon="fa  fa-2x"
-						ng-class="{'fa-angle-up' :  filterExpander , 'fa-angle-down' : ! filterExpander}"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<md-content layout-padding ng-show="filterExpander"> 
-			<md-input-container ng-repeat="filter in filters"> 
-				<label>{{filter.label}}</label>
-				<md-select ng-model="template.selectedFilters[filter.name]" multiple=true>
-					<md-option ng-repeat="item in dataset.rows | unique: filter.name"
-							ng-value="item[filter.name]" aria-label="{{item[filter.name]}}"
-							ng-click="updateMap()">{{item[filter.name]}}</md-option>
-				</md-select>
-			</md-input-container>
-		</md-content>
-	</div>
+
+	<expander-box id="filterSpatialtype" color="white" background-color="rgb(63,81,181)" expanded='true' title='translate.load("gisengine.info.message.spatialFilter")' ng-if="selectModeInteraction.type=='filter'">
+		<md-radio-group ng-model="selectFilterType">
+			<md-radio-button ng-repeat="item in filterTypes" class="md-primary" 
+					ng-value="item.type" ng-click="setSelectedFilterType(item.type)">{{item.label}}</md-radio-button> 
+		</md-radio-group>
+	</expander-box>
+
+
+	<expander-box id="selectMode" color="white" background-color="rgb(63,81,181)" expanded='false' title='translate.load("gisengine.info.message.filter")' >
+		<md-input-container ng-repeat="filter in filters"> 
+			<label>{{filter.label}}</label>
+			<md-select ng-model="template.selectedFilters[filter.name]" multiple=true>
+				<md-option ng-repeat="item in dataset.rows | unique: filter.name"
+						ng-value="item[filter.name]" aria-label="{{item[filter.name]}}"
+						ng-click="updateMap()">{{item[filter.name]}}</md-option>
+			</md-select>
+		</md-input-container>
+	</expander-box>
+
 	
-	<div class="itemboxGU" ng-init=" legendExpander=false;" >
-		<md-toolbar class="titleToolbar">
-			<span class="md-toolbar-tools">{{translate.load("gisengine.info.message.legend.config")}}</span>
-			<md-button class="md-icon-button expanderIcon" aria-label="expand"
-					ng-click=" legendExpander = !legendExpander"> 
-				<md-icon md-font-icon="fa  fa-2x"
-						ng-class="{'fa-angle-up' :  legendExpander , 'fa-angle-down' : ! legendExpander}"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<md-content layout-padding ng-show="legendExpander"> 
-		<md-tabs md-dynamic-height="" >
-      <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.choropleth")}}'>
-        <md-content class="md-padding">
-          <md-input-container>
-			   <label>{{translate.load("gisengine.info.message.legend.config.method")}}</label>
-			    <md-select ng-model="template.analysisConf.choropleth.method">
-			      <md-option ng-repeat="meth in choroplethMethodTypeList" value="{{meth.value}}">
-			        {{meth.label}}
-			      </md-option>
-			    </md-select>
-			</md-input-container>
-        
-			<md-input-container>
-				<label>{{translate.load("gisengine.info.message.legend.config.nOfClasses")}}</label>
-				 <md-select ng-model="template.analysisConf.choropleth.classes">
-				   <md-option ng-repeat="n in [2,3,4,5,6,7]" value="{{n}}">
-				     {{n}}
-				   </md-option>
-				 </md-select>
-		    </md-input-container>
-		    
-			<div md-color-picker value="template.analysisConf.choropleth.fromColor"  label='{{translate.load("gisengine.info.message.legend.config.fromColor")}}' open-on-input="true" style="width: 100%;" ></div>
-			<div md-color-picker value="template.analysisConf.choropleth.toColor"  label='{{translate.load("gisengine.info.message.legend.config.toColor")}}' open-on-input="true" style="width: 100%;"></div>
-        </md-content>
-      </md-tab>
-      <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.proportionalSymbol")}}'>
-        <md-content class="md-padding">
-          <div md-color-picker value="template.analysisConf.proportionalSymbol.color"  label='{{translate.load("gisengine.info.message.legend.config.color")}}' open-on-input="true" style="width: 100%;" ></div>
-		    <span >{{translate.load("gisengine.info.message.legend.config.value.min")}}</span>
-	      	<md-slider flex class="visibleValue md-primary margintop " md-discrete="" ng-model="template.analysisConf.proportionalSymbol.minRadiusSize" step="1" min="0" max="{{template.analysisConf.proportionalSymbol.maxRadiusSize}}" aria-label="rating"></md-slider>
-			<span >{{translate.load("gisengine.info.message.legend.config.value.max")}}</span>
-	      	<md-slider flex class="md-primary visibleValue margintop" md-discrete="" ng-model="template.analysisConf.proportionalSymbol.maxRadiusSize" step="1" min="{{template.analysisConf.proportionalSymbol.minRadiusSize}}" max="50" aria-label="rating"></md-slider>
-		</md-content>
-      </md-tab>
-      <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.chart")}}'>
-        <md-content class="md-padding">
-          
-         
-          <div md-color-picker ng-repeat="ind in indicators"  ng-init="template.analysisConf.chart['indicator_'+($index+1)] = template.analysisConf.chart['indicator_'+($index+1)] || 'green'" value="template.analysisConf.chart['indicator_'+($index+1)]"  label='{{translate.load("gisengine.info.message.legend.config.color")}} {{$index}}' open-on-input="true" style="width: 100%;" ></div>
-          
-          
-        </md-content>
-      </md-tab>
-    </md-tabs>
-			
-			
-		</md-content>
-	</div>
+	
 </md-content>
 
 

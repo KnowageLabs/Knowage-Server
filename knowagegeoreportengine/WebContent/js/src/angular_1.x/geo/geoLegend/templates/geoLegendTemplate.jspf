@@ -1,11 +1,23 @@
 <md-whiteframe class="md-whiteframe-3dp legendBox"   layout layout-align="center center" ng-if="showLegend" >
-    <div layout="column" layout-wrap> 
+
+    <div layout="column" layout-wrap ng-if="template.analysisType=='choropleth'"> 
 	    <div layout="row" layout-wrap ng-repeat="items in thematizer.legendItem.choroplet" >
 	    	<div class="colorbox" style="background-color: {{items.color}}"></div>
 	    	<span>{{items.from}}-{{items.to}} ({{items.item}})</span>
 	    </div>
 			
+	 </div>
+	 
+	 <div ng-if="template.analysisType=='proportionalSymbol'">
+	{{translate.load("gisengine.geoLegend.proportionalSymbol.message")}}
+	 </div>
+	 
+	 <div layout="column" layout-wrap ng-if="template.analysisType=='chart'">
+		<div layout="row" layout-wrap ng-repeat="items in template.analysisConf.chart"  ng-if="template.selectedMultiIndicator[$index]!=undefined">
+	    	<div class="colorbox" style="background-color: {{items}}"></div>
+	    	<span>{{template.selectedMultiIndicator[$index].header}}</span>
 	    </div>
+	 </div>
 </md-whiteframe>
 
 <md-button id="showLegend" class="md-fab md-mini"

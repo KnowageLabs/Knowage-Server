@@ -64,10 +64,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 						} else {
 							for(var i=0;i<data.root.length;i++){
 								var tmp=data.root[i];
-								if(tmp.category== null){
-									tmp.category={valueNm: geoModule_constant.noCategory};
-								}
-								var categ=tmp.category.valueNm;
+//								if(tmp.category== null){
+//									tmp.category={valueNm: geoModule_constant.noCategory};
+//								}
+								var categ=(tmp.hasOwnProperty("category") && tmp.category!=null)? tmp.category.valueNm : geoModule_constant.noCategory;
+								
 								if(tmp.hasOwnProperty("baseLayer") && tmp.baseLayer==true){
 									//insert category if not present
 									if(!$scope.baseLayers.hasOwnProperty(categ)){
@@ -212,7 +213,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		};
 
 		$scope.toggleLayerFromCatalogue=function(item){
-			var categ=item.hasOwnProperty("category")? item.category.valueNm : geoModule_constant.defaultBaseLayer;
+			var categ=(item.hasOwnProperty("category") && item.category!=null)? item.category.valueNm : geoModule_constant.noCategory;
 
 			if(item.baseLayer){
 				//insert category if not present

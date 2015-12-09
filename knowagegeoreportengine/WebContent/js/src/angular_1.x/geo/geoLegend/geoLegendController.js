@@ -17,9 +17,11 @@ angular.module('geoModule')
 	}
 })
 
-function geoLegendControllerFunction($scope,$mdDialog,geoModule_template,geoModule_thematizer,geoModule_layerServices){	
+function geoLegendControllerFunction($scope,$mdDialog,geoModule_template,geoModule_thematizer,geoModule_layerServices,sbiModule_translate){	
 	$scope.showLegend=false;
 	$scope.thematizer=geoModule_thematizer;
+	$scope.template=geoModule_template;
+	$scope.translate=sbiModule_translate;
 	$scope.legendItem=[];
 
 	$scope.$watch(function() {

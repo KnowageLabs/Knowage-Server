@@ -136,8 +136,6 @@ function geoMapMenuControllerFunction(
 		return -1;
 	};  
 	
-	$scope.newArray=function(val){
-		return new Array(val);
-	}
+
 };
 
