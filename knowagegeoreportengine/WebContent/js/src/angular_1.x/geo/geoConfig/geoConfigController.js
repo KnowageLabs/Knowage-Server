@@ -22,5 +22,9 @@ function geoConfigControllerFunction($scope,geoModule_template,sbiModule_transla
 	$scope.newArray=function(val){
 		return new Array(val);
 	}
+	$scope.choroplethMethodTypeList = [
+	                                   {label:sbiModule_translate.load("gisengine.rigthMapMenu.legend.choropleth.method.quantils"),value:"CLASSIFY_BY_QUANTILS"},
+	                                   {label:sbiModule_translate.load("gisengine.rigthMapMenu.legend.choropleth.method.equalsIntervals"),value:"CLASSIFY_BY_EQUAL_INTERVALS"}
+	                                   ];
 };
 

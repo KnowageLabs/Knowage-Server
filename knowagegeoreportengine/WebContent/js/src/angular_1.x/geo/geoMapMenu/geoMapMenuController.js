@@ -38,10 +38,7 @@ function geoMapMenuControllerFunction(
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.filter"), type:"filter"}
 	                             ];
 
-	$scope.choroplethMethodTypeList = [
-	                                   {label:sbiModule_translate.load("gisengine.rigthMapMenu.legend.choropleth.method.quantils"),value:"CLASSIFY_BY_QUANTILS"},
-	                                   {label:sbiModule_translate.load("gisengine.rigthMapMenu.legend.choropleth.method.equalsIntervals"),value:"CLASSIFY_BY_EQUAL_INTERVALS"}
-	                                   ];
+
 
 	$scope.selectFilterType = 'near';
 	$scope.filterTypes = [

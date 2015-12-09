@@ -181,13 +181,18 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var objContent=[];
 		var vAxes={};
 		var i=0;
-		data.addColumn('string', 'Topping');
+		data.addColumn('string', 'Topping','Style');
 		string.push('N');
+		var indicatorIndex=0;
 		for(var key in dsValue){
+			indicatorIndex++;
 			data.addColumn('number', 'Population');
 			data.addColumn({type: 'number', role: 'annotation'});
+			data.addColumn({ type: 'string',role: 'style' })
 			string.push(Math.round(dsValue[key].value));
-			string.push(Math.round(dsValue[key].value))
+			string.push(Math.round(dsValue[key].value));
+			var color = tinycolor(geoModule_template.analysisConf.chart["indicator_"+indicatorIndex]);
+			string.push('color:'+color.toHexString()+";opacity:"+color.getAlpha()+";")
 
 			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
 			if(i==0){
@@ -216,12 +221,6 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		data.addRows([string]);
 		var view = new google.visualization.DataView(data);
 
-		var colors=[];
-		for(var key in geoModule_template.analysisConf.chart){
-			colors.push(geoModule_template.analysisConf.chart[key]);
-		}
-
-
 		// Set chart options 
 		var size_img = 20 + 8*Math.pow(2,$map.getView().getZoom()-1);
 		//setta minvalue come min del min e max come max del max di 
@@ -244,8 +243,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				series: {0: {targetAxisIndex:0},
 					1:{targetAxisIndex:1},
 					2:{targetAxisIndex:2}
-				},
-				colors: colors,
+				}
 		};
 
 		// Instantiate and draw our chart, passing in some options.
@@ -562,7 +560,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}else if(type=='proportionalSymbol'){
 
 		}else if(type=="chart"){
-
+			
 		}
 	}
 });
