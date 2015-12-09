@@ -490,6 +490,20 @@ public class ObjectsAccessVerifier {
 		}
 		return canExecInternal(folder, profile);
 	}
+	
+	/**
+	 * Control if the current user can create objects into the input functionality.
+	 * 
+	 * @param folder
+	 *            The lowFunctionality
+	 * @param profile
+	 *            user profile
+	 * 
+	 * @return A boolean control value
+	 */
+	public static boolean canCreate(LowFunctionality folder, IEngUserProfile profile) {
+		return canCreateInternal(folder.getId(), profile);
+	}
 
 	/**
 	 * Private method called by the corrispondent public method canExec. Executes roles functionalities control .
