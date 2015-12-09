@@ -120,7 +120,7 @@ body, html {
     background-repeat: no-repeat;
     background-color: #A8BACA;
     /*background: linear-gradient( rgb(97, 148, 165),rgb(225, 229, 231));*/
-    background-image: url("back.png");
+    background-image: url("background.jpg");
     background-size: cover;
     font-family: 'Roboto', 'Helvetica Neue, Helvetica, Arial', sans-serif;
     
@@ -144,7 +144,7 @@ body, html {
  * Card component
  */
 .card {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: rgba(238, 238, 238, 0.38);
     padding: 20px 25px 30px;
     margin: 0 auto 25px;
     margin-top: 15%;
