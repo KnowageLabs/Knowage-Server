@@ -241,13 +241,10 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-			console.log("Siamo qui:");
-			console.log(selection);
-
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
-			layerServ.Render(selection);
-			//layerServ.serp();
+		//	layerServ.Render(selection);
+
 		});
 
 		// clear selection when drawing a new box and when clicking on the map
@@ -323,19 +320,68 @@ geoM.service('geoModule_layerServices', function(
 		});
 
 	}
+	
+	this.near = function(){
+		console.log("near");
+		
+		var coordinate;
+		var circleGeometry;
+		var myCircle;
+		var ray = 500000;
+		
+		var fillStyle = new ol.style.Style({
+			 fill: new ol.style.Fill({
+			      color: 'rgba(255, 255, 255, 0.2)'
+			    }),
+			 stroke: new ol.style.Stroke({
+			      color: '#ffcc33',
+			      width: 2
+			    })
+		});
+	
+		$map.on('click', function(evt) {
+			console.log("inside click");
+			coordinate = evt.coordinate;
+			console.log("coordinate: ",coordinate);
+			//500000 è un valore scelto temporaneamente succesisvamente saranno i km che sceglie l'utente
+			myCircle = new ol.geom.Circle(coordinate,ray);
+
+			
+			
+		});
+		
+		$map.on('postcompose', function(event) {
+			if(coordinate){
+				//se è stato cliccato e le coordinate sono state inizializzate disegna cerchio
+				var vecCtx = event.vectorContext;			
+				vecCtx.setFillStrokeStyle(fillStyle, null);
+				vecCtx.drawCircleGeometry(myCircle);
+				$map.render();
+				var extent = myCircle.getExtent();
+				
+				//seleziona le features interne al cerchio
+				var vectorSource = layerServ.templateLayer.getSource();
+				vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
+				layerServ.selectedFeatures.push(feature);				
+				ctx.clip();
+				});
+			}
+		});
+	}
+	
 	this.Render =function(features){
 		var raster = new ol.layer.Tile({
 			source: new ol.source.Stamen({
 				layer: 'toner'
 			})
 		});
-		raster.setZindex=1000;
+		raster.setZindex=10000;
 		$map.addLayer(raster);
 
-		/*	var osm=this.createLayer(baseLayer.Default.OSM,false);
-
+		var osm=this.createLayer(baseLayer.Default.OSM,false);
+	
 		osm.setZindex=1000001;
-		$map.addLayer(osm);*/
+		$map.addLayer(osm);
 
 		// A style for the geometry.
 		var fillStyle = new ol.style.Fill({color: [0, 0, 0, 0]});
@@ -395,7 +441,7 @@ geoM.service('geoModule_layerServices', function(
 			}));*/
 
 			ctx.clip();
-			$map.removeLayer(raster);
+			//$map.removeLayer(raster);
 			$map.render();
 
 		});
@@ -535,11 +581,11 @@ geoM.service('geoModule_layerServices', function(
 		currentInteraction.type = type;
 
 		if(type=='near'){
-
+			$map.removeInteraction(currentInteraction.obj);
+			//layerServ.near();
 		} else if(type=='intersect'){
 			$map.removeInteraction(currentInteraction.obj);
 			layerServ.intersectFeature();
-
 		} else if(type=='inside'){
 			$map.removeInteraction(currentInteraction.obj);
 			layerServ.insideFeature();
@@ -586,8 +632,9 @@ geoM.service('geoModule_layerServices', function(
 			break;
 			}
 		} else if(geo_interaction.type == "filter"){
-			//attualmente si dispone di soli rettangoli
-			layerServ.Box();
+			//default
+			layerServ.near();
+			
 		}
 	}
 
