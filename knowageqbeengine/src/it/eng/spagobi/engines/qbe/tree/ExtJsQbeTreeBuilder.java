@@ -388,6 +388,7 @@ public class ExtJsQbeTreeBuilder {
 				HierarchyLevel level = levelsIterator.next();
 				JSONObject jsObject = new JSONObject();
 				jsObject.put("text", level.getName());
+				jsObject.put("type", level.getType());
 				jsObject.put("alias", parentEntity.getType()+":"+level.getColumn());
 				jsObject.put("leaf", true);
 

@@ -167,7 +167,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					if (field.isSimpleField()) {
 						SimpleSelectField dataMartSelectField = (SimpleSelectField)field;
 
-						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.SIMPLE_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, ISelectField.SIMPLE_FIELD);
 
 						fieldUniqueName = dataMartSelectField.getUniqueName();
 						datamartField = dataSource.getModelStructure().getField( fieldUniqueName );
@@ -222,7 +222,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					} else if (field.isCalculatedField()){
 						CalculatedSelectField calculatedSelectField = (CalculatedSelectField)field;
 
-						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.CALCULATED_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, ISelectField.CALCULATED_FIELD);
 
 						JSONObject fieldCalculationDescriptor = new JSONObject();
 						fieldCalculationDescriptor.put(QuerySerializationConstants.FIELD_TYPE, calculatedSelectField.getType());
@@ -236,7 +236,7 @@ public class QueryJSONSerializer implements IQuerySerializer {
 					} else if (field.isInLineCalculatedField()) {
 						InLineCalculatedSelectField calculatedSelectField = (InLineCalculatedSelectField)field;
 
-						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, field.IN_LINE_CALCULATED_FIELD);
+						fieldJSON.put(QuerySerializationConstants.FIELD_TYPE, ISelectField.IN_LINE_CALCULATED_FIELD);
 
 						JSONObject fieldCalculationDescriptor = new JSONObject();
 						fieldCalculationDescriptor.put(QuerySerializationConstants.FIELD_ALIAS, calculatedSelectField.getAlias());
@@ -314,8 +314,8 @@ public class QueryJSONSerializer implements IQuerySerializer {
 	 * @param dataSource
 	 * @return <DatamartFieldAlias, DatamartFieldNature>
 	 */
-	public static Map<String, String> getFieldsNature(Query query,  IDataSource dataSource){
-		Map<String, String> feldsNatureMap = new HashMap<String, String>();
+	public static Map<String, String> getFieldsNature(Query query,  IDataSource dataSource) {
+		Map<String, String> fieldsNatureMap = new HashMap<String, String>();
 		String nature;
 		IModelField datamartField;
 		SimpleSelectField dataMartSelectField;
@@ -330,11 +330,11 @@ public class QueryJSONSerializer implements IQuerySerializer {
 				if(nature==null){
 					nature = dataMartSelectField.updateNature(iconCls);
 				}
-				feldsNatureMap.put(dataMartSelectField.getAlias(), nature);;
+				fieldsNatureMap.put(dataMartSelectField.getAlias(), nature);
 			}
 		}
 
-		return feldsNatureMap;
+		return fieldsNatureMap;
 	}
 
 
@@ -394,8 +394,6 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		WhereField filter;
 		WhereField.Operand operand;
 		JSONObject filterJSON;
-		IModelField datamartFilter;
-		String fieldUniqueName;
 		Iterator it;
 		IModelProperties datamartLabels;
 		IModelField datamartField;
@@ -545,8 +543,6 @@ public class QueryJSONSerializer implements IQuerySerializer {
 		HavingField filter;
 		HavingField.Operand operand;
 		JSONObject havingJSON;
-		IModelField datamartFilter;
-		String fieldUniqueName;
 		Iterator it;
 		IModelProperties datamartLabels;
 		IModelField datamartField;

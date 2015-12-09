@@ -383,6 +383,13 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 			aDataMartStructurePanel.on('expand', function(panel, node) {
 				this.currentDataMartStructurePanel = panel;
 		    }, this);
+			aDataMartStructurePanel.on('load', function(panel, node) {
+				if(aDataMartStructurePanel.temporalEntity==true){
+					this.selectGridPanel.populateTemporalOperandStore(panel.rootNode.childNodes);
+					this.selectGridPanel.showTemporalColumns();
+					this.filterGridPanel.showTemporalBtn();
+				}
+			}, this);
 			aDataMartStructurePanel.on('nodeclick', function(panel, node) {
 				this.onNodeClick(node);
 		    }, this);

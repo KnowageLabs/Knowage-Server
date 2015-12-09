@@ -792,10 +792,11 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 						}
 				    }
 				} , {
+					id: 'addTemporal',
 			        text: LN('sbi.qbe.filtergridpanel.buttons.text.addTemporal'),
 			        tooltip: LN('sbi.qbe.filtergridpanel.buttons.tt.addTemporal'),
 			        iconCls:'option',
-			        //hidden: (this.enableTbAddCalculatedBtn === false),
+			        hidden: true,
 			        listeners: {
 					  'click': {
 						fn: this.showTemporalWizard,
@@ -1236,4 +1237,11 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	 	return value;
 	}
 	
+	, showTemporalBtn: function(){
+		for(item in this.toolbar.items.items){
+			if(this.toolbar.items.items[item].id=='addTemporal'){
+				this.toolbar.items.items[item].show();
+			}
+		}
+	}
 });

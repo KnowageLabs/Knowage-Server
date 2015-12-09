@@ -121,19 +121,20 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	, temporalOperandStore:  new Ext.data.SimpleStore({
 	     fields: ['operand', 'nome', 'descrizione'],
 	     data : [
-	        ['', '', ''],
-			['YTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.ytd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.ytd')],
-			['QTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.qtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.qtd')],
-			['MTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.mtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.mtd')],
-			['WTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.wtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.wtd')],
-			
-			['LAST_YEAR',  LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastyear'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastyear')],
-			['LAST_MONTH', LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastmonth'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastmonth')],
-			['LAST_WEEK',  LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastweek'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastweek')],
-	        
-			['PARALLEL_YEAR',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelyear'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelyear')],
-			['PARALLEL_MONTH',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelmonth'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelmonth')],
-			['PARALLEL_WEEK',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelweek'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelweek')]
+	        ['', '', '']
+//	        ['YTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.ytd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.ytd')],
+//	    	['QTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.qtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.qtd')],
+//	    	['MTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.mtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.mtd')],
+//	    	['WTD', LN('sbi.qbe.selectgridpanel.name.temporalOperand.wtd'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.wtd')],
+//	    	
+//	    	['LAST_YEAR',  LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastyear'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastyear')],
+//	    	['LAST_MONTH', LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastmonth'), LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastmonth')],
+//	    	['LAST_WEEK',  LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastweek'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastweek')],
+//	        
+//	    	['PARALLEL_YEAR',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelyear'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelyear')],
+//	    	['PARALLEL_MONTH',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelmonth'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelmonth')],
+//	    	['PARALLEL_WEEK',	LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelweek'),  LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelweek')]
+	    	
 		] 
 	})
 
@@ -575,6 +576,7 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 		     
 		     , Ext.apply({
 		    	 header: LN('sbi.qbe.selectgridpanel.headers.temporalOperand')
+		    	 , id: 'temporalOperand'
 		         , dataIndex: 'temporalOperand'
 		         , editor: new Ext.form.ComboBox({
 			         tpl: '<tpl for="."><div ext:qtip="{nome}: {descrizione}" class="x-combo-list-item">{nome}</div></tpl>',	
@@ -591,19 +593,20 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 			         selectOnFocus:true
 		         })
 			     , hideable: true
-			     , hidden: false
+			     , hidden: true
 			     , width: 50
 			     , sortable: false
 		     }, this.columns['temporalOperand'] || {})
 		     
 		     , Ext.apply({
 		         header: LN('sbi.qbe.selectgridpanel.headers.temporalOperandParameter')
+		         , id: 'temporalOperandParameter'
 		         , dataIndex: 'temporalOperandParameter'
 		         , editor: new Ext.form.TextField({
 		        	 allowBlank: true
 		         })
 			     , hideable: true
-			     , hidden: false	
+			     , hidden: true	
 			     , sortable: false
 		     }, this.columns['temporalOperandParameter'] || {})
 		     
@@ -971,6 +974,57 @@ Ext.extend(Sbi.qbe.SelectGridPanel, Ext.Panel, {
 	 		cell.attr = ' ext:qtip="'  + Sbi.qbe.commons.Utils.encodeEscapes(tooltipString)+ '"';
 	 	}
 	 	return value;
+	}
+	
+	, showTemporalColumns: function() {
+		this.cm.setHidden(this.cm.getIndexById( 'temporalOperand' ), false);
+		this.cm.setHidden(this.cm.getIndexById( 'temporalOperandParameter' ), false);
+	}
+	
+	
+	, populateTemporalOperandStore: function(items) {
+		for(i in items){
+			if(items[i].attributes && items[i].attributes.iconCls=='temporal_dimension'){
+				var fields = items[i].attributes.children;
+				for(f in fields ){
+					if(fields[f].cls='default_hierarchies'){
+						var levels = fields[f].children;
+						for(l in levels){
+							switch(levels[l].type){
+							case "YEAR":
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'YTD', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.ytd'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.ytd')}));
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'LAST_YEAR', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastyear'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastyear')}));
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'PARALLEL_YEAR', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelyear'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelyear')}));
+								break;
+							case "QUARTER":
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'QTD', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.qtd'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.qtd')}));
+								break;
+							case "MONTH":
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'MTD', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.mtd'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.mtd')}));
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'LAST_MONTH', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastmonth'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastmonth')}));
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'PARALLEL_MONTH', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelmonth'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelmonth')}));
+								break;
+							case "WEEK":
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'WTD', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.wtd'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.wtd')}));
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'LAST_WEEK', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.lastweek'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.lastweek')}));
+								this.temporalOperandStore.add(new this.temporalOperandStore.recordType({
+									operand:'PARALLEL_WEEK', nome:LN('sbi.qbe.selectgridpanel.name.temporalOperand.parallelweek'), descrizione:LN('sbi.qbe.selectgridpanel.desc.temporalOperand.parallelweek')}));
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 });
