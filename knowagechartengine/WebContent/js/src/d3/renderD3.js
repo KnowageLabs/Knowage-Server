@@ -1790,6 +1790,7 @@ function renderWordCloud(chartConf){
 		         // "...-180" for table height plus pagination height (150+30)
 		         // "...-20" for bottom padding of the pagination 
 		         .attr("height",svgHeight)
+		         .style("width",legendWidth-25)
 		         .append("svg:g")
 		         .attr("transform", "translate("+0 + "," + m[0] + ")");
 		
@@ -2060,7 +2061,9 @@ function renderWordCloud(chartConf){
 						.style("padding-bottom",10)
 						.style("padding-top",20);
 	
-	var table = tableDiv.append("div").attr("id","tDiv").attr("align","center").append("table")
+	var table = tableDiv.append("div").attr("id","tDiv").attr("align","center")
+	                .attr("width", data.chart.width-legendWidth)
+	                .append("table")
 					.style("width", data.chart.width-legendWidth)
 					
 					/**
@@ -2072,7 +2075,7 @@ function renderWordCloud(chartConf){
 					 * 
 					 * @author: danristo (danilo.ristovski@mht.net)
 					 */ 
-					.style("display", "inline-block") 
+					//.style("display", "block") 
 					
 					/**
 					 * For now, table text elements will use the font customization provided for
@@ -2149,7 +2152,8 @@ function renderWordCloud(chartConf){
 	      .style("border","1px solid black")
 	      .attr("border-collapse","collapse")
 	     .append("tr")
-	      .style("height","30px")
+	     .style("width", data.chart.width-legendWidth)
+	     .style("height","30px")
 	     .selectAll("th")
 	     .data(tableColumns).enter()
 	     .append("th")
@@ -2161,6 +2165,7 @@ function renderWordCloud(chartConf){
 	.data(currentTableData)
 	     .enter()
 	     .append("tr")
+	     .style("width", data.chart.width-legendWidth)
 	     .style("background-color",function(d,i){
 	    	 if(i%2==1)return "lightgray";
 	     })
@@ -2960,11 +2965,16 @@ function renderChordChart(jsonData)
 	
 	var svg = d3.select("#chartD3").append("div")
 	 			.attr("class", "chart")	 			
-	 			.style	("width", width)
-	 			.style("height", Number(height))	
+	 			.style	("width", "100%")
+	 			.style("height", "100%")
+	 			.attr("align","center")
 				.append("svg:svg")
 				.attr("width", width)
 				.attr("height", Number(height)+spaceForLabels)	
+				.attr("viewBox","-100 -100 "+Number(width)*1.2+" "+ Number(height)*1.2)
+				.attr( "preserveAspectRatio","xMidYMid meet")
+				//.attr( "preserveAspectRatio","xMinYMin meet")
+				//.attr( "preserveAspectRatio","xMaxYMax meet")
 				.style("background-color",jsonData.chart.style.backgroundColor)	
 				.append("svg:g")
 				.attr("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
