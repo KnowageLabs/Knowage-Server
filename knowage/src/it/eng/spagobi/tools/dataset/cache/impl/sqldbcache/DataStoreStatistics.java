@@ -111,7 +111,20 @@ public class DataStoreStatistics {
 					
 					BigDecimal fieldMemorySize = null;
 					if(fieldTypeName.contains("String") && extimateVarCharMemorySize) {
-						String value = (String)record.getFieldAt(i).getValue();
+						String value = "";
+						
+						if(!(record.getFieldAt(i).getValue() instanceof String)){
+							Object nonStringValue = record.getFieldAt(i).getValue();
+							if(nonStringValue!=null){
+								value = nonStringValue.toString();
+							}else{
+								value = "";
+							}
+							logger.debug("An unexpected error occured while extimating field [" + fmd.getName() + "] memory size whose type is equal to [" + fmd.getType().toString() + "]. Field forced to String");
+						}else{
+							value = (String)record.getFieldAt(i).getValue();
+						}
+						
 						int valueLength = value!=null? value.length(): 0;
 						fieldMemorySize = new BigDecimal(valueLength);
 					} else {

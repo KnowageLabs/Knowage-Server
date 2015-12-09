@@ -371,7 +371,18 @@ public class PersistedTableManager {
 					getColumnSize().remove(fieldMeta.getName());
 					getColumnSize().put(fieldMeta.getName(), lenValue);
 				}
-				insertStatement.setString(fieldIndex + 1, (String) field.getValue());
+				if(!(field.getValue() instanceof String)){
+					logger.debug("An unexpected error occured while extimating field [" + fieldMeta.getName() + "] memory size whose type is equal to [" + fieldMeta.getType().toString() + "]. Field forced to String");
+					Object nonStringValue = field.getValue();
+					if(nonStringValue!=null){
+						insertStatement.setString(fieldIndex + 1, nonStringValue.toString());
+					}else{
+						insertStatement.setString(fieldIndex + 1, "");
+					}
+				}else{
+					insertStatement.setString(fieldIndex + 1, (String) field.getValue());
+				}
+				
 			} else if (fieldMeta.getType().toString().contains("Date")) {
 				insertStatement.setDate(fieldIndex + 1, (Date) field.getValue());
 			} else if (fieldMeta.getType().toString().contains("Timestamp")) {
