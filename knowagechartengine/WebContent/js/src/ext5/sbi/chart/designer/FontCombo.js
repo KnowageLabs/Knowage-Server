@@ -25,7 +25,7 @@ Ext.define('Sbi.chart.designer.FontCombo',{
             this.inputEl.setStyle('font-family', newValue);
             
             /**
-             * @author: danristo (danilo.ristovski@mht.net)
+             * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
              */
             if (newValue=="")	// empty by style
             	this.fireEvent("fontFamilyEmpty");

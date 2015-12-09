@@ -23,7 +23,7 @@ Ext.define
 		columnWidth: 1,
 		height: 120,
 		
-		title: "Legend",
+		title: LN("sbi.chartengine.configuration.heatmap.legendPanel.title"),
 		bodyPadding: 10,
 		items: [],		
 	

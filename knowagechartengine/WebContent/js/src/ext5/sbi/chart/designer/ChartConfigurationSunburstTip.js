@@ -24,7 +24,7 @@ Ext.define
 		columnWidth: 1,
 		height: 300,
 		
-		title: LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+		title: LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 		bodyPadding: 10,
 		items: [],		
 	

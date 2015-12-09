@@ -1,9 +1,6 @@
 Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	extend : 'Sbi.chart.designer.ChartConfigurationRoot',
 	requires : [
-//	            'Sbi.chart.designer.ChartConfigurationSunburstToolbarAndTip',
-	            'Sbi.chart.designer.ChartConfigurationSunburstToolbar',
-	            'Sbi.chart.designer.ChartConfigurationSunburstTip',
 	            'Sbi.chart.designer.ChartOrientationCombo',
 	            'Sbi.chart.designer.ColorPickerContainer',
 	            'Sbi.chart.designer.FontCombo',
@@ -70,6 +67,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         this.height = {
     		xtype : 'numberfield',
+    		id: "chartHeightNumberfield", 	// added by: Danilo Ristovski (for the validation)
+    		minValue: 0,					// added by: Danilo Ristovski (for the validation)
     		width: 280,
     		emptyText: LN("sbi.chartengine.configuration.height.emptyText"),
     		bind : '{configModel.height}',
@@ -78,9 +77,10 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
         
         this.width = {
     		xtype : 'numberfield',
-    		width: 280,
-    		emptyText: LN("sbi.chartengine.configuration.width.emptyText"),
     		id: "chartWidthNumberfield",
+    		minValue: 0,					// added by: Danilo Ristovski (for the validation)
+    		width: 280,
+    		emptyText: LN("sbi.chartengine.configuration.width.emptyText"),    		
     		bind : '{configModel.width}',
     		fieldLabel : LN('sbi.chartengine.configuration.width'),
     		hidden: ChartUtils.disableChartWidth()
@@ -255,7 +255,6 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 				width: "200",
 				maxValue: '100', 	// opacity: 100%
 				minValue: '1',		// opacity: 1%
-				value: "20"			// default opacity: 20%
 			}]		                     
         });
  	    

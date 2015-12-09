@@ -24,6 +24,7 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 	},
 	
 	items : [],
+	
 	constructor: function(config) {
         this.callParent(config);
         this.viewModel = config.viewModel;
@@ -36,6 +37,15 @@ Ext.define('Sbi.chart.designer.StylePopup',{
         	var align = Ext.create('Sbi.chart.designer.FontAlignCombo',{
         		viewModel: this.viewModel,
         		bind : this.config.bindFontAlign,
+        		
+        		/**
+    			 * If this is mandatory for certain chart type, this flag ('isFontAlignMandatory' 
+    			 * boolean should be raised up. According to that we will determine if the label 
+    			 * for this GUI element should be marked with some kind of flag that will point
+    			 * to the mandatory field that is not specified.
+    			 * 
+    			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    			 */
         		fieldLabel : (globalScope.config.isFontAlignMandatory) ?  
         				LN('sbi.chartengine.configuration.title.alignment') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
         				: LN('sbi.chartengine.configuration.title.alignment'),
@@ -48,6 +58,15 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		var font = Ext.create('Sbi.chart.designer.FontCombo',{
 			viewModel: this.viewModel,
 			bind : this.config.bindFont,
+			
+			/**
+			 * If this is mandatory for certain chart type, this flag ('isFontFamilyMandatory' 
+			 * boolean should be raised up. According to that we will determine if the label 
+			 * for this GUI element should be marked with some kind of flag that will point
+			 * to the mandatory field that is not specified.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			fieldLabel : (globalScope.config.isFontFamilyMandatory) ?  
 					LN('sbi.chartengine.configuration.font') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
     				: LN('sbi.chartengine.configuration.font'),
@@ -57,6 +76,15 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		var dim = Ext.create('Sbi.chart.designer.FontDimCombo',{
         	viewModel: this.viewModel,
         	bind : this.config.bindFontDim,
+        	
+        	/**
+			 * If this is mandatory for certain chart type, this flag ('isFontSizeMandatory' 
+			 * boolean should be raised up. According to that we will determine if the label 
+			 * for this GUI element should be marked with some kind of flag that will point
+			 * to the mandatory field that is not specified.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
         	fieldLabel : (globalScope.config.isFontSizeMandatory) ?  
         			LN('sbi.chartengine.configuration.fontsize') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
     				: LN('sbi.chartengine.configuration.fontsize')
@@ -70,6 +98,15 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 		var style = Ext.create('Sbi.chart.designer.FontStyleCombo',{
         	viewModel: this.viewModel,
         	bind : this.config.bindFontStyle,
+        	
+        	/**
+			 * If this is mandatory for certain chart type, this flag ('isFontStyleMandatory' 
+			 * boolean should be raised up. According to that we will determine if the label 
+			 * for this GUI element should be marked with some kind of flag that will point
+			 * to the mandatory field that is not specified.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
         	fieldLabel : (globalScope.config.isFontStyleMandatory) ?  
         			LN('sbi.chartengine.configuration.fontstyle') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
     				: LN('sbi.chartengine.configuration.fontstyle')
@@ -81,8 +118,19 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			var borderWidth = Ext.create('Ext.form.field.Number',{
 				fieldLabel : LN('sbi.chartengine.configuration.borderwidth'),
 				viewModel: this.viewModel,
+				minValue: 0,				// added by: Danilo Ristovski (for the validation)
+				id: "borderWidthLegend",	// added by: Danilo Ristovski (for the validation)
 				bind:  this.config.bindBorderWidth,
 				emptyText: LN("sbi.chartengine.configuration.legend.borderWith.emptyText"),
+				
+				/**
+				 * If this is mandatory for certain chart type, this flag ('isBorderWidthMandatory' 
+				 * boolean should be raised up. According to that we will determine if the label 
+				 * for this GUI element should be marked with some kind of flag that will point
+				 * to the mandatory field that is not specified.
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
 	        	fieldLabel : (globalScope.config.isBorderWidthMandatory) ?  
 	        			LN('sbi.chartengine.configuration.borderwidth') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
 	    				: LN('sbi.chartengine.configuration.borderwidth')
@@ -94,6 +142,15 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			viewModel: this.viewModel,
 			fieldBind : this.config.bindColor,
 			bind : this.config.bindColor,
+			
+			/**
+			 * If this is mandatory for certain chart type, this flag ('isFontColorMandatory' 
+			 * boolean should be raised up. According to that we will determine if the label 
+			 * for this GUI element should be marked with some kind of flag that will point
+			 * to the mandatory field that is not specified.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
 			isColorMandatory: this.config.isFontColorMandatory
 		});
 		this.add(color);
@@ -102,6 +159,15 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			var bkgrColor = Ext.create('Sbi.chart.designer.ColorPickerContainer',{    		
 				viewModel: this.viewModel,
 				fieldBind : this.config.bindBackgroundColor,
+				
+				/**
+				 * If this is mandatory for certain chart type, this flag ('isBackgroundColorMandatory' 
+				 * boolean should be raised up. According to that we will determine if the label 
+				 * for this GUI element should be marked with some kind of flag that will point
+				 * to the mandatory field that is not specified.
+				 *  
+				 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
 				//customLabel : LN('sbi.chartengine.configuration.backgroundcolor'),
 	        	customLabel : (globalScope.config.isBackgroundColorMandatory) ?  
 	        			LN('sbi.chartengine.configuration.backgroundcolor') + Sbi.settings.chart.configurationStep.htmlForMandatoryFields
@@ -109,5 +175,74 @@ Ext.define('Sbi.chart.designer.StylePopup',{
 			});
 			this.add(bkgrColor);
 		}
-    }
+    },
+    
+    /**
+     * Listener that should take care of validation of the popup form that
+     * appears when clicking on the "Configure" button inside the Legend
+     * panel on the Configuration tab (previously Step 2).
+     * 
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    listeners:
+	{
+    	close: function()
+    	{
+    		if (this.getComponent("borderWidthLegend"))
+			{    			
+    			/**
+        		 * Validate the border with parameter for the Legend panel 
+        		 * (inside of the popup that appears after clicking on the
+        		 * Configure button).
+        		 */
+        		var errorMsg = "";
+        		var globalThis = this;
+        		
+        		var borderWidthLegendField = this.getComponent("borderWidthLegend");
+        		var borderWidthLegendValue = borderWidthLegendField.value;
+        		    		
+        		if ((borderWidthLegendValue || parseInt(borderWidthLegendValue)==0) && borderWidthLegendValue!=null)
+    			{
+    				if (borderWidthLegendValue < borderWidthLegendField.minValue)
+    				{					
+    					errorMsg += Sbi.locale.sobstituteParams
+    					(
+    						LN("sbi.chartengine.validation.configuration.minValueExtended"),
+    						
+    						[
+    							LN("sbi.chartengine.configuration.borderwidth"),
+    							borderWidthLegendField.minValue,
+    							LN('sbi.chartengine.configuration.legend'),
+    							LN('sbi.chartengine.configuration.stylebutton') + " button"
+    						]
+    					);
+    				}
+    			}
+        		
+        		if (errorMsg != "")
+    			{
+        			var msg = Ext.Msg.show
+        			(
+    					{						
+	    					title : LN('sbi.chartengine.validation.errormessage'),
+	    					message : errorMsg,
+	    					icon : Ext.Msg.WARNING,
+	    					closable : false,
+	    					buttons : Ext.Msg.OK,
+	    					
+	    					fn : function()
+	    					{
+	    						/**
+	    						 * Show again the initial popup (with the form)
+	    						 * so the user can correct inappropriate value
+	    						 * for the border width.
+	    						 */
+	    	                    globalThis.show();
+	    	                }
+    					}
+					);
+    			}       			
+			}    			
+    	}
+	}
 });

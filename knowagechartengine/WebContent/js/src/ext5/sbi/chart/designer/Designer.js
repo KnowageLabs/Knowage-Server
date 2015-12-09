@@ -2305,6 +2305,14 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.exactlyOne') + '<br>';
 				}
+				else if (chartType == "PARALLEL")
+				{
+					/**
+					 * PARALLEL chart needs at least two serie items.
+					 * @author: danristo (danilo.ristovski@mht.net)
+					 */
+					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
+				}
 				else
 				{
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie') + '<br>';
@@ -2335,6 +2343,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			if ((categoriesPicked== null || (Array.isArray(categoriesPicked) && categoriesPicked.length==0)) && chartType != "GAUGE") {				
 				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
 			}	
+			
 			/**
 			 * danristo (danilo.ristovski@mht.net)
 			 */
@@ -2350,6 +2359,225 @@ Ext.define('Sbi.chart.designer.Designer', {
 					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
 				}
 			}		
+				
+			var mainConfigurationPanel = this.stepsTabPanel.getComponent(1).getComponent(0);
+			
+			/**
+			 * ********************************************************************
+			 * Validate chart's height in the Generic configuration panel on Step 2
+			 * ********************************************************************
+			 */		
+			
+			var heightField = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartHeightNumberfield");
+			var heightFieldValue = heightField.value;
+			var heightViewModelValue = this.cViewModel.data.configModel.data.height;
+						
+			if ((heightFieldValue || parseInt(heightFieldValue)==0) 
+					&& heightFieldValue!="" && heightFieldValue!=null)
+			{
+				if (heightFieldValue < heightField.minValue)
+				{					
+					errorMsg += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.configuration.minValue"),
+						
+						[
+							LN("sbi.chartengine.configuration.height"),
+							heightField.minValue,
+							LN('sbi.chartengine.configuration')
+						]
+					);
+				}
+			}
+			else
+			{				
+				if (heightViewModelValue!=null && heightViewModelValue!="" 
+						&& heightViewModelValue < heightField.minValue)
+				{
+					errorMsg += Sbi.locale.sobstituteParams
+					(
+						LN("sbi.chartengine.validation.configuration.minValue"),
+						
+						[
+							LN("sbi.chartengine.configuration.height"),
+							heightField.minValue,
+							LN('sbi.chartengine.configuration')
+						]
+					);
+				}
+			}
+						
+			
+			/**
+			 * ********************************************************************
+			 * Validate chart's width in the Generic configuration panel on Step 2
+			 * ********************************************************************
+			 */
+			if (!mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield").hidden)
+			{
+				var widthField = mainConfigurationPanel.getComponent("fieldContainer1").getComponent("chartWidthNumberfield");
+				var widthFieldValue = widthField.value;
+				var widthViewModelValue = this.cViewModel.data.configModel.data.width;
+							
+				if ((widthFieldValue || parseInt(widthFieldValue)==0) 
+						&& widthFieldValue!="" && widthFieldValue!=null)
+				{
+					if (widthFieldValue < widthField.minValue)
+					{					
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.width"),
+								widthField.minValue,
+								LN('sbi.chartengine.configuration')
+							]
+						);
+					}
+				}
+				else
+				{				
+					if (widthViewModelValue!=null && widthViewModelValue!="" 
+							&& widthViewModelValue < widthField.minValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.width"),
+								widthField.minValue,
+								LN('sbi.chartengine.configuration')
+							]
+						);
+					}
+				}
+			}			
+
+			/**
+			 * ************************************************************
+			 * Validate chart's opacity on mouse over (Sunburst) in the 
+			 * Generic configuration panel on Step 2
+			 * ************************************************************
+			 */
+			if (!mainConfigurationPanel.getComponent("opacityMouseOver").hidden)
+			{				
+				var opacityOnMouseOverField = mainConfigurationPanel.getComponent("opacityMouseOver").items.items[0];			
+				var opacityOnMouseOverValue = opacityOnMouseOverField.value;
+				var opacityOnMouseOverViewModel = this.cViewModel.data.configModel.data.opacMouseOver;
+												
+				if ((opacityOnMouseOverValue || parseInt(opacityOnMouseOverValue)==0) 
+						&& opacityOnMouseOverValue!="" && opacityOnMouseOverValue!=null)
+				{
+					if (parseInt(opacityOnMouseOverValue) < opacityOnMouseOverField.minValue)
+					{					
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
+								opacityOnMouseOverField.minValue,
+								LN('sbi.chartengine.configuration')
+							]
+						);
+					}
+					else if (parseInt(opacityOnMouseOverValue) > opacityOnMouseOverField.maxValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
+								opacityOnMouseOverField.maxValue,
+								LN('sbi.chartengine.configuration')
+							]
+						);
+					}
+				}
+				else
+				{		
+					if (opacityOnMouseOverViewModel!=null && opacityOnMouseOverViewModel!="" 
+							&& opacityOnMouseOverViewModel < opacityOnMouseOverField.minValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
+								opacityOnMouseOverField.minValue,
+								LN('sbi.chartengine.configuration')
+							]
+						);
+					}
+					else if (opacityOnMouseOverViewModel!=null && opacityOnMouseOverViewModel!="" 
+						 		&& opacityOnMouseOverViewModel > opacityOnMouseOverField.maxValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.maxValue"),
+							
+							[
+								LN("sbi.chartengine.configuration.sunburst.opacityMouseOver"),
+								opacityOnMouseOverField.maxValue,
+								LN('sbi.chartengine.configuration')
+							]
+						);
+					}
+				}
+			}			
+			
+			/**
+			 * ********************************************************************
+			 * Validate border width for the Legend panel on Step 2
+			 * ********************************************************************
+			 */
+			if (!Ext.getCmp("chartLegend").hidden)
+			{
+				var borderWidthLegendField = Ext.getCmp("borderWidthLegend");
+				var borderWidthLegendValue = borderWidthLegendField.value;
+				var borderWidthViewModelValue = this.cViewModel.data.configModel.data.legendBorderWidth;
+				
+				if ((borderWidthLegendValue || parseInt(borderWidthLegendValue)==0) 
+						&& borderWidthLegendValue!="" && borderWidthLegendValue!=null)
+				{
+					if (borderWidthLegendValue < borderWidthLegendField.minValue)
+					{					
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN("sbi.chartengine.configuration.borderwidth"),
+								borderWidthLegendField.minValue,
+								LN('sbi.chartengine.configuration.legend'),
+								LN('sbi.chartengine.configuration.stylebutton') + " button"
+							]
+						);
+					}
+				}
+				else
+				{
+					if (borderWidthViewModelValue!=null && borderWidthViewModelValue!="" 
+							&& borderWidthViewModelValue < borderWidthLegendField.minValue)
+					{
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							
+							[
+								LN("sbi.chartengine.configuration.borderwidth"),
+								borderWidthLegendField.minValue,
+								LN('sbi.chartengine.configuration.legend'),
+								LN('sbi.chartengine.configuration.stylebutton') + " button"
+							]
+						);
+					}
+				}
+			}						
 			
 			/**
 			 * only numerical values (fields) from panels 
@@ -2679,15 +2907,15 @@ Ext.define('Sbi.chart.designer.Designer', {
 				var parallelTooltipPaddingCModel = chartViewModelData.parallelTooltipPadding;
 				var parallelTooltipBorderCModel = chartViewModelData.parallelTooltipBorder;
 				var parallelTooltipBorderRadiusCModel = chartViewModelData.parallelTooltipBorderRadius;
-				// == Legend panel : Title button ==
+				// == Legend title configuration panel ==
 				var parallelLegendTitleFontFamilyCModel = chartViewModelData.parallelLegendTitleFontFamily;
 				var parallelLegendTitleFontSizeCModel = chartViewModelData.parallelLegendTitleFontSize;
 				var parallelLegendTitleFontStyleCModel = chartViewModelData.parallelLegendTitleFontWeight;				
-				// == Legend panel : Element button ==
+				//  == Legend element configuration panel ==
 				var parallelLegendElementFontFamilyCModel = chartViewModelData.parallelLegendElementFontFamily;
 				var parallelLegendElementFontSizeCModel = chartViewModelData.parallelLegendElementFontSize;
 				var parallelLegendElementFontStyleCModel = chartViewModelData.parallelLegendElementFontWeight;
-					
+				
 				/**
 				 * STEP 2 -> Limit panel
 				 */
@@ -3220,51 +3448,70 @@ Ext.define('Sbi.chart.designer.Designer', {
 				(parallelLegendTitleFontFamilyCModel=="" || parallelLegendTitleFontFamilyCModel==null || parallelLegendTitleFontFamilyCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
-								LN("sbi.chartengine.configuration.parallel.legend.title.popupTitle")
+								LN("sbi.chartengine.configuration.parallel.legendTitlePanel.title")
 							]
 						) : errorMsg;
 							
 				(parallelLegendTitleFontSizeCModel=="" || parallelLegendTitleFontSizeCModel==null || parallelLegendTitleFontSizeCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
-								LN("sbi.chartengine.configuration.parallel.legend.title.popupTitle")
+								LN("sbi.chartengine.configuration.parallel.legendTitlePanel.title")
 							]
 						) : errorMsg;	
+				
+				(parallelLegendTitleFontStyleCModel=="" || parallelLegendTitleFontStyleCModel==null || parallelLegendTitleFontStyleCModel==undefined) ?
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontstyle'),
+								LN("sbi.chartengine.configuration.parallel.legendTitlePanel.title")
+							]
+						) : errorMsg;							
 			
 				(parallelLegendElementFontFamilyCModel=="" || parallelLegendElementFontFamilyCModel==null || parallelLegendElementFontFamilyCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
-								LN("sbi.chartengine.configuration.parallel.legend.element.popupTitle")
+								LN("sbi.chartengine.configuration.parallel.legendElementPanel.title")
 							]
 						) : errorMsg;
 				
 				(parallelLegendElementFontSizeCModel=="" || parallelLegendElementFontSizeCModel==null || parallelLegendElementFontSizeCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.parallel.legend.title.panelTitle"),
-								LN("sbi.chartengine.configuration.parallel.legend.element.popupTitle")
+								LN("sbi.chartengine.configuration.parallel.legendElementPanel.title")
 							]
 						) : errorMsg;				
 				
+				(parallelLegendElementFontStyleCModel=="" || parallelLegendElementFontStyleCModel==null || parallelLegendElementFontStyleCModel==undefined) ?
+						errorMsg += Sbi.locale.sobstituteParams
+						(
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
+							
+							[
+								LN('sbi.chartengine.configuration.fontstyle'),
+								LN("sbi.chartengine.configuration.parallel.legendElementPanel.title")
+							]
+						) : errorMsg;			
+							
+							
 				/**
 				 * STEP 2 -> Palette panel
 				 */
@@ -3320,7 +3567,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.position'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						)  : errorMsg;	
@@ -3335,7 +3582,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3352,7 +3599,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
 								checkParamValuesForCharts.sunburst.toolbar.spacing.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3366,7 +3613,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.spacing'),
 								checkParamValuesForCharts.sunburst.toolbar.spacing.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3383,7 +3630,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3400,7 +3647,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
 								checkParamValuesForCharts.sunburst.toolbar.tail.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3414,7 +3661,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.tail'),
 								checkParamValuesForCharts.sunburst.toolbar.tail.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3431,7 +3678,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3448,7 +3695,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
 								checkParamValuesForCharts.sunburst.toolbar.height.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3462,7 +3709,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.height'),
 								checkParamValuesForCharts.sunburst.toolbar.height.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3479,7 +3726,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3496,7 +3743,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
 								checkParamValuesForCharts.sunburst.toolbar.width.minValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3510,7 +3757,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.width'),
 								checkParamValuesForCharts.sunburst.toolbar.width.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3524,7 +3771,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.toolbar.percentageColor'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
@@ -3538,7 +3785,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
@@ -3550,7 +3797,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.fontstyle'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //											LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
@@ -3562,7 +3809,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.sunburst.toolbarConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.toolbarConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
@@ -3578,7 +3825,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.fontstyle'),
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //														LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						) : errorMsg;
@@ -3590,7 +3837,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.fontColor'),
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;
@@ -3602,7 +3849,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;
@@ -3614,7 +3861,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;
@@ -3629,7 +3876,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.width'),
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						);
@@ -3646,7 +3893,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.width'),
 								checkParamValuesForCharts.sunburst.tip.width.minValue,
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3660,7 +3907,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.width'),
 								checkParamValuesForCharts.sunburst.tip.width.maxValue,
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.toolbarPopup.title")
 							]
 						);
@@ -3674,7 +3921,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 							
 							[
 								LN('sbi.chartengine.configuration.sunburst.tip.text'),
-								LN("sbi.chartengine.configuration.sunburst.tipConfig.title"),
+								LN("sbi.chartengine.configuration.sunburst.tipConfigurationPanel.title"),
 //								LN("sbi.chartengine.configuration.sunburst.toolbarAndTip.tipPopup.title")
 							]
 						) : errorMsg;			
@@ -3967,12 +4214,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 				(heatmapLegendVertAlignCModel=="" || heatmapLegendVertAlignCModel==null || heatmapLegendVertAlignCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
-								LN('sbi.chartengine.configuration.alignment'),
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN('sbi.chartengine.configuration.title.verticalAlignCombo'),
+								LN("sbi.chartengine.configuration.heatmap.legendPanel.title")
 							]
 						) : errorMsg;	
 				
@@ -3984,12 +4230,11 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.heatmap.symbolHeight'),
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN("sbi.chartengine.configuration.heatmap.legendPanel.title")
 							]
 						);
 					}						
@@ -4000,13 +4245,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{						
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.minValueExtended"),
+							LN("sbi.chartengine.validation.configuration.minValue"),
 							
 							[
 								LN('sbi.chartengine.configuration.heatmap.symbolHeight'),
 								checkParamValuesForCharts.heatmap.legend.symbolHeight.minValue,
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN("sbi.chartengine.configuration.heatmap.legendPanel.title")
 							]
 						);
 					}
@@ -4014,13 +4258,12 @@ Ext.define('Sbi.chart.designer.Designer', {
 					{
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.maxValueExtended"),
+							LN("sbi.chartengine.validation.configuration.maxValue"),
 							
 							[
 								LN('sbi.chartengine.configuration.heatmap.symbolHeight'),
 								checkParamValuesForCharts.heatmap.legend.symbolHeight.maxValue,
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.labelLegend")
+								LN("sbi.chartengine.configuration.heatmap.legendPanel.title")
 							]
 						);
 					}
@@ -4029,48 +4272,44 @@ Ext.define('Sbi.chart.designer.Designer', {
 				(heatmapTooltipFontFamilyCModel=="" || heatmapTooltipFontFamilyCModel==null || heatmapTooltipFontFamilyCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.font'),
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
 							]
 						) : errorMsg;
 				
 				(heatmapTooltipFontSizeCModel=="" ||  heatmapTooltipFontSizeCModel==null ||  heatmapTooltipFontSizeCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.fontsize'),
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
 							]
 						) : errorMsg;
 				
 				(heatmapTooltipFontColorCModel=="transparent" || heatmapTooltipFontColorCModel=="" || heatmapTooltipFontColorCModel==null || heatmapTooltipFontColorCModel==undefined) ?
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.color'),
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
 							]
 						) : errorMsg;
 							
 				(heatmapTooltipFontStyleCModel=="" ||  heatmapTooltipFontStyleCModel==null ||  heatmapTooltipFontStyleCModel==undefined) ? 
 						errorMsg += Sbi.locale.sobstituteParams
 						(
-							LN("sbi.chartengine.validation.configuration.parameterNotSpecifiedExtended"),
+							LN("sbi.chartengine.validation.configuration.parameterNotSpecified"),
 							
 							[
 								LN('sbi.chartengine.configuration.fontstyle'),
-								LN("sbi.chartengine.configuration.heatmap.panelTitle"),
-								LN("sbi.chartengine.configuration.heatmap.tooltipLegend")
+								LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title")
 							]
 						) : errorMsg;
 			}

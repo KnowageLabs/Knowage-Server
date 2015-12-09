@@ -96,8 +96,8 @@ Ext.define
 		 			[
 						{
 							xtype: 'label',
-//							text: Sbi.chart.designer.Designer.htmlForMandatoryFields + LN("sbi.chartengine.configuration.heatmap.labelLegend"),
-							html: LN("sbi.chartengine.configuration.heatmap.labelLegend") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
+//							text: Sbi.chart.designer.Designer.htmlForMandatoryFields + LN("sbi.chartengine.configuration.heatmap.legendPanel.title"),
+							html: LN("sbi.chartengine.configuration.heatmap.legendPanel.title") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
 							padding: "3 0 0 0"
 							//     margin: '0 0 0 10'
 						},
@@ -129,8 +129,8 @@ Ext.define
 					[
 						{
 							xtype: 'label',
-						//	text: Sbi.chart.designer.Designer.htmlForMandatoryFields + LN("sbi.chartengine.configuration.heatmap.tooltipLegend"),
-							html: LN("sbi.chartengine.configuration.heatmap.tooltipLegend") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
+						//	text: Sbi.chart.designer.Designer.htmlForMandatoryFields + LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title"),
+							html: LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title") + Sbi.settings.chart.configurationStep.htmlForMandatoryFields + ":",
 							padding: "3 0 0 0"
 							//     margin: '0 0 0 10'
 						},

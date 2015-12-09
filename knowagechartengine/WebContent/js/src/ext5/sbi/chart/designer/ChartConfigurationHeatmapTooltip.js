@@ -23,7 +23,7 @@ Ext.define
 		columnWidth: 1,
 		height: 170,
 		
-		title: "Tooltip",
+		title: LN("sbi.chartengine.configuration.heatmap.tooltipPanel.title"),
 		bodyPadding: 10,
 		items: [],		
 	

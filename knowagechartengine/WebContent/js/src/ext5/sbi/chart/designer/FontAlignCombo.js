@@ -22,15 +22,12 @@ Ext.define('Sbi.chart.designer.FontAlignCombo', {
     emptyText: LN("sbi.chartengine.configuration.alignment.emptyText"),
     
     /**
-     * danristo
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
     listeners: 
 	{
     	change: function(sender, newValue, oldValue, opts)
     	{
-    		/**
-             * @author: danristo (danilo.ristovski@mht.net)
-             */
             if (newValue=="")	// empty by style
             	this.fireEvent("fontAlignEmpty");
             else

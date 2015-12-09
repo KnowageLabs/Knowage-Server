@@ -9,7 +9,7 @@ Ext.define
 		columnWidth: 1,
 		height: 130,
 		
-		title: "Legend title configuration",	// TODO: LN()
+		title: LN("sbi.chartengine.configuration.parallel.legendTitlePanel.title"),
 		bodyPadding: 10,
 		items: [],
 	
