@@ -13,6 +13,7 @@
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- Styles -->
 <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css">
+<link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css">
 <!-- Styles -->
 <script type="text/javascript" src=" "></script>
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/modalitiesCheck.js"></script>
@@ -25,9 +26,9 @@
 	<angular_2_col>
 		<left-col>
 		<div class="leftBox">
-	<md-toolbar class="md-blue minihead" >
-					<div class="md-toolbar-tools">
-						<div>{{translate.load("sbi.modalities.check.title.constraints");}}</div>
+	<md-toolbar class="header" >
+					<div class="md-toolbar-tools" >
+						<div style="font-size: 24px;">{{translate.load("sbi.modalities.check.title.constraints");}}</div>
 						<md-button aria-label="create_button"
 							class="md-fab md-ExtraMini addButton"
 							style="position:absolute; right:11px; top:0px;"
@@ -44,8 +45,8 @@
 						</md-toolbar>	
 		
 	<md-content style="display:inline !important;">
-    <md-tabs md-dynamic-height>
-      <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}'>
+    <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
+      <md-tab label='{{translate.load("sbi.modalities.check.title.configurable");}}' ng-click="clearRight(selectedTab)">
         <md-content class="md-padding" style="background-color: rgb(236, 236, 236); height:80%;" class="ToolbarBox miniToolbar noBorder">
           
         <angular-table 
@@ -69,7 +70,7 @@
           
         </md-content>
       </md-tab>
-      <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}'>
+      <md-tab label='{{translate.load("sbi.modalities.check.title.predefined");}}' ng-click="clearRight(selectedTab)">
         <md-content class="md-padding" style="background-color: rgb(236, 236, 236);height:80%;" class="ToolbarBox miniToolbar noBorder leftListbox">
          
          <angular-table 
@@ -77,9 +78,9 @@
 						id="predefined_id"
 						ng-model="PredefinedList"
 						columns ='[
-							{"label":"LABEL","name":"label","size":"30px"},
-							{"label":"NAME","name":"name","size":"30px"},
-							{"label":"CHECK TYPE","name":"valueTypeCd","size":"30px"}
+							{"label":"LABEL","name":"label","size":"50px"},
+							{"label":"NAME","name":"name","size":"50px"},
+							{"label":"CHECK TYPE","name":"valueTypeCd","size":"85px"}
 							 ]'
 							 
 						show-search-bar = false
@@ -100,16 +101,16 @@
 		class="detailBody md-whiteframe-z1">
 		
 			<div ng-show="showme">
-				<md-toolbar class="md-blue minihead"> 
+				<md-toolbar class="header"> 
 					<div class="md-toolbar-tools h100">
 					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div>
 					<div style="position: absolute; right: 0px" class="h100">
 						<md-button type="button" tabindex="-1" aria-label="cancel"
-							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
+							class="md-raised md-ExtraMini rightHeaderButtonBackground" style=" margin-top: 2px;"
 							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
 						</md-button>
 						<md-button  type="submit"
-							aria-label="save_constraint" class="md-raised md-ExtraMini"
+							aria-label="save_constraint" class="md-raised md-ExtraMini rightHeaderButtonBackground"
 							style=" margin-top: 2px;"
 							ng-disabled="!attributeForm.$valid"
 							>
@@ -198,20 +199,7 @@
 				</div>
 				
 				<div ng-show="showpred">
-				
-				<md-toolbar class="md-blue minihead"> 
-					<div class="md-toolbar-tools h100">
-					<div style="text-align: center; font-size: 24px;">{{translate.load("sbi.modalities.check.title.details");}}</div>
-					<div style="position: absolute; right: 0px" class="h100">
-						<md-button type="button" tabindex="-1" aria-label="cancel"
-							class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-							ng-click="cancel()">{{translate.load("sbi.browser.defaultRole.cancel");}}
-						</md-button>
-						
-					</div>
-				</div>
-				</md-toolbar>
-				
+			
 			<md-content flex style="margin-left:20px;" class="ToolbarBox miniToolbar noBorder">
 					<div layout="row" layout-wrap>
 						<div flex=100>

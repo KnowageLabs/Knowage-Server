@@ -1,5 +1,6 @@
 package it.eng.spagobi.api.v2;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
@@ -81,7 +83,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public List<Check> insertCheck(@Valid Check body) {
+	public Response insertCheck(@Valid Check body) {
 
 		ICheckDAO checksDao = null;
 		Check check = body;
@@ -100,7 +102,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.insertCheck(check);
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
-			return checksDao.loadCustomChecks();
+			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
@@ -111,7 +113,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public List<Check> updateCheck(@PathParam("id") Integer id, @Valid Check body) {
+	public Response updateCheck(@PathParam("id") Integer id, @Valid Check body) {
 
 		ICheckDAO checksDao = null;
 		Check check = body;
@@ -131,7 +133,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.modifyCheck(check);
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
-			return checksDao.loadCustomChecks();
+			return Response.created(new URI("1.0/domains/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource" + id, e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
@@ -141,7 +143,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.CONTSTRAINT_MANAGEMENT })
-	public List<Check> deleteCheck(@PathParam("id") Integer id) {
+	public Response deleteCheck(@PathParam("id") Integer id) {
 
 		ICheckDAO checksDao = null;
 
@@ -151,7 +153,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.eraseCheck(check);
-			return checksDao.loadCustomChecks();
+			return Response.ok().build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource" + id, e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);

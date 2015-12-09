@@ -1,20 +1,20 @@
-var app=angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"]);
-app.controller("ModalitiesCheckController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast",ModalitiesCheckFunction]);
-function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast){
+var app = angular.module("ModalitiesCheckModule",["ngMaterial","angular_list","angular_table","sbiModule","angular_2_col"]);
+app.controller("ModalitiesCheckController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout",ModalitiesCheckFunction]);
+function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout){
 	
 	//VARIABLES
 	
 	$scope.showme = false; // flag for showing right side 
-	$scope.showpred = false;
-	$scope.additionalField= false;
-	$scope.dirtyForm=false; // flag to check for modification
-	$scope.translate=sbiModule_translate;
-	$scope.SelectedConstraint={}; // main item
-	$scope.PredefinedItem={};
-	$scope.PredefinedList =[]; // array that hold predefined list
-	$scope.label="";
-	$scope.ItemList=[]; // array that hold custom list
-	$scope.listType=[]; // array that hold dropdown list from domain
+	$scope.showpred = false; // flag to show read only predefined details
+	$scope.additionalField = false;
+	$scope.dirtyForm = false; // flag to check for modification
+	$scope.translate = sbiModule_translate;
+	$scope.SelectedConstraint = {}; // main item
+	$scope.PredefinedItem = {}; // predefined item
+	$scope.PredefinedList = []; // array that hold predefined list
+	$scope.label = "";
+	$scope.ItemList = []; // array that hold custom list
+	$scope.listType = []; // array that hold dropdown list from domain
 	$scope.showActionOK = function(msg) {
 		  var toast = $mdToast.simple() 
 		  .content(msg)
@@ -61,16 +61,40 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	 
 	//FUNCTIONS	
 		 
-	angular.element(document).ready(function () {
+	angular.element(document).ready(function () { // on page load function
 				$scope.getPredefined();
 				$scope.getCustom();
 				$scope.getDomainType();
 		    });
-	$scope.setDirty=function(){
+	
+	$scope.setDirty=function(){ 
 		  $scope.dirtyForm=true;
 	}
-
-	$scope.loadConstraints=function(item){  // this function is called when item is loaded on right side
+	
+	$scope.clearRight=function(index){
+		 if($scope.dirtyForm){
+			   $mdDialog.show($scope.confirm).then(function(){
+				$scope.dirtyForm=false;   
+				$scope.showme = false;
+				$scope.showpred = false;
+			           
+			   },function(){
+			    
+				   $scope.showme = false;
+				   $scope.showpred = false;
+			   });
+			   
+			  }else{
+			 
+				  $scope.showme = false;
+				  $scope.showpred = false;
+			  }
+		
+		
+		
+	}
+	
+	$scope.loadConstraints=function(item){  // this function is called when item from custom table is clicked
 		
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
@@ -104,16 +128,13 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	}
 	
 	
-	$scope.loadPredefined=function(item){  // this function is called when item is loaded on right side
-		console.log($scope.showpred);
+	$scope.loadPredefined=function(item){  // this function is called when item from predefined table is clicked
 		$scope.showme = false;
 		$scope.PredefinedItem=item;
 		$scope.showpred=true;
-		console.log($scope.showpred);
 	} 	                
 	
 	$scope.createConstraints =function(){ // this function is called when clicking on plus button
-		
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
@@ -133,8 +154,6 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 			  }
 	}
 	
-	
-	
 	$scope.saveConstraints= function(){  // this function is called when clicking on save button
 		
 		if($scope.SelectedConstraint.hasOwnProperty("checkId")){ // if item already exists do update PUT
@@ -146,12 +165,14 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
-							$scope.ItemList=data;
-							$scope.showActionOK("Item updated successfully");
-							$scope.showme = false;
-							$scope.dirtyForm=false;
-							
-							
+							$scope.ItemList=[];
+							$timeout(function(){								
+								$scope.getCustom();
+							}, 1000);
+							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
+							$scope.SelectedConstraint={};
+							$scope.showme=false;
+							$scope.dirtyForm=false;	
 						}
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -167,11 +188,14 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
-							$scope.ItemList=data;
-							$scope.showActionOK("Item created successfully");
-							$scope.showme = false;
+							$scope.ItemList=[];
+							$timeout(function(){								
+								$scope.getCustom();
+							}, 1000);
+							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
+							$scope.SelectedConstraint={};
+							$scope.showme=false;
 							$scope.dirtyForm=false;
-							
 						}
 					}).error(function(data, status, headers, config) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -229,7 +253,6 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.getDomainType = function(){ // service that gets domain types for dropdown GET
 		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=CHECK").success(
 				function(data, status, headers, config) {
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
@@ -249,10 +272,14 @@ function ModalitiesCheckFunction(sbiModule_translate, sbiModule_restServices, $s
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						$scope.ItemList=data;
-						$scope.showActionOK("Item deleted successfully");
-						$scope.showme = false;
-						
+						$scope.ItemList=[];
+						$timeout(function(){								
+							$scope.getCustom();
+						}, 1000);
+						$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.deleted"));
+						$scope.SelectedConstraint={};
+						$scope.showme=false;
+						$scope.dirtyForm=false;
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
