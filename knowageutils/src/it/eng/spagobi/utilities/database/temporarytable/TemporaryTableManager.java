@@ -6,7 +6,6 @@
 package it.eng.spagobi.utilities.database.temporarytable;
 
 import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
@@ -121,6 +120,11 @@ public class TemporaryTableManager {
 	// }
 
 	public static IDataSetTableDescriptor createTable(List<String> fields, String sqlStatement, String tableName, IDataSource dataSource) throws Exception {
+		return createTable(fields, sqlStatement, tableName, dataSource, -1); // queryTimeout = -1 -> NO TIMEOUT
+	}
+
+	public static IDataSetTableDescriptor createTable(List<String> fields, String sqlStatement, String tableName, IDataSource dataSource, int queryTimeout)
+			throws Exception {
 
 		logger.debug("IN");
 		Assert.assertNotNull(sqlStatement, "SQL statement cannot be null");
@@ -139,7 +143,7 @@ public class TemporaryTableManager {
 		if (!tables.containsKey(tableName)) {
 			dropTableIfExists(tableName, dataSource);
 			logger.debug("Table [" + tableName + "] must be created");
-			createTableInternal(sqlStatement, tableName, dataSource);
+			createTableInternal(sqlStatement, tableName, dataSource, queryTimeout);
 			logger.debug("Table [" + tableName + "] created successfully");
 			setLastDataSetSignature(tableName, sqlStatement);
 		}
@@ -150,7 +154,7 @@ public class TemporaryTableManager {
 		// so we check if it exists and in this case we re-create it...
 		if (!checkTableExistence(tableName, dataSource)) {
 			logger.debug("Table [" + tableName + "] must be created");
-			createTableInternal(sqlStatement, tableName, dataSource);
+			createTableInternal(sqlStatement, tableName, dataSource, queryTimeout);
 			logger.debug("Table [" + tableName + "] created successfully");
 		}
 
@@ -346,13 +350,13 @@ public class TemporaryTableManager {
 		return toReturn;
 	}
 
-	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource) throws Exception {
+	private static void createTableInternal(String baseQuery, String tableName, IDataSource dataSource, int queryTimeout) throws Exception {
 		logger.debug("IN");
 		String dialect = dataSource.getHibDialectClass().toUpperCase();
 		if (dialect.contains("HSQL")) {
 			// command in SELECT .... INTO table_name FROM ....
 			String sql = "SELECT * INTO " + tableName + " FROM ( " + baseQuery + " ) T ";
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 		} else if (dialect.contains("SQLSERVER")) {
 			// command in SELECT .... INTO table_name FROM ....
 
@@ -367,32 +371,32 @@ public class TemporaryTableManager {
 
 			String sql = "select * " + "into " + tableName + " " + "from " + "( " + baseQuery + " ) aaa";
 
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 		} else if (dialect.contains("TERADATA")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
 			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 		} else if (dialect.contains("DB2")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH NO DATA
 			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH NO DATA";
 			sql = addTablespace(dialect, sql);
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 			// command INSERT INTO table_name SELECT ....
 			sql = "INSERT INTO " + tableName + " " + baseQuery;
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 		} else if (dialect.contains("VOLTDB")) {
 			// command CREATE TABLE table_name AS ( SELECT .... ) WITH DATA
 			String sql = "CREATE TABLE " + tableName + " AS ( " + baseQuery + " ) WITH DATA";
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 			// Actually, no data are inserted...
 			// command INSERT INTO table_name SELECT ....
 			sql = "INSERT INTO " + tableName + " " + baseQuery;
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 		} else {
 			// command CREATE TABLE table_name AS SELECT ....
 			String sql = "CREATE TABLE " + tableName + " AS " + baseQuery;
 			sql = addTablespace(dialect, sql);
-			executeStatement(sql, dataSource);
+			executeStatement(sql, dataSource, queryTimeout);
 		}
 		logger.debug("OUT");
 	}
@@ -478,6 +482,10 @@ public class TemporaryTableManager {
 	}
 
 	private static void executeStatement(String sql, IDataSource dataSource) throws Exception {
+		executeStatement(sql, dataSource, -1);
+	}
+
+	private static void executeStatement(String sql, IDataSource dataSource, int queryTimeout) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
 		String dialect = dataSource.getHibDialectClass();
@@ -487,7 +495,9 @@ public class TemporaryTableManager {
 				connection.setAutoCommit(false);
 			}
 			Statement stmt = connection.createStatement();
-
+			if (queryTimeout > 0) {
+				stmt.setQueryTimeout(queryTimeout);
+			}
 
 			logger.debug("Executing sql " + sql);
 			stmt.execute(sql);
