@@ -5,7 +5,8 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.importexport;
 
-iimport it.eng.qbe.dataset.QbeDataSet;
+import it.eng.qbe.dataset.FederatedDataSet;
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -69,6 +70,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.kpi.alarm.bo.Alarm;
 import it.eng.spagobi.kpi.alarm.bo.AlarmContact;
 import it.eng.spagobi.kpi.alarm.dao.ISbiAlarmDAO;
@@ -143,6 +145,7 @@ import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
@@ -423,11 +426,12 @@ public class ExporterMetadata {
 	 *             the EMF user error
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
 	 */
-	public void insertDataSet(IDataSet dataSet, Session session, boolean recalculateId) throws EMFUserError {
+	public SbiDataSet insertDataSet(IDataSet dataSet, Session session, boolean recalculateId) throws EMFUserError {
 		logger.debug("IN");
 		Transaction tx = null;
 		Transaction tx2 = null;
 		Transaction tx3 = null;
+		SbiDataSet sbiDataSet = null;
 
 		try {
 			// check if it's not already present a dataset with id
@@ -441,7 +445,7 @@ public class ExporterMetadata {
 			List hibList = hibQuery.list();
 			if (!hibList.isEmpty()) {
 				logger.debug("dataset with id " + dataSet.getId() + " already inserted");
-				return;
+				return null;
 			}
 
 			if (dataSet != null) {
@@ -457,7 +461,7 @@ public class ExporterMetadata {
 					compositeKey.setOrganization(dataSet.getOrganization());
 				}
 
-				SbiDataSet sbiDataSet = new SbiDataSet(compositeKey);
+				sbiDataSet = new SbiDataSet(compositeKey);
 
 				SbiDomains transformer = null;
 				if (dataSet.getTransformerId() != null) {
@@ -520,6 +524,18 @@ public class ExporterMetadata {
 				sbiDataSet.setParameters(dataSet.getParameters());
 				sbiDataSet.setDsMetadata(dataSet.getDsMetadata());
 
+				if (dataSet instanceof VersionedDataSet) {
+					VersionedDataSet versionedDataset = (VersionedDataSet) dataSet;
+
+					IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
+
+					if (wrappedDataset instanceof FederatedDataSet) {
+						FederationDefinition fd = ((FederatedDataSet) wrappedDataset).getFederation();
+						SbiFederationDefinition sbiFd = (SbiFederationDefinition) session.load(SbiFederationDefinition.class, fd.getFederation_id());
+						sbiDataSet.setFederation(sbiFd);
+					}
+				}
+
 				sbiDataSet.setPublicDS(dataSet.isPublic());
 				sbiDataSet.setOwner(dataSet.getOwner());
 
@@ -533,19 +549,21 @@ public class ExporterMetadata {
 				if (dataset instanceof QbeDataSet) {
 					IDataSource dataSource = ((QbeDataSet) dataset).getDataSource();
 					this.insertDataSource(dataSource, session);
+
 					String datamart = ((QbeDataSet) dataset).getDatamarts();
+					if (datamart != null) {
+						IMetaModelsDAO modelsDAO = DAOFactory.getMetaModelsDAO();
+						MetaModel model = modelsDAO.loadMetaModelByName(datamart);
 
-					IMetaModelsDAO modelsDAO = DAOFactory.getMetaModelsDAO();
-					MetaModel model = modelsDAO.loadMetaModelByName(datamart);
-
-					if (model != null) {
-						Content content = modelsDAO.loadActiveMetaModelContentById(model.getId());
-						boolean inserted = this.insertMetaModel(model, session);
-						if (inserted) {
-							this.insertMetaModelContent(model, content, session);
+						if (model != null) {
+							Content content = modelsDAO.loadActiveMetaModelContentById(model.getId());
+							boolean inserted = this.insertMetaModel(model, session);
+							if (inserted) {
+								this.insertMetaModelContent(model, content, session);
+							}
+						} else {
+							logger.debug("Could not ins datamart " + datamart);
 						}
-					} else {
-						logger.debug("Could not ins datamart " + datamart);
 					}
 
 				} else if (dataset instanceof JDBCDataSet) {
@@ -556,6 +574,59 @@ public class ExporterMetadata {
 			}
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the New Data Set ", he);
+			if (tx != null)
+				tx.rollback();
+			if (tx2 != null)
+				tx2.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			// if (session!=null){
+			// if (session.isOpen()) session.close();
+			logger.debug("OUT");
+		}
+
+		return sbiDataSet;
+	}
+
+	/**
+	 * Insert Federation if not already present
+	 * 
+	 * @param artifact
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	public boolean insertFederation(FederationDefinition federationDefinition, Session session, Set<SbiDataSet> sbiSourceDatasets) throws EMFUserError {
+		logger.debug("IN");
+		Transaction tx = null;
+		Transaction tx2 = null;
+		Transaction tx3 = null;
+
+		try {
+			// check if it's not already present a artifact with id
+			Query hibQuery = session.createQuery("from SbiFederationDefinition sb where sb.federation_id = ? ");
+			hibQuery.setInteger(0, federationDefinition.getFederation_id());
+			List hibList = hibQuery.list();
+			if (!hibList.isEmpty()) {
+				logger.debug("Federation with id " + federationDefinition.getFederation_id() + " already inserted");
+				return false;
+			}
+
+			SbiFederationDefinition sbiFedDef = new SbiFederationDefinition();
+			sbiFedDef.setLabel(federationDefinition.getLabel());
+			sbiFedDef.setName(federationDefinition.getName());
+			sbiFedDef.setDescription(federationDefinition.getDescription());
+			sbiFedDef.setRelationships(federationDefinition.getRelationships());
+			sbiFedDef.setFederation_id(federationDefinition.getFederation_id());
+
+			sbiFedDef.setSourceDatasets(sbiSourceDatasets);
+
+			tx2 = session.beginTransaction();
+			session.save(sbiFedDef);
+			tx2.commit();
+			return true;
+
+		} catch (HibernateException he) {
+			logger.error("Error while inserting the New Federation ", he);
 			if (tx != null)
 				tx.rollback();
 			if (tx2 != null)
@@ -811,9 +882,28 @@ public class ExporterMetadata {
 				versDataSet = (VersionedDataSet) dataset;
 
 			if (versDataSet != null && versDataSet.getWrappedDataset() instanceof JDBCDataSet) {
+				logger.debug("Export a query dataset");
+
 				IDataSource ds = ((JDBCDataSet) versDataSet.getWrappedDataset()).getDataSource();
 				if (ds != null)
 					insertDataSource(ds, session);
+			} else if (versDataSet != null && versDataSet.getWrappedDataset() instanceof FederatedDataSet) {
+				logger.debug("Export a federated dataset");
+				FederatedDataSet fDS = (FederatedDataSet) versDataSet.getWrappedDataset();
+
+				FederationDefinition federationDefinition = fDS.getFederation();
+				Set<IDataSet> sourceDatasets = federationDefinition.getSourceDatasets();
+				// store SbiDataset
+				Set<SbiDataSet> sbiSourceDatasets = new HashSet<SbiDataSet>();
+
+				for (Iterator iterator = sourceDatasets.iterator(); iterator.hasNext();) {
+					IDataSet iDataSet = (IDataSet) iterator.next();
+					logger.debug("insert source dataset " + iDataSet.getLabel());
+					SbiDataSet sbiDs = insertDataSet(iDataSet, session, false);
+					sbiSourceDatasets.add(sbiDs);
+				}
+				insertFederation(federationDefinition, session, sbiSourceDatasets);
+
 			}
 
 			Transaction tx = session.beginTransaction();

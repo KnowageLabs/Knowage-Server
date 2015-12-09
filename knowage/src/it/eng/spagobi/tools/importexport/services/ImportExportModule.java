@@ -6,7 +6,7 @@
 
 package it.eng.spagobi.tools.importexport.services;
 
-iimport it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -172,6 +172,7 @@ public class ImportExportModule extends AbstractHttpModule {
 			String[] idListArray = idListStr.split(";");
 			List ids = Arrays.asList(idListArray);
 			expManager = ExportUtilities.getExportManagerInstance();
+			expManager.setProfile(profile);
 			expManager.prepareExport(pathExportFolder, exportFileName, expSubObj, exportSnaps);
 			expManager.exportObjects(ids);
 			// if (exportResources) {

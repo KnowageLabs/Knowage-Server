@@ -6,6 +6,7 @@
 package it.eng.spagobi.tools.importexport;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 
 import java.util.List;
 
@@ -56,4 +57,8 @@ public interface IExportManager {
 	 * Clean the export environment (close sessions and delete temporary files).
 	 */
 	public void cleanExportEnvironment();
+
+	public IEngUserProfile getProfile();
+
+	public void setProfile(IEngUserProfile profile);
 }

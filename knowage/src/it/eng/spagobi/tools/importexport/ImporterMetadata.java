@@ -28,6 +28,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
@@ -80,9 +81,7 @@ public class ImporterMetadata {
 	 * 
 	 * @param session
 	 *            Hiberante session for the exported database
-	 * 
 	 * @return The list of exported hibernate roles
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -121,7 +120,6 @@ public class ImporterMetadata {
 	 * @param roleId
 	 *            the role
 	 * @return The list of exported hibernate authorizations roles
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -146,9 +144,7 @@ public class ImporterMetadata {
 	 * 
 	 * @param session
 	 *            Hibernate session for the exported database
-	 * 
 	 * @return The list of exported hibernate engines
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -192,9 +188,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the exported database
 	 * @param table
 	 *            The name of the table corresponding to the hibernate objects to gather
-	 * 
 	 * @return The list of exported hibernate objects
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -260,7 +254,6 @@ public class ImporterMetadata {
 	 *            Hibernate session for a database
 	 * @param tx
 	 *            the tx
-	 * 
 	 * @return The existing hibernate object
 	 */
 	public Object getObject(Integer id, Class objClass, Transaction tx, Session session) {
@@ -285,7 +278,6 @@ public class ImporterMetadata {
 	 *            Hibernate session for the exported database
 	 * @param log
 	 *            the log
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -381,9 +373,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -819,6 +809,13 @@ public class ImporterMetadata {
 				hqlQuery = sessionCurrDB.createQuery(hql);
 				SbiArtifact hibOu = (SbiArtifact) hqlQuery.uniqueResult();
 				return hibOu;
+			} else if (hibObj instanceof SbiFederationDefinition) {
+				param = "SbiFederationDefinition";
+				String name = (String) unique;
+				hql = "from SbiFederationDefinition n where n.label = '" + name + "'";
+				hqlQuery = sessionCurrDB.createQuery(hql);
+				SbiFederationDefinition hibOu = (SbiFederationDefinition) hqlQuery.uniqueResult();
+				return hibOu;
 			}
 
 		} catch (Exception e) {
@@ -845,9 +842,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -886,9 +881,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -919,9 +912,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -943,9 +934,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -995,9 +984,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1050,9 +1037,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1092,9 +1077,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1127,9 +1110,7 @@ public class ImporterMetadata {
 	 *            Hibernate session for the current SpagoBI database
 	 * @param hibObj
 	 *            An empty object usefull to identify the kind of object to analize
-	 * 
 	 * @return The existing Object or null if it doesn't exist
-	 * 
 	 * @throws EMFUserError
 	 * @throws EMFUserError
 	 *             the EMF user error

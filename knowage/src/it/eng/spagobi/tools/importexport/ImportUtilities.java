@@ -37,6 +37,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
@@ -45,6 +46,8 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
@@ -1663,6 +1666,104 @@ public class ImportUtilities {
 		return newArtifact;
 	}
 
+	public SbiFederationDefinition makeNew(SbiFederationDefinition exportedFederationDefinition, Session sessionCurrDB, IEngUserProfile profile) {
+		logger.debug("IN");
+		SbiFederationDefinition newFederationDefinition = new SbiFederationDefinition();
+
+		newFederationDefinition.setLabel(exportedFederationDefinition.getLabel());
+		newFederationDefinition.setName(exportedFederationDefinition.getName());
+		newFederationDefinition.setDescription(exportedFederationDefinition.getDescription());
+		newFederationDefinition.setRelationships(exportedFederationDefinition.getRelationships());
+
+		SbiCommonInfo i = new SbiCommonInfo();
+		String userid = "biadmin";
+		if (profile != null) {
+			userid = (String) profile.getUserUniqueIdentifier();
+		}
+		i.setTimeIn(new Date());
+		i.setUserIn(userid);
+		i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+
+		newFederationDefinition.setCommonInfo(i);
+
+		// sessionCurrDB.save(newDataset);
+
+		logger.debug("OUT");
+		return newFederationDefinition;
+	}
+
+	public SbiFederationDefinition modifyExisting(SbiFederationDefinition exportedFederationDefinition, Session sessionCurrDB, Integer existingId,
+			Session sessionExpDB, IEngUserProfile profile) throws Exception {
+		logger.debug("IN");
+		SbiFederationDefinition existFederationDefinition = null;
+		try {
+			Query hibQueryFederationDefinition = sessionCurrDB.createQuery("from SbiFederationDefinition h where h.federation_id= ?");
+			hibQueryFederationDefinition.setInteger(0, existingId);
+			existFederationDefinition = (SbiFederationDefinition) hibQueryFederationDefinition.uniqueResult();
+
+			existFederationDefinition.setLabel(exportedFederationDefinition.getLabel());
+			existFederationDefinition.setName(exportedFederationDefinition.getName());
+			existFederationDefinition.setDescription(exportedFederationDefinition.getDescription());
+			existFederationDefinition.setRelationships(exportedFederationDefinition.getRelationships());
+
+			SbiCommonInfo i = new SbiCommonInfo();
+			String userid = "biadmin";
+			if (profile != null) {
+				userid = (String) profile.getUserUniqueIdentifier();
+			}
+			i.setTimeIn(new Date());
+			i.setUserIn(userid);
+			i.setSbiVersionIn(SbiCommonInfo.SBI_VERSION);
+			existFederationDefinition.setCommonInfo(i);
+
+			// sessionCurrDB.update(existFederationDefinition);
+
+		} catch (Exception e) {
+			logger.error("Error in modifying exported FederationDefinition " + exportedFederationDefinition.getName(), e);
+			throw e;
+		} finally {
+			logger.debug("OUT");
+		}
+		return existFederationDefinition;
+	}
+
+	public SbiFederationDefinition associateWithExistingEntities(SbiFederationDefinition newFederationDefinition,
+			SbiFederationDefinition exportedFederationDefinition, Session sessionExpDB, Session sessionCurrDB, ImporterMetadata importer,
+			MetadataAssociations metaAss, Integer existingFederationId) throws EMFUserError {
+
+		logger.debug("IN");
+
+		if (existingFederationId != null) {
+			// delete previous association of the modify federation
+			Query query = sessionCurrDB.createQuery(" from SbiDataSetFederation a where a.id.federationId = " + existingFederationId);
+
+			List contents = query.list();
+			if (contents != null) {
+				Iterator it = contents.iterator();
+				while (it.hasNext()) {
+					SbiDataSetFederation sbiDataSetFederation = (SbiDataSetFederation) it.next();
+					sessionCurrDB.delete(sbiDataSetFederation);
+				}
+			}
+		}
+
+		sessionCurrDB.clear();
+
+		Set<SbiDataSet> previousSbiDataSets = exportedFederationDefinition.getSourceDatasets();
+
+		Set<SbiDataSet> newDataSets = new HashSet<SbiDataSet>();
+
+		for (Iterator iterator = previousSbiDataSets.iterator(); iterator.hasNext();) {
+			SbiDataSet sbiDataSet = (SbiDataSet) iterator.next();
+			Integer newDsId = (Integer) metaAss.getDataSetIDAssociation().get(sbiDataSet.getId().getDsId());
+			SbiDataSet sbiDS = DAOFactory.getDataSetDAO().loadSbiDataSetById(newDsId, sessionCurrDB);
+			newDataSets.add(sbiDS);
+		}
+		newFederationDefinition.setSourceDatasets(newDataSets);
+		logger.debug("OUT");
+		return newFederationDefinition;
+	}
+
 	/**
 	 * Load an existing artifact and make modifications as per the exported artifact in input
 	 * 
@@ -2143,7 +2244,7 @@ public class ImportUtilities {
 			newDataset.setCommonInfo(i);
 
 			preActive.setActive(false);
-			sessionCurrDB.update(preActive);
+			// sessionCurrDB.update(preActive);
 
 			// sessionCurrDB.save(newDataset);
 

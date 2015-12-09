@@ -57,6 +57,7 @@ import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
@@ -151,6 +152,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	private final ArrayList<String> enginesDiscarded = new ArrayList<String>();
 
+	private final Map<Integer, Integer> exportedFederatedIdFederationId = new HashMap<Integer, Integer>();
+
 	private boolean isSuperadmin = false;
 
 	ImportUtilities importUtilities = null;
@@ -169,10 +172,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 *            the name of the compress exported file
 	 * @param archiveContent
 	 *            the bytes of the compress exported file
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public void init(String pathImpTmpFold, String archiveName, byte[] archiveContent) throws EMFUserError {
 		logger.debug("IN");
 
@@ -245,6 +248,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		logger.debug("OUT");
 	}
 
+	@Override
 	public void openSession() throws EMFUserError {
 		logger.debug("IN");
 		try {
@@ -259,6 +263,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		logger.debug("OUT");
 	}
 
+	@Override
 	public void closeSession() {
 		logger.debug("IN");
 		if (txExpDB != null && txExpDB.isActive()) {
@@ -285,10 +290,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @param overwrite
 	 *            the overwrite
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public void importObjects(boolean overwrite) throws EMFUserError {
 		logger.debug("IN");
 		metaLog.log("                                             ");
@@ -301,6 +306,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 		importDataSource(overwrite);
 		metaLog.log("-------Data Set-----");
 		importDataSet(overwrite);
+		metaLog.log("-------Import Federation Definition-----");
+		importFederationDefinition(overwrite);
 		// metaLog.log("-------Authorizations-----");
 		// importAuthorizations();
 		metaLog.log("-------Roles-----");
@@ -376,6 +383,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @return The SpagoBI version of the exported file
 	 */
+	@Override
 	public String getExportVersion() {
 		return props.getProperty("spagobi-version");
 	}
@@ -385,6 +393,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @return The current SpagoBI version
 	 */
+	@Override
 	public String getCurrentVersion() {
 		logger.debug("IN");
 		ConfigSingleton conf = ConfigSingleton.getInstance();
@@ -398,10 +407,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * Gets the list of all exported roles.
 	 * 
 	 * @return The list of exported roles
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public List getExportedRoles() throws EMFUserError {
 		List exportedRoles = null;
 		exportedRoles = importer.getAllExportedRoles(sessionExpDB);
@@ -412,10 +421,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * Gets the list of all exported engines.
 	 * 
 	 * @return The list of exported engines
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public List getExportedEngines() throws EMFUserError {
 		List exportedEngines = null;
 		exportedEngines = importer.getAllExportedEngines(sessionExpDB);
@@ -427,10 +436,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @param roleAssociations
 	 *            Map of assocaition between exported roles and roles of the portal in use
-	 * 
 	 * @throws EMFUserError
 	 *             if two ore more exported roles are associate to the same current role
 	 */
+	@Override
 	public void checkRoleReferences(Map roleAssociations) throws EMFUserError {
 		logger.debug("IN");
 		// each exported role should be associate only to one system role
@@ -460,7 +469,6 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @param mapDataSources
 	 *            Map of the associations between exported data sources and current system data sources
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -506,10 +514,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * Commits all changes made on exported and current databases.
 	 * 
 	 * @return the import result info
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public ImportResultInfo commitAllChanges() throws EMFUserError {
 		logger.debug("IN");
 		// commit all database changes and close hibernate connection
@@ -1193,6 +1201,11 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				} else {
 					existingDatasetId = (Integer) datasetAss.get(oldId);
 				}
+
+				if (exportedDataSet.getType().equalsIgnoreCase("SbiFederatedDataSet")) {
+					exportedFederatedIdFederationId.put(exportedDataSet.getId().getDsId(), exportedDataSet.getFederation().getFederation_id());
+				}
+
 				if (existingDatasetId != null) {
 					logger.debug("The dataset with label:[" + exportedDataSet.getLabel() + "] is just present. It will be updated. Existing one has id "
 							+ existingDatasetId);
@@ -1246,6 +1259,95 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 			params.add("Sbi_data_set");
 			if (exportedDataSet != null)
 				params.add(exportedDataSet.getLabel());
+			else
+				params.add("");
+			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private void importFederationDefinition(boolean overwrite) throws EMFUserError {
+		logger.debug("IN");
+		SbiFederationDefinition exportedFederationDefinition = null;
+		try {
+
+			List exportedFederationDefinitionList = importer.getAllExportedSbiObjects(sessionExpDB, "SbiFederationDefinition", null);
+			Iterator iterSbiFederationDefinition = exportedFederationDefinitionList.iterator();
+
+			while (iterSbiFederationDefinition.hasNext()) {
+				exportedFederationDefinition = (SbiFederationDefinition) iterSbiFederationDefinition.next();
+				logger.debug("Importing exported FederationDefinition with id " + exportedFederationDefinition.getFederation_id() + " and label "
+						+ exportedFederationDefinition.getLabel());
+				Integer oldId = new Integer(exportedFederationDefinition.getFederation_id());
+				Integer existingFederationDefinitionId = null;
+				Map federationDefinitionAss = metaAss.getFederationDefinitionIDAssociation();
+				Set federationDefinitionAssSet = federationDefinitionAss.keySet();
+				if (federationDefinitionAssSet.contains(oldId) && !overwrite) {
+					metaLog.log("Exported FederationDefinition " + exportedFederationDefinition.getLabel() + " not inserted"
+							+ " because exist FederationDefinition with the same label ");
+					logger.debug("Exported dataset " + exportedFederationDefinition.getLabel() + " not inserted"
+							+ " because exist FederationDefinition with the same label ");
+					continue;
+				} else {
+					existingFederationDefinitionId = (Integer) federationDefinitionAss.get(oldId);
+				}
+				if (existingFederationDefinitionId != null) {
+					logger.debug("The FederationDefinition with label:[" + exportedFederationDefinition.getLabel()
+							+ "] is just present. It will be updated. Existing one has id " + existingFederationDefinitionId);
+					metaLog.log("The dataset with label = [" + exportedFederationDefinition.getLabel() + "] will be updated.");
+					// close previous and insert new
+					SbiFederationDefinition newFederationDefinition = importUtilities.modifyExisting(exportedFederationDefinition, sessionCurrDB,
+							existingFederationDefinitionId, sessionExpDB, this.getUserProfile());
+					newFederationDefinition = importUtilities.associateWithExistingEntities(newFederationDefinition, exportedFederationDefinition,
+							sessionExpDB, sessionCurrDB, importer, metaAss, existingFederationDefinitionId);
+					this.updateSbiCommonInfo4Update(newFederationDefinition);
+					sessionCurrDB.update(newFederationDefinition);
+					sessionCurrDB.flush();
+				} else {
+					SbiFederationDefinition newFederationDefinition = importUtilities.makeNew(exportedFederationDefinition, sessionCurrDB,
+							this.getUserProfile());
+					this.updateSbiCommonInfo4Insert(newFederationDefinition);
+					newFederationDefinition = importUtilities.associateWithExistingEntities(newFederationDefinition, exportedFederationDefinition,
+							sessionExpDB, sessionCurrDB, importer, metaAss, null);
+					Object newIdO = sessionCurrDB.save(newFederationDefinition);
+					sessionCurrDB.flush();
+					Integer newId = newIdO != null ? (Integer) newIdO : null;
+
+					logger.debug("Inserted new FederationDefinition " + newFederationDefinition.getName());
+					metaLog.log("Inserted new FederationDefinition " + newFederationDefinition.getName());
+					// Integer newId = new Integer(newFederationDefinition.getFederation_id());
+					metaAss.insertCoupleFederationDefinitionIDAssociation(oldId, newId);
+
+				}
+			}
+
+			logger.debug("Update federated dataset using federation");
+			for (Iterator iterator = exportedFederatedIdFederationId.keySet().iterator(); iterator.hasNext();) {
+				Integer oldFederatedId = (Integer) iterator.next();
+				Integer oldFederationId = exportedFederatedIdFederationId.get(oldFederatedId);
+				Integer newFederatedId = (Integer) metaAss.getDataSetIDAssociation().get(oldFederatedId);
+				Integer newFederationId = (Integer) metaAss.getFederationDefinitionIDAssociation().get(oldFederationId);
+
+				SbiDataSet sbiDataSet = DAOFactory.getDataSetDAO().loadSbiDataSetById(newFederatedId, sessionCurrDB);
+				SbiFederationDefinition sbiFederationDefinition = DAOFactory.getFedetatedDatasetDAO().loadSbiFederationDefinition(newFederationId,
+						sessionCurrDB);
+				sbiDataSet.setFederation(sbiFederationDefinition);
+				sessionCurrDB.save(sbiDataSet);
+				sessionCurrDB.flush();
+			}
+
+		} catch (EMFUserError he) {
+			throw he;
+		} catch (Exception e) {
+			if (exportedFederationDefinition != null) {
+				logger.error("Error while importing exported FederationDefinition with label [" + exportedFederationDefinition.getLabel() + "].", e);
+			}
+			logger.error("Error while inserting object ", e);
+			List params = new ArrayList();
+			params.add("Sbi_Federation_Definition");
+			if (exportedFederationDefinition != null)
+				params.add(exportedFederationDefinition.getLabel());
 			else
 				params.add("");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "8019", params, ImportManager.messageBundle);
@@ -2490,7 +2592,6 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Handle already present parameter's paruse if a paruse is not present between exported delete
-	 * 
 	 */
 
 	public void deleteOldParametersUse(Integer existingParId, Integer exportParId, List sbiExistingParuses, List sbiExpParuses, Session currSessDB)
@@ -2594,7 +2695,6 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Handle already present parameter's paruse if a paruse is not present between exported delete
-	 * 
 	 */
 
 	public void deletePreviousObjParameter(Integer exstingObjectId, Integer exportObjectId, SbiObjects object) throws EMFUserError {
@@ -3399,9 +3499,8 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	}
 
 	/**
-	 * Imports biobjParuse dependencies for current exported biobject
-	 * 
-	 * a previous BiObjectParuse is: - updated if there is the modality the lov did not change metadata - otherwise is cancelled
+	 * Imports biobjParuse dependencies for current exported biobject a previous BiObjectParuse is: - updated if there is the modality the lov did not change
+	 * metadata - otherwise is cancelled
 	 * 
 	 * @param exportedBIObjectId
 	 *            The id of the current exported biobject
@@ -3527,6 +3626,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	/**
 	 * Ends the import procedure.
 	 */
+	@Override
 	public void stopImport() {
 		logger.debug("IN");
 		if (metaAss != null)
@@ -3652,10 +3752,10 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * Gets the list of exported data sources.
 	 * 
 	 * @return List of the exported data sources
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public List getExportedDataSources() throws EMFUserError {
 		logger.debug("IN");
 		List datasources = new ArrayList();
@@ -3691,6 +3791,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public void checkExistingMetadata() throws EMFUserError {
 		logger.debug("IN");
 
@@ -3957,6 +4058,20 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 				metaAss.insertCoupleDataSets(dsExp.getId().getDsId(), dsCurr.getId().getDsId());
 				logger.debug("Found an existing dataset " + dsCurr.getLabel() + " with " + "the same label of one exported dataset");
 				metaLog.log("Found an existing dataset " + dsCurr.getLabel() + " with " + "the same label of one exported dataset");
+			}
+		}
+
+		List exportedFederationDefinition = importer.getAllExportedSbiObjects(sessionExpDB, "SbiFederationDefinition", null);
+		Iterator iterSbiFederationDefinition = exportedFederationDefinition.iterator();
+		while (iterSbiFederationDefinition.hasNext()) {
+			SbiFederationDefinition dsExp = (SbiFederationDefinition) iterSbiFederationDefinition.next();
+			String label = dsExp.getLabel();
+			Object existObj = importer.checkExistence(label, sessionCurrDB, new SbiFederationDefinition());
+			if (existObj != null) {
+				SbiFederationDefinition dsCurr = (SbiFederationDefinition) existObj;
+				metaAss.insertCoupleFederationDefinitionIDAssociation(dsExp.getFederation_id(), dsCurr.getFederation_id());
+				logger.debug("Found an existing federation " + dsCurr.getLabel() + " with " + "the same label of one exported federation");
+				metaLog.log("Found an existing federation " + dsCurr.getLabel() + " with " + "the same label of one exported federation");
 			}
 		}
 
@@ -4486,6 +4601,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @return MetadataAssociation the object which contains the association between exported metadata and the current system metadata
 	 */
+	@Override
 	public MetadataAssociations getMetadataAssociation() {
 		return metaAss;
 	}
@@ -4495,6 +4611,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getExistingObject(java .lang.Integer, java.lang.Class)
 	 */
+	@Override
 	public Object getExistingObject(Integer id, Class objClass) {
 		return importer.getObject(id, objClass, txCurrDB, sessionCurrDB);
 	}
@@ -4504,6 +4621,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getExportedObject(java .lang.Integer, java.lang.Class)
 	 */
+	@Override
 	public Object getExportedObject(Integer id, Class objClass) {
 		return importer.getObject(id, objClass, txExpDB, sessionExpDB);
 	}
@@ -4513,6 +4631,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getUserAssociation()
 	 */
+	@Override
 	public UserAssociationsKeeper getUserAssociation() {
 		return usrAss;
 	}
@@ -4522,6 +4641,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getImpAssMode()
 	 */
+	@Override
 	public String getImpAssMode() {
 		return impAssMode;
 	}
@@ -4531,6 +4651,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#setImpAssMode(java.lang .String)
 	 */
+	@Override
 	public void setImpAssMode(String impAssMode) {
 		this.impAssMode = impAssMode;
 	}
@@ -4540,6 +4661,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#getAssociationFile()
 	 */
+	@Override
 	public AssociationFile getAssociationFile() {
 		return associationFile;
 	}
@@ -4549,6 +4671,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager#setAssociationFile(it .eng.spagobi.tools.importexport.bo.AssociationFile)
 	 */
+	@Override
 	public void setAssociationFile(AssociationFile associationFile) {
 		this.associationFile = associationFile;
 	}
@@ -4558,6 +4681,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager# associateAllExportedRolesByUserAssociation()
 	 */
+	@Override
 	public boolean associateAllExportedRolesByUserAssociation() throws EMFUserError {
 		logger.debug("IN");
 		try {
@@ -4594,6 +4718,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager# associateAllExportedEnginesByUserAssociation()
 	 */
+	@Override
 	public boolean associateAllExportedEnginesByUserAssociation() throws EMFUserError {
 		logger.debug("IN");
 		try {
@@ -4630,6 +4755,7 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 	 * 
 	 * @see it.eng.spagobi.tools.importexport.IImportManager# associateAllExportedDataSourcesByUserAssociation()
 	 */
+	@Override
 	public boolean associateAllExportedDataSourcesByUserAssociation() throws EMFUserError {
 		logger.debug("IN");
 		try {
@@ -6367,7 +6493,6 @@ public class ImportManager extends AbstractHibernateDAO implements IImportManage
 
 	/**
 	 * Handle already present parameter's paruse if a paruse is not present between exported delete
-	 * 
 	 */
 
 }

@@ -16,6 +16,7 @@ import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarm;
 import it.eng.spagobi.kpi.alarm.metadata.SbiAlarmContact;
 import it.eng.spagobi.kpi.config.metadata.SbiKpi;
@@ -105,6 +106,8 @@ public class MetadataAssociations {
 	private Map authorizationsIDAssociation = new HashMap();
 	private Map authorizationsAssociation = new HashMap();
 	private Map objDataSetIDAssociation = new HashMap();
+	private Map federationDefinitionAssociation = new HashMap();
+	private Map federationDefinitionIDAssociation = new HashMap();
 
 	/**
 	 * Checks if the metadata association is empty.
@@ -200,6 +203,10 @@ public class MetadataAssociations {
 			return false;
 		if (!objDataSetIDAssociation.keySet().isEmpty())
 			return false;
+		if (!federationDefinitionAssociation.keySet().isEmpty())
+			return false;
+		if (!federationDefinitionIDAssociation.keySet().isEmpty())
+			return false;
 
 		return true;
 	}
@@ -270,6 +277,8 @@ public class MetadataAssociations {
 		authorizationsAssociation = new HashMap();
 		authorizationsIDAssociation = new HashMap();
 		objDataSetIDAssociation = new HashMap();
+		federationDefinitionAssociation = new HashMap<>();
+		federationDefinitionIDAssociation = new HashMap<>();
 	}
 
 	/**
@@ -874,6 +883,10 @@ public class MetadataAssociations {
 	 */
 	public Map getDataSetIDAssociation() {
 		return datasetsIDAssociation;
+	}
+
+	public Map getFederationDefinitionIDAssociation() {
+		return federationDefinitionIDAssociation;
 	}
 
 	/**
@@ -1791,6 +1804,14 @@ public class MetadataAssociations {
 	 */
 	public void insertCoupleAuthorizations(Integer exp, Integer curr) {
 		authorizationsIDAssociation.put(exp, curr);
+	}
+
+	public void insertCoupleFederationDefinitionAssociation(SbiFederationDefinition exp, SbiFederationDefinition curr) {
+		federationDefinitionAssociation.put(exp, curr);
+	}
+
+	public void insertCoupleFederationDefinitionIDAssociation(Integer exp, Integer curr) {
+		federationDefinitionIDAssociation.put(exp, curr);
 	}
 
 }

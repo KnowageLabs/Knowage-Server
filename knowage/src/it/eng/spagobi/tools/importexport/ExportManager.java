@@ -9,6 +9,7 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -79,6 +80,7 @@ public class ExportManager implements IExportManager {
 	private boolean exportSubObjects = false;
 	private boolean exportSnapshots = false;
 	private List objectsInserted = null;
+	private IEngUserProfile profile = null;
 
 	/**
 	 * Prepare the environment for export.
@@ -91,10 +93,10 @@ public class ExportManager implements IExportManager {
 	 *            Flag which tells if it's necessary to export subobjects
 	 * @param expSnaps
 	 *            Flag which tells if it's necessary to export snapshots
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public void prepareExport(String pathExpFold, String nameExpFile, boolean expSubObj, boolean expSnaps) throws EMFUserError {
 		logger.debug("IN. pathExpFold=" + pathExpFold + " nameExpFile=" + nameExpFile + " expSubObj=" + expSubObj + " expSnaps" + expSnaps);
 		try {
@@ -137,10 +139,10 @@ public class ExportManager implements IExportManager {
 	 * 
 	 * @param objIds
 	 *            the obj ids
-	 * 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
+	@Override
 	public void exportObjects(List objIds) throws EMFUserError {
 		logger.debug("IN");
 		try {
@@ -196,6 +198,7 @@ public class ExportManager implements IExportManager {
 	 * 
 	 * @throws EMFUserError
 	 */
+	@Override
 	public void createExportArchive() throws EMFUserError {
 		logger.debug("IN");
 		FileOutputStream fos = null;
@@ -519,10 +522,13 @@ public class ExportManager implements IExportManager {
 			// Data set if present; get datasets used by BiOBject
 			ArrayList<BIObjDataSet> biObjDatasets = DAOFactory.getBIObjDataSetDAO().getBiObjDataSets(biobj.getId());
 
+			IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+			dsDAO.setUserProfile(profile);
+
 			// new dataset handling
 			for (Iterator iterator = biObjDatasets.iterator(); iterator.hasNext();) {
 				BIObjDataSet biObjDataSet = (BIObjDataSet) iterator.next();
-				IDataSet iDataSet = DAOFactory.getDataSetDAO().loadDataSetById(biObjDataSet.getDataSetId());
+				IDataSet iDataSet = dsDAO.loadDataSetById(biObjDataSet.getDataSetId());
 				exporter.insertDataSetAndDataSource(iDataSet, session);
 			}
 
@@ -895,11 +901,22 @@ public class ExportManager implements IExportManager {
 	/**
 	 * Clean the export environment (close sessions and delete temporary files).
 	 */
+	@Override
 	public void cleanExportEnvironment() {
 		logger.debug("IN");
 		closeSession();
 		deleteTmpFolder();
 		logger.debug("OUT");
+	}
+
+	@Override
+	public IEngUserProfile getProfile() {
+		return profile;
+	}
+
+	@Override
+	public void setProfile(IEngUserProfile profile) {
+		this.profile = profile;
 	}
 
 	/*
