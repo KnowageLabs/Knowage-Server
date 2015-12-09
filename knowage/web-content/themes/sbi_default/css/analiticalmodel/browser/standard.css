@@ -955,3 +955,9 @@ background-size: contain;
 background-position: center center;
 background-color:white;
 }
+
+/* CREATE FEDERATION BUTTON PADDING  */
+.createfederationbtn {
+	padding-left:32px;
+	padding-bottom:48px
+}

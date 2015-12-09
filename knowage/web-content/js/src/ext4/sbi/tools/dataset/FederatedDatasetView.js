@@ -102,13 +102,13 @@ Ext.define('Sbi.tools.dataset.FederatedDatasetView', {
 			var buttonShowQbe ='<li class="qbe"><a id="showQbe" href="#" title="Show Qbe"></a></li>';
 			var buttonEditFederated = '<li class="editFederated"><a id="editFederated" href="#" title="Edit federated"></a></li>';
 			var buttonDeleteFederated = '<li class="deleteFederated"><a id="deleteFederated" href="#" title="Delete federated"></a></li>';
-			var createFederation = '<button class="" onclick="createFederationDefinition()"><a id="createFederated" href="#" title="Create federated"></a>CREATE FEDERATION</button>';
+			var createFederation = '<button class="btn btn-default" onclick="createFederationDefinition()"><a id="createFederated" href="#" title="Create federated"></a>CREATE FEDERATION</button>';
 			var buttonHelpOnLine= Sbi.user.functionalities.indexOf("Glossary")!=-1 ? '<li class="MyDataHelpOnLine"><a id="MHOL" href="#" title="Show Help OnLine"></a></li>' : "";
 			
 			this.tpl = new Ext.XTemplate(
 					'<script src="'+Sbi.config.contextName+'/js/src/ext4/sbi/tools/dataset/FederatedDatasetView.js">',
 					'</script>',
-					'<div>',
+					'<div class="list-actions-container createfederationbtn">',
 					createFederation,
 					'</div>',
 					'<div id="list-container" class="main-datasets-list">', 	            
