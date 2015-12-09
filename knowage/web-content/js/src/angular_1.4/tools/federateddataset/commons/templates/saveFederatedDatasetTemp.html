@@ -9,13 +9,6 @@
     			<div style="padding:5px">
 					<form name="saveFDSForm">
 					
-						<md-input-container flex> 
-						<label>{{translate.load("sbi.federationdefinition.template.name");}}</label> 
-						<input ng-model="federateddataset.name" name="name" required>
-						<div ng-messages="saveFDSForm.name.$error" ng-if="saveFDSForm.name.$dirty && !federateddataset.name.length">
-							<div ng-message="required">Required!</div>
-						</div>
-						</md-input-container>
 						
 						<md-input-container flex> 
 						<label>{{translate.load("sbi.federationdefinition.template.label");}}</label> 
@@ -24,7 +17,15 @@
 							<div ng-message="required">{{translate.load("sbi.federationdefinition.required");}}</div>
 						</div>
 						</md-input-container>
-						
+					
+						<md-input-container flex> 
+						<label>{{translate.load("sbi.federationdefinition.template.name");}}</label> 
+						<input ng-model="federateddataset.name" name="name" required>
+						<div ng-messages="saveFDSForm.name.$error" ng-if="saveFDSForm.name.$dirty && !federateddataset.name.length">
+							<div ng-message="required">Required!</div>
+						</div>
+						</md-input-container>
+												
 						<md-input-container> 
 	        				<label>{{translate.load("sbi.federationdefinition.template.description");}}</label>
 	        				<input ng-model='federateddataset.description'></input>
