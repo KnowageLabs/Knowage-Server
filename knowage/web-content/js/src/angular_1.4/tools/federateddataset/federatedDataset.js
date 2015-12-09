@@ -215,7 +215,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 							item.relationships = "";
 							item.relationships = ctr.multiArray;
 												
-							sbiModule_restServices.post("federateddataset","post",item)
+							sbiModule_restServices.post("federateddataset","post",angular.toJson(item))
 								.success(
 										function(data, status, headers, config) {
 											ctr.showAlert()
