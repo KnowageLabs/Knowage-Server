@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation" table="SBI_DATA_SET_FEDERATION">
+	
+	 <composite-id name="id" class="it.eng.spagobi.federateddataset.metadata.SbiDataSetFederationId">
+            <key-property name="federationId" type="integer">
+                <column name="FEDERATION_ID" />
+            </key-property>
+            <key-property name="dsId" type="integer">
+                <column name="DS_ID" />
+            </key-property>
+            <key-property name="versionNum" type="integer">
+                <column name="VERSION_NUM" />
+            </key-property>
+        </composite-id>
+        
+
+	</class>
+
+</hibernate-mapping>

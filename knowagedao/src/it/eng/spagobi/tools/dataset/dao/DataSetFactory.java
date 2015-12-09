@@ -48,6 +48,7 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -359,6 +360,10 @@ public class DataSetFactory {
 				ds = new FederatedDataSet(SbiFederationUtils.toDatasetFederationWithDataset(sbiFederation, sourcesDatasets), (String) profile.getUserId());
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((FederatedDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
+
+				SbiFederationDefinition sbiFedDef = sbiDataSet.getFederation();
+				FederationDefinition fd = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
+				((FederatedDataSet) ds).setFederation(fd);
 
 				// START -> This code should work instead of CheckQbeDataSets around the projects
 

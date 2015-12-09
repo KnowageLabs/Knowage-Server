@@ -11,6 +11,8 @@ import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 import java.util.List;
 
+import org.hibernate.Session;
+
 /**
  * Defines the interfaces for all methods needed to create, read, update and delete a dataset (CRUD operations).
  */
@@ -23,6 +25,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public IDataSet loadDataSetByLabel(String label);
 
 	public IDataSet loadDataSetById(Integer id);
+
+	public SbiDataSet loadSbiDataSetById(Integer id, Session session);
 
 	public List<IDataSet> loadDataSetsByOwner(String owner, Boolean includeOwned, Boolean includePublic, Boolean showDerivedDatasets);
 

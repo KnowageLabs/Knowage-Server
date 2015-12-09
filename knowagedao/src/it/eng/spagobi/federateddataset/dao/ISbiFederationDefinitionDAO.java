@@ -8,6 +8,7 @@ package it.eng.spagobi.federateddataset.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 
@@ -23,6 +24,8 @@ public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 	public int saveSbiFederationDefinitionNoDuplicated(FederationDefinition federationDefinition);
 
 	public FederationDefinition loadFederationDefinition(Integer id) throws EMFUserError;
+
+	public SbiFederationDefinition loadSbiFederationDefinition(Integer id, Session currSession) throws EMFUserError;
 
 	public List<FederationDefinition> loadAllFederatedDataSets() throws EMFUserError;
 

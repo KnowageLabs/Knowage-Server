@@ -37,7 +37,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	/**
 	 * Saves the FederationDefinition. If already exist returns that one
-	 *
+	 * 
 	 * @param dataset
 	 */
 	@Override
@@ -156,6 +156,20 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 		}
 		logger.debug("OUT");
 		return toReturn;
+
+	}
+
+	@Override
+	public SbiFederationDefinition loadSbiFederationDefinition(Integer id, Session session) throws EMFUserError {
+
+		logger.debug("IN: loading federation");
+
+		Query hibQuery = session.createQuery(" from SbiFederationDefinition fd where fd.federation_id = ? ");
+		hibQuery.setInteger(0, id);
+		SbiFederationDefinition sbiResult = (SbiFederationDefinition) hibQuery.uniqueResult();
+
+		logger.debug("OUT");
+		return sbiResult;
 
 	}
 

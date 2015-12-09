@@ -68,7 +68,10 @@
         </property>
         <property name="publicDS" type="boolean">
             <column name="IS_PUBLIC" />
-        </property>  
+        </property> 
+        <many-to-one name="federation" class="it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition" lazy="false">
+            <column name="FEDERATION_ID" not-null="false" />
+        </many-to-one>
       
     </class>
 </hibernate-mapping>

@@ -101,6 +101,19 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	@Override
+	public SbiDataSet loadSbiDataSetById(Integer id, Session session) {
+		logger.debug("IN");
+
+		Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
+		hibQuery.setBoolean(0, true);
+		hibQuery.setInteger(1, id);
+		SbiDataSet dsActiveDetail = (SbiDataSet) hibQuery.uniqueResult();
+
+		logger.debug("OUT");
+		return dsActiveDetail;
+	}
+
+	@Override
 	public IDataSet loadDataSetByLabel(String label) {
 		IDataSet toReturn;
 		Session session;
@@ -431,13 +444,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibDataSet.setParameters(dataSet.getParameters());
 			hibDataSet.setDsMetadata(dataSet.getDsMetadata());
 
-			//save teh federations
-			if(dataSet.getDatasetFederation()!=null){
-				SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); 
-				if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
+			// save teh federations
+			if (dataSet.getDatasetFederation() != null) {
+				SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
+				if (federationDefinition != null) {
+					hibDataSet.setFederation(federationDefinition);
+				}
 			}
-
-			
 
 			if (dataSet.getOwner() == null) {
 				hibDataSet.setOwner(userIn);
@@ -1110,7 +1123,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	/**
-	 * 
 	 * Checks for bi kpi associated.
 	 * 
 	 * @param dsId
@@ -1300,9 +1312,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
 				hibDataSet.setPublicDS(dataSet.isPublic());
 
-				if(dataSet.getDatasetFederation()!=null){
-					SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation()); 
-					if(federationDefinition != null ){ hibDataSet.setFederation(federationDefinition); }
+				if (dataSet.getDatasetFederation() != null) {
+					SbiFederationDefinition federationDefinition = SbiFederationUtils.toSbiFederatedDataset(dataSet.getDatasetFederation());
+					if (federationDefinition != null) {
+						hibDataSet.setFederation(federationDefinition);
+					}
 				}
 
 				Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
@@ -1387,7 +1401,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * 
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
-	 * 
 	 * @throws SpagoBIDOAException
 	 *             if the dataset is referenced by at least one analytical document
 	 */
@@ -1511,8 +1524,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * 
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
-	 * 
-	 * 
 	 */
 	@Override
 	public void deleteDataSetNoChecks(Integer datasetId) {
@@ -1630,7 +1641,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * 
 	 * @param datasetVersionId
 	 *            the id of the version of the dataset to delete. Cannot be null.
-	 * 
 	 * @return true if the version whose id is equal to <code>datasetVersionId</code> is deleted from database. false otherwise (the version does not exist or
 	 *         it exists but it is active).
 	 */
@@ -1694,7 +1704,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	 * 
 	 * @param datasetId
 	 *            the id of the of the dataset whose incative version must be deleted
-	 * 
 	 * @return true if the incative versions of dataset whose id is equal to <code>datasetId</code> have been succesfully deleted from database. false otherwise
 	 *         (i.e. the dtaset does not have any inactive versions)
 	 */
