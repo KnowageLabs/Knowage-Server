@@ -52,16 +52,6 @@ Ext.define('Sbi.chart.designer.ChartTypeColumnSelector', {
         split: false,
     },
     
-    // (danilo.ristovski@mht.net)
-    listeners:
-    {
-    	ppp: function(text)
-    	{
-//    		console.log("Smth is changed: " + text);
-//    		Sbi.chart.designer.Designer.styleCustom = true;
-    	}
-    },
-    
     constructor: function(config) {
         this.callParent(config);
         

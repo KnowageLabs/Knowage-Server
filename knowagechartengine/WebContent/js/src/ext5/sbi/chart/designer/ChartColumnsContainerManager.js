@@ -151,7 +151,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			var axisData = (axis && axis != null)? 
 					Sbi.chart.designer.ChartUtils.convertJsonAxisObjToAxisData(axis) : 
 						Sbi.chart.designer.ChartUtils.createEmptyAxisData();
-					
+				
 			var chartColumnsContainer = Ext.create("Sbi.chart.designer.ChartColumnsContainer", {
 				id: idChartColumnsContainer,
 				idAxisesContainer: idAxisesContainer,
@@ -167,9 +167,10 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 			    }),
 			    
 			    listeners: {
+			    	
 			    	updateAxisTitleValue: function(textValue) {
 			        	this.axisData.titleText = textValue;
-
+			        	
 			        	var textfieldAxisTitleId = this.id + '_TitleTextfield';
 			    		
 			        	var textfieldAxisTitle = Ext.getCmp(textfieldAxisTitleId);			        	
@@ -204,7 +205,7 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
   										|| newlySelectedType == 'parallel'
   											|| newlySelectedType == 'sunburst'
   												|| newlySelectedType == 'chord'
-  					);
+  					);  					
   					
   					if(!isAxesTitleFieldAbsentFlag) {
   						this.fireEvent('updateAxisTitleValue', axisData.titleText);
@@ -526,24 +527,29 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 					    	{
 								applyAxes: true,
 								applySeries: true,
-							};					    	
+							};						    	
 					    	
+					    	var configurationForStyleGeneric = 
+					    		Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName).generic);
 					    	
+					    	var configurationForStyleSpecific = 
+					    		Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName)[chartType.toLowerCase()]);	
+					    						    	
 					    	var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 					    	(
 				    			Sbi.chart.designer.Designer.exportAsJson(),
-				    			Designer.getConfigurationForStyle(Designer.styleName).generic, 
+				    			configurationForStyleGeneric, 
 				    			configApplyAxesStyles
 			    			);
 							
 							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
 							(
 								localJsonTemplate, 
-								Designer.getConfigurationForStyle(Designer.styleName)[chartType.toLowerCase()], 
+								configurationForStyleSpecific, 
 								configApplyAxesStyles
 							);
 							
-							localJsonTemplateAxisTag = localJsonTemplate.CHART.AXES_LIST.AXIS;
+							//localJsonTemplateAxisTag = localJsonTemplate.CHART.AXES_LIST.AXIS;
 							
 							/**
 							 * Take just the newly added Y-axis panel configuration and append it
@@ -553,9 +559,9 @@ Ext.define('Sbi.chart.designer.ChartColumnsContainerManager', {
 							 * 
 							 * @author: danristo (danilo.ristovski@mht.net)
 							 */
-							tempFinal.CHART.AXES_LIST.AXIS.push(localJsonTemplateAxisTag[localJsonTemplateAxisTag.length-1]);
-							
-							Sbi.chart.designer.Designer.update(tempFinal);
+							//tempFinal.CHART.AXES_LIST.AXIS.push(localJsonTemplateAxisTag[localJsonTemplateAxisTag.length-1]);
+							//console.log(tempFinal);
+							Sbi.chart.designer.Designer.update(localJsonTemplate);
 					    }
 						
 						// *_* Old code included in: (hidden: plusHidden || (panelWhereAddSeries == null))
