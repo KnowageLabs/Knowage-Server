@@ -83,11 +83,12 @@ public class GetMetaModelsForFinalUserAction extends GetMetaModelsAction {
 
 			Integer start = this.getStart();
 			logger.debug("Start : " + start);
-			Integer limit = this.getLimit();
-			logger.debug("Limit : " + limit);
+			// Integer limit = this.getLimit();
+			// logger.debug("Limit : " + limit);
 
 			int startIndex = Math.min(start, allModels.size());
-			int stopIndex = (limit > 0) ? Math.min(start + limit, allModels.size()) : allModels.size();
+			int stopIndex = allModels.size();
+			// (limit > 0) ? Math.min(start + limit, allModels.size()) : allModels.size();
 
 			List<MetaModel> toReturnSublist = allModels.subList(startIndex, stopIndex);
 

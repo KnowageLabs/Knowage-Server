@@ -67,11 +67,13 @@ public class GetFederatedDatasetForFinalUserAction extends AbstractSpagoBIAction
 
 			Integer start = this.getStart();
 			logger.debug("Start : " + start);
-			Integer limit = this.getLimit();
-			logger.debug("Limit : " + limit);
+			// disable limit
+			// Integer limit = this.getLimit();
+			// logger.debug("Limit : " + limit);
 
 			int startIndex = Math.min(start, allFederatedDatasets.size());
-			int stopIndex = (limit > 0) ? Math.min(start + limit, allFederatedDatasets.size()) : allFederatedDatasets.size();
+			int stopIndex = allFederatedDatasets.size();
+			// (limit > 0) ? Math.min(start + limit, allFederatedDatasets.size()) : allFederatedDatasets.size();
 
 			List<FederationDefinition> toReturnSublist = allFederatedDatasets.subList(startIndex, stopIndex);
 
@@ -143,6 +145,7 @@ public class GetFederatedDatasetForFinalUserAction extends AbstractSpagoBIAction
 		return start;
 	}
 
+	// No limit
 	protected Integer getLimit() {
 		Integer limit = LIMIT_DEFAULT;
 		Object limitObject = getAttribute(LIMIT);
