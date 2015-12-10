@@ -363,7 +363,7 @@ public class DataSetFactory {
 
 				SbiFederationDefinition sbiFedDef = sbiDataSet.getFederation();
 				FederationDefinition fd = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(sbiFedDef.getFederation_id());
-				((FederatedDataSet) ds).setFederation(fd);
+				((FederatedDataSet) ds).setDatasetFederation(fd);
 
 				// START -> This code should work instead of CheckQbeDataSets around the projects
 
