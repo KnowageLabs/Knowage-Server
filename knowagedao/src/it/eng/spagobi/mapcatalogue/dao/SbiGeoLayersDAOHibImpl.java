@@ -693,7 +693,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 				do {
 					c = br.readLine();
-					obj = new JSONObject(c);
+
+					obj = obj = new JSONObject(c);
 					System.out.println(obj);
 				} while (c != null);
 			}

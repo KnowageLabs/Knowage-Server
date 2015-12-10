@@ -265,7 +265,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 	$scope.loadLayerList = function(item){
 
-		
+
 		//function calls when you clic on the list of layers
 		$scope.showme=true;
 		$scope.setTab('Layer');
@@ -280,7 +280,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 		$scope.object_temp = angular.copy(item);
 		if(item!= null){		
-			
+
 			$scope.flagtype=false;
 
 			//siamo in una condizione di caricamento dati dalla lista
@@ -692,14 +692,8 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.getDownload=function(item){
 
-		if($scope.typeWFS == 'geojson'){
-			console.log($scope.typeWFS);
-		}else if($scope.typeWFS == 'kml'){
-			console.log($scope.typeWFS);
+		var isIE = /*@cc_on!@*/false || !!document.documentMode;
 
-		}else if($scope.typeWFS == 'shp'){
-			console.log($scope.typeWFS);
-		}
 		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
 				function(data, status, headers, config) {
 					console.log(data);
@@ -709,14 +703,27 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 						var text ;						
 
 						if($scope.typeWFS == 'geojson'){
-							text = JSON.stringify(data);		
-							var anchor = angular.element('<a/>');
-							anchor.attr({
-								href: 'data:text/json;charset=utf-8,' + encodeURI(text),
-								target: '_blank',
-								download: item.label+".json"
-							})[0].click();
 
+							if(isIE){
+								//nel caso di Internet explorer download non  permesso. Per cui faccio un tipo di chiamata a parte
+								var blobObject = new Blob([JSON.stringify(data)]); 
+								window.navigator.msSaveBlob(blobObject,  item.label+".json"); // The user only has the option of clicking the Save button.
+							/*	with the response ok of the user
+							 * var fileData = [JSON.stringify(data)];
+								blobObject = new Blob(fileData);
+								window.navigator.msSaveOrOpenBlob(blobObject,item.label+".json"); // Now the user will have the option of clicking the Save button and the Open button.
+								alert('File save request made using msSaveOrOpenBlob() - note the two "Open" and "Save" buttons below.');
+							 */
+							} else{
+
+								text = JSON.stringify(data);		
+								var anchor = angular.element('<a/>');
+								anchor.attr({
+									href: 'data:text/json;charset=utf-8,' + encodeURI(text),
+									target: '_blank',
+									download: item.label+".json"
+								})[0].click();
+							}
 						} else if($scope.typeWFS == 'kml'){
 							window.open(data.url,'_blank');
 						} else if($scope.typeWFS == 'shp'){
@@ -728,6 +735,7 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					console.log("layer non Ottenuti " + status);
 
 				});
+
 
 	}
 
