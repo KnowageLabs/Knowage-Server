@@ -29,12 +29,13 @@ html,
 body {
     height: 100%;
 }
-
+ /*
 body {
 	background-image: url('../img/pixels.png');
 	background-repeat: repeat;
 	 height: 100%;
 }
+*/
 
 .carousel,
 .item,
@@ -51,10 +52,6 @@ body {
 .fill {
     width: 100%;
     height: 100%;
-	filter: alpha(opacity=50); /* internet explorer */
-	-khtml-opacity: 0.5;      /* khtml, old safari */
-	-moz-opacity: 0.5;       /* mozilla, netscape */
-	opacity: 0.5;           /* fx, safari, opera */
     background-position: center;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -75,24 +72,44 @@ footer {
 			left:0;
 			top:0;
 			z-index:1 !important;
-			/*background-image: url('../img/backgroundlogo.png');*/
 			background-size: cover;
-			filter: alpha(opacity=50); /* internet explorer */
-			-khtml-opacity: 0.5;      /* khtml, old safari */
-			-moz-opacity: 0.5;       /* mozilla, netscape */
-			opacity: 0.5;           /* fx, safari, opera */
+
 }
 
 .layer img  {
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 10px;
+    right: 10px;
     margin: 10px;
-    width: 35%;  
-    filter: alpha(opacity=50); /* internet explorer */
-	-khtml-opacity: 0.5;      /* khtml, old safari */
-	-moz-opacity: 0.5;       /* mozilla, netscape */
-	opacity: 0.5;           /* fx, safari, opera */
+    width: 15%;
+
+}
+
+.carousel-caption {
+    position: absolute;
+    right: 15%;
+    bottom: 20px;
+    left: 15%;
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 4px rgb(0, 0, 0);
+}
+
+.carousel-indicators li {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 1px;
+    text-indent: -999px;
+    cursor: pointer;
+    background-color: #000\9;
+    background-color: rgba(0,0,0,0);
+    border: 1px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgb(0, 0, 0);
 }
 
 </style>  
@@ -101,7 +118,7 @@ footer {
   
 
 	<div class="layer">
-		<img src="../img/userLogo.png" class="logo"/>
+		<img src="../img/enduserLogo.png" class="logo"/>
 
 	</div>
 
@@ -117,7 +134,7 @@ footer {
         <div class="carousel-inner">
             <div class="item active">
                 <!-- Set the first background image using inline CSS below. -->
-                <div class="fill" style="background-image:url('../img/introImage1.jpg');"></div>
+                <div class="fill" style="background-image:url('../img/backgroundLogo.jpg');"></div>
                 <div class="carousel-caption">
                     <h1>Your data at a glance</h1>
                     Define queries on your data instantly, with a few clicks and simple drag&drop actions.
