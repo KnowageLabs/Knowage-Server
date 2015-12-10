@@ -8,6 +8,22 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		globThis : this,
 
 		isCockpitEngine : false,
+		
+		/**
+		 * All XML style properties that are unwanted (on the 'blacklist')
+		 * and that can be found inside of the XML style file. The code will
+		 * later take care of those unwanted properties (if there are any in
+		 * the style file) in a manner of removing them from the JSON object
+		 * that will represent the template with which we are going to merge
+		 * the JSON structure of our current chart object (document). These
+		 * properties are unwanted and it is recommended for user not to 
+		 * specify them since they should not be taken into account as a part
+		 * of the style. However if user specify them, the code will remove 
+		 * them. 
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		unwantedStyleProps: ["text"],
 
 		setCockpitEngine : function (isCockpit) {
 			Sbi.chart.designer.ChartUtils.isCockpitEngine = isCockpit;
@@ -2187,6 +2203,46 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		},
 
 		/**
+		 * Static function that provides removing of all properties that are unwanted and that are 
+		 * specified in static variable "unwantedStyleProps". The function removes those unwanted 
+		 * properties from the JSON object representation of the XML file of the style applied to 
+		 * the chart document (if there are any of those unwanted properties in the style file). 
+		 * This JSON object is afterwards about to be the merging object with the current state 
+		 * (structure) of the chart. 
+		 * 
+		 * @param obj - The input parameter that represents the JSON object of the XML file of the 
+		 * style we want to apply to our document (chart) from which we want to remove all unwanted 
+		 * properties specified in the static variable "unwantedStyleProps".
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		removeUnwantedPropsFromJsonStyle: function(obj)
+		{
+			if (obj)
+	    	{
+		    	for (var key in obj) 
+		    	{
+		            if (typeof obj[key] == "object")
+	            	{
+		            	ChartUtils.removeUnwantedPropsFromJsonStyle(obj[key]);
+	            	}			               
+		            else if (typeof obj[key] != "function")
+	            	{
+		            	for (var i=0; i<ChartUtils.unwantedStyleProps.length; i++)
+	            		{
+		            		if (key == ChartUtils.unwantedStyleProps[i])
+		            		{
+			            		delete obj[key];
+		            		}
+	            		}		            				            		
+	            	}			                
+		        }	
+	    	}			        
+
+		    return obj;
+		},
+		
+		/**
 		 * Creates a new merged object using matching key in
 		 * case of array merging, keeping intact the original
 		 * objects <code>target</code> and <code>source</code>.
@@ -2282,7 +2338,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 					continue;
 				}
 
-				item = source[prop];
+				item = source[prop];				
 				
 				if (typeof item == 'object' && item !== null) {
 					if (isArray(item)) {
@@ -2383,7 +2439,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				} else {
 					// item is a primitive, just copy it over
 					newTarget[prop] = item;
-				}
+				}	
+				
 			}
 
 			if (removeNotFoundItemsFlag) {
@@ -2398,8 +2455,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			var styleSerieAxis,
 			styleCategoryAxis;
 
-//			console.log("-- applyAxes --");
-
 			/**
 			 * 'target' - 	content (properties) of the AXIS tag of the XML structure
 			 * 				inside the 'jsonTemplate' that represent the target when
@@ -2413,9 +2468,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			// 'source' is an array containing the styles
 			for (var i = 0; i < source.length; i++) {
 				var axis = source[i];
-//				console.log("<< SOURCE >>");
-//				console.log(axis);
-
+				
 				/**
 				 * 'styleSerieAxis' - 		properties that are common for the AXIS tag of the
 				 * 							axis for the SERIE items.
@@ -2430,17 +2483,11 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				}
 			}
 
-			//console.log(styleSerieAxis);
-			//console.log(styleCategoryAxis);
-
 			var finalAxisArray = [];
 
 			for (var i = 0; i < target.length; i++) {
 				var appliedStyledAxis = {};
 				var targetAxis = target[i];
-
-//				console.log("<< TARGET >>");
-//				console.log(targetAxis);
 
 				if (targetAxis.type.toLowerCase() == 'serie') {
 					appliedStyledAxis = ChartUtils.mergeObjects(targetAxis, styleSerieAxis);
@@ -2450,8 +2497,6 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 
 				finalAxisArray.push(appliedStyledAxis);
 			}
-
-//			console.log("<< RESULT >>");
 
 			return finalAxisArray;
 		},

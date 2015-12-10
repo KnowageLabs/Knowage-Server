@@ -36,7 +36,7 @@ Ext.define('Sbi.chart.designer.Designer', {
     	 * will be used by all JS files inside of this project (root of this
     	 * file) for purpose of dynamic path specification.
     	 * 
-    	 * @author: danristo (danilo.ristovski@mht.net)
+    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	 */
     	relativePathReturn: '../../..',
     	
@@ -101,8 +101,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 		 * for getting the default style. The default chart style has 'isDefault' 
 		 * parameter set to 'true'.
 		 * 
-		 * @author atomic (ana.tomic@mht.net)
-		 * @commentBy: danristo (danilo.ristovski@mht.net)
+		 * @author Ana Tomic (atomic, ana.tomic@mht.net)
+		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		getDefaultStyle: function(){
 			var styles=JSON.parse(Sbi.chart.designer.Styles);
@@ -121,8 +121,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 		/**
 		 * Get the missing JSON configuration elements (properties) in order to define
 		 * their default values for any type of chart (including the BAR chart).
-		 * (danilo.ristovski@mht.net)
-		 * (ana.tomic@mht.net)
+		 * 
+		 * @author Ana Tomic (atomic, ana.tomic@mht.net)
+		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		getConfigurationForStyle : function(style) {
 		      
@@ -185,7 +186,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			/**
 			 * Global scope (scope of the Designer). 
 			 * 
-			 * @author atomic (ana.tomic@mht.net)
+			 * @author Ana Tomic (atomic, ana.tomic@mht.net)
 			 */
 			var globalThis = this;
 						
@@ -201,16 +202,34 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * If we are creating completely new chart (new document) immediately on loading
 			 * the Designer page apply the default style.
 			 * 
-			 * @author: atomic (ana.tomic@mht.net)
-			 * @commentBy: danristo (danilo.ristovski@mht.net)
+			 * @author Ana Tomic (atomic, ana.tomic@mht.net)
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			if (!jsonTemplate.CHART) 
 			{
-			    var defaultStyleTemplate=this.getDefaultStyle();
+			    var defaultStyleTemplate = this.getDefaultStyle();
 			    
+			    /**
+			     * If this style JSON template is marked as default in the XML document that holds its 
+			     * data.
+			     * 
+			     * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			     */
 			    if(defaultStyleTemplate)
 			    {
-			    	jsonTemplate=Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, defaultStyleTemplate.generic);
+			    	/**
+			    	 * Remove unwanted properties from the JSON template that we are about to apply to
+			    	 * the current chart document structure (e.g. if there is some "text" property in
+			    	 * the XML style file, remove it from the JSON template). All unwanted properties
+			    	 * are set inside of the static "unwantedStyleProps" object inside of the 
+			    	 * ChartUtils.js file.
+			    	 * 
+			    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			    	 */
+			    	var defaultStyleTemplateGeneric = 
+			    			Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(defaultStyleTemplate.generic);
+			    	
+			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate,defaultStyleTemplateGeneric);
 			    }
 			    else
 			    {
@@ -221,7 +240,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 			}		
 					
 			Designer.styleName = (jsonTemplate.CHART.styleName) ? (jsonTemplate.CHART.styleName) : "";
-			//console.log(jsonTemplate);
+			
 			/**
 			 * Merging JSON templates of specified chart types with the base JSON template
 			 * (of type BAR) in order to make the union of all of the JSON elements within
@@ -256,7 +275,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 					jsonTemplate.CHART.AXES_LIST.AXIS = axisArray;
 					jsonTemplate.CHART.AXES_LIST.AXIS.push(axisTemp);
 				}		
-				
+							
 				jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate, jsonTemplate);	
 				
 			}
@@ -602,12 +621,32 @@ Ext.define('Sbi.chart.designer.Designer', {
 					 */
 					var jsonTemplateAdvancedEditor = Sbi.chart.designer.Designer.exportAsJson();	
 					
-					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(Designer.styleName).generic, configApplyAxes);
+					/**
+			    	 * Remove unwanted properties from the JSON template that we are about to apply to
+			    	 * the current chart document structure via "removeUnwantedPropsFromJsonStyle" 
+			    	 * static function.
+			    	 * 
+			    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			    	 */
+					var configurationForStyleGeneric = 
+						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName).generic);	
 					
-					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-							localJsonTemplate, 
-							Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()], 
-							configApplyAxes);							
+					var configurationForStyleSpecific = 
+						Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(Designer.styleName)[currentChartType.toLowerCase()]);	
+					
+					var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+					(
+						jsonTemplateAdvancedEditor,
+						configurationForStyleGeneric,
+						configApplyAxes
+					);
+					
+					localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+					(
+						localJsonTemplate, 
+						configurationForStyleSpecific, 
+						configApplyAxes
+					);							
 					
 					jsonTemplate = localJsonTemplate;				
 					
@@ -969,9 +1008,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * (danilo.ristovski@mht.net)
 			 */
 			this.styleLabel = Ext.create ('Ext.form.Label', {
-			        forId: 'stylePickerComboId',
+		        forId: 'stylePickerComboId',
 		        text: LN('sbi.chartengine.designer.styleforparameters'),
-			        //margin: '5 3 3 0'
+//			        margin: '5 3 3 0'
 			});
 			
 			/**
@@ -1055,12 +1094,30 @@ Ext.define('Sbi.chart.designer.Designer', {
 //								}									
 //							}
 							
-							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(jsonTemplateAdvancedEditor,Designer.getConfigurationForStyle(k.data.styleAbbr).generic, configApplyAxes);
+							/**
+					    	 * Remove unwanted properties from the JSON template that we are about to apply to
+					    	 * the current chart document structure via "removeUnwantedPropsFromJsonStyle" 
+					    	 * static function.
+					    	 * 
+					    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					    	 */
 							
-							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
-									localJsonTemplate, 
-									Designer.getConfigurationForStyle(k.data.styleAbbr)[chartTypeToLowerCase], 
-									configApplyAxes);							
+							var configurationForStyleGeneric = Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(k.data.styleAbbr).generic);	
+							var configurationForStyleSpecific = Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(Designer.getConfigurationForStyle(k.data.styleAbbr)[chartTypeToLowerCase]);	
+							
+							var localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+							(
+								jsonTemplateAdvancedEditor,
+								configurationForStyleGeneric,
+								configApplyAxes
+							);
+							
+							localJsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects
+							(
+								localJsonTemplate, 
+								configurationForStyleSpecific, 
+								configApplyAxes
+							);							
 							
 							jsonTemplate = localJsonTemplate;
 							
@@ -1802,7 +1859,14 @@ Ext.define('Sbi.chart.designer.Designer', {
   				defaults: {
   					collapsible: false,
   					split: true,
-  					bodyPadding: 10
+  					bodyPadding: 10,
+  					
+  					/**
+  					 * Disable resizing of the left part of the Designer's main page.
+  					 * 
+  					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+  					 */
+  					splitterResize: false
   				},
   				items: [
   					this.chartTypeColumnSelector,
@@ -2325,7 +2389,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 				{
 					/**
 					 * PARALLEL chart needs at least two serie items.
-					 * @author: danristo (danilo.ristovski@mht.net)
+					 * @author danristo (danilo.ristovski@mht.net)
 					 */
 					errorMsg += "- " + LN('sbi.chartengine.validation.addserie.atLeastTwo') + '<br>';
 				}
@@ -2336,29 +2400,33 @@ Ext.define('Sbi.chart.designer.Designer', {
 			 * this one can be an empty array when there are no category items picked. If the
 			 * chart type is GAUGE we are not supposed to have any category item at all.
 			 * 
-			 * @modifiedBy: danristo (danilo.ristovski@mht.net)
+			 * @modifiedBy danristo (danilo.ristovski@mht.net)
 			 */
 			var categoriesPicked = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();
 			
-			if ((categoriesPicked== null || (Array.isArray(categoriesPicked) && categoriesPicked.length==0)) && chartType != "GAUGE") {				
-				errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
-			}	
-			
-			/**
-			 * danristo (danilo.ristovski@mht.net)
-			 */
-			else 
-			{
+			if ((categoriesPicked==null || (Array.isArray(categoriesPicked))) && chartType != "GAUGE") {				
+				
 				var categoriesAsJson = Sbi.chart.designer.ChartUtils.getCategoriesDataAsOriginalJson();				
 				
-				if ((chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD") &&
-						categoriesAsJson.length != 2) {
-					errorMsg += "- " + LN("sbi.chartengine.validation.exactlyTwoCategories") + '<br>'; 
+				if (chartType == "PARALLEL" || chartType == "HEATMAP" || chartType == "CHORD")
+				{
+					if (categoriesAsJson.length != 2)
+					{
+						errorMsg += "- " + LN("sbi.chartengine.validation.exactlyTwoCategories") + '<br>'; 
+					}
 				}
-				else if ((chartType == "TREEMAP" || chartType=="SUNBURST") && categoriesAsJson.length < 2) {
-					errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
+				else if (chartType == "TREEMAP" || chartType=="SUNBURST")
+				{
+					if (categoriesAsJson.length < 2)
+					{
+						errorMsg += "- " + LN("sbi.chartengine.validation.atLeastTwoCategories") + '<br>';
+					}
 				}
-			}		
+				else if (categoriesPicked==null || categoriesPicked.length==0)
+				{
+					errorMsg += "- " + LN('sbi.chartengine.validation.addcategory') + '<br>';
+				}				
+			}			
 				
 			var mainConfigurationPanel = this.stepsTabPanel.getComponent(1).getComponent(0);
 			
@@ -4345,7 +4413,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 		cleanAxesSeriesAndCategories: function() {
 			//Reset Series and Categories
 			this.bottomXAxisesPanel.setAxisData(Sbi.chart.designer.ChartUtils.createEmptyAxisData(true));
-			
+			 
 			this.categoriesStore.removeAll();
 			
 			var serieStorePool = Sbi.chart.designer.ChartColumnsContainerManager.storePool;
