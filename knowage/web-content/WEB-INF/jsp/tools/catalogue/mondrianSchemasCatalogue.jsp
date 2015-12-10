@@ -63,20 +63,19 @@
 
 				<md-content layout-padding
 					style="background-color: rgb(236, 236, 236);"
-					class="ToolbarBox miniToolbar noBorder leftListbox"> 
+					class="md-padding ToolbarBox miniToolbar noBorder"> 
 					
 					
 <!-- /////////////// CATALOGUE TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->					
 					<angular-table 	layout-fill 
-									id="Dragan" 
+									id="catalog" 
 									ng-model="itemList"
-									columns='[{"label":"NAME","name":"NAME"},{"label":"Description","name":"DESCRIPTION"}]'
-									columns-search='["NAME","DESCRIPTION"]' 
+									columns='[{"label":"NAME","name":"name"},{"label":"DESCRIPTION","name":"description"}]'
 									show-search-bar=true
 									highlights-selected-item=true
 									speed-menu-option ="catalogueSpeedOptions"
-									click-function = "myAssociatedClickFunction(item)"
-									
+									click-function = "catalogueClickFunction(item)"
+									no-pagination=false
 									
 									> 
 					</angular-table> 
@@ -86,13 +85,13 @@
 			</div>
 
 		</left-col> 
-<!-- /////////////// RIGHT SIDE     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->		
+<!-- /////////////// RIGHT SIDE     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->		
 		<right-col  >
 			
 			<div ng-show="showMe"  >
 			
-			<form 	
-					ng-submit="saveMondrianCatalogue()"
+			<form 	layout-fill class="detailBody md-whiteframe-z1"
+					
 					class="detailBody md-whiteframe-z1" 
 					novalidate>
 					
@@ -120,7 +119,7 @@
 						</md-button>
 
 <!-- /////////////// SAVE BUTTON \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
-						<md-button type="submit" 
+						<md-button 	ng-click="saveMondrianCatalogue()"
 									aria-label="save layer"
 									class="md-raised md-ExtraMini " 
 									style=" margin-top: 2px;">
@@ -133,7 +132,8 @@
 				</md-toolbar>
 			
 <!-- /////////////// INPUT PART \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->								
-				<md-content md-dynamic-height flex style="margin-left: 20px;" class="ToolbarBox miniToolbar noBorder">
+				
+				<md-content flex style="margin-left:20px;" class="md-padding ToolbarBox miniToolbar noBorder">
 				
 <!-- /////////////// INPUT FIELD NAME \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->			
 					<div layout="row" layout-wrap>
@@ -142,10 +142,11 @@
 				 			<md-input-container class="small counter"> 
 				 
 								<label>{{translate.load("sbi.ds.name");}}</label>
-								<input 	ng-model="selectedMondrianSchema.NAME" 
-										maxlength="100"
+								<input 	ng-model="selectedMondrianSchema.name" 
+										required
 										ng-maxlength="100" 
-										md-maxlength="100"> 
+
+										> 
 							</md-input-container> 
 						</div>
      				</div>
@@ -159,10 +160,9 @@
 				
 								<label>{{translate.load("sbi.ds.description");}}</label>
 					
-								<input 	ng-model="selectedMondrianSchema.DESCRIPTION" 
-										maxlength="100"
+								<input 	ng-model="selectedMondrianSchema.description" 
 										ng-maxlength="100" 
-										md-maxlength="100"> 
+										> 
 							
 								</md-input-container>
 				</div>
@@ -173,11 +173,12 @@
 				<div flex=100>
       				<md-input-container class="small counter"> 
       				
-       					<input id="mondarianSchemaFile" 
-       							ng-model="selectedMondrianSchema.FILE" 
+       					<input id="mondarianSchemaFile"
        							type="file"
-       							fileread="selectedMondrianSchema.mondarianSchemaFile" 
-       							accept=""> 
+       							file-model="selectedMondrianSchema.file"
+       							> 
+       							
+       							
      				 </md-input-container>
 
      </div>
@@ -191,7 +192,7 @@
  
       						<md-input-container class="small counter"> 
       							<md-checkbox
-       								ng-model="selectedBusinessModel.BUSINESSMODEL_LOCKED" 
+       								ng-model="selectedMondrianSchema.currentContentId" 
        								aria-label="Locked"
        								disabled>
       							</md-checkbox> 
@@ -205,27 +206,22 @@
  							<!-- Input label for locker -->
      					</div>
      				
-<!-- /////////////// LOCK BUTTON  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
-				<div layout="row" layout-wrap>
-      						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised ">
-       								{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.lockModel")}}
-       							</md-button>
-      						</div>
-     					</div>
      				
 <!-- /////////////// UNLOCK BUTTON  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 
 				<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised ">
+       							<md-button type="button" class="md-raised " ng-click="addAutomaticData()">
        								{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.unlockModel")}}
        							</md-button>
       						</div>
      					</div> 
      				
-     								
+     				<div>
+     				
+     				
+     				</div>				
 <!-- /////////////// SAVED VERSION TOOLBAR \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 							
 				<md-toolbar class="md-blue minihead md-toolbar-tools" >
@@ -237,22 +233,34 @@
 <!-- /////////////// SCROLL FOR SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->						
 			
 			
-			<md-content layout-row  style = "background-color: rgb(236,236,236 );height:60%"  >
+			<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox"  >
 			
 			
 			
-<!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->					
+<!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
+					<md-radio-group ng-model="selectedMondrianSchema.currentContentId"  >
 						<angular-table 	layout-fill
-										id="Dragan" 
-										ng-model="selectedMondrianSchema.fileList"
-										columns='["CREATOR","CREATION_DATE","FILE_NAME"]'
-										highlights-selected-item=true
+										id="versions" 
+										ng-model="fileList"
+										no-pagination=false
 										
+										columns='[
+										{"label":"ACTIVE","name":"actives","size":"50px"},
+										{"label":"FILE NAME","name":"fileName"},
+										{"label":"CREATOR","name":"creationUser"},
+										{"label":"CREATION DATE","name":"creationDate"},
+										
+										
+										]'
+										highlights-selected-item=true
+										show-search-bar=true
+										speed-menu-option ="versionsSpeedOptions"
+										click-function = "versionClickFunction(item)"
 										> 
-					
+										
 						</angular-table>
 			
-				
+				</md-radio-button>
 			
 				
 				</md-content>	

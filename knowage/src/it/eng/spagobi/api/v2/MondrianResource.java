@@ -170,6 +170,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("ID") int artifactId) {
 
 		Content content = new Content();
+		byte[] bytes = null;
 
 		artifactDAO = DAOFactory.getArtifactsDAO();
 
@@ -183,14 +184,19 @@ public class MondrianResource extends AbstractSpagoBIResource {
 				try {
 
 					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					content.setFileName(getFileName(header));
+					if (getFileName(header) != null) {
+						content.setFileName(getFileName(header));
 
-					// convert the uploaded file to input stream
-					InputStream inputStream = inputPart.getBody(InputStream.class, null);
+						// convert the uploaded file to input stream
+						InputStream inputStream = inputPart.getBody(InputStream.class, null);
 
-					byte[] bytes = IOUtils.toByteArray(inputStream);
+						bytes = IOUtils.toByteArray(inputStream);
+						content.setContent(bytes);
+						content.setCreationDate(new Date());
+						content.setCreationUser(getUserProfile().getUserName().toString());
 
-					content.setContent(bytes);
+						artifactDAO.insertArtifactContent(artifactId, content);
+					}
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -198,14 +204,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 			}
 
-			content.setCreationDate(new Date());
-			content.setCreationUser(getUserProfile().getUserName().toString());
-			content.setDimension(String.valueOf(content.getContent().length));
-			artifactDAO.insertArtifactContent(artifactId, content);
-
 		}
 
-		return Response.status(200).entity("uploadFile is called, Uploaded file name : ").build();
+		return Response.status(200).build();
 
 	}
 
@@ -221,7 +222,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 				return finalFileName;
 			}
 		}
-		return "unknown";
+		return null;
 	}
 
 	@PUT
@@ -244,6 +245,10 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			artifactDAO = DAOFactory.getArtifactsDAO();
 			artifactDAO.setUserProfile(getUserProfile());
 			artifactDAO.modifyArtifact(artifact);
+			if (artifact.getCurrentContentId() != null) {
+				artifactDAO.setActiveVersion(artifact.getId(), artifact.getCurrentContentId());
+			}
+
 			String encodedArtifact = URLEncoder.encode("" + artifact.getId(), "UTF-8");
 			return Response.created(new URI("2.0/mondrianSchemas/" + encodedArtifact)).entity(encodedArtifact).build();
 
