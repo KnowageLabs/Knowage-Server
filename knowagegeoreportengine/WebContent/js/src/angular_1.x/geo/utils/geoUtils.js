@@ -422,7 +422,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 								if (elementIndex > 0) {
 									parametersAsString += ',';
 								}
-								parametersAsString += "'" + elementProperties[param.state] + "'";
+								parametersAsString += elementProperties[param.state];
 							}
 						}
 						// else selectedElements is a single feature

@@ -241,7 +241,7 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-			crossNavigation.navigateTo(geo_interaction.selectedFeatures);
+			//crossNavigation.navigateTo(geo_interaction.selectedFeatures);
 			
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
@@ -307,7 +307,7 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-			crossNavigation.navigateTo(geo_interaction.selectedFeatures);
+//			crossNavigation.navigateTo(geo_interaction.selectedFeatures);
 			//layerServ.Render(selection);
 
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
