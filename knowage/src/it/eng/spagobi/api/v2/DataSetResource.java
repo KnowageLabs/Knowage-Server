@@ -99,8 +99,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
 
 		for (SbiDataSet dataset : dataSets) {
-			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
-			if (DataSetUtilities.isExecutableByUser(iDataSet, getUserProfile()))
+			if (DataSetUtilities.isExecutableByUser(dataset.isPublicDS(), dataset.getOwner(), getUserProfile()))
 				toBeReturned.add(dataset);
 		}
 

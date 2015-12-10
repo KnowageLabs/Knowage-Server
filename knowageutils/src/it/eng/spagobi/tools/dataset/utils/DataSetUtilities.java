@@ -60,6 +60,19 @@ public class DataSetUtilities {
 
 		return (dataset.isPublic() || (!owner.equals(null) && owner.equals(dataset.getOwner())));
 	}
+	
+	public static boolean isExecutableByUser(boolean isPublic, String ownerDataSet, IEngUserProfile profile) {
+		if (profile == null) {
+			return false;
+		}
+		boolean isAdminUser = isAdministrator(profile);
+		if (isAdminUser) {
+			return true;
+		}
+		String owner = profile.getUserUniqueIdentifier().toString();
+
+		return (isPublic|| (!owner.equals(null) && owner.equals(ownerDataSet)));
+	}
 
 	public static boolean isAdministrator(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
