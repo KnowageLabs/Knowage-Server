@@ -130,7 +130,7 @@ author:
 			}
 		}
 	}
-	String driverParams = new JSONObject(driverParamsMap).toString(0);
+	String driverParams = new JSONObject(driverParamsMap).toString(0).replaceAll("'", "\\\\'");
 	String uuidO=request.getParameter("SBI_EXECUTION_ID")!=null? request.getParameter("SBI_EXECUTION_ID"): "null";
 %>
 

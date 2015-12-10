@@ -404,8 +404,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 			}
 
 			// Cross Navigation Dynamic parameters
-			if(crossnav.dynamicParams 
-					&& Array.isArray(crossnav.dynamicParams)) {
+			if(crossnav.dynamicParams && Array.isArray(crossnav.dynamicParams)) {
 
 				var dynamicParams = crossnav.dynamicParams;
 				for(var i = 0; i < dynamicParams.length; i++) {
@@ -422,7 +421,7 @@ geoM.service('crossNavigation', function(geoModule_template, geoModule_driverPar
 								if (elementIndex > 0) {
 									parametersAsString += ',';
 								}
-								parametersAsString += elementProperties[param.state];
+								parametersAsString += "'" + elementProperties[param.state] + "'";
 							}
 						}
 						// else selectedElements is a single feature
