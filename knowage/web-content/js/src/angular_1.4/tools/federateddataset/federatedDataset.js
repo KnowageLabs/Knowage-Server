@@ -109,7 +109,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 						console.log('selected field');
 						ctr.beforeRel = dataset;
 						ctr.beforeRel.firstSelectedListField = listField.name;
-						ctr.beforeRel.ime = dataset.name;
+						ctr.beforeRel.ime = dataset.label;
 						checkBranch = true;
 					}
 				});
@@ -136,12 +136,12 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 						t.sourceTable.className = ctr.beforeRel.ime;
 						t.sourceColumns.push(ctr.beforeRel.firstSelectedListField);
 						
-						t.destinationTable.name = dataset.name;
-						t.destinationTable.className = dataset.name;
+						t.destinationTable.name = dataset.label;
+						t.destinationTable.className = dataset.label;
 						t.destinationColumns.push(polje.name);
 						
 						ctr.beforeRel = polje;
-						ctr.beforeRel.ime = dataset.name;
+						ctr.beforeRel.ime = dataset.label;
 						ctr.beforeRel.firstSelectedListField = polje.name;
 						
 						RelationshipsArray.push(t);
