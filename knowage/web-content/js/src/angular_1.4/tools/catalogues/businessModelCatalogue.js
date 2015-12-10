@@ -1,8 +1,7 @@
 /**
  * 
  */
-//module with one quote
-//controller with double quote
+
 var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col']);
 
 app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", businessModelCatalogueFunction]);
@@ -11,16 +10,18 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	
 	//variables
 	///////////////////////////////////////////////////////////
+	$scope.isDirty = false;
 	$scope.showMe = false;				//boolean for visibility
 	$scope.translate = sbiModule_translate;
 	$scope.businessModelList=[];		//All Business Models list
 	$scope.listOfDatasources = [];		//Dropdown
 	$scope.listOfCategories=[];			//Dropdown
-	$scope.bmVersions=[];				//Selected BM Versions table multiselect
+	$scope.bmVersions=[];
 	$scope.selectedBusinessModels=[];	//Selected Business Models table multiselect
-	$scope.selectedVersions=[];
+	$scope.selectedVersions=[];			//Selected BM Versions table multiselect
 	$scope.selectedBusinessModel = {}; //Selected model for editing or new model data
-	
+	$scope.bmVersionsRadio;
+	$scope.bmVersionsActive;
 	$scope.businessModelFile = new FormData();
 	
 	angular.element(document).ready(function () {
@@ -48,6 +49,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	
 	$scope.cancel = function(){
 		$scope.showMe = false;
+		$scope.isDirty = false;
 		$scope.selectedBusinessModel = {};
 		$scope.businessModelHistory=[];
 	}
@@ -65,13 +67,51 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	}
 	
 	$scope.leftTableClick = function(item){
-		$scope.selectedBusinessModel = angular.copy(item);
-		$scope.getVersions(item.id);
-		$scope.showMe = true;	
+		if($scope.isDirty){
+		    $mdDialog.show($scope.confirm).then(function(){
+		    $scope.isDirty=false;   
+		    $scope.selectedBusinessModel=angular.copy(item);
+		    $scope.getVersions(item.id);
+		    $scope.showMe=true;
+		    },
+		     function(){		       
+		    	  $scope.showMe = true;
+		      });
+		      
+		     }else{		    
+		    	 $scope.selectedBusinessModel=angular.copy(item);
+		    	 $scope.getVersions(item.id);
+		    	 $scope.showMe=true;
+		     }
+
 	}
 	
 	$scope.downloadFile = function(item,ev){
-		console.log(item.id);
+		sbiModule_restServices
+		.get("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions/"+item.id+"/download","")
+		.success
+		(
+				function(data, status, headers, config){
+					var separator;
+					var b64;
+					var name;
+					
+					for(var i=0;i<data.length;i++){
+						if(data[i]=="+"){
+							separator = i;
+							break;
+						}
+					}
+					
+					name = data.substring(0,separator);
+					b64 = data.substring(separator+1,data.length)
+
+					var a = document.getElementById("test");
+					a.setAttribute("download",name);
+					a.setAttribute("href",b64);
+					
+					a.click();
+		});
 	}
 	
 	 $scope.bmSpeedMenu= [
@@ -205,8 +245,11 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		  					console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 		  				} else {
 		  					$scope.bmVersions = data;
+		  					//$scope.bmVersions[0].active = "&#10004;";
+		  					activeFlagStyle();
 		  					millisToDate($scope.bmVersions);
 		  				}
+		  				
 		  			})
 		  		
 		  		.error(function(data, status, headers, config) {
@@ -219,8 +262,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 //calling service for saving BM @POST and @PUT
 	 $scope.saveBusinessModel = function(){
 			console.log("aj em in sejv biznis model");
-			
-			console.log($scope.businessModelFile);
+			console.log("bmVersionsRadio:"+$scope.bmVersionsRadio);
+			console.log("bmVersionsActive:"+$scope.bmVersionsActive);
 			
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
 				console.log("Novi se cuva");
@@ -232,6 +275,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 								$scope.selectedBusinessModel.id = data.id;
 								$scope.businessModelList.push(data);
 								$scope.selectedVersions=[];
+								$scope.isDirty = false;
 								$scope.showActionOK("New Business Model saved successfully");
 							}
 							
@@ -244,14 +288,27 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 					.success(
 							function(){
+								if($scope.bmVersions.length > 1 && $scope.bmVersionsActive != null){
+									sbiModule_restServices
+									.put("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
+									.success(
+											function(){
+												console.log("Uspjesno sacuvana promjena verzije ");
+											}
+										
+										);
+									}
+								
 								$scope.businessModelList=[];
 								$scope.getBusinessModels();
-								//$scope.businessModelList.push($scope.selectedBusinessModel);
+								$scope.isDirty = false;
 								$scope.showActionOK("Business Model edited successfully");
-								console.log("Uspjesno sacuvan");
+								
 							}
 							
 						);
+				
+				
 			}	
 
 		}
@@ -369,6 +426,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			 for(var i=0; i<selectedItems.length;i++){
 				 s+="id="+selectedItems[i].id+"&";
 			 }
+			 
 			 return s;
 		} 	
 			
@@ -429,7 +487,60 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 				    			}
 				    		});
 		};
-				   
-			   
-			 //$scope.getData();
+		
+		//check if is name dirty 
+		$scope.checkChange = function(){
+			console.log($scope.bmVersionsRadio);
+			console.log($scope.bmVersionsRadioActive);
+			if($scope.selectedBusinessModel.name === null){
+				if($scope.selectedBusinessModel.name === undefined || $scope.selectedBusinessModel.name === null){
+					$scope.isDirty = false;
+				}
+			}
+			else{
+				$scope.isDirty = true;
+			}
+
+		}
+		
+		//get item by id
+		getItemById = function(id){
+			for(var i = 0; i < $scope.businessModelList.length ; i++){
+				if($scope.businessModelList[i].id == id)
+					return $scope.businessModelList[i];
+			}
+		}
+		
+		//comparing bms
+		compareBusinessModels = function(bm1,bm2){
+			for(var i in bm1){
+				if(bm1[i] !== bm2[i])
+					return false;
+			}
+				return true;
+		}
+		
+		 $scope.confirm = $mdDialog
+	      .confirm()
+	      .title(sbiModule_translate.load("sbi.catalogues.generic.modify"))
+	      .content(
+	              sbiModule_translate
+	              .load("sbi.catalogues.generic.modify.msg"))
+	              .ariaLabel('toast').ok(
+	                      sbiModule_translate.load("sbi.general.continue")).cancel(
+	                              sbiModule_translate.load("sbi.general.cancel"));
+		
+		 activeFlagStyle = function(){
+			 for(var i=0; i<$scope.bmVersions.length;i++){
+				 $scope.bmVersions[i]["ACTION"] = '<md-radio-button value="'+$scope.bmVersions[i].id+'"></md-radio-button>';
+				 if($scope.bmVersions[i].active){
+					 $scope.bmVersionsRadio = $scope.bmVersions[i].id;
+					 $scope.bmVersionsActive = $scope.bmVersions[i].id;
+				 }
+			 }
+		 }
+		 
+		 $scope.clickRightTable = function(item){
+			 $scope.bmVersionsActive= item.id;
+		 }
 };

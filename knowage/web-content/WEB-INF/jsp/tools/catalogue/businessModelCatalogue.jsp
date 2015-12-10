@@ -86,16 +86,17 @@
 									
 									<md-button type="button" tabindex="-1" aria-label="cancel"
 										class="md-raised md-ExtraMini " style=" margin-top: 2px;"
-										ng-click="cancel()">
+										ng-click="cancel()" >
 										{{translate.load("sbi.browser.defaultRole.cancel");}}
 									</md-button>
 									
-									<md-button  type="submit"
+									<md-button  type="submit" ng-disabled="!isDirty"
 										aria-label="save layer" class="md-raised md-ExtraMini "
 										style=" margin-top: 2px;" ng-click="saveBusinessModel()"
 									>
 										{{translate.load("sbi.browser.defaultRole.save");}} 
 									</md-button>
+									
 								</div>
 						</div>
 					</md-toolbar>
@@ -106,7 +107,7 @@
       						<div flex=100>
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.ds.name")}}</label>
-       								<input ng-model="selectedBusinessModel.name" required
+       								<input ng-change="checkChange()" ng-model="selectedBusinessModel.name" required
         								 ng-maxlength="100"> 
         						</md-input-container>
       						</div>
@@ -117,7 +118,7 @@
        							<md-input-container class="small counter">
        								<label>{{translate.load("sbi.ds.description")}}</label>
        								<input ng-model="selectedBusinessModel.description"
-        								ng-maxlength="100"> 
+        								ng-maxlength="100" ng-change="checkChange()"> 
         						</md-input-container>
       						</div>
      					</div>
@@ -127,7 +128,7 @@
        							<md-input-container class="small counter"> 
        								<label>{{translate.load("sbi.ds.catType")}}</label>
 							       <md-select  aria-label="aria-label"
-							        ng-model="selectedBusinessModel.category"> <md-option
+							        ng-model="selectedBusinessModel.category" ng-change="checkChange()"> <md-option
 							        ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
 							       </md-select> 
        							</md-input-container>
@@ -139,8 +140,8 @@
        							<md-input-container class="small counter"> 
        								<label>{{translate.load("sbi.ds.dataSource")}}</label>
 							       <md-select  aria-label="aria-label"
-							        ng-model="selectedBusinessModel.dataSourceLabel"> <md-option
-							        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_ID}}">{{d.DATASOURCE_LABEL}} </md-option>
+							        ng-model="selectedBusinessModel.dataSourceLabel" ng-change="checkChange()"> <md-option
+							        ng-repeat="d in listOfDatasources" value="{{d.DATASOURCE_LABEL}}">{{d.DATASOURCE_LABEL}} </md-option>
 							       </md-select> 
        							</md-input-container>
       						</div>
@@ -163,9 +164,15 @@
       						</div>
  
       						<md-input-container class="small counter"> 
-      							<md-checkbox
+      							<!--<md-checkbox
        								ng-model="selectedBusinessModel.modelLocked" aria-label="Locked" disabled>
-      							</md-checkbox> 
+      							</md-checkbox> -->
+      							<md-icon md-font-icon="fa fa-lock fa-2x" ng-show="selectedBusinessModel.modelLocked" 
+      								style="margin-top: 1px; color:#3b668c;">
+      							</md-icon>
+      							<md-icon md-font-icon="fa fa-unlock-alt fa-2x" ng-show="!selectedBusinessModel.modelLocked" 
+      								style="margin-top: 1px; color:#3b668c;">
+      							</md-icon>  
       						</md-input-container>
      					</div>
      					
@@ -178,7 +185,7 @@
      					
      					<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised " ng-disabled="selectedBusinessModel.modelLocked" ng-click="lockBusinessModel()">
+       							<md-button type="button" class="md-raised " ng-disabled="selectedBusinessModel.modelLocked" ng-click="lockBusinessModel()" >
        								{{translate.load("sbi.bm.lockModel")}}
        							</md-button>
       						</div>
@@ -193,7 +200,7 @@
      					</div>
      			
      					<div style="height:40%; padding-top:20px">
-     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%; overflow:hidden;" >
+     						<md-content flex style="background-color: rgb(236, 236, 236); height:95%; " ><!-- overflow:hidden; -->
      							<md-toolbar class="md-blue minihead md-toolbar-tools">
      								<!-- <md-button 
     									ng-disabled=false
@@ -208,7 +215,7 @@
 									</md-button>  -->
      								{{translate.load("sbi.widgets.catalogueversionsgridpanel.title")}}
      							</md-toolbar>
-     							
+     							<md-radio-group ng-model="bmVersionsRadio" ng-change="checkChange()">
      							<angular-table
 	     							style="background-color:red" 
 									layout-fill
@@ -217,17 +224,22 @@
 									columns='[
 										{"label":"Creator","name":"creationUser"},
 										{"label":"Creation Date","name":"creationDate"},
-										{"label":"File name","name":"fileName"}
+										{"label":"File name","name":"fileName"},
+										{"label":"Active","name":"ACTION"}
 										]'
 									columns-search='["creationUser","creationDate"]'
-									show-search-bar=false
+									show-search-bar=true
 									selected-item="selectedVersions"
 									highlights-selected-item=true
 									selected-item="bmVersions"
-									speed-menu-option="bmSpeedMenu2"										
+									speed-menu-option="bmSpeedMenu2"	
+									no-pagination=false	
+									click-function="clickRightTable(item)"								
 								>						
 								</angular-table>
+								<md-radio-group>								
      						</md-content>
+     						<a id="test" style="visibility:hidden"></a>
      					</div>
      					
 					</md-content>
