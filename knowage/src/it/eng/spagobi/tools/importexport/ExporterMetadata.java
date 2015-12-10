@@ -530,7 +530,7 @@ public class ExporterMetadata {
 					IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
 
 					if (wrappedDataset instanceof FederatedDataSet) {
-						FederationDefinition fd = ((FederatedDataSet) wrappedDataset).getFederation();
+						FederationDefinition fd = ((FederatedDataSet) wrappedDataset).getDatasetFederation();
 						SbiFederationDefinition sbiFd = (SbiFederationDefinition) session.load(SbiFederationDefinition.class, fd.getFederation_id());
 						sbiDataSet.setFederation(sbiFd);
 					}
@@ -891,7 +891,7 @@ public class ExporterMetadata {
 				logger.debug("Export a federated dataset");
 				FederatedDataSet fDS = (FederatedDataSet) versDataSet.getWrappedDataset();
 
-				FederationDefinition federationDefinition = fDS.getFederation();
+				FederationDefinition federationDefinition = fDS.getDatasetFederation();
 				Set<IDataSet> sourceDatasets = federationDefinition.getSourceDatasets();
 				// store SbiDataset
 				Set<SbiDataSet> sbiSourceDatasets = new HashSet<SbiDataSet>();
