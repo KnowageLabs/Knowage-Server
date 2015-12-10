@@ -2916,6 +2916,7 @@ function renderChordChart(jsonData)
 										+Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
 										+spaceForLabels+emptySplitDivHeight)*1.13;
 	
+	
 	var innerRadius = Math.min(width, height) * .35;
     var outerRadius = innerRadius * 1.1;
     
@@ -2971,10 +2972,8 @@ function renderChordChart(jsonData)
 				.append("svg:svg")
 				.attr("width", width)
 				.attr("height", Number(height)+spaceForLabels)	
-				.attr("viewBox","-100 -100 "+Number(width)*1.2+" "+ Number(height)*1.2)
+				.attr("viewBox","-100 -100 "+(Number(width)+250)+" "+ (Number(height)+spaceForLabels+250))
 				.attr( "preserveAspectRatio","xMidYMid meet")
-				//.attr( "preserveAspectRatio","xMinYMin meet")
-				//.attr( "preserveAspectRatio","xMaxYMax meet")
 				.style("background-color",jsonData.chart.style.backgroundColor)	
 				.append("svg:g")
 				.attr("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
