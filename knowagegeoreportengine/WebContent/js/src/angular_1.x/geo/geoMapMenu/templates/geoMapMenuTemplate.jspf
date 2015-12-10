@@ -42,7 +42,7 @@
 		
 	
 
-	<expander-box id="filterSpatialtype" color="white" background-color="rgb(63,81,181)" expanded='true' title='translate.load("gisengine.info.message.spatialFilter")' ng-if="selectModeInteraction.type=='filter'">
+	<expander-box id="filterSpatialtype" color="white" background-color="rgb(63,81,181)" expanded='true' title='translate.load("gisengine.info.message.spatialFilter")' ng-if="selectModeInteraction.type=='cross'">
 		<md-radio-group ng-model="selectFilterType">
 			<md-radio-button ng-repeat="item in filterTypes" class="md-primary" 
 					ng-value="item.type" ng-click="setSelectedFilterType(item.type)">{{item.label}}</md-radio-button> 

@@ -34,13 +34,11 @@ function geoMapMenuControllerFunction(
 	                           ];
 	$scope.selectModeTypeList = [
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.identify"), type:"identify"},
-	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"},	   
-	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.filter"), type:"filter"}
+	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"}
 	                             ];
 
 
-
-	$scope.selectFilterType = 'near';
+	$scope.selectFilterType = 'intersect';
 	$scope.filterTypes = [
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	

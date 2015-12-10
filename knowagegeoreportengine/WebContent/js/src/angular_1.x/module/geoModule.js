@@ -241,9 +241,11 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+			crossNavigation.navigateTo(geo_interaction.selectedFeatures);
+			
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
-		//	layerServ.Render(selection);
+			//layerServ.Render(selection);
 
 		});
 
@@ -293,7 +295,7 @@ geoM.service('geoModule_layerServices', function(
 					if(geom[1]>extent[1]){
 						if(geom[2]<extent[2]){
 							if(geom[3]<extent[3]){
-								//è inside the polygon
+								//it is inside the polygon
 								sFeatures.push(feature);				
 								selection.push(feature);
 							}
@@ -305,7 +307,8 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-			//	layerServ.Render(selection);
+			crossNavigation.navigateTo(geo_interaction.selectedFeatures);
+			//layerServ.Render(selection);
 
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
@@ -321,13 +324,45 @@ geoM.service('geoModule_layerServices', function(
 
 	}
 	
-	this.near = function(){
-		console.log("near");
-		
+	this.getCoordinate=function(){
+		var element;
 		var coordinate;
+		$map.on('click', function(evt) {
+			coordinate = evt.coordinate;
+		/*	var popup =new ol.Overlay({
+				element: document.createElement('div')
+			});
+			popup.setPosition(coordinate);
+			$map.addOverlay(popup);
+			
+			element = popup.getElement();
+			element.contentEditable = true;
+			element.innerHTML='<input id ="valueRay" placeholder="Insert ray" type="number">';
+			
+			*/
+			
+			//layerServ.near(coordinate,500000);
+			
+		});
+		
+		/*$map.on('submit',function(evt) {
+			
+			if(document.getElementById("valueRay").value){
+				var ray = document.getElementById("valueRay").value;  
+				if(ray){
+					layerServ.near(coordinate,ray);
+				}
+			}
+			
+		});*/
+		
+	}
+	
+	this.near = function(coordinate,ray){
+		console.log("near");
 		var circleGeometry;
 		var myCircle;
-		var ray = 500000;
+
 		
 		var fillStyle = new ol.style.Style({
 			 fill: new ol.style.Fill({
@@ -338,44 +373,45 @@ geoM.service('geoModule_layerServices', function(
 			      width: 2
 			    })
 		});
-	
-		$map.on('click', function(evt) {
-			console.log("inside click");
-			coordinate = evt.coordinate;
-			console.log("coordinate: ",coordinate);
-			//500000 è un valore scelto temporaneamente succesisvamente saranno i km che sceglie l'utente
-			myCircle = new ol.geom.Circle(coordinate,ray);
-
-			
-			
-		});
+		var osm=this.createLayer(baseLayer.Default.OSM,false);
+		osm.setZIndex(1000001);
+		$map.addLayer(osm);
+		 
 		
-		$map.on('postcompose', function(event) {
-			if(coordinate){
-				//se è stato cliccato e le coordinate sono state inizializzate disegna cerchio
-				var vecCtx = event.vectorContext;			
-				vecCtx.setFillStrokeStyle(fillStyle, null);
-				vecCtx.drawCircleGeometry(myCircle);
-				$map.render();
-				var extent = myCircle.getExtent();
-				
-				//seleziona le features interne al cerchio
-				var vectorSource = layerServ.templateLayer.getSource();
-				vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
-				layerServ.selectedFeatures.push(feature);				
-				ctx.clip();
-				});
-			}
-		});
+
+        var circleGeometry = new ol.geom.Circle(coordinate, ray);
+        
+        // A style for the geometry.
+        var fillStyle = new ol.style.Fill({color: [0, 0, 0, 0]});
+
+        osm.on('precompose', function(event) {
+          var ctx = event.context;
+          var vecCtx = event.vectorContext;
+
+          ctx.save();
+
+          // Using a style is a hack to workaround a limitation in
+          // OpenLayers 3, where a geometry will not be draw if no
+          // style has been provided.
+          vecCtx.setFillStrokeStyle(fillStyle, null);
+          vecCtx.drawCircleGeometry(circleGeometry);
+
+          ctx.clip();
+        });
+
+        osm.on('postcompose', function(event) {
+          var ctx = event.context;
+          ctx.restore();
+        });
 	}
-	
+
 	this.Render =function(features){
 		var raster = new ol.layer.Tile({
 			source: new ol.source.Stamen({
 				layer: 'toner'
 			})
 		});
-		raster.setZindex=10000;
+		raster.setZindex=1000;
 		$map.addLayer(raster);
 
 		var osm=this.createLayer(baseLayer.Default.OSM,false);
@@ -406,16 +442,7 @@ geoM.service('geoModule_layerServices', function(
 			}
 		}
 
-		/*	array2.push(array);
-		console.log(array2);
-		array3.push(array2);
-		//coordinates= new Array(array3);
-		coordinates.push(array3);
-		console.log("hello");*/
-
-		console.log(newArray,features[0].getGeometry().getCoordinates());
-
-		$map.on('precompose', function(event) {
+		osm.on('precompose', function(event) {
 			var ctx = event.context;
 			var vecCtx = event.vectorContext;
 			ctx.save();
@@ -442,11 +469,11 @@ geoM.service('geoModule_layerServices', function(
 
 			ctx.clip();
 			//$map.removeLayer(raster);
-			$map.render();
+	
 
 		});
 
-		$map.on('postcompose', function(event) {
+		osm.on('postcompose', function(event) {
 			var ctx = event.context;
 			ctx.restore();
 		});
@@ -567,14 +594,10 @@ geoM.service('geoModule_layerServices', function(
 
 
 	this.setInteraction = function(type){
-		console.log("Hiiiii");
-		console.log($map);
 		if(currentInteraction!={} && currentInteraction.type!=type){
 			//remove $map 
-			console.log("Remove....");
-			console.log(currentInteraction.obj);
 			$map.removeInteraction(currentInteraction.obj);
-			console.log($map);
+
 		}
 		//setta il tipo di interazione;
 
@@ -582,7 +605,7 @@ geoM.service('geoModule_layerServices', function(
 
 		if(type=='near'){
 			$map.removeInteraction(currentInteraction.obj);
-			//layerServ.near();
+			layerServ.getCoordinate();
 		} else if(type=='intersect'){
 			$map.removeInteraction(currentInteraction.obj);
 			layerServ.intersectFeature();
@@ -598,7 +621,6 @@ geoM.service('geoModule_layerServices', function(
 		geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
 		console.log("%%%%%%%layerServ.selectedFeatures (select)-> ", layerServ.selectedFeatures);
 		console.log("%%%%%%%geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
-		console.log(geo_interaction.type);
 		if(geo_interaction.type == "identify"){
 
 			var coordinate = evt.mapBrowserEvent.coordinate;
@@ -633,7 +655,7 @@ geoM.service('geoModule_layerServices', function(
 			}
 		} else if(geo_interaction.type == "filter"){
 			//default
-			layerServ.near();
+			layerServ.getCoordinate();
 			
 		}
 	}
@@ -643,7 +665,6 @@ geoM.service('geoModule_layerServices', function(
 
 		if(geoModule_templateLayerData.type=="WMS"){
 			var sldBody=geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
-			console.log(sldBody)
 			layerServ.templateLayer.getSource().updateParams({SLD_BODY:sldBody})
 		}else{
 			layerServ.templateLayer.changed();
@@ -659,7 +680,6 @@ geoM.service('geoModule_layerServices', function(
 	};
 
 	this.alterBaseLayer = function(layerConf) {
-		console.log("alterBaseLayer", layerConf);
 		var layer = this.createLayer(layerConf,true);
 		if(layer!=undefined){
 			$map.removeLayer(this.selectedBaseLayer);
@@ -673,7 +693,6 @@ geoM.service('geoModule_layerServices', function(
 	};
 
 	this.toggleLayer = function(layerConf) {
-		console.log("addLayer");
 		if(this.loadedLayer[layerConf.layerId]!=undefined){
 			$map.removeLayer(this.loadedLayer[layerConf.layerId]);
 			delete this.loadedLayer[layerConf.layerId];
