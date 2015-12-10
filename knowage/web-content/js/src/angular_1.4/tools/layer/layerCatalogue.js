@@ -74,27 +74,21 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				console.log("Download .....");
 				console.log(item);
 				$scope.showDetails(item);
-				//	$scope.getDownload(item);
 			}
 	}
 
 
 	$scope.loadLayer = function(){
 		$scope.flagtype=true;
-		console.log("dentro loadLayer");
 		$scope.selectedTab = 0;
 		sbiModule_restServices.get("layers", '').success(
 				function(data, status, headers, config) {
-
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
 						$scope.layerList = data.root;
 						for(var i=0; i<$scope.layerList.length;i++){
-							console.log($scope.layerList[i]);
 							if($scope.layerList[i].type == "WFS" || $scope.layerList[i].type == "File" ){
-								console.log("setto icon");
 								$scope.layerList[i].icon = '<md-button class="md-icon-button" ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
 							} else{
 								$scope.layerList[i].icon = '';
@@ -321,7 +315,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 				if(item.pathFile!=null){
 					//controllo se pathFile è diverso da null epr abilitarne la visualizzazione del nomefile
 					console.log("true");
-					console.log(item.pathFile);
 					$scope.pathFileCheck =true;
 				} else{
 					console.log("false");
@@ -367,10 +360,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	$scope.loadFilter = function(){
 		//funzione che carica i Filtri per ogni layer
 		$scope.loadFilterAdded();
-		console.log("carico filtri per");
-		console.log($scope.selectedLayer);
-		console.log("possiede già");
-		console.log($scope.filter_set);
 
 		sbiModule_restServices.get("layers", 'getFilter',"id="+$scope.selectedLayer.layerId).success(
 				function(data, status, headers, config) {
@@ -379,23 +368,15 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
-
 						$scope.filter = data;
-						//console.log("filtri ");
-						//console.log($scope.filter);
+
 						for(var i=0;i<$scope.filter_set.length;i++){
 							//scorro tutti i filtri 
-
-
-							//  console.log("entro per");
-							//  console.log($scope.filter_set[i]);
 							//prendo l'index del filter tot
 							var index = $scope.filterInList($scope.filter_set[i],$scope.filter);
 							//e lo rimuovo per non mostrarlo
 							if(index > -1){
 								$scope.filter.splice(index,1);
-								//	 console.log("aggiornato");
-								//	 console.log($scope.filter);  
 							}
 
 
@@ -444,7 +425,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 	}
 	$scope.cancel = function(){
-		console.log("CANCEL");
 		$scope.setTab('Layer');
 
 		if($scope.flag==true){
@@ -463,7 +443,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 
 		} else{
-			console.log("Reset");
 			$scope.selectedLayer = angular.copy({});
 			$scope.rolesItem=[];
 			$scope.flag=false;
@@ -551,15 +530,12 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 
 	$scope.showRoles=function(){
-		console.log("show roles");
 		sbiModule_restServices.get("layers", "getroles","").success(
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						//change sbi.glossary.load.error
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"),3000);
 					} else {
-						console.log("contiene data");
-						console.log(data);
 						//mostro tutti i ruoli
 						$scope.roles = data;
 
@@ -696,7 +672,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 
 		sbiModule_restServices.get("layers","getDownload","id="+item.layerId+",typeWFS="+$scope.typeWFS).success(
 				function(data, status, headers, config) {
-					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log("layer non Ottenuti");
 					} else {
@@ -708,12 +683,12 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 								//nel caso di Internet explorer download non  permesso. Per cui faccio un tipo di chiamata a parte
 								var blobObject = new Blob([JSON.stringify(data)]); 
 								window.navigator.msSaveBlob(blobObject,  item.label+".json"); // The user only has the option of clicking the Save button.
-							/*	with the response ok of the user
-							 * var fileData = [JSON.stringify(data)];
+								/*	with the response ok of the user
+								 * var fileData = [JSON.stringify(data)];
 								blobObject = new Blob(fileData);
 								window.navigator.msSaveOrOpenBlob(blobObject,item.label+".json"); // Now the user will have the option of clicking the Save button and the Open button.
 								alert('File save request made using msSaveOrOpenBlob() - note the two "Open" and "Save" buttons below.');
-							 */
+								 */
 							} else{
 
 								text = JSON.stringify(data);		
@@ -766,7 +741,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 	}
 	$scope.setTypeWFS = function(val){
 		$scope.typeWFS = val;
-		console.log($scope.typeWFS);
 	}
 	$scope.showAdvanced = function(ev) {
 		$mdDialog.show({
@@ -787,8 +761,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		$mdDialog.cancel();
 	}
 	$scope.addFilter = function(item){
-		console.log("Dentro addFilter");
-		console.log($scope.filter_set.indexOf(item));
 		if( $scope.filter_set.indexOf(item)>-1){
 			//se presente non fare nulla
 		} else{
@@ -798,7 +770,6 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 			$scope.filter.splice(index,1);
 
 		}
-		console.log($scope.filter_set);
 	}
 	$scope.removeFilter = function(item){
 		var index = $scope.filter_set.indexOf(item);
@@ -806,28 +777,13 @@ function funzione(sbiModule_translate,sbiModule_restServices, $scope, $mdDialog,
 		$scope.filter.push(item);
 	}
 	$scope.removeIcon = [{
-
 		label: sbiModule_translate.load("sbi.federationdefinition.delete"),
 		icon:"fa fa-trash-o",
 		backgroundColor:'red',
 		action : function(ev) {
-			console.log("ciaooooo");
-			console.log(ev);
 			$scope.removeFilter(ev);
 		}
 	}];
-
-	/*	  $scope.info = [{
-           		label: sbiModule_translate.load("sbi.federationdefinition.info"),
-           		icon:"fa fa-info-circle",
-           		backgroundColor:'green',
-           		action : function(ev) {
-           			console.log("hola");
-    				console.log(ev);
-           				$scope.showDetails(ev);
-           			}  
-	  }]
-	 */ 
 
 
 	$scope.setTab = function(Tab){
