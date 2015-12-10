@@ -164,7 +164,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 		ctr.listaNewDatasets = [];
 		ctr.index = "";
 		for (var i = 0; i < ctr.listaNew.length; i++) {
-			ctr.listaNewDatasets.push(ctr.listaNew[i].name)
+			ctr.listaNewDatasets.push(ctr.listaNew[i].label)
 		}
 		console.log(ctr.listaNewDatasets)
 		for (var i = 0; i < ctr.multiArray.length; i++) {
@@ -177,7 +177,6 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 				}
 			}
 		}
-		console.log(ctr.multiArrayDatasets)
 		for (var a = 0; a < ctr.listaNewDatasets.length; a++) {
 			ctr.index = ctr.multiArrayDatasets.indexOf(ctr.listaNewDatasets[a])	
 		}				
@@ -218,7 +217,22 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 							sbiModule_restServices.post("federateddataset","post",angular.toJson(item))
 								.success(
 										function(data, status, headers, config) {
-											ctr.showAlert()
+											
+											if (data.hasOwnProperty("errors")) {
+												
+												console.log("[POST]: DATA HAS ERRORS PROPERTY!");
+												
+												ctr.showError();
+												
+											} else {
+												
+												console.log("[POST]: SUCCESS!");
+														
+												ctr.showAlert();
+												
+											}
+											
+											
 										}
 										
 								)
@@ -254,7 +268,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 			});
 	}
 
-	ctr.selektuj = function(item, listId){
+	ctr.selectDeselect = function(item, listId){
 		if(ctr.myselectedvariable[listId]!=undefined || ctr.myselectedvariable[listId]!=null){
 			if(item.name==ctr.myselectedvariable[listId].name){
 				ctr.myselectedvariable[listId] = null;
@@ -273,6 +287,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 								att.selected = false;
 							});
 							listField.selected = true;
+							//add code for changing background with icon
 						}
 					} else {
 						//listField.name==item.name
@@ -501,6 +516,16 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 				$mdDialog.alert()
 					.clickOutsideToClose(true)
 					.title(sbiModule_translate.load("sbi.federationdefinition.operation.succeded"))
+					.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
+					.targetEvent(ev)
+		);
+	}
+	
+	ctr.showError = function(ev){ //premesti u saveFedDataSet
+		$mdDialog.show(
+				$mdDialog.alert()
+					.clickOutsideToClose(true)
+					.title(sbiModule_translate.load("sbi.federationdefinition.operation.failed"))
 					.ok(sbiModule_translate.load("sbi.federationdefinition.ok"))
 					.targetEvent(ev)
 		);

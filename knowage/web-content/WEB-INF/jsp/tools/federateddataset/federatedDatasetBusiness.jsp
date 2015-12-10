@@ -147,7 +147,7 @@
 										item-name="name"
 										highlights-selected-item=true
 										selected-item="ctrl.myselectedvariable[dataset.label]"
-										click-function="ctrl.selektuj(item, listId)"										
+										click-function="ctrl.selectDeselect(item, listId)"										
 									>
 									</angular-list>
 									
@@ -183,7 +183,7 @@
 											<div ng-style="myStyle"  ng-click="ctrl.retrieveSelections(k)" ng-repeat="bla in k track by $index">
 											<span>
 												<span ng-if="$index==0">
-												{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>={{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
+												{{bla.sourceTable.name | uppercase }}.{{bla.sourceColumns[0]}}</span>&nbsp; &#10140; &nbsp;{{bla.destinationTable.name | uppercase }}.{{bla.destinationColumns[0]}}
 											</span>
 											
 											</div>

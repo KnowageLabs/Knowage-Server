@@ -42,7 +42,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> getListOfAllDataSources() {
+	public List<DataSource> getAllDataSources() {
 
 		logger.debug("IN");
 
@@ -98,7 +98,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String saveDataSource(@Valid DataSource dataSource) {
+	public String postDataSource(@Valid DataSource dataSource) {
 
 		logger.debug("IN");
 
@@ -129,7 +129,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> updateDataSource(DataSourceModel dataSource) {
+	public List<DataSource> putDataSource(DataSourceModel dataSource) {
 
 		logger.debug("IN");
 
@@ -156,7 +156,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{dsId}")
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> deleteDataSource(@PathParam("dsId") Integer dsId) throws EMFUserError {
+	public List<DataSource> deleteDataSourceById(@PathParam("dsId") Integer dsId) throws EMFUserError {
 
 		logger.debug("IN");
 
