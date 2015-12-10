@@ -5,14 +5,15 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	//VARIABLES
 	
 	$scope.showme = false; // flag for showing right side 
+	$scope.tempPwd = "";
 	$scope.dirtyForm = false; // flag to check for modification
+	$scope.showUpdate=false;
 	$scope.translate = sbiModule_translate;
-	$scope.SelectedConstraint = {}; // main item
-	$scope.PredefinedItem = {}; // predefined item
-	$scope.PredefinedList = []; // array that hold predefined list
-	$scope.label = "";
-	$scope.ItemList = []; // array that hold custom list
-	$scope.listType = []; // array that hold dropdown list from domain
+	$scope.selectedUser = {}; // main item
+	$scope.usersList = []; // array that hold list of users
+	$scope.usersRoles = []; // array that hold list of roles
+	$scope.usersAttributes = [];
+	
 	$scope.showActionOK = function(msg) {
 		  var toast = $mdToast.simple() 
 		  .content(msg)
@@ -30,14 +31,14 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		  });
 		 };
 		 
-		 $scope.ccSpeedMenu= [
+		 $scope.umSpeedMenu= [
 		                         {
 		                            label:sbiModule_translate.load("sbi.generic.delete"),
 		                            icon:'fa fa-trash-o fa-lg',
 		                            color:'#153E7E',
 		                            action:function(item,event){
 		                                
-		                            	$scope.deleteConstraint(item);
+		                            	$scope.deleteUser(item);
 		                            }
 		                         }
 		                        ];
@@ -60,113 +61,96 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	//FUNCTIONS	
 		 
 	angular.element(document).ready(function () { // on page load function
-				
+		$scope.getUsers();
+		$scope.getRoles();
+		$scope.getAttributes();
 		    });
 	
 	$scope.setDirty=function(){ 
 		  $scope.dirtyForm=true;
 	}
 	
-	$scope.clearRight=function(index){
-		 if($scope.dirtyForm){
-			   $mdDialog.show($scope.confirm).then(function(){
-				$scope.dirtyForm=false;   
-				$scope.showme = false;
-				$scope.showpred = false;
-			           
-			   },function(){
-			    
-				   $scope.showme = false;
-				   $scope.showpred = false;
-			   });
-			   
-			  }else{
-			 
-				  $scope.showme = false;
-				  $scope.showpred = false;
-			  }
-		
-		
-		
-	}
 	
-	$scope.loadConstraints=function(item){  // this function is called when item from custom table is clicked
+	
+	$scope.loadUser=function(item){  // this function is called when item from custom table is clicked
 		
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
-				$scope.SelectedConstraint=angular.copy(item);
+				$scope.selectedUser=angular.copy(item);
 				$scope.showme=true;
-				$scope.showpred = false;
-			    $scope.label = "";
-			           
+				$scope.showUpdate=true;
+				$scope.letUpdate= true;
+      
 			   },function(){
 			    
 				$scope.showme = true;
-				$scope.showpred = false;
+				$scope.showUpdate=true;
+				$scope.letUpdate= true;
+				
 			   });
 			   
 			  }else{
 			 
-			  $scope.SelectedConstraint=angular.copy(item);
+			  $scope.selectedUser=angular.copy(item);
 			  $scope.showme=true;
-			  $scope.showpred = false;
+			  $scope.showUpdate=true;
+			  $scope.letUpdate= true;
 			  }
 	} 	                
 	
 	$scope.cancel = function() { // on cancel button
-		$scope.SelectedConstraint={};
+		$scope.selectedUser={};
 		$scope.showme = false;
 		$scope.dirtyForm=false;
-		$scope.showpred = false;
-		
-
+		$scope.showUpdate=false;
+		$scope.letUpdate= true;
 	}
 	
-	
-	$scope.loadPredefined=function(item){  // this function is called when item from predefined table is clicked
-		$scope.showme = false;
-		$scope.PredefinedItem=item;
-		$scope.showpred=true;
-	} 	                
-	
+	$scope.updatePass = function() { // on update password button
+		
+		$scope.letUpdate= false;
+	}
+
 	$scope.createUser=function(){ // this function is called when clicking on plus button
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
-				$scope.SelectedConstraint={};
+				$scope.selectedUser={};
 				$scope.showme=true;
-			    $scope.label = "";
+				$scope.showUpdate=false;
 			           
 			   },function(){
 			    
 				$scope.showme = true;
+				$scope.showUpdate=false;
 			   });
 			   
 			  }else{
 			 
-			$scope.SelectedConstraint={};
+			$scope.selectedUser={};
 			  $scope.showme=true;
+			  $scope.showUpdate=false;
 			  }
 	}
 	
-	$scope.saveConstraints= function(){  // this function is called when clicking on save button
+	$scope.saveUser= function(){  // this function is called when clicking on save button
 		
-		if($scope.SelectedConstraint.hasOwnProperty("checkId")){ // if item already exists do update PUT
+		if($scope.selectedUser.hasOwnProperty("checkId")){ // if item already exists do update PUT
 			
 			sbiModule_restServices
-		    .put("2.0/customChecks",$scope.SelectedConstraint.checkId,$scope.SelectedConstraint).success(
+		    .put("2.0/customChecks",$scope.selectedUser.checkId,$scope.selectedUser).success(
 					function(data, status, headers, config) {
 						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
-							$scope.ItemList=[];
+							$scope.usersList=[];
 							$timeout(function(){								
 								$scope.getCustom();
 							}, 1000);
 							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.updated"));
-							$scope.SelectedConstraint={};
+							$scope.selectedUser={};
 							$scope.showme=false;
 							$scope.dirtyForm=false;	
 						}
@@ -176,20 +160,20 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 					})	
 			
 		}else{ // create new item in database POST
-			console.log($scope.SelectedConstraint);
+			console.log($scope.selectedUser);
 			sbiModule_restServices
-		    .post("2.0/customChecks","",angular.toJson($scope.SelectedConstraint)).success(
+		    .post("2.0/customChecks","",angular.toJson($scope.selectedUser)).success(
 					function(data, status, headers, config) {
 						console.log(data);
 						if (data.hasOwnProperty("errors")) {
 							console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 						} else {
-							$scope.ItemList=[];
+							$scope.usersList=[];
 							$timeout(function(){								
-								$scope.getCustom();
+								$scope.getUsers();
 							}, 1000);
 							$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.created"));
-							$scope.SelectedConstraint={};
+							$scope.selectedUser={};
 							$scope.showme=false;
 							$scope.dirtyForm=false;
 						}
@@ -203,77 +187,61 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		
 	}
 
-	$scope.FieldsCheck = function(l){ // function that checks if field is necessary and assigns few values to main item on click
-		
-		$scope.label = l.VALUE_DS;
-		$scope.SelectedConstraint.valueTypeId=l.VALUE_ID;
-	 $scope.SelectedConstraint.valueTypeCd=l.VALUE_CD;
-		if(l.VALUE_NM == "Range"){
-			$scope.additionalField= true;
-		}else{
-			$scope.additionalField= false;
-		}
-	}
-	$scope.getPredefined = function(){ // service that gets predefined list GET
-		sbiModule_restServices.get("2.0", "predefinedChecks").success(
+	$scope.getUsers = function(){ // service that gets list of users GET
+		sbiModule_restServices.get("2.0", "users").success(
 				function(data, status, headers, config) {
 					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						$scope.PredefinedList = data;
+						$scope.usersList = data;
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 
 				})	
 	}
-	
-	
-	$scope.getCustom = function(){ // service that gets user created list GET
-		sbiModule_restServices.get("2.0", "customChecks").success(
+	$scope.getRoles = function(){ // service that gets list of roles GET
+		sbiModule_restServices.get("2.0", "users/roles").success(
 				function(data, status, headers, config) {
 					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						$scope.ItemList = data;
+						$scope.usersRoles = data;
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 
 				})	
 	}
-			
-	
-	$scope.getDomainType = function(){ // service that gets domain types for dropdown GET
-		sbiModule_restServices.get("domains", "listValueDescriptionByType","DOMAIN_TYPE=CHECK").success(
+	$scope.getAttributes = function(){ // service that gets list of roles GET
+		sbiModule_restServices.get("2.0", "users/attributes").success(
 				function(data, status, headers, config) {
+					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						console.log(data);
-						$scope.listType = data;
+						$scope.usersAttributes = data;
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 
 				})	
 	}
-	
-	$scope.deleteConstraint = function(item){ // this function is called when clicking on delete button
-		sbiModule_restServices.delete("2.0/customChecks",item.checkId).success(
+	$scope.deleteUser = function(item){ // this function is called when clicking on delete button
+		sbiModule_restServices.delete("2.0/users",item.id).success(
 				function(data, status, headers, config) {
 					console.log(data);
 					if (data.hasOwnProperty("errors")) {
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
-						$scope.ItemList=[];
+						$scope.usersList=[];
 						$timeout(function(){								
-							$scope.getCustom();
+							$scope.getUsers();
 						}, 1000);
 						$scope.showActionOK(sbiModule_translate.load("sbi.catalogues.toast.deleted"));
-						$scope.SelectedConstraint={};
+						$scope.selectedUser={};
 						$scope.showme=false;
 						$scope.dirtyForm=false;
 					}

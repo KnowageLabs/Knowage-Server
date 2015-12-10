@@ -47,13 +47,12 @@
 						id="usersList_id"
 						ng-model="usersList"
 						columns='[
-						         {"label":"User ID","name":"userID"},
-						         {"label":"Full Name","name":"userFullName"}
+						         {"label":"User ID","name":"id"},
+						         {"label":"Full Name","name":"fullName"}
 						         ]'
 						show-search-bar=true
 						highlights-selected-item=true
 						speed-menu-option="umSpeedMenu"
-						
 						click-function="loadUser(item)"
 										
 					>						
@@ -62,7 +61,7 @@
 			</div>
 		</left-col>
 		<right-col>
-		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveConstraints()"
+		<form name="attributeForm" layout-fill ng-submit="attributeForm.$valid && saveUser()"
 		class="detailBody md-whiteframe-z1">
 		
 			<div ng-show="showme">
@@ -88,29 +87,29 @@
 				
 	<md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
       <md-tab label='{{translate.load("sbi.generic.details");}}'>
-        <md-content flex>
+        <md-content flex style="margin-left:20px; height:80%;" class="md-padding ToolbarBox miniToolbar noBorder">
           
           <div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.users.userId")}}</label>
-							<input name="id" ng-model="SelectedUser.id"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
+							<input name="id" ng-model="selectedUser.id"  ng-required = "true"
+						    ng-maxlength="100" ng-change="setDirty()">
 						    
-						    <div  ng-messages="attributeForm.id.$error" ng-show="SelectedConstraint.name== null">
+						    <div  ng-messages="attributeForm.id.$error" ng-show="selectedUser.id== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 						     </md-input-container>
 						</div>
 					</div>
            <div layout="row" layout-wrap>
-						<div flex=100>
+						<div flex=100 >
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.users.fullName")}}</label>
-							<input name="name" ng-model="SelectedUser.fullName"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
+							<input name="name" ng-model="selectedUser.fullName"  ng-required = "true"
+						    ng-maxlength="255" ng-change="setDirty()">
 						    
-						    <div  ng-messages="attributeForm.name.$error" ng-show="SelectedConstraint.name== null">
+						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedUser.fullName== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 						     </md-input-container>
@@ -120,10 +119,10 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.users.pwd")}}</label>
-							<input name="pwd" ng-model="SelectedUser.pass"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
+							<input type="password" name="pwd" ng-model="selectedUser.password"  ng-required = "true"
+						    ng-maxlength="40" ng-change="setDirty()" ng-readonly="letUpdate">
 						    
-						    <div  ng-messages="attributeForm.pwd.$error" ng-show="SelectedConstraint.name== null">
+						    <div  ng-messages="attributeForm.pwd.$error" ng-show="selectedUser.password== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 						     </md-input-container>
@@ -133,26 +132,60 @@
 						<div flex=100>
 							<md-input-container class="small counter">
 							<label>{{translate.load("sbi.users.confPwd")}}</label>
-							<input name="cpwd" ng-model="SelectedUser.cpass"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
+							<input type="password" name="cpwd" ng-model="tempPwd"  ng-required = "true"
+						    ng-maxlength="40" ng-change="setDirty()" ng-readonly="letUpdate">
 						    
-						    <div  ng-messages="attributeForm.cpwd.$error" ng-show="SelectedConstraint.name== null">
+						    <div  ng-messages="attributeForm.cpwd.$error" ng-show="tempPwd== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
 						     </md-input-container>
 						</div>
-					</div>				
-        </md-content>
+					</div>
+
+			<div layout="row" layout-wrap style="float: left">
+
+				<md-button type="button" ng-click="updatePass()" ng-show = "showUpdate">
+				{{translate.load("sbi.users.changePwd");}} </md-button>
+
+			</div>
+
+			</md-content>
       </md-tab>
       <md-tab label='{{translate.load("sbi.users.roles");}}'>
-        <md-content flex>
-         
+        <md-content flex style="margin-left:20px; height:80%;" class="md-padding ToolbarBox miniToolbar noBorder">
+          <angular-table 
+						layout-fill
+						id="usersRoles_id"
+						ng-model="usersRoles"
+						columns ='[
+							{"label":"NAME","name":"name","size":"50px"},
+							{"label":"DESCRIPTION","name":"description","size":"100px"},
+							 ]'
+						selected-item="role"
+						highlights-selected-item=true
+						multi-select="true"
+							>					
+						 					
+					</angular-table>  
         
         </md-content>
       </md-tab>
       <md-tab label='{{translate.load("sbi.users.attributes");}}'>
-        <md-content flex>
-         
+        <md-content flex style="margin-left:20px; height:80%;" class="md-padding ToolbarBox miniToolbar noBorder">
+         <angular-table 
+						layout-fill
+						id="usersAttributes_id"
+						ng-model="usersAttributes"
+						columns ='[
+							{"label":"NAME","name":"name","size":"50px"},
+							{"label":"DESCRIPTION","name":"description","size":"100px"},
+							 ]'
+						selected-item="attribute"
+						highlights-selected-item=true
+						multi-select="true"
+							>					
+						 					
+					</angular-table>  
         
         </md-content>
       </md-tab>
