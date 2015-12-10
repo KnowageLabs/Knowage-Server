@@ -2782,6 +2782,32 @@ Ext
 									validationEvent : true,
 									id : 'schedulingCronLine'
 								});
+						
+						var cronHumanDescription = new Ext.form.TextField(
+								{
+									width : 400,
+									value : '-',
+									fieldLabel : LN('sbi.ds.persist.cron.schedulingline'),
+									labelSeparator : ':',
+									readOnly : true,
+									allowBlank : true,
+									validationEvent : true,
+									fieldStyle:"border:none 0px black",
+									id : 'cronHumanDescription'
+								});
+						
+						var cronNextFire = new Ext.form.TextField(
+								{
+									width : 400,
+									value : '-',
+									fieldLabel : LN('sbi.ds.persist.cron.schedulingline'),
+									labelSeparator : ':',
+									readOnly : true,
+									allowBlank : true,
+									validationEvent : true,
+									fieldStyle:"border:none 0px black",
+									id : 'cronNextFire'
+								});
 
 						var cronPanel = new Ext.form.FieldSet(
 								{
@@ -2815,7 +2841,7 @@ Ext
 														hourColumn, dayColumn,
 														monthColumn,
 														weekdayColumn ]
-											}, schedulingCronLine ]
+											}, schedulingCronLine, cronHumanDescription, cronNextFire  ]
 								});
 						return cronPanel;
 					}
@@ -2839,10 +2865,14 @@ Ext
 						} else {
 							weekday = '?';
 						}
+						
+						var cron =  minute + " " + hour + " " + day + " " + month
+						+ " " + weekday
 
-						Ext.get('schedulingCronLine').dom.value = second + " "
-								+ minute + " " + hour + " " + day + " " + month
-								+ " " + weekday;
+						Ext.get('schedulingCronLine').dom.value = second + " " + cron;
+						
+						Ext.get('cronHumanDescription').dom.value = prettyCron.toString(cron);
+						Ext.get('cronNextFire').dom.value = prettyCron.getNext(cron);
 					}
 
 					,

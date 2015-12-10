@@ -35,6 +35,7 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
     String[] fileNamesList = ( String[]) aSessionContainer.getAttribute("fileNames");
 %>
 
+<%@include file="/WEB-INF/jsp/commons/includePrettyCron.jspf" %>
 
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/service/ServiceRegistry.js")%>'></script>
