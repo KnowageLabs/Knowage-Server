@@ -320,23 +320,23 @@
 	 #foreach($xAxisKey in $xAxisList.keySet())
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
 	 
-	 {
-		 title: {
-			 text: '$xAxis.TITLE.text',
-			 ##y:-150,
+	{
+	 	title: {
+			text: '$xAxis.TITLE.text',
+			##y:-150,
 			 
-			 #set ($xTitleAlign = $xAxis.TITLE.style.align)
-			 #if( $xTitleAlign != '' )
-			 	#if ($xTitleAlign == 'center' )
+			#set ($xTitleAlign = $xAxis.TITLE.style.align)
+			#if( $xTitleAlign != '' )
+				#if ($xTitleAlign == 'center' )
 				align: 'middle',
 				#elseif ($xTitleAlign == 'left' )
 				align: 'low',
 				#elseif ($xTitleAlign == 'right' )
 				align: 'high',
 				#end
-			 #end
+			#end
 			 
-			 style:{
+			style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
 		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
 		        	#if ($styleName == 'fontWeight' && ($axisTitleStyle == 'italic' || $axisTitleStyle == 'normal'))
@@ -349,12 +349,12 @@
 	        			$styleName: '$axisTitleStyle',
 	        		#end
 	        	#end
-		     },
-		 },
+		    },
+		},
 		 
-		 labels:{
-		 #if( $xAxis.style != '' ) 
-        		style:{
+		labels:{
+		#if( $xAxis.style != '' )
+        	style:{
 	        	#foreach($styleName in $xAxis.style.keySet())
 	        		#set ($axisStyle = $xAxis.style[$styleName])
 	        		#if ($styleName == 'fontWeight' && ($axisStyle == 'italic' || $axisStyle == 'normal'))
@@ -388,15 +388,15 @@
         			rotation: $rotation,
     			#end
         	#end
-		 },
+		},
 
-		 #if($xAxis.position == 'top')
+		#if($xAxis.position == 'top')
 		 	opposite: true,
-		 #end
+		#end
 		 
-		 type: 'category',
-	 },
-	 #end
+		type: 'category',
+	},
+	#end
     
     
     yAxis: [
@@ -572,6 +572,11 @@
 	    	type: '$relatedSerieType',
 	    #end
 	    
+	    	## makes the datalabels overlapping
+	    	dataLabels: {
+	    		allowOverlap: true
+	    	},
+	    	
 	    	data: [
 	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
@@ -621,7 +626,13 @@
 			                    #set ($precisionValueAsString = ':.' + $relatedSerie.precision + 'f')
 							#end
 		                    
-		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}'
+		                    format: '${prefixValueAsString}{y$precisionValueAsString}${postfixValueAsString}',
+		                                				
+		                    #*
+		                    formatter: function() {
+		                    	return '${prefixValueAsString}' + '{' + this.y + '$precisionValueAsString' + '}' + '${postfixValueAsString}';
+		                    },
+		                    *#
 		                }
 						#end
 					},
