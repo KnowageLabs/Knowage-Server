@@ -35,7 +35,7 @@
 								</md-icon>
 							</md-button>
 							 -->
-						    <md-button aria-label="new tenant" class="md-fab md-ExtraMini addButton" ng-click="newTenant()" style="position:absolute; right:11px; top:0px;"> 
+						    <md-button aria-label="new tenant" class="md-fab md-ExtraMini addButton" ng-click="formTenant()" style="position:absolute; right:11px; top:0px;"> 
 							    <md-icon md-font-icon="fa fa-plus" style=" margin-top: 6px ; color: white;">
 								</md-icon>
 							</md-button>

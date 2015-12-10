@@ -106,8 +106,14 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 	
 	$scope.resetForm = function(form){
 		$scope.productTypes = $scope.productTypesDefault;
+		for (var i = 0 ; i < $scope.productTypesDefault.length; i++ ){
+			$scope.productTypesDefault.CHECKED = false;
+		}
 		$scope.datasources = $scope.datasourcesDefault;
-		$scope.tenant = undefined;
+		for (var i = 0 ; i < $scope.datasourcesDefault.length; i++ ){
+			$scope.datasourcesDefault[i].CHECKED = false;
+		}
+		$scope.tenant = {};
 		$scope.tenantSelected = undefined;
 		if (form !== undefined){
 			form.$setUntouched();
@@ -130,6 +136,8 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 					tenant.MULTITENANT_ID = data.root.MULTITENANT_ID ;
 					$scope.tenants.splice(0,0,angular.fromJson(angular.toJson(tenant)));
 					$scope.showAlert('INFO', 'Tenant '+ tenant.MULTITENANT_NAME + '_admin save successful');
+				} else{
+					$scope.showAlert('ERROR', ' Impossible to insert Tenant');
 				}
 			})
 	};
@@ -177,8 +185,8 @@ function manageTenantFunction(sbiModule_logger,sbiModule_translate, sbiModule_re
 		}
 	};
 	
-	$scope.newTenant = function(form){
-		$scope.resetForm(form);
+	$scope.formTenant = function(){
+		$scope.resetForm();
 		$scope.tenant = {};
 		$scope.showme=true;
 	}
