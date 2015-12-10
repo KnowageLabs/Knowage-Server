@@ -93,9 +93,11 @@ public class SQLStatement extends AbstractStatement {
 		groupByClause = SQLStatementGroupByClause.build(this, query, entityAliasesMaps);
 		orderByClause = SQLStatementOrderByClause.build(this, query, entityAliasesMaps);
 		havingClause = SQLStatementHavingClause.build(this, query, entityAliasesMaps);
-		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps);
+		
 
 		whereClause = JPQLStatementWhereClause.injectAutoJoins(this, whereClause, query, entityAliasesMaps);
+		
+		fromClause = SQLStatementFromClause.build(this, query, entityAliasesMaps);
 		
 		queryStr = selectClause    + " " 
 				   + fromClause    + " " 
