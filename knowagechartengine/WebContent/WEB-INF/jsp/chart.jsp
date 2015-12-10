@@ -301,7 +301,7 @@ author:
 	
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
-
+ 			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading');
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
@@ -366,6 +366,7 @@ author:
  							
  	 						/* Re-render the chart after resizing the window (panel). */
  	 						renderChart(chartConfiguration);
+ 	 						Ext.getBody().unmask();
  						}
 					}
  				}
@@ -402,6 +403,7 @@ author:
 				chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 					var chartConf = Ext.JSON.decode(response.responseText, true);
 					renderChart(chartConf);
+					Ext.getBody().unmask();
 				});
  				
  			}else { 				
@@ -495,6 +497,7 @@ author:
 						} 						
 						
  						renderChart(chartConf);
+ 						Ext.getBody().unmask();
  					});
  				
  			} 
