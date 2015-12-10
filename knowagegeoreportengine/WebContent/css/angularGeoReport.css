@@ -307,14 +307,14 @@ geo-cross-nav-multiselect .itemboxGU {
 	*/
 }
 
-geo-cross-nav-multiselect .itemboxGU .md-toolbar-tools {
+geo-cross-nav-multiselect .itemboxGU {
 	background-color: #FFF;
 	font-size: 15px;
-	opacity: 0.5;
-	/*
-	padding: 0 16px;
-	height: 40px;
-	*/
+	opacity: 0.8;
+}
+
+geo-cross-nav-multiselect .itemboxGU:hover {
+	opacity: 1;
 }
 
 [md-color-picker] .md-color-picker-input-container .md-color-picker-clear
