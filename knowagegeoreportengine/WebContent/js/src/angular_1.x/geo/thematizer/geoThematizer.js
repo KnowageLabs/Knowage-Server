@@ -38,10 +38,10 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				(geoModule_template.analysisType=="chart" &&  (geoModule_template.selectedMultiIndicator==undefined || geoModule_template.selectedMultiIndicator.length==0))){
 			return null;
 		}
-		
+
 		checkForDatasetValueOfIndicator();
 		var layerCol=feature.getProperties()[geoModule_template.layerJoinColumns];
-		
+
 		//get the first item or the selected item of the indicators to get all the propertyes of the geometry in the dataset
 		var dsCol=geoModule_template.analysisType=="chart"?geoModule_template.selectedMultiIndicator[0].name:geoModule_template.selectedIndicator.name;
 		var dsItem= cacheDatasetValue[dsCol][layerCol];
@@ -58,7 +58,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		if(geoModule_template.analysisType=="chart"){
 			for(var i=0;i<geoModule_template.selectedMultiIndicator.length;i++){
 				multiDsValue[geoModule_template.selectedMultiIndicator[i].name]=cacheDatasetValue[geoModule_template.selectedMultiIndicator[i].name][layerCol];
-	}
+			}
 		} else{
 			dsValue= cacheDatasetValue[geoModule_template.selectedIndicator.name][layerCol].value;
 		}
@@ -538,21 +538,28 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				var selectedIndicatorValue=cacheDatasetValue[geoModule_template.selectedIndicator.name]
 				var values=[];
 				for(var key in selectedIndicatorValue){
-					if(values.indexOf(selectedIndicatorValue[key].value)==-1){
-						values.push(selectedIndicatorValue[key].value)
+					if(values.indexOf(parseInt(selectedIndicatorValue[key].value))==-1){
+						values.push(parseInt(selectedIndicatorValue[key].value));
 					}
 				}
-				values.sort();
+				values.sort(function sortNumber(a,b) {
+					return a - b;
+				});
 
-				var intervals=values.length<geoModule_template.analysisConf.choropleth.classes ?values.length : geoModule_template.analysisConf.choropleth.classes ;
+				var intervals=parseInt(values.length<geoModule_template.analysisConf.choropleth.classes ?values.length : geoModule_template.analysisConf.choropleth.classes );
 				updateChoroplethLegendGradient(intervals);
 
-				var binSize = Math.round(values.length  / intervals);
+				var binSize = Math.floor(values.length  / intervals);
 				var k=0;
 				for(var i=0;i<values.length;i+=binSize){
-					tmtz.legendItem.choroplet[k].from=values[i];
-					tmtz.legendItem.choroplet[k].to=values[i+binSize]||values[values.length-1];
-					k++;
+					if(k>=intervals){
+						tmtz.legendItem.choroplet[intervals-1].to=values[i+binSize]||values[values.length-1];
+					}else{						
+						tmtz.legendItem.choroplet[k].from=values[i];
+						tmtz.legendItem.choroplet[k].to=values[i+binSize]||values[values.length-1];
+						k++;
+					}
+					
 				}
 			}
 
@@ -560,7 +567,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}else if(type=='proportionalSymbol'){
 
 		}else if(type=="chart"){
-			
+
 		}
 	}
 });

@@ -754,7 +754,9 @@ geoM.service('geoModule_layerServices', function(
 
 	this.updateTemplateLayer = function(legendType){
 		geoModule_thematizer.updateLegend(legendType);
-
+if(layerServ.templateLayer==undefined || Object.keys(layerServ.templateLayer).length==0){
+	return;
+}
 		if(geoModule_templateLayerData.type=="WMS"){
 			var sldBody=geoModule_thematizer.getWMSSlBody(geoModule_templateLayerData);
 			layerServ.templateLayer.getSource().updateParams({SLD_BODY:sldBody})
