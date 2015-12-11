@@ -1,5 +1,5 @@
 var geoM=angular.module('geoModule');
-
+var borderColor="#AAAAAA"
 geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_dataset,geModule_datasetJoinColumnsItem,$map,geoModule_templateLayerData){
 	var tmtz=this;
 	var cacheProportionalSymbolMinMax={};
@@ -115,7 +115,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 		return  [new ol.style.Style({
 			stroke: new ol.style.Stroke({
-				color: "#000000",
+				color: borderColor,
 				width: 1
 			}),
 			fill: new ol.style.Fill({
@@ -128,7 +128,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	this.proportionalSymbol=function(dsValue){
 		return  [new ol.style.Style({
 			stroke: new ol.style.Stroke({
-				color: "#000000",
+				color: borderColor,
 				width: 1
 			}),
 
@@ -137,7 +137,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			image: new ol.style.Circle({
 				radius: getProportionalSymbolSize(dsValue),
 				stroke: new ol.style.Stroke({
-					color: "#000000",
+					color: borderColor,
 					width: 1
 				}),
 
@@ -252,7 +252,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		chart.draw(view, options);
 		var x=  [new ol.style.Style({
 			stroke: new ol.style.Stroke({
-				color: "#000000",
+				color: borderColor,
 				width: 1
 			}),
 
@@ -384,7 +384,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				var stroke= docSld.createElement("Stroke");
 				var strokecssParameter= docSld.createElement("CssParameter");
 				strokecssParameter.setAttribute("name","stroke");
-				strokecssParameter.innerHTML="#000000";
+				strokecssParameter.innerHTML=borderColor;
 				stroke.appendChild(strokecssParameter);
 
 				var strokewidthcssParameter= docSld.createElement("CssParameter");
@@ -427,7 +427,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				var stroke= docSld.createElement("Stroke");
 				var strokecssParameter= docSld.createElement("CssParameter");
 				strokecssParameter.setAttribute("name","stroke");
-				strokecssParameter.innerHTML="#000000";
+				strokecssParameter.innerHTML=borderColor;
 				stroke.appendChild(strokecssParameter);
 
 				var strokewidthcssParameter= docSld.createElement("CssParameter");
@@ -465,7 +465,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				var stroke= docSld.createElement("Stroke");
 				var strokecssParameter= docSld.createElement("CssParameter");
 				strokecssParameter.setAttribute("name","stroke");
-				strokecssParameter.innerHTML="#000000";
+				strokecssParameter.innerHTML=borderColor;
 				stroke.appendChild(strokecssParameter);
 
 				var strokewidthcssParameter= docSld.createElement("CssParameter");
