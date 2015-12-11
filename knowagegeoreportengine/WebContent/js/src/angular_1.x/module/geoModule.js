@@ -204,12 +204,8 @@ geoM.service('geoModule_layerServices', function(
 	}
 
 	this.intersectFeature = function(){
-		console.log("this.intersect");
 		//select fetures with a box
 		var sFeatures = select.getFeatures();
-
-
-
 		var selectStyle = new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: [0, 0, 0, 1],
@@ -219,15 +215,12 @@ geoM.service('geoModule_layerServices', function(
 				color: "rgba(174, 206, 230, 0.78)"
 			})
 		});
-
 		var dragBox = new ol.interaction.DragBox({
 			condition: ol.events.condition.platformModifierKeyOnly,
 			style: selectStyle
 		});
 		currentInteraction.obj=dragBox;
 		$map.addInteraction(dragBox);
-
-
 
 		dragBox.on('boxend', function(e) {
 			var selection = [];
@@ -241,11 +234,9 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-			//crossNavigation.navigateTo(geo_interaction.selectedFeatures);
-			
+
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
-			//layerServ.Render(selection);
 
 		});
 
@@ -260,11 +251,7 @@ geoM.service('geoModule_layerServices', function(
 
 
 	this.insideFeature = function(){
-		console.log("this.inside");
 		var sFeatures = select.getFeatures();
-
-
-
 		var selectStyle = new ol.style.Style({
 			stroke: new ol.style.Stroke({
 				color: [0, 0, 0, 1],
@@ -274,15 +261,12 @@ geoM.service('geoModule_layerServices', function(
 				color: "rgba(174, 206, 230, 0.78)"
 			})
 		});
-
 		var dragBox = new ol.interaction.DragBox({
 			condition: ol.events.condition.platformModifierKeyOnly,
 			style: selectStyle
 		});
 		currentInteraction.obj=dragBox;
 		$map.addInteraction(dragBox);
-
-
 
 		dragBox.on('boxend', function(e) {
 			var selection = [];
@@ -307,15 +291,12 @@ geoM.service('geoModule_layerServices', function(
 
 			layerServ.selectedFeatures = selection;
 			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-//			crossNavigation.navigateTo(geo_interaction.selectedFeatures);
-			//layerServ.Render(selection);
 
 			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
 			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
 
 
 		});
-
 		// clear selection when drawing a new box and when clicking on the map
 		dragBox.on('boxstart', function(e) {
 			layerServ.overlay.setPosition(undefined);
@@ -323,88 +304,117 @@ geoM.service('geoModule_layerServices', function(
 		});
 
 	}
-	
+
 	this.getCoordinate=function(){
-		var element;
+		/*var element;
 		var coordinate;
-		$map.on('click', function(evt) {
+		$map.on('dblclick', function(evt) {
+
 			coordinate = evt.coordinate;
-		/*	var popup =new ol.Overlay({
+				var popup =new ol.Overlay({
 				element: document.createElement('div')
 			});
 			popup.setPosition(coordinate);
 			$map.addOverlay(popup);
-			
+
 			element = popup.getElement();
 			element.contentEditable = true;
 			element.innerHTML='<input id ="valueRay" placeholder="Insert ray" type="number">';
-			
-			*/
-			
-			//layerServ.near(coordinate,500000);
-			
-		});
-		
-		/*$map.on('submit',function(evt) {
-			
-			if(document.getElementById("valueRay").value){
-				var ray = document.getElementById("valueRay").value;  
-				if(ray){
-					layerServ.near(coordinate,ray);
-				}
-			}
-			
+
+
+
+		//		layerServ.near(coordinate,500000);
+
 		});*/
-		
+
+
 	}
-	
+
 	this.near = function(coordinate,ray){
 		console.log("near");
 		var circleGeometry;
 		var myCircle;
-
-		
-		var fillStyle = new ol.style.Style({
-			 fill: new ol.style.Fill({
-			      color: 'rgba(255, 255, 255, 0.2)'
-			    }),
-			 stroke: new ol.style.Stroke({
-			      color: '#ffcc33',
-			      width: 2
-			    })
+		var sFeatures = select.getFeatures();
+		/*var features = new ol.Collection();
+		var featureOverlay = new ol.layer.Vector({
+			source: new ol.source.Vector({features: features}),
+			style: new ol.style.Style({
+				fill: new ol.style.Fill({
+					color: 'rgba(255, 255, 255, 0.2)'
+				}),
+				stroke: new ol.style.Stroke({
+					color: '#ffcc33',
+					width: 2
+				}),
+				image: new ol.style.Circle({
+					radius: 7,
+					fill: new ol.style.Fill({
+						color: '#ffcc33'
+					})
+				})
+			})
 		});
-		var osm=this.createLayer(baseLayer.Default.OSM,false);
-		osm.setZIndex(1000001);
-		$map.addLayer(osm);
-		 
-		
+		featureOverlay.setMap($map);
 
-        var circleGeometry = new ol.geom.Circle(coordinate, ray);
-        
-        // A style for the geometry.
-        var fillStyle = new ol.style.Fill({color: [0, 0, 0, 0]});
+		var drawinteraction = new ol.interaction.Draw({
+			geometryFunction: function(coordinates, geometry){
+				geometry = new ol.geom.Circle(coordinate, ray);
+				return geometry;
+			},
+			features: features,
+			type: 'Circle'
+		});
+		$map.addInteraction(drawinteraction);
 
-        osm.on('precompose', function(event) {
-          var ctx = event.context;
-          var vecCtx = event.vectorContext;
 
-          ctx.save();
 
-          // Using a style is a hack to workaround a limitation in
-          // OpenLayers 3, where a geometry will not be draw if no
-          // style has been provided.
-          vecCtx.setFillStrokeStyle(fillStyle, null);
-          vecCtx.drawCircleGeometry(circleGeometry);
+		 */
+		var selection=[];
+		//drawinteraction.on("drawstart", function(e) {
+		//	var extent = drawinteraction.getGeometry().getExtent();
 
-          ctx.clip();
-        });
+		var features = layerServ.templateLayer.getSource().getFeatures();
+		if (features.length > 0) {
+			features.forEach(function (feature) {
+				var geom = feature.getGeometry().getCoordinates();
+				for(var i=0;i<geom[0][0].length;i++){
+					if(layerServ.findIntersect(geom[0][0][i][0],geom[0][0][i][1],coordinate,ray)){
+						//ok
+						selection.push(feature);
+						sFeatures.push(feature);	
+						break;
+					}
+				}
 
-        osm.on('postcompose', function(event) {
-          var ctx = event.context;
-          ctx.restore();
-        });
+			})
+			console.log(selection);
+
+			layerServ.selectedFeatures = selection;
+			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+
+			console.log("layerServ.selectedFeatures (near)-> ", layerServ.selectedFeatures);
+			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
+		}
+
+
+
+		//	})
+		/*drawinteraction.on("drawend", function(e) {
+			$map.removeInteraction(drawinteraction);
+		})*/
+
+
 	}
-
+	this.findIntersect = function(x,y,center,ray){
+		var x = Math.pow(x-center[0], 2);
+		var y= Math.pow(y-center[1], 2);
+		var difference = x + y;
+		if(difference<=Math.pow(ray, 2)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	this.Render =function(features){
 		var raster = new ol.layer.Tile({
 			source: new ol.source.Stamen({
@@ -415,7 +425,7 @@ geoM.service('geoModule_layerServices', function(
 		$map.addLayer(raster);
 
 		var osm=this.createLayer(baseLayer.Default.OSM,false);
-	
+
 		osm.setZindex=1000001;
 		$map.addLayer(osm);
 
@@ -469,7 +479,7 @@ geoM.service('geoModule_layerServices', function(
 
 			ctx.clip();
 			//$map.removeLayer(raster);
-	
+
 
 		});
 
@@ -593,7 +603,9 @@ geoM.service('geoModule_layerServices', function(
 
 
 
-	this.setInteraction = function(type){
+	this.setInteraction = function(){
+		var type=geoModule_template.selectFilterType;
+
 		if(currentInteraction!={} && currentInteraction.type!=type){
 			//remove $map 
 			$map.removeInteraction(currentInteraction.obj);
@@ -609,7 +621,6 @@ geoM.service('geoModule_layerServices', function(
 		} else if(type=='intersect'){
 			$map.removeInteraction(currentInteraction.obj);
 			layerServ.intersectFeature();
-		} else if(type=='inside'){
 			$map.removeInteraction(currentInteraction.obj);
 			layerServ.insideFeature();
 		}
@@ -617,10 +628,7 @@ geoM.service('geoModule_layerServices', function(
 	this.doClickAction = function(evt, prop){
 		console.log("doClickAction");
 
-		layerServ.selectedFeatures = evt.target.getFeatures().getArray();
-		geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-		console.log("%%%%%%%layerServ.selectedFeatures (select)-> ", layerServ.selectedFeatures);
-		console.log("%%%%%%%geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
+
 		if(geo_interaction.type == "identify"){
 
 			var coordinate = evt.mapBrowserEvent.coordinate;
@@ -636,7 +644,95 @@ geoM.service('geoModule_layerServices', function(
 			angular.element((document.querySelector('#popup-content')))[0].innerHTML =txt;
 			$map.getOverlays().getArray()[0].setPosition(coordinate);
 
-		}else if(geo_interaction.type == "cross"){
+		}else if(geo_interaction.type == "cross" && geoModule_template.selectFilterType=="near"){
+
+			var element;
+			var coordinate;
+
+			var key = 'Ak-dzM4wZjSqTlzveKz5u0d4IQ4bRzVI309GxmkgSVr1ewS6iPSrOvOKhA-CJlm3';
+
+		
+
+			var imagery = new ol.layer.Tile({
+			  source: new ol.source.BingMaps({key: key, imagerySet: 'Aerial'})
+			});
+
+			var container = document.getElementById('map');
+			//roads.setZIndex(200000);
+			
+		//	imagery.setZIndex(200001);
+			$map.addLayer(imagery);
+			var radius = 75;
+			document.addEventListener('keydown', function(evt) {
+			  if (evt.which === 38) {
+			    radius = Math.min(radius + 5, 150);
+			    $map.render();
+			    evt.preventDefault();
+			  } else if (evt.which === 40) {
+			    radius = Math.max(radius - 5, 25);
+			    $map.render();
+			    evt.preventDefault();
+			  }
+			});
+
+			// get the pixel position with every move
+			var mousePosition = null;
+
+			container.addEventListener('mousemove', function(event) {
+			  mousePosition = $map.getEventPixel(event);
+			  $map.render();
+			});
+
+			container.addEventListener('mouseout', function() {
+			  mousePosition = null;
+			  $map.render();
+			});
+
+			// before rendering the layer, do some clipping
+			imagery.on('precompose', function(event) {
+			  var ctx = event.context;
+			  var pixelRatio = event.frameState.pixelRatio;
+			  ctx.save();
+			  ctx.beginPath();
+			  if (mousePosition) {
+			    // only show a circle around the mouse
+			    ctx.arc(mousePosition[0] * pixelRatio, mousePosition[1] * pixelRatio,
+			        radius * pixelRatio, 0, 2 * Math.PI);
+			    ctx.lineWidth = 5 * pixelRatio;
+			    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+			    ctx.stroke();
+			  }
+			  ctx.clip();
+			});
+
+			// after rendering the layer, restore the canvas context
+			imagery.on('postcompose', function(event) {
+			  var ctx = event.context;
+			  ctx.restore();
+			});
+
+
+
+
+			
+
+			/*imagery.on('dblclick', function(event) {
+				coordinate = evt.mapBrowserEvent.coordinate;
+				layerServ.near(coordinate,500000);
+			})
+*/
+			
+
+
+
+		}
+		else if(geo_interaction.type == "cross"){
+			layerServ.selectedFeatures = evt.target.getFeatures().getArray();
+			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
+			console.log("%%%%%%%layerServ.selectedFeatures (select)-> ", layerServ.selectedFeatures);
+			console.log("%%%%%%%geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
+
+
 
 			layerServ.overlay.setPosition(undefined); // hides eventual messages present on the map
 
@@ -653,11 +749,7 @@ geoM.service('geoModule_layerServices', function(
 				}
 			break;
 			}
-		} else if(geo_interaction.type == "filter"){
-			//default
-			layerServ.getCoordinate();
-			
-		}
+		} 
 	}
 
 	this.updateTemplateLayer = function(legendType){
@@ -789,59 +881,3 @@ geoM.factory('geoModule_constant',function(sbiModule_translate){
 });
 
 
-/* code simple
-this.Box = function(){
-		console.log("this.Box");
-		//select fetures with a box
-		var sFeatures = select.getFeatures();
-
-
-
-		var selectStyle = new ol.style.Style({
-			stroke: new ol.style.Stroke({
-				color: [0, 0, 0, 1],
-				width: 2
-			}),
-			fill: new ol.style.Fill({
-				color: "rgba(174, 206, 230, 0.78)"
-			})
-		});
-
-		var dragBox = new ol.interaction.DragBox({
-			condition: ol.events.condition.platformModifierKeyOnly,
-			style: selectStyle
-		});
-		currentInteraction.obj=dragBox;
-		$map.addInteraction(dragBox);
-
-
-
-		dragBox.on('boxend', function(e) {
-			var selection = [];
-			var extent = dragBox.getGeometry().getExtent();
-
-			var vectorSource = layerServ.templateLayer.getSource();
-			vectorSource.forEachFeatureIntersectingExtent(extent, function(feature) {
-				sFeatures.push(feature);				
-				selection.push(feature);
-			});
-
-			layerServ.selectedFeatures = selection;
-			geo_interaction.setSelectedFeatures(layerServ.selectedFeatures);
-
-
-			console.log("layerServ.selectedFeatures (dragBox)-> ", layerServ.selectedFeatures);
-			console.log("geo_interaction.selectedFilterType -> ", geo_interaction.selectedFilterType);
-
-		});
-
-		// clear selection when drawing a new box and when clicking on the map
-		dragBox.on('boxstart', function(e) {
-			layerServ.overlay.setPosition(undefined);
-			sFeatures.clear();
-		});
-
-
-	}
-
- */

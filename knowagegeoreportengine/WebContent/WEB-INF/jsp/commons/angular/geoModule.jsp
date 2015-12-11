@@ -68,6 +68,9 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
     	t.analysisConf.chart={indicator_1:"red",indicator_2:"green",indicator_3:"blue"};
     }
 
+    if(!t.analysisConf.hasOwnProperty("selectFilterType")){
+    	t.selectFilterType = 'intersect';
+    }
     return t;
 });
 

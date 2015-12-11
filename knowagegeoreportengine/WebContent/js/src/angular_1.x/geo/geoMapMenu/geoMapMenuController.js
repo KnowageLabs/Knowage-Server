@@ -38,7 +38,7 @@ function geoMapMenuControllerFunction(
 	                             ];
 
 
-	$scope.selectFilterType = 'intersect';
+
 	$scope.filterTypes = [
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
@@ -47,7 +47,8 @@ function geoMapMenuControllerFunction(
 	$scope.setSelectedFilterType = function(type) {
 		//cambio geo_interaction con layer service
 		//geo_interaction.selectedFilterType = type;
-		geoModule_layerServices.setInteraction(type);
+		geoModule_template.selectFilterType=type;
+		geoModule_layerServices.setInteraction();
 		if ($scope.$root.$$phase != '$apply') {
 			$scope.$apply();
 		}
