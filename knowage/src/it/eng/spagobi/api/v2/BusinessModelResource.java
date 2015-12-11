@@ -197,23 +197,37 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 	}
 
-	///////////////// in progress/////////////////////////////////
+	/**
+	 * Get file from data base for download with specified id (in progress)
+	 **/
 	@GET
 	@Path("{bmId}/versions/{vId}/download")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response downloadFile(@PathParam("vId") Integer vId) {
-		Content c = DAOFactory.getMetaModelsDAO().loadMetaModelContentById(vId);
-		byte[] b = c.getContent();
+		Content c = null;
+		byte[] b = null;
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(c.getFileName() + "+");
-		sb.append("data:application/octet-stream;base64,");
-		sb.append(Base64.encodeBytes(b));
+		logger.debug("IN");
 
-		return Response.ok(sb.toString()).build();
+		try {
+			c = businessModelsDAO.loadMetaModelContentById(vId);
+			b = c.getContent();
+
+			StringBuilder sb = new StringBuilder();
+			sb.append(c.getFileName() + "+");
+			sb.append("data:application/octet-stream;base64,");
+			sb.append(Base64.encodeBytes(b));
+
+			return Response.ok(sb.toString()).build();
+		} catch (Exception e) {
+			logger.error("An error occurred while trying to download version with id:" + vId, e);
+			throw new SpagoBIRestServiceException("An error occurred while trying to download version with id:" + vId, buildLocaleFromSession(), e);
+
+		} finally {
+			logger.debug("IN");
+		}
 	}
 
-	//////////////////////////////////////////////
 	/**
 	 * Insert new business model POST
 	 **/

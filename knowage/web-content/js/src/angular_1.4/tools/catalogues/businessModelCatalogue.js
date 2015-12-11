@@ -105,7 +105,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					
 					name = data.substring(0,separator);
 					b64 = data.substring(separator+1,data.length)
-
+					
+					//window.location.href = b64;
 					var a = document.getElementById("test");
 					a.setAttribute("download",name);
 					a.setAttribute("href",b64);
