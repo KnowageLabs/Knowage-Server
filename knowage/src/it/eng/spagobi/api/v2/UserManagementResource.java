@@ -1,5 +1,6 @@
 package it.eng.spagobi.api.v2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.DELETE;
@@ -16,6 +17,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bo.ProfileAttribute;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
@@ -74,16 +76,20 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Path("/attributes")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public List<SbiAttribute> getUserAttributes() {
+	public List<ProfileAttribute> getUserAttributes() {
 		ISbiAttributeDAO attributesDao = null;
 		List<SbiAttribute> fullList = null;
-
+		List<ProfileAttribute> profileAttrs = new ArrayList<>();
 		try {
 
 			attributesDao = DAOFactory.getSbiAttributeDAO();
 			attributesDao.setUserProfile(getUserProfile());
 			fullList = attributesDao.loadSbiAttributes();
-			return fullList;
+			for (SbiAttribute attr : fullList) {
+				ProfileAttribute pa = new ProfileAttribute(attr);
+				profileAttrs.add(pa);
+			}
+			return profileAttrs;
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);

@@ -161,9 +161,9 @@
 							{"label":"NAME","name":"name","size":"50px"},
 							{"label":"DESCRIPTION","name":"description","size":"100px"},
 							 ]'
-						selected-item="role"
 						highlights-selected-item=true
 						multi-select="true"
+						selected-item = "role"
 							>					
 						 					
 					</angular-table>  
@@ -172,18 +172,15 @@
       </md-tab>
       <md-tab label='{{translate.load("sbi.users.attributes");}}'>
         <md-content flex style="margin-left:20px; height:80%;" class="md-padding ToolbarBox miniToolbar noBorder">
-         <angular-table 
+       		 <angular-table 
 						layout-fill
 						id="usersAttributes_id"
 						ng-model="usersAttributes"
 						columns ='[
-							{"label":"NAME","name":"name","size":"50px"},
-							{"label":"DESCRIPTION","name":"description","size":"100px"},
+							{"label":"NAME","name":"attributeName","size":"50px"},
+							{"label":"VALUE","name":"attributeValue","size":"100px"},
 							 ]'
-						selected-item="attribute"
-						highlights-selected-item=true
-						multi-select="true"
-							>					
+						highlights-selected-item=true							>					
 						 					
 					</angular-table>  
         

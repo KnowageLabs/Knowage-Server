@@ -13,6 +13,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	$scope.usersList = []; // array that hold list of users
 	$scope.usersRoles = []; // array that hold list of roles
 	$scope.usersAttributes = [];
+	$scope.role = [];
 	
 	$scope.showActionOK = function(msg) {
 		  var toast = $mdToast.simple() 
@@ -70,29 +71,39 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		  $scope.dirtyForm=true;
 	}
 	
-	
-	
 	$scope.loadUser=function(item){  // this function is called when item from custom table is clicked
-		
+		$scope.role =[];
 		 if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
-				$scope.dirtyForm=false;   
+				$scope.dirtyForm=false;
 				$scope.selectedUser=angular.copy(item);
+				  for (var i = 0; i < $scope.usersRoles.length; i++) {
+					  for (var j = 0; j < $scope.selectedUser.sbiExtUserRoleses.length; j++) {
+							 if($scope.selectedUser.sbiExtUserRoleses[j]==$scope.usersRoles[i].id){
+								 $scope.role.push($scope.usersRoles[i]);
+							 }
+						} 
+				}  
 				$scope.showme=true;
 				$scope.showUpdate=true;
-				$scope.letUpdate= true;
-      
+				$scope.letUpdate= true;      
 			   },function(){
 			    
 				$scope.showme = true;
 				$scope.showUpdate=true;
 				$scope.letUpdate= true;
-				
 			   });
 			   
 			  }else{
 			 
 			  $scope.selectedUser=angular.copy(item);
+			  for (var i = 0; i < $scope.usersRoles.length; i++) {
+				  for (var j = 0; j < $scope.selectedUser.sbiExtUserRoleses.length; j++) {
+						 if($scope.selectedUser.sbiExtUserRoleses[j]==$scope.usersRoles[i].id){
+							 $scope.role.push($scope.usersRoles[i]);
+						 }
+					} 
+			}  
 			  $scope.showme=true;
 			  $scope.showUpdate=true;
 			  $scope.letUpdate= true;
@@ -209,6 +220,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.usersRoles = data;
+						
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
@@ -223,6 +235,7 @@ function UsersManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 						console.log(sbiModule_translate.load("sbi.glossary.load.error"));
 					} else {
 						$scope.usersAttributes = data;
+						
 					}
 				}).error(function(data, status, headers, config) {
 					console.log(sbiModule_translate.load("sbi.glossary.load.error"));
