@@ -19,6 +19,9 @@
 	
 	<!-- Initializer for Cache Cleaning -->
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.CleanCacheQuartzInitializer" config="" />
+	
+	<!-- Initializer for SpagoBI metadata   -->  
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.caching.CachingInitializer" config="" />
 
     <!-- START-WEB  -->
     
