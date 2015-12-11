@@ -275,8 +275,10 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
 	, initFileUpload: function(){
 		//upload preview file
 		var config={
-				isEnabled: true,
-				labelFileName:'Preview file'
+			isEnabled: true
+			,labelFileName: LN('sbi.savewin.previewfile')
+			,labelButtonText: LN('sbi.savewin.buttonText')
+			,anchor: '95%'
 		};
 		var c = {};
 		if (Sbi.settings.widgets.FileUploadPanel && Sbi.settings.widgets.FileUploadPanel.imgUpload){c = Ext.apply({}, config, Sbi.settings.widgets.FileUploadPanel.imgUpload);} else {c = Ext.apply({}, config);}
@@ -313,7 +315,8 @@ Ext.extend(Sbi.widgets.SaveDocumentWindow, Ext.Window, {
         Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
 
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
-					    		serviceName : 'MANAGE_FILE_ACTION',
+					    		/*serviceName : 'MANAGE_FILE_ACTION',*/
+        						serviceName : 'MANAGE_PREVIEW_FILE_ACTION',
 					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE', standardUrl:true},
 					    		baseUrl:{contextPath:  Sbi.mainContextName, controllerPath: 'servlet/AdapterHTTP'}
 					    	});

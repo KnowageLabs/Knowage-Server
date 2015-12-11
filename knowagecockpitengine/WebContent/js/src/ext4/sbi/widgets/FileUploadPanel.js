@@ -66,7 +66,8 @@ Ext.extend(Sbi.widgets.FileUploadPanel, Ext.Panel, {
 //			value:config.labelFileName || LN('sbi.ds.fileName'),
 //			columnWidth: 0.4,
 //		}),
-
+		
+		//this isn't used anymore
 		this.previewFileLabel = new Ext.form.DisplayField({
 			value : (config.labelFileName || LN('sbi.ds.fileName')) +':',
 //			columnWidth: 0.2,
@@ -77,15 +78,20 @@ Ext.extend(Sbi.widgets.FileUploadPanel, Ext.Panel, {
 //			,hidden: !this.isOwner || false
 		});
 
-		this.uploadField = new Ext.form.TextField({
-			inputType:	'file',
-			fieldLabel : config.labelFileName || LN('sbi.ds.fileName'),
-			id: 'fileUploadField',
-			hideLabel : false,
-//			style: 'padding-left: 5px',
-			columnWidth: 0.8,
-			allowBlank: true
+		this.uploadField = new Ext.form.field.File({
+			id: 'fileUploadField'
+			,fieldLabel: config.labelFileName || LN('sbi.ds.fileName')
+			,labelStyle: 'font-size:12;font-family:arial'
+			,fieldStyle: 'border:0 none;background:transparent;width:auto'
+			,buttonText: config.labelButtonText || ''
+			,allowBlank: true
+			,clearOnSubmit: false
+			,columnWidth: 0.9
 		});
+		//fixing file name removing file path
+		this.uploadField.on("change", function(o,v){
+			return o.setRawValue(v.replace(/^.*(\\|\/)/, ''));
+		}, this);
 
 		this.uploadButton = new Ext.Button({
 			id: 			'fileUploadButton',
@@ -109,7 +115,7 @@ Ext.extend(Sbi.widgets.FileUploadPanel, Ext.Panel, {
 			header: false,
 			border: false,
 			labelAlign: 'left',
-			items: [this.previewFileLabel, this.uploadField, this.uploadButton]
+			items: [/*this.previewFileLabel, */this.uploadField, this.uploadButton]
 		});
 
 		return this.fileUploadFormPanel;

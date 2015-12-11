@@ -403,7 +403,8 @@ Ext.extend(Sbi.tools.documents.SaveDocumentWindow, Ext.Window, {
         Sbi.debug("[PreviewFileWizard.uploadFileButtonHandler]: form is equal to [" + form + "]");
 		
         var completeUrl =  Sbi.config.serviceRegistry.getServiceUrl({
-					    		serviceName : 'MANAGE_FILE_ACTION',
+					    		/*serviceName : 'MANAGE_FILE_ACTION',*/
+        						serviceName : 'MANAGE_PREVIEW_FILE_ACTION',
 					    		baseParams : {LIGHT_NAVIGATOR_DISABLED: 'TRUE', standardUrl:true},
 					    		baseUrl:{contextPath: 'SpagoBI', controllerPath: 'servlet/AdapterHTTP'}
 					    	});
