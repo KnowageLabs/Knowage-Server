@@ -309,9 +309,10 @@ geoM.factory('geo_interaction',function(){
 	var interact={
 			type: "identify",
 			distance_calculator: false,
-			selectedFilterType: 'box',
+			selectedFilterType: 'intersect',
 			selectedFeatures: [],
-			selectedFeaturesCallbackFunctions: []
+			selectedFeaturesCallbackFunctions: [],
+			
 	};
 
 	interact.setSelectedFeatures = function(newSelectedFeatures) {

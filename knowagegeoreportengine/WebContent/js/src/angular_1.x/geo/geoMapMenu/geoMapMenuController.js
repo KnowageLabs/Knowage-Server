@@ -26,6 +26,7 @@ function geoMapMenuControllerFunction(
 	$scope.indicators = geoModule_indicators;
 	$scope.selectModeInteraction = geo_interaction;
 	$scope.translate=sbiModule_translate;
+	$scope.firstCallInteraction = true;
 	$scope.openRigthMenu = false;
 	$scope.analysisTypeList = [
 	                           {label:sbiModule_translate.load("gisengine.rigthMapMenu.analysisType.choropleth"),type:"choropleth",img:"fa  fa-area-chart "},
@@ -37,23 +38,30 @@ function geoMapMenuControllerFunction(
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"}
 	                             ];
 
+// {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},
 
-//{label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},
 	$scope.filterTypes = [
-	                      	
+	                     	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
 	$scope.setSelectedFilterType = function(type) {
 		//cambio geo_interaction con layer service
 		//geo_interaction.selectedFilterType = type;
-		geoModule_template.selectFilterType=type;
+		geo_interaction.selectedFilterType=type;
 		geoModule_layerServices.setInteraction();
+		
 		if ($scope.$root.$$phase != '$apply') {
 			$scope.$apply();
 		}
 	};
-
+	$scope.setDefaultDraw = function(){
+		if($scope.firstCallInteraction){
+			geoModule_layerServices.setInteraction();
+			$scope.firstCallInteraction=false;
+		}
+		
+	}
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
 		var isCrossNavigationInTemplate = (geoModule_template.crossnav !== undefined);
