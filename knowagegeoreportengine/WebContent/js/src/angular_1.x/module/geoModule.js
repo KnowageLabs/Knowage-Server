@@ -645,7 +645,7 @@ geoM.service('geoModule_layerServices', function(
 			$map.getOverlays().getArray()[0].setPosition(coordinate);
 
 		}else if(geo_interaction.type == "cross" && geoModule_template.selectFilterType=="near"){
-
+			//disegna cerchio attorno mouse e seleziona features.
 			var element;
 			var coordinate;
 
@@ -714,7 +714,10 @@ geoM.service('geoModule_layerServices', function(
 
 
 
-			
+			container.addEventListener('dblclick', function(event) {
+				coordinate = evt.mapBrowserEvent.coordinate;
+				layerServ.near(coordinate,500000);
+			})
 
 			/*imagery.on('dblclick', function(event) {
 				coordinate = evt.mapBrowserEvent.coordinate;
