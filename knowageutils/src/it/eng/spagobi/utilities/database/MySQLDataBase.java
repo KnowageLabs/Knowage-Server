@@ -48,7 +48,7 @@ public class MySQLDataBase extends AbstractDataBase {
 		} else if (javaTypeName.contains("java.sql.Date")){
 			toReturn = " DATE ";
 		} else if (javaTypeName.contains("java.sql.Timestamp")){
-			toReturn = " TIMESTAMP ";
+			toReturn = " DATETIME ";
 		} else if (javaTypeName.contains("[B")){
 			toReturn = " MEDIUMBLOB ";	
 		} else if (javaTypeName.contains("[C")){
