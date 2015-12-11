@@ -181,16 +181,16 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var objContent=[];
 		var vAxes={};
 		var i=0;
-		data.addColumn('string', 'Topping','Style');
+		data.addColumn('string', 'Style');
 		string.push('N');
 		var indicatorIndex=0;
 		for(var key in dsValue){
 			indicatorIndex++;
 			data.addColumn('number', 'Population');
-			data.addColumn({type: 'number', role: 'annotation'});
+		//	data.addColumn({type: 'number', role: 'annotation'});
 			data.addColumn({ type: 'string',role: 'style' })
 			string.push(Math.round(dsValue[key].value));
-			string.push(Math.round(dsValue[key].value));
+		//	string.push(Math.round(dsValue[key].value));
 			var color = tinycolor(geoModule_template.analysisConf.chart["indicator_"+indicatorIndex]);
 			string.push('color:'+color.toHexString()+";opacity:"+color.getAlpha()+";")
 
@@ -230,7 +230,9 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				'legend': {'position': 'none'},
 				'backgroundColor': { 'fill':'transparent' },
 				'hAxis': { 'textPosition': 'none'},
-
+				/*
+				 * 
+				 * 
 				annotations: {
 					alwaysOutside: true,
 					textStyle: {
@@ -239,6 +241,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 						auraColor: 'none'
 					}
 				},
+				 * 
+				 */
 				vAxes:vAxes,
 				series: {0: {targetAxisIndex:0},
 					1:{targetAxisIndex:1},
