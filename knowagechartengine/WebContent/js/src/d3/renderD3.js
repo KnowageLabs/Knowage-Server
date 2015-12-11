@@ -691,7 +691,7 @@ function renderWordCloud(chartConf){
 		var bottomPadding = 30;
 		
 		// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-		var bcWidth = parseInt(jsonObject.toolbar.style.width);
+		var bcWidth = 2.5*parseInt(jsonObject.toolbar.style.width);
 		var bcHeight = parseInt(jsonObject.toolbar.style.height);
 		var bcSpacing = parseInt(jsonObject.toolbar.style.spacing);
 		var bcTail = parseInt(jsonObject.toolbar.style.tail);
