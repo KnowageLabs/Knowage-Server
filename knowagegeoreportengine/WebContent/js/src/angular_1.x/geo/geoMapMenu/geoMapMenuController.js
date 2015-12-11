@@ -38,9 +38,9 @@ function geoMapMenuControllerFunction(
 	                             ];
 
 
-
+//{label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},
 	$scope.filterTypes = [
-	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},	
+	                      	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
