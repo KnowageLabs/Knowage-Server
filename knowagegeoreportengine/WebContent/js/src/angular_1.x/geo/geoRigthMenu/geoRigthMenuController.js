@@ -16,10 +16,10 @@ angular.module('geoModule')
 	}
 });
 
-function geoRigthMenuControllerFunction($scope,$timeout,$map,sbiModule_translate){	
+function geoRigthMenuControllerFunction($scope,$timeout,$map,sbiModule_translate,geoModule_template){	
 	$scope.openRigthMenu=false;
 	$scope.translate=sbiModule_translate;
-	
+	$scope.template=geoModule_template;
 	$scope.toggleMenu=function(){
 		$scope.openRigthMenu=!$scope.openRigthMenu;
 		$timeout(function() {

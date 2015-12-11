@@ -5,17 +5,17 @@
  */
  
 <%-- the JSP variable are present in angularResources.jsp--%>
-	
+var template;
 geoM.factory('geoModule_template',function(geoReportCompatibility){
 	
-	var t= <%= template %>;
+	 template= <%= template %>;
 	
-	if(t.hasOwnProperty('role')) {
-		t.role = t.role.charAt(0) == '/'? t.role.charAt(0): '/' + t.role.charAt(0);
+	if(template.hasOwnProperty('role')) {
+		template.role = template.role.charAt(0) == '/'? template.role.charAt(0): '/' + template.role.charAt(0);
 	}
 	
 	var executionRole = '<%= executionRole %>';
-	t.role = executionRole || t.role;
+	template.role = executionRole || template.role;
 	
 	var executionContext = {};
     <% 
@@ -34,41 +34,41 @@ geoM.factory('geoModule_template',function(geoReportCompatibility){
 	 	}		
 	 } //while
     %>
-    t.executionContext = executionContext;
-    geoReportCompatibility.resolveCompatibility(t);
+    template.executionContext = executionContext;
+    geoReportCompatibility.resolveCompatibility(template);
   
-    if(!t.hasOwnProperty("selectedIndicator")){
-    	t.selectedIndicator = null;
+    if(!template.hasOwnProperty("selectedIndicator")){
+    	template.selectedIndicator = null;
     }
-    if(!t.hasOwnProperty("selectedMultiIndicator")){
+    if(!template.hasOwnProperty("selectedMultiIndicator")){
     	//era = null
-    	t.selectedMultiIndicator = [];
+    	template.selectedMultiIndicator = [];
     }
-    if(!t.hasOwnProperty("selectedFilters")){
-    	t.selectedFilters={};
-    }
-    
-    if(!t.hasOwnProperty("currentView")){
-    	t.currentView={center:[0, 0], zoom: 2 };
+    if(!template.hasOwnProperty("selectedFilters")){
+    	template.selectedFilters={};
     }
     
-    if(!t.hasOwnProperty("analysisConf")){
-    	t.analysisConf={};
+    if(!template.hasOwnProperty("currentView")){
+    	template.currentView={center:[0, 0], zoom: 2 };
     }
     
-    if(!t.analysisConf.hasOwnProperty("choropleth")){
-    	t.analysisConf.choropleth={"method":"CLASSIFY_BY_EQUAL_INTERVALS","classes":3,"fromColor":"#FFFF00","toColor":"#008000"};
+    if(!template.hasOwnProperty("analysisConf")){
+    	template.analysisConf={};
     }
     
-    if(!t.analysisConf.hasOwnProperty("proportionalSymbol")){
-    	t.analysisConf.proportionalSymbol={"minRadiusSize":2,"maxRadiusSize":20,color:"#FFFF00"};
+    if(!template.analysisConf.hasOwnProperty("choropleth")){
+    	template.analysisConf.choropleth={"method":"CLASSIFY_BY_EQUAL_INTERVALS","classes":3,"fromColor":"#FFFF00","toColor":"#008000"};
     }
     
-    if(!t.analysisConf.hasOwnProperty("chart")){
-    	t.analysisConf.chart={indicator_1:"red",indicator_2:"green",indicator_3:"blue"};
+    if(!template.analysisConf.hasOwnProperty("proportionalSymbol")){
+    	template.analysisConf.proportionalSymbol={"minRadiusSize":2,"maxRadiusSize":20,color:"#FFFF00"};
     }
-
-    return t;
+    
+    if(!template.analysisConf.hasOwnProperty("chart")){
+    	template.analysisConf.chart={indicator_1:"red",indicator_2:"green",indicator_3:"blue"};
+    }
+    
+    return template;
 });
 
 geoM.factory('geoModule_driverParameters',function(geoReportCompatibility){

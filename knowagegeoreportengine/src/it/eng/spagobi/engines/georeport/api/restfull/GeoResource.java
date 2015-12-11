@@ -43,6 +43,7 @@ import org.json.JSONObject;
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  *
  */
+
 @Path("1.0/geo")
 @ManageAuthorization
 public class GeoResource extends AbstractChartEngineResource {

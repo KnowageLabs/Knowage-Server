@@ -16,7 +16,9 @@ angular.module('geoModule')
 	}
 });
 
-function geoMapControllerFunction($scope,geoModule_reportUtils){
+
+//Dont'remove geoReport_saveTemplate from function because it initialize the factory to save the template
+function geoMapControllerFunction($scope,geoModule_reportUtils,geoReport_saveTemplate){
 	geoModule_reportUtils.getTargetDataset();
 	$scope.openCrossNavMultiSelectFlag = false;
 }
