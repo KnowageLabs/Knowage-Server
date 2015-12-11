@@ -37,6 +37,9 @@
 	<!-- angular table -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
+	<!-- document tree -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
+
 	<!-- 	angular time picker -->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
 
@@ -47,6 +50,5 @@
 <%-- 	<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%> --%>
 
 
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/RestService.js"></script> <!-- da rimuovere -->
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	

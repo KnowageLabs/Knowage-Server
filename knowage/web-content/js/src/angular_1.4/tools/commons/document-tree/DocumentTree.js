@@ -14,7 +14,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			scope: {
 				ngModel : '='
 				, id : "@"
-				, linearToTreeJson:"=?" //if true, the ngModel data will be parsed, if not the JSON is already in correct form
+				, createTree:"=?" //if true, the ngModel data will be parsed, if not the JSON is already in correct form
 				, clickFunction : "&" //function to call when click into element list
 				, selectedItem : "=?" //optional to get the selected  item value
 				, showFiles : '=?'
@@ -23,63 +23,51 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 	    controller: DocumentTreeControllerFunction,
 	    controllerAs: 'ctrl',
 	    link: function(scope, element, attrs, ctrl, transclude) {
-			
-	    	var folders = {};
-			if (scope.ngModel !== undefined){
-				folders = scope.ngModel;
-				for (var i = 0 ; i < folders.length; i ++ ){
+	    	
+	    	scope.createTreeStructure = function (folders){
+	    		if (attrs.createTree !==undefined  && (attrs.createTree ==true || attrs.createTree =="true")){
+		    		if (folders !== undefined && folders.length > 0 && folders[0].subfolders === undefined){
+			    		var mapFolder = {};	
+						
+						for (var i = 0 ; i < folders.length; i ++ ){
+							folders[i].subfolders = [];
+							mapFolder[folders[i].id] = folders[i]; 
+						}
+						
+						var treeFolders = [];
+						for (var i = 0 ; i < folders.length; i ++ ){
+							//if folder has not father, is a root folder
+							if (folders[i].parentId == null || folders[i].parentId == "null"){
+								treeFolders.push(folders[i]);
+							}
+							else{
+								//search parent folder with hasmap and attach the son
+								mapFolder[folders[i].parentId].subfolders.push(folders[i]);
+							}
+							//update linear structure with tree structure
+						}
+						folders=treeFolders; 
+		    		}
+	    		}
+	    		return folders;
+	    	}
+	    	
+	    	scope.initializeFolders = function (folders){
+	    		for (var i = 0 ; i < folders.length; i ++ ){
 					folders[i].checked = false;
 					folders[i].isOpen = false;
 					folders[i].type = "folder";
-					for (var j = 0; j < folders[i].biObjects.length ; j++){
+					for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
 						 folders[i].biObjects[j].type = "biObject";
 						 folders[i].biObjects[j].checked = false;
 					}
 				}
-			}
-			
-			if (folders.length > 0 && attrs.lineartotreejson && (attrs.lineartotreejson ==true || attrs.lineartotreejson =="true")){
-				//create an hash map for quick search
-				var mapFolder = {};	
-			
-				for (var i = 0 ; i < folders.length; i ++ ){
-					folders[i].subfolders = [];
-					mapFolder[folders[i].id] = folders[i]; 
-				}
-				
-				var treeFolders = [];
-				for (var i = 0 ; i < folders.length; i ++ ){
-					//if folder has not father, is a root folder
-					if (folders[i].parentId == null || folders[i].parentId == "null"){
-						treeFolders.push(folders[i]);
-					}
-					else{
-						//search parent folder with hasmap and attach the son
-						mapFolder[folders[i].parentId].subfolders.push(folders[i]);
-					}
-					//update linear structure with tree structure
-				}
-				folders=treeFolders; 
-				/*
-				var folderOrig = folders;
-				var current = [folderOrig[0]]; //root
-				while (current.length != 0) {
-					var folderCurrent=current.shift();
-					folderCurrent.subfolders=[];
-					folderCurrent.checked = false;
-					for (var i=0;i<folderOrig.length;i++) {
-					  var folder=folderOrig[i];
-					  if (folder.PARENT_FUNCT_ID == folderCurrent.FUNCT_ID) {
-						current.push(folder);
-						folderCurrent.subfolders.push(folder);
-						folder.parent=folderCurrent; //add link to the parent folder
-					  }
-					}
-				  }*/
-			}
-			scope.folders=folders;
-			scope.ngModel=scope.folders;
-			
+	    	}
+
+	    	scope.initializeFolders(scope.ngModel);
+	    	scope.ngModel = scope.createTreeStructure(scope.ngModel);
+			scope.folders=scope.ngModel;
+	    	
 			var id="dcTree";
 			if(attrs.id){
 				id=attrs.id;
@@ -111,7 +99,7 @@ function DocumentTreeControllerFunction($scope,$timeout){
 				for (var i =0 ; i < element.subfolders.length; i++){
 					$scope.toogleSelected(element.subfolders[i]);
 				}
-				for (var j=0; j < element.biObjects.length ; j++ ){
+				for (var j=0; element.biObjects !==undefined && j < element.biObjects.length ; j++ ){
 					$scope.toogleSelected(element.biObjects[j]);
 				}
 			}
@@ -132,4 +120,12 @@ function DocumentTreeControllerFunction($scope,$timeout){
 			$scope.clickFunction({item : element});
 		}
 	}
+	
+	$scope.$watchCollection( 
+			'ngModel'
+    	, function(){
+			$scope.initializeFolders($scope.ngModel);
+			$scope.ngModel = $scope.createTreeStructure($scope.ngModel);
+			$scope.folders= $scope.ngModel;
+    	});
 }
