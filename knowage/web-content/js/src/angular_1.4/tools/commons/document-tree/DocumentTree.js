@@ -3,7 +3,7 @@
  * 
  */
 var scripts = document.getElementsByTagName("script")
-var currentScriptPathDocumentTree = "http://localhost:8080/knowage/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js";
+var currentScriptPathDocumentTree = scripts[scripts.length-1].src;
 
 angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 .directive('documentTree',
