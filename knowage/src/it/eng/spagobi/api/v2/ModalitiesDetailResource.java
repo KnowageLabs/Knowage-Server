@@ -87,11 +87,6 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 		ICheckDAO checksDao = null;
 		Check check = body;
-		if (check == null) {
-			logger.error("Error JSON parsing");
-			throw new SpagoBIRuntimeException("Error JSON parsing");
-		}
-
 		if (check.getCheckId() != null) {
 			logger.error("Error paramters. New check should not have ID value");
 			throw new SpagoBIRuntimeException("Error paramters. New check should not have ID value");
@@ -100,9 +95,9 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		try {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
-			checksDao.insertCheck(check);
-			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
-			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).build();
+			Integer id = checksDao.insertCheck(check);
+			String encodedCheck = URLEncoder.encode("" + id, "UTF-8");
+			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
@@ -117,12 +112,6 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 
 		ICheckDAO checksDao = null;
 		Check check = body;
-
-		if (check == null) {
-			logger.error("Error JSON parsing");
-			throw new SpagoBIRuntimeException("Error JSON parsing");
-		}
-
 		if (check.getCheckId() == null) {
 			logger.error("The check with ID " + id + " doesn't exist");
 			throw new SpagoBIRuntimeException("The check with ID " + id + " doesn't exist");
@@ -133,7 +122,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.modifyCheck(check);
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
-			return Response.created(new URI("1.0/domains/" + encodedCheck)).entity(encodedCheck).build();
+			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource" + id, e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);
@@ -153,7 +142,8 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.eraseCheck(check);
-			return Response.ok().build();
+			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
+			return Response.ok().entity(encodedCheck).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource" + id, e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);

@@ -71,11 +71,12 @@ public interface ICheckDAO extends ISpagoBIDao {
 	 *
 	 * @param check
 	 *            The object containing all insert information
+	 * @return
 	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public void insertCheck(Check check) throws EMFUserError;
+	public Integer insertCheck(Check check) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a value constraint. All information needed

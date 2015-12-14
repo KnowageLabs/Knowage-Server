@@ -1,5 +1,6 @@
 package it.eng.spagobi.api.v2;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,10 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.ProfileAttribute;
 import it.eng.spagobi.profiling.bo.UserBO;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
@@ -53,6 +57,65 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public UserBO getUserById(@PathParam("id") Integer id) {
+		ISbiUserDAO usersDao = null;
+		List<UserBO> fullList = null;
+		try {
+
+			usersDao = DAOFactory.getSbiUserDAO();
+			usersDao.setUserProfile(getUserProfile());
+			fullList = usersDao.loadUsers();
+			for (int i = 0; i < fullList.size(); i++) {
+				if (fullList.get(i).getId() == id.intValue()) {
+					return fullList.get(i);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
+		return new UserBO();
+
+	}
+
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@Path("/{id}/roles")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public List<SbiExtRoles> getRolesByUserId(@PathParam("id") Integer id) {
+		try {
+
+			DAOFactory.getSbiUserDAO().setUserProfile(getUserProfile());
+			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserById(id);
+			ArrayList<SbiExtRoles> roles = DAOFactory.getSbiUserDAO().loadSbiUserRolesById(user.getId());
+			return roles;
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
+	}
+
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@Path("/{id}/attributes")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public List<SbiUserAttributes> getAttributesByUserId(@PathParam("id") Integer id) {
+
+		try {
+			DAOFactory.getSbiUserDAO().setUserProfile(getUserProfile());
+			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserById(id);
+			ArrayList<SbiUserAttributes> attributes = DAOFactory.getSbiUserDAO().loadSbiUserAttributesById(user.getId());
+			return attributes;
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
+	}
+
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Path("/roles")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public List<Role> getUserRoles() {
@@ -80,6 +143,7 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 		ISbiAttributeDAO attributesDao = null;
 		List<SbiAttribute> fullList = null;
 		List<ProfileAttribute> profileAttrs = new ArrayList<>();
+
 		try {
 
 			attributesDao = DAOFactory.getSbiAttributeDAO();
@@ -108,7 +172,8 @@ public class UserManagementResource extends AbstractSpagoBIResource {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			usersDao.deleteSbiUserById(id);
-			return Response.ok().build();
+			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
+			return Response.ok().entity(encodedUser).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource" + id, e);
 			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error" + "with id: " + id, buildLocaleFromSession(), e);

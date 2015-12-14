@@ -186,7 +186,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#insertCheck(it.eng.spagobi.behaviouralmodel.check.bo.Check)
 	 */
 	@Override
-	public void insertCheck(Check check) throws EMFUserError {
+	public Integer insertCheck(Check check) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -217,6 +217,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			updateSbiCommonInfo4Insert(hibCheck);
 			aSession.save(hibCheck);
 			tx.commit();
+			return hibCheck.getCheckId();
 		} catch (HibernateException he) {
 			logException(he);
 
