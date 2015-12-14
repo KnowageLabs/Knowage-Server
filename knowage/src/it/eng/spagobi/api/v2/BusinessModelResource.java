@@ -1,5 +1,6 @@
 package it.eng.spagobi.api.v2;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
@@ -151,17 +152,14 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	// in progress
 	@POST
 	@Path("/{bmId}/versions")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("bmId") int bmId) {
-		logger.debug("IN");
 
-		byte[] bytes = null;
 		Content content = new Content();
-		businessModelsDAO.setUserProfile(getUserProfile());
+		byte[] bytes = null;
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		for (String key : uploadForm.keySet()) {
@@ -173,19 +171,22 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				try {
 
 					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					content.setFileName(getFileName(header));
+					if (getFileName(header) != null) {
+						content.setFileName(getFileName(header));
 
-					// convert the uploaded file to input stream
-					InputStream inputStream = inputPart.getBody(InputStream.class, null);
+						// convert the uploaded file to input stream
+						InputStream inputStream = inputPart.getBody(InputStream.class, null);
 
-					bytes = IOUtils.toByteArray(inputStream);
-					content.setContent(bytes);
-					content.setCreationDate(new Date());
-					content.setCreationUser(getUserProfile().getUserName().toString());
-					content.setDimension(String.valueOf(content.getContent().length));
-					businessModelsDAO.insertMetaModelContent(bmId, content);
+						bytes = IOUtils.toByteArray(inputStream);
+						content.setContent(bytes);
+						content.setCreationDate(new Date());
+						content.setCreationUser(getUserProfile().getUserName().toString());
 
-				} catch (Exception e) {
+						businessModelsDAO.insertMetaModelContent(bmId, content);
+
+					}
+
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 
@@ -193,7 +194,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		}
 
-		return Response.status(200).entity("uploadFile is called, Uploaded file name : ").build();
+		return Response.status(200).build();
 
 	}
 
@@ -224,7 +225,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("An error occurred while trying to download version with id:" + vId, buildLocaleFromSession(), e);
 
 		} finally {
-			logger.debug("IN");
+			logger.debug("OUT");
 		}
 	}
 

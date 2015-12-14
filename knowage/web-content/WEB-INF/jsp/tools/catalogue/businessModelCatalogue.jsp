@@ -97,6 +97,13 @@
 										{{translate.load("sbi.browser.defaultRole.save");}} 
 									</md-button>
 									
+									<!-- <md-button  type="submit" ng-disabled="!isDirty"
+										aria-label="save layer" class="md-raised md-ExtraMini "
+										style=" margin-top: 2px;" ng-click="saveBusinessModelFile()"
+									>
+										test
+									</md-button> -->
+									
 								</div>
 						</div>
 					</md-toolbar>
@@ -153,8 +160,8 @@
       						</div>
       						
       						<md-input-container class="small counter"> 
-       							<input id="businessModelFile" ng-model="businessModelFile" type="file"
-       									fileread="businessModelFile" accept=""/> 
+       							<input id="businessModelFile" file-model="bmWithFile.file" type="file" ng-click="checkChange()"/>
+       									<!--  fileread="businessModelFile" accept="" class="md-raised md-ExtraMini "--> 
       						</md-input-container>
       					</div>
      					     					

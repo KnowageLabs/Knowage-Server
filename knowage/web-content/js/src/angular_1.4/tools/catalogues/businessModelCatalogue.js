@@ -4,9 +4,9 @@
 
 var app = angular.module('businessModelCatalogueModule',['ngMaterial', 'angular_list', 'angular_table','sbiModule', 'angular_2_col']);
 
-app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", businessModelCatalogueFunction]);
+app.controller('businessModelCatalogueController',["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast","multipartForm", businessModelCatalogueFunction]);
 
-function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast){
+function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,multipartForm){
 	
 	//variables
 	///////////////////////////////////////////////////////////
@@ -22,7 +22,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	$scope.selectedBusinessModel = {}; //Selected model for editing or new model data
 	$scope.bmVersionsRadio;
 	$scope.bmVersionsActive;
-	$scope.businessModelFile = new FormData();
+	//$scope.businessModelFile = new FormData();
+	$scope.bmWithFile = {};
 	
 	angular.element(document).ready(function () {
         $scope.getData();
@@ -112,6 +113,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					a.setAttribute("href",b64);
 					
 					a.click();
+					//window.location = data;
+					//console.log(data);
 		});
 	}
 	
@@ -259,13 +262,33 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 
 	 }
 	 
-	 
+	 $scope.saveBusinessModelFile = function(){
+			multipartForm.post("2.0/businessmodels/"+$scope.selectedBusinessModel.id+"/versions",$scope.bmWithFile).success(
+					
+					function(data,status,headers,config){
+						if(data.hasOwnProperty("errors")){
+							
+							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
+							
+						}else{
+							
+							console.log("[UPLOAD]: SUCCESS!");
+							$scope.bmVersions = $scope.getVersions($scope.selectedBusinessModel.id);
+							document.getElementById("businessModelFile").value = "";
+							$scope.isDirty = false;
+							$scope.bmWithFile = {};
+							//console.log($scope.selectedBusinessModel);
+							
+						}
+					}).error(function(data, status, headers, config) {
+								console.log("[UPLOAD]: FAIL!"+status);
+							});
+	 }
 	 //calling service for saving BM @POST and @PUT
 	 $scope.saveBusinessModel = function(){
-			console.log("aj em in sejv biznis model");
-			console.log("bmVersionsRadio:"+$scope.bmVersionsRadio);
-			console.log("bmVersionsActive:"+$scope.bmVersionsActive);
-			
+		 	//$scope.bmWithFile = $scope.selectedBusinessModel;
+		 	
+		 	delete $scope.selectedBusinessModel.file;
 			if(typeof $scope.selectedBusinessModel.id === "undefined"){
 				console.log("Novi se cuva");
 
@@ -278,6 +301,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 								$scope.selectedVersions=[];
 								$scope.isDirty = false;
 								$scope.showActionOK("New Business Model saved successfully");
+
+								$scope.saveBusinessModelFile();
 							}
 							
 						);
@@ -289,7 +314,9 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 					.put("2.0/businessmodels", $scope.selectedBusinessModel.id, $scope.selectedBusinessModel)
 					.success(
 							function(){
-								if($scope.bmVersions.length > 1 && $scope.bmVersionsActive != null){
+								$scope.saveBusinessModelFile();
+								
+								if($scope.bmVersions.length > 0 && $scope.bmVersionsActive != null){
 									sbiModule_restServices
 									.put("2.0/businessmodels/" + $scope.selectedBusinessModel.id+"/versions/"+ $scope.bmVersionsActive,"")
 									.success(
@@ -544,4 +571,53 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 $scope.clickRightTable = function(item){
 			 $scope.bmVersionsActive= item.id;
 		 }
+
 };
+
+
+
+app.directive('fileModel',['$parse',function($parse){
+		
+		return {
+			restrict:'A',
+			link: function(scope,element,attrs){
+				var model = $parse(attrs.fileModel);
+				var modelSetter = model.assign;
+				
+				element.bind('change',function(){
+					scope.$apply(function(){
+						modelSetter(scope,element[0].files[0]);
+						
+					})
+				})
+			}
+		}
+		
+		
+	}]);
+
+
+app.service('multipartForm',['$http',function($http){
+		
+		this.post = function(uploadUrl,data){
+			
+			var formData = new FormData();
+			
+			for(var key in data){
+				
+				if(key==="file"){
+					formData.append(key,data[key]);
+				}
+				
+					
+				
+				
+			}
+
+		return	$http.post(uploadUrl,formData,{
+				transformRequest:angular.identity,
+				headers:{'Content-Type': undefined}
+			})
+		}
+		
+	}])
