@@ -309,10 +309,7 @@ author:
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
  			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading');
- 			
- 			//console.log(Ext.getBody().getWidth());
- 			//console.log(Ext.getBody().getHeight()); 			
- 			
+ 						
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
@@ -349,30 +346,7 @@ author:
  					if (chartConfiguration!=null)
 					{
  						var chartType = chartConfiguration.chart.type.toUpperCase();
-		 					
- 						//var marginTop = (newHeight-chartConfiguration.chart.height)/2;
-						//var marginLeft = (newWidth-chartConfiguration.chart.width)/2;
-												
-						//var string = marginTop + " " + marginLeft + " " + marginTop + " " + marginLeft;
-						
-						//console.log(string);
-						
-						//console.log("-1-");
-						//console.log(chartConfiguration.chart);
-						
-						//if (chartConfiguration.chart.height=="")
- 							//heightChart = window.innerHeight;
- 						
- 						//if (chartConfiguration.chart.width=="")
- 						//	widthChart = window.innerWidth;
-						
-						//console.log(isChartHeightEmpty);
-						//console.log(isChartWidthEmpty);
-						
-						//if(isChartHeightEmpty!=null && isChartWidthEmpty!=null)
-							//console.log("DDD");
-							//Ext.getCmp('mainPanel').setMargin(string);
-							//console.log("EEE");
+		 				
 	 					/* 
 	 						Check if the chart (document) that we want to render (run) on the page 
 	 						usese D3 as a library for rendering.
@@ -398,13 +372,8 @@ author:
  							{
  								chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth	 						 
  							}				
- 							
- 	 						//console.log("-1a-");
- 	 						
- 	 						//console.log(chartConfiguration);
  	 						
  	 						/* Re-render the chart after resizing the window (panel). */
- 	 						//renderChart(chartConfiguration,marginTop,marginLeft);
  	 						renderChart(chartConfiguration);
  	 						Ext.getBody().unmask();
  						}
@@ -474,58 +443,12 @@ author:
  						 						
  						if ((widthChart!=undefined || heightChart!=undefined) && (widthChart!="" || heightChart!=""))
 						{
- 							console.log("UPAO");
  							Ext.getBody().setStyle("position","absolute");
  							Ext.getBody().setStyle("top","50%");
  							Ext.getBody().setStyle("left","50%");
  							Ext.getBody().setStyle("vertical-align","middle");
  							Ext.getBody().setStyle("transform","translate(-50%, -50%)");
-						}
- 						
- 						/*if (chartConf.chart.height=="")
- 							heightChart = window.innerHeight;
- 						
- 						if (chartConf.chart.width=="")
- 							widthChart = window.innerWidth;
- 							
- 						
- 						var heightOfWindow = Ext.getBody().getHeight();
- 						var widthOfWindow = Ext.getBody().getWidth();*/
- 						
- 						/* 
-							If the chart is of the Highcharts library, do not apply current dimensions of the
-							window that contains the chart. D3 does not handle this appropriately, so we need
-							the starting dimensions for the chart - current dimensions of the window within 
-							which the chart (of D3 library) is placed.
-							@author: danristo (danilo.ristovski@mht.net)
-						*/
-						//var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
-	 					
-						/*console.log("Height of window: ");
-						//console.log(heightOfWindow);
-						//console.log("Height of chart: ");
-						//console.log(heightChart);
-						
-						//console.log("Width of window: ");
-						//console.log(widthOfWindow);
-						//console.log("Width of chart: ");
-						//console.log(widthChart);
-							
-						//console.log("Window inner height:");
-						//console.log(window.innerHeight);
-						
-						//console.log("Window inner width:");
-						//console.log(window.innerWidth);
-						
-						var marginTop = (window.innerHeight-heightChart)/2;
- 						var marginLeft = (window.innerWidth-widthChart)/2;
- 						
- 						//console.log("-2-");
- 						//console.log(typeChart);
- 						//console.log("Margin top:");
- 						//console.log(marginTop);
- 						//console.log("Margin left:");
- 						//console.log(marginLeft); */						
+						} 											
 							
 						/*
 							If type of the chart is one of those that rely on the D3 library
@@ -537,10 +460,8 @@ author:
 							if-statement.
 							@author: danristo (danilo.ristovski@mht.net)
 						*/
-						//if (isD3Chart && ((chartConf.chart.width=="" || chartConf.chart.height=="") || typeChart == "SUNBURST"))
 						if (isD3Chart)
 						{	
-							//console.log("-3-");
 							if (typeChart == "PARALLEL")
  							{
 								isChartParallel = true;
@@ -582,25 +503,15 @@ author:
 							} 	
 							
 							chartConfiguration = chartConf;	
-							/*console.log("-4-");
-	 						console.log(marginTop);
-	 						renderChart(chartConf,marginTop,marginLeft);*/
 	 						renderChart(chartConf);
 						} 
 						else
-						{
-							/*var string = marginTop + " " + marginLeft + " " + marginTop +" " + marginLeft;
-	 						
-	 						//console.log(string);
-	 						
-	 						//console.log("-5-");
-	 						
-	 						var typeChart = chartConf.chart.type.toUpperCase();
-	 							
-	 						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
-	 						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
-	 						
-	 						Ext.getCmp('mainPanel').setMargin(string);*/
+						{	 						
+	 						/*
+	 							var typeChart = chartConf.chart.type.toUpperCase();	 							
+	 							(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
+	 							(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
+	 						*/
 	 						
 	 						chartConfiguration = chartConf;	
 	 						
@@ -625,7 +536,6 @@ author:
 			id: 'mainPanel',
 			width: '100%',
 		    height: '100%',
-		    //padding: "50 0 0 50",
 		    renderTo: Ext.getBody(),
 		    html: '<p>' + LN('sbi.generic.error.notemplate') + '</p>'
 		});

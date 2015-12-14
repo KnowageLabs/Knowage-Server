@@ -2901,7 +2901,7 @@ function renderChordChart(jsonData)
 	 * are going to surround the chart in order to 
 	 * (danilo.ristovski@mht.net)
 	 */
-	var spaceForLabels = 20;
+	//var spaceForLabels = 20;
 	
 
 	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
@@ -2912,9 +2912,11 @@ function renderChordChart(jsonData)
 	 * Width and height of the chart
 	 */
 	var width = jsonData.chart.width;
-	var height = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
-										+Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
-										+spaceForLabels+emptySplitDivHeight)*1.13;
+	var height = jsonData.chart.height;
+	
+	var heightForChartSvg = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
+							 + Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
+							 +emptySplitDivHeight)*1.13;
 	
 	
 	var innerRadius = Math.min(width, height) * .35;
@@ -2930,8 +2932,9 @@ function renderChordChart(jsonData)
 				.range(jsonData.colors);
 	
 	d3.select("body")
-	.append("div").attr("id","main")
-		.style("height",height)
+		.append("div").attr("id","main")
+		// Set the real height of the entire chart (the one that user specified)
+		.style("height",height)	
 		.style("width",width)
 		.style("background-color",jsonData.chart.style.backgroundColor)
 		.style("font-style",jsonData.chart.style.fontStyle)
@@ -2966,18 +2969,18 @@ function renderChordChart(jsonData)
 	d3.select("#main").append("div").attr("id","chartD3");
 	
 	var svg = d3.select("#chartD3").append("div")
-	 			.attr("class", "chart")	 			
-	 			.style	("width", "100%")
-	 			.style("height", "100%")
+	 			.attr("class","chart")	 			
+	 			.style("width",width)
+	 			.style("height",heightForChartSvg)
 	 			.attr("align","center")
 				.append("svg:svg")
-				.attr("width", width)
-				.attr("height", Number(height)+spaceForLabels)	
-				.attr("viewBox","-100 -100 "+(Number(width)+250)+" "+ (Number(height)+spaceForLabels+250))
+				.attr("width",width)
+				.attr("height", heightForChartSvg)	
+				.attr("viewBox","-100 -100 "+(Number(width)+250)+" "+ (Number(heightForChartSvg)+250))
 				.attr( "preserveAspectRatio","xMidYMid meet")
 				.style("background-color",jsonData.chart.style.backgroundColor)	
 				.append("svg:g")
-				.attr("transform", "translate(" + width / 2 + "," + ((Number(height)+spaceForLabels) / 2) + ")");
+				.attr("transform", "translate(" + width / 2 + "," + ((Number(heightForChartSvg)) / 2) + ")");
 	
 	/**
 	 * [START] Data processing part
