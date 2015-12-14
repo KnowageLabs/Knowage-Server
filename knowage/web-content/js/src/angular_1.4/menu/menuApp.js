@@ -9,7 +9,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 		$scope.openAside = false;
 	
 		$scope.toggleMenu = function(){
-			debugger;
+			//debugger;
 			$scope.openAside = !$scope.openAside;
 		}
     }]);
