@@ -736,11 +736,12 @@ function renderWordCloud(chartConf){
 	    var tipWidth = parseInt(jsonObject.tip.style.width);
 		
 	    // Parameters (dimensions) for the toolbar (breadcrumb)
-		var b = { 
-					w: bcWidth, 	h: bcHeight, 
-					s: bcSpacing, 	t: bcTail 
-				};
-//	    console.log(jsonObject);
+		var b = 
+		{ 
+			w: bcWidth, 	h: bcHeight, 
+			s: bcSpacing, 	t: bcTail 
+		};
+		
 		/* Create necessary part of the HTML DOM - the one that code need to
 		 * position chart on the page (D3 notation) */
 		
@@ -1569,7 +1570,7 @@ function renderWordCloud(chartConf){
 	 * @param data JSON containing data (parameters) about the chart 
 	 */
 	function renderParallelChart(data){
-	 console.log(data);	
+	
 	var records = data.data[0];
 
 	if(records.length>0){
@@ -1689,7 +1690,6 @@ function renderWordCloud(chartConf){
 		 * on other DIV elements.
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
-		
 		d3.select("body")
 			.append("div").attr("id","main")
 			.style("height",data.chart.height)
@@ -1700,7 +1700,7 @@ function renderWordCloud(chartConf){
 			.style("font-style",data.chart.style.fontStyle)
 			.style("font-weight",data.chart.style.fontWeight)
 			.style("text-decoration",data.chart.style.textDecoration);
-		
+				
 		// Set title
 		d3.select("#main").append("div")
 		.style("color",data.title.style.color)
@@ -2929,7 +2929,8 @@ function renderChordChart(jsonData)
     			.domain(d3.range(elemSize))
 				.range(jsonData.colors);
 	
-	d3.select("body").append("div").attr("id","main")
+	d3.select("body")
+	.append("div").attr("id","main")
 		.style("height",height)
 		.style("width",width)
 		.style("background-color",jsonData.chart.style.backgroundColor)

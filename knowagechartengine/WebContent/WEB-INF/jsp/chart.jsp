@@ -169,8 +169,15 @@ author:
 </head>
 
 <%-- == BODY ========================================================== --%>
+<%-- <body style="display: flex;
+    width: 60%;
+     height: 100%;
+    padding: 10px; 
+    vertical-align: bottom;">
+--%>
 
 <body>
+
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>
 	<%-- div with wait while loading message --%>
    	<div id="divLoadingMessage<%=uuidO%>" style="display: none; align=center">
@@ -302,6 +309,10 @@ author:
  		Ext.onReady(function(){
  			Ext.log({level: 'info'}, 'CHART: IN');
  			Ext.getBody().mask(LN('sbi.chartengine.viewer.chart.loading'), 'x-mask-loading');
+ 			
+ 			//console.log(Ext.getBody().getWidth());
+ 			//console.log(Ext.getBody().getHeight()); 			
+ 			
  			var mainPanel = Ext.create('Ext.panel.Panel', {
  				id: 'mainPanel',
  				width: '100%',
@@ -309,7 +320,7 @@ author:
  			   	//autoScroll: true,
 			  	//overflowX: 'scroll',
 			  	//overflowY: 'scroll',
- 			    renderTo: Ext.getBody()
+ 			    renderTo: Ext.getBody()  
  			});
  			
  			var globalThis = this;
@@ -325,7 +336,7 @@ author:
  				"resize",
  				
  				function(newWidth, newHeight)
- 				{ 	 					
+ 				{ 	  					
  					/*
  						If there are chart dimension values (height and width) specified 
  						for this chart (chart that relies on the D3 library), variable
@@ -339,12 +350,36 @@ author:
 					{
  						var chartType = chartConfiguration.chart.type.toUpperCase();
 		 					
+ 						//var marginTop = (newHeight-chartConfiguration.chart.height)/2;
+						//var marginLeft = (newWidth-chartConfiguration.chart.width)/2;
+												
+						//var string = marginTop + " " + marginLeft + " " + marginTop + " " + marginLeft;
+						
+						//console.log(string);
+						
+						//console.log("-1-");
+						//console.log(chartConfiguration.chart);
+						
+						//if (chartConfiguration.chart.height=="")
+ 							//heightChart = window.innerHeight;
+ 						
+ 						//if (chartConfiguration.chart.width=="")
+ 						//	widthChart = window.innerWidth;
+						
+						//console.log(isChartHeightEmpty);
+						//console.log(isChartWidthEmpty);
+						
+						//if(isChartHeightEmpty!=null && isChartWidthEmpty!=null)
+							//console.log("DDD");
+							//Ext.getCmp('mainPanel').setMargin(string);
+							//console.log("EEE");
 	 					/* 
 	 						Check if the chart (document) that we want to render (run) on the page 
 	 						usese D3 as a library for rendering.
 						*/
+						
 	 					var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
- 						
+ 							 					
  						if (isD3Chart)
  						{
  	 						/* 
@@ -364,7 +399,12 @@ author:
  								chartConfiguration.chart.width = window.innerWidth; // sometimes is newWidth != window.innerWidth	 						 
  							}				
  							
+ 	 						//console.log("-1a-");
+ 	 						
+ 	 						//console.log(chartConfiguration);
+ 	 						
  	 						/* Re-render the chart after resizing the window (panel). */
+ 	 						//renderChart(chartConfiguration,marginTop,marginLeft);
  	 						renderChart(chartConfiguration);
  	 						Ext.getBody().unmask();
  						}
@@ -400,6 +440,8 @@ author:
 						driverParams: '<%=driverParams%>',
 						jsonData: Sbi.chart.viewer.ChartTemplateContainer.metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
 				};
+				//console.log(Sbi.chart.viewer.ChartTemplateContainer.metaData);
+				//console.log(<%=driverParams%>);
 				chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
 					var chartConf = Ext.JSON.decode(response.responseText, true);
 					renderChart(chartConf);
@@ -412,11 +454,12 @@ author:
  						jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate,
  						driverParams: '<%=driverParams%>'
  					};
+ 				
  					chartServiceManager.run('jsonChartTemplate', parameters, [], function (response) {
- 						 			
- 						//console.log(response.responseText);
+ 						 			 						
+ 						var chartConf = Ext.JSON.decode(response.responseText, true);	
  						
- 						var chartConf = Ext.JSON.decode(response.responseText, true);			
+ 						var typeChart = chartConf.chart.type.toUpperCase();
  						 						
  						/* 
  							Set the initial size of the chart if the height and width are not 
@@ -426,10 +469,28 @@ author:
  						*/
  						var heightChart = chartConf.chart.height;
  						var widthChart = chartConf.chart.width;
- 						var typeChart = chartConf.chart.type.toUpperCase();
+ 				 				
+ 						var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");		
+ 						 						
+ 						if ((widthChart!=undefined || heightChart!=undefined) && (widthChart!="" || heightChart!=""))
+						{
+ 							console.log("UPAO");
+ 							Ext.getBody().setStyle("position","absolute");
+ 							Ext.getBody().setStyle("top","50%");
+ 							Ext.getBody().setStyle("left","50%");
+ 							Ext.getBody().setStyle("vertical-align","middle");
+ 							Ext.getBody().setStyle("transform","translate(-50%, -50%)");
+						}
+ 						
+ 						/*if (chartConf.chart.height=="")
+ 							heightChart = window.innerHeight;
+ 						
+ 						if (chartConf.chart.width=="")
+ 							widthChart = window.innerWidth;
  							
- 						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
- 						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
+ 						
+ 						var heightOfWindow = Ext.getBody().getHeight();
+ 						var widthOfWindow = Ext.getBody().getWidth();*/
  						
  						/* 
 							If the chart is of the Highcharts library, do not apply current dimensions of the
@@ -438,8 +499,34 @@ author:
 							which the chart (of D3 library) is placed.
 							@author: danristo (danilo.ristovski@mht.net)
 						*/
-						var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
+						//var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 	 					
+						/*console.log("Height of window: ");
+						//console.log(heightOfWindow);
+						//console.log("Height of chart: ");
+						//console.log(heightChart);
+						
+						//console.log("Width of window: ");
+						//console.log(widthOfWindow);
+						//console.log("Width of chart: ");
+						//console.log(widthChart);
+							
+						//console.log("Window inner height:");
+						//console.log(window.innerHeight);
+						
+						//console.log("Window inner width:");
+						//console.log(window.innerWidth);
+						
+						var marginTop = (window.innerHeight-heightChart)/2;
+ 						var marginLeft = (window.innerWidth-widthChart)/2;
+ 						
+ 						//console.log("-2-");
+ 						//console.log(typeChart);
+ 						//console.log("Margin top:");
+ 						//console.log(marginTop);
+ 						//console.log("Margin left:");
+ 						//console.log(marginLeft); */						
+							
 						/*
 							If type of the chart is one of those that rely on the D3 library
 							and dimensions of the chart that we are going to render for the
@@ -453,6 +540,7 @@ author:
 						//if (isD3Chart && ((chartConf.chart.width=="" || chartConf.chart.height=="") || typeChart == "SUNBURST"))
 						if (isD3Chart)
 						{	
+							//console.log("-3-");
 							if (typeChart == "PARALLEL")
  							{
 								isChartParallel = true;
@@ -490,13 +578,35 @@ author:
 		 						else
 	 							{
 		 							isChartWidthEmpty = false;
-	 							}
-		 						
-		 						chartConfiguration = chartConf;
-							} 							
-						} 						
-						
- 						renderChart(chartConf);
+	 							}		 						
+							} 	
+							
+							chartConfiguration = chartConf;	
+							/*console.log("-4-");
+	 						console.log(marginTop);
+	 						renderChart(chartConf,marginTop,marginLeft);*/
+	 						renderChart(chartConf);
+						} 
+						else
+						{
+							/*var string = marginTop + " " + marginLeft + " " + marginTop +" " + marginLeft;
+	 						
+	 						//console.log(string);
+	 						
+	 						//console.log("-5-");
+	 						
+	 						var typeChart = chartConf.chart.type.toUpperCase();
+	 							
+	 						(heightChart != undefined && heightChart != "") ? Ext.getCmp('mainPanel').setHeight(Number(heightChart)) : null;
+	 						(widthChart != undefined && widthChart!="") ? Ext.getCmp('mainPanel').setWidth(Number(widthChart)) : null; 
+	 						
+	 						Ext.getCmp('mainPanel').setMargin(string);*/
+	 						
+	 						chartConfiguration = chartConf;	
+	 						
+	 						renderChart(chartConf);
+						}				
+ 						
  						Ext.getBody().unmask();
  					});
  				
@@ -515,6 +625,7 @@ author:
 			id: 'mainPanel',
 			width: '100%',
 		    height: '100%',
+		    //padding: "50 0 0 50",
 		    renderTo: Ext.getBody(),
 		    html: '<p>' + LN('sbi.generic.error.notemplate') + '</p>'
 		});

@@ -11,6 +11,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	            ],
 	title : LN('sbi.chartengine.configuration'),
 	bodyPadding : 10,
+	
+	//overflowX: "auto",
 
 	fieldDefaults: {
         anchor: '100%'
@@ -18,8 +20,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	
 	//**********************//
 	
-	height: null,
-	width: null,
+//	height: null,
+//	width: null,
 	margin: "0 0 5 0",	// overrides the margin set in the ChartConfigurationRoot.js
 	
 	/**
@@ -31,8 +33,8 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	overflowX: "auto",
-	overflowY: "auto",
+//	overflowX: "auto",
+//	overflowY: "auto",
 	
 	chartOrientation : null,
 	

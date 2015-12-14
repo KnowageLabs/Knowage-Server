@@ -59,7 +59,7 @@
 		} 
 		
 		else{
-			console.log("highcharts414Initializer.jspf (line 53)");
+			console.log("highcharts414Initializer.jspf (line 62)");
 			console.log(chartConf);
 			new Highcharts.Chart(chartConf);
 		}
