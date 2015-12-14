@@ -11,6 +11,7 @@ angular.module('file_upload', [ 'ngMaterial'])
 	return {
 		templateUrl: currentScriptPathFileUpload.substring(0, currentScriptPathFileUpload.lastIndexOf('/') + 1) + 'template/file-upload.html',
 		transclude : true,
+		replace : false,
 			scope: {
 				ngModel : '='
 				, id : "@"
@@ -20,17 +21,18 @@ angular.module('file_upload', [ 'ngMaterial'])
 	    controllerAs: 'ctrl',
 	    link: function(scope, element, attrs, ctrl, transclude) {
 	    	
-	    	scope.id = "fileUpload";
+	    	scope.id = "fileUpload" + Math.floor(Math.random() * 1000);
 	    	if (attrs.id){
 	    		scope.id = attrs.id;
 	    	}
 	    	
-	    	scope.text = "Browse";
+	    	scope.textButton = "Browse";
 	    	if (attrs.label){
-	    		scope.text = attrs.label;
+	    		scope.textButton = attrs.label;
 	    	}
-	    	
-	    	scope.fileName = "";
+	    	if(!scope.ngModel){
+	    		scope.ngModel = {};
+	    	}
 	    }
 	}
 });
@@ -38,7 +40,9 @@ angular.module('file_upload', [ 'ngMaterial'])
 
 function FileUploadControllerFunction($scope,$timeout){
 	$scope.setFile = function (element){
-		$scope.ngModel = element.files[0];
+		$scope.ngModel.file = element.files[0];
 		$scope.fileName = element.files[0].name;
+		$scope.ngModel.fileName = element.files[0].name;
+		$scope.$apply();
 	}
 }

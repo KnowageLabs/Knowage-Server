@@ -1,10 +1,10 @@
 <md-content layout="row" layout-align="space-around center" layout-padding>
 	<!-- Simulate button and link the click event with the input type='file' -->
-	<label id="{{id}}" class="md-button md-raised md-ExtraMini" md-ink-ripple for="fileInput">
-		<span >{{text}}</span>
+	<label id="{{id}}" class="md-button md-raised md-ExtraMini" md-ink-ripple for="{{id}}_input">
+		<span >{{textButton}}</span>
 	</label>
-	<input id="fileInput" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
-	<md-input-container flex='60'>
-		<input type='text' disabled ng-model="fileName"/>
+	<input id="{{id}}_input" type="file" class="ng-hide" onchange='angular.element(this).scope().setFile(this)'>
+	<md-input-container flex='65'>
+		<input type='text' disabled ng-model="fileName" />
 	</md-input-container>
 </md-content>
