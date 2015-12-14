@@ -37,12 +37,12 @@
 						<geo-config id="config"></geo-config>
 					</md-tab-body>
 				</md-tab>
-<!-- 				<md-tab id="TEMPLATE">  -->
-<!-- 					<md-tab-label>TEMPLATE</md-tab-label>  -->
-<!-- 					<md-tab-body> -->
-<!-- 					<pre>{{template | json}}</pre> -->
-<!-- 					</md-tab-body> -->
-<!-- 				</md-tab> -->
+				<md-tab id="TEMPLATE"> 
+					<md-tab-label>TEMPLATE</md-tab-label> 
+					<md-tab-body>
+					<pre>{{template | json}}</pre>
+					</md-tab-body>
+				</md-tab>
 			</md-tabs>
 		</md-content>
 	</md-sidenav>

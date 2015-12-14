@@ -89,7 +89,7 @@ geoM.service(
 
 			this.setTemplateLayer = function(data) {
 				Object.assign(geoModule_templateLayerData, data);
-				geoModule_thematizer.updateLegend('choropleth');
+				geoModule_thematizer.updateLegend(geoModule_template.analysisType);
 				if (geoModule_templateLayerData.type == "WMS") {
 					var sldBody = geoModule_thematizer
 					.getWMSSlBody(geoModule_templateLayerData);

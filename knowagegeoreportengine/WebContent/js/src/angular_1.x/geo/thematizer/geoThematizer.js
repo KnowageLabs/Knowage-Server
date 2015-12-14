@@ -16,8 +16,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		}
 
 
-		for(var i=0;i<listIndicator.length;i++){
-			var indicator=listIndicator[i].name;
+		for(var indic=0;indic<listIndicator.length;indic++){
+			var indicator=listIndicator[indic].name;
 			if(!cacheDatasetValue.hasOwnProperty(indicator)){
 				cacheDatasetValue[indicator]={};
 				for(var i=0;i<geoModule_dataset.rows.length;i++){

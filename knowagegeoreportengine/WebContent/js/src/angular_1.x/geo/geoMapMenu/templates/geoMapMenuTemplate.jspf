@@ -14,7 +14,7 @@
 	<expander-box id="indicator" color="white" background-color="rgb(63,81,181)" expanded='true' title='translate.load("gisengine.info.message.indicator")' ng-switch on="template.analysisType=='chart'">
 		<md-radio-group ng-model="template.selectedIndicator" ng-switch-when="false">
 			<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()" class="md-primary" ng-value="ind">
-				{{ind.header}}
+				{{ind.header}} 
 			</md-radio-button>
 		</md-radio-group>
 		

@@ -28,6 +28,18 @@ function geoMapMenuControllerFunction(
 	$scope.translate=sbiModule_translate;
 	$scope.firstCallInteraction = true;
 	$scope.openRigthMenu = false;
+	
+	
+	//inizializzo il valore dell'indicator
+	for(var i=0;i<geoModule_indicators.length;i++){
+		if(geoModule_indicators[i].header==geoModule_template.selectedIndicator.header){
+			geoModule_template.selectedIndicator=geoModule_indicators[i];
+			break;
+		}
+	}
+	
+	
+	
 	$scope.analysisTypeList = [
 	                           {label:sbiModule_translate.load("gisengine.rigthMapMenu.analysisType.choropleth"),type:"choropleth",img:"fa  fa-area-chart "},
 	                           {label:sbiModule_translate.load("gisengine.rigthMapMenu.analysisType.proportionalSymbol"),type:"proportionalSymbol",img:"fa fa-circle"},
