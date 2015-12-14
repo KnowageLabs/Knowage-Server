@@ -206,15 +206,47 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 					controller: function($mdDialog) {
 						var fdsctrl = this;
 						fdsctrl.saveFedDataSet = function() {
-							console.log(ctr.multiArray);
+							
 							var item = {};
 							item.name = $scope.update.name;
 							item.label = $scope.update.label;
 							item.description = $scope.update.description;
 							item.relationships = "";
 							item.relationships = ctr.multiArray;
+							
+							if(item.hasOwnProperty("federation_id")){
+								
+								sbiModule_restServices.put("2.0/federateddataset", item.federation_id ,angular.toJson(item))
+								.success(
+										function(data, status, headers, config) {
+											
+											if (data.hasOwnProperty("errors")) {
 												
-							sbiModule_restServices.post("federateddataset","post",angular.toJson(item))
+												console.log("[PUT]: DATA HAS ERRORS PROPERTY!");
+												
+												ctr.showError();
+												
+											} else {
+												
+												console.log("[PUT]: SUCCESS!");
+														
+												ctr.showAlert();
+												
+											}
+											
+											
+										}
+										
+								)
+								.error(
+										function(data, status, headers, config) {
+											console.log("error")
+										}
+								)
+							}
+							else {
+								
+								sbiModule_restServices.post("federateddataset","post",angular.toJson(item))
 								.success(
 										function(data, status, headers, config) {
 											
@@ -241,6 +273,8 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 											console.log("error")
 										}
 								)
+							}
+							
 						}
 					},
 					templateUrl: '/knowage/js/src/angular_1.4/tools/federateddataset/commons/templates/saveFederatedDatasetTemp.html',
@@ -269,6 +303,7 @@ function funkcija($scope, $mdDialog, $timeout, sbiModule_translate, sbiModule_re
 	}
 
 	ctr.selectDeselect = function(item, listId){
+		console.log(item)
 		if(ctr.myselectedvariable[listId]!=undefined || ctr.myselectedvariable[listId]!=null){
 			if(item.name==ctr.myselectedvariable[listId].name){
 				ctr.myselectedvariable[listId] = null;

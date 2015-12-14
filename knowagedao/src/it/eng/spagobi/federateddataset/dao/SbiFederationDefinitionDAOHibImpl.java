@@ -37,7 +37,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 	/**
 	 * Saves the FederationDefinition. If already exist returns that one
-	 * 
+	 *
 	 * @param dataset
 	 */
 	@Override
@@ -407,6 +407,45 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 					aSession.close();
 			}
 		}
+	}
+
+	@Override
+	public Integer modifyFederation(SbiFederationDefinition fds) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		Integer idToReturn = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			SbiFederationDefinition hibfds = fds;
+			int id = fds.getFederation_id();
+
+			Integer idFederationPassed = fds.getFederation_id();
+			if (idFederationPassed != null && !String.valueOf(idFederationPassed.intValue()).equals("")) {
+				updateSbiCommonInfo4Insert(hibfds);
+				aSession.save(hibfds);
+				idToReturn = hibfds.getFederation_id();
+			} else {
+				updateSbiCommonInfo4Update(hibfds);
+				aSession.save(hibfds);
+				idToReturn = idFederationPassed;
+			}
+			tx.commit();
+			logger.debug("OUT");
+		} catch (HibernateException he) {
+			logger.error(he.getMessage(), he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return idToReturn;
+
 	}
 
 }

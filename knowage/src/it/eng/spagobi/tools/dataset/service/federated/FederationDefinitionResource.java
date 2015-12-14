@@ -1,10 +1,10 @@
 package it.eng.spagobi.tools.dataset.service.federated;
 
-import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
+import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -30,7 +30,7 @@ public class FederationDefinitionResource {
 
 	static protected Logger logger = Logger.getLogger(FederationDefinitionResource.class);
 
-	ISbiFederationDefinitionDAO objDao;
+	ISbiFederationDefinitionDAO fdsDAO;
 	List<FederationDefinition> listOfFederations;
 
 	@GET
@@ -39,8 +39,8 @@ public class FederationDefinitionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
-			objDao = DAOFactory.getFedetatedDatasetDAO();
-			listOfFederations = objDao.loadAllFederatedDataSets();
+			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
+			listOfFederations = fdsDAO.loadAllFederatedDataSets();
 			// needs serialization
 			return listOfFederations;
 		} catch (EMFUserError e) {
@@ -50,15 +50,17 @@ public class FederationDefinitionResource {
 	}
 
 	@PUT
-	@Path("/")
+	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
-	public Response update(FederatedDataSet fds) {
+	public Integer update(@PathParam("id") Integer id, FederationDefinition fds) {
 		logger.debug("IN");
 		try {
-			objDao = DAOFactory.getFedetatedDatasetDAO();
-			// objDao.modifyFederation(fds); needs new modifyFederation method
-			return Response.ok().build();
+			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
+			SbiFederationDefinition sfds = new SbiFederationDefinition(fds.getFederation_id(), fds.getLabel(), fds.getName(), fds.getDescription(),
+					fds.getRelationships());
+			fdsDAO.modifyFederation(sfds);
+			return sfds.getFederation_id();
 		} catch (Exception e) {
 			logger.error("Error while updating federation", e);
 			throw new SpagoBIRuntimeException("Error while updating federation", e);
@@ -70,8 +72,8 @@ public class FederationDefinitionResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
 	public Response remove(@PathParam("id") Integer id) {
 		try {
-			objDao = DAOFactory.getFedetatedDatasetDAO();
-			objDao.deleteFederatedDatasetById(id);
+			fdsDAO = DAOFactory.getFedetatedDatasetDAO();
+			fdsDAO.deleteFederatedDatasetById(id);
 			return Response.ok().build();
 		} catch (EMFUserError e) {
 			logger.error("Error while deleting resource", e);

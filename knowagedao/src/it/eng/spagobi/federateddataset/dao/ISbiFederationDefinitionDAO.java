@@ -38,4 +38,6 @@ public interface ISbiFederationDefinitionDAO extends ISpagoBIDao {
 	public Integer countFederationsUsingDataset(Integer dsId);
 
 	public void deleteFederatedDatasetById(Integer id) throws EMFUserError;
+
+	public Integer modifyFederation(SbiFederationDefinition sfds) throws EMFUserError;
 }
