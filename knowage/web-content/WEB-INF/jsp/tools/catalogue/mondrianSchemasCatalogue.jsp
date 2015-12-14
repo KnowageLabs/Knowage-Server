@@ -56,14 +56,26 @@
 				</md-button>
 			
 			</div>
-		
+			
 		</md-toolbar>
 		
 		 	
-
+ 		
 				<md-content layout-padding
 					style="background-color: rgb(236, 236, 236);"
 					class="md-padding ToolbarBox miniToolbar noBorder"> 
+					<div layout-align="space-around" layout="row" style="height:100%" ng-show="catalogLoadingShow" >
+					
+						<md-progress-circular 
+							
+					 	 	class=" md-hue-4"
+					 		md-mode="indeterminate" 
+					 		md-diameter="70"
+					 	
+					 	style="height:100%;">
+						</md-progress-circular>
+					
+					</div>
 					
 					
 <!-- /////////////// CATALOGUE TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->					
@@ -76,6 +88,7 @@
 									speed-menu-option ="catalogueSpeedOptions"
 									click-function = "catalogueClickFunction(item)"
 									no-pagination=false
+									ng-show="showCatalogs"
 									
 									> 
 					</angular-table> 
@@ -175,7 +188,7 @@
       				
        					<input id="mondarianSchemaFile"
        							type="file"
-       							file-model="selectedMondrianSchema.file"
+       							file-model="file.file"
        							> 
        							
        							
@@ -212,7 +225,7 @@
 
 				<div layout="row" layout-wrap>
       						<div flex=3 style="line-height: 40px">
-       							<md-button type="button" class="md-raised " ng-click="addAutomaticData()">
+       							<md-button type="button" class="md-raised " ng-click="print()">
        								{{translate.load("sbi.tools.catalogue.mondrianSchemasCatalogue.inputForm.unlockModel")}}
        							</md-button>
       						</div>
@@ -235,7 +248,18 @@
 			
 			<md-content layout-padding style="background-color: rgb(236, 236, 236);" class="ToolbarBox miniToolbar noBorder leftListbox"  >
 			
-			
+				<div layout-align="space-around" layout="row" style="height:100%" ng-show="versionLoadingShow" >
+					
+						<md-progress-circular 
+							
+					 	 	class=" md-hue-4"
+					 		md-mode="indeterminate" 
+					 		md-diameter="70"
+					 	
+					 		style="height:100%;">
+						</md-progress-circular>
+					
+					</div>
 			
 <!-- /////////////// SAVED FILES TABLE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ -->	
 					<md-radio-group ng-model="selectedMondrianSchema.currentContentId"  >
@@ -256,6 +280,7 @@
 										show-search-bar=true
 										speed-menu-option ="versionsSpeedOptions"
 										click-function = "versionClickFunction(item)"
+										ng-show="showVersions"
 										> 
 										
 						</angular-table>

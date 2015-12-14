@@ -10,15 +10,25 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	$scope.translate = sbiModule_translate;
 	$scope.showMe = false;
+	$scope.catalogLoadingShow = false;
+	$scope.versionLoadingShow = false;
+	$scope.showCatalogs = false;
+	$scope.showVersions = false;
 	$scope.selectedMondrianSchema={};
 	$scope.selectedVersion = {};
 	$scope.itemList = [];
-	$scope.fileList = [];
+	$scope.progressValue = 50;
+	$scope.fileList =[];
 	$scope.servicePath = "2.0/mondrianSchemasResource";
-	
+	$scope.file ={};
 	$scope.print = function(){
-	console.log($scope.selectedMondrianSchema);
+	console.log($scope.fileList);
 	};
+	
+	$scope.downloadFile= function (){
+		console.log("download");
+	}
+	
 	
 	
 	
@@ -43,7 +53,17 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	$scope.versionsSpeedOptions =  [
 	                                
-	  
+	  {
+	        
+		label:'download',
+	    icon:'fa fa-download',
+	    color:'#153E7E',
+	    action:function(item,event){
+	    $scope.downloadFile(item,event);
+			
+	    }
+	  }
+		  ,
 	                                
 	   {
 	        
@@ -65,7 +85,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	
 	$scope.saveMondrianCatalogue = function(){
-		/*
+		
 		console.log("saving Schema...");
 		
 		if(!isNaN($scope.selectedMondrianSchema.id)){
@@ -85,24 +105,9 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		
 		console.log("saved!!!");
 		
-		*/
-		console.log("save function");
-		multipartForm.post("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions",$scope.selectedMondrianSchema).success(
-			
-			function(data,status,headers,config){
-				if(data.hasOwnProperty("errors")){
-					
-					console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
-					
-				}else{
-					
-					console.log("[UPLOAD]: SUCCESS!");
-				$scope.fileList =$scope.getMondrianSchemasVersion();
-					
-				}
-			}).error(function(data, status, headers, config) {
-						console.log("[UPLOAD]: FAIL!"+status);
-					});
+		
+		
+		
 		
 	};
 	
@@ -133,6 +138,7 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		}
 		
 		console.log($scope.selectedMondrianSchema);
+		
 	}
 	
 	//CLICK FUNCTION FOR VERSIONS TABLE
@@ -166,8 +172,27 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					
 					
 				}else{
+					$scope.catalogLoadingShow =true;
+					$scope.showCatalogs = false;
+					$scope.itemList=[];
 					
-					$timeout(function(){$scope.itemList = data;}, 500);
+					
+					setTimeout(function(){
+						$scope.itemList = data;
+						
+						console.log("ucitano");
+						$scope.catalogLoadingShow = false;
+						$scope.showCatalogs = true;
+						$scope.$apply();
+					},10)
+						
+						
+						
+						
+						
+						
+					
+					
 					
 				}
 			}
@@ -179,6 +204,9 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		
 		sbiModule_restServices.get("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions","").success(
 			
+			
+					
+					
 			function(data,status,headers,config){
 				if(data.hasOwnProperty("errors")){
 					
@@ -186,23 +214,37 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					
 				}else{
 					
-					$timeout(function(){
+				$scope.showVersions=false;
+				$scope.versionLoadingShow = true;	
+				$scope.fileList =[];
+				
 						
-						$scope.fileList = data;
-						for(var i = 0; i<data.length;i++){
-						
-						$scope.fileList[i].creationDate = new Date(data[i].creationDate);
-					
-						$scope.fileList[i].actives = "<md-radio-button ng-value = "+$scope.fileList[i].id+" aria-label='label'></md-radio-button>";
-						if($scope.fileList[i].active){
-							$scope.selectedMondrianSchema.currentContentId = $scope.fileList[i].id;
+					setTimeout(function(){
+							
+							
+							$scope.fileList=data;
+							for(var i= 0 ; i<$scope.fileList.length;i++){	
+							
+								$scope.fileList[i].creationDate = new Date(data[i].creationDate);
+								$scope.fileList[i].actives = "<md-radio-button ng-value = "+$scope.fileList[i].id+" aria-label='label'></md-radio-button>";
+							
+								if($scope.fileList[i].active){
+								
+									$scope.selectedMondrianSchema.currentContentId = $scope.fileList[i].id;
+									
+								
+								}
+							
+							}
+							$scope.versionLoadingShow = false;	
+							$scope.showVersions=true;
+							
+							$scope.$apply();
 						}
+							
+						,500
+						)
 						
-					} 	
-						}, 500);
-					
-					
-					
 				}
 			}
 		
@@ -230,7 +272,29 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 		
 		)};
 		
+	//POST UPLOAD FILE
+	$scope.uploadFile= function(){
 		
+		multipartForm.post("2.0/mondrianSchemasResource/"+$scope.selectedMondrianSchema.id+"/versions",$scope.file).success(
+			
+			function(data,status,headers,config){
+				if(data.hasOwnProperty("errors")){
+					
+					console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
+					
+				}else{
+					
+					console.log("[UPLOAD]: SUCCESS!");
+					
+					$scope.getMondrianSchemasVersion();
+					
+					
+				}
+			}).error(function(data, status, headers, config) {
+						console.log("[UPLOAD]: FAIL!"+status);
+					});
+		
+	}	
 	
 	
 	//PUT MODIFY MONDRIAN SCHEMA
@@ -247,7 +311,11 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 					
 					console.log("[PUT]: SUCCESS!");
 					$scope.itemList = $scope.getMondrianSchemas();
-					$scope.getMondrianSchemas();
+					
+						console.log("uploading...");
+						$scope.uploadFile();
+					
+					
 					
 				}
 			}).error(function(data, status, headers, config) {
@@ -311,12 +379,15 @@ app.directive('fileModel',['$parse',function($parse){
 	return {
 		restrict:'A',
 		link: function(scope,element,attrs){
+			
 			var model = $parse(attrs.fileModel);
 			var modelSetter = model.assign;
+			console.log(modelSetter+"model");
 			
 			element.bind('change',function(){
 				scope.$apply(function(){
 					modelSetter(scope,element[0].files[0]);
+					
 					
 				})
 			})
@@ -346,7 +417,7 @@ app.service('multipartForm',['$http',function($http){
 			
 		
 		
-	return	$http.post(uploadUrl,formData,{
+		return $http.post(uploadUrl,formData,{
 			transformRequest:angular.identity,
 			headers:{'Content-Type': undefined}
 		})
