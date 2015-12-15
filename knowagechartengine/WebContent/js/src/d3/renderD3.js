@@ -597,7 +597,9 @@ function renderWordCloud(chartConf){
 		    		.style("font-size",chartConf.subtitle.style.fontSize)
 					.text(chartConf.subtitle.text);
 			      
-			d3.select("#main").append("svg")
+			d3.select("#main")
+			.append("div").attr("id","chart")
+			.append("svg")
 			.attr("width", chartConf.chart.width)
 			.attr("height", chartConf.chart.height-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6)
@@ -741,6 +743,14 @@ function renderWordCloud(chartConf){
 			w: bcWidth, 	h: bcHeight, 
 			s: bcSpacing, 	t: bcTail 
 		};
+		
+		/*var chartDivWidth=width;
+		var chartDivHeight=height;
+		
+		if(jsonObject.title.style!="" || jsonObject.subtitle.style!=""){
+			chartDivHeight-=jsonObject.title.style
+		}*/
+		
 		
 		/* Create necessary part of the HTML DOM - the one that code need to
 		 * position chart on the page (D3 notation) */
@@ -1743,7 +1753,7 @@ function renderWordCloud(chartConf){
 			// "...-20" for bottom padding of the pagination  
 			.style("height", data.chart.height - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.2 - 180-20)
 		.append("svg:svg")
-		.style("font-size",18)
+		//.style("font-size",18)
 			.style("width", data.chart.width-legendWidth)
 			// "...-180" for table height plus pagination height (150+30)
 			// "...-20" for bottom padding of the pagination  
@@ -1798,6 +1808,7 @@ function renderWordCloud(chartConf){
 		.attr("transform",  "translate("+ (30) +"," + 0 + ")" )
 		//.style("height",Number(removePixelsFromFontSize(data.legend.title.style.fontSize))+5)
 		.append("svg:text")
+		.style("fill",data.title.style.color)
 		.style("font-family",data.legend.title.style.fontFamily)
 		.style("font-size",data.legend.title.style.fontSize)
 		.style("font-style",data.legend.title.style.fontStyle)
@@ -2906,13 +2917,25 @@ function renderChordChart(jsonData)
 
 	/* TODO: Enable and customize empty DIV of specified height in order to make some space between the subtitle and
 	 * the chart (values on ticks) ??? */
-	var emptySplitDivHeight = 10;
+	
+	var emptySplitDivHeight = 0;
 	
 	/**
 	 * Width and height of the chart
 	 */
 	var width = jsonData.chart.width;
 	var height = jsonData.chart.height;
+	
+	var chartDivWidth=width;
+	var chartDivHeight=height;
+	
+	if(jsonData.title.text!="" || jsonData.subtitle.text!=""){
+		emptySplitDivHeight=10;
+		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.title.style.fontSize))*1.13;
+		chartDivHeight-=Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))*1.13;
+		chartDivHeight-=emptySplitDivHeight;
+		
+	}
 	
 	var heightForChartSvg = jsonData.chart.height-(Number(removePixelsFromFontSize(jsonData.title.style.fontSize))
 							 + Number(removePixelsFromFontSize(jsonData.subtitle.style.fontSize))
@@ -2971,12 +2994,12 @@ function renderChordChart(jsonData)
 	var svg = d3.select("#chartD3").append("div")
 	 			.attr("class","chart")	 			
 	 			.style("width",width)
-	 			.style("height",heightForChartSvg)
+	 			.style("height",chartDivHeight)
 	 			.attr("align","center")
 				.append("svg:svg")
 				.attr("width",width)
-				.attr("height", heightForChartSvg)	
-				.attr("viewBox","-100 -100 "+(Number(width)+250)+" "+ (Number(heightForChartSvg)+250))
+				.attr("height",heightForChartSvg)	
+				.attr("viewBox","-125 -125 "+(Number(width)+250)+" "+ (Number(heightForChartSvg)+250))
 				.attr( "preserveAspectRatio","xMidYMid meet")
 				.style("background-color",jsonData.chart.style.backgroundColor)	
 				.append("svg:g")
@@ -3140,7 +3163,7 @@ function renderChordChart(jsonData)
 		 */
 		var literalLabelsFontCustom = jsonData.xAxis.labels.style;
 		
-		ticks1.append("svg:text")
+		 ticks1.append("svg:text")
 		  .each(function(d,i) {  d.angle = (d.startAngle + d.endAngle) / 2; })
 		   .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 		  .attr("transform", function(d) {
@@ -3163,7 +3186,7 @@ function renderChordChart(jsonData)
 			.attr("x2", "5")
 			.attr("y2", "0")
 			.style("stroke", "#FF0000");	// TODO: Customize the color of ticks ???
-
+       
 		/**
 		 * Customization for serie labels (ticks on arcs of the CHORD chart).
 		 * 
@@ -3172,7 +3195,7 @@ function renderChordChart(jsonData)
 		var tickLabelsFontCustom = jsonData.yAxis.labels.style;
 		
 		 //aggiunge le label unit� di misura
-		 ticks.append("svg:text")
+		ticks.append("svg:text")
 			.attr("x", "8")
 			.attr("dy", ".35em")
 			.attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
@@ -3184,7 +3207,7 @@ function renderChordChart(jsonData)
 			.style("font-weight",tickLabelsFontCustom.fontWeight)
 			.style("text-decoration",tickLabelsFontCustom.textDecoration)
 			.text(function(d) { return d.label; });
-			
+		
 		 //disegna le fasce da un'area ad un altra
 		 svg.append("svg:g")
 			.attr("class", "chord")
