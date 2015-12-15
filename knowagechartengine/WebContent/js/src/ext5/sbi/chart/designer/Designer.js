@@ -237,7 +237,8 @@ Ext.define('Sbi.chart.designer.Designer', {
 			    	var defaultStyleTemplateGeneric = 
 			    			Sbi.chart.designer.ChartUtils.removeUnwantedPropsFromJsonStyle(defaultStyleTemplate.generic);
 			    	
-			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(baseTemplate,defaultStyleTemplateGeneric);
+			    	jsonTemplate = Sbi.chart.designer.ChartUtils.mergeObjects(
+			    			baseTemplate, defaultStyleTemplateGeneric, configApplyAxes);
 			    }
 			    else
 			    {

@@ -2249,7 +2249,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 		 * case of array merging, keeping intact the original
 		 * objects <code>target</code> and <code>source</code>.
 		 *
-		 * @author Benedetto
+		 * @author Benedetto Milazzo (benedetto.milazzo@eng.it)
 		 * @param target
 		 * @param source
 		 * @param config Object
